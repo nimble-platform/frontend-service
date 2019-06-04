@@ -34,6 +34,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	product_name = myGlobals.product_name;
 	product_description = myGlobals.product_description;
 	product_img = myGlobals.product_img;
+	product_vendor_img = myGlobals.product_vendor_img;
 	product_price = myGlobals.product_price;
 	product_currency = myGlobals.product_currency;
 	product_filter_prod = myGlobals.product_filter_prod;
@@ -45,10 +46,13 @@ export class SimpleSearchFormComponent implements OnInit {
 	product_cat = myGlobals.product_cat;
 	product_cat_mix = myGlobals.product_cat_mix;
 	party_facet_field_list = myGlobals.party_facet_field_list;
+	party_filter_main = myGlobals.party_filter_main;
+	party_filter_trust = myGlobals.party_filter_trust;
 	roundToTwoDecimals = roundToTwoDecimals;
 	item_manufacturer_id = myGlobals.item_manufacturer_id;
 	searchIndex = myGlobals.config.defaultSearchIndex;
 	searchIndexes = ["Products","Categories"];
+	searchTopic = null;
 
 	CURRENCIES = CURRENCIES;
 	selectedCurrency: any = "EUR";
@@ -75,8 +79,11 @@ export class SimpleSearchFormComponent implements OnInit {
 	showOther = false;
 	size = 0;
 	page = 1;
+	rows = 12;
 	start = 0;
 	end = 0;
+	display = "list";
+	sort = "score desc";
 	cat = "";
 	catID = "";
 	cat_level = -2;
@@ -100,6 +107,8 @@ export class SimpleSearchFormComponent implements OnInit {
 	//manufacturerIdCountMap : { [indx : string], string};
 	manufacturerIdCountMap : any;
 
+	imgEndpoint = myGlobals.user_mgmt_endpoint+"/company-settings/image/";
+	zoomedImgURL = "assets/empty_img.png";
 
 	config = myGlobals.config;
 	getMultilingualLabel = selectNameFromLabelObject;
@@ -123,23 +132,53 @@ export class SimpleSearchFormComponent implements OnInit {
 			let q = params['q'];
 			let fq = params['fq'];
 			let p = params['p'];
+			let rows = params['rows'];
+			let sort = params['sort'];
 			let cat = params['cat'];
 			let catID = params['catID'];
 			if(p){
 				this.noP = false;
 			}
 			let searchContext = params['searchContext'];
+			let sIdx = params['sIdx'];
+			if (sIdx)
+				this.searchIndex = sIdx;
+			else
+				this.searchIndex = myGlobals.config.defaultSearchIndex;
+			let sTop = params['sTop'];
+			if (sTop)
+				this.searchTopic = sTop;
+			else
+				this.searchTopic = null;
+			let display = params['display'];
+			if (display)
+				this.display = display;
+			else
+				this.display = "list";
 			if (fq)
 				fq = decodeURIComponent(fq).split("_SEP_");
 			else
 				fq = [];
+			if (rows && !isNaN(rows)) {
+				rows = parseInt(rows);
+				this.rows = rows;
+			}
+			else
+				rows = 12;
 			if (p && !isNaN(p)) {
 				p = parseInt(p);
-				this.size = p*10;
+				this.size = p*rows;
 				this.page = p;
 			}
 			else
 				p = 1;
+			if (sort) {
+				this.sort = sort;
+			}
+			else {
+				sort = "score desc";
+				this.sort = sort;
+			}
 			if (cat) {
 				this.cat = cat;
 			}
@@ -155,17 +194,38 @@ export class SimpleSearchFormComponent implements OnInit {
 			} else {
 				this.searchContext = searchContext;
 			}
-			if (q) {
-				this.getCall(q, fq, p, cat, catID);
-			} else {
+			if (q && sTop) {
+				if (sTop == "prod")
+					this.getCall(q, fq, p, rows, sort, cat, catID, sIdx, sTop);
+				else if (sTop == "comp")
+					this.getCompCall(q, fq, p, rows, sort, sTop);
+			} else if (sTop) {
 				this.callback = false;
 				this.searchDone = false;
 				this.searchCallStatus.reset();
-		    	this.model.q='';
-				this.objToSubmit.q='';
+		    	//this.model.q='';
+				//this.objToSubmit.q='';
+				this.model.q='*';
+				this.objToSubmit.q='*';
 				this.facetQuery=fq;
 				this.page=p;
-				this.getCatTree();
+				this.rows=rows;
+				this.sort=sort;
+				//this.getCatTree();
+				this.objToSubmit = copy(this.model);
+				this.page = 1;
+				this.get(this.objToSubmit);
+			}
+			else {
+				this.callback = false;
+				this.searchDone = false;
+				this.searchCallStatus.reset();
+				this.model.q='*';
+				this.objToSubmit.q='*';
+				this.facetQuery=fq;
+				this.page=p;
+				this.rows=rows;
+				this.sort=sort;
 			}
 		});
     }
@@ -176,9 +236,86 @@ export class SimpleSearchFormComponent implements OnInit {
 				q: search.q,
 				fq: encodeURIComponent(this.facetQuery.join('_SEP_')),
 				p: this.page,
+				rows: this.rows,
+				display: this.display,
+				sort: this.sort,
 				searchContext: this.searchContext,
 				cat: this.cat,
-				catID: this.catID
+				catID: this.catID,
+				sIdx: this.searchIndex,
+				sTop: this.searchTopic
+			}
+		});
+	}
+
+	setSearchTopic(sTop: string): void {
+		this.router.navigate(['/simple-search'], {
+			queryParams: {
+				q: "*",
+				fq: encodeURIComponent(this.facetQuery.join('_SEP_')),
+				p: this.page,
+				rows: this.rows,
+				display: this.display,
+				sort: this.sort,
+				searchContext: this.searchContext,
+				cat: this.cat,
+				catID: this.catID,
+				sIdx: this.searchIndex,
+				sTop: sTop
+			}
+		});
+	}
+
+	setRows(rows:any): void {
+		this.router.navigate(['/simple-search'], {
+			queryParams: {
+				q: this.objToSubmit.q,
+				fq: encodeURIComponent(this.facetQuery.join('_SEP_')),
+				p: 1,
+				rows: parseInt(rows),
+				display: this.display,
+				sort: this.sort,
+				searchContext: this.searchContext,
+				cat: this.cat,
+				catID: this.catID,
+				sIdx: this.searchIndex,
+				sTop: this.searchTopic
+			}
+		});
+	}
+
+	setDisplay(display:any): void {
+		this.router.navigate(['/simple-search'], {
+			queryParams: {
+				q: this.objToSubmit.q,
+				fq: encodeURIComponent(this.facetQuery.join('_SEP_')),
+				p: this.page,
+				rows: this.rows,
+				display: display,
+				sort: this.sort,
+				searchContext: this.searchContext,
+				cat: this.cat,
+				catID: this.catID,
+				sIdx: this.searchIndex,
+				sTop: this.searchTopic
+			}
+		});
+	}
+
+	setSort(sort:any): void {
+		this.router.navigate(['/simple-search'], {
+			queryParams: {
+				q: this.objToSubmit.q,
+				fq: encodeURIComponent(this.facetQuery.join('_SEP_')),
+				p: this.page,
+				rows: this.rows,
+				display: this.display,
+				sort: sort,
+				searchContext: this.searchContext,
+				cat: this.cat,
+				catID: this.catID,
+				sIdx: this.searchIndex,
+				sTop: this.searchTopic
 			}
 		});
 	}
@@ -198,9 +335,18 @@ export class SimpleSearchFormComponent implements OnInit {
 			)
 		);
 
+	getCompSuggestions = (text$: Observable<string>) =>
+		text$.pipe(
+			debounceTime(200),
+			distinctUntilChanged(),
+			switchMap(term =>
+					this.simpleSearchService.getCompSuggestions(term, (this.product_vendor_name))
+			)
+		);
+
 	private getCatTree(): void {
 		this.categoriesCallStatus.submit();
-		this.simpleSearchService.get("*",[this.product_cat_mix],[""],1,"","", this.searchIndex)
+		this.simpleSearchService.get("*",[this.product_cat_mix],[""],1,1,"score desc","","", this.searchIndex)
 		.then(res => {
 			// if res.facets are null, it means that there is no product in the index
 			if (res.facets == null || Object.keys(res.facets).indexOf(this.product_cat_mix) == -1) {
@@ -384,18 +530,25 @@ export class SimpleSearchFormComponent implements OnInit {
 		return level;
 	}
 
-	private getCall(q: string, fq: any, p: number, cat: string, catID: string) {
+	private getCall(q: string, fq: any, p: number, rows: number, sort: string, cat: string, catID: string, sIdx: string, sTop: string) {
 		this.cat_loading = true;
 		this.searchDone = true;
-		this.model.q = q;
+		if (q == "*")
+			this.model.q = "";
+		else
+			this.model.q = q;
 		this.objToSubmit.q = q;
 		this.facetQuery = fq;
 		this.page = p;
+		this.rows = rows;
+		this.sort = sort;
+		this.searchIndex = sIdx;
+		this.searchTopic = sTop;
 		this.searchCallStatus.submit();
 		this.simpleSearchService.getFields()
 			.then(res => {
 				let fieldLabels: string [] = this.getFieldNames(res);
-				this.simpleSearchService.get(q, Object.keys(fieldLabels), fq, p, cat, catID, this.searchIndex)
+				this.simpleSearchService.get(q, Object.keys(fieldLabels), fq, p, rows, sort, cat, catID, this.searchIndex)
 					.then(res => {
 						if (res.result.length == 0) {
 							this.cat_loading = false;
@@ -404,7 +557,7 @@ export class SimpleSearchFormComponent implements OnInit {
 							this.response = res.result;
 							this.size = res.totalElements;
 							this.page = p;
-							this.start = this.page * 10 - 10 + 1;
+							this.start = this.page * this.rows - this.rows + 1;
 							this.end = this.start + res.result.length - 1;
 						}
 						else {
@@ -448,7 +601,7 @@ export class SimpleSearchFormComponent implements OnInit {
 											this.response = copy(this.temp);
 											this.size = res.totalElements;
 											this.page = p;
-											this.start = this.page * 10 - 10 + 1;
+											this.start = this.page * this.rows - this.rows + 1;
 											this.end = this.start + res.result.length - 1;
 
 										}).catch((error) => {
@@ -461,7 +614,7 @@ export class SimpleSearchFormComponent implements OnInit {
 							}).catch(error => {
 								this.searchCallStatus.error("Error while running search.", error);
 							})
-							this.fetchImages(res.result);
+							this.fetchImages(res.result, this.product_img);
 						}
 
 					})
@@ -474,13 +627,80 @@ export class SimpleSearchFormComponent implements OnInit {
 			});
 	}
 
-	fetchImages(searchResults:any[]): void {
+	private getCompCall(q: string, fq: any, p: number, rows: number, sort:string, sTop: string) {
+		this.cat_loading = true;
+		this.searchDone = true;
+		if (q == "*")
+			this.model.q = "";
+		else
+			this.model.q = q;
+		this.objToSubmit.q = q;
+		this.facetQuery = fq;
+		this.page = p;
+		this.rows = rows;
+		this.sort = sort;
+		this.searchTopic = sTop;
+		this.searchCallStatus.submit();
+		this.simpleSearchService.getCompFields()
+			.then(res => {
+				let fieldLabels: string [] = this.getFieldNames(res);
+				this.simpleSearchService.getComp(q, Object.keys(fieldLabels), fq, p, rows, sort)
+					.then(res => {
+						if (res.result.length == 0) {
+							this.cat_loading = false;
+							this.callback = true;
+							this.searchCallStatus.callback("Company search done.", true);
+							this.response = res.result;
+							this.size = res.totalElements;
+							this.page = p;
+							this.start = this.page * this.rows - this.rows + 1;
+							this.end = this.start + res.result.length - 1;
+						}
+						else {
+							this.simpleSearchService.getUblProperties(Object.keys(fieldLabels)).then(response => {
+								this.facetObj = [];
+								this.temp = [];
+								this.handleFacets(fieldLabels, res, p, response.result);
+								this.callback = true;
+								this.searchCallStatus.callback("Company search done.", true);
+
+								this.temp = res.result;
+								for (let doc in this.temp) {
+									if (this.temp[doc][this.product_vendor_img]) {
+										var img = this.temp[doc][this.product_vendor_img];
+										if (Array.isArray(img)) {
+											this.temp[doc][this.product_vendor_img] = img[0];
+										}
+									}
+								}
+
+								this.response = copy(this.temp);
+								this.size = res.totalElements;
+								this.page = p;
+								this.start = this.page * this.rows - this.rows + 1;
+								this.end = this.start + res.result.length - 1;
+							}).catch(error => {
+								this.searchCallStatus.error("Error while running company search.", error);
+							})
+						}
+
+					})
+					.catch(error => {
+						this.searchCallStatus.error("Error while running company search.", error);
+					});
+			})
+			.catch(error => {
+				this.searchCallStatus.error("Error while running company search.", error);
+			});
+	}
+
+	fetchImages(searchResults:any[], field): void {
 		// fetch images asynchronously
 		this.imageMap = {};
 
 		let imageMap: any = {};
 		for(let result of searchResults) {
-			let productImages: string[] = result.imgageUri;
+			let productImages: string[] = result[field];
 			if(productImages != null && productImages.length > 0) {
 				imageMap[result.uri] = productImages[0];
 			}
@@ -704,16 +924,20 @@ export class SimpleSearchFormComponent implements OnInit {
 
 	getName(name:string,prefix?:string) {
 		// if it is a ubl property, then get its label from the ublProperties
+		let prefName = name;
 		if (prefix)
-			name = prefix+"."+name;
+			prefName = prefix+"."+name;
 		for(let ublProperty of this.ublProperties){
-			if(name == ublProperty.localName){
+			if(prefName == ublProperty.localName || name == ublProperty.localName){
 				return selectNameFromLabelObject(ublProperty.label);
 			}
 		}
 		// otherwise, use product_filter_mappings
-		var ret = name;
-		if (this.product_filter_mappings[name]) {
+		var ret = prefName;
+		if (this.product_filter_mappings[prefName]) {
+			ret = this.product_filter_mappings[prefName];
+		}
+		else if (this.product_filter_mappings[name]) {
 			ret = this.product_filter_mappings[name];
 		}
 		return ret;
@@ -758,6 +982,17 @@ export class SimpleSearchFormComponent implements OnInit {
 		return found;
 	}
 
+	checkCompTrustFacet() {
+		var found = false;
+		for (var i=0; i<this.facetQuery.length; i++) {
+			var comp = this.facetQuery[i].split(":")[0];
+			if (comp.localeCompare(this.product_vendor_rating) == 0 || comp.localeCompare(this.product_vendor_rating_seller) == 0 || comp.localeCompare(this.product_vendor_rating_fulfillment) == 0 || comp.localeCompare(this.product_vendor_rating_delivery) == 0 || comp.localeCompare(this.product_vendor_trust) == 0) {
+				found = true;
+			}
+		}
+		return found;
+	}
+
 	setPriceFilter() {
 		this.clearFacet(this.lowerFirstLetter(this.selectedCurrency)+"_"+this.product_price);
 		this.setRangeWithoutQuery(this.lowerFirstLetter(this.selectedCurrency)+"_"+this.product_price,this.selectedPriceMin,this.selectedPriceMax);
@@ -783,6 +1018,25 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.get(this.objToSubmit);
 	}
 
+	setCompTrustFilter() {
+		this.clearFacet(this.product_vendor_rating);
+		this.clearFacet(this.product_vendor_rating_seller);
+		this.clearFacet(this.product_vendor_rating_fulfillment);
+		this.clearFacet(this.product_vendor_rating_delivery);
+		this.clearFacet(this.product_vendor_trust);
+		if (this.ratingOverall > 0)
+			this.setRangeWithoutQuery(this.product_vendor_rating,this.ratingOverall,5);
+		if (this.ratingSeller > 0)
+			this.setRangeWithoutQuery(this.product_vendor_rating_seller,this.ratingSeller,5);
+		if (this.ratingFulfillment > 0)
+			this.setRangeWithoutQuery(this.product_vendor_rating_fulfillment,this.ratingFulfillment,5);
+		if (this.ratingDelivery > 0)
+			this.setRangeWithoutQuery(this.product_vendor_rating_delivery,this.ratingDelivery,5);
+		if (this.ratingTrust > 0)
+			this.setRangeWithoutQuery(this.product_vendor_trust,(this.ratingTrust/5),1);
+		this.get(this.objToSubmit);
+	}
+
 	resetPriceFilter() {
 		this.selectedCurrency = "EUR";
 		this.selectedPriceMin = null;
@@ -802,6 +1056,20 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.clearFacet(this.product_vendor_rating_fulfillment,this.product_vendor);
 		this.clearFacet(this.product_vendor_rating_delivery,this.product_vendor);
 		this.clearFacet(this.product_vendor_trust,this.product_vendor);
+		this.get(this.objToSubmit);
+	}
+
+	resetCompTrustFilter() {
+		this.ratingOverall = 0;
+		this.ratingSeller = 0;
+		this.ratingFulfillment = 0;
+		this.ratingDelivery = 0;
+		this.ratingTrust = 0;
+		this.clearFacet(this.product_vendor_rating);
+		this.clearFacet(this.product_vendor_rating_seller);
+		this.clearFacet(this.product_vendor_rating_fulfillment);
+		this.clearFacet(this.product_vendor_rating_delivery);
+		this.clearFacet(this.product_vendor_trust);
 		this.get(this.objToSubmit);
 	}
 
@@ -886,6 +1154,46 @@ export class SimpleSearchFormComponent implements OnInit {
 		return count;
 	}
 
+	checkCompMainCat(name:string) {
+		var found = false;
+		if (this.party_filter_main.indexOf(name) != -1) {
+			found = true;
+		}
+		return found;
+	}
+
+	checkCompMainCatCount() {
+		var count = 0;
+		if (this.facetObj) {
+			for (var i=0; i<this.facetObj.length; i++) {
+				if (this.checkCompMainCat(this.facetObj[i].name)) {
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+
+	checkCompTrustCat(name:string) {
+		var found = false;
+		if (this.party_filter_trust.indexOf(name) != -1) {
+			found = true;
+		}
+		return found;
+	}
+
+	checkCompTrustCatCount() {
+		var count = 0;
+		if (this.facetObj) {
+			for (var i=0; i<this.facetObj.length; i++) {
+				if (this.checkCompTrustCat(this.facetObj[i].name)) {
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+
 	clearFacet(outer:string, prefix?:string) {
 		if (prefix)
 			outer = prefix+"."+outer;
@@ -899,6 +1207,21 @@ export class SimpleSearchFormComponent implements OnInit {
 		if (idx >= 0) {
 			this.facetQuery.splice(idx, 1);
 		}
+	}
+
+	getFacetQueryName(facet:string):string {
+		var name = facet.split(":")[0];
+		return this.getName(name);
+	}
+
+	getFacetQueryValue(facet:string):string {
+		var value = facet.split(":")[1];
+		return value;
+	}
+
+	clearFacetQuery(facet:string) {
+		this.facetQuery.splice(this.facetQuery.indexOf(facet), 1);
+		this.get(this.objToSubmit);
 	}
 
 	setFacet(outer:string, inner:string, prefix?:string) {
@@ -1026,6 +1349,5 @@ export class SimpleSearchFormComponent implements OnInit {
 		}
 		return this.simpleSearchService.getCompanies(query,this.party_facet_field_list,idList);
 	}
-
 
 }

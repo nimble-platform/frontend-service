@@ -1,7 +1,7 @@
 <div class="row">
         <div class="col-4">
             <strong>Product / Service by:</strong><br/>
-             <span (click)="navigateToTheSearchPage(manufacturerPartyName)" class="clickable">
+             <span (click)="openCompTab()" class="clickable">
                 {{manufacturerPartyName}}
             </span>
         </div>
@@ -36,7 +36,9 @@
                             src="assets/empty_img.png">
                         <img *ngIf="wrapper.item.productImage.length > 0"
                             class="img-selected d-block active"
-                            src="data:{{wrapper.item.productImage[selectedImage].mimeCode}};base64,{{wrapper.item.productImage[selectedImage].value}}"/>
+                            style="cursor:zoom-in"
+                            src="data:{{wrapper.item.productImage[selectedImage].mimeCode}};base64,{{wrapper.item.productImage[selectedImage].value}}"
+                            (click)="open(imgZoom)"/>
                     </div>
                 </div>
             </div>
@@ -103,3 +105,14 @@
             </div>
         </div>
     </div>
+
+    <ng-template #imgZoom let-d="dismiss">
+    	<div class="modal-header">
+    		<button type="button" class="close" aria-label="Close" (click)="d('')">
+    			<span aria-hidden="true">&times;</span>
+    		</button>
+    	</div>
+    	<div class="modal-body">
+    		<img [src]="zoomedImgURL" class="w-100"/>
+    	</div>
+    </ng-template>

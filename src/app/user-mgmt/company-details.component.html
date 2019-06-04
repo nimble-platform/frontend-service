@@ -5,7 +5,7 @@
 </div>
 
 <div *ngIf="details" class="row">
-  <div class="col-6">
+  <div class="col-5">
     <h4><p>Company Data</p></h4>
     <text-input presentationMode="view" label="Company Name"
                 [text]="selectValueOfTextObject(details.details.legalName)" labelClass="col-4" valueClass="col-8">
@@ -35,7 +35,7 @@
         [text]="details.description.website" labelClass="col-4" valueClass="col-8">
     </text-input>
   </div>
-  <div class="col-6 border-left">
+  <div class="col-5 border-left">
     <h4><p>Address</p></h4>
     <text-input presentationMode="view" label="Street Name"
         [text]="details.details.address.streetName" labelClass="col-4" valueClass="col-8">
@@ -56,6 +56,10 @@
         [text]="details.details.address.country" labelClass="col-4" valueClass="col-8">
     </text-input>
   </div>
+  <div class="col-2 border-left">
+    <h4><p>Store</p></h4>
+    <button class="btn btn-lg btn-primary w-100" (click)="openSearchPage()"><i class="fa fa-store"></i></button>
+  </div>
 </div>
 
 <div *ngIf="managementMode && appComponent.checkRoles('pm') && !initCallStatus.isLoading() && details.details.vatNumber && details.details.vatNumber != ''" class="row actions-row pr-0">
@@ -64,6 +68,14 @@
   </div>
   <div class="col-2">
     <button class="btn btn-primary action" type="button" [disabled]="vatCallStatus.isLoading()" (click)="validateVAT()">Check VAT</button>
+  </div>
+</div>
+
+<div *ngIf="details" class="row">
+  <div class="col-12">
+    <hr>
+    <h4><p>Ratings</p></h4>
+    <company-rating [id]="party.partyId" [hideTitle]="true"></company-rating>
   </div>
 </div>
 
@@ -125,9 +137,6 @@
             <td *ngIf="!ev.description">n/A</td>
             <td *ngIf="ev.place.streetName">{{ev.place.streetName}}<span *ngIf="ev.place.buildingNumber"> {{ev.place.buildingNumber}}</span><br/>{{ev.place.postalCode}} {{ev.place.cityName}}<br/>{{ev.place.country}}</td>
             <td *ngIf="!ev.place.streetName">n/A</td>
-            <td>
-                <button class="btn btn-danger btn-sm" (click)="removeCompEventEntry(i)">Delete</button>
-            </td>
         </tr>
     </table>
     <hr *ngIf="details.description.companyPhotoList.length != 0 || details.description.logoImageId">

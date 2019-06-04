@@ -21,11 +21,11 @@
         </div>
         <div class="row">
             <div class="col-12">
-              <product-details-overview [wrapper]="productWrapper" [options]="options">
+              <product-details-overview [wrapper]="productWrapper" [options]="options" (compStatus)="setTab($event)">
               </product-details-overview>
             </div>
         </div>
-        <product-details-tabs [wrapper]="productWrapper" [settings]="settings" [tabToOpen]="tabToOpen">
+        <product-details-tabs [wrapper]="productWrapper" [settings]="settings" [tabToOpen]="tabToOpen" (tabStatus)="setTab($event)">
         </product-details-tabs>
     </div>
     <div class="col-3">
