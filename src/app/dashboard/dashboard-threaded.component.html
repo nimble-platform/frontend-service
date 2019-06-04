@@ -451,9 +451,9 @@
                                             </div> -->
                                         </div>
                                     </div>
-                                    <div [ngStyle]="{'visibility':order.id === selectedId  ? 'visible' : 'hidden','height':order.id === selectedId  ? 'unset' : '0px'}"> 
+                                    <div [ngStyle]="{'visibility':order.id === selectedId  ? 'visible' : 'hidden','height':order.id === selectedId  ? 'unset' : '0px'}" style="margin-bottom: 30px;"> 
                                         <!-- Titles for the rows -->
-                                        <div class="row thread-entry-heading" style="margin-left: 79px" >
+                                        <div class="row" style="margin-left: 39px;width: 1000px;border-bottom: 4px solid rgb(190, 113, 128);" >
                                    
                                             
                                             <div *ngFor="let item of finalArray;let i=index" [ngClass]="'cls'+order.id">
@@ -466,9 +466,13 @@
                                                 </div>
                                                 <br/>
                                             </div>
-                                            <hr>
-                                         
+                                            
+                                          
                                         </div>
+                                        <span *ngFor="let xaxis of finalXAsxisArray;let i=index" style="margin-left: 39px;position: absolute;">
+                                                <span [style.marginLeft.px]= "xaxis.offset" >{{xaxis.endDate}}</span>
+                                        </span>
+
                                     </div>
                                     <hr class="collaboration-hr">
                                     <div *ngFor="let group of order.associatedProcessInstanceGroups;let i=index">

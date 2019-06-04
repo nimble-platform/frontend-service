@@ -58,6 +58,7 @@ export class DashboardThreadedComponent implements OnInit{
     isProject = false;
     expanded = false;
     finalArray = [];
+    finalXAsxisArray = [];
     private data: any = [
         // {times: [{"color":"green", "label":"Weeee", "starting_time": 1355752800000, "ending_time": 1355759900000}, {"color":"blue", "label":"Weeee", "starting_time": 1355767900000, "ending_time": 1355774400000}]},
       ];
@@ -112,20 +113,17 @@ export class DashboardThreadedComponent implements OnInit{
             t_arr.push((new Date(element.lastActivityTime)).getTime()/1000);
             this.data.push(obj);
         });
-
         this.data = this.data.sort(function(a,b){return a.times[0].starting_time - b.times[0].starting_time});
         var endDateSorted =  this.data.sort(function(a,b){return a.times[0].ending_time - b.times[0].ending_time});
-
         var projectDuration = endDateSorted[endDateSorted.length-1].times[0].ending_time-this.data[0].times[0].starting_time;
         var newArray = [];
+        var arrayForXaxis= [];
         var itemid= 0;
         var colorcode = ['#ff4b66','#f36170','#e7727a','#d98185','#ca8e8f','#b99a9a','#a5a5a5'];
         var colorindex = 0;
         this.data.forEach(element => {
             var projectDurationPercetage = ((element.times[0].ending_time - element.times[0].starting_time)*700)/projectDuration;
-            // if(projectDurationPercetage < 100){
-                projectDuration = 700/this.data.length;
-            // }
+            projectDuration = 700/this.data.length;
             var timeStampDate = new Date(element.times[0].ending_time);
             var timeLabel = moment.monthsShort(timeStampDate.getMonth())+ "/"+timeStampDate.getDate();
             var itemoffset =  0;
@@ -150,10 +148,19 @@ export class DashboardThreadedComponent implements OnInit{
             colorindex++;
         });
         this.finalArray = newArray;
-        var specifier = "%S";
-        var parsedData = await t_arr.map(function(d) {
-          return d3.timeParse(specifier)(d)
+        newArray.forEach(item => {
+            arrayForXaxis.push({endDate:item.endDate,offset: (item.offset+item.duration)});
         });
+        var parr = [];
+        arrayForXaxis.filter(function(item){
+            var it = parr.findIndex(x => (x.endDate == item.endDate && x.offset == item.offset));
+            if(it <= -1){
+                parr.push(item);
+            }
+            return null;
+          });
+        this.finalXAsxisArray = parr;
+        
 
     }
 
