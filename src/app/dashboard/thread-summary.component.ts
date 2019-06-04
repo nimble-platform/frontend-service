@@ -25,6 +25,7 @@ import {selectPreferredValue} from '../common/utils';
 import {DashboardProcessInstanceDetails} from '../bpe/model/dashboard-process-instance-details';
 import {Item} from '../catalogue/model/publish/item';
 import {NEGOTIATION_RESPONSES} from "../catalogue/model/constants";
+import {DataChannel} from '../data-channel/model/datachannel';
 
 /**
  * Created by suat on 12-Mar-18.
@@ -62,6 +63,7 @@ export class ThreadSummaryComponent implements OnInit {
     fetchCallStatus: CallStatus = new CallStatus();
     saveCallStatusRating: CallStatus = new CallStatus();
     showDataChannelButton: boolean = false;
+    enableDataChannelButton: boolean = false;
     channelLink = "";
     compRating: any = {
       "QualityOfTheNegotiationProcess": 0,
@@ -452,19 +454,35 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     checkDataChannel(event:ThreadEventMetadata) {
-        if(event.processType === 'Order') {
-            this.dataChannelService.channelsForBusinessProcess(event.processId)
+        //if(event.processType === 'Order') {
+            let processGroupId = this.processInstanceGroup.id;
+            let role = this.processInstanceGroup.collaborationRole;
+            if (role == "BUYER" && this.processInstanceGroup && this.processInstanceGroup.associatedGroups && this.processInstanceGroup.associatedGroups.length > 0)
+                processGroupId = this.processInstanceGroup.associatedGroups[0];
+            this.dataChannelService.channelsForBusinessProcess(processGroupId)
                 .then(channels => {
-                    if (channels.length > 0) {
+                    if (channels && channels.channelID) {
+                        if (role == "BUYER") {
+                            if (channels.negotiationStepcounter == 1 || channels.negotiationStepcounter == 3)
+                                this.enableDataChannelButton = true;
+                            else
+                                this.enableDataChannelButton = false;
+                        }
+                        else {
+                            if (channels.negotiationStepcounter != 1)
+                                this.enableDataChannelButton = true;
+                            else
+                                this.enableDataChannelButton = false;
+                        }
                         this.showDataChannelButton = true;
-                        const channelId = channels[0].channelID;
+                        const channelId = channels.channelID;
                         this.channelLink = `/data-channel/details/${channelId}`
                     }
                 })
                 .catch(err => {
                     this.showDataChannelButton = false;
                 });
-        }
+        //}
     }
 
     cancelCollaboration(){
@@ -595,4 +613,20 @@ export class ThreadSummaryComponent implements OnInit {
       return this.compComment == "";
     }
 
+    createDatachannelNegotiation(): void {
+        let channel: DataChannel = new DataChannel(this.processInstanceGroup.id, this.titleEvent.content.buyerPartyId, "Demo-Channel", this.titleEvent.content.sellerPartyId);
+        this.dataChannelService.createChannel(channel)
+            .then(() => {
+                alert("created a new channel");
+                this.threadStateUpdated.next();
+            })
+            .catch(err => {
+                console.error("Failed to create a channel",err);
+            });
+	}
+
+
+	alertWait() {
+	    alert('Waiting for trading partner... try again later.');
+	}
 }

@@ -5,6 +5,7 @@ import {DataChannelService} from "./data-channel.service";
 import {Machine} from "./model/machine";
 import {Sensor} from "./model/sensor";
 import {Server} from "./model/server";
+import * as moment from "moment";
 
 class NewServer {
     constructor(
@@ -368,4 +369,25 @@ export class ChannelDetailsComponent implements OnInit {
                 this.update();
             });
     }
+
+    //-------------------------------------------------------------------------------------
+    // check if channel is closed or open
+    //-------------------------------------------------------------------------------------
+    checkClosed(): boolean {
+        let start;
+        let end;
+        if (this.channelConfig && this.channelConfig["startDateTime"])
+            start = moment(this.channelConfig["startDateTime"]);
+        else
+            return true;
+        if (this.channelConfig && this.channelConfig["endDateTime"])
+            end = moment(this.channelConfig["endDateTime"]);
+        else
+            return false;
+        if (start.isBefore(end))
+            return true;
+        else
+            return false;
+    }
+
 }

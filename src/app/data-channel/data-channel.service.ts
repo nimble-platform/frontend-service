@@ -5,6 +5,7 @@ import * as myGlobals from '../globals';
 import {CookieService} from 'ng2-cookies';
 import {Sensor} from './model/sensor';
 import {Server} from './model/server';
+import {DataChannel} from './model/datachannel';
 
 @Injectable()
 export class DataChannelService {
@@ -116,13 +117,12 @@ export class DataChannelService {
             .catch(this.handleError);
     }
 
-    // TODO: add body here containing businessProcessID, buyerCompanyID, description and sellerCompanyID
-    createChannel(channelID: string): Promise<any> {
+    createChannel(channel: DataChannel): Promise<any> {
         const url = `${this.url}/channel/`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const headers = new Headers({'Authorization': token});
         return this.http
-            .post(url, null, {headers: headers, withCredentials: true})
+            .post(url, channel, {headers: headers, withCredentials: true})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);

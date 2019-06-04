@@ -13,7 +13,6 @@ import { DashboardQueryParameters } from "./model/dashboard-query-parameters";
 import { DashboardUser } from "./model/dashboard-user";
 import * as myGlobals from '../globals';
 import {CollaborationGroup} from '../bpe/model/collaboration-group';
-import {DataChannelService} from "../data-channel/data-channel.service";
 import { Quotation } from "../catalogue/model/publish/quotation";
 
 @Component({
@@ -47,10 +46,6 @@ export class DashboardThreadedComponent implements OnInit {
 
     public config = myGlobals.config;
 
-    private dataChannelService: DataChannelService;
-    private dataChannelNegotiations: Array<boolean> = []; // TODO: where do we store this information?????
-    private readonly dataChannelMaxAmount: number = 3; // TODO: add static keyword for real class constant?
-    private quotation: Quotation; // TODO: use quotation.dataMonitoringPromised for ngIf (how to initialize this?)
 
     constructor(
         private cookieService: CookieService,
@@ -467,34 +462,4 @@ export class DashboardThreadedComponent implements OnInit {
                 });
         }
     }
-	
-	
-	createDatachannelNegotiation(channelID: string): void { // TODO: what number should we use for generating a channel?
-
-        if(this.dataChannelNegotiations.length < this.dataChannelMaxAmount)
-        {
-		    this.dataChannelNegotiations.push(true); // TODO: push new negotiation, set value to false after negotiation is done?
-
-		    this.dataChannelService.createChannel(channelID) // TODO: missing businessProcessID, buyerCompanyID, description and sellerCompanyID
-                .then(() => {
-                    alert("created a new channel");
-                })
-                .catch(err => {
-                    console.error("Failed to create a channel",err);
-                });
-        }
-        else
-        {
-            alert("You can only have 3 separate negotiations with one partner at a time.")
-        }
-	}
-	
-	openDatachannelNegotiation(channelID: string): void { // TODO: what number should we use for generating a channel?
-		
-		this.router.navigate(["data-channel/details/" + channelID]); // data-channel/details/0708-8592-8594
-
-		// TODO: how can we determine, if the user is a buyer or a seller here?
-		// TODO: seller gets page nr 0, page nr 2 and page nr 3 (button not clickable else)
-		// TODO: buyer gets page nr 1 and page nr 3 (button not clickable else)
-	}
 }
