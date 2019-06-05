@@ -96,7 +96,8 @@ export class AppComponent implements OnInit {
                 } else {
                     this.removeVersion("identity");
                 }
-            });
+            })
+            .catch(error => {});
         this.credentialsService.getVersionBP()
             .then(res => {
                 if (res.git && res.git.branch && res.git.commit && res.git.commit.time && res.git.commit.id) {
@@ -105,7 +106,8 @@ export class AppComponent implements OnInit {
                 } else {
                     this.removeVersion("business-process");
                 }
-            });
+            })
+            .catch(error => {});
         this.credentialsService.getVersionCatalog()
             .then(res => {
                 if (res.git && res.git.branch && res.git.commit && res.git.commit.time && res.git.commit.id) {
@@ -114,7 +116,8 @@ export class AppComponent implements OnInit {
                 } else {
                     this.removeVersion("catalog");
                 }
-            });
+            })
+            .catch(error => {});
         this.credentialsService.getVersionDataChannel()
             .then(res => {
                 if (res.git && res.git.branch && res.git.commit && res.git.commit.time && res.git.commit.id) {
@@ -123,7 +126,8 @@ export class AppComponent implements OnInit {
                 } else {
                     this.removeVersion("data-channel");
                 }
-            });
+            })
+            .catch(error => {});
     }
 
     public addVersion(id: String, ver: String, date: String) {
@@ -215,10 +219,54 @@ export class AppComponent implements OnInit {
                 console.log("Loading route " + link);
             if (!this.cookieService.get("user_id")) {
                 if (link != "/" && link != "/user-mgmt/login" && link != "/user-mgmt/registration" && link != "/analytics/info"
-                    && link != "/analytics/members" && link != "/user-mgmt/forgot")
+                    && link != "/analytics/members" && link != "/user-mgmt/forgot") {
                     this.router.navigate(["/user-mgmt/login"]);
+                }
+                else {
+                  this.logUrl(url);
+                }
+            }
+            else {
+              this.logUrl(url);
             }
         }
+    }
+
+    public logUrl(url) {
+      if (this.config.loggingEnabled) {
+        let cID = "";
+        if (this.companyID)
+          cID = this.companyID;
+        let splitHash = url.split("?");
+        let hashBase = splitHash[0];
+        if (hashBase == "/")
+          hashBase = "/user-mgmt/login";
+        let params = {};
+        if (splitHash.length > 1) {
+          let paramArr = splitHash[1].split("&");
+          for (let i=0; i<paramArr.length; i++) {
+            let splitParam = paramArr[i].split("=");
+            let paramName = splitParam[0];
+            let paramValue = splitParam[1];
+            params[paramName] = paramValue;
+          }
+        }
+        let log = {
+          "level": "INFO",
+          "serviceID": "frontendService",
+          "userId": this.userID,
+          "companyId": cID,
+          "activity": hashBase,
+          "message": {
+            "params": params
+          }
+        };
+        if (this.debug)
+          console.log("Writing log "+log);
+        this.credentialsService.logUrl(log)
+          .then(res => {})
+          .catch(error => {});
+      }
     }
 
     public checkLogin(path: any) {

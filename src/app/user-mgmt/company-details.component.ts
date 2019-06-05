@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { UserService } from "./user.service";
-import { ActivatedRoute} from "@angular/router";
+import { ActivatedRoute, Router} from "@angular/router";
 import { CookieService } from "ng2-cookies";
 import * as myGlobals from "../globals";
 import * as moment from "moment";
@@ -29,7 +29,8 @@ export class CompanyDetailsComponent implements OnInit {
     constructor(private cookieService: CookieService,
                 private userService: UserService,
                 private appComponent: AppComponent,
-                public route: ActivatedRoute) {
+                public route: ActivatedRoute,
+                public router: Router) {
     }
 
     ngOnInit() {
@@ -91,6 +92,22 @@ export class CompanyDetailsComponent implements OnInit {
 
     formatDate(date:string) {
       return moment(date).format("YYYY-MM-DD");
+    }
+
+    openSearchPage() {
+      var fq = "manufacturer.legalName:\""+selectValueOfTextObject(this.details.details.legalName)+"\"";
+      this.router.navigate(['/simple-search'], {
+  			queryParams: {
+  				q: "*",
+  				fq: encodeURIComponent(fq),
+          p: 1,
+          searchContext: null,
+          cat: "",
+  				catID: "",
+          sIdx: "Products",
+          sTop: "prod"
+        }
+  		});
     }
 
 }

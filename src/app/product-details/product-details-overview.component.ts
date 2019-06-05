@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
 import { ProductWrapper } from "../common/product-wrapper";
 import { CommodityClassification } from "../catalogue/model/publish/commodity-classification";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
@@ -10,6 +10,7 @@ import {CategoryService} from '../catalogue/category/category.service';
 import { CatalogueService } from "../catalogue/catalogue.service";
 import {CallStatus} from '../common/call-status';
 import { ActivatedRoute,Router } from "@angular/router";
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'product-details-overview',
@@ -21,6 +22,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
     @Input() wrapper: ProductWrapper;
     @Input() options: BpWorkflowOptions;
     @Input() readonly: boolean;
+    @Output() compStatus = new EventEmitter<boolean>();
 
     selectedImage: number = 0;
     manufacturerPartyName:string = null;
@@ -31,13 +33,15 @@ export class ProductDetailsOverviewComponent implements OnInit{
     classificationNames = [];
     productId = "";
     selectPreferredValue = selectPreferredValue;
-    facetQuery: any;
     catalogueId = "";
     catalogueName = "";
-    
+
+    zoomedImgURL = "";
+
     constructor(
         public categoryService:CategoryService,
         public catalogueService:CatalogueService,
+        private modalService: NgbModal,
         private route: ActivatedRoute,
 		public router: Router
 
@@ -171,26 +175,13 @@ export class ProductDetailsOverviewComponent implements OnInit{
         return getPropertyValuesAsStrings(property);
     }
 
-    navigateToTheSearchPage(company : string){
-        this.facetQuery = [];
-		var fq = "manufacturer.legalName:\""+company+"\"";
-		if (this.facetQuery.indexOf(fq) == -1)
-			this.facetQuery.push(fq);
-		else
-			this.facetQuery.splice(this.facetQuery.indexOf(fq), 1);
-		this.get("*");
+    openCompTab(){
+      this.compStatus.emit(true);
     }
 
-    get(search: String): void {
-		this.router.navigate(['/simple-search'], {
-			queryParams: {
-				q: search,
-				fq: encodeURIComponent(this.facetQuery.join('_SEP_')),
-                p: 1,
-                searchContext: null,	
-                cat: "",
-				catID: ""		
-            }
-		});
-	}
+    open(content) {
+      this.zoomedImgURL = "data:"+this.wrapper.item.productImage[this.selectedImage].mimeCode+";base64,"+this.wrapper.item.productImage[this.selectedImage].value
+    	this.modalService.open(content);
+    }
+
 }

@@ -29,9 +29,9 @@ export class PlatformAnalyticsComponent implements OnInit {
     trade_yellow_perc_str = "0%";
     trade_red_perc_str = "0%";
     cat_loading = true;
-    cat_levels = [];    
+    cat_levels = [];
     cat_level = -2;
-	cat = "";    
+	cat = "";
     product_count = 0;
     service_count = 0;
     loadedps = false;
@@ -40,7 +40,7 @@ export class PlatformAnalyticsComponent implements OnInit {
 	categoriesCallStatus: CallStatus = new CallStatus();
 
     product_cat_mix = myGlobals.product_cat_mix;
-	getMultilingualLabel = selectNameFromLabelObject;    
+	getMultilingualLabel = selectNameFromLabelObject;
 	config = myGlobals.config;
 
     constructor(private analyticsService: AnalyticsService,
@@ -85,7 +85,7 @@ export class PlatformAnalyticsComponent implements OnInit {
 
     private getCatTree(): void {
 		this.categoriesCallStatus.submit();
-		this.simpleSearchService.get("*",[this.product_cat_mix],[""],1,"","", myGlobals.config.defaultSearchIndex)
+		this.simpleSearchService.get("*",[this.product_cat_mix],[""],1,1,"score desc","","", myGlobals.config.defaultSearchIndex)
 		.then(res => {
 			// if res.facets are null, it means that there is no product in the index
 			if (res.facets == null || Object.keys(res.facets).indexOf(this.product_cat_mix) == -1) {
@@ -100,7 +100,7 @@ export class PlatformAnalyticsComponent implements OnInit {
 			this.categoriesCallStatus.error("Error while loading category tree.", error);
 		});
     }
-    
+
 
 	private async buildCatTree(categoryCounts: any[]) {
 		var taxonomy = "eClass";
@@ -189,7 +189,7 @@ export class PlatformAnalyticsComponent implements OnInit {
 				}
 			}
         }
-        
+
         this.cat_levels[0].forEach(catele => {
             if(catele.preferredName != null && catele.preferredName != ''){
                 if(catele.preferredName.toLowerCase().indexOf("service") >= 0){
@@ -202,10 +202,10 @@ export class PlatformAnalyticsComponent implements OnInit {
 
         this.loadedps = true;
         this.cat_loading = false;
-        
+
 
         this.categoriesCallStatus.callback("Categories loaded.", true);
-        
+
 
 	}
 
