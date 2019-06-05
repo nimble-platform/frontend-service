@@ -78,6 +78,7 @@ export const data_aggregation_endpoint=`${base_path}/data-aggregation`;
 export const trust_service_endpoint=`${base_path}/trust`;
 export const indexing_service_endpoint=`${base_path}/indexing-service`;
 export const rocketChatEndpoint = `${base_path}:3000`;
+export const logstash_endpoint = `${base_path}:5000`;
 
 
 // BIBA endpoints
@@ -120,6 +121,12 @@ export const config = {
   },
   "dataChannelsEnabled" : true,
   "imprint": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Platform Owner</u><br/><b>Universität Bremen / BIBA - Bremer Institut für Produktion und Logistik GmbH</b><br/>Hochschulring 20<br/>28359 Bremen, Germany<br/>Phone: +49.421.218.50166<br/>E-Mail: <a href='mailto:wel1@biba.uni-bremen.de'>wel1@biba.uni-bremen.de</a></td><td class='w-50 p-0 pl-3'><u>Platform Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)</td></tr></table>",
+  "loggingConfig": {
+    "index": "logstash-{DATE}",
+    "type": "doc",
+    "dateFormat": "YYYY.MM.DD"
+  },
+  "loggingEnabled": false,
   "logoPath": "./assets/logo_mvp.png",
   "logoRequired": false,
   "phoneNumberRequired": false,
