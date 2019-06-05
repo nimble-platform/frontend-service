@@ -97,7 +97,7 @@
                           [processInstanceGroup]="processInstanceGroup"
                           [collaborationGroupId]="collaborationGroupId"
                           [event]="lastEvent"
-                          [history]="history"
+                          [history]="completeHistory"
                           (processCancelled)="threadStateUpdated.next()">
             </thread-event>
 
@@ -111,7 +111,7 @@
                 <ng-container *ngFor="let event of history">
                     <thread-event [processInstanceGroup]="processInstanceGroup"
                                   [event]="event"
-                                  [history]="history"
+                                  [history]="completeHistory"
                                   [collaborationGroupId]="collaborationGroupId"
                                   (processCancelled)="threadStateUpdated.next()">
                     </thread-event>

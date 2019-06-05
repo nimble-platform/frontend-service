@@ -112,7 +112,7 @@ export class ProductDetailsComponent implements OnInit {
                             // contract exists, get the corresponding quotation including the terms
                             this.documentService.getDocumentJsonContent(contract.quotationReference.id).then(document => {
                                 this.frameContract = contract;
-                                this.frameContractQuotationWrapper = new QuotationWrapper(document);
+                                this.frameContractQuotationWrapper = new QuotationWrapper(document, this.line);
                                 // quotation ordered quantity contains the actual ordered quantity in that business process,
                                 // so we overwrite it with the options's quantity, which is by default 1
                                 this.frameContractQuotationWrapper.orderedQuantity.value = this.options.quantity;
@@ -130,8 +130,9 @@ export class ProductDetailsComponent implements OnInit {
                     .then(settings => {
                         this.settings = settings;
                         this.priceWrapper = new DiscountPriceWrapper(
-                            this.line.requiredItemLocationQuantity.price.priceAmount.value,
                             this.line.requiredItemLocationQuantity.price,
+                            this.line.requiredItemLocationQuantity.price,
+                            this.line.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
                             new Quantity(1,this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode),
                             this.line.priceOption,
                             [],
@@ -232,7 +233,7 @@ export class ProductDetailsComponent implements OnInit {
         this.priceWrapper.additionalItemProperties = copyItem.additionalItemProperty;
 
         if(event == 'product_defaults') {
-            this.priceWrapper.itemPrice.value = this.priceWrapper.pricePerItem;
+            this.priceWrapper.itemPrice.value = this.priceWrapper.discountedPricePerItem;
         }
     }
 
@@ -241,11 +242,7 @@ export class ProductDetailsComponent implements OnInit {
      */
 
     getPricePerItem(): string {
-        return this.priceWrapper.pricePerItemString;
-    }
-
-    getTotalPrice(): number {
-        return this.priceWrapper.totalPrice;
+        return this.priceWrapper.discountedPricePerItemString;
     }
 
     hasPrice(): boolean {
@@ -322,4 +319,14 @@ export class ProductDetailsComponent implements OnInit {
         found = (this.favouriteItemIds.indexOf(itemId.toString()) !== -1) ? true : false;
         return found;
     }
+
+    setTab(data) {
+      if (data) {
+    	this.tabToOpen = "COMPANY";
+      }
+      else {
+    	this.tabToOpen = null;
+      }
+    }
+    
 }

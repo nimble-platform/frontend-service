@@ -172,8 +172,8 @@
             <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}} d-flex">
                 <ng-container [ngSwitch]="primaryTermsSource">
                     <ng-container *ngSwitchCase="'product_defaults'">
-                        {{ wrapper.lineDiscountPriceWrapper.pricePerItemString }}
-                        <div *ngIf="wrapper.lineDiscountPriceWrapper.isDiscountApplied() > 0 && !isReadOnly()" class="space-left" data-toggle="tooltip" data-placement="top"
+                        {{ wrapper.lineDiscountPriceWrapper.discountedPricePerItemString }}
+                        <div *ngIf="wrapper.lineDiscountPriceWrapper.isDiscountApplied() > 0" class="space-left" data-toggle="tooltip" data-placement="top"
                              (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
                             <i class="fa fa-search" aria-hidden="true"></i>
                         </div>
@@ -195,12 +195,40 @@
             </div>
         </div>
 
+        <!-- VAT -->
+        <div class="row content-row">
+            <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
+                <strong class="font-weight-500">VAT:</strong>
+            </div>
+            <!-- Manufacturer's offer -->
+            <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}} d-flex">
+                <ng-container [ngSwitch]="primaryTermsSource">
+                    <ng-container *ngSwitchCase="'product_defaults'">
+                        {{ wrapper.lineDiscountPriceWrapper.vatTotalString }}
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'frame_contract'">
+                        {{ wrapper.frameContractQuotationWrapper.priceWrapper.vatTotalString}}
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'last_offer'">
+                        {{ wrapper.lastOfferQuotationWrapper.priceWrapper.vatTotalString }}
+                    </ng-container>
+                </ng-container>
+            </div>
+            <div *ngIf="negotiatePrice" class="col-5">
+                {{ wrapper.rfqDiscountPriceWrapper.vatTotalString }}
+            </div>
+        </div>
+
         <!-- Quantity -->
         <div *ngIf="showCounterOfferTerms" class="row content-row bg-light">
             <div class="col-2">
                 <strong class="font-weight-500">Quantity:</strong>
             </div>
-            <div class="col-5"></div>
+            <div class="col-5">
+                <ng-container *ngIf="primaryTermsSource == 'frame_contract'">
+                    {{ wrapper.frameContractQuotationWrapper.orderedQuantity.value }} {{wrapper.frameContractQuotationWrapper.orderedQuantity.unitCode}}
+                </ng-container>
+            </div>
             <div class="col-5 mt-1">
                 <div class="d-flex">
                     <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [ngModel]="requestedQuantity" (ngModelChange)="requestedQuantity = $event; onOrderQuantityChange()"
@@ -383,7 +411,7 @@
 <!-- Actions -->
 <div *ngIf="!showRequestedPrice()" class="d-flex justify-content-end actions-row">
     <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-    <div class="col-3 price-col">Total Price: {{ wrapper.rfqTotalPriceString }}</div>
+    <div class="col-3 price-col">Total Price: {{ wrapper.rfqGrossTotalString }}</div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>
@@ -401,7 +429,7 @@
 
 <div *ngIf="showRequestedPrice()" class="row actions-row">
     <div class="col-6"></div>
-    <div class="col-4 price-col">Requested Price: {{ wrapper.rfqTotalPriceString }}</div>
+    <div class="col-4 price-col">Requested Price: {{ wrapper.rfqGrossTotalString }}</div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>

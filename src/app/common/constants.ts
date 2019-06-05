@@ -3,3 +3,4 @@ export const maximumDecimalsForPrice = 2;
 export const deliveryPeriodUnitListId: string = 'time_quantity';
 export const warrantyPeriodUnitListId: string = 'warranty_period';
 export const frameContractDurationUnitListId: string = 'frame_contract_period';
+export const defaultVatRate: number = 20;

@@ -80,7 +80,6 @@ export class NegotiationResponseComponent implements OnInit {
         if(!this.bpDataService.bpActivityEvent.newProcess) {
             this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
         }
-        this.formerProcess = this.bpDataService.bpActivityEvent.formerProcess;
 
         this.line = this.bpDataService.getCatalogueLine();
         if(this.rfq == null) {
@@ -97,7 +96,7 @@ export class NegotiationResponseComponent implements OnInit {
             this.lastOfferQuotation,
             this.bpDataService.getCompanySettings().negotiationSettings);
 
-        this.wrapper.lineDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.pricePerItem;
+        this.wrapper.lineDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.discountedPricePerItem;
         this.quotationTotalPrice = new Quantity(this.wrapper.quotationDiscountPriceWrapper.totalPrice, this.wrapper.quotationDiscountPriceWrapper.currency);
 
         this.userRole = this.bpDataService.bpActivityEvent.userRole;
@@ -198,6 +197,10 @@ export class NegotiationResponseComponent implements OnInit {
     isFormValid(): boolean {
         // TODO check other elements
         return this.isFrameContractDurationValid();
+    }
+
+    isSellerTermsVisible(): boolean {
+        return !(this.quotation.documentStatusCode.name == 'Rejected' && this.isReadOnly());
     }
 
     /*

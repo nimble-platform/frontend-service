@@ -24,6 +24,7 @@ import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {selectPreferredValue} from '../common/utils';
 import {DashboardProcessInstanceDetails} from '../bpe/model/dashboard-process-instance-details';
 import {Item} from '../catalogue/model/publish/item';
+import {NEGOTIATION_RESPONSES} from "../catalogue/model/constants";
 
 /**
  * Created by suat on 12-Mar-18.
@@ -40,14 +41,15 @@ export class ThreadSummaryComponent implements OnInit {
     @Output() threadStateUpdated = new EventEmitter();
 
 
-    titleEvent: ThreadEventMetadata;
-    lastEvent: ThreadEventMetadata;
+    titleEvent: ThreadEventMetadata; // keeps information about the summary the collaboration
+    lastEvent: ThreadEventMetadata; // the last event in the collaboration
 
     lastEventPartnerID = null;
 
     // History of events
     hasHistory: boolean = false;
-    history: ThreadEventMetadata[];
+    completeHistory: ThreadEventMetadata[]; // keeps all the event metadata included in the collaboration
+    history: ThreadEventMetadata[]; // keeps all the event metadata included in the collaboration except the last one
     historyExpanded: boolean = false;
 
     ratingOverall = 0;
@@ -130,6 +132,7 @@ export class ThreadSummaryComponent implements OnInit {
         Promise.all(ids.map(id => this.fetchThreadEvent(id))).then(events => {
             events.sort((a,b) => moment(a.startTime).diff(moment(b.startTime)));
             events = events.reverse();
+            this.completeHistory = events;
             this.history = events.slice(1, events.length);
             this.lastEvent = events[0];
             // Update History in order to remove pending orders
@@ -189,7 +192,7 @@ export class ThreadSummaryComponent implements OnInit {
         const activityVariables = dashboardProcessInstanceDetails.variableInstance;
         const processType = ActivityVariableParser.getProcessType(activityVariables);
         const initialDoc: any = dashboardProcessInstanceDetails.requestDocument;
-        const response: any = dashboardProcessInstanceDetails.responseDocument;
+        const responseDocumentStatus: any = dashboardProcessInstanceDetails.responseDocumentStatus;
         const userRole = ActivityVariableParser.getUserRole(processType,initialDoc,this.processInstanceGroup.partyID);
         const lastActivity = dashboardProcessInstanceDetails.lastActivityInstance;
         const processInstance = dashboardProcessInstanceDetails.processInstance;
@@ -213,15 +216,15 @@ export class ThreadSummaryComponent implements OnInit {
             ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"),processType),
             initialDoc.item,
             correspondent,
-            this.getBPStatus(response),
+            this.getBPStatus(responseDocumentStatus),
             initialDoc,
             activityVariables,
             userRole === "buyer",
             isRated === "true"
         );
 
-        this.fillStatus(event, processInstance["state"], processType, response, userRole === "buyer");
-        this.setCancelCollaborationButtonStatus(processType,response);
+        this.fillStatus(event, processInstance["state"], processType, responseDocumentStatus, userRole === "buyer");
+        this.setCancelCollaborationButtonStatus(processType,responseDocumentStatus);
         this.checkDataChannel(event);
 
         return event;
@@ -324,7 +327,7 @@ export class ThreadSummaryComponent implements OnInit {
         } else {
             switch(processType) {
                 case "Order":
-                    if (response.acceptedIndicator) {
+                    if (response.documentStatus) {
                         if(buyer) {
                             event.statusText = "Waiting for Dispatch Advice";
                             event.actionText = "See Order";
@@ -339,7 +342,13 @@ export class ThreadSummaryComponent implements OnInit {
                     break;
                 case "Negotiation":
                     if (buyer) {
-                        event.statusText = "Quotation received";
+                        if (response.documentStatus == NEGOTIATION_RESPONSES.REJECTED) {
+                            event.statusText = "Quotation rejected";
+                        } else if (response.documentStatus == NEGOTIATION_RESPONSES.TERMS_UPDATED) {
+                            event.statusText = "Quotation terms updated";
+                        } else {
+                            event.statusText = "Quotation accepted";
+                        }
                     } else {
                         event.statusText = "Quotation sent";
                     }
@@ -355,7 +364,7 @@ export class ThreadSummaryComponent implements OnInit {
                     event.actionText = "See Receipt Advice";
                     break;
                 case "Ppap":
-                    if (response.acceptedIndicator) {
+                    if (response.documentStatus) {
                         event.statusText = "Ppap approved";
                     } else {
                         event.statusText = "Ppap declined";

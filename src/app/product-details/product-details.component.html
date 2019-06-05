@@ -21,11 +21,11 @@
         </div>
         <div class="row">
             <div class="col-12">
-              <product-details-overview [wrapper]="productWrapper" [options]="options">
+              <product-details-overview [wrapper]="productWrapper" [options]="options" (compStatus)="setTab($event)">
               </product-details-overview>
             </div>
         </div>
-        <product-details-tabs [wrapper]="productWrapper" [settings]="settings" [tabToOpen]="tabToOpen">
+        <product-details-tabs [wrapper]="productWrapper" [settings]="settings" [tabToOpen]="tabToOpen" (tabStatus)="setTab($event)">
         </product-details-tabs>
     </div>
     <div class="col-3">
@@ -151,16 +151,28 @@
                     </span>
                 </div>
                 <div class="inline-order-group">
-                    <label class="order-label order-price">
-                        Total Price:
+                    <label class="vat-label">
+                        VAT:
                     </label>
 
-                    <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-price-value">
-                        {{getTotalPrice()}} {{ line.requiredItemLocationQuantity.price.priceAmount.currencyID }}
+                    <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="vat-value">
+                        {{priceWrapper.vatTotalString}}
                     </span>
-                    <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-price-value">
-                        {{frameContractQuotationWrapper.priceWrapper.totalPriceString}}
+                    <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="vat-value">
+                        {{frameContractQuotationWrapper.priceWrapper.vatTotalString}}
                     </span>
+                </div>
+                <div class="inline-order-group">
+                        <label class="order-label order-price">
+                            Total Price:
+                        </label>
+
+                        <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-price-value">
+                            {{priceWrapper.grossTotalString}}
+                        </span>
+                        <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-price-value">
+                            {{frameContractQuotationWrapper.priceWrapper.grossTotalString}}
+                        </span>
                 </div>
             </ng-container>
 

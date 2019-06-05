@@ -39,7 +39,7 @@ export class ThreadEventComponent implements OnInit {
                 this.event.processType,
                 this.processInstanceGroup.id,
                 this.collaborationGroupId,
-                [this.event].concat(this.history),
+                this.history,
                 null,
                 false,
                 this.event.formerStep),
