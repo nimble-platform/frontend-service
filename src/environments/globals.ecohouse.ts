@@ -50,7 +50,7 @@ export const debug = false;
 // Base path variables - BIBA domain
 
 export const base_path = "http://nimble-dev.ikap.biba.uni-bremen.de";
-export const ub_base = "http://search-service:8090";
+export const ub_base = "http://nimble-dev.ikap.biba.uni-bremen.de:10096";
 export const pw_reset_link = "http://keycloak:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
