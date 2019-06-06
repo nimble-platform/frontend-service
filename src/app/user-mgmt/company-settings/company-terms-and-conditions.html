@@ -15,7 +15,7 @@
 
     <!-- Update/Add clauses -->
     <div>Update/Add clauses:</div>
-    <div *ngFor="let clause of termsAndConditions;let i=index">
+    <div *ngFor="let clause of termsAndConditions;let i=index" class="space-after">
         <!-- Clause Id-->
         <button [ngClass]="'btn btn-primary btn-outline-primary small-button'" (click)="showSection.set(clause.id,!showSection.get(clause.id));setSectionText(clause)">
             {{clause.id}}
