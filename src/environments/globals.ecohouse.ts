@@ -98,9 +98,9 @@ export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 
 // TnT Endpoints
 
-export const tntEndpoint = 'http://tracking-service:8090';
+export const tntEndpoint = `${base_path}:8117`;
 // export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
-export const tntMasterDataEndpoint = 'http://tracking-service:8090/masterData/id/';
+export const tntMasterDataEndpoint = `${base_path}:8117/masterData/id/`;
 
 // Platform Configuration
 
