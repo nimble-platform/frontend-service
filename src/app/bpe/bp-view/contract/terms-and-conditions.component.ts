@@ -121,20 +121,9 @@ export class TermsAndConditionsComponent implements OnInit {
                 else{
                     spanText ="<b><span style='color: red' id='"+this.generateIdForParameter(id)+"'>";
                 }
-                if(tradingTerm.value.valueQualifier == "QUANTITY"){
-                    let defaultValue = tradingTerm.value.valueQuantity[0].value;
-                    let defaultUnit = tradingTerm.value.valueQuantity[0].unitCode;
-                    text = text.replace(tradingTerm.id,spanText+defaultValue+" "+defaultUnit+"</span></b>");
-                } else if(tradingTerm.value.valueQualifier == "STRING"){
-                    let defaultValue = this.tradingTerms.get(tradingTerm.id).value.value[0].value;
-                    text = text.replace(tradingTerm.id,spanText+defaultValue+"</span></b>");
-                } else if(tradingTerm.value.valueQualifier == "NUMBER"){
-                    let defaultValue = this.tradingTerms.get(tradingTerm.id).value.valueDecimal[0].toString();
-                    text = text.replace(tradingTerm.id,spanText+defaultValue+"</span></b>");
-                } else if(tradingTerm.value.valueQualifier == "CODE"){
-                    let defaultValue = this.tradingTerms.get(tradingTerm.id).value.valueCode[0].value;
-                    text = text.replace(tradingTerm.id,spanText+defaultValue+"</span></b>");
-                }
+
+                let defaultValue = this.getDefaultValue(tradingTerm);
+                text = text.replace(tradingTerm.id,spanText+defaultValue+"</span></b>");
             }
 
             element.innerHTML = text;
@@ -156,21 +145,8 @@ export class TermsAndConditionsComponent implements OnInit {
                     spanText = "<b><span style='color: red' id='"+this.generateIdForParameter(id)+"'>";
                 }
 
-                // for the quantities, we have value and unit
-                if(tradingTerm.value.valueQualifier == "QUANTITY"){
-                    let defaultValue = this.tradingTerms.get(id).value.valueQuantity[0].value;
-                    let defaultUnit = this.tradingTerms.get(id).value.valueQuantity[0].unitCode;
-                    text = text.replace(id,spanText+defaultValue+" "+defaultUnit+"</span></b>");
-                } else if(tradingTerm.value.valueQualifier == "STRING"){
-                    let defaultValue = this.tradingTerms.get(id).value.value[0].value;
-                    text = text.replace(id,spanText+defaultValue+"</span></b>");
-                } else if(tradingTerm.value.valueQualifier == "NUMBER"){
-                    let defaultValue = this.tradingTerms.get(id).value.valueDecimal[0].toString();
-                    text = text.replace(id,spanText+defaultValue+"</span></b>");
-                } else if(tradingTerm.value.valueQualifier == "CODE"){
-                    let defaultValue = this.tradingTerms.get(id).value.valueCode[0].value;
-                    text = text.replace(id,spanText+defaultValue+"</span></b>");
-                }
+                let defaultValue = this.getDefaultValue(this.tradingTerms.get(id));
+                text = text.replace(id,spanText+defaultValue+"</span></b>");
             }
 
             element.innerHTML = text;
@@ -184,48 +160,60 @@ export class TermsAndConditionsComponent implements OnInit {
 
             for(let tradingTerm of clause.tradingTerms){
                 if(tradingTerm.id == id){
-                    if(tradingTerm.value.valueQualifier == "STRING"){
-                        value = tradingTerm.value.value[0].value;
-                    } else if(tradingTerm.value.valueQualifier == "NUMBER"){
-                        value = tradingTerm.value.valueDecimal[0].toString();
-                    } else if(tradingTerm.value.valueQualifier == "QUANTITY"){
-                        value = tradingTerm.value.valueQuantity[0].value.toString();
-                    } else if(tradingTerm.value.valueQualifier == "CODE"){
-                        value = tradingTerm.value.valueCode[0].value ;
+                    let defaultValue = this.getDefaultValue(tradingTerm);
+
+                    let element = document.getElementById(this.generateIdForParameter(id));
+                    element.innerText = defaultValue;
+
+                    let defaultTradingTerm = this.originalTradingTerms.get(id);
+
+                    if (tradingTerm.value.valueQualifier == "STRING") {
+                        this.tradingTerms.get(id).value.value[0].value = defaultTradingTerm.value.value[0].value;
+                    } else if (tradingTerm.value.valueQualifier == "NUMBER") {
+                        this.tradingTerms.get(id).value.valueDecimal[0] = defaultTradingTerm.value.valueDecimal[0];
+                    } else if (tradingTerm.value.valueQualifier == "QUANTITY") {
+                        this.tradingTerms.get(id).value.valueQuantity[0].value = defaultTradingTerm.value.valueQuantity[0].value;
+                        this.tradingTerms.get(id).value.valueQuantity[0].unitCode = defaultTradingTerm.value.valueQuantity[0].unitCode;
+                    } else if (tradingTerm.value.valueQualifier == "CODE") {
+                        this.tradingTerms.get(id).value.valueCode[0].value = defaultTradingTerm.value.valueCode[0].value;
                     }
+
+                    this.setElementColor(element,id);
                     break;
                 }
             }
         }
-        // update the value of parameter
-        if(isUnit){
-            this.tradingTerms.get(id).value.valueQuantity[0].unitCode = value;
+        else {
+            // update the value of parameter
+            if (isUnit) {
+                this.tradingTerms.get(id).value.valueQuantity[0].unitCode = value;
 
-            let element = document.getElementById(this.generateIdForParameter(id));
-            element.innerText = this.tradingTerms.get(id).value.valueQuantity[0].value +" "+ value;
+                let element = document.getElementById(this.generateIdForParameter(id));
+                element.innerText = this.tradingTerms.get(id).value.valueQuantity[0].value +" "+ value;
 
-            this.setElementColor(element,id);
-        } else{
-            let tradingTerm = this.tradingTerms.get(id);
-            if(tradingTerm.value.valueQualifier == "STRING"){
-                tradingTerm.value.value[0].value = value;
-            } else if(tradingTerm.value.valueQualifier == "NUMBER"){
-                tradingTerm.value.valueDecimal[0] = Number(value);
-            } else if(tradingTerm.value.valueQualifier == "QUANTITY"){
-                tradingTerm.value.valueQuantity[0].value = Number(value);
-            } else if(tradingTerm.value.valueQualifier == "CODE"){
-                tradingTerm.value.valueCode[0].value = value;
+                this.setElementColor(element, id);
+            } else {
+                let tradingTerm = this.tradingTerms.get(id);
+                if (tradingTerm.value.valueQualifier == "STRING") {
+                    tradingTerm.value.value[0].value = value;
+                } else if (tradingTerm.value.valueQualifier == "NUMBER") {
+                    tradingTerm.value.valueDecimal[0] = Number(value);
+                } else if (tradingTerm.value.valueQualifier == "QUANTITY") {
+                    tradingTerm.value.valueQuantity[0].value = Number(value);
+                } else if (tradingTerm.value.valueQualifier == "CODE") {
+                    tradingTerm.value.valueCode[0].value = value;
+                }
+
+                let element = document.getElementById(this.generateIdForParameter(id));
+
+                if (tradingTerm.value.valueQualifier == "QUANTITY") {
+                    element.innerText = value + " " + tradingTerm.value.valueQuantity[0].unitCode;
+                } else {
+                    element.innerText = value;
+                }
+
+                this.setElementColor(element, id);
             }
-
-            let element = document.getElementById(this.generateIdForParameter(id));
-
-            if(tradingTerm.value.valueQualifier == "QUANTITY"){
-                element.innerText = value + " " + tradingTerm.value.valueQuantity[0].unitCode;
-            } else{
-                element.innerText = value;
-            }
-
-            this.setElementColor(element,id);
         }
 
         // emit the new value if necessary
@@ -235,6 +223,36 @@ export class TermsAndConditionsComponent implements OnInit {
         else if(id == "$payment_id"){
             this.onTradingTermChanged.emit(value);
         }
+    }
+
+    // returns the default value of the given trading term
+    // if there is no default value provided for this trading term, then returns its id
+    getDefaultValue(tradingTerm:TradingTerm){
+        let defaultValue = null;
+        if(tradingTerm.value.valueQualifier == "QUANTITY"){
+            defaultValue = tradingTerm.value.valueQuantity[0].value;
+            let defaultUnit = tradingTerm.value.valueQuantity[0].unitCode;
+            // if value or unit is not provided, then return its id
+            if(!defaultValue || !defaultUnit){
+                return tradingTerm.id;
+            }
+            // else return the default value
+            return defaultValue + " " + defaultUnit;
+
+        } else if(tradingTerm.value.valueQualifier == "STRING"){
+            defaultValue = tradingTerm.value.value[0].value;
+        } else if(tradingTerm.value.valueQualifier == "NUMBER"){
+            defaultValue = tradingTerm.value.valueDecimal[0];
+        } else if(tradingTerm.value.valueQualifier == "CODE"){
+            defaultValue = tradingTerm.value.valueCode[0].value;
+        }
+
+        // if there is no default value, return its id
+        if(!defaultValue){
+            return tradingTerm.id;
+        }
+        // return the default value
+        return defaultValue
     }
 
     generateIdForClause(clauseId:number){
