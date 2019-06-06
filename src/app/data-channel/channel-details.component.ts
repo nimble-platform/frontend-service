@@ -118,6 +118,9 @@ export class ChannelDetailsComponent implements OnInit {
                        .catch(() => {
                            alert("Error while doing getting historic step");
                        });
+
+                       this.counterChannelSensors = channelConfig.associatedSensors;
+                       this.counterChannelServers = channelConfig.associatedServers;
                 }
 
                 else if(this.pageNumber == 2)
@@ -157,7 +160,7 @@ export class ChannelDetailsComponent implements OnInit {
                 }
 
 
-                if(this.pageNumber <= 1)
+                if(this.pageNumber == 0)
                 {
                        // get sensors
                        this.dataChannelService.getAssociatedSensors(channelID)
@@ -235,7 +238,6 @@ export class ChannelDetailsComponent implements OnInit {
                                                  this.sellerMessage, this.buyerMessage,
                                                  this.sellerServerType, this.buyerServerType)
            .then(() => {
-               //location.reload();
                this.router.navigate(["dashboard"]);
            })
            .catch(() => {
@@ -252,8 +254,7 @@ export class ChannelDetailsComponent implements OnInit {
        const channelId = this.channelConfig["channelID"];
        this.dataChannelService.renegotiate(channelId, numberOfSteps)
            .then(() => {
-               location.reload();
-               //this.router.navigate(["dashboard"]);
+               this.router.navigate(["dashboard"]);
            })
            .catch(() => {
                alert("Error while doing a negotiation step");

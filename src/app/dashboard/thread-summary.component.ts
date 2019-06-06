@@ -463,13 +463,13 @@ export class ThreadSummaryComponent implements OnInit {
                 .then(channels => {
                     if (channels && channels.channelID) {
                         if (role == "BUYER") {
-                            if (channels.negotiationStepcounter == 1 || channels.negotiationStepcounter == 3)
+                            if (channels.negotiationStepcounter % 5 == 1 || channels.negotiationStepcounter % 5 == 3)
                                 this.enableDataChannelButton = true;
                             else
                                 this.enableDataChannelButton = false;
                         }
                         else {
-                            if (channels.negotiationStepcounter != 1)
+                            if (channels.negotiationStepcounter % 5 != 1)
                                 this.enableDataChannelButton = true;
                             else
                                 this.enableDataChannelButton = false;
