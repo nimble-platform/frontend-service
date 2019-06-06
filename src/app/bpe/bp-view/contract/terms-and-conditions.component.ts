@@ -46,7 +46,6 @@ export class TermsAndConditionsComponent implements OnInit {
     INCOTERMS: string[] = [];
     PAYMENT_TERMS:string[] = [];
     COUNTRY_NAMES = COUNTRY_NAMES;
-    UNITS:string[] = [];
 
     // selected values for Incoterm and Trading Term (e.g. Payment Terms)
     _selectedIncoterm: string = null;
@@ -76,10 +75,6 @@ export class TermsAndConditionsComponent implements OnInit {
             this.INCOTERMS = sellerPartySettings.negotiationSettings.incoterms;
             // populate available payment terms
             this.PAYMENT_TERMS = sellerPartySettings.negotiationSettings.paymentTerms;
-            // populate available units
-            this.UNITS = deliveryPeriodUnits.concat(warrantyPeriodUnits);
-
-
 
             // if there is no need to have a title, then display the preview
             if(!this.needATitle){
