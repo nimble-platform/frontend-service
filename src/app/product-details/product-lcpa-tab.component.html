@@ -1,4 +1,5 @@
 <ng-container *ngIf="lcpaDetails.lcpainput">
+    <h5 *ngIf="isLCPAInputFilled()">Life-Cycle Cost Inputs</h5>
     <div class="d-flex flex-wrap align-items-start fixed-info-container">
         <quantity-input *ngIf="isVisible(lcpaDetails.lcpainput.lifeCycleLength)"
                         [disabled]="isDisabled()"
@@ -124,4 +125,36 @@
     <!-- Edit Property Value(s) Modal -->
     <lcpa-detail-modal (valueAdded)="onDetailSpecified($event)">
     </lcpa-detail-modal>
+</ng-container>
+<ng-container *ngIf="lcpaDetails.lcpaoutput">
+    <hr>
+    <h5>Life-Cycle Cost Outputs</h5>
+    <div class="d-flex flex-wrap">
+        <amount-input *ngIf="isVisible(lcpaDetails.lcpaoutput.lifeCycleCost)"
+                      class="col-6"
+                      label="Life Cycle Cost"
+                      [disabled]="true"
+                      [labelClass]="'col-6'"
+                      [valueClass]="'col-6'"
+                      [amount]="lcpaDetails.lcpaoutput.lifeCycleCost">
+        </amount-input>
+        <amount-input *ngIf="isVisible(lcpaDetails.lcpaoutput.operationCostsPerYear)"
+                      class="col-6"
+                      label="Operations Costs Per Year"
+                      [disabled]="true"
+                      [labelClass]="'col-6'"
+                      [valueClass]="'col-6'"
+                      [amount]="lcpaDetails.lcpaoutput.operationCostsPerYear">
+        </amount-input>
+        <quantity-input *ngIf="isVisible(lcpaDetails.lcpaoutput.capexOpexRelation)"
+                        [disabled]="true"
+                        class="col-6"
+                        label="Average Life Cycle Length"
+                        [labelClass]="'col-6'"
+                        [valueClass]="'col-6'"
+                        [disableQuantityUnit]="true"
+                        [quantityUnits]="['%']"
+                        [quantity]="lcpaDetails.lcpaoutput.capexOpexRelation">
+        </quantity-input>
+    </div>
 </ng-container>

@@ -70,4 +70,8 @@ export class ProductLcpaTabComponent implements OnInit {
     isEditMode(): boolean {
         return this.presentationMode == 'edit';
     }
+
+    isLCPAInputFilled(): boolean {
+        return UBLModelUtils.isFilledLCPAInput(this.lcpaDetails);
+    }
 }

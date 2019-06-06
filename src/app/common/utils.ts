@@ -467,7 +467,7 @@ export function getFileExtension(filename: string): string {
 }
 
 export function roundToTwoDecimals(value): any{
-    if (!isNaN(value) && value !== null) {
+    if (!isNaN(value) && value !== null && value != 0) {
         // round to minimum possible decimal >= 2
         let roundedValue: number = 0;
         let power = 1;

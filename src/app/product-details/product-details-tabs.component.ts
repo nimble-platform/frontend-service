@@ -54,7 +54,7 @@ export class ProductDetailsTabsComponent implements OnInit {
         this.selectedTab = this.getFirstTab();
         this.isLogistics = this.wrapper.getLogisticsStatus();
         this.isTransportService = this.wrapper.isTransportService();
-        if(this.wrapper.getDimensions().length == 0 && this.wrapper.getUniquePropertiesWithValue().length == 0){
+        if(this.wrapper.getDimensions().length == 0 && this.wrapper.getUniquePropertiesWithValue().length == 0 && this.wrapper.getAdditionalDocuments().length == 0){
             this.haveDetails = false;
             this.selectedTab = this.getFirstTab();
         }
