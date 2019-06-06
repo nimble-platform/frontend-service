@@ -98,9 +98,9 @@ export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 
 // TnT Endpoints
 
-export const tntEndpoint = `${bpe_endpoint}/t-t/epc-details`;
-export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
-export const tntMasterDataEndpoint = 'http://nimble-dev.ikap.biba.uni-bremen.de:8117';
+export const tntEndpoint = 'http://tracking-service:8090';
+// export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
+export const tntMasterDataEndpoint = 'http://tracking-service:8090/masterData/id/';
 
 // Platform Configuration
 
