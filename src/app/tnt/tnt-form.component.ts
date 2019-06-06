@@ -17,6 +17,7 @@ export class TnTFormComponent {
     public model = new Search('');
     @ViewChild('acc') acc;
     public metaData = {};
+    orientation: String = 'BT';
     public trackingInfo: object[] = [];
     public bpInfo = [];
     public hierarchialGraph = {nodes: [], links: []};
@@ -26,8 +27,12 @@ export class TnTFormComponent {
     hideButton = false;
     curve = d3.curveBundle.beta(1);
     gateInformation = [];
+    bizLocationInformation = [];
+    currentGate: string;
+    currentBizLoc: string;
     sstInfo = [];
     falsecode = '';
+    verified: boolean;
 
     constructor(private tntBackend: TnTService) {}
 
@@ -43,21 +48,10 @@ export class TnTFormComponent {
         this.tntBackend.getMetaData(code)
             .then(resp => {
                 this.error_detc = false;
-                this.updateInfo = false;
-                this.metaData = resp;
-                if ('productionProcessTemplate' in this.metaData) {
-                    this.getBPInfo(resp['productionProcessTemplate']);
-                    this.getAnalysis(code);
-                    if (!(this.acc.activeIds.findIndex(tab => tab === 'bProcessVis') > -1)) {
-                        this.acc.toggle('bProcessVis');
-                    }
-                }
-                if ('eventUrl' in resp) {
-                    this.getTableInfo(resp['eventUrl'], code);
-                    if (!(this.acc.activeIds.findIndex(tab => tab === 'tableInfo') > -1)) {
-                        this.acc.toggle('tableInfo');
-                    }
-                }
+                this.getTableInfo(resp);
+                this.bpInfo = resp;
+                this.showGraph();
+                this.verifyOnBlockchain();
             })
             .catch(error => {
                 if (error.status === 404) {
@@ -79,17 +73,13 @@ export class TnTFormComponent {
         this.hideButton = false;
     }
 
-    getTableInfo(url, code) {
-        this.tntBackend.getTrackingInfo(url, code)
-            .subscribe((resp_track) => {
-                this.error_detc = false;
-                this.trackingInfo = resp_track.map(el => {
+    getTableInfo(data) {
+                this.trackingInfo = data.map(el => {
                     let _out = {
-                        'eventTime': moment(Number(el.eventTime.$numberLong)),
+                        'eventTime': moment(Number(el.eventTime.$date)),
                         'bizStep': el.bizStep.split(':').pop(),
                         'action': el.action,
                         'readPoint': el.readPoint.id.split(':').pop(),
-                        'bizLocation': ''
                     };
                     if ('bizLocation' in el) {
                         _out['bizLocation'] = el.bizLocation.id.split(':').pop();
@@ -97,75 +87,49 @@ export class TnTFormComponent {
                     }
                     return _out;
                 });
-            }, (err) => {
-                this.error_detc = true;
-            });
-    }
-
-    getBPInfo(url) {
-        if (this.debug) {
-            console.log(url);
-        }
-        this.tntBackend.getBusinessProcessInfo(url)
-            .subscribe((res) => {
-                this.error_detc = false;
-                this.bpInfo = res;
-            }, (err) => {
-                this.error_detc = true;
-            });
-    }
-
-    getAnalysis(code) {
-        this.tntBackend.getAnalysisInfo(code)
-            .subscribe((res) => {
-                this.error_detc = false;
-                if (res.length) {
-                    this.bpInfo = res;
-                }
-            }, (err) => {
-                this.error_detc = true;
-            });
     }
 
     showGraph() {
-        this.bpInfo.forEach((step) => {
-            if (step['estimatedEventTime'] === null || !('estimatedEventTime' in step)) {
-                this.hierarchialGraph.nodes.push({
-                    id: step.id,
-                    label: step.bizStep.split(':').pop(),
-                    color: 'green',
-                    status: 'Step Fulfilled'
-                });
-            } else {
-                this.hierarchialGraph.nodes.push({
-                    id: step.id,
-                    label: step.bizStep.split(':').pop(),
-                    color: 'gray',
-                    status: 'Estimated Time for Completion:\n' + moment(step.estimatedEventTime.$date).toString()
-                });
-            }
-            this.hierarchialGraph.links.push({source: step.id, target: step.hasNext});
+        this.bpInfo.reverse().forEach((el, index) => {
+            this.hierarchialGraph.nodes.push({
+                id: index.toString(),
+                label: el.readPoint.id.split(':').pop()
+            });
+            this.hierarchialGraph.links.push({
+                source: index.toString(),
+                target: (index + 1).toString(),
+                label: el.bizStep.split(':').pop()
+            });
         });
-        this.hierarchialGraph.links.pop(); // remove to last link pointing to nothing
-        this.hideButton = true;
+        this.hierarchialGraph.links.pop();
     }
 
-    selectNode(ev) {
-        let selectedNode = this.bpInfo.find(el => el.id === ev.id);
-        if (this.debug) {
-            console.log(this.bpInfo);
-            console.log(selectedNode);
-        }
-        this.tntBackend.getGateInfo(this.metaData['masterUrl'], selectedNode.readPoint)
-            .then(res => {
-                this.error_detc = false;
-                this.gateInformation = res;
-                if (this.debug) {
-                    console.log(this.gateInformation);
+    getGateInfo(gateName) {
+        let selectedGate = this.bpInfo.find(el => el.readPoint.id.split(':').pop() === gateName);
+        // console.log(selectedGate);
+        this.currentGate = gateName;
+         this.tntBackend.getGateInfo(selectedGate.readPoint.id)
+            .then(resp => {
+                this.gateInformation = resp;
                 }
-            })
-            .catch(error => {
-                this.error_detc = true;
+            )
+            .catch(err => {
+                console.log(err);
+            });
+
+    }
+
+    getBizLocInfo(bizLocName) {
+        let selectedLocation = this.bpInfo.find(el => el.bizLocation.id.split(':').pop() === bizLocName);
+        // console.log(selectedGate);
+        this.currentBizLoc = bizLocName;
+        this.tntBackend.getGateInfo(selectedLocation.bizLocation.id)
+            .then(resp => {
+                    this.bizLocationInformation = resp;
+                }
+            )
+            .catch(err => {
+                console.log(err);
             });
     }
 
@@ -177,6 +141,19 @@ export class TnTFormComponent {
             })
             .catch(error => {
                 this.error_detc = true;
+            });
+    }
+
+    verifyOnBlockchain() {
+        let result = this.tntBackend.verifyOnBC(this.bpInfo)
+            .then(res => {
+                console.log(res);
+                // result = res;
+                this.verified = res;
+                // this.verified = true;
+            })
+            .catch(err => {
+                console.log(err);
             });
     }
 }
