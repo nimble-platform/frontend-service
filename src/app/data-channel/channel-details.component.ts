@@ -116,7 +116,7 @@ export class ChannelDetailsComponent implements OnInit {
                             this.initialChannelServers = initialChannelConfig.associatedServers;
                        })
                        .catch(() => {
-                           alert("Error while doing getting historic step");
+                           alert("Error while doing getting historic step. Please make sure your local data-channel-service is running!");
                        });
 
                        this.counterChannelSensors = channelConfig.associatedSensors;
@@ -132,7 +132,7 @@ export class ChannelDetailsComponent implements OnInit {
                             this.initialChannelServers = initialChannelConfig.associatedServers;
                        })
                        .catch(() => {
-                           alert("Error while doing getting historic step");
+                           alert("Error while doing getting historic step. Please make sure your local data-channel-service is running!");
                        });
 
                     this.dataChannelService.getChannelConfigFromNegotiationStep(channelID, channelConfig.negotiationStepcounter-1)
@@ -142,7 +142,7 @@ export class ChannelDetailsComponent implements OnInit {
                             this.counterChannelServers = counterChannelConfig.associatedServers;
                        })
                        .catch(() => {
-                           alert("Error while doing getting historic step");
+                           alert("Error while doing getting historic step. Please make sure your local data-channel-service is running!");
                        });
                 }
 
@@ -155,7 +155,7 @@ export class ChannelDetailsComponent implements OnInit {
                              this.counterChannelServers = counterChannelConfig.associatedServers;
                         })
                         .catch(() => {
-                            alert("Error while doing getting historic step");
+                            alert("Error while doing getting historic step. Please make sure your local data-channel-service is running!");
                         });
                 }
 
@@ -177,7 +177,7 @@ export class ChannelDetailsComponent implements OnInit {
                 }
             })
             .catch(() => {
-                alert("Error while getting channel config");
+                alert("Error while getting channel config. Please make sure your local data-channel-service is running!");
             });
 
 
@@ -241,7 +241,7 @@ export class ChannelDetailsComponent implements OnInit {
                this.router.navigate(["dashboard"]);
            })
            .catch(() => {
-               alert("Error while doing a negotiation step");
+               alert("Error while doing a negotiation step. Please make sure your local data-channel-service is running!");
            });
     }
 
@@ -257,7 +257,7 @@ export class ChannelDetailsComponent implements OnInit {
                this.router.navigate(["dashboard"]);
            })
            .catch(() => {
-               alert("Error while doing a negotiation step");
+               alert("Error while doing a negotiation step. Please make sure your local data-channel-service is running!");
            });
     }
 
@@ -273,7 +273,7 @@ export class ChannelDetailsComponent implements OnInit {
                 alert("Opened Channel");
             })
             .catch(() => {
-                alert("Error while opening channel");
+                alert("Error while opening channel. Please make sure your local data-channel-service is running!");
             });
     }
 
@@ -289,7 +289,7 @@ export class ChannelDetailsComponent implements OnInit {
                 alert("Closed Channel");
             })
             .catch(() => {
-                alert("Error while closing channel");
+                alert("Error while closing channel. Please make sure your local data-channel-service is running!");
             });
     }
 
@@ -308,7 +308,7 @@ export class ChannelDetailsComponent implements OnInit {
                 this.update();
             })
             .catch(() => {
-                alert("Error while adding server");
+                alert("Error while adding server. Please make sure your local data-channel-service is running!");
             });
     }
 
@@ -352,7 +352,7 @@ export class ChannelDetailsComponent implements OnInit {
                 this.update();
             })
             .catch(() => {
-                alert("Error while adding sensor");
+                alert("Error while adding sensor. Please make sure your local data-channel-service is running!");
             });
     }
 

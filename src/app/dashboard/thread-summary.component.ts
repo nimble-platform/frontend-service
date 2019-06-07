@@ -622,6 +622,7 @@ export class ThreadSummaryComponent implements OnInit {
             })
             .catch(err => {
                 console.error("Failed to create a channel",err);
+                alert("Failed to create a data channel. Please make sure your local data-channel-service is running!");
             });
 	}
 
