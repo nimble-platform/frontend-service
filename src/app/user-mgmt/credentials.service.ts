@@ -4,12 +4,14 @@ import 'rxjs/add/operator/toPromise';
 import { Credentials} from './model/credentials';
 import { ForgotPasswordCredentials} from './model/forgot-password-credentials';
 import * as myGlobals from '../globals';
+import * as moment from "moment";
 
 @Injectable()
 export class CredentialsService {
 
 	private headers = new Headers({'Content-Type': 'application/json'});
 	private url = myGlobals.user_mgmt_endpoint;
+	private log_url = myGlobals.logstash_endpoint;
 	constructor(private http: Http) { }
 
 	post(credentials: Credentials): Promise<any> {
@@ -73,6 +75,31 @@ export class CredentialsService {
 		.get(url, {headers: this.headers, withCredentials: true})
 		.toPromise()
 		.then(res => res.json())
+		.catch(this.handleError);
+	}
+
+	logUrl(log: any): Promise<any> {
+		let index = "logstash";
+		let type = "doc";
+		if (myGlobals.config.loggingConfig && myGlobals.config.loggingConfig.index) {
+			index = myGlobals.config.loggingConfig.index;
+			if (index.indexOf("{DATE}") != -1) {
+				let dateFormat = "YYYY-MM-DD";
+				if (myGlobals.config.loggingConfig && myGlobals.config.loggingConfig.dateFormat) {
+					dateFormat = myGlobals.config.loggingConfig.dateFormat;
+				}
+				let isoDate = moment().utc().format(dateFormat);
+				index = index.replace("{DATE}",isoDate);
+			}
+		}
+		if (myGlobals.config.loggingConfig && myGlobals.config.loggingConfig.type) {
+			type = myGlobals.config.loggingConfig.type;
+		}
+		const url = `${this.log_url}/${index}/${type}/`;
+		return this.http
+		.post(url, JSON.stringify(log), {headers: this.headers})
+		.toPromise()
+		.then()
 		.catch(this.handleError);
 	}
 

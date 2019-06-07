@@ -319,4 +319,14 @@ export class ProductDetailsComponent implements OnInit {
         found = (this.favouriteItemIds.indexOf(itemId.toString()) !== -1) ? true : false;
         return found;
     }
+
+    setTab(data) {
+      if (data) {
+    	this.tabToOpen = "COMPANY";
+      }
+      else {
+    	this.tabToOpen = null;
+      }
+    }
+    
 }
