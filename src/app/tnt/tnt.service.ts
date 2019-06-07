@@ -9,7 +9,8 @@ import {CookieService} from 'ng2-cookies';
 export class TnTService {
     // Version 1.0 for Backend..
     private tntEndpoint = myGlobals.tntEndpoint;
-    private tntAnalysisEndpoint = myGlobals.tntAnalysisEndpoint;
+    private tntMasterDataEndpoint = myGlobals.tntMasterDataEndpoint;
+    private basePath = myGlobals.base_path;
     constructor(private http: Http,
                 private cookieService: CookieService) {}
 
@@ -18,47 +19,32 @@ export class TnTService {
         let header = new Headers();
         header.append('Content-Type', 'application/json');
         header.append('Authorization', token);
-        let params = new URLSearchParams();
-        params.append('epc', epcCode);
-        let reqOptions = new RequestOptions({headers: header, params: params});
-
-        return this.http.get(`${this.tntEndpoint}`, reqOptions)
+        // let params = new URLSearchParams();
+        // params.append('epc', epcCode);
+        // let reqOptions = new RequestOptions({headers: header, params: params});
+        let reqOptions = new RequestOptions({headers: header});
+        return this.http.get(`${this.tntEndpoint}/simpleTracking/${epcCode}`, reqOptions)
             .toPromise()
             .then(resp => resp.json());
     }
 
-    getTrackingInfo(url: string, code: string) {
-        let header = new Headers();
-        header.append('Content-Type', 'application/json');
-        let params = new URLSearchParams();
-        params.append('epc', code);
-        let reqOptions = new RequestOptions({headers: header, params: params});
-        return this.http.get(`${url}`, reqOptions)
-            .map(resp => resp.json());
-    }
-
-    getBusinessProcessInfo(url: string) {
-        return this.http.get(`${url}`)
-            .map(resp => resp.json());
-    }
-
-    getAnalysisInfo(code: string) {
+    getTrackingInfo(code: string) {
         const token = 'Bearer ' + this.cookieService.get('bearer_token');
         let header = new Headers();
         header.append('Content-Type', 'application/json');
         header.append('Authorization', token);
         let reqOptions = new RequestOptions({headers: header});
-        return this.http.get(`${this.tntAnalysisEndpoint}/${code}`, reqOptions)
+        return this.http.get(`${this.tntMasterDataEndpoint}${code}`, reqOptions)
             .map(resp => resp.json());
     }
 
-    getGateInfo(url: string, code: string): Promise<any> {
+    getGateInfo(code: string): Promise<any> {
+        const token = 'Bearer ' + this.cookieService.get('bearer_token');
         let header = new Headers();
         header.append('Content-Type', 'application/json');
-        let params = new URLSearchParams();
-        params.append('id', code);
-        let reqOptions = new RequestOptions({headers: header, params: params});
-        return this.http.get(`${url}`, reqOptions)
+        header.append('Authorization', token);
+        let reqOptions = new RequestOptions({headers: header});
+        return this.http.get(`${this.tntMasterDataEndpoint}${code}`, reqOptions)
             .toPromise()
             .then(resp => resp.json());
     }
@@ -71,6 +57,18 @@ export class TnTService {
         params.append('id', code);
         let reqOptions = new RequestOptions({headers: header, params: params});
         return this.http.get(`${url}`, reqOptions)
+            .toPromise()
+            .then(resp => resp.json());
+    }
+
+    verifyOnBC(code: any): Promise<boolean> {
+        let token = 'Bearer' + this.cookieService.get('bearer_token');
+        let header = new Headers();
+        header.append('Authorization', token);
+        // let params = new URLSearchParams();
+        // params.append('jsonEventArray', code);
+        let reqOptions = new RequestOptions({headers: header});
+        return this.http.post(`${this.tntEndpoint}/verifyEventsInBlockChain`, code, reqOptions)
             .toPromise()
             .then(resp => resp.json());
     }

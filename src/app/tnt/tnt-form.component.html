@@ -29,134 +29,137 @@
             </p>
         </div>
     </div>
-    <ngb-alert type="info" *ngIf="updateInfo" (close)="updateInfo = false">
-        <span><i class="fa fa-info"></i> Enter your Code and click on the Panels below for More Information.</span>
-    </ngb-alert>
 </div>
-<div>
-    <ngb-accordion #acc="ngbAccordion">
-        <ngb-panel id="tableInfo" title="Process Information">
-            <ng-template ngbPanelContent>
-                <div class="align-center">
-                    <h4 *ngIf="!trackingInfo.length">No Information Available. Please enter a tracking Code to obtain Information</h4>
-                </div>
-                <div class="row" *ngIf="trackingInfo.length">
-                    <table class="table table-striped table-bordered table-hover">
-                        <thead class="thead-dark">
-                        <tr>
-                            <th>Event Time</th>
-                            <th>Business Step</th>
-                            <!-- <th>Action</th> -->
-                            <th>Read Point</th>
-                            <th>Business Location</th>
-                        </tr>
-                        </thead>
 
-                        <tr *ngFor="let entry of trackingInfo">
-                            <td>{{entry.eventTime}}</td>
-                            <td>{{entry.bizStep}}</td>
-                            <!-- <td>{{entry.action}}</td> -->
-                            <td>{{entry.readPoint}}</td>
-                            <td>{{entry.bizLocation}}</td>
-                        </tr>
-                    </table>
-                </div>
-
-            </ng-template>
-        </ngb-panel>
-        <ngb-panel title="Process Overview" id="bProcessVis">
-            <ng-template ngbPanelContent>
-                <div class="align-center" *ngIf="!hideButton">
-                    <button class="btn btn-lg btn-outline-info" (click)="showGraph()" [disabled]="!bpInfo.length">
-                        Obtain Process Information
-                    </button>
-                </div>
-                <div class="row" *ngIf="hierarchialGraph.nodes.length">
-                    <ngx-graph
-                            [nodes]="hierarchialGraph.nodes"
-                            [links]="hierarchialGraph.links"
-                            [curve]="curve"
-                            [draggingEnabled]="false"
-                            [panningEnabled]="false"
-                            [enableZoom]="false"
-                            (select)="selectNode($event)"
-                            [view] = "[1000, 275]"
-                    >
-                        <ng-template #defsTemplate>
-                            <svg:marker id="arrow" viewBox="0 -5 10 10" refX="8" refY="0" markerWidth="4" markerHeight="4" orient="auto">
-                                <svg:path d="M0,-5L10,0L0,5" class="arrow-head" />
-                            </svg:marker>
-                        </ng-template>
-
-                        <ng-template #nodeTemplate let-node>
-                            <svg:g class="node"
-                                   ngx-tooltip
-                                   [tooltipPlacement]="'top'"
-                                   [tooltipType]="'tooltip'"
-                                   [tooltipTitle]="node.status"
-                            >
-                                <svg:rect [attr.width]="node.width" [attr.height]="node.height" [attr.fill]="node.color" />
-                                <svg:text alignment-baseline="central" [attr.x]="10" [attr.y]="node.height / 2"
-                                          fill="white"
-                                >{{node.label}}</svg:text>
-                            </svg:g>
-                        </ng-template>
-
-                        <ng-template #linkTemplate let-link>
-                            <svg:g class="edge">
-                                <svg:path
-                                        class="line"
-                                        stroke-width="2"
-                                        marker-end="url(#arrow)" >
-                                </svg:path>
-                            </svg:g>
-                        </ng-template>
-                    </ngx-graph>
-                </div>
-                <div class="row" *ngIf="gateInformation.length">
-                    <div class="card">
-                        <div class="card-header">
-                            Read Point Information
-                        </div>
-                        <ul class="list-group">
-                            <div *ngFor="let eachRP of gateInformation">
-                                <li class="list-group-item">
-                                    {{eachRP.attributes['urn:epcglobal:cbv:mda:site'][0]}}
-                                </li>
-                                <li class="list-group-item">
-                                    {{eachRP.attributes['urn:epcglobal:cbv:mda#name'][0]}}
-                                </li>
-                                <li class="list-group-item">
-                                    {{eachRP.attributes['urn:epcglobal:cbv:mda#streetAddressOne'][0]}},
-                                    {{eachRP.attributes['urn:epcglobal:cbv:mda#city'][0]}},
-                                    {{eachRP.attributes['urn:epcglobal:cbv:mda#countryCode'][0]}}
-                                </li>
-                                <li class="list-group-item">
-                                    {{eachRP.attributes['urn:epcglobal:cbv:mda:ssd'][0]}}
-                                </li>
-                                <li class="list-group-item">
-                                    <button class="btn btn-link btn-xs" (click)="getSST(eachRP.attributes['urn:epcglobal:cbv:mda:sst'][0])">
-                                        {{eachRP.attributes['urn:epcglobal:cbv:mda:sst'][0]}}</button>
-                                </li>
-                            </div>
-                        </ul>
-                    </div>
-                    <div class="card" *ngIf="sstInfo.length">
-                        <div class="card-header">
-                            Sub Site Type Information
-                        </div>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item" *ngFor="let eachSSTField of sstInfo">
-                                {{eachSSTField.attributes['urn:epcglobal:cbv:mda#description']}}</li>
-                        </ul>
-                    </div>
-                </div>
-            </ng-template>
-        </ngb-panel>
-    </ngb-accordion>
+<div class="jumbotron" *ngIf="!trackingInfo.length">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 align-center">
+                <i class="fas fa-truck-loading fa-5x"></i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 align-center">
+                <h4>No Tracking Results</h4>
+                <p class="text-secondary">Try searching for a valid tracking code above</p>
+            </div>
+        </div>
+    </div>
 </div>
+
+<div class="row" *ngIf="trackingInfo.length">
+    <div class="col-lg-8">
+        <h4>Tracking Information</h4>
+        <!--<div class="row">-->
+            <table class="table table-hover">
+            <thead class="thead-dark">
+            <tr>
+            <th>Event Time</th>
+            <th>Business Step</th>
+            <!-- <th>Action</th> -->
+            <th>Read Point</th>
+            <th>Business Location</th>
+            </tr>
+            </thead>
+
+            <tr *ngFor="let entry of trackingInfo">
+            <td>{{entry.eventTime}}</td>
+            <td>{{entry.bizStep}}</td>
+            <!-- <td>{{entry.action}}</td> -->
+                <td><button class="btn btn-link" (click)="getGateInfo(entry.readPoint)">{{entry.readPoint}}</button></td>
+                <td><button class="btn btn-link" (click)="getBizLocInfo(entry.bizLocation)">{{entry.bizLocation}}</button></td>
+            </tr>
+            </table>
+            <div class="row" *ngIf="trackingInfo.length">
+                <ngb-alert type="success" [dismissible]="false" *ngIf="verified">
+                    <i class="fas fa-check-circle"></i> This Data is Verified by BlockChain  <i class="fas fa-project-diagram"></i> </ngb-alert>
+            </div>
+        <!--</div>-->
+    </div>
+    <div class="col-lg-4" *ngIf="gateInformation.length || bizLocationInformation.length">
+        <h4>Additional Details</h4>
+        <!--<div class="row">-->
+            <!--{{gateInformation | json}}-->
+            <!--{{bizLocationInformation | json}}-->
+            <div class="card" *ngIf="gateInformation.length">
+                <div class="card-header">
+                    <strong>{{currentGate}}</strong>
+                </div>
+                <ul class="list-group list-group-flush" *ngFor="let eachInfo of gateInformation">
+                    <li class="list-group-item">{{eachInfo['attributes']['urn:epcglobal:cbv:mda#name']}}</li>
+                    <li class="list-group-item">{{eachInfo['attributes']['urn:epcglobal:cbv:mda:site']}}</li>
+                    <li class="list-group-item">{{eachInfo['attributes']['urn:epcglobal:cbv:mda#streetAddressOne']}}, {{eachInfo['attributes']['urn:epcglobal:cbv:mda#city']}}</li>
+                    <li class="list-group-item">{{eachInfo['attributes']['urn:epcglobal:cbv:mda#countryCode']}}</li>
+                </ul>
+            </div>
+            <!--<div class="row">-->
+            <div class="card" *ngIf="bizLocationInformation.length">
+                <div class="card-header">
+                    <strong>{{currentBizLoc}}</strong>
+                </div>
+                <ul class="list-group list-group-flush" *ngFor="let eachInfo of bizLocationInformation">
+                    <li class="list-group-item">{{eachInfo['attributes']['urn:epcglobal:cbv:mda#name']}}</li>
+                    <li class="list-group-item">{{eachInfo['attributes']['urn:epcglobal:cbv:mda:site']}}</li>
+                    <li class="list-group-item">{{eachInfo['attributes']['urn:epcglobal:cbv:mda#streetAddressOne']}}, {{eachInfo['attributes']['urn:epcglobal:cbv:mda#city']}}</li>
+                    <li class="list-group-item">{{eachInfo['attributes']['urn:epcglobal:cbv:mda#countryCode']}}</li>
+                </ul>
+            </div>
+            <!--</div>-->
+        <!--</div>-->
+    </div>
+<!--<div class="col-lg-3 border border-dark align-content-center ml-3" *ngIf="hierarchialGraph.nodes.length">-->
+    <!--<ngx-graph-->
+        <!--[view]="[350,1000]"-->
+        <!--[autoCenter]="'true'"-->
+        <!--[center$]="center$"-->
+        <!--[nodes]="hierarchialGraph.nodes"-->
+        <!--[links]="hierarchialGraph.links"-->
+        <!--[orientation] = "orientation"-->
+        <!--[curve]="curve"-->
+        <!--[draggingEnabled]="true"-->
+        <!--[panningEnabled]="false"-->
+        <!--[enableZoom]="false"-->
+        <!--(select)="selectNode($event)"-->
+    <!--&gt;-->
+    <!--<ng-template #defsTemplate>-->
+    <!--<svg:marker id="arrow" viewBox="0 -5 10 10" refX="8" refY="0" markerWidth="4" markerHeight="4" orient="auto">-->
+    <!--<svg:path d="M0,-5L10,0L0,5" class="arrow-head" />-->
+    <!--</svg:marker>-->
+    <!--</ng-template>-->
+
+    <!--<ng-template #nodeTemplate let-node>-->
+        <!--<svg:g class="node"-->
+        <!--ngx-tooltip-->
+        <!--[tooltipPlacement]="'top'"-->
+        <!--[tooltipType]="'tooltip'"-->
+        <!--[tooltipTitle]="node.status"-->
+        <!--&gt;-->
+        <!--<svg:rect [attr.width]="node.width" [attr.height]="node.height" [attr.fill]="node.color" />-->
+        <!--<svg:text alignment-baseline="central" [attr.x]="10" [attr.y]="node.height / 2"-->
+            <!--fill="white">{{node.label}}</svg:text>-->
+        <!--</svg:g>-->
+    <!--</ng-template>-->
+
+    <!--<ng-template #linkTemplate let-link>-->
+        <!--<svg:g class="edge">-->
+            <!--<svg:path-->
+                <!--class="line"-->
+            <!--stroke-width="2"-->
+            <!--marker-end="url(#arrow)" >-->
+            <!--</svg:path>-->
+            <!--<svg:text class="edge-label" text-anchor="middle" fill="black">-->
+                <!--<textPath class="text-path" [attr.href]="'#' + link.id" [style.dominant-baseline]="link.dominantBaseline" startOffset="50%" fill="black">-->
+                    <!--{{link.label}}-->
+                <!--</textPath>-->
+            <!--</svg:text>-->
+        <!--</svg:g>-->
+    <!--</ng-template>-->
+    <!--</ngx-graph>-->
+<!--</div>-->
+</div>
+
 <!--<div>-->
-    <!--<pre>{{metaData | json}}</pre>-->
-    <!--<pre>{{trackingInfo | json}}</pre>-->
-    <!--<pre>{{bpInfo | json}}</pre>-->
+<!--<pre>{{hierarchialGraph | json}}</pre>-->
+<!--<pre>{{trackingInfo | json}}</pre>-->
+
 <!--</div>-->

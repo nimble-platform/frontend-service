@@ -44,26 +44,26 @@ export class ProductPriceTabComponent implements OnInit {
     ngOnInit() {
         this.updateDiscountUnits();
 
-        let vatRatesPromise: Promise<any> = Promise.resolve(ProductPriceTabComponent.vatRates);
-        if(ProductPriceTabComponent.vatRates == null) {
-            vatRatesPromise = this.catalogueService.getTaxRates();
-        }
-
-        let userId: string = this.cookieService.get("user_id");
-        let userPartyPromise: Promise<Party> = this.userService.getUserParty(userId);
-
-        Promise.all(
-            [vatRatesPromise, userPartyPromise])
-            .then(([rates, party]) => {
-                ProductPriceTabComponent.vatRates = rates;
-                this.catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent = this.getVatRateForCountry(party);
-
-            }).catch(error => {
-                this.catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent = this.defaultVatRate;
-            });
-
         if(this.catalogueLine.requiredItemLocationQuantity.applicableTaxCategory == null || this.catalogueLine.requiredItemLocationQuantity.applicableTaxCategory.length == 0) {
             this.catalogueLine.requiredItemLocationQuantity.applicableTaxCategory = [new TaxCategory()];
+
+            let vatRatesPromise: Promise<any> = Promise.resolve(ProductPriceTabComponent.vatRates);
+            if(ProductPriceTabComponent.vatRates == null) {
+                vatRatesPromise = this.catalogueService.getTaxRates();
+            }
+
+            let userId: string = this.cookieService.get("user_id");
+            let userPartyPromise: Promise<Party> = this.userService.getUserParty(userId);
+
+            Promise.all(
+                [vatRatesPromise, userPartyPromise])
+                .then(([rates, party]) => {
+                    ProductPriceTabComponent.vatRates = rates;
+                    this.catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent = this.getVatRateForCountry(party);
+
+                }).catch(error => {
+                this.catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent = this.defaultVatRate;
+            });
         }
     }
 

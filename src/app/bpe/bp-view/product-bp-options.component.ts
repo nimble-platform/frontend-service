@@ -21,6 +21,9 @@ import { CookieService } from "ng2-cookies";
 import {ThreadEventMetadata} from '../../catalogue/model/publish/thread-event-metadata';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from '../../globals';
+import {Headers, Http} from "@angular/http";
+import { DomSanitizer } from '@angular/platform-browser';
+
 /**
  * Created by suat on 20-Oct-17.
  */
@@ -53,10 +56,14 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     serviceExpanded: boolean = false;
     public config = myGlobals.config;
 
+    private identityEndpoint = myGlobals.user_mgmt_endpoint;
+    chatURL = this.sanitizer.bypassSecurityTrustResourceUrl(myGlobals.rocketChatEndpoint);
+
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
 
-    constructor(public bpDataService: BPDataService, 
+    constructor(public bpDataService: BPDataService,
+                public sanitizer: DomSanitizer,
                 public catalogueService: CatalogueService, 
                 private searchContextService: SearchContextService,
                 public userService: UserService,
@@ -64,16 +71,38 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 public route: ActivatedRoute,
                 private cookieService: CookieService,
                 private renderer: Renderer2,
+                private http: Http,
                 private modalService: NgbModal) {
         this.renderer.setStyle(document.body, "background-image", "none");
     }
 
+    /**
+     * This function will create a separate chat channel for business negotiations
+     * @param content
+     */
     open(content) {
-        this.modalService.open(content, {}).result.then((result) => {
-            // this.closeResult = `Closed with: ${result}`;
-        }, (reason) => {
-            // this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        });
+
+        let createChannelRequest = {
+            userId: this.cookieService.get("rocket_chat_userID"),
+            userToken: this.cookieService.get("rocket_chat_token"),
+            initiatingPartyID: this.cookieService.get("company_id"),
+            respondingPartyID: this.bpDataService.getCompanySettings().companyID,
+            productName: this.line.goodsItem.item.name[0].value
+        };
+
+        let headers = new Headers({'Content-Type': 'application/json'});
+        const url = `${this.identityEndpoint}/chat/createChannel`;
+        this.http
+            .post(url, JSON.stringify(createChannelRequest), {headers: headers})
+            .toPromise()
+            .then(res => {
+                let channelDetails = res.json();
+                this.chatURL = this.sanitizer.bypassSecurityTrustResourceUrl(myGlobals.rocketChatEndpoint + "/channel/" + channelDetails.channelName);
+                this.modalService.open(content, {})
+            })
+            .catch(e => {
+                alert("Error occurred while creating the channel. Please try again later")
+            })
     }
 
     ngOnInit() {

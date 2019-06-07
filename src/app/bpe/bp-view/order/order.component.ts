@@ -397,10 +397,6 @@ export class OrderComponent implements OnInit {
         return quantityToString(this.order.orderLine[0].lineItem.quantity);
     }
 
-    getTotalPriceText(): string {
-        return this.priceWrapper.totalPriceString;
-    }
-
     getDeliveryPeriodText(): string {
         const qty = this.getLineItem().delivery[0].requestedDeliveryPeriod.durationMeasure;
         return `${qty.value} ${qty.unitCode}`;
