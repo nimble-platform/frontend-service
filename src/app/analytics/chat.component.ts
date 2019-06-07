@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import {  NgbModal, ModalDismissReasons , NgbModalOptions} from '@ng-bootstrap/ng-bootstrap';
 import {rocketChatEndpoint} from "../globals";
+import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
     selector: "chat",
@@ -12,8 +13,9 @@ import {rocketChatEndpoint} from "../globals";
 
 export class ChatComponent implements OnInit {
 
-    rocketChatEndpoint = rocketChatEndpoint;
-    constructor(private modalService: NgbModal) {}
+    chatURL = this.sanitizer.bypassSecurityTrustResourceUrl(rocketChatEndpoint);
+
+    constructor(public sanitizer: DomSanitizer) {}
 
     ngOnInit(): void {
 
