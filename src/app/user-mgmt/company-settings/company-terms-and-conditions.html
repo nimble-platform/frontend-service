@@ -91,7 +91,7 @@
 
     <!-- Actions -->
     <div class="row actions-row space-before">
-        <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-10 call-status-col"><call-status [callStatus]="initPageStatus"></call-status></div>
         <div class="col-2">
             <button class="btn btn-primary action" (click)="onSave()">Save</button>
         </div>
@@ -99,4 +99,4 @@
 </div>
 
 <edit-trading-term-modal [settings]="settings"></edit-trading-term-modal>
-<call-status [callStatus]="callStatus"></call-status>
+<call-status [callStatus]="callStatus" [large]="true"></call-status>

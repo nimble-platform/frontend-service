@@ -23,6 +23,7 @@ export class CompanyTermsAndConditions implements OnInit {
 
     @Input() settings: CompanySettings = null;
 
+    initPageStatus:CallStatus = new CallStatus();
     callStatus:CallStatus = new CallStatus();
 
     // default terms and conditions which are retrieved from the server
@@ -52,7 +53,7 @@ export class CompanyTermsAndConditions implements OnInit {
     }
 
     ngOnInit(): void {
-        this.callStatus.submit();
+        this.initPageStatus.submit();
 
         Promise.all([
             this.unitService.getCachedUnitList(deliveryPeriodUnitListId),
@@ -90,9 +91,9 @@ export class CompanyTermsAndConditions implements OnInit {
             // update the clause ids
             this.removeOrderNumberFromClauseId(this.termsAndConditions);
 
-            this.callStatus.callback("Successfully initialized the page", true);
+            this.initPageStatus.callback("Successfully initialized the page", true);
         }).catch(error => {
-            this.callStatus.error("Error while initializing the page",error);
+            this.initPageStatus.error("Error while initializing the page",error);
         });
     }
 
@@ -222,11 +223,16 @@ export class CompanyTermsAndConditions implements OnInit {
     }
 
     onSave() {
+        this.callStatus.submit();
         // each clause should a have number at the beginning of clause id
         // we use these numbers to sort clauses
         let termsAndConditions = copy(this.termsAndConditions);
+        // check uniqueness of clauses
+        if(!this.checkUniquenessOfClauses(termsAndConditions)){
+            this.callStatus.error("Each clause should have unique title.");
+            return;
+        }
         this.addOrderNumberForClauses(termsAndConditions);
-        this.callStatus.submit();
         // copy the negotiation settings
         let negotiationSettingsCopy = copy(this.settings.negotiationSettings);
         // set the terms and conditions
@@ -241,6 +247,20 @@ export class CompanyTermsAndConditions implements OnInit {
             .catch(error => {
                 this.callStatus.error("Error while saving company negotiation settings.", error);
             });
+    }
+
+    // each clause should have unique id
+    // this method checks the uniqueness of clauses and returns true if each clause has unique id
+    checkUniquenessOfClauses(clauses:Clause[]):boolean{
+        // clause id list
+        let clauseIds = [];
+        for(let clause of clauses){
+            if(clauseIds.indexOf(clause.id) != -1){
+                return false;
+            }
+            clauseIds.push(clause.id);
+        }
+        return true;
     }
 
     // update the clause id by removing the number at the beginning of id
