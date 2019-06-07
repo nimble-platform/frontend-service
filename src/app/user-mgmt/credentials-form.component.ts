@@ -7,6 +7,7 @@ import { CookieService } from 'ng2-cookies';
 import { CallStatus } from '../common/call-status';
 import {copy, selectValueOfTextObject} from '../common/utils';
 import {CategoryService} from '../catalogue/category/category.service';
+import * as constants from "../common/constants";
 //declare var jsSHA: any;
 
 @Component({
@@ -73,7 +74,14 @@ export class CredentialsFormComponent implements OnInit {
 			this.cookieService.set("user_fullname",res.firstname+" "+res.lastname);
 			this.cookieService.set("user_email",res.email);
 			this.cookieService.set("bearer_token",res.accessToken);
-			this.cookieService.set("rocket_chat_token", res.rocketChatToken, undefined, '/');
+
+			// Setting cookie path to root to facilitate the iframe base login
+			if (myGlobals.config.showChat) {
+				this.cookieService.set(constants.chatToken, res.rocketChatToken, undefined, '/');
+				this.cookieService.set(constants.chatUsername, res.rocketChatUsername, undefined, '/');
+				this.cookieService.set(constants.chatUserID, res.rocketChatUserID, undefined, '/');
+			}
+
 			this.submitCallStatus.callback("Login Successful");
 			if (!res.companyID && myGlobals.config.companyRegistrationRequired)
 				this.appComponent.checkLogin("/user-mgmt/company-registration");
@@ -88,7 +96,12 @@ export class CredentialsFormComponent implements OnInit {
 			this.cookieService.delete("active_company_name");
 			this.cookieService.delete("show_welcome");
 			this.cookieService.delete("bearer_token");
-			this.cookieService.delete("rocket_chat_token");
+			this.cookieService.delete(constants.chatToken);
+			this.cookieService.delete(constants.chatUsername);
+			this.cookieService.delete(constants.chatUserID);
+			this.cookieService.delete(constants.chatRCToken);
+			this.cookieService.delete(constants.chatRCID);
+			this.cookieService.delete(constants.chatRCConnect);
 			this.appComponent.checkLogin("");
 			this.submitCallStatus.error("Invalid email or password", error);
 		});

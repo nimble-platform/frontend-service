@@ -51,7 +51,7 @@ export const debug = false;
 
 export const base_path = "http://nimble-dev.ikap.biba.uni-bremen.de";
 export const ub_base = "http://nimble-dev.ikap.biba.uni-bremen.de:10096";
-export const pw_reset_link = "http://keycloak:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+export const pw_reset_link = "http://nimble-dev.ikap.biba.uni-bremen.de:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
 // Base path variables - IBM domain
@@ -98,9 +98,9 @@ export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 
 // TnT Endpoints
 
-export const tntEndpoint = `${bpe_endpoint}/t-t/epc-details`;
-export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
-
+export const tntEndpoint = `${base_path}/tracking`;
+// export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
+export const tntMasterDataEndpoint = `${base_path}/tracking/masterData/id/`;
 
 // Platform Configuration
 
