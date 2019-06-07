@@ -220,6 +220,12 @@ export class CompanyTermsAndConditions implements OnInit {
         this.termsAndConditions.splice(this.termsAndConditions.indexOf(clause),1);
         // update the showSection map
         this.showSection.delete(clause.id);
+
+        // update the value of checkbox
+        let checkbox =  <HTMLInputElement> document.getElementById("default-"+clause.id);
+        if(checkbox){
+            checkbox.checked = false;
+        }
     }
 
     onSave() {

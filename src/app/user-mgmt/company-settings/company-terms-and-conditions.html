@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-3" *ngFor="let clause of defaultTermsAndConditions;let i=index">
             <label>
-                <input type="checkbox" (change)="onClauseSelection(clause,$event.target.checked)">
+                <input id="{{'default-'+clause.id}}" type="checkbox" (change)="onClauseSelection(clause,$event.target.checked)">
                 {{clause.id}}
             </label>
         </div>
