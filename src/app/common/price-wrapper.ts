@@ -76,7 +76,7 @@ export class PriceWrapper {
         return this.totalPrice + this.vatTotal;
     }
 
-    get grossTotalString(): number {
+    get grossTotalString(): string {
         return `${roundToTwoDecimals(this.grossTotal)} ${this.currency}`;
     }
 
