@@ -1,7 +1,7 @@
 <div *ngIf="defaultTermsAndConditions">
 
     <!-- Default Clauses -->
-    <div>Choose clauses:</div>
+    <h5>Choose clauses:</h5>
     <div class="row">
         <div class="col-3" *ngFor="let clause of defaultTermsAndConditions;let i=index">
             <label>
@@ -13,8 +13,8 @@
 
     <br>
 
-    <!-- Update/Add clauses -->
-    <div>Update/Add clauses:</div>
+    <!-- Edit clauses -->
+    <h5>Edit clauses:</h5>
     <div *ngFor="let clause of termsAndConditions;let i=index" class="space-after">
         <!-- Clause Id-->
         <button [ngClass]="'btn btn-primary btn-outline-primary small-button'" (click)="showSection.set(clause.id,!showSection.get(clause.id));setSectionText(clause)">
