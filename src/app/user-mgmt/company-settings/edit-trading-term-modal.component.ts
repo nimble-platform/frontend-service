@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewChild, ElementRef } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import {COUNTRY_NAMES, createText} from '../../common/utils';
+import {copy, COUNTRY_NAMES, createText} from '../../common/utils';
 import {TradingTerm} from '../../catalogue/model/publish/trading-term';
 import {Quantity} from '../../catalogue/model/publish/quantity';
 import {MultiTypeValue} from '../../catalogue/model/publish/multi-type-value';
@@ -49,14 +49,10 @@ export class EditTradingTermModalComponent implements OnInit {
     }
 
     open(tradingTerms:TradingTerm[],clause:Clause, element:any, tradingTerm:TradingTerm = null) {
-        // store the previous id of trading term since we need it if we update a trading term
-        let previousId = null;
         // Edit the given trading term
         if(tradingTerm){
-            // set the previous id
-            previousId = tradingTerm.id;
             // set the trading term
-            this.tradingTerm = tradingTerm;
+            this.tradingTerm = copy(tradingTerm);
         }
         // Create a new trading term
         else{
@@ -71,8 +67,8 @@ export class EditTradingTermModalComponent implements OnInit {
             if(this.tradingTerm.id.charAt(0) != '$'){
                 this.tradingTerm.id = "$" + this.tradingTerm.id;
             }
-            // no previous id means that we create a new one
-            if(!previousId){
+            // no trading term means that we create a new one
+            if(!tradingTerm){
                 // push the created trading term to the list
                 tradingTerms.push(this.tradingTerm);
                 // add the id of trading term to the end of clause content
@@ -86,10 +82,22 @@ export class EditTradingTermModalComponent implements OnInit {
             // update the trading term
             else{
                 // update the clause content
-                clause.content[0].value = clause.content[0].value.replace(previousId, this.tradingTerm.id);
+                clause.content[0].value = clause.content[0].value.replace(tradingTerm.id, this.tradingTerm.id);
                 // update the innerHTML
                 // we use regular expression to update the id of span as well.
-                element.innerHTML = element.innerHTML.replace(new RegExp(previousId.substr(1),'g'),this.tradingTerm.id.substr(1));
+                element.innerHTML = element.innerHTML.replace(new RegExp(tradingTerm.id.substr(1),'g'),this.tradingTerm.id.substr(1));
+            }
+
+            // update the trading term
+            if(tradingTerm){
+                tradingTerm.id = this.tradingTerm.id;
+                tradingTerm.tradingTermFormat = this.tradingTerm.tradingTermFormat;
+                tradingTerm.value.value = this.tradingTerm.value.value;
+                tradingTerm.value.valueQualifier = this.tradingTerm.value.valueQualifier;
+                tradingTerm.value.valueQuantity = this.tradingTerm.value.valueQuantity;
+                tradingTerm.value.valueCode = this.tradingTerm.value.valueCode;
+                tradingTerm.value.valueDecimal = this.tradingTerm.value.valueDecimal;
+                tradingTerm.value.name = this.tradingTerm.value.name;
             }
 
         }, () => {
