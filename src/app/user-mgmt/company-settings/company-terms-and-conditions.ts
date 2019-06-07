@@ -70,6 +70,8 @@ export class CompanyTermsAndConditions implements OnInit {
             // set the default terms and conditions
             if(defaultTermsAndConditions){
                 this.defaultTermsAndConditions = defaultTermsAndConditions;
+                // update the clause ids
+                this.removeOrderNumberFromClauseId(this.defaultTermsAndConditions);
             }
 
             // create sales terms if the company does not have any
@@ -79,6 +81,14 @@ export class CompanyTermsAndConditions implements OnInit {
 
             // copy the terms and conditions
             this.termsAndConditions = copy(this.settings.negotiationSettings.company.salesTerms.termOrCondition);
+            // sort terms and conditions
+            this.termsAndConditions.sort((clause1, clause2) => {
+                let order1 = Number(clause1.id.substring(0,clause1.id.indexOf("_")));
+                let order2 = Number(clause2.id.substring(0,clause2.id.indexOf("_")));
+                return order1 - order2;
+            });
+            // update the clause ids
+            this.removeOrderNumberFromClauseId(this.termsAndConditions);
 
             this.callStatus.callback("Successfully initialized the page", true);
         }).catch(error => {
@@ -202,11 +212,15 @@ export class CompanyTermsAndConditions implements OnInit {
     }
 
     onSave() {
+        // each clause should a have number at the beginning of clause id
+        // we use these numbers to sort clauses
+        let termsAndConditions = copy(this.termsAndConditions);
+        this.addOrderNumberForClauses(termsAndConditions);
         this.callStatus.submit();
         // copy the negotiation settings
         let negotiationSettingsCopy = copy(this.settings.negotiationSettings);
         // set the terms and conditions
-        negotiationSettingsCopy.company.salesTerms.termOrCondition = this.termsAndConditions;
+        negotiationSettingsCopy.company.salesTerms.termOrCondition = termsAndConditions;
         this.userService
             .putCompanyNegotiationSettings(negotiationSettingsCopy, this.settings.companyID)
             .then(() => {
@@ -217,5 +231,21 @@ export class CompanyTermsAndConditions implements OnInit {
             .catch(error => {
                 this.callStatus.error("Error while saving company negotiation settings.", error);
             });
+    }
+
+    // update the clause id by removing the number at the beginning of id
+    // this number represents the order.
+    removeOrderNumberFromClauseId(clauses:Clause[]){
+        for(let clause of clauses){
+            let startIndex = clause.id.indexOf("_");
+            clause.id = clause.id.substring(startIndex+1);
+        }
+    }
+
+    addOrderNumberForClauses(termsAndConditions:Clause[]){
+        let size = termsAndConditions.length;
+        for(let index = 0; index < size; index++){
+            termsAndConditions[index].id = index + 1 + "_" + termsAndConditions[index].id;
+        }
     }
 }
