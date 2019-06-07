@@ -64,10 +64,6 @@ export class PriceWrapper {
         return `${roundToTwoDecimals(amount.value)} ${currencyToString(amount.currencyID)} for ${baseQuantity} ${qty.unitCode}`
     }
 
-    get pricePerBaseQuantity(): number {
-        return this.pricePerItem * this.itemPrice.baseQuantity;
-    }
-
     get vatTotal(): number {
         return this.totalPrice * this.vatPercentage / 100;
     }
@@ -80,8 +76,8 @@ export class PriceWrapper {
         return this.totalPrice + this.vatTotal;
     }
 
-    get grossTotalString(): number {
-        return this.totalPrice + this.vatTotal;
+    get grossTotalString(): string {
+        return `${roundToTwoDecimals(this.grossTotal)} ${this.currency}`;
     }
 
     get currency(): string {
