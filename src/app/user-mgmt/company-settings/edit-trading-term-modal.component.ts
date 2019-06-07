@@ -23,6 +23,8 @@ export class EditTradingTermModalComponent implements OnInit {
 
     // new trading term
     tradingTerm:TradingTerm = null;
+    // ids of the existing trading terms
+    existingTradingTermIds:string[] = [];
 
     // options
     INCOTERMS: string[] = [];
@@ -48,7 +50,9 @@ export class EditTradingTermModalComponent implements OnInit {
 
     }
 
-    open(tradingTerms:TradingTerm[],clause:Clause, element:any, tradingTerm:TradingTerm = null) {
+    open(tradingTerms:TradingTerm[],clause:Clause, element:any,_existingTradingTermIds:string[], tradingTerm:TradingTerm = null) {
+        // set existing trading term ids
+        this.existingTradingTermIds = _existingTradingTermIds;
         // Edit the given trading term
         if(tradingTerm){
             // set the trading term
@@ -151,6 +155,11 @@ export class EditTradingTermModalComponent implements OnInit {
         else if(this.tradingTerm.value.valueQualifier == "CODE"){
             this.tradingTerm.value.valueQualifier = "STRING";
         }
+    }
+
+    idExists():boolean{
+        let id = this.tradingTerm.id.charAt(0) == '$' ? this.tradingTerm.id: "$" + this.tradingTerm.id;
+        return this.existingTradingTermIds.indexOf(id) != -1;
     }
 
 }

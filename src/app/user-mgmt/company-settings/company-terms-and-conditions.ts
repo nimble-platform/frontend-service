@@ -161,12 +161,22 @@ export class CompanyTermsAndConditions implements OnInit {
     // methods used to add/edit/remove trading terms
     onAddTradingTerm(clause:Clause){
         let element = document.getElementById(clause.id);
-        this.editTradingTermModelComponent.open(clause.tradingTerms,clause,element);
+        this.editTradingTermModelComponent.open(clause.tradingTerms,clause,element,this.getExistingTradingTermIds());
     }
 
     onEditTradingTerm(clause:Clause, tradingTerm:TradingTerm){
         let element = document.getElementById(clause.id);
-        this.editTradingTermModelComponent.open(clause.tradingTerms,clause,element, tradingTerm);
+        this.editTradingTermModelComponent.open(clause.tradingTerms,clause,element,this.getExistingTradingTermIds(), tradingTerm);
+    }
+
+    getExistingTradingTermIds():string[]{
+        let tradingTermIds = [];
+        for(let clause of this.termsAndConditions){
+            for(let tradingTerm of clause.tradingTerms){
+                tradingTermIds.push(tradingTerm.id);
+            }
+        }
+        return tradingTermIds;
     }
 
     onRemoveTradingTerm(clause:Clause, tradingTerm:TradingTerm){
