@@ -4,11 +4,11 @@ import { ItemInformationRequest } from "../../../catalogue/model/publish/item-in
 import { CallStatus } from "../../../common/call-status";
 import { BPEService } from "../../bpe.service";
 import { DocumentClause } from "../../../catalogue/model/publish/document-clause";
-import { ItemInformationResponse } from "../../../catalogue/model/publish/item-information-response";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
 import {DocumentService} from "../document-service";
 import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
 import {BPDataService} from '../bp-data-service';
+import {copy} from '../../../common/utils';
 
 @Component({
     selector: 'clause',
@@ -53,20 +53,27 @@ export class ClauseComponent implements OnInit {
                     this.documentService.getRequestForQuotation(result)
                         .then(request => {
                             this.rfq = request;
-                            // get T&C
-                            this.bpeService.getTermsAndConditions(
-                                null,
-                                UBLModelUtils.getPartyId(this.rfq.buyerCustomerParty.party),
-                                UBLModelUtils.getPartyId(this.rfq.sellerSupplierParty.party),
-                                null,
-                                this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms,
-                                this.bpDataService.getCompanySettings().negotiationSettings.paymentTerms[0]
-                            ).then(defaultTermsAndConditions => {
-                                this.defaultTermsAndConditions = defaultTermsAndConditions;
+                            // if the seller company has T&Cs, then use them
+                            if(this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms && this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms.termOrCondition.length > 0){
+                                this.defaultTermsAndConditions = copy(this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms.termOrCondition);
                                 this.clauseDocumentRetrievalStatus.callback("Successfully retrieved request for quotation", true);
-                            }).catch(error => {
-                                this.clauseDocumentRetrievalStatus.error("Failed to retrieve default T&C", error);
-                            });
+                            }
+                            // otherwise, use the default T&Cs
+                            else {
+                                this.bpeService.getTermsAndConditions(
+                                    null,
+                                    UBLModelUtils.getPartyId(this.rfq.buyerCustomerParty.party),
+                                    UBLModelUtils.getPartyId(this.rfq.sellerSupplierParty.party),
+                                    null,
+                                    this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms,
+                                    this.bpDataService.getCompanySettings().negotiationSettings.paymentTerms[0]
+                                ).then(defaultTermsAndConditions => {
+                                    this.defaultTermsAndConditions = defaultTermsAndConditions;
+                                    this.clauseDocumentRetrievalStatus.callback("Successfully retrieved request for quotation", true);
+                                }).catch(error => {
+                                    this.clauseDocumentRetrievalStatus.error("Failed to retrieve default T&C", error);
+                                });
+                            }
                         })
                         .catch(error => {
                             this.clauseDocumentRetrievalStatus.error("Failed to retrieve request for quotation", error);

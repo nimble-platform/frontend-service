@@ -4,7 +4,7 @@ import {Certificate} from "./certificate";
 import {Address} from "./address";
 import {PartyIdentification} from './party-identification';
 import {PartyName} from './party-name';
-import {DEFAULT_LANGUAGE} from '../constants';
+import {TradingPreferences} from './trading-preferences';
 /**
  * Created by suat on 12-May-17.
  */
@@ -18,6 +18,7 @@ export class Party {
         public certificate: Certificate[] = null,
         public partyIdentification: PartyIdentification[] = null,
         public partyName: PartyName[] = null,
+        public salesTerms:TradingPreferences = null
     ) {  }
 
 }
