@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, ViewChild} from "@angular/core";
 import {CookieService} from 'ng2-cookies';
 import {CatalogueService} from "../../catalogue.service";
 import {CallStatus} from "../../../common/call-status";
@@ -18,6 +18,8 @@ import {Observable} from 'rxjs/Observable';
 import {CATALOGUE_LINE_SORT_OPTIONS} from '../../model/constants';
 import {Catalogue} from '../../model/publish/catalogue';
 import { CatalogueLine } from "../../model/publish/catalogue-line";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {DeleteCatalogueModalComponent} from "./delete-catalogue-modal.component";
 
 @Component({
     selector: 'catalogue-view',
@@ -62,6 +64,9 @@ export class CatalogueViewComponent implements OnInit {
     callStatus = new CallStatus();
     deleteStatuses: CallStatus[] = [];
 
+    @ViewChild(DeleteCatalogueModalComponent)
+    private deleteCatalogueModal: DeleteCatalogueModalComponent;
+
     CATALOGUE_LINE_SORT_OPTIONS = CATALOGUE_LINE_SORT_OPTIONS;
 
     private searchText: string = "";
@@ -70,9 +75,7 @@ export class CatalogueViewComponent implements OnInit {
                 private publishService: PublishService,
                 private catalogueService: CatalogueService,
                 private categoryService: CategoryService,
-                private bpDataService: BPDataService,
                 private userService: UserService,
-                private route: ActivatedRoute,
                 private router: Router) {
 
     }
@@ -168,19 +171,21 @@ export class CatalogueViewComponent implements OnInit {
         }
     }
 
-    onDeleteCatalogue(): void {
-        if (confirm("Are you sure that you want to delete your entire catalogue?")) {
-            this.callStatus.submit();
+    onDeleteCatalogue(deleteCatalogueModal): void {
+        this.deleteCatalogueModal.open();
 
-            this.catalogueService.deleteCatalogue().then(res => {
-                    this.callStatus.reset();
-                    this.ngOnInit();
-                },
-                error => {
-                    this.callStatus.error("Failed to delete catalogue", error);
-                }
-            );
-        }
+        // if (confirm("Are you sure that you want to delete your entire catalogue?")) {
+        //     this.callStatus.submit();
+        //
+        //     this.catalogueService.deleteCatalogue().then(res => {
+        //             this.callStatus.reset();
+        //             this.ngOnInit();
+        //         },
+        //         error => {
+        //             this.callStatus.error("Failed to delete catalogue", error);
+        //         }
+        //     );
+        // }
     }
 
     onAddCatalogue(){

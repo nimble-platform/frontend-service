@@ -77,7 +77,6 @@ export class ProductCertificatesTabComponent implements OnInit {
             let country: Country = new Country(new Text(countryName, "en"));
             certificate.country.push(country);
         }
-        console.log(certificate.country);
 
         this.catalogueLine.goodsItem.item.certificate.push(certificate);
         close();

@@ -177,6 +177,20 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
+    deleteCataloguesForParty(catalogueIds:string[]): Promise<any> {
+        const partyId =this.cookieService.get("company_id");
+        let ids: string = '';
+        for(let id of catalogueIds) {
+           ids += id + ","
+        }
+        ids = ids.substr(0, ids.length-1);
+        const url = this.baseUrl + `/catalogue?partyId=${partyId}&ids=${ids}`;
+        return this.http
+            .delete(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .catch(this.handleError);
+    }
+
     downloadTemplate(userId:string, categories: Category[],templateLanguage:string): Promise<any> {
         let taxonomyIds:string = "", categoryIds:string = "";
         for(let category of categories) {
