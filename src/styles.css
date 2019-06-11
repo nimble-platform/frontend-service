@@ -42,6 +42,11 @@ strong {
 /*
 Overwrite default values for Bootstrap buttons.
 */
+
+.btn, .badge {
+  white-space: normal;
+}
+
 .btn.btn-primary {
     color: #fff;
     border-color: #2980b9;

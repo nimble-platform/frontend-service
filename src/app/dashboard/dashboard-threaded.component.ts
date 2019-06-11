@@ -13,6 +13,7 @@ import { DashboardQueryParameters } from "./model/dashboard-query-parameters";
 import { DashboardUser } from "./model/dashboard-user";
 import * as myGlobals from '../globals';
 import {CollaborationGroup} from '../bpe/model/collaboration-group';
+import { Quotation } from "../catalogue/model/publish/quotation";
 
 @Component({
     selector: "dashboard-threaded",
@@ -44,6 +45,7 @@ export class DashboardThreadedComponent implements OnInit {
     updatingCollaborationGroupName = [];
 
     public config = myGlobals.config;
+
 
     constructor(
         private cookieService: CookieService,

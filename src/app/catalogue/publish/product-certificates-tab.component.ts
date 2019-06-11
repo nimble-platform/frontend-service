@@ -8,9 +8,11 @@ import {DocumentReference} from "../model/publish/document-reference";
 import {Attachment} from "../model/publish/attachment";
 import {BinaryObject} from "../model/publish/binary-object";
 import {UBLModelUtils} from "../model/ubl-model-utils";
-import {COUNTRY_NAMES} from "../../common/utils";
+import {COUNTRY_NAMES, getCountrySuggestions, validateCountrySimple} from "../../common/utils";
 import {Country} from "../model/publish/country";
 import {Text} from "../model/publish/text";
+import { Observable } from "rxjs";
+import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
 
 @Component({
     selector: "product-certificates-tab",
@@ -77,13 +79,17 @@ export class ProductCertificatesTabComponent implements OnInit {
             let country: Country = new Country(new Text(countryName, "en"));
             certificate.country.push(country);
         }
-
         this.catalogueLine.goodsItem.item.certificate.push(certificate);
         close();
     }
 
-    onCountrySelected(event) {
-        this.selectedCountries.push(event.target.value);
+    validateCountry (): boolean {
+      return validateCountrySimple(this.countryFormControl.value);
+    }
+
+    onCountrySelected() {
+        this.selectedCountries.push(this.countryFormControl.value);
+        this.countryFormControl.setValue('');
     }
 
     onCountryRemoved(countryName: string) {
@@ -91,8 +97,14 @@ export class ProductCertificatesTabComponent implements OnInit {
         this.countryFormControl.setValue('');
     }
 
+    getSuggestions = (text$: Observable<string>) =>
+      text$.pipe(
+        debounceTime(50),
+        distinctUntilChanged(),
+        map(term => getCountrySuggestions(term))
+      );
+
     getCertificateCountryNames(certificate:Certificate): string[] {
-        console.log(certificate.country);
         let countryNames:string[] = [];
         if(certificate.country == null || certificate.country.length == 0) {
             return countryNames;

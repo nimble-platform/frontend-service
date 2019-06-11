@@ -11,6 +11,7 @@ import {
 } from '@angular/router';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from './globals';
+import * as moment from "moment";
 import {DEFAULT_LANGUAGE} from './catalogue/model/constants';
 
 @Component({
@@ -252,17 +253,18 @@ export class AppComponent implements OnInit {
           }
         }
         let log = {
+          "@timestamp": moment().utc().toISOString(),
           "level": "INFO",
-          "serviceID": "frontendService",
+          "serviceID": "frontend-service",
           "userId": this.userID,
           "companyId": cID,
           "activity": hashBase,
-          "message": {
+          "message": JSON.stringify({
             "params": params
-          }
+          })
         };
         if (this.debug)
-          console.log("Writing log "+log);
+          console.log("Writing log "+JSON.stringify(log));
         this.credentialsService.logUrl(log)
           .then(res => {})
           .catch(error => {});
