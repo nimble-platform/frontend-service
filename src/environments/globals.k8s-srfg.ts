@@ -78,7 +78,7 @@ export const data_aggregation_endpoint=`${base_path}/data-aggregation`;
 export const trust_service_endpoint=`${base_path}/trust`;
 export const indexing_service_endpoint=`${base_path}/indexing-service`;
 export const rocketChatEndpoint = `${base_path}:3000`;
-export const logstash_endpoint = `${base_path}:5000`;
+export const logstash_endpoint = `${base_path}:9200`;
 
 
 // BIBA endpoints

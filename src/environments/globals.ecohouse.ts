@@ -78,7 +78,7 @@ export const data_aggregation_endpoint=`${base_path}/data-aggregation`;
 export const trust_service_endpoint=`${base_path}/trust`;
 export const indexing_service_endpoint=`${base_path}/indexing-service`;
 export const rocketChatEndpoint = `${base_path}:3000`;
-export const logstash_endpoint = `${base_path}:5000`;
+export const logstash_endpoint = `${base_path}:9200`;
 
 
 // BIBA endpoints
@@ -99,8 +99,9 @@ export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 // TnT Endpoints
 
 export const tntEndpoint = `${base_path}/tracking`;
-// export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
+export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
 export const tntMasterDataEndpoint = `${base_path}/tracking/masterData/id/`;
+
 
 // Platform Configuration
 
