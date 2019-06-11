@@ -54,7 +54,7 @@ import {OriginDestinationViewComponent} from './publish/origin-destination-view-
 import {NameDescriptionPanelComponent} from './publish/name-description-panel.component';
 import {LogisticServicePublishComponent} from './publish/logistic-service-publish.component';
 import {LogisticPublishDeactivateGuardService} from './logistic-publish-deactivate-guard.service';
-import {DeleteCatalogueModalComponent} from "./ubl-model-view/catalogue/delete-catalogue-modal.component";
+import {DeleteExportCatalogueModalComponent} from "./ubl-model-view/catalogue/delete-export-catalogue-modal.component";
 
 @NgModule({
 	imports: [CommonModule, 
@@ -81,7 +81,7 @@ import {DeleteCatalogueModalComponent} from "./ubl-model-view/catalogue/delete-c
         ProductPriceTabComponent,
         AdditionalItemPropertyComponent,
         CatalogueViewComponent,
-        DeleteCatalogueModalComponent,
+        DeleteExportCatalogueModalComponent,
         CatalogueLinePanelComponent,
         CatalogueLineViewComponent,
         CatalogueLineDetailsComponent,

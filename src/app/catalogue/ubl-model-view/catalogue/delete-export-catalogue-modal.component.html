@@ -1,6 +1,7 @@
 <ng-template #modal let-c="close" let-d="dismiss">
     <div class="modal-header">
-        <h5 class="modal-title" id="modal-basic-title">Delete Catalogues</h5>
+        <h5 *ngIf="mode == 'delete'" class="modal-title">Delete Catalogues</h5>
+        <h5 *ngIf="mode == 'export'" class="modal-title">Export Catalogues</h5>
         <button type="button" class="close" aria-label="Close" (click)="d('cross')">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -11,11 +12,14 @@
             <input class="id-checkbox" type="checkbox" [(ngModel)]="selectedIdMap[id]">
             <span>{{id}}</span>
         </div>
-        <call-status [callStatus]="catalogueDeleteCallStatus"></call-status>
+        <call-status [callStatus]="catalogueOperationCallStatus"></call-status>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-primary" (click)="onDeleteClicked(d);">
+        <button *ngIf="mode == 'delete'" type="button" class="btn btn-primary" (click)="onDeleteClicked(d);">
             <span>Delete Selected Catalogues</span>
+        </button>
+        <button *ngIf="mode == 'export'" type="button" class="btn btn-primary" (click)="onExportClicked(d);">
+            <span>Export Selected Catalogues</span>
         </button>
     </div>
 </ng-template>

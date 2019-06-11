@@ -18,8 +18,7 @@ import {Observable} from 'rxjs/Observable';
 import {CATALOGUE_LINE_SORT_OPTIONS} from '../../model/constants';
 import {Catalogue} from '../../model/publish/catalogue';
 import { CatalogueLine } from "../../model/publish/catalogue-line";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {DeleteCatalogueModalComponent} from "./delete-catalogue-modal.component";
+import {DeleteExportCatalogueModalComponent} from "./delete-export-catalogue-modal.component";
 
 @Component({
     selector: 'catalogue-view',
@@ -64,8 +63,8 @@ export class CatalogueViewComponent implements OnInit {
     callStatus = new CallStatus();
     deleteStatuses: CallStatus[] = [];
 
-    @ViewChild(DeleteCatalogueModalComponent)
-    private deleteCatalogueModal: DeleteCatalogueModalComponent;
+    @ViewChild(DeleteExportCatalogueModalComponent)
+    private deleteCatalogueModal: DeleteExportCatalogueModalComponent;
 
     CATALOGUE_LINE_SORT_OPTIONS = CATALOGUE_LINE_SORT_OPTIONS;
 
@@ -172,20 +171,7 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     onDeleteCatalogue(deleteCatalogueModal): void {
-        this.deleteCatalogueModal.open();
-
-        // if (confirm("Are you sure that you want to delete your entire catalogue?")) {
-        //     this.callStatus.submit();
-        //
-        //     this.catalogueService.deleteCatalogue().then(res => {
-        //             this.callStatus.reset();
-        //             this.ngOnInit();
-        //         },
-        //         error => {
-        //             this.callStatus.error("Failed to delete catalogue", error);
-        //         }
-        //     );
-        // }
+        this.deleteCatalogueModal.open('delete');
     }
 
     onAddCatalogue(){
@@ -331,25 +317,7 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     onExportCatalogue():void{
-        this.callStatus.submit();
-
-        this.catalogueService.exportCatalogue(this.catalogueService.catalogueResponse.catalogueUuid)
-            .then(result => {
-                    var link = document.createElement('a');
-                    link.id = 'downloadLink';
-                    link.href = window.URL.createObjectURL(result.content);
-                    link.download = result.fileName;
-
-                    document.body.appendChild(link);
-                    var downloadLink = document.getElementById('downloadLink');
-                    downloadLink.click();
-                    document.body.removeChild(downloadLink);
-
-                    this.callStatus.callback("Catalogue is exported");
-                },
-                error => {
-                    this.callStatus.error("Failed to export catalogue");
-                });
+        this.deleteCatalogueModal.open('export');
     }
 
     deleteAllProductImages():void{

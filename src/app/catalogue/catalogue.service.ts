@@ -168,16 +168,7 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
-    deleteCatalogue():Promise<any> {
-        const token = 'Bearer '+this.cookieService.get("bearer_token");
-        const url = this.baseUrl + `/catalogue/ubl/${this.catalogueResponse.catalogueUuid}`;
-        return this.http
-            .delete(url,{headers:new Headers({"Authorization":token})})
-            .toPromise()
-            .catch(this.handleError);
-    }
-
-    deleteCataloguesForParty(catalogueIds:string[]): Promise<any> {
+    deleteCatalogues(catalogueIds:string[]): Promise<any> {
         const partyId =this.cookieService.get("company_id");
         let ids: string = '';
         for(let id of catalogueIds) {
@@ -289,10 +280,16 @@ export class CatalogueService {
         });
     }
 
-    exportCatalogue(catalogueUuid:string): Promise<any> {
+    exportCatalogues(catalogueIds:string[]): Promise<any> {
+        const partyId =this.cookieService.get("company_id");
+        let ids: string = '';
+        for(let id of catalogueIds) {
+            ids += id + ","
+        }
+        ids = ids.substr(0, ids.length-1);
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const languageId = DEFAULT_LANGUAGE();
-        const url = this.baseUrl + `/catalogue/export?uuid=${catalogueUuid}&languageId=${languageId}`;
+        const url = this.baseUrl + `/catalogue/export?ids=${ids}&languageId=${languageId}&partyId=${partyId}`;
         return new Promise<any>((resolve, reject) => {
 
             let xhr = new XMLHttpRequest();
@@ -308,7 +305,12 @@ export class CatalogueService {
                         var contentType = 'application/zip';
                         var blob = new Blob([xhr.response], {type: contentType});
                         // file name
-                        let fileName = catalogueUuid + '_' + new Date().toString();
+                        let fileName = catalogueIds[0];;
+                        if(catalogueIds.length > 1) {
+                            fileName = 'catalogues';
+                        }
+                        fileName = fileName + '_' + new Date().toString();
+
                         resolve({fileName: fileName, content: blob});
                     } else {
                         reject(xhr.status);
