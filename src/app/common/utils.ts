@@ -111,6 +111,13 @@ export function validateCountry(control: AbstractControl): any {
   return null;
 }
 
+export function validateCountrySimple(countryName: string): boolean {
+  if (COUNTRY_NAMES.indexOf(countryName) != -1)
+    return true;
+  else
+    return false;
+}
+
 export function sanitizeLink(link: any): any {
   let parsed_link = "";
   if (link && link != "") {
