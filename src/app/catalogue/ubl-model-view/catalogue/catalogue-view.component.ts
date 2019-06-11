@@ -329,7 +329,7 @@ export class CatalogueViewComponent implements OnInit {
                     this.callStatus.callback("Product images deleted", true);
                 })
                 .catch(error => {
-                    this.callStatus.error("Error while deleting product images");
+                    this.callStatus.error("Error while deleting product images", error);
                 });
         }
     }
