@@ -255,7 +255,7 @@ export class AppComponent implements OnInit {
         let log = {
           "@timestamp": moment().utc().toISOString(),
           "level": "INFO",
-          "serviceID": "frontendService",
+          "serviceID": "frontend-service",
           "userId": this.userID,
           "companyId": cID,
           "activity": hashBase,
