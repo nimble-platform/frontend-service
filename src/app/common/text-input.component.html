@@ -5,12 +5,12 @@
     </div>
 
     <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible && rows > 1">
-        <textarea class="form-control {{valueTextClass}}" [rows]="rows" [(ngModel)]="text" [disabled]="disabled" [maxlength]="maxLength">
+        <textarea class="form-control {{valueTextClass}}" [rows]="rows" [(ngModel)]="text" [disabled]="disabled" [required]="required" [maxlength]="maxLength">
         </textarea>
     </div>
 
     <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible && rows === 1">
-        <input type="text" class="form-control {{valueTextClass}}" [(ngModel)]="text" [disabled]="disabled" [maxlength]="maxLength">
+        <input type="text" class="form-control {{valueTextClass}}" [(ngModel)]="text" [disabled]="disabled"  [required]="required" [maxlength]="maxLength">
     </div>
 
     <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">
@@ -25,4 +25,5 @@
         <button *ngIf="addButtonStyle != ''" class="btn {{addButtonStyle}}"  type="button" (click)="onAddTextInput()">Add</button>
         <button *ngIf="deleteButtonStyle != ''" class="btn {{deleteButtonStyle}} "   type="button" (click)="onDeleteTextInput()" >Delete</button>
     </div>
+
 </div>
