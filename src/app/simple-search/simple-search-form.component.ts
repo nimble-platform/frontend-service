@@ -1209,13 +1209,27 @@ export class SimpleSearchFormComponent implements OnInit {
 		}
 	}
 
+	getFacetName(facet:string):string {
+		var name = facet;
+		for (var i=0; i<this.facetObj.length; i++) {
+			var comp = this.facetObj[i].name;
+			if (comp.localeCompare(facet) == 0) {
+				name = this.facetObj[i].realName;
+			}
+		}
+		return this.getName(name);
+	}
+
 	getFacetQueryName(facet:string):string {
 		var name = facet.split(":")[0];
-		return this.getName(name);
+		name = this.getFacetName(name);
+		return name;
 	}
 
 	getFacetQueryValue(facet:string):string {
 		var value = facet.split(":")[1];
+		value = value.split("@")[0];
+		value = value.replace(/"/g,"");
 		return value;
 	}
 
