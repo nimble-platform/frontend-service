@@ -122,6 +122,13 @@ export class ProductDetailsTabsComponent implements OnInit {
         this.tabStatus.emit(false);
     }
 
+    setTab(data) {
+      if (data) {
+        this.selectedTab = "COMPANY";
+        this.tabStatus.emit(false);
+      }
+    }
+
     getValuesAsString(property: ItemProperty): string[] {
         return getPropertyValuesAsStrings(property);
     }

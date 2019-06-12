@@ -69,7 +69,7 @@
     <!-- Overview Tab -->
     <div *ngIf="selectedTab === 'OVERVIEW'" class="p-3 col-12">
         <h3 class="p-1">Overview</h3>
-        <product-details-overview [wrapper]="wrapper" [options]="options" [readonly]="readonly">
+        <product-details-overview [wrapper]="wrapper" [options]="options" [readonly]="readonly" (compStatus)="setTab($event)">
         </product-details-overview>
     </div>
 
