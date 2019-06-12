@@ -64,13 +64,13 @@ export class CompanyDataSettingsComponent implements OnInit {
       var sectorString = model.getRawValue()['industrySectors'];
       if (Array.isArray(sectorString))
         sectorString = sectorString.join("\n");
-      this.settings.details.legalName =  createTextObject(model.getRawValue()['name']);
-      this.settings.details.brandName = createTextObject(model.getRawValue()['brandName']);
+      this.settings.details.legalName =  createTextObject(model.getRawValue()['name'],"en");
+      this.settings.details.brandName = createTextObject(model.getRawValue()['brandName'],"en");
       this.settings.details.vatNumber =  model.getRawValue()['vatNumber'];
       this.settings.details.verificationInformation =  model.getRawValue()['verificationInformation'];
       this.settings.details.businessType =  model.getRawValue()['businessType'];
-      this.settings.details.industrySectors =  createTextObject(sectorString);
-      this.settings.details.businessKeywords =  createTextObject(model.getRawValue()['businessKeywords']);
+      this.settings.details.industrySectors =  createTextObject(sectorString,"en");
+      this.settings.details.businessKeywords =  createTextObject(model.getRawValue()['businessKeywords'],"en");
       this.settings.details.yearOfCompanyRegistration =  model.getRawValue()['yearOfReg'];
       this.settings.details.address =  model.getRawValue()['address'];
       let compId = this.settings.companyID;
