@@ -52,9 +52,9 @@ export class CatalogueService {
                 .get(url, {headers: this.getAuthorizedHeaders()})
                 .toPromise()
                 .then(res => {
+                    this.catalogueResponse = res.json() as CataloguePaginationResponse;
                     let sorted = this.sortImages(res,"catalogueLines",true);
                     return sorted as CataloguePaginationResponse;
-                    //this.catalogueResponse = res.json() as CataloguePaginationResponse;
                     //return this.catalogueResponse;
                 })
                 .catch(res => {
