@@ -274,10 +274,10 @@
 										<div class="card-body">
 											<div *ngFor="let facetInner of facet.options; let i = index">
 												<div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < 10 || facet.expanded)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> ({{ facetInner.count }})
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> <span *ngIf="facetInner.count>0">({{ facetInner.count }})</span>
 												</div>
 												<div *ngIf="checkFacet(facet.name,facetInner.name) && (i < 10 || facet.expanded)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> ({{ facetInner.count }})
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> <span *ngIf="facetInner.count>0">({{ facetInner.count }})</span>
 												</div>
 											</div>
 											<div *ngIf="facet.options.length>10">

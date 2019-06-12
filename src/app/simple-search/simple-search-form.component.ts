@@ -738,9 +738,6 @@ export class SimpleSearchFormComponent implements OnInit {
 
 		for (let facet in res.facets) {
 			if (this.simpleSearchService.checkField(facet)) {
-				//TO DO: currently only handles manufacturer.legalName facet because there is no way to retrieve item counts related
-				//to other company facets (manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType)
-				if (facet == "legalName") {
 					let propertyLabel = this.getName(facet);
 					let facet_innerLabel;
 					let facet_innerCount;
@@ -757,14 +754,16 @@ export class SimpleSearchFormComponent implements OnInit {
 					for (let facet_inner of res.facets[facet].entry) {
 						facet_innerLabel = facet_inner.label;
 						facet_innerCount = facet_inner.count;
-						let id = manufacturerNameIdMap.get(facet_innerLabel);
-						let itemCountForManufacturer = manufacturerIdCountMap.get(id);
-						facetCount = itemCountForManufacturer;
+						if (facet == "legalName") {
+							let id = manufacturerNameIdMap.get(facet_innerLabel);
+							let itemCountForManufacturer = manufacturerIdCountMap.get(id);
+							facetCount = itemCountForManufacturer;
+						}
 
 						if (facet_innerLabel != "" && facet_innerLabel != ":" && facet_innerLabel != ' ' && facet_innerLabel.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
 							options.push({
-								"name": facet_inner.label, //legalName
-								"realName": facet_innerLabel, // the displayed label
+								"name": facet_inner.label,
+								"realName": facet_innerLabel,
 								"count": facetCount
 							});
 							total += facetCount;
@@ -781,7 +780,8 @@ export class SimpleSearchFormComponent implements OnInit {
 					options.sort(function(a,b){
 						return b.count-a.count;
 					});
-
+					if (total == 0)
+						total = 1;
 					this.facetObj.push({
 						"name": name,
 						"realName": realName,
@@ -790,10 +790,6 @@ export class SimpleSearchFormComponent implements OnInit {
 						"selected": selected,
 						"expanded": false
 					});
-
-				} else {
-					//need to implement the logic to get the correct counts for other company facets ;
-				}
 			}
 		}
 
