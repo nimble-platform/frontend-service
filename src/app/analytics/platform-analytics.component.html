@@ -4,14 +4,16 @@
 
 <div [hidden]="isLoading()" class="space-before">
 
-  <div class="row justify-content-center">
-    <div class="card-body text-left">
-      <h6 class="card-subtitle mb-2 text-muted">User Logins & Registrations</h6>
-      <iframe src="http://nimble-staging.salzburgresearch.at:5601/app/kibana#/dashboard/27836650-8907-11e9-9609-0520e65d66da?embed=true&_g=(refreshInterval%3A(display%3A'30%20minutes'%2Cpause%3A!f%2Csection%3A2%2Cvalue%3A1800000)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
-              height="380px" width="1500px"></iframe>
+  <div class="row">
+    <div class="col">
+    <h6>User Logins & Registrations</h6>
+    <iframe src="http://nimble-staging.salzburgresearch.at:5601/app/kibana#/dashboard/27836650-8907-11e9-9609-0520e65d66da?embed=true&_g=(refreshInterval%3A(display%3A'30%20minutes'%2Cpause%3A!f%2Csection%3A2%2Cvalue%3A1800000)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
+            height="375" width="100%" frameborder="0" class="border"></iframe>
     </div>
   </div>
+
   <hr>
+
   <div class="row justify-content-center">
     <div class="card col-3">
       <div class="card-body text-center">
@@ -53,7 +55,9 @@
       </div>
     </div>
   </div>
+
   <hr>
+
   <div class="row justify-content-center">
     <div class="card col-3">
       <div class="card-body text-center">
@@ -103,6 +107,5 @@
       </div>
     </div>
   </div>
-
 
 </div>
