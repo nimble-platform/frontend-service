@@ -16,6 +16,7 @@ import {LANGUAGES, DEFAULT_LANGUAGE} from '../model/constants';
 })
 export class EditPropertyModalComponent implements OnInit {
 
+    orgProperty: ItemProperty;
     property: ItemProperty;
     selectedProperty: SelectedProperty;
 
@@ -32,6 +33,7 @@ export class EditPropertyModalComponent implements OnInit {
 
     open(property: ItemProperty, selectedProperty: SelectedProperty, ref: any) {
         this.selectedProperty = selectedProperty;
+        this.orgProperty = copy(property);
         this.property = copy(property);
         this.addEmptyValuesToProperty();
         this.modalService.open(this.modal).result.then(() => {
@@ -71,6 +73,22 @@ export class EditPropertyModalComponent implements OnInit {
         if(this.property.valueQuantity.length === 0) {
             this.property.valueQuantity.push(new Quantity());
         }
+    }
+
+    resetValues() {
+      if (this.property.valueQualifier == this.orgProperty.valueQualifier) {
+        this.property.value = this.orgProperty.value;
+        this.property.valueBinary = this.orgProperty.valueBinary;
+        this.property.valueDecimal = this.orgProperty.valueDecimal;
+        this.property.valueQuantity = this.orgProperty.valueQuantity;
+      }
+      else {
+        this.property.value = [];
+        this.property.valueBinary = [];
+        this.property.valueDecimal = [];
+        this.property.valueQuantity = [];
+      }
+      this.addEmptyValuesToProperty();
     }
 
     selectName (ip: ItemProperty | Item) {

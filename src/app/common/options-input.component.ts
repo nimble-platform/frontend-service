@@ -22,10 +22,13 @@ export class OptionsInputComponent implements OnInit {
     @Input() labelMainClass: string = "";
     @Input() rowClass: string = "";
     @Input() valueClass: string; // set based on label
-    
+
     @Input() options: Array<string | Option>;
     private selectedValue: string;
     @Output() selectedChange = new EventEmitter<string>();
+
+    @Input() large: string = "false";
+    innerFormClass = "form-control-sm";
 
     constructor() {
 
@@ -35,6 +38,10 @@ export class OptionsInputComponent implements OnInit {
         if(!this.valueClass) {
             this.valueClass = this.label ? "col-9" : "col-12";
         }
+        if (this.large == "true")
+          this.innerFormClass = "";
+        else
+          this.innerFormClass = "form-control-sm";
     }
 
     @Input()

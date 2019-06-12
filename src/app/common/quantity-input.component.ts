@@ -25,13 +25,15 @@ export class QuantityInputComponent implements OnInit {
     @Input() placeholder: string = "Enter value here...";
     @Input() unitPlaceholder: string = "Unit";
     @Input() valueTextClass: string = "";
-    
+
     @Input() quantity: Quantity;
     @Output() onQuantityValueChange = new EventEmitter<number>();
     @Input() quantityUnits?: string[];
     @Input() quantityType?: string;
     @Input() disableQuantityUnit: boolean = false;
     @Input() step: number = 1;
+    @Input() large: string = "false";
+    innerFormClass = "form-control-sm";
 
     constructor(private unitService: UnitService) {
 
@@ -41,6 +43,11 @@ export class QuantityInputComponent implements OnInit {
         if(!this.valueClass) {
             this.valueClass = this.label ? "col-9" : "col-12";
         }
+
+        if (this.large == "true")
+          this.innerFormClass = "";
+        else
+          this.innerFormClass = "form-control-sm";
 
         if(this.quantityType) {
             this.quantityUnits = ["Loading..."];
