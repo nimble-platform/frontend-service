@@ -184,7 +184,7 @@ export class ProductPublishComponent implements OnInit {
                 // set dimensions and units lists
                 this.dimensions = dimensions;
                 this.dimensionUnits = dimensionUnits;
-
+                this.selectedCatalogueuuid = catalogueResponse.catalogueUuid;
                 this.initView(party, catalogueResponse, settings);
                 this.publishStateService.publishingStarted = true;
                 this.callStatus.callback("Successfully initialized.", true);
@@ -205,7 +205,7 @@ export class ProductPublishComponent implements OnInit {
                 this.selectedCatalogue = catalogueId;
             }
         });
-        this.selectedCatalogueuuid = this.catalogueService.catalogueResponse.catalogueUuid;
+        //this.selectedCatalogueuuid = this.catalogueService.catalogueResponse.catalogueUuid;
 
     }
 
