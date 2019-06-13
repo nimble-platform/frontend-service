@@ -13,9 +13,15 @@ import {COMPANY_LIST_SORT_OPTIONS} from './constants';
 export class CompanyManagementComponent implements OnInit {
 
     registeredCompaniesPage = null;
+    orgCompaniesPage = null;
+    verifiedExpanded = false;
+    verifiedFilter = "";
     registeredCompaniesCallStatus: CallStatus = new CallStatus();
 
     unverifiedCompaniesPage = null;
+    orgUnverifiedCompaniesPage = null;
+    unverifiedExpanded = false;
+    unverifiedFilter = "";
     unverifiedCompaniesCallStatus: CallStatus = new CallStatus();
 
     getNameOfTheCompany = selectPartyName;
@@ -44,11 +50,12 @@ export class CompanyManagementComponent implements OnInit {
 
     updateRegisteredCompanies(requestedPage: number, sortBy?: string, orderBy?: string): void {
         this.analyticsService
-            .getVerifiedCompanies(requestedPage, this.size, sortBy, orderBy)
+            .getVerifiedCompanies(requestedPage, 99999, sortBy, orderBy)
             .then(res => {
                 this.registeredCompaniesCallStatus.callback("Successfully loaded registered companies", true);
-                this.registeredCompaniesPage = res;
-                this.registeredCompaniesPage.number += 1; // number has offset of 1
+                this.orgCompaniesPage = res;
+                this.orgCompaniesPage.number += 1; // number has offset of 1
+                this.filterVerifiedCompanyPage();
             })
             .catch(error => {
                 this.registeredCompaniesCallStatus.error("Error while loading registered companies page", error);
@@ -69,8 +76,9 @@ export class CompanyManagementComponent implements OnInit {
             .getUnverifiedCompanies(requestedPage, sortBy, orderBy)
             .then(res => {
                 this.unverifiedCompaniesCallStatus.callback("Successfully loaded unverified companies", true);
-                this.unverifiedCompaniesPage = res;
-                this.unverifiedCompaniesPage.number += 1; // number has offset of 1
+                this.orgUnverifiedCompaniesPage = res;
+                this.orgUnverifiedCompaniesPage.number += 1; // number has offset of 1
+                this.filterUnverifiedCompanyPage();
             })
             .catch(error => {
                 this.unverifiedCompaniesCallStatus.error("Error while loading unverified companies", error);
@@ -138,5 +146,91 @@ export class CompanyManagementComponent implements OnInit {
         event.preventDefault();
         this.selectedTab = event.target.id;
     }
+
+    toggleVerifiedExpand() {
+      this.verifiedExpanded = !this.verifiedExpanded;
+      this.filterVerifiedCompanyPage();
+    }
+
+    toggleUnverifiedExpand() {
+      this.unverifiedExpanded = !this.unverifiedExpanded;
+      this.filterUnverifiedCompanyPage();
+    }
+
+    filterVerifiedCompanyPage() {
+      this.registeredCompaniesPage = null;
+      let remaining = 99999;
+      if (!this.verifiedExpanded)
+        remaining = this.size;
+      for (let i=0; i<this.orgCompaniesPage.content.length; i++) {
+        if (this.verifiedFilter != "" && remaining > 0) {
+          let name = selectPartyName(this.orgCompaniesPage.content[i].partyName).toLowerCase();
+          let filterLower = this.verifiedFilter.toLowerCase();
+          if (name.indexOf(filterLower) == -1)
+            this.orgCompaniesPage.content[i].display = false;
+          else {
+            this.orgCompaniesPage.content[i].display = true;
+            remaining--;
+          }
+        }
+        else if (remaining > 0) {
+          this.orgCompaniesPage.content[i].display = true;
+          remaining--;
+        }
+        else {
+          this.orgCompaniesPage.content[i].display = false;
+        }
+      }
+      this.buildVerifiedFilteredPage();
+    }
+
+    filterUnverifiedCompanyPage() {
+      this.unverifiedCompaniesPage = null;
+      let remaining = 99999;
+      if (!this.unverifiedExpanded)
+        remaining = this.size;
+      for (let i=0; i<this.orgUnverifiedCompaniesPage.content.length; i++) {
+        if (this.unverifiedFilter != "" && remaining > 0) {
+          let name = selectPartyName(this.orgUnverifiedCompaniesPage.content[i].partyName).toLowerCase();
+          let filterLower = this.unverifiedFilter.toLowerCase();
+          if (name.indexOf(filterLower) == -1)
+            this.orgUnverifiedCompaniesPage.content[i].display = false;
+          else {
+            this.orgUnverifiedCompaniesPage.content[i].display = true;
+            remaining--;
+          }
+        }
+        else if (remaining > 0) {
+          this.orgUnverifiedCompaniesPage.content[i].display = true;
+          remaining--;
+        }
+        else {
+          this.orgUnverifiedCompaniesPage.content[i].display = false;
+        }
+      }
+      this.buildUnverifiedFilteredPage();
+    }
+
+    buildVerifiedFilteredPage() {
+       let tmpPage = JSON.parse(JSON.stringify(this.orgCompaniesPage));
+       let tmpPageContent = [];
+       for (let i=0; i<tmpPage.content.length; i++) {
+         if (tmpPage.content[i].display)
+           tmpPageContent.push(tmpPage.content[i]);
+       }
+       tmpPage.content = tmpPageContent;
+       this.registeredCompaniesPage = tmpPage;
+     }
+
+     buildUnverifiedFilteredPage() {
+        let tmpPage = JSON.parse(JSON.stringify(this.orgUnverifiedCompaniesPage));
+        let tmpPageContent = [];
+        for (let i=0; i<tmpPage.content.length; i++) {
+          if (tmpPage.content[i].display)
+            tmpPageContent.push(tmpPage.content[i]);
+        }
+        tmpPage.content = tmpPageContent;
+        this.unverifiedCompaniesPage = tmpPage;
+      }
 
 }
