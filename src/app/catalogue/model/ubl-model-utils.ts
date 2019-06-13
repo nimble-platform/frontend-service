@@ -58,6 +58,7 @@ import {Attachment} from "./publish/attachment";
 import {LifeCyclePerformanceAssessmentDetails} from "./publish/life-cycle-performance-assessment-details";
 import {PartyName} from './publish/party-name';
 import {MultiTypeValue} from "./publish/multi-type-value";
+import {Clause} from "./publish/clause";
 
 /**
  * Created by suat on 05-Jul-17.
@@ -106,7 +107,7 @@ export class UBLModelUtils {
         // price
         const price: Price = this.createPrice();
         // item location quantity
-        const ilq: ItemLocationQuantity = new ItemLocationQuantity(price, [], [],null);
+        const ilq: ItemLocationQuantity = new ItemLocationQuantity(null, [], price, []);
         return ilq;
     }
 
@@ -260,7 +261,7 @@ export class UBLModelUtils {
         const lineItem: LineItem = this.createLineItem(quantity, price, item);
         const requestForQuotationLine: RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
-        [requestForQuotationLine], negotiationOptions, this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings));
+        [requestForQuotationLine], negotiationOptions, this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), [], []);
 
         // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
         let handlingUnitDimension: Dimension = new Dimension();
@@ -279,7 +280,7 @@ export class UBLModelUtils {
         const lineItem: LineItem = this.createLineItem(quantity, price, item);
         const requestForQuotationLine: RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
-            [requestForQuotationLine], new NegotiationOptions(), null, null);
+            [requestForQuotationLine], new NegotiationOptions(), null, null, null, null);
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = order.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
         rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
@@ -311,7 +312,7 @@ export class UBLModelUtils {
         const requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         const settings = new CompanyNegotiationSettings();
         const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
-            [requestForQuotationLine], new NegotiationOptions(), this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings));
+            [requestForQuotationLine], new NegotiationOptions(), this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), [], []);
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name;
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure = transportExecutionPlanRequest.consignment[0].grossVolumeMeasure;
@@ -332,7 +333,7 @@ export class UBLModelUtils {
     }
 
     public static getDefaultPaymentTerms(settings?: CompanyNegotiationSettings): PaymentTerms {
-        const terms = new PaymentTerms([], [
+        const terms = new PaymentTerms([
             new TradingTerm("Payment_In_Advance",[new Text("Payment in advance")],"PIA", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
             // new TradingTerm("Values_Net","e.g.,NET 10,payment 10 days after invoice date","Net %s",[null]),
             new TradingTerm("End_of_month",[new Text("End of month")],"EOM", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
@@ -688,5 +689,133 @@ export class UBLModelUtils {
             return true;
         }
         return false;
+    }
+
+    public static areQuantitiesEqual(quantity1: Quantity, quantity2: Quantity): boolean {
+        if(quantity1 == null && quantity2 == null) {
+            return true;
+        }
+        if(quantity1 == null || quantity2 == null) {
+            return false;
+        }
+        if(quantity1.value == quantity2.value && quantity1.unitCode == quantity2.unitCode) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static areAmountsEqual(amount1: Amount, amount2: Amount): boolean {
+        if(amount1 == null && amount2 == null) {
+            return true;
+        }
+        if(amount1 == null || amount2 == null) {
+            return false;
+        }
+        if(amount1.value == amount2.value && amount1.currencyID == amount2.currencyID) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static areTermsAndConditionListsDifferent(firstList: Clause[], secondList: Clause[]): boolean {
+        // both null
+        if(firstList == null && secondList == null) {
+            return false;
+        }
+        // one of them is null
+        if(firstList == null || secondList == null) {
+            return true;
+        }
+        // check sizes
+        if(firstList.length != secondList.length) {
+            return true;
+        }
+        // check inner values
+        for(let clause of firstList) {
+            // find the corresponding clause in the passed array
+            let correspondingClause: Clause = null;
+            for(let otherClause of secondList) {
+                if(clause.id == otherClause.id) {
+                    correspondingClause = otherClause;
+                    break;
+                }
+            }
+            // did not found the corresponding clause
+            if(correspondingClause == null) {
+                return true;
+
+            } else {
+                // check the trading terms lists in the clauses
+                // both null
+                if(clause.tradingTerms == null && correspondingClause.tradingTerms == null) {
+                    continue;
+                }
+                // one of them is null
+                if(clause.tradingTerms == null || correspondingClause.tradingTerms == null) {
+                    return true;
+                }
+                // check sizes
+                if(clause.tradingTerms.length != correspondingClause.tradingTerms.length) {
+                    return true;
+                }
+
+                // check the terms themselves
+                for(let term of clause.tradingTerms) {
+                    // find the corresponding clause in the passed array
+                    let correspondingTerm: TradingTerm = null;
+                    for (let otherTerm of correspondingClause.tradingTerms) {
+                        if (term.id == otherTerm.id) {
+                            correspondingTerm = otherTerm;
+                            break;
+                        }
+                    }
+                    // did not found the corresponding term
+                    if(correspondingTerm == null) {
+                        return true;
+
+                    } else {
+                        let qualifier: string = term.value.valueQualifier;
+                        // qualifiers do not match
+                        if(qualifier != term.value.valueQualifier) {
+                            return true;
+                        }
+                        // skip if both values are null
+                        if(term.value == null && correspondingTerm.value == null) {
+                            continue;
+                        }
+
+                        // value existences do not match
+                        if((term.value == null && correspondingTerm.value != null) ||
+                            term.value != null && correspondingTerm.value == null) {
+                            return true;
+                        }
+
+                        // for it is possible to specify single value for terms concerning the terms and conditions
+                        if(qualifier == 'STRING') {
+                            if(term.value.value[0].value != correspondingTerm.value.value[0].value ||
+                                term.value.value[0].languageID != correspondingTerm.value.value[0].languageID) {
+
+                            }
+                        } else if(qualifier == 'NUMBER') {
+                            if(term.value.valueDecimal[0] != correspondingTerm.value.valueDecimal[0]) {
+                                return true;
+                            }
+                        } else if(qualifier == 'QUANTITY') {
+                            if(term.value.valueQuantity[0].value != correspondingTerm.value.valueQuantity[0].value ||
+                                term.value.valueQuantity[0].unitCode != correspondingTerm.value.valueQuantity[0].unitCode) {
+                                return true;
+                            }
+                        } else if(qualifier == 'CODE') {
+                            if(term.value.valueCode[0].value != correspondingTerm.value.valueCode[0].value ||
+                                term.value.valueCode[0].name != correspondingTerm.value.valueCode[0].name) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

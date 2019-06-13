@@ -16,8 +16,10 @@ import { ProcessInstanceInputMessage } from "../../model/process-instance-input-
 import { BPEService } from "../../bpe.service";
 import {CookieService} from 'ng2-cookies';
 import {ItemPriceWrapper} from '../../../common/item-price-wrapper';
-import {BpStartEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
+import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
+import {copy} from "../../../common/utils";
 
 @Component({
     selector: "transport-negotiation-response",
@@ -27,17 +29,18 @@ import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event
 export class TransportNegotiationResponseComponent implements OnInit {
 
     @Input() rfq: RequestForQuotation;
-    rfqPrice: PriceWrapper;
+    rfqPrice: DiscountPriceWrapper;
     rfqPaymentTerms: PaymentTermsWrapper;
 
     @Input() quotation: Quotation;
-    quotationPrice: PriceWrapper;
+    quotationPrice: DiscountPriceWrapper;
     quotationPaymentTerms: PaymentTermsWrapper;
 
     @Input() readonly: boolean = false;
 
     selectedTab: string = "OVERVIEW";
     userRole: BpUserRole;
+    formerProcess: boolean;
 
     callStatus: CallStatus = new CallStatus();
 
@@ -59,23 +62,32 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+        if(!this.bpDataService.bpActivityEvent.newProcess) {
+            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
+        }
+        this.formerProcess = this.bpDataService.bpActivityEvent.formerProcess;
 
         if(!this.rfq) {
             this.rfq = this.bpDataService.requestForQuotation;
         }
-        this.rfqPrice = new PriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
-        this.rfqPrice.quantityPrice = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
+        this.rfqPrice = new DiscountPriceWrapper(
+            this.rfq.requestForQuotationLine[0].lineItem.price,
+            this.rfq.requestForQuotationLine[0].lineItem.price,
+            this.bpDataService.modifiedCatalogueLines[0].requiredItemLocationQuantity.applicableTaxCategory[0].percent);
+        //this.rfqPrice.quotationLinePriceWrapper = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.paymentTerms);
 
         if(!this.quotation) {
             this.quotation = this.bpDataService.quotation;
         }
-        this.quotationPrice = new PriceWrapper(this.quotation.quotationLine[0].lineItem.price);
-        this.quotationPrice.quantityPrice = new ItemPriceWrapper(this.quotation.quotationLine[0].lineItem.price);
+        this.quotationPrice = new DiscountPriceWrapper(
+            this.quotation.quotationLine[0].lineItem.price,
+            this.quotation.quotationLine[0].lineItem.price,
+            this.bpDataService.modifiedCatalogueLines[0].requiredItemLocationQuantity.applicableTaxCategory[0].percent);
+        //this.quotationPrice.quotationLinePriceWrapper = new ItemPriceWrapper(this.quotation.quotationLine[0].lineItem.price);
         this.quotationPaymentTerms = new PaymentTermsWrapper(this.quotation.paymentTerms);
 
-        this.userRole = this.bpDataService.bpStartEvent.userRole;
+        this.userRole = this.bpDataService.bpActivityEvent.userRole;
     }
 
     isDisabled(): boolean {
@@ -119,7 +131,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
             .then(res => {
                 this.callStatus.callback("Quotation sent", true);
                 var tab = "PUCHASES";
-                if (this.bpDataService.bpStartEvent.userRole == "seller")
+                if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })

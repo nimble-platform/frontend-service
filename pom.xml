@@ -134,7 +134,7 @@
                 </executions>
             </plugin>
 
-            <!-- NB: globals may be overwritten during runtime -->
+            <!-- NB: globals and global-styles may be overwritten during runtime -->
 			<plugin>
 				<groupId>com.coderplus.maven.plugins</groupId>
 				<artifactId>copy-rename-maven-plugin</artifactId>
@@ -147,8 +147,16 @@
 						<goal>copy</goal>
 						</goals>
 						<configuration>
-							<sourceFile>${project.basedir}/src/environments/globals.${env}.ts</sourceFile>
-							<destinationFile>${project.basedir}/src/app/globals.ts</destinationFile>
+							<fileSets>
+								<fileSet>
+									<sourceFile>${project.basedir}/src/environments/globals.${env}.ts</sourceFile>
+									<destinationFile>${project.basedir}/src/app/globals.ts</destinationFile>
+								</fileSet>
+								<fileSet>
+									<sourceFile>${project.basedir}/src/environments/global-styles.${env}.css</sourceFile>
+									<destinationFile>${project.basedir}/src/global-styles.css</destinationFile>
+								</fileSet>
+							</fileSets>
 						</configuration>
 					</execution>
 				</executions>

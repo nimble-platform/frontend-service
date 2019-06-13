@@ -87,14 +87,14 @@
                 <small *ngIf="editablePropName && i == 0 &&
                             (quantityFormArray.controls[0]?.controls['propName']?.errors?.required ||
                             quantityFormArray.controls[0]?.errors?.bothValues == false ||
-                            (quantityFormArray.controls[0]?.controls['quantity']?.errors ||
+                            (quantityFormArray.controls[0]?.controls['orderedQuantity']?.errors ||
                             quantityFormArray.controls[0]?.controls['unit']?.errors))"
                        class="offset-3 text-danger">
                     Property name, quantity and unit must be filled
                 </small>
                 <small *ngIf="(!editablePropName || i > 0) &&
                             (quantityFormArray.controls[i]?.errors ||
-                                (quantityFormArray.controls[i]?.controls['quantity']?.errors ||
+                                (quantityFormArray.controls[i]?.controls['orderedQuantity']?.errors ||
                                  quantityFormArray.controls[i]?.controls['unit']?.errors))"
                        class="offset-3 text-danger">
                     Both quantity and unit must be filled

@@ -50,7 +50,7 @@ export const debug = false;
 // Base path variables - BIBA domain
 
 export const base_path = "http://nimble-dev.ikap.biba.uni-bremen.de";
-export const ub_base = "http://nimble-dev.ikap.biba.uni-bremen.de:8090";
+export const ub_base = "http://nimble-dev.ikap.biba.uni-bremen.de:10096";
 export const pw_reset_link = "http://nimble-dev.ikap.biba.uni-bremen.de:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
@@ -78,6 +78,8 @@ export const data_aggregation_endpoint=`${base_path}/data-aggregation`;
 export const trust_service_endpoint=`${base_path}/trust`;
 export const indexing_service_endpoint=`${base_path}/indexing-service`;
 export const rocketChatEndpoint = `${base_path}:3000`;
+export const logstash_endpoint = `${base_path}:9200`;
+export const kibana_endpoint = `${base_path}:5601/app/kibana`;
 
 
 // BIBA endpoints
@@ -97,13 +99,15 @@ export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 
 // TnT Endpoints
 
-export const tntEndpoint = `${bpe_endpoint}/t-t/epc-details`;
+export const tntEndpoint = `${base_path}/tracking`;
 export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
+export const tntMasterDataEndpoint = `${base_path}/tracking/masterData/id/`;
 
 
 // Platform Configuration
 
 export const config = {
+  "platformName": "Eco-House",
   "companyRegistrationRequired": false,
   "categoryFilter": {
     "eClass": {
@@ -118,7 +122,17 @@ export const config = {
     }
   },
   "dataChannelsEnabled" : true,
-  "imprint": "<u>Platform Owner & Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)",
+  "imprint": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Platform Owner</u><br/><b>Universität Bremen / BIBA - Bremer Institut für Produktion und Logistik GmbH</b><br/>Hochschulring 20<br/>28359 Bremen, Germany<br/>Phone: +49.421.218.50166<br/>E-Mail: <a href='mailto:wel1@biba.uni-bremen.de'>wel1@biba.uni-bremen.de</a></td><td class='w-50 p-0 pl-3'><u>Platform Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)</td></tr></table>",
+  "kibanaConfig": {
+    "dashboards": []
+  },
+  "kibanaEnabled": false,
+  "loggingConfig": {
+    "index": "logstash-{DATE}",
+    "type": "doc",
+    "dateFormat": "YYYY.MM.DD"
+  },
+  "loggingEnabled": false,
   "logoPath": "./assets/logo_mvp.png",
   "logoRequired": false,
   "phoneNumberRequired": false,
@@ -136,8 +150,10 @@ export const config = {
   "showTrack": true,
   "showTrade": true,
   "showVerification": true,
+  "standardCurrency": "EUR",
   "standardTaxonomy": "All",
-  "supportedActivitySectors": {
+    "defaultSearchIndex": "Products",
+    "supportedActivitySectors": {
   	"": [],
   	"Logistics Provider": [],
   	"Manufacturer": [],
@@ -181,10 +197,9 @@ export const config = {
       "purchaser",
       "sales_officer"
   ],
-  "supportMail": "nimble-support@salzburgresearch.at",
+  "supportMail": "wel1@biba.uni-bremen.de",
   "supportMailContent": {
-    "en":"Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]",
-    "es":"Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
+    "en":"Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]"
   }
 };
 
@@ -193,6 +208,7 @@ export const config = {
 
 export const product_vendor = "manufacturer";
 export const product_vendor_id = "id";
+export const product_vendor_img = "logoId";
 export const product_vendor_name = "legalName";
 export const product_vendor_rating = "trustRating";
 export const product_vendor_rating_seller = "trustSellerCommunication";
@@ -200,7 +216,7 @@ export const product_vendor_rating_fulfillment = "trustFullfillmentOfTerms";
 export const product_vendor_rating_delivery = "trustDeliveryPackaging";
 export const product_vendor_trust = "trustScore";
 export const product_name = "label";
-export const class_suggestion_field = "classification.allLabels";
+export const class_label = "classification.allLabels";
 export const product_description = "description";
 export const product_img = "imgageUri";
 export const product_price = "price";
@@ -208,13 +224,21 @@ export const product_currency = "currency";
 export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
 export const product_filter_prod = ["freeOfCharge","certificateType","applicableCountries"];
-export const product_filter_comp = ["manufacturer.legalName","manufacturer.origin","manufacturer.certificateType","manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType"];
-export const party_facet_field_list = ["legalName","origin","certificateType","ppapComplianceLevel","ppapDocumentType"];
+export const product_filter_comp = ["manufacturer.legalName","manufacturer.businessType","manufacturer.activitySectors","manufacturer.businessKeywords","manufacturer.origin","manufacturer.certificateType","manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType"];
+export const party_facet_field_list = ["legalName","businessType","activitySectors","businessKeywords","origin","certificateType","ppapComplianceLevel","ppapDocumentType"];
+export const party_filter_main = ["businessType","activitySectors","businessKeywords","origin","certificateType","ppapComplianceLevel","ppapDocumentType"];
+export const party_filter_trust = ["trustScore","trustRating","trustSellerCommunication","trustFullfillmentOfTerms","trustDeliveryPackaging","trustNumberOfTransactions"];
 export const item_manufacturer_id = "manufacturerId";
 export const product_filter_trust = ["manufacturer.trustScore","manufacturer.trustRating","manufacturer.trustSellerCommunication","manufacturer.trustFullfillmentOfTerms","manufacturer.trustDeliveryPackaging","manufacturer.trustNumberOfTransactions"];
 export const product_filter_mappings = {
   "price": "Price",
-  "currency": "Currency"
+  "currency": "Currency",
+  "manufacturer.businessType": "Business Type",
+  "manufacturer.activitySectors": "Activity Sectors",
+  "manufacturer.businessKeywords": "Business Keywords",
+  "businessType": "Business Type",
+  "activitySectors": "Activity Sectors",
+  "businessKeywords": "Business Keywords"
 };
 export const product_nonfilter_full = ["_text_","_version_","id","image","localName","languages","catalogueId","doctype","manufacturerId","manufacturerItemId"];
 export const product_nonfilter_regex = ["lmf.","_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
@@ -223,12 +247,20 @@ export const product_default = {};
 export const facet_min = 1;
 export const facet_count = -1;
 export const query_settings = {
-  "fields": ["STANDARD","commodityClassficationUri","{LANG}_label","{LANG}_desc", class_suggestion_field],
+  "fields": ["STANDARD","commodityClassficationUri","{LANG}_label","{LANG}_desc"],
   "boosting": true,
   "boostingFactors": {
     "STANDARD": 4,
     "commodityClassficationUri": 16,
     "{LANG}_label": 64,
     "{LANG}_desc": -1
+  }
+};
+export const query_settings_comp = {
+  "fields": ["STANDARD","legalName"],
+  "boosting": true,
+  "boostingFactors": {
+    "STANDARD": 4,
+    "legalName": 64
   }
 };

@@ -5,6 +5,7 @@ import { SimpleSearchService } from '../simple-search/simple-search.service';
 import { CategoryService } from '../catalogue/category/category.service';
 import * as myGlobals from '../globals';
 import {selectNameFromLabelObject} from '../common/utils';
+import { DomSanitizer } from "@angular/platform-browser";
 
 @Component({
     selector: "platform-analytics",
@@ -29,9 +30,9 @@ export class PlatformAnalyticsComponent implements OnInit {
     trade_yellow_perc_str = "0%";
     trade_red_perc_str = "0%";
     cat_loading = true;
-    cat_levels = [];    
+    cat_levels = [];
     cat_level = -2;
-	cat = "";    
+	cat = "";
     product_count = 0;
     service_count = 0;
     loadedps = false;
@@ -40,17 +41,29 @@ export class PlatformAnalyticsComponent implements OnInit {
 	categoriesCallStatus: CallStatus = new CallStatus();
 
     product_cat_mix = myGlobals.product_cat_mix;
-	getMultilingualLabel = selectNameFromLabelObject;    
+	getMultilingualLabel = selectNameFromLabelObject;
 	config = myGlobals.config;
+  dashboards = [];
+  selectedTab;
 
     constructor(private analyticsService: AnalyticsService,
         private simpleSearchService: SimpleSearchService,
 		private categoryService: CategoryService,
+    private sanitizer: DomSanitizer
         ) {
 
     }
 
     ngOnInit(): void {
+        this.selectedTab = this.config.kibanaEnabled? "LOG" : "DB";
+        if (this.config.kibanaEnabled) {
+          let tmpDashboards = this.config.kibanaConfig.dashboards;
+          for (let i=0; i<tmpDashboards.length; i++) {
+            let full_url = myGlobals.kibana_endpoint + tmpDashboards[i].url;
+            tmpDashboards[i]["safeUrl"] = this.sanitizer.bypassSecurityTrustResourceUrl(full_url);
+          }
+          this.dashboards = tmpDashboards;
+        }
         this.callStatus.submit();
         this.getCatTree();
         this.analyticsService
@@ -85,7 +98,7 @@ export class PlatformAnalyticsComponent implements OnInit {
 
     private getCatTree(): void {
 		this.categoriesCallStatus.submit();
-		this.simpleSearchService.get("*",[this.product_cat_mix],[""],1,"","")
+		this.simpleSearchService.get("*",[this.product_cat_mix],[""],1,1,"score desc","","", myGlobals.config.defaultSearchIndex)
 		.then(res => {
 			// if res.facets are null, it means that there is no product in the index
 			if (res.facets == null || Object.keys(res.facets).indexOf(this.product_cat_mix) == -1) {
@@ -100,7 +113,7 @@ export class PlatformAnalyticsComponent implements OnInit {
 			this.categoriesCallStatus.error("Error while loading category tree.", error);
 		});
     }
-    
+
 
 	private async buildCatTree(categoryCounts: any[]) {
 		var taxonomy = "eClass";
@@ -189,7 +202,7 @@ export class PlatformAnalyticsComponent implements OnInit {
 				}
 			}
         }
-        
+
         this.cat_levels[0].forEach(catele => {
             if(catele.preferredName != null && catele.preferredName != ''){
                 if(catele.preferredName.toLowerCase().indexOf("service") >= 0){
@@ -202,10 +215,10 @@ export class PlatformAnalyticsComponent implements OnInit {
 
         this.loadedps = true;
         this.cat_loading = false;
-        
+
 
         this.categoriesCallStatus.callback("Categories loaded.", true);
-        
+
 
 	}
 
@@ -219,4 +232,10 @@ export class PlatformAnalyticsComponent implements OnInit {
 		}
 		return labelMap;
 	}
+
+  onSelectTab(event: any): void {
+      event.preventDefault();
+      this.selectedTab = event.target.id;
+  }
+
 }

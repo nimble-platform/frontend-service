@@ -2,7 +2,7 @@ export type PropertyValueQualifier =
  | "INT"
  | "DOUBLE" 
  | "NUMBER" 
- | "BINARY" 
+ | "FILE"
  | "STRING" 
  | "QUANTITY" 
  | "BOOLEAN";

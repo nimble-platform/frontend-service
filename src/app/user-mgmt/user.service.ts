@@ -146,10 +146,8 @@ export class UserService {
     }
 
     getSettingsForProduct(line: CatalogueLine): Promise<CompanySettings> {
-        console.log("Getting settings for product: " + UBLModelUtils.getPartyId(line.goodsItem.item.manufacturerParty));
         return this.getSettingsForParty(UBLModelUtils.getPartyId(line.goodsItem.item.manufacturerParty))
         .then(settings => {
-            //console.log("Settings", settings);
             return settings;
         })
     }
@@ -411,8 +409,9 @@ export class UserService {
             settings.deliveryPeriodRanges.push({ start: 1, end: 40 });
             settings.deliveryPeriodRanges.push({ start: 1, end: 56 });
             settings.deliveryPeriodRanges.push({ start: 0, end: 8 });
+            settings.deliveryPeriodRanges.push({ start: 1, end: 12 });
         }
-        while(settings.deliveryPeriodRanges.length > 4) {
+        while(settings.deliveryPeriodRanges.length > 5) {
             settings.deliveryPeriodRanges.pop();
         }
         if(settings.warrantyPeriodUnits.length === 0) {

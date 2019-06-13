@@ -1,13 +1,15 @@
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
 import { Quotation } from "../../../catalogue/model/publish/quotation";
-import { Amount } from "../../../catalogue/model/publish/amount";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { PaymentTermsWrapper } from "../payment-terms-wrapper";
-import { durationToString } from "../../../common/utils";
-import { PriceWrapper } from "../../../common/price-wrapper";
+import {copy, durationToString, roundToTwoDecimals} from "../../../common/utils";
 import { Address } from "../../../catalogue/model/publish/address";
 import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
+import {TradingTerm} from "../../../catalogue/model/publish/trading-term";
+import {MultiTypeValue} from "../../../catalogue/model/publish/multi-type-value";
+import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
+import {QuotationWrapper} from "./quotation-wrapper";
 
 /**
  * Convenient getters (and some setters) for catalogue line, request for quotations and quotations.
@@ -16,171 +18,190 @@ import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-neg
 export class NegotiationModelWrapper {
 
     public rfqPaymentTerms: PaymentTermsWrapper;
-    public quotationPaymentTerms: PaymentTermsWrapper;
-    public linePriceWrapper: PriceWrapper;
-    public rfqPriceWrapper: PriceWrapper;
-    public quotationPriceWrapper: PriceWrapper;
+    public lineDiscountPriceWrapper: DiscountPriceWrapper; // price wrapper to calculate the discount based on the updated terms
+    public rfqDiscountPriceWrapper: DiscountPriceWrapper;
+    public quotationDiscountPriceWrapper: DiscountPriceWrapper;
 
-    constructor(public line: CatalogueLine,
+    public newQuotationWrapper: QuotationWrapper;
+    public frameContractQuotationWrapper: QuotationWrapper;
+    public lastOfferQuotationWrapper: QuotationWrapper;
+
+    initialImmutableRfq: RequestForQuotation; // immutable rfq object that is used to load manufacturers' terms defined as product defaults
+    initialImmutableCatalogueLine: CatalogueLine; // immutable catalogue line
+
+    constructor(public catalogueLine: CatalogueLine,
                 public rfq: RequestForQuotation,
-                public quotation: Quotation,
+                public newQuotation: Quotation, // quotation object of the current negotiation step instantiated as a result of the rfq. It's supposed to be provided in the negotiation response phase
+                public frameContractQuotation: Quotation, // quotation object associated to a frame contract, if any
+                public lastOfferQuotation: Quotation, // in second or later steps of negotiation, this parameter keeps the quotation coming from the previous step
                 public settings: CompanyNegotiationSettings) {
 
-        this.rfqPaymentTerms = new PaymentTermsWrapper(rfq.paymentTerms);
-        if(quotation) {
-            this.quotationPaymentTerms = new PaymentTermsWrapper(quotation.paymentTerms);
+        if(rfq) {
+            this.initialImmutableRfq = copy(rfq);
+            this.rfqPaymentTerms = new PaymentTermsWrapper(rfq.paymentTerms);
         }
 
-        this.linePriceWrapper = new PriceWrapper(
-            line.requiredItemLocationQuantity.price,
-            rfq.requestForQuotationLine[0].lineItem.quantity,
-            line.priceOption,
-            rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty
-        );
-        this.rfqPriceWrapper = new PriceWrapper(
-            rfq.requestForQuotationLine[0].lineItem.price,
-            rfq.requestForQuotationLine[0].lineItem.quantity,
-            line.priceOption,
-            rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty
-        )
-        if(quotation) {
-            this.quotationPriceWrapper = new PriceWrapper(
-                line.requiredItemLocationQuantity.price,
-                quotation.quotationLine[0].lineItem.quantity,
-                line.priceOption,
+        if(catalogueLine) {
+            this.initialImmutableCatalogueLine = copy(catalogueLine);
+        }
+
+        // discount price wrappers
+        if(catalogueLine && rfq) {
+            // first construct wrappers
+            this.lineDiscountPriceWrapper = new DiscountPriceWrapper(
+                catalogueLine.requiredItemLocationQuantity.price,
+                copy(catalogueLine.requiredItemLocationQuantity.price), // we don't want the original catalogueLine.requiredItemLocationQuantity.price to be updated in price changes
+                catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
+                rfq.requestForQuotationLine[0].lineItem.quantity,
+                catalogueLine.priceOption,
                 rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty,
                 rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms,
                 rfq.paymentMeans.paymentMeansCode.value,
                 rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
                 rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address,
-                quotation.quotationLine[0].lineItem.price
+                //null,
+                //true // disable calculation of discounts
             );
+            this.rfqDiscountPriceWrapper = new DiscountPriceWrapper(
+                catalogueLine.requiredItemLocationQuantity.price,
+                rfq.requestForQuotationLine[0].lineItem.price,
+                catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
+                rfq.requestForQuotationLine[0].lineItem.quantity,
+                catalogueLine.priceOption,
+                rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty,
+                rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms,
+                rfq.paymentMeans.paymentMeansCode.value,
+                rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
+                rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address
+            );
+
+            if(newQuotation) {
+                this.quotationDiscountPriceWrapper = new DiscountPriceWrapper(
+                    catalogueLine.requiredItemLocationQuantity.price,
+                    newQuotation.quotationLine[0].lineItem.price,
+                    catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
+                    newQuotation.quotationLine[0].lineItem.quantity,
+                    catalogueLine.priceOption,
+                    rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty,
+                    rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms,
+                    rfq.paymentMeans.paymentMeansCode.value,
+                    rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
+                    rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address
+                );
+            }
+        }
+
+        if(newQuotation) {
+            this.newQuotationWrapper = new QuotationWrapper(newQuotation, catalogueLine);
+        }
+
+        if(frameContractQuotation) {
+            this.frameContractQuotationWrapper = new QuotationWrapper(frameContractQuotation, catalogueLine);
+        }
+
+        if(lastOfferQuotation) {
+            this.lastOfferQuotationWrapper = new QuotationWrapper(lastOfferQuotation, catalogueLine);
         }
     }
 
-    public get linePricePerItemString(): string {
-        this.updateLinePriceWrapperFields();
-        return this.linePriceWrapper.pricePerItemString;
-    }
-
-    public get lineTotalPrice(): number {
-        return this.linePriceWrapper.totalPrice;
-    }
-
-    public get lineTotalPriceString(): string {
-        this.updateLinePriceWrapperFields();
-        return this.linePriceWrapper.totalPriceString;
-    }
-
-    // before calculating total price for line, we have to update linePriceWrapper fields so that it can calculate discount amount correctly
-    private updateLinePriceWrapperFields(){
-        this.linePriceWrapper.incoterm = this.rfq.negotiationOptions.incoterms ? this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms : this.line.goodsItem.deliveryTerms.incoterms;
-        this.linePriceWrapper.paymentMeans = this.rfq.negotiationOptions.paymentMeans ? this.rfq.paymentMeans.paymentMeansCode.value : this.settings.paymentMeans[0];
-        this.linePriceWrapper.deliveryPeriod = this.rfq.negotiationOptions.deliveryPeriod ? JSON.parse(JSON.stringify(this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure)): this.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
-        this.linePriceWrapper.deliveryLocation = this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
-    }
-
-    public get rfqPricePerItemString(): string {
-        return this.rfqPriceWrapper.pricePerItemString;
-    }
-
-    public get rfqPricePerItemStringIfNegotiating(): string {
-        return this.IfNegotiating(this.rfqPriceWrapper.pricePerItemString, this.rfq.negotiationOptions.price);
-    }
-
-    public get rfqTotalPrice(): number {
-        return this.rfqPriceWrapper.totalPrice;
-    }
-
-    public get rfqTotalPriceString(): string {
-        this.updateRFQPriceWrapperFields()
-        return this.rfqPriceWrapper.totalPriceString;
-    }
-
-    public get rfqTotalPriceStringIfNegotiating(): string {
-        this.updateRFQPriceWrapperFields();
-        return this.IfNegotiating(this.rfqPriceWrapper.totalPriceString, this.rfq.negotiationOptions.price);
-    }
-
-    // before calculating total price for rfq, we have to update rfqPriceWrapper fields so that it can calculate discount amount correctly
-    private updateRFQPriceWrapperFields(){
-        this.rfqPriceWrapper.incoterm = this.rfq.negotiationOptions.incoterms ? this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms : this.line.goodsItem.deliveryTerms.incoterms;
-        this.rfqPriceWrapper.paymentMeans = this.rfq.negotiationOptions.paymentMeans ? this.rfq.paymentMeans.paymentMeansCode.value : this.settings.paymentMeans[0];
-        this.rfqPriceWrapper.deliveryPeriod = this.rfq.negotiationOptions.deliveryPeriod ? JSON.parse(JSON.stringify(this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure)): this.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
-        this.rfqPriceWrapper.deliveryLocation = this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
-    }
-
-    public get quotationPriceAmount(): Amount {
-        return this.quotation.quotationLine[0].lineItem.price.priceAmount;
-    }
-
-    public get rfqQuantity(): Quantity {
-        return this.rfq.requestForQuotationLine[0].lineItem.quantity;
-    }
-
-    public get quotationQuantity(): Quantity {
-        return this.quotation.quotationLine[0].lineItem.quantity;
-    }
+    /**
+     * Getter methods for the line which is updated based on activities of the
+     */
 
     public get lineDeliveryPeriod(): Quantity {
-        return this.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
+        return this.catalogueLine.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
     }
 
     public get lineDeliveryPeriodString(): string {
         return durationToString(this.lineDeliveryPeriod);
     }
 
-    public get rfqDeliveryPeriod(): Quantity {
-        return this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
-    }
-
-    public get rfqDeliveryPeriodString(): string {
-        return durationToString(this.rfqDeliveryPeriod);
-    }
-
-    public get rfqDeliveryPeriodStringIfNegotiating(): string {
-        return this.durationToStringIfNegotiating(this.rfqDeliveryPeriod, this.rfq.negotiationOptions.deliveryPeriod);
-    }
-
-    public get quotationDeliveryPeriod(): Quantity {
-        // update quotation delivery period to calculate price correctly
-        if(this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value && (
-                this.quotationPriceWrapper.deliveryPeriod.value != this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value ||
-                this.quotationPriceWrapper.deliveryPeriod.unitCode != this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode)){
-
-            this.quotationPriceWrapper.deliveryPeriod = JSON.parse(JSON.stringify(this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure));
-            // make this field true so that quotation price will be updated
-            this.quotationPriceWrapper.quotationDeliveryPeriodUpdated = true;
-        }
-        return this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
-    }
-
     public get lineWarranty(): Quantity {
-        return this.line.warrantyValidityPeriod.durationMeasure;
+        return this.catalogueLine.warrantyValidityPeriod.durationMeasure;
     }
 
     public get lineWarrantyString(): string {
         return durationToString(this.lineWarranty);
     }
 
+    public get lineIncoterms(): string {
+        return this.catalogueLine.goodsItem.deliveryTerms.incoterms;
+    }
+
+    public get linePaymentTerms(): string {
+        return this.settings.paymentTerms[0];
+    }
+
+    public get linePaymentMeans(): string {
+        return this.settings.paymentMeans[0];
+    }
+
+    public get lineVatPercentage(): number {
+        return this.catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent;
+    }
+
+    /**
+     * Methods for retrieving terms from the original line
+     */
+
+    public get originalLineDeliveryPeriod(): Quantity {
+        return this.initialImmutableCatalogueLine.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
+    }
+
+    public get originalLineWarranty(): Quantity {
+        return this.initialImmutableCatalogueLine.warrantyValidityPeriod.durationMeasure;
+    }
+
+    public get originalLineIncoterms(): string {
+        return this.initialImmutableCatalogueLine.goodsItem.deliveryTerms.incoterms;
+    }
+
+    public get rfqPricePerItemString(): string {
+        return this.rfqDiscountPriceWrapper.pricePerItemString;
+    }
+
+    public get rfqTotalPriceString(): string {
+        return this.rfqDiscountPriceWrapper.totalPriceString;
+    }
+
+    public get rfqVatTotal(): number {
+        return this.rfqDiscountPriceWrapper.totalPrice * this.lineVatPercentage / 100;
+    }
+
+    public get rfqVatTotalString(): string {
+        return `${this.rfqVatTotal} ${this.rfqDiscountPriceWrapper.itemPrice.currency}`
+    }
+
+    public get rfqGrossTotal(): number {
+        return this.rfqDiscountPriceWrapper.totalPrice + this.rfqVatTotal;
+    }
+
+    public get rfqGrossTotalString(): string {
+        return `${roundToTwoDecimals(this.rfqGrossTotal)} ${this.rfqDiscountPriceWrapper.itemPrice.currency}`
+    }
+
+    public get rfqDeliveryPeriod(): Quantity {
+        return this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
+    }
+
+    public set rfqDeliveryPeriod(quantity: Quantity) {
+        this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = quantity;
+    }
+
+    public get rfqDeliveryPeriodString(): string {
+        return durationToString(this.rfqDeliveryPeriod);
+    }
+
     public get rfqWarranty(): Quantity {
         return this.rfq.requestForQuotationLine[0].lineItem.warrantyValidityPeriod.durationMeasure;
     }
 
+    public set rfqWarranty(quantity: Quantity) {
+        this.rfq.requestForQuotationLine[0].lineItem.warrantyValidityPeriod.durationMeasure = quantity;
+    }
+
     public get rfqWarrantyString(): string {
         return durationToString(this.rfqWarranty);
-    }
-
-    public get rfqWarrantyStringIfNegotiating(): string {
-        return this.durationToStringIfNegotiating(this.rfqWarranty, this.rfq.negotiationOptions.warranty);
-    }
-
-    public get quotationWarranty(): Quantity {
-        return this.quotation.quotationLine[0].lineItem.warrantyValidityPeriod.durationMeasure;
-    }
-
-    public get lineIncoterms(): string {
-        return this.line.goodsItem.deliveryTerms.incoterms;
     }
 
     public get rfqIncoterms(): string {
@@ -191,39 +212,8 @@ export class NegotiationModelWrapper {
         this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms = incoterms;
     }
 
-    public get rfqIncotermsIfNegotiating(): string {
-        return this.IfNegotiating(this.rfqIncoterms, this.rfq.negotiationOptions.incoterms);
-    }
-
-    public get quotationIncoterms(): string {
-        // update quotation incoterm to calculate price correctly
-        if(this.quotationPriceWrapper.incoterm != this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms){
-            this.quotationPriceWrapper.incoterm = this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms;
-            // make this field true so that quotation price will be updated
-            this.quotationPriceWrapper.quotationIncotermUpdated = true;
-        }
-
-        return this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms;
-    }
-
-    public set quotationIncoterms(incoterms: string) {
-        this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms = incoterms;
-    }
-
-    public get linePaymentTerms(): string {
-        return this.settings.paymentTerms[0];
-    }
-
     public get rfqPaymentTermsToString(): string {
         return this.rfqPaymentTerms.paymentTerm;
-    }
-
-    public get rfqPaymentTermsIfNegotiating(): string {
-        return this.IfNegotiating(this.rfqPaymentTerms.paymentTerm, this.rfq.negotiationOptions.paymentTerms);
-    }
-
-    public get linePaymentMeans(): string {
-        return this.settings.paymentMeans[0];
     }
 
     public get rfqPaymentMeans(): string {
@@ -234,37 +224,26 @@ export class NegotiationModelWrapper {
         this.rfq.paymentMeans.paymentMeansCode.value = paymentMeans;
     }
 
-    public get quotationPaymentMeans(): string {
-        // update quotation payment means to calculate quotation price correctly
-        if(this.quotationPriceWrapper.paymentMeans !=  this.quotation.paymentMeans.paymentMeansCode.value){
-            this.quotationPriceWrapper.paymentMeans = this.quotation.paymentMeans.paymentMeansCode.value;
-            // make this field true so that quotation price will be updated
-            this.quotationPriceWrapper.quotationPaymentMeansUpdated = true;
+    public get rfqFrameContractDuration(): Quantity {
+        let tradingTerm: TradingTerm = this.rfq.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
+        if(tradingTerm != null) {
+            return tradingTerm.value.valueQuantity[0];
         }
-        return this.quotation.paymentMeans.paymentMeansCode.value;
+        return null;
     }
 
-    public set quotationPaymentMeans(paymentMeans: string) {
-        this.quotation.paymentMeans.paymentMeansCode.value = paymentMeans;
-    }
-
-    public get rfqPaymentMeansIfNegotiating(): string {
-        return this.IfNegotiating(this.rfqPaymentMeans, this.rfq.negotiationOptions.paymentMeans);
+    public set rfqFrameContractDuration(duration: Quantity) {
+        let tradingTerm: TradingTerm = this.rfq.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
+        if(tradingTerm == null) {
+            tradingTerm = new TradingTerm("FRAME_CONTRACT_DURATION", null, null, new MultiTypeValue());
+            tradingTerm.value.valueQuantity.push(duration)
+            this.rfq.tradingTerms.push(tradingTerm);
+        } else {
+            tradingTerm.value.valueQuantity[0] = duration;
+        }
     }
 
     public get rfqDeliveryAddress(): Address {
         return this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
-    }
-
-    private durationToStringIfNegotiating(qty: Quantity, negotiating: boolean): string {
-        if(!negotiating) {
-            return "";
-        }
-
-        return durationToString(qty);
-    }
-
-    private IfNegotiating(value: string, negotiating: boolean): string {
-        return negotiating ? value : "";
     }
 }

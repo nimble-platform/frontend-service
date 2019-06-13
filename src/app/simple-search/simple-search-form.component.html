@@ -1,15 +1,24 @@
 <form (ngSubmit)="onSubmit()" class="space-before" #simpleSearchForm="ngForm" novalidate>
 
-	<div class="form-group row">
+	<div [hidden]="!searchTopic" class="form-group row">
 		<div class="col-12">
-			<div class="input-group">
-			  <input type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" pattern=".{1,}" placeholder="Product / Service / Company">
-			  <div class="input-group-append">
-					<button type="submit" class="btn btn-outline-secondary" [disabled]="!simpleSearchForm.form.valid">
-						<i class="fa fa-search"></i>
-					</button>
-			  </div>
-			</div>
+				<div class="input-group">
+					<div *ngIf="searchTopic=='prod'" ngbDropdown class="d-inline-block input-group-prepend">
+						<button class="btn btn-outline-dark" type="button" id="searchIndex" ngbDropdownToggle>
+							{{searchIndex}}
+						</button>
+						<div ngbDropdownMenu aria-labelledby="searchIndex">
+							<a *ngFor="let searchIndexName of searchIndexes" class="dropdown-item" (click)="changeSearchIndex(searchIndexName)">{{searchIndexName}}</a>
+						</div>
+					</div>
+					<input *ngIf="searchTopic=='prod'" type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" pattern=".{1,}" placeholder="Product / Service">
+					<input *ngIf="searchTopic=='comp'" type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getCompSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" pattern=".{1,}" placeholder="Company">
+					<div class="input-group-append">
+						<button type="submit" class="btn btn-outline-secondary" [disabled]="!simpleSearchForm.form.valid">
+							<i class="fa fa-search"></i>
+						</button>
+					</div>
+				</div>
 		</div>
 	</div>
 
@@ -21,7 +30,24 @@
 	</div>
 	-->
 
-	<div [hidden]="searchDone">
+	<div [hidden]="searchTopic || searchCallStatus.isLoading()">
+		<div class="row">
+			<div class="card col mr-3 ml-3 pl-0 pr-0 pointer" (click)="setSearchTopic('prod')">
+				<div class="card-body p-2 text-center">
+					<p class="card-text" style="font-size:32px"><i class="fas fa-store"></i></p>
+					<h6 class="card-title mb-0 clickable">Product / Service</h6>
+				</div>
+			</div>
+			<div class="card col mr-3 ml-3 pl-0 pr-0 pointer" (click)="setSearchTopic('comp')">
+				<div class="card-body p-2 text-center">
+					<p class="card-text" style="font-size:32px"><i class="fas fa-building"></i></p>
+					<h6 class="card-title mb-0 clickable">Company</h6>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div *ngIf="false" [hidden]="searchDone">
 		<div class="card border-primary-nimble">
 			<div class="card-header text-white bg-primary-nimble">
 				Categories
@@ -75,22 +101,58 @@
 				</div>
 				<div *ngIf="size>0" class="col-8">
 					<div class="justify-content-center pagination">
-						<ngb-pagination [(collectionSize)]="size" [(page)]="page" [maxSize]="5" [boundaryLinks]="true" (pageChange)="get(objToSubmit)"></ngb-pagination>
+						<ngb-pagination [(collectionSize)]="size" [(page)]="page" [pageSize]="rows" [maxSize]="5" [boundaryLinks]="true" (pageChange)="get(objToSubmit)"></ngb-pagination>
+					</div>
+					<div class="form-group row">
+				    <label class="col-sm-2 col-form-label">Per page:</label>
+				    <div class="col-sm-2">
+				      <select class="form-control" (change)="setRows($event.target.value)">
+								<option value="9" [selected]="rows==9">9</option>
+								<option value="12" [selected]="rows==12">12</option>
+								<option value="18" [selected]="rows==18">18</option>
+								<option value="24" [selected]="rows==24">24</option>
+							</select>
+				    </div>
+						<label class="col-sm-2 col-form-label">Style:</label>
+				    <div class="col-sm-2">
+				      <select class="form-control" (change)="setDisplay($event.target.value)">
+								<option value="list" [selected]="display=='list'">List</option>
+								<option value="panel" [selected]="display=='panel'">Panel</option>
+							</select>
+				    </div>
+						<label class="col-sm-2 col-form-label">Sorting:</label>
+				    <div class="col-sm-2">
+				      <select class="form-control" (change)="setSort($event.target.value)">
+								<option value="score desc" [selected]="sort=='score desc'">Relevance</option>
+								<option *ngIf="searchTopic=='prod'" [value]="getCurrencySort('asc')" [selected]="sort==getCurrencySort('asc')">Price: Asc.</option>
+								<option *ngIf="searchTopic=='prod'" [value]="getCurrencySort('desc')" [selected]="sort==getCurrencySort('desc')">Price: Des.</option>
+								<option *ngIf="searchTopic=='comp'" value="legalName asc" [selected]="sort=='legalName asc'">A to Z</option>
+								<option *ngIf="searchTopic=='comp'" value="trustRating desc" [selected]="sort=='trustRating desc'">Rating</option>
+								<option *ngIf="searchTopic=='comp'" value="trustScore desc" [selected]="sort=='trustScore desc'">Trust</option>
+							</select>
+				    </div>
+				  </div>
+					<div *ngIf="ublProperties">
+						<span *ngFor="let fq of facetQuery">
+							<span class="badge badge-secondary mr-1 mb-2 pointer" (click)="clearFacetQuery(fq)">
+								{{getFacetQueryName(fq)}}: {{getFacetQueryValue(fq)}}
+							</span>
+						</span>
 					</div>
 				</div>
 			</div>
 
-			<div class="row">
+			<div class="row align-items-start">
 				<div class="col-4">
 
 					<div class="row mb-3">
 						<div class="col-12">
-							<button class="btn btn-secondary" [disabled]="cat==''" (click)="setCat('','')">Reset category</button>
-							<button class="btn btn-secondary ml-2" [disabled]="!facetQuery || (facetQuery && facetQuery.length==0)" (click)="resetFilter()">Reset filter</button>
+							<button *ngIf="searchTopic=='prod'" class="btn btn-secondary" [disabled]="cat==''" (click)="setCat('','')">Reset category</button>
+							<button class="btn btn-secondary" [ngClass]="{'ml-2':searchTopic=='prod'}" [disabled]="!facetQuery || (facetQuery && facetQuery.length==0)" (click)="resetFilter()">Reset filter</button>
 						</div>
 					</div>
 
-					<div *ngIf="size>0">
+					<div *ngIf="size>0 && searchTopic=='prod'">
 
 						<!-- category facet panel -->
 						<div class="pointer" (click)="showCatSection=!showCatSection">
@@ -111,20 +173,20 @@
 											<div *ngIf="cat_level==-2&&i==0">
 												<div *ngFor="let lvl of c">
 													<div *ngIf="cat==lvl.name">
-														<span class="clickable" (click)="setCat(lvl.name,lvl.id)"><b>{{ lvl.preferredName }}</b></span> ({{ lvl.count }})
+														<span class="clickable" (click)="setCat('','')" [title]="lvl.preferredName"><b>{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></b></span> ({{ lvl.count }})
 													</div>
 													<div *ngIf="cat!=lvl.name&&cat_level!=i">
-														<span class="clickable" (click)="setCat(lvl.name,lvl.id)">{{ lvl.preferredName }}</span> ({{ lvl.count }})
+														<span class="clickable" (click)="setCat(lvl.name,lvl.id)" [title]="lvl.preferredName">{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></span> ({{ lvl.count }})
 													</div>
 												</div>
 											</div>
 											<div *ngIf="cat_level>=(i-1)">
 												<div *ngFor="let lvl of c">
 													<div *ngIf="cat==lvl.name">
-														<span class="clickable" (click)="setCat(lvl.name,lvl.id)" [style.padding-left.rem]="(i * 1)"><b>{{ lvl.preferredName }}</b></span> ({{ lvl.count }})
+														<span class="clickable" (click)="setCat('','')" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName"><b>{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></b></span> ({{ lvl.count }})
 													</div>
 													<div *ngIf="cat!=lvl.name&&cat_level!=i">
-														<span class="clickable" (click)="setCat(lvl.name,lvl.id)" [style.padding-left.rem]="(i * 1)">{{ lvl.preferredName }}</span> ({{ lvl.count }})
+														<span class="clickable" (click)="setCat(lvl.name,lvl.id)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></span> ({{ lvl.count }})
 													</div>
 												</div>
 											</div>
@@ -212,10 +274,10 @@
 										<div class="card-body">
 											<div *ngFor="let facetInner of facet.options; let i = index">
 												<div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < 10 || facet.expanded)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> ({{ facetInner.count }})
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> <span *ngIf="facetInner.count>0">({{ facetInner.count }})</span>
 												</div>
 												<div *ngIf="checkFacet(facet.name,facetInner.name) && (i < 10 || facet.expanded)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> ({{ facetInner.count }})
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> <span *ngIf="facetInner.count>0">({{ facetInner.count }})</span>
 												</div>
 											</div>
 											<div *ngIf="facet.options.length>10">
@@ -340,35 +402,146 @@
 
 					</div>
 
+					<div *ngIf="size>0 && searchTopic=='comp'">
+
+						<div *ngIf="checkCompMainCatCount()>0">
+
+							<div class="pointer" (click)="showCompSection=!showCompSection">
+								<h5>Company Filters <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up"></i></span></h5>
+							</div>
+
+							<div *ngIf="showCompSection">
+								<div *ngFor="let facet of facetObj">
+									<div *ngIf="facet.total > 0 && checkCompMainCat(facet.name)" class="card mb-3">
+										<div class="card-header">
+											{{ getName(facet.name,product_vendor) }}
+										</div>
+										<div class="card-body">
+											<div *ngFor="let facetInner of facet.options; let i = index">
+												<div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < 10 || facet.expanded)">
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> ({{ facetInner.count }})
+												</div>
+												<div *ngIf="checkFacet(facet.name,facetInner.name) && (i < 10 || facet.expanded)">
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> ({{ facetInner.count }})
+												</div>
+											</div>
+											<div *ngIf="facet.options.length>10">
+												<hr>
+												<span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded">Show more</span><span *ngIf="facet.expanded">Show less</span></span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<hr/>
+
+						</div>
+
+						<div *ngIf="checkCompTrustCatCount()>0">
+
+							<div class="pointer" (click)="showTrustSection=!showTrustSection">
+								<h5>Rating / Trust Filters <span *ngIf="!showTrustSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showTrustSection"><i class="fa fa-angle-double-up"></i></span></h5>
+							</div>
+
+							<div *ngIf="showTrustSection">
+								<div class="card mb-3">
+									<div class="card-header">
+										Rating / Trust
+									</div>
+									<div class="card-body">
+										<div class="mb-2">
+											<div class="mb-2">
+												{{ getName(product_vendor_rating,product_vendor) }}<br/>
+												<ngb-rating [(rate)]="ratingOverall" max="5">
+													<ng-template let-fill="fill">
+														<span class="star star-b" [class.full]="fill === 100">
+															<span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+														</span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+											<div class="mb-2">
+												{{ getName(product_vendor_rating_seller,product_vendor) }}<br/>
+												<ngb-rating [(rate)]="ratingSeller" max="5">
+													<ng-template let-fill="fill">
+														<span class="star star-b" [class.full]="fill === 100">
+															<span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+														</span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+											<div class="mb-2">
+												{{ getName(product_vendor_rating_fulfillment,product_vendor) }}<br/>
+												<ngb-rating [(rate)]="ratingFulfillment" max="5">
+													<ng-template let-fill="fill">
+														<span class="star star-b" [class.full]="fill === 100">
+															<span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+														</span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+											<div class="mb-2">
+												{{ getName(product_vendor_rating_delivery,product_vendor) }}<br/>
+												<ngb-rating [(rate)]="ratingDelivery" max="5">
+													<ng-template let-fill="fill">
+														<span class="star star-b" [class.full]="fill === 100">
+															<span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+														</span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+											<div class="mb-2">
+												{{ getName(product_vendor_trust,product_vendor) }}<br/>
+												<ngb-rating [(rate)]="ratingTrust" max="5">
+													<ng-template let-fill="fill">
+														<span class="heart heart-b" [class.full-heart]="fill === 100">
+															<span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
+														</span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+										</div>
+										<button class="btn btn-primary" (click)="setCompTrustFilter()" [disabled]="!checkTrustFilter()">Apply</button>
+										<button class="btn btn-secondary ml-2" (click)="resetCompTrustFilter()" [hidden]="!checkCompTrustFacet()">Reset</button>
+									</div>
+								</div>
+
+							</div>
+
+						</div>
+
+					</div>
+
 				</div>
 
-				<div class="col-8">
+				<div class="col-8 row pr-0">
 
-					<div *ngFor="let result of response">
-						<div *ngIf="result.uri != null" class="card pointer mb-3">
+					<div *ngFor="let result of response" class="pr-0" [ngClass]="{'col-12':display=='list','col-4':display=='panel'}">
+						<div *ngIf="result.uri != null && searchTopic=='prod'" class="card pointer mb-3">
 							<a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: result.catalogueId, id: result.manufactuerItemId}">
 								<div class="card-body">
 									<div class="row">
-										<div class="col-2 align-center">
+										<div class="align-center" [ngClass]="{'col-2':display=='list','col-12 pb-1':display=='panel'}">
 											<img src="{{imageMap[result.uri]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
 										</div>
-										<div class="col-6">
+										<div [ngClass]="{'col-6':display=='list','col-12 pt-1 pb-1':display=='panel'}">
 											<div style="max-height:1.5rem;overflow:hidden">
 												<span [title]="getMultilingualLabel(result[product_name])"><b>{{ getMultilingualLabel(result[product_name]) }}</b></span>
 											</div>
-											<div style="max-height:3rem;overflow:hidden">
+											<div *ngIf="display=='list'" style="max-height:3rem;overflow:hidden">
 												<span *ngIf="result.description" [title]="getMultilingualLabel(result[product_description])"><small>{{getMultilingualLabel(result[product_description])}}</small></span>
 											</div>
 										</div>
-										<div class="col-2" style="border-right:1px solid rgba(0,0,0,.125)">
+										<div [ngClass]="{'col-2 border-right':display=='list','col-12 border-bottom pt-1 pb-1':display=='panel'}">
 											<span class="badge badge-primary-nimble" *ngIf="result[product_price] && !checkEmpty(result[product_price])">{{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}</span>
 											<span class="badge badge-warning" *ngIf="!result[product_price] || checkEmpty(result[product_price])">Upon request</span><br/>
 										</div>
-										<div *ngIf="result[product_vendor]" class="col-2">
+										<div *ngIf="result[product_vendor]" [ngClass]="{'col-2':display=='list','col-12 pt-1':display=='panel'}">
 											<div style="max-height:1.5rem;overflow:hidden">
 												<span [title]="result[product_vendor][product_vendor_name]"><i>{{ result[product_vendor][product_vendor_name] }}</i></span>
 											</div>
-											<div *ngIf="!checkNaN(result[product_vendor][product_vendor_rating])" (click)= "redirectToRating($event,result); $event.stopPropagation();">
+											<div *ngIf="!checkNaN(result[product_vendor][product_vendor_rating])">
 												<ngb-rating [rate]="calcRating(result[product_vendor][product_vendor_rating],1)" [readonly]="true" max="5">
 													<ng-template let-fill="fill">
 													  <span class="star" [class.full]="fill === 100">
@@ -405,23 +578,76 @@
 												</ngb-rating>
 											</div>
 										</div>
-										<div *ngIf="!result[product_vendor]" class="col-2">
-											<i>Unknown</i>
+										<div *ngIf="!result[product_vendor]" [ngClass]="{'col-2':display=='list','col-12':display=='panel'}">
+											Unknown
 										</div>
-										<!--
-										<div class="col-2 align-right">
-											<span class="badge badge-primary-nimble" *ngIf="result[product_price] && !checkEmpty(result[product_price])">{{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}</span>
-											<span class="badge badge-warning" *ngIf="!result[product_price] || checkEmpty(result[product_price])">Upon request</span><br/>
-										</div>
-										-->
 									</div>
 								</div>
 							</a>
 						</div>
+
+						<div *ngIf="result.uri != null && searchTopic=='comp'" class="card pointer mb-3">
+							<a class="text-std" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: result.id}">
+								<div class="card-body">
+									<div class="row">
+										<div class="align-center" [ngClass]="{'col-2':display=='list','col-12 pb-1':display=='panel'}">
+											<img src="{{imgEndpoint}}{{result[product_vendor_img]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
+										</div>
+										<div [ngClass]="{'col-8 border-right':display=='list','col-12 pt-1 pb-1 border-bottom':display=='panel'}">
+											<div style="max-height:1.5rem;overflow:hidden">
+												<span [title]="result[product_vendor_name]"><b>{{ result[product_vendor_name] }}</b></span>
+											</div>
+											<div *ngIf="display=='list'" style="max-height:3rem;overflow:hidden">
+												<span *ngIf="result.businessType" [title]="result.businessType"><small>{{result.businessType}}</small></span>
+											</div>
+										</div>
+										<div [ngClass]="{'col-2':display=='list','col-12 pt-1':display=='panel'}">
+											<div *ngIf="!checkNaN(result[product_vendor_rating])">
+												<ngb-rating [rate]="calcRating(result[product_vendor_rating],1)" [readonly]="true" max="5">
+													<ng-template let-fill="fill">
+													  <span class="star" [class.full]="fill === 100">
+													    <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+													  </span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+											<div *ngIf="checkNaN(result[product_vendor_rating])">
+												<ngb-rating [rate]="0" [readonly]="true" max="5">
+													<ng-template let-fill="fill">
+													  <span class="star" [class.full]="fill === 100">
+													    <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+													  </span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+											<div *ngIf="!checkNaN(result[product_vendor_trust])">
+												<ngb-rating [rate]="calcRating(result[product_vendor_trust],5)" [readonly]="true" max="5">
+													<ng-template let-fill="fill">
+													  <span class="heart" [class.full-heart]="fill === 100">
+													    <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
+													  </span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+											<div *ngIf="checkNaN(result[product_vendor_trust])">
+												<ngb-rating [rate]="0" [readonly]="true" max="5">
+													<ng-template let-fill="fill">
+													  <span class="heart" [class.full-heart]="fill === 100">
+													    <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
+													  </span>
+													</ng-template>
+												</ngb-rating>
+											</div>
+										</div>
+									</div>
+								</div>
+							</a>
+						</div>
+
 					</div>
 
-					<div *ngIf="size>0" class="justify-content-center pagination">
-						<ngb-pagination [(collectionSize)]="size" [(page)]="page" [maxSize]="5" [boundaryLinks]="true" (pageChange)="get(objToSubmit)"></ngb-pagination>
+					<div *ngIf="size>0" class="justify-content-center pagination col-12 pr-0">
+						<ngb-pagination [(collectionSize)]="size" [(page)]="page" [pageSize]="rows" [maxSize]="5" [boundaryLinks]="true" (pageChange)="get(objToSubmit)"></ngb-pagination>
 					</div>
 
 				</div>

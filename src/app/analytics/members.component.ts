@@ -17,9 +17,12 @@ export class MembersComponent implements OnInit {
 
     config = myGlobals.config;
     registeredCompaniesPage = null;
+    orgCompaniesPage = null;
     registeredCompaniesCallStatus: CallStatus = new CallStatus();
     imgEndpoint = myGlobals.user_mgmt_endpoint+"/company-settings/image/";
-    size = 16;
+    size = 12;
+    expanded = false;
+    filter = "";
 
     getNameOfTheCompany = selectPartyName;
     getLink = sanitizeLink;
@@ -39,7 +42,7 @@ export class MembersComponent implements OnInit {
               this.size = params["size"];
             }
             else {
-              this.size = 16;
+              this.size = 12;
             }
         });
         this.registeredCompaniesCallStatus.submit();
@@ -48,15 +51,59 @@ export class MembersComponent implements OnInit {
 
     updateRegisteredCompanies(requestedPage: number, sortBy?: string, orderBy?: string): void {
         this.analyticsService
-            .getVerifiedCompanies(requestedPage,this.size, sortBy, orderBy)
+            .getVerifiedCompanies(requestedPage,99999, sortBy, orderBy)
             .then(res => {
                 this.registeredCompaniesCallStatus.callback("Successfully loaded registered companies", true);
-                this.registeredCompaniesPage = res;
-                this.registeredCompaniesPage.number += 1; // number has offset of 1
+                this.orgCompaniesPage = res;
+                this.orgCompaniesPage.number += 1; // number has offset of 1
+                this.filterCompanyPage();
             })
             .catch(error => {
                 this.registeredCompaniesCallStatus.error("Error while loading registered companies page", error);
             });
+    }
+
+    toggleExpand() {
+      this.expanded = !this.expanded;
+      this.filterCompanyPage();
+    }
+
+    filterCompanyPage() {
+      this.registeredCompaniesPage = null;
+      let remaining = 99999;
+      if (!this.expanded)
+        remaining = this.size;
+      for (let i=0; i<this.orgCompaniesPage.content.length; i++) {
+        if (this.filter != "" && remaining > 0) {
+          let name = selectPartyName(this.orgCompaniesPage.content[i].partyName).toLowerCase();
+          let filterLower = this.filter.toLowerCase();
+          if (name.indexOf(filterLower) == -1)
+            this.orgCompaniesPage.content[i].display = false;
+          else {
+            this.orgCompaniesPage.content[i].display = true;
+            remaining--;
+          }
+        }
+        else if (remaining > 0) {
+          this.orgCompaniesPage.content[i].display = true;
+          remaining--;
+        }
+        else {
+          this.orgCompaniesPage.content[i].display = false;
+        }
+      }
+      this.buildFilteredPage();
+    }
+
+    buildFilteredPage() {
+      let tmpPage = JSON.parse(JSON.stringify(this.orgCompaniesPage));
+      let tmpPageContent = [];
+      for (let i=0; i<tmpPage.content.length; i++) {
+        if (tmpPage.content[i].display)
+          tmpPageContent.push(tmpPage.content[i]);
+      }
+      tmpPage.content = tmpPageContent;
+      this.registeredCompaniesPage = tmpPage;
     }
 
     getCompanyLogo(ref: any): string {
@@ -86,6 +133,7 @@ export class MembersComponent implements OnInit {
         this.updateRegisteredCompanies(1, selectedSortOption[0].sortBy, selectedSortOption[0].orderBy);
         this.registeredCompaniesCallStatus.submit();
         this.registeredCompaniesPage = null;
+        this.orgCompaniesPage = null;
     }
 
 }

@@ -2,14 +2,14 @@
 
     <!-- Edit checkbox -->
     <div class="col-5">
-        <input type="checkbox" class="form-check-input" [(ngModel)]="cbModel" [id]="id" 
+        <input type="checkbox" class="form-check-input" [(ngModel)]="cbModel" [id]="id"
             [disabled]="disabled || cbDisabled">
         <label class="form-check-label" [for]="id"><strong class="font-weight-500">{{label}}:</strong></label>
     </div>
 
     <!-- Text -->
     <div *ngIf="text !== undefined" class="col-7">
-        <input type="text" class="form-control form-control-sm" [(ngModel)]="text" 
+        <input type="text" class="form-control form-control-sm" [(ngModel)]="text"
             [ngClass]="formControlClass" [disabled]="!cbModel || disabled">
     </div>
 
@@ -23,11 +23,11 @@
 
     <!-- Quantity -->
     <div *ngIf="quantity !== undefined" class="col-4 col-quantity-value">
-        <input type="number" class="form-control form-control-sm" [(ngModel)]="quantity.value"
+        <input type="number" class="form-control form-control-sm" [ngModel]="quantity.value" (ngModelChange)="quantity.value = $event; onQuantityValueChanged()"
             [ngClass]="formControlClass" [disabled]="!cbModel || disabled" step="0.01">
     </div>
     <div *ngIf="quantity !== undefined && !quantityUnits" class="col-3 col-quantity-unit">
-        <input type="text" class="form-control form-control-sm" [(ngModel)]="quantity.unitCode" 
+        <input type="text" class="form-control form-control-sm" [(ngModel)]="quantity.unitCode"
             [disabled]="!cbModel || disabled || disableQuantityUnit">
     </div>
     <div *ngIf="quantity !== undefined && quantityUnits" class="col-3 col-quantity-unit">

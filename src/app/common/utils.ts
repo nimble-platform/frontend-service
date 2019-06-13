@@ -111,6 +111,13 @@ export function validateCountry(control: AbstractControl): any {
   return null;
 }
 
+export function validateCountrySimple(countryName: string): boolean {
+  if (COUNTRY_NAMES.indexOf(countryName) != -1)
+    return true;
+  else
+    return false;
+}
+
 export function sanitizeLink(link: any): any {
   let parsed_link = "";
   if (link && link != "") {
@@ -169,11 +176,13 @@ function isItemProperty(property: any): property is ItemProperty {
  * If the label is not a json object, then the label itself is returned
  * @param label
  */
-export function selectNameFromLabelObject(label: any): string {
+export function selectNameFromLabelObject(label: any,lang?:string): string {
     if(label == null) {
         return "";
     }
     let defaultLanguage = DEFAULT_LANGUAGE();
+    if (lang)
+      defaultLanguage = lang;
     if(label[defaultLanguage] != null) {
         return label[defaultLanguage];
     }
@@ -187,8 +196,10 @@ export function selectNameFromLabelObject(label: any): string {
     }
 }
 
-export function selectPreferredName (cp: Category | Property) {
+export function selectPreferredName (cp: Category | Property,lang?:string) {
     let defaultLanguage = DEFAULT_LANGUAGE();
+    if (lang)
+      defaultLanguage = lang;
     let englishName = null;
     for (let pName of cp.preferredName) {
         if(pName.languageID === defaultLanguage) {
@@ -208,9 +219,11 @@ export function selectPreferredName (cp: Category | Property) {
 
 // returns the all values for the default language of the browser
 // if there's no value for the defualt language of the browser, then returns english values if possible
-export function selectPreferredValues(texts:Text[]): string[]{
+export function selectPreferredValues(texts:Text[],lang?:string): string[]{
     let values = [];
     let defaultLanguage = DEFAULT_LANGUAGE();
+    if (lang)
+      defaultLanguage = lang;
     let englishValues = [];
     for (let text of texts) {
         if(text.languageID === defaultLanguage) {
@@ -236,8 +249,10 @@ export function selectPreferredValues(texts:Text[]): string[]{
 }
 
 // return the value for the default language of the browser
-export function selectPreferredValue(texts:Text[]):string{
+export function selectPreferredValue(texts:Text[],lang?:string):string{
     let defaultLanguage = DEFAULT_LANGUAGE();
+    if (lang)
+      defaultLanguage = lang;
     let englishValue = null;
     for (let text of texts) {
         if(text.languageID === defaultLanguage) {
@@ -258,8 +273,10 @@ export function selectPreferredValue(texts:Text[]):string{
       return '';
 }
 
-export function selectName (ip: ItemProperty | Item) {
+export function selectName (ip: ItemProperty | Item,lang?:string) {
     let defaultLanguage = DEFAULT_LANGUAGE();
+    if (lang)
+      defaultLanguage = lang;
     let englishName = null;
     for (let pName of ip.name) {
         if(pName.languageID === defaultLanguage) {
@@ -282,8 +299,10 @@ export function selectName (ip: ItemProperty | Item) {
 
 // textObject represents an object which contains languageId-value pairs
 // this function is used to get value according to the default language of browser
-export function selectValueOfTextObject(textObject): string{
+export function selectValueOfTextObject(textObject,lang?:string): string{
     let defaultLanguage = DEFAULT_LANGUAGE();
+    if (lang)
+      defaultLanguage = lang;
     let englishName = null;
     // get the keys
     let keys = Object.keys(textObject);
@@ -310,16 +329,20 @@ export function selectValueOfTextObject(textObject): string{
 
 // for the given value, it creates a languageId-value pair.
 // for now, languageId is the default language of the browser
-export function createTextObject(value:string):Object{
+export function createTextObject(value:string,lang?:string):Object{
     let defaultLanguage = DEFAULT_LANGUAGE();
+    if (lang)
+      defaultLanguage = lang;
     let textObject = {};
     textObject[defaultLanguage] = value;
     return textObject;
 }
 
 // For the given PartyName array, it finds the correct name of the party according to the default language of the browser.
-export function selectPartyName(partyNames:PartyName[]):string{
+export function selectPartyName(partyNames:PartyName[],lang?:string):string{
     let defaultLanguage = DEFAULT_LANGUAGE();
+    if (lang)
+      defaultLanguage = lang;
     let englishName = null;
     for(let partyName of partyNames){
         // if the party has a name for the default language of the browser, return it
@@ -342,16 +365,20 @@ export function selectPartyName(partyNames:PartyName[]):string{
     return "";
 }
 
-export function createText (value: string): Text {
-    let language = DEFAULT_LANGUAGE();
-    return new Text(value, language);
+export function createText (value: string,lang?:string): Text {
+    let defaultLanguage = DEFAULT_LANGUAGE();
+    if (lang)
+      defaultLanguage = lang;
+    return new Text(value, defaultLanguage);
 }
 
-export function selectDescription (item:  Item) {
+export function selectDescription (item:  Item,lang?:string) {
     if(item.description.length == 0){
         return null;
     }
     let defaultLanguage = DEFAULT_LANGUAGE();
+    if (lang)
+      defaultLanguage = lang;
     let englishName = null;
     for (let pName of item.description) {
         if(pName.languageID === defaultLanguage) {
@@ -368,12 +395,13 @@ export function selectDescription (item:  Item) {
     return item.description[0].value;
 }
 
-export function selectItemPropertyValuesAsString (ip: ItemProperty, language: string): string[] {
-    if (language === null)
-        language = DEFAULT_LANGUAGE();
+export function selectItemPropertyValuesAsString (ip: ItemProperty, lang?: string): string[] {
+    let defaultLanguage = DEFAULT_LANGUAGE();
+    if (lang)
+      defaultLanguage = lang;
     let result : string[] = [];
     for (let pValue of ip.value) {
-        if(pValue.languageID === language) {
+        if(pValue.languageID === defaultLanguage) {
             result.push(pValue.value);
         }
     }
@@ -467,10 +495,28 @@ export function getFileExtension(filename: string): string {
 }
 
 export function roundToTwoDecimals(value): any{
-    if (!isNaN(value) && value !== null) {
-        return (Math.round(parseFloat(value) * 100) / 100).toFixed(2);
+    if (!isNaN(value) && value !== null && value != 0) {
+        // round to minimum possible decimal >= 2
+        let roundedValue: number = 0;
+        let power = 1;
+        do {
+            power++;
+            roundedValue = Math.round(value * Math.pow(10, power)) / Math.pow(10, power);
+        } while(roundedValue == 0);
+
+        return roundedValue.toFixed(power);
     }
     return value;
+}
+
+export function trimRedundantDecimals(value: number): number {
+    let roundedValue: number = 0;
+    let power = -1;
+    do {
+        power++;
+        roundedValue = Math.round(value * Math.pow(10, power)) / Math.pow(10, power);
+    } while(roundedValue == 0);
+    return roundedValue;
 }
 
 export function isNaNNullAware(number: number): boolean {
@@ -521,7 +567,7 @@ export function getPropertyValues(property: ItemProperty): any[] {
         case "DOUBLE":
         case "NUMBER":
             return property.valueDecimal;
-        case "BINARY":
+        case "FILE":
             return property.valueBinary;
         case "QUANTITY":
             return property.valueQuantity;
@@ -537,7 +583,7 @@ export function getPropertyValuesAsStrings(property: ItemProperty): string[] {
         case "DOUBLE":
         case "NUMBER":
             return property.valueDecimal.map(num => String(num));
-        case "BINARY":
+        case "FILE":
             return property.valueBinary.map(bin => bin.fileName);
         case "QUANTITY":
             return property.valueQuantity.map(qty => `${qty.value} ${qty.unitCode}`);

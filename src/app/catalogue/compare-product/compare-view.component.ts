@@ -30,7 +30,7 @@ export class CompareViewComponent implements OnInit {
 
     catalogueResponse: Array<CatalogueLine>;
 	itemTypeResponse: any = [];
-    itemTypeResponse_first: any = [];	
+    itemTypeResponse_first: any = [];
     settings: CompanySettings;
 	ublProperties = null;
 
@@ -50,9 +50,9 @@ export class CompareViewComponent implements OnInit {
     // check whether catalogue-line-panel should be displayed for a specific catalogue line
 	catalogueLineView = {};
     catalogueLineView_first = {};
-	
+	searchIndex = myGlobals.config.defaultSearchIndex;
 
-    sortOption = null;
+	sortOption = null;
     model = new Search('');
 	facetQuery: any;
     catLine1: any;
@@ -62,7 +62,7 @@ export class CompareViewComponent implements OnInit {
     callStatus = new CallStatus();
     deleteStatuses: CallStatus[] = [];
 	imageMap: any = {};
-	imageMap_first: any = {};	
+	imageMap_first: any = {};
 	facetObj: any;
 	temp: any;
 	hari = false;
@@ -71,7 +71,7 @@ export class CompareViewComponent implements OnInit {
 	searchText_first:string = "";
     status = 1;
 	hasFavourite = false;
-	hasFavourite_first = false;	
+	hasFavourite_first = false;
     indexItem = 0;
 	favouriteIdList=[];
 	showDetails=false;
@@ -97,13 +97,13 @@ export class CompareViewComponent implements OnInit {
 	comapanyList_first = {};
 	catLineList = {};
 	catLineList_first = {};
-	selectedCurrency: any = "EUR";
+	selectedCurrency: any = myGlobals.config.standardCurrency;
 	initial = true;
 	firstSearch = false;
 	secondeSearch = false;
 	manufacturerIdCountMap : any;
 	favouriteItemIds: string[] = [];
-    addFavoriteCategoryStatus: CallStatus = new CallStatus();	
+    addFavoriteCategoryStatus: CallStatus = new CallStatus();
 
 
 
@@ -124,7 +124,7 @@ export class CompareViewComponent implements OnInit {
         for(let i = 0; i < this.pageSize; i++) {
             this.deleteStatuses.push(new CallStatus());
 		}
-		
+
 		let userId = this.cookieService.get("user_id");
         this.callStatus.submit();
         this.userService.getPerson(userId)
@@ -150,9 +150,11 @@ export class CompareViewComponent implements OnInit {
 		return (Object.keys(obj).length === 0);
 	}
 
-	getCurrency(price: any): string {
+  getCurrency(price: any): string {
 		if (price[this.selectedCurrency])
 			return this.selectedCurrency;
+		if (this.selectedCurrency != myGlobals.config.standardCurrency && price[myGlobals.config.standardCurrency])
+			return myGlobals.config.standardCurrency;
 		if (this.selectedCurrency != "EUR" && price["EUR"])
 			return "EUR";
 		return Object.keys(price)[0];
@@ -163,10 +165,10 @@ export class CompareViewComponent implements OnInit {
       debounceTime(200),
       distinctUntilChanged(),
       switchMap(term =>
-        this.simpleSearchService.getSuggestions(term,("{LANG}_"+this.product_name))
+        this.simpleSearchService.getSuggestions(term,("{LANG}_"+this.product_name), this.searchIndex)
       )
 	);
-	
+
 	searchFavouriteSearch_first(){
 			this.catalogueLinesArray_first = [];
 			this.firstSearch = true;
@@ -179,7 +181,7 @@ export class CompareViewComponent implements OnInit {
       debounceTime(200),
       distinctUntilChanged(),
       switchMap(term =>
-        this.simpleSearchService.getSuggestions(term,("{LANG}_"+this.product_name))
+        this.simpleSearchService.getSuggestions(term,("{LANG}_"+this.product_name), this.searchIndex)
       )
 	);
 
@@ -396,7 +398,7 @@ export class CompareViewComponent implements OnInit {
 		this.simpleSearchService.getFields()
 			.then(res => {
 				let fieldLabels: string [] = this.getFieldNames(res);
-				this.simpleSearchService.get(q, Object.keys(fieldLabels),[],this.page,"",this.sortOption)
+				this.simpleSearchService.get(q, Object.keys(fieldLabels),[],this.page,10,"score desc","",this.sortOption, myGlobals.config.defaultSearchIndex)
 					.then(res => {
 						if (res.result.length == 0) {
 							this.searchFavouriteCallStatus.callback("Search done.", true);
@@ -574,7 +576,7 @@ export class CompareViewComponent implements OnInit {
 				this.catalogueLineView[this.itemTypeResponse[i].localName] = false;
 			}
 		}
-	
+
     }
 
     onOpenCatalogueLine(e: Event) {
@@ -622,7 +624,7 @@ export class CompareViewComponent implements OnInit {
 
 		});
 	}
-	
+
 	viewCatalogueLine_first(cat : any, index : number){
 		this.catalogueService.getCatalogueLineByHjid(cat.localName).then(res => {
 			this.catLineList_first[cat.localName] = res;
@@ -640,7 +642,7 @@ export class CompareViewComponent implements OnInit {
         found = (this.favouriteItemIds.indexOf(itemId.toString()) !== -1) ? true : false;
         return found;
 	}
-	
+
 	removeFavorites(hjid: any) {
         if (!this.addFavoriteCategoryStatus.isLoading()) {
           let itemidList = [];

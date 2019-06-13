@@ -43,11 +43,13 @@
         <div class="col-12 d-flex flex-wrap">
             <div *ngFor="let image of catalogueLine.goodsItem.item.productImage; let i = index" class="add-image">
                 <img class="image-small img-thumbnail" src="data:{{image.mimeCode}};base64,{{image.value}}" />
+                <i *ngIf="i>0" class="fa fa-chevron-circle-left decrease-index" (click)="onDecreaseIndex(i)"></i>
+                <i *ngIf="i<catalogueLine.goodsItem.item.productImage.length-1" class="fa fa-chevron-circle-right increase-index" (click)="onIncreaseIndex(i)"></i>
                 <i class="fa fa-times-circle delete-image" (click)="onRemoveImage(i)"></i>
             </div>
             <div class="add-image btn btn-outline-primary">
                 <span>Add Image</span>
-                <input type="file" (change)="onAddImage($event)"/>
+                <input type="file" (change)="onAddImage($event)" multiple/>
                 <i class="fa fa-question-circle delete-image" (click)="onClickImageRecommendations(imageRecommendationModal)"></i>
             </div>
         </div>
@@ -65,7 +67,7 @@
             <ul>
                 <li>Images must be files with one of the "png", "jpg" or "gif" formats.</li>
                 <li>Although not mandatory, square or squarish images are recommended for better visibility.</li>
-                <li>Images exceeding 1 MB in size are not permitted.</li>
+                <li>Images exceeding 5 MB in size are not permitted.</li>
             </ul>
         </div>
     </ng-template>

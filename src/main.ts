@@ -8,5 +8,6 @@ getTranslationProviders().then(providers => {
 	const options = { providers };
 	if (!myGlobals.debug)
 		enableProdMode();
-	platformBrowserDynamic().bootstrapModule(AppModule, options);
+	//platformBrowserDynamic().bootstrapModule(AppModule, options);
+	platformBrowserDynamic().bootstrapModule(AppModule);
 });

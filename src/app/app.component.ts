@@ -11,6 +11,7 @@ import {
 } from '@angular/router';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from './globals';
+import * as moment from "moment";
 import {DEFAULT_LANGUAGE} from './catalogue/model/constants';
 
 @Component({
@@ -96,7 +97,8 @@ export class AppComponent implements OnInit {
                 } else {
                     this.removeVersion("identity");
                 }
-            });
+            })
+            .catch(error => {});
         this.credentialsService.getVersionBP()
             .then(res => {
                 if (res.git && res.git.branch && res.git.commit && res.git.commit.time && res.git.commit.id) {
@@ -105,7 +107,8 @@ export class AppComponent implements OnInit {
                 } else {
                     this.removeVersion("business-process");
                 }
-            });
+            })
+            .catch(error => {});
         this.credentialsService.getVersionCatalog()
             .then(res => {
                 if (res.git && res.git.branch && res.git.commit && res.git.commit.time && res.git.commit.id) {
@@ -114,7 +117,8 @@ export class AppComponent implements OnInit {
                 } else {
                     this.removeVersion("catalog");
                 }
-            });
+            })
+            .catch(error => {});
         this.credentialsService.getVersionDataChannel()
             .then(res => {
                 if (res.git && res.git.branch && res.git.commit && res.git.commit.time && res.git.commit.id) {
@@ -123,7 +127,8 @@ export class AppComponent implements OnInit {
                 } else {
                     this.removeVersion("data-channel");
                 }
-            });
+            })
+            .catch(error => {});
     }
 
     public addVersion(id: String, ver: String, date: String) {
@@ -215,13 +220,61 @@ export class AppComponent implements OnInit {
                 console.log("Loading route " + link);
             if (!this.cookieService.get("user_id")) {
                 if (link != "/" && link != "/user-mgmt/login" && link != "/user-mgmt/registration" && link != "/analytics/info"
-                    && link != "/analytics/members" && link != "/user-mgmt/forgot")
-                    this.router.navigate(["/user-mgmt/login"]);
+                    && link != "/analytics/members" && link != "/user-mgmt/forgot") {
+                    this.router.navigate(["/user-mgmt/login"], {queryParams: {redirectURL: url}});
+                }
+                else {
+                  this.logUrl(url);
+                }
+            }
+            else {
+              this.logUrl(url);
             }
         }
     }
 
-    public checkLogin(path: any) {
+    public logUrl(url) {
+      if (this.config.loggingEnabled) {
+        let cID = "";
+        if (this.companyID)
+          cID = this.companyID;
+        let splitHash = url.split("?");
+        let hashBase = splitHash[0];
+        if (hashBase == "/")
+          hashBase = "/user-mgmt/login";
+        let params = {};
+        if (splitHash.length > 1) {
+          let paramArr = splitHash[1].split("&");
+          for (let i=0; i<paramArr.length; i++) {
+            let splitParam = paramArr[i].split("=");
+            let paramName = splitParam[0];
+            let paramValue = splitParam[1];
+            params[paramName] = paramValue;
+          }
+        }
+        let log = {
+          "@timestamp": moment().utc().toISOString(),
+          "level": "INFO",
+          "serviceID": "frontend-service",
+          "userId": this.userID,
+          "companyId": cID,
+          "activity": hashBase,
+          "message": JSON.stringify({
+            "params": params
+          })
+        };
+        if (this.debug)
+          console.log("Writing log "+JSON.stringify(log));
+        this.credentialsService.logUrl(log)
+          .then(res => {})
+          .catch(error => {});
+      }
+    }
+
+    public checkLogin(path: any,redirected?:boolean) {
+        let redUrl = false;
+        if (redirected)
+          redUrl = redirected;
         if (this.cookieService.get("user_id")) {
             this.isLoggedIn = true;
             /*
@@ -263,8 +316,27 @@ export class AppComponent implements OnInit {
             this.userID = "";
             this.roles = [];
         }
-        if (path != "")
+        if (path != "") {
+          if(!redUrl)
             this.router.navigate([path]);
+          else {
+            let tmpUrl = decodeURIComponent(path);
+            if (tmpUrl.indexOf("?") == -1)
+              this.router.navigate([tmpUrl]);
+            else {
+              let tmpPath = tmpUrl.split("?")[0];
+              let tmpParams = tmpUrl.split("?")[1];
+              let tmpParamsSplit = tmpParams.split("&");
+              let tmpParamsObj = { queryParams : {} };
+              for (let i=0; i<tmpParamsSplit.length; i++) {
+                let key = tmpParamsSplit[i].split("=")[0];
+                let value = tmpParamsSplit[i].split("=")[1];
+                tmpParamsObj.queryParams[key] = value;
+              }
+              this.router.navigate([tmpPath],tmpParamsObj);
+            }
+          }
+        }
     }
 
     public checkRoles(func) {

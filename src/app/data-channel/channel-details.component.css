@@ -1,3 +1,7 @@
+
+/*----------------------------------------------------------------------------------------------------*/
+/* Basics*/
+/*----------------------------------------------------------------------------------------------------*/
 #channel-messages td {
     line-height: 2em;
     padding-right: 70px;
@@ -34,9 +38,29 @@ h4 {
     margin-bottom: 10px;
 }
 
-#new-sensor p {
+#comparison-header-left{
+    text-align:left;
+    float:left;
+}
+
+#comparison-header-right{
+    text-align:right;
+    float:right;
+    margin-right: 25%;
+}
+
+#new-sensor {
+    padding: 10px;
     margin-top: 10px;
-    font-size: 0.8em;
+    border: 1px solid;
+    border-color: #E8E8E8;
+}
+
+#new-server {
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid;
+    border-color: #E8E8E8;
 }
 
 .add-sensor-btn {
@@ -53,4 +77,280 @@ h4 {
 
 #add-sensor-form input {
     margin-right: 10px;
+}
+
+#add-server-form input {
+    margin-right: 10px;
+}
+
+
+/*----------------------------------------------------------------------------------------------------*/
+/* The switch - the box around the slider */
+/*----------------------------------------------------------------------------------------------------*/
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: var(--main-color);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: .25rem;
+}
+.slider.round:before {
+  border-radius: .11rem;
+}
+
+
+#HeaderTextArea h1{
+    margin-top: 40px !important;
+    margin-bottom: 20px !important;
+    float: left;
+}
+
+#ToggleButtonArea label {
+    margin-top: 40px !important;
+    margin-bottom: 20px !important;
+    margin-left: 0px;
+    float: left;
+}
+
+#DescriptionTextArea {
+    margin-top: 40px !important;
+    margin-bottom: 20px !important;
+    margin-left: 20px;
+    float: right;
+    display: inline !important;
+}
+
+#DataStorageHeader{
+  border-bottom: 1px solid;
+  border-color: #E8E8E8;
+  width: 100%;
+}
+#StorageDataArea {
+   transition: ease-in-out 1s;
+   overflow: hidden;
+   width: 100%;
+}
+
+.storage-max {
+    max-height: 1200px;
+    color: black;
+}
+
+.storage-min {
+    max-height: 0px;
+    color: transparent;
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------*/
+/* steps component */
+/*----------------------------------------------------------------------------------------------------*/
+.status-text {
+    width: 17%;
+    text-align: center;
+    font-weight: bold;
+}
+
+.status-text.four-steps {
+    width: 25%;
+}
+
+.status-text.five-steps {
+    width: 20%;
+}
+
+.steps {
+    display: flex;
+    display: -ms-flexbox;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    margin: 0.2rem 0;
+    width: 100%;
+}
+
+.steps .step {
+    -ms-flex: 1 1 0;
+    flex: 1 1 0;
+    margin-top: 0;
+    min-height: 1rem;
+    position: relative;
+    text-align: center;
+}
+
+/**
+ * Before the active step
+ */
+
+.steps .step:not(:first-child)::before {
+    background: #007706;
+    content: "";
+    height: 0.2rem;
+    left: -50%;
+    position: absolute;
+    top: 0.4rem;
+    width: 100%;
+}
+
+.steps .step span {
+    color: #007706;
+    display: inline-block;
+    padding: 20px 10px 0;
+    text-decoration: none;
+}
+
+.steps .step span::before {
+    background: #007706;
+    border: 0.1rem solid #007706;
+    border-radius: 50%;
+    content: "";
+    display: block;
+    height: 1rem;
+    left: 50%;
+    position: absolute;
+    top: 0.0rem;
+    transform: translateX(-50%);
+    width: 1rem;
+    z-index: 1;
+}
+
+/**
+ * The current step
+ */
+
+/* General */
+.steps .step.current span::before {
+    background: #ffffff;
+    border: 0.1rem solid #000000;
+}
+
+.steps .step.current {
+    font-size: 1.5rem;
+}
+
+.steps .step.current span {
+    color: #000000;
+    font-weight: 600;
+}
+
+/* Action to take */
+.steps .step.current.action_required span::before {
+    border: 0.1rem solid #d30000;
+
+}
+.steps .step.current.action_required span {
+    color: #d30000;
+}
+
+/* Waiting for reply */
+.steps .step.current.waiting span::before {
+    border: 0.1rem solid #c48601;
+
+}
+.steps .step.current.waiting span {
+    color: #c48601;
+}
+
+/* Reply sent/received */
+.steps .step.current.done span::before {
+    border: 0.1rem solid #007706;
+
+}
+.steps .step.current.done span {
+    color: #007706;
+}
+
+/* Cancelled */
+.steps .step.current.cancelled span::before {
+    border: 0.1rem solid #363636;
+
+}
+.steps .step.current.cancelled span {
+    color: #363636;
+}
+
+/**
+ * After the active step
+ */
+
+.steps .step.current ~ .step::before {
+    background: #b3b3b3;
+}
+
+.steps .step.current ~ .step span::before {
+    background: #b3b3b3;
+    border: 0.1rem solid #ffffff;
+}
+
+.steps .step.current ~ .step span {
+    color: #b3b3b3;
+}
+
+.expand-steps-div {
+    position: absolute;
+    top: 0;
+    width: 2%;
+    height: 1.5rem;
+    padding: 0;
+    color: #007706;
+    background: #ffffff;
+    text-align: center;
+}
+
+.expand-transport {
+    right: 16%;
+}
+
+.expand-order {
+    left: 16%;
 }

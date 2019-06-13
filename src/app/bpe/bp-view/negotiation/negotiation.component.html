@@ -1,8 +1,70 @@
 <ng-container *ngIf="!isLoading() && bpDataService.getCatalogueLine()">
-    <negotiation-request *ngIf="!bpDataService.quotation && bpDataService.bpStartEvent.userRole === 'buyer'">
-    </negotiation-request>
-    <negotiation-response *ngIf="bpDataService.quotation">
-    </negotiation-response>
+    <ng-container *ngIf="negotiationProcessList.length > 1 && negotiationDocumentsCallStatus.fb_callback">
+        <!-- slider -->
+        <input #processHistorySlider
+               type="range" class="form-control-range mt-2 mb-2"
+               [(ngModel)]="sliderIndex" min="0" [max]="negotiationProcessList.length-1" [step]="1"/>
+
+        <!-- dates -->
+        <div class="d-flex justify-content-between">
+            <ng-container *ngFor="let metadata of negotiationProcessList; let i = index">
+                <ng-container *ngIf="metadata != null">
+                    <div>
+                        <div [ngClass]="sliderIndex == i ? 'font-weight-bold' : ''">{{ metadata.startTime.substr(0, metadata.startTime.indexOf(' '))}}</div>
+                        <div [ngClass]="sliderIndex == i ? 'font-weight-bold' : ''">{{ metadata.startTime.substr(metadata.startTime.indexOf(' '))}}</div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="metadata == null">
+                    &nbsp;
+                </ng-container>
+            </ng-container>
+        </div>
+
+        <hr class="mb-3">
+    </ng-container>
+
+    <ng-container *ngFor="let metadata of negotiationProcessList; let i = index">
+        <!-- previous steps -->
+        <ng-container *ngIf="negotiationDocumentsCallStatus.isComplete() && lastOfferCalStatus.isComplete() && frameContractAndTermsCallStatus.isComplete()">
+            <div *ngIf="i != negotiationProcessList.length-1" [hidden]="!(sliderIndex == i)">
+                <negotiation-response [rfq]="negotiationDocuments[i].request"
+                                      [quotation]="negotiationDocuments[i].response"
+                                      [lastOfferQuotation]="negotiationDocuments[i-1]?.response"
+                                      [frameContractQuotation]="frameContractQuotation"
+                                      [frameContract]="frameContract"
+                                      [defaultTermsAndConditions]="defaultTermsAndConditions"
+                                      [primaryTermsSource]="getPrimaryTermsSource(negotiationDocuments[i-1]?.response)"
+                                      [readonly]="true"
+                                      [formerProcess]="true">
+                </negotiation-response>
+            </div>
+        </ng-container>
+        <!-- last step -->
+        <call-status [callStatus]="lastOfferCalStatus"></call-status>
+        <ng-container *ngIf="lastOfferCalStatus.isComplete()">
+            <call-status [callStatus]="frameContractAndTermsCallStatus"></call-status>
+        </ng-container>
+        <ng-container *ngIf="lastOfferCalStatus.isComplete() && frameContractAndTermsCallStatus.isComplete()">
+            <div [hidden]="!(sliderIndex == negotiationProcessList.length-1 && i == negotiationProcessList.length-1)">
+                <negotiation-request *ngIf="!bpDataService.quotation && bpDataService.bpActivityEvent.userRole === 'buyer'"
+                                     [frameContract]="frameContract"
+                                     [frameContractQuotation]="frameContractQuotation"
+                                     [lastOfferQuotation]="lastOfferQuotation"
+                                     [defaultTermsAndConditions]="defaultTermsAndConditions"
+                                     [primaryTermsSource]="getPrimaryTermsSource(lastOfferQuotation)">
+                </negotiation-request>
+                <negotiation-response *ngIf="bpDataService.quotation"
+                                      [lastOfferQuotation]="lastOfferQuotation"
+                                      [frameContractQuotation]="frameContractQuotation"
+                                      [frameContract]="frameContract"
+                                      [defaultTermsAndConditions]="defaultTermsAndConditions"
+                                      [primaryTermsSource]="getPrimaryTermsSource(lastOfferQuotation)"
+                                      [formerProcess]="formerProcess">
+                </negotiation-response>
+            </div>
+        </ng-container>
+
+    </ng-container>
 </ng-container>
 
 <call-status *ngIf="isLoading()" [callStatus]="initCallStatus" [large]="true">

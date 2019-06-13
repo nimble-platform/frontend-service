@@ -4,16 +4,18 @@ import { UBLModelUtils } from "../../catalogue/model/ubl-model-utils";
 import {UnitService} from "../../common/unit-service";
 import {ServiceBridge} from "../../common/ServiceBridge";
 import {deliveryPeriodUnitListId, warrantyPeriodUnitListId} from "../../common/constants";
+import {Party} from '../../catalogue/model/publish/party';
 
 export class CompanyNegotiationSettings {
     constructor(
         public paymentMeans: string[] = [].concat(PAYMENT_MEANS),
         public paymentTerms: string[] = UBLModelUtils.getDefaultPaymentTermsAsStrings(),
         public incoterms: string[] = [].concat(INCOTERMS),
-        public deliveryPeriodRanges: PeriodRange[] = [{ start: 0, end: 2500 }, { start: 0, end: 75 }, { start: 0, end: 100 }, { start: 0, end: 15 }],
+        public deliveryPeriodRanges: PeriodRange[] = [{ start: 0, end: 2500 }, { start: 0, end: 75 }, { start: 0, end: 100 }, { start: 0, end: 15 },{ start: 1, end: 12 }],
         public deliveryPeriodUnits: string[] = [],
         public warrantyPeriodRanges: PeriodRange[] = [{ start: 0, end: 48 }, { start: 0, end: 4 }],
-        public warrantyPeriodUnits: string[] = []
+        public warrantyPeriodUnits: string[] = [],
+        public company: Party = null
     ) {
         let unitService: UnitService = ServiceBridge.unitService;
         unitService.getCachedUnitList(deliveryPeriodUnitListId).then(list => this.deliveryPeriodUnits = list);

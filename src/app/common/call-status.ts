@@ -23,7 +23,7 @@ export class CallStatus {
         this.fb_message = msg;
         this.fb_submitted = false;
         this.fb_errordetc = false;
-        this.fb_callback = msg != null;
+        this.fb_callback = true;
         this.fb_autoCloseOnCallBack = autoClose;
     }
 
@@ -71,6 +71,10 @@ export class CallStatus {
         this.fb_submitted = false;
         this.fb_errordetc = false;
         this.fb_callback = false;
+    }
+
+    public isComplete(): boolean {
+        return this.fb_callback || this.fb_errordetc;
     }
 
     public isLoading(): boolean {

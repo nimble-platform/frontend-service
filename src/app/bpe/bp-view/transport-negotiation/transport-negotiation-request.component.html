@@ -40,7 +40,7 @@
         <h4 class="space-before">Negotiable Terms</h4>
 
         <!-- Price -->
-        <quantity-input label="Price" [disabled]="isDisabled()" [quantity]="rfqPrice" [quantityUnits]="CURRENCIES" labelClass="col-2"
+        <quantity-input label="Price" [disabled]="isDisabled()" [quantity]="rfqPrice.itemPrice" [quantityUnits]="CURRENCIES" labelClass="col-2"
             valueClass="col-10" rowClass="space-before">
         </quantity-input>
 
@@ -62,7 +62,7 @@
 
         <!-- Special Terms -->
         <text-input label="Special Terms" definition="A description of any terms or conditions relating to the delivery items.For example,exceeding the delivery period entitles the buyer to terminate the agreement."
-            [(text)]="rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms" [disabled]="isDisabled()" rowClass="space-before"
+            [(text)]="rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms[0].value" [disabled]="isDisabled()" rowClass="space-before"
             labelClass="col-2" valueClass="col-10">
         </text-input>
 

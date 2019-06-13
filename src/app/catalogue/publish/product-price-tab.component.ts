@@ -8,8 +8,12 @@ import {PriceOptionPipe} from "./price-option/price-option.pipe";
 import {Period} from '../model/publish/period';
 import {Address} from '../model/publish/address';
 import {CompanyNegotiationSettings} from '../../user-mgmt/model/company-negotiation-settings';
-import {Text} from '../model/publish/text';
 import {PaymentMeans} from '../model/publish/payment-means';
+import {CatalogueService} from "../catalogue.service";
+import {TaxCategory} from "../model/publish/tax-category";
+import {UserService} from "../../user-mgmt/user.service";
+import {CookieService} from "ng2-cookies";
+import {Party} from "../model/publish/party";
 
 @Component({
     selector: "product-price-tab",
@@ -29,12 +33,38 @@ export class ProductPriceTabComponent implements OnInit {
     object = Object;
 
     discountUnits = [];
+    defaultVatRate: number = 20;
+    static vatRates: any = null;
 
-    constructor() {
+    constructor(private catalogueService: CatalogueService,
+                private userService: UserService,
+                private cookieService: CookieService) {
     }
 
     ngOnInit() {
         this.updateDiscountUnits();
+
+        if(this.catalogueLine.requiredItemLocationQuantity.applicableTaxCategory == null || this.catalogueLine.requiredItemLocationQuantity.applicableTaxCategory.length == 0) {
+            this.catalogueLine.requiredItemLocationQuantity.applicableTaxCategory = [new TaxCategory()];
+
+            let vatRatesPromise: Promise<any> = Promise.resolve(ProductPriceTabComponent.vatRates);
+            if(ProductPriceTabComponent.vatRates == null) {
+                vatRatesPromise = this.catalogueService.getTaxRates();
+            }
+
+            let userId: string = this.cookieService.get("user_id");
+            let userPartyPromise: Promise<Party> = this.userService.getUserParty(userId);
+
+            Promise.all(
+                [vatRatesPromise, userPartyPromise])
+                .then(([rates, party]) => {
+                    ProductPriceTabComponent.vatRates = rates;
+                    this.catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent = this.getVatRateForCountry(party);
+
+                }).catch(error => {
+                this.catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent = this.defaultVatRate;
+            });
+        }
     }
 
     addPriceOption(priceOptionType: any): void {
@@ -68,11 +98,18 @@ export class ProductPriceTabComponent implements OnInit {
         this.catalogueLine.priceOption = [].concat(this.catalogueLine.priceOption);
     }
 
-    printPriceOptions(): void {
-        //console.log(this.catalogueLine.priceOption);
-    }
-
     updateDiscountUnits(){
         this.discountUnits = [].concat([this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.currencyID,"%"]);
+    }
+
+    private getVatRateForCountry(userParty: Party): number {
+        if(ProductPriceTabComponent.vatRates != null) {
+            for(let countryCode of Object.keys(ProductPriceTabComponent.vatRates.rates)) {
+                if(ProductPriceTabComponent.vatRates.rates[countryCode].country_name == userParty.postalAddress.country.name.value) {
+                    return ProductPriceTabComponent.vatRates.rates[countryCode].standard_rate;
+                }
+            }
+        }
+        return this.defaultVatRate;
     }
 }

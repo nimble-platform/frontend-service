@@ -9,14 +9,14 @@
         <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
             <input  class="form-control col-3" type="text" [(ngModel)]="searchText" [ngbTypeahead]="searchFavourite" placeholder="Search ...">
 
-            <label class="space-left space-right"><strong>Category :</strong>
+            <label class="space-left space-right"><strong></strong>
             </label>
             <select  class="custom-select col-3 space-right" [(ngModel)]="selectedCategory" (change)="requestCatalogue()">
                 <option value="All">All</option>
                 <option *ngFor="let type of cat_levels[0]" [value]=type.id>{{type.preferredName}}</option>
             </select>
 
-            <label class="space-right"><strong>Sort by:</strong>
+            <label class="space-right"><strong></strong>
             </label>
             <select  class="custom-select col-3 space-right" [(ngModel)]="sortOption" (change)="requestCatalogue()">
                 <option *ngFor="let option of CATALOGUE_LINE_SORT_OPTIONS" [value]="option.name">{{option.value}}</option>
@@ -52,10 +52,14 @@
                             </div>
                             <div class="col-2">
 
-                                <button type="button" class="btn btn-danger col" [disabled]="getDeleteStatus(i).isLoading()"
+                                <button type="button" class="btn btn-danger space-after col" [disabled]="getDeleteStatus(i).isLoading()"
                                         (click)="removeFavourite(catLine, i); $event.stopPropagation();">
                                     Remove
                                 </button>
+
+                                <a  href="#" role="button" class="btn btn-primary col" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.catalogueId, id: catLine.manufactuerItemId}">
+                                    Negotiate
+                                </a>
                                 <call-status [callStatus]="getDeleteStatus(i)"></call-status>
                             </div>
                         </div>
@@ -77,7 +81,7 @@
 </div>
 
 <div class="jumbotron" *ngIf="itemTypeResponse && hasFavourite == false">
-    <h3>No Favourite products / services.</h3>
+    <h3>No Favourite products / service.</h3>
     <h5>
         <span (click)="navigateToTheSearchPage()" class="pointer">Search For  products / services</span>
         <i class="fa fa-plus-circle pointer" (click)="navigateToTheSearchPage()"></i>

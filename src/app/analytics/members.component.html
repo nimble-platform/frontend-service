@@ -16,6 +16,21 @@
   </div>
 </div>
 
+<form (ngSubmit)="filterCompanyPage()" class="space-before" #searchForm="ngForm" novalidate>
+	<div class="form-group row">
+		<div class="col-12">
+				<div class="input-group">
+					<input type="text" class="form-control" id="searchTerm" [(ngModel)]="filter" [disabled]="registeredCompaniesCallStatus.isLoading()" name="searchTerm" #q="ngModel" placeholder="Company Name">
+					<div class="input-group-append">
+						<button type="submit" [disabled]="registeredCompaniesCallStatus.isLoading()" class="btn btn-outline-secondary">
+							<i class="fa fa-search"></i>
+						</button>
+					</div>
+				</div>
+		</div>
+	</div>
+</form>
+
 <call-status [callStatus]="registeredCompaniesCallStatus" [large]="true"></call-status>
 
 <div [hidden]="registeredCompaniesCallStatus.isLoading() || registeredCompaniesPage == null">
@@ -98,6 +113,11 @@
                 </div>
             </ng-container>
         </div>
+        <div *ngIf="registeredCompaniesPage.content.length >= size && orgCompaniesPage.content.length > size">
+          <hr>
+          <span class="clickable" (click)="toggleExpand()"><span *ngIf="!expanded">Show more</span><span *ngIf="expanded">Show less</span></span>
+        </div>
+        <!--
         <ngb-pagination class="d-flex justify-content-center"
                         [collectionSize]="registeredCompaniesPage.totalElements"
                         [pageSize]="registeredCompaniesPage.size"
@@ -106,5 +126,6 @@
                         [boundaryLinks]="false"
                         (pageChange)="onRegisteredCompaniesPageChange($event)">
         </ngb-pagination>
+        -->
     </div>
 </div>

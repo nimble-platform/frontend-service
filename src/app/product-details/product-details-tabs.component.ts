@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, EventEmitter, Output } from "@angular/core";
 import { ProductDetailsTab } from "./model/product-details-tab";
 import { ProductWrapper } from "../common/product-wrapper";
 import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
@@ -22,7 +22,16 @@ export class ProductDetailsTabsComponent implements OnInit {
 
     @Input() showOverview: boolean = false;
     @Input() readonly: boolean = false;
-    @Input() tabToOpen: string = "";
+
+    @Input()
+    set tabToOpen(tab: ProductDetailsTab) {
+      if (tab)
+        this.selectedTab = tab;
+      this.tabStatus.emit(false);
+    }
+
+    @Output() tabStatus = new EventEmitter<boolean>();
+
     config = myGlobals.config;
 
     selectedTab: ProductDetailsTab;
@@ -42,10 +51,10 @@ export class ProductDetailsTabsComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.selectedTab = this.showOverview? "OVERVIEW" : "DETAILS";
+        this.selectedTab = this.getFirstTab();
         this.isLogistics = this.wrapper.getLogisticsStatus();
         this.isTransportService = this.wrapper.isTransportService();
-        if(this.wrapper.getDimensions().length == 0 && this.wrapper.getUniquePropertiesWithValue().length == 0){
+        if(this.wrapper.getDimensions().length == 0 && this.wrapper.getUniquePropertiesWithValue().length == 0 && this.wrapper.getAdditionalDocuments().length == 0){
             this.haveDetails = false;
             this.selectedTab = this.getFirstTab();
         }
@@ -91,10 +100,6 @@ export class ProductDetailsTabsComponent implements OnInit {
             this.selectedTab = this.getFirstTab();
         }
 
-        if(this.tabToOpen == "rating"){
-          this.selectedTab = "RATING";
-        }
-
         this.bpeService.getRatingsSummary(this.settings.companyID).then(ratings => {
             if (ratings.totalNumberOfRatings <= 0) {
                 this.haveRating = false;
@@ -103,22 +108,25 @@ export class ProductDetailsTabsComponent implements OnInit {
             else {
               this.haveRating = true;
             }
-
-            if(this.tabToOpen == "rating"){
-              this.selectedTab = "RATING";
-            }
-
           })
           .catch(error => {
             this.haveRating = false;
             this.selectedTab = this.getFirstTab();
           });
-        
+
     }
 
     onSelectTab(event: any): void {
         event.preventDefault();
         this.selectedTab = event.target.id;
+        this.tabStatus.emit(false);
+    }
+
+    setTab(data) {
+      if (data) {
+        this.selectedTab = "COMPANY";
+        this.tabStatus.emit(false);
+      }
     }
 
     getValuesAsString(property: ItemProperty): string[] {
@@ -167,6 +175,10 @@ export class ProductDetailsTabsComponent implements OnInit {
     }
 
     getFirstTab(): ProductDetailsTab {
+      this.tabStatus.emit(false);
+      if (this.tabToOpen) {
+        return this.tabToOpen;
+      }
       if (this.showOverview) {
         return "OVERVIEW";
       }

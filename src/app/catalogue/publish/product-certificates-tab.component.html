@@ -75,7 +75,8 @@
             </div>
             <div class="form-group row">
                 <label class="col-3 col-form-label">Applicable Countries</label>
-                <div class="col-9">
+                <div class="col-8">
+                    <!--
                     <input list="countries" name="Country" class="form-control"
                            [formControl]="countryFormControl"
                            (change)="onCountrySelected($event)">
@@ -84,6 +85,11 @@
                             <option>{{country}}</option>
                         </ng-container>
                     </datalist>
+                    -->
+                    <input type="text" class="form-control" name="Country" [formControl]="countryFormControl" [ngbTypeahead]="getSuggestions" placeholder="e.g. United States">
+                </div>
+                <div class="col-1">
+                  <button class="btn btn-success" [disabled]="!validateCountry()" (click)="onCountrySelected()"><i class="fas fa-check"></i></button>
                 </div>
             </div>
             <div class="offset-3 d-flex flex-wrap">

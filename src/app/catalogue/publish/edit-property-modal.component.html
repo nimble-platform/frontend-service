@@ -59,33 +59,33 @@
                 <text-input label="Definition" [text]="getDefinition()" presentationMode="view" rowClass="space-before">
                 </text-input>
                 <options-input label="Data Type" [presentationMode]="getPropertyPresentationMode()"
-                    [options]="PROPERTY_TYPES" [(selected)]="property.valueQualifier" rowClass="space-before">
+                    [options]="PROPERTY_TYPES" [(selected)]="property.valueQualifier" rowClass="space-before" large="true" (selectedChange)="resetValues()">
                 </options-input>
                 <div class="row space-before">
                     <div class="col-3">
                         <strong>Value(s):</strong>
                     </div>
                     <div class="col-9">
-                        <file-input *ngIf="property.valueQualifier === 'BINARY'" [binaryObjects]="property.valueBinary"
+                        <file-input *ngIf="property.valueQualifier === 'FILE'" [binaryObjects]="property.valueBinary"
                             [multiple]="true" [maxSize]=1>
                         </file-input>
-                        <table *ngIf="property.valueQualifier === 'STRING'" class="table borderless">
+                        <table *ngIf="property.valueQualifier === 'STRING'" class="table borderless mb-0">
                             <tbody>
                                 <tr *ngFor="let pvalue of getValues(); let i = index">
-                                    <td>
+                                    <td class="pr-0" style="padding-bottom: 0.3rem">
                                         <input [(ngModel)]="pvalue.value" class="form-control" type="text" name="{{pvalue.value}}" />
                                     </td>
-                                    <td>
+                                    <td class="pr-0" style="padding-left: .75rem; padding-bottom: 0.3rem;">
                                         <select [(ngModel)]="pvalue.languageID" class="form-control" type="text" name="{{pvalue.languageID}}">
                                             <option *ngFor='let language of languages' [value]="language" [selected]="language === pvalue.languageID">{{language}}</option>
                                         </select>
                                     </td>
-                                    <td class="align-right" *ngIf="i>0">
-                                        <button class="btn btn-danger"  type="button" (click)="deletePropertyValue(i)">Delete</button>
+                                    <td class="pr-0 align-right" style="padding-left: .75rem; padding-bottom: 0.3rem;" *ngIf="i>0">
+                                        <button class="btn btn-danger"  type="button" (click)="deletePropertyValue(i)">&times;</button>
                                     </td>
                                 </tr>
                                 <tr>
-                                  <td colspan="3">
+                                  <td colspan="3" class="pr-0 pb-0">
                                     <button class="btn btn-outline-primary add-value-button" (click)="addPropertyValue()">
                                         Add Value
                                     </button>
@@ -110,10 +110,10 @@
                         </table>
                         <ng-container *ngFor="let value of getValues(); let i = index">
                             <div *ngIf="property.valueQualifier !== 'STRING'" [ngSwitch]="property.valueQualifier" class="row value-container">
-                                <div class="{{ i === 0 ? 'col-12' : 'col-9' }}">
+                                <div class="{{ getValues().length<=1 ? 'col-12' : 'col-10' }}">
 
                                     <quantity-input *ngSwitchCase="'QUANTITY'" [quantity]="property.valueQuantity[i]"
-                                        rowClass="quantity-input">
+                                        rowClass="quantity-input" large="true">
                                     </quantity-input>
 
                                     <!-- Do not use [(ngModel)]="...", as each change removes focus from the element... -->
@@ -123,23 +123,23 @@
 
                                     <!-- Do not use [(ngModel)]="...", as each change removes focus from the element... -->
                                     <ng-container *ngSwitchDefault>
-                                            <input *ngIf="property.valueQualifier !== 'BINARY' && property.valueQualifier !== 'BOOLEAN'" type="number"
-                                            class="form-control form-control-sm value-input"
+                                            <input *ngIf="property.valueQualifier !== 'FILE' && property.valueQualifier !== 'BOOLEAN'" type="number"
+                                            class="form-control value-input"
                                                 [ngModel]="property.valueDecimal[i]" (change)="setValueDecimal(i, $event)">
-                                            <input *ngIf="property.valueQualifier !== 'BINARY' && property.valueQualifier === 'BOOLEAN'" type="checkbox"
+                                            <input *ngIf="property.valueQualifier !== 'FILE' && property.valueQualifier === 'BOOLEAN'" type="checkbox"
                                                 [checked]="property.value[i].value == 'true'" (change)="setBooleanValue(i, $event)">
                                     </ng-container>
                                 </div>
-                                <div *ngIf="i > 0 && property.valueQualifier !== 'BINARY'" class="col-3">
-                                    <button class="btn btn-danger btn-remove-value btn-sm"
+                                <div *ngIf="i > 0 && property.valueQualifier !== 'FILE'" class="col-2 align-right">
+                                    <button class="btn btn-danger btn-remove-value"
                                         (click)="onRemoveValue(i)">
-                                        Delete
+                                        &times;
                                     </button>
                                 </div>
                             </div>
                         </ng-container>
                         <button class="btn btn-outline-primary add-value-button" (click)="onAddValue()"
-                            *ngIf="property.valueQualifier !== 'BOOLEAN' && property.valueQualifier !== 'BINARY' && property.valueQualifier !== 'STRING'">
+                            *ngIf="property.valueQualifier !== 'BOOLEAN' && property.valueQualifier !== 'FILE' && property.valueQualifier !== 'STRING'">
                             Add Value
                         </button>
                     </div>

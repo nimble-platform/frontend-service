@@ -54,6 +54,7 @@
                     Company Details
                 </a>
             </li>
+            <!--
             <li *ngIf="haveRating" class="nav-item">
                 <a href id="RATING" class="nav-link"
                     [ngClass]="{ active: selectedTab === 'RATING'}"
@@ -61,13 +62,14 @@
                     Company Ratings
                 </a>
             </li>
+            -->
         </ul>
     </div>
 
     <!-- Overview Tab -->
     <div *ngIf="selectedTab === 'OVERVIEW'" class="p-3 col-12">
         <h3 class="p-1">Overview</h3>
-        <product-details-overview [wrapper]="wrapper" [options]="options" [readonly]="readonly">
+        <product-details-overview [wrapper]="wrapper" [options]="options" [readonly]="readonly" (compStatus)="setTab($event)">
         </product-details-overview>
     </div>
 
@@ -86,12 +88,22 @@
             </div>
             <div *ngFor="let property of wrapper.getUniquePropertiesWithValue()" class="p-1 col-6 d-flex">
                 <strong>{{ getHumanReadablePropertyName(wrapper.getPropertyName(property)) }}: </strong>
-                <span *ngIf="property.valueQualifier !== 'BINARY'" class="ml-2">
+                <span *ngIf="property.valueQualifier !== 'FILE'" class="ml-2">
                 {{ getValuesAsString(property).join(", ") }}
             </span>
-                <ng-container *ngIf="property.valueQualifier === 'BINARY'">
+                <ng-container *ngIf="property.valueQualifier === 'FILE'">
                     <file-input presentationMode="view" [binaryObjects]="property.valueBinary" [multiple]="true" rowClass="ml-2" [small]="true"></file-input>
                 </ng-container>
+            </div>
+        </div>
+        <div *ngIf="wrapper.getAdditionalDocuments().length > 0">
+            <h3>Additional Information</h3>
+            <div class="row mx-auto">
+                <div *ngFor="let documentReference of wrapper.getAdditionalDocuments()" class="p-1 col-6 d-flex">
+                    <ng-container>
+                        <file-input presentationMode="view" [binaryObjects]="[documentReference.attachment.embeddedDocumentBinaryObject]" [multiple]="true" [small]="true"></file-input>
+                    </ng-container>
+                </div>
             </div>
         </div>
     </div>
@@ -102,6 +114,9 @@
                 <h3 *ngIf="wrapper.getPricePerItem() != '' || wrapper.getFreeSample() != ''" class="p-1">Price</h3>
                 <div *ngIf="wrapper.getPricePerItem() != ''" class="p-1">
                     <strong>Price: </strong> {{ wrapper.getPricePerItem() }}
+                </div>
+                <div *ngIf="wrapper.getVat() != ''" class="p-1">
+                    <strong>VAT: </strong> {{ wrapper.getVat() }}%
                 </div>
                 <div *ngIf="wrapper.getFreeSample() != ''" class="p-1">
                     <strong>Free Sample: </strong> {{ wrapper.getFreeSample() }}
@@ -153,9 +168,11 @@
     </div>
 
     <!-- Company Ratings Tab -->
+    <!--
     <div *ngIf="selectedTab === 'RATING'" class="p-3 col-12">
         <company-rating (ratingStatus)="getRatingStatusTab($event)" [id]="settings.companyID" [hideTitle]="true">
         </company-rating>
     </div>
+    -->
 
 </div>

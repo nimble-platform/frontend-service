@@ -78,6 +78,8 @@ export const data_aggregation_endpoint=`${base_path}/data-aggregation`;
 export const trust_service_endpoint=`${base_path}/trust`;
 export const indexing_service_endpoint=`${base_path}/indexing-service`;
 export const rocketChatEndpoint = `${base_path}:3000`;
+export const logstash_endpoint = `${base_path}:9200`;
+export const kibana_endpoint = `${base_path}:5601/app/kibana`;
 
 
 // BIBA endpoints
@@ -99,11 +101,13 @@ export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 
 export const tntEndpoint = `${bpe_endpoint}/t-t/epc-details`;
 export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
+export const tntMasterDataEndpoint = 'http://nimble-dev.ikap.biba.uni-bremen.de:8117';
 
 
 // Platform Configuration
 
 export const config = {
+  "platformName": "FMP Staging",
   "companyRegistrationRequired": true,
   "categoryFilter": {
     "eClass": {
@@ -119,6 +123,21 @@ export const config = {
   },
   "dataChannelsEnabled" : false,
   "imprint": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Platform Owner</u><br/><b>AIDIMME - Technological Institute of Metalworking, Furniture, Wood, Packaging and Related sectors</b><br/>Technological Park, Benjamín Franklin Street 13<br/>46980 Paterna (Valencia), Spain<br/>Phone: +34.961.366.070<br/>E-Mail: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>CIF: G46261590</td><td class='w-50 p-0 pl-3'><u>Platform Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)</td></tr></table>",
+  "kibanaConfig": {
+    "dashboards": [
+      {
+        "title": "User Logins & Registrations",
+        "url": "#/dashboard/27836650-8907-11e9-9609-0520e65d66da?embed=true&_g=(refreshInterval%3A(display%3A'30%20minutes'%2Cpause%3A!f%2Csection%3A2%2Cvalue%3A1800000)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
+      }
+    ]
+  },
+  "kibanaEnabled": true,
+  "loggingConfig": {
+    "index": "logstash-{DATE}",
+    "type": "doc",
+    "dateFormat": "YYYY.MM.DD"
+  },
+  "loggingEnabled": true,
   "logoPath": "./assets/logo_fmp.png",
   "logoRequired": true,
   "phoneNumberRequired": true,
@@ -140,7 +159,9 @@ export const config = {
   "showTrack": false,
   "showTrade": false,
   "showVerification": false,
+  "standardCurrency": "EUR",
   "standardTaxonomy": "FurnitureOntology",
+  "defaultSearchIndex": "Products",
   "supportedActivitySectors": {
     "": [],
     "Logistics Provider": [
@@ -247,6 +268,7 @@ export const config = {
 
 export const product_vendor = "manufacturer";
 export const product_vendor_id = "id";
+export const product_vendor_img = "logoId";
 export const product_vendor_name = "legalName";
 export const product_vendor_rating = "trustRating";
 export const product_vendor_rating_seller = "trustSellerCommunication";
@@ -254,7 +276,7 @@ export const product_vendor_rating_fulfillment = "trustFullfillmentOfTerms";
 export const product_vendor_rating_delivery = "trustDeliveryPackaging";
 export const product_vendor_trust = "trustScore";
 export const product_name = "label";
-export const class_suggestion_field = "classification.allLabels";
+export const class_label = "classification.allLabels";
 export const product_description = "description";
 export const product_img = "imgageUri";
 export const product_price = "price";
@@ -262,13 +284,21 @@ export const product_currency = "currency";
 export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
 export const product_filter_prod = ["freeOfCharge","certificateType","applicableCountries"];
-export const product_filter_comp = ["manufacturer.legalName","manufacturer.origin","manufacturer.certificateType"];
-export const party_facet_field_list = ["legalName","origin","certificateType"];
+export const product_filter_comp = ["manufacturer.legalName","manufacturer.businessType","manufacturer.activitySectors","manufacturer.businessKeywords","manufacturer.origin","manufacturer.certificateType"];
+export const party_facet_field_list = ["legalName","businessType","activitySectors","businessKeywords","origin","certificateType"];
+export const party_filter_main = ["businessType","activitySectors","businessKeywords","origin","certificateType"];
+export const party_filter_trust = ["trustScore","trustRating","trustSellerCommunication","trustFullfillmentOfTerms","trustDeliveryPackaging","trustNumberOfTransactions"];
 export const item_manufacturer_id = "manufacturerId";
 export const product_filter_trust = ["manufacturer.trustScore","manufacturer.trustRating","manufacturer.trustSellerCommunication","manufacturer.trustFullfillmentOfTerms","manufacturer.trustDeliveryPackaging","manufacturer.trustNumberOfTransactions"];
 export const product_filter_mappings = {
   "price": "Price",
-  "currency": "Currency"
+  "currency": "Currency",
+  "manufacturer.businessType": "Business Type",
+  "manufacturer.activitySectors": "Activity Sectors",
+  "manufacturer.businessKeywords": "Business Keywords",
+  "businessType": "Business Type",
+  "activitySectors": "Activity Sectors",
+  "businessKeywords": "Business Keywords"
 };
 export const product_nonfilter_full = ["_text_","_version_","id","image","localName","languages","catalogueId","doctype","manufacturerId","manufacturerItemId","manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType"];
 export const product_nonfilter_regex = ["lmf.","_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
@@ -277,12 +307,20 @@ export const product_default = {};
 export const facet_min = 1;
 export const facet_count = -1;
 export const query_settings = {
-  "fields": ["STANDARD","commodityClassficationUri","{LANG}_label","{LANG}_desc", class_suggestion_field],
+  "fields": ["STANDARD","commodityClassficationUri","{LANG}_label","{LANG}_desc"],
   "boosting": true,
   "boostingFactors": {
     "STANDARD": 4,
-    "commodityClassficationUri": 64,
-    "{LANG}_label": 16,
+    "commodityClassficationUri": 16,
+    "{LANG}_label": 64,
     "{LANG}_desc": -1
+  }
+};
+export const query_settings_comp = {
+  "fields": ["STANDARD","legalName"],
+  "boosting": true,
+  "boostingFactors": {
+    "STANDARD": 4,
+    "legalName": 64
   }
 };

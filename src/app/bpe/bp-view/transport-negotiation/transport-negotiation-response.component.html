@@ -62,13 +62,13 @@
         </div>
         <div class="col-5">
             <quantity-input [disabled]="true" 
-                [quantity]="rfqPrice" 
+                [quantity]="rfqPrice.itemPrice"
                 [quantityUnits]="CURRENCIES">
             </quantity-input>
         </div>
         <div class="col-5">
             <quantity-input [disabled]="isDisabled()" 
-                [quantity]="quotationPrice" 
+                [quantity]="quotationPrice.itemPrice"
                 [quantityUnits]="CURRENCIES">
             </quantity-input>
         </div>
@@ -141,12 +141,12 @@
             </input-label>
         </div>
         <div class="col-5">
-            <text-input [(text)]="rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms" 
+            <text-input [(text)]="rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms[0].value"
                 [disabled]="true">
             </text-input>
         </div>
         <div class="col-5">
-            <text-input [(text)]="quotation.quotationLine[0].lineItem.deliveryTerms.specialTerms" 
+            <text-input [(text)]="quotation.quotationLine[0].lineItem.deliveryTerms.specialTerms[0].value"
                 [disabled]="isDisabled()">
             </text-input>
         </div>
@@ -228,43 +228,45 @@
 
 
 <!-- Actions -->
-<div class="row actions-row" *ngIf="userRole === 'seller' && !isReadOnly()">
-    <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-    <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+<ng-container *ngIf="!formerProcess">
+    <div class="row actions-row" *ngIf="userRole === 'seller' && !isReadOnly()">
+        <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRespondToQuotation(false)">
+                Reject Offer
+            </button>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToQuotation(true)">
+                Accept Offer
+            </button>
+        </div>
     </div>
-    <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRespondToQuotation(false)">
-            Reject Offer
-        </button>
-    </div>
-    <div class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToQuotation(true)">
-            Accept Offer
-        </button>
-    </div>
-</div>
 
-<div class="row actions-row" *ngIf="userRole === 'seller' && isReadOnly() && !readonly">
-    <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-    <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+    <div class="row actions-row" *ngIf="userRole === 'seller' && isReadOnly() && !readonly">
+        <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+        </div>
     </div>
-</div>
 
-<div class="row actions-row" *ngIf="userRole === 'buyer' && !readonly">
-    <div class="col-5 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-    <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+    <div class="row actions-row" *ngIf="userRole === 'buyer' && !readonly">
+        <div class="col-5 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+        </div>
+        <div class="col-3">
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRequestNewQuotation()">
+                Request new Quotation
+            </button>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onAcceptAndOrder()">
+                Accept & Order
+            </button>
+        </div>
     </div>
-    <div class="col-3">
-        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRequestNewQuotation()">
-            Request new Quotation
-        </button>
-    </div>
-    <div class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onAcceptAndOrder()">
-            Accept & Order
-        </button>
-    </div>
-</div>
+</ng-container>

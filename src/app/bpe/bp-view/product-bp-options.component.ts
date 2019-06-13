@@ -21,6 +21,9 @@ import { CookieService } from "ng2-cookies";
 import {ThreadEventMetadata} from '../../catalogue/model/publish/thread-event-metadata';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from '../../globals';
+import {Headers, Http} from "@angular/http";
+import { DomSanitizer } from '@angular/platform-browser';
+
 /**
  * Created by suat on 20-Oct-17.
  */
@@ -34,7 +37,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     currentStep: ProductBpStep;
     stepsDisplayMode: ProductBpStepsDisplay;
     callStatus: CallStatus = new CallStatus();
-    bpStartEventSubs: Subscription;
+    bpActivityEventSubs: Subscription;
 
     id: string;
     catalogueId: string;
@@ -53,10 +56,14 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     serviceExpanded: boolean = false;
     public config = myGlobals.config;
 
+    private identityEndpoint = myGlobals.user_mgmt_endpoint;
+    chatURL = this.sanitizer.bypassSecurityTrustResourceUrl(myGlobals.rocketChatEndpoint);
+
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
 
-    constructor(public bpDataService: BPDataService, 
+    constructor(public bpDataService: BPDataService,
+                public sanitizer: DomSanitizer,
                 public catalogueService: CatalogueService, 
                 private searchContextService: SearchContextService,
                 public userService: UserService,
@@ -64,26 +71,53 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 public route: ActivatedRoute,
                 private cookieService: CookieService,
                 private renderer: Renderer2,
+                private http: Http,
                 private modalService: NgbModal) {
         this.renderer.setStyle(document.body, "background-image", "none");
     }
 
+    /**
+     * This function will create a separate chat channel for business negotiations
+     * @param content
+     */
     open(content) {
-        this.modalService.open(content, {}).result.then((result) => {
-            // this.closeResult = `Closed with: ${result}`;
-        }, (reason) => {
-            // this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        });
+
+        let createChannelRequest = {
+            userId: this.cookieService.get("rocket_chat_userID"),
+            userToken: this.cookieService.get("rocket_chat_token"),
+            initiatingPartyID: this.cookieService.get("company_id"),
+            respondingPartyID: this.bpDataService.getCompanySettings().companyID,
+            productName: this.line.goodsItem.item.name[0].value
+        };
+
+        let headers = new Headers({'Content-Type': 'application/json'});
+        const url = `${this.identityEndpoint}/chat/createChannel`;
+        this.http
+            .post(url, JSON.stringify(createChannelRequest), {headers: headers})
+            .toPromise()
+            .then(res => {
+                let channelDetails = res.json();
+                this.chatURL = this.sanitizer.bypassSecurityTrustResourceUrl(myGlobals.rocketChatEndpoint + "/channel/" + channelDetails.channelName);
+                this.modalService.open(content, {})
+            })
+            .catch(e => {
+                alert("Error occurred while creating the channel. Please try again later")
+            })
     }
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        this.processMetadata = this.bpDataService.bpStartEvent.processMetadata;
+        if(this.bpDataService.bpActivityEvent.processHistory.length > 0) {
+            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
+        }
 
-        this.bpStartEventSubs = this.bpDataService.bpStartEventObservable.subscribe(bpStartEvent => {
-            if (bpStartEvent) {
-                this.processType = bpStartEvent.processType;
-                this.currentStep = this.getCurrentStep(bpStartEvent.processType);
+        this.bpActivityEventSubs = this.bpDataService.bpActivityEventObservable.subscribe(bpActivityEvent => {
+            if (bpActivityEvent) {
+                if(this.bpDataService.bpActivityEvent.newProcess) {
+                    this.processMetadata = null;
+                }
+                this.processType = bpActivityEvent.processType;
+                this.currentStep = this.getCurrentStep(bpActivityEvent.processType);
                 this.stepsDisplayMode = this.getStepsDisplayMode();
             }
         });
@@ -145,7 +179,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.bpStartEventSubs.unsubscribe();
+        this.bpActivityEventSubs.unsubscribe();
         this.renderer.setStyle(document.body, "background-image", "url('assets/bg_global.jpg')");
     }
 
@@ -161,7 +195,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     }
 
     isReadOnly(): boolean {
-        return !(this.processMetadata && this.processMetadata.isBeingUpdated) || this.bpDataService.bpStartEvent.processType == 'Fulfilment' || this.bpDataService.bpStartEvent.processType == 'Transport_Execution_Plan';
+        return !(this.processMetadata && this.processMetadata.isBeingUpdated) || this.bpDataService.bpActivityEvent.processType == 'Fulfilment' || this.bpDataService.bpActivityEvent.processType == 'Transport_Execution_Plan';
     }
 
     onToggleProductExpanded() {
@@ -181,7 +215,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     }
 
     private getOriginalOrder(): Promise<Order | null> {
-        if(this.bpDataService.bpStartEvent.userRole === "seller") {
+        if(this.bpDataService.bpActivityEvent.userRole === "seller") {
             return Promise.resolve(null);
         }
         if(this.searchContextService.getAssociatedProcessMetadata()) {
@@ -198,7 +232,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     private initWithCatalogueLine(line: CatalogueLine, settings: CompanySettings) {
         this.wrapper = new ProductWrapper(line, settings.negotiationSettings);
         this.settings = settings;
-        this.options = this.bpDataService.bpStartEvent.workflowOptions;
+        this.options = this.bpDataService.bpActivityEvent.workflowOptions;
         if(this.processType) {
             this.currentStep = this.getCurrentStep(this.processType);
         }
@@ -244,7 +278,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     private getStepsDisplayMode(): ProductBpStepsDisplay {
         if(this.isTransportService()) {
-            if(this.bpDataService.bpStartEvent.userRole === "seller") {
+            if(this.bpDataService.bpActivityEvent.processType == 'Transport_Execution_Plan' && this.bpDataService.bpActivityEvent.userRole === "seller") {
                 // The service provider only sees transport steps
                 return "Transport";
             } else if(!this.originalOrder) {
@@ -257,7 +291,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             if(this.isLogisticsService()){
                 return "Logistics";
             }
-            if(this.bpDataService.bpStartEvent.userRole === "seller") {
+            if(this.bpDataService.bpActivityEvent.userRole === "seller") {
                 return "Order_Before_Transport";
             } else {
                 return "Order";

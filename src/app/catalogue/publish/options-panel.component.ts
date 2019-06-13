@@ -34,7 +34,7 @@ export class OptionsPanelComponent implements OnInit{
                 this.title = selectPreferredValue(this.itemProperty.name);
 
                 // retrieve options
-                this.logisticPublishingService.getCachedPropertyCodeList(indexedProperty.codeListUri).then(codeListResult => {
+                this.logisticPublishingService.getCachedPropertyCodeList(indexedProperty.codeListId).then(codeListResult => {
                     for(let result of codeListResult.result){
                         let label = selectNameFromLabelObject(result.label);
                         this.options.push(new Text(label));
@@ -47,6 +47,7 @@ export class OptionsPanelComponent implements OnInit{
     onOptionAdded() {
         if(this.option){
             this.itemProperty.value.push(new Text(this.option));
+            this.option = null;
         }
     }
 
