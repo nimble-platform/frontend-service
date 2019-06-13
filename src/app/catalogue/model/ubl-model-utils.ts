@@ -395,7 +395,7 @@ export class UBLModelUtils {
         const documentReference: DocumentReference = new DocumentReference(rfq.id);
 
         const quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, false, documentReference,
-            customerParty, supplierParty, [quotationLine], rfq.paymentMeans, rfq.paymentTerms, [], rfq.termOrCondition);
+            customerParty, supplierParty, [quotationLine], rfq.paymentMeans, rfq.paymentTerms, rfq.tradingTerms, rfq.termOrCondition);
         return quotation;
     }
 
