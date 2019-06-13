@@ -449,6 +449,7 @@ export class BPDataService{
         this.requestForQuotation.requestForQuotationLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
         this.requestForQuotation.paymentMeans = copyQuotation.paymentMeans;
         this.requestForQuotation.paymentTerms = copyQuotation.paymentTerms;
+        this.requestForQuotation.termOrCondition = copyQuotation.termOrCondition;
         this.requestForQuotation.delivery = copyRfq.delivery;
         this.requestForQuotation.dataMonitoringRequested = copyRfq.dataMonitoringRequested;
     }
