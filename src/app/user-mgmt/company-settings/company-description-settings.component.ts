@@ -201,7 +201,7 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
 
     onSave(model: FormGroup) {
         this.saveCallStatus.submit();
-        this.settings.description.companyStatement =  createTextObject(model.getRawValue()['companyStatement']);
+        this.settings.description.companyStatement =  createTextObject(model.getRawValue()['companyStatement'],"en");
         this.settings.description.website = model.getRawValue()['website'];
         this.settings.description.socialMediaList = this.socialMediaList;
         this.settings.description.externalResources = this.externalResources;

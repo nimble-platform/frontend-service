@@ -103,6 +103,7 @@ export class OrderComponent implements OnInit {
         this.orderResponse = this.bpDataService.orderResponse;
         this.priceWrapper = new PriceWrapper(
             this.order.orderLine[0].lineItem.price,
+            this.bpDataService.getCatalogueLine().requiredItemLocationQuantity.applicableTaxCategory[0].percent,
             this.order.orderLine[0].lineItem.quantity
         );
 
@@ -394,10 +395,6 @@ export class OrderComponent implements OnInit {
 
     getQuantityText(): string {
         return quantityToString(this.order.orderLine[0].lineItem.quantity);
-    }
-
-    getTotalPriceText(): string {
-        return this.priceWrapper.totalPriceString;
     }
 
     getDeliveryPeriodText(): string {

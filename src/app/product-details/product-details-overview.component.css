@@ -7,7 +7,7 @@
 
 .carousel-active {
     display: flex;
-    width:300px;
+    width:100%;
     height:300px;
     overflow: hidden;
     margin: 0 auto;
@@ -22,9 +22,9 @@
 
 .carousel-resize {
     min-width:100%;
-    max-width: none;
+    max-width:100%;
     height:300px;
-    margin: 0 -100%;
+    margin:0;
 }
 
 .carousel-inactive {

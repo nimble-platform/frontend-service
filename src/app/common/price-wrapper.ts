@@ -1,8 +1,8 @@
 import { Price } from "../catalogue/model/publish/price";
 import { Quantity } from "../catalogue/model/publish/quantity";
-import { currencyToString } from "./utils";
+import {currencyToString, roundToTwoDecimals} from "./utils";
 import { ItemPriceWrapper } from "./item-price-wrapper";
-import {Amount} from "../catalogue/model/publish/amount";
+import {defaultVatRate} from "./constants";
 
 /**
  * Wrapper around a price and a quantity, contains convenience methods to get the total price,
@@ -12,12 +12,13 @@ import {Amount} from "../catalogue/model/publish/amount";
  */
 export class PriceWrapper {
     /** hjid field from Quantity class */
-    hjid: string = null;
+    //hjid: string = null;
 
     itemPrice: ItemPriceWrapper;
 
     constructor(public price: Price,
-                public quantity: Quantity = new Quantity(1, price.baseQuantity.unitCode)) {
+                public vatPercentage: number = defaultVatRate,
+                public orderedQuantity: Quantity = new Quantity(1, price.baseQuantity.unitCode)) {
         this.itemPrice = new ItemPriceWrapper(price);
     }
 
@@ -28,11 +29,11 @@ export class PriceWrapper {
 
         const amount = Number(this.price.priceAmount.value);
         const baseQuantity = this.price.baseQuantity.value || 1;
-        return this.roundPrice(this.quantity.value * amount / baseQuantity);
+        return this.orderedQuantity.value * amount / baseQuantity;
     }
 
     set totalPrice(price: number) {
-        const quantity = this.quantity.value || 1;
+        const quantity = this.orderedQuantity.value || 1;
         const baseQuantity = this.price.baseQuantity.value || 1;
         this.price.priceAmount.value = price / quantity * baseQuantity
     }
@@ -41,11 +42,11 @@ export class PriceWrapper {
         if(!this.hasPrice()) {
             return "Not specified";
         }
-        return `${this.totalPrice} ${this.currency}`;
+        return `${roundToTwoDecimals(this.totalPrice)} ${this.currency}`;
     }
 
     get pricePerItem(): number {
-        return this.price.priceAmount.value;
+        return this.price.priceAmount.value / this.price.baseQuantity.value;
     }
 
     get pricePerItemString(): string {
@@ -58,9 +59,25 @@ export class PriceWrapper {
         }
 
         if(baseQuantity === 1) {
-            return `${this.roundPrice(amount.value)} ${currencyToString(amount.currencyID)} per ${qty.unitCode}`
+            return `${roundToTwoDecimals(amount.value)} ${currencyToString(amount.currencyID)} per ${qty.unitCode}`
         }
-        return `${this.roundPrice(amount.value)} ${currencyToString(amount.currencyID)} for ${baseQuantity} ${qty.unitCode}`
+        return `${roundToTwoDecimals(amount.value)} ${currencyToString(amount.currencyID)} for ${baseQuantity} ${qty.unitCode}`
+    }
+
+    get vatTotal(): number {
+        return this.totalPrice * this.vatPercentage / 100;
+    }
+
+    get vatTotalString(): string {
+        return `${roundToTwoDecimals(this.vatTotal)} ${this.currency}`
+    }
+
+    get grossTotal(): number {
+        return this.totalPrice + this.vatTotal;
+    }
+
+    get grossTotalString(): string {
+        return `${roundToTwoDecimals(this.grossTotal)} ${this.currency}`;
     }
 
     get currency(): string {
@@ -76,15 +93,11 @@ export class PriceWrapper {
         return this.price.priceAmount.value != null;
     }
 
-    private roundPrice(value: number): number {
-        return Math.round(value * 100) / 100;
-    }
-
     /**
      * Getters/Setters for quantity
      */
 
-    get value(): number {
+    /*get value(): number {
         return this.totalPrice;
     }
 
@@ -98,5 +111,4 @@ export class PriceWrapper {
 
     set unitCode(unitCode: string) {
         this.currency = unitCode;
-    }
-}
+*/}

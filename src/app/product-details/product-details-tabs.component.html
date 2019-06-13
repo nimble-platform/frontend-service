@@ -54,6 +54,7 @@
                     Company Details
                 </a>
             </li>
+            <!--
             <li *ngIf="haveRating" class="nav-item">
                 <a href id="RATING" class="nav-link"
                     [ngClass]="{ active: selectedTab === 'RATING'}"
@@ -61,13 +62,14 @@
                     Company Ratings
                 </a>
             </li>
+            -->
         </ul>
     </div>
 
     <!-- Overview Tab -->
     <div *ngIf="selectedTab === 'OVERVIEW'" class="p-3 col-12">
         <h3 class="p-1">Overview</h3>
-        <product-details-overview [wrapper]="wrapper" [options]="options" [readonly]="readonly">
+        <product-details-overview [wrapper]="wrapper" [options]="options" [readonly]="readonly" (compStatus)="setTab($event)">
         </product-details-overview>
     </div>
 
@@ -92,6 +94,16 @@
                 <ng-container *ngIf="property.valueQualifier === 'FILE'">
                     <file-input presentationMode="view" [binaryObjects]="property.valueBinary" [multiple]="true" rowClass="ml-2" [small]="true"></file-input>
                 </ng-container>
+            </div>
+        </div>
+        <div *ngIf="wrapper.getAdditionalDocuments().length > 0">
+            <h3>Additional Information</h3>
+            <div class="row mx-auto">
+                <div *ngFor="let documentReference of wrapper.getAdditionalDocuments()" class="p-1 col-6 d-flex">
+                    <ng-container>
+                        <file-input presentationMode="view" [binaryObjects]="[documentReference.attachment.embeddedDocumentBinaryObject]" [multiple]="true" [small]="true"></file-input>
+                    </ng-container>
+                </div>
             </div>
         </div>
     </div>
@@ -156,9 +168,11 @@
     </div>
 
     <!-- Company Ratings Tab -->
+    <!--
     <div *ngIf="selectedTab === 'RATING'" class="p-3 col-12">
         <company-rating (ratingStatus)="getRatingStatusTab($event)" [id]="settings.companyID" [hideTitle]="true">
         </company-rating>
     </div>
+    -->
 
 </div>

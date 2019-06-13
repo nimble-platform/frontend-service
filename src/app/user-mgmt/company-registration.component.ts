@@ -122,11 +122,11 @@ export class CompanyRegistrationComponent implements OnInit {
                 null,
                 new CompanyDetails(
                     model.getRawValue()['address'],
-                    createTextObject(model.getRawValue()['businessKeywords']),
+                    createTextObject(model.getRawValue()['businessKeywords'],"en"),
                     model.getRawValue()['businessType'],
-                    createTextObject(model.getRawValue()['name']),
-                    createTextObject(model.getRawValue()['brandName']),
-                    createTextObject(sectorString),
+                    createTextObject(model.getRawValue()['name'],"en"),
+                    createTextObject(model.getRawValue()['brandName'],"en"),
+                    createTextObject(sectorString,"en"),
                     model.getRawValue()['vatNumber'],
                     model.getRawValue()['verificationInformation'],
                     model.getRawValue()['yearOfReg']

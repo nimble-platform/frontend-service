@@ -60,8 +60,19 @@ export class SimpleSearchService {
 		.catch(this.handleError);
 	}
 
-	get(query: string, facets: string[], facetQueries: string[], page: number, cat: string, catID: string, search_index: string): Promise<any> {
+  getCompFields(): Promise<any> {
+  const url = this.url + `/party/fields`;
+  // const url = `${this.url}/select?q=*:*&rows=0&wt=csv`;
+  return this.http
+  .get(url, {headers: this.headers})
+  .toPromise()
+  .then(res => res.json())
+  .catch(this.handleError);
+}
+
+	get(query: string, facets: string[], facetQueries: string[], page: number, rows: number, sort: string, cat: string, catID: string, search_index: string): Promise<any> {
 		let queryRes;
+		let searchObject: any = {};
 		if (search_index == "Categories") {
 			let classLabel = myGlobals.class_label;
 			let querySettings = {
@@ -72,11 +83,12 @@ export class SimpleSearchService {
 			queryRes = this.buildQueryString(query, querySettings, true, false);
 		} else {
 			queryRes = this.buildQueryString(query, myGlobals.query_settings, true, false);
+			searchObject.sort = [];
+			searchObject.sort.push(sort);
 		}
 		query = queryRes.queryStr;
 		const url = this.url + `/item/search`
-		let searchObject: any = {};
-		searchObject.rows = 10;
+		searchObject.rows = rows;
 		searchObject.start = page - 1;
 		searchObject.q = query;
 		for (let facet of facets) {
@@ -111,6 +123,42 @@ export class SimpleSearchService {
 			.catch(this.handleError);
 	}
 
+  getComp(query: string, facets: string[], facetQueries: string[], page: number, rows: number, sort: string): Promise<any> {
+		let queryRes;
+    queryRes = this.buildQueryString(query, myGlobals.query_settings_comp, true, false);
+		query = queryRes.queryStr;
+		const url = this.url + `/party/search`
+		let searchObject: any = {};
+		searchObject.rows = rows;
+		searchObject.start = page - 1;
+		searchObject.q = query;
+    searchObject.sort = [];
+    searchObject.sort.push(sort);
+		for (let facet of facets) {
+			if (facet.length === 0 || !facet.trim()) {
+			} else {
+				if (searchObject.facet == null) {
+					searchObject.facet = {};
+					searchObject.facet.field = [];
+					searchObject.facet.minCount = this.facetMin;
+					searchObject.facet.limit = this.facetCount;
+				}
+				searchObject.facet.field.push(facet)
+			}
+		}
+		for (let facetQuery of facetQueries) {
+			if (searchObject.fq == null) {
+				searchObject.fq = [];
+			}
+			searchObject.fq.push(facetQuery);
+		}
+		return this.http
+			.post(url, searchObject, {headers: this.getHeadersWithBasicAuthorization()})
+			.toPromise()
+			.then(res => res.json())
+			.catch(this.handleError);
+	}
+
 	getSuggestions(query: string, item_field: string, search_index: string) {
 		let querySettings = {
 			"fields": [item_field],
@@ -122,6 +170,33 @@ export class SimpleSearchService {
 		if (search_index == "Categories") {
 			url = this.url + `/class/search`;
 		}
+		let searchObject: any = {};
+		searchObject.rows = 0;
+		searchObject.q = queryRes.queryStr;
+		searchObject.facet = {};
+		searchObject.facet.field = [];
+		searchObject.facet.limit = -1;
+
+		for (let i = 0; i < queryRes.queryFields.length; i++) {
+			searchObject.facet.field.push(queryRes.queryFields[i]);
+		}
+		return this.http
+			.post(url, searchObject, {headers: this.getHeadersWithBasicAuthorization()})
+			.pipe(
+				map(response =>
+					this.getSuggestionArray(response.json(), query, queryRes.queryArr, queryRes.queryFields)
+				)
+			);
+	}
+
+  getCompSuggestions(query: string, item_field: string) {
+		let querySettings = {
+			"fields": [item_field],
+			"boosting": false,
+			"boostingFactors": {}
+		};
+		let queryRes = this.buildQueryString(query, querySettings, true, true);
+		let url = this.url + `/party/search`;
 		let searchObject: any = {};
 		searchObject.rows = 0;
 		searchObject.q = queryRes.queryStr;
@@ -391,10 +466,12 @@ export class SimpleSearchService {
 		searchObject.start = page-1;
     searchObject.q = query;
     searchObject.sort = [];
+    let currency = myGlobals.config.standardCurrency;
+    let currentFirstLower = currency.charAt(0).toLowerCase() + currency.slice(1);
     if(sortType === "PRICE_HIGH_TO_LOW"){
-      searchObject.sort.push("eUR_price desc");
+      searchObject.sort.push(currentFirstLower+"_price desc");
     }else{
-      searchObject.sort.push("eUR_price asc");
+      searchObject.sort.push(currentFirstLower+"_price asc");
     }
 		for (let facet of facets) {
 			if (facet.length === 0 || !facet.trim()) {}

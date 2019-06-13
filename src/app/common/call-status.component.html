@@ -7,7 +7,7 @@
 	<div class="align-self-center" role="alert">{{callStatus.fb_message}}</div>
 </div>
 <div *ngIf="callStatus.fb_errordetc" #errorBox
-	 class="d-flex alert-danger alert-dismissible p-2 pr-4 rounded"
+	 class="d-flex alert-danger alert-dismissible p-2 pr-4 rounded position-relative"
 	 [ngClass]="{'alert' : large} ">
 	<div class="align-self-center" role="alert">
 		{{callStatus.fb_message}} <span *ngIf="callStatus.fb_details != ''" class="pointer" (click)="callStatus.fb_showDetails=!callStatus.fb_showDetails"><span *ngIf="!callStatus.fb_showDetails"><i class="fa fa-angle-double-down pl-2 pr-2"></i></span><span *ngIf="callStatus.fb_showDetails"><i class="fa fa-angle-double-up pl-2 pr-2"></i></span></span>

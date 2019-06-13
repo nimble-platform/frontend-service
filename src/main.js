@@ -9,6 +9,7 @@ i18n_provider_1.getTranslationProviders().then(function (providers) {
     var options = { providers: providers };
     if (!myGlobals.debug)
         core_1.enableProdMode();
-    platform_browser_dynamic_1.platformBrowserDynamic().bootstrapModule(app_module_1.AppModule, options);
+    //platformBrowserDynamic().bootstrapModule(AppModule, options);
+    platform_browser_dynamic_1.platformBrowserDynamic().bootstrapModule(app_module_1.AppModule);
 });
 //# sourceMappingURL=main.js.map

@@ -14,15 +14,15 @@
 }
 
 .bg-primary-nimble {
-	background-color: #b77563;
+	background-color: var(--main-color);
 }
 
 .border-primary-nimble {
-	border-color: #b77563;
+	border-color: var(--main-color);
 }
 
 .badge-primary-nimble {
-	background-color: #b77563;
+	background-color: var(--main-color);
 	color: #fff;
 }
 

@@ -116,26 +116,28 @@
             <div class="col-12">
                 <button class='btn btn-outline-primary' (click)="toggleDimensionCard()">Dimensions</button>
                 <div *ngIf="showDimensions" >
-                    <div class="row" *ngFor="let multiValuedDimension of multiValuedDimensions">
-                        <div class="col-3" style="align-self:center">
-                            <strong>{{multiValuedDimension.attributeID}} : </strong>
+                    <div class="row border-bottom m-0" *ngFor="let multiValuedDimension of multiValuedDimensions">
+                        <div class="col-3" style="padding:.75rem;padding-left:0;">
+                            <div class="col-form-label">
+                              <strong>{{multiValuedDimension.attributeID}} : </strong>
+                            </div>
                         </div>
                         <div class="col-6">
-                            <table class="table table-borderless mb-0">
+                            <table class="table table-borderless" style="margin-bottom:.75rem;">
                                 <tbody>
                                 <tr *ngFor="let quantity of multiValuedDimension.measure;let i=index">
-                                    <td>
-                                        <quantity-input [quantity]="quantity" rowClass="quantity-input" [quantityUnits]="dimensionUnits">
+                                    <td class="pb-0">
+                                        <quantity-input [quantity]="quantity" rowClass="quantity-input" [quantityUnits]="dimensionUnits" large="true">
                                         </quantity-input>
                                     </td>
-                                    <td *ngIf="i>0" class="align-right" >
+                                    <td *ngIf="i>0" class="align-right pb-0" >
                                         <button class="btn btn-danger"  type="button" (click)="onRemoveDimension(multiValuedDimension.attributeID,quantity)">&times;</button>
                                     </td>
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col-3" style="align-self:center">
+                        <div class="col-3 align-right" style="padding:.75rem;padding-right:0;">
                             <button class="btn btn-outline-primary" (click)="onAddDimension(multiValuedDimension.attributeID)">
                                 Add
                             </button>
@@ -144,43 +146,45 @@
                 </div>
             </div>
             <div class="col-12">
-                <div class="row" *ngFor="let prop of getProductProperties()">
-                    <div class="col-3" style="align-self:center">
-                        <strong [title]="getDefinition(prop)">{{ getPrettyName(prop) }}: </strong>
+                <div class="row border-bottom m-0" *ngFor="let prop of getProductProperties()">
+                    <div class="col-3" style="padding:.75rem;padding-left:0;">
+                        <div class="col-form-label">
+                          <strong [title]="getDefinition(prop)">{{ getPrettyName(prop) }}: </strong>
+                        </div>
                     </div>
                     <div class="col-6">
-                        <table *ngIf="prop.valueQualifier === 'FILE'" class="table table-borderless mb-0">
+                        <table *ngIf="prop.valueQualifier === 'FILE'" class="table table-borderless" style="margin-bottom:.75rem;">
                             <tbody>
                             <tr>
-                                <td>
+                                <td class="pb-0">
                                     <file-input [binaryObjects]="prop.valueBinary" [multiple]="true" [maxSize]=1>
                                     </file-input>
                                 </td>
                             </tr>
                             </tbody>
                         </table>
-                        <table *ngIf="prop.valueQualifier !== 'FILE'" class="table table-borderless mb-0">
+                        <table *ngIf="prop.valueQualifier !== 'FILE'" class="table table-borderless" style="margin-bottom:.75rem;">
                             <tbody>
                                 <tr *ngFor="let value of getValues(prop); let i = index">
-                                    <td *ngIf="prop.valueQualifier === 'STRING'" style="vertical-align:middle">
+                                    <td *ngIf="prop.valueQualifier === 'STRING'" style="vertical-align:middle" class="pb-0">
                                         <input [(ngModel)]="value.value" class="form-control" type="text" name="{{value.value}}" />
                                     </td>
-                                    <td *ngIf="prop.valueQualifier === 'STRING'" style="vertical-align:middle">
+                                    <td *ngIf="prop.valueQualifier === 'STRING'" style="vertical-align:middle" class="pb-0">
                                         <select [(ngModel)]="value.languageID" class="form-control" type="text" name="{{value.languageID}}">
                                             <option *ngFor='let language of languages' [value]="language" [selected]="language === value.languageID">{{language}}</option>
                                         </select>
                                     </td>
-                                    <td *ngIf="prop.valueQualifier === 'QUANTITY'" style="vertical-align:middle">
-                                      <quantity-input [quantity]="prop.valueQuantity[i]" rowClass="quantity-input">
+                                    <td *ngIf="prop.valueQualifier === 'QUANTITY'" style="vertical-align:middle" class="pb-0">
+                                      <quantity-input [quantity]="prop.valueQuantity[i]" rowClass="quantity-input" large="true">
                                       </quantity-input>
                                     </td>
-                                    <td *ngIf="prop.valueQualifier === 'BOOLEAN'" style="vertical-align:middle">
+                                    <td *ngIf="prop.valueQualifier === 'BOOLEAN'" style="vertical-align:middle;line-height:2.375rem;" class="pb-0">
                                       <input type="checkbox" [checked]="prop.value[i].value == 'true'" (change)="setBooleanValue(prop, i, $event)">
                                     </td>
-                                    <td *ngIf="prop.valueQualifier !== 'STRING' && prop.valueQualifier !== 'QUANTITY' && prop.valueQualifier !== 'BOOLEAN'" style="vertical-align:middle">
-                                      <input type="number" class="form-control form-control-sm value-input" [ngModel]="prop.valueDecimal[i]" (change)="setValueDecimal(prop, i, $event)">
+                                    <td *ngIf="prop.valueQualifier !== 'STRING' && prop.valueQualifier !== 'QUANTITY' && prop.valueQualifier !== 'BOOLEAN'" style="vertical-align:middle" class="pb-0">
+                                      <input type="number" class="form-control value-input" [ngModel]="prop.valueDecimal[i]" (change)="setValueDecimal(prop, i, $event)">
                                     </td>
-                                    <td *ngIf="i>0 && prop.valueQualifier !== 'BOOLEAN'" class="align-right" style="vertical-align:middle">
+                                    <td *ngIf="i>0 && prop.valueQualifier !== 'BOOLEAN'" class="align-right" style="vertical-align:middle" class="pb-0 align-right">
                                         <button class="btn btn-danger"  type="button" (click)="onRemoveValue(prop,i)">&times;</button>
                                     </td>
                                 </tr>
@@ -219,7 +223,7 @@
                         </ng-container>
                         -->
                     </div>
-                    <div class="col-3 align-right" style="align-self:center">
+                    <div class="col-3 align-right" style="padding:.75rem;padding-right:0;">
                         <button class="btn btn-outline-primary" (click)="onAddValue(prop)"
                             *ngIf="prop.valueQualifier !== 'BOOLEAN' && prop.valueQualifier !== 'FILE'">
                             Add

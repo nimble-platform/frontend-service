@@ -33,6 +33,26 @@ export class NameDescriptionPanelComponent implements OnInit{
         this.catalogueLine.goodsItem.item.description.splice(index, 1);
     }
 
+    removeHjidsFromImages() {
+      for (var i=0; i<this.catalogueLine.goodsItem.item.productImage.length; i++) {
+        this.catalogueLine.goodsItem.item.productImage[i].hjid = null;
+      }
+    }
+
+    onDecreaseIndex(index: number): void {
+        this.removeHjidsFromImages();
+        let tmp_img = this.catalogueLine.goodsItem.item.productImage[index-1];
+        this.catalogueLine.goodsItem.item.productImage[index-1] = this.catalogueLine.goodsItem.item.productImage[index];
+        this.catalogueLine.goodsItem.item.productImage[index] = tmp_img;
+    }
+
+    onIncreaseIndex(index: number): void {
+        this.removeHjidsFromImages();
+        let tmp_img = this.catalogueLine.goodsItem.item.productImage[index+1];
+        this.catalogueLine.goodsItem.item.productImage[index+1] = this.catalogueLine.goodsItem.item.productImage[index];
+        this.catalogueLine.goodsItem.item.productImage[index] = tmp_img;
+    }
+
     onRemoveImage(index: number): void {
         this.catalogueLine.goodsItem.item.productImage.splice(index, 1);
     }

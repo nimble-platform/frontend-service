@@ -45,6 +45,11 @@
   				Trade Details
   			</a>
   		</li>
+		<li *ngIf="viewMode=='full'" class="nav-item">
+			<a href id="TERMS_AND_CONDITIONS" class="nav-link" [ngClass]="{ active: selectedTab === 'TERMS_AND_CONDITIONS'}" (click)="onSelectTab($event)">
+				Terms and Conditions
+			</a>
+		</li>
   		<li *ngIf="viewMode=='full'" class="nav-item">
   			<a href id="DELIVERY_TERMS" class="nav-link" [ngClass]="{ active: selectedTab === 'DELIVERY_TERMS'}" (click)="onSelectTab($event)">
   				Delivery Address
@@ -85,6 +90,12 @@
   <div *ngIf="settings" [hidden]="selectedTab !== 'NEGOTIATION_SETTINGS'">
   	<company-negotiation-settings [settings]="settings">
   	</company-negotiation-settings>
+  </div>
+
+    <!-- Terms and Conditions, hidden to avoid reloading -->
+  <div *ngIf="settings" [hidden]="selectedTab !== 'TERMS_AND_CONDITIONS'">
+    <company-terms-and-conditions [settings]="settings">
+    </company-terms-and-conditions>
   </div>
 
   <!-- Delivery Terms, hidden to avoid reloading -->

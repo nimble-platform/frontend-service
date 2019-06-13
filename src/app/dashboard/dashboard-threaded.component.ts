@@ -22,8 +22,6 @@ import { timestamp } from "rxjs/operator/timestamp";
 import * as moment from "moment";
 import {Moment, unitOfTime} from "moment";
 
-// import { GoogleChartInterface } from 'ng2-google-charts/google-charts-interfaces';
-
 @Component({
     selector: "dashboard-threaded",
     templateUrl: "./dashboard-threaded.component.html",
@@ -44,6 +42,8 @@ export class DashboardThreadedComponent implements OnInit{
 
     results: DashboardOrdersQueryResults = new DashboardOrdersQueryResults();
     queryStatus: CallStatus = new CallStatus();
+
+    exportCallStatus: CallStatus = new CallStatus();
 
     TABS = TABS;
 
@@ -71,6 +71,7 @@ export class DashboardThreadedComponent implements OnInit{
     updatingCollaborationGroupName = [];
 
     public config = myGlobals.config;
+
 
     constructor(
         private cookieService: CookieService,
@@ -233,6 +234,28 @@ export class DashboardThreadedComponent implements OnInit{
             this.updateStateFromQueryParameters(this.queryParameters);
         }
         this.getTabCounters();
+    }
+
+    onExportClicked() {
+        this.exportCallStatus.submit();
+        let partyId: string = this.cookieService.get("company_id");
+        this.bpeService.exportTransactions(partyId, null, null, null).then(result => {
+
+                var link = document.createElement('a');
+                link.id = 'downloadLink';
+                link.href = window.URL.createObjectURL(result.content);
+                link.download = result.fileName;
+
+                document.body.appendChild(link);
+                var downloadLink = document.getElementById('downloadLink');
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+
+                this.exportCallStatus.callback("Exported transactions successfully", true);
+            },
+            error => {
+                this.exportCallStatus.error("Failed to export transactions", error);
+            });
     }
 
     /*

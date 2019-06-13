@@ -21,11 +21,11 @@
         </div>
         <div class="row">
             <div class="col-12">
-              <product-details-overview [wrapper]="productWrapper" [options]="options">
+              <product-details-overview [wrapper]="productWrapper" [options]="options" (compStatus)="setTab($event)">
               </product-details-overview>
             </div>
         </div>
-        <product-details-tabs [wrapper]="productWrapper" [settings]="settings" [tabToOpen]="tabToOpen">
+        <product-details-tabs [wrapper]="productWrapper" [settings]="settings" [tabToOpen]="tabToOpen" (tabStatus)="setTab($event)">
         </product-details-tabs>
     </div>
     <div class="col-3">
@@ -135,7 +135,7 @@
                         Quantity:
                     </label>
                     <span class="order-qty-input">
-                        <input type="number" min="0" step="1" (keypress)="onOrderQuantityKeyPressed($event)"
+                        <input type="number" min="1" step="1" (keypress)="onOrderQuantityKeyPressed($event)"
                                [ngModel]="options.quantity" (ngModelChange)="options.quantity=$event; onOrderQuantityChange()"
                                class="form-control form-control-sm w-75 px-1"
                                [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()"/>
@@ -146,21 +146,33 @@
                     <span class="order-qty-range">
                         <input type="range" [ngModel]="options.quantity" (ngModelChange)="options.quantity=$event; onOrderQuantityChange()"
                                class="form-control-range"
-                               min="0" [max]="getMaximumQuantity()" [step]="getSteps()"
+                               [min]="getSteps()" [max]="getMaximumQuantity()" [step]="getSteps()"
                                [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()"/>
                     </span>
                 </div>
                 <div class="inline-order-group">
-                    <label class="order-label order-price">
-                        Total Price:
+                    <label class="vat-label">
+                        VAT:
                     </label>
 
-                    <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-price-value">
-                        {{getTotalPrice()}} {{ line.requiredItemLocationQuantity.price.priceAmount.currencyID }}
+                    <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="vat-value">
+                        {{priceWrapper.vatTotalString}}
                     </span>
-                    <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-price-value">
-                        {{frameContractQuotationWrapper.priceWrapper.totalPriceString}}
+                    <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="vat-value">
+                        {{frameContractQuotationWrapper.priceWrapper.vatTotalString}}
                     </span>
+                </div>
+                <div class="inline-order-group">
+                        <label class="order-label order-price">
+                            Total Price:
+                        </label>
+
+                        <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-price-value">
+                            {{priceWrapper.grossTotalString}}
+                        </span>
+                        <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-price-value">
+                            {{frameContractQuotationWrapper.priceWrapper.grossTotalString}}
+                        </span>
                 </div>
             </ng-container>
 
@@ -168,7 +180,7 @@
             <ng-container *ngIf="!hasPrice()">
 
                 <hr>
-
+                <!--
                 <div class="inline-order-group">
                     <label class="order-label">
                         Quantity:
@@ -176,6 +188,27 @@
                     <span class="order-qty-input">
                         <input type="number" [(ngModel)]="options.quantity" class="form-control form-control-sm px-1" />
                         <span *ngIf="getQuantityUnit() !== ''" class="ml-2">{{ getQuantityUnit() }}</span>
+                    </span>
+                </div>
+                -->
+                <div class="inline-order-group">
+                    <label class="order-label">
+                        Quantity:
+                    </label>
+                    <span class="order-qty-input">
+                        <input type="number" min="1" step="1" (keypress)="onOrderQuantityKeyPressed($event)"
+                               [ngModel]="options.quantity" (ngModelChange)="options.quantity=$event;"
+                               class="form-control form-control-sm w-75 px-1"
+                               [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()"/>
+                        <span *ngIf="getQuantityUnit() !== ''" class="ml-2">{{ getQuantityUnit() }}</span>
+                    </span>
+                </div>
+                <div class="inline-order-group">
+                    <span class="order-qty-range">
+                        <input type="range" [ngModel]="options.quantity" (ngModelChange)="options.quantity=$event;"
+                               class="form-control-range"
+                               min="1" max="100" step="1"
+                               [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()"/>
                     </span>
                 </div>
                 <div class="inline-order-group">

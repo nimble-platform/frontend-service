@@ -53,11 +53,13 @@ export class CatalogueService {
                 .toPromise()
                 .then(res => {
                     this.catalogueResponse = res.json() as CataloguePaginationResponse;
-                    return this.catalogueResponse;
+                    let sorted = this.sortImages(res,"catalogueLines",true);
+                    return sorted as CataloguePaginationResponse;
+                    //return this.catalogueResponse;
                 })
                 .catch(res => {
                     if (res.status == 404) {
-                        // no default catalogue yet, create new one            
+                        // no default catalogue yet, create new one
                         this.catalogueResponse = new CataloguePaginationResponse(null,0,[]);
                         return this.catalogueResponse;
                     } else {
@@ -70,23 +72,25 @@ export class CatalogueService {
 
     getFavouriteResponse(userId: string,limit:number=0, offset:number=0, sortOption=null): Promise<any>{
         return this.userService.getPerson(userId).then(person => {
-            
+
             let url = this.baseUrl + `/cataloguelines?limit=${limit}&offset=${offset}`;
             // if there is a selected category to filter the results, then add it to the url
-    
+
             if(sortOption){
                 url += `&sortOption=${sortOption}`;
             }
-       
+
             if(person){
-                url += `&ids=${person.favouriteProductID}`;                
+                url += `&ids=${person.favouriteProductID}`;
             }
 
             return this.http
                 .get(url, {headers: this.getAuthorizedHeaders()})
                 .toPromise()
                 .then(res => {
-                    return res.json() as Array<CatalogueLine>;
+                    let sorted = this.sortImages(res,null,true);
+                    return sorted as Array<CatalogueLine>;
+                    //return res.json() as Array<CatalogueLine>;
                 })
                 .catch(res => {
                     if(res.status == 500){
@@ -103,7 +107,9 @@ export class CatalogueService {
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res => {
-                return res.json() as CatalogueLine;
+                let sorted = this.sortImages(res,null,false);
+                return sorted as CatalogueLine;
+                //return res.json() as CatalogueLine;
             })
             .catch(this.handleError);
     }
@@ -115,7 +121,9 @@ export class CatalogueService {
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res => {
-                return res.json() as CatalogueLine;
+                let sorted = this.sortImages(res,null,false);
+                return sorted as CatalogueLine;
+                //return res.json() as CatalogueLine;
             })
             .catch(this.handleError);
     }
@@ -139,7 +147,9 @@ export class CatalogueService {
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res => {
-                return res.json() as CatalogueLine[];
+                let sorted = this.sortImages(res,null,true);
+                return sorted as CatalogueLine[];
+                //return res.json() as CatalogueLine[];
             })
             .catch(this.handleError);
     }
@@ -168,11 +178,16 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
-    deleteCatalogue():Promise<any> {
-        const token = 'Bearer '+this.cookieService.get("bearer_token");
-        const url = this.baseUrl + `/catalogue/ubl/${this.catalogueResponse.catalogueUuid}`;
+    deleteCatalogues(catalogueIds:string[]): Promise<any> {
+        const partyId =this.cookieService.get("company_id");
+        let ids: string = '';
+        for(let id of catalogueIds) {
+           ids += id + ","
+        }
+        ids = ids.substr(0, ids.length-1);
+        const url = this.baseUrl + `/catalogue?partyId=${partyId}&ids=${ids}`;
         return this.http
-            .delete(url,{headers:new Headers({"Authorization":token})})
+            .delete(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .catch(this.handleError);
     }
@@ -275,10 +290,16 @@ export class CatalogueService {
         });
     }
 
-    exportCatalogue(catalogueUuid:string): Promise<any> {
+    exportCatalogues(catalogueIds:string[]): Promise<any> {
+        const partyId =this.cookieService.get("company_id");
+        let ids: string = '';
+        for(let id of catalogueIds) {
+            ids += id + ","
+        }
+        ids = ids.substr(0, ids.length-1);
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const languageId = DEFAULT_LANGUAGE();
-        const url = this.baseUrl + `/catalogue/export?uuid=${catalogueUuid}&languageId=${languageId}`;
+        const url = this.baseUrl + `/catalogue/export?ids=${ids}&languageId=${languageId}&partyId=${partyId}`;
         return new Promise<any>((resolve, reject) => {
 
             let xhr = new XMLHttpRequest();
@@ -294,7 +315,12 @@ export class CatalogueService {
                         var contentType = 'application/zip';
                         var blob = new Blob([xhr.response], {type: contentType});
                         // file name
-                        let fileName = catalogueUuid + '_' + new Date().toString();
+                        let fileName = catalogueIds[0];;
+                        if(catalogueIds.length > 1) {
+                            fileName = 'catalogues';
+                        }
+                        fileName = fileName + '_' + new Date().toString();
+
                         resolve({fileName: fileName, content: blob});
                     } else {
                         reject(xhr.status);
@@ -370,7 +396,9 @@ export class CatalogueService {
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res => {
-                return res.json();
+                let sorted = this.sortImages(res,"catalogueLine",true);
+                return sorted;
+                //return res.json();
             })
             .catch(this.handleError);
 
@@ -382,7 +410,9 @@ export class CatalogueService {
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res => {
-                return res.json();
+                let sorted = this.sortImages(res,"catalogueLine",true);
+                return sorted;
+                //return res.json();
             })
             .catch(this.handleError);
     }
@@ -423,5 +453,37 @@ export class CatalogueService {
 
     setEditMode(editMode:boolean):void {
         this.editMode.next(editMode);
+    }
+
+    sortImages(data:any,start:string,array:boolean):any {
+      let dataTmp = data.json();
+      let dataTmpInner = dataTmp;
+      if (dataTmp) {
+        if (start)
+          dataTmpInner = dataTmp[start];
+        if (array) {
+          for (let i=0; i<dataTmpInner.length; i++) {
+            dataTmpInner[i] = this.sortImagesInner(dataTmpInner[i]);
+          }
+        }
+        else {
+          dataTmpInner = this.sortImagesInner(dataTmpInner);
+        }
+        if (start)
+          dataTmp[start] = dataTmpInner;
+      }
+      return dataTmp;
+    }
+
+    sortImagesInner(data:any) {
+      let dataTmp = data;
+      if (dataTmp && dataTmp.goodsItem && dataTmp.goodsItem.item && dataTmp.goodsItem.item.productImage && dataTmp.goodsItem.item.productImage.length > 1) {
+        dataTmp.goodsItem.item.productImage = dataTmp.goodsItem.item.productImage.sort(function(a,b){
+            let a_comp = a.hjid;
+            let b_comp = b.hjid;
+            return a_comp-b_comp;
+        });
+      }
+      return dataTmp;
     }
 }
