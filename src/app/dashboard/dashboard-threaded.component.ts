@@ -121,7 +121,7 @@ export class DashboardThreadedComponent implements OnInit {
     onExportClicked() {
         this.exportCallStatus.submit();
         let partyId: string = this.cookieService.get("company_id");
-        this.bpeService.exportTransactions(partyId).then(result => {
+        this.bpeService.exportTransactions(partyId, null, null, null).then(result => {
 
                 var link = document.createElement('a');
                 link.id = 'downloadLink';

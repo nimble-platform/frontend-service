@@ -424,7 +424,7 @@ export class BPEService {
 	}
 
 	exportTransactions(partyId: string, userId: string, direction: string, archived: boolean): Promise<any> {
-		const url = `${this.url}/processInstance/export?partyId=${partyId}`;
+		let url = `${this.url}/processInstance/export?partyId=${partyId}`;
 		if(userId != null) {
 			url += `&userId=${userId}`;
 		}
