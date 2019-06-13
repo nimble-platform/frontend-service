@@ -5,6 +5,7 @@ import { SimpleSearchService } from '../simple-search/simple-search.service';
 import { CategoryService } from '../catalogue/category/category.service';
 import * as myGlobals from '../globals';
 import {selectNameFromLabelObject} from '../common/utils';
+import { DomSanitizer } from "@angular/platform-browser";
 
 @Component({
     selector: "platform-analytics",
@@ -42,15 +43,27 @@ export class PlatformAnalyticsComponent implements OnInit {
     product_cat_mix = myGlobals.product_cat_mix;
 	getMultilingualLabel = selectNameFromLabelObject;
 	config = myGlobals.config;
+  dashboards = [];
+  selectedTab;
 
     constructor(private analyticsService: AnalyticsService,
         private simpleSearchService: SimpleSearchService,
 		private categoryService: CategoryService,
+    private sanitizer: DomSanitizer
         ) {
 
     }
 
     ngOnInit(): void {
+        this.selectedTab = this.config.kibanaEnabled? "LOG" : "DB";
+        if (this.config.kibanaEnabled) {
+          let tmpDashboards = this.config.kibanaConfig.dashboards;
+          for (let i=0; i<tmpDashboards.length; i++) {
+            let full_url = myGlobals.kibana_endpoint + tmpDashboards[i].url;
+            tmpDashboards[i]["safeUrl"] = this.sanitizer.bypassSecurityTrustResourceUrl(full_url);
+          }
+          this.dashboards = tmpDashboards;
+        }
         this.callStatus.submit();
         this.getCatTree();
         this.analyticsService
@@ -219,4 +232,10 @@ export class PlatformAnalyticsComponent implements OnInit {
 		}
 		return labelMap;
 	}
+
+  onSelectTab(event: any): void {
+      event.preventDefault();
+      this.selectedTab = event.target.id;
+  }
+
 }

@@ -221,7 +221,7 @@ export class AppComponent implements OnInit {
             if (!this.cookieService.get("user_id")) {
                 if (link != "/" && link != "/user-mgmt/login" && link != "/user-mgmt/registration" && link != "/analytics/info"
                     && link != "/analytics/members" && link != "/user-mgmt/forgot") {
-                    this.router.navigate(["/user-mgmt/login"]);
+                    this.router.navigate(["/user-mgmt/login"], {queryParams: {redirectURL: url}});
                 }
                 else {
                   this.logUrl(url);
@@ -271,7 +271,10 @@ export class AppComponent implements OnInit {
       }
     }
 
-    public checkLogin(path: any) {
+    public checkLogin(path: any,redirected?:boolean) {
+        let redUrl = false;
+        if (redirected)
+          redUrl = redirected;
         if (this.cookieService.get("user_id")) {
             this.isLoggedIn = true;
             /*
@@ -313,8 +316,27 @@ export class AppComponent implements OnInit {
             this.userID = "";
             this.roles = [];
         }
-        if (path != "")
+        if (path != "") {
+          if(!redUrl)
             this.router.navigate([path]);
+          else {
+            let tmpUrl = decodeURIComponent(path);
+            if (tmpUrl.indexOf("?") == -1)
+              this.router.navigate([tmpUrl]);
+            else {
+              let tmpPath = tmpUrl.split("?")[0];
+              let tmpParams = tmpUrl.split("?")[1];
+              let tmpParamsSplit = tmpParams.split("&");
+              let tmpParamsObj = { queryParams : {} };
+              for (let i=0; i<tmpParamsSplit.length; i++) {
+                let key = tmpParamsSplit[i].split("=")[0];
+                let value = tmpParamsSplit[i].split("=")[1];
+                tmpParamsObj.queryParams[key] = value;
+              }
+              this.router.navigate([tmpPath],tmpParamsObj);
+            }
+          }
+        }
     }
 
     public checkRoles(func) {

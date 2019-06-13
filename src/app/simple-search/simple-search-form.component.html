@@ -124,8 +124,8 @@
 				    <div class="col-sm-2">
 				      <select class="form-control" (change)="setSort($event.target.value)">
 								<option value="score desc" [selected]="sort=='score desc'">Relevance</option>
-								<option *ngIf="searchTopic=='prod'" value="eUR_price asc" [selected]="sort=='eUR_price asc'">Price: Asc.</option>
-								<option *ngIf="searchTopic=='prod'" value="eUR_price desc" [selected]="sort=='eUR_price desc'">Price: Des.</option>
+								<option *ngIf="searchTopic=='prod'" [value]="getCurrencySort('asc')" [selected]="sort==getCurrencySort('asc')">Price: Asc.</option>
+								<option *ngIf="searchTopic=='prod'" [value]="getCurrencySort('desc')" [selected]="sort==getCurrencySort('desc')">Price: Des.</option>
 								<option *ngIf="searchTopic=='comp'" value="legalName asc" [selected]="sort=='legalName asc'">A to Z</option>
 								<option *ngIf="searchTopic=='comp'" value="trustRating desc" [selected]="sort=='trustRating desc'">Rating</option>
 								<option *ngIf="searchTopic=='comp'" value="trustScore desc" [selected]="sort=='trustScore desc'">Trust</option>
@@ -274,10 +274,10 @@
 										<div class="card-body">
 											<div *ngFor="let facetInner of facet.options; let i = index">
 												<div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < 10 || facet.expanded)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> ({{ facetInner.count }})
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> <span *ngIf="facetInner.count>0">({{ facetInner.count }})</span>
 												</div>
 												<div *ngIf="checkFacet(facet.name,facetInner.name) && (i < 10 || facet.expanded)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> ({{ facetInner.count }})
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> <span *ngIf="facetInner.count>0">({{ facetInner.count }})</span>
 												</div>
 											</div>
 											<div *ngIf="facet.options.length>10">

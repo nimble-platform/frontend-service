@@ -466,10 +466,12 @@ export class SimpleSearchService {
 		searchObject.start = page-1;
     searchObject.q = query;
     searchObject.sort = [];
+    let currency = myGlobals.config.standardCurrency;
+    let currentFirstLower = currency.charAt(0).toLowerCase() + currency.slice(1);
     if(sortType === "PRICE_HIGH_TO_LOW"){
-      searchObject.sort.push("eUR_price desc");
+      searchObject.sort.push(currentFirstLower+"_price desc");
     }else{
-      searchObject.sort.push("eUR_price asc");
+      searchObject.sort.push(currentFirstLower+"_price asc");
     }
 		for (let facet of facets) {
 			if (facet.length === 0 || !facet.trim()) {}
