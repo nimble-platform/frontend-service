@@ -146,11 +146,19 @@
                         <!--<div class="col-3"></div>-->
                         <!-- Show Archived Button -->
                         <div class="col-4">
-                            <button class="btn btn-secondary float-right"
-                                (click)="onToggleArchived()"
-                                [disabled]="!isToggleArchivedButtonEnabled()">
-                                {{getToggleArchivedButtonText()}}
-                            </button>
+                            <div class="d-flex justify-content-end">
+                                <call-status [callStatus]="exportCallStatus"></call-status>
+                                <button class="btn btn-secondary align-self-start float-right ml-2"
+                                        (click)="onExportClicked()"
+                                        [disabled]="exportCallStatus.isLoading()">
+                                    Export
+                                </button>
+                                <button class="btn btn-secondary align-self-start float-right ml-2"
+                                    (click)="onToggleArchived()"
+                                    [disabled]="!isToggleArchivedButtonEnabled()">
+                                    {{getToggleArchivedButtonText()}}
+                                </button>
+                            </div>
                         </div>
                     </div>
 

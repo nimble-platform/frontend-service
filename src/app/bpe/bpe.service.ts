@@ -414,24 +414,6 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	saveFrameContract(digitalAgreement: DigitalAgreement): Promise<DigitalAgreement> {
-		const url = `${this.url}/contract/digital-agreement`;
-		return this.http
-		    .post(url, digitalAgreement, {headers: this.getAuthorizedHeaders()})
-		    .toPromise()
-		    .then(res => res.json())
-		    .catch(this.handleError);
-	}
-
-	updateFrameContract(digitalAgreement: DigitalAgreement): Promise<DigitalAgreement> {
-		const url = `${this.url}/contract/digital-agreement/${digitalAgreement.id}`;
-		return this.http
-            .put(url, digitalAgreement, {headers: this.getAuthorizedHeaders()})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
-	}
-
 	getFrameContract(sellerId: string, buyerId: string, productId: string): Promise<DigitalAgreement> {
 		const url = `${this.url}/contract/digital-agreement?sellerId=${sellerId}&buyerId=${buyerId}&productId=${productId}`;
 		return this.http
@@ -439,6 +421,54 @@ export class BPEService {
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
+	}
+
+	exportTransactions(partyId: string, userId: string, direction: string, archived: boolean): Promise<any> {
+		const url = `${this.url}/processInstance/export?partyId=${partyId}`;
+		if(userId != null) {
+			url += `&userId=${userId}`;
+		}
+		if(direction != null) {
+			url += `&direction=${direction}`;
+		}
+		if(archived != null) {
+			url += `&archived=${archived}`;
+		}
+
+		return new Promise<any>((resolve, reject) => {
+			const token = 'Bearer '+this.cookieService.get("bearer_token");
+			let xhr = new XMLHttpRequest();
+			xhr.open('GET', url, true);
+			xhr.setRequestHeader('Accept', 'application/zip');
+			xhr.setRequestHeader('Accept', 'text/plain');
+			xhr.setRequestHeader('Authorization', token);
+			xhr.responseType = 'blob';
+
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState === 4) {
+					if (xhr.status === 200) {
+
+						var contentType = 'application/zip';
+						var blob = new Blob([xhr.response], {type: contentType});
+						// file name
+						let fileName = 'transactions_' + new Date().toString();
+
+						resolve({fileName: fileName, content: blob});
+					} else {
+						reject(xhr.responseText);
+					}
+
+
+				} else if(xhr.readyState == 2) {
+					if(xhr.status == 200) {
+						xhr.responseType = "blob";
+					} else {
+						xhr.responseType = "text";
+					}
+				}
+			};
+			xhr.send();
+		});
 	}
 
 	private getAuthorizedHeaders(): Headers {
