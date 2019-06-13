@@ -8,6 +8,7 @@ import { CallStatus } from '../common/call-status';
 import {copy, selectValueOfTextObject} from '../common/utils';
 import {CategoryService} from '../catalogue/category/category.service';
 import * as constants from "../common/constants";
+import { ActivatedRoute } from '@angular/router';
 //declare var jsSHA: any;
 
 @Component({
@@ -27,16 +28,26 @@ export class CredentialsFormComponent implements OnInit {
 
 	submitCallStatus: CallStatus = new CallStatus();
 
+	redirect = "";
+
 	constructor(
 		private credentialsService: CredentialsService,
 		private cookieService: CookieService,
 		private appComponent: AppComponent,
-		private categoryService:CategoryService
+		private categoryService:CategoryService,
+		private route: ActivatedRoute,
 	) {	}
 
 	ngOnInit() {
+		this.route
+			.queryParams
+			.subscribe(params => {
+				this.redirect = params['redirectURL'];
+			});
 		if (this.cookieService.get("user_id")) {
-			if (!this.appComponent.checkRoles("comp_req") && !this.appComponent.checkRoles('wait_comp'))
+			if (this.redirect && this.redirect != "")
+				this.appComponent.checkLogin(this.redirect,true);
+			else if (!this.appComponent.checkRoles("comp_req") && !this.appComponent.checkRoles('wait_comp'))
 				this.appComponent.checkLogin("/user-mgmt/company-registration");
 			else
 				this.appComponent.checkLogin("/dashboard");
@@ -83,7 +94,9 @@ export class CredentialsFormComponent implements OnInit {
 			}
 
 			this.submitCallStatus.callback("Login Successful");
-			if (!res.companyID && myGlobals.config.companyRegistrationRequired)
+			if (this.redirect && this.redirect != "")
+				this.appComponent.checkLogin(this.redirect,true);
+			else if (!res.companyID && myGlobals.config.companyRegistrationRequired)
 				this.appComponent.checkLogin("/user-mgmt/company-registration");
 			else
 				 this.appComponent.checkLogin("/dashboard");
