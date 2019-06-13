@@ -127,7 +127,7 @@ h4 {
 }
 
 input:checked + .slider {
-  background-color: #b77563F3;
+  background-color: var(--main-color);
 }
 
 input:focus + .slider {

@@ -74,9 +74,9 @@ docker run -it --rm -p 9092:8080 --name nimble-core_frontend-service nimbleplatf
 ```
 
 ### Environments
-There are various environment files for different build configurations. By default src/app/globals.ts is used.
+There are various environment files for different build configurations. By default src/app/globals.ts and src/global-styles.css are used.
 
-In case you want to build using a different environment file (see src/environments/globals.[ENVIRONMENT].ts) execute
+In case you want to build using a different environment file (see src/environments/globals.[ENVIRONMENT].ts and src/environments/global-styles.[ENVIRONMENT].css) execute
 ```shell
 mvn clean install -Denv=[ENVIRONMENT]
 ```
