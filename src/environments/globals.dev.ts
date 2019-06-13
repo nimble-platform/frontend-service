@@ -145,6 +145,7 @@ export const config = {
   "showTrack": true,
   "showTrade": true,
   "showVerification": true,
+  "standardCurrency": "EUR",
   "standardTaxonomy": "All",
     "defaultSearchIndex": "Products",
     "supportedActivitySectors": {

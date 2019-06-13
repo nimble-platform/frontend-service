@@ -149,6 +149,7 @@ export const config = {
   "showTrack": false,
   "showTrade": false,
   "showVerification": false,
+  "standardCurrency": "EUR",
   "standardTaxonomy": "FurnitureOntology",
   "defaultSearchIndex": "Products",
   "supportedActivitySectors": {

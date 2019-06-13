@@ -55,7 +55,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	searchTopic = null;
 
 	CURRENCIES = CURRENCIES;
-	selectedCurrency: any = "EUR";
+	selectedCurrency: any = myGlobals.config.standardCurrency;
 	selectedPriceMin: any;
 	selectedPriceMax: any;
 
@@ -1034,7 +1034,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	}
 
 	resetPriceFilter() {
-		this.selectedCurrency = "EUR";
+		this.selectedCurrency = myGlobals.config.standardCurrency;
 		this.selectedPriceMin = null;
 		this.selectedPriceMax = null;
 		this.clearFacet(this.lowerFirstLetter(this.selectedCurrency)+"_"+this.product_price);
@@ -1267,7 +1267,7 @@ export class SimpleSearchFormComponent implements OnInit {
 
 	resetFilter() {
 		this.facetQuery = [];
-		this.selectedCurrency = "EUR";
+		this.selectedCurrency = myGlobals.config.standardCurrency;
 		this.selectedPriceMin = null;
 		this.selectedPriceMax = null;
 		this.ratingOverall = 0;
@@ -1286,19 +1286,20 @@ export class SimpleSearchFormComponent implements OnInit {
 		return match;
 	}
 
-	/**
-	 * Gets the price from a price object in the form of:
-	 {
-		"EUR": 100
-	  },
-	 * @param price
-	 */
 	getCurrency(price: any): string {
 		if (price[this.selectedCurrency])
 			return this.selectedCurrency;
+		if (this.selectedCurrency != myGlobals.config.standardCurrency && price[myGlobals.config.standardCurrency])
+			return myGlobals.config.standardCurrency;
 		if (this.selectedCurrency != "EUR" && price["EUR"])
 			return "EUR";
 		return Object.keys(price)[0];
+	}
+
+	getCurrencySort(order: any): string {
+		let currency = myGlobals.config.standardCurrency;
+    let currentFirstLower = currency.charAt(0).toLowerCase() + currency.slice(1);
+		return (currentFirstLower + "_price " + order);
 	}
 
 	getCategoryDisplayInfo(categories: any): any {

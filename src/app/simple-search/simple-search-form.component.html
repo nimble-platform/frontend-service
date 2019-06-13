@@ -124,8 +124,8 @@
 				    <div class="col-sm-2">
 				      <select class="form-control" (change)="setSort($event.target.value)">
 								<option value="score desc" [selected]="sort=='score desc'">Relevance</option>
-								<option *ngIf="searchTopic=='prod'" value="eUR_price asc" [selected]="sort=='eUR_price asc'">Price: Asc.</option>
-								<option *ngIf="searchTopic=='prod'" value="eUR_price desc" [selected]="sort=='eUR_price desc'">Price: Des.</option>
+								<option *ngIf="searchTopic=='prod'" [value]="getCurrencySort('asc')" [selected]="sort==getCurrencySort('asc')">Price: Asc.</option>
+								<option *ngIf="searchTopic=='prod'" [value]="getCurrencySort('desc')" [selected]="sort==getCurrencySort('desc')">Price: Des.</option>
 								<option *ngIf="searchTopic=='comp'" value="legalName asc" [selected]="sort=='legalName asc'">A to Z</option>
 								<option *ngIf="searchTopic=='comp'" value="trustRating desc" [selected]="sort=='trustRating desc'">Rating</option>
 								<option *ngIf="searchTopic=='comp'" value="trustScore desc" [selected]="sort=='trustScore desc'">Trust</option>

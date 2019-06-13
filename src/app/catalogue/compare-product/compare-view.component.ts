@@ -97,7 +97,7 @@ export class CompareViewComponent implements OnInit {
 	comapanyList_first = {};
 	catLineList = {};
 	catLineList_first = {};
-	selectedCurrency: any = "EUR";
+	selectedCurrency: any = myGlobals.config.standardCurrency;
 	initial = true;
 	firstSearch = false;
 	secondeSearch = false;
@@ -150,9 +150,11 @@ export class CompareViewComponent implements OnInit {
 		return (Object.keys(obj).length === 0);
 	}
 
-	getCurrency(price: any): string {
+  getCurrency(price: any): string {
 		if (price[this.selectedCurrency])
 			return this.selectedCurrency;
+		if (this.selectedCurrency != myGlobals.config.standardCurrency && price[myGlobals.config.standardCurrency])
+			return myGlobals.config.standardCurrency;
 		if (this.selectedCurrency != "EUR" && price["EUR"])
 			return "EUR";
 		return Object.keys(price)[0];
