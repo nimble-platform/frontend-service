@@ -79,6 +79,7 @@ export const trust_service_endpoint=`${base_path}/trust`;
 export const indexing_service_endpoint=`${base_path}/indexing-service`;
 export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}:9200`;
+export const kibana_endpoint = `${base_path}:5601/app/kibana`;
 
 
 // BIBA endpoints
@@ -122,12 +123,16 @@ export const config = {
   },
   "dataChannelsEnabled" : true,
   "imprint": "<u>Platform Owner & Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)",
+  "kibanaConfig": {
+    "dashboards": []
+  },
+  "kibanaEnabled": false,
   "loggingConfig": {
     "index": "logstash-{DATE}",
     "type": "doc",
     "dateFormat": "YYYY.MM.DD"
   },
-  "loggingEnabled": true,
+  "loggingEnabled": false,
   "logoPath": "./assets/logo_mvp.png",
   "logoRequired": false,
   "phoneNumberRequired": false,
