@@ -26,6 +26,7 @@ import {DashboardProcessInstanceDetails} from '../bpe/model/dashboard-process-in
 import {Item} from '../catalogue/model/publish/item';
 import {NEGOTIATION_RESPONSES} from "../catalogue/model/constants";
 import {DataChannel} from '../data-channel/model/datachannel';
+import * as myGlobals from "../globals";
 
 /**
  * Created by suat on 12-Mar-18.
@@ -41,6 +42,7 @@ export class ThreadSummaryComponent implements OnInit {
     @Input() collaborationGroupId: string;
     @Output() threadStateUpdated = new EventEmitter();
 
+    config = myGlobals.config;
 
     titleEvent: ThreadEventMetadata; // keeps information about the summary the collaboration
     lastEvent: ThreadEventMetadata; // the last event in the collaboration
@@ -620,12 +622,12 @@ export class ThreadSummaryComponent implements OnInit {
         let channel: DataChannel = new DataChannel(this.processInstanceGroup.id, this.titleEvent.content.buyerPartyId, "Demo-Channel", this.titleEvent.content.sellerPartyId);
         this.dataChannelService.createChannel(channel)
             .then(() => {
-                alert("created a new channel");
+                //alert("created a new channel");
                 this.threadStateUpdated.next();
             })
             .catch(err => {
-                console.error("Failed to create a channel",err);
-                alert("Failed to create a data channel. Please make sure your local data-channel-service is running!");
+                console.error("Failed to create a data channel",err);
+                alert("Failed to create a data channel... try again later.");
             });
 	}
 
