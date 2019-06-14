@@ -106,7 +106,9 @@ export class TnTFormComponent {
 
     getGateInfo(gateName) {
         let selectedGate = this.bpInfo.find(el => el.readPoint.id.split(':').pop() === gateName);
-        // console.log(selectedGate);
+        if (this.debug) {
+            console.log(selectedGate);
+        }
         this.currentGate = gateName;
          this.tntBackend.getGateInfo(selectedGate.readPoint.id)
             .then(resp => {
@@ -114,14 +116,16 @@ export class TnTFormComponent {
                 }
             )
             .catch(err => {
-                console.log(err);
+                this.falsecode = err._body;
             });
 
     }
 
     getBizLocInfo(bizLocName) {
         let selectedLocation = this.bpInfo.find(el => el.bizLocation.id.split(':').pop() === bizLocName);
-        // console.log(selectedGate);
+        if (this.debug) {
+            console.log(selectedLocation);
+        }
         this.currentBizLoc = bizLocName;
         this.tntBackend.getGateInfo(selectedLocation.bizLocation.id)
             .then(resp => {
@@ -129,7 +133,7 @@ export class TnTFormComponent {
                 }
             )
             .catch(err => {
-                console.log(err);
+                this.falsecode = err._body;
             });
     }
 
@@ -141,19 +145,22 @@ export class TnTFormComponent {
             })
             .catch(error => {
                 this.error_detc = true;
+                this.falsecode = error._body;
             });
     }
 
     verifyOnBlockchain() {
         let result = this.tntBackend.verifyOnBC(this.bpInfo)
             .then(res => {
-                console.log(res);
+                if (this.debug) {
+                    console.log(res);
+                }
                 // result = res;
                 this.verified = res;
                 // this.verified = true;
             })
             .catch(err => {
-                console.log(err);
+                this.falsecode = err._body;
             });
     }
 }

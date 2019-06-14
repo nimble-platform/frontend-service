@@ -34,6 +34,8 @@ export class DashboardThreadedComponent implements OnInit {
     results: DashboardOrdersQueryResults = new DashboardOrdersQueryResults();
     queryStatus: CallStatus = new CallStatus();
 
+    exportCallStatus: CallStatus = new CallStatus();
+
     TABS = TABS;
 
     buyerCounter = 0;
@@ -114,6 +116,28 @@ export class DashboardThreadedComponent implements OnInit {
             this.updateStateFromQueryParameters(this.queryParameters);
         }
         this.getTabCounters();
+    }
+
+    onExportClicked() {
+        this.exportCallStatus.submit();
+        let partyId: string = this.cookieService.get("company_id");
+        this.bpeService.exportTransactions(partyId, null, null, null).then(result => {
+
+                var link = document.createElement('a');
+                link.id = 'downloadLink';
+                link.href = window.URL.createObjectURL(result.content);
+                link.download = result.fileName;
+
+                document.body.appendChild(link);
+                var downloadLink = document.getElementById('downloadLink');
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+
+                this.exportCallStatus.callback("Exported transactions successfully", true);
+            },
+            error => {
+                this.exportCallStatus.error("Failed to export transactions", error);
+            });
     }
 
     /*

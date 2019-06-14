@@ -39,7 +39,7 @@
                           <div *ngIf="titleEvent && showDataChannelButton && !enableDataChannelButton" class="inline" data-toggle="tooltip" data-placement="top" title="Waiting for trading partner..." (click)="alertWait()">
                               <i class="fa fa-exchange-alt p-1 pointer" aria-hidden="true"></i>
                           </div>
-                          <div *ngIf="titleEvent && !titleEvent.buyer && !showDataChannelButton" class="inline" (click)="createDatachannelNegotiation()" data-placement="top" title="Create New Data Channel">
+                          <div *ngIf="titleEvent && !titleEvent.buyer && !showDataChannelButton && config.dataChannelsEnabled" class="inline" (click)="createDatachannelNegotiation()" data-placement="top" title="Negotiate New Data Channel">
                               <i class="fas fa-plus p-1 pointer" aria-hidden="true"></i>
                           </div>
                           <!--
@@ -147,7 +147,7 @@
         <div class="modal-body">
             <div class="form-group row">
                 <label class="col-6 col-form-label">
-                  <strong>Overall Rating 
+                  <strong>Overall Rating
                     <span title="Overall rating of the company based on 'Seller Communication','Fulfillment of Terms' and 'Delivery & Packaging'. See the subitems for more details.">
                       <i class="fa fa-exclamation-circle"></i>
                     </span>
@@ -165,7 +165,7 @@
               </div>
           <div class="form-group row">
             <label class="col-6 col-form-label">
-              <strong>Seller Communication 
+              <strong>Seller Communication
                 <span title=' Overall rating of how well the seller communicated based on "Quality of Negotiation Process","Quality of Ordering Process" and "Response Time". See the subitems for more details.'>
                   <i class="fa fa-exclamation-circle"></i>
                 </span>
@@ -231,7 +231,7 @@
           </div>
           <div class="form-group row">
               <label class="col-6 col-form-label">
-                <strong>Fulfillment of Terms 
+                <strong>Fulfillment of Terms
                   <span title='Overall rating of how accurately the seller fulfilled the agreed upon terms based on "Quality of Requested Information" and "Conformance to Contractual Terms". See the subitems for more details.'>
                     <i class="fa fa-exclamation-circle"></i>
                   </span>
