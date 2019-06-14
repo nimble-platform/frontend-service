@@ -1,5 +1,5 @@
 <div [hidden]="callStatus.fb_errordetc || callStatus.fb_callback || !callStatus.fb_submitted">
-	<img src="assets/form_loader.gif"/>
+	<img src="../../assets/form_loader.gif"/>
 </div>
 <div *ngIf="callStatus.fb_callback && !callStatus.fb_autoCloseOnCallBack" #successBox
 	 class="d-flex alert-success p-2 rounded"

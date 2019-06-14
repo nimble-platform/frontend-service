@@ -5,7 +5,7 @@
         <div class="col-3 product-image">
             <img *ngIf="catalogueLine.goodsItem.item.productImage.length == 0"
                  class="img-max"
-                 src="assets/empty_img.png">
+                 src="../../../assets/empty_img.png">
             <img *ngIf="catalogueLine.goodsItem.item.productImage.length > 0"
                  class="img-selected d-block active"
                  src="data:{{catalogueLine.goodsItem.item.productImage[0].mimeCode}};base64,{{catalogueLine.goodsItem.item.productImage[0].value}}"/>

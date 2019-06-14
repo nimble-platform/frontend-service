@@ -24,11 +24,6 @@
 
 	<call-status [callStatus]="searchCallStatus" [large]="true"></call-status>
 
-	<!--
-	<div [hidden]="error_detc || callback || !submitted">
-		<img class="space-before" src="assets/form_loader.gif"/>
-	</div>
-	-->
 
 	<div [hidden]="searchTopic || searchCallStatus.isLoading()">
 		<div class="row">
@@ -166,7 +161,7 @@
 								</div>
 								<div class="card-body">
 									<div *ngIf="cat_loading">
-										<img src="assets/form_loader.gif"/>
+										<img src="../../assets/form_loader.gif"/>
 									</div>
 									<div *ngIf="!cat_loading">
 										<div *ngFor="let c of cat_levels; let i = index">
@@ -523,7 +518,7 @@
 								<div class="card-body">
 									<div class="row">
 										<div class="align-center" [ngClass]="{'col-2':display=='list','col-12 pb-1':display=='panel'}">
-											<img src="{{imageMap[result.uri]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
+											<img src="{{imageMap[result.uri]}}" class="thumb" onerror="this.src='../../assets/empty_img.png';"/>
 										</div>
 										<div [ngClass]="{'col-6':display=='list','col-12 pt-1 pb-1':display=='panel'}">
 											<div style="max-height:1.5rem;overflow:hidden">
@@ -591,7 +586,7 @@
 								<div class="card-body">
 									<div class="row">
 										<div class="align-center" [ngClass]="{'col-2':display=='list','col-12 pb-1':display=='panel'}">
-											<img src="{{imgEndpoint}}{{result[product_vendor_img]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
+											<img src="{{imgEndpoint}}{{result[product_vendor_img]}}" class="thumb" onerror="this.src='../../assets/empty_img.png';"/>
 										</div>
 										<div [ngClass]="{'col-8 border-right':display=='list','col-12 pt-1 pb-1 border-bottom':display=='panel'}">
 											<div style="max-height:1.5rem;overflow:hidden">

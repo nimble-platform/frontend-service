@@ -9,10 +9,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-	<link rel="stylesheet" href="assets/css/fontawesome-all.min.css">
-    <link rel="stylesheet" href="global-styles.css">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="./src/assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="./src/assets/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="./src/global-styles.css">
+    <link rel="stylesheet" href="./src/styles.css">
 
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700" rel="stylesheet">
 
@@ -20,22 +20,12 @@
 
     <script src="node_modules/core-js/client/shim.min.js"></script>
     <script src="node_modules/zone.js/dist/zone.js"></script>
-    <script src="node_modules/systemjs/dist/system.src.js"></script>
-    <script src="systemjs.config.js"></script>
     <script src="sha256.js"></script>
     <script>
         var locale = navigator.language || navigator.userLanguage;
         if (locale.length > 2)
             locale = locale.substr(0, 2);
         document.locale = locale;
-        System.config({
-            map: {
-                text: 'systemjs-text-plugin.js',
-            }
-        });
-        System.import('main.js').catch(function (err) {
-            console.error(err);
-        });
     </script>
 
     <!-- Needed for the text editor and diagram-->
