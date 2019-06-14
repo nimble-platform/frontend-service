@@ -227,7 +227,7 @@ export class ThreadSummaryComponent implements OnInit {
 
         this.fillStatus(event, processInstance["state"], processType, responseDocumentStatus, userRole === "buyer");
         this.setCancelCollaborationButtonStatus(processType,responseDocumentStatus);
-        this.checkDataChannel(processInstanceId);
+        this.checkDataChannel(event);
 
         return event;
     }
@@ -453,10 +453,13 @@ export class ThreadSummaryComponent implements OnInit {
         }
     }
 
-    checkDataChannel(processInstanceId:string) {
+    checkDataChannel(event:ThreadEventMetadata) {
         //if(event.processType === 'Order') {
+            let processGroupId = this.processInstanceGroup.id;
             let role = this.processInstanceGroup.collaborationRole;
-            this.dataChannelService.channelsForBusinessProcess(processInstanceId)
+            if (role == "BUYER" && this.processInstanceGroup && this.processInstanceGroup.associatedGroups && this.processInstanceGroup.associatedGroups.length > 0)
+              processGroupId = this.processInstanceGroup.associatedGroups[0];
+            this.dataChannelService.channelsForBusinessProcess(processGroupId)
                 .then(channels => {
                     if (channels && channels.channelID) {
                         if (role == "BUYER") {
@@ -474,6 +477,9 @@ export class ThreadSummaryComponent implements OnInit {
                         this.showDataChannelButton = true;
                         const channelId = channels.channelID;
                         this.channelLink = `/data-channel/details/${channelId}`
+                    }
+                    else {
+                      this.showDataChannelButton = false;
                     }
                 })
                 .catch(err => {
