@@ -30,6 +30,7 @@ export class TermsAndConditionsComponent implements OnInit {
     // Outputs
     @Output() onIncotermChanged = new EventEmitter();
     @Output() onTradingTermChanged = new EventEmitter();
+    @Output() onClauseUpdated = new EventEmitter();
 
     showPreview: boolean = false;
     callStatus : CallStatus = new CallStatus();
@@ -363,6 +364,7 @@ export class TermsAndConditionsComponent implements OnInit {
             }
 
         }
+        this.onClauseUpdated.emit();
         return true;
     }
 
