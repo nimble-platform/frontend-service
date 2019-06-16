@@ -28,7 +28,7 @@
     <hr>
 
     <!-- Action buttons -->
-    <ng-container *ngIf="formerProcess">
+    <ng-container *ngIf="!formerProcess">
         <div class="row actions-row">
             <div class="col-4"></div>
             <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>

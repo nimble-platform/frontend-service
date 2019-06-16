@@ -189,7 +189,7 @@
             <!-- Customer's offer -->
             <div *ngIf="showCounterOfferTerms" class="col-5">
                 <negotiation-request-input label="Request Item Price" [(cbModel)]="negotiatePrice" id="priceCb"
-                                           [disabled]="isLoading() || isReadOnly()" [quantity]="wrapper.rfqDiscountPriceWrapper.itemPrice"
+                                           [disabled]="isLoading() || isReadOnly()" [quantity]="wrapper.rfqDiscountPriceWrapper.itemPrice" [step]="0.01"
                                            [quantityUnits]="CURRENCIES" [disableQuantityUnit]="lineHasPrice" [invalid]="!isPriceValid()">
                 </negotiation-request-input>
             </div>
