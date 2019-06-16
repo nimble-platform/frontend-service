@@ -14,13 +14,8 @@ import { DashboardUser } from "./model/dashboard-user";
 import * as myGlobals from '../globals';
 import {CollaborationGroup} from '../bpe/model/collaboration-group';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import * as d3timelines from 'd3-timelines';
 import * as d3 from 'd3';
-import * as d3time from 'd3-time';
-import * as d3timeformat from 'd3-time-format';
-import { timestamp } from "rxjs/operator/timestamp";
 import * as moment from "moment";
-import {Moment, unitOfTime} from "moment";
 
 @Component({
     selector: "dashboard-threaded",
