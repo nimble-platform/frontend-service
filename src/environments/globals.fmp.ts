@@ -138,6 +138,7 @@ export const config = {
   "logoPath": "./assets/logo_fmp.png",
   "logoRequired": true,
   "phoneNumberRequired": true,
+  "projectsEnabled": true,
   "requiredAgreements": [
     {
       "title":"Privacy Policy",

@@ -59,7 +59,7 @@ export class DashboardThreadedComponent implements OnInit{
       ];
     private chart: any;
 
-    
+
     // this contains status-name-defaultName information of collaboration groups
     // if status is true, that means we are changing collaboration group name
     // defaultName is used if the collaboration group does not have any name assigned.
@@ -78,7 +78,7 @@ export class DashboardThreadedComponent implements OnInit{
         public appComponent: AppComponent
     ) {}
 
-   
+
 
     ngOnInit() {
         this.computeUserFromCookies();
@@ -126,7 +126,7 @@ export class DashboardThreadedComponent implements OnInit{
             var width = 700/this.data.length;
             if(itemid != 0){
                 itemoffset = (700/this.data.length)*itemid - ((this.data[itemid-1].times[0].ending_time < element.times[0].starting_time) ? 50 : 0);
-                
+
                 newArray.forEach(element1 => {
                     var timeStampDatemoment = new Date(element1.enddate);
                     if(moment.monthsShort(timeStampDate.getMonth())+ "/"+timeStampDate.getDate() == moment.monthsShort(timeStampDatemoment.getMonth())+ "/"+timeStampDatemoment.getDate()){
@@ -156,7 +156,7 @@ export class DashboardThreadedComponent implements OnInit{
             return null;
           });
         this.finalXAsxisArray = parr;
-        
+
 
     }
 
@@ -195,7 +195,7 @@ export class DashboardThreadedComponent implements OnInit{
             else if (this.appComponent.checkRoles('sales'))
               this.updateQueryParameters({ tab: TABS.SALES });
             else
-              this.updateQueryParameters({ tab: TABS.CATALOGUE });  
+              this.updateQueryParameters({ tab: TABS.CATALOGUE });
         }
     }
 
@@ -373,7 +373,21 @@ export class DashboardThreadedComponent implements OnInit{
                 return upped;
             }
         }
-        return TABS.PURCHASES;
+        if (this.appComponent.checkRoles('purchases'))
+          return TABS.PURCHASES;
+        if (this.appComponent.checkRoles('sales'))
+          return TABS.SALES;
+        if (this.appComponent.checkRoles('catalogue'))
+          return TABS.CATALOGUE;
+        if (this.appComponent.checkRoles('favourite'))
+          return TABS.FAVOURITE;
+        if (this.appComponent.checkRoles('compare'))
+          return TABS.COMPARE;
+        if (this.config.projectsEnabled && this.appComponent.checkRoles('projects'))
+          return TABS.PROJECTS;
+        if (this.appComponent.checkRoles('performance'))
+          return TABS.PERFORMANCE;
+        return null;
     }
 
     private sanitizePage(page: string): number {
@@ -398,7 +412,7 @@ export class DashboardThreadedComponent implements OnInit{
         if(this.isOrdersQueryNeeded(query)) {
             this.executeOrdersQuery(query);
         }
-       
+
         this.query = query
     }
 
@@ -414,7 +428,7 @@ export class DashboardThreadedComponent implements OnInit{
     }
 
     private getOrdersQuery(query: DashboardOrdersQuery): Promise<void> {
-        
+
 
         if(this.queryParameters.tab == "PROJECTS"){
             this.isProject = true;
@@ -545,7 +559,7 @@ export class DashboardThreadedComponent implements OnInit{
         }
         if(this.queryParameters.tab == "PROJECTS" && this.isProject == false){
             return true;
-            
+
         }else if(this.queryParameters.tab != "PROJECTS" && this.isProject == true){
             return true;
         }
@@ -659,5 +673,5 @@ export class DashboardThreadedComponent implements OnInit{
         .catch(err => {
         });
     }
-  
+
 }

@@ -138,6 +138,7 @@ export const config = {
   "logoPath": "./assets/logo_mvp.png",
   "logoRequired": false,
   "phoneNumberRequired": false,
+  "projectsEnabled": true,
   "requiredAgreements": [
     {
       "title":"End-User License Agreement (EULA)",

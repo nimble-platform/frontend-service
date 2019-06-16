@@ -393,7 +393,7 @@ export class AppComponent implements OnInit {
                     this.allowed = true;
                 break;
             case "projects" :
-                if (all_rights || publish || purch || sales || (initial && !compReq))
+                if (all_rights || purch || sales || monitor || (initial && !compReq))
                     this.allowed = true;
                 break;
             case "performance":
