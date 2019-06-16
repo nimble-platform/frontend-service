@@ -536,7 +536,7 @@
 							<a class="text-std" [href]="getProdLink(result)">
 							<!--<a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: result.catalogueId, id: result.manufactuerItemId}">-->
 								<div class="card-body">
-									<div *ngIf="result.nimbleInstanceName && result.sourceIndexingServiceUrl && result.nimbleInstanceName != '' && result.sourceIndexingServiceUrl != ''" [title]="result.nimbleInstanceName" class="badge badge-pill badge-secondary p-2" style="position:absolute;right:-0.5rem;top:-0.5rem;font-size:1rem;">
+									<div *ngIf="result.nimbleInstanceName && result.sourceFrontendServiceUrl && result.nimbleInstanceName != '' && result.sourceFrontendServiceUrl != ''" [title]="result.nimbleInstanceName" class="badge badge-pill badge-secondary p-2" style="position:absolute;right:-0.5rem;top:-0.5rem;font-size:1rem;">
 										<i class="fa fa-database"></i>
 									</div>
 									<div class="row">
@@ -608,7 +608,7 @@
 							<a class="text-std" [href]="getCompLink(result)">
 							<!--<a class="text-std" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: result.id}">-->
 								<div class="card-body">
-									<div *ngIf="result.nimbleInstanceName && result.sourceIndexingServiceUrl && result.nimbleInstanceName != '' && result.sourceIndexingServiceUrl != ''" [title]="result.nimbleInstanceName" class="badge badge-pill badge-secondary p-2" style="position:absolute;right:-0.5rem;top:-0.5rem;font-size:1rem;">
+									<div *ngIf="result.nimbleInstanceName && result.sourceFrontendServiceUrl && result.nimbleInstanceName != '' && result.sourceFrontendServiceUrl != ''" [title]="result.nimbleInstanceName" class="badge badge-pill badge-secondary p-2" style="position:absolute;right:-0.5rem;top:-0.5rem;font-size:1rem;">
 										<i class="fa fa-database"></i>
 									</div>
 									<div class="row">
