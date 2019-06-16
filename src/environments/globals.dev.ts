@@ -130,7 +130,13 @@ export const config = {
       {
         "title": "User Logins & Registrations",
         "url": "#/dashboard/27836650-8907-11e9-9609-0520e65d66da?embed=true&_g=(refreshInterval%3A(display%3A'30%20minutes'%2Cpause%3A!f%2Csection%3A2%2Cvalue%3A1800000)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
-      }
+      }, {
+            "title": "Business Process Activities",
+            "url": "#/dashboard/95678d10-906c-11e9-aa69-2987e334cad6?embed=true&_g=(refreshInterval%3A(display%3A'30%20minutes'%2Cpause%3A!f%2Csection%3A2%2Cvalue%3A1800000)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
+        }, {
+            "title": "Products Activities",
+            "url": "#/dashboard/60b1b040-9072-11e9-aa69-2987e334cad6?embed=true&_g=(refreshInterval%3A(display%3A'30%20minutes'%2Cpause%3A!f%2Csection%3A2%2Cvalue%3A1800000)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
+        }
     ]
   },
   "kibanaEnabled": true,
