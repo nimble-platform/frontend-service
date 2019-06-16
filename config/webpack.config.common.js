@@ -9,7 +9,7 @@ const isDev                = process.env.NODE_ENV !== 'production';
 
 module.exports = {
     entry: {
-        vendor: './src/vendor.ts',
+        // vendor: './src/vendor.ts',
         polyfills: './src/polyfills.ts',
         main: isDev ? './src/main.ts' : './src/main.aot.ts'
     },
@@ -27,9 +27,9 @@ module.exports = {
             {
                 test: /\.(scss|sass)$/,
                 use: [
-                    { loader: 'style-loader', options: { sourceMap: isDev } },
-                    { loader: 'css-loader', options: { sourceMap: isDev } },
-                    { loader: 'sass-loader', options: { sourceMap: isDev } }
+                    { loader: 'style-loader'},
+                    { loader: 'css-loader'},
+                    { loader: 'sass-loader'}
                 ],
                 include: helpers.root('src', 'assets')
             },

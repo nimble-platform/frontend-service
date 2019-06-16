@@ -4,6 +4,9 @@ const webpackMerge = require('webpack-merge');
 
 const commonConfig = require('./webpack.config.common');
 const helpers      = require('./helpers');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const UglifyJsPlugin          = require('uglifyjs-webpack-plugin');
+const cssnano                 = require('cssnano');
 
 module.exports = webpackMerge(commonConfig, {
     mode: 'development',
@@ -17,9 +20,29 @@ module.exports = webpackMerge(commonConfig, {
         chunkFilename: '[id].chunk.js'
     },
 
-    optimization: {
-        noEmitOnErrors: true
-    },
+    // optimization: {
+    //     noEmitOnErrors: true,
+    //     splitChunks: {
+    //         chunks: 'all'
+    //     },
+    //     runtimeChunk: 'single',
+    //     minimizer: [
+    //         new UglifyJsPlugin({
+    //             cache: true,
+    //             parallel: true
+    //         }),
+    //
+    //         new OptimizeCSSAssetsPlugin({
+    //             cssProcessor: cssnano,
+    //             cssProcessorOptions: {
+    //                 discardComments: {
+    //                     removeAll: true
+    //                 }
+    //             },
+    //             canPrint: false
+    //         })
+    //     ]
+    // },
 
     module: {
         rules: [

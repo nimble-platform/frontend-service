@@ -14,6 +14,13 @@ import * as myGlobals from './globals';
 import * as moment from "moment";
 import {DEFAULT_LANGUAGE} from './catalogue/model/constants';
 
+import '../assets/css/bootstrap.min.css';
+import '../assets/css/fontawesome-all.min.css';
+import '../global-styles.css';
+import '../styles.css';
+
+import 'zone.js';
+
 @Component({
     selector: 'nimble-app',
     providers: [CookieService],
