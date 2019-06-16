@@ -80,6 +80,7 @@ export const indexing_service_endpoint=`${base_path}/indexing-service`;
 export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}:9200`;
 export const kibana_endpoint = `${base_path}:5601/app/kibana`;
+export const delegate_endpoint = `http://161.156.70.122:9265`;
 
 
 // BIBA endpoints
@@ -122,7 +123,9 @@ export const config = {
     }
   },
   "dataChannelsEnabled" : true,
-  "imprint": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Platform Owner</u><br/><b>Universität Bremen / BIBA - Bremer Institut für Produktion und Logistik GmbH</b><br/>Hochschulring 20<br/>28359 Bremen, Germany<br/>Phone: +49.421.218.50166<br/>E-Mail: <a href='mailto:wel1@biba.uni-bremen.de'>wel1@biba.uni-bremen.de</a></td><td class='w-50 p-0 pl-3'><u>Platform Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)</td></tr></table>",
+  "delegationEnabled": false,
+  "imprint": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Platform Owner</u><br/><b>Lindbäcks Bygg Aktiebolag</b><br/>Hammarvägen 21<br/>94336 Öjebyn<br/>Sweden<br/></td><td class='w-50 p-0 pl-3'><u>Platform Provider</u><br/><b>Universität Bremen</b><br/>Bibliothekstraße 1<br/>28359 Bremen, Germany<br/>Phone: +49 421 218-1<br/>Internet: <a href='https://www.uni-bremen.de' target='_blank'>www.uni-bremen.de</a><br/>Die Universität Bremen ist eine Körperschaft des Öffentlichen Rechts. Sie wird durch den Rektor Prof. Dr.-Ing. Bernd Scholz-Reiter gesetzlich vertreten.\n" +
+      "Zuständige Aufsichtsbehörde ist die Senatorin für Wissenschaft, Gesundheit und Verbraucherschutz, Rembertiring 8 – 12, 28195 Bremen.<br/>DE 811 245 070 (gemäß § 27 a UStG)<br/></td></tr></table>",
   "kibanaConfig": {
     "dashboards": []
   },
@@ -136,6 +139,7 @@ export const config = {
   "logoPath": "./assets/logo_mvp.png",
   "logoRequired": false,
   "phoneNumberRequired": false,
+  "projectsEnabled": true,
   "requiredAgreements": [
     {
       "title":"End-User License Agreement (EULA)",
@@ -150,7 +154,7 @@ export const config = {
   "showTrack": true,
   "showTrade": true,
   "showVerification": true,
-  "standardCurrency": "EUR",
+  "standardCurrency": "SEK",
   "standardTaxonomy": "All",
     "defaultSearchIndex": "Products",
     "supportedActivitySectors": {

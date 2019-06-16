@@ -73,7 +73,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
         this.rfqPrice = new DiscountPriceWrapper(
             this.rfq.requestForQuotationLine[0].lineItem.price,
             this.rfq.requestForQuotationLine[0].lineItem.price,
-            this.bpDataService.modifiedCatalogueLines[0].requiredItemLocationQuantity.applicableTaxCategory[0].percent);
+            this.bpDataService.getCatalogueLine().requiredItemLocationQuantity.applicableTaxCategory[0].percent);
         //this.rfqPrice.quotationLinePriceWrapper = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.paymentTerms);
 
@@ -83,7 +83,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
         this.quotationPrice = new DiscountPriceWrapper(
             this.quotation.quotationLine[0].lineItem.price,
             this.quotation.quotationLine[0].lineItem.price,
-            this.bpDataService.modifiedCatalogueLines[0].requiredItemLocationQuantity.applicableTaxCategory[0].percent);
+            this.bpDataService.getCatalogueLine().requiredItemLocationQuantity.applicableTaxCategory[0].percent);
         //this.quotationPrice.quotationLinePriceWrapper = new ItemPriceWrapper(this.quotation.quotationLine[0].lineItem.price);
         this.quotationPaymentTerms = new PaymentTermsWrapper(this.quotation.paymentTerms);
 
@@ -132,7 +132,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
                 this.callStatus.callback("Quotation sent", true);
                 var tab = "PUCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
-                  tab = "SALES";
+                    tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
             })
             .catch(error => {

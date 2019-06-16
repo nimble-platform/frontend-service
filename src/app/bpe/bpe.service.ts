@@ -193,7 +193,7 @@ export class BPEService {
 	}
 
 	getProcessInstanceGroupFilters(partyId:string, collaborationRole: CollaborationRole, archived: boolean, products: string[],
-		categories: string[], partners: string[],status: string[]): Promise<ProcessInstanceGroupFilter> {
+		categories: string[], partners: string[],status: string[],isProject:boolean): Promise<ProcessInstanceGroupFilter> {
 		const headers = this.getAuthorizedHeaders();
 
 		let url: string = `${this.url}/process-instance-groups/filters?partyId=${partyId}&collaborationRole=${collaborationRole}&archived=${archived}`;
@@ -209,6 +209,9 @@ export class BPEService {
 		if(status.length > 0){
 			url += '&status='+this.stringifyArray(status);
 		}
+		if(isProject){
+		    url += '&isProject='+isProject;
+		}
 		return this.http
             .get(url, {headers: headers})
             .toPromise()
@@ -216,7 +219,7 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getCollaborationGroups(partyId:string, collaborationRole: CollaborationRole, page: number, limit: number, archived: boolean, products: string[], categories: string[], partners: string[], status: string[]): Promise<CollaborationGroupResponse> {
+	getCollaborationGroups(partyId:string, collaborationRole: CollaborationRole, page: number, limit: number, archived: boolean, products: string[], categories: string[], partners: string[], status: string[], isProject?:boolean): Promise<CollaborationGroupResponse> {
 		let offset:number = page * limit;
 		let url:string = `${this.url}/collaboration-groups?partyId=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}&archived=${archived}`;
 		if(products.length > 0) {
@@ -230,7 +233,12 @@ export class BPEService {
 		}
 		if(status.length > 0){
 		    url += '&status='+this.stringifyArray(status);
-        }
+		}
+
+		if(isProject){
+		    url += '&isProject='+isProject;
+		}
+
 		return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
@@ -423,6 +431,28 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
+	mergeNegotations(baseId:string , mergeIds) {
+		let url = `${this.url}/collaboration-groups/merge`;
+		// append catalogue merge ids to the url
+		url += "?bcid=" + baseId;
+		let size = mergeIds.length;
+		for (let i = 0; i < size; i++) {
+			if (i == 0) {
+				url += "&cgids=";
+			}
+
+			url += mergeIds[i];
+
+			if (i != size - 1) {
+				url += ",";
+			}
+		}
+		return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
 	exportTransactions(partyId: string, userId: string, direction: string, archived: boolean): Promise<any> {
 		let url = `${this.url}/processInstance/export?partyId=${partyId}`;
 		if(userId != null) {

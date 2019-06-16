@@ -189,7 +189,7 @@
             <!-- Customer's offer -->
             <div *ngIf="showCounterOfferTerms" class="col-5">
                 <negotiation-request-input label="Request Item Price" [(cbModel)]="negotiatePrice" id="priceCb"
-                                           [disabled]="isLoading() || isReadOnly()" [quantity]="wrapper.rfqDiscountPriceWrapper.itemPrice"
+                                           [disabled]="isLoading() || isReadOnly()" [quantity]="wrapper.rfqDiscountPriceWrapper.itemPrice" [step]="0.01"
                                            [quantityUnits]="CURRENCIES" [disableQuantityUnit]="lineHasPrice" [invalid]="!isPriceValid()">
                 </negotiation-request-input>
             </div>
@@ -260,154 +260,186 @@
     </div>
 </div>
 
-<!-- Frame contract -->
-<ng-container *ngIf="isFrameContractVisible()">
-    <div class="row">
-        <div class="btn btn-outline-primary align-self-start mb-2" (click)="showFrameContractDetails = !showFrameContractDetails;">Frame Contract</div>
-    </div>
-    <ng-container *ngIf="showFrameContractDetails">
+<div class="row mb-2">
+  <div class="col-12">
+    <ng-container *ngIf="isFrameContractVisible()">
+      <div class="btn btn-outline-primary align-self-start" [ngClass]="{'active':showFrameContractDetails}" (click)="showFrameContractDetails=showTab(showFrameContractDetails)">Frame Contract</div>
+    </ng-container>
+    <div class="btn btn-outline-primary align-self-start" [ngClass]="{'active':showNotesAndAdditionalFiles,'ml-2':isFrameContractVisible()}" (click)="showNotesAndAdditionalFiles=showTab(showNotesAndAdditionalFiles)">Notes and Additional Files</div>
+    <div *ngIf="config.dataChannelsEnabled" class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showDataMonitoring}" (click)="showDataMonitoring=showTab(showDataMonitoring)">Data Monitoring</div>
+    <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showTermsAndConditions}" (click)="showTermsAndConditions=showTab(showTermsAndConditions)">Terms and Conditions</div>
+    <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showPurchaseOrder}" (click)="showPurchaseOrder=showTab(showPurchaseOrder)">Purchase Order</div>
+    <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showDeliveryAddress}" (click)="showDeliveryAddress=showTab(showDeliveryAddress)">Delivery Address</div>
+  </div>
+</div>
+
+<div class="row mb-2">
+  <div class="col-12">
+
+    <!-- Frame contract -->
+    <ng-container *ngIf="isFrameContractVisible()">
+        <!--
         <div class="row">
+            <div class="btn btn-outline-primary align-self-start mb-2" (click)="showFrameContractDetails = !showFrameContractDetails;">Frame Contract</div>
+        </div>
+        -->
+        <ng-container *ngIf="showFrameContractDetails">
+            <div class="row">
+                <div class="col-2">
+                    <strong class="font-weight-500">Frame Contract:</strong>
+                    <span title="The period within which the offered conditions will be valid upon confirmation by the seller.">&#9432;</span>
+                </div>
+                <div class="col-5"></div>
+                <div class="col-5">
+                    <negotiation-request-input label="Request Frame Contract" [(cbModel)]="negotiateFrameContractDuration"
+                                               id="frameContractCb"
+                                               [quantityUnits]="frameContractDurationUnits"
+                                               [quantity]="frameContractDuration"
+                                               [disabled]="isFrameContractDisabled()">
+                    </negotiation-request-input>
+                </div>
+            </div>
+        </ng-container>
+    </ng-container>
+
+    <!--Notes-->
+    <!--
+    <div class="row">
+        <div class="btn btn-outline-primary align-self-start mb-2" (click)="showNotesAndAdditionalFiles = !showNotesAndAdditionalFiles;">Notes and Additional Files</div>
+    </div>
+    -->
+    <note-file-view *ngIf="showNotesAndAdditionalFiles"
+                    class="mb-2"
+                    [notes]="rfq.note"
+                    [documents]="rfq.additionalDocumentReference"
+                    [label]="'Notes'"
+                    [firstCol]="'col-2'"
+                    [secondCol]="'col-5'"
+                    [lastCol]="'col-5'"
+                    [readonly]="isLoading() || isReadOnly()"></note-file-view>
+
+    <!-- Data Monitoring -->
+    <ng-container *ngIf="config.dataChannelsEnabled">
+        <!--
+        <div class="row">
+            <div class="btn btn-outline-primary align-self-start mb-2" (click)="showDataMonitoring = !showDataMonitoring;">Data Monitoring</div>
+        </div>
+        -->
+        <div *ngIf="showDataMonitoring" class="row mb-3">
+            <div class="col-12">
+                <div class="input-group">
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" [(ngModel)]="rfq.dataMonitoringRequested" [disabled]="isLoading() || isReadOnly()" >
+                    </div>
+                    <span class="form-control d-inline border-0">
+                            <strong class="font-weight-500">Request data monitoring service</strong>
+                        </span>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Delivery -->
+    <!--
+    <div class="row">
+        <div class="btn btn-outline-primary align-self-start mb-2" (click)="showDeliveryAddress = !showDeliveryAddress">Delivery Address</div>
+    </div>
+    -->
+    <div *ngIf="showDeliveryAddress" class="row mb-3">
+        <div class="col-12">
+            <options-input label="Use Existing Address" [(selected)]="selectedAddress" [options]="addressOptions"
+                           rowClass="mb-1" labelClass="col-2" valueClass="col-10">
+            </options-input>
+
+            <address-input [address]="wrapper.rfqDeliveryAddress" [disabled]="isLoading() || isReadOnly() || selectedAddressValue !== ''">
+            </address-input>
+        </div>
+    </div>
+
+    <!-- Contract Preview -->
+    <!--
+    <div class="row">
+        <div class="btn btn-outline-primary align-self-start mb-2" (click)="showTermsAndConditions = !showTermsAndConditions">Terms and Conditions</div>
+    </div>
+    -->
+    <div *ngIf="showTermsAndConditions">
+        <div class="row mb-2">
             <div class="col-2">
-                <strong class="font-weight-500">Frame Contract:</strong>
+                <strong class="font-weight-500">Terms and conditions:</strong>
                 <span title="The period within which the offered conditions will be valid upon confirmation by the seller.">&#9432;</span>
             </div>
             <div class="col-5"></div>
             <div class="col-5">
-                <negotiation-request-input label="Request Frame Contract" [(cbModel)]="negotiateFrameContractDuration"
-                                           id="frameContractCb"
-                                           [quantityUnits]="frameContractDurationUnits"
-                                           [quantity]="frameContractDuration"
-                                           [disabled]="isFrameContractDisabled()">
-                </negotiation-request-input>
+                <input type="checkbox" class="form-check-input" [(ngModel)]="negotiateTermsAndConditions"
+                       [disabled]="isLoading() || isReadOnly()">
+                <label class="form-check-label"><strong class="font-weight-500">Request terms and conditions:</strong></label>
             </div>
         </div>
-    </ng-container>
-</ng-container>
+        <div class="row content-row">
+            <div class="col-2"></div>
+            <div class="col-5">
+                <terms-and-conditions [hidden]="primaryTermsSource != 'product_defaults'" [buyerPartyId]="buyerId"
+                                      [needATitle]="false"
+                                      [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-product-defaults'"
+                                      [termsAndConditions]="defaultTermsAndConditions"
+                                      [originalTermAndConditionClauses]="defaultTermsAndConditions">
+                </terms-and-conditions>
+                <terms-and-conditions *ngIf="wrapper.frameContractQuotation" [hidden]="primaryTermsSource != 'frame_contract'" [buyerPartyId]="buyerId"
+                                      [needATitle]="false"
+                                      [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-frame-contract'"
+                                      [termsAndConditions]="wrapper.frameContractQuotation.termOrCondition"
+                                      [originalTermAndConditionClauses]="wrapper.frameContractQuotation.termOrCondition">
+                </terms-and-conditions>
+                <terms-and-conditions *ngIf="wrapper.lastOfferQuotation" [hidden]="primaryTermsSource != 'last_offer'"
+                                      [buyerPartyId]="buyerId"
+                                      [needATitle]="false"
+                                      [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-last-offer'"
+                                      [termsAndConditions]="wrapper.lastOfferQuotation.termOrCondition"
+                                      [originalTermAndConditionClauses]="wrapper.lastOfferQuotation.termOrCondition">
+                </terms-and-conditions>
+            </div>
+            <div class="col-5">
+                <terms-and-conditions [buyerPartyId]="buyerId"
+                                      [selectedIncoterm]="wrapper.rfqIncoterms"
+                                      [selectedTradingTerm]="wrapper.rfqPaymentTerms.paymentTerm"
+                                      (onIncotermChanged)="wrapper.rfqIncoterms = $event; onPriceConditionsChange();"
+                                      (onTradingTermChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event; onPriceConditionsChange();"
+                                      [originalTermAndConditionClauses]="primaryTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.termOrCondition :
+                                      (primaryTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.termOrCondition : defaultTermsAndConditions)"
+                                      [needATitle]="false"
+                                      [sellerPartyId]="sellerId" [readOnly]="isLoading() || isReadOnly() || !negotiateTermsAndConditions" [documentType]="'rfq'"
+                                      [termsAndConditions]="wrapper.rfq.termOrCondition">
+                </terms-and-conditions>
+            </div>
+        </div>
+    </div>
 
-<!--Notes-->
-<div class="row">
-    <div class="btn btn-outline-primary align-self-start mb-2" (click)="showNotesAndAdditionalFiles = !showNotesAndAdditionalFiles;">Notes and Additional Files</div>
-</div>
-<note-file-view *ngIf="showNotesAndAdditionalFiles"
-                class="mb-2"
-                [notes]="rfq.note"
-                [documents]="rfq.additionalDocumentReference"
-                [label]="'Notes'"
-                [firstCol]="'col-2'"
-                [secondCol]="'col-5'"
-                [lastCol]="'col-5'"
-                [readonly]="isLoading() || isReadOnly()"></note-file-view>
-
-<!-- Data Monitoring -->
-<ng-container *ngIf="config.dataChannelsEnabled">
+    <!-- Purchase Order -->
+    <!--
     <div class="row">
-        <div class="btn btn-outline-primary align-self-start mb-2" (click)="showDataMonitoring = !showDataMonitoring;">Data Monitoring</div>
+        <div class="btn btn-outline-primary align-self-start mb-2" (click)="showPurchaseOrder = !showPurchaseOrder">Purchase Order</div>
     </div>
-    <div *ngIf="showDataMonitoring" class="row mb-3">
+    -->
+    <div *ngIf="showPurchaseOrder" class="row mb-3">
         <div class="col-12">
-            <div class="input-group">
-                <div class="d-flex align-items-center">
-                    <input type="checkbox" [(ngModel)]="rfq.dataMonitoringRequested" [disabled]="isLoading() || isReadOnly()" >
-                </div>
-                <span class="form-control d-inline border-0">
-                        <strong class="font-weight-500">Request data monitoring service</strong>
-                    </span>
+            <div class="row">
+                <div class="col-2"><strong>Product Id:</strong></div>
+                <div class="col-10">{{rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id}}</div>
+            </div>
+            <div class="row">
+                <div class="col-2"><strong>Quantity:</strong></div>
+                <div class="col-10">{{requestedQuantity}} {{getQuantityUnit()}}</div>
+            </div>
+            <div class="row">
+                <div class="col-2"><strong>Total Price:</strong></div>
+                <div class="col-10">{{ wrapper.rfqTotalPriceString }}</div>
             </div>
         </div>
     </div>
-</ng-container>
 
-<!-- Delivery -->
-<div class="row">
-    <div class="btn btn-outline-primary align-self-start mb-2" (click)="showDeliveryAddress = !showDeliveryAddress">Delivery Address</div>
-</div>
-<div *ngIf="showDeliveryAddress" class="row mb-3">
-    <div class="col-12">
-        <options-input label="Use Existing Address" [(selected)]="selectedAddress" [options]="addressOptions"
-                       rowClass="mb-1" labelClass="col-2" valueClass="col-10">
-        </options-input>
-
-        <address-input [address]="wrapper.rfqDeliveryAddress" [disabled]="isLoading() || isReadOnly() || selectedAddressValue !== ''">
-        </address-input>
-    </div>
+  </div>
 </div>
 
-<!-- Contract Preview -->
-<div class="row">
-    <div class="btn btn-outline-primary align-self-start mb-2" (click)="showTermsAndConditions = !showTermsAndConditions">Terms and Conditions</div>
-</div>
-<div *ngIf="showTermsAndConditions">
-    <div class="row mb-2">
-        <div class="col-2">
-            <strong class="font-weight-500">Terms and conditions:</strong>
-            <span title="The period within which the offered conditions will be valid upon confirmation by the seller.">&#9432;</span>
-        </div>
-        <div class="col-5"></div>
-        <div class="col-5">
-            <input type="checkbox" class="form-check-input" [(ngModel)]="negotiateTermsAndConditions"
-                   [disabled]="isLoading() || isReadOnly()">
-            <label class="form-check-label"><strong class="font-weight-500">Request terms and conditions:</strong></label>
-        </div>
-    </div>
-    <div class="row content-row">
-        <div class="col-2"></div>
-        <div class="col-5">
-            <terms-and-conditions [hidden]="primaryTermsSource != 'product_defaults'" [buyerPartyId]="buyerId"
-                                  [needATitle]="false"
-                                  [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-product-defaults'"
-                                  [termsAndConditions]="defaultTermsAndConditions"
-                                  [originalTermAndConditionClauses]="defaultTermsAndConditions">
-            </terms-and-conditions>
-            <terms-and-conditions *ngIf="wrapper.frameContractQuotation" [hidden]="primaryTermsSource != 'frame_contract'" [buyerPartyId]="buyerId"
-                                  [needATitle]="false"
-                                  [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-frame-contract'"
-                                  [termsAndConditions]="wrapper.frameContractQuotation.termOrCondition"
-                                  [originalTermAndConditionClauses]="wrapper.frameContractQuotation.termOrCondition">
-            </terms-and-conditions>
-            <terms-and-conditions *ngIf="wrapper.lastOfferQuotation" [hidden]="primaryTermsSource != 'last_offer'"
-                                  [buyerPartyId]="buyerId"
-                                  [needATitle]="false"
-                                  [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-last-offer'"
-                                  [termsAndConditions]="wrapper.lastOfferQuotation.termOrCondition"
-                                  [originalTermAndConditionClauses]="wrapper.lastOfferQuotation.termOrCondition">
-            </terms-and-conditions>
-        </div>
-        <div class="col-5">
-            <terms-and-conditions [buyerPartyId]="buyerId"
-                                  [selectedIncoterm]="wrapper.rfqIncoterms"
-                                  [selectedTradingTerm]="wrapper.rfqPaymentTerms.paymentTerm"
-                                  (onIncotermChanged)="wrapper.rfqIncoterms = $event; onPriceConditionsChange();"
-                                  (onTradingTermChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event; onPriceConditionsChange();"
-                                  [originalTermAndConditionClauses]="primaryTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.termOrCondition :
-                                  (primaryTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.termOrCondition : defaultTermsAndConditions)"
-                                  [needATitle]="false"
-                                  [sellerPartyId]="sellerId" [readOnly]="isLoading() || isReadOnly() || !negotiateTermsAndConditions" [documentType]="'rfq'"
-                                  [termsAndConditions]="wrapper.rfq.termOrCondition">
-            </terms-and-conditions>
-        </div>
-    </div>
-</div>
-
-<!-- Purchase Order -->
-<div class="row">
-    <div class="btn btn-outline-primary align-self-start mb-2" (click)="showPurchaseOrder = !showPurchaseOrder">Purchase Order</div>
-</div>
-<div *ngIf="showPurchaseOrder" class="row mb-3">
-    <div class="col-12">
-        <div class="row">
-            <div class="col-2"><strong>Product Id:</strong></div>
-            <div class="col-10">{{rfq.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id}}</div>
-        </div>
-        <div class="row">
-            <div class="col-2"><strong>Quantity:</strong></div>
-            <div class="col-10">{{requestedQuantity}} {{getQuantityUnit()}}</div>
-        </div>
-        <div class="row">
-            <div class="col-2"><strong>Total Price:</strong></div>
-            <div class="col-10">{{ wrapper.rfqTotalPriceString }}</div>
-        </div>
-    </div>
-</div>
 <!-- Actions -->
 <div *ngIf="!showRequestedPrice()" class="d-flex justify-content-end actions-row">
     <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>

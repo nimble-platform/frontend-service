@@ -13,6 +13,7 @@ export class SimpleSearchService {
 
     private headers = new Headers({'Content-Type': 'application/json'});
     private url = myGlobals.indexing_service_endpoint;
+    private delegate_url = myGlobals.delegate_endpoint;
     private facetMin = myGlobals.facet_min;
     private facetCount = myGlobals.facet_count;
 
@@ -50,8 +51,10 @@ export class SimpleSearchService {
             .catch(this.handleError);
     }
 
-    getFields(): Promise<any> {
-		const url = this.url + `/item/fields`;
+    getFields(delegated?:boolean): Promise<any> {
+		let url = this.url + `/item/fields`;
+    if (delegated)
+      url = this.delegate_url + `/item/fields`;
 		// const url = `${this.url}/select?q=*:*&rows=0&wt=csv`;
 		return this.http
 		.get(url, {headers: this.headers})
@@ -60,8 +63,10 @@ export class SimpleSearchService {
 		.catch(this.handleError);
 	}
 
-  getCompFields(): Promise<any> {
-  const url = this.url + `/party/fields`;
+  getCompFields(delegated?: boolean): Promise<any> {
+  let url = this.url + `/party/fields`;
+  if (delegated)
+    url = this.delegate_url + `/party/fields`;
   // const url = `${this.url}/select?q=*:*&rows=0&wt=csv`;
   return this.http
   .get(url, {headers: this.headers})
@@ -70,7 +75,7 @@ export class SimpleSearchService {
   .catch(this.handleError);
 }
 
-	get(query: string, facets: string[], facetQueries: string[], page: number, rows: number, sort: string, cat: string, catID: string, search_index: string): Promise<any> {
+	get(query: string, facets: string[], facetQueries: string[], page: number, rows: number, sort: string, cat: string, catID: string, search_index: string, delegated?: boolean): Promise<any> {
 		let queryRes;
 		let searchObject: any = {};
 		if (search_index == "Categories") {
@@ -87,7 +92,9 @@ export class SimpleSearchService {
 			searchObject.sort.push(sort);
 		}
 		query = queryRes.queryStr;
-		const url = this.url + `/item/search`
+		let url = this.url + `/item/search`;
+    if (delegated)
+      url = this.delegate_url + `/item/search`;
 		searchObject.rows = rows;
 		searchObject.start = page - 1;
 		searchObject.q = query;
@@ -123,11 +130,13 @@ export class SimpleSearchService {
 			.catch(this.handleError);
 	}
 
-  getComp(query: string, facets: string[], facetQueries: string[], page: number, rows: number, sort: string): Promise<any> {
+  getComp(query: string, facets: string[], facetQueries: string[], page: number, rows: number, sort: string, delegated?: boolean): Promise<any> {
 		let queryRes;
     queryRes = this.buildQueryString(query, myGlobals.query_settings_comp, true, false);
 		query = queryRes.queryStr;
-		const url = this.url + `/party/search`
+		let url = this.url + `/party/search`;
+    if (delegated)
+      url = this.delegate_url + `/party/search`;
 		let searchObject: any = {};
 		searchObject.rows = rows;
 		searchObject.start = page - 1;
@@ -426,10 +435,12 @@ export class SimpleSearchService {
 		return Promise.reject(error.message || error);
 	}
 
-	getCompanies(query: string, facets: string[], facetQueries: string[]): Promise<any> {
+	getCompanies(query: string, facets: string[], facetQueries: string[], delegated?: boolean): Promise<any> {
 		query = query.replace(/[!'()]/g, '');
 		// var start = page*10-10;
-		const url = this.url + `/party/search`
+		let url = this.url + `/party/search`;
+    if (delegated)
+      url = this.delegate_url + `/party/search`;
 
 		let searchObject:any = {};
 		searchObject.rows = facetQueries.length;
