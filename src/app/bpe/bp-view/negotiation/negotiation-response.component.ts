@@ -108,7 +108,9 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     onRespondToQuotation(accepted: boolean) {
+        this.callStatus.submit();
         if (!isValidPrice(this.wrapper.quotationDiscountPriceWrapper.totalPrice)) {
+            this.callStatus.callback("Quotation aborted", true);
             alert("Price cannot have more than 2 decimal places");
             return false;
         }
@@ -122,7 +124,7 @@ export class NegotiationResponseComponent implements OnInit {
             this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.REJECTED;
         }
 
-        this.callStatus.submit();
+        //this.callStatus.submit();
         const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.buyerCustomerParty.party),
             UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.sellerSupplierParty.party),this.cookieService.get("user_id"), this.quotation, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processId);
