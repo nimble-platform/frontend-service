@@ -34,6 +34,7 @@ export class NegotiationRequestInputComponent implements OnInit {
     @Input() quantityUnits?: string[];
     @Input() quantityType?: string;
     @Input() disableQuantityUnit?: boolean = false;
+    @Input() step: number = 1;
 
     // Set if the input is a number
     @Input() amountValue?: number;

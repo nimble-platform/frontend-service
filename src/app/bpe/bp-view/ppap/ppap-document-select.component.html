@@ -68,7 +68,7 @@
 
 
 <!-- Action buttons -->
-<ng-container *ngIf="formerProcess">
+<ng-container *ngIf="!formerProcess">
     <div *ngIf="!isRequestSent()" class="row actions-row">
         <div class="col-2"></div>
         <div *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>

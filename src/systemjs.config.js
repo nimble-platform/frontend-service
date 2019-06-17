@@ -52,6 +52,7 @@
 			'd3-transition': 'npm:d3-transition/dist',
 			'd3-voronoi': 'npm:d3-voronoi/dist',
 			'd3-zoom': 'npm:d3-zoom/dist',
+			'd3-timelines': 'npm:d3-timelines/dist',
 			'@swimlane/ngx-graph': 'npm:@swimlane/ngx-graph/release/index.js',
 			'@swimlane/ngx-charts': 'npm:@swimlane/ngx-charts/release/index.js',
 			'@angular/animations': 'npm:@angular/animations/bundles/animations.umd.js',
@@ -209,7 +210,11 @@
 			'd3-zoom': {
 				main: 'd3-zoom.js',
         defaultExtension: 'js'
-      }
+      },
+			'd3-timelines': {
+				main: 'd3-timelines.js',
+        defaultExtension: 'js'
+			}
 		}
 	});
 })(this);

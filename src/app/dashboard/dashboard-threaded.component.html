@@ -51,6 +51,9 @@
                     <a href id="COMPARE" *ngIf="this.appComponent.checkRoles('compare')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.COMPARE}" (click)="onChangeTab($event)" i18n>Compare</a>
                 </li>
                 <li class="nav-item">
+                    <a href id="PROJECTS" *ngIf="config.projectsEnabled && this.appComponent.checkRoles('projects')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.PROJECTS}" (click)="onChangeTab($event)" i18n>Projects</a>
+                </li>
+                <li class="nav-item">
                     <a href id="PERFORMANCE" *ngIf="this.appComponent.checkRoles('performance')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.PERFORMANCE}" (click)="onChangeTab($event)" i18n>Performance</a>
                 </li>
             </ul>
@@ -209,10 +212,78 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-auto align-right p-0">
-										
+                                    <div class="col-xs-auto align-right p-0" style="min-width:6rem">
+
                                         <div data-toggle="tooltip" class="inline" (click)="changeCollaborationGroupNameStatus(i,true)" data-placement="top" title="Change group name">
                                             <i class="fa fa-pencil-alt p-1 pointer" aria-hidden="true"></i>
+                                        </div>
+
+                                        <ng-template #negotiationGroup let-modal>
+                                            <div class="modal-header">
+                                                <h4 class="modal-title" id="modal-basic-title">Negotiation Groups</h4>
+                                                <button type="button" class="btn btn-danger"
+                                                (click)="mergeNegotations(); $event.stopPropagation();">
+                                                    Merge
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-12 pagination justify-content-center">
+                                                        <div *ngIf="results.orders" class="col-10">
+                                                            <h4 *ngIf="results.orders.length === 0">No orders.</h4>
+                                                            <div *ngFor="let order of results.orders;let i=index" class="bordered space-after">
+                                                                <div>
+                                                                <div class="row w-100 m-0">
+                                                                    <div class="col d-flex collaboration-group-header">
+                                                                        <div class="header-label mr-auto d-flex">
+                                                                            <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name != null && order.name != '')">
+                                                                                    <input  *ngIf="selectedNegotiationIndex != (i+(this.query.page -1)*this.query.pageSize)" type="checkbox" class="form-check-input"
+                                                                                    [checked]="this.selectedNegotiations.indexOf(i+ (this.query.page -1)*this.query.pageSize) > -1" (change)="changeNegotation(i,order); $event.stopPropagation()"
+                                                                                    value="updatingCollaborationGroupName[i].defaultName" style="margin-left: 1px;"> <span style="margin-left: 20px;">{{order.name}} </span>
+                                                                                </h5>
+                                                                            <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name == null || order.name == '')">
+                                                                                    <input  *ngIf="selectedNegotiationIndex != (i+(this.query.page -1)*this.query.pageSize)" type="checkbox" class="form-check-input"
+                                                                                     [checked]="this.selectedNegotiations.indexOf(i+ (this.query.page -1)*this.query.pageSize) > -1" (change)="changeNegotation(i,order); $event.stopPropagation()"
+                                                                                     value="updatingCollaborationGroupName[i].defaultName" style="margin-left: 1px;">
+                                                                                     <span style="margin-left: 20px;">{{updatingCollaborationGroupName[i].defaultName}}</span>
+                                                                            </h5>
+                                                                            <input *ngIf="updatingCollaborationGroupName[i].status == true" type="text" class="form-control form-control-sm" name="inputCtrl" [(ngModel)]="updatingCollaborationGroupName[i].name" [disabled]=""/>
+                                                                            <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="updateCollaborationGroupName(order.id,updatingCollaborationGroupName[i].name)" data-toggle="tooltip" data-placement="top" title="Save">
+                                                                                <i class="fa fa-check p-2 pointer" aria-hidden="true"></i>
+                                                                            </div>
+                                                                            <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="changeCollaborationGroupNameStatus(i,false)" data-toggle="tooltip" data-placement="top" title="Cancel">
+                                                                                <i class="fa fa-times p-2 pointer" aria-hidden="true"></i>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <hr class="collaboration-hr">
+                                                                    <div *ngFor="let group of order.associatedProcessInstanceGroups;let i=index">
+                                                                        <div [ngClass]="i != order.associatedProcessInstanceGroups.length-1 ? 'space-after' : null">
+                                                                            <!--If Purchases tab is selected, show groups whose collaboration role is Buyer-->
+                                                                            <thread-summary *ngIf="queryParameters.tab == TABS.SALES || (queryParameters.tab == TABS.PURCHASES && group.collaborationRole == 'BUYER')" [processInstanceGroup]="group" [collaborationGroupId]="order.id" (threadStateUpdated)="onOrderRemovedFromView()">
+                                                                            </thread-summary>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-12 pagination justify-content-center">
+                                                            <ngb-pagination [collectionSize]="results.resultCount" [pageSize]="query.pageSize" [(page)]="query.page"
+                                                            [maxSize]="query.pageSize" [boundaryLinks]="true" (pageChange)="onPageChange()">
+                                                            </ngb-pagination>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </ng-template>
+
+                                        <div *ngIf="queryParameters.tab === TABS.PURCHASES && config.projectsEnabled" data-toggle="tooltip" class="inline" (click)="open(negotiationGroup,i,order)" data-placement="top" title="Add to group">
+                                            <i class="fa fa-object-group p-1 pointer" aria-hidden="true"></i>
                                         </div>
                                         <div *ngIf="!order.archived && order.isArchiveable" class="inline" (click)="archiveGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Archive">
                                             <i class="fa fa-archive p-1 pointer" aria-hidden="true"></i>
@@ -274,10 +345,171 @@
         </div>
     </div>
 
+    <!-- Projects tab -->
+      <div *ngIf="queryParameters.tab === TABS.PROJECTS" class="row">
+        <div class="col-12">
+                <!-- No data -->
+                <div class="row" *ngIf="results.resultCount === 0 && !queryParameters.archived && !areOrdersLoading()">
+                    <div class="col-12">
+                        <!-- Purchases -->
+                        <ng-container *ngIf="queryParameters.tab === TABS.PROJECTS">
+                            <div style="margin-top: 20vh">
+                                <h4 class="space-before text-center">You have not created any projects yet</h4>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+
+                <!-- Data -->
+                <div class="row" *ngIf="results.resultCount > 0 || queryParameters['archived']">
+                    <div class="col-12">
+                        <div class="row space-before">
+                            <div class="col-4"></div>
+                            <!-- Pagination Info -->
+                            <div class="col-4 pagination justify-content-center">
+                                <ngb-pagination [collectionSize]="results.resultCount" [pageSize]="query.pageSize" [(page)]="query.page"
+                                    [maxSize]="query.pageSize" [boundaryLinks]="true" (pageChange)="onPageChange()">
+                                </ngb-pagination>
+                            </div>
+                            <!--<div class="col-3"></div>-->
+                            <!-- Show Archived Button -->
+                            <!-- <div class="col-4">
+                                <button class="btn btn-secondary float-right"
+                                    (click)="onToggleArchived()"
+                                    [disabled]="!isToggleArchivedButtonEnabled()">
+                                    {{getToggleArchivedButtonText()}}
+                                </button>
+                            </div> -->
+                        </div>
+
+                        <div class="row">
+
+                            <!-- Filters -->
+                            <div class="col-2">
+                                <facet [title]="'Product / Service'" [dataType]="'string'"
+                                    [stringValues]="filterSet && filterSet.relatedProducts"
+                                    [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.relatedProducts"
+                                    [loading]="areFiltersLoading()"
+                                    (triggerCriteriaChanged)="onFilterChange()">
+                                </facet>
+                                <facet [title]="'Category'" [dataType]="'string'"
+                                    [stringValues]="filterSet && filterSet.relatedProductCategories"
+                                    [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.relatedProductCategories"
+                                    [loading]="areFiltersLoading()"
+                                    (triggerCriteriaChanged)="onFilterChange()">
+                                </facet>
+                                <facet [title]="'Trading Partner'" [dataType]="'string'"
+                                    [stringValues]="filterSet && filterSet.tradingPartnerNames"
+                                    [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.tradingPartnerNames"
+                                    [loading]="areFiltersLoading()"
+                                    (triggerCriteriaChanged)="onFilterChange()">
+                                </facet>
+                                <facet [title]="'Status'" [dataType]="'string'"
+                                       [stringValues]="filterSet && filterSet.status"
+                                       [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.status"
+                                       [loading]="areFiltersLoading()"
+                                       (triggerCriteriaChanged)="onFilterChange()">
+                                </facet>
+                            </div>
+
+                            <!-- Results -->
+                            <div *ngIf="results.orders" class="col-10">
+                                <h4 *ngIf="results.orders.length === 0">No orders.</h4>
+                                <div *ngFor="let order of results.orders;let i=index" class="bordered space-after">
+                                    <div class="row w-100 m-0">
+                                        <div class="col d-flex collaboration-group-header">
+                                            <div class="header-label mr-auto d-flex">
+                                                <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name != null || order.name != '')">{{order.name}}</h5>
+                                                <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name == null || order.name == '')">{{updatingCollaborationGroupName[i].defaultName}}</h5>
+                                                <input *ngIf="updatingCollaborationGroupName[i].status == true" type="text" class="form-control form-control-sm" name="inputCtrl" [(ngModel)]="updatingCollaborationGroupName[i].name" [disabled]=""/>
+                                                <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="updateCollaborationGroupName(order.id,updatingCollaborationGroupName[i].name)" data-toggle="tooltip" data-placement="top" title="Save">
+                                                    <i class="fa fa-check p-2 pointer" aria-hidden="true"></i>
+                                                </div>
+                                                <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="changeCollaborationGroupNameStatus(i,false)" data-toggle="tooltip" data-placement="top" title="Cancel">
+                                                    <i class="fa fa-times p-2 pointer" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-auto align-right p-0">
+                                            <div data-toggle="tooltip" class="inline" (click)="changeCollaborationGroupNameStatus(i,true)" data-placement="top" title="Change group name">
+                                                <i class="fa fa-pencil-alt p-1 pointer" aria-hidden="true"></i>
+                                            </div>
+                                            <div *ngIf="order.id != selectedId" class="inline" (click)="clickexpand(order)" data-toggle="tooltip" data-placement="top" title="Show details">
+                                                <i class="fa fa-angle-double-down p-1 pointer" aria-hidden="true"></i>
+                                            </div>
+                                            <div *ngIf="order.id === selectedId" class="inline" (click)="clickantiExampand(order)" data-toggle="tooltip" data-placement="top" title="Hide details">
+                                                <i class="fa fa-angle-double-up p-1 pointer" aria-hidden="true"></i>
+                                            </div>
+                                            <!-- <div *ngIf="!order.archived" class="inline" (click)="archiveGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Archive">
+                                                <i class="fa fa-archive p-1 pointer" aria-hidden="true"></i>
+                                            </div>
+                                            <div *ngIf="order.archived" class="inline" (click)="restoreGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Restore">
+                                                <i class="fa fa-undo p-1 pointer" aria-hidden="true"></i>
+                                            </div>
+                                            <div *ngIf="order.archived" class="inline" (click)="deleteGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
+                                                <i class="fa fa-trash-alt p-1 pointer" aria-hidden="true"></i>
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                    <div [ngStyle]="{'visibility':order.id === selectedId  ? 'visible' : 'hidden','height':order.id === selectedId  ? 'unset' : '0px', 'margin-bottom': order.id === selectedId? '30px' : '0px'}">
+                                        <!-- Titles for the rows -->
+                                        <div class="row" style="margin-left: 39px;width: 1000px;border-bottom: 4px solid rgb(190, 113, 128);" >
+
+
+                                            <div *ngFor="let item of finalArray;let i=index" [ngClass]="'cls'+order.id">
+                                                <div class="row">
+                                                <div class="col-md-12" style="width: 700px;" >
+                                                    <!-- <div [style.width.px]="item.duration"  [style.marginLeft.px]= "item.offset" style="background:blue">item.label </div> -->
+                                                     <div [style.width.px]="item.duration"  [style.marginLeft.px]= "item.offset"  style="white-space: nowrap;border-bottom: 3px solid rgb(255, 75, 102);"><b>{{item.label}} <span> <i>-{{item.endDate}}</i></span></b></div>
+                                                </div>
+
+                                                </div>
+                                                <br/>
+                                            </div>
+
+
+                                        </div>
+                                        <span *ngFor="let xaxis of finalXAsxisArray;let i=index" style="margin-left: 39px;position: absolute;">
+                                                <span [style.marginLeft.px]= "xaxis.offset" >{{xaxis.endDate}}</span>
+                                        </span>
+
+                                    </div>
+                                    <hr class="collaboration-hr">
+                                    <div *ngFor="let group of order.associatedProcessInstanceGroups;let i=index">
+                                        <div [ngClass]="i != order.associatedProcessInstanceGroups.length-1 ? 'space-after' : null">
+                                            <!--If Purchases tab is selected, show groups whose collaboration role is Buyer-->
+                                            <thread-summary *ngIf="queryParameters.tab == TABS.SALES || (queryParameters.tab == TABS.PROJECTS && group.collaborationRole == 'BUYER')" [processInstanceGroup]="group" [collaborationGroupId]="order.id" (threadStateUpdated)="onOrderRemovedFromView()">
+                                            </thread-summary>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pagination Info -->
+                        <div class="row ">
+                            <div class="col pagination justify-content-center">
+                                <ngb-pagination [collectionSize]="results.resultCount" [pageSize]="query.pageSize" [(page)]="query.page"
+                                    [maxSize]="query.pageSize" [boundaryLinks]="true" (pageChange)="onPageChange()">
+                                </ngb-pagination>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading -->
+                <call-status [callStatus]="queryStatus" [large]="true"></call-status>
+            </div>
+    </div>
+
     <!-- Performance tab -->
      <div *ngIf="queryParameters.tab === TABS.PERFORMANCE" class="row">
         <div class="col-12">
             <performance-analytics></performance-analytics>
         </div>
     </div>
+
+
+
 </div>

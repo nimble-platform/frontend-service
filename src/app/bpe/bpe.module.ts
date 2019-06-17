@@ -45,6 +45,7 @@ import { TransportServiceDetailsComponent } from "./bp-view/transport-negotiatio
 import { TransportNegotiationAddressComponent } from "./bp-view/transport-negotiation/transport-negotiation-address.component";
 import {TermsAndConditionsComponent} from './bp-view/contract/terms-and-conditions.component';
 
+
 @NgModule({
     imports: [
         CommonModule, 
@@ -89,7 +90,7 @@ import {TermsAndConditionsComponent} from './bp-view/contract/terms-and-conditio
         ContractComponent,
         ClauseComponent,
         PpapClauseComponent,
-        ShipmentInputComponent
+        ShipmentInputComponent,
     ],
     exports: [
         BPConfigureComponent,
@@ -104,7 +105,7 @@ import {TermsAndConditionsComponent} from './bp-view/contract/terms-and-conditio
         BpProductDetailsComponent,
         ContractComponent,
         ClauseComponent,
-        PpapClauseComponent
+        PpapClauseComponent,
     ],
     providers: []
 })

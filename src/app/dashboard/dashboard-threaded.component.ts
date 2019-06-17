@@ -13,14 +13,16 @@ import { DashboardQueryParameters } from "./model/dashboard-query-parameters";
 import { DashboardUser } from "./model/dashboard-user";
 import * as myGlobals from '../globals';
 import {CollaborationGroup} from '../bpe/model/collaboration-group';
-import { Quotation } from "../catalogue/model/publish/quotation";
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import * as d3 from 'd3';
+import * as moment from "moment";
 
 @Component({
     selector: "dashboard-threaded",
     templateUrl: "./dashboard-threaded.component.html",
     styleUrls: ["./dashboard-threaded.component.css"]
 })
-export class DashboardThreadedComponent implements OnInit {
+export class DashboardThreadedComponent implements OnInit{
 
     user: DashboardUser;
 
@@ -31,6 +33,8 @@ export class DashboardThreadedComponent implements OnInit {
     queryParameters: DashboardQueryParameters = new DashboardQueryParameters();
 
     query: DashboardOrdersQuery = new DashboardOrdersQuery();
+    querypopup: DashboardOrdersQuery = new DashboardOrdersQuery();
+
     results: DashboardOrdersQueryResults = new DashboardOrdersQueryResults();
     queryStatus: CallStatus = new CallStatus();
 
@@ -38,8 +42,23 @@ export class DashboardThreadedComponent implements OnInit {
 
     TABS = TABS;
 
+    selectedId = "";
+    selectedNegotiations = [];
+    selectedNegotiation:any;
+    selectedNegotiationLists = [];
+    selectedNegotiationIndex = -1;
+    isDivVisible = false;
     buyerCounter = 0;
     sellerCounter = 0;
+    isProject = false;
+    expanded = false;
+    finalArray = [];
+    finalXAsxisArray = [];
+    private data: any = [
+        // {times: [{"color":"green", "label":"Weeee", "starting_time": 1355752800000, "ending_time": 1355759900000}, {"color":"blue", "label":"Weeee", "starting_time": 1355767900000, "ending_time": 1355774400000}]},
+      ];
+    private chart: any;
+
 
     // this contains status-name-defaultName information of collaboration groups
     // if status is true, that means we are changing collaboration group name
@@ -51,6 +70,7 @@ export class DashboardThreadedComponent implements OnInit {
 
     constructor(
         private cookieService: CookieService,
+        private modalService: NgbModal,
         private bpeService: BPEService,
         private userService: UserService,
         private router: Router,
@@ -58,15 +78,103 @@ export class DashboardThreadedComponent implements OnInit {
         public appComponent: AppComponent
     ) {}
 
+
+
     ngOnInit() {
         this.computeUserFromCookies();
         this.getTabCounters();
         this.route.queryParams.subscribe(params => this.updateStateFromQueryParameters(params));
     }
 
-    /*
-     * Handlers called from the template.
-     */
+    async clickexpand(data){
+        if(this.selectedId != ""){
+            this.data = [];
+            this.chart = null;
+            var idDiv = ".cls"+this.selectedId + " > svg";
+            d3.select(idDiv).remove();
+        }
+        this.expanded = !this.expanded;
+        this.isDivVisible = !this.isDivVisible;
+        this.selectedId = data.id;
+        var t_arr = [];
+        await data.associatedProcessInstanceGroups.forEach(element => {
+            var lastActivityTime = (new Date(element.lastActivityTime)).getTime();
+            var firstActivityTime = (new Date(element.firstActivityTime)).getTime();
+            if((new Date(element.lastActivityTime).getTime()) -(new Date(element.firstActivityTime).getTime()) < 86400000){
+                firstActivityTime = new Date(element.firstActivityTime).getTime()-(86400000*1);
+                lastActivityTime = (new Date(element.lastActivityTime)).getTime();
+            }
+            var obj =  { times: [{"color":"red", "label":element.name, "starting_time": firstActivityTime, "ending_time": lastActivityTime}]}
+            t_arr.push((new Date(element.firstActivityTime)).getTime()/1000);
+            t_arr.push((new Date(element.lastActivityTime)).getTime()/1000);
+            this.data.push(obj);
+        });
+        this.data = this.data.sort(function(a,b){return a.times[0].starting_time - b.times[0].starting_time});
+        var endDateSorted =  this.data.sort(function(a,b){return a.times[0].ending_time - b.times[0].ending_time});
+        var projectDuration = endDateSorted[endDateSorted.length-1].times[0].ending_time-this.data[0].times[0].starting_time;
+        var newArray = [];
+        var arrayForXaxis= [];
+        var itemid= 0;
+        var colorcode = ['#ff4b66','#f36170','#e7727a','#d98185','#ca8e8f','#b99a9a','#a5a5a5'];
+        var colorindex = 0;
+        this.data.forEach(element => {
+            var projectDurationPercetage = ((element.times[0].ending_time - element.times[0].starting_time)*700)/projectDuration;
+            projectDuration = 700/this.data.length;
+            var timeStampDate = new Date(element.times[0].ending_time);
+            var timeLabel = moment.monthsShort(timeStampDate.getMonth())+ "/"+timeStampDate.getDate();
+            var itemoffset =  0;
+            var width = 700/this.data.length;
+            if(itemid != 0){
+                itemoffset = (700/this.data.length)*itemid - ((this.data[itemid-1].times[0].ending_time < element.times[0].starting_time) ? 50 : 0);
+
+                newArray.forEach(element1 => {
+                    var timeStampDatemoment = new Date(element1.enddate);
+                    if(moment.monthsShort(timeStampDate.getMonth())+ "/"+timeStampDate.getDate() == moment.monthsShort(timeStampDatemoment.getMonth())+ "/"+timeStampDatemoment.getDate()){
+                        itemoffset = element1.offset+itemid*10;
+                        element1.duration = element1.duration+ width - itemid*10;
+                        projectDuration = element1.duration- itemid*10;
+                    }
+                });
+            }
+            itemid++;
+            if(colorindex == 6){
+                colorindex = 0;;
+            }
+            newArray.push({label:element.times[0].label.toUpperCase(),duration: projectDuration, endDate:timeLabel,offset: itemoffset,startdate : element.times[0].starting_time,enddate: element.times[0].ending_time,color: colorcode[colorindex]});
+            colorindex++;
+        });
+        this.finalArray = newArray;
+        newArray.forEach(item => {
+            arrayForXaxis.push({endDate:item.endDate,offset: (item.offset+item.duration)});
+        });
+        var parr = [];
+        arrayForXaxis.filter(function(item){
+            var it = parr.findIndex(x => (x.endDate == item.endDate && x.offset == item.offset));
+            if(it <= -1){
+                parr.push(item);
+            }
+            return null;
+          });
+        this.finalXAsxisArray = parr;
+
+
+    }
+
+    clickantiExampand(data){
+        this.expanded = !this.expanded;
+        this.isDivVisible = !this.isDivVisible;
+        if(this.selectedId == data.id){
+            this.selectedId = "";
+            this.data = [];
+            this.chart = null;
+            var idDiv = "cls"+data.id;
+            var myNode = document.getElementsByClassName(idDiv);
+            while(myNode[0].hasChildNodes())
+            {
+            myNode[0].removeChild(myNode[0].lastChild);
+            }
+        }
+    }
 
     onChangeTab(event: any): void {
         event.preventDefault();
@@ -87,7 +195,7 @@ export class DashboardThreadedComponent implements OnInit {
             else if (this.appComponent.checkRoles('sales'))
               this.updateQueryParameters({ tab: TABS.SALES });
             else
-              this.updateQueryParameters({ tab: TABS.CATALOGUE });  
+              this.updateQueryParameters({ tab: TABS.CATALOGUE });
         }
     }
 
@@ -97,6 +205,11 @@ export class DashboardThreadedComponent implements OnInit {
 
     onPageChange(): void {
         this.updateQueryParameters({ pg: this.query.page });
+    }
+
+    onPopUpPageChange(): void {
+        this.getOrdersQuery(this.querypopup);
+        // this.updateQueryParameters({ pg: this.query.page });
     }
 
     onFilterChange(): void {
@@ -235,6 +348,7 @@ export class DashboardThreadedComponent implements OnInit {
             case TABS.PURCHASES:
             case TABS.FAVOURITE:
             case TABS.COMPARE:
+            case TABS.PROJECTS:
             case TABS.PERFORMANCE:
             case TABS.SALES:
                 this.queryOrdersIfNeeded();
@@ -255,11 +369,25 @@ export class DashboardThreadedComponent implements OnInit {
             }
         } else {
             const upped = tab.toUpperCase()
-            if(upped === TABS.CATALOGUE || upped === TABS.SALES || upped === TABS.WELCOME || upped === TABS.FAVOURITE || upped == TABS.COMPARE || upped == TABS.PERFORMANCE) {
+            if(upped === TABS.CATALOGUE || upped === TABS.SALES || upped === TABS.WELCOME || upped === TABS.FAVOURITE || upped == TABS.COMPARE || upped == TABS.PROJECTS || upped == TABS.PERFORMANCE) {
                 return upped;
             }
         }
-        return TABS.PURCHASES;
+        if (this.appComponent.checkRoles('purchases'))
+          return TABS.PURCHASES;
+        if (this.appComponent.checkRoles('sales'))
+          return TABS.SALES;
+        if (this.appComponent.checkRoles('catalogue'))
+          return TABS.CATALOGUE;
+        if (this.appComponent.checkRoles('favourite'))
+          return TABS.FAVOURITE;
+        if (this.appComponent.checkRoles('compare'))
+          return TABS.COMPARE;
+        if (this.config.projectsEnabled && this.appComponent.checkRoles('projects'))
+          return TABS.PROJECTS;
+        if (this.appComponent.checkRoles('performance'))
+          return TABS.PERFORMANCE;
+        return null;
     }
 
     private sanitizePage(page: string): number {
@@ -274,15 +402,17 @@ export class DashboardThreadedComponent implements OnInit {
 
     }
 
-    private queryOrdersIfNeeded(): void {
+    async queryOrdersIfNeeded() {
         const query = this.computeOrderQueryFromQueryParams();
+
+        if(await this.isOrdersFiltersQueryNeeded(query)) {
+            this.executeOrdersFiltersQuery(query);
+        }
 
         if(this.isOrdersQueryNeeded(query)) {
             this.executeOrdersQuery(query);
         }
-        if(this.isOrdersFiltersQueryNeeded(query)) {
-            this.executeOrdersFiltersQuery(query);
-        }
+
         this.query = query
     }
 
@@ -298,6 +428,14 @@ export class DashboardThreadedComponent implements OnInit {
     }
 
     private getOrdersQuery(query: DashboardOrdersQuery): Promise<void> {
+
+
+        if(this.queryParameters.tab == "PROJECTS"){
+            this.isProject = true;
+        }else{
+            this.isProject = false;
+        }
+
         if(query.archived) {
             // only one query needed
             return this.bpeService
@@ -318,7 +456,7 @@ export class DashboardThreadedComponent implements OnInit {
                 // regular query
                 this.bpeService.getCollaborationGroups(this.cookieService.get("company_id"),
                     query.collaborationRole, query.page - 1, query.pageSize, query.archived,
-                    query.products, query.categories, query.partners,query.status
+                    query.products, query.categories, query.partners,query.status,this.isProject
                 ),
                 // query for archived orders
                 this.bpeService.getCollaborationGroups(this.cookieService.get("company_id"),
@@ -361,9 +499,14 @@ export class DashboardThreadedComponent implements OnInit {
 
     private executeOrdersFiltersQuery(query: DashboardOrdersQuery): void {
         this.filterQueryStatus.submit();
+        if(this.queryParameters.tab == "PROJECTS"){
+            this.isProject = true;
+        }else{
+            this.isProject = false;
+        }
 
         this.bpeService
-        .getProcessInstanceGroupFilters(this.cookieService.get("company_id"), query.collaborationRole, query.archived, query.products, query.categories, query.partners, query.status)
+        .getProcessInstanceGroupFilters(this.cookieService.get("company_id"), query.collaborationRole, query.archived, query.products, query.categories, query.partners, query.status,this.isProject)
         .then(response => {
             // populate the modified filter set with the passed parameters that are also included in the results
             // so that the selected criteria would have a checkbox along with
@@ -414,7 +557,12 @@ export class DashboardThreadedComponent implements OnInit {
         if(!this.filterSet) {
             return true;
         }
+        if(this.queryParameters.tab == "PROJECTS" && this.isProject == false){
+            return true;
 
+        }else if(this.queryParameters.tab != "PROJECTS" && this.isProject == true){
+            return true;
+        }
         // Do not recompute the filters on filter changes.
         return this.query.archived !== query.archived
             || this.query.collaborationRole !== query.collaborationRole;
@@ -423,7 +571,7 @@ export class DashboardThreadedComponent implements OnInit {
     private computeOrderQueryFromQueryParams(): DashboardOrdersQuery {
         return new DashboardOrdersQuery(
             this.queryParameters.arch,
-            this.queryParameters.tab === TABS.PURCHASES ? "BUYER" : "SELLER",
+            this.queryParameters.tab === TABS.PURCHASES || this.queryParameters.tab == TABS.PROJECTS ? "BUYER" : "SELLER",
             this.queryParameters.pg,
             this.parseArray(this.queryParameters.prd),
             this.parseArray(this.queryParameters.cat),
@@ -486,4 +634,44 @@ export class DashboardThreadedComponent implements OnInit {
                 });
         }
     }
+
+    open(content,index,order) {
+        this.selectedNegotiation = order;
+        this.selectedNegotiationIndex = index + (this.query.page -1)*this.query.pageSize;
+        this.modalService.open(content, {backdropClass: 'light-blue-backdrop'}).result.then((result) => {
+            this.selectedNegotiations = [];
+        }, (reason) => {
+            this.selectedNegotiations = [];
+        });
+    }
+
+    changeNegotation(index,order){
+        let lastindex = index + (this.querypopup.page -1)*this.querypopup.pageSize;
+        if(this.selectedNegotiations.indexOf(lastindex) > -1){
+            let indexOfNegotation = this.selectedNegotiations.indexOf(lastindex);
+            this.selectedNegotiations.splice(indexOfNegotation,1);
+            delete this.selectedNegotiationLists[lastindex];
+        }else{
+            this.selectedNegotiations.push(lastindex);
+            this.selectedNegotiationLists[lastindex] = order;
+        }
+    }
+
+    async mergeNegotations(){
+        let selectedNegotation = this.selectedNegotiation.id;
+        let mergeIdList = [];
+
+
+        await this.selectedNegotiationLists.forEach(item => {
+            mergeIdList.push(item.id);
+        })
+
+        this.bpeService.mergeNegotations(selectedNegotation,mergeIdList)
+        .then(() => {
+            location.reload();
+        })
+        .catch(err => {
+        });
+    }
+
 }
