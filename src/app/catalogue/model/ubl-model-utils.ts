@@ -778,7 +778,7 @@ export class UBLModelUtils {
                     } else {
                         let qualifier: string = term.value.valueQualifier;
                         // qualifiers do not match
-                        if(qualifier != term.value.valueQualifier) {
+                        if(qualifier != correspondingTerm.value.valueQualifier) {
                             return true;
                         }
                         // skip if both values are null
@@ -796,7 +796,7 @@ export class UBLModelUtils {
                         if(qualifier == 'STRING') {
                             if(term.value.value[0].value != correspondingTerm.value.value[0].value ||
                                 term.value.value[0].languageID != correspondingTerm.value.value[0].languageID) {
-
+                                return true;
                             }
                         } else if(qualifier == 'NUMBER') {
                             if(term.value.valueDecimal[0] != correspondingTerm.value.valueDecimal[0]) {

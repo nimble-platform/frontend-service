@@ -80,6 +80,7 @@ export const indexing_service_endpoint=`${base_path}/indexing-service`;
 export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}:9200`;
 export const kibana_endpoint = `${base_path}:5601/app/kibana`;
+export const delegate_endpoint = `http://161.156.70.122:9265`;
 
 
 // BIBA endpoints
@@ -122,6 +123,7 @@ export const config = {
     }
   },
   "dataChannelsEnabled" : true,
+  "delegationEnabled": false,
   "imprint": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Platform Owner</u><br/><b>Lindbäcks Bygg Aktiebolag</b><br/>Hammarvägen 21<br/>94336 Öjebyn<br/>Sweden<br/></td><td class='w-50 p-0 pl-3'><u>Platform Provider</u><br/><b>Universität Bremen</b><br/>Bibliothekstraße 1<br/>28359 Bremen, Germany<br/>Phone: +49 421 218-1<br/>Internet: <a href='https://www.uni-bremen.de' target='_blank'>www.uni-bremen.de</a><br/>Die Universität Bremen ist eine Körperschaft des Öffentlichen Rechts. Sie wird durch den Rektor Prof. Dr.-Ing. Bernd Scholz-Reiter gesetzlich vertreten.\n" +
       "Zuständige Aufsichtsbehörde ist die Senatorin für Wissenschaft, Gesundheit und Verbraucherschutz, Rembertiring 8 – 12, 28195 Bremen.<br/>DE 811 245 070 (gemäß § 27 a UStG)<br/></td></tr></table>",
   "kibanaConfig": {
@@ -137,6 +139,7 @@ export const config = {
   "logoPath": "./assets/logo_mvp.png",
   "logoRequired": false,
   "phoneNumberRequired": false,
+  "projectsEnabled": true,
   "requiredAgreements": [
     {
       "title":"End-User License Agreement (EULA)",

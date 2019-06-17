@@ -7,7 +7,7 @@
                 <div *ngIf="!titleEvent" class="header-label mr-auto d-flex w-100">
                     <div class="row w-100 m-0">
                       <div class="col pl-2 pr-2">
-                          <span *ngIf="fetchCallStatus.isLoading()"><img src="../../assets/form_loader.gif"/></span>
+                          <span *ngIf="fetchCallStatus.isLoading()"><img src="../../assets/images/form_loader.gif"/></span>
                           <span *ngIf="fetchCallStatus.isError()">Error while fetching thread.</span>
                       </div>
                     </div>
@@ -32,7 +32,7 @@
                           <span *ngIf="processInstanceGroup.status == 'CANCELLED'">n/A</span>
                           <span *ngIf="processInstanceGroup.status != 'CANCELLED' && titleEvent.actionText !== ''" class="clickable" (click)="openBpProcessView()">{{titleEvent.actionText}}</span>
                         </div>
-                        <div class="col-xs-auto align-right pl-1 pr-2">
+                        <div class="col-xs-auto align-right pl-1 pr-2" style="min-width:6rem">
                           <div *ngIf="titleEvent && showDataChannelButton && enableDataChannelButton" class="inline" data-toggle="tooltip" data-placement="top" title="Show Data Channel">
                               <i class="fa fa-exchange-alt p-1 pointer" aria-hidden="true" [routerLink]="[channelLink]"></i>
                           </div>

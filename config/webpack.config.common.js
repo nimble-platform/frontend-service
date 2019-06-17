@@ -3,15 +3,19 @@
 const CleanWebpackPlugin   = require('clean-webpack-plugin');
 const HtmlWebpackPlugin    = require('html-webpack-plugin');
 const CopyWebpackPlugin    = require('copy-webpack-plugin');
+const { IndexHtmlWebpackPlugin } = require('@angular-devkit/build-angular/src/angular-cli-files/plugins/index-html-webpack-plugin');
+
 
 const helpers              = require('./helpers');
 const isDev                = process.env.NODE_ENV !== 'production';
+var path = require('path');
 
 module.exports = {
     entry: {
         // vendor: './src/vendor.ts',
         polyfills: './src/polyfills.ts',
-        main: isDev ? './src/main.ts' : './src/main.aot.ts'
+        main: isDev ? './src/main.ts' : './src/main.aot.ts',
+        // styles: './src/styles.css'
     },
 
     resolve: {
@@ -35,11 +39,8 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: [
-                    'to-string-loader',
-                    "style-loader",
-                    'css-loader'
-                ]
+                use: ['to-string-loader', 'css-loader'],
+                exclude: [path.resolve(__dirname, './src/styles.css')]
             },
             {
                 test: /\.(jpg|png|webp|gif|otf|eot|ttf|woff|woff2|ani|svg)$/,
@@ -56,10 +57,12 @@ module.exports = {
     },
 
     plugins: [
-        new CopyWebpackPlugin([{
-            from: './src/assets/',
-            to: 'assets/'
-        }]),
+        new CopyWebpackPlugin([
+            {from: './src/assets/webfonts/',to: 'assets/webfonts/'},
+            {from: './src/assets/images/',to: 'assets/'},
+            {from: './src/assets/pdf/',to: 'assets/'},
+            {from: './src/assets/css/',to: 'assets/css'}
+            ]),
 
         new CleanWebpackPlugin(
             helpers.root('dist'), { root: helpers.root(), verbose: true }),

@@ -104,7 +104,7 @@ import {TermsAndConditionsComponent} from './bp-view/contract/terms-and-conditio
         BpProductDetailsComponent,
         ContractComponent,
         ClauseComponent,
-        PpapClauseComponent
+        PpapClauseComponent,
     ],
     providers: []
 })

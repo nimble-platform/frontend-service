@@ -4,9 +4,8 @@ const webpackMerge = require('webpack-merge');
 
 const commonConfig = require('./webpack.config.common');
 const helpers      = require('./helpers');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const UglifyJsPlugin          = require('uglifyjs-webpack-plugin');
-const cssnano                 = require('cssnano');
+const { HashedModuleIdsPlugin } = require('webpack');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = webpackMerge(commonConfig, {
     mode: 'development',
@@ -20,29 +19,56 @@ module.exports = webpackMerge(commonConfig, {
         chunkFilename: '[id].chunk.js'
     },
 
-    // optimization: {
-    //     noEmitOnErrors: true,
-    //     splitChunks: {
-    //         chunks: 'all'
-    //     },
-    //     runtimeChunk: 'single',
-    //     minimizer: [
-    //         new UglifyJsPlugin({
-    //             cache: true,
-    //             parallel: true
-    //         }),
-    //
-    //         new OptimizeCSSAssetsPlugin({
-    //             cssProcessor: cssnano,
-    //             cssProcessorOptions: {
-    //                 discardComments: {
-    //                     removeAll: true
-    //                 }
-    //             },
-    //             canPrint: false
-    //         })
-    //     ]
+    // output: {
+    //     path: helpers.root('dist'),
+    //     publicPath: '/',
+    //     filename: '[hash].js',
+    //     chunkFilename: '[id].[hash].chunk.js'
     // },
+
+    optimization: {
+        noEmitOnErrors: true,
+        runtimeChunk: 'single',
+        splitChunks: {
+            cacheGroups: {
+                default: {
+                    chunks: 'async',
+                    minChunks: 2,
+                    priority: 10
+                },
+                common: {
+                    name: 'common',
+                    chunks: 'async',
+                    minChunks: 2,
+                    enforce: true,
+                    priority: 5
+                },
+                vendors: false,
+                vendor: false
+            }
+        },
+        minimizer: [
+            new HashedModuleIdsPlugin(),
+            new UglifyJSPlugin({
+                sourceMap: true,
+                cache: true,
+                parallel: true,
+                uglifyOptions: {
+                    safari10: true,
+                    output: {
+                        ascii_only: true,
+                        comments: false,
+                        webkit: true,
+                    },
+                    compress: {
+                        pure_getters: true,
+                        passes: 3,
+                        inline: 3,
+                    }
+                }
+            })
+        ]
+    },
 
     module: {
         rules: [
@@ -63,8 +89,8 @@ module.exports = webpackMerge(commonConfig, {
         ]
     },
 
-    devServer: {
-        historyApiFallback: true,
-        stats: 'minimal'
-    }
+    // devServer: {
+    //     historyApiFallback: true,
+    //     stats: 'minimal'
+    // }
 });

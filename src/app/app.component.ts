@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {CookieService} from 'ng2-cookies';
 import {CredentialsService} from './user-mgmt/credentials.service';
 import {
@@ -14,10 +14,11 @@ import * as myGlobals from './globals';
 import * as moment from "moment";
 import {DEFAULT_LANGUAGE} from './catalogue/model/constants';
 
-import '../assets/css/bootstrap.min.css';
-import '../assets/css/fontawesome-all.min.css';
-import '../global-styles.css';
-import '../styles.css';
+// import '../assets/css/bootstrap.min.css';
+// import '../global-styles.css';
+// import '../styles.css';
+// import '../assets/css/fontawesome-all.min.css';
+
 
 import 'zone.js';
 
@@ -397,6 +398,10 @@ export class AppComponent implements OnInit {
                 break;
             case "compare" :
                 if (all_rights || publish || purch || sales || (initial && !compReq))
+                    this.allowed = true;
+                break;
+            case "projects" :
+                if (all_rights || purch || sales || monitor || (initial && !compReq))
                     this.allowed = true;
                 break;
             case "performance":
