@@ -213,8 +213,10 @@ export class NegotiationRequestComponent implements OnInit {
      */
 
     onSendRequest(): void {
+        this.callStatus.submit();
         if (this.wrapper.rfqDiscountPriceWrapper.itemPrice.hasPrice()) {
             if (!isValidPrice(this.wrapper.rfqDiscountPriceWrapper.itemPrice.price.priceAmount.value)) {
+                this.callStatus.callback("Terms aborted", true);
                 alert("Price cannot have more than 2 decimal places");
                 return;
             }
@@ -235,7 +237,7 @@ export class NegotiationRequestComponent implements OnInit {
             UBLModelUtils.removeHjidFieldsFromObject(rfq);
 
             // send request for quotation
-            this.callStatus.submit();
+            //this.callStatus.submit();
 
             let sellerParty: Party;
             let buyerParty: Party;
@@ -265,6 +267,7 @@ export class NegotiationRequestComponent implements OnInit {
                 this.callStatus.error("Failed to send Terms", error);
             });
         } else {
+            this.callStatus.callback("Terms sent", true);
             // set the item price, otherwise we will lose item price information
             this.bpDataService.requestForQuotation.requestForQuotationLine[0].lineItem.price.priceAmount.value = this.wrapper.rfqDiscountPriceWrapper.totalPrice/this.wrapper.rfqDiscountPriceWrapper.orderedQuantity.value;
             // just go to order page
