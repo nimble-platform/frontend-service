@@ -39,7 +39,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     formerProcess: boolean = false; // true indicates that the last step of the history IS NOT negotiation
     sliderIndex: number = -1;
 
-    constructor(private bpDataService: BPDataService,
+    constructor(public bpDataService: BPDataService,
                 private bpeService: BPEService,
                 private documentService: DocumentService,
                 private cookieService: CookieService,

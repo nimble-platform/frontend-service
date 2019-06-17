@@ -14,7 +14,7 @@ module.exports = {
     entry: {
         // vendor: './src/vendor.ts',
         polyfills: './src/polyfills.ts',
-        main: isDev ? './src/main.ts' : './src/main.aot.ts',
+        main: isDev ? './src/main.ts' : './src/main.ts',
         // styles: './src/styles.css'
     },
 
@@ -68,7 +68,8 @@ module.exports = {
             helpers.root('dist'), { root: helpers.root(), verbose: true }),
 
         new HtmlWebpackPlugin({
-            template: 'src/index.html'
+            template: 'src/index.html',
+            chunksSortMode: 'none'
         })
     ]
 };

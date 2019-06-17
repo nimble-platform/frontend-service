@@ -27,7 +27,7 @@ export class CompanyDataSettingsComponent implements OnInit {
 
     selectValueOfTextObject = selectValueOfTextObject;
 
-    constructor(private appComponent: AppComponent,
+    constructor(public appComponent: AppComponent,
                 private _fb: FormBuilder,
                 private modalService: NgbModal,
                 private userService: UserService) {

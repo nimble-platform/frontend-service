@@ -1,169 +1,169 @@
-<!-- Explorative Search Details HTML -->
-<ngb-alert type="info" *ngIf="!introAlert" (close)="introAlert = true">
-    <div class="row">
-    <div class="col-md-2"><i class="fa fa-6x fa-info-circle"></i></div>
-    <div class="col-md-10">
-        <p>
-            <strong>Let Us Help You</strong>
-        </p>
-            <ul>
-                <li>Double Click on a Node to <strong>select</strong> that property.</li>
-                <li>Single Click on a Node to <strong>deselect</strong> that property.</li>
-                <li>Certain Properties may not have filters to display, nevertheless if selected they will be shown
-                    in your final selections.
-                </li>
-            </ul>
-    </div>
-    </div>
-</ngb-alert>
-<ngb-alert type="info" *ngIf="rerenderAlert" (close)="rerenderAlert = false">
-    <p>
-        <strong>The Graph has been updated! Your previous selections, if any are still selected.</strong>
-    </p>
-</ngb-alert>
-<div [hidden]="!hiddenElement">
-    <div class="row">
-        <!--<pre>-->
-            <!--<code>-->
-                <!--{{sparqlSelectedOption | json}}-->
-            <!--</code>-->
-        <!--</pre>-->
-        <div class="table-responsive">
-            <table class="table table-hover table-bordered">
-                <caption>Product / Service Overview</caption>
-                <thead>
-                    <tr>
-                        <th>
-                            Properties
-                        </th>
-                        <th>
-                            Specifications
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let column of sparqlSelectedOption?.columns; let i=index">
-                        <th scope="row">
-                            {{column}}
-                        </th>
-                        <td>
-                            {{sparqlSelectedOption.rows[0][i]}}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="row mt-3">
-        <div class="col-md-6">
-            <button class="btn btn-secondary" (click)="hiddenElement=!hiddenElement">Back to Graph</button>
-        </div>
-        <div class="col-md-6">
-            <button class="btn btn-primary" [disabled]="!negotiationEnable" (click)="negotiation()">
-                Initiate Business Process</button>
-        </div>
-    </div>
-</div>
-<div class="row mt-4">
-    <h4>Ontological View</h4>
-</div>
-<div class="cont-max border" [hidden]="hiddenElement">
-    <div class="row">
-        <div class="col-md-10 align-center" style="overflow: scroll">
-            <svg width="2600" height="1500"></svg>
-        </div>
-        <div class="col-md-2" *ngIf="!filterFromChildExists && !arrayPassedToChild.length">
-            <div class="jumbotron align-items-center">
-                <i class="fas fa-filter fa-6x"></i>
-                <h4>Your Filters will appear here upon clicking nodes of the graph</h4>
-                <h5 class="text-secondary">Filters for property which have only numeric values will be shown here.</h5>
-            </div>
-        </div>
-        <div class="col-md-2" *ngIf="arrayPassedToChild.length">
-            <search-filter *ngFor="let eachFilter of arrayPassedToChild" [filterProperties]="eachFilter"
-                           (filterSelectionUpdated)="handleFilterSelectionUpdated($event)">
-            </search-filter>
-        </div>
-    </div>
-</div>
-<div class="row mt-4" [hidden]="hiddenElement">
-    <div class="col-3 float-left">
-            <button class="btn btn-lg btn-primary" [disabled]="!tableJSON.parameters.length"
-                    (click)="genTable()">Obtain Results</button>
-    </div>
-    <div class="col-9">
-        <p class="text-secondary text-sm-left"><i class="fas fa-info-circle"></i> After you remove/add Properties do not forget to click <kbd>Obtain Results</kbd> each time</p>
-    </div>
-</div>
+<!--&lt;!&ndash; Explorative Search Details HTML &ndash;&gt;-->
+<!--<ngb-alert type="info" *ngIf="!introAlert" (close)="introAlert = true">-->
+    <!--<div class="row">-->
+    <!--<div class="col-md-2"><i class="fa fa-6x fa-info-circle"></i></div>-->
+    <!--<div class="col-md-10">-->
+        <!--<p>-->
+            <!--<strong>Let Us Help You</strong>-->
+        <!--</p>-->
+            <!--<ul>-->
+                <!--<li>Double Click on a Node to <strong>select</strong> that property.</li>-->
+                <!--<li>Single Click on a Node to <strong>deselect</strong> that property.</li>-->
+                <!--<li>Certain Properties may not have filters to display, nevertheless if selected they will be shown-->
+                    <!--in your final selections.-->
+                <!--</li>-->
+            <!--</ul>-->
+    <!--</div>-->
+    <!--</div>-->
+<!--</ngb-alert>-->
+<!--<ngb-alert type="info" *ngIf="rerenderAlert" (close)="rerenderAlert = false">-->
+    <!--<p>-->
+        <!--<strong>The Graph has been updated! Your previous selections, if any are still selected.</strong>-->
+    <!--</p>-->
+<!--</ngb-alert>-->
+<!--<div [hidden]="!hiddenElement">-->
+    <!--<div class="row">-->
+        <!--&lt;!&ndash;<pre>&ndash;&gt;-->
+            <!--&lt;!&ndash;<code>&ndash;&gt;-->
+                <!--&lt;!&ndash;{{sparqlSelectedOption | json}}&ndash;&gt;-->
+            <!--&lt;!&ndash;</code>&ndash;&gt;-->
+        <!--&lt;!&ndash;</pre>&ndash;&gt;-->
+        <!--<div class="table-responsive">-->
+            <!--<table class="table table-hover table-bordered">-->
+                <!--<caption>Product / Service Overview</caption>-->
+                <!--<thead>-->
+                    <!--<tr>-->
+                        <!--<th>-->
+                            <!--Properties-->
+                        <!--</th>-->
+                        <!--<th>-->
+                            <!--Specifications-->
+                        <!--</th>-->
+                    <!--</tr>-->
+                <!--</thead>-->
+                <!--<tbody>-->
+                    <!--<tr *ngFor="let column of sparqlSelectedOption?.columns; let i=index">-->
+                        <!--<th scope="row">-->
+                            <!--{{column}}-->
+                        <!--</th>-->
+                        <!--<td>-->
+                            <!--{{sparqlSelectedOption.rows[0][i]}}-->
+                        <!--</td>-->
+                    <!--</tr>-->
+                <!--</tbody>-->
+            <!--</table>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="row mt-3">-->
+        <!--<div class="col-md-6">-->
+            <!--<button class="btn btn-secondary" (click)="hiddenElement=!hiddenElement">Back to Graph</button>-->
+        <!--</div>-->
+        <!--<div class="col-md-6">-->
+            <!--<button class="btn btn-primary" [disabled]="!negotiationEnable" (click)="negotiation()">-->
+                <!--Initiate Business Process</button>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+<!--<div class="row mt-4">-->
+    <!--<h4>Ontological View</h4>-->
+<!--</div>-->
+<!--<div class="cont-max border" [hidden]="hiddenElement">-->
+    <!--<div class="row">-->
+        <!--<div class="col-md-10 align-center" style="overflow: scroll">-->
+            <!--<svg width="2600" height="1500"></svg>-->
+        <!--</div>-->
+        <!--<div class="col-md-2" *ngIf="!filterFromChildExists && !arrayPassedToChild.length">-->
+            <!--<div class="jumbotron align-items-center">-->
+                <!--<i class="fas fa-filter fa-6x"></i>-->
+                <!--<h4>Your Filters will appear here upon clicking nodes of the graph</h4>-->
+                <!--<h5 class="text-secondary">Filters for property which have only numeric values will be shown here.</h5>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="col-md-2" *ngIf="arrayPassedToChild.length">-->
+            <!--<search-filter *ngFor="let eachFilter of arrayPassedToChild" [filterProperties]="eachFilter"-->
+                           <!--(filterSelectionUpdated)="handleFilterSelectionUpdated($event)">-->
+            <!--</search-filter>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+<!--<div class="row mt-4" [hidden]="hiddenElement">-->
+    <!--<div class="col-3 float-left">-->
+            <!--<button class="btn btn-lg btn-primary" [disabled]="!tableJSON.parameters.length"-->
+                    <!--(click)="genTable()">Obtain Results</button>-->
+    <!--</div>-->
+    <!--<div class="col-9">-->
+        <!--<p class="text-secondary text-sm-left"><i class="fas fa-info-circle"></i> After you remove/add Properties do not forget to click <kbd>Obtain Results</kbd> each time</p>-->
+    <!--</div>-->
+<!--</div>-->
 
-<div class="jumbotron mt-2" *ngIf="!tableJSON.parameters.length && config">
-    <div class="container">
-        <div class="row">
-            <div class="col-12 align-center">
-                <h4>Your Search Results will be visible here.</h4>
-                <i class="fas fa-table"></i>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12 align-center">
-                <p class="text-secondary"> Select Properties from above and click <kbd>Obtain Results</kbd></p>
-            </div>
-        </div>
+<!--<div class="jumbotron mt-2" *ngIf="!tableJSON.parameters.length && config">-->
+    <!--<div class="container">-->
+        <!--<div class="row">-->
+            <!--<div class="col-12 align-center">-->
+                <!--<h4>Your Search Results will be visible here.</h4>-->
+                <!--<i class="fas fa-table"></i>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="row">-->
+            <!--<div class="col-12 align-center">-->
+                <!--<p class="text-secondary"> Select Properties from above and click <kbd>Obtain Results</kbd></p>-->
+            <!--</div>-->
+        <!--</div>-->
 
-    </div>
-</div>
+    <!--</div>-->
+<!--</div>-->
 
 
-<div *ngIf="tableJSON.parameters.length">
-    <div class="jumbotron" *ngIf="tableResult?.columns !== undefined && !tableResult?.columns.length">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 align-center">
-                    <h4>No Matching Products/Services Found. <i class="fas fa-table"></i></h4>
+<!--<div *ngIf="tableJSON.parameters.length">-->
+    <!--<div class="jumbotron" *ngIf="tableResult?.columns !== undefined && !tableResult?.columns.length">-->
+        <!--<div class="container">-->
+            <!--<div class="row">-->
+                <!--<div class="col-12 align-center">-->
+                    <!--<h4>No Matching Products/Services Found. <i class="fas fa-table"></i></h4>-->
 
-                    <h5>We could not find any matching Products with your Selection.</h5>
-                    <h5>Try removing some Selected Properties above and click <kbd>Obtain Results</kbd> again</h5>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row" *ngIf="tableResult?.columns !== undefined && tableResult?.columns.length">
-        <div class="table-responsive table-hover" style="overflow-y: scroll; height: 35vh">
-            <table class="table table-sm table-bordered">
-                <caption>Available Results from NIMBLE</caption>
-              <thead>
-                <tr>
-                    <!--<th>-->
-                        <!--Result-->
+                    <!--<h5>We could not find any matching Products with your Selection.</h5>-->
+                    <!--<h5>Try removing some Selected Properties above and click <kbd>Obtain Results</kbd> again</h5>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="row" *ngIf="tableResult?.columns !== undefined && tableResult?.columns.length">-->
+        <!--<div class="table-responsive table-hover" style="overflow-y: scroll; height: 35vh">-->
+            <!--<table class="table table-sm table-bordered">-->
+                <!--<caption>Available Results from NIMBLE</caption>-->
+              <!--<thead>-->
+                <!--<tr>-->
+                    <!--&lt;!&ndash;<th>&ndash;&gt;-->
+                        <!--&lt;!&ndash;Result&ndash;&gt;-->
+                    <!--&lt;!&ndash;</th>&ndash;&gt;-->
+                    <!--<th *ngFor="let column of tableResult?.columns; let i=index" scope="col">-->
+                        <!--{{column}}-->
                     <!--</th>-->
-                    <th *ngFor="let column of tableResult?.columns; let i=index" scope="col">
-                        {{column}}
-                    </th>
-                    <th *ngIf="tableResult?.uuids.length">
-                        More
-                    </th>
-                </tr>
-              </thead>
-                <tbody>
-                <tr *ngFor="let row of tableResult?.rows; let i=index"  [ngClass] = "{'selected-row': i === selectedProduct}">
-                    <!--<td>{{i+1}}</td>-->
-                    <td *ngFor="let field of row">{{field}}</td>
-                    <td *ngIf="tableResult?.uuids.length">
-                        <button class="btn btn-xs btn-outline-primary"
-                                (click)="getSparqlOptionalSelect(i)"
-                        >
-                            Further Info.
-                        </button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-<!--<pre>-->
-        <!--<code>{{tableJSON | json}}</code>-->
-<!--</pre>-->
-<!--<pre>-->
-    <!--<code>{{tableResult | json}}</code>-->
-<!--</pre>-->
+                    <!--<th *ngIf="tableResult?.uuids.length">-->
+                        <!--More-->
+                    <!--</th>-->
+                <!--</tr>-->
+              <!--</thead>-->
+                <!--<tbody>-->
+                <!--<tr *ngFor="let row of tableResult?.rows; let i=index"  [ngClass] = "{'selected-row': i === selectedProduct}">-->
+                    <!--&lt;!&ndash;<td>{{i+1}}</td>&ndash;&gt;-->
+                    <!--<td *ngFor="let field of row">{{field}}</td>-->
+                    <!--<td *ngIf="tableResult?.uuids.length">-->
+                        <!--<button class="btn btn-xs btn-outline-primary"-->
+                                <!--(click)="getSparqlOptionalSelect(i)"-->
+                        <!--&gt;-->
+                            <!--Further Info.-->
+                        <!--</button>-->
+                    <!--</td>-->
+                <!--</tr>-->
+                <!--</tbody>-->
+            <!--</table>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+<!--&lt;!&ndash;<pre>&ndash;&gt;-->
+        <!--&lt;!&ndash;<code>{{tableJSON | json}}</code>&ndash;&gt;-->
+<!--&lt;!&ndash;</pre>&ndash;&gt;-->
+<!--&lt;!&ndash;<pre>&ndash;&gt;-->
+    <!--&lt;!&ndash;<code>{{tableResult | json}}</code>&ndash;&gt;-->
+<!--&lt;!&ndash;</pre>&ndash;&gt;-->

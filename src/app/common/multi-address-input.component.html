@@ -1,5 +1,5 @@
 <!-- view and singlevalue mode -->
-<div *ngIf="presentationMode == 'view' || presentationMode == 'singlevalue'" class="row {{ rowClass }}">
+<div *ngIf="presentationMode == 'view'" class="row {{ rowClass }}">
     <div *ngIf="label" [class]="labelClass">
         <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
         </input-label>

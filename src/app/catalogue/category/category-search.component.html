@@ -194,7 +194,7 @@
 
     <!-- Details Panel -->
     <div class="col-5 pl-0">
-        <div class="border" [ngClass]="{'disabled-section': !selectedCategoryWithDetails && (callback || !submitted || error_detc)}" style="height:50vh; overflow-x: hidden; overflow-y: scroll;">
+        <div class="border" [ngClass]="{'disabled-section': !selectedCategoryWithDetails}" style="height:50vh; overflow-x: hidden; overflow-y: scroll;">
 
             <!-- Loading/Error call status -->
             <div *ngIf="getCategoryDetailsStatus.isDisplayed()" class="p-2 fixed-header">

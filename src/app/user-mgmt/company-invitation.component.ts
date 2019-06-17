@@ -37,7 +37,7 @@ export class CompanyInvitationComponent implements OnInit {
     constructor(
         private cookieService: CookieService,
         private userService: UserService,
-		private appComponent: AppComponent,
+		public appComponent: AppComponent,
 		private modalService: NgbModal
 	) {}
 

@@ -249,7 +249,7 @@ export class NegotiationResponseComponent implements OnInit {
         this.discountModal.open(this.wrapper.quotationDiscountPriceWrapper.appliedDiscounts,this.wrapper.quotationDiscountPriceWrapper.price.priceAmount.currencyID);
     }
 
-    private checkEqual(part): boolean {
+    checkEqual(part): boolean {
       switch(part) {
         case "deliveryPeriod":
           if (this.primaryTermsSource == "product_defaults")
