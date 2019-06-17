@@ -1364,8 +1364,10 @@ export class SimpleSearchFormComponent implements OnInit {
 
 	getCompanyNameFromIds(idList: any[]): Promise<any>{
 		let facets = this.party_facet_field_list;
+		/*
 		if (this.delegatedSearch)
 			facets = [this.product_vendor_name];
+		*/
 		let query = "";
 		let length = idList.length;
 		while (length--) {
