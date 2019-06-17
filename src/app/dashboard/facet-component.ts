@@ -20,6 +20,9 @@ export class FacetComponent {
     @Output() booleanValueChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() triggerCriteriaChanged: EventEmitter<void> = new EventEmitter<void>();
 
+    expanded: boolean = false;
+    maxFacets = 5;
+
     selectStringValue(value: string): void {
         let index = this.selectedStringValues.indexOf(value);
         if(index == -1) {

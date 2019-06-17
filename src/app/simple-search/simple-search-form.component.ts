@@ -103,6 +103,8 @@ export class SimpleSearchFormComponent implements OnInit {
     // check whether 'p' query parameter exists or not
 	noP = true;
 
+	maxFacets = 5;
+
 	//manufacturer.legalName : {id,count}
 	//manufacturerIdCountMap : { [indx : string], string};
 	manufacturerIdCountMap : any;

@@ -30,13 +30,19 @@
 
       <!-- string data type -->
       <ng-container *ngIf="dataType == 'string' && !loading">
-          <div *ngFor="let value of stringValues"
-              class="filter-option ml-2 mr-2 mt-1 mb-1"
-              (click)="selectStringValue(value)">
-              <input type="checkbox"
-                      class="mr-2"
-                      [checked]="selectedStringValues.indexOf(value) != -1">
-              <span>{{value}}</span>
+          <div *ngFor="let value of stringValues; let i = index">
+            <div *ngIf="expanded || i<maxFacets"
+                class="filter-option ml-2 mr-2 mt-1 mb-1"
+                (click)="selectStringValue(value)" style="word-break:break-all;max-height:1.5rem;overflow:hidden">
+                <input type="checkbox"
+                        class="mr-2"
+                        [checked]="selectedStringValues.indexOf(value) != -1">
+                <span [title]="value">{{value}}</span>
+            </div>
+          </div>
+          <div *ngIf="stringValues.length>maxFacets" class="ml-2 mr-2">
+            <hr>
+            <span (click)="expanded=!expanded"><span class="clickable" *ngIf="!expanded">Show more</span><span class="clickable" *ngIf="expanded">Show less</span></span>
           </div>
       </ng-container>
 
