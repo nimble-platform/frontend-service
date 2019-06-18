@@ -91,7 +91,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         };
 
         if (createChannelRequest.initiatingPartyID == createChannelRequest.respondingPartyID) {
-            createChannelRequest.initiatingPartyID =  this.bpDataService.documentService.getBuyerParty();
+            createChannelRequest.initiatingPartyID =  this.bpDataService.documentService.getBuyerParty()['id'];
         }
 
         let headers = new Headers({'Content-Type': 'application/json'});
