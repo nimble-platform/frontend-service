@@ -1383,7 +1383,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	getProdLink(res:any): string {
 		let link = "";
 		if (res && res.catalogueId && res.manufactuerItemId) {
-			if (res.sourceFrontendServiceUrl && res.sourceFrontendServiceUrl != "")
+			if (!res.isFromLocalInstance && res.sourceFrontendServiceUrl && res.sourceFrontendServiceUrl != "")
 				link += res.sourceFrontendServiceUrl;
 			link += "#/product-details?catalogueId=" + res.catalogueId + "&id=" + res.manufactuerItemId;
 		}
@@ -1393,7 +1393,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	getCompLink(res:any): string {
 		let link = "";
 		if (res && res.id) {
-			if (res.sourceFrontendServiceUrl && res.sourceFrontendServiceUrl != "")
+			if (!res.isFromLocalInstance && res.sourceFrontendServiceUrl && res.sourceFrontendServiceUrl != "")
 				link += res.sourceFrontendServiceUrl;
 			link += "#/user-mgmt/company-details?id=" + res.id;
 		}

@@ -90,7 +90,7 @@ export class PriceWrapper {
 
     hasPrice(): boolean {
         // != here gives "not null or undefined", which is the behaviour we want.
-        return this.price.priceAmount.value != null;
+        return (this.price.priceAmount.value != null && !isNaN(this.price.priceAmount.value));
     }
 
     /**
