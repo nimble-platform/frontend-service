@@ -33,12 +33,15 @@ export class LogoutComponent implements OnInit {
 		this.cookieService.delete("active_company_name");
 		this.cookieService.delete("show_welcome");
 		this.cookieService.delete("bearer_token");
+
+		this.cookieService.delete(constants.chatRCConnect, '/');
+		this.cookieService.delete(constants.chatRCToken, '/');
+		this.cookieService.delete(constants.chatRCID, '/');
+
 		this.cookieService.delete(constants.chatToken,'/');
 		this.cookieService.delete(constants.chatUsername, '/');
 		this.cookieService.delete(constants.chatUserID, '/');
-		this.cookieService.delete(constants.chatRCToken, '/');
-		this.cookieService.delete(constants.chatRCID, '/');
-		this.cookieService.delete(constants.chatRCConnect, '/');
+
 		this.userService.resetData();
 		this.appComponent.checkLogin("/user-mgmt/login");
 	}
