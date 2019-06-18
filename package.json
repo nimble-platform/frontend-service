@@ -41,6 +41,7 @@
     "countries-list": "^2.4.x",
     "d3": "5.0.0",
     "d3-timelines": "^1.3.0",
+    "express": "^4.17.1",
     "file-saver": "^1.3.8",
     "jshint": "^2.9.x",
     "lunr": "^2.3.0",
