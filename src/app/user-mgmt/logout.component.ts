@@ -5,6 +5,8 @@ import { UserService } from './user.service';
 import { CategoryService } from '../catalogue/category/category.service';
 import { CatalogueService } from '../catalogue/catalogue.service';
 import * as constants from "../common/constants";
+import {Headers, Http} from "@angular/http";
+import * as myGlobals from "../globals";
 
 @Component({
 	selector: 'nimble-logout',
@@ -19,7 +21,8 @@ export class LogoutComponent implements OnInit {
 		private appComponent: AppComponent,
 		private userService: UserService,
         private categoryService: CategoryService,
-        private catalogueService: CatalogueService
+        private catalogueService: CatalogueService,
+        private http: Http
 	) {	}
 
 	ngOnInit() {
@@ -34,13 +37,26 @@ export class LogoutComponent implements OnInit {
 		this.cookieService.delete("show_welcome");
 		this.cookieService.delete("bearer_token");
 
-		this.cookieService.delete(constants.chatRCConnect, '/');
-		this.cookieService.delete(constants.chatRCToken, '/');
-		this.cookieService.delete(constants.chatRCID, '/');
+		// if rocket chat enabled
 
-		this.cookieService.delete(constants.chatToken,'/');
-		this.cookieService.delete(constants.chatUsername, '/');
-		this.cookieService.delete(constants.chatUserID, '/');
+        let headers = new Headers({'Content-Type': 'application/json', 'X-Auth-Token': this.cookieService.get(constants.chatToken), 'X-User-Id': this.cookieService.get(constants.chatUserID)});
+        const url = myGlobals.rocketChatEndpoint + '/api/v1/logout';
+        this.http
+            .post(url, JSON.stringify({}), {headers: headers})
+            .toPromise()
+            .then(res => {
+                console.log(res);
+                this.cookieService.delete(constants.chatRCConnect, '/');
+                this.cookieService.delete(constants.chatRCToken, '/');
+                this.cookieService.delete(constants.chatRCID, '/');
+
+                this.cookieService.delete(constants.chatToken, '/');
+                this.cookieService.delete(constants.chatUsername, '/');
+                this.cookieService.delete(constants.chatUserID, '/');
+            })
+            .catch(e => {
+                alert("Error occurred while logging off from rocket chat");
+            });
 
 		this.userService.resetData();
 		this.appComponent.checkLogin("/user-mgmt/login");
