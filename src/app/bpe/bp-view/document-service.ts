@@ -93,5 +93,13 @@ export class DocumentService {
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);
     }
+
+    public getBuyerParty() {
+        let buyerPartID = '';
+        this.mapOfDocument.forEach(m => {
+            buyerPartID = m.buyerCustomerParty.party.partyIdentification[0];
+        });
+        return buyerPartID;
+    }
 }
 

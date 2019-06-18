@@ -96,7 +96,7 @@ export class BPDataService{
                 private precedingBPDataService: PrecedingBPDataService,
                 private userService: UserService,
                 private cookieService: CookieService,
-                private documentService: DocumentService,
+                public documentService: DocumentService,
                 private router: Router) {
     }
 

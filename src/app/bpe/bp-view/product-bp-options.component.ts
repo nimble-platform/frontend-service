@@ -90,6 +90,10 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             productName: this.line.goodsItem.item.name[0].value
         };
 
+        if (createChannelRequest.initiatingPartyID == createChannelRequest.respondingPartyID) {
+            createChannelRequest.initiatingPartyID =  this.bpDataService.documentService.getBuyerParty();
+        }
+
         let headers = new Headers({'Content-Type': 'application/json'});
         const url = `${this.identityEndpoint}/chat/createChannel`;
         this.http
