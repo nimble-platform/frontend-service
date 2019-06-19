@@ -55,7 +55,7 @@ export class LogoutComponent implements OnInit {
                 this.cookieService.delete(constants.chatUserID, '/');
             })
             .catch(e => {
-                alert("Error occurred while logging off from rocket chat");
+                console.error("Error occurred while logging off from rocket chat");
             });
 
 		this.userService.resetData();
