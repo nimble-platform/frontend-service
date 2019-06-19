@@ -162,7 +162,7 @@ export class DispatchAdviceComponent implements OnInit {
         this.bpeService.startBusinessProcess(piim)
             .then(res => {
                 this.callStatus.callback("Dispatch Advice sent", true);
-                var tab = "PUCHASES";
+                var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});

@@ -219,7 +219,7 @@ export class PpapDocumentSelectComponent implements OnInit {
             .then(() => {
                 this.documentService.updateCachedDocument(ppap.id,ppap);
                 this.callStatus.callback("Ppap request updated", true);
-                var tab = "PUCHASES";
+                var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
