@@ -116,6 +116,7 @@ export class PpapDocumentUploadComponent {
     }
 
     responseToPpapRequest(acceptedIndicator: boolean) {
+        this.callStatus.submit();
         this.submitted = true;
         for(let i=0;i<this.binaryObjects.length;i++){
             for(let j=0;j<this.binaryObjects[i].documents.length;j++){
@@ -138,7 +139,7 @@ export class PpapDocumentUploadComponent {
         const vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", UBLModelUtils.getPartyId(this.ppap.buyerCustomerParty.party), UBLModelUtils.getPartyId(this.ppap.sellerSupplierParty.party), this.cookieService.get("user_id"),this.ppapResponse, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processId);
 
-        this.callStatus.submit();
+        //this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim).then(res => {
             this.callStatus.callback("Ppap Response placed", true);
             var tab = "PUCHASES";

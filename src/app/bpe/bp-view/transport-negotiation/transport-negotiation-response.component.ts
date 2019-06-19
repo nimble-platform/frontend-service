@@ -116,6 +116,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
     }
 
     onRespondToQuotation(accepted: boolean): void {
+        this.callStatus.submit();
         if(accepted) {
             this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.ACCEPTED;
         } else {
@@ -126,7 +127,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
             UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.sellerSupplierParty.party), this.cookieService.get("user_id"),this.quotation, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processId);
 
-        this.callStatus.submit();
+        //this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim)
             .then(res => {
                 this.callStatus.callback("Quotation sent", true);

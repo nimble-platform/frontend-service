@@ -244,6 +244,7 @@ export class OrderComponent implements OnInit {
     }
 
     onRespondToOrder(accepted: boolean): void {
+        this.submitCallStatus.submit();
         this.bpDataService.orderResponse.acceptedIndicator = accepted;
 
         let vars: ProcessVariables = ModelUtils.createProcessVariables(
@@ -259,7 +260,7 @@ export class OrderComponent implements OnInit {
             this.processMetadata.processId
         );
 
-        this.submitCallStatus.submit();
+        //this.submitCallStatus.submit();
         this.bpeService.continueBusinessProcess(piim)
             .then(res => {
                 this.submitCallStatus.callback("Order Response placed", true);
