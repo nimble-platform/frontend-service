@@ -216,7 +216,7 @@ export class OrderComponent implements OnInit {
         this.bpeService.startBusinessProcess(piim)
             .then(res => {
                 this.submitCallStatus.callback("Order placed", true);
-                var tab = "PUCHASES";
+                var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
@@ -233,7 +233,7 @@ export class OrderComponent implements OnInit {
             .then(() => {
                 this.documentService.updateCachedDocument(order.id,order);
                 this.submitCallStatus.callback("Order updated", true);
-                var tab = "PUCHASES";
+                var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
@@ -264,7 +264,7 @@ export class OrderComponent implements OnInit {
         this.bpeService.continueBusinessProcess(piim)
             .then(res => {
                 this.submitCallStatus.callback("Order Response placed", true);
-                var tab = "PUCHASES";
+                var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});

@@ -142,7 +142,7 @@ export class PpapDocumentUploadComponent {
         //this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim).then(res => {
             this.callStatus.callback("Ppap Response placed", true);
-            var tab = "PUCHASES";
+            var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")
               tab = "SALES";
             this.router.navigate(['dashboard'], {queryParams: {tab: tab}});

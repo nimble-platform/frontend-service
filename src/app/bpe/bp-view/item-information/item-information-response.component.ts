@@ -99,7 +99,7 @@ export class ItemInformationResponseComponent implements OnInit {
         //this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim).then(() => {
             this.callStatus.callback("Information Response sent", true);
-            var tab = "PUCHASES";
+            var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")
               tab = "SALES";
             this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
