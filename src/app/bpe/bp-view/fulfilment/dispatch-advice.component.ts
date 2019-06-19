@@ -144,6 +144,7 @@ export class DispatchAdviceComponent implements OnInit {
     }
 
     onSendDispatchAdvice(): void {
+        this.callStatus.submit();
         let dispatchAdvice: DespatchAdvice = copy(this.dispatchAdvice);
         UBLModelUtils.removeHjidFieldsFromObject(dispatchAdvice);
 
@@ -152,12 +153,12 @@ export class DispatchAdviceComponent implements OnInit {
             UBLModelUtils.getPartyId(dispatchAdvice.despatchSupplierParty.party),
             UBLModelUtils.getPartyId(dispatchAdvice.deliveryCustomerParty.party),
             this.cookieService.get("user_id"),
-            dispatchAdvice, 
+            dispatchAdvice,
             this.bpDataService
         );
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
-        this.callStatus.submit();
+        //this.callStatus.submit();
         this.bpeService.startBusinessProcess(piim)
             .then(res => {
                 this.callStatus.callback("Dispatch Advice sent", true);

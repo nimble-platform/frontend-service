@@ -60,8 +60,9 @@ export class ReceiptAdviceComponent implements OnInit {
     }
 
     onSendReceiptAdvice(): void {
+        this.callStatus.submit();
         const vars: ProcessVariables = ModelUtils.createProcessVariables(
-            "Fulfilment", 
+            "Fulfilment",
             UBLModelUtils.getPartyId(this.bpDataService.receiptAdvice.despatchSupplierParty.party),
             UBLModelUtils.getPartyId(this.bpDataService.receiptAdvice.deliveryCustomerParty.party),
             this.cookieService.get("user_id"),
@@ -71,7 +72,7 @@ export class ReceiptAdviceComponent implements OnInit {
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(
             vars, this.processMetadata.processId);
 
-        this.callStatus.submit();
+        //this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim)
             .then(res => {
                 this.callStatus.callback("Receipt Advice sent", true);

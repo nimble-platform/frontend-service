@@ -183,9 +183,10 @@ export class TransportExecutionPlanComponent implements OnInit {
     }
 
     onSendResponse(accepted: boolean) {
+        this.callStatus.submit();
         this.response.documentStatusCode.name = accepted ? "Accepted" : "Rejected";
 
-        const vars: ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan", 
+        const vars: ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan",
             UBLModelUtils.getPartyId(this.bpDataService.transportExecutionPlan.transportUserParty),
             UBLModelUtils.getPartyId(this.bpDataService.transportExecutionPlan.transportServiceProviderParty),
             this.cookieService.get("user_id"),
@@ -193,7 +194,7 @@ export class TransportExecutionPlanComponent implements OnInit {
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars,
             this.processMetadata.processId);
 
-        this.callStatus.submit();
+        //this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim)
             .then(res => {
                 this.callStatus.callback("Transport Execution Plan sent", true);
