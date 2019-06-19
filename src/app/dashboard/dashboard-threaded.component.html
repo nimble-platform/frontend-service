@@ -108,6 +108,11 @@
                 <div class="col-12">
                     <!-- Sales -->
                     <ng-container *ngIf="queryParameters.tab === TABS.SALES">
+                        <button class="btn btn-secondary float-left space-before"
+                                (click)="onViewUpdated(false)"
+                                [disabled]="filterQueryStatus.isLoading() || queryStatus.isLoading()">
+                            Refresh
+                        </button>
                         <button class="btn btn-secondary float-right space-before"
                             (click)="onToggleArchived()"
                             [disabled]="!isToggleArchivedButtonEnabled()">
@@ -120,6 +125,11 @@
                     </ng-container>
                     <!-- Purchases -->
                     <ng-container *ngIf="queryParameters.tab === TABS.PURCHASES">
+                        <button class="btn btn-secondary float-left space-before"
+                                (click)="onViewUpdated(false)"
+                                [disabled]="filterQueryStatus.isLoading() || queryStatus.isLoading()">
+                            Refresh
+                        </button>
                         <button class="btn btn-secondary float-right space-before"
                             (click)="onToggleArchived()"
                             [disabled]="!isToggleArchivedButtonEnabled()">
