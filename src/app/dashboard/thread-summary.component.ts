@@ -41,6 +41,7 @@ export class ThreadSummaryComponent implements OnInit {
     @Input() processInstanceGroup: ProcessInstanceGroup;
     @Input() collaborationGroupId: string;
     @Output() threadStateUpdated = new EventEmitter();
+    @Output() threadStateUpdatedNoChange = new EventEmitter();
 
     config = myGlobals.config;
 
@@ -496,7 +497,7 @@ export class ThreadSummaryComponent implements OnInit {
             this.bpeService.cancelCollaboration(this.processInstanceGroup.id)
                 .then(() => {
                     this.archiveCallStatus.callback("Cancelled collaboration successfully");
-                    this.threadStateUpdated.next();
+                    this.threadStateUpdatedNoChange.next();
                 })
                 .catch(err => {
                     this.archiveCallStatus.error("Failed to cancel collaboration",err);
@@ -623,7 +624,7 @@ export class ThreadSummaryComponent implements OnInit {
         this.dataChannelService.createChannel(channel)
             .then(() => {
                 //alert("created a new channel");
-                this.threadStateUpdated.next();
+                this.threadStateUpdatedNoChange.next();
             })
             .catch(err => {
                 console.error("Failed to create a data channel",err);

@@ -139,7 +139,15 @@
             <div class="row" *ngIf="results.resultCount > 0 || queryParameters['archived']">
                 <div class="col-12">
                     <div class="row space-before">
-                        <div class="col-4"></div>
+                        <div class="col-4">
+                            <div class="d-flex justify-content-start">
+                              <button class="btn btn-secondary align-self-start float-left mr-2"
+                                      (click)="onViewUpdated(false)"
+                                      [disabled]="filterQueryStatus.isLoading() || queryStatus.isLoading()">
+                                  Refresh
+                              </button>
+                            </div>
+                        </div>
                         <!-- Pagination Info -->
                         <div class="col-4 pagination justify-content-center">
                             <ngb-pagination [collectionSize]="results.resultCount" [pageSize]="query.pageSize" [(page)]="query.page"
@@ -218,11 +226,11 @@
                                             <i class="fa fa-pencil-alt p-1 pointer" aria-hidden="true"></i>
                                         </div>
 
-                                        <ng-template #negotiationGroup let-modal>
+                                        <ng-template #negotiationGroup let-c="close" let-modal>
                                             <div class="modal-header">
                                                 <h4 class="modal-title" id="modal-basic-title">Negotiation Groups</h4>
                                                 <button type="button" class="btn btn-danger"
-                                                (click)="mergeNegotations(); $event.stopPropagation();">
+                                                (click)="mergeNegotations(c); $event.stopPropagation();">
                                                     Merge
                                                 </button>
                                             </div>
@@ -261,7 +269,7 @@
                                                                     <div *ngFor="let group of order.associatedProcessInstanceGroups;let i=index">
                                                                         <div [ngClass]="i != order.associatedProcessInstanceGroups.length-1 ? 'space-after' : null">
                                                                             <!--If Purchases tab is selected, show groups whose collaboration role is Buyer-->
-                                                                            <thread-summary *ngIf="queryParameters.tab == TABS.SALES || (queryParameters.tab == TABS.PURCHASES && group.collaborationRole == 'BUYER')" [processInstanceGroup]="group" [collaborationGroupId]="order.id" (threadStateUpdated)="onOrderRemovedFromView()">
+                                                                            <thread-summary *ngIf="queryParameters.tab == TABS.SALES || (queryParameters.tab == TABS.PURCHASES && group.collaborationRole == 'BUYER')" [processInstanceGroup]="group" [collaborationGroupId]="order.id" (threadStateUpdated)="onOrderRemovedFromView()" (threadStateUpdatedNoChange)="onViewUpdated(false)">
                                                                             </thread-summary>
                                                                         </div>
                                                                     </div>
@@ -300,7 +308,7 @@
                                 <div *ngFor="let group of order.associatedProcessInstanceGroups;let i=index">
                                     <div [ngClass]="i != order.associatedProcessInstanceGroups.length-1 ? 'space-after' : null">
                                         <!--If Purchases tab is selected, show groups whose collaboration role is Buyer-->
-                                        <thread-summary *ngIf="queryParameters.tab == TABS.SALES || (queryParameters.tab == TABS.PURCHASES && group.collaborationRole == 'BUYER')" [processInstanceGroup]="group" [collaborationGroupId]="order.id" (threadStateUpdated)="onOrderRemovedFromView()">
+                                        <thread-summary *ngIf="queryParameters.tab == TABS.SALES || (queryParameters.tab == TABS.PURCHASES && group.collaborationRole == 'BUYER')" [processInstanceGroup]="group" [collaborationGroupId]="order.id" (threadStateUpdated)="onOrderRemovedFromView()" (threadStateUpdatedNoChange)="onViewUpdated(false)">
                                         </thread-summary>
                                     </div>
                                 </div>
@@ -478,7 +486,7 @@
                                     <div *ngFor="let group of order.associatedProcessInstanceGroups;let i=index">
                                         <div [ngClass]="i != order.associatedProcessInstanceGroups.length-1 ? 'space-after' : null">
                                             <!--If Purchases tab is selected, show groups whose collaboration role is Buyer-->
-                                            <thread-summary *ngIf="queryParameters.tab == TABS.SALES || (queryParameters.tab == TABS.PROJECTS && group.collaborationRole == 'BUYER')" [processInstanceGroup]="group" [collaborationGroupId]="order.id" (threadStateUpdated)="onOrderRemovedFromView()">
+                                            <thread-summary *ngIf="queryParameters.tab == TABS.SALES || (queryParameters.tab == TABS.PROJECTS && group.collaborationRole == 'BUYER')" [processInstanceGroup]="group" [collaborationGroupId]="order.id" (threadStateUpdated)="onOrderRemovedFromView()" (threadStateUpdatedNoChange)="onViewUpdated(false)">
                                             </thread-summary>
                                         </div>
                                     </div>
