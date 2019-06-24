@@ -263,7 +263,7 @@ export class NegotiationRequestComponent implements OnInit {
 
             }).then(() => {
                 this.callStatus.callback("Terms sent", true);
-                var tab = "PUCHASES";
+                var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                     tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
@@ -288,7 +288,7 @@ export class NegotiationRequestComponent implements OnInit {
         this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processId).then(() => {
             this.documentService.updateCachedDocument(rfq.id,rfq);
             this.callStatus.callback("Terms updated", true);
-            var tab = "PUCHASES";
+            var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")
                 tab = "SALES";
             this.router.navigate(['dashboard'], {queryParams: {tab: tab}});

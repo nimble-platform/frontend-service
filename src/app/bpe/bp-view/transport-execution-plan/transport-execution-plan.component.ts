@@ -154,7 +154,7 @@ export class TransportExecutionPlanComponent implements OnInit {
         })
         .then(() => {
             this.callStatus.callback("Transport Execution Plan sent", true);
-            var tab = "PUCHASES";
+            var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")
               tab = "SALES";
             this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
@@ -172,7 +172,7 @@ export class TransportExecutionPlanComponent implements OnInit {
             .then(() => {
                 this.documentService.updateCachedDocument(transportationExecutionPlanRequest.id,transportationExecutionPlanRequest);
                 this.callStatus.callback("Item Information Request updated", true);
-                var tab = "PUCHASES";
+                var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});

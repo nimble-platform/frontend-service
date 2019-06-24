@@ -131,7 +131,7 @@ export class NegotiationResponseComponent implements OnInit {
 
         this.bpeService.continueBusinessProcess(piim).then(() => {
             this.callStatus.callback("Quotation sent", true);
-            var tab = "PUCHASES";
+            var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")
                 tab = "SALES";
             this.router.navigate(['dashboard'], {queryParams: {tab: tab}});

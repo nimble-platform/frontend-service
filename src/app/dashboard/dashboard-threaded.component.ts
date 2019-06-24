@@ -231,6 +231,15 @@ export class DashboardThreadedComponent implements OnInit{
         this.getTabCounters();
     }
 
+    onViewUpdated(reset?:boolean): void {
+      this.filterSet = null;
+      if (reset)
+        this.updateQueryParameters({ pg: 1 });
+      else
+        this.updateStateFromQueryParameters(this.queryParameters);
+      this.getTabCounters();
+    }
+
     onExportClicked() {
         this.exportCallStatus.submit();
         let partyId: string = this.cookieService.get("company_id");
@@ -417,6 +426,7 @@ export class DashboardThreadedComponent implements OnInit{
     }
 
     private executeOrdersQuery(query: DashboardOrdersQuery): void {
+        this.results = new DashboardOrdersQueryResults();
         this.queryStatus.submit();
         this.getOrdersQuery(query)
         .then(() =>{
@@ -596,7 +606,7 @@ export class DashboardThreadedComponent implements OnInit{
     updateCollaborationGroupName(id:string,name:string){
         this.bpeService.updateCollaborationGroupName(id,name)
             .then(() => {
-                this.onOrderRemovedFromView();
+                this.onViewUpdated(false);
             })
             .catch(err => {
                 console.error("Failed to update collaboration group name",err);
@@ -657,7 +667,7 @@ export class DashboardThreadedComponent implements OnInit{
         }
     }
 
-    async mergeNegotations(){
+    async mergeNegotations(c:any){
         let selectedNegotation = this.selectedNegotiation.id;
         let mergeIdList = [];
 
@@ -668,7 +678,9 @@ export class DashboardThreadedComponent implements OnInit{
 
         this.bpeService.mergeNegotations(selectedNegotation,mergeIdList)
         .then(() => {
-            location.reload();
+            //location.reload();
+            c();
+            this.onViewUpdated(true);
         })
         .catch(err => {
         });
