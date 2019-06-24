@@ -766,7 +766,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     private openDiscountModal(): void{
-        this.discountModal.open(this.wrapper.lineDiscountPriceWrapper.appliedDiscounts,this.wrapper.lineDiscountPriceWrapper.price.priceAmount.currencyID);
+        this.discountModal.open(this.wrapper.lineDiscountPriceWrapper);
     }
 
     showTab(tab:boolean):boolean {

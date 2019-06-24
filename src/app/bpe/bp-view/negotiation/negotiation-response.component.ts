@@ -248,7 +248,7 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     private openDiscountModal(): void{
-        this.discountModal.open(this.wrapper.quotationDiscountPriceWrapper.appliedDiscounts,this.wrapper.quotationDiscountPriceWrapper.price.priceAmount.currencyID);
+        this.discountModal.open(this.wrapper.quotationDiscountPriceWrapper);
     }
 
     private checkEqual(part): boolean {

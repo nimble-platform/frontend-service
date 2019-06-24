@@ -274,6 +274,14 @@ export class DiscountPriceWrapper {
         return discount;
     }
 
+    public calculateTotalDiscount():number {
+        let totalDiscount = 0;
+        for(let discount of this.appliedDiscounts){
+            totalDiscount += discount.discount;
+        }
+        return totalDiscount;
+    }
+
     // checks whether there's a price option for the selected property value or not
     private existenceOfPriceOptionForPropertyValue(priceOptionPropertyValues:Text[],selectedPropertyValue:Text):boolean{
         for(let property of priceOptionPropertyValues){
