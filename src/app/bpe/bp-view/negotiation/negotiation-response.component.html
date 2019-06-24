@@ -161,7 +161,7 @@
                             [quantity]="quotationTotalPrice" [quantityUnits]="CURRENCIES"
                             (onQuantityValueChange)="onTotalPriceChanged($event)"
                             [step]="0.01"
-                            [disableQuantityUnit]="wrapper.lineDiscountPriceWrapper.hasPrice()">
+                            [disableQuantityUnit]="wrapper.lineDiscountPriceWrapper.itemPrice.hasPrice()">
             </quantity-input>
             <small>( {{ wrapper.newQuotationWrapper.priceWrapper.pricePerItemString}} )</small>
             <span *ngIf="isDiscountIconVisibleInCustomerRequestColumn()" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">

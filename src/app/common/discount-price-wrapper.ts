@@ -38,7 +38,7 @@ export class DiscountPriceWrapper {
     }
 
     get originalPricePerItem(): number {
-        if(!this.hasPrice() || isNaN(this.orderedQuantity.value)) {
+        if(!this.itemPrice.hasPrice() || isNaN(this.orderedQuantity.value)) {
             return 0;
         }
 
@@ -47,7 +47,7 @@ export class DiscountPriceWrapper {
     }
 
     get pricePerItem(): number {
-        if(!this.hasPrice() || isNaN(this.orderedQuantity.value)) {
+        if(!this.itemPrice.hasPrice() || isNaN(this.orderedQuantity.value)) {
             return 0;
         }
 
@@ -57,7 +57,7 @@ export class DiscountPriceWrapper {
     get pricePerItemString(): string {
         const qty = this.orderedQuantity;
 
-        if(!this.hasPrice() || !qty.value) {
+        if(!this.itemPrice.hasPrice() || !qty.value) {
             return "On demand";
         }
 
@@ -65,7 +65,7 @@ export class DiscountPriceWrapper {
     }
 
     get discountedPricePerItem(): number {
-        if(!this.hasPrice() || isNaN(this.orderedQuantity.value)) {
+        if(!this.itemPrice.hasPrice() || isNaN(this.orderedQuantity.value)) {
             return 0;
         }
 
@@ -76,7 +76,7 @@ export class DiscountPriceWrapper {
     get discountedPricePerItemString(): string {
         const qty = this.orderedQuantity;
 
-        if(!this.hasPrice() || !qty.value) {
+        if(!this.itemPrice.hasPrice() || !qty.value) {
             return "On demand";
         }
 
@@ -84,7 +84,7 @@ export class DiscountPriceWrapper {
     }
 
     get totalPrice(): number {
-        if(!this.hasPrice() || !this.orderedQuantity.value) {
+        if(!this.itemPrice.hasPrice() || !this.orderedQuantity.value) {
             return 0;
         }
 
@@ -97,7 +97,7 @@ export class DiscountPriceWrapper {
     }
 
     get totalPriceString(): string {
-        if(!this.hasPrice()) {
+        if(!this.itemPrice.hasPrice()) {
             return "Not specified";
         }
         return `${roundToTwoDecimals(this.totalPrice)} ${this.currency}`;
@@ -125,11 +125,6 @@ export class DiscountPriceWrapper {
 
     set currency(currency: string) {
         this.price.priceAmount.currencyID = currency;
-    }
-
-    hasPrice(): boolean {
-        // != here gives "not null or undefined", which is the behaviour we want.
-        return (this.price.priceAmount.value != null && !isNaN(this.price.priceAmount.value));
     }
 
     isDiscountApplied(): boolean {

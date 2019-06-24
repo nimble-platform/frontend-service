@@ -158,6 +158,11 @@ export class NegotiationRequestComponent implements OnInit {
         // this is required to initialize the line discount wrapper with the terms from rfq
         this.onPriceConditionsChange();
 
+        // enable the price negotiation if the product does not have any price
+        if(this.primaryTermsSource == 'product_defaults' && !this.wrapper.lineDiscountPriceWrapper.itemPrice.hasPrice()) {
+            this.negotiatePrice = true;
+        }
+
         // set the flag for showing the counter terms if the presen
         if(this.processMetadata != null) {
             this.showCounterOfferTerms = true;
@@ -340,7 +345,7 @@ export class NegotiationRequestComponent implements OnInit {
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = trimRedundantDecimals(quotationWrapper.priceWrapper.pricePerItem);
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = quotationWrapper.priceWrapper.currency;
             }
-            if(!this.rfq.negotiationOptions.frameContractDuration || ignoreNegotiationOptions) {
+            if((!this.rfq.negotiationOptions.frameContractDuration || ignoreNegotiationOptions) && quotationWrapper.frameContractDuration != null) {
                 this.frameContractDuration = copy(quotationWrapper.frameContractDuration);
             }
             if(!this.rfq.negotiationOptions.termsAndConditions || ignoreNegotiationOptions) {
@@ -446,7 +451,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     get lineHasPrice(): boolean {
-        return this.wrapper.lineDiscountPriceWrapper.hasPrice();
+        return this.wrapper.lineDiscountPriceWrapper.itemPrice.hasPrice();
     }
 
     get requestedQuantity(): number {

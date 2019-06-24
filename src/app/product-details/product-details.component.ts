@@ -246,7 +246,7 @@ export class ProductDetailsComponent implements OnInit {
     }
 
     hasPrice(): boolean {
-        return this.priceWrapper.hasPrice();
+        return this.priceWrapper.itemPrice.hasPrice();
     }
 
     getMaximumQuantity(): number {
