@@ -23,7 +23,7 @@
                     {{ placeholder }}
                 </label>
             </div>
-            <select *ngIf="languageEnabled" class="form-control language-select" [(ngModel)]="selectedLanguage">
+            <select *ngIf="languageEnabled && multiple" class="form-control language-select" [(ngModel)]="selectedLanguage">
                 <option *ngFor='let language of languages' [value]="language">{{language}}</option>
             </select>
         </div>
