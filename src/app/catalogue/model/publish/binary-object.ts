@@ -8,6 +8,7 @@ export class BinaryObject {
         public mimeCode: string,
         public fileName: string,
         public uri: string,
+        public languageID: string,
 
         // for demo
         public objectMetadata:string,

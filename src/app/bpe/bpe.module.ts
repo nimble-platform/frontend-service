@@ -18,7 +18,6 @@ import { FulfilmentComponent } from "./bp-view/fulfilment/fulfilment.component";
 import { ReceiptAdviceComponent } from "./bp-view/fulfilment/receipt-advice.component";
 import { NegotiationComponent } from "./bp-view/negotiation/negotiation.component";
 import { TransportExecutionPlanComponent } from "./bp-view/transport-execution-plan/transport-execution-plan.component";
-import { BpProductDetailsComponent } from "./bp-view/bp-product-details.component";
 import { PpapComponent } from "./bp-view/ppap/ppap.component";
 
 import { PpapDocumentSelectComponent } from "./bp-view/ppap/ppap-document-select.component";
@@ -82,7 +81,6 @@ import {TermsAndConditionsComponent} from './bp-view/contract/terms-and-conditio
         TransportNegotiationAddressComponent,
         TransportServiceDetailsComponent,
         TransportNegotiationComponent,
-        BpProductDetailsComponent,
         PpapComponent,
         PpapDocumentSelectComponent,
         PpapDocumentUploadComponent,
@@ -102,7 +100,6 @@ import {TermsAndConditionsComponent} from './bp-view/contract/terms-and-conditio
         ReceiptAdviceComponent,
         NegotiationComponent,
         TransportExecutionPlanComponent,
-        BpProductDetailsComponent,
         ContractComponent,
         ClauseComponent,
         PpapClauseComponent,
