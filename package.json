@@ -51,7 +51,7 @@
     "ng2-cookies": "^1.0.12",
     "rxjs": "^5.5.x",
     "systemjs": "^0.20.x",
-    "underscore": "^1.9.0",
+    "underscore": "1.9.0",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {
@@ -67,7 +67,7 @@
     "@types/jasmine": "2.8.8",
     "@types/lunr": "^2.1.5",
     "@types/node": "^9.6.22",
-    "@types/underscore": "^1.8.8",
+    "@types/underscore": "1.8.8",
     "babel-cli": "^6.26.x",
     "babel-preset-angular2": "^0.0.x",
     "babel-preset-env": "^1.7.0",
