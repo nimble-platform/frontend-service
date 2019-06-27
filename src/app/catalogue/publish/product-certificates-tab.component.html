@@ -18,7 +18,8 @@
                     <expandable-flex-row [content]="getCertificateCountryNames(certificate)" [shrinkElementSize]="2"></expandable-flex-row>
                 </td>
                 <td>
-                    <button class="btn btn-danger btn-sm ml-1" [disabled]="disabled" (click)="onDelete(certificate.id, i)">Delete</button>
+                    <button class="btn btn-primary btn-sm ml-1" [disabled]="disabled" (click)="onEdit(addCertModal, i)">Edit</button>
+                    <button class="btn btn-danger btn-sm ml-1" [disabled]="disabled" (click)="onDelete(i)">Delete</button>
                 </td>
             </tr>
         </table>
@@ -64,7 +65,7 @@
                 <div class="col-9">
                     <select class="form-control" [formControl]="addCertForm.controls['type']" required>
                         <option></option>
-                        <option *ngFor="let certType of config.supportedCertificates">{{certType}}</option>
+                        <option *ngFor="let certType of config.supportedCertificates" [selected]="certType == addCertForm.controls['type'].value">{{certType}}</option>
                     </select>
                 </div>
             </div>

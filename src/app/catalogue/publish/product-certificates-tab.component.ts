@@ -39,19 +39,40 @@ export class ProductCertificatesTabComponent implements OnInit {
         // nothing for now
     }
 
+    onEdit(popup, i: number){
+        let cert:Certificate = this.catalogueLine.goodsItem.item.certificate[i];
+        this.certificateFilesProvided = true;
+        this.addCertForm = this._fb.group({
+            name: [cert.certificateTypeCode.name],
+            description: [cert.remarks],
+            type: [cert.certificateType]
+        });
+        this.selectedFiles = [];
+        for(let docRef of cert.documentReference) {
+            this.selectedFiles.push(docRef.attachment.embeddedDocumentBinaryObject);
+        }
+
+        this.countryFormControl = new FormControl('');
+        this.selectedCountries = [];
+        for(let country of cert.country) {
+            this.selectedCountries.push(country.name.value);
+        }
+
+        this.modalService.open(popup);
+    }
+
     onDelete(i: number) {
         this.catalogueLine.goodsItem.item.certificate.splice(i, 1);
     }
 
     onAddCertificate(content) {
-        this.certificateFilesProvided = false;
-        this.selectedFiles = [];
         this.addCertForm = this._fb.group({
-            file: [""],
             name: [""],
             description: [""],
             type: [""]
         });
+        this.certificateFilesProvided = false;
+        this.selectedFiles = [];
         this.countryFormControl = new FormControl('');
         this.modalService.open(content);
     }
