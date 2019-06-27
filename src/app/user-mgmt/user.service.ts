@@ -17,6 +17,7 @@ import { Person } from '../catalogue/model/publish/person';
 import { ResetPasswordCredentials } from './model/reset-password-credentials';
 import {UnitService} from "../common/unit-service";
 import {deliveryPeriodUnitListId, warrantyPeriodUnitListId} from "../common/constants";
+import {Certificate} from "../catalogue/model/publish/certificate";
 
 @Injectable()
 export class UserService {
@@ -366,6 +367,19 @@ export class UserService {
     downloadCert(id: string) {
       const url = `${this.url}/company-settings/certificate/${id}`;
       window.open(url,"_blank");
+    }
+
+    downloadCertObject(id: string): Promise<Certificate> {
+        const url = `${this.url}/company-settings/certificate/${id}/object`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
+            .get(url, { headers: headers_token, withCredentials: true })
+            .toPromise()
+            .then(res => {
+                return this.sanitizeNegotiationSettings(res.json());
+            })
+            .catch(this.handleError);
     }
 
     deleteCert(id: string, partyId: string): Promise<void> {
