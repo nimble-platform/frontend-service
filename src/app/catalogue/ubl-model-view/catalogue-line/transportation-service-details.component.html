@@ -63,11 +63,11 @@
                 [definition]="'The method of transport used for this shipment stage,e.g.,road,air or rail'"
                 [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportModeCode.name">
     </value-view>
-    <!--<value-view [presentationMode]="presentationMode"-->
-                <!--[propName]="'Carrier Party'"-->
-                <!--[definition]="'The party carrying the goods'"-->
-                <!--[(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].carrierParty.name.value">-->
-    <!--</value-view>-->
+    <value-view [presentationMode]="presentationMode"
+                [propName]="'Carrier Party'"
+                [definition]="'The party carrying the goods'"
+                [(value)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].carrierParty.partyName[0].name.value">
+    </value-view>
 </div>
 
 <!-- transport means / equipment -->
