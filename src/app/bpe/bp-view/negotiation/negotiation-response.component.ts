@@ -208,7 +208,7 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     isTermDropDownVisible(): boolean {
-        return this.lastOfferQuotation || (this.frameContractQuotation && !this.frameContractNegotiation);
+        return this.lastOfferQuotation != null || (this.frameContractQuotation != null && !this.frameContractNegotiation);
     }
 
     /*
