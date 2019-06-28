@@ -1,12 +1,12 @@
 <div class="row title-row">
     <div class="col-3"></div>
     <div class="col-3">
-        <h3 *ngIf="!(lastOfferQuotation || frameContractQuotation)" class="font-weight-600">Product Defaults</h3>
-        <select [hidden]="!(lastOfferQuotation || frameContractQuotation)"
+        <h3 *ngIf="!isTermDropDownVisible()" class="font-weight-600">Product Defaults</h3>
+        <select [hidden]="!isTermDropDownVisible()"
                 #termSelectBox class="btn btn-outline-secondary"
                 [(ngModel)]="primaryTermsSource">
             <option *ngIf="lastOfferQuotation" value="last_offer">Last Offer</option>
-            <option *ngIf="frameContractQuotation" value="frame_contract">Frame Contract</option>
+            <option *ngIf="frameContractQuotation && !frameContractNegotiation" value="frame_contract">Frame Contract</option>
             <option value="product_defaults">Product Defaults</option>
         </select>
     </div>

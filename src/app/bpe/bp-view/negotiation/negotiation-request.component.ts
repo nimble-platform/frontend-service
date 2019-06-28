@@ -54,6 +54,8 @@ export class NegotiationRequestComponent implements OnInit {
     wrapper: NegotiationModelWrapper;
     @Input() frameContract: DigitalAgreement = new DigitalAgreement();
     @Input() frameContractQuotation: Quotation;
+    @Input() frameContractNegotiation: boolean = true; // this input is added in order to control the visibility of the frame contract option while loading terms.
+                                                       // frame contract option is disabled when displaying the history through which the contract is being negotiated.
     @Input() lastOfferQuotation: Quotation;
     @Input() primaryTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = 'product_defaults';
     @Input() defaultTermsAndConditions: Clause[];
@@ -111,7 +113,7 @@ export class NegotiationRequestComponent implements OnInit {
         this.sellerId = UBLModelUtils.getPartyId(this.catalogueLine.goodsItem.item.manufacturerParty);
         this.buyerId = this.cookieService.get("company_id");
 
-        let frameContractDuration = this.getFrameContractDurationFromRfq(this.rfq);
+        let frameContractDuration = UBLModelUtils.getFrameContractDurationFromRfq(this.rfq);
         // if the rfq frame contract duration is not null, we are rendering the negotiation process in which the frame contract duration is also negotiated
         if(frameContractDuration != null) {
             this.frameContractDuration = frameContractDuration;
@@ -119,7 +121,11 @@ export class NegotiationRequestComponent implements OnInit {
         } else if(this.frameContract) {
             // initialize frame contract variables
             this.frameContractAvailable = true;
-            this.manufacturersTermsExistence.frame_contract = true;
+            // the frame contract option is visible only if the visible flag is true. this mainly aims to hide the frame contract option when the
+            // contract itself is being negotiated
+            if(!this.frameContractNegotiation) {
+                this.manufacturersTermsExistence.frame_contract = true;
+            }
         }
 
         // construct wrapper with the retrieved documents
@@ -284,6 +290,11 @@ export class NegotiationRequestComponent implements OnInit {
     onUpdateRequest(): void {
         this.callStatus.submit();
 
+        // check frame contract explicitly. this is required e.g. if the frame contract is specified in the update itself.
+        if(this.rfq.negotiationOptions.frameContractDuration && this.isFrameContractValid()) {
+            this.wrapper.rfqFrameContractDuration = this.frameContractDuration;
+        }
+
         const rfq: RequestForQuotation = copy(this.rfq);
         this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processId).then(() => {
             this.documentService.updateCachedDocument(rfq.id,rfq);
@@ -435,7 +446,7 @@ export class NegotiationRequestComponent implements OnInit {
 
             // although the product default terms are selected, the following two conditions are calculated using the rfq itself
             frameContractDurationDiffers = this.wrapper.rfq.negotiationOptions.frameContractDuration &&
-                !UBLModelUtils.areQuantitiesEqual(this.frameContractDuration, this.getFrameContractDurationFromRfq(this.wrapper.initialImmutableRfq));
+                !UBLModelUtils.areQuantitiesEqual(this.frameContractDuration, UBLModelUtils.getFrameContractDurationFromRfq(this.wrapper.initialImmutableRfq));
             termsAndConditionsDiffer = UBLModelUtils.areTermsAndConditionListsDifferent(this.wrapper.initialImmutableRfq.termOrCondition, this.rfq.termOrCondition);
         }
 
@@ -755,14 +766,6 @@ export class NegotiationRequestComponent implements OnInit {
         }
 
         return value >= range.start && value <= range.end;
-    }
-
-    private getFrameContractDurationFromRfq(rfq: RequestForQuotation): Quantity {
-        let tradingTerm: TradingTerm = rfq.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
-        if(tradingTerm != null) {
-            return tradingTerm.value.valueQuantity[0];
-        }
-        return null;
     }
 
     private openDiscountModal(): void{

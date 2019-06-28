@@ -41,6 +41,7 @@ export class NegotiationResponseComponent implements OnInit {
     @Input() lastOfferQuotation: Quotation;
     @Input() frameContractQuotation: Quotation;
     @Input() frameContract: DigitalAgreement;
+    @Input() frameContractNegotiation: boolean = false;
     @Input() defaultTermsAndConditions: Clause[];
     @Input() primaryTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = 'product_defaults';
     @Input() readonly: boolean = false;
@@ -204,6 +205,10 @@ export class NegotiationResponseComponent implements OnInit {
 
     isSellerTermsVisible(): boolean {
         return !(this.quotation.documentStatusCode.name == 'Rejected' && this.isReadOnly());
+    }
+
+    isTermDropDownVisible(): boolean {
+        return this.lastOfferQuotation || (this.frameContractQuotation && !this.frameContractNegotiation);
     }
 
     /*

@@ -818,4 +818,12 @@ export class UBLModelUtils {
             }
         }
     }
+
+    public static getFrameContractDurationFromRfq(rfq: RequestForQuotation): Quantity {
+        let tradingTerm: TradingTerm = rfq.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
+        if(tradingTerm != null) {
+            return tradingTerm.value.valueQuantity[0];
+        }
+        return null;
+    }
 }
