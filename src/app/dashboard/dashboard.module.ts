@@ -13,6 +13,7 @@ import { CatalogueModule } from "../catalogue/catalogue.module";
 import { BPEModule } from "../bpe/bpe.module";
 import { AnalyticsModule } from "../analytics/analytics.module";
 import { ThreadEventComponent } from "./thread-event.component";
+import {FrameContractTabComponent} from "./frame-contract-tab.component";
 
 @NgModule({
 	imports: [
@@ -31,7 +32,8 @@ import { ThreadEventComponent } from "./thread-event.component";
 		DashboardThreadedComponent,
 		ThreadSummaryComponent,
 		ThreadEventComponent,
-		FacetComponent
+		FacetComponent,
+		FrameContractTabComponent
 	],
 	exports: [
 		DashboardThreadedComponent,

@@ -17,6 +17,7 @@ import { Person } from '../catalogue/model/publish/person';
 import { ResetPasswordCredentials } from './model/reset-password-credentials';
 import {UnitService} from "../common/unit-service";
 import {deliveryPeriodUnitListId, warrantyPeriodUnitListId} from "../common/constants";
+import {getAuthorizedHeaders} from "../common/utils";
 
 @Injectable()
 export class UserService {
@@ -112,6 +113,23 @@ export class UserService {
                 let party:Party = res.json();
                 UBLModelUtils.removeHjidFieldsFromObject(party);
                 return Promise.resolve(party);
+            })
+            .catch(this.handleError);
+    }
+
+    getParties(partyIds: string[]): Promise<Party[]> {
+        const url = `${this.url}/party/${partyId}`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+
+        return this.http
+            .get(url, {headers: getAuthorizedHeaders(this.cookieService), withCredentials: true})
+            .toPromise()
+            .then(res => {
+                let parties:Party[] = res.json();
+                for(let party of parties) {
+                    UBLModelUtils.removeHjidFieldsFromObject(party);
+                }
+                return Promise.resolve(parties);
             })
             .catch(this.handleError);
     }

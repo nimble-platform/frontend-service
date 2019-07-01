@@ -1,0 +1,27 @@
+<call-status [callStatus]="frameContractsRetrievalCallStatus"></call-status>
+<ng-container *ngIf="frameContracts.length > 0">
+    <div class="row title-row">
+        <div class="col-3">
+            Product
+        </div>
+        <div class="col-3">
+            Corresponding company
+        </div>
+        <div class="col-2">
+            Agreed on
+        </div>
+        <div class="col-2">
+            Valid until
+        </div>
+    </div>
+    <div class="row data-row" *ngFor="let frameContract of frameContracts">
+        <div class="col-3">{{getProductName(frameContract.item.name)}}</div>
+        <div class="col-3">{{getCorrespondingPartyName(frameContract)}}</div>
+        <div class="col-2">{{frameContract.digitalAgreementTerms.validityPeriod.startDate}}</div>
+        <div class="col-2">{{frameContract.digitalAgreementTerms.validityPeriod.endDate}}</div>
+        <div class="col-2"><div class="btn btn-outline-primary">See Details</div></div>
+    </div>
+</ng-container>
+<ng-container *ngIf="frameContracts.length == 0 && frameContractsRetrievalCallStatus.isComplete()">
+    No frame contract exists
+</ng-container>
