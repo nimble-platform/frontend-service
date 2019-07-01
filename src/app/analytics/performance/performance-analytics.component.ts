@@ -198,7 +198,7 @@ export class PerformanceAnalyticsComponent implements OnInit {
         
         this.cat_levels[0].forEach(catele => {
             if(catele.preferredName != null && catele.preferredName != ''){
-                if(catele.preferredName.toLowerCase().indexOf("service") >= 0){
+                if(catele.preferredName.toLowerCase().indexOf("service") >= 0 || catele.preferredName.toLowerCase().indexOf("servicio") >= 0){
                     this.service_count = this.service_count+catele.count;
                 }else{
                     this.product_count = this.product_count+catele.count;
