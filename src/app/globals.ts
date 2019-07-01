@@ -79,7 +79,7 @@ export const trust_service_endpoint=`${base_path}/trust`;
 export const indexing_service_endpoint=`${base_path}/indexing-service`;
 export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}:9200`;
-export const kibana_endpoint = `${base_path}:5601/app/kibana`;
+export const kibana_endpoint = `${base_path}/kibana/app/kibana`;
 export const delegate_endpoint = `${base_path}:9265`;
 
 
