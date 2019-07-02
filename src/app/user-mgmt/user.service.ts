@@ -117,23 +117,6 @@ export class UserService {
             .catch(this.handleError);
     }
 
-    getParties(partyIds: string[]): Promise<Party[]> {
-        const url = `${this.url}/party/${partyId}`;
-        const token = 'Bearer '+this.cookieService.get("bearer_token");
-
-        return this.http
-            .get(url, {headers: getAuthorizedHeaders(this.cookieService), withCredentials: true})
-            .toPromise()
-            .then(res => {
-                let parties:Party[] = res.json();
-                for(let party of parties) {
-                    UBLModelUtils.removeHjidFieldsFromObject(party);
-                }
-                return Promise.resolve(parties);
-            })
-            .catch(this.handleError);
-    }
-
     getPerson(personId:string):Promise<Person> {
         const url = `${this.url}/person/${personId}`;
         const token = 'Bearer '+this.cookieService.get("bearer_token");

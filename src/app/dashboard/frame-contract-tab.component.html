@@ -15,8 +15,18 @@
         </div>
     </div>
     <div class="row data-row" *ngFor="let frameContract of frameContracts">
-        <div class="col-3">{{getProductName(frameContract.item.name)}}</div>
-        <div class="col-3">{{getCorrespondingPartyName(frameContract)}}</div>
+        <div class="col-3">
+            {{getProductName(frameContract.item.name)}}
+            <a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: frameContract.item.catalogueDocumentReference.id, id: frameContract.item.manufacturersItemIdentification.id}">
+                <i class="fas fa-external-link-alt btn-light"></i>
+            </a>
+        </div>
+        <div class="col-3">
+            {{getCorrespondingPartyName(frameContract)}}
+            <a class="text-std" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: getCorrespondingPartyId(frameContract)}">
+                <i class="fas fa-external-link-alt btn-light"></i>
+            </a>
+        </div>
         <div class="col-2">{{frameContract.digitalAgreementTerms.validityPeriod.startDate}}</div>
         <div class="col-2">{{frameContract.digitalAgreementTerms.validityPeriod.endDate}}</div>
         <div class="col-2"><div class="btn btn-outline-primary">See Details</div></div>

@@ -2,8 +2,9 @@ import {Component, OnInit} from "@angular/core";
 import {DigitalAgreement} from "../catalogue/model/publish/digital-agreement";
 import {CookieService} from "ng2-cookies";
 import {BPEService} from "../bpe/bpe.service";
-import {modifyDate, selectPartyName, selectPreferredValues} from "../common/utils";
+import {selectPartyName, selectPreferredValues} from "../common/utils";
 import {CallStatus} from "../common/call-status";
+import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 /**
  * Created by suat on 28-Mar-18.
  */
@@ -36,6 +37,16 @@ export class FrameContractTabComponent implements OnInit {
         }).catch(error => {
             this.frameContractsRetrievalCallStatus.error("Failed to retrieve frame contracts");
         });
+    }
+
+    getCorrespondingPartyId(frameContract: DigitalAgreement): string {
+        let userPartyId = this.cookieService.get("company_id");
+
+        for(let party of frameContract.participantParty) {
+            if(party.partyIdentification[0].id != userPartyId) {
+                return UBLModelUtils.getPartyId(party);
+            }
+        }
     }
 
     getCorrespondingPartyName(frameContract: DigitalAgreement ): string {
