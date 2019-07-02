@@ -26,6 +26,6 @@
         <div class="col-2" (click)="navigateToQuotationDetails(frameContract)"><div class="btn btn-outline-primary">See Details</div></div>
     </div>
 </ng-container>
-<ng-container *ngIf="frameContracts.length == 0 && frameContractsRetrievalCallStatus.isComplete()">
+<ng-container *ngIf="frameContracts.length == 0 && frameContractsRetrievalCallStatus.isComplete() && !frameContractsRetrievalCallStatus.isError()">
     No frame contract exists
 </ng-container>
