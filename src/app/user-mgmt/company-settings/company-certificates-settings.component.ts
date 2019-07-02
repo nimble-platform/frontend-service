@@ -26,6 +26,7 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
     savePpapLevelCallStatus: CallStatus = new CallStatus();
 
     certFile = null;
+    editCert = null;
     addCertForm: FormGroup;
     saveCertCallStatus: CallStatus = new CallStatus();
     certificatesCallStatus: CallStatus = new CallStatus();
@@ -60,10 +61,11 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
         this.saveCertCallStatus.submit();
         const fields = model.getRawValue();
         this.userService
-            .saveCert(this.certFile, encodeURIComponent(fields.name), encodeURIComponent(fields.description), encodeURIComponent(fields.type), this.settings.companyID)
+            .saveCert(this.certFile, encodeURIComponent(fields.name), encodeURIComponent(fields.description), encodeURIComponent(fields.type), this.settings.companyID,this.editCert)
             .then(() => {
                 close();
                 this.saveCertCallStatus.callback("Certificate saved", true);
+                this.editCert = null;
                 this.onSaveEvent.emit();
             })
             .catch(error => {
@@ -113,6 +115,7 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
 
     onEditCertificate(popup, i: number): void {
         let cert = this.certificates[i];
+        this.editCert = cert.id;
         this.userService.downloadCertObject(cert.id).then(certObj => {
             let binaryObject: BinaryObject = certObj.documentReference[0].attachment.embeddedDocumentBinaryObject;
             var parts = [new Blob([binaryObject.value], {type: binaryObject.mimeCode})];
