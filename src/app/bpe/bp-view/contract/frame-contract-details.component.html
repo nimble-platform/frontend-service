@@ -73,14 +73,13 @@
                           [termsAndConditions]="quotationWrapper.quotation.termOrCondition">
     </terms-and-conditions>
 
-    <!--<note-file-view *ngIf="shownTab == 'NOTES_AND_ADDITIONAL_FILES'"-->
-                    <!--[notes]="quotationWrapper.quotation.note"-->
-                    <!--[documents]="quotationWrapper.additionalDocumentReference"-->
-                    <!--[label]="'Notes'"-->
-                    <!--[firstCol]="'col-3'"-->
-                    <!--[secondCol]="'col-3'"-->
-                    <!--[thirdCol]="'col-3'"-->
-                    <!--[lastCol]="'col-3'"-->
-                    <!--[readonly]="isLoading() || isReadOnly()"></note-file-view>-->
+    <note-file-view *ngIf="shownTab == 'NOTES_AND_ADDITIONAL_FILES'"
+                    [notes]="quotationWrapper.quotation.note"
+                    [documents]="quotationWrapper.quotation.additionalDocumentReference"
+                    [label]="'Notes'"
+                    [firstCol]="'col-2'"
+                    [lastCol]="'col-10'"
+                    [readonly]="true">
+    </note-file-view>
 </ng-container>
 <h4 *ngIf="showNoFrameContractLabel">No frame contract available.</h4>
