@@ -17,7 +17,7 @@ import { Person } from '../catalogue/model/publish/person';
 import { ResetPasswordCredentials } from './model/reset-password-credentials';
 import {UnitService} from "../common/unit-service";
 import {deliveryPeriodUnitListId, warrantyPeriodUnitListId} from "../common/constants";
-import {getAuthorizedHeaders} from "../common/utils";
+import {Certificate} from "../catalogue/model/publish/certificate";
 
 @Injectable()
 export class UserService {
@@ -327,8 +327,8 @@ export class UserService {
       });
     }
 
-    saveCert(file: File, name: string, description: string, type: string, partyId: string): Promise<void> {
-      const url = `${this.url}/company-settings/${partyId}/certificate?name=${name}&description=${description}&type=${type}`;
+    saveCert(file: File, name: string, description: string, type: string, partyId: string,certID?:string): Promise<void> {
+      const url = `${this.url}/company-settings/${partyId}/certificate?name=${name}&description=${description}&type=${type}&certID=${certID}`;
       const token = 'Bearer '+this.cookieService.get("bearer_token");
       const headers_token = new Headers({'Authorization': token});
       const form_data: FormData = new FormData();
@@ -367,6 +367,19 @@ export class UserService {
     downloadCert(id: string) {
       const url = `${this.url}/company-settings/certificate/${id}`;
       window.open(url,"_blank");
+    }
+
+    downloadCertObject(id: string): Promise<Certificate> {
+        const url = `${this.url}/company-settings/certificate/${id}/object`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
+            .get(url, { headers: headers_token, withCredentials: true })
+            .toPromise()
+            .then(res => {
+                return res.json();
+            })
+            .catch(this.handleError);
     }
 
     deleteCert(id: string, partyId: string): Promise<void> {
