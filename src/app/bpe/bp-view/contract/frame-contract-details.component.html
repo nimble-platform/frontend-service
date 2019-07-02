@@ -65,11 +65,13 @@
         </div>
     </ng-container>
 
-    <!--<terms-and-conditions *ngIf="shownTab == 'TERMS_AND_CONDITIONS'"-->
-                          <!--[needATitle]="false"-->
-                          <!--[readOnly]="true"-->
-                          <!--[termsAndConditions]="quotationWrapper.quotation.termOrCondition">-->
-    <!--</terms-and-conditions>-->
+    <terms-and-conditions *ngIf="shownTab == 'TERMS_AND_CONDITIONS'"
+                          [needATitle]="false"
+                          [readOnly]="true"
+                          [enableComparisonWithOtherTerms]="false"
+                          [showPreview]="true"
+                          [termsAndConditions]="quotationWrapper.quotation.termOrCondition">
+    </terms-and-conditions>
 
     <!--<note-file-view *ngIf="shownTab == 'NOTES_AND_ADDITIONAL_FILES'"-->
                     <!--[notes]="quotationWrapper.quotation.note"-->
