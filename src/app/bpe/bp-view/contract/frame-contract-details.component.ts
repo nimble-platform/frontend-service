@@ -1,6 +1,5 @@
 import {Component, Input, OnInit} from "@angular/core";
-import {ActivatedRoute} from "@angular/router";
-import {Quotation} from "../../../catalogue/model/publish/quotation";
+import {ActivatedRoute, Router} from "@angular/router";
 import {DocumentService} from "../document-service";
 import {CallStatus} from "../../../common/call-status";
 import {CatalogueService} from "../../../catalogue/catalogue.service";
@@ -36,7 +35,8 @@ export class FrameContractDetailsComponent implements OnInit {
                 private frameContractTransitionService: FrameContractTransitionService,
                 private documentService: DocumentService,
                 private cookieService: CookieService,
-                private route: ActivatedRoute) {
+                private route: ActivatedRoute,
+                private router: Router) {
     }
 
     ngOnInit() {
