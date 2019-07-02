@@ -16,20 +16,14 @@
     </div>
     <div class="row data-row" *ngFor="let frameContract of frameContracts">
         <div class="col-3">
-            {{getProductName(frameContract.item.name)}}
-            <a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: frameContract.item.catalogueDocumentReference.id, id: frameContract.item.manufacturersItemIdentification.id}">
-                <i class="fas fa-external-link-alt btn-light"></i>
-            </a>
+            <span class="clickable" (click)="navigateToProductDetails(frameContract)">{{getProductName(frameContract.item.name)}}</span>
         </div>
         <div class="col-3">
-            {{getCorrespondingPartyName(frameContract)}}
-            <a class="text-std" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: getCorrespondingPartyId(frameContract)}">
-                <i class="fas fa-external-link-alt btn-light"></i>
-            </a>
+            <span class="clickable" (click)="navigateToCompanyDetails(frameContract)">{{getCorrespondingPartyName(frameContract)}}</span>
         </div>
         <div class="col-2">{{frameContract.digitalAgreementTerms.validityPeriod.startDate}}</div>
         <div class="col-2">{{frameContract.digitalAgreementTerms.validityPeriod.endDate}}</div>
-        <div class="col-2"><div class="btn btn-outline-primary">See Details</div></div>
+        <div class="col-2" (click)="navigateToQuotationDetails(frameContract)"><div class="btn btn-outline-primary">See Details</div></div>
     </div>
 </ng-container>
 <ng-container *ngIf="frameContracts.length == 0 && frameContractsRetrievalCallStatus.isComplete()">

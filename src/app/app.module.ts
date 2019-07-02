@@ -31,6 +31,7 @@ import { AnalyticsService } from './analytics/analytics.service';
 import { EpcService } from './bpe/bp-view/epc-service';
 import {DocumentService} from "./bpe/bp-view/document-service";
 import {LogisticPublishingService} from './catalogue/publish/logistic-publishing.service';
+import {FrameContractTransitionService} from "./bpe/bp-view/contract/frame-contract-transition.service";
 
 @NgModule({
     imports: [
@@ -53,6 +54,7 @@ import {LogisticPublishingService} from './catalogue/publish/logistic-publishing
         DataChannelService,
 		BPService,
 		BPDataService,
+        FrameContractTransitionService,
 		CatalogueService,
         CategoryService,
         LogisticPublishingService,

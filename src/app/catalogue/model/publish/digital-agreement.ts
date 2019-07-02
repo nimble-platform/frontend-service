@@ -3,7 +3,7 @@ import {Party} from "./party";
 import {Item} from "./item";
 import {DocumentReference} from "./document-reference";
 export class DigitalAgreement {
-    constructor(public id: string = "",
+    constructor(public hjid: number = null,
                 public participantParty: Party[] = [],
                 public item: Item = null,
                 public digitalAgreementTerms: DigitalAgreementTerms = new DigitalAgreementTerms(),

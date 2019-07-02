@@ -426,6 +426,15 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
+	getFrameContractByHjid(hjid: number): Promise<DigitalAgreement> {
+		const url = `${this.url}/contract/digital-agreement/${hjid}`;
+		return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
 	getAllFrameContractsForParty(partyId: string): Promise<DigitalAgreement[]> {
 		const url = `${this.url}/contract/digital-agreement/all?partyId=${partyId}`;
 		return this.http

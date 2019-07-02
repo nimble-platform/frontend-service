@@ -5,6 +5,7 @@ import {BPEService} from "../bpe/bpe.service";
 import {selectPartyName, selectPreferredValues} from "../common/utils";
 import {CallStatus} from "../common/call-status";
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
+import {Router} from "@angular/router";
 /**
  * Created by suat on 28-Mar-18.
  */
@@ -21,7 +22,8 @@ export class FrameContractTabComponent implements OnInit {
     getProductName = selectPreferredValues;
 
     constructor(private bpeService: BPEService,
-                private cookieService: CookieService) {}
+                private cookieService: CookieService,
+                private router: Router) {}
 
     ngOnInit() {
         this.retrieveFrameContracts();
@@ -37,6 +39,29 @@ export class FrameContractTabComponent implements OnInit {
         }).catch(error => {
             this.frameContractsRetrievalCallStatus.error("Failed to retrieve frame contracts");
         });
+    }
+
+    navigateToProductDetails(frameContract: DigitalAgreement): void {
+        this.router.navigate(['/product-details'],
+            {
+                queryParams: {
+                    catalogueId: frameContract.item.catalogueDocumentReference.id,
+                    id: frameContract.item.manufacturersItemIdentification.id
+                }
+            });
+    }
+
+    navigateToCompanyDetails(frameContract: DigitalAgreement): void {
+        this.router.navigate(['/user-mgmt/company-details'],
+            {
+                queryParams: {
+                    id: this.getCorrespondingPartyId(frameContract)
+                }
+            });
+    }
+
+    navigateToQuotationDetails(frameContract: DigitalAgreement): void {
+        this.router.navigate(['/bpe/frame-contract/' + frameContract.hjid]);
     }
 
     getCorrespondingPartyId(frameContract: DigitalAgreement): string {
