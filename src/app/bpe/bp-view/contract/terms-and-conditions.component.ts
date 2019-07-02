@@ -21,18 +21,19 @@ export class TermsAndConditionsComponent implements OnInit {
     @Input() buyerPartyId:string;
     @Input() sellerPartyId:string;
     @Input() readOnly:boolean = false;
+    @Input() enableComparisonWithOtherTerms: boolean = true; // if true, original and current terms are compared and differences are highlighted
     @Input() rfqId:string = null;
     @Input() documentType:string; // "order", "rfq", "quotation";
     _originalTermAndConditionClauses:Clause[] = null; // original terms and conditions of the object
     _termsAndConditions:Clause[] = []; // updated terms and conditions of the object
     @Input() needATitle:boolean = true; // whether we need to add a title before displaying terms and conditions
+    @Input showPreview: boolean = false; // whether the terms and conditions list is collapsed or not
 
     // Outputs
     @Output() onIncotermChanged = new EventEmitter();
     @Output() onTradingTermChanged = new EventEmitter();
     @Output() onClauseUpdated = new EventEmitter();
 
-    showPreview: boolean = false;
     callStatus : CallStatus = new CallStatus();
 
     showSection:boolean[] = [];
@@ -65,27 +66,29 @@ export class TermsAndConditionsComponent implements OnInit {
         window.crypto.getRandomValues(array);
         this.randomComponentId = "" + array[0];
 
-        Promise.all([
-            this.userService.getSettingsForParty(this.sellerPartyId),
-            this.unitService.getCachedUnitList(deliveryPeriodUnitListId),
-            this.unitService.getCachedUnitList(warrantyPeriodUnitListId)
+        if(this.enableComparisonWithOtherTerms) {
+            Promise.all([
+                this.userService.getSettingsForParty(this.sellerPartyId),
+                this.unitService.getCachedUnitList(deliveryPeriodUnitListId),
+                this.unitService.getCachedUnitList(warrantyPeriodUnitListId)
 
-        ]).then(([sellerPartySettings, deliveryPeriodUnits, warrantyPeriodUnits]) => {
+            ]).then(([sellerPartySettings, deliveryPeriodUnits, warrantyPeriodUnits]) => {
 
-            // populate available incoterms
-            this.INCOTERMS = sellerPartySettings.negotiationSettings.incoterms;
-            // populate available payment terms
-            this.PAYMENT_TERMS = sellerPartySettings.negotiationSettings.paymentTerms;
+                // populate available incoterms
+                this.INCOTERMS = sellerPartySettings.negotiationSettings.incoterms;
+                // populate available payment terms
+                this.PAYMENT_TERMS = sellerPartySettings.negotiationSettings.paymentTerms;
 
-            // if there is no need to have a title, then display the preview
-            if(!this.needATitle){
-                this.showPreview = true;
-            }
+                // if there is no need to have a title, then display the preview
+                if (!this.needATitle) {
+                    this.showPreview = true;
+                }
 
-            this.callStatus.callback("Successfully fetched terms and conditions", true);
-        }).catch(error => {
-            this.callStatus.error("Error while fething terms and conditions",error);
-        });
+                this.callStatus.callback("Successfully fetched terms and conditions", true);
+            }).catch(error => {
+                this.callStatus.error("Error while fething terms and conditions", error);
+            });
+        }
     }
 
     displayTermsAndConditions(){
