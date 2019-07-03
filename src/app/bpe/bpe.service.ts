@@ -11,12 +11,7 @@ import {CookieService} from "ng2-cookies";
 import {Contract} from "../catalogue/model/publish/contract";
 import {Clause} from "../catalogue/model/publish/clause";
 import { CollaborationRole } from "./model/collaboration-role";
-import { ItemInformationResponse } from '../catalogue/model/publish/item-information-response';
-import { ItemInformationRequest } from '../catalogue/model/publish/item-information-request';
 import { Order } from '../catalogue/model/publish/order';
-import { TradingTerm } from '../catalogue/model/publish/trading-term';
-import { Quotation } from '../catalogue/model/publish/quotation';
-import { RequestForQuotation } from '../catalogue/model/publish/request-for-quotation';
 import { EvidenceSupplied } from '../catalogue/model/publish/evidence-supplied';
 import { Comment } from '../catalogue/model/publish/comment';
 import {SearchContextService} from '../simple-search/search-context.service';
@@ -424,6 +419,24 @@ export class BPEService {
 
 	getFrameContract(sellerId: string, buyerId: string, productId: string): Promise<DigitalAgreement> {
 		const url = `${this.url}/contract/digital-agreement?sellerId=${sellerId}&buyerId=${buyerId}&productId=${productId}`;
+		return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
+	getFrameContractByHjid(hjid: number): Promise<DigitalAgreement> {
+		const url = `${this.url}/contract/digital-agreement/${hjid}`;
+		return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
+	getAllFrameContractsForParty(partyId: string): Promise<DigitalAgreement[]> {
+		const url = `${this.url}/contract/digital-agreement/all?partyId=${partyId}`;
 		return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()

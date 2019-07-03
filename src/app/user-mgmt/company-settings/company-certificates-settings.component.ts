@@ -7,6 +7,7 @@ import { CookieService } from "ng2-cookies";
 import { FormGroup, FormBuilder } from "@angular/forms";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import * as myGlobals from '../../globals';
+import {BinaryObject} from "../../catalogue/model/publish/binary-object";
 
 @Component({
     selector: "company-certificates-settings",
@@ -25,6 +26,7 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
     savePpapLevelCallStatus: CallStatus = new CallStatus();
 
     certFile = null;
+    editCert = null;
     addCertForm: FormGroup;
     saveCertCallStatus: CallStatus = new CallStatus();
     certificatesCallStatus: CallStatus = new CallStatus();
@@ -59,10 +61,11 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
         this.saveCertCallStatus.submit();
         const fields = model.getRawValue();
         this.userService
-            .saveCert(this.certFile, encodeURIComponent(fields.name), encodeURIComponent(fields.description), encodeURIComponent(fields.type), this.settings.companyID)
+            .saveCert(this.certFile, encodeURIComponent(fields.name), encodeURIComponent(fields.description), encodeURIComponent(fields.type), this.settings.companyID,this.editCert)
             .then(() => {
                 close();
                 this.saveCertCallStatus.callback("Certificate saved", true);
+                this.editCert = null;
                 this.onSaveEvent.emit();
             })
             .catch(error => {
@@ -108,6 +111,26 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
             .catch(error => {
                 this.savePpapLevelCallStatus.error("Error while saving Ppap level.", error);
             });
+    }
+
+    onEditCertificate(popup, i: number): void {
+        let cert = this.certificates[i];
+        this.editCert = cert.id;
+        this.userService.downloadCertObject(cert.id).then(certObj => {
+            let binaryObject: BinaryObject = certObj.documentReference[0].attachment.embeddedDocumentBinaryObject;
+            var parts = [new Blob([binaryObject.value], {type: binaryObject.mimeCode})];
+            this.certFile = new File(parts, binaryObject.fileName, {
+                type: binaryObject.mimeCode
+            });
+
+            this.addCertForm = this._fb.group({
+                name: [cert.name],
+                description: [cert.description],
+                type: [cert.type]
+            });
+            this.certFile = null;
+            this.modalService.open(popup);
+        });
     }
 
     onDownloadCertificate(id: string) {

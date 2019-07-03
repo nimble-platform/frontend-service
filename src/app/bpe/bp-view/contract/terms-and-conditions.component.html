@@ -9,7 +9,7 @@
 </div>
 <call-status [callStatus]="callStatus"></call-status>
 <div class="col-12 section" *ngIf="showPreview && _termsAndConditions">
-    <div *ngFor="let clause of _termsAndConditions;let i=index">
+    <div *ngFor="let clause of _termsAndConditions;let i=index" class="mb-1">
         <button [ngClass]="isClauseUpdated(clause) ? 'btn btn-primary btn-outline-primary small-button' : 'btn btn-danger small-button'" (click)="showSection[i] = !showSection[i]; setSectionText(i)">
             {{getClauseName(clause)}}
         </button>

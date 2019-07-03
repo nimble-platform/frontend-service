@@ -43,6 +43,7 @@ import { TransportNegotiationResponseComponent } from "./bp-view/transport-negot
 import { TransportServiceDetailsComponent } from "./bp-view/transport-negotiation/transport-service-details.component";
 import { TransportNegotiationAddressComponent } from "./bp-view/transport-negotiation/transport-negotiation-address.component";
 import {TermsAndConditionsComponent} from './bp-view/contract/terms-and-conditions.component';
+import {FrameContractDetailsComponent} from "./bp-view/contract/frame-contract-details.component";
 
 
 @NgModule({
@@ -65,6 +66,7 @@ import {TermsAndConditionsComponent} from './bp-view/contract/terms-and-conditio
         ProductBpStepsComponent,
         OrderComponent,
         TermsAndConditionsComponent,
+        FrameContractDetailsComponent,
         FulfilmentComponent,
         DispatchAdviceComponent,
         ReceiptAdviceComponent,

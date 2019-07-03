@@ -359,6 +359,7 @@ export class DashboardThreadedComponent implements OnInit{
             case TABS.COMPARE:
             case TABS.PROJECTS:
             case TABS.PERFORMANCE:
+            case TABS.FRAME_CONTRACTS:
             case TABS.SALES:
                 this.queryOrdersIfNeeded();
                 return;
@@ -378,7 +379,14 @@ export class DashboardThreadedComponent implements OnInit{
             }
         } else {
             const upped = tab.toUpperCase()
-            if(upped === TABS.CATALOGUE || upped === TABS.SALES || upped === TABS.WELCOME || upped === TABS.FAVOURITE || upped == TABS.COMPARE || upped == TABS.PROJECTS || upped == TABS.PERFORMANCE) {
+            if(upped === TABS.CATALOGUE ||
+                upped === TABS.SALES ||
+                upped === TABS.WELCOME ||
+                upped === TABS.FAVOURITE ||
+                upped == TABS.COMPARE ||
+                upped == TABS.PROJECTS ||
+                upped == TABS.PERFORMANCE ||
+                upped == TABS.FRAME_CONTRACTS) {
                 return upped;
             }
         }

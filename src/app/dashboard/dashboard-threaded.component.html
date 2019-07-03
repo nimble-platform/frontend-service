@@ -42,6 +42,12 @@
                     <a href id="SALES" *ngIf="this.appComponent.checkRoles('sales')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.SALES}" (click)="onChangeTab($event)" i18n>Sales <span *ngIf="sellerCounter>0" class="badge badge-pill badge-danger ml-1">{{sellerCounter}}</span></a>
                 </li>
                 <li class="nav-item">
+                    <a href id="PROJECTS" *ngIf="config.projectsEnabled && this.appComponent.checkRoles('projects')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.PROJECTS}" (click)="onChangeTab($event)" i18n>Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a href id="FRAME_CONTRACTS" *ngIf="config.frameContractTabEnabled && this.appComponent.checkRoles('purchases')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.FRAME_CONTRACTS}" (click)="onChangeTab($event)" i18n>Frame Contracts</a>
+                </li>
+                <li class="nav-item">
                     <a href id="CATALOGUE" *ngIf="this.appComponent.checkRoles('catalogue')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.CATALOGUE}" (click)="onChangeTab($event)" i18n>Catalogue</a>
                 </li>
                 <li class="nav-item">
@@ -49,9 +55,6 @@
                 </li>
                 <li class="nav-item">
                     <a href id="COMPARE" *ngIf="this.appComponent.checkRoles('compare')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.COMPARE}" (click)="onChangeTab($event)" i18n>Compare</a>
-                </li>
-                <li class="nav-item">
-                    <a href id="PROJECTS" *ngIf="config.projectsEnabled && this.appComponent.checkRoles('projects')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.PROJECTS}" (click)="onChangeTab($event)" i18n>Projects</a>
                 </li>
                 <li class="nav-item">
                     <a href id="PERFORMANCE" *ngIf="this.appComponent.checkRoles('performance')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.PERFORMANCE}" (click)="onChangeTab($event)" i18n>Performance</a>
@@ -520,6 +523,10 @@
                 <call-status [callStatus]="queryStatus" [large]="true"></call-status>
             </div>
     </div>
+
+    <!-- Frame contracts tab -->
+    <frame-contract-tab *ngIf="queryParameters.tab === TABS.FRAME_CONTRACTS">
+    </frame-contract-tab>
 
     <!-- Performance tab -->
      <div *ngIf="queryParameters.tab === TABS.PERFORMANCE" class="row">
