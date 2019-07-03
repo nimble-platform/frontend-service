@@ -6,6 +6,7 @@ import { CategoryService } from '../catalogue/category/category.service';
 import * as myGlobals from '../globals';
 import {selectNameFromLabelObject} from '../common/utils';
 import { DomSanitizer } from "@angular/platform-browser";
+import { UserService } from "../user-mgmt/user.service";
 
 @Component({
     selector: "platform-analytics",
@@ -43,18 +44,20 @@ export class PlatformAnalyticsComponent implements OnInit {
     product_cat_mix = myGlobals.product_cat_mix;
 	getMultilingualLabel = selectNameFromLabelObject;
 	config = myGlobals.config;
-  dashboards = [];
-  selectedTab;
+  	dashboards = [];
+  	selectedTab;
 
     constructor(private analyticsService: AnalyticsService,
         private simpleSearchService: SimpleSearchService,
 		private categoryService: CategoryService,
-    private sanitizer: DomSanitizer
+		private userService:UserService,
+    	private sanitizer: DomSanitizer
         ) {
 
     }
 
     ngOnInit(): void {
+		this.setCookie();
         this.selectedTab = this.config.kibanaEnabled? "LOG" : "DB";
         if (this.config.kibanaEnabled) {
           let tmpDashboards = this.config.kibanaConfig.dashboards;
@@ -94,7 +97,11 @@ export class PlatformAnalyticsComponent implements OnInit {
 
     isLoading(): boolean {
         return this.callStatus.fb_submitted;
-    }
+	}
+	
+	setCookie(){
+		this.userService.getCallKibana().then().catch();
+	}
 
     private getCatTree(): void {
 		this.categoriesCallStatus.submit();
