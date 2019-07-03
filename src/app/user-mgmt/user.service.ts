@@ -468,4 +468,14 @@ export class UserService {
         .then(() => {})
         .catch(this.handleError)
     }
+
+    getCallKibana(){
+        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': 'Basic YWRtaW46KnBsYXRmb3JtKg==' });
+        return this.http
+        .get('http://nimble-staging.salzburgresearch.at/kibana/api/console/api_server?sense_version=%40%40SENSE_VERSION&apis=es_5_0', { headers: headers_token})
+        .toPromise()
+        .then(res => {
+        })
+        .catch(this.handleError);
+    }
 }
