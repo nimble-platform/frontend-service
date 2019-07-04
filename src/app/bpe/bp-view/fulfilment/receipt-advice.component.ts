@@ -70,7 +70,7 @@ export class ReceiptAdviceComponent implements OnInit {
             this.bpDataService
         );
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(
-            vars, this.processMetadata.processId);
+            vars, this.processMetadata.processInstanceId);
 
         //this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim)

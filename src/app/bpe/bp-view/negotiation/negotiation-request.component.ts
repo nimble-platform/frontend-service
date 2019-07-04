@@ -296,7 +296,7 @@ export class NegotiationRequestComponent implements OnInit {
         }
 
         const rfq: RequestForQuotation = copy(this.rfq);
-        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processId).then(() => {
+        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processInstanceId).then(() => {
             this.documentService.updateCachedDocument(rfq.id,rfq);
             this.callStatus.callback("Terms updated", true);
             var tab = "PURCHASES";

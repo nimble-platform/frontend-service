@@ -229,7 +229,7 @@ export class OrderComponent implements OnInit {
         this.submitCallStatus.submit();
         const order = copy(this.bpDataService.order);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(order),"ORDER",this.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(order),"ORDER",this.processMetadata.processInstanceId)
             .then(() => {
                 this.documentService.updateCachedDocument(order.id,order);
                 this.submitCallStatus.callback("Order updated", true);
@@ -257,7 +257,7 @@ export class OrderComponent implements OnInit {
         );
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(
             vars,
-            this.processMetadata.processId
+            this.processMetadata.processInstanceId
         );
 
         //this.submitCallStatus.submit();

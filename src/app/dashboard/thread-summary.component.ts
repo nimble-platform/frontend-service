@@ -128,7 +128,7 @@ export class ThreadSummaryComponent implements OnInit {
             new BpURLParams(
                 this.titleEvent.product.catalogueDocumentReference.id,
                 this.titleEvent.product.manufacturersItemIdentification.id,
-                this.titleEvent.processId));
+                this.titleEvent.processInstanceId));
     }
 
     private fetchEvents(): void {
@@ -575,7 +575,7 @@ export class ThreadSummaryComponent implements OnInit {
         reviews.push(comm);
         this.saveCallStatusRating.submit();
         this.bpeService
-            .postRatings(this.lastEventPartnerID, this.lastEvent.processId, ratings, reviews)
+            .postRatings(this.lastEventPartnerID, this.lastEvent.processInstanceId, ratings, reviews)
             .then(() => {
                 this.saveCallStatusRating.callback("Rating saved", true);
                 close();
@@ -594,7 +594,7 @@ export class ThreadSummaryComponent implements OnInit {
         reviews.push(comm);
         this.saveCallStatusRating.submit();
         this.bpeService
-            .postRatings(this.lastEventPartnerID, this.lastEvent.processId, ratings, reviews)
+            .postRatings(this.lastEventPartnerID, this.lastEvent.processInstanceId, ratings, reviews)
             .then(() => {
                 this.saveCallStatusRating.callback("Rating saved", true);
                 close();

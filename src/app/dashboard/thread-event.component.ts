@@ -47,12 +47,12 @@ export class ThreadEventComponent implements OnInit {
             new BpURLParams(
                 this.event.product.catalogueDocumentReference.id,
                 this.event.product.manufacturersItemIdentification.id,
-                this.event.processId));
+                this.event.processInstanceId));
     }
 
     cancelBP(){
         if (confirm("Are you sure that you want to cancel this process?")){
-            this.bpeService.cancelBusinessProcess(this.event.processId)
+            this.bpeService.cancelBusinessProcess(this.event.processInstanceId)
                 .then(res => {
                     this.processCancelled.next();
                 })

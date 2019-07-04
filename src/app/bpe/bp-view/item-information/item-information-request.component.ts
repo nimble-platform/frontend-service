@@ -128,7 +128,7 @@ export class ItemInformationRequestComponent implements OnInit {
         this.callStatus.submit();
         const itemInformationRequest: ItemInformationRequest = copy(this.bpDataService.itemInformationRequest);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(itemInformationRequest),"ITEMINFORMATIONREQUEST",this.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(itemInformationRequest),"ITEMINFORMATIONREQUEST",this.processMetadata.processInstanceId)
             .then(() => {
                 this.documentService.updateCachedDocument(itemInformationRequest.id,itemInformationRequest);
                 this.callStatus.callback("Item Information Request updated", true);

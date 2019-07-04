@@ -215,7 +215,7 @@ export class PpapDocumentSelectComponent implements OnInit {
         ppap.additionalDocumentReference = this.additionalDocuments;
         ppap.documentType = this.DOCUMENTS.filter((_, i) => this.selectedDocuments[i]).map(doc => doc.name);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(ppap),"PPAPREQUEST",this.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(ppap),"PPAPREQUEST",this.processMetadata.processInstanceId)
             .then(() => {
                 this.documentService.updateCachedDocument(ppap.id,ppap);
                 this.callStatus.callback("Ppap request updated", true);

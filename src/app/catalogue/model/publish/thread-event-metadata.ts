@@ -7,7 +7,7 @@ export class ThreadEventMetadata {
     constructor(
         public processType: ProcessType,
         public presentableProcessType: string,
-        public processId: string,
+        public processInstanceId: string,
         public startTime: string,
         public tradingPartner: string,
         public product: Item,

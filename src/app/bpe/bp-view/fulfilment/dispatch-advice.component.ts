@@ -177,7 +177,7 @@ export class DispatchAdviceComponent implements OnInit {
 
         let dispatchAdvice: DespatchAdvice = copy(this.bpDataService.despatchAdvice);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(dispatchAdvice),"DESPATCHADVICE",this.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(dispatchAdvice),"DESPATCHADVICE",this.processMetadata.processInstanceId)
             .then(() => {
                 this.documentService.updateCachedDocument(dispatchAdvice.id,dispatchAdvice);
                 this.callStatus.callback("Dispatch Advice updated", true);
