@@ -44,6 +44,8 @@ import { TransportServiceDetailsComponent } from "./bp-view/transport-negotiatio
 import { TransportNegotiationAddressComponent } from "./bp-view/transport-negotiation/transport-negotiation-address.component";
 import {TermsAndConditionsComponent} from './bp-view/contract/terms-and-conditions.component';
 import {FrameContractDetailsComponent} from "./bp-view/contract/frame-contract-details.component";
+import {ThreadSummaryComponent} from "./bp-summary/thread-summary.component";
+import {ThreadEventComponent} from "./bp-summary/thread-event.component";
 
 
 @NgModule({
@@ -55,7 +57,7 @@ import {FrameContractDetailsComponent} from "./bp-view/contract/frame-contract-d
         ReactiveFormsModule, 
         BPERoutingModule, 
         CatalogueModule, 
-        ProductDetailsModule, 
+        ProductDetailsModule,
         NgbModule.forRoot()
     ],
     declarations: [
@@ -91,6 +93,8 @@ import {FrameContractDetailsComponent} from "./bp-view/contract/frame-contract-d
         ClauseComponent,
         PpapClauseComponent,
         ShipmentInputComponent,
+        ThreadSummaryComponent,
+        ThreadEventComponent
     ],
     exports: [
         BPConfigureComponent,
@@ -105,6 +109,7 @@ import {FrameContractDetailsComponent} from "./bp-view/contract/frame-contract-d
         ContractComponent,
         ClauseComponent,
         PpapClauseComponent,
+        ThreadSummaryComponent
     ],
     providers: []
 })

@@ -223,11 +223,11 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             return Promise.resolve(null);
         }
         if(this.searchContextService.getAssociatedProcessMetadata()) {
-            const processId = this.searchContextService.getAssociatedProcessMetadata().processId;
+            const processId = this.searchContextService.getAssociatedProcessMetadata().processInstanceId;
             return this.bpeService.getOriginalOrderForProcess(processId)
         }
         if(this.processMetadata) {
-            const processId = this.processMetadata.processId;
+            const processId = this.processMetadata.processInstanceId;
             return this.bpeService.getOriginalOrderForProcess(processId);
         }
         return Promise.resolve(null);

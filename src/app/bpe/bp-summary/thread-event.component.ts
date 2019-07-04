@@ -1,12 +1,12 @@
 import {Component, OnInit, Input, Output, EventEmitter} from "@angular/core";
 import { Router } from "@angular/router";
-import { BPDataService } from "../bpe/bp-view/bp-data-service";
-import { ProcessInstanceGroup } from "../bpe/model/process-instance-group";
-import { ThreadEventMetadata } from "../catalogue/model/publish/thread-event-metadata";
-import {BPEService} from "../bpe/bpe.service";
-import {BpActivityEvent} from '../catalogue/model/publish/bp-start-event';
-import {BpUserRole} from '../bpe/model/bp-user-role';
-import {BpURLParams} from '../catalogue/model/publish/bpURLParams';
+import { BPDataService } from "../bp-view/bp-data-service";
+import { ProcessInstanceGroup } from "../model/process-instance-group";
+import { ThreadEventMetadata } from "../../catalogue/model/publish/thread-event-metadata";
+import {BPEService} from "../bpe.service";
+import {BpActivityEvent} from '../../catalogue/model/publish/bp-start-event';
+import {BpUserRole} from '../model/bp-user-role';
+import {BpURLParams} from '../../catalogue/model/publish/bpURLParams';
 
 @Component({
     selector: "thread-event",
