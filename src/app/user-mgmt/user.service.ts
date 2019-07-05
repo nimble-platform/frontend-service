@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import { ResponseContentType, Http, RequestOptions, Headers } from '@angular/http';
 import { CookieService } from 'ng2-cookies';
 import 'rxjs/add/operator/toPromise';
+import { Observable } from 'rxjs/Observable';
+import { Subscriber } from 'rxjs/Subscriber';
 import * as myGlobals from '../globals';
 import {Party} from "../catalogue/model/publish/party";
 import { CompanySettings } from './model/company-settings';
@@ -485,11 +487,28 @@ export class UserService {
 
     getCallKibana(){
         const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': 'Basic YWRtaW46KnBsYXRmb3JtKg==' });
-        return this.http
-        .get('http://nimble-staging.salzburgresearch.at/kibana/api/console/api_server?sense_version=%40%40SENSE_VERSION&apis=es_5_0', { headers: headers_token})
-        .toPromise()
-        .then(res => {
-        })
-        .catch(this.handleError);
+        let options = new RequestOptions();
+        options.headers = new Headers();
+        options.headers.append('authorization', 'Basic YWRtaW46KnBsYXRmb3JtKg==');
+        options.responseType = ResponseContentType.Blob;
+
+        return new Observable((observer: Subscriber<any>) => {
+            let objectUrl: string = null;
+
+            this.http
+                .get("http://nimble-staging.salzburgresearch.at/kibana/app/kibana#/dashboard/27836650-8907-11e9-9609-0520e65d66da?_g=(refreshInterval%3A(display%3A'30%20minutes'%2Cpause%3A!f%2Csection%3A2%2Cvalue%3A1800000)%2Ctime%3A(from%3Anow%2FM%2Cmode%3Aquick%2Cto%3Anow%2FM))", options)
+                .subscribe(m => {
+                    objectUrl = URL.createObjectURL(m.blob());
+                    observer.next(objectUrl);
+                });
+
+            return () => {
+                if (objectUrl) {
+                    URL.revokeObjectURL(objectUrl);
+                    objectUrl = null;
+                }
+            };
+        });
+        
     }
 }
