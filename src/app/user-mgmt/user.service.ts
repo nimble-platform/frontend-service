@@ -498,7 +498,7 @@ export class UserService {
             this.http
                 .get("http://nimble-staging.salzburgresearch.at/kibana/app/kibana#/dashboard/27836650-8907-11e9-9609-0520e65d66da?_g=(refreshInterval%3A(display%3A'30%20minutes'%2Cpause%3A!f%2Csection%3A2%2Cvalue%3A1800000)%2Ctime%3A(from%3Anow%2FM%2Cmode%3Aquick%2Cto%3Anow%2FM))", options)
                 .subscribe(m => {
-                    objectUrl = m.toString();
+                    objectUrl = "http://nimble-staging.salzburgresearch.at/kibana/app/kibana#/dashboard/27836650-8907-11e9-9609-0520e65d66da?_g=(refreshInterval%3A(display%3A'30%20minutes'%2Cpause%3A!f%2Csection%3A2%2Cvalue%3A1800000)%2Ctime%3A(from%3Anow%2FM%2Cmode%3Aquick%2Cto%3Anow%2FM))";
                     observer.next(objectUrl);
                 });
 
