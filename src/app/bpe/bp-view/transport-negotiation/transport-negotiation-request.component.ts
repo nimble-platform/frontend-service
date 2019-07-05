@@ -158,7 +158,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
             rfq.requestForQuotationLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
         }
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processInstanceId)
             .then(() => {
                 this.callStatus.callback("Terms updated", true);
                 var tab = "PURCHASES";

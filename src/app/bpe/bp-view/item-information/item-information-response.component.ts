@@ -94,7 +94,7 @@ export class ItemInformationResponseComponent implements OnInit {
             this.bpDataService.itemInformationResponse,
             this.bpDataService
         );
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processId);
+        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processInstanceId);
 
         //this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim).then(() => {

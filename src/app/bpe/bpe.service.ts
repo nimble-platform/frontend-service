@@ -17,6 +17,7 @@ import { Comment } from '../catalogue/model/publish/comment';
 import {SearchContextService} from '../simple-search/search-context.service';
 import {DashboardProcessInstanceDetails} from './model/dashboard-process-instance-details';
 import {DigitalAgreement} from "../catalogue/model/publish/digital-agreement";
+import {CollaborationGroup} from "./model/collaboration-group";
 
 @Injectable()
 export class BPEService {
@@ -64,7 +65,7 @@ export class BPEService {
 
 			// if we have a precedingGroupId,then we need also a precedingProcessId
 			if(this.bpDataService.precedingProcessId == null){
-                url += '&precedingPid=' + this.searchContextService.getAssociatedProcessMetadata().processId;
+                url += '&precedingPid=' + this.searchContextService.getAssociatedProcessMetadata().processInstanceId;
             }
 		}
 		return this.http
@@ -234,6 +235,15 @@ export class BPEService {
 		    url += '&isProject='+isProject;
 		}
 
+		return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
+	getGroupDetailsForProcessInstance(processInstanceId: string): Promise<CollaborationGroup> {
+		let url:string = `${this.url}/processInstance/${processInstanceId}/collaboration-group`;
 		return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
