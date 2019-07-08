@@ -17,22 +17,22 @@ import {TradingTerm} from '../../../catalogue/model/publish/trading-term';
 export class TermsAndConditionsComponent implements OnInit {
 
     // Inputs
-    @Input() orderId:string = null;
     @Input() buyerPartyId:string;
     @Input() sellerPartyId:string;
     @Input() readOnly:boolean = false;
+    @Input() enableComparisonWithOtherTerms: boolean = true; // if true, original and current terms are compared and differences are highlighted
     @Input() rfqId:string = null;
     @Input() documentType:string; // "order", "rfq", "quotation";
     _originalTermAndConditionClauses:Clause[] = null; // original terms and conditions of the object
     _termsAndConditions:Clause[] = []; // updated terms and conditions of the object
     @Input() needATitle:boolean = true; // whether we need to add a title before displaying terms and conditions
+    @Input() showPreview: boolean = false; // whether the terms and conditions list is collapsed or not
 
     // Outputs
     @Output() onIncotermChanged = new EventEmitter();
     @Output() onTradingTermChanged = new EventEmitter();
     @Output() onClauseUpdated = new EventEmitter();
 
-    showPreview: boolean = false;
     callStatus : CallStatus = new CallStatus();
 
     showSection:boolean[] = [];
@@ -59,33 +59,34 @@ export class TermsAndConditionsComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.callStatus.submit();
-
         let array = new Uint32Array(1);
         window.crypto.getRandomValues(array);
         this.randomComponentId = "" + array[0];
 
-        Promise.all([
-            this.userService.getSettingsForParty(this.sellerPartyId),
-            this.unitService.getCachedUnitList(deliveryPeriodUnitListId),
-            this.unitService.getCachedUnitList(warrantyPeriodUnitListId)
+        if(this.enableComparisonWithOtherTerms) {
+            this.callStatus.submit();
+            Promise.all([
+                this.userService.getSettingsForParty(this.sellerPartyId),
+                this.unitService.getCachedUnitList(deliveryPeriodUnitListId),
+                this.unitService.getCachedUnitList(warrantyPeriodUnitListId)
 
-        ]).then(([sellerPartySettings, deliveryPeriodUnits, warrantyPeriodUnits]) => {
+            ]).then(([sellerPartySettings, deliveryPeriodUnits, warrantyPeriodUnits]) => {
 
-            // populate available incoterms
-            this.INCOTERMS = sellerPartySettings.negotiationSettings.incoterms;
-            // populate available payment terms
-            this.PAYMENT_TERMS = sellerPartySettings.negotiationSettings.paymentTerms;
+                // populate available incoterms
+                this.INCOTERMS = sellerPartySettings.negotiationSettings.incoterms;
+                // populate available payment terms
+                this.PAYMENT_TERMS = sellerPartySettings.negotiationSettings.paymentTerms;
 
-            // if there is no need to have a title, then display the preview
-            if(!this.needATitle){
-                this.showPreview = true;
-            }
+                // if there is no need to have a title, then display the preview
+                if (!this.needATitle) {
+                    this.showPreview = true;
+                }
 
-            this.callStatus.callback("Successfully fetched terms and conditions", true);
-        }).catch(error => {
-            this.callStatus.error("Error while fething terms and conditions",error);
-        });
+                this.callStatus.callback("Successfully fetched terms and conditions", true);
+            }).catch(error => {
+                this.callStatus.error("Error while fething terms and conditions", error);
+            });
+        }
     }
 
     displayTermsAndConditions(){
@@ -353,8 +354,8 @@ export class TermsAndConditionsComponent implements OnInit {
 
     // checks whether the terms are updated or not with respect to the original clause
     isClauseUpdated(clause:Clause){
-        // if we have an order, we do not need to check the clause is changed or not
-        if(this.orderId){
+        // if the comparison is disabled, we do not need to check the clause is changed or not
+        if(!this.enableComparisonWithOtherTerms){
             return true;
         }
         for(let tradingTerm of clause.tradingTerms){
@@ -369,8 +370,8 @@ export class TermsAndConditionsComponent implements OnInit {
     }
 
     isOriginalTradingTerm(tradingTermId:string){
-        // if we have an order, we do not need to check the clause is changed or not
-        if(this.orderId){
+        // if the comparison is disabled, we do not need to check the clause is changed or not
+        if(!this.enableComparisonWithOtherTerms){
             return true;
         }
 

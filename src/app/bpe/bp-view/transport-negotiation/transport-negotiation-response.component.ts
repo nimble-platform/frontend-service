@@ -116,6 +116,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
     }
 
     onRespondToQuotation(accepted: boolean): void {
+        this.callStatus.submit();
         if(accepted) {
             this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.ACCEPTED;
         } else {
@@ -124,13 +125,13 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
         const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.buyerCustomerParty.party),
             UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.sellerSupplierParty.party), this.cookieService.get("user_id"),this.quotation, this.bpDataService);
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processId);
+        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processInstanceId);
 
-        this.callStatus.submit();
+        //this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim)
             .then(res => {
                 this.callStatus.callback("Quotation sent", true);
-                var tab = "PUCHASES";
+                var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                     tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});

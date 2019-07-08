@@ -9,7 +9,7 @@
         <ng-container *ngFor="let note of requestNotes;let i=index;">
             <div class="row">
                 <div class="col-12 space-after">
-                <textarea  class="form-control note-textarea" rows="3"
+                <textarea  class="form-control note-textarea" rows="3" maxlength="255"
                            [disabled]="true" [ngModel]="requestNotes[i]">
                 </textarea>
                 </div>
@@ -20,7 +20,7 @@
         <ng-container *ngFor="let note of notes;let i=index;">
             <div class="row">
                 <div class="{{ i === 0 || readonly ? 'col-12' : (thirdCol ? 'col-8' : 'col-9') }} space-after">
-                <textarea  class="form-control note-textarea" rows="3"
+                <textarea  class="form-control note-textarea" rows="3" maxlength="255"
                            [disabled]="readonly" [ngModel]="notes[i]" (change)="setNote(i, $event)">
                 </textarea>
                 </div>

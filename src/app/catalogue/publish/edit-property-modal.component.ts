@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef } from "@angular/core";
+import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { ItemProperty } from "../model/publish/item-property";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import {sanitizePropertyName, copy, isCustomProperty, getPropertyValues, createText, selectName} from '../../common/utils';
@@ -6,8 +6,7 @@ import { Quantity } from "../model/publish/quantity";
 import { SelectedProperty } from "../model/publish/selected-property";
 import { PROPERTY_TYPES } from "../model/constants";
 import {Item} from '../model/publish/item';
-import {Text} from '../model/publish/text';
-import {LANGUAGES, DEFAULT_LANGUAGE} from '../model/constants';
+import {LANGUAGES} from '../model/constants';
 
 @Component({
     selector: "edit-property-modal",
@@ -19,6 +18,7 @@ export class EditPropertyModalComponent implements OnInit {
     orgProperty: ItemProperty;
     property: ItemProperty;
     selectedProperty: SelectedProperty;
+    propertyDataType: string;
 
     @ViewChild("modal") modal: ElementRef;
 
@@ -36,6 +36,7 @@ export class EditPropertyModalComponent implements OnInit {
         this.orgProperty = copy(property);
         this.property = copy(property);
         this.addEmptyValuesToProperty();
+        this.setPropertyDataTypeInCaseOfBinaryProperty();
         this.modalService.open(this.modal).result.then(() => {
             // on OK, update the property with the values
             property.value = this.property.value;
@@ -75,6 +76,19 @@ export class EditPropertyModalComponent implements OnInit {
         }
     }
 
+    // if there is at least one file with an extension different than the image extensions, the property is treated as File, otherwise as Image
+    setPropertyDataTypeInCaseOfBinaryProperty(): void {
+        if(this.property.valueQualifier == 'FILE') {
+            for(let binaryObject of this.property.valueBinary) {
+                if(!binaryObject.mimeCode.startsWith("image")) {
+                    this.propertyDataType = "File";
+                    return;
+                }
+            }
+        }
+        this.propertyDataType = "Image";
+    }
+
     resetValues() {
       if (this.property.valueQualifier == this.orgProperty.valueQualifier) {
         this.property.value = this.orgProperty.value;
@@ -89,6 +103,10 @@ export class EditPropertyModalComponent implements OnInit {
         this.property.valueQuantity = [];
       }
       this.addEmptyValuesToProperty();
+    }
+
+    handleOptionChange(event): void {
+        this.propertyDataType = event.name;
     }
 
     selectName (ip: ItemProperty | Item) {
@@ -133,14 +151,6 @@ export class EditPropertyModalComponent implements OnInit {
     }
 
     private languages: Array<string> = LANGUAGES;
-    addPropertyValue() {
-      this.property.value.push(createText(''));
-    }
-
-    deletePropertyValue(index) {
-        this.property.value.splice(index, 1);
-    }
-
     addPropertyName() {
         this.property.name.push(createText(''));
     }

@@ -1,0 +1,36 @@
+<div class="row thread-entry-row">
+    <div class="col-3"><p>{{event.presentableProcessType}}</p></div>
+    <div class="col-3"><p>{{event.startTime}}</p></div>
+    <div class="col-3"><p>{{event.correspondent}}</p></div>
+    <div *ngIf="event.status === 'CANCELLED'" class="col-3 alert-dark">
+        <div class="pt-2"><strong>Cancelled</strong></div>
+        <button *ngIf="processInstanceGroup.status !== 'CANCELLED' && event.buyer" class="btn btn-secondary" (click)="openBpProcessView(false)">{{event.actionText}}</button>
+    </div>
+    <div *ngIf="event.status === 'DONE'" [ngClass]="processInstanceGroup.status == 'CANCELLED' ? 'col-3 alert-dark':'col-3 alert-success'">
+        <div class="pt-1"><strong>Completed</strong></div>
+        <div class="py-1">{{event.statusText}}</div>
+        <button *ngIf="processInstanceGroup.status !== 'CANCELLED'" class="btn btn-secondary" (click)="openBpProcessView(false)">{{event.actionText}}</button>
+    </div>
+    <div *ngIf="event.status === 'WAITING'" [ngClass]="processInstanceGroup.status == 'CANCELLED' ? 'col-3 alert-dark':'col-3 alert-warning'">
+        <div *ngIf="processInstanceGroup.status !== 'CANCELLED'">
+          <div class="pt-1"><strong>In Progress</strong></div>
+          <div class="py-1">{{event.statusText}}</div>
+          <button class="btn btn-secondary" (click)="openBpProcessView(false)">{{event.actionText}}</button>
+          <button class="btn btn-secondary" (click)="openBpProcessView(true)">Update Request</button>
+          <button class="btn btn-secondary" (click)="cancelBP()">Cancel</button>
+        </div>
+        <div *ngIf="processInstanceGroup.status == 'CANCELLED'">
+          <div class="pt-1"><strong>Collaboration cancelled</strong></div>
+        </div>
+    </div>
+    <div *ngIf="event.status === 'ACTION_REQUIRED'" [ngClass]="processInstanceGroup.status == 'CANCELLED' ? 'col-3 alert-dark':'col-3 alert-danger'" >
+        <div *ngIf="processInstanceGroup.status !== 'CANCELLED'">
+          <div class="pt-1"><strong>In Progress</strong></div>
+          <div class="py-1">{{event.statusText}}</div>
+          <button class="btn btn-primary" (click)="openBpProcessView(false)">{{event.actionText}}</button>
+        </div>
+        <div *ngIf="processInstanceGroup.status == 'CANCELLED'">
+          <div class="pt-1"><strong>Collaboration cancelled</strong></div>
+        </div>
+    </div>
+</div>

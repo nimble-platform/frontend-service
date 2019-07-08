@@ -3,6 +3,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import {PriceOption} from '../catalogue/model/publish/price-option';
 import { PRICE_OPTIONS } from '../catalogue/model/constants';
 import {roundToTwoDecimals, selectPreferredValues} from '../common/utils';
+import {DiscountPriceWrapper} from "../common/discount-price-wrapper";
 
 @Component({
     selector: "discount-modal",
@@ -33,8 +34,10 @@ export class DiscountModalComponent implements OnInit {
 
     getPropertyName = selectPreferredValues;
 
-    open(appliedDiscounts:PriceOption[],currencyId) {
-        this.currencyId = currencyId;
+    open(priceWrapper: DiscountPriceWrapper) {
+        let appliedDiscounts = priceWrapper.appliedDiscounts;
+        this.currencyId = priceWrapper.currency;
+
         this.resetDiscounts();
         for(let discount of appliedDiscounts){
             switch (discount.typeID){
@@ -58,8 +61,7 @@ export class DiscountModalComponent implements OnInit {
                     break;
             }
         }
-        this.calculateTotalDiscount(appliedDiscounts);
-
+        this.totalDiscount = priceWrapper.calculateTotalDiscount();
 
         this.modalService.open(this.modal).result.then((result) => {
 
@@ -76,15 +78,6 @@ export class DiscountModalComponent implements OnInit {
         this.deliveryPeriodDiscounts = [];
         this.incotermDiscounts = [];
         this.paymentMeanDiscounts = [];
-    }
-
-    private calculateTotalDiscount(appliedDiscounts:PriceOption[]):void{
-        let totalDiscount = 0;
-        for(let discount of appliedDiscounts){
-            totalDiscount += discount.discount;
-        }
-
-        this.totalDiscount = totalDiscount;
     }
 
     private getAbsValue(value:number):number{

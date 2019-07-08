@@ -113,15 +113,12 @@
 
             <!-- Price & Quantity -->
             <ng-container *ngIf="hasPrice()">
-                <div class="order-group d-flex">
+                <div class="order-group">
                     <label class="order-label">
                         Price
                     </label>
                     <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
                         {{ getPricePerItem() }}
-                        <div *ngIf="priceWrapper.appliedDiscounts.length > 0" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
-                            <i class="fa fa-search" aria-hidden="true"></i>
-                        </div>
                     </span>
                     <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
                         {{ frameContractQuotationWrapper.priceWrapper.pricePerItemString}}
@@ -150,19 +147,34 @@
                                [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()"/>
                     </span>
                 </div>
-                <div class="inline-order-group">
-                    <label class="vat-label">
-                        VAT:
+                <div class="order-group mt-2">
+                    <label class="order-label">
+                        VAT
                     </label>
-
-                    <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="vat-value">
+                    <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
                         {{priceWrapper.vatTotalString}}
                     </span>
-                    <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="vat-value">
+                        <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
                         {{frameContractQuotationWrapper.priceWrapper.vatTotalString}}
                     </span>
                 </div>
-                <div class="inline-order-group">
+                <div *ngIf="priceWrapper.appliedDiscounts.length > 0" class="order-group">
+                    <label class="order-label">
+                        Applied Discounts
+                    </label>
+                    <div class="inline-order-value">
+                        <span *ngIf="termsSelectBoxValue == 'product_defaults'">
+                                {{priceWrapper.calculateTotalDiscount()}} {{priceWrapper.currency}}
+                            </span>
+                        <span class="space-left"
+                              data-toggle="tooltip" data-placement="top"
+                              (click)="openDiscountModal()"
+                              title="Applied Discounts/Charges" style="cursor: pointer">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="order-group">
                         <label class="order-label order-price">
                             Total Price:
                         </label>

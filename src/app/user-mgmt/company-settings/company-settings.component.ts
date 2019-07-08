@@ -83,9 +83,9 @@ export class CompanySettingsComponent implements OnInit {
           if (completeness.qualityIndicator && completeness.qualityIndicator.length>0) {
             for (var indicator of completeness.qualityIndicator) {
               if (indicator.qualityParameter == "PROFILE_COMPLETENESS") {
-                if (indicator.orderedQuantity && indicator.orderedQuantity.value) {
-                  this.profile_completeness = indicator.orderedQuantity.value;
-                  this.profile_completeness_str = Math.round(indicator.orderedQuantity.value*100)+"%";
+                if (indicator.quantity && indicator.quantity.value) {
+                  this.profile_completeness = indicator.quantity.value;
+                  this.profile_completeness_str = Math.round(indicator.quantity.value*100)+"%";
                 }
               }
             }

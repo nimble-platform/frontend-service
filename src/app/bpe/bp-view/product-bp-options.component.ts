@@ -90,6 +90,10 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             productName: this.line.goodsItem.item.name[0].value
         };
 
+        if (createChannelRequest.initiatingPartyID == createChannelRequest.respondingPartyID) {
+            createChannelRequest.initiatingPartyID =  this.bpDataService.documentService.getBuyerParty()['id'];
+        }
+
         let headers = new Headers({'Content-Type': 'application/json'});
         const url = `${this.identityEndpoint}/chat/createChannel`;
         this.http
@@ -219,11 +223,11 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             return Promise.resolve(null);
         }
         if(this.searchContextService.getAssociatedProcessMetadata()) {
-            const processId = this.searchContextService.getAssociatedProcessMetadata().processId;
+            const processId = this.searchContextService.getAssociatedProcessMetadata().processInstanceId;
             return this.bpeService.getOriginalOrderForProcess(processId)
         }
         if(this.processMetadata) {
-            const processId = this.processMetadata.processId;
+            const processId = this.processMetadata.processInstanceId;
             return this.bpeService.getOriginalOrderForProcess(processId);
         }
         return Promise.resolve(null);

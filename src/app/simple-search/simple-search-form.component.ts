@@ -103,6 +103,8 @@ export class SimpleSearchFormComponent implements OnInit {
     // check whether 'p' query parameter exists or not
 	noP = true;
 
+	maxFacets = 5;
+
 	//manufacturer.legalName : {id,count}
 	//manufacturerIdCountMap : { [indx : string], string};
 	manufacturerIdCountMap : any;
@@ -1361,6 +1363,11 @@ export class SimpleSearchFormComponent implements OnInit {
 	}
 
 	getCompanyNameFromIds(idList: any[]): Promise<any>{
+		let facets = this.party_facet_field_list;
+		/*
+		if (this.delegatedSearch)
+			facets = [this.product_vendor_name];
+		*/
 		let query = "";
 		let length = idList.length;
 		while (length--) {
@@ -1370,14 +1377,14 @@ export class SimpleSearchFormComponent implements OnInit {
 				query = query+" OR ";
 			}
 		}
-		return this.simpleSearchService.getCompanies(query,this.party_facet_field_list,idList,this.delegatedSearch);
+		return this.simpleSearchService.getCompanies(query,facets,idList,this.delegatedSearch);
 	}
 
 	getProdLink(res:any): string {
 		let link = "";
 		if (res && res.catalogueId && res.manufactuerItemId) {
-			if (res.sourceIndexingServiceUrl && res.sourceIndexingServiceUrl != "")
-				link += res.sourceIndexingServiceUrl;
+			if (!res.isFromLocalInstance && res.sourceFrontendServiceUrl && res.sourceFrontendServiceUrl != "")
+				link += res.sourceFrontendServiceUrl;
 			link += "#/product-details?catalogueId=" + res.catalogueId + "&id=" + res.manufactuerItemId;
 		}
 		return link;
@@ -1386,8 +1393,8 @@ export class SimpleSearchFormComponent implements OnInit {
 	getCompLink(res:any): string {
 		let link = "";
 		if (res && res.id) {
-			if (res.sourceIndexingServiceUrl && res.sourceIndexingServiceUrl != "")
-				link += res.sourceIndexingServiceUrl;
+			if (!res.isFromLocalInstance && res.sourceFrontendServiceUrl && res.sourceFrontendServiceUrl != "")
+				link += res.sourceFrontendServiceUrl;
 			link += "#/user-mgmt/company-details?id=" + res.id;
 		}
 		return link;

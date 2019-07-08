@@ -7,12 +7,12 @@ import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import {DashboardRoutingModule} from "./dashboard-routing.module";
 
 import {DashboardThreadedComponent} from "./dashboard-threaded.component";
-import {ThreadSummaryComponent} from "./thread-summary.component";
 import {FacetComponent} from "./facet-component";
 import { CatalogueModule } from "../catalogue/catalogue.module";
 import { BPEModule } from "../bpe/bpe.module";
 import { AnalyticsModule } from "../analytics/analytics.module";
-import { ThreadEventComponent } from "./thread-event.component";
+import { ThreadEventComponent } from "../bpe/bp-summary/thread-event.component";
+import {FrameContractTabComponent} from "./frame-contract-tab.component";
 
 @NgModule({
 	imports: [
@@ -29,13 +29,11 @@ import { ThreadEventComponent } from "./thread-event.component";
 	],
 	declarations: [
 		DashboardThreadedComponent,
-		ThreadSummaryComponent,
-		ThreadEventComponent,
-		FacetComponent
+		FacetComponent,
+		FrameContractTabComponent
 	],
 	exports: [
 		DashboardThreadedComponent,
-		ThreadSummaryComponent,
 		FacetComponent
 	],
 	providers: [

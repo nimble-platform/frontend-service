@@ -1,6 +1,51 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [11.0.0] - 2019-06-17
+### Added
+- Delegated / federated search (staging only)
+- Rocket chat integration (staging only)
+- Platform log analytics
+- Projects page on dashboard
+- Data channel negotiation
+- Negotiation UI update (including negotiation history and change highlighting)
+- Search UI update
+- Company search
+- Product search based on categories
+- Selection of main product image
+- Tracking and Tracing UI update
+- Business process export
+- Search capabilities for "Platform Members" and "Company Management"
+- Terms and Condition editor
+- Frame contracts
+- Frontend logging
+- Added VAT tax to prices
+
+### Changed
+- Redirect URL in case login is required
+- Extracted default currency and main color to config
+- Styling of properties and values
+- Styling of facets / filters
+- Enable setting / selecting specific languages for multilingual fields
+- Unified country selection
+- Improvements and fixes on business process workflows
+
+## [10.0.0] - 2019-05-10
+### Added
+- Logistics services UI update
+- Negotiation UI update
+- Catalogue creation and support for multiple catalogues
+- Performance analytics
+- Product Favourites search
+- Compare products
+- Search all products from company
+- Self descriptive trust fields
+- Search boosting 
+
+### Changed
+- Platform member names fixed
+- Disabled product id when the publish mode is edit
+
 ## [9.0.0] - 2019-03-29
 ### Added
 - Boosting mechanisms for search results

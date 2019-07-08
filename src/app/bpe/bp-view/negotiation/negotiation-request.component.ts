@@ -54,6 +54,8 @@ export class NegotiationRequestComponent implements OnInit {
     wrapper: NegotiationModelWrapper;
     @Input() frameContract: DigitalAgreement = new DigitalAgreement();
     @Input() frameContractQuotation: Quotation;
+    @Input() frameContractNegotiation: boolean = true; // this input is added in order to control the visibility of the frame contract option while loading terms.
+                                                       // frame contract option is disabled when displaying the history through which the contract is being negotiated.
     @Input() lastOfferQuotation: Quotation;
     @Input() primaryTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = 'product_defaults';
     @Input() defaultTermsAndConditions: Clause[];
@@ -111,7 +113,7 @@ export class NegotiationRequestComponent implements OnInit {
         this.sellerId = UBLModelUtils.getPartyId(this.catalogueLine.goodsItem.item.manufacturerParty);
         this.buyerId = this.cookieService.get("company_id");
 
-        let frameContractDuration = this.getFrameContractDurationFromRfq(this.rfq);
+        let frameContractDuration = UBLModelUtils.getFrameContractDurationFromRfq(this.rfq);
         // if the rfq frame contract duration is not null, we are rendering the negotiation process in which the frame contract duration is also negotiated
         if(frameContractDuration != null) {
             this.frameContractDuration = frameContractDuration;
@@ -119,7 +121,11 @@ export class NegotiationRequestComponent implements OnInit {
         } else if(this.frameContract) {
             // initialize frame contract variables
             this.frameContractAvailable = true;
-            this.manufacturersTermsExistence.frame_contract = true;
+            // the frame contract option is visible only if the visible flag is true. this mainly aims to hide the frame contract option when the
+            // contract itself is being negotiated
+            if(!this.frameContractNegotiation) {
+                this.manufacturersTermsExistence.frame_contract = true;
+            }
         }
 
         // construct wrapper with the retrieved documents
@@ -157,6 +163,11 @@ export class NegotiationRequestComponent implements OnInit {
         // update the price based on the updated conditions
         // this is required to initialize the line discount wrapper with the terms from rfq
         this.onPriceConditionsChange();
+
+        // enable the price negotiation if the product does not have any price
+        if(this.primaryTermsSource == 'product_defaults' && !this.wrapper.lineDiscountPriceWrapper.itemPrice.hasPrice()) {
+            this.negotiatePrice = true;
+        }
 
         // set the flag for showing the counter terms if the presen
         if(this.processMetadata != null) {
@@ -213,8 +224,10 @@ export class NegotiationRequestComponent implements OnInit {
      */
 
     onSendRequest(): void {
+        this.callStatus.submit();
         if (this.wrapper.rfqDiscountPriceWrapper.itemPrice.hasPrice()) {
             if (!isValidPrice(this.wrapper.rfqDiscountPriceWrapper.itemPrice.price.priceAmount.value)) {
+                this.callStatus.callback("Terms aborted", true);
                 alert("Price cannot have more than 2 decimal places");
                 return;
             }
@@ -235,7 +248,7 @@ export class NegotiationRequestComponent implements OnInit {
             UBLModelUtils.removeHjidFieldsFromObject(rfq);
 
             // send request for quotation
-            this.callStatus.submit();
+            //this.callStatus.submit();
 
             let sellerParty: Party;
             let buyerParty: Party;
@@ -256,7 +269,7 @@ export class NegotiationRequestComponent implements OnInit {
 
             }).then(() => {
                 this.callStatus.callback("Terms sent", true);
-                var tab = "PUCHASES";
+                var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                     tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
@@ -265,6 +278,7 @@ export class NegotiationRequestComponent implements OnInit {
                 this.callStatus.error("Failed to send Terms", error);
             });
         } else {
+            this.callStatus.callback("Terms sent", true);
             // set the item price, otherwise we will lose item price information
             this.bpDataService.requestForQuotation.requestForQuotationLine[0].lineItem.price.priceAmount.value = this.wrapper.rfqDiscountPriceWrapper.totalPrice/this.wrapper.rfqDiscountPriceWrapper.orderedQuantity.value;
             // just go to order page
@@ -276,11 +290,16 @@ export class NegotiationRequestComponent implements OnInit {
     onUpdateRequest(): void {
         this.callStatus.submit();
 
+        // check frame contract explicitly. this is required e.g. if the frame contract is specified in the update itself.
+        if(this.rfq.negotiationOptions.frameContractDuration && this.isFrameContractValid()) {
+            this.wrapper.rfqFrameContractDuration = this.frameContractDuration;
+        }
+
         const rfq: RequestForQuotation = copy(this.rfq);
-        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processId).then(() => {
+        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processInstanceId).then(() => {
             this.documentService.updateCachedDocument(rfq.id,rfq);
             this.callStatus.callback("Terms updated", true);
-            var tab = "PUCHASES";
+            var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")
                 tab = "SALES";
             this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
@@ -337,7 +356,7 @@ export class NegotiationRequestComponent implements OnInit {
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = trimRedundantDecimals(quotationWrapper.priceWrapper.pricePerItem);
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = quotationWrapper.priceWrapper.currency;
             }
-            if(!this.rfq.negotiationOptions.frameContractDuration || ignoreNegotiationOptions) {
+            if((!this.rfq.negotiationOptions.frameContractDuration || ignoreNegotiationOptions) && quotationWrapper.frameContractDuration != null) {
                 this.frameContractDuration = copy(quotationWrapper.frameContractDuration);
             }
             if(!this.rfq.negotiationOptions.termsAndConditions || ignoreNegotiationOptions) {
@@ -427,7 +446,7 @@ export class NegotiationRequestComponent implements OnInit {
 
             // although the product default terms are selected, the following two conditions are calculated using the rfq itself
             frameContractDurationDiffers = this.wrapper.rfq.negotiationOptions.frameContractDuration &&
-                !UBLModelUtils.areQuantitiesEqual(this.frameContractDuration, this.getFrameContractDurationFromRfq(this.wrapper.initialImmutableRfq));
+                !UBLModelUtils.areQuantitiesEqual(this.frameContractDuration, UBLModelUtils.getFrameContractDurationFromRfq(this.wrapper.initialImmutableRfq));
             termsAndConditionsDiffer = UBLModelUtils.areTermsAndConditionListsDifferent(this.wrapper.initialImmutableRfq.termOrCondition, this.rfq.termOrCondition);
         }
 
@@ -443,7 +462,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     get lineHasPrice(): boolean {
-        return this.wrapper.lineDiscountPriceWrapper.hasPrice();
+        return this.wrapper.lineDiscountPriceWrapper.itemPrice.hasPrice();
     }
 
     get requestedQuantity(): number {
@@ -749,16 +768,8 @@ export class NegotiationRequestComponent implements OnInit {
         return value >= range.start && value <= range.end;
     }
 
-    private getFrameContractDurationFromRfq(rfq: RequestForQuotation): Quantity {
-        let tradingTerm: TradingTerm = rfq.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
-        if(tradingTerm != null) {
-            return tradingTerm.value.valueQuantity[0];
-        }
-        return null;
-    }
-
     private openDiscountModal(): void{
-        this.discountModal.open(this.wrapper.lineDiscountPriceWrapper.appliedDiscounts,this.wrapper.lineDiscountPriceWrapper.price.priceAmount.currencyID);
+        this.discountModal.open(this.wrapper.lineDiscountPriceWrapper);
     }
 
     showTab(tab:boolean):boolean {

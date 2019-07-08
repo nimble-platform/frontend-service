@@ -19,11 +19,15 @@
 
 .file-link-row {
     display: flex;
-    justify-content: space-between;
     margin-bottom: 0.5rem;
     line-height: 1.95rem;
 }
 
 .file-link-row-sm .file-link-row {
     line-height: 1.5rem;
+}
+
+.language-select {
+    width: auto;
+    margin-left: 2rem;
 }

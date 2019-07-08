@@ -94,7 +94,7 @@ export class SimpleSearchService {
 		query = queryRes.queryStr;
 		let url = this.url + `/item/search`;
     if (delegated)
-      url = this.delegate_url + `item/search`;
+      url = this.delegate_url + `/item/search`;
 		searchObject.rows = rows;
 		searchObject.start = page - 1;
 		searchObject.q = query;
@@ -136,7 +136,7 @@ export class SimpleSearchService {
 		query = queryRes.queryStr;
 		let url = this.url + `/party/search`;
     if (delegated)
-      url = this.delegate_url + `party/search`;
+      url = this.delegate_url + `/party/search`;
 		let searchObject: any = {};
 		searchObject.rows = rows;
 		searchObject.start = page - 1;
@@ -440,7 +440,7 @@ export class SimpleSearchService {
 		// var start = page*10-10;
 		let url = this.url + `/party/search`;
     if (delegated)
-      url = this.delegate_url + `party/search`;
+      url = this.delegate_url + `/party/search`;
 
 		let searchObject:any = {};
 		searchObject.rows = facetQueries.length;

@@ -154,7 +154,7 @@ export class TransportExecutionPlanComponent implements OnInit {
         })
         .then(() => {
             this.callStatus.callback("Transport Execution Plan sent", true);
-            var tab = "PUCHASES";
+            var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")
               tab = "SALES";
             this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
@@ -168,11 +168,11 @@ export class TransportExecutionPlanComponent implements OnInit {
         this.callStatus.submit();
         const transportationExecutionPlanRequest: TransportExecutionPlanRequest = copy(this.bpDataService.transportExecutionPlanRequest);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(transportationExecutionPlanRequest),"TRANSPORTEXECUTIONPLANREQUEST",this.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(transportationExecutionPlanRequest),"TRANSPORTEXECUTIONPLANREQUEST",this.processMetadata.processInstanceId)
             .then(() => {
                 this.documentService.updateCachedDocument(transportationExecutionPlanRequest.id,transportationExecutionPlanRequest);
                 this.callStatus.callback("Item Information Request updated", true);
-                var tab = "PUCHASES";
+                var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
@@ -183,17 +183,18 @@ export class TransportExecutionPlanComponent implements OnInit {
     }
 
     onSendResponse(accepted: boolean) {
+        this.callStatus.submit();
         this.response.documentStatusCode.name = accepted ? "Accepted" : "Rejected";
 
-        const vars: ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan", 
+        const vars: ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan",
             UBLModelUtils.getPartyId(this.bpDataService.transportExecutionPlan.transportUserParty),
             UBLModelUtils.getPartyId(this.bpDataService.transportExecutionPlan.transportServiceProviderParty),
             this.cookieService.get("user_id"),
             this.bpDataService.transportExecutionPlan, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars,
-            this.processMetadata.processId);
+            this.processMetadata.processInstanceId);
 
-        this.callStatus.submit();
+        //this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim)
             .then(res => {
                 this.callStatus.callback("Transport Execution Plan sent", true);

@@ -96,7 +96,7 @@ export class BPDataService{
                 private precedingBPDataService: PrecedingBPDataService,
                 private userService: UserService,
                 private cookieService: CookieService,
-                private documentService: DocumentService,
+                public documentService: DocumentService,
                 private router: Router) {
     }
 
@@ -302,7 +302,7 @@ export class BPDataService{
         const linePriceWrapper = new PriceWrapper(
             line.requiredItemLocationQuantity.price,
             line.requiredItemLocationQuantity.applicableTaxCategory[0].percent);
-        if(linePriceWrapper.hasPrice()) {
+        if(linePriceWrapper.itemPrice.hasPrice()) {
             rfqLine.lineItem.price = copy(line.requiredItemLocationQuantity.price);
         } else {
             rfqLine.lineItem.price.priceAmount.value = 1;
@@ -685,7 +685,7 @@ export class BPDataService{
             const priceWrapper = new PriceWrapper(
                 line.requiredItemLocationQuantity.price,
                 line.requiredItemLocationQuantity.applicableTaxCategory[0].percent);
-            if(!priceWrapper.hasPrice()) {
+            if(!priceWrapper.itemPrice.hasPrice()) {
                 this.bpActivityEvent.workflowOptions.negotiation.price = true;
             }
 

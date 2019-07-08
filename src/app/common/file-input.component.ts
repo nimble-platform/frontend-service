@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
 import { BinaryObject } from "../catalogue/model/publish/binary-object";
 import {CatalogueService} from '../catalogue/catalogue.service';
+import {DEFAULT_LANGUAGE, LANGUAGES} from "../catalogue/model/constants";
 
 @Component({
     selector: "file-input",
@@ -12,6 +13,7 @@ export class FileInputComponent implements OnInit {
     @Input() visible: boolean = true;
     @Input() disabled: boolean = false;
     @Input() presentationMode: "edit" | "view" = "edit";
+    @Input() languageEnabled: boolean = false;
 
     @Input() label: string;
     @Input() definition: string;
@@ -32,6 +34,11 @@ export class FileInputComponent implements OnInit {
 
     @Input() binaryObjects: BinaryObject[] = [];
 
+    activeLanguage = DEFAULT_LANGUAGE();
+    fileExistsWithDefaultLanguage: boolean = false;
+    private languages: Array<string> = LANGUAGES;
+    selectedLanguage: string;
+
     constructor(public catalogueService:CatalogueService) {
 
     }
@@ -39,6 +46,11 @@ export class FileInputComponent implements OnInit {
     ngOnInit() {
         if(!this.valueClass) {
             this.valueClass = this.label ? "col-9" : "col-12";
+        }
+        for(let binaryObject of this.binaryObjects) {
+            if(binaryObject.languageID == this.activeLanguage) {
+                this.fileExistsWithDefaultLanguage = true;
+            }
         }
     }
 
@@ -54,7 +66,7 @@ export class FileInputComponent implements OnInit {
               const self = this;
               reader.onload = function () {
                   const base64String = (reader.result as string).split(',').pop();
-                  const binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
+                  const binaryObject = new BinaryObject(base64String, file.type, file.name, "", self.selectedLanguage, "");
                   self.binaryObjects.push(binaryObject);
                   self.onSelectFile.emit(binaryObject);
               };

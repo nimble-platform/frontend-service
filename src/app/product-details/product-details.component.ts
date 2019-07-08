@@ -246,7 +246,7 @@ export class ProductDetailsComponent implements OnInit {
     }
 
     hasPrice(): boolean {
-        return this.priceWrapper.hasPrice();
+        return this.priceWrapper.itemPrice.hasPrice();
     }
 
     getMaximumQuantity(): number {
@@ -269,7 +269,7 @@ export class ProductDetailsComponent implements OnInit {
     }
 
     private openDiscountModal(): void{
-        this.discountModal.open(this.priceWrapper.appliedDiscounts,this.priceWrapper.price.priceAmount.currencyID);
+        this.discountModal.open(this.priceWrapper);
     }
 
     removeFavorites(item: CatalogueLine) {

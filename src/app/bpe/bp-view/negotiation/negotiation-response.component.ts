@@ -41,6 +41,7 @@ export class NegotiationResponseComponent implements OnInit {
     @Input() lastOfferQuotation: Quotation;
     @Input() frameContractQuotation: Quotation;
     @Input() frameContract: DigitalAgreement;
+    @Input() frameContractNegotiation: boolean = false;
     @Input() defaultTermsAndConditions: Clause[];
     @Input() primaryTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = 'product_defaults';
     @Input() readonly: boolean = false;
@@ -108,7 +109,9 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     onRespondToQuotation(accepted: boolean) {
+        this.callStatus.submit();
         if (!isValidPrice(this.wrapper.quotationDiscountPriceWrapper.totalPrice)) {
+            this.callStatus.callback("Quotation aborted", true);
             alert("Price cannot have more than 2 decimal places");
             return false;
         }
@@ -122,14 +125,14 @@ export class NegotiationResponseComponent implements OnInit {
             this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.REJECTED;
         }
 
-        this.callStatus.submit();
+        //this.callStatus.submit();
         const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.buyerCustomerParty.party),
             UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.sellerSupplierParty.party),this.cookieService.get("user_id"), this.quotation, this.bpDataService);
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processId);
+        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processInstanceId);
 
         this.bpeService.continueBusinessProcess(piim).then(() => {
             this.callStatus.callback("Quotation sent", true);
-            var tab = "PUCHASES";
+            var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")
                 tab = "SALES";
             this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
@@ -204,6 +207,10 @@ export class NegotiationResponseComponent implements OnInit {
         return !(this.quotation.documentStatusCode.name == 'Rejected' && this.isReadOnly());
     }
 
+    isTermDropDownVisible(): boolean {
+        return this.lastOfferQuotation != null || (this.frameContractQuotation != null && !this.frameContractNegotiation);
+    }
+
     /*
      * Internal Methods
      */
@@ -246,7 +253,7 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     private openDiscountModal(): void{
-        this.discountModal.open(this.wrapper.quotationDiscountPriceWrapper.appliedDiscounts,this.wrapper.quotationDiscountPriceWrapper.price.priceAmount.currencyID);
+        this.discountModal.open(this.wrapper.quotationDiscountPriceWrapper);
     }
 
     checkEqual(part): boolean {

@@ -18,7 +18,6 @@ import { FulfilmentComponent } from "./bp-view/fulfilment/fulfilment.component";
 import { ReceiptAdviceComponent } from "./bp-view/fulfilment/receipt-advice.component";
 import { NegotiationComponent } from "./bp-view/negotiation/negotiation.component";
 import { TransportExecutionPlanComponent } from "./bp-view/transport-execution-plan/transport-execution-plan.component";
-import { BpProductDetailsComponent } from "./bp-view/bp-product-details.component";
 import { PpapComponent } from "./bp-view/ppap/ppap.component";
 
 import { PpapDocumentSelectComponent } from "./bp-view/ppap/ppap-document-select.component";
@@ -44,6 +43,9 @@ import { TransportNegotiationResponseComponent } from "./bp-view/transport-negot
 import { TransportServiceDetailsComponent } from "./bp-view/transport-negotiation/transport-service-details.component";
 import { TransportNegotiationAddressComponent } from "./bp-view/transport-negotiation/transport-negotiation-address.component";
 import {TermsAndConditionsComponent} from './bp-view/contract/terms-and-conditions.component';
+import {FrameContractDetailsComponent} from "./bp-view/contract/frame-contract-details.component";
+import {ThreadSummaryComponent} from "./bp-summary/thread-summary.component";
+import {ThreadEventComponent} from "./bp-summary/thread-event.component";
 
 @NgModule({
     imports: [
@@ -54,7 +56,7 @@ import {TermsAndConditionsComponent} from './bp-view/contract/terms-and-conditio
         ReactiveFormsModule, 
         BPERoutingModule, 
         CatalogueModule, 
-        ProductDetailsModule, 
+        ProductDetailsModule,
         NgbModule.forRoot()
     ],
     declarations: [
@@ -65,6 +67,7 @@ import {TermsAndConditionsComponent} from './bp-view/contract/terms-and-conditio
         ProductBpStepsComponent,
         OrderComponent,
         TermsAndConditionsComponent,
+        FrameContractDetailsComponent,
         FulfilmentComponent,
         DispatchAdviceComponent,
         ReceiptAdviceComponent,
@@ -81,7 +84,6 @@ import {TermsAndConditionsComponent} from './bp-view/contract/terms-and-conditio
         TransportNegotiationAddressComponent,
         TransportServiceDetailsComponent,
         TransportNegotiationComponent,
-        BpProductDetailsComponent,
         PpapComponent,
         PpapDocumentSelectComponent,
         PpapDocumentUploadComponent,
@@ -89,7 +91,9 @@ import {TermsAndConditionsComponent} from './bp-view/contract/terms-and-conditio
         ContractComponent,
         ClauseComponent,
         PpapClauseComponent,
-        ShipmentInputComponent
+        ShipmentInputComponent,
+        ThreadSummaryComponent,
+        ThreadEventComponent
     ],
     exports: [
         BPConfigureComponent,
@@ -101,10 +105,10 @@ import {TermsAndConditionsComponent} from './bp-view/contract/terms-and-conditio
         ReceiptAdviceComponent,
         NegotiationComponent,
         TransportExecutionPlanComponent,
-        BpProductDetailsComponent,
         ContractComponent,
         ClauseComponent,
         PpapClauseComponent,
+        ThreadSummaryComponent
     ],
     providers: []
 })

@@ -8,6 +8,7 @@ import { CompanyNegotiationSettings } from "../model/company-negotiation-setting
 import { SelectedTerms } from "../selected-terms";
 import { copy, deepEquals } from "../../common/utils";
 import { CompanySettings } from "../model/company-settings";
+import { CompanySensor } from "../model/company-sensor";
 
 @Component({
     selector: "company-negotiation-settings",
@@ -35,6 +36,9 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
     paymentMeans: SelectedTerms;
     incoterms: SelectedTerms;
 
+    public SERVICE_TYPES: string[] = ["None", "Service Level 1 (Start/Stop)", "Service Level 2 (Warnings/Alerts)", "Service Level 3 (Machines/Sensors)"]
+    newSensor: CompanySensor = new CompanySensor('', '', '');
+
     constructor(private userService: UserService) {
 
     }
@@ -47,6 +51,22 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
         this.paymentMeans = new SelectedTerms(this.negotiationSettings.paymentMeans, PAYMENT_MEANS);
         // first incoterm is "" (option for no incoterm)
         this.incoterms = new SelectedTerms(this.negotiationSettings.incoterms, INCOTERMS);
+    }
+
+    onAddSensor() {
+        if(typeof this.negotiationSettings.sensors === 'undefined')
+        {
+            this.negotiationSettings.sensors = [];
+        }
+
+        this.negotiationSettings.sensors.push(new CompanySensor(
+                                                 this.newSensor.machine,
+                                                 this.newSensor.sensor,
+                                                 this.newSensor.format));
+    }
+
+    onRemoveSensor(sensorID: number) {
+        this.negotiationSettings.sensors.splice(sensorID, 1);
     }
 
     onSave() {

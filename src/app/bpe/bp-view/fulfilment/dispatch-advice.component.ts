@@ -144,6 +144,7 @@ export class DispatchAdviceComponent implements OnInit {
     }
 
     onSendDispatchAdvice(): void {
+        this.callStatus.submit();
         let dispatchAdvice: DespatchAdvice = copy(this.dispatchAdvice);
         UBLModelUtils.removeHjidFieldsFromObject(dispatchAdvice);
 
@@ -152,16 +153,16 @@ export class DispatchAdviceComponent implements OnInit {
             UBLModelUtils.getPartyId(dispatchAdvice.despatchSupplierParty.party),
             UBLModelUtils.getPartyId(dispatchAdvice.deliveryCustomerParty.party),
             this.cookieService.get("user_id"),
-            dispatchAdvice, 
+            dispatchAdvice,
             this.bpDataService
         );
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
 
-        this.callStatus.submit();
+        //this.callStatus.submit();
         this.bpeService.startBusinessProcess(piim)
             .then(res => {
                 this.callStatus.callback("Dispatch Advice sent", true);
-                var tab = "PUCHASES";
+                var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
                 this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
@@ -176,7 +177,7 @@ export class DispatchAdviceComponent implements OnInit {
 
         let dispatchAdvice: DespatchAdvice = copy(this.bpDataService.despatchAdvice);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(dispatchAdvice),"DESPATCHADVICE",this.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(dispatchAdvice),"DESPATCHADVICE",this.processMetadata.processInstanceId)
             .then(() => {
                 this.documentService.updateCachedDocument(dispatchAdvice.id,dispatchAdvice);
                 this.callStatus.callback("Dispatch Advice updated", true);

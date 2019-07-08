@@ -85,6 +85,7 @@ export class ItemInformationResponseComponent implements OnInit {
     }
 
     onSendResponse(): void {
+        this.callStatus.submit();
         const vars: ProcessVariables = ModelUtils.createProcessVariables(
             "Item_Information_Request",
             UBLModelUtils.getPartyId(this.bpDataService.itemInformationRequest.buyerCustomerParty.party),
@@ -93,12 +94,12 @@ export class ItemInformationResponseComponent implements OnInit {
             this.bpDataService.itemInformationResponse,
             this.bpDataService
         );
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processId);
+        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processInstanceId);
 
-        this.callStatus.submit();
+        //this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim).then(() => {
             this.callStatus.callback("Information Response sent", true);
-            var tab = "PUCHASES";
+            var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")
               tab = "SALES";
             this.router.navigate(['dashboard'], {queryParams: {tab: tab}});

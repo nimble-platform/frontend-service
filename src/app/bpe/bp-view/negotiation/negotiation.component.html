@@ -27,11 +27,13 @@
         <!-- previous steps -->
         <ng-container *ngIf="negotiationDocumentsCallStatus.isComplete() && lastOfferCalStatus.isComplete() && frameContractAndTermsCallStatus.isComplete()">
             <div *ngIf="i != negotiationProcessList.length-1" [hidden]="!(sliderIndex == i)">
+                {{isFrameContractBeingNegotiatedInThisNegotiation}}
                 <negotiation-response [rfq]="negotiationDocuments[i].request"
                                       [quotation]="negotiationDocuments[i].response"
                                       [lastOfferQuotation]="negotiationDocuments[i-1]?.response"
                                       [frameContractQuotation]="frameContractQuotation"
                                       [frameContract]="frameContract"
+                                      [frameContractNegotiation]="isFrameContractBeingNegotiatedInThisNegotiation"
                                       [defaultTermsAndConditions]="defaultTermsAndConditions"
                                       [primaryTermsSource]="getPrimaryTermsSource(negotiationDocuments[i-1]?.response)"
                                       [readonly]="true"
@@ -49,6 +51,7 @@
                 <negotiation-request *ngIf="!bpDataService.quotation && bpDataService.bpActivityEvent.userRole === 'buyer'"
                                      [frameContract]="frameContract"
                                      [frameContractQuotation]="frameContractQuotation"
+                                     [frameContractNegotiation]="isFrameContractBeingNegotiatedInThisNegotiation"
                                      [lastOfferQuotation]="lastOfferQuotation"
                                      [defaultTermsAndConditions]="defaultTermsAndConditions"
                                      [primaryTermsSource]="getPrimaryTermsSource(lastOfferQuotation)">
@@ -57,6 +60,7 @@
                                       [lastOfferQuotation]="lastOfferQuotation"
                                       [frameContractQuotation]="frameContractQuotation"
                                       [frameContract]="frameContract"
+                                      [frameContractNegotiation]="isFrameContractBeingNegotiatedInThisNegotiation"
                                       [defaultTermsAndConditions]="defaultTermsAndConditions"
                                       [primaryTermsSource]="getPrimaryTermsSource(lastOfferQuotation)"
                                       [formerProcess]="formerProcess">
