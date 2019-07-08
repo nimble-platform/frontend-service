@@ -48,6 +48,34 @@
                 </configuration>
             </plugin>
 
+            <!-- NB: globals and global-styles may be overwritten during runtime -->
+            <plugin>
+                <groupId>com.coderplus.maven.plugins</groupId>
+                <artifactId>copy-rename-maven-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-file</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <fileSets>
+                                <fileSet>
+                                    <sourceFile>${project.basedir}/src/environments/globals.${env}.ts</sourceFile>
+                                    <destinationFile>${project.basedir}/src/app/globals.ts</destinationFile>
+                                </fileSet>
+                                <fileSet>
+                                    <sourceFile>${project.basedir}/src/environments/global-styles.${env}.css</sourceFile>
+                                    <destinationFile>${project.basedir}/src/global-styles.css</destinationFile>
+                                </fileSet>
+                            </fileSets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
@@ -111,34 +139,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- NB: globals and global-styles may be overwritten during runtime -->
-			<plugin>
-				<groupId>com.coderplus.maven.plugins</groupId>
-				<artifactId>copy-rename-maven-plugin</artifactId>
-				<version>1.0</version>
-				<executions>
-					<execution>
-						<id>copy-file</id>
-						<phase>process-resources</phase>
-						<goals>
-						<goal>copy</goal>
-						</goals>
-						<configuration>
-							<fileSets>
-								<fileSet>
-									<sourceFile>${project.basedir}/src/environments/globals.${env}.ts</sourceFile>
-									<destinationFile>${project.basedir}/src/app/globals.ts</destinationFile>
-								</fileSet>
-								<fileSet>
-									<sourceFile>${project.basedir}/src/environments/global-styles.${env}.css</sourceFile>
-									<destinationFile>${project.basedir}/src/global-styles.css</destinationFile>
-								</fileSet>
-							</fileSets>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 			
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
