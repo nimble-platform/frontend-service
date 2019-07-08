@@ -34,6 +34,10 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
     paymentTerms: SelectedTerms;
     paymentMeans: SelectedTerms;
     incoterms: SelectedTerms;
+    process_ids: SelectedTerms;
+
+    PROCESS_IDS:string[];
+    PROCESS_ID_NAME_MAP:Map<string,string> = null;
 
     constructor(private userService: UserService) {
 
@@ -47,6 +51,22 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
         this.paymentMeans = new SelectedTerms(this.negotiationSettings.paymentMeans, PAYMENT_MEANS);
         // first incoterm is "" (option for no incoterm)
         this.incoterms = new SelectedTerms(this.negotiationSettings.incoterms, INCOTERMS);
+
+        this.populateProcessIdNameMap();
+        this.PROCESS_IDS = Array.from(this.PROCESS_ID_NAME_MAP.keys());
+        this.process_ids = new SelectedTerms(this.negotiationSettings.company.processID, this.PROCESS_IDS);
+    }
+
+    // populate PROCESS_ID_NAME_MAP variable
+    // key is the id of process and value is the name of process
+    populateProcessIdNameMap(){
+        this.PROCESS_ID_NAME_MAP = new Map<string, string>();
+        this.PROCESS_ID_NAME_MAP.set("Item_Information_Request","Item Information Request");
+        this.PROCESS_ID_NAME_MAP.set("Ppap","PPAP");
+        this.PROCESS_ID_NAME_MAP.set("Negotiation","Negotiation");
+        this.PROCESS_ID_NAME_MAP.set("Order","Order");
+        this.PROCESS_ID_NAME_MAP.set("Transport_Execution_Plan","Transport Execution Plan");
+        this.PROCESS_ID_NAME_MAP.set("Fulfilment","Fulfilment");
     }
 
     onSave() {

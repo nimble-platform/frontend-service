@@ -5,6 +5,23 @@
     </div>
 </div> -->
 
+<!-- Business Workflow -->
+<div class="row space-before">
+    <div class="col-12">
+        <h4>Business Workflows</h4>
+    </div>
+    <div class="col-12">
+        <label>Choose processes you want to include your workflow:</label>
+        <div *ngFor="let process_id of PROCESS_IDS; let i = index" class="row">
+            <input class="col-1" type="checkbox" [disabled]="isDisabled()"
+                   [checked]="process_ids.isSelected(process_id)" (change)="process_ids.toggle(process_id)" style="margin-top: 5px">
+            <label class="col-11">{{ PROCESS_ID_NAME_MAP.get(process_id) }}</label>
+        </div>
+    </div>
+</div>
+
+<hr>
+
 <!-- Payment Terms -->
 <div class="row space-before">
     <div class="col-2">
