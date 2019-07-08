@@ -6,11 +6,11 @@
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-//    "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true,
     "lib": ["es6", "dom"],
     "typeRoots": ["node_modules/@types"],
     "noImplicitAny": false
+    //    "noImplicitAny": true
   },
   "exclude": [
     "node_modules",
