@@ -5,7 +5,7 @@
   "scripts": {
     "build:dev": "cross-env NODE_ENV=development webpack --mode development",
     "build:production": "cross-env NODE_ENV=production webpack --mode production",
-    "start": "webpack-dev-server --inline --hot --progress --port 8091 --display-modules",
+    "start": "webpack-dev-server --inline --hot --progress --port 9092 --display-modules",
     "pree2e": "npm run build:e2e",
     "e2e": "concurrently \"npm run serve:e2e\" \"npm run protractor\" --kill-others --success first",
     "preprotractor": "webdriver-manager update",
