@@ -55,6 +55,15 @@ export const PROPERTY_TYPES: Option[] = [
     { name: "Boolean", value: "BOOLEAN" },
 ]
 
+export const PROCESSES = [
+    { id: "Item_Information_Request", name: "Item Information Request" },
+    { id: "Ppap", name: "PPAP" },
+    { id: "Negotiation", name: "Negotiation" },
+    { id: "Order", name: "Order" },
+    { id: "Transport_Execution_Plan", name: "Transport Execution Plan" },
+    { id: "Fulfilment", name: "Fulfilment" },
+]
+
 export const TRANSPORT_SERVICE_CATEGORY_NAME = "Transport service"
 
 export const PPAP_CERTIFICATES = [

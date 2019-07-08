@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { CookieService } from "ng2-cookies";
 import { UserService } from "../user.service";
-import { PAYMENT_MEANS, INCOTERMS } from "../../catalogue/model/constants";
+import {PAYMENT_MEANS, INCOTERMS, PROCESSES} from '../../catalogue/model/constants';
 import { UBLModelUtils } from "../../catalogue/model/ubl-model-utils";
 import { CallStatus } from "../../common/call-status";
 import { CompanyNegotiationSettings } from "../model/company-negotiation-settings";
@@ -25,6 +25,7 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
     PAYMENT_TERMS_RIGHT = this.PAYMENT_TERMS.filter((_, i) => i % 2 === 1);
     INCOTERMS_LEFT = INCOTERMS.filter((_, i) => i % 2 === 1);
     INCOTERMS_RIGHT = INCOTERMS.filter((_, i) => i % 2 === 0 && i > 0);
+    PROCESSES = PROCESSES;
 
     // initCallStatus: CallStatus = new CallStatus();
     callStatus: CallStatus = new CallStatus();
@@ -35,9 +36,6 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
     paymentMeans: SelectedTerms;
     incoterms: SelectedTerms;
     process_ids: SelectedTerms;
-
-    PROCESS_IDS:string[];
-    PROCESS_ID_NAME_MAP:Map<string,string> = null;
 
     constructor(private userService: UserService) {
 
@@ -52,21 +50,11 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
         // first incoterm is "" (option for no incoterm)
         this.incoterms = new SelectedTerms(this.negotiationSettings.incoterms, INCOTERMS);
 
-        this.populateProcessIdNameMap();
-        this.PROCESS_IDS = Array.from(this.PROCESS_ID_NAME_MAP.keys());
-        this.process_ids = new SelectedTerms(this.negotiationSettings.company.processID, this.PROCESS_IDS);
-    }
-
-    // populate PROCESS_ID_NAME_MAP variable
-    // key is the id of process and value is the name of process
-    populateProcessIdNameMap(){
-        this.PROCESS_ID_NAME_MAP = new Map<string, string>();
-        this.PROCESS_ID_NAME_MAP.set("Item_Information_Request","Item Information Request");
-        this.PROCESS_ID_NAME_MAP.set("Ppap","PPAP");
-        this.PROCESS_ID_NAME_MAP.set("Negotiation","Negotiation");
-        this.PROCESS_ID_NAME_MAP.set("Order","Order");
-        this.PROCESS_ID_NAME_MAP.set("Transport_Execution_Plan","Transport Execution Plan");
-        this.PROCESS_ID_NAME_MAP.set("Fulfilment","Fulfilment");
+        let ids = [];
+        for(let process of PROCESSES){
+            ids.push(process.id);
+        }
+        this.process_ids = new SelectedTerms(this.negotiationSettings.company.processID, ids);
     }
 
     onSave() {
