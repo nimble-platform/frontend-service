@@ -51,7 +51,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	roundToTwoDecimals = roundToTwoDecimals;
 	item_manufacturer_id = myGlobals.item_manufacturer_id;
 	searchIndex = myGlobals.config.defaultSearchIndex;
-	searchIndexes = ["Products","Categories"];
+	searchIndexes = ["Name","Category"];
 	searchTopic = null;
 
 	CURRENCIES = CURRENCIES;
