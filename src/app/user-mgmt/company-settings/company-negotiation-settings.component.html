@@ -13,8 +13,8 @@
     <div class="col-12">
         <label>Choose processes you want to include your workflow:</label>
         <div *ngFor="let process of PROCESSES; let i = index" class="row">
-            <input class="col-1" type="checkbox" [disabled]="isDisabled()"
-                   [checked]="process_ids.isSelected(process.id)" (change)="process_ids.toggle(process.id)" style="margin-top: 5px">
+            <input class="col-1" type="checkbox" [disabled]="isProcessIdSelectionDisabled(process.id)"
+                   [checked]="process_ids.isSelected(process.id)" (change)="onProcessIdToggle(process.id)" style="margin-top: 5px">
             <label class="col-11">{{ process.name }}</label>
         </div>
     </div>

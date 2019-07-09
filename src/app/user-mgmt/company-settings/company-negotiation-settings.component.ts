@@ -81,4 +81,24 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
     isDisabled(): boolean {
         return this.presentationMode === "view";
     }
+
+    // it checks whether we should disable checkbox for the given process id or not
+    isProcessIdSelectionDisabled(processId:string){
+        // for Negotiation, we should disable checkbox if Order or Transport_Execution_Plan is selected since Negotiation is a necessary step for these processes
+        // and the user should not deselect it.
+        if(processId == "Negotiation" && (this.process_ids.isSelected("Order") || this.process_ids.isSelected('Transport_Execution_Plan'))){
+            return true;
+        }
+        return this.isDisabled();
+    }
+
+    // called when process id checkbox is changed
+    onProcessIdToggle(processId:string){
+        this.process_ids.toggle(processId);
+        // make sure that when Order or Transport_Execution_Plan is selected, Negotiation is selected as well
+        if((this.process_ids.isSelected("Order") || this.process_ids.isSelected('Transport_Execution_Plan')) && !this.process_ids.isSelected("Negotiation")){
+            this.process_ids.toggle("Negotiation");
+        }
+    }
+
 }
