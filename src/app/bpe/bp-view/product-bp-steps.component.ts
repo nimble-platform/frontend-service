@@ -3,6 +3,7 @@ import { ProductBpStepStatus } from "./product-bp-step-status";
 import { ProductBpStep } from "./product-bp-step";
 import { ProductBpStepsDisplay } from "./product-bp-steps-display";
 import * as myGlobals from '../../globals';
+import { BPDataService } from './bp-data-service';
 
 @Component({
     selector: "product-bp-steps",
@@ -16,13 +17,19 @@ export class ProductBpStepsComponent implements OnInit {
     @Input() displayMode: ProductBpStepsDisplay;
     @Input() statusText: string = "";
 
+    // map representing the processes which are included in the seller's workflow
+    // id is the process id and value is true or false (whether the process is included or not)
+    companyWorkflowMap = null;
+
     config = myGlobals.config;
 
-    constructor() {
+    constructor(public bpDataService:BPDataService) {
 
     }
 
     ngOnInit() {
+        // set companyWorkflowMap
+        this.companyWorkflowMap = this.bpDataService.getCompanyWorkflowMap();
     }
 
     getStepClasses(step: ProductBpStep): any {

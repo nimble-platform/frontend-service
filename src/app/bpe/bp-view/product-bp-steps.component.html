@@ -2,26 +2,26 @@
     <!-- Order Steps -->
     <div *ngIf="displayMode === 'Order' || displayMode === 'Order_Before_Transport'" class="col-12">
         <div class="steps">
-            <div [ngClass]="getStepClasses('Item_Information_Request')">
+            <div *ngIf="companyWorkflowMap.get('Item_Information_Request')" [ngClass]="getStepClasses('Item_Information_Request')">
                 <span [attr.data-after]="statusText">Request for Information</span>
             </div>
-            <div *ngIf="config.showPPAP" [ngClass]="getStepClasses('Ppap')">
+            <div *ngIf="config.showPPAP && companyWorkflowMap.get('Ppap')" [ngClass]="getStepClasses('Ppap')">
                 <span [attr.data-after]="statusText">Ppap</span>
             </div>
-            <div [ngClass]="getStepClasses('Negotiation')">
+            <div *ngIf="companyWorkflowMap.get('Negotiation')" [ngClass]="getStepClasses('Negotiation')">
                 <span [attr.data-after]="statusText">Negotiation</span>
             </div>
-            <div [ngClass]="getStepClasses('Order')">
+            <div *ngIf="companyWorkflowMap.get('Order')" [ngClass]="getStepClasses('Order')">
                 <span [attr.data-after]="statusText">Order Preview</span>
             </div>
-            <div [ngClass]="getStepClasses('Order_Confirmed')">
+            <div *ngIf="companyWorkflowMap.get('Order')" [ngClass]="getStepClasses('Order_Confirmed')">
                 <span [attr.data-after]="statusText">Order Confirmed</span>
             </div>
-            <div [ngClass]="getStepClasses('Fulfilment')">
+            <div *ngIf="companyWorkflowMap.get('Fulfilment')" [ngClass]="getStepClasses('Fulfilment')">
                 <span [attr.data-after]="statusText">Order Dispatched</span>
             </div>
         </div>
-        <div *ngIf="displayMode === 'Order_Before_Transport'" class="expand-steps-div expand-transport">
+        <div *ngIf="displayMode === 'Order_Before_Transport' && companyWorkflowMap.get('Fulfilment')" class="expand-steps-div expand-transport">
             <i class="fas fa-ellipsis-h"></i>
         </div>
     </div>
@@ -29,16 +29,16 @@
     <!-- Transport Steps -->
     <div *ngIf="displayMode === 'Transport'" class="col-12">
         <div class="steps">
-            <div [ngClass]="getStepClasses('Transport_Information_Request')">
+            <div *ngIf="companyWorkflowMap.get('Item_Information_Request')" [ngClass]="getStepClasses('Transport_Information_Request')">
                 <span [attr.data-after]="statusText">Transport Service Information Request</span>
             </div>
-            <div [ngClass]="getStepClasses('Transport_Negotiation')">
+            <div *ngIf="companyWorkflowMap.get('Negotiation')" [ngClass]="getStepClasses('Transport_Negotiation')">
                 <span [attr.data-after]="statusText">Transport Service Negotiation</span>
             </div>
-            <div [ngClass]="getStepClasses('Transport_Order')">
+            <div *ngIf="companyWorkflowMap.get('Transport_Execution_Plan')" [ngClass]="getStepClasses('Transport_Order')">
                 <span [attr.data-after]="statusText">Transport Service Preview</span>
             </div>
-            <div [ngClass]="getStepClasses('Transport_Order_Confirmed')">
+            <div *ngIf="companyWorkflowMap.get('Transport_Execution_Plan')" [ngClass]="getStepClasses('Transport_Order_Confirmed')">
                 <span [attr.data-after]="statusText">Transport Service Confirmed</span>
             </div>
         </div>
@@ -54,17 +54,17 @@
             <!-- <div [ngClass]="getStepClasses('Order_Confirmed')">
                 <span>Order Confirmed</span>
             </div> -->
-            <div [ngClass]="getStepClasses('Transport_Information_Request')">
+            <div *ngIf="companyWorkflowMap.get('Item_Information_Request')" [ngClass]="getStepClasses('Transport_Information_Request')">
                 <span [attr.data-after]="statusText">Transport Service Information Request</span>
             </div>
-            <div [ngClass]="getStepClasses('Transport_Negotiation')">
+            <div *ngIf="companyWorkflowMap.get('Negotiation')" [ngClass]="getStepClasses('Transport_Negotiation')">
                 <span [attr.data-after]="statusText">Transport Service Negotiation</span>
             </div>
-            <div [ngClass]="getStepClasses('Transport_Order')">
+            <div *ngIf="companyWorkflowMap.get('Transport_Execution_Plan')" [ngClass]="getStepClasses('Transport_Order')">
                 <span [attr.data-after]="statusText">Transport Service Review</span>
             </div>
-            <div [ngClass]="getStepClasses('Transport_Order_Confirmed')">
-                <span [attr.data-after]="statusText" >Transport Service Confirmed</span>
+            <div *ngIf="companyWorkflowMap.get('Transport_Execution_Plan')" [ngClass]="getStepClasses('Transport_Order_Confirmed')">
+                <span [attr.data-after]="statusText">Transport Service Confirmed</span>
             </div>
             <div [ngClass]="getStepClasses('Fulfilment')">
                 <span [attr.data-after]="statusText">Order Dispatched</span>
@@ -78,7 +78,7 @@
     <!-- Logistics Services Steps -->
     <div *ngIf="displayMode === 'Logistics'" class="col-12">
         <div class="steps">
-            <div [ngClass]="getStepClasses('Item_Information_Request')">
+            <div *ngIf="companyWorkflowMap.get('Item_Information_Request')" [ngClass]="getStepClasses('Item_Information_Request')">
                 <span [attr.data-after]="statusText">Request for Information</span>
             </div>
         </div>
