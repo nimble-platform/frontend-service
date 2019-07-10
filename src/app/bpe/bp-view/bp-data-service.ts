@@ -581,6 +581,17 @@ export class BPDataService{
         return workflowMap;
     }
 
+    // checks whether the given process is the final step in the workflow or not
+    isFinalProcessInTheWorkflow(processId:string){
+        let companyWorkflow = this.getCompanySettings().negotiationSettings.company.processID;
+        // if there is no workflow specified, then consider the default flow
+        // Fulfilment or TEP is the final step in the default flow
+        if((!companyWorkflow || companyWorkflow.length == 0) && (processId == "Fulfilment" || processId == "Transport_Execution_Plan")){
+            return true;
+        }
+        return companyWorkflow[companyWorkflow.length-1] == processId;
+    }
+
     /********************************************************************************************
      * Methods to update the modified catalogue lines based on the user activities on the UI
      * For example, user would choose a particular dimension for the product to be ordered, or

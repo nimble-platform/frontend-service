@@ -232,7 +232,7 @@ export class NegotiationRequestComponent implements OnInit {
                 return;
             }
         }
-        if(this.isNegotiatingAnyTerm()) {
+        if(this.isNegotiatingAnyTerm() || this.bpDataService.isFinalProcessInTheWorkflow("Negotiation")) {
             // create an additional trading term for the frame contract duration
             if(this.rfq.negotiationOptions.frameContractDuration && this.isFrameContractValid()) {
                 this.wrapper.rfqFrameContractDuration = this.frameContractDuration;

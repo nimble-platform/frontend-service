@@ -449,7 +449,7 @@
     </div>
     <div class="col-3"   *ngIf="!(processMetadata && processMetadata.isBeingUpdated)">
         <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onSendRequest()">
-            {{ isNegotiatingAnyTerm() ? "Send Request" : "Continue With Manufacturer's Terms" }}
+            {{ isNegotiatingAnyTerm() || bpDataService.isFinalProcessInTheWorkflow('Negotiation') ? "Send Request" : "Continue With Manufacturer's Terms" }}
         </button>
     </div>
     <div class="col-3" *ngIf="processMetadata && processMetadata.isBeingUpdated">
