@@ -3,16 +3,16 @@
 	<div [hidden]="!searchTopic" class="form-group row">
 		<div class="col-12">
 				<div class="input-group">
-					<div *ngIf="searchTopic=='prod'" ngbDropdown class="d-inline-block input-group-prepend">
-						<button class="btn btn-outline-dark" type="button" id="searchIndex" ngbDropdownToggle>
+					<input *ngIf="searchTopic=='prod'" type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" pattern=".{1,}" placeholder="Product / Service">
+					<input *ngIf="searchTopic=='comp'" type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getCompSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" pattern=".{1,}" placeholder="Company">
+					<div *ngIf="searchTopic=='prod'" ngbDropdown class="d-inline-block input-group-append">
+						<button *ngIf="searchTopic=='prod'" class="btn btn-outline-secondary" type="button" id="searchIndex" ngbDropdownToggle>
 							{{searchIndex}}
 						</button>
 						<div ngbDropdownMenu aria-labelledby="searchIndex">
 							<a *ngFor="let searchIndexName of searchIndexes" class="dropdown-item" (click)="changeSearchIndex(searchIndexName)">{{searchIndexName}}</a>
 						</div>
 					</div>
-					<input *ngIf="searchTopic=='prod'" type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" pattern=".{1,}" placeholder="Product / Service">
-					<input *ngIf="searchTopic=='comp'" type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getCompSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" pattern=".{1,}" placeholder="Company">
 					<div class="input-group-append">
 						<button type="submit" class="btn btn-outline-secondary" [disabled]="!simpleSearchForm.form.valid">
 							<i class="fa fa-search"></i>
