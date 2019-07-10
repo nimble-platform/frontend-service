@@ -73,6 +73,9 @@ export class OrderComponent implements OnInit {
 
     showPurchaseOrder:boolean = false;
 
+    // map representing the workflow of seller's company
+    companyWorkflowMap = null;
+
     constructor(public bpDataService: BPDataService,
                 private userService: UserService,
                 private bpeService: BPEService,
@@ -106,6 +109,8 @@ export class OrderComponent implements OnInit {
             this.bpDataService.getCatalogueLine().requiredItemLocationQuantity.applicableTaxCategory[0].percent,
             this.order.orderLine[0].lineItem.quantity
         );
+
+        this.companyWorkflowMap = this.bpDataService.getCompanyWorkflowMap();
 
         // null check is for checking whether a new order is initialized
         // preceding process id check is for checking whether there is any preceding process before the order
