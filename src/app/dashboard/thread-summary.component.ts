@@ -27,6 +27,7 @@ import {Item} from '../catalogue/model/publish/item';
 import {NEGOTIATION_RESPONSES} from "../catalogue/model/constants";
 import {DataChannel} from '../data-channel/model/datachannel';
 import * as myGlobals from "../globals";
+import {UserService} from '../user-mgmt/user.service';
 
 /**
  * Created by suat on 12-Mar-18.
@@ -95,6 +96,7 @@ export class ThreadSummaryComponent implements OnInit {
                 private bpDataService: BPDataService,
                 private router: Router,
                 private modalService: NgbModal,
+                private userService: UserService,
                 private documentService: DocumentService) {
     }
 
@@ -203,6 +205,13 @@ export class ThreadSummaryComponent implements OnInit {
         const processInstance = dashboardProcessInstanceDetails.processInstance;
         const correspondent = this.getCorrespondent(dashboardProcessInstanceDetails,userRole,processType);
 
+        // get seller's business process workflow
+        // we need this information to set status and labels for Order properly
+        const sellerNegotiationSettings = await this.userService.getCompanyNegotiationSettingsForParty(initialDoc.item.manufacturerParty.partyIdentification[0].id);
+        const sellerWorkflow = sellerNegotiationSettings.company.processID;
+        // check whether Fulfilment is included or not in seller's workflow
+        const isFulfilmentIncludedInWorkflow = !sellerWorkflow || sellerWorkflow.length == 0 || sellerWorkflow.indexOf('Fulfilment') != -1;
+
         if (userRole === "buyer") {
             let item:Item = initialDoc.item;
             this.lastEventPartnerID = UBLModelUtils.getPartyId(item.manufacturerParty);
@@ -228,7 +237,7 @@ export class ThreadSummaryComponent implements OnInit {
             isRated === "true"
         );
 
-        this.fillStatus(event, processInstance["state"], processType, responseDocumentStatus, userRole === "buyer");
+        this.fillStatus(event, processInstance["state"], processType, responseDocumentStatus, userRole === "buyer",isFulfilmentIncludedInWorkflow);
         this.setCancelCollaborationButtonStatus(processType,responseDocumentStatus);
         this.checkDataChannel(event);
 
@@ -267,9 +276,9 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     private fillStatus(event: ThreadEventMetadata, processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
-                       processType: ProcessType, response: any, buyer: boolean): void {
+                       processType: ProcessType, response: any, buyer: boolean, isFulfilmentIncludedInWorkflow:boolean): void {
 
-        event.status = this.getStatus(processState, processType, response, buyer);
+        event.status = this.getStatus(processState, processType, response, buyer, isFulfilmentIncludedInWorkflow);
 
         // messages if there is no response from the responder party
         if (response == null) {
@@ -334,11 +343,21 @@ export class ThreadSummaryComponent implements OnInit {
                 case "Order":
                     if (response.documentStatus) {
                         if(buyer) {
-                            event.statusText = "Waiting for Dispatch Advice";
+                            if(isFulfilmentIncludedInWorkflow){
+                                event.statusText = "Waiting for Dispatch Advice";
+                            }
+                            else{
+                                event.statusText = "Order approved";
+                            }
                             event.actionText = "See Order";
                         } else {
+                            if(isFulfilmentIncludedInWorkflow){
+                                event.actionText = "Send Dispatch Advice";
+                            }
+                            else{
+                                event.actionText = "See Order";
+                            }
                             event.statusText = "Order approved";
-                            event.actionText = "Send Dispatch Advice";
                         }
                     } else {
                         event.statusText = "Order declined";
@@ -397,11 +416,12 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     private getStatus(processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
-                      processType: ProcessType, response: any, buyer: boolean): ThreadEventStatus {
+                      processType: ProcessType, response: any, buyer: boolean,isFulfilmentIncludedInWorkflow:boolean): ThreadEventStatus {
         switch(processState) {
             case "COMPLETED":
                 if(processType === "Order") {
-                     return buyer ? "WAITING" : "ACTION_REQUIRED";
+                    if(isFulfilmentIncludedInWorkflow)
+                        return buyer ? "WAITING" : "ACTION_REQUIRED";
                 }
                 return "DONE";
             case "EXTERNALLY_TERMINATED":
