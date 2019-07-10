@@ -84,9 +84,12 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
 
     // it checks whether we should disable checkbox for the given process id or not
     isProcessIdSelectionDisabled(processId:string){
-        // for Negotiation, we should disable checkbox if Order or Transport_Execution_Plan is selected since Negotiation is a necessary step for these processes
+        // for Negotiation, we should disable checkbox if Order, Transport_Execution_Plan or Fulfilment is selected since Negotiation is a necessary step for these processes
         // and the user should not deselect it.
-        if(processId == "Negotiation" && (this.process_ids.isSelected("Order") || this.process_ids.isSelected('Transport_Execution_Plan'))){
+        if(processId == "Negotiation" && (this.process_ids.isSelected("Order") || this.process_ids.isSelected('Transport_Execution_Plan') || this.process_ids.isSelected('Fulfilment'))){
+            return true;
+        }
+        if(processId == "Order" && this.process_ids.isSelected("Fulfilment")){
             return true;
         }
         return this.isDisabled();
@@ -98,6 +101,13 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
         // make sure that when Order or Transport_Execution_Plan is selected, Negotiation is selected as well
         if((this.process_ids.isSelected("Order") || this.process_ids.isSelected('Transport_Execution_Plan')) && !this.process_ids.isSelected("Negotiation")){
             this.process_ids.toggle("Negotiation");
+        }
+        // make sure that when Fulfilment is selected, Negotiation and Order is selected as well
+        if(this.process_ids.isSelected("Fulfilment")){
+            if(!this.process_ids.isSelected("Negotiation"))
+                this.process_ids.toggle("Negotiation");
+            if(!this.process_ids.isSelected("Order"))
+                this.process_ids.toggle("Order");
         }
     }
 
