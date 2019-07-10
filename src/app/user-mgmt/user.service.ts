@@ -489,7 +489,8 @@ export class UserService {
         const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': 'Basic YWRtaW46KnBsYXRmb3JtKg==' });
         let options = new RequestOptions();
         options.headers = new Headers();
-        options.headers.append('authorization', 'Basic YWRtaW46KnBsYXRmb3JtKg==');
+        options.headers.append('Content-Type', 'application/json');
+        options.headers.append('Authorization', 'Basic YWRtaW46KnBsYXRmb3JtKg==');
         options.responseType = ResponseContentType.Blob;
 
         return new Observable((observer: Subscriber<any>) => {

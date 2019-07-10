@@ -61,7 +61,7 @@ export class PlatformAnalyticsComponent implements OnInit {
 
     ngOnInit(): void {
 
-		this.iframe.nativeElement.src = this.userService.getCallKibana().subscribe(blob => this.iframe.nativeElement.src = blob);;
+		this.userService.getCallKibana().subscribe(blob => this.iframe.nativeElement.src = blob);
         this.selectedTab = this.config.kibanaEnabled? "LOG" : "DB";
         if (this.config.kibanaEnabled) {
           let tmpDashboards = this.config.kibanaConfig.dashboards;
