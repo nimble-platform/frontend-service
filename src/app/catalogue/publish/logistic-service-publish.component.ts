@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {UBLModelUtils} from '../model/ubl-model-utils';
 import {Location} from '@angular/common';
@@ -285,18 +285,23 @@ export class LogisticServicePublishComponent implements OnInit {
     }
 
 
-    getButtonLabel(serviceType:string,exit:boolean = false){
+    getButtonLabel(exit:boolean = false){
         if(this.publishStateService.publishMode === "edit")
             return exit ? "Save & Exit" : "Save & Continue";
         else if(this.publishStateService.publishMode === "copy")
             return exit ? "Publish & Exit" : "Publish & Continue";
 
-        if(serviceType == "TRANSPORT"){
-            if(this.logisticPublishMode.get('ROADTRANSPORT') === 'edit' || this.logisticPublishMode.get('MARITIMETRANSPORT') === 'edit' || this.logisticPublishMode.get('AIRTRANSPORT') === 'edit' || this.logisticPublishMode.get('RAILTRANSPORT') === 'edit')
-                return exit ? "Save & Exit" : "Save & Continue";
-        }
-        else if(this.logisticPublishMode.get(serviceType) === 'edit')
+        // if the publish mode is 'edit' for at least one of the logistics services, set isPublishModeEdit to true.
+        let isPublishModeEdit = false;
+        this.logisticPublishMode.forEach(value => {
+            if(value == 'edit'){
+                isPublishModeEdit = true;
+            }
+        });
+
+        if(isPublishModeEdit){
             return exit ? "Save & Exit" : "Save & Continue";
+        }
 
         return exit ? "Publish & Exit" : "Publish & Continue";
     }
@@ -425,33 +430,14 @@ export class LogisticServicePublishComponent implements OnInit {
     // methods used to validate catalogue lines
     isValidCatalogueLineForLogistics(): boolean {
         if(this.publishMode == 'create'){
-            if(this.selectedTabSinglePublish == 'TRANSPORT'){
-                if(this.logisticCatalogueLines.has("ROADTRANSPORT")){
-                    if(this.itemHasName(this.logisticCatalogueLines.get("ROADTRANSPORT").goodsItem.item)){
-                        return true;
-                    }
+            let isValid = false;
+            // if at least of the logistics services has a valid name, then set 'isValid' to true.
+            this.logisticCatalogueLines.forEach(catalogueLine => {
+                if(this.itemHasName(catalogueLine.goodsItem.item)){
+                    isValid = true;
                 }
-                if(this.logisticCatalogueLines.has("MARITIMETRANSPORT")){
-                    if(this.itemHasName(this.logisticCatalogueLines.get("MARITIMETRANSPORT").goodsItem.item)){
-                        return true;
-                    }
-                }
-                if(this.logisticCatalogueLines.has("AIRTRANSPORT")){
-                    if(this.itemHasName(this.logisticCatalogueLines.get("AIRTRANSPORT").goodsItem.item)){
-                        return true;
-                    }
-                }
-                if(this.logisticCatalogueLines.has("RAILTRANSPORT")){
-                    if(this.itemHasName(this.logisticCatalogueLines.get("RAILTRANSPORT").goodsItem.item)){
-                        return true;
-                    }
-                }
-            }else{
-                if(this.itemHasName(this.logisticCatalogueLines.get(this.selectedTabSinglePublish).goodsItem.item)){
-                    return true;
-                }
-            }
-            return false;
+            });
+            return isValid;
         }
         return this.isValidCatalogueLine();
     }
@@ -556,62 +542,66 @@ export class LogisticServicePublishComponent implements OnInit {
             }
         }
         else{
-            if(this.selectedTabSinglePublish == "TRANSPORT"){
-                let transportServiceCatalogueLines:CatalogueLine[] = [];
-                let transportServicePublishModes:string[] = [];
-                if(this.logisticCatalogueLines.has("ROADTRANSPORT")){
-                    this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines.get("ROADTRANSPORT"));
-                    transportServiceCatalogueLines.push(this.logisticCatalogueLines.get("ROADTRANSPORT"));
-                    transportServicePublishModes.push(this.logisticPublishMode.get("ROADTRANSPORT"));
+            let catalogueLines:CatalogueLine[] = [];
+            let cataloguePublishModes:string[] = [];
+            // get valid catalogue lines and their publish modes
+            if(this.logisticCatalogueLines.has("ROADTRANSPORT") && this.itemHasName(this.logisticCatalogueLines.get("ROADTRANSPORT").goodsItem.item)){
+                this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines.get("ROADTRANSPORT"));
+                // be sure that its transportation service details is not null
+                this.logisticCatalogueLines.get("ROADTRANSPORT").goodsItem.item.transportationServiceDetails = new TransportationService();
+                catalogueLines.push(this.logisticCatalogueLines.get("ROADTRANSPORT"));
+                cataloguePublishModes.push(this.logisticPublishMode.get("ROADTRANSPORT"));
+            }
+            if(this.logisticCatalogueLines.has("MARITIMETRANSPORT") && this.itemHasName(this.logisticCatalogueLines.get("MARITIMETRANSPORT").goodsItem.item)){
+                this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines.get("MARITIMETRANSPORT"));
+                // be sure that its transportation service details is not null
+                this.logisticCatalogueLines.get("MARITIMETRANSPORT").goodsItem.item.transportationServiceDetails = new TransportationService();
+                catalogueLines.push(this.logisticCatalogueLines.get("MARITIMETRANSPORT"));
+                cataloguePublishModes.push(this.logisticPublishMode.get("MARITIMETRANSPORT"));
+            }
+            if(this.logisticCatalogueLines.has("AIRTRANSPORT") && this.itemHasName(this.logisticCatalogueLines.get("AIRTRANSPORT").goodsItem.item)){
+                this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines.get("AIRTRANSPORT"));
+                // be sure that its transportation service details is not null
+                this.logisticCatalogueLines.get("AIRTRANSPORT").goodsItem.item.transportationServiceDetails = new TransportationService();
+                catalogueLines.push(this.logisticCatalogueLines.get("AIRTRANSPORT"));
+                cataloguePublishModes.push(this.logisticPublishMode.get("AIRTRANSPORT"));
+            }
+            if(this.logisticCatalogueLines.has("RAILTRANSPORT") && this.itemHasName(this.logisticCatalogueLines.get("RAILTRANSPORT").goodsItem.item)){
+                this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines.get("RAILTRANSPORT"));
+                // be sure that its transportation service details is not null
+                this.logisticCatalogueLines.get("RAILTRANSPORT").goodsItem.item.transportationServiceDetails = new TransportationService();
+                catalogueLines.push(this.logisticCatalogueLines.get("RAILTRANSPORT"));
+                cataloguePublishModes.push(this.logisticPublishMode.get("RAILTRANSPORT"));
+            }
+            this.logisticCatalogueLines.forEach((catalogueLine, key) => {
+                if(key != "ROADTRANSPORT" && key != "MARITIMETRANSPORT" && key != "AIRTRANSPORT" && key != "RAILTRANSPORT" && this.itemHasName(catalogueLine.goodsItem.item)){
+                    catalogueLines.push(catalogueLine);
+                    cataloguePublishModes.push(this.logisticPublishMode.get(key));
                 }
-                if(this.logisticCatalogueLines.has("MARITIMETRANSPORT")){
-                    this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines.get("MARITIMETRANSPORT"));
-                    transportServiceCatalogueLines.push(this.logisticCatalogueLines.get("MARITIMETRANSPORT"));
-                    transportServicePublishModes.push(this.logisticPublishMode.get("MARITIMETRANSPORT"));
-                }
-                if(this.logisticCatalogueLines.has("AIRTRANSPORT")){
-                    this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines.get("AIRTRANSPORT"));
-                    transportServiceCatalogueLines.push(this.logisticCatalogueLines.get("AIRTRANSPORT"));
-                    transportServicePublishModes.push(this.logisticPublishMode.get("AIRTRANSPORT"));
-                }
-                if(this.logisticCatalogueLines.has("RAILTRANSPORT")){
-                    this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines.get("RAILTRANSPORT"));
-                    transportServiceCatalogueLines.push(this.logisticCatalogueLines.get("RAILTRANSPORT"));
-                    transportServicePublishModes.push(this.logisticPublishMode.get("RAILTRANSPORT"));
-                }
+            });
 
-                let validCatalogueLinesToBePublished:CatalogueLine[] = [];
-                let validCatalogueLinesToBeUpdated:CatalogueLine[] = [];
+            let catalogueLinesToBePublished:CatalogueLine[] = [];
+            let catalogueLinesToBeUpdated:CatalogueLine[] = [];
+            // get catalogue lines to be published and catalogue lines to be updated
+            for(let i = 0; i < catalogueLines.length ; i++){
+                if(cataloguePublishModes[i] == 'edit'){
+                    catalogueLinesToBeUpdated.push(catalogueLines[i]);
+                }else{
+                    catalogueLinesToBePublished.push(catalogueLines[i]);
+                }
+            }
 
-                for(let i = 0; i < transportServiceCatalogueLines.length ; i++){
-                    if(this.itemHasName(transportServiceCatalogueLines[i].goodsItem.item)){
-                        // be sure that its transportation service details is not null
-                        transportServiceCatalogueLines[i].goodsItem.item.transportationServiceDetails = new TransportationService();
-
-                        if(transportServicePublishModes[i] == 'edit'){
-                            validCatalogueLinesToBeUpdated.push(transportServiceCatalogueLines[i]);
-                        }else{
-                            validCatalogueLinesToBePublished.push(transportServiceCatalogueLines[i]);
-                        }
-                    }
-                }
-
-                if(validCatalogueLinesToBePublished.length > 0){
-                    this.publish(validCatalogueLinesToBePublished,exitThePage);
-                }
-                if(validCatalogueLinesToBeUpdated.length > 0){
-                    this.saveEditedProduct(exitThePage,validCatalogueLinesToBeUpdated);
-                }
-
-            } else{
-                if(this.logisticPublishMode.get(this.selectedTabSinglePublish) === "create" || this.logisticPublishMode.get(this.selectedTabSinglePublish) === "copy"){
-                    // publish new service
-                    this.publish([this.logisticCatalogueLines.get(this.selectedTabSinglePublish)], exitThePage);
-                }
-                else{
-                    // update the existing service
-                    this.saveEditedProduct(exitThePage,[this.logisticCatalogueLines.get(this.selectedTabSinglePublish)]);
-                }
+            // make sure that we exit after publishing new services and updating existing ones
+            if(exitThePage && catalogueLinesToBePublished.length > 0 && catalogueLinesToBeUpdated.length > 0){
+                this.publish(catalogueLinesToBePublished,false);
+                this.saveEditedProduct(true,catalogueLinesToBeUpdated);
+                return;
+            }
+            if(catalogueLinesToBePublished.length > 0){
+                this.publish(catalogueLinesToBePublished,exitThePage);
+            }
+            if(catalogueLinesToBeUpdated.length > 0){
+                this.saveEditedProduct(exitThePage,catalogueLinesToBeUpdated);
             }
         }
     }
