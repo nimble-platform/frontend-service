@@ -63,10 +63,8 @@ export class PlatformAnalyticsComponent implements OnInit {
 
 		// this.iframe.nativeElement.src = this.userService.getCallKibana().subscribe(blob => this.iframe.nativeElement.src = blob);;
 		this.userService.getCallKibana().then(res => {
-			debugger
 		})
 		.catch(error => {
-			debugger
 		});
         this.selectedTab = this.config.kibanaEnabled? "LOG" : "DB";
         if (this.config.kibanaEnabled) {
