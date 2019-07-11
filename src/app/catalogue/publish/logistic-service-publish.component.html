@@ -96,6 +96,14 @@
                 <div class="space-before" *ngFor="let property of getLogisticProperties('ROADTRANSPORT')">
                     <options-panel [itemProperty]="property"></options-panel>
                 </div>
+                <div class="space-before">
+                    <options-panel [itemProperty]="getProductTypeProperty('ROADTRANSPORT')" [checkboxOther]="false"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
+                <div class="space-before">
+                    <options-panel [itemProperty]="getIndustrySpecializationProperty('ROADTRANSPORT')" [checkboxOther]="false"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
             </div>
             <button *ngIf="availableLogisticsServices.indexOf('MARITIMETRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'MARITIMETRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showMaritimeTransportService = !showMaritimeTransportService">Maritime Transport</button>
             <div class="well" *ngIf="showMaritimeTransportService">
@@ -112,6 +120,14 @@
                 </div>
                 <div class="space-before" *ngFor="let property of getLogisticProperties('MARITIMETRANSPORT')">
                     <options-panel [itemProperty]="property"></options-panel>
+                </div>
+                <div class="space-before">
+                    <options-panel [itemProperty]="getProductTypeProperty('MARITIMETRANSPORT')" [checkboxOther]="false"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
+                <div class="space-before">
+                    <options-panel [itemProperty]="getIndustrySpecializationProperty('MARITIMETRANSPORT')" [checkboxOther]="false"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
             </div>
             <button *ngIf="availableLogisticsServices.indexOf('AIRTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'AIRTRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showAirTransportService = !showAirTransportService">Air Transport</button>
@@ -130,6 +146,14 @@
                 <div class="space-before" *ngFor="let property of getLogisticProperties('AIRTRANSPORT')">
                     <options-panel [itemProperty]="property"></options-panel>
                 </div>
+                <div class="space-before">
+                    <options-panel [itemProperty]="getProductTypeProperty('AIRTRANSPORT')" [checkboxOther]="false"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
+                <div class="space-before">
+                    <options-panel [itemProperty]="getIndustrySpecializationProperty('AIRTRANSPORT')" [checkboxOther]="false"
+                                   [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
             </div>
             <button *ngIf="availableLogisticsServices.indexOf('RAILTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'RAILTRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showRailTransportService = !showRailTransportService">Rail Transport</button>
             <div class="well" *ngIf="showRailTransportService">
@@ -147,14 +171,12 @@
                 <div class="space-before" *ngFor="let property of getLogisticProperties('RAILTRANSPORT')">
                     <options-panel [itemProperty]="property"></options-panel>
                 </div>
-            </div>
-            <div *ngIf="selectedTabSinglePublish == 'TRANSPORT' || selectedTabSinglePublish == 'RAILTRANSPORT' || selectedTabSinglePublish == 'AIRTRANSPORT' || selectedTabSinglePublish == 'MARITIMETRANSPORT' || selectedTabSinglePublish == 'ROADTRANSPORT'">
                 <div class="space-before">
-                    <options-panel [itemProperty]="getProductTypeProperty('TRANSPORT')" [checkboxOther]="false"
+                    <options-panel [itemProperty]="getProductTypeProperty('RAILTRANSPORT')" [checkboxOther]="false"
                                    [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
                 <div class="space-before">
-                    <options-panel [itemProperty]="getIndustrySpecializationProperty('TRANSPORT')" [checkboxOther]="false"
+                    <options-panel [itemProperty]="getIndustrySpecializationProperty('RAILTRANSPORT')" [checkboxOther]="false"
                                    [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
             </div>

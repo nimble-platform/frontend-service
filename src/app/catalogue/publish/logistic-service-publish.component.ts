@@ -362,24 +362,6 @@ export class LogisticServicePublishComponent implements OnInit {
         return properties
     }
 
-    getProductTypeForLogistic(serviceType:string){
-        let item:Item = this.getLogisticCatalogueLine(serviceType).goodsItem.item;
-        for(let itemProperty of item.additionalItemProperty){
-            if(itemProperty.uri == "http://www.aidimme.es/FurnitureSectorOntology.owl#managedProductType"){
-                return itemProperty.value;
-            }
-        }
-    }
-
-    getIndustrySpecializationForLogistics(serviceType:string){
-        let item:Item = this.getLogisticCatalogueLine(serviceType).goodsItem.item;
-        for(let itemProperty of item.additionalItemProperty){
-            if(itemProperty.uri == 'http://www.aidimme.es/FurnitureSectorOntology.owl#industrySpecialization'){
-                return itemProperty.value;
-            }
-        }
-    }
-
     getOriginAddressForLogistics(serviceType:string){
         let item:Item = this.getLogisticCatalogueLine(serviceType).goodsItem.item;
         for(let itemProperty of item.additionalItemProperty){
@@ -507,18 +489,10 @@ export class LogisticServicePublishComponent implements OnInit {
     }
 
     private copyMissingAdditionalItemPropertiesAndAddresses(catalogueLine:CatalogueLine){
-        let productType = this.getProductTypeForLogistic('TRANSPORT');
-        let industrySpecialization = this.getIndustrySpecializationForLogistics('TRANSPORT');
         let originAddress = this.getOriginAddressForLogistics('TRANSPORT');
         let destinationAddress = this.getDestinationAddressForLogistics('TRANSPORT');
         for(let itemProperty of catalogueLine.goodsItem.item.additionalItemProperty){
-            if(itemProperty.uri == 'http://www.aidimme.es/FurnitureSectorOntology.owl#managedProductType'){
-                itemProperty.value = productType;
-            }
-            else if(itemProperty.uri == 'http://www.aidimme.es/FurnitureSectorOntology.owl#industrySpecialization'){
-                itemProperty.value = industrySpecialization;
-            }
-            else if(itemProperty.uri == "http://www.aidimme.es/FurnitureSectorOntology.owl#originTransport"){
+            if(itemProperty.uri == "http://www.aidimme.es/FurnitureSectorOntology.owl#originTransport"){
                 itemProperty.value = originAddress.value;
             }
             else if(itemProperty.uri == "http://www.aidimme.es/FurnitureSectorOntology.owl#destinationTransport"){
