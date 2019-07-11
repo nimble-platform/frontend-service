@@ -513,11 +513,11 @@ export class UserService {
     // }
     
     getCallKibana(){
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'kbn-version': '7.2.0' });
+        const headers_token = new Headers({ 'Content-Type': 'application/json', 'kbn-version': '6.7.1','User-Agent': 'Mozilla', "withCredentials": "true","Access-Control-Allow-Origi":"*"});
         let options = new RequestOptions();
-
+        
         return this.http
-        .post("http://localhost:5601/api/v1/auth/login", JSON.stringify({"username": "admin", "password": "admin"}), {headers: headers_token})
+        .post("http://nimble-staging.salzburgresearch.at:5601/api/v1/auth/login", JSON.stringify({"username": "admin", "password": "admin"}), {headers: headers_token})
         .toPromise()
         .then(res => res.json())
         .catch(this.handleError);
