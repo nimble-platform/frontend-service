@@ -238,7 +238,7 @@ export class ThreadSummaryComponent implements OnInit {
         );
 
         this.fillStatus(event, processInstance["state"], processType, responseDocumentStatus, userRole === "buyer",isFulfilmentIncludedInWorkflow);
-        this.setCancelCollaborationButtonStatus(processType,responseDocumentStatus);
+        this.setCancelCollaborationButtonStatus(processType,responseDocumentStatus,sellerWorkflow);
         this.checkDataChannel(event);
 
         return event;
@@ -525,7 +525,16 @@ export class ThreadSummaryComponent implements OnInit {
         }
     }
 
-    setCancelCollaborationButtonStatus(processType: ProcessType, response: any){
+    setCancelCollaborationButtonStatus(processType: ProcessType, response: any,sellerWorkflow:string[]){
+        // if the flow is completed, do not allow the user to cancel collaboration
+        if(sellerWorkflow && sellerWorkflow.length > 0){
+            const lastProcessID = sellerWorkflow[sellerWorkflow.length-1];
+            if(processType == lastProcessID && response){
+                this.showCancelCollaborationButton = false;
+                return;
+            }
+        }
+
         switch(processType) {
             case "Order":
                 if (response && response.acceptedIndicator) {
