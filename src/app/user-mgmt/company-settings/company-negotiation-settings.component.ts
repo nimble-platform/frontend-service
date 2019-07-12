@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from "@angular/core";
-import { CookieService } from "ng2-cookies";
 import { UserService } from "../user.service";
 import {PAYMENT_MEANS, INCOTERMS, PROCESSES} from '../../catalogue/model/constants';
 import { UBLModelUtils } from "../../catalogue/model/ubl-model-utils";
@@ -8,6 +7,7 @@ import { CompanyNegotiationSettings } from "../model/company-negotiation-setting
 import { SelectedTerms } from "../selected-terms";
 import { copy, deepEquals } from "../../common/utils";
 import { CompanySettings } from "../model/company-settings";
+import {BPEService} from '../../bpe/bpe.service';
 
 @Component({
     selector: "company-negotiation-settings",
@@ -37,7 +37,13 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
     incoterms: SelectedTerms;
     process_ids: SelectedTerms;
 
-    constructor(private userService: UserService) {
+    // whether the all collaborations is finished or not
+    // if all collaborations is finished, then the user can update its workflow
+    isAllCollaborationsFinished:boolean;
+    alertClosed:boolean = false;
+
+    constructor(private userService: UserService,
+                private bpeService: BPEService) {
 
     }
 
@@ -55,6 +61,14 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
             ids.push(process.id);
         }
         this.process_ids = new SelectedTerms(this.negotiationSettings.company.processID, ids);
+
+        this.bpeService.checkAllCollaborationsFinished(this.settings.companyID).then(finished => {
+            this.isAllCollaborationsFinished = finished;
+            // no need to show alert
+            if(finished){
+                this.alertClosed = true;
+            }
+        });
     }
 
     onSave() {
@@ -84,6 +98,10 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
 
     // it checks whether we should disable checkbox for the given process id or not
     isProcessIdSelectionDisabled(processId:string){
+        // if there exists some unfinished collaborations, do not allow the user to update its workflow
+        if(!this.isAllCollaborationsFinished){
+            return true;
+        }
         // for Negotiation, we should disable checkbox if Order, Transport_Execution_Plan or Fulfilment is selected since Negotiation is a necessary step for these processes
         // and the user should not deselect it.
         if(processId == "Negotiation" && (this.process_ids.isSelected("Order") || this.process_ids.isSelected('Transport_Execution_Plan') || this.process_ids.isSelected('Fulfilment'))){
