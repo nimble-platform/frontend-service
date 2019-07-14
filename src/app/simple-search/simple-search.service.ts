@@ -78,7 +78,7 @@ export class SimpleSearchService {
 	get(query: string, facets: string[], facetQueries: string[], page: number, rows: number, sort: string, cat: string, catID: string, search_index: string, delegated?: boolean): Promise<any> {
 		let queryRes;
 		let searchObject: any = {};
-		if (search_index == "Categories") {
+		if (search_index == "Category") {
 			let classLabel = myGlobals.class_label;
 			let querySettings = {
 				"fields": ["commodityClassficationUri", classLabel],
@@ -176,7 +176,7 @@ export class SimpleSearchService {
 		};
 		let queryRes = this.buildQueryString(query, querySettings, true, true);
 		let url = this.url + `/item/search`;
-		if (search_index == "Categories") {
+		if (search_index == "Category") {
 			url = this.url + `/class/search`;
 		}
 		let searchObject: any = {};
