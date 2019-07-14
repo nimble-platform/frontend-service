@@ -89,12 +89,12 @@ module.exports = webpackMerge(commonConfig, {
                 loader: '@angular-devkit/build-optimizer/webpack-loader',
                 options: { sourceMap: true }
             },
-            {
-                test: /\.js$/,
-                exclude: /(ngfactory|ngstyle).js$/,
-                enforce: 'pre',
-                use: 'source-map-loader'
-            },
+            // {
+            //     test: /\.js$/,
+            //     exclude: /(ngfactory|ngstyle).js$/,
+            //     enforce: 'pre',
+            //     use: 'source-map-loader'
+            // },
             // This hides some deprecation warnings that Webpack throws
             {
                 test: /[\/\\]@angular[\/\\]core[\/\\].+\.js$/,
