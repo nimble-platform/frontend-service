@@ -103,7 +103,7 @@ export class NegotiationRequestComponent implements OnInit {
 
     ngOnInit() {
 
-        this.userService.getSettingsForParty("43471").then(res => {
+        this.userService.getSettingsForParty(this.cookieService.get("company_id")).then(res => {
             this.deliverytermsOfBuyer = res.tradeDetails.deliveryTerms;
         });
 
