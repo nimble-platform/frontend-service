@@ -453,8 +453,8 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-    checkCollaborationFinished(collaborationGroupId:string):Promise<any>{
-        const url = `${this.url}/collaboration-groups/${collaborationGroupId}/finished`;
+    checkCollaborationFinished(groupId:string):Promise<any>{
+        const url = `${this.url}/process-instance-groups/${groupId}/finished`;
         return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()

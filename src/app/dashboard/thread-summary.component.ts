@@ -136,7 +136,7 @@ export class ThreadSummaryComponent implements OnInit {
     private fetchEvents(): void {
         this.fetchCallStatus.submit();
         const ids = this.processInstanceGroup.processInstanceIDs;
-        Promise.all(ids.map(id => this.fetchThreadEvent(id)).concat(this.bpeService.checkCollaborationFinished(this.collaborationGroupId))).then(responses => {
+        Promise.all(ids.map(id => this.fetchThreadEvent(id)).concat(this.bpeService.checkCollaborationFinished(this.processInstanceGroup.id))).then(responses => {
             let isCollaborationFinished = responses.pop();
             let events = responses;
             // if the collaboration is finished, the user should not be able to cancel the collaboration

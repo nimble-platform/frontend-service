@@ -150,7 +150,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                     return Promise.all([
                         this.getReferencedCatalogueLine(line, order),
                         this.userService.getSettingsForProduct(line),
-                        this.bpDataService.bpActivityEvent.collaborationGroupId ? this.bpeService.checkCollaborationFinished(this.bpDataService.bpActivityEvent.collaborationGroupId) : false
+                        this.bpDataService.bpActivityEvent.containerGroupId ? this.bpeService.checkCollaborationFinished(this.bpDataService.bpActivityEvent.containerGroupId) : false
                     ])
                 })
                 .then(([referencedLine, settings, isCollaborationFinished]) => {
