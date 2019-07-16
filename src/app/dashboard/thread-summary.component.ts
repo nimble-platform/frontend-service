@@ -136,7 +136,14 @@ export class ThreadSummaryComponent implements OnInit {
     private fetchEvents(): void {
         this.fetchCallStatus.submit();
         const ids = this.processInstanceGroup.processInstanceIDs;
-        Promise.all(ids.map(id => this.fetchThreadEvent(id))).then(events => {
+        Promise.all(ids.map(id => this.fetchThreadEvent(id)).concat(this.bpeService.checkCollaborationFinished(this.collaborationGroupId))).then(responses => {
+            let isCollaborationFinished = responses.pop();
+            let events = responses;
+            // if the collaboration is finished, the user should not be able to cancel the collaboration
+            if(isCollaborationFinished){
+                this.showCancelCollaborationButton = false;
+            }
+
             events.sort((a,b) => moment(a.startTime).diff(moment(b.startTime)));
             events = events.reverse();
             this.completeHistory = events;
@@ -526,15 +533,6 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     setCancelCollaborationButtonStatus(processType: ProcessType, response: any,sellerWorkflow:string[]){
-        // if the flow is completed, do not allow the user to cancel collaboration
-        if(sellerWorkflow && sellerWorkflow.length > 0){
-            const lastProcessID = sellerWorkflow[sellerWorkflow.length-1];
-            if(processType == lastProcessID && response){
-                this.showCancelCollaborationButton = false;
-                return;
-            }
-        }
-
         switch(processType) {
             case "Order":
                 if (response && response.acceptedIndicator) {
