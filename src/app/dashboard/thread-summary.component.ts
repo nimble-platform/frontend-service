@@ -151,10 +151,13 @@ export class ThreadSummaryComponent implements OnInit {
             this.lastEvent = events[0];
             // Update History in order to remove pending orders
             this.updateHistory(this.history);
-            if (!this.lastEvent.isRated) {
-              if (this.lastEvent.statusText == "Receipt Advice sent" || this.lastEvent.statusText == "Transport Execution Plan received" || this.processInstanceGroup.status == "CANCELLED") {
-                this.showRateCollaborationButton = true;
-              }
+
+            // if the collaboration is not rated yet, set the RateCollaborationButton status
+            if(!this.isCollaborationRated(events) ){
+                // set the status of button to True if the process is cancelled or it is completed (buyer side only)
+                if((isCollaborationFinished && this.lastEvent.buyer) || this.processInstanceGroup.status == "CANCELLED"){
+                    this.showRateCollaborationButton = true;
+                }
             }
             this.computeTitleEvent();
 
@@ -168,6 +171,16 @@ export class ThreadSummaryComponent implements OnInit {
         }).catch(error => {
             this.fetchCallStatus.error("Error while fetching thread.", error);
         });
+    }
+
+    // checks the given ThreadEventMetadatas and returns True if there are at least one ThreadEventMetadata which is rated
+    private isCollaborationRated(events:ThreadEventMetadata[]){
+        for(let event of events){
+            if(event.isRated){
+                return true;
+            }
+        }
+        return false;
     }
 
     /*
