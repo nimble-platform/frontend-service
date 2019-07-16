@@ -188,7 +188,7 @@ export class NegotiationRequestComponent implements OnInit {
     private setProcessMetadataFields(processHistory: ThreadEventMetadata[]): void {
         this.processMetadataHistory = this.bpDataService.bpActivityEvent.processHistory;
         if(!this.bpDataService.bpActivityEvent.newProcess) {
-            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
+            this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
         } else {
             if(this.processMetadataHistory.length > 0 && this.processMetadataHistory[0].processType == "Negotiation") {
                 this.manufacturersTermsExistence.last_offer = true;

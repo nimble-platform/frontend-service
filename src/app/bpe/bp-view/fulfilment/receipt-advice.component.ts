@@ -42,9 +42,7 @@ export class ReceiptAdviceComponent implements OnInit {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        if(!this.bpDataService.bpActivityEvent.newProcess) {
-            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
-        }
+        this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
         this.receiptAdvice = this.bpDataService.receiptAdvice;
         this.dispatchAdvice = this.bpDataService.despatchAdvice;

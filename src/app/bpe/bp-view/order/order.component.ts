@@ -87,9 +87,7 @@ export class OrderComponent implements OnInit {
 
     ngOnInit(): void {
         // get copy of ThreadEventMetadata of the current business process
-        if(!this.bpDataService.bpActivityEvent.newProcess) {
-            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
-        }
+        this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
         this.formerProcess = this.bpDataService.bpActivityEvent.formerProcess;
 
         if(this.bpDataService.order == null) {

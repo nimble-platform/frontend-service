@@ -111,9 +111,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        if(this.bpDataService.bpActivityEvent.processHistory.length > 0) {
-            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
-        }
+        this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
         this.bpActivityEventSubs = this.bpDataService.bpActivityEventObservable.subscribe(bpActivityEvent => {
             if (bpActivityEvent) {

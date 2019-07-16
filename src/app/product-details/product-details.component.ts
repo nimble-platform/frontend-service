@@ -194,6 +194,7 @@ export class ProductDetailsComponent implements OnInit {
                 targetProcess,
                 null,
                 this.bpDataService.bpActivityEvent.collaborationGroupId,
+                null,
                 [],
                 this.options,
                 true, // this is a new process
