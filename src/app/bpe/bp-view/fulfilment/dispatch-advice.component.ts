@@ -45,9 +45,7 @@ export class DispatchAdviceComponent implements OnInit {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        if(!this.bpDataService.bpActivityEvent.newProcess) {
-            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
-        }
+        this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
         if(this.bpDataService.despatchAdvice == null) {
             this.initDispatchAdvice();
@@ -177,7 +175,7 @@ export class DispatchAdviceComponent implements OnInit {
 
         let dispatchAdvice: DespatchAdvice = copy(this.bpDataService.despatchAdvice);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(dispatchAdvice),"DESPATCHADVICE",this.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(dispatchAdvice),"DESPATCHADVICE",this.processMetadata.processInstanceId)
             .then(() => {
                 this.documentService.updateCachedDocument(dispatchAdvice.id,dispatchAdvice);
                 this.callStatus.callback("Dispatch Advice updated", true);

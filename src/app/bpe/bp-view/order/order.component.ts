@@ -90,9 +90,7 @@ export class OrderComponent implements OnInit {
 
     ngOnInit(): void {
         // get copy of ThreadEventMetadata of the current business process
-        if(!this.bpDataService.bpActivityEvent.newProcess) {
-            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
-        }
+        this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
         this.formerProcess = this.bpDataService.bpActivityEvent.formerProcess;
 
         if(this.bpDataService.order == null) {
@@ -234,7 +232,7 @@ export class OrderComponent implements OnInit {
         this.submitCallStatus.submit();
         const order = copy(this.bpDataService.order);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(order),"ORDER",this.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(order),"ORDER",this.processMetadata.processInstanceId)
             .then(() => {
                 this.documentService.updateCachedDocument(order.id,order);
                 this.submitCallStatus.callback("Order updated", true);
@@ -262,7 +260,7 @@ export class OrderComponent implements OnInit {
         );
         let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(
             vars,
-            this.processMetadata.processId
+            this.processMetadata.processInstanceId
         );
 
         //this.submitCallStatus.submit();

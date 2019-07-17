@@ -85,6 +85,7 @@ export class NegotiationRequestComponent implements OnInit {
     showTermsAndConditions:boolean = false;
     callStatus: CallStatus = new CallStatus();
     pageInitCallStatus: CallStatus = new CallStatus();
+    deliverytermsOfBuyer = null;
 
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
@@ -101,6 +102,11 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     ngOnInit() {
+
+        this.userService.getSettingsForParty(this.cookieService.get("company_id")).then(res => {
+            this.deliverytermsOfBuyer = res.tradeDetails.deliveryTerms;
+        });
+
         // get copy of ThreadEventMetadata of the current business process
         this.setProcessMetadataFields(this.bpDataService.bpActivityEvent.processHistory);
 
@@ -136,7 +142,6 @@ export class NegotiationRequestComponent implements OnInit {
             this.frameContractQuotation,
             this.lastOfferQuotation,
             this.bpDataService.getCompanySettings().negotiationSettings);
-
         // terms select box value should be set before computing the negotiation options
         if (this.lastOfferQuotation) {
             this.manufacturersTermsExistence.last_offer = true;
@@ -183,7 +188,7 @@ export class NegotiationRequestComponent implements OnInit {
     private setProcessMetadataFields(processHistory: ThreadEventMetadata[]): void {
         this.processMetadataHistory = this.bpDataService.bpActivityEvent.processHistory;
         if(!this.bpDataService.bpActivityEvent.newProcess) {
-            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
+            this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
         } else {
             if(this.processMetadataHistory.length > 0 && this.processMetadataHistory[0].processType == "Negotiation") {
                 this.manufacturersTermsExistence.last_offer = true;
@@ -296,7 +301,7 @@ export class NegotiationRequestComponent implements OnInit {
         }
 
         const rfq: RequestForQuotation = copy(this.rfq);
-        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processId).then(() => {
+        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processInstanceId).then(() => {
             this.documentService.updateCachedDocument(rfq.id,rfq);
             this.callStatus.callback("Terms updated", true);
             var tab = "PURCHASES";
@@ -570,7 +575,7 @@ export class NegotiationRequestComponent implements OnInit {
 
         if(addressStr !== "") {
             const index = Number(addressStr);
-            const address = this.bpDataService.getCompanySettings().tradeDetails.deliveryTerms[index].deliveryAddress;
+            const address = this.deliverytermsOfBuyer[index].deliveryAddress;
             const rfqAddress = this.wrapper.rfqDeliveryAddress;
             rfqAddress.buildingNumber = address.buildingNumber;
             rfqAddress.cityName = address.cityName;
@@ -582,21 +587,21 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     get addressOptions(): Option[] {
-        const deliveryTerms = this.bpDataService.getCompanySettings().tradeDetails.deliveryTerms;
-        var ret = [];
-        if (deliveryTerms.length == 0 || !deliveryTerms[0].deliveryAddress || !deliveryTerms[0].deliveryAddress.streetName) {
-            ret = [
-                { name: "No", value: "" }
-            ];
-        }
-        else {
-            ret = [
-                { name: "No", value: "" }
-            ].concat(deliveryTerms.map((term, i) => {
-                return { name: addressToString(term.deliveryAddress), value: String(i) };
-            }));
-        }
-        return ret;
+            const deliveryTerms = this.deliverytermsOfBuyer;
+            var ret = [];
+            if (deliveryTerms.length == 0 || !deliveryTerms[0].deliveryAddress || !deliveryTerms[0].deliveryAddress.streetName) {
+                ret = [
+                    { name: "No", value: "" }
+                ];
+            }
+            else {
+                ret = [
+                    { name: "No", value: "" }
+                ].concat(deliveryTerms.map((term, i) => {
+                    return { name: addressToString(term.deliveryAddress), value: String(i) };
+                }));
+            }
+            return ret;
     }
 
     getPriceSteps(): number {

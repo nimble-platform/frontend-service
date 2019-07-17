@@ -1,33 +1,33 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { ProcessInstanceGroup } from "../bpe/model/process-instance-group";
-import { Router } from "@angular/router";
-import { BPDataService } from "../bpe/bp-view/bp-data-service";
-import { BPEService } from "../bpe/bpe.service";
-import { ActivityVariableParser } from "../bpe/bp-view/activity-variable-parser";
+import { ProcessInstanceGroup } from "../model/process-instance-group";
+import {ActivatedRoute, Router} from "@angular/router";
+import { BPDataService } from "../bp-view/bp-data-service";
+import { BPEService } from "../bpe.service";
+import { ActivityVariableParser } from "../bp-view/activity-variable-parser";
 import * as moment from "moment";
-import { CallStatus } from "../common/call-status";
+import { CallStatus } from "../../common/call-status";
 import { CookieService } from "ng2-cookies";
-import { DataChannelService } from "../data-channel/data-channel.service";
-import { ProcessType } from "../bpe/model/process-type";
-import { ThreadEventMetadata } from "../catalogue/model/publish/thread-event-metadata";
-import { ThreadEventStatus } from "../catalogue/model/publish/thread-event-status";
-import { SearchContextService } from "../simple-search/search-context.service";
-import {DocumentService} from "../bpe/bp-view/document-service";
-import { EvidenceSupplied } from "../catalogue/model/publish/evidence-supplied";
-import { Comment } from "../catalogue/model/publish/comment";
+import { DataChannelService } from "../../data-channel/data-channel.service";
+import { ProcessType } from "../model/process-type";
+import { ThreadEventMetadata } from "../../catalogue/model/publish/thread-event-metadata";
+import { ThreadEventStatus } from "../../catalogue/model/publish/thread-event-status";
+import { SearchContextService } from "../../simple-search/search-context.service";
+import {DocumentService} from "../bp-view/document-service";
+import { EvidenceSupplied } from "../../catalogue/model/publish/evidence-supplied";
+import { Comment } from "../../catalogue/model/publish/comment";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { Code } from "../catalogue/model/publish/code";
-import {BpUserRole} from '../bpe/model/bp-user-role';
-import {BpActivityEvent} from '../catalogue/model/publish/bp-start-event';
-import {BpURLParams} from '../catalogue/model/publish/bpURLParams';
-import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
-import {selectPreferredValue} from '../common/utils';
-import {DashboardProcessInstanceDetails} from '../bpe/model/dashboard-process-instance-details';
-import {Item} from '../catalogue/model/publish/item';
-import {NEGOTIATION_RESPONSES} from "../catalogue/model/constants";
-import {DataChannel} from '../data-channel/model/datachannel';
-import * as myGlobals from "../globals";
-import {UserService} from '../user-mgmt/user.service';
+import { Code } from "../../catalogue/model/publish/code";
+import {BpUserRole} from '../model/bp-user-role';
+import {BpActivityEvent} from '../../catalogue/model/publish/bp-start-event';
+import {BpURLParams} from '../../catalogue/model/publish/bpURLParams';
+import {UBLModelUtils} from '../../catalogue/model/ubl-model-utils';
+import {selectPreferredValue} from '../../common/utils';
+import {DashboardProcessInstanceDetails} from '../model/dashboard-process-instance-details';
+import {Item} from '../../catalogue/model/publish/item';
+import {NEGOTIATION_RESPONSES} from "../../catalogue/model/constants";
+import {DataChannel} from '../../data-channel/model/datachannel';
+import * as myGlobals from "../../globals";
+import {UserService} from '../../user-mgmt/user.service';
 
 /**
  * Created by suat on 12-Mar-18.
@@ -44,11 +44,11 @@ export class ThreadSummaryComponent implements OnInit {
     @Output() threadStateUpdated = new EventEmitter();
     @Output() threadStateUpdatedNoChange = new EventEmitter();
 
-    config = myGlobals.config;
+    routeProcessInstanceId: string; // a non-null value indicates that the page is loaded directly i.e. not via the dashboard and the user should be
+                                    // redirected to the details of the process instance
 
     titleEvent: ThreadEventMetadata; // keeps information about the summary the collaboration
     lastEvent: ThreadEventMetadata; // the last event in the collaboration
-
     lastEventPartnerID = null;
 
     // History of events
@@ -62,7 +62,8 @@ export class ThreadSummaryComponent implements OnInit {
     ratingFulfillment = 0;
 
     // Utilities
-    eventCount: number = 0
+    eventCount: number = 0;
+    collaborationGroupRetrievalCallStatus: CallStatus = new CallStatus();
     archiveCallStatus: CallStatus = new CallStatus();
     fetchCallStatus: CallStatus = new CallStatus();
     saveCallStatusRating: CallStatus = new CallStatus();
@@ -81,12 +82,11 @@ export class ThreadSummaryComponent implements OnInit {
 
     // this is always true unless an approved order is present in this process group or the collaboration is already cancelled
     showCancelCollaborationButton = true;
-
     // this is always false unless the collaboration was cancelled or fully completed (buyer side only)
     showRateCollaborationButton = false;
-
     expanded: boolean = false;
 
+    config = myGlobals.config;
     selectPreferredValue = selectPreferredValue;
 
     constructor(private bpeService: BPEService,
@@ -95,15 +95,47 @@ export class ThreadSummaryComponent implements OnInit {
                 private searchContextService: SearchContextService,
                 private bpDataService: BPDataService,
                 private router: Router,
+                private route: ActivatedRoute,
                 private modalService: NgbModal,
-                private userService: UserService,
-                private documentService: DocumentService) {
+                private userService: UserService) {
     }
 
     ngOnInit(): void {
+        this.route.params.subscribe(params => {
+            this.routeProcessInstanceId = params["processInstanceId"];
+            if(this.routeProcessInstanceId == null) {
+                return;
+            }
+
+            // get the CollaborationGroup associated to the process instance
+            this.collaborationGroupRetrievalCallStatus.submit();
+            this.bpeService.getGroupDetailsForProcessInstance(this.routeProcessInstanceId).then(collaborationGroup => {
+                // find the process instance group containing the process instance
+                for(let pig of collaborationGroup.associatedProcessInstanceGroups) {
+                    for(let pid of pig.processInstanceIDs) {
+                        if(pid == this.routeProcessInstanceId) {
+                            this.processInstanceGroup = pig;
+                            this.collaborationGroupId = collaborationGroup.id;
+                            this.init();
+                        }
+                    }
+                }
+                this.collaborationGroupRetrievalCallStatus.callback(null, true);
+
+            }).catch(error => {
+                this.collaborationGroupRetrievalCallStatus.error("Failed to retrieve associated Collaboration Group", error);
+            })
+        });
+
+        // null process instance group means that the component is being navigated directly (i.e. not via the dashboard)
+        if(this.processInstanceGroup != null) {
+            this.init();
+        }
+    }
+
+    private init() {
         if(this.processInstanceGroup.status == "CANCELLED"){
             this.showCancelCollaborationButton = false;
-            //this.showRateCollaborationButton = true;
         }
         this.eventCount = this.processInstanceGroup.processInstanceIDs.length;
         this.hasHistory = this.eventCount > 1;
@@ -122,6 +154,7 @@ export class ThreadSummaryComponent implements OnInit {
                 this.titleEvent.processType,
                 this.processInstanceGroup.id,
                 this.collaborationGroupId,
+                this.titleEvent,
                 [this.titleEvent].concat(this.history),
                 null,
                 false,
@@ -130,7 +163,7 @@ export class ThreadSummaryComponent implements OnInit {
             new BpURLParams(
                 this.titleEvent.product.catalogueDocumentReference.id,
                 this.titleEvent.product.manufacturersItemIdentification.id,
-                this.titleEvent.processId));
+                this.titleEvent.processInstanceId));
     }
 
     private fetchEvents(): void {
@@ -165,6 +198,11 @@ export class ThreadSummaryComponent implements OnInit {
             events[0].formerStep = false;
             for(let i=1; i<events.length; i++) {
                 events[i].formerStep = true;
+            }
+
+            // if the component has been loaded directly, navigate to the details
+            if(this.routeProcessInstanceId != null) {
+                this.openBpProcessView();
             }
 
             this.fetchCallStatus.callback("Successfully fetched events.", true);
@@ -615,7 +653,7 @@ export class ThreadSummaryComponent implements OnInit {
         reviews.push(comm);
         this.saveCallStatusRating.submit();
         this.bpeService
-            .postRatings(this.lastEventPartnerID, this.lastEvent.processId, ratings, reviews)
+            .postRatings(this.lastEventPartnerID, this.lastEvent.processInstanceId, ratings, reviews)
             .then(() => {
                 this.saveCallStatusRating.callback("Rating saved", true);
                 close();
@@ -634,7 +672,7 @@ export class ThreadSummaryComponent implements OnInit {
         reviews.push(comm);
         this.saveCallStatusRating.submit();
         this.bpeService
-            .postRatings(this.lastEventPartnerID, this.lastEvent.processId, ratings, reviews)
+            .postRatings(this.lastEventPartnerID, this.lastEvent.processInstanceId, ratings, reviews)
             .then(() => {
                 this.saveCallStatusRating.callback("Rating saved", true);
                 close();

@@ -145,6 +145,98 @@
     </div>
 </div>
 
+<hr>
+
+<!-- Data Exchange Services-->
+<div class="row space-before">
+    <div class="col-12">
+        <h4>Data Exchange Services</h4>
+    </div>
+</div>
+
+<!-- Service Level -->
+<div class="col-12">
+    <options-input label="Service Level" [visible]="true" [presentationMode]="presentationMode"
+                   [disabled]="false" [options]="SERVICE_TYPES" [(selected)]="negotiationSettings.serviceLevel"
+                   labelClass="col-4" valueClass="col-8">
+    </options-input><br/>
+</div>
+
+<div *ngIf="negotiationSettings.serviceLevel == 'Service Level 3 (Machines/Sensors)'">
+
+    <!------------------------------------------------------------------------------------------------------------>
+    <!-- All added sensors -->
+    <!------------------------------------------------------------------------------------------------------------>
+    <div  *ngFor="let unit of negotiationSettings.sensors; let i = index" class="row space-before">
+
+        <!-- machine description -->
+        <div class="col-3">
+            <text-input label="machine" [(text)]="negotiationSettings.sensors[i].machine" [disabled]="true"
+                        labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
+            </text-input>
+        </div>
+
+        <!-- sensor description -->
+        <div class="col-3">
+            <text-input label="sensor" [(text)]="negotiationSettings.sensors[i].sensor" [disabled]="true"
+                        labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
+            </text-input>
+        </div>
+
+        <!-- data format -->
+        <div class="col-3">
+            <text-input label="format" [(text)]="negotiationSettings.sensors[i].format" [disabled]="true"
+                        labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
+            </text-input>
+        </div>
+
+        <div class="col-1">
+            <button class="btn btn-danger w-100 btn-sm" (click)="onRemoveSensor(i)">x</button>
+        </div>
+    </div>
+    <hr>
+
+    <!------------------------------------------------------------------------------------------------------------>
+    <!-- Add a Sensor: Formular  -->
+    <!------------------------------------------------------------------------------------------------------------>
+    <div class="form-group" id="new-sensor">
+        <h6 i18n>Add new sensor streaming description</h6><br/>
+        <form id="add-sensor-form" #customPropertyForm="ngForm" class="row space-before col-12">
+
+            <div class="col-3">
+            <!-- machine name-->
+            <text-input label="machine" [(text)]="newSensor.machine"
+                        labelClass="col-3" valueClass="col-8" [rows]="1" [required]="true">
+            </text-input>
+            </div>
+
+            <div class="col-3">
+            <!-- sensor name -->
+            <text-input label="sensor" [(text)]="newSensor.sensor"
+                        labelClass="col-3" valueClass="col-8" [rows]="1" [required]="true">
+            </text-input>
+            </div>
+
+            <div class="col-3">
+            <!-- data format -->
+            <text-input label="format" [(text)]="newSensor.format"
+                        labelClass="col-3" valueClass="col-8" [rows]="1" [required]="true">
+            </text-input>
+            </div>
+
+            <div class="row actions-row col-3">
+                <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+                <div class="col-6">
+                    <button class="btn btn-success action" [disabled]="isLoading()" (click)="onAddSensor()">Add a Sensor</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<hr>
+
 <!-- Actions -->
 <div class="row actions-row space-before">
     <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>

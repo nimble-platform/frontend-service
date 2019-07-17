@@ -7,6 +7,7 @@ import { CompanyNegotiationSettings } from "../model/company-negotiation-setting
 import { SelectedTerms } from "../selected-terms";
 import { copy, deepEquals } from "../../common/utils";
 import { CompanySettings } from "../model/company-settings";
+import { CompanySensor } from "../model/company-sensor";
 import {BPEService} from '../../bpe/bpe.service';
 
 @Component({
@@ -36,6 +37,9 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
     paymentMeans: SelectedTerms;
     incoterms: SelectedTerms;
     process_ids: SelectedTerms;
+
+    private SERVICE_TYPES: string[] = ["None", "Service Level 1 (Start/Stop)", "Service Level 2 (Warnings/Alerts)", "Service Level 3 (Machines/Sensors)"]
+    newSensor: CompanySensor = new CompanySensor('', '', '');
 
     // whether the all collaborations is finished or not
     // if all collaborations is finished, then the user can update its workflow
@@ -69,6 +73,22 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
                 this.alertClosed = true;
             }
         });
+    }
+
+    onAddSensor() {
+        if(typeof this.negotiationSettings.sensors === 'undefined')
+        {
+            this.negotiationSettings.sensors = [];
+        }
+
+        this.negotiationSettings.sensors.push(new CompanySensor(
+                                                 this.newSensor.machine,
+                                                 this.newSensor.sensor,
+                                                 this.newSensor.format));
+    }
+
+    onRemoveSensor(sensorID: number) {
+        this.negotiationSettings.sensors.splice(sensorID, 1);
     }
 
     onSave() {

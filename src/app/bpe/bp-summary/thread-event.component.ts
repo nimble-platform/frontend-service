@@ -1,12 +1,12 @@
 import {Component, OnInit, Input, Output, EventEmitter} from "@angular/core";
 import { Router } from "@angular/router";
-import { BPDataService } from "../bpe/bp-view/bp-data-service";
-import { ProcessInstanceGroup } from "../bpe/model/process-instance-group";
-import { ThreadEventMetadata } from "../catalogue/model/publish/thread-event-metadata";
-import {BPEService} from "../bpe/bpe.service";
-import {BpActivityEvent} from '../catalogue/model/publish/bp-start-event';
-import {BpUserRole} from '../bpe/model/bp-user-role';
-import {BpURLParams} from '../catalogue/model/publish/bpURLParams';
+import { BPDataService } from "../bp-view/bp-data-service";
+import { ProcessInstanceGroup } from "../model/process-instance-group";
+import { ThreadEventMetadata } from "../../catalogue/model/publish/thread-event-metadata";
+import {BPEService} from "../bpe.service";
+import {BpActivityEvent} from '../../catalogue/model/publish/bp-start-event';
+import {BpUserRole} from '../model/bp-user-role';
+import {BpURLParams} from '../../catalogue/model/publish/bpURLParams';
 
 @Component({
     selector: "thread-event",
@@ -39,6 +39,7 @@ export class ThreadEventComponent implements OnInit {
                 this.event.processType,
                 this.processInstanceGroup.id,
                 this.collaborationGroupId,
+                this.event,
                 this.history,
                 null,
                 false,
@@ -47,12 +48,12 @@ export class ThreadEventComponent implements OnInit {
             new BpURLParams(
                 this.event.product.catalogueDocumentReference.id,
                 this.event.product.manufacturersItemIdentification.id,
-                this.event.processId));
+                this.event.processInstanceId));
     }
 
     cancelBP(){
         if (confirm("Are you sure that you want to cancel this process?")){
-            this.bpeService.cancelBusinessProcess(this.event.processId)
+            this.bpeService.cancelBusinessProcess(this.event.processInstanceId)
                 .then(res => {
                     this.processCancelled.next();
                 })

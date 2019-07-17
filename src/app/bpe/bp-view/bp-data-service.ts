@@ -85,7 +85,7 @@ export class BPDataService{
     ////////////////////////////////////////////////////////////////////////////
 
     // BpActivityEvent is used to set bp options while navigating to bp details page
-    bpActivityEvent:BpActivityEvent = new BpActivityEvent(null,"Item_Information_Request",null,null,[], null, true, false);
+    bpActivityEvent:BpActivityEvent = new BpActivityEvent(null,"Item_Information_Request",null,null,null,[], null, true, false);
     // these are used to update view according to the selected process type.
     private bpActivityEventBehaviorSubject: BehaviorSubject<BpActivityEvent> = new BehaviorSubject<BpActivityEvent>(this.bpActivityEvent);
     bpActivityEventObservable = this.bpActivityEventBehaviorSubject.asObservable();
@@ -232,9 +232,9 @@ export class BPDataService{
         }
 
         this.bpActivityEvent = bpActivityEvent;
-        // if the event is not created for a new process, the first item of the history contains the process metadata for the continued process
+        // if the event is not created for a new process, processMetadata contains the process metadata for the continued process
         if(!bpActivityEvent.newProcess){
-            await this.setProcessDocuments(bpActivityEvent.processHistory[0]);
+            await this.setProcessDocuments(bpActivityEvent.processMetadata);
         }
         this.bpActivityEventBehaviorSubject.next(this.bpActivityEvent);
         this.navigateToBpExec(bpURLParams);
@@ -272,6 +272,7 @@ export class BPDataService{
             processType,
             this.bpActivityEvent.containerGroupId,
             this.bpActivityEvent.collaborationGroupId,
+            this.bpActivityEvent.processMetadata,
             this.bpActivityEvent.processHistory,
             null,
             true, // new process is true

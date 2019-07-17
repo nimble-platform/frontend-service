@@ -111,9 +111,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        if(this.bpDataService.bpActivityEvent.processHistory.length > 0) {
-            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
-        }
+        this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
         this.bpActivityEventSubs = this.bpDataService.bpActivityEventObservable.subscribe(bpActivityEvent => {
             if (bpActivityEvent) {
@@ -238,11 +236,11 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             return Promise.resolve(null);
         }
         if(this.searchContextService.getAssociatedProcessMetadata()) {
-            const processId = this.searchContextService.getAssociatedProcessMetadata().processId;
+            const processId = this.searchContextService.getAssociatedProcessMetadata().processInstanceId;
             return this.bpeService.getOriginalOrderForProcess(processId)
         }
         if(this.processMetadata) {
-            const processId = this.processMetadata.processId;
+            const processId = this.processMetadata.processInstanceId;
             return this.bpeService.getOriginalOrderForProcess(processId);
         }
         return Promise.resolve(null);

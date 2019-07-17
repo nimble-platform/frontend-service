@@ -56,9 +56,7 @@ export class TransportExecutionPlanComponent implements OnInit {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        if(!this.bpDataService.bpActivityEvent.newProcess) {
-            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
-        }
+        this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
         this.formerProcess = this.bpDataService.bpActivityEvent.formerProcess;
 
         if(!this.bpDataService.transportExecutionPlanRequest) {
@@ -168,7 +166,7 @@ export class TransportExecutionPlanComponent implements OnInit {
         this.callStatus.submit();
         const transportationExecutionPlanRequest: TransportExecutionPlanRequest = copy(this.bpDataService.transportExecutionPlanRequest);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(transportationExecutionPlanRequest),"TRANSPORTEXECUTIONPLANREQUEST",this.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(transportationExecutionPlanRequest),"TRANSPORTEXECUTIONPLANREQUEST",this.processMetadata.processInstanceId)
             .then(() => {
                 this.documentService.updateCachedDocument(transportationExecutionPlanRequest.id,transportationExecutionPlanRequest);
                 this.callStatus.callback("Item Information Request updated", true);
@@ -192,7 +190,7 @@ export class TransportExecutionPlanComponent implements OnInit {
             this.cookieService.get("user_id"),
             this.bpDataService.transportExecutionPlan, this.bpDataService);
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars,
-            this.processMetadata.processId);
+            this.processMetadata.processInstanceId);
 
         //this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim)

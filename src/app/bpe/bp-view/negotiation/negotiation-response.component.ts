@@ -79,10 +79,7 @@ export class NegotiationResponseComponent implements OnInit {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        if(!this.bpDataService.bpActivityEvent.newProcess) {
-            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
-        }
-
+        this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
         this.line = this.bpDataService.getCatalogueLine();
         if(this.rfq == null) {
             this.rfq = this.bpDataService.requestForQuotation;
@@ -128,7 +125,7 @@ export class NegotiationResponseComponent implements OnInit {
         //this.callStatus.submit();
         const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.buyerCustomerParty.party),
             UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.sellerSupplierParty.party),this.cookieService.get("user_id"), this.quotation, this.bpDataService);
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processId);
+        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processInstanceId);
 
         this.bpeService.continueBusinessProcess(piim).then(() => {
             this.callStatus.callback("Quotation sent", true);

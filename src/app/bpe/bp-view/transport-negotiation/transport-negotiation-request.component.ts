@@ -54,9 +54,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        if(!this.bpDataService.bpActivityEvent.newProcess) {
-            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
-        }
+        this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
         this.rfq = this.bpDataService.requestForQuotation;
         this.validateRfq();
@@ -158,7 +156,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
             rfq.requestForQuotationLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
         }
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processInstanceId)
             .then(() => {
                 this.callStatus.callback("Terms updated", true);
                 var tab = "PURCHASES";
