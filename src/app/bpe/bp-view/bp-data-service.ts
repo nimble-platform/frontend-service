@@ -272,7 +272,7 @@ export class BPDataService{
             processType,
             this.bpActivityEvent.containerGroupId,
             this.bpActivityEvent.collaborationGroupId,
-            this.bpActivityEvent.processMetadata,
+            null,
             this.bpActivityEvent.processHistory,
             null,
             true, // new process is true
