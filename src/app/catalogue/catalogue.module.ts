@@ -39,7 +39,6 @@ import { ProductDeliveryTradingComponent } from "./publish/product-delivery-trad
 import { ProductDetailsModule } from "../product-details/product-details.module";
 import { ProductPriceTabComponent } from "./publish/product-price-tab.component";
 import { ProductCertificatesTabComponent } from "./publish/product-certificates-tab.component";
-import { ProductTrackAndTraceTabComponent } from "./publish/product-track-and-trace-tab.component";
 import { UserMgmtModule } from "../user-mgmt/user-mgmt.module";
 import {NoteFileViewComponent} from './ubl-model-view/note-file-view.component';
 import {PriceOptionCountPipe} from "./publish/price-option/price-option-count.pipe";
@@ -86,7 +85,6 @@ import {DeleteExportCatalogueModalComponent} from "./ubl-model-view/catalogue/de
         CatalogueLineViewComponent,
         CatalogueLineDetailsComponent,
         ProductCertificatesTabComponent,
-        ProductTrackAndTraceTabComponent,
         QuantityViewComponent,
         AmountViewComponent,
         QuantityValueViewComponent,

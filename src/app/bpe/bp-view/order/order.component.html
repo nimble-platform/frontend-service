@@ -204,62 +204,58 @@
 
 
 <!-- EPC Codes -->
-<ng-container *ngIf="isReady() && isOrderCompleted() && trackAndTraceDetailsExists()">
+<ng-container *ngIf="isReady() && isOrderCompleted() && config.showTrack">
 
     <hr>
 
-    <h2>EPC Codes</h2>
+    <div class="btn btn-outline-primary space-after" (click)="showEPCCodePanel = !showEPCCodePanel">EPC Codes</div>
 
     <call-status [callStatus]="initEpcCodesCallStatus"></call-status>
 
-    <ng-container *ngIf="epcCodes">
+    <div *ngIf="epcCodes && showEPCCodePanel" class="row">
 
+      <!--List of codes -->
+      <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
+          <div class="row mb-1" *ngFor="let code of epcCodes.codes; let i = index; trackBy:trackByFn">
+            <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
+                <input type="text" class="form-control" [(ngModel)]="epcCodes.codes[i]" [disabled]="isBuyer()">
+            </div>
+            <div class="col-3" *ngIf="isSeller() && i > 0">
+                <button class="btn btn-danger w-100" (click)="onDeleteEpcCode(i)">Delete</button>
+            </div>
+          </div>
+      </div>
+
+      <div *ngIf="isSeller()" class="col-1"></div>
+
+      <div *ngIf="isSeller()" class="col-2">
+
+        <!-- Add code -->
         <div class="row">
-
-          <!--List of codes -->
-          <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
-              <div class="row mb-1" *ngFor="let code of epcCodes.codes; let i = index; trackBy:trackByFn">
-                <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
-                    <input type="text" class="form-control" [(ngModel)]="epcCodes.codes[i]" [disabled]="isBuyer()">
-                </div>
-                <div class="col-3" *ngIf="isSeller() && i > 0">
-                    <button class="btn btn-danger w-100" (click)="onDeleteEpcCode(i)">Delete</button>
-                </div>
-              </div>
-          </div>
-
-          <div *ngIf="isSeller()" class="col-1"></div>
-
-          <div *ngIf="isSeller()" class="col-2">
-
-            <!-- Add code -->
-            <div class="row">
-                <div class="col-12">
-                    <button class="btn btn-success w-100" (click)="onAddEpcCode()">Add</button>
-                </div>
+            <div class="col-12">
+                <button class="btn btn-success w-100" (click)="onAddEpcCode()">Add</button>
             </div>
-
-            <!-- Save -->
-            <div class="row">
-                <div class="col-12">
-                    <button class="btn btn-primary w-100 save-epc-btn" [disabled]="!areEpcCodesDirty()"
-                        (click)="onSaveEpcCodes()">Save</button>
-                </div>
-            </div>
-
-            <div class="row">
-              <div class="col-12 d-flex justify-content-end">
-                  <span class="align-self-center">
-                      <call-status [callStatus]="saveEpcCodesCallStatus"></call-status>
-                  </span>
-              </div>
-            </div>
-
-          </div>
-
         </div>
 
-    </ng-container>
+        <!-- Save -->
+        <div class="row">
+            <div class="col-12">
+                <button class="btn btn-primary w-100 save-epc-btn" [disabled]="!areEpcCodesDirty()"
+                    (click)="onSaveEpcCodes()">Save</button>
+            </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12 d-flex justify-content-end">
+              <span class="align-self-center">
+                  <call-status [callStatus]="saveEpcCodesCallStatus"></call-status>
+              </span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
 </ng-container>
 
 <!-- Actions -->

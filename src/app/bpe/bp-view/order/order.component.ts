@@ -72,6 +72,7 @@ export class OrderComponent implements OnInit {
     getPartyId = UBLModelUtils.getPartyId;
 
     showPurchaseOrder:boolean = false;
+    showEPCCodePanel:boolean = false;
 
     // map representing the workflow of seller's company
     companyWorkflowMap = null;
