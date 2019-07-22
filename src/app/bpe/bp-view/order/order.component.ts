@@ -470,8 +470,10 @@ export class OrderComponent implements OnInit {
     private isDataMonitoringDemanded(): Promise<boolean> {
         let docClause: DocumentClause = null;
 
-        if (this.order.contract && this.order.contract.length > 0) {
-            for (let clause of this.order.contract[0].clause) {
+        let contract = this.getNonTermAndConditionContract();
+
+        if (contract && contract.clause.length > 0) {
+            for (let clause of contract.clause) {
                 let clauseCopy = JSON.parse(JSON.stringify(clause));
                 if (clauseCopy.clauseDocumentRef) {
                     docClause = clause as DocumentClause;
