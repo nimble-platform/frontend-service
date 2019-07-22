@@ -163,7 +163,7 @@ export class OrderComponent implements OnInit {
             for(let contract of this.order.contract){
                 for(let clause of contract.clause){
                     if(clause.type){
-                        return clause;
+                        return contract;
                     }
                 }
             }
