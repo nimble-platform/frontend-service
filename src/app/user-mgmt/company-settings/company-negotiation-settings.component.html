@@ -8,7 +8,7 @@
 <!-- Business Workflow -->
 <div class="row space-before">
     <div class="col-12">
-        <h4>Business Workflows</h4>
+        <h4>Business Workflow</h4>
     </div>
     <div class="col-12">
         <div *ngIf="!alertClosed" class="alert alert-danger" role="alert">
@@ -19,7 +19,7 @@
         </div>
     </div>
     <div class="col-12">
-        <label>Choose processes you want to include your workflow:</label>
+        <label>Choose processes you want to include in your workflow:</label>
         <div *ngFor="let process of PROCESSES; let i = index" class="row">
             <input class="col-1" type="checkbox" [disabled]="isProcessIdSelectionDisabled(process.id)"
                    [checked]="process_ids.isSelected(process.id)" (change)="onProcessIdToggle(process.id)" style="margin-top: 5px">
