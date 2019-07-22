@@ -27,6 +27,7 @@ import {Item} from '../../catalogue/model/publish/item';
 import {NEGOTIATION_RESPONSES} from "../../catalogue/model/constants";
 import {DataChannel} from '../../data-channel/model/datachannel';
 import * as myGlobals from "../../globals";
+import {UserService} from '../../user-mgmt/user.service';
 
 /**
  * Created by suat on 12-Mar-18.
@@ -95,7 +96,8 @@ export class ThreadSummaryComponent implements OnInit {
                 private bpDataService: BPDataService,
                 private router: Router,
                 private route: ActivatedRoute,
-                private modalService: NgbModal) {
+                private modalService: NgbModal,
+                private userService: UserService) {
     }
 
     ngOnInit(): void {
@@ -167,7 +169,14 @@ export class ThreadSummaryComponent implements OnInit {
     private fetchEvents(): void {
         this.fetchCallStatus.submit();
         const ids = this.processInstanceGroup.processInstanceIDs;
-        Promise.all(ids.map(id => this.fetchThreadEvent(id))).then(events => {
+        Promise.all(ids.map(id => this.fetchThreadEvent(id)).concat(this.bpeService.checkCollaborationFinished(this.processInstanceGroup.id))).then(responses => {
+            let isCollaborationFinished = responses.pop();
+            let events = responses;
+            // if the collaboration is finished, the user should not be able to cancel the collaboration
+            if(isCollaborationFinished){
+                this.showCancelCollaborationButton = false;
+            }
+
             events.sort((a,b) => moment(a.startTime).diff(moment(b.startTime)));
             events = events.reverse();
             this.completeHistory = events;
@@ -175,10 +184,13 @@ export class ThreadSummaryComponent implements OnInit {
             this.lastEvent = events[0];
             // Update History in order to remove pending orders
             this.updateHistory(this.history);
-            if (!this.lastEvent.isRated) {
-              if (this.lastEvent.statusText == "Receipt Advice sent" || this.lastEvent.statusText == "Transport Execution Plan received" || this.processInstanceGroup.status == "CANCELLED") {
-                this.showRateCollaborationButton = true;
-              }
+
+            // if the collaboration is not rated yet, set the RateCollaborationButton status
+            if(!this.isCollaborationRated(events) ){
+                // set the status of button to True if the process is cancelled or it is completed (buyer side only)
+                if((isCollaborationFinished && this.lastEvent.buyer) || this.processInstanceGroup.status == "CANCELLED"){
+                    this.showRateCollaborationButton = true;
+                }
             }
             this.computeTitleEvent();
 
@@ -197,6 +209,16 @@ export class ThreadSummaryComponent implements OnInit {
         }).catch(error => {
             this.fetchCallStatus.error("Error while fetching thread.", error);
         });
+    }
+
+    // checks the given ThreadEventMetadatas and returns True if there are at least one ThreadEventMetadata which is rated
+    private isCollaborationRated(events:ThreadEventMetadata[]){
+        for(let event of events){
+            if(event.isRated){
+                return true;
+            }
+        }
+        return false;
     }
 
     /*
@@ -241,6 +263,13 @@ export class ThreadSummaryComponent implements OnInit {
         const processInstance = dashboardProcessInstanceDetails.processInstance;
         const correspondent = this.getCorrespondent(dashboardProcessInstanceDetails,userRole,processType);
 
+        // get seller's business process workflow
+        // we need this information to set status and labels for Order properly
+        const sellerNegotiationSettings = await this.userService.getCompanyNegotiationSettingsForParty(initialDoc.item.manufacturerParty.partyIdentification[0].id);
+        const sellerWorkflow = sellerNegotiationSettings.company.processID;
+        // check whether Fulfilment is included or not in seller's workflow
+        const isFulfilmentIncludedInWorkflow = !sellerWorkflow || sellerWorkflow.length == 0 || sellerWorkflow.indexOf('Fulfilment') != -1;
+
         if (userRole === "buyer") {
             let item:Item = initialDoc.item;
             this.lastEventPartnerID = UBLModelUtils.getPartyId(item.manufacturerParty);
@@ -266,8 +295,8 @@ export class ThreadSummaryComponent implements OnInit {
             isRated === "true"
         );
 
-        this.fillStatus(event, processInstance["state"], processType, responseDocumentStatus, userRole === "buyer");
-        this.setCancelCollaborationButtonStatus(processType,responseDocumentStatus);
+        this.fillStatus(event, processInstance["state"], processType, responseDocumentStatus, userRole === "buyer",isFulfilmentIncludedInWorkflow);
+        this.setCancelCollaborationButtonStatus(processType,responseDocumentStatus,sellerWorkflow);
         this.checkDataChannel(event);
 
         return event;
@@ -305,9 +334,9 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     private fillStatus(event: ThreadEventMetadata, processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
-                       processType: ProcessType, response: any, buyer: boolean): void {
+                       processType: ProcessType, response: any, buyer: boolean, isFulfilmentIncludedInWorkflow:boolean): void {
 
-        event.status = this.getStatus(processState, processType, response, buyer);
+        event.status = this.getStatus(processState, processType, response, buyer, isFulfilmentIncludedInWorkflow);
 
         // messages if there is no response from the responder party
         if (response == null) {
@@ -372,11 +401,21 @@ export class ThreadSummaryComponent implements OnInit {
                 case "Order":
                     if (response.documentStatus) {
                         if(buyer) {
-                            event.statusText = "Waiting for Dispatch Advice";
+                            if(isFulfilmentIncludedInWorkflow){
+                                event.statusText = "Waiting for Dispatch Advice";
+                            }
+                            else{
+                                event.statusText = "Order approved";
+                            }
                             event.actionText = "See Order";
                         } else {
+                            if(isFulfilmentIncludedInWorkflow){
+                                event.actionText = "Send Dispatch Advice";
+                            }
+                            else{
+                                event.actionText = "See Order";
+                            }
                             event.statusText = "Order approved";
-                            event.actionText = "Send Dispatch Advice";
                         }
                     } else {
                         event.statusText = "Order declined";
@@ -435,11 +474,12 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     private getStatus(processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
-                      processType: ProcessType, response: any, buyer: boolean): ThreadEventStatus {
+                      processType: ProcessType, response: any, buyer: boolean,isFulfilmentIncludedInWorkflow:boolean): ThreadEventStatus {
         switch(processState) {
             case "COMPLETED":
                 if(processType === "Order") {
-                     return buyer ? "WAITING" : "ACTION_REQUIRED";
+                    if(isFulfilmentIncludedInWorkflow)
+                        return buyer ? "WAITING" : "ACTION_REQUIRED";
                 }
                 return "DONE";
             case "EXTERNALLY_TERMINATED":
@@ -543,7 +583,7 @@ export class ThreadSummaryComponent implements OnInit {
         }
     }
 
-    setCancelCollaborationButtonStatus(processType: ProcessType, response: any){
+    setCancelCollaborationButtonStatus(processType: ProcessType, response: any,sellerWorkflow:string[]){
         switch(processType) {
             case "Order":
                 if (response && response.acceptedIndicator) {

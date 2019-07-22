@@ -18,7 +18,8 @@ export class Party {
         public certificate: Certificate[] = null,
         public partyIdentification: PartyIdentification[] = null,
         public partyName: PartyName[] = null,
-        public salesTerms:TradingPreferences = null
+        public salesTerms:TradingPreferences = null,
+        public processID:string[] = []
     ) {  }
 
 }

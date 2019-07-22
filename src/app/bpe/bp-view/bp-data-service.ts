@@ -25,7 +25,7 @@ import { PrecedingBPDataService } from "./preceding-bp-data-service";
 import { BpUserRole } from "../model/bp-user-role";
 import { BpWorkflowOptions } from "../model/bp-workflow-options";
 import { NegotiationOptions } from "../../catalogue/model/publish/negotiation-options";
-import {DEFAULT_LANGUAGE, PAYMENT_MEANS} from '../../catalogue/model/constants';
+import {DEFAULT_LANGUAGE, PAYMENT_MEANS, PROCESSES} from '../../catalogue/model/constants';
 import { ThreadEventMetadata } from "../../catalogue/model/publish/thread-event-metadata";
 import { ProcessType } from "../model/process-type";
 import { PaymentMeans } from "../../catalogue/model/publish/payment-means";
@@ -560,6 +560,37 @@ export class BPDataService{
 
         // reinitialize the messages considering the search context
         //this.setBpMessages(this.searchContextService.associatedProcessType, this.searchContextService.associatedProcessMetadata);
+    }
+
+    // it retrieves the company's business workflow through settings and construct a workflow map
+    // key is the id of process and value is true/false (whether this process is included in company's workflow or not)
+    getCompanyWorkflowMap(){
+        let companyWorkflow = this.getCompanySettings().negotiationSettings.company.processID;
+
+        let workflowMap = new Map();
+        for(let process of PROCESSES){
+            if(companyWorkflow.length == 0){
+                workflowMap.set(process.id,true);
+            }
+            else if(companyWorkflow.indexOf(process.id) != -1){
+                workflowMap.set(process.id,true);
+            }
+            else{
+                workflowMap.set(process.id,false);
+            }
+        }
+        return workflowMap;
+    }
+
+    // checks whether the given process is the final step in the workflow or not
+    isFinalProcessInTheWorkflow(processId:string){
+        let companyWorkflow = this.getCompanySettings().negotiationSettings.company.processID;
+        // if there is no workflow specified, then consider the default flow
+        // Fulfilment or TEP is the final step in the default flow
+        if((!companyWorkflow || companyWorkflow.length == 0) && (processId == "Fulfilment" || processId == "Transport_Execution_Plan")){
+            return true;
+        }
+        return companyWorkflow[companyWorkflow.length-1] == processId;
     }
 
     /********************************************************************************************

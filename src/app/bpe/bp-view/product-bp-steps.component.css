@@ -76,6 +76,17 @@
     border: 0.1rem solid #000000;
 }
 
+.steps .step.current span::after {
+    content: attr(data-after);
+    display: block;
+    position: absolute;
+    width: 100%;
+    left: 10px;
+    top: -40px;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
 .steps .step.current {
     font-size: 1.2rem;
 }
