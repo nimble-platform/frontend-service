@@ -73,6 +73,9 @@ export class ProductDetailsComponent implements OnInit {
     private discountModal: DiscountModalComponent;
     selectPreferredValue = selectPreferredValue;
 
+    // business workflow of seller company
+    companyWorkflowMap = null;
+
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private catalogueService: CatalogueService,
@@ -145,6 +148,9 @@ export class ProductDetailsComponent implements OnInit {
                         // in BPDataService,chooseFirstValuesOfItemProperties method, we use this workflowOptions to select values of the properties correctly
                         this.bpDataService.bpActivityEvent.workflowOptions = this.options;
 
+                        // get the business workflow of seller company
+                        this.companyWorkflowMap = this.bpDataService.getCompanyWorkflowMap();
+
                         this.getProductStatus.callback("Retrieved product details", true);
                         this.initCheckGetProductStatus.error(null);
                     })
@@ -194,6 +200,7 @@ export class ProductDetailsComponent implements OnInit {
                 targetProcess,
                 null,
                 this.bpDataService.bpActivityEvent.collaborationGroupId,
+                null,
                 [],
                 this.options,
                 true, // this is a new process

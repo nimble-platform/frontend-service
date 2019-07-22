@@ -23,13 +23,13 @@
 
 <!-- Actions -->
 <div *ngIf="!isRequestSent()" class="row actions-row">
-    <div class="col-2"></div>
+    <div class="{{bpDataService.isFinalProcessInTheWorkflow('Item_Information_Request') ? 'col-4' : 'col-2'}}"></div>
     <div *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div *ngIf="processMetadata && processMetadata.isBeingUpdated" class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>
-    <div *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="col-2">
+    <div *ngIf="!(processMetadata && processMetadata.isBeingUpdated) && !bpDataService.isFinalProcessInTheWorkflow('Item_Information_Request')" class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onSkip()">
             Skip
         </button>

@@ -1136,4 +1136,19 @@ export class ProductPublishComponent implements OnInit {
             this.productCatalogueRetrievalStatus.error('Failed to get product catalogues');
         });
     }
+
+    // used to validate inputs whose type is number
+    areInputNumbersValid():boolean{
+        // get all inputs whose type is number
+        let inputs = document.querySelectorAll("input[type=number]");
+        let size = inputs.length;
+        for(let i = 0; i < size; i++){
+            // if there are at least one input which is not valid, return false
+            if(!(<HTMLInputElement> inputs[i]).validity.valid){
+                return false;
+            }
+        }
+        // return true if all inputs are valid
+        return true;
+    }
 }

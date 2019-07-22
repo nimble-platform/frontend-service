@@ -70,13 +70,13 @@
 <!-- Action buttons -->
 <ng-container *ngIf="!formerProcess">
     <div *ngIf="!isRequestSent()" class="row actions-row">
-        <div class="col-2"></div>
+        <div class="{{bpDataService.isFinalProcessInTheWorkflow('Ppap') ? 'col-4' : 'col-2'}}"></div>
         <div *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
         <div *ngIf="processMetadata && processMetadata.isBeingUpdated" class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
         </div>
-        <div *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="col-2">
+        <div *ngIf="!(processMetadata && processMetadata.isBeingUpdated) && !bpDataService.isFinalProcessInTheWorkflow('Ppap')" class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onSkip()">
                 Skip
             </button>

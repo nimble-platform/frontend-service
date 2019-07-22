@@ -27,7 +27,6 @@
         <!-- previous steps -->
         <ng-container *ngIf="negotiationDocumentsCallStatus.isComplete() && lastOfferCalStatus.isComplete() && frameContractAndTermsCallStatus.isComplete()">
             <div *ngIf="i != negotiationProcessList.length-1" [hidden]="!(sliderIndex == i)">
-                {{isFrameContractBeingNegotiatedInThisNegotiation}}
                 <negotiation-response [rfq]="negotiationDocuments[i].request"
                                       [quotation]="negotiationDocuments[i].response"
                                       [lastOfferQuotation]="negotiationDocuments[i-1]?.response"
