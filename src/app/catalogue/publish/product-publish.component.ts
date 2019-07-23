@@ -152,7 +152,7 @@ export class ProductPublishComponent implements OnInit {
     dimensions:string[] = [];
     // dimensions' units retrieved from the unit service
     dimensionUnits:string[] = [];
-    selectedTabSinglePublish: "DETAILS" | "DELIVERY_TRADING" | "PRICE" | "CERTIFICATES" | "TRACK_TRACE" | "LCPA" = "DETAILS";
+    selectedTabSinglePublish: "DETAILS" | "DELIVERY_TRADING" | "PRICE" | "CERTIFICATES" | "LCPA" = "DETAILS";
 
     constructor(public categoryService: CategoryService,
                 private catalogueService: CatalogueService,

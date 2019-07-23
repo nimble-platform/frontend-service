@@ -93,13 +93,6 @@
                             Certificates
                         </a>
                     </li>
-                    <li *ngIf="config.showTrack" class="nav-item">
-                        <a href id="TRACK_TRACE" class="nav-link"
-                           [ngClass]="{ active: selectedTabSinglePublish === 'TRACK_TRACE'}"
-                           (click)="onSelectTabSinglePublish($event)">
-                            Track &amp; Trace
-                        </a>
-                    </li>
                     <li *ngIf="config.showLCPA" class="nav-item">
                         <a href id="LCPA" class="nav-link"
                            [ngClass]="{ active: selectedTabSinglePublish === 'LCPA'}"
