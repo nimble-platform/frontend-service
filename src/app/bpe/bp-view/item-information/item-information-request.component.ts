@@ -51,9 +51,7 @@ export class ItemInformationRequestComponent implements OnInit {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        if(!this.bpDataService.bpActivityEvent.newProcess) {
-            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
-        }
+        this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
         this.request = this.bpDataService.itemInformationRequest;
         const documents = this.request.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference;

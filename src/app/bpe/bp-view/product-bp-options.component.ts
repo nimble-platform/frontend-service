@@ -111,9 +111,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        if(this.bpDataService.bpActivityEvent.processHistory.length > 0) {
-            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
-        }
+        this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
         this.bpActivityEventSubs = this.bpDataService.bpActivityEventObservable.subscribe(bpActivityEvent => {
             if (bpActivityEvent) {
@@ -149,10 +147,25 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
                     return Promise.all([
                         this.getReferencedCatalogueLine(line, order),
-                        this.userService.getSettingsForProduct(line)
+                        this.userService.getSettingsForProduct(line),
+                        this.bpDataService.bpActivityEvent.containerGroupId ? this.bpeService.checkCollaborationFinished(this.bpDataService.bpActivityEvent.containerGroupId) : false
                     ])
                 })
-                .then(([referencedLine, settings]) => {
+                .then(([referencedLine, settings, isCollaborationFinished]) => {
+                    // if the collaboration is finished, we need to update workflow since it could be different from the current one
+                    // we will retrieve process ids from the process history and use those ids to create new workflow
+                    if(isCollaborationFinished){
+                        let companyWorkflow = [];
+                        let size = this.bpDataService.bpActivityEvent.processHistory.length;
+                        for(let i = size-1; i > -1;i--){
+                            let processType = this.bpDataService.bpActivityEvent.processHistory[i].processType;
+                            if(companyWorkflow.indexOf(processType) == -1){
+                                companyWorkflow.push(processType);
+                            }
+                        }
+                        // update the workflow of company
+                        settings.negotiationSettings.company.processID = companyWorkflow;
+                    }
                     // set the product line to be the first fetched line, either service or product.
                     this.bpDataService.setCatalogueLines([this.line], [settings]);
                     this.bpDataService.computeWorkflowOptions();

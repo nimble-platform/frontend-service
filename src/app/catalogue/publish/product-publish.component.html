@@ -112,10 +112,10 @@
         </div>
 
         <!-- Product Details Tab -->
-        <div class="row space-before" *ngIf="selectedTabSinglePublish === 'DETAILS'">
+        <div class="row space-before" [hidden]="selectedTabSinglePublish != 'DETAILS'">
             <div class="col-12">
                 <button class='btn btn-outline-primary' (click)="toggleDimensionCard()">Dimensions</button>
-                <div *ngIf="showDimensions" >
+                <div [hidden]="!showDimensions" >
                     <div class="row border-bottom m-0" *ngFor="let multiValuedDimension of multiValuedDimensions">
                         <div class="col-3" style="padding:.75rem;padding-left:0;">
                             <div class="col-form-label">
@@ -245,7 +245,7 @@
         </div>
 
         <!-- Price Tab -->
-        <div class="row space-before" *ngIf="selectedTabSinglePublish === 'PRICE'">
+        <div class="row space-before" [hidden]="selectedTabSinglePublish != 'PRICE'">
             <div class="col-12">
                 <product-price-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()" [companyNegotiationSettings]="companyNegotiationSettings">
                 </product-price-tab>
@@ -253,7 +253,7 @@
         </div>
 
         <!-- Delivery & Trading Tab -->
-        <div class="row space-before" *ngIf="selectedTabSinglePublish === 'DELIVERY_TRADING'">
+        <div class="row space-before" [hidden]="selectedTabSinglePublish != 'DELIVERY_TRADING'">
             <div class="col-12">
                 <product-delivery-trading [wrapper]="productWrapper" [disabled]="isLoading()">
                 </product-delivery-trading>
@@ -261,23 +261,15 @@
         </div>
 
         <!-- Certificates -->
-        <div class="row space-before" *ngIf="selectedTabSinglePublish === 'CERTIFICATES'">
+        <div class="row space-before" [hidden]="selectedTabSinglePublish != 'CERTIFICATES'">
             <div class="col-12">
                 <product-certificates-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()">
                 </product-certificates-tab>
             </div>
         </div>
 
-        <!-- Track and Trace -->
-        <div class="row space-before" *ngIf="selectedTabSinglePublish === 'TRACK_TRACE'">
-            <div class="col-12">
-                <product-track-and-trace-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()">
-                </product-track-and-trace-tab>
-            </div>
-        </div>
-
         <!-- Life Cycle Performance Analysis -->
-        <div class="row space-before" *ngIf="selectedTabSinglePublish === 'LCPA'">
+        <div class="row space-before" [hidden]="selectedTabSinglePublish != 'LCPA'">
             <div class="col-12">
                 <product-lcpa-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()" [presentationMode]="'edit'">
                 </product-lcpa-tab>
@@ -296,12 +288,12 @@
             </button>
         </div>
         <div class="col-3">
-            <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine()" (click)="onPublish(false)">
+            <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine() || !areInputNumbersValid()" (click)="onPublish(false)">
                 {{ publishStateService.publishMode === "edit" ? "Save & Continue" : "Publish & Continue"  }}
             </button>
         </div>
         <div class="col-3">
-            <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine()" (click)="onPublish(true)">
+            <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine() || !areInputNumbersValid()" (click)="onPublish(true)">
                 {{ publishStateService.publishMode === "edit" ? "Save & Exit" : "Publish & Exit"  }}
             </button>
         </div>

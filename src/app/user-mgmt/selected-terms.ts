@@ -17,9 +17,8 @@ export class SelectedTerms {
             })
         } else {
             allTerms.forEach(term => {
-                this.selectedMap[term] = true
+                this.selectedMap[term] = false
             })
-            selectedTerms.push(...allTerms);
         }
     }
 

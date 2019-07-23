@@ -129,10 +129,10 @@ export const config = {
   "imprint": "<u>Platform Owner & Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)",
   "kibanaConfig": {
     "dashboards": [
-      {
-        "title": "User Logins & Registrations",
-        "url": "#/dashboard/27836650-8907-11e9-9609-0520e65d66da?embed=true&_g=(refreshInterval%3A(display%3A'30%20minutes'%2Cpause%3A!f%2Csection%3A2%2Cvalue%3A1800000)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
-      }, {
+        {
+            "title": "User Logins & Registrations",
+            "url": "#/dashboard/407d6ed0-ac89-11e9-94eb-b71f5a648539?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
+        }, {
             "title": "Business Process Activities",
             "url": "#/dashboard/95678d10-906c-11e9-aa69-2987e334cad6?embed=true&_g=(refreshInterval%3A(display%3A'30%20minutes'%2Cpause%3A!f%2Csection%3A2%2Cvalue%3A1800000)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
         }, {

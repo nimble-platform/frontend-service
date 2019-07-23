@@ -83,7 +83,7 @@
                       [amountType]="'currency_quantity'">
         </amount-input>
     </div>
-    <ng-container *ngFor="let detail of catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpainput.additionalLCPAInputDetail; let i = index">
+    <ng-container *ngFor="let detail of _catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpainput.additionalLCPAInputDetail; let i = index">
         <div [ngSwitch]="detail.valueQualifier">
             <div *ngIf="i == 0">
                 <hr>

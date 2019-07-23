@@ -454,6 +454,24 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
+	checkAllCollaborationsFinished(partyId:string){
+        const url = `${this.url}/collaboration-groups/all-finished?partyId=${partyId}`;
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
+    checkCollaborationFinished(groupId:string):Promise<any>{
+        const url = `${this.url}/process-instance-groups/${groupId}/finished`;
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
 	mergeNegotations(baseId:string , mergeIds) {
 		let url = `${this.url}/collaboration-groups/merge`;
 		// append catalogue merge ids to the url

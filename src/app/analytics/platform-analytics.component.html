@@ -29,20 +29,16 @@
 <div [hidden]="isLoading()" class="space-before">
 
   <div [hidden]="selectedTab !== 'LOG'">
-
-    <!-- <div *ngFor="let dashboard of dashboards"> -->
-
-      <div class="row">
-        <div class="col">
-        <!--<h6>{{dashboards.title}}</h6>-->
-        <iframe #iframe height="375" width="100%" frameborder="0" class="border"></iframe>
-        <iframe src="http://localhost:5601/app/kibana#/home?_g=()" height="375" width="100%" frameborder="0" class="border"></iframe>
-        </div>
+    <div *ngFor="let dashboard of dashboards">
+    <div class="row">
+      <div class="col">
+        <h6>{{dashboard.title}}</h6>
+        <iframe [src]="dashboard.safeUrl"
+                height="375" width="100%" frameborder="0" class="border"></iframe>
       </div>
-
-      <hr>
-
-    <!-- </div> -->
+    </div>
+    <hr>
+  </div>
 
   </div>
 
