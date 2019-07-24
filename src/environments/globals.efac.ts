@@ -70,13 +70,13 @@ export const pw_reset_link = "https://efactory-nimble.salzburgresearch.at:8080/a
 
 // Service endpoints
 
-export const user_mgmt_endpoint=`http://identity-service`;
-export const catalogue_endpoint=`http://catalogue-service`;
-export const bpe_endpoint=`http://business-process-service`;
-export const data_channel_endpoint=`http://data-channel-service`;
-export const data_aggregation_endpoint=`http://data-aggregation-service`;
-export const trust_service_endpoint=`http://trust-service`;
-export const indexing_service_endpoint=`http://indexing-service`;
+export const user_mgmt_endpoint=`${base_path}/identity`;
+export const catalogue_endpoint=`${base_path}/catalog`;
+export const bpe_endpoint=`${base_path}/business-process`;
+export const data_channel_endpoint=`${base_path}/data-channel`;
+export const data_aggregation_endpoint=`${base_path}/data-aggregation`;
+export const trust_service_endpoint=`${base_path}/trust`;
+export const indexing_service_endpoint=`${base_path}/indexing-service`;
 export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}:9200`;
 export const kibana_endpoint = `${base_path}:5601/app/kibana`;
