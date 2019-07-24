@@ -55,6 +55,33 @@ node('nimble-jenkins-slave') {
         }
     }
 
+     // -----------------------------------------------
+    // --------------- k8's efactory Branch ----------------
+    // -----------------------------------------------
+  
+    if (env.BRANCH_NAME == 'efactory') {
+
+        stage('Clone and Update') {
+            git(url: 'https://github.com/nimble-platform/frontend-service.git', branch: env.BRANCH_NAME)
+        }
+      
+        stage('Build Application - EFAC') {
+            sh 'mvn clean install -Denv=efactory'
+        }
+
+        stage('Build Docker - EFAC') {
+            sh 'docker build -t nimbleplatform/frontend-service:efactory ./target'
+        }
+
+        stage('Push Docker - EFAC') {
+            sh 'docker push nimbleplatform/frontend-service:efactory'
+        }
+
+        stage('Deploy Efac') {
+            sh 'ssh efac-prod "kubectl delete pod -l  io.kompose.service=frontend-service"'
+        }
+    }
+
     // -----------------------------------------------
     // ---------------- Master Branch ----------------
     // -----------------------------------------------
