@@ -95,7 +95,7 @@ export const config = {
   "dateFormat": "YYYY.MM.DD"
  },
  "loggingEnabled": false,
- "logoPath": "./assets/logo_fmp.png",
+ "logoPath": "./assets/logo_efac.png",
  "logoRequired": true,
  "phoneNumberRequired": true,
  "projectsEnabled": true,
