@@ -43,7 +43,7 @@ node('nimble-jenkins-slave') {
         }
 
         stage('Build Application - EFAC') {
-            sh 'mvn clean install -Denv=efac'
+            sh 'mvn clean install -Denv=efac-staging'
         }
 
         stage('Build Docker - EFAC') {
