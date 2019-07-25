@@ -464,7 +464,7 @@ export class OrderComponent implements OnInit {
         return false;
     }
 
-    getProductionTemplateFromOrderResponse(): boolean {
+    getProductionTemplateFromOrderResponse(): DocumentReference {
         let ttDocRef = this.orderResponse.additionalDocumentReference.filter(docRef => docRef.documentType === 'PRODUCTIONTEMPLATE');
         if(ttDocRef.length > 0) {
             return ttDocRef[0];
