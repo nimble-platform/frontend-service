@@ -427,15 +427,6 @@ export class OrderComponent implements OnInit {
         return this.order.orderLine[0].lineItem;
     }
 
-    trackAndTraceDetailsExists(): boolean {
-        const tnt = this.order.orderLine[0].lineItem.item.trackAndTraceDetails
-        if (tnt && (tnt.masterURL || tnt.eventURL || tnt.productionProcessTemplate)) {
-            return true;
-        }
-
-        return false;
-    }
-
     /*
      *
      */
@@ -445,7 +436,7 @@ export class OrderComponent implements OnInit {
             && this.processMetadata.processStatus == 'Completed'
             && this.bpDataService.orderResponse
             && this.bpDataService.orderResponse.acceptedIndicator
-            && this.trackAndTraceDetailsExists()) {
+            && this.config.showTrack) {
             this.initEpcCodesCallStatus.submit();
             this.epcService.getEpcCodes(this.order.id).then(res => {
                 this.epcCodes = res;
