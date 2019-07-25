@@ -78,7 +78,7 @@ export const data_aggregation_endpoint=`${base_path}/data-aggregation`;
 export const trust_service_endpoint=`${base_path}/trust`;
 export const indexing_service_endpoint=`${base_path}/indexing-service`;
 export const rocketChatEndpoint = `${base_path}:3000`;
-export const logstash_endpoint = `${base_path}:9200`;
+export const logstash_endpoint = `${base_path}:8082`;
 export const kibana_endpoint = `${base_path}:5601/app/kibana`;
 export const delegate_endpoint = `${base_path}:9265`;
 
@@ -140,11 +140,6 @@ export const config = {
     ]
   },
   "kibanaEnabled": true,
-  "loggingConfig": {
-    "index": "logstash-{DATE}",
-    "type": "doc",
-    "dateFormat": "YYYY.MM.DD"
-  },
   "loggingEnabled": true,
   "logoPath": "./assets/logo_efac.png",
   "logoRequired": true,
