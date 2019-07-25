@@ -45,6 +45,19 @@ export class DocumentService {
             .catch(this.handleError);
     }
 
+    updateDocument(documentId: string, documentType: string, document: any): Promise<any> {
+        const url = `${this.url}/document/${documentId}?documentType=${documentType}`;
+        return this.http
+            .patch(url, document, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => {
+                let resJson = res.json();
+                this.updateCachedDocument(documentId, resJson);
+                return resJson;
+            })
+            .catch(this.handleError);
+    }
+
     getItemInformationRequest(itemInformationResponse: ItemInformationResponse): Promise<ItemInformationRequest> {
         return this.getDocumentJsonContent(itemInformationResponse.itemInformationRequestDocumentReference.id);
     }

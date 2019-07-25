@@ -208,54 +208,89 @@
 
     <hr>
 
-    <div class="btn btn-outline-primary space-after" (click)="showEPCCodePanel = !showEPCCodePanel">EPC Codes</div>
+    <div class="btn btn-outline-primary space-after" (click)="showTTPanel = !showTTPanel">Track & Trace</div>
 
-    <call-status [callStatus]="initEpcCodesCallStatus"></call-status>
+    <ng-container *ngIf="showTTPanel">
+        <ul class="nav nav-tabs space-after">
+            <li class="nav-item">
+                <a href id="EPC_CODES" class="nav-link"
+                   [ngClass]="{ active: selectedTrackAndTraceTab === 'EPC_CODES'}"
+                   (click)="onTTTabSelect($event)">
+                    EPC Codes
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href id="PRODUCTION_PROCESS_TEMPLATE" class="nav-link"
+                   [ngClass]="{ active: selectedTrackAndTraceTab === 'PRODUCTION_PROCESS_TEMPLATE'}"
+                   (click)="onTTTabSelect($event)">
+                    Production Process Template
+                </a>
+            </li>
+        </ul>
 
-    <div *ngIf="epcCodes && showEPCCodePanel" class="row">
+        <ng-container *ngIf="selectedTrackAndTraceTab === 'EPC_CODES'">
+            <call-status [callStatus]="initEpcCodesCallStatus"></call-status>
 
-      <!--List of codes -->
-      <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
-          <div class="row mb-1" *ngFor="let code of epcCodes.codes; let i = index; trackBy:trackByFn">
-            <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
-                <input type="text" class="form-control" [(ngModel)]="epcCodes.codes[i]" [disabled]="isBuyer()">
+            <div *ngIf="epcCodes" class="row">
+
+              <!--List of codes -->
+              <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
+                  <div class="row mb-1" *ngFor="let code of epcCodes.codes; let i = index; trackBy:trackByFn">
+                    <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
+                        <input type="text" class="form-control" [(ngModel)]="epcCodes.codes[i]" [disabled]="isBuyer()">
+                    </div>
+                    <div class="col-3" *ngIf="isSeller() && i > 0">
+                        <button class="btn btn-danger w-100" (click)="onDeleteEpcCode(i)">Delete</button>
+                    </div>
+                  </div>
+              </div>
+
+              <div *ngIf="isSeller()" class="col-1"></div>
+
+              <div *ngIf="isSeller()" class="col-2">
+
+                <!-- Add code -->
+                <div class="row">
+                    <div class="col-12">
+                        <button class="btn btn-success w-100" (click)="onAddEpcCode()">Add</button>
+                    </div>
+                </div>
+
+                <!-- Save -->
+                <div class="row">
+                    <div class="col-12">
+                        <button class="btn btn-primary w-100 save-epc-btn" [disabled]="!areEpcCodesDirty()"
+                            (click)="onSaveEpcCodes()">Save</button>
+                    </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-12 d-flex justify-content-end">
+                      <span class="align-self-center">
+                          <call-status [callStatus]="saveEpcCodesCallStatus"></call-status>
+                      </span>
+                  </div>
+                </div>
+
+              </div>
             </div>
-            <div class="col-3" *ngIf="isSeller() && i > 0">
-                <button class="btn btn-danger w-100" (click)="onDeleteEpcCode(i)">Delete</button>
+        </ng-container>
+
+        <div *ngIf="selectedTrackAndTraceTab === 'PRODUCTION_PROCESS_TEMPLATE'">
+            <div class="d-flex">
+                <div class="col-3 mr-2">
+                    <file-input [binaryObjects]="productionTemplateFile"
+                                (onSelectFile)="onTTFileSelected($event)"
+                                (onClearFile)="onTTFileRemoved()">
+                    </file-input>
+                </div>
+                <div>
+                    <button class="btn btn-primary" (click)="onUpdateOrderResponse()">Save</button>
+                </div>
             </div>
-          </div>
-      </div>
-
-      <div *ngIf="isSeller()" class="col-1"></div>
-
-      <div *ngIf="isSeller()" class="col-2">
-
-        <!-- Add code -->
-        <div class="row">
-            <div class="col-12">
-                <button class="btn btn-success w-100" (click)="onAddEpcCode()">Add</button>
-            </div>
+            <call-status [large]="true" [callStatus]="updateOrderResponseCallStatus"></call-status>
         </div>
-
-        <!-- Save -->
-        <div class="row">
-            <div class="col-12">
-                <button class="btn btn-primary w-100 save-epc-btn" [disabled]="!areEpcCodesDirty()"
-                    (click)="onSaveEpcCodes()">Save</button>
-            </div>
-        </div>
-
-        <div class="row">
-          <div class="col-12 d-flex justify-content-end">
-              <span class="align-self-center">
-                  <call-status [callStatus]="saveEpcCodesCallStatus"></call-status>
-              </span>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
+    </ng-container>
 </ng-container>
 
 <!-- Actions -->

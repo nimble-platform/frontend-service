@@ -32,6 +32,8 @@ import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event
 import * as myGlobals from '../../../globals';
 import {Contract} from '../../../catalogue/model/publish/contract';
 import {Clause} from '../../../catalogue/model/publish/clause';
+import {BinaryObject} from "../../../catalogue/model/publish/binary-object";
+import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -59,8 +61,10 @@ export class OrderComponent implements OnInit {
 
     epcCodes: EpcCodes;
     savedEpcCodes: EpcCodes;
+    productionTemplateFile: BinaryObject[] = [];
     initEpcCodesCallStatus: CallStatus = new CallStatus();
     saveEpcCodesCallStatus: CallStatus = new CallStatus();
+    updateOrderResponseCallStatus: CallStatus = new CallStatus();
 
     initCallStatus: CallStatus = new CallStatus();
     submitCallStatus: CallStatus = new CallStatus();
@@ -72,7 +76,8 @@ export class OrderComponent implements OnInit {
     getPartyId = UBLModelUtils.getPartyId;
 
     showPurchaseOrder:boolean = false;
-    showEPCCodePanel:boolean = false;
+    showTTPanel:boolean = false;
+    selectedTrackAndTraceTab: 'EPC_CODES' | 'PRODUCTION_PROCESS_TEMPLATE' = 'EPC_CODES';
 
     // map representing the workflow of seller's company
     companyWorkflowMap = null;
@@ -155,6 +160,10 @@ export class OrderComponent implements OnInit {
         }
 
         this.initializeEPCCodes();
+        let productionTemplateFile: DocumentReference = this.getProductionTemplateFromOrderResponse();
+        if(productionTemplateFile != null) {
+            this.productionTemplateFile = [productionTemplateFile.attachment.embeddedDocumentBinaryObject]
+        }
     }
 
     // retrieve the order contract which is not the Term and Condition contract
@@ -338,29 +347,36 @@ export class OrderComponent implements OnInit {
             });
     }
 
-    onAddEpcCode() {
-        this.epcCodes.codes.push("");
+    onTTTabSelect(event): void {
+        event.preventDefault();
+        this.selectedTrackAndTraceTab = event.target.id;
     }
 
-    areEpcCodesDirty(): boolean {
-        if(!this.epcCodes || !this.savedEpcCodes) {
-            return false;
-        }
+    onTTFileSelected(binaryObject: BinaryObject): void {
+        let documentReference: DocumentReference = UBLModelUtils.createDocumentReferenceWithBinaryObject(binaryObject);
+        documentReference.documentType = 'PRODUCTIONTEMPLATE';
+        this.orderResponse.additionalDocumentReference = [];
+        this.orderResponse.additionalDocumentReference.push(documentReference);
+    }
 
-        const codes = this.epcCodes.codes;
-        const saved = this.savedEpcCodes.codes;
+    onTTFileRemoved(): void {
+        this.orderResponse.additionalDocumentReference = [];
+    }
 
-        if(codes.length !== saved.length) {
-            return true;
-        }
+    onUpdateOrderResponse(): void {
+        this.updateOrderResponseCallStatus.submit();
 
-        for(let i = 0; i < saved.length; i++) {
-            if(codes[i] !== saved[i]) {
-                return true;
-            }
-        }
+        this.documentService.updateDocument(this.orderResponse.id, 'ORDERRESPONSESIMPLE', JSON.stringify(this.orderResponse))
+            .then(() => {
+                this.updateOrderResponseCallStatus.callback("Production template file added to the order response", true);
+            })
+            .catch(error => {
+                this.updateOrderResponseCallStatus.error("Failed to add production template to the order response", error);
+            });
+    }
 
-        return false;
+    onAddEpcCode() {
+        this.epcCodes.codes.push("");
     }
 
     /*
@@ -425,6 +441,35 @@ export class OrderComponent implements OnInit {
 
     getLineItem(): LineItem {
         return this.order.orderLine[0].lineItem;
+    }
+
+    areEpcCodesDirty(): boolean {
+        if(!this.epcCodes || !this.savedEpcCodes) {
+            return false;
+        }
+
+        const codes = this.epcCodes.codes;
+        const saved = this.savedEpcCodes.codes;
+
+        if(codes.length !== saved.length) {
+            return true;
+        }
+
+        for(let i = 0; i < saved.length; i++) {
+            if(codes[i] !== saved[i]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    getProductionTemplateFromOrderResponse(): boolean {
+        let ttDocRef = this.orderResponse.additionalDocumentReference.filter(docRef => docRef.documentType === 'PRODUCTIONTEMPLATE');
+        if(ttDocRef.length > 0) {
+            return ttDocRef[0];
+        }
+        return null;
     }
 
     /*
