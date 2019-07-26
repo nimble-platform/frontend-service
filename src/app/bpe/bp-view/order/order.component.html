@@ -281,10 +281,11 @@
                 <div class="col-3 mr-2">
                     <file-input [binaryObjects]="productionTemplateFile"
                                 (onSelectFile)="onTTFileSelected($event)"
-                                (onClearFile)="onTTFileRemoved()">
+                                (onClearFile)="onTTFileRemoved()"
+                                [presentationMode]="isSeller() ? 'edit' : 'view'">
                     </file-input>
                 </div>
-                <div>
+                <div *ngIf="isSeller()">
                     <button class="btn btn-primary" (click)="onUpdateOrderResponse()">Save</button>
                 </div>
             </div>
