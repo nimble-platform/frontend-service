@@ -239,7 +239,7 @@
                     <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
                         <input type="text" class="form-control" [(ngModel)]="epcCodes.codes[i]" [disabled]="isBuyer()">
                     </div>
-                    <div class="col-3" *ngIf="isSeller() && i > 0">
+                    <div class="col-3" *ngIf="isSeller()">
                         <button class="btn btn-danger w-100" (click)="onDeleteEpcCode(i)">Delete</button>
                     </div>
                   </div>
@@ -259,7 +259,7 @@
                 <!-- Save -->
                 <div class="row">
                     <div class="col-12">
-                        <button class="btn btn-primary w-100 save-epc-btn" [disabled]="!areEpcCodesDirty()"
+                        <button class="btn btn-primary w-100 save-epc-btn" [disabled]="!areEpcCodesDirty() || !isThereAValidEPCCode()"
                             (click)="onSaveEpcCodes()">Save</button>
                     </div>
                 </div>

@@ -336,6 +336,9 @@ export class OrderComponent implements OnInit {
             }
         }
 
+        // remove the empty codes also from the displayed list
+        this.epcCodes.codes = this.epcCodes.codes.filter(code => code);
+
         const codes = new EpcCodes(this.order.id, selectedEpcCodes);
 
         this.epcService.registerEpcCodes(codes)
@@ -464,6 +467,17 @@ export class OrderComponent implements OnInit {
         return false;
     }
 
+    isThereAValidEPCCode(): boolean {
+        if(this.epcCodes) {
+            for(let code of this.epcCodes.codes) {
+                if(code) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     getProductionTemplateFromOrderResponse(): DocumentReference {
         let ttDocRef = this.orderResponse.additionalDocumentReference.filter(docRef => docRef.documentType === 'PRODUCTIONTEMPLATE');
         if(ttDocRef.length > 0) {
@@ -485,16 +499,16 @@ export class OrderComponent implements OnInit {
             this.initEpcCodesCallStatus.submit();
             this.epcService.getEpcCodes(this.order.id).then(res => {
                 this.epcCodes = res;
-                if(this.epcCodes.codes.length == 0){
-                    this.epcCodes.codes.push("");
+                if(this.epcCodes.codes == null){
+                    this.epcCodes.codes = [];
                 }
                 this.epcCodes.codes.sort();
                 this.savedEpcCodes = copy(this.epcCodes);
                 this.initEpcCodesCallStatus.callback("EPC Codes initialized", true);
             }).catch(error => {
                 if(error.status && error.status == 404) {
-                    this.epcCodes = new EpcCodes(this.order.id,[""]);
-                    this.savedEpcCodes = new EpcCodes(this.order.id,[""]);
+                    this.epcCodes = new EpcCodes(this.order.id,[]);
+                    this.savedEpcCodes = new EpcCodes(this.order.id,[]);
                     this.initEpcCodesCallStatus.callback("EPC Codes initialized", true);
                 } else {
                     this.initEpcCodesCallStatus.error("Error while initializing EPC Codes", error);
