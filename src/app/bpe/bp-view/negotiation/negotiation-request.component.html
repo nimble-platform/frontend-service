@@ -196,11 +196,11 @@
         </div>
 
         <!-- VAT -->
-        <div class="row content-row">
+        <!--<div class="row content-row">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">VAT:</strong>
             </div>
-            <!-- Manufacturer's offer -->
+            <!-- Manufacturer's offer -- >
             <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}} d-flex">
                 <ng-container [ngSwitch]="primaryTermsSource">
                     <ng-container *ngSwitchCase="'product_defaults'">
@@ -217,7 +217,7 @@
             <div *ngIf="showCounterOfferTerms" class="col-5">
                 {{ wrapper.rfqDiscountPriceWrapper.vatTotalString }}
             </div>
-        </div>
+        </div>-->
 
         <!-- Quantity -->
         <div *ngIf="showCounterOfferTerms" class="row content-row">
@@ -415,11 +415,6 @@
     </div>
 
     <!-- Purchase Order -->
-    <!--
-    <div class="row">
-        <div class="btn btn-outline-primary align-self-start mb-2" (click)="showPurchaseOrder = !showPurchaseOrder">Purchase Order</div>
-    </div>
-    -->
     <div *ngIf="showPurchaseOrder" class="row mb-3">
         <div class="col-12">
             <div class="row">
@@ -431,8 +426,16 @@
                 <div class="col-10">{{requestedQuantity}} {{getQuantityUnit()}}</div>
             </div>
             <div class="row">
-                <div class="col-2"><strong>Total Price:</strong></div>
+                <div class="col-2"><strong>Net Price:</strong></div>
                 <div class="col-10">{{ wrapper.rfqTotalPriceString }}</div>
+            </div>
+            <div class="row">
+                <div class="col-2"><strong>VAT:</strong></div>
+                <div class="col-10">{{ wrapper.rfqTotalPriceString }}</div>
+            </div>
+            <div class="row">
+                <div class="col-2"><strong>Gross Total:</strong></div>
+                <div class="col-10">{{ wrapper.rfqGrossTotalString}}</div>
             </div>
         </div>
     </div>
@@ -440,10 +443,16 @@
   </div>
 </div>
 
+<hr class="actions-hr">
+
 <!-- Actions -->
 <div *ngIf="!showRequestedPrice()" class="d-flex justify-content-end actions-row">
-    <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-    <div class="col-3 price-col">Total Price: {{ wrapper.rfqGrossTotalString }}</div>
+    <div class="col-3 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-4">
+        <div class="price-col">Net Price: {{ wrapper.rfqTotalPriceString}}</div>
+        <div class="price-col">VAT: {{ wrapper.rfqVatTotalString}}</div>
+        <div class="price-col">Gross Total: {{ wrapper.rfqGrossTotalString }}</div>
+    </div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>
