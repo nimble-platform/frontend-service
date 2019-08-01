@@ -684,8 +684,21 @@ export class UBLModelUtils {
         return false;
     }
 
-    public static isEmptyQuantity(quantity:Quantity | Amount): boolean {
-        if(quantity.value == null) {
+    public static isEmptyQuantity(quantity: Quantity): boolean {
+        if(quantity == null) {
+            return true;
+        }
+        if(!quantity.value || !quantity.unitCode) {
+            return true;
+        }
+        return false;
+    }
+
+    public static isEmptyAmount(amount: Amount): boolean {
+        if(amount == null) {
+            return true;
+        }
+        if(!amount.value || !amount.currencyID) {
             return true;
         }
         return false;
@@ -823,6 +836,23 @@ export class UBLModelUtils {
         let tradingTerm: TradingTerm = rfq.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
         if(tradingTerm != null) {
             return tradingTerm.value.valueQuantity[0];
+        }
+        return null;
+    }
+
+    public static getFirstFromMultiTypeValueByQualifier(multiTypeValue: MultiTypeValue): any {
+        if(multiTypeValue.valueQualifier == 'TEXT' || multiTypeValue.valueQualifier == 'STRING') {
+            if(multiTypeValue.value && multiTypeValue.value.length > 0) {
+                return multiTypeValue.value[0];
+            }
+        } else if(multiTypeValue.valueQualifier == 'NUMBER') {
+            if(multiTypeValue.valueDecimal && multiTypeValue.valueDecimal.length > 0) {
+                return multiTypeValue.valueDecimal[0];
+            }
+        } else if(multiTypeValue.valueQualifier == 'QUANTITY') {
+            if(multiTypeValue.valueQuantity && multiTypeValue.valueQuantity.length > 0) {
+                return multiTypeValue.valueQuantity[0];
+            }
         }
         return null;
     }

@@ -12,6 +12,7 @@ import {TradingTerm} from "../../../catalogue/model/publish/trading-term";
 import {MultiTypeValue} from "../../../catalogue/model/publish/multi-type-value";
 import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
 import {Clause} from "../../../catalogue/model/publish/clause";
+import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 
 export class QuotationWrapper {
 
@@ -108,5 +109,9 @@ export class QuotationWrapper {
 
     public get dataMonitoringPromisedString(): string {
         return this.quotation.dataMonitoringPromised ? "Promised" : "Not Promised";
+    }
+
+    public getTradingTerm(termName: string): TradingTerm {
+        return this.quotation.tradingTerms.find(tradingTerm => tradingTerm.id == termName);
     }
 }

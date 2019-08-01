@@ -31,9 +31,9 @@ import {frameContractDurationUnitListId} from "../../../common/constants";
 import {Party} from "../../../catalogue/model/publish/party";
 import {Quantity} from "../../../catalogue/model/publish/quantity";
 import {NegotiationOptions} from "../../../catalogue/model/publish/negotiation-options";
-import {TradingTerm} from "../../../catalogue/model/publish/trading-term";
 import {Quotation} from "../../../catalogue/model/publish/quotation";
 import {Clause} from "../../../catalogue/model/publish/clause";
+import {CustomTermModalComponent} from "./custom-term-modal.component";
 
 @Component({
     selector: "negotiation-request",
@@ -89,6 +89,8 @@ export class NegotiationRequestComponent implements OnInit {
 
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
+    @ViewChild(CustomTermModalComponent)
+    private customTermModal: CustomTermModalComponent;
 
     constructor(private bpDataService: BPDataService,
                 private bpeService:BPEService,
@@ -149,7 +151,7 @@ export class NegotiationRequestComponent implements OnInit {
         // if a new business process is created load initial terms based on the selected terms source
         // ignore negotiation options is true as they are not calculated yet
         // rfq is provided with values in onTermsSourceChange. this is done after initializing the wrapper,
-        // because this method requires the wrapper
+        // because onTermsSourceChange method requires the wrapper
         if(!this.processMetadata) {
             this.onTermsSourceChange(this.primaryTermsSource, true);
         }
@@ -409,6 +411,10 @@ export class NegotiationRequestComponent implements OnInit {
         if(!this.rfq.negotiationOptions.price && this.primaryTermsSource == 'product_defaults') {
             this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.discountedPricePerItem;
         }
+    }
+
+    deleteTradingTerm(termName: string): void {
+        this.wrapper.deleteRfqTradingTerm(termName);
     }
 
     /*
@@ -775,6 +781,10 @@ export class NegotiationRequestComponent implements OnInit {
 
     private openDiscountModal(): void{
         this.discountModal.open(this.wrapper.lineDiscountPriceWrapper);
+    }
+
+    private openCustomTermModal(): void {
+        this.customTermModal.open();
     }
 
     showTab(tab:boolean):boolean {

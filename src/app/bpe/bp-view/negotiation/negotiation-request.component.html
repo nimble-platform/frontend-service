@@ -195,30 +195,6 @@
             </div>
         </div>
 
-        <!-- VAT -->
-        <!--<div class="row content-row">
-            <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
-                <strong class="font-weight-500">VAT:</strong>
-            </div>
-            <!-- Manufacturer's offer -- >
-            <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}} d-flex">
-                <ng-container [ngSwitch]="primaryTermsSource">
-                    <ng-container *ngSwitchCase="'product_defaults'">
-                        {{ wrapper.lineDiscountPriceWrapper.vatTotalString }}
-                    </ng-container>
-                    <ng-container *ngSwitchCase="'frame_contract'">
-                        {{ wrapper.frameContractQuotationWrapper.priceWrapper.vatTotalString}}
-                    </ng-container>
-                    <ng-container *ngSwitchCase="'last_offer'">
-                        {{ wrapper.lastOfferQuotationWrapper.priceWrapper.vatTotalString }}
-                    </ng-container>
-                </ng-container>
-            </div>
-            <div *ngIf="showCounterOfferTerms" class="col-5">
-                {{ wrapper.rfqDiscountPriceWrapper.vatTotalString }}
-            </div>
-        </div>-->
-
         <!-- Quantity -->
         <div *ngIf="showCounterOfferTerms" class="row content-row">
             <div class="col-2">
@@ -278,11 +254,6 @@
 
     <!-- Frame contract -->
     <ng-container *ngIf="isFrameContractVisible()">
-        <!--
-        <div class="row">
-            <div class="btn btn-outline-primary align-self-start mb-2" (click)="showFrameContractDetails = !showFrameContractDetails;">Frame Contract</div>
-        </div>
-        -->
         <ng-container *ngIf="showFrameContractDetails">
             <div class="row">
                 <div class="col-2">
@@ -303,11 +274,6 @@
     </ng-container>
 
     <!--Notes-->
-    <!--
-    <div class="row">
-        <div class="btn btn-outline-primary align-self-start mb-2" (click)="showNotesAndAdditionalFiles = !showNotesAndAdditionalFiles;">Notes and Additional Files</div>
-    </div>
-    -->
     <note-file-view *ngIf="showNotesAndAdditionalFiles"
                     class="mb-2"
                     [notes]="rfq.note"
@@ -320,11 +286,6 @@
 
     <!-- Data Monitoring -->
     <ng-container *ngIf="config.dataChannelsEnabled">
-        <!--
-        <div class="row">
-            <div class="btn btn-outline-primary align-self-start mb-2" (click)="showDataMonitoring = !showDataMonitoring;">Data Monitoring</div>
-        </div>
-        -->
         <div *ngIf="showDataMonitoring" class="row mb-3">
             <div class="col-12">
                 <div class="input-group">
@@ -340,11 +301,6 @@
     </ng-container>
 
     <!-- Delivery -->
-    <!--
-    <div class="row">
-        <div class="btn btn-outline-primary align-self-start mb-2" (click)="showDeliveryAddress = !showDeliveryAddress">Delivery Address</div>
-    </div>
-    -->
     <div *ngIf="showDeliveryAddress" class="row mb-3">
         <div class="col-12">
             <options-input label="Use Existing Address" [(selected)]="selectedAddress" [options]="addressOptions"
@@ -356,26 +312,64 @@
         </div>
     </div>
 
-    <!-- Contract Preview -->
-    <!--
-    <div class="row">
-        <div class="btn btn-outline-primary align-self-start mb-2" (click)="showTermsAndConditions = !showTermsAndConditions">Terms and Conditions</div>
-    </div>
-    -->
+    <!-- Terms and conditions -->
     <div *ngIf="showTermsAndConditions">
         <div class="row mb-2">
             <div class="col-2">
-                <strong class="font-weight-500">Terms and conditions:</strong>
+                <strong class="font-weight-500">Terms:</strong>
+                <span title="Custom trading terms requested by the customer.">&#9432;</span>
+            </div>
+        </div>
+
+        <ng-container *ngFor="let tradingTerm of wrapper.rfq.tradingTerms">
+            <div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row content-row space-before">
+                <div class="col-2">
+                    <strong class="font-weight-500">{{tradingTerm.id}}:</strong>
+                    <span *ngIf="tradingTerm.description.length > 0" [title]="tradingTerm.description[0].value">&#9432;</span>
+                </div>
+                <div class="col-5">
+                    <ng-container [ngSwitch]="primaryTermsSource">
+                        <ng-container *ngSwitchCase="'frame_contract'">
+                            <multi-type-input [multiTypeValue]="wrapper.frameContractQuotationWrapper.getTradingTerm(tradingTerm.id)?.value"
+                                              [presentationMode]="'view'">
+                            </multi-type-input>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'last_offer'">
+                            <multi-type-input [multiTypeValue]="wrapper.lastOfferQuotationWrapper.getTradingTerm(tradingTerm.id)?.value"
+                                              [presentationMode]="'view'">
+                            </multi-type-input>
+                        </ng-container>
+                    </ng-container>
+
+                </div>
+                <div class="col-5">
+                    <div class="d-flex">
+                        <multi-type-input [multiTypeValue]="tradingTerm.value" [disabled]="isLoading() || isReadOnly()"></multi-type-input>
+                        <div *ngIf="!isReadOnly()" class="btn btn-danger ml-2" (click)="deleteTradingTerm(tradingTerm.id)">Delete</div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+
+        <div *ngIf="!isReadOnly()" class="row content-row">
+            <div class="offset-7 col-5">
+                <div class="btn btn-outline-primary" (click)="openCustomTermModal()">Add Custom Term</div>
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-2">
+                <strong class="font-weight-500">Clauses:</strong>
                 <span title="The period within which the offered conditions will be valid upon confirmation by the seller.">&#9432;</span>
             </div>
             <div class="col-5"></div>
             <div class="col-5">
                 <input type="checkbox" class="form-check-input" [(ngModel)]="negotiateTermsAndConditions"
                        [disabled]="isLoading() || isReadOnly()">
-                <label class="form-check-label"><strong class="font-weight-500">Request terms and conditions:</strong></label>
+                <label class="form-check-label"><strong class="font-weight-500">Request clauses:</strong></label>
             </div>
         </div>
-        <div class="row content-row">
+        <div class="row content-row mt-1">
             <div class="col-2"></div>
             <div class="col-5">
                 <terms-and-conditions [hidden]="primaryTermsSource != 'product_defaults'" [buyerPartyId]="buyerId"
@@ -477,3 +471,4 @@
 </div>
 
 <discount-modal></discount-modal>
+<custom-term-modal [negotiationModelWrapper]="wrapper"></custom-term-modal>

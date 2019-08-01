@@ -59,10 +59,16 @@ export class ProductLcpaTabComponent {
         this._catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpainput.additionalLCPAInputDetail.splice(detailIndex, 1);
     }
 
-    isVisible(quantity: Amount | Quantity): boolean {
+    isVisible(quantity, type: 'QUANTITY'|'AMOUNT' = 'AMOUNT'): boolean {
         if(this.presentationMode == 'view') {
-            if(UBLModelUtils.isEmptyQuantity(quantity)) {
-                return false;
+            if(type == 'QUANTITY') {
+                if(UBLModelUtils.isEmptyQuantity(quantity)) {
+                    return false;
+                }
+            } else {
+                if(UBLModelUtils.isEmptyAmount(quantity)) {
+                    return false;
+                }
             }
         }
         return true;
