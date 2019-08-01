@@ -238,14 +238,14 @@
 
 <div class="row mb-2">
   <div class="col-12">
+    <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showTermsAndConditions}" (click)="showTermsAndConditions=showTab(showTermsAndConditions)">Terms and Conditions</div>
+    <div *ngIf="config.dataChannelsEnabled" class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showDataMonitoring}" (click)="showDataMonitoring=showTab(showDataMonitoring)">Data Monitoring</div>
     <ng-container *ngIf="isFrameContractVisible()">
       <div class="btn btn-outline-primary align-self-start" [ngClass]="{'active':showFrameContractDetails}" (click)="showFrameContractDetails=showTab(showFrameContractDetails)">Frame Contract</div>
     </ng-container>
     <div class="btn btn-outline-primary align-self-start" [ngClass]="{'active':showNotesAndAdditionalFiles,'ml-2':isFrameContractVisible()}" (click)="showNotesAndAdditionalFiles=showTab(showNotesAndAdditionalFiles)">Notes and Additional Files</div>
-    <div *ngIf="config.dataChannelsEnabled" class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showDataMonitoring}" (click)="showDataMonitoring=showTab(showDataMonitoring)">Data Monitoring</div>
-    <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showTermsAndConditions}" (click)="showTermsAndConditions=showTab(showTermsAndConditions)">Terms and Conditions</div>
-    <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showPurchaseOrder}" (click)="showPurchaseOrder=showTab(showPurchaseOrder)">Purchase Order</div>
     <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showDeliveryAddress}" (click)="showDeliveryAddress=showTab(showDeliveryAddress)">Delivery Address</div>
+    <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showPurchaseOrder}" (click)="showPurchaseOrder=showTab(showPurchaseOrder)">Purchase Order</div>
   </div>
 </div>
 
