@@ -314,7 +314,7 @@
 
     <!-- Terms and conditions -->
     <div *ngIf="showTermsAndConditions">
-        <div class="row mb-2">
+        <div class="row mb-2 space-before">
             <div class="col-2">
                 <strong class="font-weight-500">Terms:</strong>
                 <span title="Custom trading terms requested by the customer.">&#9432;</span>
@@ -322,7 +322,7 @@
         </div>
 
         <ng-container *ngFor="let tradingTerm of wrapper.rfq.tradingTerms">
-            <div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row content-row space-before">
+            <div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row content-row">
                 <div class="col-2">
                     <strong class="font-weight-500">{{tradingTerm.id}}:</strong>
                     <span *ngIf="tradingTerm.description.length > 0" [title]="tradingTerm.description[0].value">&#9432;</span>
@@ -357,10 +357,10 @@
             </div>
         </div>
 
-        <div class="row mb-2">
+        <div class="row mt-2 mb-2">
             <div class="col-2">
                 <strong class="font-weight-500">Clauses:</strong>
-                <span title="The period within which the offered conditions will be valid upon confirmation by the seller.">&#9432;</span>
+                <span title="Clauses including detailed definitions and terms applying to the eventual contract.">&#9432;</span>
             </div>
             <div class="col-5"></div>
             <div class="col-5">
@@ -373,20 +373,17 @@
             <div class="col-2"></div>
             <div class="col-5">
                 <terms-and-conditions [hidden]="primaryTermsSource != 'product_defaults'" [buyerPartyId]="buyerId"
-                                      [needATitle]="false"
                                       [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-product-defaults'"
                                       [termsAndConditions]="defaultTermsAndConditions"
                                       [originalTermAndConditionClauses]="defaultTermsAndConditions">
                 </terms-and-conditions>
                 <terms-and-conditions *ngIf="wrapper.frameContractQuotation" [hidden]="primaryTermsSource != 'frame_contract'" [buyerPartyId]="buyerId"
-                                      [needATitle]="false"
                                       [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-frame-contract'"
                                       [termsAndConditions]="wrapper.frameContractQuotation.termOrCondition"
                                       [originalTermAndConditionClauses]="wrapper.frameContractQuotation.termOrCondition">
                 </terms-and-conditions>
                 <terms-and-conditions *ngIf="wrapper.lastOfferQuotation" [hidden]="primaryTermsSource != 'last_offer'"
                                       [buyerPartyId]="buyerId"
-                                      [needATitle]="false"
                                       [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-last-offer'"
                                       [termsAndConditions]="wrapper.lastOfferQuotation.termOrCondition"
                                       [originalTermAndConditionClauses]="wrapper.lastOfferQuotation.termOrCondition">
@@ -400,7 +397,6 @@
                                       (onTradingTermChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event; onPriceConditionsChange();"
                                       [originalTermAndConditionClauses]="primaryTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.termOrCondition :
                                       (primaryTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.termOrCondition : defaultTermsAndConditions)"
-                                      [needATitle]="false"
                                       [sellerPartyId]="sellerId" [readOnly]="isLoading() || isReadOnly() || !negotiateTermsAndConditions" [documentType]="'rfq'"
                                       [termsAndConditions]="wrapper.rfq.termOrCondition">
                 </terms-and-conditions>

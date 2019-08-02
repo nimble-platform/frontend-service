@@ -48,6 +48,7 @@ export class OrderComponent implements OnInit {
     order: Order;
     address: Address
     orderResponse: OrderResponseSimple;
+    lastQuotation: Quotation;
     paymentTermsWrapper: PaymentTermsWrapper;
     priceWrapper: PriceWrapper;
     userRole: BpUserRole;
@@ -75,8 +76,7 @@ export class OrderComponent implements OnInit {
 
     getPartyId = UBLModelUtils.getPartyId;
 
-    showPurchaseOrder:boolean = false;
-    showTTPanel:boolean = false;
+    selectedTab: string;
     selectedTrackAndTraceTab: 'EPC_CODES' | 'PRODUCTION_PROCESS_TEMPLATE' = 'EPC_CODES';
 
     // map representing the workflow of seller's company
@@ -116,12 +116,12 @@ export class OrderComponent implements OnInit {
 
         this.companyWorkflowMap = this.bpDataService.getCompanyWorkflowMap();
 
-        // null check is for checking whether a new order is initialized
-        // preceding process id check is for checking whether there is any preceding process before the order
-
         const sellerId: string = UBLModelUtils.getPartyId(this.order.orderLine[0].lineItem.item.manufacturerParty);
         const buyerId: string = this.cookieService.get("company_id");
         this.initCallStatus.submit();
+
+        // null check is for checking whether a new order is initialized
+        // preceding process id check is for checking whether there is any preceding process before the order
         if(this.getNonTermAndConditionContract() == null && this.bpDataService.precedingProcessId != null) {
             Promise.all([
                 this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId),
@@ -134,15 +134,12 @@ export class OrderComponent implements OnInit {
                 this.sellerParty = sellerParty;
                 this.dataMonitoringDemanded = dataMonitoringDemanded;
                 this.order.contract.push(contract);
-                return this.isDataMonitoringDemanded();
-            })
-            .then(dataMonitoringDemanded => {
-                this.dataMonitoringDemanded = dataMonitoringDemanded;
                 this.initCallStatus.callback("Initialized", true);
-            })
-            .catch(error => {
+
+            }).catch(error => {
                 this.initCallStatus.error("Error while initializing", error);
             });
+
         } else {
             Promise.all([
                 this.userService.getParty(buyerId),
@@ -159,10 +156,12 @@ export class OrderComponent implements OnInit {
             });
         }
 
-        this.initializeEPCCodes();
-        let productionTemplateFile: DocumentReference = this.getProductionTemplateFromOrderResponse();
-        if(productionTemplateFile != null) {
-            this.productionTemplateFile = [productionTemplateFile.attachment.embeddedDocumentBinaryObject]
+        if(this.orderResponse) {
+            this.initializeEPCCodes();
+            let productionTemplateFile: DocumentReference = this.getProductionTemplateFromOrderResponse();
+            if (productionTemplateFile != null) {
+                this.productionTemplateFile = [productionTemplateFile.attachment.embeddedDocumentBinaryObject]
+            }
         }
     }
 
@@ -417,6 +416,10 @@ export class OrderComponent implements OnInit {
         return this.isOrderCompleted();
     }
 
+    isEpcTabShown(): boolean {
+        return this.isReady() && this.isOrderCompleted() && this.config.showTrack;
+    }
+
     getQuantityText(): string {
         return quantityToString(this.order.orderLine[0].lineItem.quantity);
     }
@@ -493,7 +496,6 @@ export class OrderComponent implements OnInit {
     private initializeEPCCodes() {
         if(this.processMetadata
             && this.processMetadata.processStatus == 'Completed'
-            && this.bpDataService.orderResponse
             && this.bpDataService.orderResponse.acceptedIndicator
             && this.config.showTrack) {
             this.initEpcCodesCallStatus.submit();
@@ -523,6 +525,7 @@ export class OrderComponent implements OnInit {
         let contract = this.getNonTermAndConditionContract();
 
         if (contract && contract.clause.length > 0) {
+            // contract contains the clauses such the latest ones would be in the initial indices
             for (let clause of contract.clause) {
                 let clauseCopy = JSON.parse(JSON.stringify(clause));
                 if (clauseCopy.clauseDocumentRef) {
@@ -538,8 +541,8 @@ export class OrderComponent implements OnInit {
             this.fetchDataMonitoringStatus.submit();
             return this.documentService.getDocumentJsonContent(docClause.clauseDocumentRef.id).then(result => {
                 this.fetchDataMonitoringStatus.callback("Successfully fetched data monitoring service", true);
-                const q: Quotation = result as Quotation;
-                return q.dataMonitoringPromised;
+                this.lastQuotation = result as Quotation;
+                return this.lastQuotation.dataMonitoringPromised;
             })
             .catch(error => {
                 this.fetchDataMonitoringStatus.error("Error while fetching data monitoring service", error);

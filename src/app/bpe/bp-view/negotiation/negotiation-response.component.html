@@ -224,7 +224,7 @@
     </div>
 </div>
 
-<div class="row mb-2">
+<div class="row mb-4">
   <div class="col-12">
     <div class="btn align-self-start ml-2" [ngClass]="{'btn-outline-primary':!tcChanged,'btn-danger':tcChanged,'active':showTermsAndConditions}" (click)="showTermsAndConditions=showTab(showTermsAndConditions)">Terms and Conditions</div>
     <ng-container *ngIf="isFrameContractPanelVisible()">
@@ -302,10 +302,18 @@
     <!-- Terms and conditions -->
     <div [hidden]="!showTermsAndConditions||!defaultTermsAndConditions">
         <!-- Custom trading terms -->
+        <div class="row mb-2">
+            <div class="col-3">
+                <strong class="font-weight-500">Terms:</strong>
+                <span title="Custom trading terms requested by the customer.">&#9432;</span>
+            </div>
+        </div>
+
         <ng-container *ngFor="let tradingTerm of wrapper.newQuotation.tradingTerms">
-            <div class="row mt-1">
+            <div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row">
                 <div class="col-3">
                     <strong class="font-weight-500">{{tradingTerm.id}}:</strong>
+                    <span *ngIf="tradingTerm.description.length > 0" [title]="tradingTerm.description[0].value">&#9432;</span>
                 </div>
                 <div class="col-3">
                     <ng-container [ngSwitch]="primaryTermsSource">
@@ -325,31 +333,35 @@
                     <multi-type-input [multiTypeValue]="wrapper.getRfqTradingTerm(tradingTerm.id)?.value" [presentationMode]="'view'"></multi-type-input>
                 </div>
                 <div class="col-3">
-                    <multi-type-input [multiTypeValue]="tradingTerm.value" [disabled]="isLoading() || isReadOnly()"></multi-type-input>
+                    <multi-type-input [multiTypeValue]="tradingTerm.value" [presentationMode]="isReadOnly() ? 'view' : 'edit'"></multi-type-input>
                 </div>
             </div>
         </ng-container>
 
         <!-- Clauses -->
+        <div class="row mt-2 mb-2">
+            <div class="col-3">
+                <strong class="font-weight-500">Clauses:</strong>
+                <span title="Clauses including detailed definitions and terms applying to the eventual contract.">&#9432;</span>
+            </div>
+        </div>
+
         <div class="row content-row">
             <div class="col-3"></div>
             <div class="col-3">
                 <terms-and-conditions [hidden]="primaryTermsSource != 'product_defaults'" [buyerPartyId]="getPartyId(rfq.buyerCustomerParty.party)"
-                                      [needATitle]="false"
                                       [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer-product-defaults'"
                                       [termsAndConditions]="defaultTermsAndConditions"
                                       [originalTermAndConditionClauses]="defaultTermsAndConditions">
                 </terms-and-conditions>
                 <terms-and-conditions *ngIf="wrapper.frameContractQuotation" [hidden]="primaryTermsSource != 'frame_contract'"
                                       [buyerPartyId]="getPartyId(rfq.buyerCustomerParty.party)"
-                                      [needATitle]="false"
                                       [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer-frame-contract'"
                                       [termsAndConditions]="wrapper.frameContractQuotation.termOrCondition"
                                       [originalTermAndConditionClauses]="wrapper.frameContractQuotation.termOrCondition">
                 </terms-and-conditions>
                 <terms-and-conditions *ngIf="wrapper.lastOfferQuotation" [hidden]="primaryTermsSource != 'last_offer'"
                                       [buyerPartyId]="getPartyId(rfq.buyerCustomerParty.party)"
-                                      [needATitle]="false"
                                       [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer-last-offer'"
                                       [termsAndConditions]="wrapper.lastOfferQuotation.termOrCondition"
                                       [originalTermAndConditionClauses]="wrapper.lastOfferQuotation.termOrCondition">
@@ -359,7 +371,6 @@
                 <terms-and-conditions [buyerPartyId]="getPartyId(rfq.buyerCustomerParty.party)"
                                       [originalTermAndConditionClauses]="primaryTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.termOrCondition :
                                       (primaryTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.termOrCondition : defaultTermsAndConditions)"
-                                      [needATitle]="false"
                                       (onClauseUpdated)="tcChanged=true"
                                       [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq'"
                                       [termsAndConditions]="rfq.termOrCondition"></terms-and-conditions>
@@ -374,7 +385,6 @@
                                       (onTradingTermChanged)="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm = $event"
                                       [originalTermAndConditionClauses]="primaryTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.termOrCondition :
                                       (primaryTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.termOrCondition : defaultTermsAndConditions)"
-                                      [needATitle]="false"
                                       [sellerPartyId]="getPartyId(quotation.sellerSupplierParty.party)" [readOnly]="isLoading() || isReadOnly()"
                                       [documentType]="'quotation'"
                                       [termsAndConditions]="quotation.termOrCondition"></terms-and-conditions>
@@ -411,10 +421,9 @@
   </div>
 </div>
 
-<hr class="actions-hr">
-
 <!-- Actions -->
 <ng-container *ngIf="!formerProcess">
+    <hr class="actions-hr">
     <div class="row actions-row" *ngIf="userRole === 'seller' && !isReadOnly()">
         <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
         <div class="col-2">

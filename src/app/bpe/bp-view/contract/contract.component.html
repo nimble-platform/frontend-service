@@ -1,4 +1,4 @@
-<div class="col-12 title">
+<div *ngIf="collapsable" class="col-12 title">
     <h4>
         Previous Steps
         <button class="btn btn-outline-dark" (click)="showClauses =! showClauses"
@@ -8,7 +8,7 @@
         </button>
     </h4>
 </div>
-<ng-container *ngIf="showClauses">
+<ng-container *ngIf="!collapsable || (collapsable && showClauses)">
     <ng-container *ngFor="let clause of contract.clause">
         <!-- show clauses if it's document clause. Check quotation clause specifically -->
         <ng-container *ngIf="clause.clauseDocumentRef && ((showQuotation && clause.clauseDocumentRef.documentType === 'QUOTATION') || true)">

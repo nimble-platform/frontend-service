@@ -25,8 +25,6 @@ export class TermsAndConditionsComponent implements OnInit {
     @Input() documentType:string; // "order", "rfq", "quotation";
     _originalTermAndConditionClauses:Clause[] = null; // original terms and conditions of the object
     _termsAndConditions:Clause[] = []; // updated terms and conditions of the object
-    @Input() needATitle:boolean = true; // whether we need to add a title before displaying terms and conditions
-    @Input() showPreview: boolean = false; // whether the terms and conditions list is collapsed or not
 
     // Outputs
     @Output() onIncotermChanged = new EventEmitter();
@@ -77,11 +75,6 @@ export class TermsAndConditionsComponent implements OnInit {
                 // populate available payment terms
                 this.PAYMENT_TERMS = sellerPartySettings.negotiationSettings.paymentTerms;
 
-                // if there is no need to have a title, then display the preview
-                if (!this.needATitle) {
-                    this.showPreview = true;
-                }
-
                 this.callStatus.callback("Successfully fetched terms and conditions", true);
             }).catch(error => {
                 this.callStatus.error("Error while fething terms and conditions", error);
@@ -91,7 +84,6 @@ export class TermsAndConditionsComponent implements OnInit {
 
     displayTermsAndConditions(){
         this.clearShowSectionArray();
-        this.showPreview = !this.showPreview;
     }
 
     clearShowSectionArray(){

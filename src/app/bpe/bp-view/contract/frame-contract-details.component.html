@@ -66,10 +66,8 @@
     </ng-container>
 
     <terms-and-conditions *ngIf="shownTab == 'TERMS_AND_CONDITIONS'"
-                          [needATitle]="false"
                           [readOnly]="true"
                           [enableComparisonWithOtherTerms]="false"
-                          [showPreview]="true"
                           [termsAndConditions]="quotationWrapper.quotation.termOrCondition">
     </terms-and-conditions>
 
