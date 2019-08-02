@@ -301,52 +301,56 @@
 
     <!-- Terms and conditions -->
     <div [hidden]="!showTermsAndConditions||!defaultTermsAndConditions">
-        <!-- Custom trading terms -->
-        <div class="row mb-2">
-            <div class="col-3">
-                <strong class="font-weight-500">Terms:</strong>
-                <span title="Custom trading terms requested by the customer.">&#9432;</span>
-            </div>
-        </div>
+        <ul class="nav nav-tabs space-after space-before">
+            <li class="nav-item">
+                <a href id="CUSTOM_TERMS" class="nav-link"
+                   [ngClass]="{ active: selectedTCTab === 'CUSTOM_TERMS'}"
+                   (click)="onTCTabSelect($event)">
+                    Custom Terms
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href id="CLAUSES" class="nav-link"
+                   [ngClass]="{ active: selectedTCTab === 'CLAUSES'}"
+                   (click)="onTCTabSelect($event)">
+                    Clauses
+                </a>
+            </li>
+        </ul>
 
-        <ng-container *ngFor="let tradingTerm of wrapper.newQuotation.tradingTerms">
-            <div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row">
-                <div class="col-3">
-                    <strong class="font-weight-500">{{tradingTerm.id}}:</strong>
-                    <span *ngIf="tradingTerm.description.length > 0" [title]="tradingTerm.description[0].value">&#9432;</span>
+        <ng-container *ngIf="selectedTCTab == 'CUSTOM_TERMS'">
+            <ng-container *ngFor="let tradingTerm of wrapper.newQuotation.tradingTerms">
+                <div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row">
+                    <div class="col-3">
+                        <strong class="font-weight-500">{{tradingTerm.id}}:</strong>
+                        <span *ngIf="tradingTerm.description.length > 0" [title]="tradingTerm.description[0].value">&#9432;</span>
+                    </div>
+                    <div class="col-3">
+                        <ng-container [ngSwitch]="primaryTermsSource">
+                            <div *ngSwitchCase="'frame_contract'" class="col-3">
+                                <multi-type-input [multiTypeValue]="wrapper.frameContractQuotationWrapper.getTradingTerm(tradingTerm.id)?.value"
+                                                  [presentationMode]="'view'">
+                                </multi-type-input>
+                            </div>
+                            <div *ngSwitchCase="'last_offer'" class="col-3">
+                                <multi-type-input [multiTypeValue]="wrapper.lastOfferQuotationWrapper.getTradingTerm(tradingTerm.id)?.value"
+                                                  [presentationMode]="'view'">
+                                </multi-type-input>
+                            </div>
+                        </ng-container>
+                    </div>
+                    <div class="col-3">
+                        <multi-type-input [multiTypeValue]="wrapper.getRfqTradingTerm(tradingTerm.id)?.value" [presentationMode]="'view'"></multi-type-input>
+                    </div>
+                    <div class="col-3">
+                        <multi-type-input [multiTypeValue]="tradingTerm.value" [presentationMode]="isReadOnly() ? 'view' : 'edit'"></multi-type-input>
+                    </div>
                 </div>
-                <div class="col-3">
-                    <ng-container [ngSwitch]="primaryTermsSource">
-                        <div *ngSwitchCase="'frame_contract'" class="col-3">
-                            <multi-type-input [multiTypeValue]="wrapper.frameContractQuotationWrapper.getTradingTerm(tradingTerm.id)?.value"
-                                              [presentationMode]="'view'">
-                            </multi-type-input>
-                        </div>
-                        <div *ngSwitchCase="'last_offer'" class="col-3">
-                            <multi-type-input [multiTypeValue]="wrapper.lastOfferQuotationWrapper.getTradingTerm(tradingTerm.id)?.value"
-                                              [presentationMode]="'view'">
-                            </multi-type-input>
-                        </div>
-                    </ng-container>
-                </div>
-                <div class="col-3">
-                    <multi-type-input [multiTypeValue]="wrapper.getRfqTradingTerm(tradingTerm.id)?.value" [presentationMode]="'view'"></multi-type-input>
-                </div>
-                <div class="col-3">
-                    <multi-type-input [multiTypeValue]="tradingTerm.value" [presentationMode]="isReadOnly() ? 'view' : 'edit'"></multi-type-input>
-                </div>
-            </div>
+            </ng-container>
         </ng-container>
 
         <!-- Clauses -->
-        <div class="row mt-2 mb-2">
-            <div class="col-3">
-                <strong class="font-weight-500">Clauses:</strong>
-                <span title="Clauses including detailed definitions and terms applying to the eventual contract.">&#9432;</span>
-            </div>
-        </div>
-
-        <div class="row content-row">
+        <div *ngIf="selectedTCTab == 'CLAUSES'" class="row content-row">
             <div class="col-3"></div>
             <div class="col-3">
                 <terms-and-conditions [hidden]="primaryTermsSource != 'product_defaults'" [buyerPartyId]="getPartyId(rfq.buyerCustomerParty.party)"

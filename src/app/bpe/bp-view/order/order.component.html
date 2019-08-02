@@ -121,15 +121,15 @@
 
 
     <div class="row mb-4 mt-4">
-        <div class="btn btn-outline-primary" [ngClass]="{'active':selectedTab == 'TERMS_AND_CONDITIONS'}" (click)="selectedTab = 'TERMS_AND_CONDITIONS'">Terms and Conditions</div>
-        <div *ngIf="isEpcTabShown()" class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedTab == 'TRACK_AND_TRACE'}" (click)="selectedTab = 'TRACK_AND_TRACE'">Track and Trace</div>
-        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedTab == 'NOTES_AND_FILES'}" (click)="selectedTab = 'NOTES_AND_FILES'">Notes and Additional Files</div>
-        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedTab == 'PURCHASE_ORDER'}" (click)="selectedTab = 'PURCHASE_ORDER'">Purchase Order</div>
-        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedTab == 'PREVIOUS_STEPS'}" (click)="selectedTab = 'PREVIOUS_STEPS'">Previous Steps</div>
+        <div class="btn btn-outline-primary" [ngClass]="{'active':selectedPanel == 'TERMS_AND_CONDITIONS'}" (click)="selectedPanel = 'TERMS_AND_CONDITIONS'">Terms and Conditions</div>
+        <div *ngIf="isEpcTabShown()" class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'TRACK_AND_TRACE'}" (click)="selectedPanel = 'TRACK_AND_TRACE'">Track and Trace</div>
+        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'NOTES_AND_FILES'}" (click)="selectedPanel = 'NOTES_AND_FILES'">Notes and Additional Files</div>
+        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'PURCHASE_ORDER'}" (click)="selectedPanel = 'PURCHASE_ORDER'">Purchase Order</div>
+        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'PREVIOUS_STEPS'}" (click)="selectedPanel = 'PREVIOUS_STEPS'">Previous Steps</div>
     </div>
 
     <!-- Notes -->
-    <ng-container *ngIf="selectedTab == 'NOTES_AND_FILES'">
+    <ng-container *ngIf="selectedPanel == 'NOTES_AND_FILES'">
         <div class="row content-row" *ngIf="isReady()">
             <div class="col-6">
                 <note-file-view [notes]="order.note"
@@ -154,37 +154,44 @@
     <!-- Contract Preview -->
     <ng-container *ngIf="isReady()">
         <!--<div>-->
-        <contract *ngIf="selectedTab == 'PREVIOUS_STEPS'" [contract]="getOrderContract()" [collapsable]="false"></contract>
+        <contract *ngIf="selectedPanel == 'PREVIOUS_STEPS'" [contract]="getOrderContract()" [collapsable]="false"></contract>
         <!--</div>-->
-        <div *ngIf="selectedTab == 'TERMS_AND_CONDITIONS'">
-            <!-- Custom trading terms -->
-            <div class="row mb-2">
-                <div class="col-3">
-                    <strong class="font-weight-500">Terms:</strong>
-                    <span title="Custom trading terms requested by the customer.">&#9432;</span>
-                </div>
-            </div>
+        <div *ngIf="selectedPanel == 'TERMS_AND_CONDITIONS'">
+            <ul class="nav nav-tabs space-after space-before">
+                <li class="nav-item">
+                    <a href id="CUSTOM_TERMS" class="nav-link"
+                       [ngClass]="{ active: selectedTCTab === 'CUSTOM_TERMS'}"
+                       (click)="onTCTabSelect($event)">
+                        Custom Terms
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href id="CLAUSES" class="nav-link"
+                       [ngClass]="{ active: selectedTCTab === 'CLAUSES'}"
+                       (click)="onTCTabSelect($event)">
+                        Clauses
+                    </a>
+                </li>
+            </ul>
 
-            <ng-container *ngFor="let tradingTerm of lastQuotation?.tradingTerms">
-                <div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row">
-                    <div class="col-2">
-                        <strong class="font-weight-500">{{tradingTerm.id}}:</strong>
-                        <span *ngIf="tradingTerm.description.length > 0" [title]="tradingTerm.description[0].value">&#9432;</span>
+            <!-- Custom trading terms -->
+            <ng-container *ngIf="selectedTCTab == 'CUSTOM_TERMS'">
+                <ng-container *ngFor="let tradingTerm of lastQuotation?.tradingTerms">
+                    <div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row">
+                        <div class="col-2">
+                            <strong class="font-weight-500">{{tradingTerm.id}}:</strong>
+                            <span *ngIf="tradingTerm.description.length > 0" [title]="tradingTerm.description[0].value">&#9432;</span>
+                        </div>
+                        <multi-type-input [multiTypeValue]="tradingTerm.value"
+                                          [presentationMode]="'view'">
+                        </multi-type-input>
                     </div>
-                    <multi-type-input [multiTypeValue]="tradingTerm.value"
-                                      [presentationMode]="'view'">
-                    </multi-type-input>
-                </div>
+                </ng-container>
             </ng-container>
 
             <!-- Clauses -->
-            <div class="row mt-2 mb-2">
-                <div>
-                    <strong class="font-weight-500">Clauses:</strong>
-                    <span title="Clauses including detailed definitions and terms applying to the eventual contract.">&#9432;</span>
-                </div>
-            </div>
-            <terms-and-conditions [buyerPartyId]="getPartyId(buyerParty)"
+            <terms-and-conditions *ngIf="selectedTCTab == 'CLAUSES'"
+                                    [buyerPartyId]="getPartyId(buyerParty)"
                                   [selectedIncoterm]="order.orderLine[0].lineItem.deliveryTerms.incoterms"
                                   [selectedTradingTerm]="order.paymentTerms.tradingTerms"
                                   [sellerPartyId]="getPartyId(sellerParty)"
@@ -194,7 +201,7 @@
                                   [termsAndConditions]="getTermAndConditionClauses()">
             </terms-and-conditions>
         </div>
-        <ng-container *ngIf="selectedTab == 'PURCHASE_ORDER'">
+        <ng-container *ngIf="selectedPanel == 'PURCHASE_ORDER'">
             <div class="row">
                 <div class="col-3"><strong>Product Id:</strong></div>
                 <div class="col-9">{{order.orderLine[0].lineItem.item.manufacturersItemIdentification.id}}</div>
@@ -221,7 +228,7 @@
 
 
 <!-- EPC Codes -->
-<ng-container *ngIf="selectedTab == 'TRACK_AND_TRACE'">
+<ng-container *ngIf="selectedPanel == 'TRACK_AND_TRACE'">
     <ul class="nav nav-tabs space-after">
         <li class="nav-item">
             <a href id="EPC_CODES" class="nav-link"

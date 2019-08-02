@@ -76,7 +76,8 @@ export class OrderComponent implements OnInit {
 
     getPartyId = UBLModelUtils.getPartyId;
 
-    selectedTab: string;
+    selectedPanel: string;
+    selectedTCTab: 'CUSTOM_TERMS' | 'CLAUSES' = 'CUSTOM_TERMS';
     selectedTrackAndTraceTab: 'EPC_CODES' | 'PRODUCTION_PROCESS_TEMPLATE' = 'EPC_CODES';
 
     // map representing the workflow of seller's company
@@ -379,6 +380,11 @@ export class OrderComponent implements OnInit {
 
     onAddEpcCode() {
         this.epcCodes.codes.push("");
+    }
+
+    onTCTabSelect(event): void {
+        event.preventDefault();
+        this.selectedTCTab = event.target.id;
     }
 
     /*

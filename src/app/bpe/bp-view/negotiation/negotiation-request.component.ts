@@ -83,8 +83,8 @@ export class NegotiationRequestComponent implements OnInit {
     showDeliveryAddress: boolean = false;
     showPurchaseOrder:boolean = false;
     showTermsAndConditions:boolean = false;
+    selectedTCTab: 'CUSTOM_TERMS' | 'CLAUSES' = 'CUSTOM_TERMS';
     callStatus: CallStatus = new CallStatus();
-    pageInitCallStatus: CallStatus = new CallStatus();
     deliverytermsOfBuyer = null;
 
     @ViewChild(DiscountModalComponent)
@@ -413,7 +413,12 @@ export class NegotiationRequestComponent implements OnInit {
         }
     }
 
-    deleteTradingTerm(termName: string): void {
+    onTCTabSelect(event): void {
+        event.preventDefault();
+        this.selectedTCTab = event.target.id;
+    }
+
+    onDeleteTradingTerm(termName: string): void {
         this.wrapper.deleteRfqTradingTerm(termName);
     }
 

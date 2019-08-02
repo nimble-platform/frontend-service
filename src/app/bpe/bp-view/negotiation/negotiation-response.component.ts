@@ -67,6 +67,7 @@ export class NegotiationResponseComponent implements OnInit {
     showDeliveryAddress: boolean = false;
     showTermsAndConditions:boolean = false;
     showPurchaseOrder:boolean = false;
+    selectedTCTab: 'CUSTOM_TERMS' | 'CLAUSES' = 'CUSTOM_TERMS';
     tcChanged:boolean = false;
 
     constructor(private bpeService: BPEService,
@@ -151,6 +152,11 @@ export class NegotiationResponseComponent implements OnInit {
 
     onTotalPriceChanged(totalPrice: number): void {
         this.wrapper.quotationDiscountPriceWrapper.totalPrice = totalPrice;
+    }
+
+    onTCTabSelect(event): void {
+        event.preventDefault();
+        this.selectedTCTab = event.target.id;
     }
 
     /*
