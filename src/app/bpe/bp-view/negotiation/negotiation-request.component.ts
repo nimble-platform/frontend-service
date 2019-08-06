@@ -174,7 +174,7 @@ export class NegotiationRequestComponent implements OnInit {
         // rfq is provided with values in onTermsSourceChange. this is done after initializing the wrapper,
         // because onLoadCounterOfferTerms method requires the wrapper
         if(!this.processMetadata) {
-            this.onLoadCounterOfferTerms(this.manufacturersTermsSource, true);
+            this.onLoadCounterOfferTerms(this.manufacturersTermsSource);
         }
         this.wrapper.initialImmutableRfq.termOrCondition = copy(this.defaultTermsAndConditions);
 

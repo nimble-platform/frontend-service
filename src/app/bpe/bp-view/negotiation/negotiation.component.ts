@@ -286,7 +286,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         }
 
         // check the negotiation history documents
-        for(let i=0; i<this.negotiationDocuments.length; i=i+2) {qa
+        for(let i=0; i<this.negotiationDocuments.length; i=i+2) {
             let rfq: RequestForQuotation = this.negotiationDocuments[i];
             frameContractDuration = UBLModelUtils.getFrameContractDurationFromRfq(rfq);
             if(frameContractDuration != null) {
