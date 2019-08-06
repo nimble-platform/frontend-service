@@ -178,8 +178,8 @@ export class NegotiationRequestComponent implements OnInit {
         }
         this.wrapper.initialImmutableRfq.termOrCondition = copy(this.defaultTermsAndConditions);
 
-        // compute negotiation options for selecting the negotiation ticks automatically
-        // this.computeRfqNegotiationOptions(this.rfq);
+        // initialize dirty terms at the beginning so that the term source change would not affect them
+        this.initializeDirtyTerms();
         // if the line does not have a price enable the price negotiation
         // if(!this.lineHasPrice) {
             // this.rfq.negotiationOptions.price = true;
@@ -224,33 +224,28 @@ export class NegotiationRequestComponent implements OnInit {
         }
     }
 
-    // computeRfqNegotiationOptions(rfq: RequestForQuotation) {
-    //     if(!rfq.negotiationOptions) {
-    //         rfq.negotiationOptions = new NegotiationOptions();
-    //     }
-    //     if(this.primaryTermsSource == 'product_defaults') {
-    //         rfq.negotiationOptions.deliveryPeriod = this.wrapper.lineDeliveryPeriodString !== this.wrapper.rfqDeliveryPeriodString;
-    //         rfq.negotiationOptions.incoterms = this.wrapper.lineIncoterms !== this.wrapper.rfqIncoterms;
-    //         rfq.negotiationOptions.paymentMeans = this.wrapper.linePaymentMeans !== this.wrapper.rfqPaymentMeans;
-    //         rfq.negotiationOptions.paymentTerms = this.wrapper.linePaymentTerms !== this.wrapper.rfqPaymentTermsToString;
-    //         rfq.negotiationOptions.price = this.wrapper.lineDiscountPriceWrapper.discountedPricePerItem !== this.wrapper.rfqDiscountPriceWrapper.pricePerItem;
-    //         rfq.negotiationOptions.warranty = this.wrapper.lineWarrantyString !== this.wrapper.rfqWarrantyString;
-    //         rfq.negotiationOptions.termsAndConditions = UBLModelUtils.areTermsAndConditionListsDifferent(this.defaultTermsAndConditions, this.wrapper.rfq.termOrCondition);
-    //
-    //     } else {
-    //         let quotationWrapper = this.wrapper.frameContractQuotationWrapper;
-    //         if(this.primaryTermsSource == 'last_offer') {
-    //             quotationWrapper = this.wrapper.lastOfferQuotationWrapper;
-    //         }
-    //         rfq.negotiationOptions.deliveryPeriod = quotationWrapper.deliveryPeriodString !== this.wrapper.rfqDeliveryPeriodString;
-    //         rfq.negotiationOptions.incoterms = quotationWrapper.incoterms !== this.wrapper.rfqIncoterms;
-    //         rfq.negotiationOptions.paymentMeans = quotationWrapper.paymentMeans !== this.wrapper.rfqPaymentMeans;
-    //         rfq.negotiationOptions.paymentTerms = quotationWrapper.paymentTermsWrapper.paymentTerm !== this.wrapper.rfqPaymentTermsToString;
-    //         rfq.negotiationOptions.price = quotationWrapper.priceWrapper.pricePerItem !== this.wrapper.rfqDiscountPriceWrapper.discountedPricePerItem;
-    //         rfq.negotiationOptions.warranty = quotationWrapper.warrantyString !== this.wrapper.rfqWarrantyString;
-    //         rfq.negotiationOptions.termsAndConditions = UBLModelUtils.areTermsAndConditionListsDifferent(quotationWrapper.quotation.termOrCondition, this.wrapper.rfq.termOrCondition);
-    //     }
-    // }
+    private initializeDirtyTerms() {
+        if(this.manufacturersTermsSource == 'product_defaults') {
+            this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.DELIVERY_PERIOD] = this.wrapper.lineDeliveryPeriodString !== this.wrapper.rfqDeliveryPeriodString;
+            this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.INCOTERMS] = this.wrapper.lineIncoterms !== this.wrapper.rfqIncoterms;
+            this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PAYMENT_MEANS] = this.wrapper.linePaymentMeans !== this.wrapper.rfqPaymentMeans;
+            this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PAYMENT_TERMS] = this.wrapper.linePaymentTerms !== this.wrapper.rfqPaymentTermsToString;
+            this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PRICE] = this.wrapper.lineDiscountPriceWrapper.discountedPricePerItem !== this.wrapper.rfqDiscountPriceWrapper.pricePerItem;
+            this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.WARRANTY_PERIOD] = this.wrapper.lineWarrantyString !== this.wrapper.rfqWarrantyString;
+
+        } else {
+            let quotationWrapper = this.wrapper.frameContractQuotationWrapper;
+            if(this.manufacturersTermsSource == 'last_offer') {
+                quotationWrapper = this.wrapper.lastOfferQuotationWrapper;
+            }
+            this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.DELIVERY_PERIOD] = quotationWrapper.deliveryPeriodString !== this.wrapper.rfqDeliveryPeriodString;
+            this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.INCOTERMS] = quotationWrapper.incoterms !== this.wrapper.rfqIncoterms;
+            this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PAYMENT_MEANS] = quotationWrapper.paymentMeans !== this.wrapper.rfqPaymentMeans;
+            this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PAYMENT_TERMS] = quotationWrapper.paymentTermsWrapper.paymentTerm !== this.wrapper.rfqPaymentTermsToString;
+            this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PRICE] = quotationWrapper.priceWrapper.pricePerItem !== this.wrapper.rfqDiscountPriceWrapper.discountedPricePerItem;
+            this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.WARRANTY_PERIOD] = quotationWrapper.warrantyString !== this.wrapper.rfqWarrantyString;
+        }
+    }
 
     /*
      * Event handlers

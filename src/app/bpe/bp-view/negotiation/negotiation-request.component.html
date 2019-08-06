@@ -25,8 +25,10 @@
                         class="btn btn-outline-secondary"
                         (click)="onLoadCounterOfferTerms('product_defaults')">Use terms of last offer
                 </button>
-                <input #overwriteChangesInput class="ml-2" type="checkbox" [(ngModel)]="resetUpdatesChecked"><label class="ml-2">Reset changes</label>
-                <span title="Explicitly specified terms will also be reset with the ones from the selected source.">&#9432;</span>
+                <ng-container *ngIf="dirtyNegotiationFields != {}">
+                    <input class="ml-2" type="checkbox" [(ngModel)]="resetUpdatesChecked"><label class="ml-2">Reset changes</label>
+                    <span title="Explicitly specified terms will also be reset with the ones from the selected source.">&#9432;</span>
+                </ng-container>
             </div>
         </div>
     </div>
@@ -368,7 +370,7 @@
                 <div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row content-row">
                     <div class="col-2">
                         <strong class="font-weight-500">{{tradingTerm.id}}:</strong>
-                        <span *ngIf="tradingTerm.description.length > 0" [title]="tradingTerm.description[0].value">&#9432;</span>
+                        <span *ngIf="tradingTerm.description?.length > 0" [title]="tradingTerm.description[0].value">&#9432;</span>
                     </div>
                     <div class="col-5">
                         <ng-container [ngSwitch]="manufacturersTermsSource">
