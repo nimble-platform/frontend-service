@@ -36,6 +36,13 @@ export class CatalogueService {
 
     getCatalogueResponse(userId: string,categoryName:string=null,searchText:string=null,limit:number=0, offset:number=0, sortOption=null,catalogueId="default"): Promise<CataloguePaginationResponse>{
         return this.userService.getUserParty(userId).then(party => {
+
+            var catalogueUUid  = "";
+            if(catalogueId != "default" && catalogueId != "all"){
+                catalogueUUid = catalogueId;
+                catalogueId = "default";
+            }
+
             let url = this.baseUrl + `/catalogue/${UBLModelUtils.getPartyId(party)}/pagination/${catalogueId}?limit=${limit}&offset=${offset}`;
             // if there is a selected category to filter the results, then add it to the url
             if(categoryName){
@@ -47,6 +54,9 @@ export class CatalogueService {
             }
             if(sortOption){
                 url += `&sortOption=${sortOption}`;
+            }
+            if(catalogueUUid != ""){
+                url += `&catalogueUUId=${catalogueUUid}`;
             }
             return this.http
                 .get(url, {headers: this.getAuthorizedHeaders()})
@@ -379,6 +389,20 @@ export class CatalogueService {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const partyId =this.cookieService.get("company_id");
         const url = this.baseUrl + `/catalogue/ids/${partyId}`;
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => {
+                return res.json();
+            })
+            .catch(this.handleError);
+
+    }
+
+    getCatalogueIdsUUidsForParty(){
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const partyId =this.cookieService.get("company_id");
+        const url = this.baseUrl + `/catalogue/idsuuids/${partyId}`;
         return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
