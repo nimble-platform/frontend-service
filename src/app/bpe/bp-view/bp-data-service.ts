@@ -24,7 +24,6 @@ import { UserService } from "../../user-mgmt/user.service";
 import { PrecedingBPDataService } from "./preceding-bp-data-service";
 import { BpUserRole } from "../model/bp-user-role";
 import { BpWorkflowOptions } from "../model/bp-workflow-options";
-import { NegotiationOptions } from "../../catalogue/model/publish/negotiation-options";
 import {DEFAULT_LANGUAGE, PAYMENT_MEANS, PROCESSES} from '../../catalogue/model/constants';
 import { ThreadEventMetadata } from "../../catalogue/model/publish/thread-event-metadata";
 import { ProcessType } from "../model/process-type";
@@ -32,7 +31,6 @@ import { PaymentMeans } from "../../catalogue/model/publish/payment-means";
 import { Code } from "../../catalogue/model/publish/code";
 import { PaymentTerms } from "../../catalogue/model/publish/payment-terms";
 import {copy, getPropertyKey, selectName} from '../../common/utils';
-import { NegotiationModelWrapper } from "./negotiation/negotiation-model-wrapper";
 import { PriceWrapper } from "../../common/price-wrapper";
 import { Quantity } from "../../catalogue/model/publish/quantity";
 import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
@@ -289,10 +287,7 @@ export class BPDataService{
     // this method is supposed to be called when the user is about to initialize a business process via the
     // search details page
     initRfq(settings: CompanyNegotiationSettings): Promise<void> {
-        const rfq = UBLModelUtils.createRequestForQuotation(
-            this.bpActivityEvent.workflowOptions ? this.bpActivityEvent.workflowOptions.negotiation : new NegotiationOptions(),
-            settings
-        );
+        const rfq = UBLModelUtils.createRequestForQuotation(settings);
         this.requestForQuotation = rfq;
 
         const line = this.catalogueLines[0];
@@ -359,7 +354,6 @@ export class BPDataService{
 
     private initFetchedRfq(): void {
         const rfq = this.requestForQuotation;
-        rfq.negotiationOptions = new NegotiationOptions();
         rfq.paymentMeans = rfq.paymentMeans || new PaymentMeans(new Code(PAYMENT_MEANS[0], PAYMENT_MEANS[0]));
         rfq.paymentTerms = rfq.paymentTerms || new PaymentTerms();
     }
@@ -433,7 +427,7 @@ export class BPDataService{
         const copyRfq = copy(this.requestForQuotation);
         this.resetBpData();
         this.modifiedCatalogueLines = copy(this.catalogueLines);
-        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(new NegotiationOptions(),null);
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(null);
         this.requestForQuotation.requestForQuotationLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
         this.requestForQuotation.paymentMeans = copyQuotation.paymentMeans;
         this.requestForQuotation.paymentTerms = copyQuotation.paymentTerms;
@@ -447,7 +441,7 @@ export class BPDataService{
         let copyOrder:Order = copy(this.order);
         this.resetBpData();
         this.modifiedCatalogueLines = copy(this.catalogueLines);
-        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(new NegotiationOptions(),null);
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(null);
         this.requestForQuotation.requestForQuotationLine[0].lineItem = copyOrder.orderLine[0].lineItem;
         this.requestForQuotation.paymentTerms = copyOrder.paymentTerms;
         this.requestForQuotation.paymentMeans = copyOrder.paymentMeans;
@@ -718,7 +712,7 @@ export class BPDataService{
                 line.requiredItemLocationQuantity.price,
                 line.requiredItemLocationQuantity.applicableTaxCategory[0].percent);
             if(!priceWrapper.itemPrice.hasPrice()) {
-                this.bpActivityEvent.workflowOptions.negotiation.price = true;
+                // this.bpActivityEvent.workflowOptions.negotiation.price = true;
             }
 
             // this item contains all the properties.

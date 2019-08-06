@@ -62,11 +62,11 @@ export class ProductLcpaTabComponent {
     isVisible(quantity, type: 'QUANTITY'|'AMOUNT' = 'AMOUNT'): boolean {
         if(this.presentationMode == 'view') {
             if(type == 'QUANTITY') {
-                if(UBLModelUtils.isEmptyQuantity(quantity)) {
+                if(UBLModelUtils.isEmptyOrIncompleteQuantity(quantity)) {
                     return false;
                 }
             } else {
-                if(UBLModelUtils.isEmptyAmount(quantity)) {
+                if(UBLModelUtils.isEmptyOrIncompleteAmount(quantity)) {
                     return false;
                 }
             }

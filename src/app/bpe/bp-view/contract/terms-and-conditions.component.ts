@@ -28,7 +28,7 @@ export class TermsAndConditionsComponent implements OnInit {
 
     // Outputs
     @Output() onIncotermChanged = new EventEmitter();
-    @Output() onTradingTermChanged = new EventEmitter();
+    @Output() onPaymentMeansChanged = new EventEmitter();
     @Output() onClauseUpdated = new EventEmitter();
 
     callStatus : CallStatus = new CallStatus();
@@ -80,10 +80,6 @@ export class TermsAndConditionsComponent implements OnInit {
                 this.callStatus.error("Error while fething terms and conditions", error);
             });
         }
-    }
-
-    displayTermsAndConditions(){
-        this.clearShowSectionArray();
     }
 
     clearShowSectionArray(){
@@ -210,7 +206,7 @@ export class TermsAndConditionsComponent implements OnInit {
             this.onIncotermChanged.emit(value);
         }
         else if(id == "$payment_id"){
-            this.onTradingTermChanged.emit(value);
+            this.onPaymentMeansChanged.emit(value);
         }
     }
 

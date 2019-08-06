@@ -386,7 +386,7 @@
                                       [selectedTradingTerm]="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm"
                                       (onClauseUpdated)="tcChanged=true"
                                       (onIncotermChanged)="wrapper.newQuotationWrapper.incoterms = $event"
-                                      (onTradingTermChanged)="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm = $event"
+                                      (onPaymentMeansChanged)="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm = $event"
                                       [originalTermAndConditionClauses]="primaryTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.termOrCondition :
                                       (primaryTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.termOrCondition : defaultTermsAndConditions)"
                                       [sellerPartyId]="getPartyId(quotation.sellerSupplierParty.party)" [readOnly]="isLoading() || isReadOnly()"

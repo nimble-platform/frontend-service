@@ -23,7 +23,6 @@ import {isValidPrice} from "../../../common/utils";
 import {DigitalAgreement} from "../../../catalogue/model/publish/digital-agreement";
 import * as moment from "moment";
 import {Moment, unitOfTime} from "moment";
-import {NegotiationOptions} from "../../../catalogue/model/publish/negotiation-options";
 import {Clause} from '../../../catalogue/model/publish/clause';
 
 @Component({
@@ -180,7 +179,7 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     isFrameContractPanelVisible(): boolean {
-        return this.wrapper.rfqFrameContractDuration != null;
+        return !UBLModelUtils.isEmptyQuantity(this.wrapper.rfqFrameContractDuration);
     }
 
     isDiscountIconVisibleInCustomerRequestColumn(): boolean {

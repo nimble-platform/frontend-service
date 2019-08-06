@@ -52,7 +52,7 @@ export class CustomTermModalComponent {
                 return true;
             }
         } else {
-            if(!UBLModelUtils.isEmptyQuantity(this.quantityValue)) {
+            if(!UBLModelUtils.isEmptyOrIncompleteQuantity(this.quantityValue)) {
                 return true;
             }
         }
