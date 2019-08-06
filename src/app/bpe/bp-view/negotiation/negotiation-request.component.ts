@@ -356,66 +356,12 @@ export class NegotiationRequestComponent implements OnInit {
         }), 0);
     }
 
-    // onTermsSourceChange(termSource: 'product_defaults' | 'frame_contract' | 'last_offer'/*, ignoreNegotiationOptions: boolean = false*/): void {
-    //     this.manufacturersTermsSource = termSource;
-    //
-    //     if(termSource == 'frame_contract' || termSource == 'last_offer') {
-    //         let quotationWrapper = this.wrapper.frameContractQuotationWrapper;
-    //         if(termSource == 'last_offer') {
-    //             quotationWrapper = this.wrapper.lastOfferQuotationWrapper;
-    //         }
-    //         // if(!this.rfq.negotiationOptions.deliveryPeriod || ignoreNegotiationOptions) {
-    //             this.wrapper.rfqDeliveryPeriod = copy(quotationWrapper.deliveryPeriod);
-    //         // }
-    //         // if(!this.rfq.negotiationOptions.warranty || ignoreNegotiationOptions) {
-    //             this.wrapper.rfqWarranty = copy(quotationWrapper.warranty);
-    //         // }
-    //         // if(!this.rfq.negotiationOptions.paymentTerms || ignoreNegotiationOptions) {
-    //             this.wrapper.rfqPaymentTerms.paymentTerm = quotationWrapper.paymentTermsWrapper.paymentTerm;
-    //         // }
-    //         // if(!this.rfq.negotiationOptions.incoterms || ignoreNegotiationOptions) {
-    //             this.wrapper.rfqIncoterms = quotationWrapper.incoterms;
-    //         // }
-    //         // if(!this.rfq.negotiationOptions.paymentMeans || ignoreNegotiationOptions) {
-    //             this.wrapper.rfqPaymentMeans = quotationWrapper.paymentMeans;
-    //         // }
-    //         // if(!this.rfq.negotiationOptions.price || ignoreNegotiationOptions) {
-    //             this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = trimRedundantDecimals(quotationWrapper.priceWrapper.pricePerItem);
-    //             this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = quotationWrapper.priceWrapper.currency;
-    //         // }
-    //         // if(/*(!this.rfq.negotiationOptions.frameContractDuration || ignoreNegotiationOptions) && */quotationWrapper.frameContractDuration != null) {
-    //         //     this.frameContractDuration = copy(quotationWrapper.frameContractDuration);
-    //         // }
-    //         // if(!this.rfq.negotiationOptions.termsAndConditions || ignoreNegotiationOptions) {
-    //             this.rfq.termOrCondition = copy(quotationWrapper.quotation.termOrCondition);
-    //         // }
-    //
-    //     } else if(termSource == 'product_defaults') {
-    //         // if(!this.rfq.negotiationOptions.deliveryPeriod || ignoreNegotiationOptions) {
-    //             this.wrapper.rfqDeliveryPeriod = copy(this.wrapper.originalLineDeliveryPeriod);
-    //         // }
-    //         // if(!this.rfq.negotiationOptions.warranty || ignoreNegotiationOptions) {
-    //             this.wrapper.rfqWarranty = copy(this.wrapper.originalLineWarranty);
-    //         // }
-    //         // if(!this.rfq.negotiationOptions.paymentTerms || ignoreNegotiationOptions) {
-    //             this.wrapper.rfqPaymentTerms.paymentTerm = this.wrapper.linePaymentTerms;
-    //         // }
-    //         // if(!this.rfq.negotiationOptions.incoterms || ignoreNegotiationOptions) {
-    //             this.wrapper.rfqIncoterms = this.wrapper.originalLineIncoterms;
-    //         // }
-    //         // if(!this.rfq.negotiationOptions.paymentMeans || ignoreNegotiationOptions) {
-    //             this.wrapper.rfqPaymentMeans = this.wrapper.linePaymentMeans;
-    //         // }
-    //         // if(!this.rfq.negotiationOptions.price || ignoreNegotiationOptions) {
-    //             this.onPriceConditionsChange();
-    //             this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = trimRedundantDecimals(this.wrapper.lineDiscountPriceWrapper.pricePerItem);
-    //             this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = this.wrapper.lineDiscountPriceWrapper.itemPrice.currency;
-    //         // }
-    //         // if(!this.rfq.negotiationOptions.termsAndConditions || ignoreNegotiationOptions) {
-    //             this.rfq.termOrCondition = copy(this.defaultTermsAndConditions);
-    //         // }
-    //     }
-    // }
+    onManufacturersTermsSourceChange(termSource: 'product_defaults' | 'frame_contract' | 'last_offer'): void {
+        this.manufacturersTermsSource = termSource;
+        if(!this.showCounterOfferTerms) {
+            this.onLoadCounterOfferTerms(termSource);
+        }
+    }
 
     onLoadCounterOfferTerms(termSource: 'product_defaults' | 'frame_contract' | 'last_offer'): void {
         // if changes are overwritten, users preferences should be reset
@@ -588,6 +534,15 @@ export class NegotiationRequestComponent implements OnInit {
             frameContractDurationDiffers ||
             this.rfq.dataMonitoringRequested ||
             termsAndConditionsDiffer;
+    }
+
+    isThereDirtyTerm(): boolean {
+        for(let term of Object.keys(this.dirtyNegotiationFields)) {
+            if(this.dirtyNegotiationFields[term]) {
+                return true;
+            }
+        }
+        return false;
     }
 
     get lineHasPrice(): boolean {

@@ -5,7 +5,7 @@
             <div class="col-2"></div>
             <div class="col-5">
                 <label class="column-title mr-2">Manufacturer's Terms</label><br>
-                <select [hidden]="!isManufacturersTermsSelectBoxVisible()" #termSelectBox class="btn btn-outline-secondary" [value]="manufacturersTermsSource" (change)="manufacturersTermsSource = $event.target.value">
+                <select [hidden]="!isManufacturersTermsSelectBoxVisible()" #termSelectBox class="btn btn-outline-secondary" [value]="manufacturersTermsSource" (change)="onManufacturersTermsSourceChange($event.target.value)">
                     <option *ngIf="manufacturersTermsExistence.last_offer" value="last_offer">Last Offer</option>
                     <option *ngIf="manufacturersTermsExistence.frame_contract" value="frame_contract">Frame Contract</option>
                     <option value="product_defaults">Product Defaults</option>
@@ -13,22 +13,25 @@
             </div>
             <div class="col-5">
                 <label class="column-title">Counter Offer</label><br>
-                <button *ngIf="manufacturersTermsSource == 'product_defaults'"
-                        class="btn btn-outline-secondary"
-                        (click)="onLoadCounterOfferTerms('product_defaults')">Use product defaults
-                </button>
-                <button *ngIf="manufacturersTermsSource == 'frame_contract'"
-                        class="btn btn-outline-secondary"
-                        (click)="onLoadCounterOfferTerms('frame_contract')">Use frame contract terms
-                </button>
-                <button *ngIf="manufacturersTermsSource == 'last_offer'"
-                        class="btn btn-outline-secondary"
-                        (click)="onLoadCounterOfferTerms('product_defaults')">Use terms of last offer
-                </button>
-                <ng-container *ngIf="dirtyNegotiationFields != {}">
-                    <input class="ml-2" type="checkbox" [(ngModel)]="resetUpdatesChecked"><label class="ml-2">Reset changes</label>
-                    <span title="Explicitly specified terms will also be reset with the ones from the selected source.">&#9432;</span>
+                <ng-container *ngIf="showCounterOfferTerms">
+                    <button *ngIf="manufacturersTermsSource == 'product_defaults'"
+                            class="btn btn-outline-secondary"
+                            (click)="onLoadCounterOfferTerms('product_defaults')">Use product defaults
+                    </button>
+                    <button *ngIf="manufacturersTermsSource == 'frame_contract'"
+                            class="btn btn-outline-secondary"
+                            (click)="onLoadCounterOfferTerms('frame_contract')">Use frame contract terms
+                    </button>
+                    <button *ngIf="manufacturersTermsSource == 'last_offer'"
+                            class="btn btn-outline-secondary"
+                            (click)="onLoadCounterOfferTerms('product_defaults')">Use terms of last offer
+                    </button>
+                    <ng-container *ngIf="isThereDirtyTerm()">
+                        <input class="ml-2" type="checkbox" [(ngModel)]="resetUpdatesChecked"><label class="ml-2">Reset changes</label>
+                        <span title="Explicitly specified terms will also be reset with the ones from the selected source.">&#9432;</span>
+                    </ng-container>
                 </ng-container>
+                <button *ngIf="!showCounterOfferTerms" class="btn btn-primary action" [disabled]="isLoading()"(click)="onShowCounterOfferTerms();">Offer Counter Terms</button>
             </div>
         </div>
     </div>
@@ -231,40 +234,37 @@
         <!-- Quantity -->
         <div *ngIf="showCounterOfferTerms" class="row content-row">
             <div class="col-2">
-                <strong class="font-weight-500">Quantity:</strong>
+
             </div>
             <div class="col-5">
-                <ng-container *ngIf="manufacturersTermsSource == 'frame_contract'">
-                    {{ wrapper.frameContractQuotationWrapper.orderedQuantity.value }} {{wrapper.frameContractQuotationWrapper.orderedQuantity.unitCode}}
-                </ng-container>
+                <!--<ng-container *ngIf="manufacturersTermsSource == 'frame_contract'">-->
+                    <!--{{ wrapper.frameContractQuotationWrapper.orderedQuantity.value }} {{wrapper.frameContractQuotationWrapper.orderedQuantity.unitCode}}-->
+                <!--</ng-container>-->
             </div>
-            <div class="col-5 mt-1">
-                <div class="d-flex">
-                    <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [ngModel]="requestedQuantity" (ngModelChange)="requestedQuantity = $event; onOrderQuantityChange()"
-                           class="form-control form-control-sm w-75"
-                           [disabled]="isLoading() || isReadOnly()"/>
-                    <span class="ml-2" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() }}</span>
+            <div class="col-5">
+                <div class="row">
+                    <strong class="font-weight-500 col-5">Quantity:</strong>
+                    <div class="col-4 quantity-input">
+                        <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [ngModel]="requestedQuantity" (ngModelChange)="requestedQuantity = $event; onOrderQuantityChange()"
+                               class="form-control form-control-sm"
+                               [disabled]="isLoading() || isReadOnly()"/>
+                    </div>
+                    <span class="col-3" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() }}</span>
                 </div>
             </div>
         </div>
     </div>
-    <div *ngIf="!showCounterOfferTerms" class="col-5 d-flex flex-column justify-content-center align-items-center">
-        <div class="d-flex flex-column">
-            <div class="d-flex align-items-center mb-2">
-                <div class="col-3">
-                    <strong class="font-weight-500">Quantity:</strong>
-                </div>
-                <div class="col-6 mt-1">
-                    <div class="d-flex">
-                        <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [ngModel]="requestedQuantity" (ngModelChange)="requestedQuantity = $event; onOrderQuantityChange()"
-                               class="form-control form-control-sm w-75"
-                               [disabled]="isLoading() || isReadOnly()"/>
-                        <span class="ml-2" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() }}</span>
-                    </div>
-                </div>
+    <div *ngIf="!showCounterOfferTerms" class="col-5">
+        <div class="row">
+            <div class="col-5">
+                <strong class="font-weight-500">Quantity:</strong>
             </div>
-            <hr class="w-100">
-            <button class="btn btn-primary action mb-3" [disabled]="isLoading()"(click)="onShowCounterOfferTerms();">Offer Counter Terms</button>
+            <div class="col-4 quantity-input">
+                <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [ngModel]="requestedQuantity" (ngModelChange)="requestedQuantity = $event; onOrderQuantityChange()"
+                   class="form-control form-control-sm"
+                   [disabled]="isLoading() || isReadOnly()"/>
+            </div>
+            <span class="col-3" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() }}</span>
         </div>
     </div>
 </div>

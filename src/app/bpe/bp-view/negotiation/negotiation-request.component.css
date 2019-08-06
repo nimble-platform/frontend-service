@@ -17,3 +17,7 @@
 .input-spacer {
     margin-bottom: 0.6rem;
 }
+
+.quantity-input {
+    padding-right: 0.1rem;
+}
