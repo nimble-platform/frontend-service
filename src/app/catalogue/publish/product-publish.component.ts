@@ -111,7 +111,9 @@ export class ProductPublishComponent implements OnInit {
     private editPropertyModal: EditPropertyModalComponent;
     customProperties: any[] = [];
     cataloguesIds:any[] = [];
+    catalogueIdsUUids: any = [];
     selectedCatalogueuuid = "";
+    catalogueuuid = "";
     callStatus: CallStatus = new CallStatus();
 
     /*
@@ -219,10 +221,11 @@ export class ProductPublishComponent implements OnInit {
 
     changeCat(){
         this.catlogueId = this.selectedCatalogue;
-        this.catalogueService.getCatalogueFromId(this.catlogueId).then((catalogue) => {
+
+        this.catalogueService.getCatalogueFromUuid(this.catalogueuuid).then((catalogue) => {
             this.selectedCatalogueuuid = catalogue.uuid;
         }).catch((err) => {
-            this.selectedCatalogueuuid = this.catalogueService.catalogueResponse.catalogueUuid;
+            this.selectedCatalogueuuid = this.catalogueuuid;
         })
     }
 
@@ -776,20 +779,20 @@ export class ProductPublishComponent implements OnInit {
 
         } else {
             let catalogueId = this.catlogueId;
-            this.catalogueService.getCatalogueFromId(catalogueId).then((catalogue) => {
+            // this.catalogueService.getCatalogueFromId(catalogueId).then((catalogue) => {
                 // TODO: create a service to add multiple catalogue lines
                 for(let catalogueLine of catalogueLines){
-                    catalogueLine.goodsItem.item.catalogueDocumentReference.id = catalogue.uuid;
-                    this.catalogueService.addCatalogueLine(catalogue.uuid,JSON.stringify(catalogueLine))
+                    catalogueLine.goodsItem.item.catalogueDocumentReference.id = this.catalogueuuid;
+                    this.catalogueService.addCatalogueLine(this.catalogueuuid,JSON.stringify(catalogueLine))
                         .then(() => {
                             this.onSuccessfulPublish(exitThePage,[catalogueLine]);
                         })
                         .catch(err=> this.onFailedPublish(err))
                 }
-            })
-            .catch(err=> {
-                this.onFailedPublish(err)
-            })
+            // })
+            // .catch(err=> {
+            //     this.onFailedPublish(err)
+            // })
 
         }
     }
@@ -801,9 +804,8 @@ export class ProductPublishComponent implements OnInit {
         this.submitted = true;
 
         this.publishStatus.submit();
-
-        this.getCatalogueUUid().then((catalogue) => {
-            this.selectedCatalogueuuid = catalogue.uuid;
+        // this.getCatalogueUUid().then((catalogue) => {
+            this.selectedCatalogueuuid = this.catalogueuuid;
             // TODO: create a service to update multiple catalogue lines
             for(let catalogueLine of catalogueLines){
                 this.catalogueService.updateCatalogueLine(this.selectedCatalogueuuid,JSON.stringify(catalogueLine))
@@ -814,9 +816,9 @@ export class ProductPublishComponent implements OnInit {
                     });
             }
 
-        }).catch((err) => {
-            this.onFailedPublish(err);
-        })
+        // }).catch((err) => {
+        //     this.onFailedPublish(err);
+        // })
 
     }
 
@@ -897,7 +899,7 @@ export class ProductPublishComponent implements OnInit {
 
         let userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(party => {
-            this.catalogueService.getCatalogueFromId(this.catlogueId).then(catalogueResponse => {
+            this.catalogueService.getCatalogueFromUuid(this.catalogueuuid).then(catalogueResponse => {
                 this.catalogueService.getCatalogueLines(catalogueResponse.uuid,catalogueLineIds).then(catalogueLines => {
                     // go to the dashboard - catalogue tab
                     if(exitThePage){
@@ -1129,12 +1131,25 @@ export class ProductPublishComponent implements OnInit {
 
     public getCatagloueIdsForParty(){
         this.productCatalogueRetrievalStatus.submit();
-        this.catalogueService.getCatalogueIdsForParty().then((catalogueIds) => {
-            this.cataloguesIds = catalogueIds;
+        this.catalogueService.getCatalogueIdsUUidsForParty().then((catalogueIds) => {
+            var idList =[];
+            var uuidList = [];
+
+            for(var obj in catalogueIds){
+                if(catalogueIds[obj][0] == this.selectedCatalogue){
+                    this.catalogueuuid = catalogueIds[obj][1];
+                }
+                idList.push(catalogueIds[obj][0]);
+                uuidList.push(catalogueIds[obj][1]);
+            }
+
+            this.cataloguesIds = idList;
+            this.catalogueIdsUUids = uuidList;
             this.productCatalogueRetrievalStatus.callback("Successfully loaded catalogueId list", true);
         }).catch((error) => {
             this.productCatalogueRetrievalStatus.error('Failed to get product catalogues');
         });
+       
     }
 
     // used to validate inputs whose type is number
