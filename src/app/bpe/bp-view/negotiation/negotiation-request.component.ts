@@ -206,6 +206,11 @@ export class NegotiationRequestComponent implements OnInit {
         this.unitService.getCachedUnitList(frameContractDurationUnitListId).then(list => {
            this.frameContractDurationUnits = list;
         });
+
+        // set tc tab based on the existence of custom terms
+        if(this.isReadOnly() && this.getNonFrameContractTermNumber() == 0) {
+            this.selectedTCTab = 'CLAUSES';
+        }
     }
 
     private setProcessMetadataFields(processHistory: ThreadEventMetadata[]): void {
@@ -456,6 +461,7 @@ export class NegotiationRequestComponent implements OnInit {
             // if(!this.rfq.negotiationOptions.termsAndConditions || ignoreNegotiationOptions) {
             this.rfq.termOrCondition = copy(quotationWrapper.quotation.termOrCondition);
             // }
+            this.rfq.tradingTerms = copy(quotationWrapper.tradingTerms);
 
         } else if(termSource == 'product_defaults') {
             if(this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.DELIVERY_PERIOD]) {
@@ -481,6 +487,7 @@ export class NegotiationRequestComponent implements OnInit {
             // if(!this.rfq.negotiationOptions.termsAndConditions || ignoreNegotiationOptions) {
             this.rfq.termOrCondition = copy(this.defaultTermsAndConditions);
             // }
+            this.rfq.tradingTerms = [];
         }
 
         this.counterOfferTermsSource = termSource;
@@ -867,6 +874,16 @@ export class NegotiationRequestComponent implements OnInit {
             console.log("lo");
             return this.wrapper.lastOfferQuotation.termOrCondition;
         }
+    }
+
+    getNonFrameContractTermNumber(): number {
+        let termCount: number = 0;
+        for(let tradingTerm of this.wrapper.rfq.tradingTerms) {
+            if(tradingTerm.id != 'FRAME_CONTRACT_DURATION') {
+                termCount++;
+            }
+        }
+        return termCount;
     }
 
     /**

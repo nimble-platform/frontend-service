@@ -114,4 +114,8 @@ export class QuotationWrapper {
     public getTradingTerm(termName: string): TradingTerm {
         return this.quotation.tradingTerms.find(tradingTerm => tradingTerm.id == termName);
     }
+
+    public get tradingTerms(): TradingTerm[] {
+        return this.quotation.tradingTerms;
+    }
 }

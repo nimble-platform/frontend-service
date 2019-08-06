@@ -99,6 +99,11 @@ export class NegotiationResponseComponent implements OnInit {
         this.quotationTotalPrice = new Quantity(this.wrapper.quotationDiscountPriceWrapper.totalPrice, this.wrapper.quotationDiscountPriceWrapper.currency);
 
         this.userRole = this.bpDataService.bpActivityEvent.userRole;
+
+        // change the selected TC tab if there is no custom trading term
+        if(this.getNonFrameContractTermNumber() == 0) {
+            this.selectedTCTab = 'CLAUSES';
+        }
     }
 
     onBack(): void {
@@ -213,6 +218,79 @@ export class NegotiationResponseComponent implements OnInit {
         return this.lastOfferQuotation != null || (this.frameContractQuotation != null && !this.frameContractNegotiation);
     }
 
+    private getNonFrameContractTermNumber(): number {
+        let termCount: number = 0;
+        for(let tradingTerm of this.wrapper.newQuotation.tradingTerms) {
+            if(tradingTerm.id != 'FRAME_CONTRACT_DURATION') {
+                termCount++;
+            }
+        }
+        return termCount;
+    }
+
+    private checkEqual(part): boolean {
+        switch(part) {
+            case "deliveryPeriod":
+                if (this.primaryTermsSource == "product_defaults")
+                    return (this.wrapper.rfqDeliveryPeriodString == this.wrapper.lineDeliveryPeriodString);
+                else if (this.primaryTermsSource == "frame_contract")
+                    return (this.wrapper.rfqDeliveryPeriodString == this.wrapper.frameContractQuotationWrapper.deliveryPeriodString);
+                else if (this.primaryTermsSource == "last_offer")
+                    return (this.wrapper.rfqDeliveryPeriodString == this.wrapper.lastOfferQuotationWrapper.deliveryPeriodString);
+                break;
+            case "warranty":
+                if (this.primaryTermsSource == "product_defaults")
+                    return (this.wrapper.rfqWarrantyString == this.wrapper.lineWarrantyString);
+                else if (this.primaryTermsSource == "frame_contract")
+                    return (this.wrapper.rfqWarrantyString == this.wrapper.frameContractQuotationWrapper.warrantyString);
+                else if (this.primaryTermsSource == "last_offer")
+                    return (this.wrapper.rfqWarrantyString == this.wrapper.lastOfferQuotationWrapper.warrantyString);
+                break;
+            case "incoTerms":
+                if (this.primaryTermsSource == "product_defaults")
+                    return (this.wrapper.rfqIncoterms == this.wrapper.lineIncoterms);
+                else if (this.primaryTermsSource == "frame_contract")
+                    return (this.wrapper.rfqIncoterms == this.wrapper.frameContractQuotationWrapper.incotermsString);
+                else if (this.primaryTermsSource == "last_offer")
+                    return (this.wrapper.rfqIncoterms == this.wrapper.lastOfferQuotationWrapper.incotermsString);
+                break;
+            case "paymentTerms":
+                if (this.primaryTermsSource == "product_defaults")
+                    return (this.wrapper.rfqPaymentTerms.paymentTerm == this.wrapper.linePaymentTerms);
+                else if (this.primaryTermsSource == "frame_contract")
+                    return (this.wrapper.rfqPaymentTerms.paymentTerm == this.wrapper.frameContractQuotationWrapper.paymentTermsWrapper.paymentTerm);
+                else if (this.primaryTermsSource == "last_offer")
+                    return (this.wrapper.rfqPaymentTerms.paymentTerm == this.wrapper.lastOfferQuotationWrapper.paymentTermsWrapper.paymentTerm);
+                break;
+            case "paymentMeans":
+                if (this.primaryTermsSource == "product_defaults")
+                    return (this.wrapper.rfqPaymentMeans == this.wrapper.linePaymentMeans);
+                else if (this.primaryTermsSource == "frame_contract")
+                    return (this.wrapper.rfqPaymentMeans == this.wrapper.frameContractQuotationWrapper.paymentMeans);
+                else if (this.primaryTermsSource == "last_offer")
+                    return (this.wrapper.rfqPaymentMeans == this.wrapper.lastOfferQuotationWrapper.paymentMeans);
+                break;
+            case "quantity":
+                if (this.primaryTermsSource == "product_defaults")
+                    return true;
+                else if (this.primaryTermsSource == "frame_contract")
+                    return (this.rfq.requestForQuotationLine[0].lineItem.quantity.value == this.wrapper.frameContractQuotationWrapper.orderedQuantity.value);
+                else if (this.primaryTermsSource == "last_offer")
+                    return (this.rfq.requestForQuotationLine[0].lineItem.quantity.value == this.wrapper.lastOfferQuotationWrapper.orderedQuantity.value);
+                break;
+            case "price":
+                if (this.primaryTermsSource == "product_defaults")
+                    return (this.wrapper.rfqPricePerItemString == this.wrapper.lineDiscountPriceWrapper.discountedPricePerItemString);
+                else if (this.primaryTermsSource == "frame_contract")
+                    return (this.wrapper.rfqPricePerItemString == this.wrapper.frameContractQuotationWrapper.priceWrapper.pricePerItemString);
+                else if (this.primaryTermsSource == "last_offer")
+                    return (this.wrapper.rfqPricePerItemString == this.wrapper.lastOfferQuotationWrapper.priceWrapper.pricePerItemString);
+                break;
+            default:
+                return true;
+        }
+    }
+
     /*
      * Internal Methods
      */
@@ -256,69 +334,6 @@ export class NegotiationResponseComponent implements OnInit {
 
     private openDiscountModal(): void{
         this.discountModal.open(this.wrapper.quotationDiscountPriceWrapper);
-    }
-
-    private checkEqual(part): boolean {
-      switch(part) {
-        case "deliveryPeriod":
-          if (this.primaryTermsSource == "product_defaults")
-            return (this.wrapper.rfqDeliveryPeriodString == this.wrapper.lineDeliveryPeriodString);
-          else if (this.primaryTermsSource == "frame_contract")
-            return (this.wrapper.rfqDeliveryPeriodString == this.wrapper.frameContractQuotationWrapper.deliveryPeriodString);
-          else if (this.primaryTermsSource == "last_offer")
-            return (this.wrapper.rfqDeliveryPeriodString == this.wrapper.lastOfferQuotationWrapper.deliveryPeriodString);
-          break;
-        case "warranty":
-          if (this.primaryTermsSource == "product_defaults")
-            return (this.wrapper.rfqWarrantyString == this.wrapper.lineWarrantyString);
-          else if (this.primaryTermsSource == "frame_contract")
-            return (this.wrapper.rfqWarrantyString == this.wrapper.frameContractQuotationWrapper.warrantyString);
-          else if (this.primaryTermsSource == "last_offer")
-            return (this.wrapper.rfqWarrantyString == this.wrapper.lastOfferQuotationWrapper.warrantyString);
-          break;
-        case "incoTerms":
-          if (this.primaryTermsSource == "product_defaults")
-            return (this.wrapper.rfqIncoterms == this.wrapper.lineIncoterms);
-          else if (this.primaryTermsSource == "frame_contract")
-            return (this.wrapper.rfqIncoterms == this.wrapper.frameContractQuotationWrapper.incotermsString);
-          else if (this.primaryTermsSource == "last_offer")
-            return (this.wrapper.rfqIncoterms == this.wrapper.lastOfferQuotationWrapper.incotermsString);
-          break;
-        case "paymentTerms":
-          if (this.primaryTermsSource == "product_defaults")
-            return (this.wrapper.rfqPaymentTerms.paymentTerm == this.wrapper.linePaymentTerms);
-          else if (this.primaryTermsSource == "frame_contract")
-            return (this.wrapper.rfqPaymentTerms.paymentTerm == this.wrapper.frameContractQuotationWrapper.paymentTermsWrapper.paymentTerm);
-          else if (this.primaryTermsSource == "last_offer")
-            return (this.wrapper.rfqPaymentTerms.paymentTerm == this.wrapper.lastOfferQuotationWrapper.paymentTermsWrapper.paymentTerm);
-          break;
-        case "paymentMeans":
-          if (this.primaryTermsSource == "product_defaults")
-            return (this.wrapper.rfqPaymentMeans == this.wrapper.linePaymentMeans);
-          else if (this.primaryTermsSource == "frame_contract")
-            return (this.wrapper.rfqPaymentMeans == this.wrapper.frameContractQuotationWrapper.paymentMeans);
-          else if (this.primaryTermsSource == "last_offer")
-            return (this.wrapper.rfqPaymentMeans == this.wrapper.lastOfferQuotationWrapper.paymentMeans);
-          break;
-        case "quantity":
-          if (this.primaryTermsSource == "product_defaults")
-            return true;
-          else if (this.primaryTermsSource == "frame_contract")
-            return (this.rfq.requestForQuotationLine[0].lineItem.quantity.value == this.wrapper.frameContractQuotationWrapper.orderedQuantity.value);
-          else if (this.primaryTermsSource == "last_offer")
-            return (this.rfq.requestForQuotationLine[0].lineItem.quantity.value == this.wrapper.lastOfferQuotationWrapper.orderedQuantity.value);
-          break;
-        case "price":
-          if (this.primaryTermsSource == "product_defaults")
-            return (this.wrapper.rfqPricePerItemString == this.wrapper.lineDiscountPriceWrapper.discountedPricePerItemString);
-          else if (this.primaryTermsSource == "frame_contract")
-            return (this.wrapper.rfqPricePerItemString == this.wrapper.frameContractQuotationWrapper.priceWrapper.pricePerItemString);
-          else if (this.primaryTermsSource == "last_offer")
-            return (this.wrapper.rfqPricePerItemString == this.wrapper.lastOfferQuotationWrapper.priceWrapper.pricePerItemString);
-          break;
-        default:
-          return true;
-      }
     }
 
     showTab(tab:boolean):boolean {

@@ -346,7 +346,7 @@
 
     <!-- Terms and conditions -->
     <div *ngIf="showTermsAndConditions">
-        <ul class="nav nav-tabs space-after space-before">
+        <ul *ngIf="!isReadOnly() || getNonFrameContractTermNumber() > 0" class="nav nav-tabs space-after space-before">
             <li class="nav-item">
                 <a href id="CUSTOM_TERMS" class="nav-link"
                    [ngClass]="{ active: selectedTCTab === 'CUSTOM_TERMS'}"

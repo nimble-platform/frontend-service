@@ -301,7 +301,7 @@
 
     <!-- Terms and conditions -->
     <div [hidden]="!showTermsAndConditions||!defaultTermsAndConditions">
-        <ul class="nav nav-tabs space-after space-before">
+        <ul *ngIf="getNonFrameContractTermNumber() > 0" class="nav nav-tabs space-after space-before">
             <li class="nav-item">
                 <a href id="CUSTOM_TERMS" class="nav-link"
                    [ngClass]="{ active: selectedTCTab === 'CUSTOM_TERMS'}"
@@ -318,7 +318,7 @@
             </li>
         </ul>
 
-        <ng-container *ngIf="selectedTCTab == 'CUSTOM_TERMS'">
+        <ng-container *ngIf="selectedTCTab == 'CUSTOM_TERMS' && getNonFrameContractTermNumber() > 0">
             <ng-container *ngFor="let tradingTerm of wrapper.newQuotation.tradingTerms">
                 <div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row">
                     <div class="col-3">
