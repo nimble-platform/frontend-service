@@ -105,8 +105,7 @@ export class ProductPublishComponent implements OnInit {
     private selectedPropertiesUpdates: SelectedPropertiesUpdate = {};
     selectedProperty: ItemProperty;
     categoryModalPropertyKeyword: string = "";
-    selectedCatalogue: string = "default";
-    catlogueId = "default";
+
     @ViewChild(EditPropertyModalComponent)
     private editPropertyModal: EditPropertyModalComponent;
     customProperties: any[] = [];
@@ -114,6 +113,8 @@ export class ProductPublishComponent implements OnInit {
     catalogueUUids: any = [];
     // uuid of the catalogue containing the product to be published / edited
     selectedCatalogueuuid = "";
+    // id of the catalogue containing the product to be published / edited
+    selectedCatalogueId: string = "default";
     callStatus: CallStatus = new CallStatus();
 
     /*
@@ -204,7 +205,7 @@ export class ProductPublishComponent implements OnInit {
 
             let catalogueId = params['cat'];
             if(catalogueId != null){
-                this.selectedCatalogue = catalogueId;
+                this.selectedCatalogueId = catalogueId;
             }
         });
         //this.selectedCatalogueuuid = this.catalogueService.catalogueResponse.catalogueUuid;
@@ -220,10 +221,9 @@ export class ProductPublishComponent implements OnInit {
     }
 
     changeCat(){
-        // get the corresponding catalogue id
-        let index = this.catalogueUUids.indexOf(this.selectedCatalogueuuid);
-        // update selected catalogue id and uuid
-        this.catlogueId = this.cataloguesIds[index];
+        let index = this.cataloguesIds.indexOf(this.selectedCatalogueId);
+        // update selected catalogue uuid
+        this.selectedCatalogueuuid = this.catalogueUUids[index];
     }
 
     /*
@@ -895,7 +895,7 @@ export class ProductPublishComponent implements OnInit {
                 // get the uuid of catalogue
                 let uuid = null;
                 for(let idUuid of catalogueIdsUuids){
-                    if(idUuid[0] == this.catlogueId){
+                    if(idUuid[0] == this.selectedCatalogueId){
                         uuid = idUuid[1];
                         break;
                     }
@@ -1140,7 +1140,7 @@ export class ProductPublishComponent implements OnInit {
             var uuidList = [];
 
             for(var obj in catalogueIds){
-                if(catalogueIds[obj][0] == this.selectedCatalogue){
+                if(catalogueIds[obj][0] == this.selectedCatalogueId){
                     this.selectedCatalogueuuid = catalogueIds[obj][1];
                 }
                 idList.push(catalogueIds[obj][0]);
