@@ -1,6 +1,6 @@
 <form class="delivery-terms-form" [formGroup]="deliveryTermsForm" novalidate>
 
-	<div [ngClass]="{'d-none':deliveryTermsForm.aM,'':!deliveryTermsForm.aM}">
+	<div>
 		<address-form [group]="deliveryTermsForm.controls['deliveryAddress']"></address-form>
 	</div>
 

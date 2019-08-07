@@ -28,7 +28,7 @@ export class CompanyDetailsComponent implements OnInit {
 
     constructor(private cookieService: CookieService,
                 private userService: UserService,
-                private appComponent: AppComponent,
+                public appComponent: AppComponent,
                 public route: ActivatedRoute,
                 public router: Router) {
     }

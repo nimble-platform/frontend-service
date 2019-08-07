@@ -109,7 +109,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let column of sparqlSelectedOption?.columns; let i=index">
+                <tr *ngFor="let column of sparqlSelectedOption['columns']; let i=index">
                     <th scope="row">
                         {{column}}
                     </th>
@@ -278,7 +278,7 @@
                  [hidden]="(emptyFilterAlert)"
                  *ngIf="!searchvalue.length">
                 <div *ngIf="loadingFilter">
-                    <img src="assets/form_loader.gif">
+                    <img src="../../assets/images/form_loader.gif">
                 </div>
                 <div class="align-content-center">
                     <i class="fas fa-filter fa-4x"></i>
@@ -287,7 +287,7 @@
             </div>
             <div *ngIf="emptyFilterAlert" >
                 <ngb-alert type="danger" (close)="emptyFilterAlert=false">
-                    <i class="fas fa-exclamation-triangle"></i><p> We couldn't find any filters for the selection.</p>
+                    <i class="fas fa-exclamation-triangle pr-1"></i><p> <span>We couldn't find any filters for the selection.</span></p>
                 </ngb-alert>
             </div>
             <div *ngIf="searchvalue.length" class="d-flex flex-row fixed p-2" [ngClass]="{'fixed-header': searchvalue.length}">
@@ -386,7 +386,7 @@
     </div>
 </div>
 
-<div class="jumbotron" *ngIf="!sparqlJSON.parameters.length && configSPQ">
+<div class="jumbotron" *ngIf="!sparqlJSON['parameters'].length && configSPQ">
     <div class="container">
         <div class="row">
             <div class="col-12 align-center">
@@ -403,12 +403,12 @@
     </div>
 </div>
 
-<div *ngIf="sparqlJSON.parameters.length">
+<div *ngIf="sparqlJSON['parameters'].length">
     <div class="jumbotron" *ngIf="tableResult?.columns !== undefined && !tableResult?.columns.length">
         <div class="container">
             <div class="row">
                 <div class="col-12 align-center">
-                    <h4>No Matching Products/Services Found. <i class="fas fa-table"></i></h4>
+                    <h4><span>No Matching Products/Services Found.</span> <i class="fas fa-table pl-1"></i></h4>
 
                     <h5>We could not find any matching Products with your Selection.</h5>
                     <h5>Try removing some Selected Properties above and click <kbd>Obtain Results</kbd> again</h5>

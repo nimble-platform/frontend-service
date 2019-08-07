@@ -218,7 +218,7 @@ export class NegotiationResponseComponent implements OnInit {
         return this.lastOfferQuotation != null || (this.frameContractQuotation != null && !this.frameContractNegotiation);
     }
 
-    private getNonFrameContractTermNumber(): number {
+    getNonFrameContractTermNumber(): number {
         let termCount: number = 0;
         for(let tradingTerm of this.wrapper.newQuotation.tradingTerms) {
             if(tradingTerm.id != 'FRAME_CONTRACT_DURATION') {
@@ -228,7 +228,7 @@ export class NegotiationResponseComponent implements OnInit {
         return termCount;
     }
 
-    private checkEqual(part): boolean {
+    checkEqual(part): boolean {
         switch(part) {
             case "deliveryPeriod":
                 if (this.primaryTermsSource == "product_defaults")

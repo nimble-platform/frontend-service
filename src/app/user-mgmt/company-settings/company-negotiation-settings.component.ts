@@ -38,7 +38,7 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
     incoterms: SelectedTerms;
     process_ids: SelectedTerms;
 
-    private SERVICE_TYPES: string[] = ["None", "Service Level 1 (Start/Stop)", "Service Level 2 (Warnings/Alerts)", "Service Level 3 (Machines/Sensors)"]
+    public SERVICE_TYPES: string[] = ["None", "Service Level 1 (Start/Stop)", "Service Level 2 (Warnings/Alerts)", "Service Level 3 (Machines/Sensors)"]
     newSensor: CompanySensor = new CompanySensor('', '', '');
 
     // whether the all collaborations is finished or not
