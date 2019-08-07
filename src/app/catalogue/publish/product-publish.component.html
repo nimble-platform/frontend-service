@@ -25,7 +25,7 @@
         </div>
         <div class="col-4">
           <select class="custom-select" [(ngModel)]="selectedCatalogueuuid" (change)="changeCat()">
-            <option *ngFor="let catalogue of cataloguesIds ; let i = index"  [value]=catalogueIdsUUids[i]>{{catalogue}}</option>
+            <option *ngFor="let catalogue of cataloguesIds ; let i = index"  [value]="catalogueUUids[i]">{{catalogue}}</option>
           </select>
         </div>
 </div>

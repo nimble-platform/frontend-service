@@ -111,7 +111,7 @@ export class ProductPublishComponent implements OnInit {
     private editPropertyModal: EditPropertyModalComponent;
     customProperties: any[] = [];
     cataloguesIds:any[] = [];
-    catalogueIdsUUids: any = [];
+    catalogueUUids: any = [];
     // uuid of the catalogue containing the product to be published / edited
     selectedCatalogueuuid = "";
     callStatus: CallStatus = new CallStatus();
@@ -221,7 +221,7 @@ export class ProductPublishComponent implements OnInit {
 
     changeCat(){
         // get the corresponding catalogue id
-        let index = this.catalogueIdsUUids.indexOf(this.selectedCatalogueuuid);
+        let index = this.catalogueUUids.indexOf(this.selectedCatalogueuuid);
         // update selected catalogue id and uuid
         this.catlogueId = this.cataloguesIds[index];
     }
@@ -1148,7 +1148,7 @@ export class ProductPublishComponent implements OnInit {
             }
 
             this.cataloguesIds = idList;
-            this.catalogueIdsUUids = uuidList;
+            this.catalogueUUids = uuidList;
             this.productCatalogueRetrievalStatus.callback("Successfully loaded catalogueId list", true);
         }).catch((error) => {
             this.productCatalogueRetrievalStatus.error('Failed to get product catalogues');
