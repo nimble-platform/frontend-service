@@ -54,7 +54,7 @@ export class UserFormComponent implements OnInit {
         }
         this.route.queryParams.subscribe(params => {
             if (params['email']) {
-                const test = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._-]+\.[a-z]{2,3}$/.test(params['email']);
+                const test = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9]{2,10}$/.test(params['email']);
                 if (test) {
                     this.model.user.email = params['email'];
                     this.email_preset = true;
