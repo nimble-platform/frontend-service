@@ -895,11 +895,24 @@ export class ProductPublishComponent implements OnInit {
 
         let userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(party => {
-            this.catalogueService.getCatalogueFromUuid(this.catalogueuuid).then(catalogueResponse => {
-                this.catalogueService.getCatalogueLines(catalogueResponse.uuid,catalogueLineIds).then(catalogueLines => {
+            // get catalogue id-uuid pairs for the party to find the uuid of catalogue
+            this.catalogueService.getCatalogueIdsUUidsForParty().then(catalogueIdsUuids => {
+                // get the uuid of catalogue
+                let uuid = null;
+                for(let idUuid of catalogueIdsUuids){
+                    if(idUuid[0] == this.catlogueId){
+                        uuid = idUuid[1];
+                        break;
+                    }
+                }
+
+                // update the id of selected catalogue
+                this.selectedCatalogueuuid = uuid;
+
+                this.catalogueService.getCatalogueLines(this.selectedCatalogueuuid,catalogueLineIds).then(catalogueLines => {
                     // go to the dashboard - catalogue tab
                     if(exitThePage){
-                        this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogueResponse.uuid,
+                        this.catalogueLine = UBLModelUtils.createCatalogueLine(this.selectedCatalogueuuid,
                             party, this.companyNegotiationSettings,this.dimensions);
 
                         // since every changes is saved,we do not need a dialog box
