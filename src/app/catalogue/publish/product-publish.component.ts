@@ -822,10 +822,6 @@ export class ProductPublishComponent implements OnInit {
 
     }
 
-    private getCatalogueUUid(){
-        this.catlogueId = this.selectedCatalogue;
-        return this.catalogueService.getCatalogueFromId(this.catlogueId);
-    }
     // changes publishMode to create
     private changePublishModeToCreate():void{
         this.changePublishModeCreate = true;

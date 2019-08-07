@@ -413,21 +413,6 @@ export class CatalogueService {
 
     }
 
-    getCatalogueFromId(id: string){
-        const partyId =this.cookieService.get("company_id");
-        const url = this.baseUrl + `/catalogue/${partyId}/${id}/ubl`;
-        return this.http
-            .get(url, {headers: this.getAuthorizedHeaders()})
-            .toPromise()
-            .then(res => {
-                let sorted = this.sortImages(res,"catalogueLine",true);
-                return sorted;
-                //return res.json();
-            })
-            .catch(this.handleError);
-
-    }
-
     getCatalogueFromUuid(Uuid: string){
         const url = this.baseUrl + `/catalogue/ubl/${Uuid}`;
         return this.http
