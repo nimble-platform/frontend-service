@@ -287,7 +287,7 @@
             </div>
             <div *ngIf="emptyFilterAlert" >
                 <ngb-alert type="danger" (close)="emptyFilterAlert=false">
-                    <i class="fas fa-exclamation-triangle"></i><p> We couldn't find any filters for the selection.</p>
+                    <i class="fas fa-exclamation-triangle pr-1"></i><p> <span>We couldn't find any filters for the selection.</span></p>
                 </ngb-alert>
             </div>
             <div *ngIf="searchvalue.length" class="d-flex flex-row fixed p-2" [ngClass]="{'fixed-header': searchvalue.length}">
@@ -408,7 +408,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-12 align-center">
-                    <h4>No Matching Products/Services Found. <i class="fas fa-table"></i></h4>
+                    <h4><span>No Matching Products/Services Found.</span> <i class="fas fa-table pl-1"></i></h4>
 
                     <h5>We could not find any matching Products with your Selection.</h5>
                     <h5>Try removing some Selected Properties above and click <kbd>Obtain Results</kbd> again</h5>

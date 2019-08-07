@@ -165,7 +165,7 @@
 
 						<!-- category facet panel -->
 						<div class="pointer" (click)="showCatSection=!showCatSection">
-							<h5>Categories <span *ngIf="!showCatSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showCatSection"><i class="fa fa-angle-double-up"></i></span></h5>
+							<h5><span>Categories</span> <span *ngIf="!showCatSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCatSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
 						</div>
 
 						<div *ngIf="showCatSection">
@@ -210,7 +210,7 @@
 						<div *ngIf="checkProdCatCount()>0">
 
 							<div class="pointer" (click)="showProdSection=!showProdSection">
-								<h5>Product / Service Filters <span *ngIf="!showProdSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showProdSection"><i class="fa fa-angle-double-up"></i></span></h5>
+								<h5><span>Product / Service Filters</span> <span *ngIf="!showProdSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showProdSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
 							</div>
 
 							<div *ngIf="showProdSection">
@@ -271,7 +271,7 @@
 						<div *ngIf="checkCompCatCount()>0">
 
 							<div class="pointer" (click)="showCompSection=!showCompSection">
-								<h5>Product / Service Vendor Filters <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up"></i></span></h5>
+								<h5><span>Product / Service Vendor Filters</span> <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
 							</div>
 
 							<div *ngIf="showCompSection">
@@ -305,7 +305,7 @@
 						<div *ngIf="checkCompCatCount()>0">
 
 							<div class="pointer" (click)="showTrustSection=!showTrustSection">
-								<h5>Rating / Trust Filters <span *ngIf="!showTrustSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showTrustSection"><i class="fa fa-angle-double-up"></i></span></h5>
+								<h5><span>Rating / Trust Filters</span> <span *ngIf="!showTrustSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showTrustSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
 							</div>
 
 							<div *ngIf="showTrustSection">
@@ -380,7 +380,7 @@
 						<div *ngIf="checkOtherCatCount()>0">
 
 							<div class="pointer" (click)="showOtherSection=!showOtherSection">
-								<h5>Other Filters <span *ngIf="!showOtherSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showOtherSection"><i class="fa fa-angle-double-up"></i></span></h5>
+								<h5><span>Other Filters</span> <span *ngIf="!showOtherSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showOtherSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
 							</div>
 
 							<div *ngIf="showOtherSection">
@@ -416,7 +416,7 @@
 						<div *ngIf="checkCompMainCatCount()>0">
 
 							<div class="pointer" (click)="showCompSection=!showCompSection">
-								<h5>Company Filters <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up"></i></span></h5>
+								<h5><span>Company Filters</span> <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
 							</div>
 
 							<div *ngIf="showCompSection">
@@ -450,7 +450,7 @@
 						<div *ngIf="checkCompTrustCatCount()>0">
 
 							<div class="pointer" (click)="showTrustSection=!showTrustSection">
-								<h5>Rating / Trust Filters <span *ngIf="!showTrustSection"><i class="fa fa-angle-double-down"></i></span><span *ngIf="showTrustSection"><i class="fa fa-angle-double-up"></i></span></h5>
+								<h5><span>Rating / Trust Filters</span> <span *ngIf="!showTrustSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showTrustSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
 							</div>
 
 							<div *ngIf="showTrustSection">
@@ -532,7 +532,7 @@
 							<!--<a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: result.catalogueId, id: result.manufactuerItemId}">-->
 								<div class="card-body">
 									<div *ngIf="!result.isFromLocalInstance && result.nimbleInstanceName && result.sourceFrontendServiceUrl && result.nimbleInstanceName != '' && result.sourceFrontendServiceUrl != ''" [title]="result.nimbleInstanceName" class="badge badge-pill badge-secondary p-2" style="position:absolute;right:-0.7rem;top:-0.7rem">
-										<i class="fa fa-database"></i> {{result.nimbleInstanceName}}
+										<i class="fa fa-database pr-1"></i> <span>{{result.nimbleInstanceName}}</span>
 									</div>
 									<div class="row">
 										<div class="align-center" [ngClass]="{'col-2':display=='list','col-12 pb-1':display=='panel'}">
@@ -604,7 +604,7 @@
 							<!--<a class="text-std" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: result.id}">-->
 								<div class="card-body">
 									<div *ngIf="!result.isFromLocalInstance && result.nimbleInstanceName && result.sourceFrontendServiceUrl && result.nimbleInstanceName != '' && result.sourceFrontendServiceUrl != ''" [title]="result.nimbleInstanceName" class="badge badge-pill badge-secondary p-2" style="position:absolute;right:-0.7rem;top:-0.7rem;">
-										<i class="fa fa-database"></i> {{result.nimbleInstanceName}}
+										<i class="fa fa-database pr-1"></i> <span>{{result.nimbleInstanceName}}</span>
 									</div>
 									<div class="row">
 										<div class="align-center" [ngClass]="{'col-2':display=='list','col-12 pb-1':display=='panel'}">
