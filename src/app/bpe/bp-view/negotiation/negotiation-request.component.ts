@@ -93,6 +93,8 @@ export class NegotiationRequestComponent implements OnInit {
     showPurchaseOrder:boolean = false;
     showTermsAndConditions:boolean = false;
     selectedTCTab: 'CUSTOM_TERMS' | 'CLAUSES' = 'CUSTOM_TERMS';
+    clausesDiffer: boolean = false;
+    custTermsDiffer: boolean = false;
     resetUpdatesChecked: boolean = false;
     callStatus: CallStatus = new CallStatus();
 
@@ -112,6 +114,11 @@ export class NegotiationRequestComponent implements OnInit {
     private customTermModal: CustomTermModalComponent;
 
     config = myGlobals.config;
+
+    onClauseUpdate(event): void {
+        console.log("clause update event: " + event);
+        this.clausesDiffer = event;
+    }
 
     constructor(private bpDataService: BPDataService,
                 private bpeService:BPEService,
@@ -479,6 +486,10 @@ export class NegotiationRequestComponent implements OnInit {
 
     onDeleteTradingTerm(termName: string): void {
         this.wrapper.deleteRfqTradingTerm(termName);
+        let termListsEqual: boolean = this.checkTradingTermListEquivalance();
+        if(termListsEqual) {
+            this.custTermsDiffer = false;
+        }
     }
 
     /*
@@ -493,7 +504,8 @@ export class NegotiationRequestComponent implements OnInit {
         let paymentTermDiffers: boolean;
         let paymentMeansDiffers: boolean;
         let frameContractDurationDiffers: boolean = false; // this is valid only in the second and subsequent steps of a negotiation process
-        let termsAndConditionsDiffer: boolean;
+        let customTermsDiffer: boolean;
+        let clausesDiffer: boolean;
 
         if(this.counterOfferTermsSource == 'last_offer' || this.counterOfferTermsSource == 'frame_contract') {
             let quotationWrapper = this.wrapper.frameContractQuotationWrapper;
@@ -509,7 +521,8 @@ export class NegotiationRequestComponent implements OnInit {
             paymentMeansDiffers = this.wrapper.rfqPaymentMeans != quotationWrapper.paymentMeans;
             frameContractDurationDiffers = this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.FRAME_CONTRACT_DURATION] &&
                 durationToString(this.frameContractDuration) != quotationWrapper.rfqFrameContractDurationString;
-            termsAndConditionsDiffer = UBLModelUtils.areTermsAndConditionListsDifferent(quotationWrapper.quotation.termOrCondition, this.rfq.termOrCondition);
+            customTermsDiffer = UBLModelUtils.areTradingTermListsEqual(this.wrapper.rfqTradingTerms, quotationWrapper.tradingTerms);
+            clausesDiffer = UBLModelUtils.areTermsAndConditionListsDifferent(quotationWrapper.quotation.termOrCondition, this.rfq.termOrCondition);
 
         } else {
             priceDiffers = this.wrapper.rfqPricePerItemString != this.wrapper.lineDiscountPriceWrapper.discountedPricePerItemString;
@@ -522,7 +535,8 @@ export class NegotiationRequestComponent implements OnInit {
             // although the product default terms are selected, the following two conditions are calculated using the rfq itself
             frameContractDurationDiffers = this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.FRAME_CONTRACT_DURATION] &&
                 !UBLModelUtils.areQuantitiesEqual(this.frameContractDuration, UBLModelUtils.getFrameContractDurationFromRfq(this.wrapper.initialImmutableRfq));
-            termsAndConditionsDiffer = UBLModelUtils.areTermsAndConditionListsDifferent(this.wrapper.initialImmutableRfq.termOrCondition, this.rfq.termOrCondition);
+            customTermsDiffer = this.wrapper.rfqTradingTerms.length > 0 ? true : false;
+            clausesDiffer = UBLModelUtils.areTermsAndConditionListsDifferent(this.wrapper.initialImmutableRfq.termOrCondition, this.rfq.termOrCondition);
         }
 
         return priceDiffers ||
@@ -533,7 +547,8 @@ export class NegotiationRequestComponent implements OnInit {
             paymentMeansDiffers ||
             frameContractDurationDiffers ||
             this.rfq.dataMonitoringRequested ||
-            termsAndConditionsDiffer;
+            customTermsDiffer ||
+            clausesDiffer;
     }
 
     isThereDirtyTerm(): boolean {
@@ -799,16 +814,6 @@ export class NegotiationRequestComponent implements OnInit {
         return !range || this.isPeriodValid(this.wrapper.rfqWarranty.value, range);
     }
 
-    // isFrameContractTermsChanged(): boolean {
-    //     return !UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqDeliveryPeriod, this.wrapper.frameContractQuotationWrapper.deliveryPeriod) ||
-    //         !UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqWarranty, this.wrapper.frameContractQuotationWrapper.warranty) ||
-    //         this.wrapper.rfqPaymentTerms.paymentTerm != this.wrapper.frameContractQuotationWrapper.paymentTermsWrapper.paymentTerm ||
-    //         this.wrapper.rfqIncoterms != this.wrapper.frameContractQuotationWrapper.incoterms ||
-    //         this.wrapper.rfqPaymentMeans != this.wrapper.frameContractQuotationWrapper.paymentMeans ||
-    //         !UBLModelUtils.areAmountsEqual(this.wrapper.rfqDiscountPriceWrapper.itemPrice.price.priceAmount, this.wrapper.frameContractQuotationWrapper.priceWrapper.price.priceAmount) ||
-    //         !UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqDiscountPriceWrapper.itemPrice.price.baseQuantity, this.wrapper.frameContractQuotationWrapper.priceWrapper.price.baseQuantity);
-    // }
-
     isManufacturersTermsSelectBoxVisible(): boolean {
         return this.manufacturersTermsExistence.frame_contract == true || this.manufacturersTermsExistence.last_offer == true;
     }
@@ -834,6 +839,14 @@ export class NegotiationRequestComponent implements OnInit {
             }
         }
         return termCount;
+    }
+
+    areTermsEqual(termId: string): boolean {
+        let termsEqual: boolean = this.wrapper.checkTermEquivalance(this.manufacturersTermsSource, termId);
+        if(!termsEqual) {
+            this.custTermsDiffer = true;
+        }
+        return termsEqual;
     }
 
     /**
@@ -883,5 +896,15 @@ export class NegotiationRequestComponent implements OnInit {
       this.showTermsAndConditions = false;
       this.showPurchaseOrder = false;
       return ret;
+    }
+
+    private checkTradingTermListEquivalance(): boolean {
+        let manufacturersTermList;
+        if(this.manufacturersTermsSource == 'frame_contract') {
+            manufacturersTermList = this.wrapper.frameContractQuotationWrapper.tradingTerms;
+        } else if(this.manufacturersTermsSource == 'last_offer') {
+            manufacturersTermList = this.wrapper.lastOfferQuotationWrapper.tradingTerms;
+        }
+        return UBLModelUtils.areTradingTermListsEqual(this.wrapper.rfqTradingTerms, manufacturersTermList);
     }
 }

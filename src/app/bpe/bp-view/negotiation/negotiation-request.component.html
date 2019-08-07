@@ -39,7 +39,8 @@
 <div class="row mb-3">
     <div class="{{showCounterOfferTerms ? 'col-12' : 'col-7'}}">
         <!-- Delivery Period -->
-        <div class="row content-row">
+        <div class="row content-row"
+             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'deliveryPeriod')}">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Delivery Period:</strong>
             </div>
@@ -77,7 +78,8 @@
         </div>
 
         <!-- Warranty -->
-        <div class="row content-row">
+        <div class="row content-row"
+             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'warranty')}">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Warranty:</strong>
             </div>
@@ -112,7 +114,8 @@
         </div>
 
         <!-- Incoterms -->
-        <div class="row content-row">
+        <div class="row content-row"
+             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'incoTerms')}">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Incoterms:</strong>
             </div>
@@ -141,7 +144,8 @@
         </div>
 
         <!-- Payment Terms -->
-        <div class="row content-row">
+        <div class="row content-row"
+             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'paymentTerms')}">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Payment Terms:</strong>
             </div>
@@ -169,7 +173,8 @@
         </div>
 
         <!-- Payment Means -->
-        <div class="row content-row">
+        <div class="row content-row"
+             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'paymentMeans')}">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Payment Means:</strong>
             </div>
@@ -197,7 +202,8 @@
         </div>
 
         <!-- Price -->
-        <div class="row content-row">
+        <div class="row content-row"
+             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'price')}">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Price:</strong>
             </div>
@@ -271,7 +277,7 @@
 
 <div class="row mb-2">
   <div class="col-12">
-    <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showTermsAndConditions}" (click)="showTermsAndConditions=showTab(showTermsAndConditions)">Terms and Conditions</div>
+    <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'btn-outline-primary':!(clausesDiffer || custTermsDiffer),'btn-danger':(clausesDiffer || custTermsDiffer),'active':showTermsAndConditions}" (click)="showTermsAndConditions=showTab(showTermsAndConditions)">Terms and Conditions</div>
     <div *ngIf="config.dataChannelsEnabled" class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showDataMonitoring}" (click)="showDataMonitoring=showTab(showDataMonitoring)">Data Monitoring</div>
     <ng-container *ngIf="isFrameContractVisible()">
       <div class="btn btn-outline-primary align-self-start" [ngClass]="{'active':showFrameContractDetails}" (click)="showFrameContractDetails=showTab(showFrameContractDetails)">Frame Contract</div>
@@ -367,7 +373,8 @@
 
         <ng-container *ngIf="selectedTCTab == 'CUSTOM_TERMS'">
             <ng-container *ngFor="let tradingTerm of wrapper.rfq.tradingTerms">
-                <div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row content-row">
+                <div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row content-row mb-1"
+                     [ngClass]="{'bg-danger text-white' : !areTermsEqual(tradingTerm.id)}">
                     <div class="col-2">
                         <strong class="font-weight-500">{{tradingTerm.id}}:</strong>
                         <span *ngIf="tradingTerm.description?.length > 0" [title]="tradingTerm.description[0].value">&#9432;</span>
@@ -396,9 +403,7 @@
                 </div>
             </ng-container>
             <div *ngIf="!isReadOnly()">
-                <div>
-                    <div class="btn btn-outline-primary" (click)="openCustomTermModal()">Add Custom Term</div>
-                </div>
+                <div class="btn btn-outline-primary mt-1" (click)="openCustomTermModal()">Add Custom Term</div>
             </div>
         </ng-container>
 
@@ -430,6 +435,7 @@
                                           [selectedTradingTerm]="wrapper.rfqPaymentTerms.paymentTerm"
                                           (onIncotermChanged)="wrapper.rfqIncoterms = $event; onTermsChange(fixedTerms.INCOTERMS);"
                                           (onPaymentMeansChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event; onTermsChange(fixedTerms.PAYMENT_MEANS);"
+                                          (onClauseUpdated)="onClauseUpdate($event);"
                                           [originalTermAndConditionClauses]=
                                                   "manufacturersTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.termOrCondition :
                                                   (manufacturersTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.termOrCondition :

@@ -850,4 +850,44 @@ export class UBLModelUtils {
         }
         return null;
     }
+
+    public static areTradingTermListsEqual(list1: TradingTerm[], list2: TradingTerm[]): boolean {
+        if((!list1 && !list2) ||
+            (!list1 && list2.length == 0) ||
+            (list1.length == 0 && !list2)) {
+            return true;
+        }
+        if(list1.length != list2.length) {
+            return false;
+        }
+        for(let term1 of list1) {
+            let isEqual: boolean = false;
+            for(let term2 of list2) {
+                if (term1.id == term2.id) {
+                    isEqual = UBLModelUtils.areTradingTermsEqual(term1, term2);
+                    break;
+                }
+            }
+            if(!isEqual) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static areTradingTermsEqual(term1: TradingTerm, term2: TradingTerm): boolean {
+        if(!term1 && !term2) {
+            return true;
+        }
+        if(!term1 || !term2) {
+            return false;
+        }
+        if(term1.value.valueQualifier != term2.value.valueQualifier) {
+            return false;
+        }
+        let value1 = UBLModelUtils.getFirstFromMultiTypeValueByQualifier(term1.value);
+        let value2 = UBLModelUtils.getFirstFromMultiTypeValueByQualifier(term2.value);
+
+        return value1 == value2;
+    }
 }

@@ -438,7 +438,7 @@ export function durationToString(duration: Quantity): string {
     if(duration.value === 0) {
         return "None";
     }
-    return "Not defined";
+    return "None";
 }
 
 export function periodToString(period: Period): string {

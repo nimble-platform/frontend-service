@@ -245,6 +245,10 @@ export class NegotiationModelWrapper {
         }
     }
 
+    public get rfqTradingTerms(): TradingTerm[] {
+        return this.rfq.tradingTerms.filter(tradingTerm => tradingTerm.id != "FRAME_CONTRACT_DURATION").map(tradingTerm => tradingTerm);
+    }
+
     public getRfqTradingTerm(termName: string): TradingTerm {
         return this.rfq.tradingTerms.find(tradingTerm => tradingTerm.id == termName);
     }
@@ -282,5 +286,83 @@ export class NegotiationModelWrapper {
 
     public get rfqDeliveryAddress(): Address {
         return this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
+    }
+
+    public checkEqual(termsSource: 'product_defaults' | 'frame_contract' | 'last_offer', part): boolean {
+        switch(part) {
+            case "deliveryPeriod":
+                if (termsSource == "product_defaults")
+                    return (this.rfqDeliveryPeriodString == this.lineDeliveryPeriodString);
+                else if (termsSource == "frame_contract")
+                    return (this.rfqDeliveryPeriodString == this.frameContractQuotationWrapper.deliveryPeriodString);
+                else if (termsSource == "last_offer")
+                    return (this.rfqDeliveryPeriodString == this.lastOfferQuotationWrapper.deliveryPeriodString);
+                break;
+            case "warranty":
+                if (termsSource == "product_defaults")
+                    return (this.rfqWarrantyString == this.lineWarrantyString);
+                else if (termsSource == "frame_contract")
+                    return (this.rfqWarrantyString == this.frameContractQuotationWrapper.warrantyString);
+                else if (termsSource == "last_offer")
+                    return (this.rfqWarrantyString == this.lastOfferQuotationWrapper.warrantyString);
+                break;
+            case "incoTerms":
+                if (termsSource == "product_defaults")
+                    return (this.rfqIncoterms == this.lineIncoterms);
+                else if (termsSource == "frame_contract")
+                    return (this.rfqIncoterms == this.frameContractQuotationWrapper.incotermsString);
+                else if (termsSource == "last_offer")
+                    return (this.rfqIncoterms == this.lastOfferQuotationWrapper.incotermsString);
+                break;
+            case "paymentTerms":
+                if (termsSource == "product_defaults")
+                    return (this.rfqPaymentTerms.paymentTerm == this.linePaymentTerms);
+                else if (termsSource == "frame_contract")
+                    return (this.rfqPaymentTerms.paymentTerm == this.frameContractQuotationWrapper.paymentTermsWrapper.paymentTerm);
+                else if (termsSource == "last_offer")
+                    return (this.rfqPaymentTerms.paymentTerm == this.lastOfferQuotationWrapper.paymentTermsWrapper.paymentTerm);
+                break;
+            case "paymentMeans":
+                if (termsSource == "product_defaults")
+                    return (this.rfqPaymentMeans == this.linePaymentMeans);
+                else if (termsSource == "frame_contract")
+                    return (this.rfqPaymentMeans == this.frameContractQuotationWrapper.paymentMeans);
+                else if (termsSource == "last_offer")
+                    return (this.rfqPaymentMeans == this.lastOfferQuotationWrapper.paymentMeans);
+                break;
+            case "quantity":
+                if (termsSource == "product_defaults")
+                    return true;
+                else if (termsSource == "frame_contract")
+                    return (this.rfq.requestForQuotationLine[0].lineItem.quantity.value == this.frameContractQuotationWrapper.orderedQuantity.value);
+                else if (termsSource == "last_offer")
+                    return (this.rfq.requestForQuotationLine[0].lineItem.quantity.value == this.lastOfferQuotationWrapper.orderedQuantity.value);
+                break;
+            case "price":
+                if (termsSource == "product_defaults")
+                    return (this.rfqPricePerItemString == this.lineDiscountPriceWrapper.discountedPricePerItemString);
+                else if (termsSource == "frame_contract")
+                    return (this.rfqPricePerItemString == this.frameContractQuotationWrapper.priceWrapper.pricePerItemString);
+                else if (termsSource == "last_offer")
+                    return (this.rfqPricePerItemString == this.lastOfferQuotationWrapper.priceWrapper.pricePerItemString);
+                break;
+            default:
+                return true;
+        }
+    }
+
+    checkTermEquivalance(termsSource: 'product_defaults' | 'frame_contract' | 'last_offer', termId: string): boolean {
+        if (termsSource == "product_defaults") {
+            return false;
+        }
+        let rfqTerm = this.getRfqTradingTerm(termId);
+        let otherTerm;
+
+        if (termsSource == "frame_contract") {
+            otherTerm = this.frameContractQuotationWrapper.getTradingTerm(termId);
+        } else if(termsSource == "last_offer") {
+            otherTerm = this.lastOfferQuotationWrapper.getTradingTerm(termId);
+        }
+        return UBLModelUtils.areTradingTermsEqual(rfqTerm, otherTerm);
     }
 }
