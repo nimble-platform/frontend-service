@@ -47,7 +47,6 @@ import {ItemInformationResponse} from "./publish/item-information-response";
 import {PaymentTerms} from "./publish/payment-terms";
 import {Address} from "./publish/address";
 import {MonetaryTotal} from "./publish/monetary-total";
-import {NegotiationOptions} from "./publish/negotiation-options";
 import {CURRENCIES, DEFAULT_LANGUAGE} from "./constants";
 import {TradingTerm} from "./publish/trading-term";
 import {CompanyNegotiationSettings} from "../../user-mgmt/model/company-negotiation-settings";
@@ -251,7 +250,7 @@ export class UBLModelUtils {
         return ppapResponse;
     }
 
-    public static createRequestForQuotation(negotiationOptions: NegotiationOptions, settings: CompanyNegotiationSettings): RequestForQuotation {
+    public static createRequestForQuotation(settings: CompanyNegotiationSettings): RequestForQuotation {
         if(settings == null){
             settings = new CompanyNegotiationSettings();
         }
@@ -261,7 +260,7 @@ export class UBLModelUtils {
         const lineItem: LineItem = this.createLineItem(quantity, price, item);
         const requestForQuotationLine: RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
-        [requestForQuotationLine], negotiationOptions, this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), [], []);
+        [requestForQuotationLine], this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), [], []);
 
         // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
         let handlingUnitDimension: Dimension = new Dimension();
@@ -280,7 +279,7 @@ export class UBLModelUtils {
         const lineItem: LineItem = this.createLineItem(quantity, price, item);
         const requestForQuotationLine: RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
-            [requestForQuotationLine], new NegotiationOptions(), null, null, null, null);
+            [requestForQuotationLine], null, null, null, null);
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = order.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
         rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
@@ -312,7 +311,7 @@ export class UBLModelUtils {
         const requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         const settings = new CompanyNegotiationSettings();
         const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
-            [requestForQuotationLine], new NegotiationOptions(), this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), [], []);
+            [requestForQuotationLine], this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), [], []);
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name;
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure = transportExecutionPlanRequest.consignment[0].grossVolumeMeasure;
@@ -370,7 +369,7 @@ export class UBLModelUtils {
     }
 
     public static createRequestForQuotationWithIir(iir: ItemInformationResponse, fromAddress: Address, toAddress: Address, orderMetadata: any): RequestForQuotation {
-        const rfq: RequestForQuotation = this.createRequestForQuotation(new NegotiationOptions(), null);
+        const rfq: RequestForQuotation = this.createRequestForQuotation(null);
         rfq.requestForQuotationLine[0].lineItem.item = iir.item[0];
         if(iir.item[0].transportationServiceDetails != null) {
             rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.originAddress = fromAddress;
@@ -684,38 +683,46 @@ export class UBLModelUtils {
         return false;
     }
 
-    public static isEmptyQuantity(quantity:Quantity | Amount): boolean {
-        if(quantity.value == null) {
+    public static isEmptyQuantity(quantity: Quantity): boolean {
+        if(quantity == null) {
+            return true;
+        }
+        if(!quantity.value && !quantity.unitCode) {
+            return true;
+        }
+        return false;
+    }
+
+    public static isEmptyOrIncompleteQuantity(quantity: Quantity): boolean {
+        if(UBLModelUtils.isEmptyQuantity(quantity)) {
+            return true;
+        }
+        if(!quantity.value || !quantity.unitCode) {
+            return true;
+        }
+        return false;
+    }
+
+    public static isEmptyOrIncompleteAmount(amount: Amount): boolean {
+        if(amount == null) {
+            return true;
+        }
+        if(!amount.value || !amount.currencyID) {
             return true;
         }
         return false;
     }
 
     public static areQuantitiesEqual(quantity1: Quantity, quantity2: Quantity): boolean {
-        if(quantity1 == null && quantity2 == null) {
+        if(UBLModelUtils.isEmptyQuantity(quantity1) && UBLModelUtils.isEmptyQuantity(quantity2)) {
             return true;
         }
-        if(quantity1 == null || quantity2 == null) {
+        if(UBLModelUtils.isEmptyQuantity(quantity1) || UBLModelUtils.isEmptyQuantity(quantity2)) {
             return false;
         }
         if(quantity1.value == quantity2.value && quantity1.unitCode == quantity2.unitCode) {
             return true;
         }
-
-        return false;
-    }
-
-    public static areAmountsEqual(amount1: Amount, amount2: Amount): boolean {
-        if(amount1 == null && amount2 == null) {
-            return true;
-        }
-        if(amount1 == null || amount2 == null) {
-            return false;
-        }
-        if(amount1.value == amount2.value && amount1.currencyID == amount2.currencyID) {
-            return true;
-        }
-
         return false;
     }
 
@@ -823,6 +830,23 @@ export class UBLModelUtils {
         let tradingTerm: TradingTerm = rfq.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
         if(tradingTerm != null) {
             return tradingTerm.value.valueQuantity[0];
+        }
+        return null;
+    }
+
+    public static getFirstFromMultiTypeValueByQualifier(multiTypeValue: MultiTypeValue): any {
+        if(multiTypeValue.valueQualifier == 'TEXT' || multiTypeValue.valueQualifier == 'STRING') {
+            if(multiTypeValue.value && multiTypeValue.value.length > 0) {
+                return multiTypeValue.value[0];
+            }
+        } else if(multiTypeValue.valueQualifier == 'NUMBER') {
+            if(multiTypeValue.valueDecimal && multiTypeValue.valueDecimal.length > 0) {
+                return multiTypeValue.valueDecimal[0];
+            }
+        } else if(multiTypeValue.valueQualifier == 'QUANTITY') {
+            if(multiTypeValue.valueQuantity && multiTypeValue.valueQuantity.length > 0) {
+                return multiTypeValue.valueQuantity[0];
+            }
         }
         return null;
     }

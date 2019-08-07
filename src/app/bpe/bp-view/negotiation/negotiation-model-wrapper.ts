@@ -10,6 +10,8 @@ import {TradingTerm} from "../../../catalogue/model/publish/trading-term";
 import {MultiTypeValue} from "../../../catalogue/model/publish/multi-type-value";
 import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
 import {QuotationWrapper} from "./quotation-wrapper";
+import {Text} from "../../../catalogue/model/publish/text";
+import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 
 /**
  * Convenient getters (and some setters) for catalogue line, request for quotations and quotations.
@@ -169,7 +171,7 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqVatTotalString(): string {
-        return `${this.rfqVatTotal} ${this.rfqDiscountPriceWrapper.itemPrice.currency}`
+        return `${roundToTwoDecimals(this.rfqVatTotal)} ${this.rfqDiscountPriceWrapper.itemPrice.currency}`
     }
 
     public get rfqGrossTotal(): number {
@@ -240,6 +242,41 @@ export class NegotiationModelWrapper {
             this.rfq.tradingTerms.push(tradingTerm);
         } else {
             tradingTerm.value.valueQuantity[0] = duration;
+        }
+    }
+
+    public getRfqTradingTerm(termName: string): TradingTerm {
+        return this.rfq.tradingTerms.find(tradingTerm => tradingTerm.id == termName);
+    }
+
+    public addRfqTradingTerm(termName: string, termDescription: string, value, type: string): void {
+        let tradingTerm: TradingTerm = this.rfq.tradingTerms.find(tradingTerm => tradingTerm.id == termName);
+        if(tradingTerm != null) {
+            return;
+        } else {
+            let termValue: MultiTypeValue = new MultiTypeValue();
+            termValue.valueQualifier = type;
+
+            if(type == 'TEXT') {
+                let text: Text = new Text(value, null);
+                text.value = value;
+                termValue.value.push(text);
+            } else if(type == 'NUMBER') {
+                termValue.valueDecimal.push(value);
+            } else if(type == 'QUANTITY') {
+                termValue.valueQuantity.push(value);
+            }
+
+            let description: Text[] = [new Text(termDescription, null)];
+            tradingTerm = new TradingTerm(termName, description, null, termValue);
+            this.rfq.tradingTerms.push(tradingTerm);
+        }
+    }
+
+    public deleteRfqTradingTerm(termName: string): void {
+        let indexToRemove = this.rfq.tradingTerms.findIndex(term => term.id === termName);
+        if(indexToRemove != -1) {
+            this.rfq.tradingTerms.splice(indexToRemove, 1);
         }
     }
 

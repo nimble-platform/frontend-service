@@ -32,6 +32,8 @@ import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event
 import * as myGlobals from '../../../globals';
 import {Contract} from '../../../catalogue/model/publish/contract';
 import {Clause} from '../../../catalogue/model/publish/clause';
+import {BinaryObject} from "../../../catalogue/model/publish/binary-object";
+import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -46,6 +48,7 @@ export class OrderComponent implements OnInit {
     order: Order;
     address: Address
     orderResponse: OrderResponseSimple;
+    lastQuotation: Quotation;
     paymentTermsWrapper: PaymentTermsWrapper;
     priceWrapper: PriceWrapper;
     userRole: BpUserRole;
@@ -59,8 +62,10 @@ export class OrderComponent implements OnInit {
 
     epcCodes: EpcCodes;
     savedEpcCodes: EpcCodes;
+    productionTemplateFile: BinaryObject[] = [];
     initEpcCodesCallStatus: CallStatus = new CallStatus();
     saveEpcCodesCallStatus: CallStatus = new CallStatus();
+    updateOrderResponseCallStatus: CallStatus = new CallStatus();
 
     initCallStatus: CallStatus = new CallStatus();
     submitCallStatus: CallStatus = new CallStatus();
@@ -71,8 +76,9 @@ export class OrderComponent implements OnInit {
 
     getPartyId = UBLModelUtils.getPartyId;
 
-    showPurchaseOrder:boolean = false;
-    showEPCCodePanel:boolean = false;
+    selectedPanel: string;
+    selectedTCTab: 'CUSTOM_TERMS' | 'CLAUSES' = 'CUSTOM_TERMS';
+    selectedTrackAndTraceTab: 'EPC_CODES' | 'PRODUCTION_PROCESS_TEMPLATE' = 'EPC_CODES';
 
     // map representing the workflow of seller's company
     companyWorkflowMap = null;
@@ -111,12 +117,12 @@ export class OrderComponent implements OnInit {
 
         this.companyWorkflowMap = this.bpDataService.getCompanyWorkflowMap();
 
-        // null check is for checking whether a new order is initialized
-        // preceding process id check is for checking whether there is any preceding process before the order
-
         const sellerId: string = UBLModelUtils.getPartyId(this.order.orderLine[0].lineItem.item.manufacturerParty);
         const buyerId: string = this.cookieService.get("company_id");
         this.initCallStatus.submit();
+
+        // null check is for checking whether a new order is initialized
+        // preceding process id check is for checking whether there is any preceding process before the order
         if(this.getNonTermAndConditionContract() == null && this.bpDataService.precedingProcessId != null) {
             Promise.all([
                 this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId),
@@ -129,15 +135,12 @@ export class OrderComponent implements OnInit {
                 this.sellerParty = sellerParty;
                 this.dataMonitoringDemanded = dataMonitoringDemanded;
                 this.order.contract.push(contract);
-                return this.isDataMonitoringDemanded();
-            })
-            .then(dataMonitoringDemanded => {
-                this.dataMonitoringDemanded = dataMonitoringDemanded;
                 this.initCallStatus.callback("Initialized", true);
-            })
-            .catch(error => {
+
+            }).catch(error => {
                 this.initCallStatus.error("Error while initializing", error);
             });
+
         } else {
             Promise.all([
                 this.userService.getParty(buyerId),
@@ -154,7 +157,13 @@ export class OrderComponent implements OnInit {
             });
         }
 
-        this.initializeEPCCodes();
+        if(this.orderResponse) {
+            this.initializeEPCCodes();
+            let productionTemplateFile: DocumentReference = this.getProductionTemplateFromOrderResponse();
+            if (productionTemplateFile != null) {
+                this.productionTemplateFile = [productionTemplateFile.attachment.embeddedDocumentBinaryObject]
+            }
+        }
     }
 
     // retrieve the order contract which is not the Term and Condition contract
@@ -327,6 +336,9 @@ export class OrderComponent implements OnInit {
             }
         }
 
+        // remove the empty codes also from the displayed list
+        this.epcCodes.codes = this.epcCodes.codes.filter(code => code);
+
         const codes = new EpcCodes(this.order.id, selectedEpcCodes);
 
         this.epcService.registerEpcCodes(codes)
@@ -338,29 +350,41 @@ export class OrderComponent implements OnInit {
             });
     }
 
+    onTTTabSelect(event): void {
+        event.preventDefault();
+        this.selectedTrackAndTraceTab = event.target.id;
+    }
+
+    onTTFileSelected(binaryObject: BinaryObject): void {
+        let documentReference: DocumentReference = UBLModelUtils.createDocumentReferenceWithBinaryObject(binaryObject);
+        documentReference.documentType = 'PRODUCTIONTEMPLATE';
+        this.orderResponse.additionalDocumentReference = [];
+        this.orderResponse.additionalDocumentReference.push(documentReference);
+    }
+
+    onTTFileRemoved(): void {
+        this.orderResponse.additionalDocumentReference = [];
+    }
+
+    onUpdateOrderResponse(): void {
+        this.updateOrderResponseCallStatus.submit();
+
+        this.documentService.updateDocument(this.orderResponse.id, 'ORDERRESPONSESIMPLE', JSON.stringify(this.orderResponse))
+            .then(() => {
+                this.updateOrderResponseCallStatus.callback("Production template file added to the order response", true);
+            })
+            .catch(error => {
+                this.updateOrderResponseCallStatus.error("Failed to add production template to the order response", error);
+            });
+    }
+
     onAddEpcCode() {
         this.epcCodes.codes.push("");
     }
 
-    areEpcCodesDirty(): boolean {
-        if(!this.epcCodes || !this.savedEpcCodes) {
-            return false;
-        }
-
-        const codes = this.epcCodes.codes;
-        const saved = this.savedEpcCodes.codes;
-
-        if(codes.length !== saved.length) {
-            return true;
-        }
-
-        for(let i = 0; i < saved.length; i++) {
-            if(codes[i] !== saved[i]) {
-                return true;
-            }
-        }
-
-        return false;
+    onTCTabSelect(event): void {
+        event.preventDefault();
+        this.selectedTCTab = event.target.id;
     }
 
     /*
@@ -398,6 +422,10 @@ export class OrderComponent implements OnInit {
         return this.isOrderCompleted();
     }
 
+    isEpcTabShown(): boolean {
+        return this.isReady() && this.isOrderCompleted() && this.config.showTrack;
+    }
+
     getQuantityText(): string {
         return quantityToString(this.order.orderLine[0].lineItem.quantity);
     }
@@ -427,13 +455,44 @@ export class OrderComponent implements OnInit {
         return this.order.orderLine[0].lineItem;
     }
 
-    trackAndTraceDetailsExists(): boolean {
-        const tnt = this.order.orderLine[0].lineItem.item.trackAndTraceDetails
-        if (tnt && (tnt.masterURL || tnt.eventURL || tnt.productionProcessTemplate)) {
+    areEpcCodesDirty(): boolean {
+        if(!this.epcCodes || !this.savedEpcCodes) {
+            return false;
+        }
+
+        const codes = this.epcCodes.codes;
+        const saved = this.savedEpcCodes.codes;
+
+        if(codes.length !== saved.length) {
             return true;
         }
 
+        for(let i = 0; i < saved.length; i++) {
+            if(codes[i] !== saved[i]) {
+                return true;
+            }
+        }
+
         return false;
+    }
+
+    isThereAValidEPCCode(): boolean {
+        if(this.epcCodes) {
+            for(let code of this.epcCodes.codes) {
+                if(code) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    getProductionTemplateFromOrderResponse(): DocumentReference {
+        let ttDocRef = this.orderResponse.additionalDocumentReference.filter(docRef => docRef.documentType === 'PRODUCTIONTEMPLATE');
+        if(ttDocRef.length > 0) {
+            return ttDocRef[0];
+        }
+        return null;
     }
 
     /*
@@ -443,22 +502,21 @@ export class OrderComponent implements OnInit {
     private initializeEPCCodes() {
         if(this.processMetadata
             && this.processMetadata.processStatus == 'Completed'
-            && this.bpDataService.orderResponse
             && this.bpDataService.orderResponse.acceptedIndicator
-            && this.trackAndTraceDetailsExists()) {
+            && this.config.showTrack) {
             this.initEpcCodesCallStatus.submit();
             this.epcService.getEpcCodes(this.order.id).then(res => {
                 this.epcCodes = res;
-                if(this.epcCodes.codes.length == 0){
-                    this.epcCodes.codes.push("");
+                if(this.epcCodes.codes == null){
+                    this.epcCodes.codes = [];
                 }
                 this.epcCodes.codes.sort();
                 this.savedEpcCodes = copy(this.epcCodes);
                 this.initEpcCodesCallStatus.callback("EPC Codes initialized", true);
             }).catch(error => {
                 if(error.status && error.status == 404) {
-                    this.epcCodes = new EpcCodes(this.order.id,[""]);
-                    this.savedEpcCodes = new EpcCodes(this.order.id,[""]);
+                    this.epcCodes = new EpcCodes(this.order.id,[]);
+                    this.savedEpcCodes = new EpcCodes(this.order.id,[]);
                     this.initEpcCodesCallStatus.callback("EPC Codes initialized", true);
                 } else {
                     this.initEpcCodesCallStatus.error("Error while initializing EPC Codes", error);
@@ -473,6 +531,7 @@ export class OrderComponent implements OnInit {
         let contract = this.getNonTermAndConditionContract();
 
         if (contract && contract.clause.length > 0) {
+            // contract contains the clauses such the latest ones would be in the initial indices
             for (let clause of contract.clause) {
                 let clauseCopy = JSON.parse(JSON.stringify(clause));
                 if (clauseCopy.clauseDocumentRef) {
@@ -488,8 +547,8 @@ export class OrderComponent implements OnInit {
             this.fetchDataMonitoringStatus.submit();
             return this.documentService.getDocumentJsonContent(docClause.clauseDocumentRef.id).then(result => {
                 this.fetchDataMonitoringStatus.callback("Successfully fetched data monitoring service", true);
-                const q: Quotation = result as Quotation;
-                return q.dataMonitoringPromised;
+                this.lastQuotation = result as Quotation;
+                return this.lastQuotation.dataMonitoringPromised;
             })
             .catch(error => {
                 this.fetchDataMonitoringStatus.error("Error while fetching data monitoring service", error);

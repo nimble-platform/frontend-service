@@ -14,6 +14,7 @@ import {CookieService} from "ng2-cookies";
 import {Clause} from "../../../catalogue/model/publish/clause";
 import {frameContractDurationUnitListId} from "../../../common/constants";
 import {RequestForQuotation} from "../../../catalogue/model/publish/request-for-quotation";
+import {Quantity} from "../../../catalogue/model/publish/quantity";
 
 @Component({
     selector: 'negotiation',
@@ -276,8 +277,9 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     setFrameContractNegotiationFlag(): void {
         // first check the current request for quotation contains a frame contract duration. currently it is assumed that if an rfq contains a frame
         // contract duration, the contract is being negotiated in that history
+        let frameContractDuration: Quantity = UBLModelUtils.getFrameContractDurationFromRfq(this.bpDataService.requestForQuotation);
         if(this.bpDataService.requestForQuotation) {
-            if(UBLModelUtils.getFrameContractDurationFromRfq(this.bpDataService.requestForQuotation) != null) {
+            if(!UBLModelUtils.isEmptyQuantity(frameContractDuration)) {
                 this.isFrameContractBeingNegotiatedInThisNegotiation = true;
                 return;
             }
@@ -286,7 +288,8 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         // check the negotiation history documents
         for(let i=0; i<this.negotiationDocuments.length; i=i+2) {
             let rfq: RequestForQuotation = this.negotiationDocuments[i];
-            if(UBLModelUtils.getFrameContractDurationFromRfq(this.bpDataService.requestForQuotation) != null) {
+            frameContractDuration = UBLModelUtils.getFrameContractDurationFromRfq(rfq);
+            if(frameContractDuration != null) {
                 this.isFrameContractBeingNegotiatedInThisNegotiation = true;
                 return;
             }

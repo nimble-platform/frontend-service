@@ -53,7 +53,7 @@
                                      [frameContractNegotiation]="isFrameContractBeingNegotiatedInThisNegotiation"
                                      [lastOfferQuotation]="lastOfferQuotation"
                                      [defaultTermsAndConditions]="defaultTermsAndConditions"
-                                     [primaryTermsSource]="getPrimaryTermsSource(lastOfferQuotation)">
+                                     [manufacturersTermsSource]="getPrimaryTermsSource(lastOfferQuotation)">
                 </negotiation-request>
                 <negotiation-response *ngIf="bpDataService.quotation"
                                       [lastOfferQuotation]="lastOfferQuotation"

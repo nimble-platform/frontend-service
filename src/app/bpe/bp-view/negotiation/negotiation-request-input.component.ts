@@ -12,9 +12,9 @@ export class NegotiationRequestInputComponent implements OnInit {
     @Input() label: string;
 
     // see https://blog.angulartraining.com/tutorial-create-your-own-two-way-data-binding-in-angular-46487650ea82 for this trick
-    private cbModelValue: boolean;
-    @Output() cbModelChange = new EventEmitter<boolean>();
-    @Input() cbDisabled: boolean = false;
+    // private cbModelValue: boolean;
+    // @Output() cbModelChange = new EventEmitter<boolean>();
+    // @Input() cbDisabled: boolean = false;
     @Input() disabled: boolean = false;
     @Input() invalid: boolean = false;
     @Input() id: string;
@@ -55,15 +55,15 @@ export class NegotiationRequestInputComponent implements OnInit {
         }
     }
 
-    @Input()
-    get cbModel(): boolean {
-        return this.cbModelValue;
-    }
-
-    set cbModel(cbModel: boolean) {
-        this.cbModelValue = cbModel;
-        this.cbModelChange.emit(cbModel);
-    }
+    // @Input()
+    // get cbModel(): boolean {
+    //     return this.cbModelValue;
+    // }
+    //
+    // set cbModel(cbModel: boolean) {
+    //     this.cbModelValue = cbModel;
+    //     this.cbModelChange.emit(cbModel);
+    // }
 
     @Input()
     get text(): string {

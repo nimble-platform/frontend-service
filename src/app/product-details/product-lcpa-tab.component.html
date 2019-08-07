@@ -1,6 +1,6 @@
 <ng-container *ngIf="lcpaDetails.lcpainput">
     <div class="d-flex flex-wrap align-items-start fixed-info-container">
-        <quantity-input *ngIf="isVisible(lcpaDetails.lcpainput.lifeCycleLength)"
+        <quantity-input *ngIf="isVisible(lcpaDetails.lcpainput.lifeCycleLength, 'QUANTITY')"
                         [disabled]="isDisabled()"
                         class="col-6"
                         label="Average Life Cycle Length"

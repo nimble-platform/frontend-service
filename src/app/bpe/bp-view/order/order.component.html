@@ -120,141 +120,194 @@
     </div>
 
 
-    <hr>
-
+    <div class="row mb-4 mt-4">
+        <div class="btn btn-outline-primary" [ngClass]="{'active':selectedPanel == 'TERMS_AND_CONDITIONS'}" (click)="selectedPanel = 'TERMS_AND_CONDITIONS'">Terms and Conditions</div>
+        <div *ngIf="isEpcTabShown()" class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'TRACK_AND_TRACE'}" (click)="selectedPanel = 'TRACK_AND_TRACE'">Track and Trace</div>
+        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'NOTES_AND_FILES'}" (click)="selectedPanel = 'NOTES_AND_FILES'">Notes and Additional Files</div>
+        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'PURCHASE_ORDER'}" (click)="selectedPanel = 'PURCHASE_ORDER'">Purchase Order</div>
+        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'PREVIOUS_STEPS'}" (click)="selectedPanel = 'PREVIOUS_STEPS'">Previous Steps</div>
+    </div>
 
     <!-- Notes -->
-    <h5>Notes and Additional Files</h5>
-    <div class="row content-row" *ngIf="isReady()">
-        <div class="col-6">
-            <note-file-view [notes]="order.note"
-                       [label]="'Customer\'s Note'"
-                       [documents]="order.additionalDocumentReference"
-                       [firstCol]="'col-4'"
-                       [lastCol]="'col-8'"
-                       [readonly]="isReadOnly() || isSeller()"></note-file-view>
+    <ng-container *ngIf="selectedPanel == 'NOTES_AND_FILES'">
+        <div class="row content-row" *ngIf="isReady()">
+            <div class="col-6">
+                <note-file-view [notes]="order.note"
+                           [label]="'Customer\'s Note'"
+                           [documents]="order.additionalDocumentReference"
+                           [firstCol]="'col-4'"
+                           [lastCol]="'col-8'"
+                           [readonly]="isReadOnly() || isSeller()"></note-file-view>
+            </div>
+            <div class="col-6">
+                <note-file-view *ngIf="orderResponse"
+                           [notes]="orderResponse.note"
+                           [documents]="orderResponse.additionalDocumentReference"
+                           [label]="'Supplier\'s Note'"
+                           [firstCol]="'col-4'"
+                           [lastCol]="'col-8'"
+                           [readonly]="isReadOnly()"></note-file-view>
+            </div>
         </div>
-        <div class="col-6">
-            <note-file-view *ngIf="orderResponse"
-                       [notes]="orderResponse.note"
-                       [documents]="orderResponse.additionalDocumentReference"
-                       [label]="'Supplier\'s Note'"
-                       [firstCol]="'col-4'"
-                       [lastCol]="'col-8'"
-                       [readonly]="isReadOnly()"></note-file-view>
-        </div>
-    </div>
-
-
-    <hr>
-
+    </ng-container>
 
     <!-- Contract Preview -->
-    <div *ngIf="isReady()">
-        <div>
-            <contract [contract]="getOrderContract()"></contract>
-        </div>
-        <div class="row">
-            <div class="col-6">
-                <terms-and-conditions [buyerPartyId]="getPartyId(buyerParty)"
-                                      [selectedIncoterm]="order.orderLine[0].lineItem.deliveryTerms.incoterms"
-                                      [selectedTradingTerm]="order.paymentTerms.tradingTerms"
-                                      [sellerPartyId]="getPartyId(sellerParty)"
-                                      [readOnly]="true"
-                                      [enableComparisonWithOtherTerms]="false"
-                                      [documentType]="'order'"
-                                      [termsAndConditions]="getTermAndConditionClauses()">
-                </terms-and-conditions>
-            </div>
-            <div class="col-6">
-                <h4>
-                    Purchase Order
-                    <button class="btn btn-outline-dark" (click)="showPurchaseOrder = !showPurchaseOrder">
-                        <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="showPurchaseOrder"></i>
-                        <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!showPurchaseOrder"></i>
-                    </button>
-                </h4>
-                <div *ngIf="showPurchaseOrder">
-                    <div class="row">
-                        <div class="col-3"><strong>Product Id:</strong></div>
-                        <div class="col-9">{{order.orderLine[0].lineItem.item.manufacturersItemIdentification.id}}</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-3"><strong>Quantity:</strong></div>
-                        <div class="col-9">{{getQuantityText()}}</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-3"><strong>Net Price:</strong></div>
-                        <div class="col-9">{{priceWrapper.totalPriceString}}</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-3"><strong>VAT:</strong></div>
-                        <div class="col-9">{{priceWrapper.vatTotalString}}</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-3"><strong>Gross Total:</strong></div>
-                        <div class="col-9">{{priceWrapper.grossTotalString}}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <ng-container *ngIf="isReady()">
+        <!--<div>-->
+        <contract *ngIf="selectedPanel == 'PREVIOUS_STEPS'" [contract]="getOrderContract()" [collapsable]="false"></contract>
+        <!--</div>-->
+        <div *ngIf="selectedPanel == 'TERMS_AND_CONDITIONS'">
+            <ul class="nav nav-tabs space-after space-before">
+                <li class="nav-item">
+                    <a href id="CUSTOM_TERMS" class="nav-link"
+                       [ngClass]="{ active: selectedTCTab === 'CUSTOM_TERMS'}"
+                       (click)="onTCTabSelect($event)">
+                        Custom Terms
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href id="CLAUSES" class="nav-link"
+                       [ngClass]="{ active: selectedTCTab === 'CLAUSES'}"
+                       (click)="onTCTabSelect($event)">
+                        Clauses
+                    </a>
+                </li>
+            </ul>
 
-    </div>
+            <!-- Custom trading terms -->
+            <ng-container *ngIf="selectedTCTab == 'CUSTOM_TERMS'">
+                <ng-container *ngFor="let tradingTerm of lastQuotation?.tradingTerms">
+                    <div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row">
+                        <div class="col-2">
+                            <strong class="font-weight-500">{{tradingTerm.id}}:</strong>
+                            <span *ngIf="tradingTerm.description.length > 0" [title]="tradingTerm.description[0].value">&#9432;</span>
+                        </div>
+                        <multi-type-input [multiTypeValue]="tradingTerm.value"
+                                          [presentationMode]="'view'">
+                        </multi-type-input>
+                    </div>
+                </ng-container>
+            </ng-container>
+
+            <!-- Clauses -->
+            <terms-and-conditions *ngIf="selectedTCTab == 'CLAUSES'"
+                                    [buyerPartyId]="getPartyId(buyerParty)"
+                                  [selectedIncoterm]="order.orderLine[0].lineItem.deliveryTerms.incoterms"
+                                  [selectedTradingTerm]="order.paymentTerms.tradingTerms"
+                                  [sellerPartyId]="getPartyId(sellerParty)"
+                                  [readOnly]="true"
+                                  [enableComparisonWithOtherTerms]="false"
+                                  [documentType]="'order'"
+                                  [termsAndConditions]="getTermAndConditionClauses()">
+            </terms-and-conditions>
+        </div>
+        <ng-container *ngIf="selectedPanel == 'PURCHASE_ORDER'">
+            <div class="row">
+                <div class="col-3"><strong>Product Id:</strong></div>
+                <div class="col-9">{{order.orderLine[0].lineItem.item.manufacturersItemIdentification.id}}</div>
+            </div>
+            <div class="row">
+                <div class="col-3"><strong>Quantity:</strong></div>
+                <div class="col-9">{{getQuantityText()}}</div>
+            </div>
+            <div class="row">
+                <div class="col-3"><strong>Net Price:</strong></div>
+                <div class="col-9">{{priceWrapper.totalPriceString}}</div>
+            </div>
+            <div class="row">
+                <div class="col-3"><strong>VAT:</strong></div>
+                <div class="col-9">{{priceWrapper.vatTotalString}}</div>
+            </div>
+            <div class="row">
+                <div class="col-3"><strong>Gross Total:</strong></div>
+                <div class="col-9">{{priceWrapper.grossTotalString}}</div>
+            </div>
+        </ng-container>
+    </ng-container>
 </ng-container>
 
 
 <!-- EPC Codes -->
-<ng-container *ngIf="isReady() && isOrderCompleted() && config.showTrack">
+<ng-container *ngIf="selectedPanel == 'TRACK_AND_TRACE'">
+    <ul class="nav nav-tabs space-after">
+        <li class="nav-item">
+            <a href id="EPC_CODES" class="nav-link"
+               [ngClass]="{ active: selectedTrackAndTraceTab === 'EPC_CODES'}"
+               (click)="onTTTabSelect($event)">
+                EPC Codes
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href id="PRODUCTION_PROCESS_TEMPLATE" class="nav-link"
+               [ngClass]="{ active: selectedTrackAndTraceTab === 'PRODUCTION_PROCESS_TEMPLATE'}"
+               (click)="onTTTabSelect($event)">
+                Production Process Template
+            </a>
+        </li>
+    </ul>
 
-    <hr>
+    <ng-container *ngIf="selectedTrackAndTraceTab === 'EPC_CODES'">
+        <call-status [callStatus]="initEpcCodesCallStatus"></call-status>
 
-    <div class="btn btn-outline-primary space-after" (click)="showEPCCodePanel = !showEPCCodePanel">EPC Codes</div>
+        <div *ngIf="epcCodes" class="row">
 
-    <call-status [callStatus]="initEpcCodesCallStatus"></call-status>
-
-    <div *ngIf="epcCodes && showEPCCodePanel" class="row">
-
-      <!--List of codes -->
-      <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
-          <div class="row mb-1" *ngFor="let code of epcCodes.codes; let i = index; trackBy:trackByFn">
-            <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
-                <input type="text" class="form-control" [(ngModel)]="epcCodes.codes[i]" [disabled]="isBuyer()">
-            </div>
-            <div class="col-3" *ngIf="isSeller() && i > 0">
-                <button class="btn btn-danger w-100" (click)="onDeleteEpcCode(i)">Delete</button>
-            </div>
+          <!--List of codes -->
+          <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
+              <div class="row mb-1" *ngFor="let code of epcCodes.codes; let i = index; trackBy:trackByFn">
+                <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
+                    <input type="text" class="form-control" [(ngModel)]="epcCodes.codes[i]" [disabled]="isBuyer()">
+                </div>
+                <div class="col-3" *ngIf="isSeller()">
+                    <button class="btn btn-danger w-100" (click)="onDeleteEpcCode(i)">Delete</button>
+                </div>
+              </div>
           </div>
-      </div>
 
-      <div *ngIf="isSeller()" class="col-1"></div>
+          <div *ngIf="isSeller()" class="col-1"></div>
 
-      <div *ngIf="isSeller()" class="col-2">
+          <div *ngIf="isSeller()" class="col-2">
 
-        <!-- Add code -->
-        <div class="row">
-            <div class="col-12">
-                <button class="btn btn-success w-100" (click)="onAddEpcCode()">Add</button>
+            <!-- Add code -->
+            <div class="row">
+                <div class="col-12">
+                    <button class="btn btn-success w-100" (click)="onAddEpcCode()">Add</button>
+                </div>
             </div>
-        </div>
 
-        <!-- Save -->
-        <div class="row">
-            <div class="col-12">
-                <button class="btn btn-primary w-100 save-epc-btn" [disabled]="!areEpcCodesDirty()"
-                    (click)="onSaveEpcCodes()">Save</button>
+            <!-- Save -->
+            <div class="row">
+                <div class="col-12">
+                    <button class="btn btn-primary w-100 save-epc-btn" [disabled]="!areEpcCodesDirty() || !isThereAValidEPCCode()"
+                        (click)="onSaveEpcCodes()">Save</button>
+                </div>
             </div>
-        </div>
 
-        <div class="row">
-          <div class="col-12 d-flex justify-content-end">
-              <span class="align-self-center">
-                  <call-status [callStatus]="saveEpcCodesCallStatus"></call-status>
-              </span>
+            <div class="row">
+              <div class="col-12 d-flex justify-content-end">
+                  <span class="align-self-center">
+                      <call-status [callStatus]="saveEpcCodesCallStatus"></call-status>
+                  </span>
+              </div>
+            </div>
+
           </div>
         </div>
+    </ng-container>
 
-      </div>
-
+    <div *ngIf="selectedTrackAndTraceTab === 'PRODUCTION_PROCESS_TEMPLATE'">
+        <div class="d-flex">
+            <div class="col-3 mr-2">
+                <file-input [binaryObjects]="productionTemplateFile"
+                            (onSelectFile)="onTTFileSelected($event)"
+                            (onClearFile)="onTTFileRemoved()"
+                            [presentationMode]="isSeller() ? 'edit' : 'view'">
+                </file-input>
+            </div>
+            <div *ngIf="isSeller()">
+                <button class="btn btn-primary" (click)="onUpdateOrderResponse()">Save</button>
+            </div>
+        </div>
+        <call-status [large]="true" [callStatus]="updateOrderResponseCallStatus"></call-status>
     </div>
 </ng-container>
 
@@ -262,7 +315,7 @@
 <ng-container *ngIf="!formerProcess">
     <ng-container *ngIf="isBuyer() && isReady()">
 
-        <hr>
+        <hr class="actions-hr">
 
         <div class="row actions-row" *ngIf="!isReadOnly()">
             <div class="col-8 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
@@ -307,7 +360,7 @@
 
     <ng-container *ngIf="isSeller() && isReady()">
 
-        <hr>
+        <hr class="actions-hr">
 
         <div class="row actions-row" *ngIf="!isOrderCompleted()">
             <div class="col-6 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>

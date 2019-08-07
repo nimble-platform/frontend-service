@@ -2,7 +2,6 @@ import { CustomerParty } from "./customer-party";
 import { SupplierParty } from "./supplier-party";
 import { RequestForQuotationLine } from "./request-for-quotation-line";
 import { Delivery } from "./delivery";
-import { NegotiationOptions } from "./negotiation-options";
 import { PaymentTerms } from "./payment-terms";
 import { PaymentMeans } from "./payment-means";
 import {DocumentReference} from './document-reference';
@@ -18,7 +17,6 @@ export class RequestForQuotation {
 		public sellerSupplierParty: SupplierParty,
 		public delivery: Delivery,
 		public requestForQuotationLine: RequestForQuotationLine[],
-		public negotiationOptions: NegotiationOptions,
 		public paymentMeans: PaymentMeans,
 		public paymentTerms: PaymentTerms,
 		public tradingTerms: TradingTerm[],

@@ -43,7 +43,7 @@ node('nimble-jenkins-slave') {
         }
 
         stage('Build Application - EFAC') {
-            sh 'mvn clean install -Denv=efac'
+            sh 'mvn clean install -Denv=efac-staging'
         }
 
         stage('Build Docker - EFAC') {
@@ -52,6 +52,10 @@ node('nimble-jenkins-slave') {
 
         stage('Push Docker - EFAC') {
             sh 'docker push nimbleplatform/frontend-service:efac-staging'
+        }
+
+        stage('Deploy - EFAC') {
+            sh 'ssh staging "cd /srv/nimble-staging/ && ./run-staging.sh restart-single frontend-service-efactory"'
         }
     }
 

@@ -7,9 +7,9 @@ export const debug = false;
 
 // Base path variables - SRFG staging
 
-// export const base_path = "http://nimble-staging.salzburgresearch.at";
-// export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
-// export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+export const base_path = "http://nimble-staging.salzburgresearch.at";
+export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
+export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
 // Base path variables - MVP productive
@@ -63,9 +63,9 @@ export const debug = false;
 
 // Base path variables - Local development
 
-export const base_path = "http://localhost";
-export const ub_base = "http://localhost:8090";
-export const pw_reset_link = "http://localhost:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+// export const base_path = "http://localhost";
+// export const ub_base = "http://localhost:8090";
+// export const pw_reset_link = "http://localhost:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
 // Service endpoints
@@ -79,7 +79,7 @@ export const trust_service_endpoint=`${base_path}/trust`;
 export const indexing_service_endpoint=`${base_path}/index`;
 export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}/logstash`;
-export const kibana_endpoint = `${base_path}/kibana/app/kibana`;
+export const kibana_endpoint = `${base_path}:5601/app/kibana`;
 export const delegate_endpoint = `${base_path}:9265`;
 
 
@@ -108,8 +108,8 @@ export const tntMasterDataEndpoint = 'http://nimble-dev.ikap.biba.uni-bremen.de:
 // Platform Configuration
 
 export const config = {
-  "platformName": "Development",
-  "companyRegistrationRequired": false,
+  "platformName": "FMP Staging",
+  "companyRegistrationRequired": true,
   "categoryFilter": {
     "eClass": {
       "hiddenCategories": [],
@@ -122,92 +122,145 @@ export const config = {
       "ontologyPrefix": "http://www.aidimme.es/FurnitureSectorOntology.owl#"
     }
   },
-  "dataChannelsEnabled" : true,
-  "defaultSearchIndex": "Name",
-  "delegationEnabled": false,
-  "frameContractTabEnabled":true,
-  "imprint": "<u>Platform Owner & Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)",
+  "dataChannelsEnabled" : false,
+  "delegationEnabled": true,
+  "imprint": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Platform Owner</u><br/><b>AIDIMME - Technological Institute of Metalworking, Furniture, Wood, Packaging and Related sectors</b><br/>Technological Park, Benjamín Franklin Street 13<br/>46980 Paterna (Valencia), Spain<br/>Phone: +34.961.366.070<br/>E-Mail: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>CIF: G46261590</td><td class='w-50 p-0 pl-3'><u>Platform Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)</td></tr></table>",
   "kibanaConfig": {
     "dashboards": [
-        {
-            "title": "User Logins & Registrations",
-            "url": "#/dashboard/407d6ed0-ac89-11e9-94eb-b71f5a648539?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
-        }, {
-            "title": "Business Process Activities",
-            "url": "#/dashboard/95678d10-906c-11e9-aa69-2987e334cad6?embed=true&_g=(refreshInterval%3A(display%3A'30%20minutes'%2Cpause%3A!f%2Csection%3A2%2Cvalue%3A1800000)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
-        }, {
-            "title": "Products Activities",
-            "url": "#/dashboard/60b1b040-9072-11e9-aa69-2987e334cad6?embed=true&_g=(refreshInterval%3A(display%3A'30%20minutes'%2Cpause%3A!f%2Csection%3A2%2Cvalue%3A1800000)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
-        }
+      {
+        "title": "User Logins & Registrations",
+        "url": "#/dashboard/27836650-8907-11e9-9609-0520e65d66da?embed=true&_g=(refreshInterval%3A(display%3A'30%20minutes'%2Cpause%3A!f%2Csection%3A2%2Cvalue%3A1800000)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
+      }, {
+        "title": "Business Process Activities",
+        "url": "#/dashboard/95678d10-906c-11e9-aa69-2987e334cad6?embed=true&_g=(refreshInterval%3A(display%3A'30%20minutes'%2Cpause%3A!f%2Csection%3A2%2Cvalue%3A1800000)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
+      }, {
+        "title": "Products Activities",
+        "url": "#/dashboard/60b1b040-9072-11e9-aa69-2987e334cad6?embed=true&_g=(refreshInterval%3A(display%3A'30%20minutes'%2Cpause%3A!f%2Csection%3A2%2Cvalue%3A1800000)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
+      }
     ]
   },
   "kibanaEnabled": true,
   "loggingEnabled": true,
-  "logoPath": "./assets/logo_mvp.png",
-  "logoRequired": false,
-  "phoneNumberRequired": false,
+  "logoPath": "./assets/logo_efac.png",
+  "logoRequired": true,
+  "phoneNumberRequired": true,
   "projectsEnabled": true,
   "requiredAgreements": [
     {
-      "title":"End-User License Agreement (EULA)",
-      "src":"./assets/eula.pdf"
+      "title":"Privacy Policy",
+      "src":"./assets/privacy_policy.pdf"
+    },
+    {
+      "title":"Terms of Service (ToS)",
+      "src":"./assets/tos.pdf"
     }
   ],
-  "showChat": false,
-  "showCompanyMembers": false,
-  "showExplorative": true,
-  "showLCPA": true,
-  "showPPAP": true,
-  "showTrack": true,
-  "showTrade": true,
-  "showVerification": true,
+  "showChat": true,
+  "showCompanyMembers": true,
+  "showExplorative": false,
+  "showLCPA": false,
+  "showPPAP": false,
+  "showTrack": false,
+  "showTrade": false,
+  "showVerification": false,
   "standardCurrency": "EUR",
-  "standardTaxonomy": "All",
+  "standardTaxonomy": "FurnitureOntology",
+  "defaultSearchIndex": "Products",
   "supportedActivitySectors": {
-  	"": [],
-  	"Logistics Provider": [],
-  	"Manufacturer": [],
-  	"Service Provider": [],
-  	"Other": []
+    "": [],
+    "Logistics Provider": [
+      "General"
+    ],
+    "Manufacturer": [
+      "Bathroom",
+      "Carpentry",
+      "Childcare",
+      "Closet / Cupboard",
+      "Contract",
+      "Doors / Windows",
+      "Furniture for Retail",
+      "Home",
+      "Hotels, Restaurants & Cafes",
+      "Kids",
+      "Kitchen",
+      "Lightings / Lamps",
+      "Mattresses",
+      "Office",
+      "Outdoor Furniture",
+      "Panels",
+      "Parquet Floors",
+      "Upholstered Furniture",
+      "Wooden Packaging"
+    ],
+    "Retailer": [
+      "General"
+    ],
+    "Service Provider": [
+      "Architects",
+      "Buyer-Designer",
+      "Certification",
+      "Consulting",
+      "Design / Decoration",
+      "Distributor",
+      "Engineering",
+      "Facility Cleaning",
+      "Facility Maintenance",
+      "Furniture Installer",
+      "Legal Services",
+      "Outsourcing",
+      "Print Services",
+      "Quality Control / Tests",
+      "Sales Agent",
+      "Training",
+      "Waste Management"
+    ],
+    "Supplier": [
+      "Adhesives",
+      "Board",
+      "Ceramic",
+      "Composites",
+      "Cork",
+      "Decorated Paper",
+      "Fitting",
+      "Foam",
+      "Glass",
+      "Machinery",
+      "Metal",
+      "Packaging Materials",
+      "Paints & Varnishes",
+      "Plastic",
+      "Plywood",
+      "Straw",
+      "Textile",
+      "Tools",
+      "Veneer",
+      "Wood"
+    ]
   },
   "supportedBusinessTypes": [
-  	"",
-  	"Logistics Provider",
-  	"Manufacturer",
-  	"Service Provider",
-  	"Other"
+    "",
+    "Logistics Provider",
+    "Manufacturer",
+    "Retailer",
+    "Service Provider",
+    "Supplier"
   ],
   "supportedCertificates": [
-      "Appearance Approval Report",
-      "Checking Aids",
-      "Control Plan",
-      "Customer Engineering Approval",
-      "Customer Specific Requirements",
-      "Design Documentation",
-      "Design Failure Mode and Effects Analysis",
-      "Dimensional Results",
-      "Engineering Change Documentation",
-      "Initial Process Studies",
-      "Master Sample",
-      "Measurement System Analysis Studies",
-      "Part Submission Warrant",
-      "Process Failure Mode and Effects Analysis",
-      "Process Flow Diagram",
-      "Qualified Laboratory Documentation",
-      "Records of Material / Performance Tests",
-      "Sample Production Parts",
+      "Health and Safety",
+      "Innovation",
+      "Management",
+      "Quality",
+      "Sustainability and Environment",
       "Other"
   ],
   "supportedRoles": [
-      "company_admin",
-      "external_representative",
       "legal_representative",
       "monitor",
       "publisher",
       "purchaser",
       "sales_officer"
   ],
-  "supportMail": "nimble-support@salzburgresearch.at",
+  "supportMail": "nimbleFMP@aidimme.es",
   "supportMailContent": {
     "en":"Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]",
     "es":"Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
@@ -235,9 +288,9 @@ export const product_currency = "currency";
 export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
 export const product_filter_prod = ["freeOfCharge","certificateType","applicableCountries"];
-export const product_filter_comp = ["manufacturer.legalName","manufacturer.businessType","manufacturer.activitySectors","manufacturer.businessKeywords","manufacturer.origin","manufacturer.certificateType","manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType"];
-export const party_facet_field_list = ["legalName","businessType","activitySectors","businessKeywords","origin","certificateType","ppapComplianceLevel","ppapDocumentType"];
-export const party_filter_main = ["businessType","activitySectors","businessKeywords","origin","certificateType","ppapComplianceLevel","ppapDocumentType"];
+export const product_filter_comp = ["manufacturer.legalName","manufacturer.businessType","manufacturer.activitySectors","manufacturer.businessKeywords","manufacturer.origin","manufacturer.certificateType"];
+export const party_facet_field_list = ["legalName","businessType","activitySectors","businessKeywords","origin","certificateType"];
+export const party_filter_main = ["businessType","activitySectors","businessKeywords","origin","certificateType"];
 export const party_filter_trust = ["trustScore","trustRating","trustSellerCommunication","trustFullfillmentOfTerms","trustDeliveryPackaging","trustNumberOfTransactions"];
 export const item_manufacturer_id = "manufacturerId";
 export const product_filter_trust = ["manufacturer.trustScore","manufacturer.trustRating","manufacturer.trustSellerCommunication","manufacturer.trustFullfillmentOfTerms","manufacturer.trustDeliveryPackaging","manufacturer.trustNumberOfTransactions"];
@@ -251,7 +304,7 @@ export const product_filter_mappings = {
   "activitySectors": "Activity Sectors",
   "businessKeywords": "Business Keywords"
 };
-export const product_nonfilter_full = ["_text_","_version_","id","image","localName","languages","catalogueId","doctype","manufacturerId","manufacturerItemId","allLabels"];
+export const product_nonfilter_full = ["_text_","_version_","id","image","localName","languages","catalogueId","doctype","manufacturerId","manufacturerItemId","manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType","allLabels"];
 export const product_nonfilter_regex = ["lmf.","_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
 export const product_configurable = [];
 export const product_default = {};
