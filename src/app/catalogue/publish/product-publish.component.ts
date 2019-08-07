@@ -220,13 +220,11 @@ export class ProductPublishComponent implements OnInit {
     }
 
     changeCat(){
-        this.catlogueId = this.selectedCatalogue;
-
-        this.catalogueService.getCatalogueFromUuid(this.catalogueuuid).then((catalogue) => {
-            this.selectedCatalogueuuid = catalogue.uuid;
-        }).catch((err) => {
-            this.selectedCatalogueuuid = this.catalogueuuid;
-        })
+        // get the corresponding catalogue id
+        let index = this.catalogueIdsUUids.indexOf(this.catalogueuuid);
+        // update selected catalogue id and uuid
+        this.catlogueId = this.cataloguesIds[index];
+        this.selectedCatalogueuuid = this.catalogueuuid;
     }
 
     /*
@@ -778,7 +776,6 @@ export class ProductPublishComponent implements OnInit {
             });
 
         } else {
-            let catalogueId = this.catlogueId;
             // this.catalogueService.getCatalogueFromId(catalogueId).then((catalogue) => {
                 // TODO: create a service to add multiple catalogue lines
                 for(let catalogueLine of catalogueLines){
