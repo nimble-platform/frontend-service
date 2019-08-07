@@ -112,8 +112,8 @@ export class ProductPublishComponent implements OnInit {
     customProperties: any[] = [];
     cataloguesIds:any[] = [];
     catalogueIdsUUids: any = [];
+    // uuid of the catalogue containing the product to be published / edited
     selectedCatalogueuuid = "";
-    catalogueuuid = "";
     callStatus: CallStatus = new CallStatus();
 
     /*
@@ -221,10 +221,9 @@ export class ProductPublishComponent implements OnInit {
 
     changeCat(){
         // get the corresponding catalogue id
-        let index = this.catalogueIdsUUids.indexOf(this.catalogueuuid);
+        let index = this.catalogueIdsUUids.indexOf(this.selectedCatalogueuuid);
         // update selected catalogue id and uuid
         this.catlogueId = this.cataloguesIds[index];
-        this.selectedCatalogueuuid = this.catalogueuuid;
     }
 
     /*
@@ -779,8 +778,8 @@ export class ProductPublishComponent implements OnInit {
             // this.catalogueService.getCatalogueFromId(catalogueId).then((catalogue) => {
                 // TODO: create a service to add multiple catalogue lines
                 for(let catalogueLine of catalogueLines){
-                    catalogueLine.goodsItem.item.catalogueDocumentReference.id = this.catalogueuuid;
-                    this.catalogueService.addCatalogueLine(this.catalogueuuid,JSON.stringify(catalogueLine))
+                    catalogueLine.goodsItem.item.catalogueDocumentReference.id = this.selectedCatalogueuuid;
+                    this.catalogueService.addCatalogueLine(this.selectedCatalogueuuid,JSON.stringify(catalogueLine))
                         .then(() => {
                             this.onSuccessfulPublish(exitThePage,[catalogueLine]);
                         })
@@ -802,7 +801,6 @@ export class ProductPublishComponent implements OnInit {
 
         this.publishStatus.submit();
         // this.getCatalogueUUid().then((catalogue) => {
-            this.selectedCatalogueuuid = this.catalogueuuid;
             // TODO: create a service to update multiple catalogue lines
             for(let catalogueLine of catalogueLines){
                 this.catalogueService.updateCatalogueLine(this.selectedCatalogueuuid,JSON.stringify(catalogueLine))
@@ -1143,7 +1141,7 @@ export class ProductPublishComponent implements OnInit {
 
             for(var obj in catalogueIds){
                 if(catalogueIds[obj][0] == this.selectedCatalogue){
-                    this.catalogueuuid = catalogueIds[obj][1];
+                    this.selectedCatalogueuuid = catalogueIds[obj][1];
                 }
                 idList.push(catalogueIds[obj][0]);
                 uuidList.push(catalogueIds[obj][1]);
