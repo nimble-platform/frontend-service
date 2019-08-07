@@ -105,15 +105,16 @@ export class ProductPublishComponent implements OnInit {
     private selectedPropertiesUpdates: SelectedPropertiesUpdate = {};
     selectedProperty: ItemProperty;
     categoryModalPropertyKeyword: string = "";
-    selectedCatalogue: string = "default";
-    catlogueId = "default";
+
     @ViewChild(EditPropertyModalComponent)
     private editPropertyModal: EditPropertyModalComponent;
     customProperties: any[] = [];
     cataloguesIds:any[] = [];
-    catalogueIdsUUids: any = [];
+    catalogueUUids: any = [];
+    // uuid of the catalogue containing the product to be published / edited
     selectedCatalogueuuid = "";
-    catalogueuuid = "";
+    // id of the catalogue containing the product to be published / edited
+    selectedCatalogueId: string = "default";
     callStatus: CallStatus = new CallStatus();
 
     /*
@@ -204,7 +205,7 @@ export class ProductPublishComponent implements OnInit {
 
             let catalogueId = params['cat'];
             if(catalogueId != null){
-                this.selectedCatalogue = catalogueId;
+                this.selectedCatalogueId = catalogueId;
             }
         });
         //this.selectedCatalogueuuid = this.catalogueService.catalogueResponse.catalogueUuid;
@@ -220,13 +221,9 @@ export class ProductPublishComponent implements OnInit {
     }
 
     changeCat(){
-        this.catlogueId = this.selectedCatalogue;
-
-        this.catalogueService.getCatalogueFromUuid(this.catalogueuuid).then((catalogue) => {
-            this.selectedCatalogueuuid = catalogue.uuid;
-        }).catch((err) => {
-            this.selectedCatalogueuuid = this.catalogueuuid;
-        })
+        let index = this.cataloguesIds.indexOf(this.selectedCatalogueId);
+        // update selected catalogue uuid
+        this.selectedCatalogueuuid = this.catalogueUUids[index];
     }
 
     /*
@@ -778,12 +775,11 @@ export class ProductPublishComponent implements OnInit {
             });
 
         } else {
-            let catalogueId = this.catlogueId;
             // this.catalogueService.getCatalogueFromId(catalogueId).then((catalogue) => {
                 // TODO: create a service to add multiple catalogue lines
                 for(let catalogueLine of catalogueLines){
-                    catalogueLine.goodsItem.item.catalogueDocumentReference.id = this.catalogueuuid;
-                    this.catalogueService.addCatalogueLine(this.catalogueuuid,JSON.stringify(catalogueLine))
+                    catalogueLine.goodsItem.item.catalogueDocumentReference.id = this.selectedCatalogueuuid;
+                    this.catalogueService.addCatalogueLine(this.selectedCatalogueuuid,JSON.stringify(catalogueLine))
                         .then(() => {
                             this.onSuccessfulPublish(exitThePage,[catalogueLine]);
                         })
@@ -805,7 +801,6 @@ export class ProductPublishComponent implements OnInit {
 
         this.publishStatus.submit();
         // this.getCatalogueUUid().then((catalogue) => {
-            this.selectedCatalogueuuid = this.catalogueuuid;
             // TODO: create a service to update multiple catalogue lines
             for(let catalogueLine of catalogueLines){
                 this.catalogueService.updateCatalogueLine(this.selectedCatalogueuuid,JSON.stringify(catalogueLine))
@@ -895,11 +890,24 @@ export class ProductPublishComponent implements OnInit {
 
         let userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(party => {
-            this.catalogueService.getCatalogueFromUuid(this.catalogueuuid).then(catalogueResponse => {
-                this.catalogueService.getCatalogueLines(catalogueResponse.uuid,catalogueLineIds).then(catalogueLines => {
+            // get catalogue id-uuid pairs for the party to find the uuid of catalogue
+            this.catalogueService.getCatalogueIdsUUidsForParty().then(catalogueIdsUuids => {
+                // get the uuid of catalogue
+                let uuid = null;
+                for(let idUuid of catalogueIdsUuids){
+                    if(idUuid[0] == this.selectedCatalogueId){
+                        uuid = idUuid[1];
+                        break;
+                    }
+                }
+
+                // update the id of selected catalogue
+                this.selectedCatalogueuuid = uuid;
+
+                this.catalogueService.getCatalogueLines(this.selectedCatalogueuuid,catalogueLineIds).then(catalogueLines => {
                     // go to the dashboard - catalogue tab
                     if(exitThePage){
-                        this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogueResponse.uuid,
+                        this.catalogueLine = UBLModelUtils.createCatalogueLine(this.selectedCatalogueuuid,
                             party, this.companyNegotiationSettings,this.dimensions);
 
                         // since every changes is saved,we do not need a dialog box
@@ -1132,15 +1140,15 @@ export class ProductPublishComponent implements OnInit {
             var uuidList = [];
 
             for(var obj in catalogueIds){
-                if(catalogueIds[obj][0] == this.selectedCatalogue){
-                    this.catalogueuuid = catalogueIds[obj][1];
+                if(catalogueIds[obj][0] == this.selectedCatalogueId){
+                    this.selectedCatalogueuuid = catalogueIds[obj][1];
                 }
                 idList.push(catalogueIds[obj][0]);
                 uuidList.push(catalogueIds[obj][1]);
             }
 
             this.cataloguesIds = idList;
-            this.catalogueIdsUUids = uuidList;
+            this.catalogueUUids = uuidList;
             this.productCatalogueRetrievalStatus.callback("Successfully loaded catalogueId list", true);
         }).catch((error) => {
             this.productCatalogueRetrievalStatus.error('Failed to get product catalogues');
