@@ -26,7 +26,7 @@ export class Leaf {
 export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChanges {
     @Input() config = {}; // this comes from `explorative-search-form.component` (Parent)
     @Input() lang: string; // language selection which comes from the Parent
-    public hiddenElement = false; // to hide the graph or table
+    hiddenElement = false; // to hide the graph or table
     /*Parameters that will be passed to `explorative-search-filter.component (Child)*/
     arrayPassedToChild: any[] = []; // this is passed to the child NOW
     filterFromChildExists = false; // to check if the there is a filter to display or not
@@ -38,8 +38,8 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     private mergedNodeName: string;
 
     /* SPARQL TABLE Variables */
-    public sparqlSelectedOption: Object;
-    private tableJSON: Object = {
+    sparqlSelectedOption: Object;
+    tableJSON: Object = {
         parametersIncludingPath: [],
         parameters: [],
         parametersURL: [],
