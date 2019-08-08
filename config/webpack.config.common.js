@@ -60,8 +60,14 @@ module.exports = {
             {from: './src/assets/images/',to: 'assets/'},
             {from: './src/assets/pdf/',to: 'assets/'},
             {from: './src/assets/css/',to: 'assets/css'},
-            {from: './src/health.json',to: './'}
-            ]),
+			{from: './src/assets/js/',to: 'assets/js'},
+			{from: './src/lib/bpe/js',to: 'lib/bpe/js'},
+			{from: './src/locale',to: 'locale'},
+			{from: './src/main',to: 'main'},
+            {from: './src/health.json',to: './'},
+			{from: './src/messages.xlf',to: './'},
+			{from: './src/favicon.ico',to: './'}
+        ]),
 
         new CleanWebpackPlugin(
             helpers.root('dist'), { root: helpers.root(), verbose: true }),
