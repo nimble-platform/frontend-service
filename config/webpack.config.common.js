@@ -59,7 +59,8 @@ module.exports = {
             {from: './src/assets/webfonts/',to: 'assets/webfonts/'},
             {from: './src/assets/images/',to: 'assets/'},
             {from: './src/assets/pdf/',to: 'assets/'},
-            {from: './src/assets/css/',to: 'assets/css'}
+            {from: './src/assets/css/',to: 'assets/css'},
+            {from: './src/health.json',to: './'}
             ]),
 
         new CleanWebpackPlugin(
