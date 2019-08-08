@@ -104,6 +104,13 @@ export class NegotiationResponseComponent implements OnInit {
         if(this.getNonFrameContractTermNumber() == 0) {
             this.selectedTCTab = 'CLAUSES';
         }
+
+        // initialize data monitoring request based on the frame contract and last offer
+        if (this.lastOfferQuotation) {
+            this.quotation.dataMonitoringPromised = this.lastOfferQuotation.dataMonitoringPromised;
+        } else if (this.frameContractQuotation) {
+           this.quotation.dataMonitoringPromised = this.frameContractQuotation.dataMonitoringPromised;
+        }
     }
 
     onBack(): void {

@@ -158,6 +158,10 @@ export class NegotiationModelWrapper {
         return this.initialImmutableCatalogueLine.goodsItem.deliveryTerms.incoterms;
     }
 
+    /**
+     * Rfq methods
+     */
+
     public get rfqPricePerItemString(): string {
         return this.rfqDiscountPriceWrapper.pricePerItemString;
     }
@@ -212,6 +216,10 @@ export class NegotiationModelWrapper {
 
     public set rfqIncoterms(incoterms: string) {
         this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms = incoterms;
+    }
+
+    public get rfqIncotermsString(): string {
+        return this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms || 'None';
     }
 
     public get rfqPaymentTermsToString(): string {
@@ -310,9 +318,9 @@ export class NegotiationModelWrapper {
                 if (termsSource == "product_defaults")
                     return (this.rfqIncoterms == this.lineIncoterms);
                 else if (termsSource == "frame_contract")
-                    return (this.rfqIncoterms == this.frameContractQuotationWrapper.incotermsString);
+                    return (this.rfqIncoterms == this.frameContractQuotationWrapper.incoterms);
                 else if (termsSource == "last_offer")
-                    return (this.rfqIncoterms == this.lastOfferQuotationWrapper.incotermsString);
+                    return (this.rfqIncoterms == this.lastOfferQuotationWrapper.incoterms);
                 break;
             case "paymentTerms":
                 if (termsSource == "product_defaults")

@@ -110,7 +110,7 @@ export class QuotationWrapper {
     }
 
     public get dataMonitoringPromisedString(): string {
-        return this.quotation.dataMonitoringPromised ? "Promised" : "Not Promised";
+        return this.quotation.dataMonitoringPromised ? 'Confirmed' : 'Not Confirmed';
     }
 
     public getTradingTerm(termName: string): TradingTerm {

@@ -116,7 +116,6 @@ export class NegotiationRequestComponent implements OnInit {
     config = myGlobals.config;
 
     onClauseUpdate(event): void {
-        console.log("clause update event: " + event);
         this.clausesDiffer = event;
     }
 
@@ -178,7 +177,7 @@ export class NegotiationRequestComponent implements OnInit {
         }
         // if a new business process is created load initial terms based on the selected terms source
         // ignore negotiation options is true as they are not calculated yet
-        // rfq is provided with values in onTermsSourceChange. this is done after initializing the wrapper,
+        // rfq is provided with values in onLoadCounterOfferTerms. this is done after initializing the wrapper,
         // because onLoadCounterOfferTerms method requires the wrapper
         if(!this.processMetadata) {
             this.onLoadCounterOfferTerms(this.manufacturersTermsSource);
@@ -365,6 +364,7 @@ export class NegotiationRequestComponent implements OnInit {
 
     onManufacturersTermsSourceChange(termSource: 'product_defaults' | 'frame_contract' | 'last_offer'): void {
         this.manufacturersTermsSource = termSource;
+        // if the counter offer panel is not shown, then the selection of terms source should update the the rfq
         if(!this.showCounterOfferTerms) {
             this.onLoadCounterOfferTerms(termSource);
         }
@@ -410,6 +410,7 @@ export class NegotiationRequestComponent implements OnInit {
             this.rfq.termOrCondition = copy(quotationWrapper.quotation.termOrCondition);
             // }
             this.rfq.tradingTerms = copy(quotationWrapper.tradingTerms);
+            this.rfq.dataMonitoringRequested = quotationWrapper.dataMonitoringPromised;
 
         } else if(termSource == 'product_defaults') {
             if(this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.DELIVERY_PERIOD]) {
@@ -456,7 +457,7 @@ export class NegotiationRequestComponent implements OnInit {
 
         // update the rfq price only if the price is not being negotiated and the default product terms are presented
         // it does not make sense to update price based on the discounts when the terms of frame contract or last offer terms are presented
-        if(/*!this.rfq.negotiationOptions.price && */this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PRICE] && this.manufacturersTermsSource == 'product_defaults') {
+        if(/*!this.rfq.negotiationOptions.price && */!this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PRICE] && this.manufacturersTermsSource == 'product_defaults') {
             this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.discountedPricePerItem;
         }
     }
@@ -506,6 +507,7 @@ export class NegotiationRequestComponent implements OnInit {
         let frameContractDurationDiffers: boolean = false; // this is valid only in the second and subsequent steps of a negotiation process
         let customTermsDiffer: boolean;
         let clausesDiffer: boolean;
+        let dataDataMonitoringRequestDiffers = false;
 
         if(this.counterOfferTermsSource == 'last_offer' || this.counterOfferTermsSource == 'frame_contract') {
             let quotationWrapper = this.wrapper.frameContractQuotationWrapper;
@@ -521,8 +523,9 @@ export class NegotiationRequestComponent implements OnInit {
             paymentMeansDiffers = this.wrapper.rfqPaymentMeans != quotationWrapper.paymentMeans;
             frameContractDurationDiffers = this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.FRAME_CONTRACT_DURATION] &&
                 durationToString(this.frameContractDuration) != quotationWrapper.rfqFrameContractDurationString;
-            customTermsDiffer = UBLModelUtils.areTradingTermListsEqual(this.wrapper.rfqTradingTerms, quotationWrapper.tradingTerms);
+            customTermsDiffer = !UBLModelUtils.areTradingTermListsEqual(this.wrapper.rfqTradingTerms, quotationWrapper.tradingTerms);
             clausesDiffer = UBLModelUtils.areTermsAndConditionListsDifferent(quotationWrapper.quotation.termOrCondition, this.rfq.termOrCondition);
+            dataDataMonitoringRequestDiffers = !quotationWrapper.dataMonitoringPromised ? this.rfq.dataMonitoringRequested : false;
 
         } else {
             priceDiffers = this.wrapper.rfqPricePerItemString != this.wrapper.lineDiscountPriceWrapper.discountedPricePerItemString;
@@ -537,6 +540,7 @@ export class NegotiationRequestComponent implements OnInit {
                 !UBLModelUtils.areQuantitiesEqual(this.frameContractDuration, UBLModelUtils.getFrameContractDurationFromRfq(this.wrapper.initialImmutableRfq));
             customTermsDiffer = this.wrapper.rfqTradingTerms.length > 0 ? true : false;
             clausesDiffer = UBLModelUtils.areTermsAndConditionListsDifferent(this.wrapper.initialImmutableRfq.termOrCondition, this.rfq.termOrCondition);
+            dataDataMonitoringRequestDiffers = this.rfq.dataMonitoringRequested;
         }
 
         return priceDiffers ||
@@ -546,7 +550,7 @@ export class NegotiationRequestComponent implements OnInit {
             paymentTermDiffers ||
             paymentMeansDiffers ||
             frameContractDurationDiffers ||
-            this.rfq.dataMonitoringRequested ||
+            dataDataMonitoringRequestDiffers ||
             customTermsDiffer ||
             clausesDiffer;
     }

@@ -203,7 +203,7 @@
 
         <!-- Price -->
         <div class="row content-row"
-             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'price')}">
+             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'price') || !wrapper.rfqDiscountPriceWrapper.itemPrice.hasPrice()}">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Price:</strong>
             </div>
@@ -280,9 +280,9 @@
     <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'btn-outline-primary':!(clausesDiffer || custTermsDiffer),'btn-danger':(clausesDiffer || custTermsDiffer),'active':showTermsAndConditions}" (click)="showTermsAndConditions=showTab(showTermsAndConditions)">Terms and Conditions</div>
     <div *ngIf="config.dataChannelsEnabled" class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showDataMonitoring}" (click)="showDataMonitoring=showTab(showDataMonitoring)">Data Monitoring</div>
     <ng-container *ngIf="isFrameContractVisible()">
-      <div class="btn btn-outline-primary align-self-start" [ngClass]="{'active':showFrameContractDetails}" (click)="showFrameContractDetails=showTab(showFrameContractDetails)">Frame Contract</div>
+      <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showFrameContractDetails}" (click)="showFrameContractDetails=showTab(showFrameContractDetails)">Frame Contract</div>
     </ng-container>
-    <div class="btn btn-outline-primary align-self-start" [ngClass]="{'active':showNotesAndAdditionalFiles,'ml-2':isFrameContractVisible()}" (click)="showNotesAndAdditionalFiles=showTab(showNotesAndAdditionalFiles)">Notes and Additional Files</div>
+    <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showNotesAndAdditionalFiles}" (click)="showNotesAndAdditionalFiles=showTab(showNotesAndAdditionalFiles)">Notes and Additional Files</div>
     <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showDeliveryAddress}" (click)="showDeliveryAddress=showTab(showDeliveryAddress)">Delivery Address</div>
     <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showPurchaseOrder}" (click)="showPurchaseOrder=showTab(showPurchaseOrder)">Purchase Order</div>
   </div>
@@ -328,14 +328,23 @@
     <ng-container *ngIf="config.dataChannelsEnabled">
         <div *ngIf="showDataMonitoring" class="row mb-3">
             <div class="col-12">
-                <div class="input-group">
-                    <div class="d-flex align-items-center">
-                        <input type="checkbox" [(ngModel)]="rfq.dataMonitoringRequested" [disabled]="isLoading() || isReadOnly()" >
-                    </div>
-                    <span class="form-control d-inline border-0">
+                <!-- frame contract exists, so, indicate that the data monitoring request -->
+                <ng-container *ngIf="((manufacturersTermsSource == 'frame_contract' &&
+                                        wrapper.frameContractQuotationWrapper.dataMonitoringPromised) ||
+                                        (manufacturersTermsSource == 'last_offer' &&
+                                        wrapper.lastOfferQuotationWrapper.dataMonitoringPromised)); else editDataMonitoringRequest">
+                    <input type="checkbox" checked="true" disabled="true"><label>Data monitoring promised</label>
+                </ng-container>
+                <ng-template #editDataMonitoringRequest>
+                    <div class="input-group">
+                        <div class="d-flex align-items-center">
+                            <input type="checkbox" [(ngModel)]="rfq.dataMonitoringRequested" [disabled]="isLoading() || isReadOnly()" >
+                        </div>
+                        <span class="form-control d-inline border-0">
                             <strong class="font-weight-500">Request data monitoring service</strong>
                         </span>
-                </div>
+                    </div>
+                </ng-template>
             </div>
         </div>
     </ng-container>

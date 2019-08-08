@@ -100,20 +100,24 @@
     <div class="col-3"><strong class="font-weight-500">Data monitoring service requested:</strong></div>
     <ng-container [ngSwitch]="primaryTermsSource">
         <div *ngSwitchCase="'product_defaults'" class="col-3"></div>
-        <div *ngSwitchCase="'frame_contract'" class="col-3">{{ rfq.dataMonitoringRequested ? wrapper.frameContractQuotationWrapper.dataMonitoringPromisedString : ''}}</div>
+        <div *ngSwitchCase="'frame_contract'" class="col-3">{{ wrapper.frameContractQuotationWrapper.dataMonitoringPromisedString}}</div>
         <div *ngSwitchCase="'last_offer'" class="col-3">{{ rfq.dataMonitoringRequested ? wrapper.lastOfferQuotationWrapper.dataMonitoringPromisedString : ''}}</div>
     </ng-container>
     <div *ngIf="rfq.dataMonitoringRequested" class="col-3"><b>Requested</b></div>
     <div *ngIf="!rfq.dataMonitoringRequested" class="col-3">Not Requested</div>
-    <div class="col-3" *ngIf="rfq.dataMonitoringRequested && !isReadOnly()">
-        <input type="checkbox" [(ngModel)]="quotation.dataMonitoringPromised"
-            [disabled]="isDisabled()">
-        <label>Provide data monitoring service</label>
-    </div>
-    <div class="col-3" *ngIf="rfq.dataMonitoringRequested && isReadOnly() && isSellerTermsVisible()">
-        <label *ngIf="quotation.dataMonitoringPromised">Data monitoring service confirmed.</label>
-        <label *ngIf="!quotation.dataMonitoringPromised">Data monitoring service <strong class="font-weight-500">not provided</strong>.</label>
-    </div>
+
+    <!-- Manufacturer's response -->
+    <ng-container *ngIf="rfq.dataMonitoringRequested">
+        <div class="col-3" *ngIf="!isReadOnly()">
+            <input type="checkbox" [(ngModel)]="quotation.dataMonitoringPromised"
+                   [disabled]="isDisabled()">
+            <label>Provide data monitoring service</label>
+        </div>
+        <div class="col-3" *ngIf="isReadOnly() && isSellerTermsVisible()">
+            <label *ngIf="quotation.dataMonitoringPromised"><strong class="font-weight-500">Confirmed</strong>.</label>
+            <label *ngIf="!quotation.dataMonitoringPromised"><strong class="font-weight-500">Not Confirmed</strong>.</label>
+        </div>
+    </ng-container>
 </div>
 
 <div class="row content-row" [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(primaryTermsSource, 'quantity')}">
