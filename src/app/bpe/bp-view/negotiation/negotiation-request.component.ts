@@ -403,7 +403,10 @@ export class NegotiationRequestComponent implements OnInit {
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = trimRedundantDecimals(quotationWrapper.priceWrapper.pricePerItem);
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = quotationWrapper.priceWrapper.currency;
             }
-            if(termSource == 'last_offer' && this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.FRAME_CONTRACT_DURATION] && quotationWrapper.frameContractDuration != null) {
+
+            if (termSource === 'last_offer' &&
+                (this.resetUpdatesChecked ||
+                    !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.FRAME_CONTRACT_DURATION] && quotationWrapper.frameContractDuration != null)) {
                 this.frameContractDuration = copy(quotationWrapper.frameContractDuration);
             }
             // if(!this.rfq.negotiationOptions.termsAndConditions || ignoreNegotiationOptions) {
@@ -759,11 +762,11 @@ export class NegotiationRequestComponent implements OnInit {
      * 2) the current request for quotation have the corresponding trading term (e.g. this might occur during a second negotiation step)
      */
     isFrameContractInEditMode(): boolean {
-        return !this.isReadOnly() && (!this.frameContractAvailable || this.wrapper.rfqFrameContractDuration != null);
+        return !this.isReadOnly() && (!this.frameContractAvailable || this.frameContractNegotiation);
     }
 
     isFrameContractVisible(): boolean {
-        return !this.frameContractAvailable || !UBLModelUtils.isEmptyQuantity(this.wrapper.rfqFrameContractDuration);
+        return !this.frameContractAvailable || this.frameContractNegotiation;
     }
 
     getDeliveryPeriodText(): string {
