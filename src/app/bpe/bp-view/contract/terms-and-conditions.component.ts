@@ -7,6 +7,7 @@ import {COUNTRY_NAMES} from '../../../common/utils';
 import {UnitService} from '../../../common/unit-service';
 import {deliveryPeriodUnitListId, warrantyPeriodUnitListId} from '../../../common/constants';
 import {TradingTerm} from '../../../catalogue/model/publish/trading-term';
+import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 
 
 @Component({
@@ -29,26 +30,29 @@ export class TermsAndConditionsComponent implements OnInit {
     // Outputs
     @Output() onIncotermChanged = new EventEmitter();
     @Output() onPaymentMeansChanged = new EventEmitter();
-    @Output() onClauseUpdated = new EventEmitter();
+    @Output() onClauseUpdated: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     callStatus : CallStatus = new CallStatus();
-
-    showSection:boolean[] = [];
 
     // used to store values of parameters inside the terms and conditions text
     tradingTerms:Map<string,TradingTerm> = null;
     // used to store original values of parameters
     originalTradingTerms:Map<string,TradingTerm> = null;
+    // used as a suffix to be able create html elements (keeping clause text) with unique ids.
+    // this is required since the style of html elements are updated within the script.
     randomComponentId: string = '';
+
+    showSection:boolean[] = []; //collapsed state of clauses
+    updatedClauseIds: string[] = []; // keeps the identifier of clauses including terms differing than the original terms
+
+    // selected values for Incoterm and Trading Term (e.g. Payment Terms)
+    _selectedIncoterm: string = null;
+    _selectedTradingTerm: string = null;
 
     // options
     INCOTERMS: string[] = [];
     PAYMENT_TERMS:string[] = [];
     COUNTRY_NAMES = COUNTRY_NAMES;
-
-    // selected values for Incoterm and Trading Term (e.g. Payment Terms)
-    _selectedIncoterm: string = null;
-    _selectedTradingTerm: string = null;
 
     constructor(public bpeService: BPEService,
                 public userService: UserService,
@@ -82,12 +86,6 @@ export class TermsAndConditionsComponent implements OnInit {
         }
     }
 
-    clearShowSectionArray(){
-        for(let i = 0; i < 19; i++){
-            this.showSection[i] = false;
-        }
-    }
-
     setSectionText(index:number){
         if(this.readOnly){
             let element = document.getElementById(this.generateIdForClause(index));
@@ -99,7 +97,7 @@ export class TermsAndConditionsComponent implements OnInit {
             for(let tradingTerm of clause.tradingTerms){
                 let id = tradingTerm.id;
                 let spanText = "";
-                if(this.isOriginalTradingTerm(tradingTerm.id)){
+                if(this.isSameWithTheOriginalTradingTerm(tradingTerm.id)){
                     spanText = "<b><span id='"+this.generateIdForParameter(id)+"'>";
 
                 }
@@ -122,7 +120,7 @@ export class TermsAndConditionsComponent implements OnInit {
             for(let tradingTerm of clause.tradingTerms){
                 let id = tradingTerm.id;
                 let spanText = "";
-                if(this.isOriginalTradingTerm(tradingTerm.id)){
+                if(this.isSameWithTheOriginalTradingTerm(tradingTerm.id)){
                     spanText = "<b><span id='"+this.generateIdForParameter(id)+"'>";
 
                 }
@@ -207,6 +205,35 @@ export class TermsAndConditionsComponent implements OnInit {
         }
         else if(id == "$payment_id"){
             this.onPaymentMeansChanged.emit(value);
+        }
+
+        this.checkDifferingUpdate(clause.id);
+    }
+
+    checkDifferingUpdate(updatedClauseId: string): void {
+        let updatedClause: Clause = this._termsAndConditions.find(clause => clause.id == updatedClauseId);
+        let sameWithOriginal: boolean = this.isSameWithTheOriginalClause(updatedClause);
+
+        if(!sameWithOriginal) {
+            // store the clause id in the updated clauses list
+            let clauseId: number = this.updatedClauseIds.findIndex(id => id == updatedClauseId);
+            if(clauseId == -1) {
+                this.updatedClauseIds.push(updatedClauseId);
+            }
+            // emit a clause updated event
+            this.onClauseUpdated.emit(true);
+            return;
+
+        } else {
+            // remove the term from the updated list if it is included there
+            let indexToDelete: number = this.updatedClauseIds.findIndex(id => id == updatedClauseId);
+            if(indexToDelete != -1) {
+                this.updatedClauseIds.splice(indexToDelete, 1);
+                // if the update clause id list is empty then notify the parent components about this
+                if(this.updatedClauseIds.length == 0) {
+                    this.onClauseUpdated.emit(false);
+                }
+            }
         }
     }
 
@@ -341,23 +368,23 @@ export class TermsAndConditionsComponent implements OnInit {
     }
 
     // checks whether the terms are updated or not with respect to the original clause
-    isClauseUpdated(clause:Clause){
+    isSameWithTheOriginalClause(clause:Clause){
         // if the comparison is disabled, we do not need to check the clause is changed or not
         if(!this.enableComparisonWithOtherTerms){
             return true;
         }
         for(let tradingTerm of clause.tradingTerms){
-
-            if (!this.isOriginalTradingTerm(tradingTerm.id)){
+            if (!this.isSameWithTheOriginalTradingTerm(tradingTerm.id)){
                 return false;
             }
-
         }
-        this.onClauseUpdated.emit();
         return true;
     }
 
-    isOriginalTradingTerm(tradingTermId:string){
+    /**
+     * Compares the trading term which is shown in the UI and specified by the given identifier with the original term
+     */
+    isSameWithTheOriginalTradingTerm(tradingTermId:string){
         // if the comparison is disabled, we do not need to check the clause is changed or not
         if(!this.enableComparisonWithOtherTerms){
             return true;
@@ -406,7 +433,7 @@ export class TermsAndConditionsComponent implements OnInit {
 
     // if the trading term is updated, its color is set to red, otherwise to black.
     private setElementColor(element, tradingTermId:string){
-        if(this.isOriginalTradingTerm(tradingTermId)){
+        if(this.isSameWithTheOriginalTradingTerm(tradingTermId)){
             element.style.color = 'black';
         } else{
             element.style.color = 'red';
