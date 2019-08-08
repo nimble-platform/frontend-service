@@ -46,19 +46,19 @@ class NewSensor {
 })
 export class ChannelDetailsComponent implements OnInit {
 
-    private pageNumber: number = 0;
-    private hasInternalService: boolean = false;
+    public pageNumber: number = 0;
+    public hasInternalService: boolean = false;
     private hasFilteringService: boolean = false;
-    private displayStorageArea: boolean = true;
+    public displayStorageArea: boolean = true;
     private pageSubmitted: boolean = false;
     private pageRenegotiated: boolean = false;
 
-    private channelConfig: object = {};
+    public channelConfig: object = {};
     private channelMessages: object[] = [];
 
     private SERVER_TYPES: string[] = ["MongoDB", "Oracle", "Mqtt", "Kafka"]
 
-    private sellerMessage: string = '';
+    public sellerMessage: string = '';
     private buyerMessage: string = '';
 
     private sellerServerType: string = '';

@@ -24,8 +24,8 @@
             <call-status [callStatus]="productCatalogueRetrievalStatus"></call-status>
         </div>
         <div class="col-4">
-          <select class="custom-select" [(ngModel)]="selectedCatalogue" (change)="changeCat()">
-              <option *ngFor="let catalogue of cataloguesIds"  [value]=catalogue>{{catalogue}}</option>
+          <select class="custom-select" [(ngModel)]="selectedCatalogueId" (change)="changeCat()">
+            <option *ngFor="let catalogueId of cataloguesIds" >{{catalogueId}}</option>
           </select>
         </div>
 </div>

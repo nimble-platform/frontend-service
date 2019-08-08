@@ -42,7 +42,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let column of sparqlSelectedOption?.columns; let i=index">
+                    <tr *ngFor="let column of sparqlSelectedOption['columns']; let i=index">
                         <th scope="row">
                             {{column}}
                         </th>
@@ -88,15 +88,15 @@
 </div>
 <div class="row mt-4" [hidden]="hiddenElement">
     <div class="col-3 float-left">
-            <button class="btn btn-lg btn-primary" [disabled]="!tableJSON.parameters.length"
+            <button class="btn btn-lg btn-primary" [disabled]="!tableJSON['parameters'].length"
                     (click)="genTable()">Obtain Results</button>
     </div>
     <div class="col-9">
-        <p class="text-secondary text-sm-left"><i class="fas fa-info-circle"></i> After you remove/add Properties do not forget to click <kbd>Obtain Results</kbd> each time</p>
+        <p class="text-secondary text-sm-left"><i class="fas fa-info-circle pr-1"></i> <span>After you remove/add Properties do not forget to click <kbd>Obtain Results</kbd> each time</span></p>
     </div>
 </div>
 
-<div class="jumbotron mt-2" *ngIf="!tableJSON.parameters.length && config">
+<div class="jumbotron mt-2" *ngIf="!tableJSON['parameters'].length && config">
     <div class="container">
         <div class="row">
             <div class="col-12 align-center">
@@ -114,7 +114,7 @@
 </div>
 
 
-<div *ngIf="tableJSON.parameters.length">
+<div *ngIf="tableJSON['parameters'].length">
     <div class="jumbotron" *ngIf="tableResult?.columns !== undefined && !tableResult?.columns.length">
         <div class="container">
             <div class="row">

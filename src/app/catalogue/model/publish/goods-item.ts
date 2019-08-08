@@ -2,7 +2,6 @@
  * Created by suat on 12-May-17.
  */
 import {Item} from "./item";
-import {Delivery} from "./delivery";
 import {DeliveryTerms} from "./delivery-terms";
 import {Package} from "./package";
 import {UBLModelUtils} from "../ubl-model-utils";

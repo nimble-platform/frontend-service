@@ -45,22 +45,20 @@ export class CatalogueLineHeaderComponent {
     }
 
     private addImage(event: any) {
-        let fileList: FileList = event.target.files;
-        if (fileList.length > 0) {
-            let images = this.catalogueLine.goodsItem.item.productImage;
-
-            for (let i = 0; i < fileList.length; i++) {
-                let file: File = fileList[i];
-                let reader = new FileReader();
-
-                reader.onload = function (e: any) {
-                    let base64String = reader.result.split(',').pop();
-                    let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "", "");
-                    images.push(binaryObject);
-                };
-                reader.readAsDataURL(file);
-            }
-        }
+       let fileList: FileList = event.target.files;
+       if (fileList.length > 0) {
+           let images = this.catalogueLine.goodsItem.item.productImage;
+           for (let i = 0; i < fileList.length; i++) {
+               let file: File = fileList[i];
+               let reader = new FileReader();
+               reader.onload = function (e: any) {
+                   let base64String = (<string>reader.result).split(',').pop();
+                   let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "", "");
+                   images.push(binaryObject);
+               };
+               reader.readAsDataURL(file);
+           }
+       }
     }
 
     deleteImage(index: number): void {

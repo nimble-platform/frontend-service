@@ -3,7 +3,7 @@
 	<div class="form-group row col-10 mx-auto">
 		<label for="email" class="col-3 col-form-label font-weight-bold" i18n>E-Mail</label>
 		<div class="col-9">
-			<input type="email" class="form-control" id="email" [(disabled)]="email_preset" required [(ngModel)]="model.user.email" name="email" #email="ngModel" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._-]+\.[a-z]{2,3}$" i18n-placeholder placeholder="e.g. user@domain.com">
+			<input type="email" class="form-control" id="email" [(disabled)]="email_preset" required [(ngModel)]="model.user.email" name="email" #email="ngModel" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9]{2,10}$" i18n-placeholder placeholder="e.g. user@domain.com">
 			<div *ngIf="!email.valid && email.touched"><small class="text-danger">Please enter a valid e-mail address.</small></div>
 		</div>
 	</div>

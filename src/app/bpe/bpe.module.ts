@@ -48,7 +48,6 @@ import {ThreadSummaryComponent} from "./bp-summary/thread-summary.component";
 import {ThreadEventComponent} from "./bp-summary/thread-event.component";
 import {CustomTermModalComponent} from "./bp-view/negotiation/custom-term-modal.component";
 
-
 @NgModule({
     imports: [
         CommonModule, 

@@ -231,7 +231,7 @@ export class PpapDocumentSelectComponent implements OnInit {
         this.selectedDocuments = this.DOCUMENTS.map(() => false);
     }
 
-    private computeSelectedDocuments() {
+    public computeSelectedDocuments() {
         this.selectedDocuments = this.DOCUMENTS.map(doc => doc.levels[this.level]);
     }
 }

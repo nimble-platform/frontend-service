@@ -1,5 +1,5 @@
-<!-- view and singlevalue mode -->
-<div *ngIf="presentationMode == 'view' || presentationMode == 'singlevalue'" class="row {{ rowClass }}">
+<!-- view mode -->
+<div *ngIf="presentationMode == 'view'" class="row {{ rowClass }}">
     <div *ngIf="label" [class]="labelClass">
         <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
         </input-label>
@@ -14,7 +14,7 @@
         <option *ngFor="let value of address">{{value.cityName}}</option>
     </select>-->
 </div>
-    
+
 <!-- edit mode -->
 <div *ngIf="presentationMode == 'edit'">
     <div *ngFor="let addr of address; let i = index;" class="row {{ rowClass }}">

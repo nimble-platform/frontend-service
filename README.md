@@ -8,6 +8,10 @@ The complete frontend is developed with [Angular](https://angular.io) in TypeScr
 ### With Node.js (aka. full development)
 For development purposes it is advisable to set up [Node.js](https://nodejs.org/en/download/) on your machine since it delivers all possibly required functionality and provides way faster build cycles.
 
+The following versions are used for deployment:
+- Node.js: 10.16.0
+- NPM: 6.9.0
+
 e.g. i18n
 ```shell
 npm run i18n
@@ -19,11 +23,21 @@ In order to install all the dependencies execute
 npm install
 ```
 
-In order to start the lite-server with BrowserSync (any file changes will be deployed on the fly during development) execute
+In order to build the resources execute
 ```shell
-npm start
+npm run build:dev
 ```
-The port can be adapted in bs-config.json (default is 9092).
+for the development build or 
+```shell
+npm run build:production
+```
+for the production build
+
+In order to start the webpack-dev-server (any file changes will be deployed on the fly during development) execute
+```shell
+npm run start
+```
+The port can be adapted in package.json (default is 9092).
 
 ### Without Node.js (aka. basic development / debugging only)
 In case you don't want / need to set up a full-stack Node.js on your machine you can execute
@@ -32,11 +46,12 @@ mvn clean install
 ```
 in order to install all the dependencies using a minified Node.js version pulled by Maven.
 
-In order to start the lite-server with BrowserSync (any file changes will be deployed on the fly during development) execute
+You can mount the generated WAR file on your preferred server or directly on Tomcat using Maven
 ```shell
-mvn deploy
+mvn tomcat7:run-war
 ```
-The port can be adapted in bs-config.json (default is 9092).
+
+The port can be adapted in pom.xml (default is 9092).
 
 ## Deployment
 

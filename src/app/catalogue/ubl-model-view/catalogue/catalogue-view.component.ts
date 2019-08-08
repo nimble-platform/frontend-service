@@ -54,6 +54,7 @@ export class CatalogueViewComponent implements OnInit {
     selectedCatalogue: string = "all";
     catlogueId: string = "all";
     cataloguesIds : any = [];
+    catalogueIdsUUids: any = [];
 
     sortOption = null;
     catalogueText: string = "";
@@ -211,7 +212,7 @@ export class CatalogueViewComponent implements OnInit {
         this.publishService.publishMode = 'edit';
         this.publishService.publishingStarted = false;
         this.categoryService.resetSelectedCategories();
-        if(this.catlogueId == "all"){
+        // if(this.catlogueId == "all"){
              this.catalogueService.getCatalogueFromUuid(catalogueLine.goodsItem.item.catalogueDocumentReference.id)
             .then(res => {
                 if(isLogisticsService(catalogueLine))
@@ -226,12 +227,12 @@ export class CatalogueViewComponent implements OnInit {
                     this.router.navigate(['catalogue/publish'], {queryParams: {cat:'default', pg: "single"}});
             });;
 
-        }else{
-            if(isLogisticsService(catalogueLine))
-                this.router.navigate(['catalogue/publish-logistic'], {queryParams: {cat:this.catlogueId, pg: "single"}});
-            else
-                this.router.navigate(['catalogue/publish'], {queryParams: {cat:this.catlogueId, pg: "single"}});
-        }
+        // }else{
+        //     if(isLogisticsService(catalogueLine))
+        //         this.router.navigate(['catalogue/publish-logistic'], {queryParams: {cat:this.catlogueId, pg: "single"}});
+        //     else
+        //         this.router.navigate(['catalogue/publish'], {queryParams: {cat:this.catlogueId, pg: "single"}});
+        // }
     }
 
     redirectToCopy(catalogueLine) {
@@ -344,8 +345,17 @@ export class CatalogueViewComponent implements OnInit {
 
     getCatagloueIdsForParty(){
         this.productCatalogueRetrievalStatus.submit();
-        this.catalogueService.getCatalogueIdsForParty().then((catalogueIds) => {
-            this.cataloguesIds = catalogueIds;
+        this.catalogueService.getCatalogueIdsUUidsForParty().then((catalogueIds) => {
+            var idList =[];
+            var uuidList = [];
+
+            for(var obj in catalogueIds){
+                idList.push(catalogueIds[obj][0]);
+                uuidList.push(catalogueIds[obj][1]);
+            }
+
+            this.cataloguesIds = idList;
+            this.catalogueIdsUUids = uuidList;
             this.productCatalogueRetrievalStatus.callback("Successfully loaded catalogueId list", true);
         }).catch((error) => {
             this.productCatalogueRetrievalStatus.error('Failed to get product catalogues');
