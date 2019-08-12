@@ -69,6 +69,10 @@ export class NegotiationResponseComponent implements OnInit {
     selectedTCTab: 'CUSTOM_TERMS' | 'CLAUSES' = 'CUSTOM_TERMS';
     tcChanged:boolean = false;
 
+    onClauseUpdate(event): void {
+        this.tcChanged = UBLModelUtils.areTermsAndConditionListsDifferent(this.wrapper.rfq.termOrCondition, this.wrapper.newQuotation.termOrCondition);
+    }
+
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
                 private location: Location,

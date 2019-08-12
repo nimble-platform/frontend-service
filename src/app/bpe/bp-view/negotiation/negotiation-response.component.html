@@ -380,7 +380,7 @@
                 <terms-and-conditions [buyerPartyId]="getPartyId(rfq.buyerCustomerParty.party)"
                                       [originalTermAndConditionClauses]="primaryTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.termOrCondition :
                                       (primaryTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.termOrCondition : defaultTermsAndConditions)"
-                                      (onClauseUpdated)="tcChanged = $event"
+                                      (onClauseUpdated)="onClauseUpdate($event);"
                                       [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq'"
                                       [termsAndConditions]="rfq.termOrCondition"></terms-and-conditions>
             </div>
@@ -389,7 +389,7 @@
                                       [rfqId]="rfq.id" [buyerPartyId]="getPartyId(quotation.buyerCustomerParty.party)"
                                       [selectedIncoterm]="wrapper.newQuotationWrapper.incoterms"
                                       [selectedTradingTerm]="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm"
-                                      (onClauseUpdated)="tcChanged = $event"
+                                      (onClauseUpdated)="onClauseUpdate($event);"
                                       (onIncotermChanged)="wrapper.newQuotationWrapper.incoterms = $event"
                                       (onPaymentMeansChanged)="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm = $event"
                                       [originalTermAndConditionClauses]="primaryTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.termOrCondition :

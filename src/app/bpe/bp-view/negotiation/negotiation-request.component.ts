@@ -116,7 +116,7 @@ export class NegotiationRequestComponent implements OnInit {
     config = myGlobals.config;
 
     onClauseUpdate(event): void {
-        this.clausesDiffer = event;
+        this.clausesDiffer = UBLModelUtils.areTermsAndConditionListsDifferent(this.wrapper.initialImmutableRfq.termOrCondition, this.rfq.termOrCondition);
     }
 
     constructor(private bpDataService: BPDataService,
