@@ -14,8 +14,7 @@
     "test": "concurrently \"npm run build:watch\" \"karma start karma.conf.js\"",
     "pretest:once": "npm run build",
     "test:once": "karma start karma.conf.js --single-run",
-    "lint": "tslint ./src/**/*.ts -t verbose",
-    "i18n": "./node_modules/.bin/ng-xi18n -p ./src/tsconfig.json"
+    "lint": "tslint ./src/**/*.ts -t verbose"
   },
   "keywords": [],
   "author": "",
@@ -36,6 +35,8 @@
     "@angular/router": "~7.2",
     "@angular/upgrade": "~7.2",
     "@ng-bootstrap/ng-bootstrap": "~4.2",
+    "@ngx-translate/core": "~11.0",
+    "@ngx-translate/http-loader": "~4.0",
     "@swimlane/ngx-charts": "~11.1",
     "@swimlane/ngx-graph": "~6.1",
     "core-js": "~2.6",

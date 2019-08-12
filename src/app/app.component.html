@@ -22,54 +22,54 @@
         <ul *ngIf="!isLoggedIn" class="nav navbar-nav mr-auto">
             <li class="nav-item" routerLinkActive="active">
                 <a class="nav-link" routerLink="/user-mgmt/login">
-                    <i class="fa fa-unlock pr-1"></i> <span i18n>Login</span>
+                    <i class="fa fa-unlock pr-1"></i> <span [innerHTML]="'Login' | translate"></span>
                 </a>
             </li>
             <li class="nav-item" routerLinkActive="active">
                 <a class="nav-link" routerLink="/user-mgmt/registration">
-                    <i class="fa fa-edit pr-1"></i> <span i18n>Registration</span>
+                    <i class="fa fa-edit pr-1"></i> <span [innerHTML]="'Registration' | translate"></span>
                 </a>
             </li>
         </ul>
         <ul *ngIf="isLoggedIn" class="nav navbar-nav mr-auto">
             <li class="nav-item" *ngIf="checkRoles('comp_req') || checkRoles('wait_comp')" routerLinkActive="active">
                 <a class="nav-link" routerLink="/dashboard">
-                    <i class="fa fa-list-ul pr-1"></i> <span i18n>Dashboard</span>
+                    <i class="fa fa-list-ul pr-1"></i> <span [innerHTML]="'Dashboard' | translate"></span>
                 </a>
             </li>
             <li ngbDropdown class="nav-item dropdown" *ngIf="checkRoles('catalogue')" routerLinkActive="active">
                 <a class="nav-link pointer" id="dropdownMenuPublish" ngbDropdownToggle>
-                    <i class="fa fa-arrow-up pr-1"></i> <span i18n>Publish</span>
+                    <i class="fa fa-arrow-up pr-1"></i> <span [innerHTML]="'Publish' | translate"></span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuPublish" ngbDropdownMenu>
                     <a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']"
                        [queryParams]="{pageRef: 'menu', productType: 'product'}" routerLinkActive="active">
-                        <i class="fa fa-shopping-cart dd-icon pr-1"></i> <span i18n>Product / Service</span>
+                        <i class="fa fa-shopping-cart dd-icon pr-1"></i> <span [innerHTML]="'Product / Service' | translate"></span>
                     </a>
                     <a *ngIf="enableLogisticServicePublishing" class="dropdown-item" [routerLink]="['/catalogue/publish-logistic']"
                        [queryParams]="{pageRef: 'single', productType: 'transportation'}" routerLinkActive="active">
-                        <i class="fa fa-truck dd-icon pr-1"></i> <span i18n>Logistics Service</span>
+                        <i class="fa fa-truck dd-icon pr-1"></i> <span [innerHTML]="'Logistics Service' | translate"></span>
                     </a>
                 </div>
             </li>
 
             <li class="nav-item" *ngIf="!config.showExplorative && checkRoles('comp_req')" routerLinkActive="active">
                 <a class="nav-link" routerLink="/simple-search">
-                    <i class="fa fa-search pr-1"></i> <span i18n>Search</span>
+                    <i class="fa fa-search pr-1"></i> <span [innerHTML]="'Search' | translate"></span>
                 </a>
             </li>
 
             <li ngbDropdown class="nav-item dropdown" *ngIf="config.showExplorative && checkRoles('comp_req')"
                 routerLinkActive="active">
                 <a class="nav-link pointer" id="dropdownMenuSearch" ngbDropdownToggle>
-                    <i class="fa fa-search pr-1"></i> <span i18n>Search</span>
+                    <i class="fa fa-search pr-1"></i> <span [innerHTML]="'Search' | translate"></span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuSearch" ngbDropdownMenu>
                     <a class="dropdown-item" routerLink="/simple-search" routerLinkActive="active">
-                        <i class="fa fa-keyboard dd-icon pr-1"></i> <span i18n>Text-based</span>
+                        <i class="fa fa-keyboard dd-icon pr-1"></i> <span [innerHTML]="'Text-based' | translate"></span>
                     </a>
                     <a class="dropdown-item" routerLink="/explore-search" routerLinkActive="active">
-                        <i class="fa fa-code-branch dd-icon pr-1"></i> <span i18n>Explorative</span>
+                        <i class="fa fa-code-branch dd-icon pr-1"></i> <span [innerHTML]="'Explorative' | translate"></span>
                     </a>
                 </div>
             </li>
@@ -77,14 +77,14 @@
             <!--
             <li class="nav-item" *ngIf="debug||roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
                 <a class="nav-link" [routerLink]="['/bpe/bpe-design']" [queryParams]="{fromScratch: true}">
-                    <i class="fa fa-exchange-alt"></i> <span i18n>Business Process</span>
+                    <i class="fa fa-exchange-alt"></i> <span>Business Process</span>
                 </a>
             </li>
             -->
 
             <li class="nav-item" *ngIf="checkRoles('reg_comp')" routerLinkActive="active">
                 <a class="nav-link" routerLink="/user-mgmt/company-registration">
-                    <i class="fa fa-edit pr-1"></i> <span i18n>Register a Company</span>
+                    <i class="fa fa-edit pr-1"></i> <span [innerHTML]="'Register a Company' | translate"></span>
                 </a>
             </li>
 
@@ -92,7 +92,7 @@
             <!-- This Will be adapted by the platform's core dev-team later -->
             <li class="nav-item" *ngIf="config.showTrack && checkRoles('track')" routerLinkActive="active">
                 <a class="nav-link" routerLink="/tnt" routerLinkActive="active">
-                    <i class="fa fa-truck pr-1"></i> <span>Track</span>
+                    <i class="fa fa-truck pr-1"></i> <span [innerHTML]="'Track' | translate"></span>
                 </a>
             </li>
 
@@ -100,23 +100,23 @@
                 routerLinkActive="active">
                 <a class="nav-link" [title]="activeCompanyName?activeCompanyName:''"
                    routerLink="/user-mgmt/company-invitation">
-                    <i class="fa fa-building pr-1"></i> <span i18n>Company Members</span>
+                    <i class="fa fa-building pr-1"></i> <span [innerHTML]="'Company Members' | translate"></span>
                 </a>
             </li>
 
             <li ngbDropdown class="nav-item dropdown" *ngIf="checkRoles('pm')" routerLinkActive="active">
                 <a class="nav-link pointer" id="dropdownMenuPM" ngbDropdownToggle>
-                    <i class="fa fa-chart-pie pr-1"></i> <span i18n>Platform Management</span>
+                    <i class="fa fa-chart-pie pr-1"></i> <span [innerHTML]="'Platform Management' | translate"></span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuPM" ngbDropdownMenu>
                     <a class="dropdown-item" routerLink="/analytics/management" routerLinkActive="active">
-                        <i class="fa fa-user-tie dd-icon pr-1"></i> <span i18n>Company Management</span>
+                        <i class="fa fa-user-tie dd-icon pr-1"></i> <span [innerHTML]="'Company Management' | translate"></span>
                     </a>
                     <a class="dropdown-item" routerLink="/analytics/trust" routerLinkActive="active">
-                        <i class="fa fa-sliders-h dd-icon pr-1"></i> <span i18n>Trust Policy Configuration</span>
+                        <i class="fa fa-sliders-h dd-icon pr-1"></i> <span [innerHTML]="'Trust Policy Configuration' | translate"></span>
                     </a>
                     <a class="dropdown-item" routerLink="/analytics/platform" routerLinkActive="active">
-                        <i class="fa fa-chart-area dd-icon pr-1"></i> <span i18n>Platform Analytics</span>
+                        <i class="fa fa-chart-area dd-icon pr-1"></i> <span [innerHTML]="'Platform Analytics' | translate"></span>
                     </a>
                     <!--
                     <a class="dropdown-item" href="https://nimble-platform.uk-south.containers.mybluemix.net/dashboards/status" target="_blank">
@@ -137,7 +137,7 @@
 
             <li class="nav-item" routerLinkActive="active" *ngIf="config.showChat">
                 <a class="nav-link" routerLink="/analytics/chat">
-                    <i class="fa fa-comments pr-1"></i> <span i18n>Chat</span>
+                    <i class="fa fa-comments pr-1"></i> <span [innerHTML]="'Chat' | translate"></span>
                 </a>
             </li>
 
@@ -145,7 +145,7 @@
 
         <ul class="nav navbar-nav">
             <li class="nav-item" routerLinkActive="active">
-                <a class="nav-link pointer" routerLink="/analytics/info" title="Imprint / Info">
+                <a class="nav-link pointer" routerLink="/analytics/info" [title]="'Imprint / Info' | translate">
                     <i class="fa fa-info-circle"></i>
                 </a>
             </li>
@@ -153,7 +153,7 @@
 
         <ul class="nav navbar-nav">
             <li class="nav-item">
-                <a class="nav-link pointer" (click)="open(support)" title="Help">
+                <a class="nav-link pointer" (click)="open(support)" [title]="'Help' | translate">
                     <i class="fa fa-question-circle"></i>
                 </a>
             </li>
@@ -162,7 +162,7 @@
         <ul class="nav navbar-nav">
             <li class="nav-item" routerLinkActive="active">
                 <a class="nav-link" routerLink="/analytics/members">
-                    <i class="fa fa-users pr-1"></i> <span i18n>Platform Members</span>
+                    <i class="fa fa-users pr-1"></i> <span [innerHTML]="'Platform Members' | translate"></span>
                 </a>
             </li>
         </ul>
@@ -177,18 +177,18 @@
                     <a *ngIf="checkRoles('comp-settings')" class="dropdown-item"
                        [title]="activeCompanyName?activeCompanyName:''" routerLink="/user-mgmt/company-settings"
                        routerLinkActive="active">
-                        <i class="fa fa-cog dd-icon pr-1"></i> <span i18n>Company Settings</span>
+                        <i class="fa fa-cog dd-icon pr-1"></i> <span [innerHTML]="'Company Settings' | translate"></span>
                     </a>
                     <a *ngIf="checkRoles('comp-ratings')" class="dropdown-item"
                        [title]="activeCompanyName?activeCompanyName:''" routerLink="/user-mgmt/company-rating"
                        routerLinkActive="active">
-                        <i class="fa fa-star dd-icon pr-1"></i> <span i18n>Company Ratings</span>
+                        <i class="fa fa-star dd-icon pr-1"></i> <span [innerHTML]="'Company Ratings' | translate"></span>
                     </a>
                     <a class="dropdown-item" routerLink="/user-mgmt/user-profile" routerLinkActive="active">
-                        <i class="fa fa-user-tie dd-icon pr-1"></i> <span i18n>User Profile</span>
+                        <i class="fa fa-user-tie dd-icon pr-1"></i> <span [innerHTML]="'User Profile' | translate"></span>
                     </a>
                     <a class="dropdown-item" routerLink="/user-mgmt/logout">
-                        <i class="fa fa-lock dd-icon pr-1"></i> <span i18n>Logout</span>
+                        <i class="fa fa-lock dd-icon pr-1"></i> <span [innerHTML]="'Logout' | translate"></span>
                     </a>
                 </div>
             </li>
@@ -218,25 +218,15 @@
 
 <ng-template #support let-d="dismiss">
     <div class="modal-header">
-        <h4 class="modal-title">Help</h4>
+        <h4 class="modal-title" [innerHTML]="'Help' | translate">Help</h4>
         <button type="button" class="close" aria-label="Close" (click)="d('')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
-    <div class="modal-body">
-        This platform has only been developed for and tested on Chrome and Firefox. In case you are experiencing errors
-        try using one of those browsers first.<br/><br/>
-        When you press "Open manual" a PDF with an user manual will open in a new tab.<br/><br/>
-        When you press "Contact support" a partially prefilled mail template will open in the mail client of your
-        choice.<br/>
-        Please make sure to fill out the description and cause of the issue properly and add screenshots if they are of
-        use.<br/>
-        We will get back to you within one business day.
-    </div>
+    <div class="modal-body" [innerHTML]="'help-modal-text' | translate"></div>
     <div class="modal-footer">
-        <a href="assets/user_manual.pdf" target="_blank" role="button" class="btn btn-primary" (click)="d('')">Open
-            manual</a>
-        <a [href]="mailto" role="button" class="btn btn-primary" (click)="d('')">Contact support</a>
+        <a href="assets/user_manual.pdf" target="_blank" role="button" class="btn btn-primary" (click)="d('')" [innerHTML]="'Open manual' | translate"></a>
+        <a [href]="mailto" role="button" class="btn btn-primary" (click)="d('')" [innerHTML]="'Contact support' | translate"></a>
     </div>
 </ng-template>
 <!--<div id="support-btn" (click)="open(support)"><img id="support-img" src="assets/support_white.png"/></div>-->
@@ -246,8 +236,7 @@
 </div>
 
 <div *ngIf="!minimalView" id="footer">
-    <img src="../assets/images/eu_flag.png" alt=""> This project has received funding from the European Union's Horizon 2020
-    research and innovation programme under grant agreement No 723810
+    <img src="../assets/images/eu_flag.png" alt=""> <span [innerHTML]="'funding-disclaimer' | translate"></span>
     <div *ngIf="versions.length > 0">
         <small>
 			<span *ngFor="let version of versions; let i = index" [attr.data-index]="i">

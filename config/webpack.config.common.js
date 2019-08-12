@@ -61,11 +61,10 @@ module.exports = {
             {from: './src/assets/pdf/',to: 'assets/'},
             {from: './src/assets/css/',to: 'assets/css'},
 			{from: './src/assets/js/',to: 'assets/js'},
+      {from: './src/assets/i18n',to: 'assets/i18n'},
 			{from: './src/lib/bpe/js',to: 'lib/bpe/js'},
-			{from: './src/locale',to: 'locale'},
 			{from: './src/main',to: 'main'},
             {from: './src/health.json',to: './'},
-			{from: './src/messages.xlf',to: './'},
 			{from: './src/favicon.ico',to: './'}
         ]),
 

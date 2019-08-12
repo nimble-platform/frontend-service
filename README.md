@@ -12,12 +12,6 @@ The following versions are used for deployment:
 - Node.js: 10.16.0
 - NPM: 6.9.0
 
-e.g. i18n
-```shell
-npm run i18n
-```
-Afterwards, copy src/messages.xlf to src/locale/messages.[LANGUAGE_TAG].xlf (e.g. messages.de.xlf) and add translations inside the target tags.
-
 In order to install all the dependencies execute
 ```shell
 npm install
@@ -27,7 +21,7 @@ In order to build the resources execute
 ```shell
 npm run build:dev
 ```
-for the development build or 
+for the development build or
 ```shell
 npm run build:production
 ```
@@ -98,6 +92,44 @@ mvn clean install -Denv=[ENVIRONMENT]
 or
 ```shell
 ./deploy.sh docker-build [ENVIRONMENT]
+```
+
+## Internationalization / Localization
+
+For Internationalization [@ngx-translate/core](https://www.npmjs.com/package/@ngx-translate/core#usage) is used.
+
+Import the TranslateService for every component that requires translations and add it to the constructor, e.g.
+```shell
+import {TranslateService} from '@ngx-translate/core';
+```
+
+The translations themself have to be added to src/assets/[LANG].json
+
+### Translating text in HTML
+
+In order to translate text in HTML files wrap the text inside a <span> (or other HTML tag) and make sure it does not contain any Angular variable bindings, e.g. convert
+```shell
+Hello {{user}} - Welcome to the NIMBLE platform!
+```
+to
+```shell
+<span [innerHTML]="'Hello' | translate"></span> {{user}} - <span [innerHTML]="'Welcome to the NIMBLE platform!' | translate"></span>
+```
+
+### Translating HTML properties
+
+In order to translate HTML properties (e.g. titles, placeholders, ...) use the following annotation:
+```shell
+<span [title]="'Some title' | translate"></span>
+```
+
+### Translating dynamic values
+
+In order to translate dynamic values or anything coming from TypeScript files use the following annotation:
+```shell
+translate.get('Some text').subscribe((res: string) => {
+    console.log(res);
+});
 ```
 
  ---

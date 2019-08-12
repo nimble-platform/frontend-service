@@ -8,6 +8,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { CookieService } from 'ng2-cookies';
+import { HttpClientModule, HttpClient } from "@angular/common/http";
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { AppCommonModule } from "./common/common.module";
 
@@ -33,6 +36,10 @@ import {DocumentService} from "./bpe/bp-view/document-service";
 import {LogisticPublishingService} from './catalogue/publish/logistic-publishing.service';
 import {FrameContractTransitionService} from "./bpe/bp-view/contract/frame-contract-transition.service";
 
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http);
+}
+
 @NgModule({
     imports: [
         BrowserModule,
@@ -40,10 +47,18 @@ import {FrameContractTransitionService} from "./bpe/bp-view/contract/frame-contr
         BrowserAnimationsModule,
         FormsModule,
         HttpModule,
+        HttpClientModule,
         AppRoutingModule,
         ReactiveFormsModule,
 		    AppCommonModule,
-        NgbModule.forRoot()
+        NgbModule.forRoot(),
+        TranslateModule.forRoot({
+          loader: {
+            provide: TranslateLoader,
+            useFactory: HttpLoaderFactory,
+            deps: [HttpClient]
+          }
+        })
     ],
     declarations: [
         AppComponent

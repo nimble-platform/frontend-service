@@ -21,7 +21,6 @@
             <a
                     [ngClass]="{'nav-link': true, active: selectedTab === 'Product Details'}"
                     (click)="selectedTab = 'Product Details'"
-                    i18n
             >Details</a>
         </li>
 
@@ -29,7 +28,6 @@
             <a
                     [ngClass]="{'nav-link': true, active: selectedTab === 'Product Trading & Delivery Terms'}"
                     (click)="selectedTab = 'Product Trading & Delivery Terms';"
-                    i18n
             >Trading & Delivery Terms</a>
         </li>
     </ul>
@@ -50,7 +48,7 @@
                     (presentationMode != 'edit' && catalogueLine.goodsItem.item.transportationServiceDetails != null)">
     <ul class="nav nav-tabs mb-3">
         <li class="nav-item pointer">
-            <a class="nav-link active" i18n>Transportation Service Details</a>
+            <a class="nav-link active">Transportation Service Details</a>
         </li>
     </ul>
 
