@@ -37,7 +37,7 @@ import {LogisticPublishingService} from './catalogue/publish/logistic-publishing
 import {FrameContractTransitionService} from "./bpe/bp-view/contract/frame-contract-transition.service";
 
 export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http);
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
 @NgModule({
