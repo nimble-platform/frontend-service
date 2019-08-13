@@ -20,7 +20,7 @@ import { TreeviewModule } from 'ngx-treeview';
         FormsModule,
         HttpModule,
         QualiExploreRoutingModule,
-        TreeviewModule,
+        TreeviewModule.forRoot(),
         NgbModule.forRoot()
     ],
     declarations: [
