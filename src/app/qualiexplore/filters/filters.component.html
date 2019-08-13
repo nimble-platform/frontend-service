@@ -1,1 +1,43 @@
-<h2>Filters Working</h2>
+<div class="container mt-5">
+    <h2>QualiExplore</h2>
+    <div class="mt-lg-auto jumbotron">
+      <h3 class="display-5">Step - 1</h3>
+      <p class="lead">Select one or more items that fit to the work task that you would like to support with Product Usage Information. QualiExplore will show you factors that influence the quality of the information that you can use in your task.</p>
+      <!-- <p>It highlights the most relevant factors with a  <i class="fas fa-flag fa-1x"></i> symbol.</p> -->
+    </div>
+
+    <!-- <pre>{{filters | json}}</pre> -->
+  <div class="row mt-5">
+    <div class="col-lg-3" *ngFor="let filter of filters">
+      
+      <h4>
+        <i class="fas fa-box" *ngIf="filter['name'] === 'Product'"></i>
+        <i class="fas fa-bullseye" *ngIf="filter['name']==='Goal'"></i>
+        <i class="fas fa-info" *ngIf="filter['name'] === 'Information quality'"></i>
+        <i class="fas fa-exchange-alt" *ngIf="filter['name'] === 'Information channel'"></i>
+        {{filter['name']}}
+      </h4>
+      <hr>
+      <div *ngFor="let label of filter['labels']">
+          <div class="form-check">
+            <input class="form-check-input"
+                   type="checkbox"
+                   value="{{label['id']}}"
+                   id="{{label['id']}}"
+                   [(ngModel)]="label['checked']"
+                   (change)="changeCheck(label['id'], $event)"
+            >
+              <label class="form-check-label" for="{{label['id']}}">
+                {{label['name']}}
+              </label>
+          </div>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <div class="text-right">
+    <button class="btn btn-lg btn-primary" (click)="proceed()" [disabled]="!selections.length">
+    Proceed
+  </button>
+  </div>
+</div>
