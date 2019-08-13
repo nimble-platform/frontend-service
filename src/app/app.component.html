@@ -96,6 +96,13 @@
                 </a>
             </li>
 
+            <!-- QualiExplore Component UB-->
+            <li class="nav-item" *ngIf="config.showTrack && checkRoles('track')" routerLinkActive="active">
+                <a class="nav-link" routerLink="/qualiexplore" routerLinkActive="active">
+                    <i class="fas fa-certificate pr-1"></i> <span [innerHTML]="'QualiExplore' | translate"></span>
+                </a>
+            </li>
+
             <li class="nav-item" *ngIf="checkRoles('comp') || (checkRoles('comp_req') && config.showCompanyMembers)"
                 routerLinkActive="active">
                 <a class="nav-link" [title]="activeCompanyName?activeCompanyName:''"
