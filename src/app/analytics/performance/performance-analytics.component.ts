@@ -6,6 +6,7 @@ import { CategoryService } from '../../catalogue/category/category.service';
 import * as myGlobals from '../../globals';
 import {selectNameFromLabelObject} from '../../common/utils';
 import { CookieService } from "ng2-cookies";
+import {TranslateService} from '@ngx-translate/core';
 
 
 @Component({
@@ -49,6 +50,7 @@ export class PerformanceAnalyticsComponent implements OnInit {
 		private simpleSearchService: SimpleSearchService,
 		private cookieService: CookieService,		
 		private categoryService: CategoryService,
+		private translate: TranslateService,
         ) {
 
     }
