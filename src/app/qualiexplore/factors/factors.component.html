@@ -8,7 +8,7 @@
         <!-- <input type="checkbox" class="form-check-input" [(ngModel)]="item.checked" (ngModelChange)="onCheckedChange(); select(item);" [disabled]="item.disabled"
                [indeterminate]="item.indeterminate"/> -->
         <span class="form-check-label" *ngIf="item.value !== null && item.value['highlighted']">
-          <i class="{{item.value['class']}}" aria-hidden="true" title="Highlighted" [ngClass]="{'marked': item.checked}"></i>
+          <i class="{{item.value['class']}}" aria-hidden="true" title="Highlighted" [ngClass]="{'marked': item.checked}" (ngModelChange)="onCheckedChange()"></i>
         </span>
         <!-- <label class="form-check-label" (click)="item.checked = !item.checked; onCheckedChange(); select(item);">
           {{item.text}}
@@ -28,9 +28,23 @@
     <div class="jumbotron">
       <h3 class="display-5">Step - 2</h3>
       <p class="lead">This step highlights the most relevant factors with a  <i class="fas fa-flag fa-1x"></i> 
-      symbol.</p> 
-      <p>Selected IDs from Step-1: {{selected}}</p>
-      <!-- <button class="btn btn-outline-secondary" (click)="backToStep1()">Return to Step-1</button> -->
+      symbol.</p>
+      <button type="button" class="btn btn-outline-primary" (click)="collapseSelectedFilters = !collapseSelectedFilters" [attr.aria-expanded]="!collapseSelectedFilters" aria-controls="collapseFilters">
+        Selected Filters <i class="fas fa-angle-double-down" *ngIf="collapseSelectedFilters"></i> 
+      </button>
+      <div id="collapseFilters" [ngbCollapse]="collapseSelectedFilters">
+        <ul class="filter-details" *ngFor="let filter of selectedFilterDetails">
+          <li>
+              <i class="fas fa-box" *ngIf="filter['parent'] === 'Product'"></i>
+              <i class="fas fa-bullseye" *ngIf="filter['parent']==='Goal'"></i>
+              <i class="fas fa-info" *ngIf="filter['parent'] === 'Information quality'"></i>
+              <i class="fas fa-exchange-alt" *ngIf="filter['parent'] === 'Information channel'"></i>
+              {{filter['name']}}
+          </li>
+        </ul>
+      </div>
+      <br>
+      <button class="btn btn-sm btn-outline-secondary mt-lg-2" (click)="backToStep1()">Return to Step-1</button>
     </div>
     <div class="row mt-5">
       <div class="col-lg-6">
