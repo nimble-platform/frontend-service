@@ -16,6 +16,11 @@
     list-style-type: none;
 }
 
+.filter-details li {
+    list-style-type: none;
+    margin-top: 0.4rem;
+}
+
 .factorDescription blockquote {
     text-indent: 10%;
 }
