@@ -25,7 +25,7 @@
                    value="{{label['id']}}"
                    id="{{label['id']}}"
                    [(ngModel)]="label['checked']"
-                   (change)="changeCheck(label['id'], $event)"
+                   (change)="changeCheck(label['id'], $event); label['checked'] = true;"
             >
               <label class="form-check-label" for="{{label['id']}}">
                 {{label['name']}}
@@ -36,6 +36,9 @@
   </div>
   <hr>
   <div class="text-right">
+    <button class="btn btn-md btn-outline-secondary float-left" (click)="reset()" [disabled]="!selections.length">
+      Reset Filters
+    </button>
     <button class="btn btn-lg btn-primary" (click)="proceed()" [disabled]="!selections.length">
     Proceed
   </button>
