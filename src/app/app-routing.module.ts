@@ -12,7 +12,8 @@ const routes: Routes = [
 	{path: 'data-channel', loadChildren: './data-channel/data-channel.module#DataChannelModule'},
 	{path: 'tnt', loadChildren: './tnt/tnt.module#TnTModule'},
 	{path: 'product-details', loadChildren: './product-details/product-details.module#ProductDetailsModule'},
-  	{path: 'analytics', loadChildren: './analytics/analytics.module#AnalyticsModule'}
+	{path: 'analytics', loadChildren: './analytics/analytics.module#AnalyticsModule'},
+	{path: 'qualiexplore', loadChildren: './qualiexplore/qualiexplore.module#QualiExploreModule'}
 ];
 
 @NgModule({
