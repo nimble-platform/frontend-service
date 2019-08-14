@@ -28,6 +28,8 @@ import {NEGOTIATION_RESPONSES} from "../../catalogue/model/constants";
 import {DataChannel} from '../../data-channel/model/datachannel';
 import * as myGlobals from "../../globals";
 import {UserService} from '../../user-mgmt/user.service';
+import {TranslateService} from '@ngx-translate/core';
+
 
 /**
  * Created by suat on 12-Mar-18.
@@ -97,7 +99,8 @@ export class ThreadSummaryComponent implements OnInit {
                 private router: Router,
                 private route: ActivatedRoute,
                 private modalService: NgbModal,
-                private userService: UserService) {
+                private userService: UserService,
+                private translate: TranslateService) {
     }
 
     ngOnInit(): void {

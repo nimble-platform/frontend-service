@@ -1,63 +1,64 @@
 <call-status [callStatus]="frameContractRetrievalCallStatus"></call-status>
 <ng-container *ngIf="quotationWrapper">
-    <h4>Frame Contract on
+    <h4>
+        <span [innerHTML]="'Frame Contract on' | translate"></span>
         <span class="clickable" (click)="navigateToProductDetails()">{{getProductName(frameContract.item.name)}}</span> with
         <span class="clickable" (click)="navigateToCompanyDetails()">{{getCorrespondingPartyName()}}</span>
     </h4>
     <div class="row space-after">
-        <div class="col-3"><strong class="font-weight-500">Agreed on:</strong></div>
+        <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Agreed on' | translate"></span>:</strong></div>
         <div class="col-3">{{frameContract.digitalAgreementTerms.validityPeriod.startDate}}</div>
     </div>
     <div class="row mb-4">
-        <div class="col-3"><strong class="font-weight-500">Valid until:</strong></div>
+        <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Valid until' | translate"></span>:</strong></div>
         <div class="col-3">{{frameContract.digitalAgreementTerms.validityPeriod.endDate}}</div>
     </div>
 
     <div class="row mb-3">
         <div class="col-12">
-            <div class="btn btn-outline-primary align-self-start" [ngClass]="{'active': shownTab == 'MAIN_TERMS'}" (click)="shownTab = 'MAIN_TERMS'">Main
-                Terms
+            <div class="btn btn-outline-primary align-self-start" [ngClass]="{'active': shownTab == 'MAIN_TERMS'}" (click)="shownTab = 'MAIN_TERMS'">
+                    <span [innerHTML]="'Main Terms' | translate"></span>
             </div>
             <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active': shownTab == 'TERMS_AND_CONDITIONS'}"
-                 (click)="shownTab = 'TERMS_AND_CONDITIONS'">Terms and Conditions
+                 (click)="shownTab = 'TERMS_AND_CONDITIONS'"><span [innerHTML]="'Terms and Conditions' | translate"></span> 
             </div>
             <div class="btn btn-outline-primary align-self-start" [ngClass]="{'active': shownTab == 'NOTES_AND_ADDITIONAL_FILES'}"
-                 (click)="shownTab = 'NOTES_AND_ADDITIONAL_FILES'">Notes and Additional Files
+                 (click)="shownTab = 'NOTES_AND_ADDITIONAL_FILES'"><span [innerHTML]="'Notes and Additional Files' | translate"></span>
             </div>
         </div>
     </div>
 
     <ng-container *ngIf="shownTab == 'MAIN_TERMS'">
         <div class="row space-after">
-            <div class="col-3"><strong class="font-weight-500">Delivery Period:</strong></div>
+            <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Delivery Period' | translate"></span>:</strong></div>
             <div class="col-3">{{ quotationWrapper.deliveryPeriodString}}</div>
         </div>
         <div class="row space-after">
-            <div class="col-3"><strong class="font-weight-500">Warranty:</strong></div>
+            <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Warranty' | translate"></span>:</strong></div>
             <div class="col-3">{{ quotationWrapper.warrantyString}}</div>
         </div>
         <div class="row space-after">
-            <div class="col-3"><strong class="font-weight-500">Incoterms:</strong></div>
+            <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Incoterms' | translate"></span>:</strong></div>
             <div class="col-3">{{ quotationWrapper.incotermsString}}</div>
         </div>
         <div class="row space-after">
-            <div class="col-3"><strong class="font-weight-500">Payment Terms:</strong></div>
+            <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Payment Terms' | translate"></span>:</strong></div>
             <div class="col-3">{{ quotationWrapper.paymentTermsWrapper.paymentTerm}}</div>
         </div>
         <div class="row space-after">
-            <div class="col-3"><strong class="font-weight-500">Payment Means:</strong></div>
+            <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Payment Means' | translate"></span>:</strong></div>
             <div class="col-3">{{ quotationWrapper.paymentMeans}}</div>
         </div>
         <div class="row space-after">
-            <div class="col-3"><strong class="font-weight-500">Data monitoring service requested:</strong></div>
+            <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Data monitoring service requested' | translate"></span>:</strong></div>
             <div class="col-3">{{ quotationWrapper.dataMonitoringPromisedString}}</div>
         </div>
         <div class="row space-after">
-            <div class="col-3"><strong class="font-weight-500">Ordered Quantity:</strong></div>
+            <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Ordered Quantity' | translate"></span>:</strong></div>
             <div class="col-3">{{ quotationWrapper.orderedQuantity.value }} {{quotationWrapper.orderedQuantity.unitCode}}</div>
         </div>
         <div class="row space-after">
-            <div class="col-3"><strong class="font-weight-500">Net Total Price:</strong></div>
+            <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Net Total Price' | translate"></span>:</strong></div>
             <div class="col-3">
                 {{ quotationWrapper.priceWrapper.totalPriceString }}<br/>
                 <small>( {{ quotationWrapper.priceWrapper.pricePerItemString }} )</small>
@@ -80,4 +81,4 @@
                     [readonly]="true">
     </note-file-view>
 </ng-container>
-<h4 *ngIf="showNoFrameContractLabel">No frame contract available.</h4>
+<h4 *ngIf="showNoFrameContractLabel"><span [innerHTML]="'No frame contract available' | translate"></span>.</h4>

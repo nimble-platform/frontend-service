@@ -7,6 +7,7 @@ import {BPEService} from "../bpe.service";
 import {BpActivityEvent} from '../../catalogue/model/publish/bp-start-event';
 import {BpUserRole} from '../model/bp-user-role';
 import {BpURLParams} from '../../catalogue/model/publish/bpURLParams';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "thread-event",
@@ -22,7 +23,8 @@ export class ThreadEventComponent implements OnInit {
     @Output() processCancelled = new EventEmitter();
 
     constructor(private bpDataService: BPDataService,
-                private bpeService: BPEService) {
+                private bpeService: BPEService,
+                private translate: TranslateService) {
     }
 
     ngOnInit() {

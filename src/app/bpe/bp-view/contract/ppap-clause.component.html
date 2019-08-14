@@ -1,10 +1,10 @@
 <ng-container *ngIf="ppapResponse">
     <div class="row space-before">
         <div class="col-3">
-            <strong>Requested Documents: </strong>
+            <strong><span [innerHTML]="'Requested Documents' | translate"></span>: </strong>
         </div>
         <div class="col-9">
-            <span *ngIf="!ppapResponse.requestedDocument || ppapResponse.requestedDocument.length === 0">None.</span>
+            <span *ngIf="!ppapResponse.requestedDocument || ppapResponse.requestedDocument.length === 0"><span [innerHTML]="'None' | translate"></span>.</span>
             <ng-container *ngIf="ppapResponse.requestedDocument && ppapResponse.requestedDocument.length > 0">
                 <div *ngFor="let document of ppapResponse.requestedDocument" class="mt-3">
                     <a href class="btn-link" (click)="downloadFile(document, $event)">

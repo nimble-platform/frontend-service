@@ -1,5 +1,6 @@
 import {Component, Input} from "@angular/core";
 import {Contract} from "../../../catalogue/model/publish/contract";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'contract',
@@ -12,4 +13,7 @@ export class ContractComponent {
     @Input() collapsable: boolean = true;
 
     showClauses:boolean = false;
+
+    constructor(private translate: TranslateService) {
+}
 }

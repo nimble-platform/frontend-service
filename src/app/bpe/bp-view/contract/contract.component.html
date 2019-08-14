@@ -1,6 +1,6 @@
 <div *ngIf="collapsable" class="col-12 title">
     <h4>
-        Previous Steps
+        <span [innerHTML]="'Previous Steps' | translate"></span>
         <button class="btn btn-outline-dark" (click)="showClauses =! showClauses"
                 [disabled]="!contract">
             <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="showClauses"></i>

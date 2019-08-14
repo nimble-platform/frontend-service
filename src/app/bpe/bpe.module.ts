@@ -47,6 +47,13 @@ import {FrameContractDetailsComponent} from "./bp-view/contract/frame-contract-d
 import {ThreadSummaryComponent} from "./bp-summary/thread-summary.component";
 import {ThreadEventComponent} from "./bp-summary/thread-event.component";
 import {CustomTermModalComponent} from "./bp-view/negotiation/custom-term-modal.component";
+import { HttpClientModule, HttpClient } from "@angular/common/http";
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
+export function HttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 
 @NgModule({
     imports: [
@@ -58,7 +65,14 @@ import {CustomTermModalComponent} from "./bp-view/negotiation/custom-term-modal.
         BPERoutingModule, 
         CatalogueModule, 
         ProductDetailsModule,
-        NgbModule.forRoot()
+        NgbModule.forRoot(),
+        TranslateModule.forRoot({
+            loader: {
+              provide: TranslateLoader,
+              useFactory: HttpLoaderFactory,
+              deps: [HttpClient]
+            }
+        })
     ],
     declarations: [
         BPConfigureComponent,
