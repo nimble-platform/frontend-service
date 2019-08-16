@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {AnalyticsService} from "./analytics.service";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'company-analytics',
@@ -11,7 +12,8 @@ export class CompanyAnalyticsComponent implements OnInit {
 
     
     constructor(
-        private analyticsService: AnalyticsService
+        private analyticsService: AnalyticsService,
+        private translate: TranslateService,
     ) {
     }
 

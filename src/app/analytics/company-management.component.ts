@@ -4,6 +4,7 @@ import { CallStatus } from '../common/call-status';
 import {selectPartyName} from '../common/utils';
 import { CompanyManagementTab } from "./model/company-management-tab";
 import {COMPANY_LIST_SORT_OPTIONS} from './constants';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "company-management",
@@ -35,7 +36,8 @@ export class CompanyManagementComponent implements OnInit {
 
     selectedTab: CompanyManagementTab;
 
-    constructor(private analyticsService: AnalyticsService) {
+    constructor(private analyticsService: AnalyticsService,
+      private translate: TranslateService,) {
     }
 
     ngOnInit(): void {

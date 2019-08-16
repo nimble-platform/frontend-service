@@ -7,6 +7,7 @@ import * as myGlobals from '../globals';
 import {selectNameFromLabelObject} from '../common/utils';
 import { DomSanitizer } from "@angular/platform-browser";
 import { UserService } from "../user-mgmt/user.service";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "platform-analytics",
@@ -54,7 +55,8 @@ export class PlatformAnalyticsComponent implements OnInit {
         private simpleSearchService: SimpleSearchService,
 		private categoryService: CategoryService,
 		private userService:UserService,
-    	private sanitizer: DomSanitizer
+		private sanitizer: DomSanitizer,
+		private translate: TranslateService,
         ) {
 
     }

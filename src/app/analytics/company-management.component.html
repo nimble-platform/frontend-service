@@ -9,7 +9,7 @@
                     <a href id="UNVERIFIED" class="nav-link"
                         [ngClass]="{ active: selectedTab === 'UNVERIFIED'}"
                         (click)="onSelectTab($event)">
-                        Unverified Companies
+                        <span [innerHTML]="'Unverified Companies' | translate"></span>
                         <span *ngIf="unverifiedCompaniesPage">
                             <span [hidden]="unverifiedCompaniesCallStatus.isLoading() || unverifiedCompaniesPage == null">(Total {{ unverifiedCompaniesPage.totalElements }})</span>
                         </span>
@@ -21,7 +21,7 @@
                 <a href id="VERIFIED" class="nav-link"
                     [ngClass]="{ active: selectedTab === 'VERIFIED'}"
                     (click)="onSelectTab($event)">
-                    Registered Companies
+                    <span [innerHTML]="'Registered Companies' | translate"></span>
                     <span *ngIf="registeredCompaniesPage">
                         <span [hidden]="registeredCompaniesCallStatus.isLoading() || registeredCompaniesPage == null">(Total {{ registeredCompaniesPage.totalElements }})</span>
                     </span>
@@ -35,7 +35,7 @@
     <div *ngIf="selectedTab === 'UNVERIFIED'" class="p-3 col-12">
         <div class="row">
           <div class="col-8">
-            <h4>Unverified Companies
+            <h4><span [innerHTML]="'Unverified Companies' | translate"></span>
                 <span *ngIf="unverifiedCompaniesPage"><span [hidden]="unverifiedCompaniesCallStatus.isLoading() || unverifiedCompaniesPage == null">(Total {{ unverifiedCompaniesPage.totalElements }})</span></span>
             </h4>
           </div>
@@ -70,10 +70,10 @@
         <div *ngIf="!unverifiedCompaniesCallStatus.isLoading() && unverifiedCompaniesPage">
             <table class="table table-striped table-bordered">
                 <tr>
-                    <th><span>ID</span></th>
-                    <th><span>Company Name</span></th>
-                    <th><span>Address</span></th>
-                    <th><span>Initial Representative</span></th>
+                    <th><span [innerHTML]="'ID' | translate"></span></th>
+                    <th><span [innerHTML]="'Company Name' | translate">></span></th>
+                    <th><span [innerHTML]="'Address' | translate"></span></th>
+                    <th><span [innerHTML]="'Initial Representative' | translate"></span></th>
                     <th style="width:20rem !important;"></th>
                 </tr>
                 <ng-container *ngFor="let company of unverifiedCompaniesPage.content">
@@ -95,11 +95,11 @@
                         <td *ngIf="!company.person[0]">n/A</td>
                         <td>
                             <a class="btn btn-primary" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: company.hjid, viewMode:'mgmt'}">Details</a>
-                            <button class="btn btn-success ml-2" (click)="verifyCompany(company)">
-                                Verify
+                            <button class="btn btn-success ml-2" (click)="verifyCompany(company)"
+                            ><span [innerHTML]="'Verify' | translate"></span>
                             </button>
                             <button class="btn btn-danger ml-2" (click)="rejectCompany(company)">
-                                Reject
+                              <span [innerHTML]="'Reject' | translate"></span>  
                             </button>
                         </td>
                     </tr>
@@ -107,7 +107,7 @@
             </table>
             <div *ngIf="unverifiedCompaniesPage.content.length >= size && orgUnverifiedCompaniesPage.content.length > size">
               <hr>
-              <span class="clickable" (click)="toggleUnverifiedExpand()"><span *ngIf="!unverifiedExpanded">Show more</span><span *ngIf="unverifiedExpanded">Show less</span></span>
+              <span class="clickable" (click)="toggleUnverifiedExpand()"><span *ngIf="!unverifiedExpanded" [innerHTML]="'Show more' | translate"></span><span *ngIf="unverifiedExpanded" [innerHTML]="'Show less' | translate"></span></span>
             </div>
             <!--
             <ngb-pagination class="d-flex justify-content-center"
@@ -126,13 +126,13 @@
     <div *ngIf="selectedTab === 'VERIFIED'" class="p-3 col-12">
         <div class="row">
           <div class="col-8">
-            <h4>Registered Companies
+            <h4><span [innerHTML]="'Registered Companies' | translate"></span>
                 <span *ngIf="registeredCompaniesPage"><span [hidden]="registeredCompaniesCallStatus.isLoading() || registeredCompaniesPage == null">(Total {{ registeredCompaniesPage.totalElements }})</span></span>
             </h4>
           </div>
           <div class="col-4">
             <div class="input-group">
-                <label class="col-form-label col-form-label-sm space-right"><strong>Sort by:</strong>
+                <label class="col-form-label col-form-label-sm space-right"><strong><span [innerHTML]="'Sort by' | translate"></span>:</strong>
                 </label>
                 <select  class="form-control form-control-sm custom-select" [(ngModel)]="sortOptionForRegisteredCompanies"
                         (change)="sortRegisteredCompanyList()" [disabled]="registeredCompaniesCallStatus.isLoading()">
@@ -162,10 +162,10 @@
             <div *ngIf="registeredCompaniesPage">
                 <table class="table table-striped table-bordered">
                     <tr>
-                        <th><span>ID</span></th>
-                        <th><span>Company Name</span></th>
-                        <th><span>Address</span></th>
-                        <th><span>Legal Representative</span></th>
+                        <th><span [innerHTML]="'ID' | translate"></span></th>
+                        <th><span [innerHTML]="'Company Name' | translate"></span></th>
+                        <th><span [innerHTML]="'Address' | translate"></span></th>
+                        <th><span [innerHTML]="'Legal Representative' | translate"></span></th>
                         <th style="width:20rem !important;"></th>
                     </tr>
                     <ng-container *ngFor="let company of registeredCompaniesPage.content">
@@ -194,7 +194,7 @@
                 </table>
                 <div *ngIf="registeredCompaniesPage.content.length >= size && orgCompaniesPage.content.length > size">
                   <hr>
-                  <span class="clickable" (click)="toggleVerifiedExpand()"><span *ngIf="!verifiedExpanded">Show more</span><span *ngIf="verifiedExpanded">Show less</span></span>
+                  <span class="clickable" (click)="toggleVerifiedExpand()"><span *ngIf="!verifiedExpanded" [innerHTML]="'Show more' | translate"></span><span *ngIf="verifiedExpanded" [innerHTML]="'Show less' | translate"></span></span>
                 </div>
                 <!--
                 <ngb-pagination class="d-flex justify-content-center"
