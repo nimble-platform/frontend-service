@@ -57,9 +57,9 @@ export class ExplorativeSearchFormComponent implements OnInit {
     showMore: boolean[] = [];
     // when unchecked in search history, do not show respective keywords
     showParticularKeyword: boolean[] = [];
-    private _error_detected_kw = false;
-    private _error_detected_query = false;
-    private _warning_kw = false;
+    _error_detected_kw = false;
+    _error_detected_query = false;
+    _warning_kw = false;
     private activeTabName = 'sqp';
     private conceptName = '';
     private conceptURL = '';

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {CookieService} from 'ng2-cookies';
 import {CredentialsService} from './user-mgmt/credentials.service';
 import {
@@ -13,6 +13,9 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from './globals';
 import * as moment from "moment";
 import {DEFAULT_LANGUAGE} from './catalogue/model/constants';
+import {TranslateService} from '@ngx-translate/core';
+
+import 'zone.js';
 
 @Component({
     selector: 'nimble-app',
@@ -47,7 +50,8 @@ export class AppComponent implements OnInit {
         private credentialsService: CredentialsService,
         private router: Router,
         private route: ActivatedRoute,
-        private modalService: NgbModal
+        private modalService: NgbModal,
+        private translate: TranslateService
     ) {
         router.events.subscribe(event => {
             if (event instanceof NavigationStart) {
@@ -69,6 +73,8 @@ export class AppComponent implements OnInit {
                 this.checkState(event.url);
             }
         });
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {

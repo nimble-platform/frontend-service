@@ -8,22 +8,30 @@ The complete frontend is developed with [Angular](https://angular.io) in TypeScr
 ### With Node.js (aka. full development)
 For development purposes it is advisable to set up [Node.js](https://nodejs.org/en/download/) on your machine since it delivers all possibly required functionality and provides way faster build cycles.
 
-e.g. i18n
-```shell
-npm run i18n
-```
-Afterwards, copy src/messages.xlf to src/locale/messages.[LANGUAGE_TAG].xlf (e.g. messages.de.xlf) and add translations inside the target tags.
+The following versions are used for deployment:
+- Node.js: 10.16.0
+- NPM: 6.9.0
 
 In order to install all the dependencies execute
 ```shell
 npm install
 ```
 
-In order to start the lite-server with BrowserSync (any file changes will be deployed on the fly during development) execute
+In order to build the resources execute
 ```shell
-npm start
+npm run build:dev
 ```
-The port can be adapted in bs-config.json (default is 9092).
+for the development build or
+```shell
+npm run build:production
+```
+for the production build
+
+In order to start the webpack-dev-server (any file changes will be deployed on the fly during development) execute
+```shell
+npm run start
+```
+The port can be adapted in package.json (default is 9092).
 
 ### Without Node.js (aka. basic development / debugging only)
 In case you don't want / need to set up a full-stack Node.js on your machine you can execute
@@ -32,11 +40,12 @@ mvn clean install
 ```
 in order to install all the dependencies using a minified Node.js version pulled by Maven.
 
-In order to start the lite-server with BrowserSync (any file changes will be deployed on the fly during development) execute
+You can mount the generated WAR file on your preferred server or directly on Tomcat using Maven
 ```shell
-mvn deploy
+mvn tomcat7:run-war
 ```
-The port can be adapted in bs-config.json (default is 9092).
+
+The port can be adapted in pom.xml (default is 9092).
 
 ## Deployment
 
@@ -83,6 +92,44 @@ mvn clean install -Denv=[ENVIRONMENT]
 or
 ```shell
 ./deploy.sh docker-build [ENVIRONMENT]
+```
+
+## Internationalization / Localization
+
+For Internationalization [@ngx-translate/core](https://www.npmjs.com/package/@ngx-translate/core#usage) is used.
+
+Import the TranslateService for every component that requires translations and add it to the constructor, e.g.
+```shell
+import {TranslateService} from '@ngx-translate/core';
+```
+
+The translations themself have to be added to src/assets/[LANG].json
+
+### Translating text in HTML
+
+In order to translate text in HTML files wrap the text inside a <span> (or other HTML tag) and make sure it does not contain any Angular variable bindings, e.g. convert
+```shell
+Hello {{user}} - Welcome to the NIMBLE platform!
+```
+to
+```shell
+<span [innerHTML]="'Hello' | translate"></span> {{user}} - <span [innerHTML]="'Welcome to the NIMBLE platform!' | translate"></span>
+```
+
+### Translating HTML properties
+
+In order to translate HTML properties (e.g. titles, placeholders, ...) use the following annotation:
+```shell
+<span [title]="'Some title' | translate"></span>
+```
+
+### Translating dynamic values
+
+In order to translate dynamic values or anything coming from TypeScript files use the following annotation:
+```shell
+translate.get('Some text').subscribe((res: string) => {
+    console.log(res);
+});
 ```
 
  ---

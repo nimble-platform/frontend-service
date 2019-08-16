@@ -79,23 +79,7 @@ export class CredentialsService {
 	}
 
 	logUrl(log: any): Promise<any> {
-		let index = "logstash";
-		let type = "doc";
-		if (myGlobals.config.loggingConfig && myGlobals.config.loggingConfig.index) {
-			index = myGlobals.config.loggingConfig.index;
-			if (index.indexOf("{DATE}") != -1) {
-				let dateFormat = "YYYY-MM-DD";
-				if (myGlobals.config.loggingConfig && myGlobals.config.loggingConfig.dateFormat) {
-					dateFormat = myGlobals.config.loggingConfig.dateFormat;
-				}
-				let isoDate = moment().utc().format(dateFormat);
-				index = index.replace("{DATE}",isoDate);
-			}
-		}
-		if (myGlobals.config.loggingConfig && myGlobals.config.loggingConfig.type) {
-			type = myGlobals.config.loggingConfig.type;
-		}
-		const url = `${this.log_url}/${index}/${type}/`;
+		const url = `${this.log_url}`;
 		return this.http
 		.post(url, JSON.stringify(log), {headers: this.headers})
 		.toPromise()

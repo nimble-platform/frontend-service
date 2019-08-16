@@ -32,7 +32,7 @@
         <!-- Order Workflow For Product -->
         <div *ngIf="isLogistics === false" class="p-3 border border-dark border-bottom-0">
 
-            <h2 class="py-1">Negotiate & Order</h2>
+            <h2 class="py-1">{{companyWorkflowMap.get('Order') ? 'Negotiate & Order' : 'Negotiate'}}</h2>
 
             <div [hidden]="frameContract == null">
                 <hr>
@@ -113,15 +113,12 @@
 
             <!-- Price & Quantity -->
             <ng-container *ngIf="hasPrice()">
-                <div class="order-group d-flex">
+                <div class="order-group">
                     <label class="order-label">
                         Price
                     </label>
                     <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
                         {{ getPricePerItem() }}
-                        <div *ngIf="priceWrapper.appliedDiscounts.length > 0" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
-                            <i class="fa fa-search" aria-hidden="true"></i>
-                        </div>
                     </span>
                     <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
                         {{ frameContractQuotationWrapper.priceWrapper.pricePerItemString}}
@@ -150,19 +147,34 @@
                                [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()"/>
                     </span>
                 </div>
-                <div class="inline-order-group">
-                    <label class="vat-label">
-                        VAT:
+                <div class="order-group mt-2">
+                    <label class="order-label">
+                        VAT
                     </label>
-
-                    <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="vat-value">
+                    <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
                         {{priceWrapper.vatTotalString}}
                     </span>
-                    <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="vat-value">
+                        <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
                         {{frameContractQuotationWrapper.priceWrapper.vatTotalString}}
                     </span>
                 </div>
-                <div class="inline-order-group">
+                <div *ngIf="priceWrapper.appliedDiscounts.length > 0" class="order-group">
+                    <label class="order-label">
+                        Applied Discounts
+                    </label>
+                    <div class="inline-order-value">
+                        <span *ngIf="termsSelectBoxValue == 'product_defaults'">
+                                {{priceWrapper.calculateTotalDiscount()}} {{priceWrapper.currency}}
+                            </span>
+                        <span class="space-left"
+                              data-toggle="tooltip" data-placement="top"
+                              (click)="openDiscountModal()"
+                              title="Applied Discounts/Charges" style="cursor: pointer">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="order-group">
                         <label class="order-label order-price">
                             Total Price:
                         </label>
@@ -222,16 +234,16 @@
             </ng-container>
 
             <!-- Action Button -->
-            <button class="btn btn-primary pt-2 w-100"
-                (click)="onNegotiate(termsSelectBoxValue)" [disabled]="!this.appComponent.checkRoles('bp') || options.quantity <= 0">
-                Negotiate & Order
+            <button *ngIf="companyWorkflowMap.get('Negotiation')" class="btn btn-primary pt-2 w-100"
+                    (click)="onNegotiate(termsSelectBoxValue)" [disabled]="!this.appComponent.checkRoles('bp') || options.quantity <= 0">
+                {{companyWorkflowMap.get('Order') ? 'Negotiate & Order' : 'Negotiate'}}
             </button>
         </div>
 
         <!-- Order Workflow For Logistics -->
         <div *ngIf="isLogistics === true" class="p-3 border border-dark border-bottom-0">
 
-            <h2 class="py-1">Negotiate & Order</h2>
+            <h2 class="py-1">{{companyWorkflowMap.get('Order') ? 'Negotiate & Order' : 'Negotiate'}}</h2>
 
             <!-- Payment Terms -->
             <div class="order-group">
@@ -262,23 +274,23 @@
             </div>
 
             <!-- Action Button -->
-            <button *ngIf="isTransportService" class="btn btn-primary pt-2 w-100"
+            <button *ngIf="isTransportService && companyWorkflowMap.get('Negotiation')" class="btn btn-primary pt-2 w-100"
                 (click)="onNegotiate(termsSelectBoxValue)" [disabled]="!this.appComponent.checkRoles('bp') || options.quantity <= 0">
-                Negotiate & Order
+                {{companyWorkflowMap.get('Transport_Execution_Plan') ? 'Negotiate & Order' : 'Negotiate' }}
             </button>
 
         </div>
         <div *ngIf="this.appComponent.checkRoles('bp')" class="pb-3 pl-3 pr-3 pt-0 border border-dark border-top-0">
-                <div>
-                    <button class="btn btn-secondary w-100" (click)="onRequestInformation()">
-                        Request Information
-                    </button>
-                </div>
-                <div *ngIf="config.showPPAP && isPpapAvailable() && !isLogistics">
-                    <button class="btn btn-secondary w-100 mt-3" (click)="onStartPpap()">
-                        Start Ppap
-                    </button>
-                </div>
+            <div *ngIf="companyWorkflowMap.get('Item_Information_Request')">
+                <button class="btn btn-secondary w-100" (click)="onRequestInformation()">
+                    Request Information
+                </button>
+            </div>
+            <div *ngIf="config.showPPAP && isPpapAvailable() && !isLogistics && companyWorkflowMap.get('Ppap')">
+                <button class="btn btn-secondary w-100 mt-3" (click)="onStartPpap()">
+                    Start Ppap
+                </button>
+            </div>
         </div>
     </div>
 </div>

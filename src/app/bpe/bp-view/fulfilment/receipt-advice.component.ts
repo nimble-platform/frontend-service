@@ -42,9 +42,7 @@ export class ReceiptAdviceComponent implements OnInit {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        if(!this.bpDataService.bpActivityEvent.newProcess) {
-            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
-        }
+        this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
         this.receiptAdvice = this.bpDataService.receiptAdvice;
         this.dispatchAdvice = this.bpDataService.despatchAdvice;
@@ -70,7 +68,7 @@ export class ReceiptAdviceComponent implements OnInit {
             this.bpDataService
         );
         const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(
-            vars, this.processMetadata.processId);
+            vars, this.processMetadata.processInstanceId);
 
         //this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim)

@@ -12,6 +12,9 @@ import {TradingTerm} from "../../../catalogue/model/publish/trading-term";
 import {MultiTypeValue} from "../../../catalogue/model/publish/multi-type-value";
 import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
 import {Clause} from "../../../catalogue/model/publish/clause";
+import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
+
+const FRAME_CONTRACT_TERM_ID = "FRAME_CONTRACT_DURATION";
 
 export class QuotationWrapper {
 
@@ -76,7 +79,7 @@ export class QuotationWrapper {
     }
 
     public get frameContractDuration(): Quantity {
-        let tradingTerm: TradingTerm = this.quotation.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
+        let tradingTerm: TradingTerm = this.quotation.tradingTerms.find(tradingTerm => tradingTerm.id == FRAME_CONTRACT_TERM_ID);
         if(tradingTerm != null) {
             return tradingTerm.value.valueQuantity[0];
         }
@@ -92,9 +95,9 @@ export class QuotationWrapper {
     }
 
     public set frameContractDuration(duration: Quantity) {
-        let tradingTerm: TradingTerm = this.quotation.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
+        let tradingTerm: TradingTerm = this.quotation.tradingTerms.find(tradingTerm => tradingTerm.id == FRAME_CONTRACT_TERM_ID);
         if(tradingTerm == null) {
-            tradingTerm = new TradingTerm("FRAME_CONTRACT_DURATION", null, null, new MultiTypeValue());
+            tradingTerm = new TradingTerm(FRAME_CONTRACT_TERM_ID, null, null, new MultiTypeValue());
             tradingTerm.value.valueQuantity.push(duration)
             this.quotation.tradingTerms.push(tradingTerm);
         } else {
@@ -107,6 +110,14 @@ export class QuotationWrapper {
     }
 
     public get dataMonitoringPromisedString(): string {
-        return this.quotation.dataMonitoringPromised ? "Promised" : "Not Promised";
+        return this.quotation.dataMonitoringPromised ? 'Confirmed' : 'Not Confirmed';
+    }
+
+    public getTradingTerm(termName: string): TradingTerm {
+        return this.quotation.tradingTerms.find(tradingTerm => tradingTerm.id == termName);
+    }
+
+    public get tradingTerms(): TradingTerm[] {
+        return this.quotation.tradingTerms.filter(tradingTerm => tradingTerm.id != FRAME_CONTRACT_TERM_ID).map(tradingTerm => tradingTerm);
     }
 }

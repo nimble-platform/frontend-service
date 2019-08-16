@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild,EventEmitter, Output} from "@angular/core";
+import {Component, Input, ViewChild,EventEmitter, Output} from "@angular/core";
 import {LcpaDetailModalComponent} from "./lcpa-detail-modal.component";
 import {LifeCyclePerformanceAssessmentDetails} from "../catalogue/model/publish/life-cycle-performance-assessment-details";
 import {CatalogueLine} from "../catalogue/model/publish/catalogue-line";
@@ -13,9 +13,8 @@ import {Amount} from "../catalogue/model/publish/amount";
     templateUrl: "./product-lcpa-tab.component.html",
     styleUrls: ['./product-lcpa-tab.component.css']
 })
-export class ProductLcpaTabComponent implements OnInit {
+export class ProductLcpaTabComponent {
 
-    @Input() catalogueLine: CatalogueLine;
     @Input() disabled: boolean;
     @Input() presentationMode: 'view' | 'edit' = 'view';
     @Output() lcpaStatus = new EventEmitter<boolean>();
@@ -23,20 +22,27 @@ export class ProductLcpaTabComponent implements OnInit {
     @ViewChild(LcpaDetailModalComponent)
     private lcpaDetailModal: LcpaDetailModalComponent;
     lcpaDetails: LifeCyclePerformanceAssessmentDetails = new LifeCyclePerformanceAssessmentDetails();
+    _catalogueLine: CatalogueLine;
 
     constructor() {
     }
 
-    ngOnInit() {
-        if(this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails == null) {
+    @Input()
+    set catalogueLine(catalogueLine:CatalogueLine) {
+        this._catalogueLine = catalogueLine;
+        if(this._catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails == null) {
             this.lcpaStatus.emit(true);
-            this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails = this.lcpaDetails;
+            this._catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails = this.lcpaDetails;
         } else {
-            this.lcpaDetails = this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails;
+            this.lcpaDetails = this._catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails;
             if(this.lcpaDetails.lcpainput == null) {
                 this.lcpaDetails.lcpainput = new LCPAInput();
             }
         }
+    }
+
+    get catalogueLine(): CatalogueLine {
+        return this._catalogueLine;
     }
 
     openLcpaDetailsModal(event: Event): void {
@@ -46,17 +52,23 @@ export class ProductLcpaTabComponent implements OnInit {
     }
 
     onDetailSpecified(detail: MultiTypeValue): void {
-        this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpainput.additionalLCPAInputDetail.push(detail);
+        this._catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpainput.additionalLCPAInputDetail.push(detail);
     }
 
     onDeleteDetail(detailIndex: number): void {
-        this.catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpainput.additionalLCPAInputDetail.splice(detailIndex, 1);
+        this._catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpainput.additionalLCPAInputDetail.splice(detailIndex, 1);
     }
 
-    isVisible(quantity: Amount | Quantity): boolean {
+    isVisible(quantity, type: 'QUANTITY'|'AMOUNT' = 'AMOUNT'): boolean {
         if(this.presentationMode == 'view') {
-            if(UBLModelUtils.isEmptyQuantity(quantity)) {
-                return false;
+            if(type == 'QUANTITY') {
+                if(UBLModelUtils.isEmptyOrIncompleteQuantity(quantity)) {
+                    return false;
+                }
+            } else {
+                if(UBLModelUtils.isEmptyOrIncompleteAmount(quantity)) {
+                    return false;
+                }
             }
         }
         return true;

@@ -1,19 +1,19 @@
 <div class="input-group form-group">
-    <button class="btn btn-outline-secondary"  (click)="create();"><span class="fa fa-plus"></span> Add New Business Process</button>
+    <button class="btn btn-outline-secondary"  (click)="create();"><span class="fa fa-plus pr-1"></span> <span>Add New Business Process</span></button>
 </div>
 <div class="input-group form-group">
     <table class="table table-striped">
         <tr>
-            <th><span i18n>Process ID</span></th>
-            <th><span i18n>Process Name</span></th>
-            <th><span i18n>Controls</span></th>
+            <th><span>Process ID</span></th>
+            <th><span>Process Name</span></th>
+            <th><span>Controls</span></th>
         </tr>
         <tr *ngFor="let bp of bps">
             <th scope="row"><span>{{bp.processID}}</span></th>
             <td><span>{{bp.processName}}</span></td>
-            <td><button class="btn btn-outline-secondary" (click)="delete(bp); $event.stopPropagation()"><span class="fa fa-trash"></span> Delete</button>
-            <button class="btn btn-outline-secondary" (click)="edit(bp)"><span class="fa fa-pencil"></span> Edit</button>
-            <button class="btn btn-outline-secondary" (click)="configure(bp)"><span class="fa fa-plug"></span> Configure</button></td>
+            <td><button class="btn btn-outline-secondary" (click)="delete(bp); $event.stopPropagation()"><span class="fa fa-trash pr-1"></span> <span>Delete</span></button>
+            <button class="btn btn-outline-secondary" (click)="edit(bp)"><span class="fa fa-pencil pr-1"></span> <span>Edit</span></button>
+            <button class="btn btn-outline-secondary" (click)="configure(bp)"><span class="fa fa-plug pr-1"></span> <span>Configure</span></button></td>
         </tr>
     </table>
 </div>

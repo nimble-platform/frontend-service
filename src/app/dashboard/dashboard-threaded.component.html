@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-12">
-        <p class="nimble-title" i18n>Dashboard</p>
+        <p class="nimble-title">Dashboard</p>
     </div>
 </div>
 
@@ -27,7 +27,7 @@
             <ul class="nav nav-tabs">
                 <ng-container *ngIf="user.showWelcomeTab">
                     <li class="nav-item welcome-tab">
-                        <a href id="WELCOME" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.WELCOME}" (click)="onChangeTab($event)" i18n>
+                        <a href id="WELCOME" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.WELCOME}" (click)="onChangeTab($event)">
                             Welcome
                             <button type="button" class="close space-left" aria-label="Close" (click)="onCloseWelcomeTab($event)">
                                 <span aria-hidden="true">&times;</span>
@@ -36,25 +36,28 @@
                     </li>
                 </ng-container>
                 <li class="nav-item">
-                    <a href id="PURCHASES" *ngIf="this.appComponent.checkRoles('purchases')"  [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.PURCHASES}" (click)="onChangeTab($event)" i18n>Purchases <span *ngIf="buyerCounter>0" class="badge badge-pill badge-danger ml-1">{{buyerCounter}}</span></a>
+                    <a href id="PURCHASES" *ngIf="this.appComponent.checkRoles('purchases')"  [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.PURCHASES}" (click)="onChangeTab($event)">Purchases <span *ngIf="buyerCounter>0" class="badge badge-pill badge-danger ml-1">{{buyerCounter}}</span></a>
                 </li>
                 <li class="nav-item">
-                    <a href id="SALES" *ngIf="this.appComponent.checkRoles('sales')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.SALES}" (click)="onChangeTab($event)" i18n>Sales <span *ngIf="sellerCounter>0" class="badge badge-pill badge-danger ml-1">{{sellerCounter}}</span></a>
+                    <a href id="SALES" *ngIf="this.appComponent.checkRoles('sales')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.SALES}" (click)="onChangeTab($event)">Sales <span *ngIf="sellerCounter>0" class="badge badge-pill badge-danger ml-1">{{sellerCounter}}</span></a>
                 </li>
                 <li class="nav-item">
-                    <a href id="CATALOGUE" *ngIf="this.appComponent.checkRoles('catalogue')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.CATALOGUE}" (click)="onChangeTab($event)" i18n>Catalogue</a>
+                    <a href id="PROJECTS" *ngIf="config.projectsEnabled && this.appComponent.checkRoles('projects')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.PROJECTS}" (click)="onChangeTab($event)">Projects</a>
                 </li>
                 <li class="nav-item">
-                    <a href id="FAVOURITE" *ngIf="this.appComponent.checkRoles('favourite')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.FAVOURITE}" (click)="onChangeTab($event)" i18n>Favourite</a>
+                    <a href id="FRAME_CONTRACTS" *ngIf="config.frameContractTabEnabled && this.appComponent.checkRoles('purchases')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.FRAME_CONTRACTS}" (click)="onChangeTab($event)">Frame Contracts</a>
                 </li>
                 <li class="nav-item">
-                    <a href id="COMPARE" *ngIf="this.appComponent.checkRoles('compare')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.COMPARE}" (click)="onChangeTab($event)" i18n>Compare</a>
+                    <a href id="CATALOGUE" *ngIf="this.appComponent.checkRoles('catalogue')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.CATALOGUE}" (click)="onChangeTab($event)">Catalogue</a>
                 </li>
                 <li class="nav-item">
-                    <a href id="PROJECTS" *ngIf="config.projectsEnabled && this.appComponent.checkRoles('projects')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.PROJECTS}" (click)="onChangeTab($event)" i18n>Projects</a>
+                    <a href id="FAVOURITE" *ngIf="this.appComponent.checkRoles('favourite')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.FAVOURITE}" (click)="onChangeTab($event)">Favourite</a>
                 </li>
                 <li class="nav-item">
-                    <a href id="PERFORMANCE" *ngIf="this.appComponent.checkRoles('performance')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.PERFORMANCE}" (click)="onChangeTab($event)" i18n>Performance</a>
+                    <a href id="COMPARE" *ngIf="this.appComponent.checkRoles('compare')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.COMPARE}" (click)="onChangeTab($event)">Compare</a>
+                </li>
+                <li class="nav-item">
+                    <a href id="PERFORMANCE" *ngIf="this.appComponent.checkRoles('performance')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.PERFORMANCE}" (click)="onChangeTab($event)">Performance</a>
                 </li>
             </ul>
         </div>
@@ -520,6 +523,10 @@
                 <call-status [callStatus]="queryStatus" [large]="true"></call-status>
             </div>
     </div>
+
+    <!-- Frame contracts tab -->
+    <frame-contract-tab *ngIf="queryParameters.tab === TABS.FRAME_CONTRACTS">
+    </frame-contract-tab>
 
     <!-- Performance tab -->
      <div *ngIf="queryParameters.tab === TABS.PERFORMANCE" class="row">

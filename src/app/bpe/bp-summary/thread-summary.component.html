@@ -1,4 +1,4 @@
-<div class="row thread-entry m-0">
+<div *ngIf="!routeProcessInstanceId" class="row thread-entry m-0">
     <div class="col-12">
         <!-- Title bar -->
         <div class="row">
@@ -7,39 +7,39 @@
                 <div *ngIf="!titleEvent" class="header-label mr-auto d-flex w-100">
                     <div class="row w-100 m-0">
                       <div class="col pl-2 pr-2">
-                          <span *ngIf="fetchCallStatus.isLoading()"><img src="assets/form_loader.gif"/></span>
-                          <span *ngIf="fetchCallStatus.isError()">Error while fetching thread.</span>
+                          <span *ngIf="fetchCallStatus.isLoading()"><img src="../../../assets/images/form_loader.gif"/></span>
+                          <span *ngIf="fetchCallStatus.isError()" [innerHTML]="'Error while fetching thread.' | translate"></span>
                       </div>
                     </div>
                 </div>
                 <div *ngIf="titleEvent" class="header-label mr-auto d-flex w-100">
                     <div class="row w-100 m-0">
                         <div class="col pl-2">
-                          <strong>Product / Service:</strong><br/>
+                          <strong><span [innerHTML]="'Product / Service' | translate"></span>:</strong><br/>
                           <span class="clickable" (click)="navigateToSearchDetails()">{{selectPreferredValue(titleEvent.product.name)}}</span>
                         </div>
                         <div class="col pl-1">
-                          <strong>Trading Partner:</strong><br/>
+                          <strong><span [innerHTML]="'Trading Partner' | translate"></span>:</strong><br/>
                           <span class="clickable" (click)="navigateToCompanyDetails()">{{titleEvent.tradingPartner}}</span>
                         </div>
                         <div class="col pl-1">
-                          <strong>Status:</strong><br/>
-                          <span *ngIf="processInstanceGroup.status == 'CANCELLED'" class="badge badge-secondary">Collaboration cancelled</span>
+                          <strong><span [innerHTML]="'Status' | translate"></span>:</strong><br/>
+                          <span *ngIf="processInstanceGroup.status == 'CANCELLED'" class="badge badge-secondary"><span [innerHTML]="'Collaboration cancelled' | translate"></span></span>
                           <span *ngIf="processInstanceGroup.status != 'CANCELLED'" class="badge" [ngClass]="{'badge-secondary':(titleEvent.status=='CANCELLED'),'badge-success':(titleEvent.status=='DONE'),'badge-warning':(titleEvent.status=='WAITING'),'badge-danger':(titleEvent.status=='ACTION_REQUIRED')}">{{titleEvent.statusText}}</span>
                         </div>
                         <div class="col pl-1">
-                          <strong>Actions:</strong><br/>
-                          <span *ngIf="processInstanceGroup.status == 'CANCELLED'">n/A</span>
+                          <strong><span [innerHTML]="'Actions' | translate"></span>:</strong><br/>
+                          <span *ngIf="processInstanceGroup.status == 'CANCELLED'"><span [innerHTML]="'n/A' | translate"></span></span>
                           <span *ngIf="processInstanceGroup.status != 'CANCELLED' && titleEvent.actionText !== ''" class="clickable" (click)="openBpProcessView()">{{titleEvent.actionText}}</span>
                         </div>
                         <div class="col-xs-auto align-right pl-1 pr-2" style="min-width:6rem">
-                          <div *ngIf="titleEvent && showDataChannelButton && enableDataChannelButton" class="inline" data-toggle="tooltip" data-placement="top" title="Show Data Channel">
+                          <div *ngIf="titleEvent && showDataChannelButton && enableDataChannelButton" class="inline" data-toggle="tooltip" data-placement="top" title="Show Data Channel | translate">
                               <i class="fa fa-exchange-alt p-1 pointer" aria-hidden="true" [routerLink]="[channelLink]"></i>
                           </div>
-                          <div *ngIf="titleEvent && showDataChannelButton && !enableDataChannelButton" class="inline" data-toggle="tooltip" data-placement="top" title="Waiting for trading partner..." (click)="alertWait()">
+                          <div *ngIf="titleEvent && showDataChannelButton && !enableDataChannelButton" class="inline" data-toggle="tooltip" data-placement="top" title="'Waiting for trading partner...' | translate" (click)="alertWait()">
                               <i class="fa fa-exchange-alt p-1 pointer" aria-hidden="true"></i>
                           </div>
-                          <div *ngIf="titleEvent && !titleEvent.buyer && !showDataChannelButton && config.dataChannelsEnabled" class="inline" (click)="createDatachannelNegotiation()" data-placement="top" title="Negotiate New Data Channel">
+                          <div *ngIf="titleEvent && !titleEvent.buyer && !showDataChannelButton && config.dataChannelsEnabled" class="inline" (click)="createDatachannelNegotiation()" data-placement="top" title="'Negotiate New Data Channel' | translate">
                               <i class="fas fa-plus p-1 pointer" aria-hidden="true"></i>
                           </div>
                           <!--
@@ -47,16 +47,16 @@
                               <i class="fa fa-trash-alt p-1 pointer" aria-hidden="true"></i>
                           </div>
                           -->
-                          <div *ngIf="titleEvent && showRateCollaborationButton" class="inline" (click)="rateCollaboration(addSuccessRatingModal,addCancelRatingModal)" data-toggle="tooltip" data-placement="top" title="Rate this collaboration">
+                          <div *ngIf="titleEvent && showRateCollaborationButton" class="inline" (click)="rateCollaboration(addSuccessRatingModal,addCancelRatingModal)" data-toggle="tooltip" data-placement="top" title="'Rate this collaboration' | translate">
                               <i class="fa fa-star p-1 pointer" aria-hidden="true"></i>
                           </div>
-                          <div *ngIf="titleEvent && showCancelCollaborationButton" class="inline" (click)="cancelCollaboration()" data-toggle="tooltip" data-placement="top" title="Cancel the collaboration">
+                          <div *ngIf="titleEvent && showCancelCollaborationButton" class="inline" (click)="cancelCollaboration()" data-toggle="tooltip" data-placement="top" title="'Cancel the collaboration' | translate">
                               <i class="fa fa-times p-1 pointer" aria-hidden="true"></i>
                           </div>
-                          <div *ngIf="!expanded" class="inline" (click)="expanded = !expanded" data-toggle="tooltip" data-placement="top" title="Show details">
+                          <div *ngIf="!expanded" class="inline" (click)="expanded = !expanded" data-toggle="tooltip" data-placement="top" [title]="'Show details' | translate">
                               <i class="fa fa-angle-double-down p-1 pointer" aria-hidden="true"></i>
                           </div>
-                          <div *ngIf="expanded" class="inline" (click)="expanded = !expanded" data-toggle="tooltip" data-placement="top" title="Hide details">
+                          <div *ngIf="expanded" class="inline" (click)="expanded = !expanded" data-toggle="tooltip" data-placement="top" [title]="'Hide details' | translate">
                               <i class="fa fa-angle-double-up p-1 pointer" aria-hidden="true"></i>
                           </div>
                         </div>
@@ -92,10 +92,10 @@
             <!-- Titles for the rows -->
             <div class="row thread-entry-heading">
                 <!--<div class="col-2"><strong>Customer</strong></div>-->
-                <div class="col-3"><strong>Type</strong></div>
-                <div class="col-3"><strong>Date</strong></div>
-                <div class="col-3"><strong>Correspondent</strong></div>
-                <div class="col-3"><strong>Status</strong></div>
+                <div class="col-3"><strong><span [innerHTML]="'Type' | translate"></span></strong></div>
+                <div class="col-3"><strong><span [innerHTML]="'Date' | translate"></span></strong></div>
+                <div class="col-3"><strong><span [innerHTML]="'Correspondent' | translate"></span></strong></div>
+                <div class="col-3"><strong><span [innerHTML]="'Status' | translate"></span></strong></div>
             </div>
 
             <!-- Most recent event -->
@@ -138,7 +138,7 @@
 <ng-template #addSuccessRatingModal let-d="dismiss">
     <form novalidate>
         <div class="modal-header">
-            <h4 class="modal-title">Rate Collaboration</h4>
+            <h4 class="modal-title"><span [innerHTML]="'Rate Collaboration' | translate"></span></h4>
             <button type="button" class="close" aria-label="Close" (click)="d('')">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -147,7 +147,7 @@
         <div class="modal-body">
             <div class="form-group row">
                 <label class="col-6 col-form-label">
-                  <strong>Overall Rating
+                  <strong><span [innerHTML]="'Overall Rating' | translate"></span>
                     <span title="Overall rating of the company based on 'Seller Communication','Fulfillment of Terms' and 'Delivery & Packaging'. See the subitems for more details.">
                       <i class="fa fa-exclamation-circle"></i>
                     </span>
@@ -165,7 +165,7 @@
               </div>
           <div class="form-group row">
             <label class="col-6 col-form-label">
-              <strong>Seller Communication
+              <strong><span [innerHTML]="'Seller Communication' | translate"></span>
                 <span title=' Overall rating of how well the seller communicated based on "Quality of Negotiation Process","Quality of Ordering Process" and "Response Time". See the subitems for more details.'>
                   <i class="fa fa-exclamation-circle"></i>
                 </span>
@@ -182,7 +182,7 @@
               </div>
           </div>
           <div class="form-group row">
-            <label class="col-6 col-form-label">Quality of Negotiation Process
+            <label class="col-6 col-form-label"><span [innerHTML]="'Quality of Negotiation Process' | translate"></span>
                 <span title='Indicates how well the negotiation was executed; e.g. clear responses, flexibility on provided terms, supporting documentation, etc.'>
                     <i class="fa fa-exclamation-circle"></i>
                 </span>
@@ -198,7 +198,7 @@
               </div>
           </div>
           <div class="form-group row">
-            <label class="col-6 col-form-label">Quality of Ordering Process
+            <label class="col-6 col-form-label"><span [innerHTML]="'Quality of Ordering Process' | translate"></span>
                 <span title=' Indicates how well the ordering was executed; e.g. clear responses, supporting documentation, transition to fulfillment, etc.'>
                     <i class="fa fa-exclamation-circle"></i>
                   </span>
@@ -214,7 +214,7 @@
               </div>
           </div>
           <div class="form-group row">
-            <label class="col-6 col-form-label">Response Time
+            <label class="col-6 col-form-label"><span [innerHTML]="'Response Time' | translate"></span>
                 <span title="Indicates how the response times were perceived by the trading partner. This is a subjective value.">
                     <i class="fa fa-exclamation-circle"></i>
                   </span>
@@ -231,7 +231,7 @@
           </div>
           <div class="form-group row">
               <label class="col-6 col-form-label">
-                <strong>Fulfillment of Terms
+                <strong><span [innerHTML]="'Fulfillment of Terms' | translate"></span>
                   <span title='Overall rating of how accurately the seller fulfilled the agreed upon terms based on "Quality of Requested Information" and "Conformance to Contractual Terms". See the subitems for more details.'>
                     <i class="fa fa-exclamation-circle"></i>
                   </span>
@@ -249,7 +249,7 @@
             </div>
 
           <div class="form-group row">
-            <label class="col-6 col-form-label">Quality of Requested Information
+            <label class="col-6 col-form-label"><span [innerHTML]="'Quality of Requested Information' | translate"></span>
                 <span title="Indicates how well the received product or service matches the listed details.">
                     <i class="fa fa-exclamation-circle"></i>
                   </span>
@@ -265,7 +265,7 @@
               </div>
           </div>
           <div class="form-group row">
-            <label class="col-6 col-form-label">Conformance to Contractual Terms
+            <label class="col-6 col-form-label"><span [innerHTML]="'Conformance to Contractual Terms' | translate"></span>
                 <span title="Indicates how accurately the seller conformed to the agreed upon contractual terms; e.g. dispatch date, payment method, additional services, etc.">
                     <i class="fa fa-exclamation-circle"></i>
                   </span>
@@ -282,7 +282,7 @@
           </div>
           <div class="form-group row">
             <label class="col-6 col-form-label">
-              <strong>Delivery & Packaging</strong>
+              <strong><span [innerHTML]="'Delivery & Packaging' | translate"></span></strong>
               <span title="Overall rating of the quality of delivery and packaging, e.g. delivery date, adequate packing, adequate delivery method, etc.">
                   <i class="fa fa-exclamation-circle"></i>
                 </span>
@@ -300,7 +300,7 @@
           <hr>
           <div class="form-group row">
               <label class="col-2 col-form-label">
-                <strong>Comment:</strong>
+                <strong><span [innerHTML]="'Comment' | translate"></span>:</strong>
               </label>
               <div class="col-10">
                   <input type="text" class="form-control" [(ngModel)]="compComment" name="compCommentSuccess">
@@ -310,7 +310,7 @@
         <div class="modal-footer">
             <call-status [callStatus]="saveCallStatusRating"></call-status>
             <button type="button" class="btn btn-primary save-cert-btn" [disabled]="saveCallStatusRating.isLoading() || checkCompRating()" (click)="onSaveSuccessRating(d);">
-                <span>Save</span>
+                <span [innerHTML]="'Save' | translate"></span>
             </button>
         </div>
     </form>
@@ -320,7 +320,7 @@
 <ng-template #addCancelRatingModal let-d="dismiss">
     <form novalidate>
         <div class="modal-header">
-            <h4 class="modal-title">Cancellation Reasons</h4>
+            <h4 class="modal-title"><span [innerHTML]="'Cancellation Reasons' | translate"></span></h4>
             <button type="button" class="close" aria-label="Close" (click)="d('')">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -328,16 +328,16 @@
         <div class="modal-body">
           <div class="form-group row">
               <label class="col-2 col-form-label">
-                <strong>Reason:</strong>
+                <strong> <span [innerHTML]="'Reason' | translate"></span>:</strong>
               </label>
               <div class="col-10">
                   <select class="form-control" [(ngModel)]="compComment" name="compCommentCancel">
                     <option></option>
-                    <option>Slow Response Time</option>
-                    <option>Suspicious Company Information</option>
-                    <option>Undervalued Offer</option>
-                    <option>Rejected Delivery Terms</option>
-                    <option>Other</option>
+                    <option><span [innerHTML]="'Slow Response Time' | translate"></span></option>
+                    <option><span [innerHTML]="'Suspicious Company Information' | translate"></span></option>
+                    <option><span [innerHTML]="'Undervalued Offer' | translate"></span></option>
+                    <option><span [innerHTML]="'Rejected Delivery Terms' | translate"></span></option>
+                    <option><span [innerHTML]="'Other' | translate"></span></option>
                   </select>
               </div>
           </div>
@@ -345,11 +345,11 @@
         <div class="modal-footer">
             <call-status [callStatus]="saveCallStatusRating"></call-status>
             <button type="button" class="btn btn-primary save-cert-btn" [disabled]="saveCallStatusRating.isLoading() || checkCompComment()" (click)="onSaveCancelRating(d);">
-                <span>Save</span>
+                <span [innerHTML]="'Save' | translate"></span>
             </button>
         </div>
     </form>
 </ng-template>
 
-<call-status [callStatus]="archiveCallStatus" [large]="true">
-</call-status>
+<call-status [callStatus]="archiveCallStatus" [large]="true"></call-status>
+<call-status [callStatus]="collaborationGroupRetrievalCallStatus" [large]="true"></call-status>

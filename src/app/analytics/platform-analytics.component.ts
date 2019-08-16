@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit,ViewChild,ElementRef } from "@angular/core";
 import { AnalyticsService } from "./analytics.service";
 import { CallStatus } from "../common/call-status";
 import { SimpleSearchService } from '../simple-search/simple-search.service';
@@ -6,6 +6,7 @@ import { CategoryService } from '../catalogue/category/category.service';
 import * as myGlobals from '../globals';
 import {selectNameFromLabelObject} from '../common/utils';
 import { DomSanitizer } from "@angular/platform-browser";
+import { UserService } from "../user-mgmt/user.service";
 
 @Component({
     selector: "platform-analytics",
@@ -43,18 +44,23 @@ export class PlatformAnalyticsComponent implements OnInit {
     product_cat_mix = myGlobals.product_cat_mix;
 	getMultilingualLabel = selectNameFromLabelObject;
 	config = myGlobals.config;
-  dashboards = [];
-  selectedTab;
+  	dashboards = [];
+	selectedTab;
+	
+	public secureSrc = ""  ;
 
+	@ViewChild('iframe') iframe: ElementRef;
     constructor(private analyticsService: AnalyticsService,
         private simpleSearchService: SimpleSearchService,
 		private categoryService: CategoryService,
-    private sanitizer: DomSanitizer
+		private userService:UserService,
+    	private sanitizer: DomSanitizer
         ) {
 
     }
 
     ngOnInit(): void {
+
         this.selectedTab = this.config.kibanaEnabled? "LOG" : "DB";
         if (this.config.kibanaEnabled) {
           let tmpDashboards = this.config.kibanaConfig.dashboards;
@@ -94,7 +100,8 @@ export class PlatformAnalyticsComponent implements OnInit {
 
     isLoading(): boolean {
         return this.callStatus.fb_submitted;
-    }
+	}
+	
 
     private getCatTree(): void {
 		this.categoriesCallStatus.submit();
@@ -205,7 +212,7 @@ export class PlatformAnalyticsComponent implements OnInit {
 
         this.cat_levels[0].forEach(catele => {
             if(catele.preferredName != null && catele.preferredName != ''){
-                if(catele.preferredName.toLowerCase().indexOf("service") >= 0){
+                if(catele.preferredName.toLowerCase().indexOf("service") >= 0 || catele.preferredName.toLowerCase().indexOf("servicio") >= 0){
                     this.service_count = this.service_count+catele.count;
                 }else{
                     this.product_count = this.product_count+catele.count;

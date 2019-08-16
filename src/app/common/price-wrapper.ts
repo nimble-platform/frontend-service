@@ -23,7 +23,7 @@ export class PriceWrapper {
     }
 
     get totalPrice(): number {
-        if(!this.hasPrice()) {
+        if(!this.itemPrice.hasPrice()) {
             return 0;
         }
 
@@ -39,7 +39,7 @@ export class PriceWrapper {
     }
 
     get totalPriceString(): string {
-        if(!this.hasPrice()) {
+        if(!this.itemPrice.hasPrice()) {
             return "Not specified";
         }
         return `${roundToTwoDecimals(this.totalPrice)} ${this.currency}`;

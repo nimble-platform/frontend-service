@@ -54,9 +54,7 @@ export class PpapDocumentUploadComponent {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        if(!this.bpDataService.bpActivityEvent.newProcess) {
-            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
-        }
+        this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
         this.route.queryParams.subscribe(params =>{
             this.processid = params['pid'];
@@ -137,7 +135,7 @@ export class PpapDocumentUploadComponent {
         this.ppapResponse.note = this.notesToSend;
         this.ppapResponse.additionalDocumentReference = this.additionalDocumentsToSend;
         const vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", UBLModelUtils.getPartyId(this.ppap.buyerCustomerParty.party), UBLModelUtils.getPartyId(this.ppap.sellerSupplierParty.party), this.cookieService.get("user_id"),this.ppapResponse, this.bpDataService);
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processId);
+        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processInstanceId);
 
         //this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim).then(res => {

@@ -18,6 +18,7 @@ import { MultiAddressInputComponent } from './multi-address-input.component';
 import { InputLabelComponent } from './input-label.component';
 import {AmountInputComponent} from "./amount-input.component";
 import {ExpandableFlexRow} from "./expandable-flex-row.component";
+import {MultiTypeInputComponent} from "./multi-type-input.component";
 
 @NgModule({
 	imports: [
@@ -41,7 +42,8 @@ import {ExpandableFlexRow} from "./expandable-flex-row.component";
 		MultiAddressInputComponent,
 		InputLabelComponent,
 		AmountInputComponent,
-		ExpandableFlexRow
+		ExpandableFlexRow,
+		MultiTypeInputComponent
 	],
 	exports: [
 		CallStatusComponent,
@@ -57,7 +59,8 @@ import {ExpandableFlexRow} from "./expandable-flex-row.component";
 		MultiAddressInputComponent,
 		InputLabelComponent,
 		AmountInputComponent,
-		ExpandableFlexRow
+		ExpandableFlexRow,
+		MultiTypeInputComponent
 	],
 	providers: [
 	]

@@ -43,7 +43,7 @@ export class PaymentTermsView implements OnInit{
         this.initialTradingTerms.push(new TradingTerm("Cash_in_advance",[new Text("Cash in advance")],"CIA",new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)));
     }
 
-    private get(id) : TradingTerm{
+    get(id) : TradingTerm{
         for(let tradingTerm of this.tradingTerms){
             if(tradingTerm.id == id){
                 return tradingTerm;

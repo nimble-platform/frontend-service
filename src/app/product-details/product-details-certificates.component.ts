@@ -5,6 +5,7 @@ import { UserService } from "../user-mgmt/user.service";
 import {CatalogueService} from "../catalogue/catalogue.service";
 import {Certificate} from "../catalogue/model/publish/certificate";
 import {Country} from '../catalogue/model/publish/country';
+import {DEFAULT_LANGUAGE} from "../catalogue/model/constants";
 
 @Component({
     selector: 'product-details-certificates',
@@ -48,7 +49,15 @@ export class ProductDetailsCertificatesComponent {
     }
 
     downloadProductCertificate(certificate: Certificate) {
-        this.catalogueService.getBinaryObject(certificate.documentReference[0].attachment.embeddedDocumentBinaryObject.uri).then(binaryObject => {
+        let defaultLanguage = DEFAULT_LANGUAGE();
+        let fileUri = certificate.documentReference[0].attachment.embeddedDocumentBinaryObject.uri;
+        for(let certFile of certificate.documentReference) {
+            if(certFile.attachment.embeddedDocumentBinaryObject.languageID == defaultLanguage) {
+                fileUri = certFile.attachment.embeddedDocumentBinaryObject.uri;
+                break;
+            }
+        }
+        this.catalogueService.getBinaryObject(fileUri).then(binaryObject => {
             const binaryString = window.atob(binaryObject.value);
             const binaryLen = binaryString.length;
             const bytes = new Uint8Array(binaryLen);

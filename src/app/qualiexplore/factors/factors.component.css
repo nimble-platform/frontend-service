@@ -1,0 +1,30 @@
+.fa-flag {
+    color: red;
+    margin-right: 10px;
+}
+.fa-flag.marked {
+    color: green;
+    margin-right: 10px;
+}
+
+.fa-caret-right,
+.fa-caret-down {
+    cursor: pointer;
+}
+
+#sourceList li {
+    list-style-type: none;
+}
+
+.filter-details li {
+    list-style-type: none;
+    margin-top: 0.4rem;
+}
+
+.factorDescription blockquote {
+    text-indent: 10%;
+}
+
+.form-check-label {
+    cursor: pointer;
+}

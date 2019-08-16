@@ -7,7 +7,7 @@
       <div class="card-body text-center">
         <h4 *ngIf="user_count>=0" class="card-title"><b>{{product_count}}</b></h4>
         <h4 *ngIf="user_count<0" class="card-title"><b>???</b></h4>
-        <h6 class="card-subtitle mb-2 text-muted">No Of Products</h6>
+        <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'No Of Products' | translate"></span></h6>
         <p class="card-text" style="font-size:32px"><i class="fa fa-cog"></i></p>
       </div>
     </div>

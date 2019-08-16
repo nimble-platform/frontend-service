@@ -4,16 +4,15 @@
 
 	<form (ngSubmit)="onSubmit()" class="space-before" #inviteForm="ngForm" novalidate>
 		<div class="form-group row">
-			<label for="email" class="col-2 col-form-label" i18n>E-Mail</label>
+			<label for="email" class="col-2 col-form-label">E-Mail</label>
 			<div class="col-10">
-				<input type="email" class="form-control" id="email" required [(ngModel)]="invEmail" name="email" #email="ngModel" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._-]+\.[a-z]{2,3}$"
-				 i18n-placeholder placeholder="e.g. user@domain.com">
+				<input type="email" class="form-control" id="email" required [(ngModel)]="invEmail" name="email" #email="ngModel" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._-]+\.[a-z]{2,3}$" placeholder="e.g. user@domain.com">
 			 </div>
 		</div>
 
 		<div class="form-group row">
 			<label class="col-2 col-form-label">
-				<span i18n>Roles</span>
+				<span>Roles</span>
 				<span class="tooltip-icon" (click)="showRoleTT(tooltip)"><i class="fa fa-question-circle"></i></span>
 			</label>
 			<div class="col-10">
@@ -49,7 +48,7 @@
 				<call-status [callStatus]="submitCallStatus" [large]="true"></call-status>
 			</div>
 			<div class="col-2">
-				<button type="submit" class="btn btn-primary action" [disabled]="!inviteForm.form.valid || !rolesSelected || submitCallStatus.isLoading()" i18n>Submit</button>
+				<button type="submit" class="btn btn-primary action" [disabled]="!inviteForm.form.valid || !rolesSelected || submitCallStatus.isLoading()">Submit</button>
 			</div>
 		</div>
 
@@ -104,7 +103,7 @@
 	</div>
 	<div class="modal-body">
 		<div class="form-group row">
-			<label for="email" class="col-2 col-form-label" i18n>E-Mail</label>
+			<label for="email" class="col-2 col-form-label">E-Mail</label>
 			<div class="col-10">
 				<input type="text" class="form-control" [(ngModel)]="invToChange.email" disabled>
 			</div>
@@ -112,7 +111,7 @@
 
 		<div class="form-group row">
 			<label class="col-2 col-form-label">
-				<span i18n>Roles</span>
+				<span>Roles</span>
 				<span class="tooltip-icon" (click)="showRoleTT(tooltip)"><i class="fa fa-question-circle"></i></span>
 			</label>
 			<div class="col-10">

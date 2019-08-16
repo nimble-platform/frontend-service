@@ -48,6 +48,34 @@
                 </configuration>
             </plugin>
 
+            <!-- NB: globals and global-styles may be overwritten during runtime -->
+            <plugin>
+                <groupId>com.coderplus.maven.plugins</groupId>
+                <artifactId>copy-rename-maven-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-file</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <fileSets>
+                                <fileSet>
+                                    <sourceFile>${project.basedir}/src/environments/globals.${env}.ts</sourceFile>
+                                    <destinationFile>${project.basedir}/src/app/globals.ts</destinationFile>
+                                </fileSet>
+                                <fileSet>
+                                    <sourceFile>${project.basedir}/src/environments/global-styles.${env}.css</sourceFile>
+                                    <destinationFile>${project.basedir}/src/global-styles.css</destinationFile>
+                                </fileSet>
+                            </fileSets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
@@ -60,22 +88,10 @@
                             <goal>install-node-and-npm</goal>
                         </goals>
                         <configuration>
-                            <nodeVersion>v8.11.2</nodeVersion>
-                            <npmVersion>5.6.0</npmVersion>
+                            <nodeVersion>v10.16.0</nodeVersion>
+                            <npmVersion>6.9.0</npmVersion>
                         </configuration>
                     </execution>
-					<!--
-					<execution>
-                        <id>npm update</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>update</arguments>
-                        </configuration>
-                    </execution>
-					-->
                     <execution>
                         <id>npm install</id>
                         <phase>compile</phase>
@@ -93,17 +109,7 @@
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>run build --prod --build-optimizer</arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>npm start</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>start</arguments>
+                            <arguments>run build:production</arguments>
                         </configuration>
                     </execution>
                 </executions>
@@ -133,34 +139,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- NB: globals and global-styles may be overwritten during runtime -->
-			<plugin>
-				<groupId>com.coderplus.maven.plugins</groupId>
-				<artifactId>copy-rename-maven-plugin</artifactId>
-				<version>1.0</version>
-				<executions>
-					<execution>
-						<id>copy-file</id>
-						<phase>process-resources</phase>
-						<goals>
-						<goal>copy</goal>
-						</goals>
-						<configuration>
-							<fileSets>
-								<fileSet>
-									<sourceFile>${project.basedir}/src/environments/globals.${env}.ts</sourceFile>
-									<destinationFile>${project.basedir}/src/app/globals.ts</destinationFile>
-								</fileSet>
-								<fileSet>
-									<sourceFile>${project.basedir}/src/environments/global-styles.${env}.css</sourceFile>
-									<destinationFile>${project.basedir}/src/global-styles.css</destinationFile>
-								</fileSet>
-							</fileSets>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 			
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -194,7 +172,7 @@
                             <outputDirectory>${project.build.directory}/${finalName}/</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${project.basedir}/src</directory>
+                                    <directory>${project.basedir}/dist</directory>
                                 </resource>
                             </resources>
                         </configuration>

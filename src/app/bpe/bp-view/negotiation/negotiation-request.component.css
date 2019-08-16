@@ -6,7 +6,8 @@
 
 .title-row {
     padding: 0rem 0.3rem 0.3rem 0.3rem;
-    border-bottom: 1px solid gray;
+    border-bottom: 1px solid rgba(0,0,0,.1);
+    margin-bottom: 1rem;
 }
 
 .content-row {
@@ -15,4 +16,8 @@
 
 .input-spacer {
     margin-bottom: 0.6rem;
+}
+
+.quantity-input {
+    padding-right: 0.1rem;
 }

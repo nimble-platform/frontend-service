@@ -8,12 +8,4 @@ export class TradingTerm {
         public tradingTermFormat:string = null,
         public value: MultiTypeValue = null,
     ) {  }
-
-    getDescription(languageID: string): string {
-        for (const pName of this.description) {
-            if(pName.languageID === languageID) {
-                return pName.value;
-            }
-        }
-    }
 }

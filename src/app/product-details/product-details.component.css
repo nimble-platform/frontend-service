@@ -8,15 +8,6 @@
     margin-bottom: 0rem;
 }
 
-.vat-label {
-    font-weight: bold;
-    margin-bottom: 0rem;
-}
-
-.vat-value {
-    margin-left: 6rem;
-}
-
 .order-group {
     margin-bottom: 0.5rem;
 }
@@ -34,12 +25,18 @@
 .order-price-value {
     font-size: 1.4rem;
     font-weight: bold;
-    margin-left: 0.4rem;
+    margin-left: 2rem;
+    display: block;
 }
 
 .inline-order-group {
     display: flex;
     margin-bottom: 0.4rem;
+}
+
+.inline-order-value {
+    display: flex;
+    margin-left: 2rem;
 }
 
 .order-qty-input {

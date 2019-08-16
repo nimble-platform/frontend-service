@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
+import {Component, EventEmitter, OnInit, Input, Output, ViewChild, ElementRef} from "@angular/core";
 
 export interface Option {
     name: string
@@ -24,11 +24,15 @@ export class OptionsInputComponent implements OnInit {
     @Input() valueClass: string; // set based on label
 
     @Input() options: Array<string | Option>;
+    @Input() selectedIndex: number = -1; // this is added just to initialize the selected properly in case there are multiple options with the same value
     private selectedValue: string;
     @Output() selectedChange = new EventEmitter<string>();
+    @Output() selectedOptionChange = new EventEmitter<string|Option>(); // selected option is kept since at some places the option itself is required. e.g. we want to make a distinction
+                                                                        // between image and file property qualifiers
 
     @Input() large: string = "false";
     innerFormClass = "form-control-sm";
+    @ViewChild('optionsInputSelect') optionsInputSelect;
 
     constructor() {
 
@@ -44,6 +48,14 @@ export class OptionsInputComponent implements OnInit {
           this.innerFormClass = "form-control-sm";
     }
 
+    ngAfterViewInit() {
+        if(this.selectedIndex != -1) {
+            setTimeout((()=>{
+                this.optionsInputSelect.nativeElement.selectedIndex = this.selectedIndex;
+            }), 0);
+        }
+    }
+
     @Input()
     get selected(): string {
         return this.selectedValue;
@@ -52,6 +64,14 @@ export class OptionsInputComponent implements OnInit {
     set selected(selected: string) {
         this.selectedValue = selected;
         this.selectedChange.emit(selected);
+    }
+
+    onChange(event): void {
+        this.selectedIndex = event.target.selectedIndex;
+        let selectedOption = this.options[this.selectedIndex];
+
+        // emit also the selected option itself
+        this.selectedOptionChange.emit(selectedOption);
     }
 
     getValue(option: Option | string): string {

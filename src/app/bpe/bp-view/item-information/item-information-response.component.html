@@ -32,7 +32,7 @@
            [label]="'Manufacturer\'s note'"
            [readonly]="isLoading() || isResponseSent()"></note-file-view>
 
-<hr>
+<hr class="actions-hr">
 
 <!-- Actions -->
 <div *ngIf="!isBuyer() && !readonly && !isFormerStep" class="row actions-row">
@@ -55,7 +55,7 @@
 
 <!-- Buyer only sees once the response has been sent -->
 <div *ngIf="isBuyer() && !readonly && !isFormerStep" class="row actions-row">
-    <div class="col-2"></div>
+    <div class="{{bpDataService.isFinalProcessInTheWorkflow('Item_Information_Request') ? 'col-4' : 'col-2'}}"></div>
     <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
@@ -65,7 +65,7 @@
             Ask Something Else
         </button>
     </div>
-    <div class="col-2">
+    <div class="col-2" *ngIf="!bpDataService.isFinalProcessInTheWorkflow('Item_Information_Request')">
         <button class="btn btn-primary action" [disabled]="isLoading() || readonly || (isLogisticsService && !isTransportService)" (click)="onNextStep()">
             Go to Next Step
         </button>

@@ -1,0 +1,50 @@
+<ng-template #modal let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h5 class="modal-title" id="modal-basic-title">Add Custom Term</h5>
+        <button type="button" class="close" aria-label="Close" (click)="d('cross')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <div class="row space-before">
+                <div class="col-3">
+                    <strong>Term Name:</strong>
+                </div>
+                <div class="col-9">
+                    <input [(ngModel)]="termName" class="form-control" type="text"/>
+                </div>
+            </div>
+            <div class="row space-before">
+                <div class="col-3">
+                    <strong>Term Description:</strong>
+                </div>
+                <div class="col-9">
+                    <input [(ngModel)]="termDescription" class="form-control" type="text"/>
+                </div>
+            </div>
+            <options-input #dataTypeOption label="Data Type"
+                           [presentationMode]="'edit'"
+                           [options]="['TEXT', 'NUMBER', 'QUANTITY']"
+                           [selectedIndex]="0"
+                           (selectedOptionChange)="selectedDataType = $event"
+                           rowClass="space-before"
+                           large="true">
+            </options-input>
+            <div class="row space-before">
+                <div class="col-3">
+                    <strong>Value:</strong>
+                </div>
+                <div class="col-9">
+                    <input *ngIf="selectedDataType == 'TEXT'" [(ngModel)]="stringValue" class="form-control" type="text"/>
+                    <input *ngIf="selectedDataType == 'NUMBER'" [(ngModel)]="numberValue" class="form-control" type="number"/>
+                    <quantity-input *ngIf="selectedDataType == 'QUANTITY'" [quantity]="quantityValue"></quantity-input>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="d('cancel')">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="c('ok')" [disabled]="!validValueSpecified()">OK</button>
+    </div>
+</ng-template>

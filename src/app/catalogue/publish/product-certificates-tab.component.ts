@@ -26,11 +26,9 @@ export class ProductCertificatesTabComponent implements OnInit {
 
     addCertForm: FormGroup;
     countryFormControl: FormControl;
+    certificateFilesProvided = false;
     config = myGlobals.config;
-    certDocumentReference: DocumentReference;
-    countryNames = COUNTRY_NAMES;
-    validUpload = false;
-    countryInputValue: string = ''
+    selectedFiles: BinaryObject[] = [];
     selectedCountries: string[] = [];
 
     constructor(private _fb: FormBuilder,
@@ -41,30 +39,53 @@ export class ProductCertificatesTabComponent implements OnInit {
         // nothing for now
     }
 
+    onEdit(popup, i: number){
+        let cert:Certificate = this.catalogueLine.goodsItem.item.certificate[i];
+        this.certificateFilesProvided = true;
+        this.addCertForm = this._fb.group({
+            name: [cert.certificateTypeCode.name],
+            description: [cert.remarks],
+            type: [cert.certificateType]
+        });
+        this.selectedFiles = [];
+        for(let docRef of cert.documentReference) {
+            this.selectedFiles.push(docRef.attachment.embeddedDocumentBinaryObject);
+        }
+
+        this.countryFormControl = new FormControl('');
+        this.selectedCountries = [];
+        for(let country of cert.country) {
+            this.selectedCountries.push(country.name.value);
+        }
+
+        this.modalService.open(popup);
+    }
+
     onDelete(i: number) {
         this.catalogueLine.goodsItem.item.certificate.splice(i, 1);
     }
 
     onAddCertificate(content) {
-        this.validUpload = false;
         this.addCertForm = this._fb.group({
-            file: [""],
             name: [""],
             description: [""],
             type: [""]
         });
+        this.certificateFilesProvided = false;
+        this.selectedFiles = [];
         this.countryFormControl = new FormControl('');
         this.modalService.open(content);
     }
 
-    onSetCertificateFile(event: BinaryObject) {
-        this.validUpload = true;
-        this.certDocumentReference = UBLModelUtils.createDocumentReferenceWithBinaryObject(event);
+    onCertificateFileSelected(event: BinaryObject) {
+        this.certificateFilesProvided = true;
     }
 
     removedFile(event:boolean){
         if(event){
-            this.validUpload = false;
+            if(this.selectedFiles.length == 0) {
+                this.certificateFilesProvided = false;
+            }
         }
     }
 
@@ -74,7 +95,9 @@ export class ProductCertificatesTabComponent implements OnInit {
         certificate.certificateType = fields.type;
         certificate.remarks = fields.description;
         certificate.certificateTypeCode.name = fields.name;
-        certificate.documentReference = [this.certDocumentReference];
+        for(let file of this.selectedFiles) {
+            certificate.documentReference.push(UBLModelUtils.createDocumentReferenceWithBinaryObject(file));
+        }
         for(let countryName of this.selectedCountries) {
             let country: Country = new Country(new Text(countryName, "en"));
             certificate.country.push(country);

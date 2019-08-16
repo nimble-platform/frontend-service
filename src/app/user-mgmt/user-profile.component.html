@@ -12,25 +12,25 @@
             <h5>Details</h5>
             <table class="table">
                 <tr>
-                    <th><span i18n>First Name</span></th>
+                    <th><span>First Name</span></th>
                     <td>{{ userProfile.firstName}}</td>
                 </tr>
                 <tr>
-                    <th><span i18n>Last Name</span></th>
+                    <th><span>Last Name</span></th>
                     <td>{{ userProfile.familyName}}</td>
                 </tr>
                 <tr>
-                    <th><span i18n>E-Mail</span></th>
+                    <th><span>E-Mail</span></th>
                     <td>{{ userProfile.contact.electronicMail}}</td>
                 </tr>
                 <tr>
-                    <th><span i18n>Phone Number</span></th>
+                    <th><span>Phone Number</span></th>
                     <td *ngIf="userProfile.contact.telephone">{{ userProfile.contact.telephone}}</td>
                     <td *ngIf="!userProfile.contact.telephone">n/A</td>
                 </tr>
                 <!--
                 <tr>
-                    <th><span i18n>ID</span></th>
+                    <th><span>ID</span></th>
                     <td>{{ userProfile.id}}</td>
                 </tr>
                 -->
@@ -70,7 +70,7 @@
                         <call-status [callStatus]="changePasswordCallStatus" [large]="true"></call-status>
                     </div>
                     <div class="col-6">
-                        <button type="submit" class="btn btn-primary action" i18n [disabled]="!changePasswordForm.form.valid || !passwords_matching || changePasswordCallStatus.isLoading()">
+                        <button type="submit" class="btn btn-primary action" [disabled]="!changePasswordForm.form.valid || !passwords_matching || changePasswordCallStatus.isLoading()">
                             Change Password
                         </button>
                     </div>

@@ -66,7 +66,7 @@ export class LogisticPublishingService {
     private getProperty(uri:string){
         let url = this.url + `/property?uri=${encodeURIComponent(uri)}`;
         return this.http
-            .get(url, {headers: this.headers})
+            .get(url, {headers: new Headers({'Content-Type': 'application/json','Authorization':'Bearer ' +this.cookieService.get("bearer_token")})})
             .toPromise()
             .then(res => {
                 let property = res.json();
@@ -80,7 +80,7 @@ export class LogisticPublishingService {
     private getPropertyCodeList(uri:string){
         const url = this.url + `/code/select?q=codedList:"${encodeURIComponent(uri)}"`;
         return this.http
-            .get(url, {headers: this.headers})
+            .get(url, {headers: new Headers({'Content-Type': 'application/json','Authorization':'Bearer ' +this.cookieService.get("bearer_token")})})
             .toPromise()
             .then(res => {
                 let propertyCodeList = res.json();

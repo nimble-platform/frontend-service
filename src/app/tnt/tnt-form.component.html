@@ -22,10 +22,10 @@
         <div class="alert alert-danger space-before"
              role="alert">
             <p>
-                <em>An Error Occured</em> - Check Your EPC Code or Please Try Again Later.
+                <em>An Error Occured</em> - There is no information about this EPC available. Please check your code or contact your company's responsible personnel for tracking and tracing.
             </p>
             <p *ngIf="falsecode">
-                <i class="fa fa-exclamation"></i> <em>{{falsecode}}</em>
+                <i class="fa fa-exclamation pr-1"></i> <span><em>{{falsecode}}</em></span>
             </p>
         </div>
     </div>
@@ -72,7 +72,7 @@
             </table>
             <div class="row" *ngIf="trackingInfo.length">
                 <ngb-alert type="success" [dismissible]="false" *ngIf="verified">
-                    <i class="fas fa-check-circle"></i> This Data is Verified by BlockChain  <i class="fas fa-project-diagram"></i> </ngb-alert>
+                    <i class="fas fa-check-circle pr-1"></i> <span>This Data is Verified by BlockChain</span>  <i class="fas fa-project-diagram pl-1"></i> </ngb-alert>
             </div>
         <!--</div>-->
     </div>

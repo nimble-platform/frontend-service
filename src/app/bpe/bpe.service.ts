@@ -11,17 +11,13 @@ import {CookieService} from "ng2-cookies";
 import {Contract} from "../catalogue/model/publish/contract";
 import {Clause} from "../catalogue/model/publish/clause";
 import { CollaborationRole } from "./model/collaboration-role";
-import { ItemInformationResponse } from '../catalogue/model/publish/item-information-response';
-import { ItemInformationRequest } from '../catalogue/model/publish/item-information-request';
 import { Order } from '../catalogue/model/publish/order';
-import { TradingTerm } from '../catalogue/model/publish/trading-term';
-import { Quotation } from '../catalogue/model/publish/quotation';
-import { RequestForQuotation } from '../catalogue/model/publish/request-for-quotation';
 import { EvidenceSupplied } from '../catalogue/model/publish/evidence-supplied';
 import { Comment } from '../catalogue/model/publish/comment';
 import {SearchContextService} from '../simple-search/search-context.service';
 import {DashboardProcessInstanceDetails} from './model/dashboard-process-instance-details';
 import {DigitalAgreement} from "../catalogue/model/publish/digital-agreement";
+import {CollaborationGroup} from "./model/collaboration-group";
 
 @Injectable()
 export class BPEService {
@@ -69,7 +65,7 @@ export class BPEService {
 
 			// if we have a precedingGroupId,then we need also a precedingProcessId
 			if(this.bpDataService.precedingProcessId == null){
-                url += '&precedingPid=' + this.searchContextService.getAssociatedProcessMetadata().processId;
+                url += '&precedingPid=' + this.searchContextService.getAssociatedProcessMetadata().processInstanceId;
             }
 		}
 		return this.http
@@ -239,6 +235,15 @@ export class BPEService {
 		    url += '&isProject='+isProject;
 		}
 
+		return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
+	getGroupDetailsForProcessInstance(processInstanceId: string): Promise<CollaborationGroup> {
+		let url:string = `${this.url}/processInstance/${processInstanceId}/collaboration-group`;
 		return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
@@ -430,6 +435,42 @@ export class BPEService {
             .then(res => res.json())
             .catch(this.handleError);
 	}
+
+	getFrameContractByHjid(hjid: number): Promise<DigitalAgreement> {
+		const url = `${this.url}/contract/digital-agreement/${hjid}`;
+		return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
+	getAllFrameContractsForParty(partyId: string): Promise<DigitalAgreement[]> {
+		const url = `${this.url}/contract/digital-agreement/all?partyId=${partyId}`;
+		return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
+	checkAllCollaborationsFinished(partyId:string){
+        const url = `${this.url}/collaboration-groups/all-finished?partyId=${partyId}`;
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
+    checkCollaborationFinished(groupId:string):Promise<any>{
+        const url = `${this.url}/process-instance-groups/${groupId}/finished`;
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
 
 	mergeNegotations(baseId:string , mergeIds) {
 		let url = `${this.url}/collaboration-groups/merge`;

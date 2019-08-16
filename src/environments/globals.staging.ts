@@ -76,10 +76,10 @@ export const bpe_endpoint=`${base_path}/business-process`;
 export const data_channel_endpoint=`${base_path}/data-channel`;
 export const data_aggregation_endpoint=`${base_path}/data-aggregation`;
 export const trust_service_endpoint=`${base_path}/trust`;
-export const indexing_service_endpoint=`${base_path}/indexing-service`;
+export const indexing_service_endpoint=`${base_path}/index`;
 export const rocketChatEndpoint = `${base_path}:3000`;
-export const logstash_endpoint = `${base_path}:9200`;
-export const kibana_endpoint = `${base_path}:5601/app/kibana`;
+export const logstash_endpoint = `${base_path}/logstash`;
+export const kibana_endpoint = `${base_path}/kibana/app/kibana`;
 export const delegate_endpoint = `${base_path}:9265`;
 
 
@@ -123,28 +123,25 @@ export const config = {
     }
   },
   "dataChannelsEnabled" : true,
+  "defaultSearchIndex": "Name",
   "delegationEnabled": true,
+  "frameContractTabEnabled":true,
   "imprint": "<u>Platform Owner & Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)",
   "kibanaConfig": {
     "dashboards": [
         {
             "title": "User Logins & Registrations",
-            "url": "#/dashboard/27836650-8907-11e9-9609-0520e65d66da?embed=true&_g=(refreshInterval%3A(display%3A'30%20minutes'%2Cpause%3A!f%2Csection%3A2%2Cvalue%3A1800000)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
+            "url": "#/dashboard/407d6ed0-ac89-11e9-94eb-b71f5a648539?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
         }, {
             "title": "Business Process Activities",
-            "url": "#/dashboard/95678d10-906c-11e9-aa69-2987e334cad6?embed=true&_g=(refreshInterval%3A(display%3A'30%20minutes'%2Cpause%3A!f%2Csection%3A2%2Cvalue%3A1800000)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
+            "url": "#/dashboard/70532e10-ad4c-11e9-94eb-b71f5a648539?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
         }, {
             "title": "Products Activities",
-            "url": "#/dashboard/60b1b040-9072-11e9-aa69-2987e334cad6?embed=true&_g=(refreshInterval%3A(display%3A'30%20minutes'%2Cpause%3A!f%2Csection%3A2%2Cvalue%3A1800000)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
+            "url": "#/dashboard/ebcf1a20-ad53-11e9-94eb-b71f5a648539?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
         }
     ]
   },
   "kibanaEnabled": true,
-  "loggingConfig": {
-    "index": "logstash-{DATE}",
-    "type": "doc",
-    "dateFormat": "YYYY.MM.DD"
-  },
   "loggingEnabled": true,
   "logoPath": "./assets/logo_mvp.png",
   "logoRequired": false,
@@ -166,8 +163,7 @@ export const config = {
   "showVerification": true,
   "standardCurrency": "EUR",
   "standardTaxonomy": "All",
-    "defaultSearchIndex": "Products",
-    "supportedActivitySectors": {
+  "supportedActivitySectors": {
   	"": [],
   	"Logistics Provider": [],
   	"Manufacturer": [],

@@ -58,16 +58,21 @@
                 </div>
                 <text-input label="Definition" [text]="getDefinition()" presentationMode="view" rowClass="space-before">
                 </text-input>
-                <options-input label="Data Type" [presentationMode]="getPropertyPresentationMode()"
-                    [options]="PROPERTY_TYPES" [(selected)]="property.valueQualifier" rowClass="space-before" large="true" (selectedChange)="resetValues()">
+                <options-input #dataTypeOption label="Data Type" [presentationMode]="getPropertyPresentationMode()"
+                               [options]="PROPERTY_TYPES" rowClass="space-before" large="true"
+                               [(selected)]="property.valueQualifier"
+                               [selectedIndex]="propertyDataType == 'File' ? 3 : -1"
+                               (selectedChange)="resetValues()"
+                               (selectedOptionChange)="handleOptionChange($event)">
                 </options-input>
                 <div class="row space-before">
                     <div class="col-3">
                         <strong>Value(s):</strong>
                     </div>
+                    <!--{{propertyDataType}}-->
                     <div class="col-9">
                         <file-input *ngIf="property.valueQualifier === 'FILE'" [binaryObjects]="property.valueBinary"
-                            [multiple]="true" [maxSize]=1>
+                                    [multiple]="true" [maxSize]=1 [languageEnabled]="propertyDataType == 'File'">
                         </file-input>
                         <table *ngIf="property.valueQualifier === 'STRING'" class="table borderless mb-0">
                             <tbody>
@@ -81,12 +86,12 @@
                                         </select>
                                     </td>
                                     <td class="pr-0 align-right" style="padding-left: .75rem; padding-bottom: 0.3rem;" *ngIf="i>0">
-                                        <button class="btn btn-danger"  type="button" (click)="deletePropertyValue(i)">&times;</button>
+                                        <button class="btn btn-danger"  type="button" (click)="onRemoveValue(i)">&times;</button>
                                     </td>
                                 </tr>
                                 <tr>
                                   <td colspan="3" class="pr-0 pb-0">
-                                    <button class="btn btn-outline-primary add-value-button" (click)="addPropertyValue()">
+                                    <button class="btn btn-outline-primary add-value-button" (click)="onAddValue()">
                                         Add Value
                                     </button>
                                   </td>

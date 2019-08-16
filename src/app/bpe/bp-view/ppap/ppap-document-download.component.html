@@ -1,7 +1,7 @@
 <div *ngIf="ppap && ppapResponse">
     <div class="row space-before">
         <div class="col-12">
-            <h4 class="space-after" i18n>Ppap Response</h4>
+            <h4 class="space-after">Ppap Response</h4>
             <div *ngFor="let document of requestedDocuments" class="space-before">
                 <file-input label="{{ document }}" accept="file/*" [multiple]="true"
                             presentationMode="view" [binaryObjects]="documents[document] || []">
@@ -21,7 +21,7 @@
                [documents]="additionalDocuments"
                [label]="'Response Notes'"></note-file-view>
 
-    <hr>
+    <hr class="actions-hr">
 
     <!-- Action buttons -->
     <ng-container *ngIf="!formerProcess">

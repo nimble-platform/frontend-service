@@ -1,5 +1,9 @@
+/*@import "assets/css/bootstrap.min.css";*/
+/*@import "assets/css/fontawesome-all.min.css";*/
+@import "global-styles.css";
+
 html, body {
-    background-image: url('assets/bg_global.jpg');
+    background-image: url('../bg_global.jpg');
     background-size: 100%;
     background-repeat: no-repeat;
     font-family: 'Montserrat', sans-serif;
@@ -519,6 +523,10 @@ ngb-pagination .page-item.active .page-link {
 
 /* Floating BP actions */
 
+.actions-hr {
+    margin-top: 3rem;
+}
+
 .actions-row {
     padding: 0.3rem;
     align-items: center !important;
@@ -528,7 +536,7 @@ ngb-pagination .page-item.active .page-link {
     display: flex;
     align-items: center;
     font-weight: bold;
-    font-size: 1.6rem;
+    font-size: 1.2rem;
     justify-content: flex-end;
 }
 
@@ -554,3 +562,4 @@ ngb-pagination .page-item.active .page-link {
 }
 
 /* ------------------- */
+

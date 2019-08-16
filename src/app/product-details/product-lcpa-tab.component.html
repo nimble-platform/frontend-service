@@ -1,6 +1,6 @@
 <ng-container *ngIf="lcpaDetails.lcpainput">
     <div class="d-flex flex-wrap align-items-start fixed-info-container">
-        <quantity-input *ngIf="isVisible(lcpaDetails.lcpainput.lifeCycleLength)"
+        <quantity-input *ngIf="isVisible(lcpaDetails.lcpainput.lifeCycleLength, 'QUANTITY')"
                         [disabled]="isDisabled()"
                         class="col-6"
                         label="Average Life Cycle Length"
@@ -83,7 +83,7 @@
                       [amountType]="'currency_quantity'">
         </amount-input>
     </div>
-    <ng-container *ngFor="let detail of catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpainput.additionalLCPAInputDetail; let i = index">
+    <ng-container *ngFor="let detail of _catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpainput.additionalLCPAInputDetail; let i = index">
         <div [ngSwitch]="detail.valueQualifier">
             <div *ngIf="i == 0">
                 <hr>

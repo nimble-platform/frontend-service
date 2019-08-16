@@ -53,9 +53,7 @@ export class ItemInformationResponseComponent implements OnInit {
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
-        if(!this.bpDataService.bpActivityEvent.newProcess) {
-            this.processMetadata = this.bpDataService.bpActivityEvent.processHistory[0];
-        }
+        this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
         this.isFormerStep = this.bpDataService.bpActivityEvent.formerProcess;
 
         if (!this.request) {
@@ -94,7 +92,7 @@ export class ItemInformationResponseComponent implements OnInit {
             this.bpDataService.itemInformationResponse,
             this.bpDataService
         );
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processId);
+        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processInstanceId);
 
         //this.callStatus.submit();
         this.bpeService.continueBusinessProcess(piim).then(() => {

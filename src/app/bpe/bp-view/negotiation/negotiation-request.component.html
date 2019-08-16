@@ -4,15 +4,34 @@
         <div class="row title-row">
             <div class="col-2"></div>
             <div class="col-5">
-                <label *ngIf="!isManufacturersTermsSelectBoxVisible()" class="column-title mr-2">Manufacturer's Terms</label>
-                <select [hidden]="!isManufacturersTermsSelectBoxVisible()" #termSelectBox class="btn btn-outline-secondary" [value]="primaryTermsSource" (change)="onTermsSourceChange($event.target.value)">
+                <label class="column-title mr-2">Manufacturer's Terms</label><br>
+                <select [hidden]="!isManufacturersTermsSelectBoxVisible()" #termSelectBox class="btn btn-outline-secondary" [value]="manufacturersTermsSource" (change)="onManufacturersTermsSourceChange($event.target.value)">
                     <option *ngIf="manufacturersTermsExistence.last_offer" value="last_offer">Last Offer</option>
                     <option *ngIf="manufacturersTermsExistence.frame_contract" value="frame_contract">Frame Contract</option>
                     <option value="product_defaults">Product Defaults</option>
                 </select>
             </div>
             <div class="col-5">
-                <label class="column-title">Counter Offer</label>
+                <label class="column-title">Counter Offer</label><br>
+                <ng-container *ngIf="showCounterOfferTerms">
+                    <button *ngIf="manufacturersTermsSource == 'product_defaults'"
+                            class="btn btn-outline-secondary"
+                            (click)="onLoadCounterOfferTerms('product_defaults')">Use product defaults
+                    </button>
+                    <button *ngIf="manufacturersTermsSource == 'frame_contract'"
+                            class="btn btn-outline-secondary"
+                            (click)="onLoadCounterOfferTerms('frame_contract')">Use frame contract terms
+                    </button>
+                    <button *ngIf="manufacturersTermsSource == 'last_offer'"
+                            class="btn btn-outline-secondary"
+                            (click)="onLoadCounterOfferTerms('product_defaults')">Use terms of last offer
+                    </button>
+                    <ng-container *ngIf="isThereDirtyTerm()">
+                        <input class="ml-2" type="checkbox" [(ngModel)]="resetUpdatesChecked"><label class="ml-2">Reset changes</label>
+                        <span title="Explicitly specified terms will also be reset with the ones from the selected source.">&#9432;</span>
+                    </ng-container>
+                </ng-container>
+                <button *ngIf="!showCounterOfferTerms" class="btn btn-primary action" [disabled]="isLoading()"(click)="onShowCounterOfferTerms();">Offer Counter Terms</button>
             </div>
         </div>
     </div>
@@ -20,13 +39,14 @@
 <div class="row mb-3">
     <div class="{{showCounterOfferTerms ? 'col-12' : 'col-7'}}">
         <!-- Delivery Period -->
-        <div class="row content-row">
+        <div class="row content-row"
+             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'deliveryPeriod')}">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Delivery Period:</strong>
             </div>
             <!-- Manufacturers's offer -->
             <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
-                <ng-container [ngSwitch]="primaryTermsSource">
+                <ng-container [ngSwitch]="manufacturersTermsSource">
                     <ng-container *ngSwitchCase="'product_defaults'">
                         {{ wrapper.lineDeliveryPeriod.value }}
                         {{ wrapper.lineDeliveryPeriod.unitCode }}
@@ -46,22 +66,26 @@
             </div>
             <!-- Customer's offer-->
             <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input label="Request Delivery Period" [(cbModel)]="negotiateDeliveryPeriod"
+                <negotiation-request-input [label]="'Request Delivery Period'"
                                            [disabled]="isLoading() || isReadOnly()"
-                                           id="deliveryCb" [quantity]="wrapper.rfqDeliveryPeriod" [quantityUnits]="wrapper.settings.deliveryPeriodUnits"
+                                           id="deliveryCb"
+                                           [quantity]="wrapper.rfqDeliveryPeriod"
+                                           (quantityChange)="onTermsChange(fixedTerms.DELIVERY_PERIOD)"
+                                           [quantityUnits]="wrapper.settings.deliveryPeriodUnits"
                                            [invalid]="!isDeliveryPeriodValid()">
                 </negotiation-request-input>
             </div>
         </div>
 
         <!-- Warranty -->
-        <div class="row content-row">
+        <div class="row content-row"
+             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'warranty')}">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Warranty:</strong>
             </div>
             <!-- Manufacturers's offer -->
             <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
-                <ng-container [ngSwitch]="primaryTermsSource">
+                <ng-container [ngSwitch]="manufacturersTermsSource">
                     <ng-container *ngSwitchCase="'product_defaults'">
                         {{ wrapper.lineWarrantyString }}
                     </ng-container>
@@ -78,20 +102,25 @@
             </div>
             <!-- Customer's offer-->
             <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input label="Request Warranty" [(cbModel)]="negotiateWarranty" [disabled]="isLoading() || isReadOnly()"
-                                           id="warrantyCb" [quantity]="wrapper.rfqWarranty" [quantityUnits]="wrapper.settings.warrantyPeriodUnits"
+                <negotiation-request-input label="Request Warranty"
+                                           [disabled]="isLoading() || isReadOnly()"
+                                           id="warrantyCb"
+                                           [quantity]="wrapper.rfqWarranty"
+                                           (quantityChange)="onTermsChange(fixedTerms.WARRANTY_PERIOD)"
+                                           [quantityUnits]="wrapper.settings.warrantyPeriodUnits"
                                            [invalid]="!isWarrantyPeriodValid()">
                 </negotiation-request-input>
             </div>
         </div>
 
         <!-- Incoterms -->
-        <div class="row content-row">
+        <div class="row content-row"
+             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'incoTerms')}">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Incoterms:</strong>
             </div>
             <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
-                <ng-container [ngSwitch]="primaryTermsSource">
+                <ng-container [ngSwitch]="manufacturersTermsSource">
                     <ng-container *ngSwitchCase="'product_defaults'">
                         {{ wrapper.lineIncoterms }}
                     </ng-container>
@@ -104,19 +133,24 @@
                 </ng-container>
             </div>
             <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input label="Request Incoterms" [(cbModel)]="negotiateIncoterm" [disabled]="isLoading() || isReadOnly()"
-                                           id="incotermsCb" [options]="wrapper.settings.incoterms" [selected]="wrapper.rfqIncoterms" (selectedChange)="wrapper.rfqIncoterms = $event; onPriceConditionsChange()">
+                <negotiation-request-input label="Request Incoterms"
+                                           [disabled]="isLoading() || isReadOnly()"
+                                           id="incotermsCb"
+                                           [options]="wrapper.settings.incoterms"
+                                           [selected]="wrapper.rfqIncoterms"
+                                           (selectedChange)="wrapper.rfqIncoterms = $event; onTermsChange(fixedTerms.INCOTERMS)">
                 </negotiation-request-input>
             </div>
         </div>
 
         <!-- Payment Terms -->
-        <div class="row content-row">
+        <div class="row content-row"
+             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'paymentTerms')}">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Payment Terms:</strong>
             </div>
             <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
-                <ng-container [ngSwitch]="primaryTermsSource">
+                <ng-container [ngSwitch]="manufacturersTermsSource">
                     <ng-container *ngSwitchCase="'product_defaults'">
                         {{ wrapper.linePaymentTerms }}
                     </ng-container>
@@ -129,21 +163,23 @@
                 </ng-container>
             </div>
             <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input label="Request Payment Terms" [(cbModel)]="negotiatePaymentTerm"
+                <negotiation-request-input label="Request Payment Terms"
                                            id="paymentTermsCb" [options]="wrapper.settings.paymentTerms"
-                                           [selected]="wrapper.rfqPaymentTerms.paymentTerm" (selectedChange)="wrapper.rfqPaymentTerms.paymentTerm = $event; onPriceConditionsChange($event)"
+                                           [selected]="wrapper.rfqPaymentTerms.paymentTerm"
+                                           (selectedChange)="wrapper.rfqPaymentTerms.paymentTerm = $event; onTermsChange(fixedTerms.PAYMENT_TERMS)"
                                            [disabled]="isLoading() || isReadOnly()">
                 </negotiation-request-input>
             </div>
         </div>
 
         <!-- Payment Means -->
-        <div class="row content-row">
+        <div class="row content-row"
+             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'paymentMeans')}">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Payment Means:</strong>
             </div>
             <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
-                <ng-container [ngSwitch]="primaryTermsSource">
+                <ng-container [ngSwitch]="manufacturersTermsSource">
                     <ng-container *ngSwitchCase="'product_defaults'">
                         {{ wrapper.linePaymentMeans }}
                     </ng-container>
@@ -156,21 +192,24 @@
                 </ng-container>
             </div>
             <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input label="Request Payment Means" [(cbModel)]="negotiatePaymentMean"
-                                           id="paymentMeansCb" [options]="wrapper.settings.paymentMeans" [selected]="wrapper.rfqPaymentMeans" (selectedChange)="wrapper.rfqPaymentMeans = $event; onPriceConditionsChange()"
+                <negotiation-request-input label="Request Payment Means"
+                                           id="paymentMeansCb" [options]="wrapper.settings.paymentMeans"
+                                           [selected]="wrapper.rfqPaymentMeans"
+                                           (selectedChange)="wrapper.rfqPaymentMeans = $event; onTermsChange(fixedTerms.PAYMENT_MEANS)"
                                            [disabled]="isLoading() || isReadOnly()">
                 </negotiation-request-input>
             </div>
         </div>
 
         <!-- Price -->
-        <div class="row content-row">
+        <div class="row content-row"
+             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'price') || !wrapper.rfqDiscountPriceWrapper.itemPrice.hasPrice()}">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Price:</strong>
             </div>
             <!-- Manufacturer's offer -->
             <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}} d-flex">
-                <ng-container [ngSwitch]="primaryTermsSource">
+                <ng-container [ngSwitch]="manufacturersTermsSource">
                     <ng-container *ngSwitchCase="'product_defaults'">
                         {{ wrapper.lineDiscountPriceWrapper.discountedPricePerItemString }}
                         <div *ngIf="wrapper.lineDiscountPriceWrapper.isDiscountApplied() > 0" class="space-left" data-toggle="tooltip" data-placement="top"
@@ -188,88 +227,64 @@
             </div>
             <!-- Customer's offer -->
             <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input label="Request Item Price" [(cbModel)]="negotiatePrice" id="priceCb"
-                                           [disabled]="isLoading() || isReadOnly()" [quantity]="wrapper.rfqDiscountPriceWrapper.itemPrice" [step]="0.01"
-                                           [quantityUnits]="CURRENCIES" [disableQuantityUnit]="lineHasPrice" [invalid]="!isPriceValid()">
+                <negotiation-request-input label="Request Item Price" id="priceCb"
+                                           [disabled]="isLoading() || isReadOnly()"
+                                           [quantity]="wrapper.rfqDiscountPriceWrapper.itemPrice" [step]="0.01"
+                                           (quantityChange)="onTermsChange(fixedTerms.PRICE, false)"
+                                           [quantityUnits]="CURRENCIES" [disableQuantityUnit]="lineHasPrice"
+                                           [invalid]="!isPriceValid()">
                 </negotiation-request-input>
-            </div>
-        </div>
-
-        <!-- VAT -->
-        <div class="row content-row">
-            <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
-                <strong class="font-weight-500">VAT:</strong>
-            </div>
-            <!-- Manufacturer's offer -->
-            <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}} d-flex">
-                <ng-container [ngSwitch]="primaryTermsSource">
-                    <ng-container *ngSwitchCase="'product_defaults'">
-                        {{ wrapper.lineDiscountPriceWrapper.vatTotalString }}
-                    </ng-container>
-                    <ng-container *ngSwitchCase="'frame_contract'">
-                        {{ wrapper.frameContractQuotationWrapper.priceWrapper.vatTotalString}}
-                    </ng-container>
-                    <ng-container *ngSwitchCase="'last_offer'">
-                        {{ wrapper.lastOfferQuotationWrapper.priceWrapper.vatTotalString }}
-                    </ng-container>
-                </ng-container>
-            </div>
-            <div *ngIf="showCounterOfferTerms" class="col-5">
-                {{ wrapper.rfqDiscountPriceWrapper.vatTotalString }}
             </div>
         </div>
 
         <!-- Quantity -->
         <div *ngIf="showCounterOfferTerms" class="row content-row">
             <div class="col-2">
-                <strong class="font-weight-500">Quantity:</strong>
+
             </div>
             <div class="col-5">
-                <ng-container *ngIf="primaryTermsSource == 'frame_contract'">
-                    {{ wrapper.frameContractQuotationWrapper.orderedQuantity.value }} {{wrapper.frameContractQuotationWrapper.orderedQuantity.unitCode}}
-                </ng-container>
+                <!--<ng-container *ngIf="manufacturersTermsSource == 'frame_contract'">-->
+                    <!--{{ wrapper.frameContractQuotationWrapper.orderedQuantity.value }} {{wrapper.frameContractQuotationWrapper.orderedQuantity.unitCode}}-->
+                <!--</ng-container>-->
             </div>
-            <div class="col-5 mt-1">
-                <div class="d-flex">
-                    <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [ngModel]="requestedQuantity" (ngModelChange)="requestedQuantity = $event; onOrderQuantityChange()"
-                           class="form-control form-control-sm w-75"
-                           [disabled]="isLoading() || isReadOnly()"/>
-                    <span class="ml-2" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() }}</span>
+            <div class="col-5">
+                <div class="row">
+                    <strong class="font-weight-500 col-5">Quantity:</strong>
+                    <div class="col-4 quantity-input">
+                        <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [ngModel]="requestedQuantity" (ngModelChange)="requestedQuantity = $event; onOrderQuantityChange()"
+                               class="form-control form-control-sm"
+                               [disabled]="isLoading() || isReadOnly()"/>
+                    </div>
+                    <span class="col-3" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() }}</span>
                 </div>
             </div>
         </div>
     </div>
-    <div *ngIf="!showCounterOfferTerms" class="col-5 d-flex flex-column justify-content-center align-items-center">
-        <div class="d-flex flex-column">
-            <div class="d-flex align-items-center mb-2">
-                <div class="col-3">
-                    <strong class="font-weight-500">Quantity:</strong>
-                </div>
-                <div class="col-6 mt-1">
-                    <div class="d-flex">
-                        <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [ngModel]="requestedQuantity" (ngModelChange)="requestedQuantity = $event; onOrderQuantityChange()"
-                               class="form-control form-control-sm w-75"
-                               [disabled]="isLoading() || isReadOnly()"/>
-                        <span class="ml-2" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() }}</span>
-                    </div>
-                </div>
+    <div *ngIf="!showCounterOfferTerms" class="col-5">
+        <div class="row">
+            <div class="col-5">
+                <strong class="font-weight-500">Quantity:</strong>
             </div>
-            <hr class="w-100">
-            <button class="btn btn-primary action mb-3" [disabled]="isLoading()"(click)="showCounterOfferTerms = !showCounterOfferTerms">Offer Counter Terms</button>
+            <div class="col-4 quantity-input">
+                <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [ngModel]="requestedQuantity" (ngModelChange)="requestedQuantity = $event; onOrderQuantityChange()"
+                   class="form-control form-control-sm"
+                   [disabled]="isLoading() || isReadOnly()"/>
+            </div>
+            <span class="col-3" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() }}</span>
         </div>
     </div>
 </div>
 
 <div class="row mb-2">
   <div class="col-12">
-    <ng-container *ngIf="isFrameContractVisible()">
-      <div class="btn btn-outline-primary align-self-start" [ngClass]="{'active':showFrameContractDetails}" (click)="showFrameContractDetails=showTab(showFrameContractDetails)">Frame Contract</div>
-    </ng-container>
-    <div class="btn btn-outline-primary align-self-start" [ngClass]="{'active':showNotesAndAdditionalFiles,'ml-2':isFrameContractVisible()}" (click)="showNotesAndAdditionalFiles=showTab(showNotesAndAdditionalFiles)">Notes and Additional Files</div>
+    <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'btn-outline-primary':!(clausesDiffer || custTermsDiffer),'btn-danger':(clausesDiffer || custTermsDiffer),'active':showTermsAndConditions}" (click)="showTermsAndConditions=showTab(showTermsAndConditions)">Terms and Conditions</div>
     <div *ngIf="config.dataChannelsEnabled" class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showDataMonitoring}" (click)="showDataMonitoring=showTab(showDataMonitoring)">Data Monitoring</div>
-    <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showTermsAndConditions}" (click)="showTermsAndConditions=showTab(showTermsAndConditions)">Terms and Conditions</div>
-    <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showPurchaseOrder}" (click)="showPurchaseOrder=showTab(showPurchaseOrder)">Purchase Order</div>
+    <ng-container *ngIf="isFrameContractVisible()">
+      <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showFrameContractDetails}" (click)="showFrameContractDetails=showTab(showFrameContractDetails)">Frame Contract</div>
+    </ng-container>
+    <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showNotesAndAdditionalFiles}" (click)="showNotesAndAdditionalFiles=showTab(showNotesAndAdditionalFiles)">Notes and Additional Files</div>
     <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showDeliveryAddress}" (click)="showDeliveryAddress=showTab(showDeliveryAddress)">Delivery Address</div>
+    <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showPurchaseOrder}" (click)="showPurchaseOrder=showTab(showPurchaseOrder)">Purchase Order</div>
   </div>
 </div>
 
@@ -278,11 +293,6 @@
 
     <!-- Frame contract -->
     <ng-container *ngIf="isFrameContractVisible()">
-        <!--
-        <div class="row">
-            <div class="btn btn-outline-primary align-self-start mb-2" (click)="showFrameContractDetails = !showFrameContractDetails;">Frame Contract</div>
-        </div>
-        -->
         <ng-container *ngIf="showFrameContractDetails">
             <div class="row">
                 <div class="col-2">
@@ -291,9 +301,10 @@
                 </div>
                 <div class="col-5"></div>
                 <div class="col-5">
-                    <negotiation-request-input label="Request Frame Contract" [(cbModel)]="negotiateFrameContractDuration"
+                    <negotiation-request-input label="Request Frame Contract"
                                                id="frameContractCb"
                                                [quantityUnits]="frameContractDurationUnits"
+                                               (quantityChange)="onTermsChange(fixedTerms.FRAME_CONTRACT_DURATION, false)"
                                                [quantity]="frameContractDuration"
                                                [disabled]="isFrameContractDisabled()">
                     </negotiation-request-input>
@@ -303,11 +314,6 @@
     </ng-container>
 
     <!--Notes-->
-    <!--
-    <div class="row">
-        <div class="btn btn-outline-primary align-self-start mb-2" (click)="showNotesAndAdditionalFiles = !showNotesAndAdditionalFiles;">Notes and Additional Files</div>
-    </div>
-    -->
     <note-file-view *ngIf="showNotesAndAdditionalFiles"
                     class="mb-2"
                     [notes]="rfq.note"
@@ -320,31 +326,30 @@
 
     <!-- Data Monitoring -->
     <ng-container *ngIf="config.dataChannelsEnabled">
-        <!--
-        <div class="row">
-            <div class="btn btn-outline-primary align-self-start mb-2" (click)="showDataMonitoring = !showDataMonitoring;">Data Monitoring</div>
-        </div>
-        -->
         <div *ngIf="showDataMonitoring" class="row mb-3">
             <div class="col-12">
-                <div class="input-group">
-                    <div class="d-flex align-items-center">
-                        <input type="checkbox" [(ngModel)]="rfq.dataMonitoringRequested" [disabled]="isLoading() || isReadOnly()" >
-                    </div>
-                    <span class="form-control d-inline border-0">
+                <!-- frame contract exists, so, indicate that the data monitoring request -->
+                <ng-container *ngIf="((manufacturersTermsSource == 'frame_contract' &&
+                                        wrapper.frameContractQuotationWrapper.dataMonitoringPromised) ||
+                                        (manufacturersTermsSource == 'last_offer' &&
+                                        wrapper.lastOfferQuotationWrapper.dataMonitoringPromised)); else editDataMonitoringRequest">
+                    <input type="checkbox" checked="true" disabled="true"><label>Data monitoring promised</label>
+                </ng-container>
+                <ng-template #editDataMonitoringRequest>
+                    <div class="input-group">
+                        <div class="d-flex align-items-center">
+                            <input type="checkbox" [(ngModel)]="rfq.dataMonitoringRequested" [disabled]="isLoading() || isReadOnly()" >
+                        </div>
+                        <span class="form-control d-inline border-0">
                             <strong class="font-weight-500">Request data monitoring service</strong>
                         </span>
-                </div>
+                    </div>
+                </ng-template>
             </div>
         </div>
     </ng-container>
 
     <!-- Delivery -->
-    <!--
-    <div class="row">
-        <div class="btn btn-outline-primary align-self-start mb-2" (click)="showDeliveryAddress = !showDeliveryAddress">Delivery Address</div>
-    </div>
-    -->
     <div *ngIf="showDeliveryAddress" class="row mb-3">
         <div class="col-12">
             <options-input label="Use Existing Address" [(selected)]="selectedAddress" [options]="addressOptions"
@@ -356,70 +361,104 @@
         </div>
     </div>
 
-    <!-- Contract Preview -->
-    <!--
-    <div class="row">
-        <div class="btn btn-outline-primary align-self-start mb-2" (click)="showTermsAndConditions = !showTermsAndConditions">Terms and Conditions</div>
-    </div>
-    -->
+    <!-- Terms and conditions -->
     <div *ngIf="showTermsAndConditions">
-        <div class="row mb-2">
-            <div class="col-2">
-                <strong class="font-weight-500">Terms and conditions:</strong>
-                <span title="The period within which the offered conditions will be valid upon confirmation by the seller.">&#9432;</span>
+        <ul *ngIf="!isReadOnly() || getNonFrameContractTermNumber() > 0" class="nav nav-tabs space-after space-before">
+            <li class="nav-item">
+                <a href id="CUSTOM_TERMS" class="nav-link"
+                   [ngClass]="{ active: selectedTCTab === 'CUSTOM_TERMS'}"
+                   (click)="onTCTabSelect($event)">
+                    Custom Terms
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href id="CLAUSES" class="nav-link"
+                   [ngClass]="{ active: selectedTCTab === 'CLAUSES'}"
+                   (click)="onTCTabSelect($event)">
+                    Clauses
+                </a>
+            </li>
+        </ul>
+
+        <ng-container *ngIf="selectedTCTab == 'CUSTOM_TERMS'">
+            <ng-container *ngFor="let tradingTerm of wrapper.rfq.tradingTerms">
+                <div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row content-row mb-1"
+                     [ngClass]="{'bg-danger text-white' : !areTermsEqual(tradingTerm.id)}">
+                    <div class="col-2">
+                        <strong class="font-weight-500">{{tradingTerm.id}}:</strong>
+                        <span *ngIf="tradingTerm.description?.length > 0" [title]="tradingTerm.description[0].value">&#9432;</span>
+                    </div>
+                    <div class="col-5">
+                        <ng-container [ngSwitch]="manufacturersTermsSource">
+                            <ng-container *ngSwitchCase="'frame_contract'">
+                                <multi-type-input [multiTypeValue]="wrapper.frameContractQuotationWrapper.getTradingTerm(tradingTerm.id)?.value"
+                                                  [presentationMode]="'view'">
+                                </multi-type-input>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="'last_offer'">
+                                <multi-type-input [multiTypeValue]="wrapper.lastOfferQuotationWrapper.getTradingTerm(tradingTerm.id)?.value"
+                                                  [presentationMode]="'view'">
+                                </multi-type-input>
+                            </ng-container>
+                        </ng-container>
+
+                    </div>
+                    <div class="col-5">
+                        <div class="d-flex">
+                            <multi-type-input [multiTypeValue]="tradingTerm.value" [disabled]="isLoading() || isReadOnly()"></multi-type-input>
+                            <div *ngIf="!isReadOnly()" class="btn btn-danger ml-2" (click)="onDeleteTradingTerm(tradingTerm.id)">Delete</div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+            <div *ngIf="!isReadOnly()">
+                <div class="btn btn-outline-primary mt-1" (click)="openCustomTermModal()">Add Custom Term</div>
             </div>
-            <div class="col-5"></div>
-            <div class="col-5">
-                <input type="checkbox" class="form-check-input" [(ngModel)]="negotiateTermsAndConditions"
-                       [disabled]="isLoading() || isReadOnly()">
-                <label class="form-check-label"><strong class="font-weight-500">Request terms and conditions:</strong></label>
+        </ng-container>
+
+        <ng-container *ngIf="selectedTCTab == 'CLAUSES'">
+            <div class="row content-row mt-2">
+                <div class="col-2"></div>
+                <div class="col-5">
+                    <terms-and-conditions [hidden]="manufacturersTermsSource != 'product_defaults'" [buyerPartyId]="buyerId"
+                                          [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-product-defaults'"
+                                          [termsAndConditions]="defaultTermsAndConditions"
+                                          [originalTermAndConditionClauses]="defaultTermsAndConditions">
+                    </terms-and-conditions>
+                    <terms-and-conditions *ngIf="wrapper.frameContractQuotation" [hidden]="manufacturersTermsSource != 'frame_contract'" [buyerPartyId]="buyerId"
+                                          [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-frame-contract'"
+                                          [termsAndConditions]="wrapper.frameContractQuotation.termOrCondition"
+                                          [originalTermAndConditionClauses]="wrapper.frameContractQuotation.termOrCondition">
+                    </terms-and-conditions>
+                    <terms-and-conditions *ngIf="wrapper.lastOfferQuotation" [hidden]="manufacturersTermsSource != 'last_offer'"
+                                          [buyerPartyId]="buyerId"
+                                          [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-last-offer'"
+                                          [termsAndConditions]="wrapper.lastOfferQuotation.termOrCondition"
+                                          [originalTermAndConditionClauses]="wrapper.lastOfferQuotation.termOrCondition">
+                    </terms-and-conditions>
+                </div>
+                <div class="col-5">
+                    <terms-and-conditions [buyerPartyId]="buyerId"
+                                          [sellerPartyId]="sellerId"
+                                          [selectedIncoterm]="wrapper.rfqIncoterms"
+                                          [selectedTradingTerm]="wrapper.rfqPaymentTerms.paymentTerm"
+                                          (onIncotermChanged)="wrapper.rfqIncoterms = $event; onTermsChange(fixedTerms.INCOTERMS);"
+                                          (onPaymentMeansChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event; onTermsChange(fixedTerms.PAYMENT_MEANS);"
+                                          (onClauseUpdated)="onClauseUpdate($event);"
+                                          [originalTermAndConditionClauses]=
+                                                  "manufacturersTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.termOrCondition :
+                                                  (manufacturersTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.termOrCondition :
+                                                  defaultTermsAndConditions)"
+                                          [termsAndConditions]="wrapper.rfq.termOrCondition"
+                                          [readOnly]="isLoading() || isReadOnly()"
+                                          [documentType]="'rfq'">
+                    </terms-and-conditions>
+                </div>
             </div>
-        </div>
-        <div class="row content-row">
-            <div class="col-2"></div>
-            <div class="col-5">
-                <terms-and-conditions [hidden]="primaryTermsSource != 'product_defaults'" [buyerPartyId]="buyerId"
-                                      [needATitle]="false"
-                                      [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-product-defaults'"
-                                      [termsAndConditions]="defaultTermsAndConditions"
-                                      [originalTermAndConditionClauses]="defaultTermsAndConditions">
-                </terms-and-conditions>
-                <terms-and-conditions *ngIf="wrapper.frameContractQuotation" [hidden]="primaryTermsSource != 'frame_contract'" [buyerPartyId]="buyerId"
-                                      [needATitle]="false"
-                                      [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-frame-contract'"
-                                      [termsAndConditions]="wrapper.frameContractQuotation.termOrCondition"
-                                      [originalTermAndConditionClauses]="wrapper.frameContractQuotation.termOrCondition">
-                </terms-and-conditions>
-                <terms-and-conditions *ngIf="wrapper.lastOfferQuotation" [hidden]="primaryTermsSource != 'last_offer'"
-                                      [buyerPartyId]="buyerId"
-                                      [needATitle]="false"
-                                      [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-last-offer'"
-                                      [termsAndConditions]="wrapper.lastOfferQuotation.termOrCondition"
-                                      [originalTermAndConditionClauses]="wrapper.lastOfferQuotation.termOrCondition">
-                </terms-and-conditions>
-            </div>
-            <div class="col-5">
-                <terms-and-conditions [buyerPartyId]="buyerId"
-                                      [selectedIncoterm]="wrapper.rfqIncoterms"
-                                      [selectedTradingTerm]="wrapper.rfqPaymentTerms.paymentTerm"
-                                      (onIncotermChanged)="wrapper.rfqIncoterms = $event; onPriceConditionsChange();"
-                                      (onTradingTermChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event; onPriceConditionsChange();"
-                                      [originalTermAndConditionClauses]="primaryTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.termOrCondition :
-                                      (primaryTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.termOrCondition : defaultTermsAndConditions)"
-                                      [needATitle]="false"
-                                      [sellerPartyId]="sellerId" [readOnly]="isLoading() || isReadOnly() || !negotiateTermsAndConditions" [documentType]="'rfq'"
-                                      [termsAndConditions]="wrapper.rfq.termOrCondition">
-                </terms-and-conditions>
-            </div>
-        </div>
+        </ng-container>
     </div>
 
     <!-- Purchase Order -->
-    <!--
-    <div class="row">
-        <div class="btn btn-outline-primary align-self-start mb-2" (click)="showPurchaseOrder = !showPurchaseOrder">Purchase Order</div>
-    </div>
-    -->
     <div *ngIf="showPurchaseOrder" class="row mb-3">
         <div class="col-12">
             <div class="row">
@@ -431,8 +470,16 @@
                 <div class="col-10">{{requestedQuantity}} {{getQuantityUnit()}}</div>
             </div>
             <div class="row">
-                <div class="col-2"><strong>Total Price:</strong></div>
+                <div class="col-2"><strong>Net Price:</strong></div>
                 <div class="col-10">{{ wrapper.rfqTotalPriceString }}</div>
+            </div>
+            <div class="row">
+                <div class="col-2"><strong>VAT:</strong></div>
+                <div class="col-10">{{ wrapper.rfqTotalPriceString }}</div>
+            </div>
+            <div class="row">
+                <div class="col-2"><strong>Gross Total:</strong></div>
+                <div class="col-10">{{ wrapper.rfqGrossTotalString}}</div>
             </div>
         </div>
     </div>
@@ -440,16 +487,22 @@
   </div>
 </div>
 
+<hr class="actions-hr">
+
 <!-- Actions -->
 <div *ngIf="!showRequestedPrice()" class="d-flex justify-content-end actions-row">
-    <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-    <div class="col-3 price-col">Total Price: {{ wrapper.rfqGrossTotalString }}</div>
+    <div class="col-3 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-4">
+        <div class="price-col">Net Price: {{ wrapper.rfqTotalPriceString}}</div>
+        <div class="price-col">VAT: {{ wrapper.rfqVatTotalString}}</div>
+        <div class="price-col">Gross Total: {{ wrapper.rfqGrossTotalString }}</div>
+    </div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
     </div>
     <div class="col-3"   *ngIf="!(processMetadata && processMetadata.isBeingUpdated)">
         <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onSendRequest()">
-            {{ isNegotiatingAnyTerm() ? "Send Request" : "Continue With Manufacturer's Terms" }}
+            {{ isNegotiatingAnyTerm() || bpDataService.isFinalProcessInTheWorkflow('Negotiation') ? "Send Request" : "Continue With Manufacturer's Terms" }}
         </button>
     </div>
     <div class="col-3" *ngIf="processMetadata && processMetadata.isBeingUpdated">
@@ -468,3 +521,4 @@
 </div>
 
 <discount-modal></discount-modal>
+<custom-term-modal [negotiationModelWrapper]="wrapper"></custom-term-modal>

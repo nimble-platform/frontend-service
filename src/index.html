@@ -11,43 +11,26 @@
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
 	<link rel="stylesheet" href="assets/css/fontawesome-all.min.css">
-    <link rel="stylesheet" href="global-styles.css">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="assets/css/global-styles.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
 
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700" rel="stylesheet">
 
-    <!--<link rel="stylesheet" type="text/css" href="https://bramp.github.io/js-sequence-diagrams/css/sequence-diagram-min.css" media="screen"/>-->
-
     <script src="node_modules/core-js/client/shim.min.js"></script>
     <script src="node_modules/zone.js/dist/zone.js"></script>
-    <script src="node_modules/systemjs/dist/system.src.js"></script>
-    <script src="systemjs.config.js"></script>
-    <script src="sha256.js"></script>
+
     <script>
         var locale = navigator.language || navigator.userLanguage;
         if (locale.length > 2)
             locale = locale.substr(0, 2);
         document.locale = locale;
-        System.config({
-            map: {
-                text: 'systemjs-text-plugin.js',
-            }
-        });
-        System.import('main.js').catch(function (err) {
-            console.error(err);
-        });
     </script>
 
-    <!-- Needed for the text editor and diagram-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ace.js" type="text/javascript" charset="utf-8"></script>
-
-    <!--<script src="lib/bpe/js/jquery-3.2.1.min.js"></script>-->
-    <script src="node_modules/underscore/underscore-min.js"></script>
-    <!--<script src="lib/bpe/js/webfont.js"></script>-->
-    <!--<script src="lib/bpe/js/snap.svg-min.js"></script>-->
-    <!--<script src="lib/bpe/js/sequence-diagram-min.js"></script>-->
-    <!--<script src="lib/bpe/js/svginnerhtml.min.js"></script>-->
+	<script src="node_modules/underscore/underscore-min.js"></script>
     <script src="node_modules/countries-list/dist/index.es5.min.js"></script>
+	<script src="assets/js/sha256.js"></script>
+    <script src="assets/js/ace.js"></script>
+    <script src="lib/bpe/js/webfont.js"></script>
 
 </head>
 

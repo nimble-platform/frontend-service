@@ -29,18 +29,18 @@
 
 <table id="channel-details" class="table table-striped table-bordered">
     <tr>
-        <th><span i18n>Channel ID</span></th>
-        <th><span i18n>Business Process</span></th>
-        <th><span i18n>Description</span></th>
-        <th><span i18n>Start Time</span></th>
-        <th><span i18n>End Time</span></th>
+        <th><span>Channel ID</span></th>
+        <th><span>Business Process</span></th>
+        <th><span>Description</span></th>
+        <th><span>Start Time</span></th>
+        <th><span>End Time</span></th>
     </tr>
     <tr>
-        <td>{{channelConfig.channelID}}</td>
-        <td>{{channelConfig.businessProcessID}}</td>
-        <td>{{channelConfig.description}}</td>
-        <td>{{channelConfig.startDateTime}}</td>
-        <td>{{channelConfig.endDateTime}}</td>
+        <td>{{channelConfig["channelID"]}}</td>
+        <td>{{channelConfig["businessProcessID"]}}</td>
+        <td>{{channelConfig["description"]}}</td>
+        <td>{{channelConfig["startDateTime"]}}</td>
+        <td>{{channelConfig["endDateTime"]}}</td>
     </tr>
 </table>
 
@@ -96,13 +96,13 @@
         <ng-container *ngFor="let sensor of initialChannelSensors">
             <table class="table table-striped table-bordered">
                 <tr>
-                    <th><span i18n>Machine</span></th>
-                    <th><span i18n>Sensor</span></th>
-                    <th><span i18n>Interval</span></th>
-                    <th><span i18n>Description</span></th>
-                    <th *ngIf="hasFilteringService"><span i18n>Datakey</span></th>
-                    <th *ngIf="hasFilteringService"><span i18n>Metadata</span></th>
-                    <th *ngIf="hasFilteringService"><span i18n>Advanced Filtering</span></th>
+                    <th><span>Machine</span></th>
+                    <th><span>Sensor</span></th>
+                    <th><span>Interval</span></th>
+                    <th><span>Description</span></th>
+                    <th *ngIf="hasFilteringService"><span>Datakey</span></th>
+                    <th *ngIf="hasFilteringService"><span>Metadata</span></th>
+                    <th *ngIf="hasFilteringService"><span>Advanced Filtering</span></th>
                     <th *ngIf="pageNumber <= 1" class="interaction-column"></th>
                 </tr>
                 <tr>
@@ -126,10 +126,10 @@
         <ng-container *ngFor="let sensor of initialChannelSensors">
             <table class="table table-striped table-bordered">
                 <tr>
-                    <th><span i18n>Machine</span></th>
-                    <th><span i18n>Sensor</span></th>
-                    <th><span i18n>Interval</span></th>
-                    <th><span i18n>Description</span></th>
+                    <th><span>Machine</span></th>
+                    <th><span>Sensor</span></th>
+                    <th><span>Interval</span></th>
+                    <th><span>Description</span></th>
                 </tr>
                 <tr>
                     <td>{{sensor.machine.name}}</td>
@@ -138,9 +138,9 @@
                     <td>{{sensor.description}}</td>
                 </tr>
                 <tr *ngIf="hasFilteringService">
-                    <th><span i18n>Metadata</span></th>
-                    <th><span i18n>Advanced Filtering</span></th>
-                    <th><span i18n>Datakey</span></th>
+                    <th><span>Metadata</span></th>
+                    <th><span>Advanced Filtering</span></th>
+                    <th><span>Datakey</span></th>
                 </tr>
                 <tr *ngIf="hasFilteringService">
                     <td>{{sensor.metadata}}</td>
@@ -156,10 +156,10 @@
             <table class="table table-striped table-bordered">
 
                 <tr>
-                    <th><span i18n>Machine</span></th>
-                    <th><span i18n>Sensor</span></th>
-                    <th><span i18n>Interval</span></th>
-                    <th><span i18n>Description</span></th>
+                    <th><span>Machine</span></th>
+                    <th><span>Sensor</span></th>
+                    <th><span>Interval</span></th>
+                    <th><span>Description</span></th>
                 </tr>
                 <tr>
                     <td>{{sensor.machine.name}}</td>
@@ -168,9 +168,9 @@
                     <td>{{sensor.description}}</td>
                 </tr>
                 <tr *ngIf="hasFilteringService">
-                    <th><span i18n>Metadata</span></th>
-                    <th><span i18n>Advanced Filtering</span></th>
-                    <th><span i18n>Datakey</span></th>
+                    <th><span>Metadata</span></th>
+                    <th><span>Advanced Filtering</span></th>
+                    <th><span>Datakey</span></th>
                 </tr>
                 <tr *ngIf="hasFilteringService">
                     <td>{{sensor.metadata}}</td>
@@ -178,7 +178,7 @@
                     <td>{{sensor.dataKey}}</td>
                 </tr>
                 <!--<tr>
-                        <th class="interaction-column"> <span i18n>Remove</span> </th>
+                        <th class="interaction-column"> <span>Remove</span> </th>
                 </tr> -->
                 <tr>
                     <td>
@@ -196,10 +196,10 @@
         <ng-container *ngFor="let sensor of initialChannelSensors">
             <table class="table table-striped table-bordered">
                 <tr>
-                    <th><span i18n>Machine</span></th>
-                    <th><span i18n>Sensor</span></th>
-                    <th><span i18n>Interval</span></th>
-                    <th><span i18n>Description</span></th>
+                    <th><span>Machine</span></th>
+                    <th><span>Sensor</span></th>
+                    <th><span>Interval</span></th>
+                    <th><span>Description</span></th>
                 </tr>
                 <tr>
                     <td>{{sensor.machine.name}}</td>
@@ -208,9 +208,9 @@
                     <td>{{sensor.description}}</td>
                 </tr>
                 <tr *ngIf="hasFilteringService">
-                    <th><span i18n>Metadata</span></th>
-                    <th><span i18n>Advanced Filtering</span></th>
-                    <th><span i18n>Datakey</span></th>
+                    <th><span>Metadata</span></th>
+                    <th><span>Advanced Filtering</span></th>
+                    <th><span>Datakey</span></th>
                 </tr>
                 <tr *ngIf="hasFilteringService">
                     <td>{{sensor.metadata}}</td>
@@ -224,10 +224,10 @@
         <ng-container *ngFor="let sensor of counterChannelSensors">
             <table class="table table-striped table-bordered">
                 <tr>
-                    <th><span i18n>Machine</span></th>
-                    <th><span i18n>Sensor</span></th>
-                    <th><span i18n>Interval</span></th>
-                    <th><span i18n>Description</span></th>
+                    <th><span>Machine</span></th>
+                    <th><span>Sensor</span></th>
+                    <th><span>Interval</span></th>
+                    <th><span>Description</span></th>
                 </tr>
                 <tr>
                     <td>{{sensor.machine.name}}</td>
@@ -236,9 +236,9 @@
                     <td>{{sensor.description}}</td>
                 </tr>
                 <tr *ngIf="hasFilteringService">
-                    <th><span i18n>Metadata</span></th>
-                    <th><span i18n>Advanced Filtering</span></th>
-                    <th><span i18n>Datakey</span></th>
+                    <th><span>Metadata</span></th>
+                    <th><span>Advanced Filtering</span></th>
+                    <th><span>Datakey</span></th>
                 </tr>
                 <tr *ngIf="hasFilteringService">
                     <td>{{sensor.metadata}}</td>
@@ -252,13 +252,13 @@
         <ng-container *ngFor="let sensor of counterChannelSensors">
             <table class="table table-striped table-bordered">
                 <tr>
-                    <th><span i18n>Machine</span></th>
-                    <th><span i18n>Sensor</span></th>
-                    <th><span i18n>Interval</span></th>
-                    <th><span i18n>Description</span></th>
-                    <th *ngIf="hasFilteringService"><span i18n>Datakey</span></th>
-                    <th *ngIf="hasFilteringService"><span i18n>Metadata</span></th>
-                    <th *ngIf="hasFilteringService"><span i18n>Advanced Filtering</span></th>
+                    <th><span>Machine</span></th>
+                    <th><span>Sensor</span></th>
+                    <th><span>Interval</span></th>
+                    <th><span>Description</span></th>
+                    <th *ngIf="hasFilteringService"><span>Datakey</span></th>
+                    <th *ngIf="hasFilteringService"><span>Metadata</span></th>
+                    <th *ngIf="hasFilteringService"><span>Advanced Filtering</span></th>
                 </tr>
                 <tr>
                     <td>{{sensor.machine.name}}</td>
@@ -278,7 +278,7 @@
 <!-- Add a Sensor: Formular  -->
 <!------------------------------------------------------------------------------------------------------------>
 <div *ngIf="pageNumber <= 1" class="form-group" id="new-sensor">
-    <h6 i18n>Add new sensor</h6><br/>
+    <h6>Add new sensor</h6><br/>
     <form id="add-sensor-form" #customPropertyForm="ngForm" class="col-12">
 
         <!-- machine name-->
@@ -320,7 +320,7 @@
         <button [disabled]="!customPropertyForm.form.valid"
                 class="btn btn-success ml-2 add-sensor-btn"
                 (click)="addSensor()">
-            <span i18n>Add sensor</span>
+            <span>Add sensor</span>
         </button>
     </form>
     <p>Names of sensors are unique. Entering the name of an existing sensor, will
@@ -373,14 +373,14 @@
            <ng-container *ngFor="let server of initialChannelServers">
                <table class="table table-striped table-bordered">
                    <tr>
-                       <th><span i18n>Prio</span></th>
-                       <th><span i18n>Server Name</span></th>
-                       <th><span i18n>Endpoint Address</span></th>
-                       <th><span i18n>Storage Duration</span></th>
-                       <th><span i18n>Ownership</span></th>
-                       <th><span i18n>Login</span></th>
-                       <th><span i18n>Password</span></th>
-                       <th><span i18n>Description</span></th>
+                       <th><span>Prio</span></th>
+                       <th><span>Server Name</span></th>
+                       <th><span>Endpoint Address</span></th>
+                       <th><span>Storage Duration</span></th>
+                       <th><span>Ownership</span></th>
+                       <th><span>Login</span></th>
+                       <th><span>Password</span></th>
+                       <th><span>Description</span></th>
                        <th *ngIf="pageNumber <= 1" class="interaction-column"></th>
                    </tr>
                    <tr>
@@ -405,10 +405,10 @@
             <ng-container *ngFor="let server of initialChannelServers">
                 <table class="table table-striped table-bordered">
                     <tr>
-                        <th><span i18n>Prio</span></th>
-                        <th><span i18n>Server Name</span></th>
-                        <th><span i18n>Endpoint Address</span></th>
-                        <th><span i18n>Storage Duration</span></th>
+                        <th><span>Prio</span></th>
+                        <th><span>Server Name</span></th>
+                        <th><span>Endpoint Address</span></th>
+                        <th><span>Storage Duration</span></th>
                     </tr>
                     <tr>
                         <td>{{server.priority}}</td>
@@ -418,10 +418,10 @@
                     </tr>
 
                     <tr>
-                        <th><span i18n>Ownership</span></th>
-                        <th><span i18n>Login</span></th>
-                        <th><span i18n>Password</span></th>
-                        <th><span i18n>Description</span></th>
+                        <th><span>Ownership</span></th>
+                        <th><span>Login</span></th>
+                        <th><span>Password</span></th>
+                        <th><span>Description</span></th>
                     </tr>
                     <tr>
                         <td>{{server.ownership}}</td>
@@ -437,10 +437,10 @@
                 <table class="table table-striped table-bordered">
 
                     <tr>
-                        <th><span i18n>Prio</span></th>
-                        <th><span i18n>Server Name</span></th>
-                        <th><span i18n>Endpoint Address</span></th>
-                        <th><span i18n>Storage Duration</span></th>
+                        <th><span>Prio</span></th>
+                        <th><span>Server Name</span></th>
+                        <th><span>Endpoint Address</span></th>
+                        <th><span>Storage Duration</span></th>
                     </tr>
                     <tr>
                         <td>{{server.priority}}</td>
@@ -449,10 +449,10 @@
                         <td>{{server.duration}}</td>
                     </tr>
                     <tr>
-                        <th><span i18n>Ownership</span></th>
-                        <th><span i18n>Login</span></th>
-                        <th><span i18n>Password</span></th>
-                        <th><span i18n>Description</span></th>
+                        <th><span>Ownership</span></th>
+                        <th><span>Login</span></th>
+                        <th><span>Password</span></th>
+                        <th><span>Description</span></th>
                     </tr>
                     <tr>
                         <td>{{server.ownership}}</td>
@@ -461,7 +461,7 @@
                         <td>{{server.description}}</td>
                     </tr>
                     <!--<tr>
-                        <th class="interaction-column"> <span i18n>Remove</span> </th>
+                        <th class="interaction-column"> <span>Remove</span> </th>
                     </tr> -->
                     <tr>
                         <td>
@@ -478,10 +478,10 @@
             <ng-container *ngFor="let server of initialChannelServers">
                 <table class="table table-striped table-bordered">
                     <tr>
-                        <th><span i18n>Prio</span></th>
-                        <th><span i18n>Server Name</span></th>
-                        <th><span i18n>Endpoint Address</span></th>
-                        <th><span i18n>Storage Duration</span></th>
+                        <th><span>Prio</span></th>
+                        <th><span>Server Name</span></th>
+                        <th><span>Endpoint Address</span></th>
+                        <th><span>Storage Duration</span></th>
                     </tr>
                     <tr>
                         <td>{{server.priority}}</td>
@@ -491,10 +491,10 @@
                     </tr>
 
                     <tr>
-                        <th><span i18n>Ownership</span></th>
-                        <th><span i18n>Login</span></th>
-                        <th><span i18n>Password</span></th>
-                        <th><span i18n>Description</span></th>
+                        <th><span>Ownership</span></th>
+                        <th><span>Login</span></th>
+                        <th><span>Password</span></th>
+                        <th><span>Description</span></th>
                     </tr>
                     <tr>
                         <td>{{server.ownership}}</td>
@@ -510,10 +510,10 @@
             <ng-container *ngFor="let server of counterChannelServers">
                 <table class="table table-striped table-bordered">
                     <tr>
-                        <th><span i18n>Prio</span></th>
-                        <th><span i18n>Server Name</span></th>
-                        <th><span i18n>Endpoint Address</span></th>
-                        <th><span i18n>Storage Duration</span></th>
+                        <th><span>Prio</span></th>
+                        <th><span>Server Name</span></th>
+                        <th><span>Endpoint Address</span></th>
+                        <th><span>Storage Duration</span></th>
                     </tr>
                     <tr>
                         <td>{{server.priority}}</td>
@@ -523,10 +523,10 @@
                     </tr>
 
                     <tr>
-                        <th><span i18n>Ownership</span></th>
-                        <th><span i18n>Login</span></th>
-                        <th><span i18n>Password</span></th>
-                        <th><span i18n>Description</span></th>
+                        <th><span>Ownership</span></th>
+                        <th><span>Login</span></th>
+                        <th><span>Password</span></th>
+                        <th><span>Description</span></th>
                     </tr>
                     <tr>
                         <td>{{server.ownership}}</td>
@@ -542,14 +542,14 @@
             <ng-container *ngFor="let server of counterChannelServers">
                 <table class="table table-striped table-bordered">
                     <tr>
-                        <th><span i18n>Prio</span></th>
-                        <th><span i18n>Server Name</span></th>
-                        <th><span i18n>Endpoint Address</span></th>
-                        <th><span i18n>Storage Duration</span></th>
-                        <th><span i18n>Ownership</span></th>
-                        <th><span i18n>Login</span></th>
-                        <th><span i18n>Password</span></th>
-                        <th><span i18n>Description</span></th>
+                        <th><span>Prio</span></th>
+                        <th><span>Server Name</span></th>
+                        <th><span>Endpoint Address</span></th>
+                        <th><span>Storage Duration</span></th>
+                        <th><span>Ownership</span></th>
+                        <th><span>Login</span></th>
+                        <th><span>Password</span></th>
+                        <th><span>Description</span></th>
                     </tr>
                     <tr>
                         <td>{{server.priority}}</td>
@@ -570,7 +570,7 @@
     <!-- Add a Server: Formular -->
     <!------------------------------------------------------------------------------------------------------------>
     <div *ngIf="pageNumber <= 1" class="form-group" id="new-server">
-        <h6 i18n>Add new server</h6><br/>
+        <h6>Add new server</h6><br/>
         <form id="add-server-form" #customPropertyForm="ngForm" class="col-12">
 
             <!-- server prio-->
@@ -617,7 +617,7 @@
             <button [disabled]="!customPropertyForm.form.valid"
                     class="btn btn-success ml-2 add-sensor-btn"
                     (click)="addServer()">
-                <span i18n>Add server</span>
+                <span>Add server</span>
             </button>
         </form>
         <p>Names of servers are unique. Entering the name of an existing server, will
@@ -669,9 +669,9 @@
 
 <table id="channel-messages" class="table table-striped table-bordered">
     <tr>
-        <th><span i18n>Machine ID</span></th>
-        <th><span i18n>Time</span></th>
-        <th><span i18n>Payload</span></th>
+        <th><span>Machine ID</span></th>
+        <th><span>Time</span></th>
+        <th><span>Payload</span></th>
     </tr>
     <ng-container *ngFor="let message of channelMessages">
         <tr>
