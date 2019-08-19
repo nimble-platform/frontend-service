@@ -26,6 +26,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         AppCommonModule,
         FormsModule,
         ReactiveFormsModule,
+        HttpClientModule,
         HttpModule,
         TnTRoutingModule,
         NgxGraphModule,
