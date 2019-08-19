@@ -4,7 +4,7 @@
         <div class="row title-row">
             <div class="col-2"></div>
             <div class="col-5">
-                <label class="column-title mr-2"><span [innerHTML]="'Manufacturer's Terms' | translate"></span></label><br>
+                <label class="column-title mr-2"><span [innerHTML]="'Manufcature Terms' | translate"></span></label><br>
                 <select [hidden]="!isManufacturersTermsSelectBoxVisible()" #termSelectBox class="btn btn-outline-secondary" [value]="manufacturersTermsSource" (change)="onManufacturersTermsSourceChange($event.target.value)">
                     <option *ngIf="manufacturersTermsExistence.last_offer" value="last_offer"><span [innerHTML]="'Last Offer' | translate"></span></option>
                     <option *ngIf="manufacturersTermsExistence.frame_contract" value="frame_contract"><span [innerHTML]="'Frame Contract' | translate"></span></option>
