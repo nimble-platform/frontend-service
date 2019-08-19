@@ -14,7 +14,7 @@
     <hr>
 
     <!--Notes-->
-    <h5>Notes and Additional Files</h5>
+    <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
     <note-file-view [notes]="dispatchAdvice.note"
                [documents]="dispatchAdvice.additionalDocumentReference"
                [label]="'Notes'"
@@ -35,7 +35,8 @@
                 {{ isReadOnly() ? "Advice Sent" : "Send advice" }}
             </button>
             <button *ngIf="processMetadata && processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading() || isReadOnly()" (click)="onUpdateDispatchAdvice()">
-                Update Advice
+                <span [innerHTML]="' Update Advice' | translate"></span>
+               
             </button>
         </div>
     </div>

@@ -1,6 +1,6 @@
 <ng-template #modal let-c="close" let-d="dismiss">
     <div class="modal-header">
-        <h5 class="modal-title" id="modal-basic-title">Add Custom Term</h5>
+        <h5 class="modal-title" id="modal-basic-title"><span [innerHTML]="'Add Custom Term' | translate"></span></h5>
         <button type="button" class="close" aria-label="Close" (click)="d('cross')">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -9,7 +9,7 @@
         <div class="container-fluid">
             <div class="row space-before">
                 <div class="col-3">
-                    <strong>Term Name:</strong>
+                    <strong><span [innerHTML]="'Term Name' | translate"></span>:</strong>
                 </div>
                 <div class="col-9">
                     <input [(ngModel)]="termName" class="form-control" type="text"/>
@@ -17,7 +17,7 @@
             </div>
             <div class="row space-before">
                 <div class="col-3">
-                    <strong>Term Description:</strong>
+                    <strong><span [innerHTML]="'Term Description' | translate"></span>:</strong>
                 </div>
                 <div class="col-9">
                     <input [(ngModel)]="termDescription" class="form-control" type="text"/>
@@ -33,7 +33,7 @@
             </options-input>
             <div class="row space-before">
                 <div class="col-3">
-                    <strong>Value:</strong>
+                    <strong><span [innerHTML]="'Value' | translate"></span>:</strong>
                 </div>
                 <div class="col-9">
                     <input *ngIf="selectedDataType == 'TEXT'" [(ngModel)]="stringValue" class="form-control" type="text"/>
@@ -44,7 +44,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="d('cancel')">Cancel</button>
-        <button type="button" class="btn btn-primary" (click)="c('ok')" [disabled]="!validValueSpecified()">OK</button>
+        <button type="button" class="btn btn-secondary" (click)="d('cancel')"><span [innerHTML]="'Cancel' | translate"></span></button>
+        <button type="button" class="btn btn-primary" (click)="c('ok')" [disabled]="!validValueSpecified()"><span [innerHTML]="'OK' | translate"></span></button>
     </div>
 </ng-template>

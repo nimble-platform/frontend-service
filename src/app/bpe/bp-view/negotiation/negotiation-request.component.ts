@@ -33,6 +33,7 @@ import {Quantity} from "../../../catalogue/model/publish/quantity";
 import {Quotation} from "../../../catalogue/model/publish/quotation";
 import {Clause} from "../../../catalogue/model/publish/clause";
 import {CustomTermModalComponent} from "./custom-term-modal.component";
+import {TranslateService} from '@ngx-translate/core';
 
 enum FIXED_NEGOTIATION_TERMS {
     DELIVERY_PERIOD = 'deliveryPeriod',
@@ -126,6 +127,7 @@ export class NegotiationRequestComponent implements OnInit {
                 private cookieService: CookieService,
                 private location: Location,
                 private documentService: DocumentService,
+                private translate: TranslateService,
                 private router: Router) {
 
     }
