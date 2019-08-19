@@ -1,10 +1,10 @@
 <div *ngIf="isLogistics">
-    <p class="pb-3 nimble-title">Publish Logistics Service</p>
+    <p class="pb-3 nimble-title"><span [innerHTML]="'Publish Logistics Service' | translate"></span></p>
 </div>
 <div *ngIf="!isLogistics">
-    <p class="pb-3 nimble-title">Publish Product / Service</p>
+    <p class="pb-3 nimble-title"><span [innerHTML]="'Publish Product / Service' | translate"></span></p>
 </div>
-<p>All published products / services must belong to at least one category, which will describe the product / service and help customers find your offering.</p>
+<p><span [innerHTML]="'All published products / services must belong to at least one category, which will describe the product / service and help customers find your offering.' | translate"></span></p>
 <div class="form-group row d-flex">
     <div class="col-12 inline">
         <form #categorySearch="ngForm" (ngSubmit)="onSearchCategory()" novalidate>
@@ -24,7 +24,7 @@
                 <input type="text" class="form-control" name="inputCtrl" [(ngModel)]="categoryKeyword" [ngbTypeahead]="getSuggestions" [focusFirst]=false placeholder="Search Category..."/>
                 <div class="input-group-append">
                     <button type="submit" class="btn btn-primary" [disabled]="!categorySearch.form.valid || getCategoryDetailsStatus.isDisplayed()">
-                        <i class="fa fa-search pr-1"></i> <span>Search Categories</span>
+                        <i class="fa fa-search pr-1"></i> <span><span [innerHTML]="'Search Categories' | translate"></span></span>
                     </button>
                 </div>
             </div>
@@ -33,7 +33,7 @@
 </div>
 
 <div *ngIf="!pathToSelectedCategories">
-  <span class="text-muted">Click on a category to see its path.</span>
+  <span class="text-muted"><span [innerHTML]="'Click on a category to see its path.' | translate"></span></span>
 </div>
 <div *ngIf="pathToSelectedCategories">
     <span  *ngFor="let parentCat of pathToSelectedCategories.parents;let l=last" >
@@ -51,16 +51,16 @@
         <div *ngIf="!treeView" class="border" style="height:50vh; overflow-x: hidden; overflow-y: scroll;">
             <table class="table table-hover mb-0">
                 <thead class="thead-light fixed">
-                    <th scope="col" style="color: #000;" class="p-3 border-top-0 border-bottom">Classification</th>
-                    <th scope="col" style="color: #000;" class="p-3 border-top-0 border-bottom">Name</th>
-                    <th scope="col" colspan="2" class="p-0 border-top-0 border-bottom text-right" style="vertical-align:top"><button class="btn btn-secondary my-2 mr-1" (click)="toggleTreeView()" [disabled]="getCategoryDetailsStatus.isDisplayed()">Browse</button></th>
+                    <th scope="col" style="color: #000;" class="p-3 border-top-0 border-bottom"><span [innerHTML]="'Classification' | translate"></span></th>
+                    <th scope="col" style="color: #000;" class="p-3 border-top-0 border-bottom"><span [innerHTML]="'Name' | translate"></span></th>
+                    <th scope="col" colspan="2" class="p-0 border-top-0 border-bottom text-right" style="vertical-align:top"><button class="btn btn-secondary my-2 mr-1" (click)="toggleTreeView()" [disabled]="getCategoryDetailsStatus.isDisplayed()"><span [innerHTML]="'Browse' | translate"></span></button></th>
                 </thead>
                 <tbody>
                     <tr *ngIf="getCategoriesStatus.isDisplayed()">
                         <call-status [callStatus]="getCategoriesStatus"></call-status>
                     </tr>
                     <tr *ngIf="!getCategoriesStatus.isDisplayed() && (!categories || categories.length == 0)">
-                        <td colspan="3">No results found.</td>
+                        <td colspan="3"><span [innerHTML]="'No results found.' | translate"></span></td>
                     </tr>
                     <ng-container *ngIf="!getCategoriesStatus.isDisplayed() && categories">
                         <tr *ngFor="let category of categories"
@@ -85,7 +85,7 @@
                 <div class="row">
                     <div class="pr-0 col-3">
                         <div class="thead-light-equivalent">
-                            <p class="mb-0 p-3">Categories</p>
+                            <p class="mb-0 p-3"><span [innerHTML]="'Categories' | translate"></span></p>
                         </div>
                     </div>
                     <div class="pl-0 col-9">
@@ -114,12 +114,12 @@
                       </li>
                       <li class="nav-item">
                         <a href id="FAVORITE" class="nav-link" [ngClass]="{ active: selectedTab === 'FAVORITE', 'disabled': getCategoryDetailsStatus.isDisplayed()}" (click)="onSelectTab($event)">
-                          Favorite
+                            <span [innerHTML]="'Favorite' | translate"></span>
                         </a>
                       </li>
                       <li class="nav-item">
                         <a href id="RECENT" class="nav-link" [ngClass]="{ active: selectedTab === 'RECENT', 'disabled': getCategoryDetailsStatus.isDisplayed()}" (click)="onSelectTab($event)">
-                          Recently Used
+                            <span [innerHTML]="'Recently Used' | translate"></span>
                         </a>
                       </li>
                     </ul>
@@ -137,7 +137,7 @@
                       </div>
                       <div *ngIf="prefCats.length == 0 && !favoriteCategoriesStatus.isDisplayed()">
                         <!--<h4 class="p-2">Favorite Categories</h4>-->
-                        <div class="py-2 d-flex" style="padding-left:1rem">No favorite categories</div>
+                        <div class="py-2 d-flex" style="padding-left:1rem"><span [innerHTML]="'No favorite categories' | translate"></span></div>
                       </div>
                     </div>
 
@@ -153,7 +153,7 @@
                       </div>
                       <div *ngIf="recCats.length == 0 && !recentCategoriesStatus.isDisplayed()">
                         <!--<h4 class="p-2">Recently Used Categories</h4>-->
-                        <div class="py-2 d-flex" style="padding-left:1rem">No recently used categories</div>
+                        <div class="py-2 d-flex" style="padding-left:1rem"><span [innerHTML]="'No recently used categories' | translate"></span></div>
                       </div>
                     </div>
 
@@ -170,7 +170,7 @@
                                   (detailsEvent)="getCategoryDetails($event,false)" [selectedCategory]="selectedCategory"
                                   [selectedCategories]="selectedCategories" [scrollToDivId]="scrollToDivId" [selectedPath]="pathToSelectedCategories" [loadingStatus]="getCategoryDetailsStatus.isDisplayed()"></category-tree>
                           </ng-container>
-                          <div *ngIf="!logisticsCategory && !getCategoriesStatus.isDisplayed()" class="py-2 d-flex" style="padding-left:1rem">No available category</div>
+                          <div *ngIf="!logisticsCategory && !getCategoriesStatus.isDisplayed()" class="py-2 d-flex" style="padding-left:1rem"><span [innerHTML]="'No available category' | translate"></span></div>
                       </div>
 
                       <!-- Product Categories -->
@@ -183,7 +183,7 @@
                                       [selectedCategories]="selectedCategories" [scrollToDivId]="scrollToDivId" [selectedPath]="pathToSelectedCategories" [loadingStatus]="getCategoryDetailsStatus.isDisplayed()"></category-tree>
                               </div>
                           </ng-container>
-                          <div *ngIf="!rootCategories && !getCategoriesStatus.isDisplayed()" class="py-2 d-flex" style="padding-left:1rem">No available category</div>
+                          <div *ngIf="!rootCategories && !getCategoriesStatus.isDisplayed()" class="py-2 d-flex" style="padding-left:1rem"><span [innerHTML]="'No available category' | translate"></span></div>
                       </div>
 
                     </div>
@@ -203,16 +203,16 @@
 
             <!-- Title + buttons -->
             <div *ngIf="selectedCategoryWithDetails" class="d-flex flex-row fixed p-2" [ngClass]="{'fixed-header': selectedCategoryWithDetails}">
-                <h4 class="font-weight-bold" *ngIf="!selectedCategoryWithDetails">Details</h4>
+                <h4 class="font-weight-bold" *ngIf="!selectedCategoryWithDetails"><span [innerHTML]="'Details' | translate"></span></h4>
                 <h4 class="font-weight-bold pr-2 mr-auto" *ngIf="selectedCategoryWithDetails">Details for {{selectPreferredName(selectedCategoryWithDetails)}}</h4>
                 <div *ngIf="selectedCategoryWithDetails">
                     <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) === -1"
                             class="btn btn-outline-primary float-right" (click)="addCategoryToSelected(selectedCategoryWithDetails)">
-                        Select Category
+                            <span [innerHTML]="'Select Category' | translate"></span>
                     </button>
                     <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) > -1"
                             class="btn btn-danger float-right" (click)="removeCategoryFromSelected(selectedCategoryWithDetails)">
-                        Unselect Category
+                            <span [innerHTML]="'Unselect Category' | translate"></span>
                     </button>
                     <br/>
 
@@ -242,7 +242,7 @@
             </div>
 
             <!-- No Category Details -->
-            <p *ngIf="!selectedCategoryWithDetails && !getCategoryDetailsStatus.isDisplayed()" class="align-self-center p-2 fixed-header">Click on a category to see its details.</p>
+            <p *ngIf="!selectedCategoryWithDetails && !getCategoryDetailsStatus.isDisplayed()" class="align-self-center p-2 fixed-header"><span [innerHTML]="'Click on a category to see its details.' | translate"></span></p>
 
             <!-- Details -->
             <div *ngIf="selectedCategoryWithDetails" class="p-2">
@@ -252,7 +252,7 @@
                 <div class="row">
                     <div class="col-12 mb-0" *ngIf="selectedCategoryWithDetails.properties?.length > 0">
                         <label>
-                            <strong>Properties: </strong>
+                            <strong><span [innerHTML]="'Properties: ' | translate"></span></strong>
                         </label>
                     </div>
                 </div>
@@ -287,15 +287,15 @@
 <!-- Actions: no permission -->
 <div *ngIf="!this.appComponent.checkRoles('catalogue')" class="form-group row">
     <div class="col-12 d-flex align-items-center">
-        <p class="mt-1 mb-0 mr-3">You do not have permission to publish any products / services to your company catalogue.</p>
+        <p class="mt-1 mb-0 mr-3"><span [innerHTML]="'You do not have permission to publish any products / services to your company catalogue.' | translate"></span></p>
     </div>
 </div>
 
 <!-- Selected Categories + Action -->
 <div *ngIf="this.appComponent.checkRoles('catalogue')" class="form-group row">
     <div class="col-9 d-flex align-items-center">
-        <p class="mt-1 mb-0 mr-3 flex-shrink-0">Selected Categories: </p>
-        <p class="mt-1 mb-0 mr-3 flex-shrink-0" *ngIf="categoryService.selectedCategories.length === 0">None. Please add a category above to proceed.</p>
+        <p class="mt-1 mb-0 mr-3 flex-shrink-0"><span [innerHTML]="'Selected Categories: ' | translate"></span></p>
+        <p class="mt-1 mb-0 mr-3 flex-shrink-0" *ngIf="categoryService.selectedCategories.length === 0"><span [innerHTML]="'None. Please add a category above to proceed.' | translate"></span></p>
         <div class="w-100 h-100 align-self-start">
             <div class="d-flex flex-wrap">
                 <div *ngFor="let selectedCategory of categoryService.selectedCategories"
@@ -310,7 +310,7 @@
         <button class="btn btn-primary w-100 inline" [disabled]="categoryService.selectedCategories.length === 0"
                 (click)="navigateToPublishingPage()">
             <span>
-                Continue With Selected Categories
+                <span [innerHTML]="'Continue With Selected Categories' | translate"></span>
             </span>
         </button>
     </div>

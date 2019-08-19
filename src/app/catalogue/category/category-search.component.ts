@@ -18,6 +18,7 @@ import { Text} from '../model/publish/text';
 import { Observable } from "rxjs/Observable";
 import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
 import { SimpleSearchService } from "../../simple-search/simple-search.service";
+import {TranslateService} from '@ngx-translate/core';
 
 type ProductType = "product" | "transportation";
 type SelectedTab = "TREE"
@@ -88,7 +89,8 @@ export class CategorySearchComponent implements OnInit {
         private simpleSearchService: SimpleSearchService,
         private catalogueService: CatalogueService,
         private publishService: PublishService,
-        public appComponent: AppComponent
+        public appComponent: AppComponent,
+        private translate: TranslateService
     ) {}
 
     ngOnInit(): void {
