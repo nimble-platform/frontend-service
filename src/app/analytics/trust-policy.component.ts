@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { AnalyticsService } from "./analytics.service";
 import { CallStatus } from "../common/call-status";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "trust-policy",
@@ -15,8 +16,8 @@ export class TrustPolicyComponent implements OnInit {
     callStatus: CallStatus = new CallStatus();
     saveCallStatus: CallStatus = new CallStatus();
 
-    constructor(private analyticsService: AnalyticsService) {
-
+    constructor(private analyticsService: AnalyticsService, 
+        private translate: TranslateService) {
     }
 
     ngOnInit(): void {
