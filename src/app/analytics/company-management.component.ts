@@ -38,6 +38,8 @@ export class CompanyManagementComponent implements OnInit {
 
     constructor(private analyticsService: AnalyticsService,
       private translate: TranslateService,) {
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
     }
 
     ngOnInit(): void {

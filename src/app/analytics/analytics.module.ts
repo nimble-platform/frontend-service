@@ -27,6 +27,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         CommonModule,
         AppCommonModule,
         FormsModule,
+        HttpClientModule,
         HttpModule,
         ReactiveFormsModule,
         AnalyticsRoutingModule,

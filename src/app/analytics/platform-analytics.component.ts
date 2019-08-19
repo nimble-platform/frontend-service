@@ -58,7 +58,8 @@ export class PlatformAnalyticsComponent implements OnInit {
 		private sanitizer: DomSanitizer,
 		private translate: TranslateService,
         ) {
-
+			translate.setDefaultLang("en");
+			translate.use(translate.getBrowserLang());
     }
 
     ngOnInit(): void {

@@ -25,6 +25,8 @@ export class ThreadEventComponent implements OnInit {
     constructor(private bpDataService: BPDataService,
                 private bpeService: BPEService,
                 private translate: TranslateService) {
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {
