@@ -23,6 +23,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from '../../globals';
 import {Headers, Http} from "@angular/http";
 import { DomSanitizer } from '@angular/platform-browser';
+import {TranslateService} from '@ngx-translate/core';
 
 /**
  * Created by suat on 20-Oct-17.
@@ -71,9 +72,12 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 public route: ActivatedRoute,
                 private cookieService: CookieService,
                 private renderer: Renderer2,
+                private translate: TranslateService,
                 private http: Http,
                 private modalService: NgbModal) {
         this.renderer.setStyle(document.body, "background-image", "none");
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
     }
 
     /**
