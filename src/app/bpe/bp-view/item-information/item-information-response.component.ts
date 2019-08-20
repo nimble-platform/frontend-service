@@ -50,8 +50,9 @@ export class ItemInformationResponseComponent implements OnInit {
                 private cookieService: CookieService,
                 private translate: TranslateService,
                 private route: ActivatedRoute) {
-                    translate.setDefaultLang("en");
-                    translate.use(translate.getBrowserLang()
+
+                   translate.setDefaultLang("en");
+                    translate.use(translate.getBrowserLang());
 
     }
 
