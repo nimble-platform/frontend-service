@@ -5,13 +5,12 @@
         </div>
         <div class="col-md-10">
             <p>
-                <strong>Let Us Help You</strong>
+                <strong><span [innerHTML]="'Let Us Help You' | translate"></span></strong>
             </p>
             <ul>
-                <li>You can click on any of the <strong>Properties/Reference</strong> below and obtain filter values</li>
-                <li>If you click on one of the <strong>References</strong> your Explorer
-                    will update with new properties for the selected reference.</li>
-                <li>You can use the <strong>Path</strong> below to go back to a previous Reference by simply clicking on it.</li>
+                <li><span [innerHTML]="'exp-search-semantic-help-1' | translate"></span></li>
+                <li><span [innerHTML]="'exp-search-semantic-help-2' | translate"></span></li>
+                <li><span [innerHTML]="'exp-search-semantic-help-3' | translate"></span></li>
                 <!--<li><strong>Work In Progress:</strong> Logical operation <em>OR</em> is currently under development</li>-->
             </ul>
         </div>
@@ -97,14 +96,14 @@
         <!--</pre>-->
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
-                <caption>Product / Service Overview</caption>
+                <caption><span [innerHTML]="'Product / Service Overview' | translate"></span></caption>
                 <thead>
                 <tr>
                     <th>
-                        Properties
+                        <span [innerHTML]="'Properties' | translate"></span>
                     </th>
                     <th>
-                        Specifications
+                        <span [innerHTML]="'Specifications' | translate"></span>
                     </th>
                 </tr>
                 </thead>
@@ -123,11 +122,11 @@
     </div>
     <div class="row mt-3">
         <div class="col-md-6">
-            <button class="btn btn-secondary" (click)="hiddenElement=!hiddenElement">Back to Explorer</button>
+            <button class="btn btn-secondary" (click)="hiddenElement=!hiddenElement"><span [innerHTML]="'Back to Explorer' | translate"></span></button>
         </div>
         <div class="col-md-6">
             <button class="btn btn-primary" [disabled]="!negotiationEnable" (click)="negotiation()">
-                Initiate Business Process</button>
+                <span [innerHTML]="'Initiate Business Process' | translate"></span></button>
         </div>
     </div>
 </div>
@@ -201,12 +200,12 @@
 <!--</div>-->
 <div *ngIf="configSPQ" [hidden]="hiddenElement">
     <div>
-        <h4> Property Explorer for {{configSPQ.frozenConcept}}</h4>
+        <h4> <span [innerHTML]="'Property Explorer for' | translate"></span> {{configSPQ.frozenConcept}}</h4>
     </div>
     <div class="row mt-4 d-flex">
         <div class="col-7 pr-0 pb-0">
             <div class="input-group-md">
-                <label for="typeahead-template"><span>Quick Search</span></label>
+                <label for="typeahead-template"><span [innerHTML]="'Quick Search' | translate"></span></label>
                 <input id="typeahead-template"
                 type="text"
                 class="form-control"
@@ -229,7 +228,7 @@
                     <div class="row border">
                         <div class="pr-0 col-3">
                             <div class="thead-light-equivalent">
-                                <p class="mb-0" style="padding: 0.50rem;text-align: center"><b>All Attributes</b></p>
+                                <p class="mb-0" style="padding: 0.50rem;text-align: center"><b><span [innerHTML]="'All Attributes' | translate"></span></b></p>
                             </div>
                         </div>
                     </div>
@@ -237,10 +236,10 @@
                 <div class="fixed" style="background-color: #e9ecef">
                     <ul class="nav nav-tabs pt-2 pl-1 pr-1 fixed">
                         <li class="nav-item">
-                            <a href id="PROPS" class="nav-link" [ngClass]="{active: selectedTab === 'PROPS'}" (click)="onSelectTab($event)">Properties</a>
+                            <a href id="PROPS" class="nav-link" [ngClass]="{active: selectedTab === 'PROPS'}" (click)="onSelectTab($event)"><span [innerHTML]="'Properties' | translate"></span></a>
                         </li>
                         <li class="nav-item">
-                            <a href id="REFS" class="nav-link" [ngClass]="{active: selectedTab === 'REFS'}" (click)="onSelectTab($event)">References</a>
+                            <a href id="REFS" class="nav-link" [ngClass]="{active: selectedTab === 'REFS'}" (click)="onSelectTab($event)"><span [innerHTML]="'References' | translate"></span></a>
                         </li>
                     </ul>
                 </div>
@@ -255,7 +254,7 @@
                     </ng-container>
                     <ng-container *ngIf="selectedTab === 'REFS'">
                         <div class="disabled-section align-content-center" style="height: 55vh">
-                            <p *ngIf="!objResults.length">References for this Product are not available</p>
+                            <p *ngIf="!objResults.length"> <span [innerHTML]="'References for this Product are not available' | translate"></span></p>
                         </div>
                         <tr *ngFor="let eachVal of objResults; let i=index;">
                             <td class="py-2 px-3"
@@ -282,23 +281,23 @@
                 </div>
                 <div class="align-content-center">
                     <i class="fas fa-filter fa-4x"></i>
-                    <h5>Select Property to Obtain Filter Values</h5>
+                    <h5><span [innerHTML]="'Select Property to Obtain Filter Values' | translate"></span></h5>
                 </div>
             </div>
             <div *ngIf="emptyFilterAlert" >
                 <ngb-alert type="danger" (close)="emptyFilterAlert=false">
-                    <i class="fas fa-exclamation-triangle pr-1"></i><p> <span>We couldn't find any filters for the selection.</span></p>
+                    <i class="fas fa-exclamation-triangle pr-1"></i><p> <span [innerHTML]="'exp-search-semantic-help-7' | translate"></span></p>
                 </ngb-alert>
             </div>
             <div *ngIf="searchvalue.length" class="d-flex flex-row fixed p-2" [ngClass]="{'fixed-header': searchvalue.length}">
-                <h4 class="font-weight-bold mr-auto">Values</h4>
+                <h4 class="font-weight-bold mr-auto"><span [innerHTML]="'Values' | translate"></span></h4>
                 <div>
                     <button class="btn btn-secondary float-right"
                             placement="right"
                             ngbTooltip="Add Property without Filter Values"
                             (click)="noFilterSelected()"
                             [disabled]="disableAddPropBtn || !disableManualFilters"
-                    >Select Property</button>
+                    ><span [innerHTML]="'Select Property' | translate"></span></button>
                 </div>
             </div>
             <div class="p-2 mt-2" style="overflow-y: scroll; height: 30vh; overflow-x: hidden"
@@ -320,7 +319,7 @@
             <div *ngIf="valuesAreNumeric">
                 <hr>
                 <div class="d-flex flex-row fixed p-2">
-                    <h5>Manual Filter</h5>
+                    <h5><span [innerHTML]="'Manual Filter' | translate"></span></h5>
                     <div>
                         <button
                                 class="btn btn-link btn-sm float-right"
@@ -330,13 +329,13 @@
                     </div>
                 </div>
                 <div class="input-group-sm auto-mr">
-                    <label for="min"><span>min</span></label>
+                    <label for="min"><span [innerHTML]="'min' | translate"></span></label>
                     <input id="min" type="number"
                            class="form-control-sm"
                            [disabled]="disableManualFilters"
                            #minVal
                     >
-                    <label for="max"><span>max</span></label>
+                    <label for="max"><span [innerHTML]="'max' | translate"></span></label>
                     <input id="max" type="number"
                            class="form-control-sm"
                            [disabled]="disableManualFilters"
@@ -361,8 +360,8 @@
 <!-- Show Selected Properties here and Obtain Results Button -->
 <div class="form-group row" [hidden]="hiddenElement" *ngIf="configSPQ">
     <div class="col-9 d-flex align-items-center">
-        <p class="mt-1 mb-0 mr-3 flex-shrink-0">Selected Properties: </p>
-        <p class="mt-1 mb-0 mr-3 flex-shrink-0" *ngIf="allSelectedProperties.size === 0">None. Please add a property from above to proceed.</p>
+        <p class="mt-1 mb-0 mr-3 flex-shrink-0"> <span [innerHTML]="'Selected Properties:' | translate"></span> </p>
+        <p class="mt-1 mb-0 mr-3 flex-shrink-0" *ngIf="allSelectedProperties.size === 0"><span [innerHTML]="'None. Please add a property from above to proceed.' | translate"></span></p>
         <div class="w-100 h-100 align-self-start">
             <div class="d-flex flex-wrap">
                 <div *ngFor="let selectedProp of allSelectedProperties"
@@ -379,8 +378,7 @@
         <button class="btn btn-primary w-100 inline"
                 [disabled]="!sparqlJSON.parameters.length"
                 (click)="genTable()">
-            <span>
-                Obtain Results
+            <span [innerHTML]="'Obtain Results' | translate">
             </span>
         </button>
     </div>
@@ -390,13 +388,13 @@
     <div class="container">
         <div class="row">
             <div class="col-12 align-center">
-                <h4>Your Search Results will be visible here.</h4>
+                <h4><span [innerHTML]="'Your Search Results will be visible here.' | translate"></span></h4>
                 <i class="fas fa-table"></i>
             </div>
         </div>
         <div class="row">
             <div class="col-12 align-center">
-                <p class="text-secondary"> Select Properties from above and click <kbd>Obtain Results</kbd></p>
+                <p class="text-secondary"><span [innerHTML]="'exp-search-semantic-help-4' | translate"></span></p>
             </div>
         </div>
 
@@ -408,10 +406,10 @@
         <div class="container">
             <div class="row">
                 <div class="col-12 align-center">
-                    <h4><span>No Matching Products/Services Found.</span> <i class="fas fa-table pl-1"></i></h4>
+                    <h4><span [innerHTML]="'No Matching Products/Services Found.' | translate"></span> <i class="fas fa-table pl-1"></i></h4>
 
-                    <h5>We could not find any matching Products with your Selection.</h5>
-                    <h5>Try removing some Selected Properties above and click <kbd>Obtain Results</kbd> again</h5>
+                    <h5><span [innerHTML]="'exp-search-semantic-help-5' | translate"></span></h5>
+                    <h5><span [innerHTML]="'exp-search-semantic-help-6' | translate"></span></h5>
                 </div>
             </div>
         </div>
@@ -419,7 +417,7 @@
     <div class="row" *ngIf="tableResult?.columns !== undefined && tableResult?.columns.length">
         <div class="table-responsive table-hover" style="overflow-y: scroll; height: 35vh">
             <table class="table table-sm table-bordered">
-                <caption>Available Results from NIMBLE</caption>
+                <caption><span [innerHTML]="'Available Results from NIMBLE' | translate"></span></caption>
                 <thead>
                 <tr>
                     <!--<th>-->
@@ -429,7 +427,7 @@
                         {{column}}
                     </th>
                     <th *ngIf="tableResult?.uuids.length">
-                        More
+                        <span [innerHTML]="'More' | translate"></span>
                     </th>
                 </tr>
                 </thead>
@@ -441,7 +439,7 @@
                         <button class="btn btn-xs btn-outline-primary"
                                 (click)="getSparqlOptionalSelect(i)"
                         >
-                            Further Info.
+                            <span [innerHTML]="'Further Info.' | translate"></span>
                         </button>
                     </td>
                 </tr>
