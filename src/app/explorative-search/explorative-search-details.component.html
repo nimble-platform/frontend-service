@@ -7,18 +7,16 @@
             <strong>Let Us Help You</strong>
         </p>
             <ul>
-                <li>Double Click on a Node to <strong>select</strong> that property.</li>
-                <li>Single Click on a Node to <strong>deselect</strong> that property.</li>
-                <li>Certain Properties may not have filters to display, nevertheless if selected they will be shown
-                    in your final selections.
-                </li>
+                <li><span [innerHTML]="'exp-search-details-help-1' | translate"></span></li>
+                <li><span [innerHTML]="'exp-search-details-help-2' | translate"></span></li>
+                <li><span [innerHTML]="'exp-search-details-help-3' | translate"></span></li>
             </ul>
     </div>
     </div>
 </ngb-alert>
 <ngb-alert type="info" *ngIf="rerenderAlert" (close)="rerenderAlert = false">
     <p>
-        <strong>The Graph has been updated! Your previous selections, if any are still selected.</strong>
+        <strong><span [innerHTML]="'exp-search-details-help-4' | translate"></span></strong>
     </p>
 </ngb-alert>
 <div [hidden]="!hiddenElement">
@@ -30,14 +28,14 @@
         <!--</pre>-->
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
-                <caption>Product / Service Overview</caption>
+                <caption><span [innerHTML]="'Product / Service Overview' | translate"></span></caption>
                 <thead>
                     <tr>
                         <th>
-                            Properties
+                            <span [innerHTML]="'Properties' | translate"></span>
                         </th>
                         <th>
-                            Specifications
+                            <span [innerHTML]="'Specifications' | translate"></span>
                         </th>
                     </tr>
                 </thead>
@@ -56,16 +54,16 @@
     </div>
     <div class="row mt-3">
         <div class="col-md-6">
-            <button class="btn btn-secondary" (click)="hiddenElement=!hiddenElement">Back to Graph</button>
+            <button class="btn btn-secondary" (click)="hiddenElement=!hiddenElement"><span [innerHTML]="'Back to Graph' | translate"></span></button>
         </div>
         <div class="col-md-6">
             <button class="btn btn-primary" [disabled]="!negotiationEnable" (click)="negotiation()">
-                Initiate Business Process</button>
+                <span [innerHTML]="'Initiate Business Process' | translate"></span></button>
         </div>
     </div>
 </div>
 <div class="row mt-4">
-    <h4>Ontological View</h4>
+    <h4><span [innerHTML]="'Ontological View' | translate"></span></h4>
 </div>
 <div class="cont-max border" [hidden]="hiddenElement">
     <div class="row">
@@ -75,8 +73,8 @@
         <div class="col-md-2" *ngIf="!filterFromChildExists && !arrayPassedToChild.length">
             <div class="jumbotron align-items-center">
                 <i class="fas fa-filter fa-6x"></i>
-                <h4>Your Filters will appear here upon clicking nodes of the graph</h4>
-                <h5 class="text-secondary">Filters for property which have only numeric values will be shown here.</h5>
+                <h4><span [innerHTML]="'exp-search-details-help-5' | translate"></span></h4>
+                <h5 class="text-secondary"><span [innerHTML]="'exp-search-details-help-6' | translate"></span></h5>
             </div>
         </div>
         <div class="col-md-2" *ngIf="arrayPassedToChild.length">
@@ -89,10 +87,10 @@
 <div class="row mt-4" [hidden]="hiddenElement">
     <div class="col-3 float-left">
             <button class="btn btn-lg btn-primary" [disabled]="!tableJSON['parameters'].length"
-                    (click)="genTable()">Obtain Results</button>
+                    (click)="genTable()"><span [innerHTML]="'Obtain Results' | translate"></span></button>
     </div>
     <div class="col-9">
-        <p class="text-secondary text-sm-left"><i class="fas fa-info-circle pr-1"></i> <span>After you remove/add Properties do not forget to click <kbd>Obtain Results</kbd> each time</span></p>
+        <p class="text-secondary text-sm-left"><i class="fas fa-info-circle pr-1"></i> <span [innerHTML]="'exp-search-details-help-7' | translate"></span></p>
     </div>
 </div>
 
@@ -100,13 +98,13 @@
     <div class="container">
         <div class="row">
             <div class="col-12 align-center">
-                <h4>Your Search Results will be visible here.</h4>
+                <h4><span [innerHTML]="'Your Search Results will be visible here.' | translate"></span></h4>
                 <i class="fas fa-table"></i>
             </div>
         </div>
         <div class="row">
             <div class="col-12 align-center">
-                <p class="text-secondary"> Select Properties from above and click <kbd>Obtain Results</kbd></p>
+                <p class="text-secondary"> <span [innerHTML]="'exp-search-details-help-8' | translate"></span></p>
             </div>
         </div>
 
@@ -119,10 +117,10 @@
         <div class="container">
             <div class="row">
                 <div class="col-12 align-center">
-                    <h4>No Matching Products/Services Found. <i class="fas fa-table"></i></h4>
+                    <h4> <span [innerHTML]="'No Matching Products/Services Found.' | translate"></span> <i class="fas fa-table"></i></h4>
 
-                    <h5>We could not find any matching Products with your Selection.</h5>
-                    <h5>Try removing some Selected Properties above and click <kbd>Obtain Results</kbd> again</h5>
+                    <h5><span [innerHTML]="'exp-search-semantic-help-5' | translate"></span></h5>
+                    <h5><span [innerHTML]="'exp-search-semantic-help-6' | translate"></span></h5>
                 </div>
             </div>
         </div>
@@ -130,7 +128,7 @@
     <div class="row" *ngIf="tableResult?.columns !== undefined && tableResult?.columns.length">
         <div class="table-responsive table-hover" style="overflow-y: scroll; height: 35vh">
             <table class="table table-sm table-bordered">
-                <caption>Available Results from NIMBLE</caption>
+                <caption><span [innerHTML]="'Available Results from NIMBLE' | translate"></span></caption>
               <thead>
                 <tr>
                     <!--<th>-->
@@ -150,9 +148,8 @@
                     <td *ngFor="let field of row">{{field}}</td>
                     <td *ngIf="tableResult?.uuids.length">
                         <button class="btn btn-xs btn-outline-primary"
-                                (click)="getSparqlOptionalSelect(i)"
-                        >
-                            Further Info.
+                                (click)="getSparqlOptionalSelect(i)">
+                            <span [innerHTML]="'Further Info.' | translate"></span>
                         </button>
                     </td>
                 </tr>
