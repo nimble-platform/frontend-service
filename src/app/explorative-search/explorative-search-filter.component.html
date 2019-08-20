@@ -26,14 +26,13 @@
 <!--</div>-->
 <div class="card" *ngIf="filterProperties['filterJSON'] !== undefined">
 <div class="card-header">
-    <h4> {{filterProperties.fName}} Filter </h4>
+    <h4> {{filterProperties.fName}} <span [innerHTML]="'Filter' | translate"></span> </h4>
 </div>
 <div class="card-body">
     <ngb-alert type="info" [dismissible]="false">
-        <p><i class="fa fa-1x fa-info-circle pr-1"></i> <span>Filter Values are Optional.</span>
+        <p><i class="fa fa-1x fa-info-circle pr-1"></i> <span [innerHTML]="'Filter Values are Optional.' | translate"></span>
         </p>
-        <p>If you do select a value do not forget
-            to press the <kbd>Apply Filter</kbd> button.</p>
+        <p><span [innerHTML]="'exp-search-filter-help-1' | translate"></span></p>
     </ngb-alert>
     <div *ngFor="let every of result">
         <!-- CheckBoxes for the Filter -->
@@ -47,9 +46,9 @@
     </div>
 
     <div>
-    <p>Amount Of Groups  <span #rangeVal>3</span></p>
+    <p><span [innerHTML]="'Amount Of Groups' | translate"></span>  <span #rangeVal>3</span></p>
     <input type="range" min="1" max="10" value="3" (change)="getGroupVal($event.target.value)">
     </div>
-    <button class="btn btn-primary" (click)="submitFilter()">Apply Filter</button>
+    <button class="btn btn-primary" (click)="submitFilter()"><span [innerHTML]="'Apply Filter' | translate"></span></button>
 </div>
 </div>
