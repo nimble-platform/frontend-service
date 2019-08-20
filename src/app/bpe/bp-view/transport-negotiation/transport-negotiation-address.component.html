@@ -1,6 +1,6 @@
 <div class="row space-before">
     <div class="col-12">
-        <h4>Pick-up Address</h4>
+        <h4><span [innerHTML]="'Pick-up Address' | translate"></span></h4>
         <address-input [address]="lineItem.delivery[0].shipment.originAddress" [disabled]="disabled">
         </address-input>
     </div>
@@ -9,7 +9,7 @@
 <!-- Destination Address -->
 <div class="row">
     <div class="col-12">
-        <h4>Drop-off Address</h4>
+        <h4><span [innerHTML]="'Drop-off Address' | translate"></span></h4>
         <address-input [address]="lineItem.deliveryTerms.deliveryLocation.address"[disabled]="disabled">
         </address-input>
     </div>

@@ -20,6 +20,7 @@ import {ItemPriceWrapper} from '../../../common/item-price-wrapper';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
 import {Text} from '../../../catalogue/model/publish/text';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "transport-negotiation-request",
@@ -48,8 +49,10 @@ export class TransportNegotiationRequestComponent implements OnInit {
                 private cookieService: CookieService,
                 private userService:UserService,
                 private location: Location,
+                private translate: TranslateService,
                 private router: Router) {
-
+                    translate.setDefaultLang("en");
+                    translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {
