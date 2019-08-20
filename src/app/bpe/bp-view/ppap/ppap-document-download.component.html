@@ -1,7 +1,7 @@
 <div *ngIf="ppap && ppapResponse">
     <div class="row space-before">
         <div class="col-12">
-            <h4 class="space-after">Ppap Response</h4>
+            <h4 class="space-after"><span [innerHTML]="'Ppap Response' | translate"></span></h4>
             <div *ngFor="let document of requestedDocuments" class="space-before">
                 <file-input label="{{ document }}" accept="file/*" [multiple]="true"
                             presentationMode="view" [binaryObjects]="documents[document] || []">
@@ -13,7 +13,7 @@
     </div>
 
     <!--Notes-->
-    <h5>Notes and Additional Files</h5>
+    <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
     <note-file-view [notes]="notesBuyer"
                [documents]="additionalDocumentsBuyer"
                [label]="'Request Notes'"></note-file-view>
@@ -28,11 +28,11 @@
         <div *ngIf="isBuyer()" class="row actions-row">
             <div class="col-8"></div>
             <div class="col-2">
-                <button class="btn btn-secondary action" (click)="onBack()">Back</button>
+                <button class="btn btn-secondary action" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
             </div>
             <div class="col-2">
                 <button class="btn btn-primary action" (click)="onNextStep()">
-                    Next Step
+                    <span [innerHTML]="'Next Step' | translate"></span>
                 </button>
             </div>
         </div>
@@ -40,7 +40,7 @@
         <div *ngIf="!isBuyer()" class="row actions-row">
             <div class="col-10"></div>
             <div class="col-2">
-                <button class="btn btn-secondary action" (click)="onBack()">Back</button>
+                <button class="btn btn-secondary action" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
             </div>
         </div>
     </ng-container>
