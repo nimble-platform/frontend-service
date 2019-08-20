@@ -48,6 +48,8 @@ export class ItemInformationRequestComponent implements OnInit {
                 private translate: TranslateService,
                 private documentService: DocumentService,
                 private router: Router) {
+                    translate.setDefaultLang("en");
+                    translate.use(translate.getBrowserLang());
 
     }
 
