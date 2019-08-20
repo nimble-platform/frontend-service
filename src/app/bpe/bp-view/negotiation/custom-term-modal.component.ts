@@ -23,7 +23,10 @@ export class CustomTermModalComponent {
     @ViewChild("modal") modal: ElementRef;
 
     constructor(private modalService: NgbModal,private translate: TranslateService) {
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
     }
+    
 
     open() {
         this.modalService.open(this.modal).result.then(() => {
