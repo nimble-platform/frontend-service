@@ -18,6 +18,7 @@ import { CatalogueLine } from "../model/publish/catalogue-line";
 import { filter } from "rxjs/operator/filter";
 import * as myGlobals from '../../globals';
 import { Search } from '../../simple-search/model/search';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'compare-view',
@@ -113,7 +114,8 @@ export class CompareViewComponent implements OnInit {
                 private categoryService: CategoryService,
                 private userService: UserService,
                 private route: ActivatedRoute,
-                private router: Router) {
+				private router: Router
+				private translate: TranslateService) {
 
     }
 

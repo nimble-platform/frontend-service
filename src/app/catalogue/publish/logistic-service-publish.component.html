@@ -4,14 +4,14 @@
         <a href id="singleUpload"
            [ngClass]="{'nav-link': true, active: publishingGranularity === 'single'}"
            (click)="onSelectTab($event)"
-        >Single Upload</a>
+        ><span [innerHTML]="'Single Upload' | translate"></span></a>
     </li>
 
     <li class="nav-item">
         <a href id="bulkUpload"
            [ngClass]="{'nav-link': true, active: publishingGranularity == 'bulk'}"
            (click)="onSelectTab($event)"
-        >Bulk Upload</a>
+        ><span [innerHTML]="'Bulk Upload' | translate"></span></a>
     </li>
 </ul>
 
@@ -29,61 +29,61 @@
                         <a href id="TRANSPORT" class="nav-link"
                            [ngClass]="{ active: selectedTabSinglePublish === 'TRANSPORT'}"
                            (click)="onSelectTabSinglePublish($event)">
-                            Transport
+                           <span [innerHTML]="'Transport' | translate"></span>
                         </a>
                     </li>
                     <li *ngIf="availableLogisticsServices.indexOf('WAREHOUSING') != -1" class="nav-item">
                         <a href id="WAREHOUSING" class="nav-link"
                            [ngClass]="{ active: selectedTabSinglePublish === 'WAREHOUSING'}"
                            (click)="onSelectTabSinglePublish($event)">
-                            Warehousing
+                           <span [innerHTML]="'Warehousing' | translate"></span>
                         </a>
                     </li>
                     <li *ngIf="availableLogisticsServices.indexOf('ORDERPICKING') != -1" class="nav-item">
                         <a href id="ORDERPICKING" class="nav-link"
                            [ngClass]="{ active: selectedTabSinglePublish === 'ORDERPICKING'}"
                            (click)="onSelectTabSinglePublish($event)">
-                            Order Picking
+                           <span [innerHTML]="'Order Picking' | translate"></span>
                         </a>
                     </li>
                     <li *ngIf="availableLogisticsServices.indexOf('REVERSELOGISTICS') != -1" class="nav-item">
                         <a href id="REVERSELOGISTICS" class="nav-link"
                            [ngClass]="{ active: selectedTabSinglePublish === 'REVERSELOGISTICS'}"
                            (click)="onSelectTabSinglePublish($event)">
-                            Reverse Logistics
+                           <span [innerHTML]="'Reverse Logistics' | translate"></span>
                         </a>
                     </li>
                     <li *ngIf="availableLogisticsServices.indexOf('INHOUSESERVICES') != -1" class="nav-item">
                         <a href id="INHOUSESERVICES" class="nav-link"
                            [ngClass]="{ active: selectedTabSinglePublish === 'INHOUSESERVICES'}"
                            (click)="onSelectTabSinglePublish($event)">
-                            In-house Services
+                           <span [innerHTML]="'In-house Services' | translate"></span>
                         </a>
                     </li>
                     <li *ngIf="availableLogisticsServices.indexOf('CUSTOMSMANAGEMENT') != -1" class="nav-item">
                         <a href id="CUSTOMSMANAGEMENT" class="nav-link"
                            [ngClass]="{ active: selectedTabSinglePublish === 'CUSTOMSMANAGEMENT'}"
                            (click)="onSelectTabSinglePublish($event)">
-                            Customs Management
+                           <span [innerHTML]="'Customs Management' | translate"></span>
                         </a>
                     </li>
                     <li *ngIf="availableLogisticsServices.indexOf('LOGISTICSCONSULTANCY') != -1" class="nav-item">
                         <a href id="LOGISTICSCONSULTANCY" class="nav-link"
                            [ngClass]="{ active: selectedTabSinglePublish === 'LOGISTICSCONSULTANCY'}"
                            (click)="onSelectTabSinglePublish($event)">
-                            Logistics Consultancy
+                           <span [innerHTML]="'Logistics Consultancy' | translate"></span>
                         </a>
                     </li>
                 </ul>
             </div>
         </div>
         <div class="space-before" *ngIf="selectedTabSinglePublish == 'TRANSPORT' || singleTabForLogisticServices">
-            <button *ngIf="availableLogisticsServices.indexOf('ROADTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'ROADTRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showRoadTransportService = !showRoadTransportService">Road Transport</button>
+            <button *ngIf="availableLogisticsServices.indexOf('ROADTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'ROADTRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showRoadTransportService = !showRoadTransportService"><span [innerHTML]="'Road Transport' | translate"></span></button>
             <div class="well" *ngIf="showRoadTransportService">
                 <name-description-panel [catalogueLine]="getLogisticCatalogueLine('ROADTRANSPORT')" [productIdEditable]="isProductIdEditable('ROADTRANSPORT')"></name-description-panel>
                 <div class="row space-before">
                     <div class="col-3">
-                        <strong>Additional Information</strong>
+                        <strong><span [innerHTML]="'Additional Information' | translate"></span></strong>
                     </div>
                     <div class="div-padding-left">
                         <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'ROADTRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('ROADTRANSPORT')"
@@ -103,12 +103,12 @@
                                    [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
             </div>
-            <button *ngIf="availableLogisticsServices.indexOf('MARITIMETRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'MARITIMETRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showMaritimeTransportService = !showMaritimeTransportService">Maritime Transport</button>
+            <button *ngIf="availableLogisticsServices.indexOf('MARITIMETRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'MARITIMETRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showMaritimeTransportService = !showMaritimeTransportService"><span [innerHTML]="'Maritime Transport' | translate"></span></button>
             <div class="well" *ngIf="showMaritimeTransportService">
                 <name-description-panel [catalogueLine]="getLogisticCatalogueLine('MARITIMETRANSPORT')" [productIdEditable]="isProductIdEditable('MARITIMETRANSPORT')"></name-description-panel>
                 <div class="row space-before">
                     <div class="col-3">
-                        <strong>Additional Information</strong>
+                        <strong><span [innerHTML]="'Additional Information' | translate"></span></strong>
                     </div>
                     <div class="div-padding-left">
                         <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'MARITIMETRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('MARITIMETRANSPORT')"
@@ -128,12 +128,12 @@
                                    [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
             </div>
-            <button *ngIf="availableLogisticsServices.indexOf('AIRTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'AIRTRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showAirTransportService = !showAirTransportService">Air Transport</button>
+            <button *ngIf="availableLogisticsServices.indexOf('AIRTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'AIRTRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showAirTransportService = !showAirTransportService"><span [innerHTML]="'Air Transport' | translate"></span></button>
             <div class="well" *ngIf="showAirTransportService">
                 <name-description-panel [catalogueLine]="getLogisticCatalogueLine('AIRTRANSPORT')" [productIdEditable]="isProductIdEditable('AIRTRANSPORT')"></name-description-panel>
                 <div class="row space-before">
                     <div class="col-3">
-                        <strong>Additional Information</strong>
+                        <strong><span [innerHTML]="'Additional Information' | translate"></span></strong>
                     </div>
                     <div class="div-padding-left">
                         <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'AIRTRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('AIRTRANSPORT')"
@@ -153,12 +153,12 @@
                                    [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
             </div>
-            <button *ngIf="availableLogisticsServices.indexOf('RAILTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'RAILTRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showRailTransportService = !showRailTransportService">Rail Transport</button>
+            <button *ngIf="availableLogisticsServices.indexOf('RAILTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'RAILTRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showRailTransportService = !showRailTransportService"><span [innerHTML]="'Rail Transport' | translate"></span></button>
             <div class="well" *ngIf="showRailTransportService">
                 <name-description-panel [catalogueLine]="getLogisticCatalogueLine('RAILTRANSPORT')" [productIdEditable]="isProductIdEditable('RAILTRANSPORT')"></name-description-panel>
                 <div class="row space-before">
                     <div class="col-3">
-                        <strong>Additional Information</strong>
+                        <strong><span [innerHTML]="'Additional Information' | translate"></span></strong>
                     </div>
                     <div class="div-padding-left">
                         <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'RAILTRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('RAILTRANSPORT')"
@@ -192,7 +192,7 @@
 
             <div class="row space-before">
                 <div class="col-3">
-                    <strong>Additional Information</strong>
+                    <strong><span [innerHTML]="'Additional Information' | translate"></span></strong>
                 </div>
                 <div class="div-padding-left">
                     <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'WAREHOUSING')" [binaryObjects]="getBinaryObjectsForLogisticService('WAREHOUSING')"
@@ -210,7 +210,7 @@
 
             <div class="row space-before">
                 <div class="col-3">
-                    <strong>Additional Information</strong>
+                    <strong><span [innerHTML]="'Additional Information' | translate"></span></strong>
                 </div>
                 <div class="div-padding-left">
                     <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'ORDERPICKING')" [binaryObjects]="getBinaryObjectsForLogisticService('ORDERPICKING')"
@@ -228,7 +228,7 @@
 
             <div class="row space-before">
                 <div class="col-3">
-                    <strong>Additional Information</strong>
+                    <strong><span [innerHTML]="'Additional Information' | translate"></span></strong>
                 </div>
                 <div class="div-padding-left">
                     <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'REVERSELOGISTICS')" [binaryObjects]="getBinaryObjectsForLogisticService('REVERSELOGISTICS')"
@@ -246,7 +246,7 @@
 
             <div class="row space-before">
                 <div class="col-3">
-                    <strong>Additional Information</strong>
+                    <strong><span [innerHTML]="'Additional Information' | translate"></span></strong>
                 </div>
                 <div class="div-padding-left">
                     <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'INHOUSESERVICES')" [binaryObjects]="getBinaryObjectsForLogisticService('INHOUSESERVICES')"
@@ -264,7 +264,7 @@
 
             <div class="row space-before">
                 <div class="col-3">
-                    <strong>Additional Information</strong>
+                    <strong><span [innerHTML]="'Additional Information' | translate"></span></strong>
                 </div>
                 <div class="div-padding-left">
                     <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'CUSTOMSMANAGEMENT')" [binaryObjects]="getBinaryObjectsForLogisticService('CUSTOMSMANAGEMENT')"
@@ -281,7 +281,7 @@
 
             <div class="row space-before">
                 <div class="col-3">
-                    <strong>Additional Information</strong>
+                    <strong><span [innerHTML]="'Additional Information' | translate"></span></strong>
                 </div>
                 <div class="div-padding-left">
                     <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'LOGISTICSCONSULTANCY')" [binaryObjects]="getBinaryObjectsForLogisticService('LOGISTICSCONSULTANCY')"
@@ -301,7 +301,7 @@
             <div class="col-4 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
             <div class="col-2">
                 <button class="btn btn-secondary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onBack()">
-                    Cancel
+                    <span [innerHTML]="'Cancel' | translate"></span>
                 </button>
             </div>
             <div class="col-3">

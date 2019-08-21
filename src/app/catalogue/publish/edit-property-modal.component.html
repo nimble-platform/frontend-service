@@ -12,7 +12,7 @@
                 </text-input -->
                 <div class="row space-before">
                     <div class="col-3">
-                        <strong>Name(s):</strong>
+                        <strong><span [innerHTML]="'Name(s):' | translate"></span></strong>
                     </div>
                     <div class="col-9">
                         <table class="table borderless">
@@ -27,13 +27,13 @@
                                         </select>
                                     </td>
                                     <td class="align-right" *ngIf="i>0">
-                                        <button class="btn btn-danger"  type="button" (click)="deletePropertyName(i)" *ngIf="getPropertyPresentationMode() === 'edit'">Delete</button>
+                                        <button class="btn btn-danger"  type="button" (click)="deletePropertyName(i)" *ngIf="getPropertyPresentationMode() === 'edit'"><span [innerHTML]="'Delete' | translate"></span></button>
                                     </td>
                                 </tr>
                                 <tr *ngIf="getPropertyPresentationMode() === 'edit'">
                                   <td colspan="3">
                                     <button class="btn btn-outline-primary add-value-button" (click)="addPropertyName()">
-                                        Add Name
+                                        <span [innerHTML]="'Add Name' | translate"></span>
                                     </button>
                                   </td>
                                 </tr>
@@ -67,7 +67,7 @@
                 </options-input>
                 <div class="row space-before">
                     <div class="col-3">
-                        <strong>Value(s):</strong>
+                        <strong><span [innerHTML]="'Value(s):' | translate"></span></strong>
                     </div>
                     <!--{{propertyDataType}}-->
                     <div class="col-9">
@@ -92,7 +92,7 @@
                                 <tr>
                                   <td colspan="3" class="pr-0 pb-0">
                                     <button class="btn btn-outline-primary add-value-button" (click)="onAddValue()">
-                                        Add Value
+                                        <span [innerHTML]="'Add Value' | translate"></span>
                                     </button>
                                   </td>
                                 </tr>
@@ -145,14 +145,14 @@
                         </ng-container>
                         <button class="btn btn-outline-primary add-value-button" (click)="onAddValue()"
                             *ngIf="property.valueQualifier !== 'BOOLEAN' && property.valueQualifier !== 'FILE' && property.valueQualifier !== 'STRING'">
-                            Add Value
+                            <span [innerHTML]="'Add Value' | translate"></span>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="d('cancel')">Cancel</button>
-            <button type="button" class="btn btn-primary" (click)="c('ok')" [disabled]="this.property.name[0].value==''">OK</button>
+            <button type="button" class="btn btn-secondary" (click)="d('cancel')"><span [innerHTML]="'Cancel' | translate"></span></button>
+            <button type="button" class="btn btn-primary" (click)="c('ok')" [disabled]="this.property.name[0].value==''"><span [innerHTML]="'OK' | translate"></span></button>
         </div>
     </ng-template>
