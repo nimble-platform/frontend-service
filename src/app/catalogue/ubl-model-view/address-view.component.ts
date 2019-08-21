@@ -1,5 +1,6 @@
 import {Component, Input} from "@angular/core";
 import {Address} from "../model/publish/address";
+import {TranslateService} from '@ngx-translate/core';
 import {UBLModelUtils} from "../model/ubl-model-utils";
 /**
  * Created by suat on 22-Sep-17.
@@ -9,6 +10,10 @@ import {UBLModelUtils} from "../model/ubl-model-utils";
     selector: 'address-view',
     templateUrl: './address-view.component.html'
 })
+
+constructor(
+    private translate: TranslateService
+) {}
 
 export class AddressViewComponent {
     @Input() address: Address[];

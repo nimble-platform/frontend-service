@@ -7,7 +7,7 @@
 
     <ng-container *ngIf="presentationMode != 'view'">
         <div class="input-group space-after">
-            <label class="col-3">Estimated Delivery Date
+            <label class="col-3"><span [innerHTML]="'Estimated Delivery Date' | translate"></span>
                 <span class="label label-default" title="'The estimated date of delivery in this plan between the start and date of the service.'">
                         &#9432;
                 </span>

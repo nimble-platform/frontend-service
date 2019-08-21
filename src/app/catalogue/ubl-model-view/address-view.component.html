@@ -59,7 +59,7 @@
     <!-- empty address list -->
     <ng-container *ngIf="address == null || address.length == 0">
         <div>
-            <label>Add Applicable Country</label>
+            <label><span [innerHTML]="'Add Applicable Country' | translate"></span></label>
             <i class="fa fa-plus-circle pointer" (click)="addFirstValue()"></i>
         </div>
     </ng-container>

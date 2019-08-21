@@ -1,7 +1,12 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Attachment} from '../model/publish/attachment';
 import {DocumentReference} from '../model/publish/document-reference';
+import {TranslateService} from '@ngx-translate/core';
 import {BinaryObject} from '../model/publish/binary-object';
+
+constructor(
+    private translate: TranslateService
+) {}
 
 @Component({
     selector: 'note-file-view',

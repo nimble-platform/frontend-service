@@ -148,32 +148,32 @@
 
 <div *ngIf="showPropertyDetails && propertyDetails" class="p-3 bordered">
     <div class="input-group form-group">
-        <label class="col-3 control-label">Definition</label>
+        <label class="col-3 control-label"><span [innerHTML]="'Definition' | translate"></span></label>
         <label>{{propertyDetails.definition}}</label>
     </div>
     <div class="input-group form-group">
-        <label class="col-3 control-label">Preferred name</label>
+        <label class="col-3 control-label"><span [innerHTML]="'Preferred name' | translate"></span></label>
         <label>{{selectPreferredName(propertyDetails)}}</label>
     </div>
     <div class="input-group form-group">
-        <label class="col-3 control-label">Short name</label>
+        <label class="col-3 control-label"><span [innerHTML]="'Short name' | translate"></span></label>
         <label>{{propertyDetails.shortName}}</label>
     </div>
     <div class="input-group form-group">
-        <label class="col-3 control-label">Remark</label>
+        <label class="col-3 control-label"><span [innerHTML]="'Remark' | translate"></span></label>
         <label>{{propertyDetails.remark}}</label>
     </div>
     <div class="input-group form-group">
-        <label class="col-3 control-label">Data type</label>
+        <label class="col-3 control-label"><span [innerHTML]="'Data type' | translate"></span></label>
         <label>{{propertyDetails.dataType}}</label>
     </div>
     <div>
         <div *ngIf="propertyDetails.unit" class="input-group form-group">
-            <label class="col-3 control-label">Unit</label>
+            <label class="col-3 control-label"><span [innerHTML]="'Unit' | translate"></span></label>
             <label>{{propertyDetails.unit.definition}}</label>
         </div>
         <div *ngIf="propertyDetails.unit" class="input-group form-group">
-            <label class="col-3 control-label">Unit short name</label>
+            <label class="col-3 control-label"><span [innerHTML]="'Unit short name' | translate"></span></label>
             <label>{{propertyDetails.unit.shortName}}</label>
         </div>
     </div>

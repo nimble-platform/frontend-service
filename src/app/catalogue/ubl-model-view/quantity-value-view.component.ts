@@ -1,9 +1,14 @@
 import {Component, EventEmitter, Input, Output} from "@angular/core";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'quantity-value-view',
     templateUrl: './quantity-value-view.component.html'
 })
+
+constructor(
+    private translate: TranslateService
+) {}
 
 export class QuantityValueViewComponent {
     @Input() propName: string;

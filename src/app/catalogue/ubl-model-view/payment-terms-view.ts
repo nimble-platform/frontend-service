@@ -1,12 +1,18 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {TradingTerm} from '../model/publish/trading-term';
 import {Text} from "../model/publish/text";
+import {TranslateService} from '@ngx-translate/core';
 import {MultiTypeValue} from "../model/publish/multi-type-value";
 
 @Component({
     selector: 'payment-terms-view',
     templateUrl: './payment-terms-view.html'
 })
+
+constructor(
+    private translate: TranslateService
+) {}
+
 export class PaymentTermsView implements OnInit{
     @Input() tradingTerms: TradingTerm[];
     @Input() presentationMode:string;

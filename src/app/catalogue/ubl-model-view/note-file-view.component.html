@@ -27,20 +27,20 @@
                 <div *ngIf="!readonly && i > 0 " class="col-3">
                     <button class="btn btn-danger btn-remove-value float-right"
                             (click)="onRemoveNote(i)">
-                        Remove
+                            <span [innerHTML]="'Remove' | translate"></span>
                     </button>
                 </div>
             </div>
         </ng-container>
         <button *ngIf="!readonly" class="btn btn-primary add-value-button" (click)="onAddNote()">
-            Add Note
+            <span [innerHTML]="'Add Note' | translate"></span>
         </button>
     </div>
 </div>
 
 <div class="row space-before">
     <div [class]="firstCol">
-        <strong class="font-weight-500"><label>Additional Files:</label></strong>
+        <strong class="font-weight-500"><label><span [innerHTML]="'Additional Files:' | translate"></span></label></strong>
     </div>
     <div *ngIf="secondCol" [class]="secondCol">
     </div>
