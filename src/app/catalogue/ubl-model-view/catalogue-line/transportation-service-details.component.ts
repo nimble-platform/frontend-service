@@ -36,6 +36,8 @@ export class TransportationServiceDetails implements OnInit{
 
     constructor(private publishService: PublishService,private translate: TranslateService) {
         this.propertyBlockCollapsedStates = this.publishService.getCollapsedStates();
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
     }
 
     ngOnInit(): void {

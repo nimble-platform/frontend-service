@@ -31,7 +31,10 @@ export class CatalogueLineHeaderComponent {
 
     constructor(
         private translate: TranslateService
-        ) {}
+        ) {
+            translate.setDefaultLang("en");
+            translate.use(translate.getBrowserLang());
+        }
 
     toggleCollapsed(blockName:string):void {
         this.propertyBlockCollapsedStates.set(blockName, !this.propertyBlockCollapsedStates.get(blockName));

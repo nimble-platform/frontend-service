@@ -9,15 +9,19 @@ import {MultiTypeValue} from "../model/publish/multi-type-value";
     templateUrl: './payment-terms-view.html'
 })
 
-constructor(
-    private translate: TranslateService
-) {}
 
 export class PaymentTermsView implements OnInit{
     @Input() tradingTerms: TradingTerm[];
     @Input() presentationMode:string;
     initialTradingTerms: TradingTerm[] = [];
 
+    constructor(
+        private translate: TranslateService
+    ) {
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
+    }
+    
     ngOnInit(){
         // create initial trading terms list
         this.createTradingTerms();

@@ -11,17 +11,18 @@ import {UBLModelUtils} from "../model/ubl-model-utils";
     templateUrl: './address-view.component.html'
 })
 
-constructor(
-    private translate: TranslateService
-) {}
-
 export class AddressViewComponent {
     @Input() address: Address[];
     @Input() propName: string;
     @Input() presentationMode: string;
     @Input() multiValue: boolean = false;
     @Input() definition: string = null;
-
+    
+    constructor(private translate: TranslateService
+        ) {
+            translate.setDefaultLang("en");
+            translate.use(translate.getBrowserLang());
+        }
 
     addFirstValue(): void {
         this.address.push(new Address());

@@ -27,7 +27,10 @@ export class DetailedAddressViewComponent implements OnInit{
         private cookieService: CookieService,
         private userService: UserService,
         private translate: TranslateService    
-    ) {	}
+    ) {	
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
+    }
 
     ngOnInit():void{
         // get company address
