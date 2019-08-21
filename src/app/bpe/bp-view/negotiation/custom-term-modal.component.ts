@@ -3,6 +3,7 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {Quantity} from "../../../catalogue/model/publish/quantity";
 import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 import {NegotiationModelWrapper} from "./negotiation-model-wrapper";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "custom-term-modal",
@@ -21,8 +22,11 @@ export class CustomTermModalComponent {
 
     @ViewChild("modal") modal: ElementRef;
 
-    constructor(private modalService: NgbModal) {
+    constructor(private modalService: NgbModal,private translate: TranslateService) {
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
     }
+    
 
     open() {
         this.modalService.open(this.modal).result.then(() => {

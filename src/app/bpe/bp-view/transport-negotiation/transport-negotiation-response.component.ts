@@ -20,6 +20,7 @@ import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
 import {copy} from "../../../common/utils";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "transport-negotiation-response",
@@ -56,8 +57,10 @@ export class TransportNegotiationResponseComponent implements OnInit {
                 private bpDataService: BPDataService,
                 private location: Location,
                 private cookieService: CookieService,
+                private translate: TranslateService,
                 private router: Router) {
-
+                    translate.setDefaultLang("en");
+                    translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {

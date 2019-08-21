@@ -23,35 +23,34 @@
   
   <div class="container mt-lg-5 mb-lg-5">
     <h2>
-      QualiExplore
+      <span [innerHTML]="'QualiExplore' | translate"></span>
     </h2>
     <div class="jumbotron">
-      <h3 class="display-5">Step - 2</h3>
-      <p class="lead">This step highlights the most relevant factors with a  <i class="fas fa-flag fa-1x"></i> 
-      symbol.</p>
+      <h3 class="display-5"><span [innerHTML]="'Step - 2' | translate"></span></h3>
+      <p class="lead"><span [innerHTML]="'quali-desc-2' | translate"></span> <i class="fas fa-flag fa-1x"></i></p>
       <button type="button" class="btn btn-outline-primary" (click)="collapseSelectedFilters = !collapseSelectedFilters" [attr.aria-expanded]="!collapseSelectedFilters" aria-controls="collapseFilters">
-        Selected Filters <i class="fas fa-angle-double-down" *ngIf="collapseSelectedFilters"></i> 
+        <span [innerHTML]="'Selected Filters' | translate"></span> <i class="fas fa-angle-double-down ml-3" *ngIf="collapseSelectedFilters"></i> 
       </button>
       <div id="collapseFilters" [ngbCollapse]="collapseSelectedFilters">
         <ul class="filter-details" *ngFor="let filter of selectedFilterDetails">
           <li>
-              <i class="fas fa-box" *ngIf="filter['parent'] === 'Product'"></i>
-              <i class="fas fa-bullseye" *ngIf="filter['parent']==='Goal'"></i>
-              <i class="fas fa-info" *ngIf="filter['parent'] === 'Information quality'"></i>
-              <i class="fas fa-exchange-alt" *ngIf="filter['parent'] === 'Information channel'"></i>
+              <i class="fas fa-box mr-2" *ngIf="filter['parent'] === 'Product'"></i>
+              <i class="fas fa-bullseye mr-2" *ngIf="filter['parent']==='Goal'"></i>
+              <i class="fas fa-info mr-2" *ngIf="filter['parent'] === 'Information quality'"></i>
+              <i class="fas fa-exchange-alt mr-2" *ngIf="filter['parent'] === 'Information channel'"></i>
               {{filter['name']}}
           </li>
         </ul>
       </div>
       <br>
-      <button class="btn btn-sm btn-outline-secondary mt-lg-2" (click)="backToStep1()">Return to Step-1</button>
+      <button class="btn btn-sm btn-outline-secondary mt-lg-2" (click)="backToStep1()"><span [innerHTML]="'Return to Step-1' | translate"></span></button>
     </div>
     <div class="row mt-5">
       <div class="col-lg-6">
-         <h3>Discover all Quality Factors</h3>
+         <h3><span [innerHTML]="'Discover all Quality Factors' | translate"></span></h3>
       </div>
       <div class="col-lg-6">
-        <h3>Quality Factor Information</h3>
+        <h3><span [innerHTML]="'Quality Factor Information' | translate"></span></h3>
       </div>
     </div>
     <div class="row mt-2">
@@ -68,21 +67,21 @@
       <div class="col-lg-6" *ngIf="selectedFactor == undefined">
         <div class="jumbotron">
           <i class="fas fa-list-ul fa-3x"></i>
-          <p class="lead">Please click on the list items on the left pane to find out relevant quality factors.</p>
-          <p class="lead">After reading the provided information, click on <em>Proceed</em></p>
+          <p class="lead"><span [innerHTML]="'quali-grey-1' | translate"></span></p>
+          <p class="lead"><span [innerHTML]="'After reading the provided information' | translate"></span>, click on <em><span [innerHTML]="'Proceed' | translate"></span></em></p>
         </div>
       </div>
       <div class="col-lg-6" *ngIf="selectedFactor !== undefined">
         <div class="shadow card bg-white rounded">
           <div class="card-header" *ngIf="!selectedFactor.text.length">
-            Factor
+            <span [innerHTML]="'Factor' | translate"></span>
           </div>
           <div class="card-header" *ngIf="selectedFactor.text.length">
             <b>{{selectedFactor.text}}</b>
           </div>
           <div class="card-body">
             <p *ngIf="selectedFactor.value == null">
-              <i class="fas fa-info-circle"></i> Expand the property to obtain further information
+              <i class="fas fa-info-circle"></i> <span [innerHTML]="'Expand the property to obtain further information' | translate"></span>
             </p>
             <div class="factorDescription" *ngIf="selectedFactor.value">
                 <i class="fas fa-quote-left"></i>
@@ -92,24 +91,24 @@
                 <i class="fas fa-quote-right"></i>
             </div>
             <div *ngIf="selectedFactor.value">
-              <b>Sources</b>
+              <b><span [innerHTML]="'Sources' | translate"></span></b>
               <ul id="sourceList" *ngFor="let source of selectedFactor.value.source">
                   <li *ngIf="!isUrl(source)"><a href="https://doi.org/{{source}}" target="_blank" id="sourceList">{{source}} </a>
                     <i class="fas fa-external-link-alt"></i>
                   </li>
-                  <li *ngIf="isUrl(source)"><a href="{{source}}" target="_blank" id="sourceList">Link To Source </a>
+                  <li *ngIf="isUrl(source)"><a href="{{source}}" target="_blank" id="sourceList"><span [innerHTML]="'Link To Source' | translate"></span> </a>
                    <i class="fas fa-external-link-alt"></i>
                   </li>
                   
               </ul>
                 <button class="btn btn-md btn-primary float-right" 
-                  (click)="markRead(selectedFactor); proceedButtonDisabled = !proceedButtonDisabled" [disabled]="proceedButtonDisabled">Proceed</button>
+                  (click)="markRead(selectedFactor); proceedButtonDisabled = !proceedButtonDisabled" [disabled]="proceedButtonDisabled"><span [innerHTML]="'Proceed' | translate"></span></button>
             </div>
           </div>
         </div>
         <div class="row mt-5">
           <div class="col-lg-6">
-            <h3>Progress</h3>
+            <h3><span [innerHTML]="'Progress' | translate"></span></h3>
             <div class="shadow p-3 mb-5 bg-white rounded">
               <b>{{totalResolvedFactors}} of {{totalHighlightedFactors}}</b>
               <ngb-progressbar type="info" [value]="(totalResolvedFactors/totalHighlightedFactors) * 100" height="30px"> 

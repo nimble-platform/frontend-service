@@ -52,8 +52,9 @@ export class PerformanceAnalyticsComponent implements OnInit {
 		private categoryService: CategoryService,
 		private translate: TranslateService,
         ) {
-
-    }
+			translate.setDefaultLang("en");
+			translate.use(translate.getBrowserLang());
+    	}
 
     ngOnInit(): void {
 		this.callStatus.submit();

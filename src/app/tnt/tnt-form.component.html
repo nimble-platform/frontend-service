@@ -1,14 +1,14 @@
 <div>
-    <p class="nimble-title">Track Your Product</p>
+    <p class="nimble-title"><span [innerHTML]="'Track Your Product' | translate"></span></p>
     <form class="space-before" (ngSubmit)="Search(model.q)" #trackForm="ngForm" novalidate>
         <div class="form-group row">
-            <label class="col-2 col-form-label">Enter EPC Code</label>
+            <label class="col-2 col-form-label"><span [innerHTML]="'Enter EPC Code' | translate"></span></label>
             <div class="col-10">
                 <div class="input-group">
                     <input type="text"
                            class="form-control" required [(ngModel)]="model.q"
                            name="trackSearch" #q="ngModel" pattern=".{1,}"
-                           placeholder="Your SGTIN Code">
+                           [placeholder]="'Your SGTIN Code' | translate">
                     <div class="input-group-append">
                         <button type="submit" class="btn btn-outline-secondary" [disabled]="!trackForm.form.valid">
                             <i class="fa fa-search"></i>
@@ -22,7 +22,7 @@
         <div class="alert alert-danger space-before"
              role="alert">
             <p>
-                <em>An Error Occured</em> - There is no information about this EPC available. Please check your code or contact your company's responsible personnel for tracking and tracing.
+                <em><span [innerHTML]="'An Error Occured' | translate"></span></em> - <span [innerHTML]="'tnt-error' | translate"></span>
             </p>
             <p *ngIf="falsecode">
                 <i class="fa fa-exclamation pr-1"></i> <span><em>{{falsecode}}</em></span>
@@ -40,8 +40,8 @@
         </div>
         <div class="row">
             <div class="col-md-12 align-center">
-                <h4>No Tracking Results</h4>
-                <p class="text-secondary">Try searching for a valid tracking code above</p>
+                <h4><span [innerHTML]="'No Tracking Results' | translate"></span></h4>
+                <p class="text-secondary"><span [innerHTML]="'Try searching for a valid tracking code above' | translate"></span></p>
             </div>
         </div>
     </div>
@@ -49,16 +49,16 @@
 
 <div class="row" *ngIf="trackingInfo.length">
     <div class="col-lg-8">
-        <h4>Tracking Information</h4>
+        <h4><span [innerHTML="'Tracking Information' | translate"></span></h4>
         <!--<div class="row">-->
             <table class="table table-hover">
             <thead class="thead-dark">
             <tr>
-            <th>Event Time</th>
-            <th>Business Step</th>
+            <th><span [innerHTML]="'Event Time' | translate"></span></th>
+            <th><span [innerHTML]="'Business Step' | translate"></span></th>
             <!-- <th>Action</th> -->
-            <th>Read Point</th>
-            <th>Business Location</th>
+            <th><span [innerHTML]="'Read Point' | translate"></span></th>
+            <th><span [innerHTML]="'Business Location' | translate"></span></th>
             </tr>
             </thead>
 
@@ -72,12 +72,12 @@
             </table>
             <div class="row" *ngIf="trackingInfo.length">
                 <ngb-alert type="success" [dismissible]="false" *ngIf="verified">
-                    <i class="fas fa-check-circle pr-1"></i> <span>This Data is Verified by BlockChain</span>  <i class="fas fa-project-diagram pl-1"></i> </ngb-alert>
+                    <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'This Data is Verified by BlockChain' | translate"></span>  <i class="fas fa-project-diagram pl-1"></i> </ngb-alert>
             </div>
         <!--</div>-->
     </div>
     <div class="col-lg-4" *ngIf="gateInformation.length || bizLocationInformation.length">
-        <h4>Additional Details</h4>
+        <h4><span [innerHTML]="'Additional Details' | translate"></span></h4>
         <!--<div class="row">-->
             <!--{{gateInformation | json}}-->
             <!--{{bizLocationInformation | json}}-->

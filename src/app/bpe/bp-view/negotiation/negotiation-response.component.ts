@@ -24,6 +24,7 @@ import {DigitalAgreement} from "../../../catalogue/model/publish/digital-agreeme
 import * as moment from "moment";
 import {Moment, unitOfTime} from "moment";
 import {Clause} from '../../../catalogue/model/publish/clause';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "negotiation-response",
@@ -77,8 +78,10 @@ export class NegotiationResponseComponent implements OnInit {
                 private bpDataService: BPDataService,
                 private location: Location,
                 private cookieService: CookieService,
+                private translate: TranslateService,
                 private router: Router) {
-
+                    translate.setDefaultLang("en");
+                    translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {

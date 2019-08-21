@@ -19,6 +19,7 @@ import {CookieService} from 'ng2-cookies';
 import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "item-information-response",
@@ -47,7 +48,11 @@ export class ItemInformationResponseComponent implements OnInit {
                 private location: Location,
                 private router: Router,
                 private cookieService: CookieService,
+                private translate: TranslateService,
                 private route: ActivatedRoute) {
+
+                   translate.setDefaultLang("en");
+                    translate.use(translate.getBrowserLang());
 
     }
 

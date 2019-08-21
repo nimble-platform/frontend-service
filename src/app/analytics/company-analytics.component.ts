@@ -15,6 +15,8 @@ export class CompanyAnalyticsComponent implements OnInit {
         private analyticsService: AnalyticsService,
         private translate: TranslateService,
     ) {
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
     }
 
     ngOnInit(): void {

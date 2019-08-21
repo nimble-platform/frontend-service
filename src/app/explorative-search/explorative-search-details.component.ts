@@ -2,6 +2,7 @@ import {Component, AfterViewInit, Input, OnChanges, ViewEncapsulation} from '@an
 import * as d3 from 'd3';
 import { ExplorativeSearchService } from './explorative-search.service';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 // Leaf class for Radial Tidy Tree
 export class Leaf {
@@ -68,7 +69,10 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     private _warning_selection = false;
     private root: any;
     // BackEnd Service + Modal Service declared here
-    constructor(private expSearch: ExplorativeSearchService, private router: Router) { }
+    constructor(private expSearch: ExplorativeSearchService, private router: Router, private translate: TranslateService) {
+        translate.setDefaultLang('en');
+        translate.use(translate.getBrowserLang());
+     }
 
     /**
      * using OnChanges LifeCycle Hook for incoming Configuration

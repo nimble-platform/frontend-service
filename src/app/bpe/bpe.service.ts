@@ -30,23 +30,15 @@ export class BPEService {
                 private searchContextService: SearchContextService,
 				private cookieService: CookieService) { }
 
-	startBusinessProcess(piim:ProcessInstanceInputMessage):Promise<ProcessInstance> {
-		const headers = this.getAuthorizedHeaders();
-		let url = `${this.url}/start`;
-		if(this.bpDataService.bpActivityEvent.containerGroupId != null) {
-			url += '?gid=' + this.bpDataService.bpActivityEvent.containerGroupId;
-		}
-		if(this.bpDataService.precedingProcessId != null) {
-			if(this.bpDataService.bpActivityEvent.containerGroupId != null) {
-				url += '&';
-			} else {
-				url += '?';
-			}
-			url += 'precedingPid=' + this.bpDataService.precedingProcessId;
-		}
-		if(this.bpDataService.bpActivityEvent.collaborationGroupId != null){
-			if(this.bpDataService.bpActivityEvent.containerGroupId != null || this.bpDataService.precedingProcessId != null){
-			    url += '&';
+    startBusinessProcess(piim:ProcessInstanceInputMessage):Promise<ProcessInstance> {
+        const headers = this.getAuthorizedHeaders();
+        let url = `${this.url}/start`;
+        if(this.bpDataService.bpActivityEvent.containerGroupId != null) {
+            url += '?gid=' + this.bpDataService.bpActivityEvent.containerGroupId;
+        }
+        if(this.bpDataService.bpActivityEvent.collaborationGroupId != null){
+            if(this.bpDataService.bpActivityEvent.containerGroupId != null){
+                url += '&';
             }
             else {
 			    url += "?";
@@ -54,21 +46,16 @@ export class BPEService {
             url += 'collaborationGID=' + this.bpDataService.bpActivityEvent.collaborationGroupId
 		}
 
-		if(this.searchContextService.getPrecedingGroupId() != null){
-			if(this.bpDataService.bpActivityEvent.containerGroupId != null || this.bpDataService.precedingProcessId != null || this.bpDataService.bpActivityEvent.collaborationGroupId != null){
-				url += '&';
-			}
-			else {
-				url += '?';
-			}
-			url += 'precedingGid=' + this.searchContextService.getPrecedingGroupId();
-
-			// if we have a precedingGroupId,then we need also a precedingProcessId
-			if(this.bpDataService.precedingProcessId == null){
-                url += '&precedingPid=' + this.searchContextService.getAssociatedProcessMetadata().processInstanceId;
+        if(this.searchContextService.getPrecedingGroupId() != null){
+            if(this.bpDataService.bpActivityEvent.containerGroupId != null || this.bpDataService.bpActivityEvent.collaborationGroupId != null){
+                url += '&';
             }
-		}
-		return this.http
+            else {
+                url += '?';
+            }
+            url += 'precedingGid=' + this.searchContextService.getPrecedingGroupId();
+        }
+        return this.http
             .post(url, JSON.stringify(piim), {headers: headers})
             .toPromise()
             .then(res => {

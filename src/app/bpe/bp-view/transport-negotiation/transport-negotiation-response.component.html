@@ -5,21 +5,21 @@
             <a href id="OVERVIEW" class="nav-link"
                 [ngClass]="{ active: selectedTab === 'OVERVIEW'}"
                 (click)="onSelectTab($event)">
-                Transport Service Details
+                <span [innerHTML]="'Transport Service Details' | translate"></span>
             </a>
         </li>
         <li class="nav-item">
             <a href id="ADDRESS" class="nav-link"
                 [ngClass]="{ active: selectedTab === 'ADDRESS'}"
                 (click)="onSelectTab($event)">
-                Pick-up & Drop-off
+                <span [innerHTML]="'Pick-up & Drop-off' | translate"></span>
             </a>
         </li>
         <li class="nav-item">
             <a href id="NEGOTIATION" class="nav-link"
                 [ngClass]="{ active: selectedTab === 'NEGOTIATION'}"
                 (click)="onSelectTab($event)">
-                Negotiable Terms
+                <span [innerHTML]="'Negotiable Terms' | translate"></span>
             </a>
         </li>
     </ul>
@@ -44,13 +44,13 @@
 <ng-container *ngIf="selectedTab === 'NEGOTIATION'">
     <div  class="row space-before title-row">
         <div class="col-2">
-            <h5 class="space-before">Term</h5>
+            <h5 class="space-before"><span [innerHTML]="'Term' | translate"></span></h5>
         </div>
         <div class="col-5">
-            <h5 class="space-before">Request</h5>
+            <h5 class="space-before"><span [innerHTML]="'Request' | translate"></span></h5>
         </div>
         <div class="col-5">
-            <h5 class="space-before">Response</h5>
+            <h5 class="space-before"><span [innerHTML]="'Response' | translate"></span></h5>
         </div>
     </div>
 
@@ -210,7 +210,7 @@
     <hr>
 
     <!--Notes-->
-    <h5>Notes and Additional Files</h5>
+    <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
     <note-file-view [notes]="quotation.note"
                [requestNotes]="rfq.note"
                [documents]="quotation.additionalDocumentReference"
@@ -230,16 +230,16 @@
     <div class="row actions-row" *ngIf="userRole === 'seller' && !isReadOnly()">
         <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
         <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRespondToQuotation(false)">
-                Reject Offer
+                <span [innerHTML]="'Reject Offer' | translate"></span>
             </button>
         </div>
         <div class="col-2">
             <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToQuotation(true)">
-                Accept Offer
+                <span [innerHTML]="'Accept Offer' | translate"></span> 
             </button>
         </div>
     </div>
@@ -247,23 +247,23 @@
     <div class="row actions-row" *ngIf="userRole === 'seller' && isReadOnly() && !readonly">
         <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
         <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
     </div>
 
     <div class="row actions-row" *ngIf="userRole === 'buyer' && !readonly">
         <div class="col-5 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
         <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div class="col-3">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRequestNewQuotation()">
-                Request new Quotation
+                <span [innerHTML]="'Request new Quotation' | translate"></span>
             </button>
         </div>
         <div class="col-2">
             <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onAcceptAndOrder()">
-                Accept & Order
+                <span [innerHTML]="'Accept & Order' | translate"></span>
             </button>
         </div>
     </div>

@@ -8,6 +8,7 @@
 
 import {Component, Input, OnChanges, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
 import {ExplorativeSearchService} from './explorative-search.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'search-filter',
@@ -37,7 +38,10 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
     @ViewChild('rangeVal') slider: ElementRef;
     private  _error_detected_slider;
 
-    constructor(private expSearch: ExplorativeSearchService) {}
+    constructor(private expSearch: ExplorativeSearchService, private translate: TranslateService) {
+        translate.setDefaultLang('en');
+        translate.use(translate.getBrowserLang());
+    }
 
     /**
      * use the OnChanges LifeCycle Hook for everytime when the parent sends
@@ -121,7 +125,7 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
                 this._error_detected_slider = false;
             })
             .catch(error => {
-                //console.log(error);
+                // console.log(error);
                 this._error_detected_slider = true;
             });
     }
@@ -135,6 +139,6 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
         // console.log(Number(this.groupSelectVal)); DEBUG
         // This needs to be changed according to Backend API
         this.filterSelectionUpdated.emit(this.finalSelectionJSON);
-        //console.log('FilterArea: finalSelectionJSON', this.finalSelectionJSON); // DEBUG CHECK
+        // console.log('FilterArea: finalSelectionJSON', this.finalSelectionJSON); // DEBUG CHECK
     }
 }

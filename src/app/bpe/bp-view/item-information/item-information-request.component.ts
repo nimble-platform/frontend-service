@@ -21,6 +21,7 @@ import { PresentationMode } from "../../../catalogue/model/publish/presentation-
 import {DocumentService} from '../document-service';
 import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
+import {TranslateService} from '@ngx-translate/core';
 /**
  * Created by suat on 19-Nov-17.
  */
@@ -44,8 +45,11 @@ export class ItemInformationRequestComponent implements OnInit {
                 private userService: UserService,
                 private cookieService: CookieService,
                 private location: Location,
+                private translate: TranslateService,
                 private documentService: DocumentService,
                 private router: Router) {
+                    translate.setDefaultLang("en");
+                    translate.use(translate.getBrowserLang());
 
     }
 

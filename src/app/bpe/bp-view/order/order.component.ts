@@ -33,6 +33,7 @@ import * as myGlobals from '../../../globals';
 import {Contract} from '../../../catalogue/model/publish/contract';
 import {Clause} from '../../../catalogue/model/publish/clause';
 import {BinaryObject} from "../../../catalogue/model/publish/binary-object";
+import {TranslateService} from '@ngx-translate/core';
 import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
 
 /**
@@ -91,8 +92,10 @@ export class OrderComponent implements OnInit {
                 private epcService: EpcService,
                 private location: Location,
                 private router: Router,
+                private translate: TranslateService,
                 private documentService: DocumentService) {
-
+                    translate.setDefaultLang("en");
+                    translate.use(translate.getBrowserLang());
     }
 
     ngOnInit(): void {

@@ -2,8 +2,8 @@
 
 <ng-container *ngIf="isReady()">
     <div class="row title-row">
-        <div class="col-6"><h4>Order Details</h4></div>
-        <div class="col-6"><h4>Delivery Details</h4></div>
+        <div class="col-6"><h4><span [innerHTML]="'Order Details' | translate"></span></h4></div>
+        <div class="col-6"><h4><span [innerHTML]="'Delivery Details' | translate"></span></h4></div>
     </div>
 
     <div class="row content-row">
@@ -88,7 +88,7 @@
         <div class="col-6">
             <div class="row" *ngIf="config.dataChannelsEnabled">
                 <div class="col-4">
-                    <strong>Data Monitoring Service:</strong>
+                    <strong><span [innerHTML]="'Data Monitoring Service' | translate"></span>:</strong>
                 </div>
                 <div class="col-8">
                     <span *ngIf="!fetchDataMonitoringStatus.isDisplayed()">{{ dataMonitoringDemanded ? "Yes" : "No" }}</span>
@@ -121,11 +121,11 @@
 
 
     <div class="row mb-4 mt-4">
-        <div class="btn btn-outline-primary" [ngClass]="{'active':selectedPanel == 'TERMS_AND_CONDITIONS'}" (click)="selectedPanel = 'TERMS_AND_CONDITIONS'">Terms and Conditions</div>
-        <div *ngIf="isEpcTabShown()" class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'TRACK_AND_TRACE'}" (click)="selectedPanel = 'TRACK_AND_TRACE'">Track and Trace</div>
-        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'NOTES_AND_FILES'}" (click)="selectedPanel = 'NOTES_AND_FILES'">Notes and Additional Files</div>
-        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'PURCHASE_ORDER'}" (click)="selectedPanel = 'PURCHASE_ORDER'">Purchase Order</div>
-        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'PREVIOUS_STEPS'}" (click)="selectedPanel = 'PREVIOUS_STEPS'">Previous Steps</div>
+        <div class="btn btn-outline-primary" [ngClass]="{'active':selectedPanel == 'TERMS_AND_CONDITIONS'}" (click)="selectedPanel = 'TERMS_AND_CONDITIONS'"><span [innerHTML]="'Terms and Conditions' | translate"></span></div>
+        <div *ngIf="isEpcTabShown()" class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'TRACK_AND_TRACE'}" (click)="selectedPanel = 'TRACK_AND_TRACE'"><span [innerHTML]="'Track and Trace' | translate"></span></div>
+        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'NOTES_AND_FILES'}" (click)="selectedPanel = 'NOTES_AND_FILES'"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>
+        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'PURCHASE_ORDER'}" (click)="selectedPanel = 'PURCHASE_ORDER'"><span [innerHTML]="'Purchase Order' | translate"></span></div>
+        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'PREVIOUS_STEPS'}" (click)="selectedPanel = 'PREVIOUS_STEPS'"><span [innerHTML]="'Previous Steps' | translate"></span></div>
     </div>
 
     <!-- Notes -->
@@ -162,14 +162,14 @@
                     <a href id="CUSTOM_TERMS" class="nav-link"
                        [ngClass]="{ active: selectedTCTab === 'CUSTOM_TERMS'}"
                        (click)="onTCTabSelect($event)">
-                        Custom Terms
+                       <span [innerHTML]="'Custom Terms' | translate"></span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href id="CLAUSES" class="nav-link"
                        [ngClass]="{ active: selectedTCTab === 'CLAUSES'}"
                        (click)="onTCTabSelect($event)">
-                        Clauses
+                       <span [innerHTML]="'Clauses' | translate"></span>
                     </a>
                 </li>
             </ul>
@@ -203,23 +203,23 @@
         </div>
         <ng-container *ngIf="selectedPanel == 'PURCHASE_ORDER'">
             <div class="row">
-                <div class="col-3"><strong>Product Id:</strong></div>
+                <div class="col-3"><strong><span [innerHTML]="'Product Id' | translate"></span>:</strong></div>
                 <div class="col-9">{{order.orderLine[0].lineItem.item.manufacturersItemIdentification.id}}</div>
             </div>
             <div class="row">
-                <div class="col-3"><strong>Quantity:</strong></div>
+                <div class="col-3"><strong><span [innerHTML]="'Quantity' | translate"></span>:</strong></div>
                 <div class="col-9">{{getQuantityText()}}</div>
             </div>
             <div class="row">
-                <div class="col-3"><strong>Net Price:</strong></div>
+                <div class="col-3"><strong><span [innerHTML]="'Net Price' | translate"></span>:</strong></div>
                 <div class="col-9">{{priceWrapper.totalPriceString}}</div>
             </div>
             <div class="row">
-                <div class="col-3"><strong>VAT:</strong></div>
+                <div class="col-3"><strong><span [innerHTML]="'VAT' | translate"></span>:</strong></div>
                 <div class="col-9">{{priceWrapper.vatTotalString}}</div>
             </div>
             <div class="row">
-                <div class="col-3"><strong>Gross Total:</strong></div>
+                <div class="col-3"><strong><span [innerHTML]="'Gross Total' | translate"></span>:</strong></div>
                 <div class="col-9">{{priceWrapper.grossTotalString}}</div>
             </div>
         </ng-container>
@@ -234,14 +234,14 @@
             <a href id="EPC_CODES" class="nav-link"
                [ngClass]="{ active: selectedTrackAndTraceTab === 'EPC_CODES'}"
                (click)="onTTTabSelect($event)">
-                EPC Codes
+               <span [innerHTML]="'EPC Codes' | translate"></span>
             </a>
         </li>
         <li class="nav-item">
             <a href id="PRODUCTION_PROCESS_TEMPLATE" class="nav-link"
                [ngClass]="{ active: selectedTrackAndTraceTab === 'PRODUCTION_PROCESS_TEMPLATE'}"
                (click)="onTTTabSelect($event)">
-                Production Process Template
+               <span [innerHTML]="'Production Process Template' | translate"></span>
             </a>
         </li>
     </ul>
@@ -258,7 +258,7 @@
                     <input type="text" class="form-control" [(ngModel)]="epcCodes.codes[i]" [disabled]="isBuyer()">
                 </div>
                 <div class="col-3" *ngIf="isSeller()">
-                    <button class="btn btn-danger w-100" (click)="onDeleteEpcCode(i)">Delete</button>
+                    <button class="btn btn-danger w-100" (click)="onDeleteEpcCode(i)"><span [innerHTML]="'Delete' | translate"></span></button>
                 </div>
               </div>
           </div>
@@ -270,7 +270,7 @@
             <!-- Add code -->
             <div class="row">
                 <div class="col-12">
-                    <button class="btn btn-success w-100" (click)="onAddEpcCode()">Add</button>
+                    <button class="btn btn-success w-100" (click)="onAddEpcCode()"><span [innerHTML]="'Add' | translate"></span></button>
                 </div>
             </div>
 
@@ -278,7 +278,7 @@
             <div class="row">
                 <div class="col-12">
                     <button class="btn btn-primary w-100 save-epc-btn" [disabled]="!areEpcCodesDirty() || !isThereAValidEPCCode()"
-                        (click)="onSaveEpcCodes()">Save</button>
+                        (click)="onSaveEpcCodes()"><span [innerHTML]="'Save' | translate"></span></button>
                 </div>
             </div>
 
@@ -304,7 +304,7 @@
                 </file-input>
             </div>
             <div *ngIf="isSeller()">
-                <button class="btn btn-primary" (click)="onUpdateOrderResponse()">Save</button>
+                <button class="btn btn-primary" (click)="onUpdateOrderResponse()"><span [innerHTML]="'Save' | translate"></span></button>
             </div>
         </div>
         <call-status [large]="true" [callStatus]="updateOrderResponseCallStatus"></call-status>
@@ -321,15 +321,15 @@
             <div class="col-8 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
             <div class="col-2">
                 <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
-                    Back
+                    <span [innerHTML]="'Back' | translate"></span>
                 </button>
             </div>
             <div class="col-2">
                 <button *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading()" (click)="onOrder()">
-                    Order
+                    <span [innerHTML]="'Order' | translate"></span>
                 </button>
                 <button *ngIf="processMetadata && processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading()" (click)="onOrderUpdate()">
-                    Update Order
+                    <span [innerHTML]="'Update Order' | translate"></span>
                 </button>
             </div>
         </div>
@@ -338,7 +338,7 @@
             <div class="col-10 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
             <div class="col-2">
                 <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
-                    Back
+                    <span [innerHTML]="'Back' | translate"></span>
                 </button>
             </div>
         </div>
@@ -347,12 +347,12 @@
             <div class="col-7 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
             <div class="col-2">
                 <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
-                    Back
+                    <span [innerHTML]="'Back' | translate"></span>
                 </button>
             </div>
             <div class="col-3">
                 <button class="btn btn-primary action" [disabled]="isLoading() || isOrderRejected()" (click)="onDownloadContact()">
-                    Download Contract
+                    <span [innerHTML]="'Download Contract' | translate"></span>
                 </button>
             </div>
         </div>
@@ -366,17 +366,17 @@
             <div class="col-6 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
             <div class="col-2">
                 <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
-                    Back
+                    <span [innerHTML]="'Back' | translate"></span>
                 </button>
             </div>
             <div class="col-2">
                 <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRespondToOrder(false)">
-                    Reject
+                    <span [innerHTML]="'Reject' | translate"></span>
                 </button>
             </div>
             <div class="col-2">
                 <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToOrder(true)">
-                    Accept
+                    <span [innerHTML]="'Accept' | translate"></span>
                 </button>
             </div>
         </div>
@@ -385,22 +385,22 @@
             <div class="{{companyWorkflowMap.get('Fulfilment') ? 'col-3' : 'col-8'}} call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
             <div class="col-2">
                 <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
-                    Back
+                    <span [innerHTML]="'Back' | translate"></span>
                 </button>
             </div>
             <div class="col-2">
                 <button class="btn btn-secondary action" [disabled]="isLoading() || isOrderRejected()" (click)="onDownloadContact()">
-                    Download Contract
+                    <span [innerHTML]="'Download Contract' | translate"></span>
                 </button>
             </div>
             <div class="col-3" *ngIf="companyWorkflowMap.get('Fulfilment')">
                 <button class="btn btn-primary action" [disabled]="isLoading() || isOrderRejected()" (click)="onSearchTransportService()">
-                    Search for Transport Service Provider
+                    <span [innerHTML]="'Search for Transport Service Provider' | translate"></span>
                 </button>
             </div>
             <div class="col-2" *ngIf="companyWorkflowMap.get('Fulfilment')">
                 <button class="btn btn-primary action" [disabled]="isLoading() || isOrderRejected()" (click)="onDispatchOrder()">
-                    Dispatch Order
+                    <span [innerHTML]="'Dispatch Order' | translate"></span> 
                 </button>
             </div>
         </div>

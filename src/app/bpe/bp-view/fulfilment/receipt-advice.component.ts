@@ -13,6 +13,8 @@ import { DespatchAdvice } from "../../../catalogue/model/publish/despatch-advice
 import {CookieService} from 'ng2-cookies';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
+import {TranslateService} from '@ngx-translate/core';
+
 
 /**
  * Created by suat on 20-Sep-17.
@@ -37,7 +39,10 @@ export class ReceiptAdviceComponent implements OnInit {
                 private bpDataService: BPDataService,
                 private location: Location,
                 private cookieService: CookieService,
+                private translate: TranslateService,
                 private router:Router) {
+                    translate.setDefaultLang("en");
+                    translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {

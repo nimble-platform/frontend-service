@@ -4,6 +4,7 @@ import {ExplorativeSearchService} from './explorative-search.service';
 import { Observable } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 import {isNumeric} from 'rxjs/util/isNumeric';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'explore-search-semantic',
@@ -74,7 +75,12 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
 
 
 
-    constructor(private expSearch: ExplorativeSearchService, private router: Router) { }
+    constructor(private expSearch: ExplorativeSearchService,
+                private router: Router,
+                private translate: TranslateService) {
+                    translate.setDefaultLang('en');
+                    translate.use(translate.getBrowserLang());
+                }
 
     /**
      * ngOnChanges: Angular Life Cycle Hook
@@ -183,12 +189,12 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         let newConcept = '';
         this.expSearch.getReferencesFromConcept(dummyJSON)
             .then(res => {
-                //console.log(res);
+                // console.log(res);
                 this.referenceResults = res['allAvailableReferences'][index];
                 this.refResultsRange = this.referenceResults['range'];
                 jsonforProperties['concept'] = encodeURIComponent(this.refResultsRange[0]['original']);
                 jsonforProperties['distanceToFrozenConcept'] += 1;
-                //console.log(jsonforProperties);
+                // console.log(jsonforProperties);
                 this.expSearch.searchForProperty(jsonforProperties)
                     .then((resp) => {
                             // console.log(res); // DEBUG
@@ -217,7 +223,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     }
 
     check(con, i) {
-        //console.log(i);
+        // console.log(i);
         if (i === 0) {
             let dummyJSON = this.configSPQ;
             dummyJSON['concept'] = con.url;
@@ -228,7 +234,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
             let dummyJSON = this.configSPQ;
             dummyJSON['concept'] = encodeURIComponent(con.url);
             dummyJSON['distanceToFrozenConcept'] = i;
-            //console.log(dummyJSON);
+            // console.log(dummyJSON);
             this.getPropertiesOfConcept(dummyJSON);
         }
         this.conceptPaths.length = i + 1;
@@ -237,7 +243,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
 
     noFilterSelected() {
         if (this.sparqlJSON['parameters'].findIndex(name => name === this.selectedProperty['translatedProperty']) > -1) {
-            //console.log('already exists');
+            // console.log('already exists');
         } else {
             this.sparqlJSON['parameters'].push(this.selectedProperty['translatedProperty']);
             this.sparqlJSON['parametersURL'].push(encodeURIComponent(this.selectedProperty['propertyURL']));

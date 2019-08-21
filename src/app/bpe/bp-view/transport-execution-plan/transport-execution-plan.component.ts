@@ -20,6 +20,7 @@ import { PresentationMode } from "../../../catalogue/model/publish/presentation-
 import {DocumentService} from '../document-service';
 import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "transport-execution-plan",
@@ -50,8 +51,10 @@ export class TransportExecutionPlanComponent implements OnInit {
                 private location: Location,
                 private router: Router,
                 private documentService: DocumentService,
+                private translate: TranslateService,
                 private route: ActivatedRoute) {
-
+                    translate.setDefaultLang("en");
+                    translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {
