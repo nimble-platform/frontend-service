@@ -341,6 +341,18 @@
 	"ppadoclevel3": "Level 3 – PSW with product samples and complete supporting data",
 	"ppadoclevel2": "Level 2 – PSW with product samples and limited supporting data",
 	"ppadoclevel1": "Level 1 - Part Submission Warrant (PSW) only submitted to the customer",
+	"1. Download the product / service category template":"1. Download the product / service category template",
+	"Download template":"Download template",
+	"At least one category should be selected!":"At least one category should be selected!",
+	"Append mode: Already published products / services are updated if newer versions are provided in the template, new products / services are appended to the current catalogue.":"Append mode: Already published products / services are updated if newer versions are provided in the template, new products / services are appended to the current catalogue.",
+	"Replace mode: All previously published items having the same categories specified in the template are deleted; and only the new ones are added to the catalogue.":"Replace mode: All previously published items having the same categories specified in the template are deleted; and only the new ones are added to the catalogue.",
+	"Append":"Append",
+	"Replace":"Replace",
+	"3. Upload the template after filling it with your product / service information":"3. Upload the template after filling it with your product / service information",
+	"Upload template(s)":"Upload template(s)",
+	"4. Upload a "zip package" including product / service images. Each image must be suffixed with the identifier of the product / service. For example: pid1.imageFile.jpg, pid1.imageFile2.png, etc.":"4. Upload a "zip package" including product / service images. Each image must be suffixed with the identifier of the product / service. For example: pid1.imageFile.jpg, pid1.imageFile2.png, etc.",
+	"Upload Image Package":"Upload Image Package",
+	"2. Select upload mode.":"2. Select upload mode.",
 	"funding-disclaimer": "This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 723810",
 	"help-modal-text": "This platform has only been developed for and tested on Chrome and Firefox. In case you are experiencing errors try using one of those browsers first.<br/><br/>When you press \"Open manual\" a PDF with an user manual will open in a new tab.<br/><br/>When you press \"Contact support\" a partially prefilled mail template will open in the mail client of your choice.<br/>Please make sure to fill out the description and cause of the issue properly and add screenshots if they are of use.<br/>We will get back to you within one business day."
 }
