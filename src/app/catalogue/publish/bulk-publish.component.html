@@ -54,8 +54,7 @@
     </ng-container>
 </div>
 <div class="d-flex mb-4">
-    <label class="col-9"><span [innerHTML]="'4. Upload a "zip package" including product / service images. Each image must be suffixed with the identifier of the product / service.
-        For example: pid1.imageFile.jpg, pid1.imageFile2.png, etc.' | translate"></span>
+    <label class="col-9"><span [innerHTML]="'4. Upload a zip package' | translate"></span>
     </label>
     <input #imagePackage type="file" (change)="uploadImagePackage($event)"
            accept="application/zip"

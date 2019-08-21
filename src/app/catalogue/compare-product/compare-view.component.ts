@@ -114,7 +114,7 @@ export class CompareViewComponent implements OnInit {
                 private categoryService: CategoryService,
                 private userService: UserService,
                 private route: ActivatedRoute,
-				private router: Router
+				private router: Router,
 				private translate: TranslateService) {
 
     }
