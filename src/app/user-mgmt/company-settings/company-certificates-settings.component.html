@@ -3,15 +3,15 @@
 <!-- <h3 class="space-after space-before">PPAP</h3> -->
 <div *ngIf="config.showPPAP">
   <div class="form-group row space-before">
-      <strong class="col-2 col-form-label">PPAP Comp. Level:</strong>
+      <strong class="col-2 col-form-label"><span [innerHTML]="'PPAP Comp. Level:' | translate"></span></strong>
       <div class="col-10">
           <select class="form-control" [(ngModel)]="ppapLevel">
               <option [value]="0">-</option>
-              <option [value]="1">Level 1</option>
-              <option [value]="2">Level 2</option>
-              <option [value]="3">Level 3</option>
-              <option [value]="4">Level 4</option>
-              <option [value]="5">Level 5</option>
+              <option [value]="1"><span [innerHTML]="'Level 1' | translate"></span></option>
+              <option [value]="2"><span [innerHTML]="'Level 2' | translate"></span></option>
+              <option [value]="3"><span [innerHTML]="'Level 3' | translate"></span></option>
+              <option [value]="4"><span [innerHTML]="'Level 3' | translate"></span></option>
+              <option [value]="5"><span [innerHTML]="'Level 5' | translate"></span></option>
           </select>
       </div>
   </div>
@@ -20,7 +20,7 @@
       <div class="col-10 call-status-col"><call-status [callStatus]="savePpapLevelCallStatus"></call-status></div>
       <div class="col-2">
           <button class="btn btn-primary action" type="button" [disabled]="!isPpapLevelDirty()" (click)="onSavePpapLevel()">
-              Save
+            <span [innerHTML]="'Save' | translate"></span>
           </button>
       </div>
   </div>
@@ -29,7 +29,7 @@
 </div>
 
 <!-- Certificates -->
-<h4 class="space-after" [ngClass]="{'space-before':!config.showPPAP}">Certificates</h4>
+<h4 class="space-after" [ngClass]="{'space-before':!config.showPPAP}"><span [innerHTML]="'Certificates' | translate"></span></h4>
 
 <call-status [callStatus]="certificatesCallStatus"></call-status>
 
@@ -42,16 +42,16 @@
                 <col style="width: 150%;">
                 <col style="width: auto;">
             </colgroup>
-            <tr><th>Certificate Type</th><th>Certificate Name</th><th>Certificate Description</th><th class="col-3">Actions</th></tr>
-            <tr *ngIf="certificates.length==0"><td colspan="4">No data</td></tr>
+            <tr><th><span [innerHTML]="'Certificate Type' | translate"></span></th><th><span [innerHTML]="'Certificate Name' | translate"></span></th><th><span [innerHTML]="'Certificate Description' | translate"></span></th><th class="col-3"><span [innerHTML]="'Actions' | translate"></span></th></tr>
+            <tr *ngIf="certificates.length==0"><td colspan="4"><span [innerHTML]="'No data' | translate"></span></td></tr>
             <tr *ngFor="let certificate of certificates; let i = index">
                 <td>{{certificate.type}}</td>
                 <td>{{certificate.name}}</td>
                 <td>{{certificate.description}}</td>
                 <td>
-                    <button class="btn btn-primary btn-sm" [disabled]="certificatesCallStatus.isLoading()" (click)="onDownloadCertificate(certificate.id)">Download</button>
-                    <button class="btn btn-primary btn-sm" [disabled]="certificatesCallStatus.isLoading()" (click)="onEditCertificate(addCertModal, i)">Edit</button>
-                    <button class="btn btn-danger btn-sm ml-1" [disabled]="certificatesCallStatus.isLoading()" (click)="onRemoveCertificate(certificate.id, i)">Delete</button>
+                    <button class="btn btn-primary btn-sm" [disabled]="certificatesCallStatus.isLoading()" (click)="onDownloadCertificate(certificate.id)"><span [innerHTML]="'Download' | translate"></span></button>
+                    <button class="btn btn-primary btn-sm" [disabled]="certificatesCallStatus.isLoading()" (click)="onEditCertificate(addCertModal, i)"><span [innerHTML]="'Edit' | translate"></span></button>
+                    <button class="btn btn-danger btn-sm ml-1" [disabled]="certificatesCallStatus.isLoading()" (click)="onRemoveCertificate(certificate.id, i)"><span [innerHTML]="'Delete' | translate"></span></button>
                 </td>
             </tr>
         </table>
@@ -62,7 +62,7 @@
     <div class="col-10"></div>
     <div class="col-2">
         <button class="btn btn-primary action" type="button" (click)="onAddCertificate(addCertModal)">
-            <span>Add Certificate</span>
+            <span><span [innerHTML]="'Add Certificate' | translate"></span></span>
         </button>
     </div>
 </div>
@@ -73,20 +73,20 @@
 <ng-template #addCertModal let-d="dismiss">
     <form [formGroup]="addCertForm" novalidate>
         <div class="modal-header">
-            <h4 class="modal-title">Add Certificate</h4>
+            <h4 class="modal-title"><span [innerHTML]="'Add Certificate' | translate"></span></h4>
             <button type="button" class="close" aria-label="Close" (click)="d('')">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
         <div class="modal-body">
                 <div class="form-group row">
-                    <label class="col-2 col-form-label">File</label>
+                    <label class="col-2 col-form-label"><span [innerHTML]="'File' | translate"></span></label>
                     <div class="col-10">
                         <input type="file" class="form-control" [formControl]="addCertForm.controls['file']" (change)="onSetCertificateFile($event)" required>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-2 col-form-label">Type</label>
+                    <label class="col-2 col-form-label"><span [innerHTML]="'Type' | translate"></span></label>
                     <div class="col-10">
                         <select class="form-control" [formControl]="addCertForm.controls['type']" required>
                             <option></option>
@@ -95,13 +95,13 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-2 col-form-label">Name</label>
+                    <label class="col-2 col-form-label"><span [innerHTML]="'Name' | translate"></span></label>
                     <div class="col-10">
                         <input type="text" class="form-control" [formControl]="addCertForm.controls['name']" required>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-2 col-form-label">Description</label>
+                    <label class="col-2 col-form-label"><span [innerHTML]="'Description' | translate"></span></label>
                     <div class="col-10">
                         <input type="text" class="form-control" [formControl]="addCertForm.controls['description']">
                     </div>
@@ -110,7 +110,7 @@
         <div class="modal-footer">
             <call-status [callStatus]="saveCertCallStatus"></call-status>
             <button type="button" class="btn btn-primary save-cert-btn" [disabled]="!addCertForm.valid || saveCertCallStatus.isLoading()" (click)="onSaveCertificate(addCertForm, d);">
-                    <span>Save</span>
+                    <span><span [innerHTML]="'Save' | translate"></span></span>
             </button>
         </div>
     </form>
