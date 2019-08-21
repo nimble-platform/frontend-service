@@ -1,5 +1,11 @@
 {
 	"Chat": "Chat",
+	"Add Name & Description":"Add Name & Description",
+	"Add Image":"Add Image",
+	"Image recommendations":"Image recommendations",
+	"Images must be files with one of the "png", "jpg" or "gif" formats.":"Images must be files with one of the "png", "jpg" or "gif" formats.",
+	"Although not mandatory, square or squarish images are recommended for better visibility.":"Although not mandatory, square or squarish images are recommended for better visibility.",
+	"Images exceeding 5 MB in size are not permitted.":"Images exceeding 5 MB in size are not permitted.",
 	"Single Upload":"Single Upload",
 	"Bulk Upload":"Bulk Upload",
 	"Transport":"Transport",
