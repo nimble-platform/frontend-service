@@ -42,6 +42,8 @@ export class AmountViewComponent extends ChildForm implements OnInit {
                 private translate: TranslateService,
                 private unitService:UnitService) {
         super();
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {

@@ -79,7 +79,8 @@ export class CatalogueViewComponent implements OnInit {
                 private translate: TranslateService,
                 private userService: UserService,
                 private router: Router) {
-
+                    translate.setDefaultLang("en");
+                    translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {

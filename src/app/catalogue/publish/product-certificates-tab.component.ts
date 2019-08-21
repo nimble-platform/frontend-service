@@ -35,6 +35,8 @@ export class ProductCertificatesTabComponent implements OnInit {
     constructor(private _fb: FormBuilder,
                 private modalService: NgbModal,
                 private translate: TranslateService) {
+                    translate.setDefaultLang("en");
+                    translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {

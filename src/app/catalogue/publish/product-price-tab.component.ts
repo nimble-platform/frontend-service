@@ -41,6 +41,8 @@ export class ProductPriceTabComponent implements OnInit {
                 private userService: UserService,
                 private cookieService: CookieService,
                 private translate: TranslateService) {
+                    translate.setDefaultLang("en");
+                    translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {

@@ -36,6 +36,8 @@ export class CatalogueLinePanelComponent {
                 private publishService: PublishService,
                 private translate: TranslateService,
                 private router: Router) {
+                    translate.setDefaultLang("en");
+                    translate.use(translate.getBrowserLang());
     }
 
     selectItemName (item:  Item) {

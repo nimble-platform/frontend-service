@@ -14,6 +14,8 @@ export class NameDescriptionPanelComponent implements OnInit{
 
     constructor(private modalService: NgbModal,
         private translate: TranslateService) {
+            translate.setDefaultLang("en");
+            translate.use(translate.getBrowserLang());
     }
 
     @Input() catalogueLine;

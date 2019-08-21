@@ -5,11 +5,6 @@ import {TranslateService} from '@ngx-translate/core';
     selector: 'quantity-value-view',
     templateUrl: './quantity-value-view.component.html'
 })
-
-constructor(
-    private translate: TranslateService
-) {}
-
 export class QuantityValueViewComponent {
     @Input() propName: string;
     @Input() value: number;
@@ -18,6 +13,13 @@ export class QuantityValueViewComponent {
     @Input() definition: string;
 
     @Output() onValueChanged: EventEmitter<number> = new EventEmitter<number>();
+
+    constructor(
+        private translate: TranslateService
+    ) {
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
+    }
 
     ngOnChanges(values) {
         // emit the new value of the "value" field

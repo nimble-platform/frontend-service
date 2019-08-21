@@ -27,6 +27,8 @@ export class DimensionViewComponent extends ChildForm implements OnInit {
                 private translate: TranslateService,
                 private cdr: ChangeDetectorRef) {
         super();
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
     }
 
     ngOnInit(): void {

@@ -29,6 +29,8 @@ export class BulkPublishComponent {
                 private router: Router,
                 private cookieService: CookieService,
                 private translate: TranslateService) {
+                    translate.setDefaultLang("en");
+                    translate.use(translate.getBrowserLang());
     }
 
     closeCategoryWarning(): void {
