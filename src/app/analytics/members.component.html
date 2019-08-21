@@ -116,7 +116,9 @@
         <div *ngIf="registeredCompaniesPage.content.length >= size && orgCompaniesPage.content.length > size">
           <hr>
           <span class="clickable" (click)="toggleExpand()">
-              <span *ngIf="!expanded"> [innerHTML]="'Show more' | translate"></span><span *ngIf="expanded">[innerHTML]="'Show less' | translate"></span></span>
+              <span *ngIf="!expanded" [innerHTML]="'Show more' | translate"></span>
+              <span *ngIf="expanded" [innerHTML]="'Show less' | translate"></span>
+              </span>
         </div>
         <!--
         <ngb-pagination class="d-flex justify-content-center"
