@@ -1,6 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, Output, ViewChild} from "@angular/core";
 import {CallStatus} from "../../../common/call-status";
 import {CatalogueService} from "../../catalogue.service";
+import {TranslateService} from '@ngx-translate/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
@@ -20,7 +21,8 @@ export class DeleteExportCatalogueModalComponent {
     @Output() onSuccessfulDelete: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     constructor(private modalService: NgbModal,
-                private catalogueService: CatalogueService) {
+                private catalogueService: CatalogueService,
+                private translate: TranslateService) {
     }
 
     open(mode: 'delete' | 'export'): void {
