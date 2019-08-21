@@ -9,10 +9,6 @@ import {TranslateService} from '@ngx-translate/core';
     templateUrl: './product-trading-details.component.html',
 })
 
-constructor(
-    private translate: TranslateService
-    ) {}
-
 // Component that displays warranty information etc. inside the "trading details" tab in CatalogueLineView
 export class ProductTradingDetailsComponent {
     @Input() presentationMode:string;
@@ -20,4 +16,8 @@ export class ProductTradingDetailsComponent {
     @Input() parentForm: FormGroup;
 
     INCOTERMS: string[] = INCOTERMS;
+
+    constructor(
+        private translate: TranslateService
+    ) {}
 }
