@@ -11,14 +11,14 @@
         <!--other options-->
         <div *ngIf="checkboxOther" class="row space-before">
             <input class="align-self-center custom-checkbox col-1" type="checkbox" [(ngModel)]="isOtherOptionEnabled">
-            <label class="form-check-label align-self-center ">Other</label>
+            <label class="form-check-label align-self-center "><span [innerHTML]="'Other' | translate"></span></label>
             <input type="text" class="space-left" [(ngModel)]="option">
-            <button class="btn btn-outline-primary space-left" (click)="onOptionAdded()" [disabled]="!isOtherOptionEnabled">Add</button>
+            <button class="btn btn-outline-primary space-left" (click)="onOptionAdded()" [disabled]="!isOtherOptionEnabled"><span [innerHTML]="'Add' | translate"></span></button>
         </div>
         <div *ngIf="!checkboxOther" class="row space-before">
             <div class="col-12">
                 <input type="text" [(ngModel)]="option">
-                <button class="btn btn-outline-primary space-left" (click)="onOptionAdded()">Add</button>
+                <button class="btn btn-outline-primary space-left" (click)="onOptionAdded()"><span [innerHTML]="'Add' | translate"></span></button>
             </div>
         </div>
     </div>
