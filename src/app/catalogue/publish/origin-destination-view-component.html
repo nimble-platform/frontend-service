@@ -6,11 +6,11 @@
         <!-- All over the world-->
         <div class="row">
             <input class="align-self-center custom-checkbox col-1" type="checkbox" (change)="onAllOverTheWorldOptionSelected($event.target.checked)" [(ngModel)]="isAllOverTheWorldOptionSelected">
-            <label class="form-check-label">All over the world</label>
+            <label class="form-check-label"><span [innerHTML]="'All over the world' | translate"></span></label>
         </div>
         <div class="row">
             <input class="align-self-center custom-checkbox col-1" type="checkbox" [(ngModel)]="enableRegionSelection" (change)="onRegionsChecked($event.target.checked)">
-            <label class="form-check-label">Regions</label>
+            <label class="form-check-label"><span [innerHTML]="'Regions' | translate"></span></label>
         </div>
         <!-- Region options -->
         <div *ngFor="let option of regionOptions" class="row">
@@ -25,7 +25,7 @@
         <!-- Country selection -->
         <div class="row">
             <input class="align-self-center custom-checkbox col-1" type="checkbox" [(ngModel)]="enableCountrySelection" (change)="onCountrySelectionChanged($event.target.value)">
-            <label class="form-check-label">Only selected countries</label>
+            <label class="form-check-label"><span [innerHTML]="'Only selected countries' | translate"></span></label>
         </div>
         <div class="row">
             <div class="col-12">
