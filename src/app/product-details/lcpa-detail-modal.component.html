@@ -9,7 +9,7 @@
             <div class="container-fluid">
                 <div class="row space-before">
                     <div class="col-3">
-                        <strong>Name:</strong>
+                        <strong><span [innerHTML]="'Name:' | translate"></span></strong>
                     </div>
                     <div class="col-9">
                         <input [(ngModel)]="lcpaInputDetail.name.value" class="form-control" type="text" name="{{lcpaInputDetail.name.value}}" [disabled]="presentationMode === 'view'" />
@@ -33,7 +33,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="d('cancel')">Cancel</button>
-            <button type="button" class="btn btn-primary" (click)="addDetail(c)" [disabled]="lcpaInputDetail.name.value==''">OK</button>
+            <button type="button" class="btn btn-secondary" (click)="d('cancel')"><span [innerHTML]="'Cancel' | translate"></span></button>
+            <button type="button" class="btn btn-primary" (click)="addDetail(c)" [disabled]="lcpaInputDetail.name.value==''"><span [innerHTML]="'OK' | translate"></span></button>
         </div>
     </ng-template>

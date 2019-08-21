@@ -36,11 +36,11 @@
 
             <div [hidden]="frameContract == null">
                 <hr>
-                Terms:
+                <span [innerHTML]="'Terms:' | translate"></span>
 
                 <select #termSelectBox class="btn btn-outline-secondary" [value]="termsSelectBoxValue" (change)="onTermsChange($event.target.value)">
-                    <option value="product_defaults">Product Defaults</option>
-                    <option value="frame_contract">Frame Contract</option>
+                    <option value="product_defaults"><span [innerHTML]="'Product Defaults' | translate"></span></option>
+                    <option value="frame_contract"><span [innerHTML]="'Frame Contract' | translate"></span></option>
                 </select>
             </div>
 
@@ -49,7 +49,7 @@
             <!-- Delivery Period -->
             <div class="order-group">
                 <label class="order-label">
-                    Delivery Period
+                    <span [innerHTML]="'Delivery Period' | translate"></span>
                 </label>
                 <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
                     {{ productWrapper.getDeliveryPeriod() }}
@@ -62,7 +62,7 @@
             <!-- Warranty Period -->
             <div class="order-group">
                 <label class="order-label">
-                    Warranty
+                    <span [innerHTML]="'Warranty' | translate"></span>
                 </label>
                 <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
                     {{ productWrapper.getWarrantyPeriod() }}
@@ -75,7 +75,7 @@
             <!-- Incoterms -->
             <div class="order-group">
                 <label class="order-label">
-                    Incoterms
+                    <span [innerHTML]="'Incoterms' | translate"></span>
                 </label>
                 <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
                     {{ productWrapper.getIncoterms() }}
@@ -88,7 +88,7 @@
             <!-- Payment Terms -->
             <div class="order-group">
                 <label class="order-label">
-                    Payment Terms
+                    <span [innerHTML]="'Payment Terms' | translate"></span>
                 </label>
                 <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
                     {{ productWrapper.getPaymentTerms() }}
@@ -101,7 +101,7 @@
             <!-- Payment Means -->
             <div class="order-group">
                 <label class="order-label">
-                    Payment Means
+                    <span [innerHTML]="'Payment Means' | translate"></span>
                 </label>
                 <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
                     {{ productWrapper.getPaymentMeans() }}
@@ -115,7 +115,7 @@
             <ng-container *ngIf="hasPrice()">
                 <div class="order-group">
                     <label class="order-label">
-                        Price
+                        <span [innerHTML]="'Dashboard' | translate"></span>
                     </label>
                     <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
                         {{ getPricePerItem() }}
@@ -129,7 +129,7 @@
 
                 <div class="inline-order-group">
                     <label class="order-label">
-                        Quantity:
+                        <span [innerHTML]="'Quantity:' | translate"></span>
                     </label>
                     <span class="order-qty-input">
                         <input type="number" min="1" step="1" (keypress)="onOrderQuantityKeyPressed($event)"
@@ -149,7 +149,7 @@
                 </div>
                 <div class="order-group mt-2">
                     <label class="order-label">
-                        VAT
+                        <span [innerHTML]="'VAT' | translate"></span>
                     </label>
                     <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
                         {{priceWrapper.vatTotalString}}
@@ -160,7 +160,7 @@
                 </div>
                 <div *ngIf="priceWrapper.appliedDiscounts.length > 0" class="order-group">
                     <label class="order-label">
-                        Applied Discounts
+                        <span [innerHTML]="'Applied Discounts' | translate"></span>
                     </label>
                     <div class="inline-order-value">
                         <span *ngIf="termsSelectBoxValue == 'product_defaults'">
@@ -176,7 +176,7 @@
                 </div>
                 <div class="order-group">
                         <label class="order-label order-price">
-                            Total Price:
+                            <span [innerHTML]="'Total Price:' | translate"></span>
                         </label>
 
                         <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-price-value">
@@ -205,7 +205,7 @@
                 -->
                 <div class="inline-order-group">
                     <label class="order-label">
-                        Quantity:
+                        <span [innerHTML]="'Quantity:' | translate"></span>
                     </label>
                     <span class="order-qty-input">
                         <input type="number" min="1" step="1" (keypress)="onOrderQuantityKeyPressed($event)"
@@ -225,10 +225,10 @@
                 </div>
                 <div class="inline-order-group">
                     <label class="order-label order-price">
-                        Total Price:
+                        <span [innerHTML]="'Total Price:' | translate"></span>
                     </label>
                     <span class="order-price-value">
-                        on demand
+                        <span [innerHTML]="'on demand' | translate"></span>
                     </span>
                 </div>
             </ng-container>
@@ -248,7 +248,7 @@
             <!-- Payment Terms -->
             <div class="order-group">
                 <label class="order-label">
-                    Payment Terms
+                    <span [innerHTML]="'Payment Terms' | translate"></span>
                 </label>
                 <span class="order-value">
                     {{ productWrapper.getPaymentTerms() }}
@@ -258,7 +258,7 @@
             <!-- Payment Means -->
             <div class="order-group">
                 <label class="order-label">
-                    Payment Means
+                    <span [innerHTML]="'Payment Means' | translate"></span>
                 </label>
                 <span class="order-value">
                     {{ productWrapper.getPaymentMeans() }}
@@ -266,10 +266,10 @@
             </div>
             <div class="inline-order-group">
                 <label class="order-label order-price">
-                    Total Price:
+                    <span [innerHTML]="'Total Price:' | translate"></span>
                 </label>
                 <span class="order-price-value">
-                    on demand
+                    <span [innerHTML]="'on demand' | translate"></span>
                 </span>
             </div>
 
@@ -283,12 +283,12 @@
         <div *ngIf="this.appComponent.checkRoles('bp')" class="pb-3 pl-3 pr-3 pt-0 border border-dark border-top-0">
             <div *ngIf="companyWorkflowMap.get('Item_Information_Request')">
                 <button class="btn btn-secondary w-100" (click)="onRequestInformation()">
-                    Request Information
+                    <span [innerHTML]="'Request Information' | translate"></span>
                 </button>
             </div>
             <div *ngIf="config.showPPAP && isPpapAvailable() && !isLogistics && companyWorkflowMap.get('Ppap')">
                 <button class="btn btn-secondary w-100 mt-3" (click)="onStartPpap()">
-                    Start Ppap
+                    <span [innerHTML]="'Start Ppap' | translate"></span>
                 </button>
             </div>
         </div>

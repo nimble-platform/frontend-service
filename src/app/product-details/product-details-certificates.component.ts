@@ -6,6 +6,7 @@ import {CatalogueService} from "../catalogue/catalogue.service";
 import {Certificate} from "../catalogue/model/publish/certificate";
 import {Country} from '../catalogue/model/publish/country';
 import {DEFAULT_LANGUAGE} from "../catalogue/model/constants";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'product-details-certificates',
@@ -17,7 +18,8 @@ export class ProductDetailsCertificatesComponent {
     @Input() settings: CompanySettings;
     @Output() certificateStatus = new EventEmitter<boolean>();
 
-    constructor(private userService: UserService,
+    constructor(private translate: TranslateService,
+                private userService: UserService,
                 private catalogueService: CatalogueService) {
 
     }

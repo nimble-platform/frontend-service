@@ -7,6 +7,7 @@ import { CatalogueLine } from "../catalogue/model/publish/catalogue-line";
 import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
 import { ProcessType } from "../bpe/model/process-type";
 import { ProductWrapper } from "../common/product-wrapper";
+import {TranslateService} from '@ngx-translate/core';
 import { Item } from "../catalogue/model/publish/item";
 import {
     copy,
@@ -83,6 +84,7 @@ export class ProductDetailsComponent implements OnInit {
                 private userService: UserService,
                 private route: ActivatedRoute,
                 private cookieService: CookieService,
+                private translate: TranslateService,
                 public appComponent: AppComponent,) {
 
     }
