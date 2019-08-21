@@ -2,11 +2,16 @@ import { Component, Input } from "@angular/core";
 import { CatalogueLine } from "../../model/publish/catalogue-line";
 import { FormGroup } from "@angular/forms";
 import { INCOTERMS } from "../../model/constants";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'product-trading-details',
     templateUrl: './product-trading-details.component.html',
 })
+
+constructor(
+    private translate: TranslateService
+    ) {}
 
 // Component that displays warranty information etc. inside the "trading details" tab in CatalogueLineView
 export class ProductTradingDetailsComponent {

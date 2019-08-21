@@ -2,6 +2,7 @@ import {Component, Input} from "@angular/core";
 import {CatalogueLine} from "../../model/publish/catalogue-line";
 import {PropertyBlockPipe} from "../../property-block-pipe";
 import {PublishService} from "../../publish-and-aip.service";
+import {TranslateService} from '@ngx-translate/core';
 import {FormGroup} from "@angular/forms";
 
 @Component({
@@ -28,8 +29,9 @@ export class CatalogueLineDetailsComponent{
     // keeping the collapsed state of property blocks. it is actually a reference to the actual kept in publish service
     propertyBlockCollapsedStates: Map<string, boolean> = new Map<string, boolean>();
 
-    constructor(private publishService: PublishService) {
-        this.propertyBlockCollapsedStates = this.publishService.getCollapsedStates();
+    constructor(private translate: TranslateService,
+        private publishService: PublishService) {
+        this.propertyBlockCollapsedStates = this.publishService.getCollapsedStates,();
     }
 
     toggleCollapsed(blockName:string):void {

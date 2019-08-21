@@ -3,6 +3,7 @@ import {CatalogueLine} from "../../model/publish/catalogue-line";
 import {FormGroup, NgForm} from "@angular/forms";
 import {BinaryObject} from "../../model/publish/binary-object";
 import {Item} from '../../model/publish/item';
+import {TranslateService} from '@ngx-translate/core';
 import {selectDescription, selectName} from '../../../common/utils';
 import {ItemProperty} from '../../model/publish/item-property';
 /**
@@ -27,6 +28,10 @@ export class CatalogueLineHeaderComponent {
 
     // after first three custom properties,check whether the rest is visible or not
     showOtherCustomProperties = false;
+
+    constructor(
+        private translate: TranslateService
+        ) {}
 
     toggleCollapsed(blockName:string):void {
         this.propertyBlockCollapsedStates.set(blockName, !this.propertyBlockCollapsedStates.get(blockName));
