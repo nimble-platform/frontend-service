@@ -14,6 +14,7 @@ import {TaxCategory} from "../model/publish/tax-category";
 import {UserService} from "../../user-mgmt/user.service";
 import {CookieService} from "ng2-cookies";
 import {Party} from "../model/publish/party";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "product-price-tab",
@@ -38,7 +39,8 @@ export class ProductPriceTabComponent implements OnInit {
 
     constructor(private catalogueService: CatalogueService,
                 private userService: UserService,
-                private cookieService: CookieService) {
+                private cookieService: CookieService,
+                private translate: TranslateService) {
     }
 
     ngOnInit() {
