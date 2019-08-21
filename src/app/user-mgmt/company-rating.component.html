@@ -4,6 +4,11 @@
     </div>
 </div>
 
+<div *ngIf="!ratings" class="row">
+    <div class="col-12">
+        Unrated
+    </div>
+</div>
 <div *ngIf="ratings" class="row">
   <div class="col-12">
     <div *ngIf="ratings.totalNumberOfRatings==0">

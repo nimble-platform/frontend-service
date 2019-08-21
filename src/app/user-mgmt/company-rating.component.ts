@@ -54,7 +54,7 @@ export class CompanyRatingComponent implements OnInit {
           console.log("Fetched ratings: " + JSON.stringify(ratings));
         }
         this.ratings = ratings;
-        if (this.ratings.totalNumberOfRatings > 0) {
+        if (this.ratings && this.ratings.totalNumberOfRatings > 0) {
           this.calcRatings();
         }else{
           this.ratingStatus.emit(true);

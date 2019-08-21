@@ -390,8 +390,15 @@ export class BPEService {
             .get(url, {headers: headers})
             .toPromise()
             .then(res => res.json())
-            .catch(this.handleError);
-	}
+            .catch(res => {
+                if (res.status == 400) {
+                    // no ratings
+                    return null;
+                } else {
+                    this.handleError(res.getBody());
+                }
+            });
+    }
 
 	postRatings(partyId: string, processInstanceId: string, ratings: EvidenceSupplied[], reviews: Comment[]): Promise<any> {
 		const headers = this.getAuthorizedHeaders();
