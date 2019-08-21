@@ -30,8 +30,8 @@ export class CatalogueLineDetailsComponent{
     propertyBlockCollapsedStates: Map<string, boolean> = new Map<string, boolean>();
 
     constructor(private translate: TranslateService,
-        private publishService: PublishService) {
-        this.propertyBlockCollapsedStates = this.publishService.getCollapsedStates,();
+                private publishService: PublishService) {
+        this.propertyBlockCollapsedStates = this.publishService.getCollapsedStates();
     }
 
     toggleCollapsed(blockName:string):void {
