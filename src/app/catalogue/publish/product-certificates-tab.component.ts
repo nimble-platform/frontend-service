@@ -13,6 +13,7 @@ import {Country} from "../model/publish/country";
 import {Text} from "../model/publish/text";
 import { Observable } from "rxjs";
 import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "product-certificates-tab",
@@ -32,7 +33,8 @@ export class ProductCertificatesTabComponent implements OnInit {
     selectedCountries: string[] = [];
 
     constructor(private _fb: FormBuilder,
-                private modalService: NgbModal) {
+                private modalService: NgbModal,
+                private translate: TranslateService) {
     }
 
     ngOnInit() {
