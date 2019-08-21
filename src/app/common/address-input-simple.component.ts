@@ -3,6 +3,7 @@ import { AddressSimple } from "../catalogue/model/publish/address-simple";
 import { Observable } from "rxjs";
 import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
 import { getCountrySuggestions } from "./utils";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "address-input-simple",
@@ -15,9 +16,12 @@ export class AddressInputSimpleComponent implements OnInit {
     @Input() disabled: boolean = false;
     @Input() required: boolean = false;
 
-    constructor(
+    constructor(private translate: TranslateService
 
-    ) { }
+    ) { 
+      translate.setDefaultLang("en");
+      translate.use(translate.getBrowserLang());
+    }
 
     ngOnInit() {
 

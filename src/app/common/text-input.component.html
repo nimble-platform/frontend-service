@@ -22,8 +22,7 @@
     </select>
 
     <div class="d-flex align-items-end justify-content-end {{flexClass}}">
-        <button *ngIf="addButtonStyle != ''" class="btn {{addButtonStyle}}"  type="button" (click)="onAddTextInput()">Add</button>
-        <button *ngIf="deleteButtonStyle != ''" class="btn {{deleteButtonStyle}} "   type="button" (click)="onDeleteTextInput()" >Delete</button>
+        <button *ngIf="addButtonStyle != ''" class="btn {{addButtonStyle}}"  type="button" (click)="onAddTextInput()"><span [innerHTML]="'Add' | translate"></span></button>
+        <button *ngIf="deleteButtonStyle != ''" class="btn {{deleteButtonStyle}} "   type="button" (click)="onDeleteTextInput()" ><span [innerHTML]="'Delete' | translate"></span></button>
     </div>
-
 </div>
