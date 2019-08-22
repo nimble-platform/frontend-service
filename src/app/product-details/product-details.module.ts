@@ -14,6 +14,13 @@ import { UserMgmtModule } from "../user-mgmt/user-mgmt.module";
 import {DiscountModalComponent} from './discount-modal.component';
 import {ProductLcpaTabComponent} from "./product-lcpa-tab.component";
 import {LcpaDetailModalComponent} from "./lcpa-detail-modal.component";
+import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import {HttpClient} from '@angular/common/http';
+import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
+
+export function HttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 
 @NgModule({
 	imports: [
@@ -24,7 +31,14 @@ import {LcpaDetailModalComponent} from "./lcpa-detail-modal.component";
         ReactiveFormsModule,
 		ProductDetailsRoutingModule,
 		UserMgmtModule,
-		NgbModule.forRoot()
+		NgbModule.forRoot(),
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
+        })
 	],
 	declarations: [
 		ProductDetailsComponent,
