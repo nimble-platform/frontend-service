@@ -8,6 +8,7 @@ import { CallStatus } from "../common/call-status";
 import { CompanySettings } from "./model/company-settings";
 import { AppComponent } from "../app.component";
 import {selectValueOfTextObject, sanitizeLink} from '../common/utils';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "company-details",
@@ -29,6 +30,7 @@ export class CompanyDetailsComponent implements OnInit {
     constructor(private cookieService: CookieService,
                 private userService: UserService,
                 public appComponent: AppComponent,
+                private translate: TranslateService,
                 public route: ActivatedRoute,
                 public router: Router) {
     }
