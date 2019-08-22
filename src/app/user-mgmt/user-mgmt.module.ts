@@ -28,9 +28,9 @@ import { CompanyRatingComponent } from './company-rating.component';
 import { UserProfileComponent } from './user-profile.component';
 import { CompanyTermsAndConditions } from './company-settings/company-terms-and-conditions';
 import { EditTradingTermModalComponent } from './company-settings/edit-trading-term-modal.component';
-import {TranslateHttpLoader} from '@ngx-translate/http-loader';
-import {HttpClient} from '@angular/common/http';
-import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { HttpClientModule, HttpClient } from "@angular/common/http";
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -45,11 +45,11 @@ export function HttpLoaderFactory(http: HttpClient) {
 		HttpModule,
 		UserMgmtRoutingModule,
 		NgbModule.forRoot(),
-        TranslateModule.forRoot({
+		TranslateModule.forRoot({
             loader: {
-                provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
-                deps: [HttpClient]
+              provide: TranslateLoader,
+              useFactory: HttpLoaderFactory,
+              deps: [HttpClient]
             }
         })
 	],
