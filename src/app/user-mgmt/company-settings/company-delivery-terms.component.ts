@@ -5,6 +5,7 @@ import { DeliveryTermsSubForm } from "../subforms/delivery-terms.component";
 import * as myGlobals from "../../globals";
 import { CallStatus } from "../../common/call-status";
 import { CookieService } from "ng2-cookies";
+import {TranslateService} from '@ngx-translate/core';
 import { UserService } from "../user.service";
 
 @Component({
@@ -23,6 +24,7 @@ export class CompanyDeliveryTermsComponent implements OnInit {
 
     constructor(private _fb: FormBuilder,
                 private cookieService: CookieService,
+                private translate: TranslateService,
                 private userService: UserService) {
 
     }

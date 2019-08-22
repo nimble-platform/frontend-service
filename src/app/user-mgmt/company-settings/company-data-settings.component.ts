@@ -8,6 +8,7 @@ import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 import { AddressSubForm } from "../subforms/address.component";
 import { CallStatus } from "../../common/call-status";
 import { UserService } from "../user.service";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "company-data-settings",
@@ -29,6 +30,7 @@ export class CompanyDataSettingsComponent implements OnInit {
 
     constructor(public appComponent: AppComponent,
                 private _fb: FormBuilder,
+                private translate: TranslateService,
                 private modalService: NgbModal,
                 private userService: UserService) {
 
