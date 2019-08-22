@@ -13,13 +13,16 @@ import {TranslateService} from '@ngx-translate/core';
     styleUrls: ['delivery-terms.component.css']
 })
 
-constructor(
-    private translate: TranslateService
-) {}
-
 export class DeliveryTermsSubForm {
 
     @Input('group') deliveryTermsForm: FormGroup;
+    
+    constructor(
+        private translate: TranslateService
+    ) {
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
+    }
 
 	public static setAddress(deliveryTermsForm, address: Address) {
 		AddressSubForm.update(deliveryTermsForm.controls.deliveryAddress, address);

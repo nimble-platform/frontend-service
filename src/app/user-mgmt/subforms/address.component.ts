@@ -13,9 +13,6 @@ import {TranslateService} from '@ngx-translate/core';
     styleUrls: ['address.component.css']
 })
 
-constructor(
-    private translate: TranslateService
-) {}
 
 export class AddressSubForm {
 
@@ -23,6 +20,14 @@ export class AddressSubForm {
   public addressForm: FormGroup;
 	@Input() disabledFlag: boolean = false;
   @Input() requiredFlag: boolean = true;
+
+
+  constructor(
+    private translate: TranslateService
+    ) {
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
+    }
 
   getSuggestions = (text$: Observable<string>) =>
     text$.pipe(

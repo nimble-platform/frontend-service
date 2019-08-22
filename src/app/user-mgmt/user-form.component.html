@@ -22,7 +22,7 @@
 		<label for="password2" class="col-3 col-form-label font-weight-bold"><span [innerHTML]="'Password (repeat)' | translate"></span></label>
 		<div class="col-9">
 			<input type="password" class="form-control" [ngClass]="pw_val_class" id="password2" required (input)="validatePW()" [(ngModel)]="password_validate" name="password2" #password2="ngModel" pattern=".{6,}" placeholder="Six or more characters">
-			<div *ngIf="!password2.valid && password2.touched"><small class="text-danger"><span [innerHTML]="'Passwords don't match.' | translate"></span></small></div>
+			<div *ngIf="!password2.valid && password2.touched"><small class="text-danger"><span [innerHTML]="'Passwords dont match.' | translate"></span></small></div>
 		</div>
 	</div>
 
@@ -66,7 +66,7 @@
 
 	<!-- Phone Number -->
 	<div class="form-group row col-10 mx-auto">
-		<label for="phoneNumber" class="col-3 col-form-label font-weight-bold"><span [innerHTML]="'Phone Number ' | translate"></span><span *ngIf="!config.phoneNumberRequired"><span [innerHTML]="'(optional)' | translate"></span></label>
+		<label for="phoneNumber" class="col-3 col-form-label font-weight-bold"><span [innerHTML]="'Phone Number ' | translate"></span><span *ngIf="!config.phoneNumberRequired"[innerHTML]="'(optional)' | translate"></span></label>
 		<div class="col-9">
 			<input type="tel" class="form-control" id="phoneNumber" [required] = "config.phoneNumberRequired" [(ngModel)]="model.user.phoneNumber" name="phoneNumber" #phoneNumber="ngModel">
 			<div *ngIf="!phoneNumber.valid && phoneNumber.touched"><small class="text-danger"><span [innerHTML]="'Please enter a valid phone number.' | translate"></span></small></div>
