@@ -6,6 +6,13 @@ import {AppCommonModule} from "../common/common.module";
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {DataChannelRoutingModule} from './data-channel-routing.module';
 import {ChannelDetailsComponent} from "./channel-details.component";
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { HttpClientModule, HttpClient } from "@angular/common/http";
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
+export function HttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 
 @NgModule({
     imports: [
@@ -15,7 +22,14 @@ import {ChannelDetailsComponent} from "./channel-details.component";
         HttpModule,
         ReactiveFormsModule,
         DataChannelRoutingModule,
-        NgbModule.forRoot()
+        NgbModule.forRoot(),
+        TranslateModule.forRoot({
+            loader: {
+              provide: TranslateLoader,
+              useFactory: HttpLoaderFactory,
+              deps: [HttpClient]
+            }
+        })
     ],
     declarations: [
         ChannelDetailsComponent
