@@ -12,6 +12,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from '../globals';
 import {CallStatus} from '../common/call-status';
 import {Address} from './model/address';
+import {TranslateService} from '@ngx-translate/core';
 import {getCountryByISO, getFileExtension} from '../common/utils';
 import {ALLOWED_EXTENSIONS} from '../common/constants';
 import {createTextObject, selectValueOfTextObject} from '../common/utils';
@@ -41,6 +42,7 @@ export class CompanyRegistrationComponent implements OnInit {
                 private cookieService: CookieService,
                 private modalService: NgbModal,
                 private router: Router,
+                private translate: TranslateService,
                 private userService: UserService) {
     }
 

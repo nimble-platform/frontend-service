@@ -1,10 +1,10 @@
 <div *ngIf="pageRef==='registration'">
     <ngb-alert type="success" [dismissible]="false">
-        Account successfully registered! Please log in.
+            <span [innerHTML]="'Account successfully registered! Please log in.' | translate"></span>
     </ngb-alert>
 </div>
 
 <div class="row col-10 mx-auto" style="padding-top: 20vh;">
-    <p class="col-12 nimble-title">Login</p>
+    <p class="col-12 nimble-title"><span [innerHTML]="'Login' | translate"></span></p>
 </div>
 <credentials-form></credentials-form>

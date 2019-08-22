@@ -3,20 +3,20 @@
 	<div *ngIf="!alertClosed">
 		<p class="space-before">
 			<ngb-alert type="info" (close)="alertClosed=true">
-				During this first step of the company registration we ask you to provide your most vital company data in order to get started.<br/>
-				After submitting your registration you will be taken to your company settings where you can provide even more information.<br/>
-				<strong>Beware: </strong>Data submitted in this step can only be changed after re-validation by a platform manager.
+					<span [innerHTML]="'During this first step of the company registration we ask you to provide your most vital company data in order to get started.' | translate"></span><br/>
+					<span [innerHTML]="'After submitting your registration you will be taken to your company settings where you can provide even more information.' | translate"></span><br/>
+				<strong><span [innerHTML]="'Beware: ' | translate"></span></strong><span [innerHTML]="'Data submitted in this step can only be changed after re-validation by a platform manager.' | translate"></span>
 			</ngb-alert>
 		</p>
 	</div>
 
-	<h3 class="space-after">Company Registration</h3>
+	<h3 class="space-after"><span [innerHTML]="'Company Registration' | translate"></span></h3>
 
 	<div *ngIf="!vatSkipped && !vatValidated">
 
 		<div class="form-group row">
 			<label class="col-2 col-form-label">
-				<strong>VAT Number:</strong>
+				<strong><span [innerHTML]="'VAT Number:' | translate"></span></strong>
 			</label>
 			<div class="col-10">
 				<input type="text" class="form-control" [(ngModel)]="vat" [ngModelOptions]="{standalone: true}" required maxlength="255">
@@ -28,10 +28,10 @@
 				<call-status [callStatus]="vatCallStatus" [large]="true"></call-status>
 			</div>
 			<div class="col-2">
-				<button class="btn btn-secondary action" type="button" [disabled]="vatCallStatus.isLoading()" (click)="skipVAT()">Skip</button>
+				<button class="btn btn-secondary action" type="button" [disabled]="vatCallStatus.isLoading()" (click)="skipVAT()"><span [innerHTML]="'Skip' | translate"></span></button>
 			</div>
 			<div class="col-2">
-				<button class="btn btn-primary action" type="button" [disabled]="vat=='' || vatCallStatus.isLoading()" (click)="validateVAT()">Validate</button>
+				<button class="btn btn-primary action" type="button" [disabled]="vat=='' || vatCallStatus.isLoading()" (click)="validateVAT()"><span [innerHTML]="'Validate' | translate"></span></button>
 			</div>
 		</div>
 
@@ -42,7 +42,7 @@
 		<!-- Legal Name -->
 		<div class="form-group row">
 			<label class="col-2 col-form-label">
-				<strong>Company Name:</strong>
+				<strong><span [innerHTML]="'Company Name:' | translate"></span></strong>
 			</label>
 			<div class="col-10">
 				<input type="text" class="form-control" name="companyName" [formControl]="registrationForm.controls['name']" required maxlength="255">
@@ -52,7 +52,7 @@
 		<!-- Brand Name -->
 		<div class="form-group row">
 			<label class="col-2 col-form-label">
-				<strong>Trade Name:</strong>
+				<strong><span [innerHTML]="'Trade Name:' | translate"></span></strong>
 			</label>
 			<div class="col-10">
 				<input type="text" class="form-control" name="brandName" [formControl]="registrationForm.controls['brandName']" maxlength="255">
@@ -62,7 +62,7 @@
 		<!-- VAT Number -->
 		<div class="form-group row">
 			<label class="col-2 col-form-label">
-				<strong>VAT Number:</strong>
+				<strong><span [innerHTML]="'VAT Number:' | translate"></span></strong>
 			</label>
 			<div class="col-10">
 				<input type="text" class="form-control" [formControl]="registrationForm.controls['vatNumber']" required [readonly]="vatValidated" maxlength="255">
@@ -72,7 +72,7 @@
 		<!-- Logo -->
 		<div *ngIf="config.logoRequired" class="form-group row">
 			<label class="col-2 col-form-label">
-				<strong>Logo:</strong>
+				<strong><span [innerHTML]="'Logo:' | translate"></span></strong>
 				<span class="tooltip-icon" (click)="showLogoTT(tooltip)"><i class="fa fa-question-circle"></i></span>
 			</label>
 			<div class="col-10">
@@ -84,7 +84,7 @@
 		<div *ngIf="config.showVerification" class="form-group row">
 			<label class="col-2 col-form-label">
 				<span>
-					<strong>Verification Info:</strong>
+					<strong><span [innerHTML]="'Verification Info:' | translate"></span></strong>
 				</span>
 				<span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><i class="fa fa-question-circle"></i></span>
 			</label>
@@ -96,7 +96,7 @@
 		<!-- Business Type -->
 		<div class="form-group row">
 			<label class="col-2 col-form-label">
-				<strong>Business Type:</strong>
+				<strong><span [innerHTML]="'Business Type:' | translate"></span></strong>
 			</label>
 			<div class="col-10">
 				<select class="form-control" [formControl]="registrationForm.controls['businessType']" (change)="registrationForm.controls['industrySectors'].setValue('')" required>
@@ -108,7 +108,7 @@
 		<!-- Industry Sectors -->
 		<div class="form-group row">
 			<label class="col-2 col-form-label">
-				<strong>Activity Sectors:</strong>
+				<strong><span [innerHTML]="'Activity Sectors:' | translate"></span></strong>
 				<span *ngIf="config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length>0 && !forceActText" class="tooltip-icon" (click)="showSectorTT(tooltip)"><i class="fa fa-question-circle"></i></span>
 			</label>
 			<div class="col-10">
@@ -119,14 +119,14 @@
 				</select>
 				<textarea rows="3" *ngIf="registrationForm.getRawValue()['businessType'] != '' && (!config.supportedActivitySectors[registrationForm.getRawValue()['businessType']] || config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length==0) || forceActText" class="form-control" [formControl]="registrationForm.controls['industrySectors']" placeholder="Separate entries using new lines" required maxlength="255"></textarea>
 	      <!--<input *ngIf="registrationForm.getRawValue()['businessType'] != '' && (!config.supportedActivitySectors[registrationForm.getRawValue()['businessType']] || config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length==0) || forceActText" type="text" class="form-control" [formControl]="registrationForm.controls['industrySectors']" placeholder="Separate entries using ','" required maxlength="255">-->
-	      <div *ngIf="config.supportedActivitySectors[registrationForm.getRawValue()['businessType']] && config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length>0"><button class="btn btn-link pl-0" type="button" (click)="switchInput()"><span *ngIf="!forceActText">Nothing fitting your business? Switch to manual input.</span><span *ngIf="forceActText">Want to make use of the predefined sectors? Switch to list input.</span></button></div>
+	      <div *ngIf="config.supportedActivitySectors[registrationForm.getRawValue()['businessType']] && config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length>0"><button class="btn btn-link pl-0" type="button" (click)="switchInput()"><span *ngIf="!forceActText"><span [innerHTML]="'Nothing fitting your business? Switch to manual input.' | translate"></span></span><span *ngIf="forceActText"><span [innerHTML]="'Want to make use of the predefined sectors? Switch to list input.' | translate"></span></span></button></div>
 			</div>
 		</div>
 
 		<!-- Business Keywords -->
 		<div class="form-group row">
 			<label class="col-2 col-form-label">
-				<strong>Business Keywords:</strong>
+				<strong><span [innerHTML]="'Business Keywords:' | translate"></span></strong>
 				<span class="tooltip-icon" (click)="showKeywordsTT(tooltip)"><i class="fa fa-question-circle"></i></span>
 			</label>
 			<div class="col-10">
@@ -138,7 +138,7 @@
 		<!-- Year of Comp. Reg. -->
 		<div class="form-group row">
 			<label class="col-2 col-form-label">
-				<strong>Year of Foundation:</strong>
+				<strong><span [innerHTML]="'Year of Foundation:' | translate"></span></strong>
 			</label>
 			<div class="col-10">
 				<input type="number" class="form-control" [formControl]="registrationForm.controls['yearOfReg']">
@@ -154,10 +154,10 @@
 				<call-status [callStatus]="submitCallStatus" [large]="true"></call-status>
 			</div>
 			<div class="col-2">
-				<button class="btn btn-secondary action" type="button" [disabled]="submitCallStatus.isLoading()" (click)="backToVAT()">Back</button>
+				<button class="btn btn-secondary action" type="button" [disabled]="submitCallStatus.isLoading()" (click)="backToVAT()"><span [innerHTML]="'Back' | translate"></span></button>
 			</div>
 			<div class="col-2">
-				<button class="btn btn-primary action" type="submit" [disabled]="!registrationForm.valid || submitCallStatus.isLoading()">Register</button>
+				<button class="btn btn-primary action" type="submit" [disabled]="!registrationForm.valid || submitCallStatus.isLoading()"><span [innerHTML]="'Register' | translate"></span></button>
 			</div>
 		</div>
 
@@ -167,7 +167,7 @@
 
 <ng-template #tooltip let-d="dismiss">
 	<div class="modal-header">
-		<h4 class="modal-title">Tooltip</h4>
+		<h4 class="modal-title"><span [innerHTML]="'Tooltip' | translate"></span></h4>
 		<button type="button" class="close" aria-label="Close" (click)="d('')">
 			<span aria-hidden="true">&times;</span>
 		</button>

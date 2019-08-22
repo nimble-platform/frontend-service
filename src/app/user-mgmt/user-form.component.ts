@@ -11,6 +11,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { Router } from '@angular/router';
 import { CallStatus } from '../common/call-status';
 import * as constants from '../common/constants';
+import {TranslateService} from '@ngx-translate/core';
 import {selectValueOfTextObject} from '../common/utils';
 //declare var jsSHA: any;
 
@@ -40,6 +41,7 @@ export class UserFormComponent implements OnInit {
 
     constructor(
         private userService: UserService,
+        private translate: TranslateService,
         private router: Router,
 		private modalService: NgbModal,
     private credentialsService: CredentialsService,
