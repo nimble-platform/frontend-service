@@ -1,4 +1,13 @@
 {
+	"Profile Completeness:":"Profile Completeness:", 
+	"Company Data":"Company Data",  
+	"Trade Details":"Trade Details",  
+	"Catalogue Categories":"Catalogue Categories",  
+	"Choose clauses:":"Choose clauses:",  
+	"Add Trading Term":"Add Trading Term",  
+	"Edit clauses:":"Edit clauses:",  
+	"Id:":"Id:", 
+	"Default Value(s):":"Default Value(s):",	
 	"Mandatory and already submitted data during the registration can only be changed after re-validation by a platform manager.":"Mandatory and already submitted data during the registration can only be changed after re-validation by a platform manager.", 
 	"In order to execute business processes your company needs to be verified by an administrator - please stay tuned.":"In order to execute business processes your company needs to be verified by an administrator - please stay tuned.",
 	"Company Name:":"Company Name:",  
