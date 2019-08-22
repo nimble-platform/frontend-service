@@ -6,9 +6,9 @@ import {AppCommonModule} from "../common/common.module";
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {DataChannelRoutingModule} from './data-channel-routing.module';
 import {ChannelDetailsComponent} from "./channel-details.component";
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { HttpClientModule, HttpClient } from "@angular/common/http";
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import {HttpClient} from '@angular/common/http';
+import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -25,9 +25,9 @@ export function HttpLoaderFactory(http: HttpClient) {
         NgbModule.forRoot(),
         TranslateModule.forRoot({
             loader: {
-              provide: TranslateLoader,
-              useFactory: HttpLoaderFactory,
-              deps: [HttpClient]
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
             }
         })
     ],

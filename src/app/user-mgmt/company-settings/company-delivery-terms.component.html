@@ -7,12 +7,12 @@
         <div class="{{ i > 0 ? 'col-7' : 'col-9' }}"></div>
         <div class="col-3">
             <button class="btn btn-secondary w-100 btn-sm" (click)="onSetToCompanyAddress(i)">
-                Set to Company Address
+                <span [innerHTML]="'Set to Company Address' | translate"></span>
             </button>
         </div>
         <div *ngIf="i > 0" class="col-2">
             <button class="btn btn-danger w-100 btn-sm" (click)="onDeleteDeliveryTerms(i)">
-                Delete
+                <span [innerHTML]="'Delete' | translate"></span>
             </button>
         </div>
     </div>
@@ -29,12 +29,12 @@
     </div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="saveCallStatus.isLoading()" (click)="onAddDeliveryTerms()">
-            Add Delivery Address
+            <span [innerHTML]="'Add Delivery Address' | translate"></span>
         </button>
     </div>
     <div class="col-2">
         <button class="btn btn-primary action" [disabled]="!settingsForm.valid || !settingsForm.dirty || saveCallStatus.isLoading()" (click)="onSave(settingsForm)">
-            Save
+            <span [innerHTML]="'Save' | translate"></span>
         </button>
     </div>
 </div>
