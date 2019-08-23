@@ -6,6 +6,7 @@ import {UBLModelUtils} from "../../model/ubl-model-utils";
 import {CatalogueLine} from "../../model/publish/catalogue-line";
 import {Quantity} from "../../model/publish/quantity";
 import {Text} from '../../model/publish/text';
+import {TranslateService} from '@ngx-translate/core';
 
 /**
  * Created by suat on 03-Sep-18.
@@ -21,6 +22,10 @@ export class ItemPropertyPriceOptionComponent {
     @Input() priceOption: PriceOption;
     @Input() index: number;
     @Input() discountUnits;
+
+constructor(
+        private translate: TranslateService
+    ) {}
 
     getItemPropertyName = selectPreferredValues;
 

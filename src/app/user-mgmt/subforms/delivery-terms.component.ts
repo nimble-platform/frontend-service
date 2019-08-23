@@ -4,6 +4,7 @@ import { AddressSubForm } from './address.component';
 import { DeliveryTerms } from '../model/delivery-terms';
 import { Address } from '../model/address';
 import {DEFAULT_LANGUAGE} from '../../catalogue/model/constants';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     moduleId: module.id,
@@ -11,9 +12,17 @@ import {DEFAULT_LANGUAGE} from '../../catalogue/model/constants';
     templateUrl: 'delivery-terms.component.html',
     styleUrls: ['delivery-terms.component.css']
 })
+
 export class DeliveryTermsSubForm {
 
     @Input('group') deliveryTermsForm: FormGroup;
+    
+    constructor(
+        private translate: TranslateService
+    ) {
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
+    }
 
 	public static setAddress(deliveryTermsForm, address: Address) {
 		AddressSubForm.update(deliveryTermsForm.controls.deliveryAddress, address);

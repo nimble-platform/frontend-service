@@ -3,6 +3,7 @@ import {COUNTRY_NAMES, selectPreferredValue} from '../../common/utils';
 import {Text} from '../model/publish/text';
 import {ItemProperty} from '../model/publish/item-property';
 import {REGIONS} from '../model/constants';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "origin-destination-view",
@@ -10,7 +11,9 @@ import {REGIONS} from '../model/constants';
 })
 export class OriginDestinationViewComponent implements OnInit{
 
-    constructor() {
+    constructor(private translate: TranslateService) {
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
     }
 
     // stores the address information

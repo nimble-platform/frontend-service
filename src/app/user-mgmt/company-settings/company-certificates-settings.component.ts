@@ -7,6 +7,7 @@ import { CookieService } from "ng2-cookies";
 import { FormGroup, FormBuilder } from "@angular/forms";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import * as myGlobals from '../../globals';
+import {TranslateService} from '@ngx-translate/core';
 import {BinaryObject} from "../../catalogue/model/publish/binary-object";
 
 @Component({
@@ -34,6 +35,7 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
     constructor(private _fb: FormBuilder,
                 private userService: UserService,
                 private modalService: NgbModal,
+                private translate: TranslateService,
                 private cookieService: CookieService) {
 
     }

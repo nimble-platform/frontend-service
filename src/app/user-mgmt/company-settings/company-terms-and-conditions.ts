@@ -13,6 +13,7 @@ import {EditTradingTermModalComponent} from './edit-trading-term-modal.component
 import {Text} from '../../catalogue/model/publish/text';
 import {TradingPreferences} from '../../catalogue/model/publish/trading-preferences';
 import {UserService} from '../user.service';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "company-terms-and-conditions",
@@ -48,6 +49,7 @@ export class CompanyTermsAndConditions implements OnInit {
                 public userService: UserService,
                 public appComponent: AppComponent,
                 public unitService: UnitService,
+                private translate: TranslateService,
                 public bpeService: BPEService) {
 
     }

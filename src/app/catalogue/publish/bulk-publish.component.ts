@@ -7,6 +7,7 @@ import {CookieService} from "ng2-cookies";
 import {Category} from '../model/category/category';
 import {ProductPublishComponent} from './product-publish.component';
 import {Router} from '@angular/router';
+import {TranslateService} from '@ngx-translate/core';
 /**
  * Created by suat on 20-Mar-19.
  */
@@ -26,7 +27,10 @@ export class BulkPublishComponent {
     constructor(private categoryService: CategoryService,
                 private catalogueService: CatalogueService,
                 private router: Router,
-                private cookieService: CookieService) {
+                private cookieService: CookieService,
+                private translate: TranslateService) {
+                    translate.setDefaultLang("en");
+                    translate.use(translate.getBrowserLang());
     }
 
     closeCategoryWarning(): void {

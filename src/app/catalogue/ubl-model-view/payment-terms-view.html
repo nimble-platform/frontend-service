@@ -1,11 +1,11 @@
 <div class="well">
-    <h5 class="mt-3 mb-3">Payment Terms</h5>
+    <h5 class="mt-3 mb-3"><span [innerHTML]="'Payment Terms' | translate"></span></h5>
     <div class="bordered mb-3" style='overflow: auto'>
         <div style="width: 50%;float: left;padding: 1em">
             <div>
                 <input [checked]="get('Payment_In_Advance').value[0].value == 'true'" type="checkbox"  [disabled]="presentationMode != 'edit'"
                        (change)="get('Payment_In_Advance').value[0].value == 'true' ? get('Payment_In_Advance').value[0].value='false' : get('Payment_In_Advance').value[0].value='true'" >
-                <label>PIA
+                <label><span [innerHTML]="'PIA' | translate"></span>
                     <span class="label label-default" title="Payment in advance">
                     &#9432;
                     </span>
@@ -14,7 +14,7 @@
             <div>
                 <input [checked]="get('Values_Net').value[0].value" (change)="get('Values_Net').value[0].value=null"
                        type="checkbox" [disabled]="presentationMode != 'edit' || !get('Values_Net').value[0].value">
-                <label>Net</label>
+                <label><span [innerHTML]="'Net' | translate"></span></label>
                 <input [(ngModel)]="get('Values_Net').value[0].value" class="bordered col-3" type="number" style="height: 30px;background-color:#eceeef" [disabled]="presentationMode != 'edit'" placeholder="Number">
                 <span class="label label-default" title="e.g.,NET 10,payment 10 days after invoice date">
                     &#9432;
@@ -23,7 +23,7 @@
             <div>
                 <input [checked]="get('End_of_month').value[0].value == 'true'" type="checkbox" [disabled]="presentationMode != 'edit'"
                        (change)="get('End_of_month').value[0].value == 'true' ? get('End_of_month').value[0].value='false' : get('End_of_month').value[0].value='true'">
-                <label>EOM
+                <label><span [innerHTML]="'EOM' | translate"></span>
                     <span class="label label-default" title="End of month">
                     &#9432;
                     </span>
@@ -32,7 +32,7 @@
             <div>
                 <input [checked]="get('Cash_next_delivery').value[0].value == 'true'" type="checkbox" [disabled]="presentationMode != 'edit'"
                        (change)="get('Cash_next_delivery').value[0].value == 'true' ? get('Cash_next_delivery').value[0].value='false' : get('Cash_next_delivery').value[0].value='true'">
-                <label>CND
+                <label><span [innerHTML]="'CND' | translate"></span>
                     <span class="label label-default" title="Cash next delivery">
                     &#9432;
                     </span>
@@ -41,7 +41,7 @@
             <div>
                 <input [checked]="get('Cash_before_shipment').value[0].value == 'true'" type="checkbox" [disabled]="presentationMode != 'edit'"
                        (change)="get('Cash_before_shipment').value[0].value == 'true' ? get('Cash_before_shipment').value[0].value='false' : get('Cash_before_shipment').value[0].value='true'">
-                <label>CBS
+                <label><span [innerHTML]="'CBS' | translate"></span>
                     <span class="label label-default" title="Cash before shipment">
                     &#9432;
                     </span>
@@ -54,7 +54,7 @@
                 <input [checked]="get('Values_MFI').value[0].value" (change)="get('Values_MFI').value[0].value=null"
                        type="checkbox"  [disabled]="presentationMode != 'edit' || !get('Values_MFI').value[0].value">
                 <input [(ngModel)]="get('Values_MFI').value[0].value" class="bordered col-3" type="number" style="height: 30px;background-color:#eceeef" [disabled]="presentationMode != 'edit'" placeholder="Number">
-                <label>MFI
+                <label><span [innerHTML]="'MFI' | translate"></span>
                     <span class="label label-default" title="e.g.,21 MFI,21st of the month following invoice date">
                     &#9432;
                     </span>
@@ -67,7 +67,7 @@
                 <input [(ngModel)]="get('Values_/NET').value[0].value" class="bordered col-3" type="number" style="height: 30px;background-color:#eceeef" [disabled]="presentationMode != 'edit'" placeholder="Number">
                 <span>/</span>
                 <input [(ngModel)]="get('Values_/NET').value[1].value" class="bordered col-3" type="number" style="height: 30px;background-color:#eceeef" [disabled]="presentationMode != 'edit'" placeholder="Number">
-                <span> NET </span>
+                <span> <span [innerHTML]="'NET' | translate"></span> </span>
                 <input [(ngModel)]="get('Values_/NET').value[2].value" class="bordered col-3" type="number" style="height: 30px;background-color:#eceeef" [disabled]="presentationMode != 'edit'" placeholder="Number">
                 <span class="label label-default" title="e.g.,1/10 NET 30,1% discount if payment received within 10 days otherwise payment 30 days after invoice date">
                     &#9432;
@@ -76,7 +76,7 @@
             <div>
                 <input [checked]="get('Cash_on_delivery').value[0].value == 'true'" type="checkbox" [disabled]="presentationMode != 'edit'"
                        (change)="get('Cash_on_delivery').value[0].value == 'true' ? get('Cash_on_delivery').value[0].value='false' : get('Cash_on_delivery').value[0].value='true'">
-                <label>COD
+                <label><span [innerHTML]="'COD' | translate"></span>
                     <span class="label label-default" title="Cash on delivery">
                     &#9432;
                     </span>
@@ -85,7 +85,7 @@
             <div>
                 <input [checked]="get('Cash_with_order').value[0].value == 'true'" type="checkbox" [disabled]="presentationMode != 'edit'"
                        (change)="get('Cash_with_order').value[0].value == 'true' ? get('Cash_with_order').value[0].value='false' : get('Cash_with_order').value[0].value='true'">
-                <label>CWO
+                <label><span [innerHTML]="'CWO' | translate"></span>
                     <span class="label label-default" title="Cash with order">
                     &#9432;
                     </span>
@@ -94,7 +94,7 @@
             <div>
                 <input [checked]="get('Cash_in_advance').value[0].value == 'true'" type="checkbox" [disabled]="presentationMode != 'edit'"
                        (change)="get('Cash_in_advance').value[0].value == 'true' ? get('Cash_in_advance').value[0].value='false' : get('Cash_in_advance').value[0].value='true'">
-                <label>CIA
+                <label><span [innerHTML]="'CIA' | translate"></span>
                     <span class="label label-default" title="Cash in advance">
                     &#9432;
                     </span>

@@ -3,6 +3,7 @@ import { CatalogueLine } from "../catalogue/model/publish/catalogue-line";
 import { TransportationService } from "../catalogue/model/publish/transportation-service";
 import {selectPartyName} from '../common/utils';
 import { Address } from "../user-mgmt/model/address";
+import {TranslateService} from '@ngx-translate/core';
 import { DetailedAddressViewComponent } from "../catalogue/ubl-model-view/detailed-address-view.component";
 
 @Component({
@@ -24,7 +25,9 @@ export class TransportationServiceInput implements OnInit {
     haveEnvironmentalEmission : boolean = true;
     haveTransporationServiceDetails : boolean = true;
     address:any;
-    constructor() {
+    constructor(
+            private translate: TranslateService
+          ) {
     }
 
     ngOnInit() {

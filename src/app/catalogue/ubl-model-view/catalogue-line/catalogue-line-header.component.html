@@ -39,10 +39,10 @@
                   readonly>
         </textarea>
         <label class="col-4 mb-2" *ngIf="presentationMode != 'edit' && !catalogueLine.goodsItem.item.description[0].value">
-            <i>No available description</i>
+            <i><span [innerHTML]="'No available description' | translate"></span></i>
         </label>
         <div *ngIf="catalogueLine.goodsItem.item.commodityClassification.length > 1" class="d-flex flex-wrap">
-            <label class="col-3 control-label">Product / Service Types</label>
+            <label class="col-3 control-label"><span [innerHTML]="'Product / Service Types' | translate"></span></label>
             <div *ngFor="let classification of catalogueLine.goodsItem.item.commodityClassification" >
 				<div *ngIf="classification.itemClassificationCode.listID != 'Default'" class="bordered inline space-right">
                     {{classification.itemClassificationCode.name}}
@@ -54,7 +54,7 @@
         <!-- images -->
         <div *ngIf="presentationMode=='edit' && catalogueLine.goodsItem.item.productImage.length == 0"
              class="col-10">
-            <label *ngIf="catalogueLine.goodsItem.item.productImage.length == 0">Add Image</label>
+            <label *ngIf="catalogueLine.goodsItem.item.productImage.length == 0"><span [innerHTML]="'Add Image' | translate"></span></label>
             <input #image type="file" (change)="addImage($event)" multiple accept="image/*"
                    style="display: none">
             <i class="fa fa-plus-circle pointer" (click)="image.click()"></i>

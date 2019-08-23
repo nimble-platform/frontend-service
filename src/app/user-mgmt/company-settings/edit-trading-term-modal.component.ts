@@ -8,6 +8,7 @@ import {Option} from '../../common/options-input.component';
 import {Clause} from '../../catalogue/model/publish/clause';
 import {CompanySettings} from '../model/company-settings';
 import {Code} from '../../catalogue/model/publish/code';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "edit-trading-term-modal",
@@ -38,7 +39,7 @@ export class EditTradingTermModalComponent implements OnInit {
         { name: "Quantity", value: "QUANTITY" },
     ];
 
-    constructor(private modalService: NgbModal) {
+    constructor(private modalService: NgbModal,private translate: TranslateService) {
     }
 
     ngOnInit() {

@@ -4,6 +4,7 @@ import {UBLModelUtils} from "../model/ubl-model-utils";
 import {BPDataService} from "../../bpe/bp-view/bp-data-service";
 import {Quantity} from "../model/publish/quantity";
 import {FormGroup} from "@angular/forms";
+import {TranslateService} from '@ngx-translate/core';
 import {ChildForm} from "../child-form";
 /**
  * Created by suat on 04-Oct-17.
@@ -23,8 +24,11 @@ export class DimensionViewComponent extends ChildForm implements OnInit {
     object = Object;
 
     constructor(private bpDataService: BPDataService,
+                private translate: TranslateService,
                 private cdr: ChangeDetectorRef) {
         super();
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
     }
 
     ngOnInit(): void {

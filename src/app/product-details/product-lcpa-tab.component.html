@@ -87,7 +87,7 @@
         <div [ngSwitch]="detail.valueQualifier">
             <div *ngIf="i == 0">
                 <hr>
-                <h6>Additional LCPA Details</h6>
+                <h6><span [innerHTML]="'Additional LCPA Details' | translate"></span></h6>
             </div>
 
             <div class="row space-before">
@@ -109,7 +109,7 @@
                 <div *ngIf="isEditMode()" class="col-1">
                     <button class="btn btn-danger btn-remove-value btn-sm btn-block"
                             (click)="onDeleteDetail(i)">
-                        Delete
+                            <span [innerHTML]="'Delete' | translate"></span>
                     </button>
                 </div>
             </div>
@@ -117,7 +117,7 @@
     </ng-container>
     <div *ngIf="isEditMode()" class="d-flex justify-content-end space-before">
         <button class="btn btn-outline-primary btn-sm" (click)="openLcpaDetailsModal($event)">
-            Add more LCPA details
+            <span [innerHTML]="'Add more LCPA details' | translate"></span>
         </button>
     </div>
 

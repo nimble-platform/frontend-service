@@ -4,27 +4,27 @@
                  [large]="true">
     </call-status>
     <span *ngIf="getDefaultDeliveryLocation.fb_callback" class="col-2 control-label">
-                    Street Name
+        <span [innerHTML]="'Street Name' | translate"></span>
     </span>
     <input *ngIf="getDefaultDeliveryLocation.fb_callback" class="form-control" [(ngModel)]="deliveryAddress.streetName" [disabled]="presentationMode != 'edit'">
 </div>
 <div *ngIf="getDefaultDeliveryLocation.fb_callback" class="input-group form-group">
-    <label class="col-2 control-label offset-3">Building Number</label>
+    <label class="col-2 control-label offset-3"><span [innerHTML]="'Building Number' | translate"></span></label>
     <input type="text" class="form-control" [(ngModel)]="deliveryAddress.buildingNumber" [disabled]="presentationMode != 'edit'">
 </div>
 <div *ngIf="getDefaultDeliveryLocation.fb_callback" class="input-group form-group">
-    <label class="col-2 control-label offset-3">City / Town</label>
+    <label class="col-2 control-label offset-3"><span [innerHTML]="'City / Town' | translate"></span></label>
     <input type="text" class="form-control" [(ngModel)]="deliveryAddress.cityName" [disabled]="presentationMode != 'edit'">
 </div>
 <div *ngIf="getDefaultDeliveryLocation.fb_callback" class="input-group form-group">
-    <label class="col-2 control-label offset-3">State / Province</label>
+    <label class="col-2 control-label offset-3"><span [innerHTML]="'State / Province' | translate"></span></label>
     <input type="text" class="form-control" [(ngModel)]="deliveryAddress.region" [disabled]="presentationMode != 'edit'">
 </div>
 <div *ngIf="getDefaultDeliveryLocation.fb_callback" class="input-group form-group">
-    <label class="col-2 control-label offset-3">Postal code</label>
+    <label class="col-2 control-label offset-3"><span [innerHTML]="'Dashboard' | translate"></span></label>
     <input type="text" class="form-control" [(ngModel)]="deliveryAddress.postalZone" [disabled]="presentationMode != 'edit'">
 </div>
 <div *ngIf="getDefaultDeliveryLocation.fb_callback" class="input-group form-group">
-    <label class="col-2 control-label offset-3">Country</label>
+    <label class="col-2 control-label offset-3"><span [innerHTML]="'Country' | translate"></span></label>
     <input type="text" class="form-control" [(ngModel)]="deliveryAddress.country.name.value" [disabled]="presentationMode != 'edit'">
 </div>

@@ -3,6 +3,7 @@ import { UserService } from './user.service';
 import { Person } from '../catalogue/model/publish/person';
 import { CookieService } from 'ng2-cookies';
 import { CallStatus } from '../common/call-status';
+import {TranslateService} from '@ngx-translate/core';
 import { ResetPasswordCredentials } from './model/reset-password-credentials';
 
 @Component({
@@ -21,6 +22,7 @@ export class UserProfileComponent implements OnInit {
     passwords_matching: boolean = false;
 
     constructor(private userService: UserService,
+                private translate: TranslateService,
                 private cookieService: CookieService,
     ) {
 

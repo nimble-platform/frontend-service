@@ -1,5 +1,5 @@
 <!-- TODO use trading-details for common elements -->
-<h5 class="mt-3 mb-3">Price</h5>
+<h5 class="mt-3 mb-3"><span [innerHTML]="'Price' | translate"></span></h5>
 <!-- Price Amount -->
 <amount-view [presentationMode]="presentationMode"
              [propName]="'Amount'"
@@ -24,7 +24,7 @@
               (valueChanged)="catalogueLine.freeOfChargeIndicator = $event">
 </boolean-view>
 
-<h5 class="mb-3">Delivery Terms</h5>
+<h5 class="mb-3"><span [innerHTML]="'Delivery Terms' | translate"></span></h5>
 
 <!-- Incoterms -->
 <value-view *ngIf="presentationMode != 'edit'"
@@ -36,7 +36,7 @@
 
 <ng-container *ngIf="presentationMode == 'edit'">
     <div class="input-group form-group">
-        <label class="col-3">Incoterms
+        <label class="col-3"><span [innerHTML]="'Incoterms' | translate"></span>
             <span class="label label-default" title="A set of international rules for the interpretation of the most commonly used trade terms">
                     &#9432;
                 </span>
@@ -76,7 +76,7 @@
 
 <ng-container
         *ngIf="catalogueLine.goodsItem.containingPackage.quantity.value != null || catalogueLine.goodsItem.containingPackage.packagingTypeCode != null">
-    <h5 class="mb-3">Packaging</h5>
+    <h5 class="mb-3"><span [innerHTML]="'Packaging' | translate"></span></h5>
 
     <!-- Package quantity -->
     <quantity-view [presentationMode]="presentationMode"
@@ -98,7 +98,7 @@
 
 <ng-container
         *ngIf="catalogueLine.warrantyValidityPeriod.durationMeasure.value != null || catalogueLine.warrantyInformation.length > 0">
-    <h5 class="mt-3">Warranty</h5>
+    <h5 class="mt-3"><span [innerHTML]="'Warranty' | translate"></span></h5>
 
     <!-- Validity period -->
     <quantity-view [presentationMode]="presentationMode"

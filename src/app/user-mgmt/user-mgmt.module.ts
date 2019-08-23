@@ -28,6 +28,13 @@ import { CompanyRatingComponent } from './company-rating.component';
 import { UserProfileComponent } from './user-profile.component';
 import { CompanyTermsAndConditions } from './company-settings/company-terms-and-conditions';
 import { EditTradingTermModalComponent } from './company-settings/edit-trading-term-modal.component';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { HttpClientModule, HttpClient } from "@angular/common/http";
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
+export function HttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 
 @NgModule({
 	imports: [
@@ -37,7 +44,14 @@ import { EditTradingTermModalComponent } from './company-settings/edit-trading-t
 		ReactiveFormsModule,
 		HttpModule,
 		UserMgmtRoutingModule,
-		NgbModule.forRoot()
+		NgbModule.forRoot(),
+		TranslateModule.forRoot({
+            loader: {
+              provide: TranslateLoader,
+              useFactory: HttpLoaderFactory,
+              deps: [HttpClient]
+            }
+        })
 	],
 	declarations: [
 		LoginComponent,

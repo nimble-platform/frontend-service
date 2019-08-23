@@ -1,46 +1,46 @@
 <form (ngSubmit)="onSubmit()" class="space-before" #userForm="ngForm" novalidate>
 	<!-- Email -->
 	<div class="form-group row col-10 mx-auto">
-		<label for="email" class="col-3 col-form-label font-weight-bold">E-Mail</label>
+		<label for="email" class="col-3 col-form-label font-weight-bold"><span [innerHTML]="'E-Mail' | translate"></span></label>
 		<div class="col-9">
 			<input type="email" class="form-control" id="email" [(disabled)]="email_preset" required [(ngModel)]="model.user.email" name="email" #email="ngModel" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9]{2,10}$" placeholder="e.g. user@domain.com">
-			<div *ngIf="!email.valid && email.touched"><small class="text-danger">Please enter a valid e-mail address.</small></div>
+			<div *ngIf="!email.valid && email.touched"><small class="text-danger"><span [innerHTML]="'Please enter a valid e-mail address.' | translate"></span></small></div>
 		</div>
 	</div>
 
 	<!-- Password -->
 	<div class="form-group row col-10 mx-auto">
-		<label for="password" class="col-3 col-form-label font-weight-bold">Password</label>
+		<label for="password" class="col-3 col-form-label font-weight-bold"><span [innerHTML]="'Password' | translate"></span></label>
 		<div class="col-9">
 			<input type="password" class="form-control" id="password" required (input)="validatePW()" [(ngModel)]="model.credentials.password" name="password" #password="ngModel" pattern=".{6,}" placeholder="Six or more characters">
-			<div *ngIf="!password.valid && password.touched"><small class="text-danger">Please enter a password with six or more characters.</small></div>
+			<div *ngIf="!password.valid && password.touched"><small class="text-danger"><span [innerHTML]="'Please enter a password with six or more characters.' | translate"></span></small></div>
 		</div>
 	</div>
 
 	<!-- Password (repeat) -->
 	<div class="form-group row col-10 mx-auto">
-		<label for="password2" class="col-3 col-form-label font-weight-bold">Password (repeat)</label>
+		<label for="password2" class="col-3 col-form-label font-weight-bold"><span [innerHTML]="'Password (repeat)' | translate"></span></label>
 		<div class="col-9">
 			<input type="password" class="form-control" [ngClass]="pw_val_class" id="password2" required (input)="validatePW()" [(ngModel)]="password_validate" name="password2" #password2="ngModel" pattern=".{6,}" placeholder="Six or more characters">
-			<div *ngIf="!password2.valid && password2.touched"><small class="text-danger">Passwords don't match.</small></div>
+			<div *ngIf="!password2.valid && password2.touched"><small class="text-danger"><span [innerHTML]="'Passwords dont match.' | translate"></span></small></div>
 		</div>
 	</div>
 
 	<!-- First Name -->
 	<div class="form-group row col-10 mx-auto">
-		<label for="firstname" class="col-3 col-form-label font-weight-bold">First Name</label>
+		<label for="firstname" class="col-3 col-form-label font-weight-bold"><span [innerHTML]="'First Name' | translate"></span></label>
 		<div class="col-9">
 			<input type="text" class="form-control" id="firstname" required [(ngModel)]="model.user.firstname" name="firstname" #firstname="ngModel">
-			<div *ngIf="!firstname.valid && firstname.touched"><small class="text-danger">Please enter your first name.</small></div>
+			<div *ngIf="!firstname.valid && firstname.touched"><small class="text-danger"><span [innerHTML]="'Please enter your first name.' | translate"></span></small></div>
 		</div>
 	</div>
 
 	<!-- Last Name -->
 	<div class="form-group row col-10 mx-auto">
-		<label for="lastname" class="col-3 col-form-label font-weight-bold">Last Name</label>
+		<label for="lastname" class="col-3 col-form-label font-weight-bold"><span [innerHTML]="'Last Name' | translate"></span></label>
 		<div class="col-9">
 			<input type="text" class="form-control" id="lastname" required [(ngModel)]="model.user.lastname" name="lastname" #lastname="ngModel">
-			<div *ngIf="!lastname.valid && lastname.touched"><small class="text-danger">Please enter your last name.</small></div>
+			<div *ngIf="!lastname.valid && lastname.touched"><small class="text-danger"><span [innerHTML]="'Please enter your last name.' | translate"></span></small></div>
 		</div>
 	</div>
 
@@ -66,10 +66,10 @@
 
 	<!-- Phone Number -->
 	<div class="form-group row col-10 mx-auto">
-		<label for="phoneNumber" class="col-3 col-form-label font-weight-bold">Phone Number <span *ngIf="!config.phoneNumberRequired">(optional)</span></label>
+		<label for="phoneNumber" class="col-3 col-form-label font-weight-bold"><span [innerHTML]="'Phone Number ' | translate"></span><span *ngIf="!config.phoneNumberRequired"[innerHTML]="'(optional)' | translate"></span></label>
 		<div class="col-9">
 			<input type="tel" class="form-control" id="phoneNumber" [required] = "config.phoneNumberRequired" [(ngModel)]="model.user.phoneNumber" name="phoneNumber" #phoneNumber="ngModel">
-			<div *ngIf="!phoneNumber.valid && phoneNumber.touched"><small class="text-danger">Please enter a valid phone number.</small></div>
+			<div *ngIf="!phoneNumber.valid && phoneNumber.touched"><small class="text-danger"><span [innerHTML]="'Please enter a valid phone number.' | translate"></span></small></div>
 		</div>
 	</div>
 
@@ -89,7 +89,7 @@
 		<div *ngFor="let ra of config.requiredAgreements" class="col-12">
 			<input type="checkbox" required name="{{ra.title}}" [(ngModel)]="requiredAgreements[ra.title]">
 			<span class="form-control d-inline border-0" [ngClass]="{'ng-invalid':!requiredAgreements[ra.title],'ng-valid required':requiredAgreements[ra.title]}">
-				I agree to the <a class="clickable" href="{{ra.src}}" target="_blank">{{ra.title}}</a>
+					<span [innerHTML]="'I agree to the ' | translate"></span><a class="clickable" href="{{ra.src}}" target="_blank">{{ra.title}}</a>
 			</span>
 		</div>
 	</div>
@@ -105,19 +105,19 @@
 		</div>
 		-->
 		<div class="col-3">
-			<button type="submit" class="btn btn-primary action" [disabled]="!userForm.form.valid || !passwords_matching || submitCallStatus.isLoading()">Submit</button>
+			<button type="submit" class="btn btn-primary action" [disabled]="!userForm.form.valid || !passwords_matching || submitCallStatus.isLoading()"><span [innerHTML]="'Submit' | translate"></span></button>
 		</div>
 	</div>
 
 	<div *ngIf="debug">
 		<div [hidden]="!submitted">
 			<hr/>
-			<p>Request:</p>
+			<p><span [innerHTML]="'Request:' | translate"></span></p>
 			<pre>{{ objToSubmit | json }}</pre>
 		</div>
 		<div [hidden]="!callback">
 			<hr/>
-			<p>Response:</p>
+			<p><span [innerHTML]="'Response:' | translate"></span></p>
 			<pre>{{ response | json }}</pre>
 		</div>
 	</div>

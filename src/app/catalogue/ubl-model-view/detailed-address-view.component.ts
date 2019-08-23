@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Address} from "../model/publish/address";
 import {CookieService} from 'ng2-cookies';
 import {UserService} from '../../user-mgmt/user.service';
+import {TranslateService} from '@ngx-translate/core';
 import {CallStatus} from '../../common/call-status';
 
 /*
@@ -24,8 +25,12 @@ export class DetailedAddressViewComponent implements OnInit{
 
     constructor(
         private cookieService: CookieService,
-        private userService: UserService
-    ) {	}
+        private userService: UserService,
+        private translate: TranslateService    
+    ) {	
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
+    }
 
     ngOnInit():void{
         // get company address

@@ -3,6 +3,7 @@ import {CatalogueLine} from "../../model/publish/catalogue-line";
 import * as myGlobals from "../../../globals";
 import {FormGroup} from "@angular/forms";
 import {ChildForm} from "../../child-form";
+import {TranslateService} from '@ngx-translate/core';
 import {PublishService} from "../../publish-and-aip.service";
 
 @Component({
@@ -26,8 +27,10 @@ export class CatalogueLineViewComponent extends ChildForm {
     transportationServiceDetailsForm: FormGroup = new FormGroup({});
 	public debug = myGlobals.debug;
 
-	constructor(private publishService: PublishService) {
-	    super();
+	constructor(private publishService: PublishService,private translate: TranslateService) {
+        super();
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
     }
 
 	ngOnInit() {

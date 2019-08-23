@@ -3,6 +3,7 @@ import {Text} from '../model/publish/text';
 import {DEFAULT_LANGUAGE} from '../model/constants';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {BinaryObject} from '../model/publish/binary-object';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "name-description-panel",
@@ -11,7 +12,10 @@ import {BinaryObject} from '../model/publish/binary-object';
 })
 export class NameDescriptionPanelComponent implements OnInit{
 
-    constructor(private modalService: NgbModal) {
+    constructor(private modalService: NgbModal,
+        private translate: TranslateService) {
+            translate.setDefaultLang("en");
+            translate.use(translate.getBrowserLang());
     }
 
     @Input() catalogueLine;

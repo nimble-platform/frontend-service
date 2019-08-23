@@ -6,6 +6,7 @@ import { CallStatus } from "../../common/call-status";
 import { CompanySettings } from "../model/company-settings";
 import { ActivatedRoute } from "@angular/router";
 import { AppComponent } from "../../app.component";
+import {TranslateService} from '@ngx-translate/core';
 
 type SelectedTab = "COMPANY_DATA"
     | "COMPANY_DESCRIPTION"
@@ -35,6 +36,7 @@ export class CompanySettingsComponent implements OnInit {
     constructor(private cookieService: CookieService,
                 private userService: UserService,
                 public route: ActivatedRoute,
+                private translate: TranslateService,
                 public appComponent: AppComponent) {
 
     }

@@ -1,7 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Attachment} from '../model/publish/attachment';
 import {DocumentReference} from '../model/publish/document-reference';
+import {TranslateService} from '@ngx-translate/core';
 import {BinaryObject} from '../model/publish/binary-object';
+
+
 
 @Component({
     selector: 'note-file-view',
@@ -25,6 +28,13 @@ export class NoteFileViewComponent implements OnInit{
 
     files:BinaryObject[];
     requestFiles:BinaryObject[];
+
+    constructor(
+        private translate: TranslateService
+    ) {
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
+    }
     ngOnInit(){
         if(this.documents){
             this.files = this.documents.filter(doc => doc.attachment != null).map(doc => doc.attachment.embeddedDocumentBinaryObject);

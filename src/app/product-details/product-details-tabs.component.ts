@@ -8,6 +8,7 @@ import { getPropertyValuesAsStrings, selectPartyName } from "../common/utils";
 import { CompanySettings } from "../user-mgmt/model/company-settings";
 import * as myGlobals from '../globals';
 import {Quantity} from '../catalogue/model/publish/quantity';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'product-details-tabs',
@@ -47,6 +48,7 @@ export class ProductDetailsTabsComponent implements OnInit {
     haveRating = false;
 
     constructor(
+        private translate: TranslateService,
         private bpeService: BPEService,
     ) {}
 

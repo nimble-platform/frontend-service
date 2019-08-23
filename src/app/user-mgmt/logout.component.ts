@@ -7,6 +7,7 @@ import { CatalogueService } from '../catalogue/catalogue.service';
 import * as constants from "../common/constants";
 import {Headers, Http} from "@angular/http";
 import * as myGlobals from "../globals";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
 	selector: 'nimble-logout',
@@ -21,7 +22,8 @@ export class LogoutComponent implements OnInit {
 		private appComponent: AppComponent,
 		private userService: UserService,
         private categoryService: CategoryService,
-        private catalogueService: CatalogueService,
+		private catalogueService: CatalogueService,
+		private translate: TranslateService,
         private http: Http
 	) {	}
 

@@ -11,6 +11,7 @@ import { CatalogueService } from "../catalogue/catalogue.service";
 import {CallStatus} from '../common/call-status';
 import { ActivatedRoute,Router } from "@angular/router";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'product-details-overview',
@@ -39,6 +40,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
     zoomedImgURL = "";
 
     constructor(
+        private translate: TranslateService,
         public categoryService:CategoryService,
         public catalogueService:CatalogueService,
         private modalService: NgbModal,

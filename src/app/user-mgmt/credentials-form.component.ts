@@ -8,6 +8,7 @@ import { CallStatus } from '../common/call-status';
 import {copy, selectValueOfTextObject} from '../common/utils';
 import {CategoryService} from '../catalogue/category/category.service';
 import * as constants from "../common/constants";
+import {TranslateService} from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
 //declare var jsSHA: any;
 
@@ -35,6 +36,7 @@ export class CredentialsFormComponent implements OnInit {
 		private cookieService: CookieService,
 		private appComponent: AppComponent,
 		private categoryService:CategoryService,
+		private translate: TranslateService,
 		private route: ActivatedRoute,
 	) {	}
 

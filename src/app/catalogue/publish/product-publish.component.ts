@@ -13,6 +13,7 @@ import { Quantity } from "../model/publish/quantity";
 import { CategoryService } from "../category/category.service";
 import { CatalogueService } from "../catalogue.service";
 import { UserService } from "../../user-mgmt/user.service";
+import {TranslateService} from '@ngx-translate/core';
 import { Router, Params, ActivatedRoute } from "@angular/router";
 import { CookieService } from "ng2-cookies";
 import { Category } from "../model/category/category";
@@ -166,7 +167,10 @@ export class ProductPublishComponent implements OnInit {
                 private location: Location,
                 private cookieService: CookieService,
                 private unitService:UnitService,
-                private modalService: NgbModal) {
+                private modalService: NgbModal,
+                private translate: TranslateService) {
+                    translate.setDefaultLang("en");
+                    translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {

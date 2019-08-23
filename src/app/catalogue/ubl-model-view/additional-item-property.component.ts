@@ -11,6 +11,7 @@ import {FormGroup} from "@angular/forms";
 import {createText, selectName, selectDescription, selectPreferredName, selectItemPropertyValuesAsString} from '../../common/utils';
 import {Category} from '../model/category/category';
 import {Item} from '../model/publish/item';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'additional-item-property',
@@ -33,8 +34,10 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
     showPropertyDetails: boolean = false;
     customProperty: boolean = false;
 
-    constructor(private catalogueService:CatalogueService,
+    constructor(private catalogueService:CatalogueService,private translate: TranslateService,
                 private bpDataService: BPDataService) {
+                    translate.setDefaultLang("en");
+                    translate.use(translate.getBrowserLang());
     }
 
     openPropertyDetails(): void {

@@ -18,6 +18,7 @@ import {Observable} from 'rxjs/Observable';
 import {CATALOGUE_LINE_SORT_OPTIONS} from '../../model/constants';
 import {Catalogue} from '../../model/publish/catalogue';
 import { CatalogueLine } from "../../model/publish/catalogue-line";
+import {TranslateService} from '@ngx-translate/core';
 import {DeleteExportCatalogueModalComponent} from "./delete-export-catalogue-modal.component";
 
 @Component({
@@ -75,9 +76,11 @@ export class CatalogueViewComponent implements OnInit {
                 private publishService: PublishService,
                 private catalogueService: CatalogueService,
                 private categoryService: CategoryService,
+                private translate: TranslateService,
                 private userService: UserService,
                 private router: Router) {
-
+                    translate.setDefaultLang("en");
+                    translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {

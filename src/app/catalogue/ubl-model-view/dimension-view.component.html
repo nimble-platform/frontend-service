@@ -19,6 +19,6 @@
 </div>
 
 <div *ngIf="presentationMode == 'edit'">
-    <label>Add Dimension</label>
+    <label><span [innerHTML]="'Add Dimension' | translate"></span></label>
     <i class="fa fa-plus-circle pointer" (click)="addNewDimension('', '')"></i>
 </div>

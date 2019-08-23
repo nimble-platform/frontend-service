@@ -34,7 +34,7 @@
                 <text-input *ngIf="i>0" label="Description" [(text)]="catalogueLine.goodsItem.item.description[i].value" [rows]="6" [maxLength]="2047" [rowClass]="'m-0 space-before'" [flexClass]="'col-1 pr-0'" [valueClass]="'col-8'" (deleteTextInput)="deleteItemNameDescription(i)" [deleteButtonStyle]="'btn-danger'">
                 </text-input>
             </div>
-            <div class="col-12 pr-0 align-right space-before"><button class='btn btn-outline-primary' (click)="addItemNameDescription()">Add Name & Description</button></div>
+            <div class="col-12 pr-0 align-right space-before"><button class='btn btn-outline-primary' (click)="addItemNameDescription()"><span [innerHTML]="'Add Name & Description' | translate"></span></button></div>
         </div>
     </div>
 
@@ -48,7 +48,7 @@
                 <i class="fa fa-times-circle delete-image" (click)="onRemoveImage(i)"></i>
             </div>
             <div class="add-image btn btn-outline-primary">
-                <span>Add Image</span>
+                <span><span [innerHTML]="'Add Image' | translate"></span></span>
                 <input type="file" (change)="onAddImage($event)" multiple/>
                 <i class="fa fa-question-circle delete-image" (click)="onClickImageRecommendations(imageRecommendationModal)"></i>
             </div>
@@ -58,16 +58,16 @@
     <!-- Image recommendations Modal -->
     <ng-template #imageRecommendationModal let-d="dismiss">
         <div class="modal-header">
-            <h4 class="modal-title">Image recommendations</h4>
+            <h4 class="modal-title"><span [innerHTML]="'Image recommendations' | translate"></span></h4>
             <button type="button" class="close" aria-label="Close" (click)="d('')">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
         <div class="modal-body">
             <ul>
-                <li>Images must be files with one of the "png", "jpg" or "gif" formats.</li>
-                <li>Although not mandatory, square or squarish images are recommended for better visibility.</li>
-                <li>Images exceeding 5 MB in size are not permitted.</li>
+                <li><span [innerHTML]="'Images must be files with one of the formats.' | translate"></span></li>
+                <li><span [innerHTML]="'Although not mandatory, square or squarish images are recommended for better visibility.' | translate"></span></li>
+                <li><span [innerHTML]="'Images exceeding 5 MB in size are not permitted.' | translate"></span></li>
             </ul>
         </div>
     </ng-template>

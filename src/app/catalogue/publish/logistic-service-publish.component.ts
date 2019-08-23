@@ -23,6 +23,7 @@ import {Catalogue} from '../model/publish/catalogue';
 import * as myGlobals from '../../globals';
 import {Category} from '../model/category/category';
 import {LogisticPublishingService} from './logistic-publishing.service';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "logistic-service-publish",
@@ -39,7 +40,10 @@ export class LogisticServicePublishComponent implements OnInit {
                 private router: Router,
                 private location: Location,
                 private cookieService: CookieService,
-                private logisticPublishingService:LogisticPublishingService) {
+                private logisticPublishingService:LogisticPublishingService,
+                private translate: TranslateService) {
+                    translate.setDefaultLang("en");
+                    translate.use(translate.getBrowserLang());
     }
 
     config = myGlobals.config;

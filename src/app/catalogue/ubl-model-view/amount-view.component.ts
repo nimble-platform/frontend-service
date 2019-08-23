@@ -3,6 +3,7 @@ import {Quantity} from "../model/publish/quantity";
 import {Subject} from "rxjs/Subject";
 import {Amount} from "../model/publish/amount";
 import {ChildForm} from "../child-form";
+import {TranslateService} from '@ngx-translate/core';
 import {AbstractControl, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {UnitService} from '../../common/unit-service';
 
@@ -38,8 +39,11 @@ export class AmountViewComponent extends ChildForm implements OnInit {
     amountForm:FormGroup = this.fb.group({}, { validator: this.bothValuesExist });
 
     constructor(private fb:FormBuilder,
+                private translate: TranslateService,
                 private unitService:UnitService) {
         super();
+        translate.setDefaultLang("en");
+        translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {

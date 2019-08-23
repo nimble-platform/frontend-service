@@ -48,17 +48,17 @@
                                 <p  *ngIf="catLine[product_description] != null"  style="word-break: break-all;word-wrap: break-word;">{{getMultilingualLabel(catLine[product_description])}}</p>
                                 <!-- <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" style="word-break: break-all;word-wrap: break-word;">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p> -->
                                     <p *ngIf="catLine[product_price] && !checkEmpty(catLine[product_price])" style="word-break: break-all;word-wrap: break-word;">{{roundToTwoDecimals(catLine[product_price][getCurrency(catLine[product_price])])}} {{getCurrency(catLine[product_price])}}</p>
-                                    <p *ngIf="!catLine[product_price] || checkEmpty(catLine[product_price])" style="word-break: break-all;word-wrap: break-word;">Upon request</p>
+                                    <p *ngIf="!catLine[product_price] || checkEmpty(catLine[product_price])" style="word-break: break-all;word-wrap: break-word;"><span [innerHTML]="'Upon request' | translate"></span></p>
                             </div>
                             <div class="col-2">
 
                                 <button type="button" class="btn btn-danger space-after col" [disabled]="getDeleteStatus(i).isLoading()"
                                         (click)="removeFavourite(catLine, i); $event.stopPropagation();">
-                                    Remove
+                                        <span [innerHTML]="'Remove' | translate"></span> 
                                 </button>
 
                                 <a  href="#" role="button" class="btn btn-primary col" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.catalogueId, id: catLine.manufactuerItemId}">
-                                    Negotiate
+                                    <span [innerHTML]="'Negotiate' | translate"></span>
                                 </a>
                                 <call-status [callStatus]="getDeleteStatus(i)"></call-status>
                             </div>
@@ -81,9 +81,9 @@
 </div>
 
 <div class="jumbotron" *ngIf="itemTypeResponse && hasFavourite == false">
-    <h3>No Favourite products / service.</h3>
+    <h3><span [innerHTML]="'No Favourite products / service.' | translate"></span></h3>
     <h5>
-        <span (click)="navigateToTheSearchPage()" class="pointer">Search For  products / services</span>
+        <span (click)="navigateToTheSearchPage()" class="pointer"><span [innerHTML]="'Search For  products / services' | translate"></span></span>
         <i class="fa fa-plus-circle pointer" (click)="navigateToTheSearchPage()"></i>
     </h5>
 </div>
