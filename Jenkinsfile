@@ -57,6 +57,18 @@ node('nimble-jenkins-slave') {
         stage('Deploy - EFAC') {
             sh 'ssh staging "cd /srv/nimble-staging/ && ./run-staging.sh restart-single frontend-service-efactory"'
         }
+
+        stage('Build Application - Eco House') {
+            sh 'mvn clean install -Denv=ecohouse'
+        }
+
+        stage('Build Docker - Eco House') {
+            sh 'docker build -t nimbleplatform/frontend-service:ecohouse ./target'
+        }
+
+        stage('Push Docker - Eco House') {
+            sh 'docker push nimbleplatform/frontend-service:ecohouse'
+        }
     }
 
     // -----------------------------------------------
