@@ -23,4 +23,13 @@ export class ActivityVariableParser {
         let role:BpUserRole = buyerId == partyId ? 'buyer' : 'seller';
         return role;
     }
+
+    static getPrecedingDocumentId(activityVariables:any){
+        for(let activityVariable of activityVariables){
+            if(activityVariable.name == "responseDocumentID"){
+                return activityVariable.value;
+            }
+        }
+        return null;
+    }
 }

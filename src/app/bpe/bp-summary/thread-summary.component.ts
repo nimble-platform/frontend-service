@@ -168,7 +168,8 @@ export class ThreadSummaryComponent implements OnInit {
             new BpURLParams(
                 this.titleEvent.product.catalogueDocumentReference.id,
                 this.titleEvent.product.manufacturersItemIdentification.id,
-                this.titleEvent.processInstanceId));
+                this.titleEvent.processInstanceId,
+                ActivityVariableParser.getPrecedingDocumentId(this.titleEvent.activityVariables)));
     }
 
     private fetchEvents(): void {

@@ -13,9 +13,6 @@ import {CookieService} from "ng2-cookies";
 import {Router} from "@angular/router";
 import {CustomerParty} from "../../../catalogue/model/publish/customer-party";
 import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
-import {ProcessVariables} from "../../model/process-variables";
-import {ModelUtils} from "../../model/model-utils";
-import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
 import {NegotiationModelWrapper} from "./negotiation-model-wrapper";
 import {copy, durationToString, getMaximumQuantityForPrice, getStepForPrice, isValidPrice, roundToTwoDecimals, trimRedundantDecimals} from "../../../common/utils";
 import {PeriodRange} from "../../../user-mgmt/model/period-range";
@@ -300,10 +297,7 @@ export class NegotiationRequestComponent implements OnInit {
                 rfq.buyerCustomerParty = new CustomerParty(buyerParty);
                 rfq.sellerSupplierParty = new SupplierParty(sellerParty);
 
-                const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", this.buyerId, this.sellerId,this.cookieService.get("user_id"), rfq, this.bpDataService);
-                const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
-
-                return this.bpeService.startBusinessProcess(piim);
+                return this.bpeService.processDocument(rfq);
 
             }).then(() => {
                 this.callStatus.callback("Terms sent", true);

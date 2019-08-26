@@ -6,8 +6,6 @@ import {BPDataService} from "../bp-data-service";
 import {CustomerParty} from "../../../catalogue/model/publish/customer-party";
 import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
 import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
-import {ModelUtils} from "../../model/model-utils";
-import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
 import {Ppap} from "../../../catalogue/model/publish/ppap";
 import {CallStatus} from "../../../common/call-status";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -186,10 +184,8 @@ export class PpapDocumentSelectComponent implements OnInit {
 
             this.userService.getParty(sellerId).then(sellerParty => {
                 this.ppap.sellerSupplierParty = new SupplierParty(sellerParty);
-                let vars = ModelUtils.createProcessVariables("Ppap", buyerId, sellerId,this.cookieService.get("user_id"), this.ppap, this.bpDataService);
-                let piim = new ProcessInstanceInputMessage(vars, "");
                 this.bpeService
-                    .startBusinessProcess(piim)
+                    .processDocument(this.ppap)
                     .then(() => {
                         this.callStatus.callback("Ppap request sent", true);
                         this.router.navigate(["dashboard"]);

@@ -4,9 +4,6 @@ import { BPEService } from "../../bpe.service";
 import { CallStatus } from "../../../common/call-status";
 import { Router, ActivatedRoute } from "@angular/router";
 import { Location } from "@angular/common";
-import { ProcessVariables } from "../../model/process-variables";
-import { ModelUtils } from "../../model/model-utils";
-import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { ItemInformationRequest } from "../../../catalogue/model/publish/item-information-request";
 import { ItemInformationResponse } from "../../../catalogue/model/publish/item-information-response";
 import { DocumentReference } from "../../../catalogue/model/publish/document-reference";
@@ -16,9 +13,7 @@ import { ProcessType } from "../../model/process-type";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 import {isLogisticsService, isTransportService} from '../../../common/utils';
 import {CookieService} from 'ng2-cookies';
-import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
-import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
 import {TranslateService} from '@ngx-translate/core';
 
 @Component({
@@ -89,18 +84,9 @@ export class ItemInformationResponseComponent implements OnInit {
 
     onSendResponse(): void {
         this.callStatus.submit();
-        const vars: ProcessVariables = ModelUtils.createProcessVariables(
-            "Item_Information_Request",
-            UBLModelUtils.getPartyId(this.bpDataService.itemInformationRequest.buyerCustomerParty.party),
-            UBLModelUtils.getPartyId(this.bpDataService.itemInformationRequest.sellerSupplierParty.party),
-            this.cookieService.get("user_id"),
-            this.bpDataService.itemInformationResponse,
-            this.bpDataService
-        );
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processInstanceId);
 
         //this.callStatus.submit();
-        this.bpeService.continueBusinessProcess(piim).then(() => {
+        this.bpeService.processDocument(this.bpDataService.itemInformationResponse).then(() => {
             this.callStatus.callback("Information Response sent", true);
             var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")

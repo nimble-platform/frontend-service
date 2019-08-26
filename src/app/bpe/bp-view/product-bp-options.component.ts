@@ -132,6 +132,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             const id = params["id"];
             const catalogueId = params["catalogueId"];
             this.bpDataService.precedingProcessId = params["pid"];
+            this.bpDataService.precedingDocumentId = params["did"];
 
             if (this.id !== id || this.catalogueId !== catalogueId) {
                 this.id = id;

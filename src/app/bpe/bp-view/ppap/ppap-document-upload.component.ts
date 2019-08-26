@@ -3,9 +3,6 @@ import {Ppap} from "../../../catalogue/model/publish/ppap";
 import {PpapResponse} from "../../../catalogue/model/publish/ppap-response";
 import {BPDataService} from "../bp-data-service";
 import {BPEService} from "../../bpe.service";
-import {ProcessVariables} from "../../model/process-variables";
-import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
-import {ModelUtils} from "../../model/model-utils";
 import {CallStatus} from "../../../common/call-status";
 import {ActivatedRoute, Router} from "@angular/router";
 import {BinaryObject} from "../../../catalogue/model/publish/binary-object";
@@ -137,11 +134,9 @@ export class PpapDocumentUploadComponent {
 
         this.ppapResponse.note = this.notesToSend;
         this.ppapResponse.additionalDocumentReference = this.additionalDocumentsToSend;
-        const vars: ProcessVariables = ModelUtils.createProcessVariables("Ppap", UBLModelUtils.getPartyId(this.ppap.buyerCustomerParty.party), UBLModelUtils.getPartyId(this.ppap.sellerSupplierParty.party), this.cookieService.get("user_id"),this.ppapResponse, this.bpDataService);
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processInstanceId);
 
         //this.callStatus.submit();
-        this.bpeService.continueBusinessProcess(piim).then(res => {
+        this.bpeService.processDocument(this.ppapResponse).then(res => {
             this.callStatus.callback("Ppap Response placed", true);
             var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")

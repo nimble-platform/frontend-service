@@ -8,9 +8,6 @@ import { Router } from "@angular/router";
 import { Quotation } from "../../../catalogue/model/publish/quotation";
 import { NegotiationModelWrapper } from "./negotiation-model-wrapper";
 import { NEGOTIATION_RESPONSES, CURRENCIES } from "../../../catalogue/model/constants";
-import { ModelUtils } from "../../model/model-utils";
-import { ProcessVariables } from "../../model/process-variables";
-import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { CallStatus } from "../../../common/call-status";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { BpUserRole } from "../../model/bp-user-role";
@@ -142,11 +139,8 @@ export class NegotiationResponseComponent implements OnInit {
         }
 
         //this.callStatus.submit();
-        const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.buyerCustomerParty.party),
-            UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.sellerSupplierParty.party),this.cookieService.get("user_id"), this.quotation, this.bpDataService);
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processInstanceId);
 
-        this.bpeService.continueBusinessProcess(piim).then(() => {
+        this.bpeService.processDocument(this.quotation).then(() => {
             this.callStatus.callback("Quotation sent", true);
             var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")

@@ -8,6 +8,7 @@ import {BpActivityEvent} from '../../catalogue/model/publish/bp-start-event';
 import {BpUserRole} from '../model/bp-user-role';
 import {BpURLParams} from '../../catalogue/model/publish/bpURLParams';
 import {TranslateService} from '@ngx-translate/core';
+import {ActivityVariableParser} from '../bp-view/activity-variable-parser';
 
 @Component({
     selector: "thread-event",
@@ -52,7 +53,8 @@ export class ThreadEventComponent implements OnInit {
             new BpURLParams(
                 this.event.product.catalogueDocumentReference.id,
                 this.event.product.manufacturersItemIdentification.id,
-                this.event.processInstanceId));
+                this.event.processInstanceId,
+                ActivityVariableParser.getPrecedingDocumentId(this.event.activityVariables)));
     }
 
     cancelBP(){

@@ -89,6 +89,7 @@ export class BPDataService{
     bpActivityEventObservable = this.bpActivityEventBehaviorSubject.asObservable();
 
     precedingProcessId: string;
+    precedingDocumentId: string;
 
     constructor(private searchContextService: SearchContextService,
                 private precedingBPDataService: PrecedingBPDataService,
@@ -245,6 +246,7 @@ export class BPDataService{
                     catalogueId: bpURLParams.catalogueId,
                     id: bpURLParams.catalogueLineId,
                     pid: bpURLParams.processInstanceId,
+                    did: bpURLParams.previousDocumentId,
                     termsSource: bpURLParams.termsSource
                 }
             });

@@ -4,15 +4,11 @@ import { CallStatus } from "../../../common/call-status";
 import { BPEService } from "../../bpe.service";
 import { BPDataService } from "../bp-data-service";
 import { Router } from "@angular/router";
-import { ProcessVariables } from "../../model/process-variables";
-import { ModelUtils } from "../../model/model-utils";
-import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { BpUserRole } from "../../model/bp-user-role";
 import { Location } from "@angular/common";
 import { DespatchAdvice } from "../../../catalogue/model/publish/despatch-advice";
 import {CookieService} from 'ng2-cookies';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
-import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
 import {TranslateService} from '@ngx-translate/core';
 
 
@@ -64,19 +60,9 @@ export class ReceiptAdviceComponent implements OnInit {
 
     onSendReceiptAdvice(): void {
         this.callStatus.submit();
-        const vars: ProcessVariables = ModelUtils.createProcessVariables(
-            "Fulfilment",
-            UBLModelUtils.getPartyId(this.bpDataService.receiptAdvice.despatchSupplierParty.party),
-            UBLModelUtils.getPartyId(this.bpDataService.receiptAdvice.deliveryCustomerParty.party),
-            this.cookieService.get("user_id"),
-            this.bpDataService.receiptAdvice,
-            this.bpDataService
-        );
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(
-            vars, this.processMetadata.processInstanceId);
 
         //this.callStatus.submit();
-        this.bpeService.continueBusinessProcess(piim)
+        this.bpeService.processDocument(this.bpDataService.receiptAdvice)
             .then(res => {
                 this.callStatus.callback("Receipt Advice sent", true);
                 var tab = "PURCHASES";

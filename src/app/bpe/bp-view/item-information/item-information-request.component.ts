@@ -13,13 +13,9 @@ import { Attachment } from "../../../catalogue/model/publish/attachment";
 import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
 import { CustomerParty } from "../../../catalogue/model/publish/customer-party";
 import { SupplierParty } from "../../../catalogue/model/publish/supplier-party";
-import { ProcessVariables } from "../../model/process-variables";
-import { ModelUtils } from "../../model/model-utils";
-import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { copy, isTransportService } from "../../../common/utils";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 import {DocumentService} from '../document-service';
-import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {TranslateService} from '@ngx-translate/core';
 /**
@@ -108,11 +104,7 @@ export class ItemInformationRequestComponent implements OnInit {
             itemInformationRequest.buyerCustomerParty = new CustomerParty(buyerParty);
             itemInformationRequest.sellerSupplierParty = new SupplierParty(sellerParty);
 
-            const vars: ProcessVariables = ModelUtils.createProcessVariables(
-                "Item_Information_Request", buyerId, sellerId,this.cookieService.get("user_id"), itemInformationRequest, this.bpDataService);
-            const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
-
-            return this.bpeService.startBusinessProcess(piim)
+            return this.bpeService.processDocument(itemInformationRequest);
         })
         .then(() => {
             this.callStatus.callback("Item Information Request sent", true);
