@@ -63,6 +63,7 @@ module.exports = {
 			{from: './src/assets/js/',to: 'assets/js'},
       {from: './src/assets/i18n',to: 'assets/i18n'},
 			{from: './src/lib/bpe/js',to: 'lib/bpe/js'},
+			{from: './src/environments',to: 'environments'},
 			{from: './src/main',to: 'main'},
             {from: './src/health.json',to: './'},
 			{from: './src/favicon.ico',to: './'}
