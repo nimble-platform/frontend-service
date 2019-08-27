@@ -2,17 +2,17 @@
 <div class="col-12 pt-4">
     <ul class="nav nav-tabs">
         <li class="nav-item">
-            <a href id="OVERVIEW" class="nav-link" [ngClass]="{ active: selectedTab === 'OVERVIEW'}" (click)="onSelectTab($event)">
+            <a href id="OVERVIEW" class="nav-link" [ngClass]="{ active: selectedTab === 'OVERVIEW'}" (click)="onSelectTab($event,'OVERVIEW')">
                 <span [innerHTML]="'Transport Service Details' | translate"></span>
             </a>
         </li>
         <li class="nav-item">
-            <a href id="ADDRESS" class="nav-link" [ngClass]="{ active: selectedTab === 'ADDRESS'}" (click)="onSelectTab($event)">
+            <a href id="ADDRESS" class="nav-link" [ngClass]="{ active: selectedTab === 'ADDRESS'}" (click)="onSelectTab($event,'ADDRESS')">
                 <span [innerHTML]="'Pick-up & Drop-off' | translate"></span>
             </a>
         </li>
         <li class="nav-item">
-            <a href id="NEGOTIATION" class="nav-link" [ngClass]="{ active: selectedTab === 'NEGOTIATION'}" (click)="onSelectTab($event)">
+            <a href id="NEGOTIATION" class="nav-link" [ngClass]="{ active: selectedTab === 'NEGOTIATION'}" (click)="onSelectTab($event,'NEGOTIATION')">
                 <span [innerHTML]="'Negotiable Terms' | translate"></span>
             </a>
         </li>
@@ -111,7 +111,7 @@
     </div>
     <div class="col-3" *ngIf="!updatingProcess">
         <button class="btn btn-primary action" [disabled]="isDisabled()" (click)="onSendRequest()">
-            <span [innerHTML]="'Send Request' | translate"></span> 
+            <span [innerHTML]="'Send Request' | translate"></span>
         </button>
     </div>
     <div class="col-3" *ngIf="updatingProcess">

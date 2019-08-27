@@ -176,9 +176,9 @@ export class DashboardThreadedComponent implements OnInit{
         }
     }
 
-    onChangeTab(event: any): void {
+    onChangeTab(event: any, id: any): void {
         event.preventDefault();
-        this.updateQueryParameters({ tab: event.target.id });
+        this.updateQueryParameters({ tab: id });
     }
 
     onCloseWelcomeTab(event: any): void {

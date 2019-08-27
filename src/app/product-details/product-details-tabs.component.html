@@ -6,7 +6,7 @@
                 <li class="nav-item">
                     <a href id="OVERVIEW" class="nav-link"
                         [ngClass]="{ active: selectedTab === 'OVERVIEW'}"
-                        (click)="onSelectTab($event)">
+                        (click)="onSelectTab($event,'OVERVIEW')">
                         <span [innerHTML]="'Overview' | translate"></span>
                     </a>
                 </li>
@@ -14,14 +14,14 @@
             <li *ngIf="haveDetails" class="nav-item">
                 <a href id="DETAILS" class="nav-link"
                     [ngClass]="{ active: selectedTab === 'DETAILS'}"
-                    (click)="onSelectTab($event)">
+                    (click)="onSelectTab($event,'DETAILS')">
                     <span [innerHTML]="'Details' | translate"></span>
                 </a>
             </li>
             <li *ngIf="haveTransportServiceDetails" class="nav-item">
                     <a href id="PRICE" class="nav-link"
                         [ngClass]="{ active: selectedTab === 'PRICE'}"
-                        (click)="onSelectTab($event)">
+                        (click)="onSelectTab($event,'PRICE')">
                         <span [innerHTML]="'Price' | translate"></span>
                     </a>
             </li>
@@ -29,28 +29,28 @@
                 <a href id="DELIVERY_TRADING" class="nav-link"
                     *ngIf="isLogistics === false"
                     [ngClass]="{ active: selectedTab === 'DELIVERY_TRADING'}"
-                    (click)="onSelectTab($event)">
+                    (click)="onSelectTab($event,'DELIVERY_TRADING')">
                     <span [innerHTML]="'Delivery' | translate"></span> &amp; <span [innerHTML]="'Trading' | translate"></span>
                 </a>
             </li>
             <li *ngIf="haveCertificates" class="nav-item">
                 <a href id="CERTIFICATES" class="nav-link"
                     [ngClass]="{ active: selectedTab === 'CERTIFICATES'}"
-                    (click)="onSelectTab($event)">
+                    (click)="onSelectTab($event,'CERTIFICATES')">
                     <span [innerHTML]="'Certificates' | translate"></span>
                 </a>
             </li>
             <li *ngIf="config.showLCPA && haveLCPA" class="nav-item">
                 <a href id="LCPA" class="nav-link" *ngIf="isLogistics === false"
                    [ngClass]="{ active: selectedTab === 'LCPA'}"
-                   (click)="onSelectTab($event)">
+                   (click)="onSelectTab($event,'LCPA')">
                    <span [innerHTML]="'LCPA Details' | translate"></span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href id="COMPANY" class="nav-link"
                     [ngClass]="{ active: selectedTab === 'COMPANY'}"
-                    (click)="onSelectTab($event)">
+                    (click)="onSelectTab($event,'COMPANY')">
                     <span [innerHTML]="'Company Details' | translate"></span>
                 </a>
             </li>

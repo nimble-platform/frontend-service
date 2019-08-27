@@ -481,9 +481,9 @@ export class NegotiationRequestComponent implements OnInit {
         }
     }
 
-    onTCTabSelect(event): void {
+    onTCTabSelect(event:any, id:any): void {
         event.preventDefault();
-        this.selectedTCTab = event.target.id;
+        this.selectedTCTab = id;
     }
 
     onDeleteTradingTerm(termName: string): void {

@@ -408,9 +408,9 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
             }
     }
 
-    onSelectTab(event: any) {
+    onSelectTab(event: any, id: any) {
         event.preventDefault();
-        this.selectedTab = event.target.id;
+        this.selectedTab = id;
     }
 
     genTable() {

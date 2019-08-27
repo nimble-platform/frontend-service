@@ -92,9 +92,9 @@ export class TransportNegotiationResponseComponent implements OnInit {
         return this.callStatus.fb_submitted;
     }
 
-    onSelectTab(event: any): void {
+    onSelectTab(event: any, id: any): void {
         event.preventDefault();
-        this.selectedTab = event.target.id;
+        this.selectedTab = id;
     }
 
     isReadOnly(): boolean {

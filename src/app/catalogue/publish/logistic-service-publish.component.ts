@@ -156,14 +156,14 @@ export class LogisticServicePublishComponent implements OnInit {
     }
 
     // switching between tabs
-    onSelectTabSinglePublish(event: any) {
+    onSelectTabSinglePublish(event: any, id: any) {
         event.preventDefault();
-        this.selectedTabSinglePublish = event.target.id;
+        this.selectedTabSinglePublish = id;
     }
 
-    onSelectTab(event: any) {
+    onSelectTab(event: any, id: any) {
         event.preventDefault();
-        if(event.target.id === "singleUpload") {
+        if(id === "singleUpload") {
             this.publishingGranularity = "single";
         } else {
             this.publishingGranularity = "bulk";

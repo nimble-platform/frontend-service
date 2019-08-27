@@ -156,10 +156,10 @@ export class CategorySearchComponent implements OnInit {
         })
     }
 
-    onSelectTab(event: any) {
+    onSelectTab(event: any, id: any) {
         event.preventDefault();
         if (!this.getCategoryDetailsStatus.isDisplayed())
-          this.selectedTab = event.target.id;
+          this.selectedTab = id;
     }
 
     private getFavoriteCategories() {

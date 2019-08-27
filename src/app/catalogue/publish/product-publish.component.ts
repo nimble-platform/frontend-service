@@ -234,18 +234,18 @@ export class ProductPublishComponent implements OnInit {
      * Event Handlers
      */
 
-    onSelectTab(event: any) {
+    onSelectTab(event: any, id: any) {
         event.preventDefault();
-        if(event.target.id === "singleUpload") {
+        if(id === "singleUpload") {
             this.publishingGranularity = "single";
         } else {
             this.publishingGranularity = "bulk";
         }
     }
 
-    onSelectTabSinglePublish(event: any) {
+    onSelectTabSinglePublish(event: any, id: any) {
         event.preventDefault();
-        this.selectedTabSinglePublish = event.target.id;
+        this.selectedTabSinglePublish = id;
     }
 
     /**
@@ -1157,7 +1157,7 @@ export class ProductPublishComponent implements OnInit {
         }).catch((error) => {
             this.productCatalogueRetrievalStatus.error('Failed to get product catalogues');
         });
-       
+
     }
 
     // used to validate inputs whose type is number

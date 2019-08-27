@@ -3,14 +3,14 @@
     <li class="nav-item">
         <a href id="singleUpload"
            [ngClass]="{'nav-link': true, active: publishingGranularity === 'single'}"
-           (click)="onSelectTab($event)"
+           (click)="onSelectTab($event,'singleUpload')"
         ><span [innerHTML]="'Single Upload' | translate"></span></a>
     </li>
 
     <li class="nav-item">
         <a href id="bulkUpload"
            [ngClass]="{'nav-link': true, active: publishingGranularity == 'bulk'}"
-           (click)="onSelectTab($event)"
+           (click)="onSelectTab($event,'bulkUpload')"
         ><span [innerHTML]="'Bulk Upload' | translate"></span></a>
     </li>
 </ul>
@@ -66,35 +66,35 @@
                     <li class="nav-item">
                         <a href id="DETAILS" class="nav-link"
                            [ngClass]="{ active: selectedTabSinglePublish === 'DETAILS'}"
-                           (click)="onSelectTabSinglePublish($event)">
+                           (click)="onSelectTabSinglePublish($event,'DETAILS')">
                            <span [innerHTML]="'Details' | translate"></span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href id="PRICE" class="nav-link"
                            [ngClass]="{ active: selectedTabSinglePublish === 'PRICE'}"
-                           (click)="onSelectTabSinglePublish($event)">
+                           (click)="onSelectTabSinglePublish($event,'PRICE')">
                            <span [innerHTML]="'Price' | translate"></span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href id="DELIVERY_TRADING" class="nav-link"
                            [ngClass]="{ active: selectedTabSinglePublish === 'DELIVERY_TRADING'}"
-                           (click)="onSelectTabSinglePublish($event)">
+                           (click)="onSelectTabSinglePublish($event,'DELIVERY_TRADING')">
                            <span [innerHTML]="'Delivery' | translate"></span> &amp; <span [innerHTML]="'Trading' | translate"></span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href id="CERTIFICATES" class="nav-link"
                            [ngClass]="{ active: selectedTabSinglePublish === 'CERTIFICATES'}"
-                           (click)="onSelectTabSinglePublish($event)">
+                           (click)="onSelectTabSinglePublish($event,'CERTIFICATES')">
                            <span [innerHTML]="'Certificates' | translate"></span>
                         </a>
                     </li>
                     <li *ngIf="config.showLCPA" class="nav-item">
                         <a href id="LCPA" class="nav-link"
                            [ngClass]="{ active: selectedTabSinglePublish === 'LCPA'}"
-                           (click)="onSelectTabSinglePublish($event)">
+                           (click)="onSelectTabSinglePublish($event,'LCPA')">
                            <span [innerHTML]="'LCPA Details' | translate"></span>
                         </a>
                     </li>
@@ -336,7 +336,7 @@
                     <div class="col-12">
                         <span [innerHTML]="'No property matching your search? ' | translate"></span><br>
                         <a href class="btn-link" (click)="onAddCategory($event, d)"><span [innerHTML]="'Add more categories to this product / service' | translate"></span></a>
-                        <span [innerHTML]="'or' | translate"></span> 
+                        <span [innerHTML]="'or' | translate"></span>
                         <a href class="btn-link" (click)="onAddCustomProperty($event, d)"><span [innerHTML]="'Create a custom property' | translate"></span></a>.
                     </div>
                 </div>

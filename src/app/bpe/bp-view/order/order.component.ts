@@ -330,9 +330,9 @@ export class OrderComponent implements OnInit {
             });
     }
 
-    onTTTabSelect(event): void {
+    onTTTabSelect(event:any,id:any): void {
         event.preventDefault();
-        this.selectedTrackAndTraceTab = event.target.id;
+        this.selectedTrackAndTraceTab = id;
     }
 
     onTTFileSelected(binaryObject: BinaryObject): void {
@@ -362,9 +362,9 @@ export class OrderComponent implements OnInit {
         this.epcCodes.codes.push("");
     }
 
-    onTCTabSelect(event): void {
+    onTCTabSelect(event:any,id:any): void {
         event.preventDefault();
-        this.selectedTCTab = event.target.id;
+        this.selectedTCTab = id;
     }
 
     /*

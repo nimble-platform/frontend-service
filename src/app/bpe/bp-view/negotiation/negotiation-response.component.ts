@@ -166,9 +166,9 @@ export class NegotiationResponseComponent implements OnInit {
         this.wrapper.quotationDiscountPriceWrapper.totalPrice = totalPrice;
     }
 
-    onTCTabSelect(event): void {
+    onTCTabSelect(event:any,id:any): void {
         event.preventDefault();
-        this.selectedTCTab = event.target.id;
+        this.selectedTCTab = id;
     }
 
     /*

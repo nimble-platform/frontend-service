@@ -84,9 +84,9 @@ export class TransportNegotiationRequestComponent implements OnInit {
         return !!this.processMetadata && !this.processMetadata.isBeingUpdated;
     }
 
-    onSelectTab(event: any): void {
+    onSelectTab(event: any, id: any): void {
         event.preventDefault();
-        this.selectedTab = event.target.id;
+        this.selectedTab = id;
     }
 
     onBack(): void {

@@ -146,9 +146,9 @@ export class CompanyManagementComponent implements OnInit {
         return selectedSortOption[0];
     }
 
-    onSelectTab(event: any): void {
+    onSelectTab(event: any, id: any): void {
         event.preventDefault();
-        this.selectedTab = event.target.id;
+        this.selectedTab = id;
     }
 
     toggleVerifiedExpand() {

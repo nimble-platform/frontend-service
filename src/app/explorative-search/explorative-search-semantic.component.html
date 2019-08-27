@@ -236,10 +236,10 @@
                 <div class="fixed" style="background-color: #e9ecef">
                     <ul class="nav nav-tabs pt-2 pl-1 pr-1 fixed">
                         <li class="nav-item">
-                            <a href id="PROPS" class="nav-link" [ngClass]="{active: selectedTab === 'PROPS'}" (click)="onSelectTab($event)"><span [innerHTML]="'Properties' | translate"></span></a>
+                            <a href id="PROPS" class="nav-link" [ngClass]="{active: selectedTab === 'PROPS'}" (click)="onSelectTab($event,'PROPS')"><span [innerHTML]="'Properties' | translate"></span></a>
                         </li>
                         <li class="nav-item">
-                            <a href id="REFS" class="nav-link" [ngClass]="{active: selectedTab === 'REFS'}" (click)="onSelectTab($event)"><span [innerHTML]="'References' | translate"></span></a>
+                            <a href id="REFS" class="nav-link" [ngClass]="{active: selectedTab === 'REFS'}" (click)="onSelectTab($event,'REFS')"><span [innerHTML]="'References' | translate"></span></a>
                         </li>
                     </ul>
                 </div>

@@ -161,14 +161,14 @@
                 <li class="nav-item">
                     <a href id="CUSTOM_TERMS" class="nav-link"
                        [ngClass]="{ active: selectedTCTab === 'CUSTOM_TERMS'}"
-                       (click)="onTCTabSelect($event)">
+                       (click)="onTCTabSelect($event,'CUSTOM_TERMS')">
                        <span [innerHTML]="'Custom Terms' | translate"></span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href id="CLAUSES" class="nav-link"
                        [ngClass]="{ active: selectedTCTab === 'CLAUSES'}"
-                       (click)="onTCTabSelect($event)">
+                       (click)="onTCTabSelect($event,'CLAUSES')">
                        <span [innerHTML]="'Clauses' | translate"></span>
                     </a>
                 </li>
@@ -233,14 +233,14 @@
         <li class="nav-item">
             <a href id="EPC_CODES" class="nav-link"
                [ngClass]="{ active: selectedTrackAndTraceTab === 'EPC_CODES'}"
-               (click)="onTTTabSelect($event)">
+               (click)="onTTTabSelect($event,'EPC_CODES')">
                <span [innerHTML]="'EPC Codes' | translate"></span>
             </a>
         </li>
         <li class="nav-item">
             <a href id="PRODUCTION_PROCESS_TEMPLATE" class="nav-link"
                [ngClass]="{ active: selectedTrackAndTraceTab === 'PRODUCTION_PROCESS_TEMPLATE'}"
-               (click)="onTTTabSelect($event)">
+               (click)="onTTTabSelect($event,'PRODUCTION_PROCESS_TEMPLATE')">
                <span [innerHTML]="'Production Process Template' | translate"></span>
             </a>
         </li>
@@ -400,7 +400,7 @@
             </div>
             <div class="col-2" *ngIf="companyWorkflowMap.get('Fulfilment')">
                 <button class="btn btn-primary action" [disabled]="isLoading() || isOrderRejected()" (click)="onDispatchOrder()">
-                    <span [innerHTML]="'Dispatch Order' | translate"></span> 
+                    <span [innerHTML]="'Dispatch Order' | translate"></span>
                 </button>
             </div>
         </div>

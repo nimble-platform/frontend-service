@@ -108,9 +108,9 @@ export class CompanySettingsComponent implements OnInit {
       this.initCallStatus.callback("Settings successfully fetched", true);
     }
 
-    onSelectTab(event: any) {
+    onSelectTab(event: any, id: any) {
         event.preventDefault();
-        this.selectedTab = event.target.id;
+        this.selectedTab = id;
     }
 
     onSettingsUpdated() {

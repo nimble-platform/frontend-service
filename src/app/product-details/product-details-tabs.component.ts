@@ -118,9 +118,9 @@ export class ProductDetailsTabsComponent implements OnInit {
 
     }
 
-    onSelectTab(event: any): void {
+    onSelectTab(event: any, id: any): void {
         event.preventDefault();
-        this.selectedTab = event.target.id;
+        this.selectedTab = id;
         this.tabStatus.emit(false);
     }
 
