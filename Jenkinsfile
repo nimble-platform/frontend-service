@@ -113,7 +113,7 @@ node('nimble-jenkins-slave') {
         }
 
         stage('Deploy - MVP') {
-            sh 'ssh nimble "cd /data/deployment_setup/prod/ && sudo ./run-prod.sh restart-single frontend-service"'
+            sh 'ssh nimble "cd /data/deployment_setup/prod/ && export COMPOSE_HTTP_TIMEOUT=600 && sudo ./run-prod.sh restart-single frontend-service"'
         }
 
         stage('Build Application - FMP') {
