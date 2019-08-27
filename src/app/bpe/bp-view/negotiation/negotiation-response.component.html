@@ -188,24 +188,24 @@
 </div>
 
 <!-- VAT -->
-<div class="row content-row">
-    <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'VAT' | translate"></span>:</strong></div>
-    <ng-container [ngSwitch]="primaryTermsSource">
-        <div *ngSwitchCase="'product_defaults'" class="col-3">
-            {{ wrapper.lineDiscountPriceWrapper.vatTotalString }}
-        </div>
-        <div *ngSwitchCase="'frame_contract'" class="col-3"></div>
-        <div *ngSwitchCase="'last_offer'" class="col-3">
-                {{ wrapper.lastOfferQuotationWrapper.priceWrapper.vatTotalString }}
-        </div>
-    </ng-container>
-    <div class="col-3">
-        {{ wrapper.rfqVatTotalString}}
-    </div>
-    <div class="col-3">
-        {{ wrapper.quotationDiscountPriceWrapper.vatTotalString}}
-    </div>
-</div>
+<!--<div class="row content-row">-->
+    <!--<div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'VAT' | translate"></span>:</strong></div>-->
+    <!--<ng-container [ngSwitch]="primaryTermsSource">-->
+        <!--<div *ngSwitchCase="'product_defaults'" class="col-3">-->
+            <!--{{ wrapper.lineDiscountPriceWrapper.vatTotalString }}-->
+        <!--</div>-->
+        <!--<div *ngSwitchCase="'frame_contract'" class="col-3"></div>-->
+        <!--<div *ngSwitchCase="'last_offer'" class="col-3">-->
+                <!--{{ wrapper.lastOfferQuotationWrapper.priceWrapper.vatTotalString }}-->
+        <!--</div>-->
+    <!--</ng-container>-->
+    <!--<div class="col-3">-->
+        <!--{{ wrapper.rfqVatTotalString}}-->
+    <!--</div>-->
+    <!--<div class="col-3">-->
+        <!--{{ wrapper.quotationDiscountPriceWrapper.vatTotalString}}-->
+    <!--</div>-->
+<!--</div>-->
 
 
 <!-- Gross total price -->
@@ -416,6 +416,14 @@
             <div class="row">
                 <div class="col-2"><strong><span [innerHTML]="'Total Price' | translate"></span>:</strong></div>
                 <div class="col-10">{{wrapper.newQuotationWrapper.priceWrapper.totalPriceString}}</div>
+            </div>
+            <div class="row">
+                <div class="col-2"><strong><span [innerHTML]="'VAT' | translate"></span>:</strong></div>
+                <div class="col-10">{{ wrapper.newQuotationWrapper.priceWrapper.vatTotalString }}</div>
+            </div>
+            <div class="row">
+                <div class="col-2"><strong><span [innerHTML]="'Gross Total' | translate"></span>:</strong></div>
+                <div class="col-10">{{ wrapper.newQuotationWrapper.priceWrapper.grossTotalString}}</div>
             </div>
         </div>
     </div>
