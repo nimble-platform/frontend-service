@@ -199,6 +199,7 @@ export class ThreadSummaryComponent implements OnInit {
                 }
             }
             this.computeTitleEvent();
+            this.checkDataChannel();
 
             // update the former step field of events after sorting and other population
             events[0].formerStep = false;
@@ -303,7 +304,6 @@ export class ThreadSummaryComponent implements OnInit {
 
         this.fillStatus(event, processInstance["state"], processType, responseDocumentStatus, userRole === "buyer",isFulfilmentIncludedInWorkflow);
         this.setCancelCollaborationButtonStatus(processType,responseDocumentStatus,sellerWorkflow);
-        this.checkDataChannel(event);
 
         return event;
     }
@@ -540,39 +540,34 @@ export class ThreadSummaryComponent implements OnInit {
         }
     }
 
-    checkDataChannel(event:ThreadEventMetadata) {
-        //if(event.processType === 'Order') {
-            let processGroupId = this.processInstanceGroup.id;
-            let role = this.processInstanceGroup.collaborationRole;
-            if (role == "BUYER" && this.processInstanceGroup && this.processInstanceGroup.associatedGroups && this.processInstanceGroup.associatedGroups.length > 0)
-              processGroupId = this.processInstanceGroup.associatedGroups[0];
-            this.dataChannelService.channelsForBusinessProcess(processGroupId)
-                .then(channels => {
-                    if (channels && channels.channelID) {
-                        if (role == "BUYER") {
-                            if (channels.negotiationStepcounter % 5 == 1 || channels.negotiationStepcounter % 5 == 3)
-                                this.enableDataChannelButton = true;
-                            else
-                                this.enableDataChannelButton = false;
-                        }
-                        else {
-                            if (channels.negotiationStepcounter % 5 != 1)
-                                this.enableDataChannelButton = true;
-                            else
-                                this.enableDataChannelButton = false;
-                        }
-                        this.showDataChannelButton = true;
-                        const channelId = channels.channelID;
-                        this.channelLink = `/data-channel/details/${channelId}`
-                    }
-                    else {
-                      this.showDataChannelButton = false;
-                    }
-                })
-                .catch(err => {
-                    this.showDataChannelButton = false;
-                });
-        //}
+    checkDataChannel() {
+        let channelId = this.processInstanceGroup.dataChannelId;
+        let role = this.processInstanceGroup.collaborationRole;
+
+        if(channelId){
+            this.dataChannelService.getChannelConfig(channelId).then(channel => {
+                if (role == "BUYER") {
+                    if (channel.negotiationStepcounter % 5 == 1 || channel.negotiationStepcounter % 5 == 3)
+                        this.enableDataChannelButton = true;
+                    else
+                        this.enableDataChannelButton = false;
+                }
+                else {
+                    if (channel.negotiationStepcounter % 5 != 1)
+                        this.enableDataChannelButton = true;
+                    else
+                        this.enableDataChannelButton = false;
+                }
+                this.showDataChannelButton = true;
+                this.channelLink = `/data-channel/details/${channelId}`
+            }).catch(err => {
+                this.showDataChannelButton = false;
+                console.error(err);
+            });
+        }
+        else{
+            this.showDataChannelButton = false;
+        }
     }
 
     cancelCollaboration(){
@@ -702,20 +697,6 @@ export class ThreadSummaryComponent implements OnInit {
     checkCompComment(): boolean {
       return this.compComment == "";
     }
-
-    createDatachannelNegotiation(): void {
-        let channel: DataChannel = new DataChannel(this.processInstanceGroup.id, this.titleEvent.content.buyerPartyId, "Demo-Channel", this.titleEvent.content.sellerPartyId);
-        this.dataChannelService.createChannel(channel)
-            .then(() => {
-                //alert("created a new channel");
-                this.threadStateUpdatedNoChange.next();
-            })
-            .catch(err => {
-                console.error("Failed to create a data channel",err);
-                alert("Failed to create a data channel... try again later.");
-            });
-	}
-
 
 	alertWait() {
 	    alert('Waiting for trading partner... try again later.');

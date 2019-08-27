@@ -64,7 +64,7 @@
                     </label>
                     <select  class="custom-select col-8 space-right" [(ngModel)]="selectedCatalogue" (change)="changeCat()">
                         <option value="all"><span [innerHTML]="'All' | translate"></span></option>
-                        <option *ngFor="let catalogue of cataloguesIds ; let i = index"  [value]=catalogueIdsUUids[i]>{{catalogue}}</option>
+                        <option *ngFor="let catalogue of cataloguesIds ; let i = index"  [value]=catalogueIdsUUids[i] [innerHtml]="catalogue == 'default'? 'Main Catalogue': catalogue"></option>
                     </select>
                     <call-status [callStatus]="productCatalogueRetrievalStatus"></call-status>
                 </div>
@@ -167,7 +167,7 @@
                     </label>
                     <select  class="custom-select col-8 space-right" [(ngModel)]="selectedCatalogue" (change)="changeCat()">
                         <option value="all">All</option>
-                        <option *ngFor="let catalogue of cataloguesIds ; let i = index"  [value]=catalogueIdsUUids[i]>{{catalogue}}</option>
+                        <option *ngFor="let catalogue of cataloguesIds ; let i = index"  [value]=catalogueIdsUUids[i] [innerHtml]="catalogue == 'default'? 'Main Catalogue': catalogue"></option>
                     </select>
                     <call-status [callStatus]="productCatalogueRetrievalStatus"></call-status>
                 </div>

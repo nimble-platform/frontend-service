@@ -39,9 +39,6 @@
                           <div *ngIf="titleEvent && showDataChannelButton && !enableDataChannelButton" class="inline" data-toggle="tooltip" data-placement="top" title="'Waiting for trading partner...' | translate" (click)="alertWait()">
                               <i class="fa fa-exchange-alt p-1 pointer" aria-hidden="true"></i>
                           </div>
-                          <div *ngIf="titleEvent && !titleEvent.buyer && !showDataChannelButton && config.dataChannelsEnabled" class="inline" (click)="createDatachannelNegotiation()" data-placement="top" title="'Negotiate New Data Channel' | translate">
-                              <i class="fas fa-plus p-1 pointer" aria-hidden="true"></i>
-                          </div>
                           <!--
                           <div *ngIf="titleEvent && processInstanceGroup.archived" class="inline" (click)="deleteGroup()" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
                               <i class="fa fa-trash-alt p-1 pointer" aria-hidden="true"></i>
