@@ -19,6 +19,7 @@ src/app/**/*.js.map
 src/app/**/*.metadata.json
 src/environments/*.js
 src/environments/*.js.map
+dist/
 
 ### Maven ###
 target/

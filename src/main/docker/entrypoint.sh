@@ -12,6 +12,7 @@ else
     mv environments/globals.${TARGET_ENVIRONMENT}.ts app/globals.ts
     mv environments/globals.${TARGET_ENVIRONMENT}.js app/globals.js
     mv environments/globals.${TARGET_ENVIRONMENT}.js.map app/globals.js.map
+    mv environments/global-styles.${TARGET_ENVIRONMENT}.css assets/css/global-styles.css
 
     jar -uf /usr/local/tomcat/webapps/ROOT.war app/
     rm -r environments/ app/
