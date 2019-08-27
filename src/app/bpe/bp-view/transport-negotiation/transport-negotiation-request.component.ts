@@ -128,7 +128,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
             rfq.buyerCustomerParty = new CustomerParty(buyerParty);
             rfq.sellerSupplierParty = new SupplierParty(sellerParty);
 
-            return this.bpeService.processDocument(rfq);
+            return this.bpeService.startProcessWithDocument(rfq);
         })
         .then(() => {
             this.callStatus.callback("Terms sent", true);

@@ -118,7 +118,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
         }
 
         //this.callStatus.submit();
-        this.bpeService.processDocument(this.quotation)
+        this.bpeService.startProcessWithDocument(this.quotation)
             .then(res => {
                 this.callStatus.callback("Quotation sent", true);
                 var tab = "PURCHASES";

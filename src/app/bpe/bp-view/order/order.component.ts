@@ -219,7 +219,7 @@ export class OrderComponent implements OnInit {
         order.buyerCustomerParty = new CustomerParty(this.buyerParty);
         order.sellerSupplierParty = new SupplierParty(this.sellerParty);
 
-        this.bpeService.processDocument(order)
+        this.bpeService.startProcessWithDocument(order)
             .then(res => {
                 this.submitCallStatus.callback("Order placed", true);
                 var tab = "PURCHASES";
@@ -254,7 +254,7 @@ export class OrderComponent implements OnInit {
         this.bpDataService.orderResponse.acceptedIndicator = accepted;
 
         //this.submitCallStatus.submit();
-        this.bpeService.processDocument(this.bpDataService.orderResponse)
+        this.bpeService.startProcessWithDocument(this.bpDataService.orderResponse)
             .then(res => {
                 this.submitCallStatus.callback("Order Response placed", true);
                 var tab = "PURCHASES";

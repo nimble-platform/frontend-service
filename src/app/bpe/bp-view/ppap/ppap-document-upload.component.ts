@@ -136,7 +136,7 @@ export class PpapDocumentUploadComponent {
         this.ppapResponse.additionalDocumentReference = this.additionalDocumentsToSend;
 
         //this.callStatus.submit();
-        this.bpeService.processDocument(this.ppapResponse).then(res => {
+        this.bpeService.startProcessWithDocument(this.ppapResponse).then(res => {
             this.callStatus.callback("Ppap Response placed", true);
             var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")

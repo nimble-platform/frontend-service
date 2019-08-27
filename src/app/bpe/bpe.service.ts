@@ -30,7 +30,7 @@ export class BPEService {
                 private searchContextService: SearchContextService,
 				private cookieService: CookieService) { }
 
-	processDocument(document:any):Promise<ProcessInstance> {
+    startProcessWithDocument(document:any):Promise<ProcessInstance> {
         const headers = this.getAuthorizedHeaders();
         let url = `${this.url}/process-document`;
 

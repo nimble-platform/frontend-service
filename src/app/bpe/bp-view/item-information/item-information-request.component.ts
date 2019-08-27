@@ -104,7 +104,7 @@ export class ItemInformationRequestComponent implements OnInit {
             itemInformationRequest.buyerCustomerParty = new CustomerParty(buyerParty);
             itemInformationRequest.sellerSupplierParty = new SupplierParty(sellerParty);
 
-            return this.bpeService.processDocument(itemInformationRequest);
+            return this.bpeService.startProcessWithDocument(itemInformationRequest);
         })
         .then(() => {
             this.callStatus.callback("Item Information Request sent", true);
