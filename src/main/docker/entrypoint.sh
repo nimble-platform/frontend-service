@@ -9,13 +9,14 @@ else
     cd /tmp
     jar -xf /usr/local/tomcat/webapps/ROOT.war environments/
     mkdir app
+    mkdir -p assets/css
     mv environments/globals.${TARGET_ENVIRONMENT}.ts app/globals.ts
     mv environments/globals.${TARGET_ENVIRONMENT}.js app/globals.js
     mv environments/globals.${TARGET_ENVIRONMENT}.js.map app/globals.js.map
     mv environments/global-styles.${TARGET_ENVIRONMENT}.css assets/css/global-styles.css
-
+    jar -uf /usr/local/tomcat/webapps/ROOT.war assets/css/
     jar -uf /usr/local/tomcat/webapps/ROOT.war app/
-    rm -r environments/ app/
+    rm -r environments/ app/ assets/
 
     cd $WD
 fi
