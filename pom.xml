@@ -68,7 +68,7 @@
                                 </fileSet>
                                 <fileSet>
                                     <sourceFile>${project.basedir}/src/environments/global-styles.${env}.css</sourceFile>
-                                    <destinationFile>${project.basedir}/src/global-styles.css</destinationFile>
+                                    <destinationFile>${project.basedir}/src/assets/css/global-styles.css</destinationFile>
                                 </fileSet>
                             </fileSets>
                         </configuration>
@@ -100,6 +100,16 @@
                         </goals>
                         <configuration>
                             <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm run compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run compile:env</arguments>
                         </configuration>
                     </execution>
                     <execution>
@@ -139,7 +149,7 @@
                     </execution>
                 </executions>
             </plugin>
-			
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -214,7 +224,7 @@
                     </execution>
                 </executions>
             </plugin>
-			
+
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
 				<version>3.1.0</version>
