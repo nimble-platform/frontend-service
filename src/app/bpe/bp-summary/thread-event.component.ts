@@ -6,7 +6,6 @@ import { ThreadEventMetadata } from "../../catalogue/model/publish/thread-event-
 import {BPEService} from "../bpe.service";
 import {BpActivityEvent} from '../../catalogue/model/publish/bp-start-event';
 import {BpUserRole} from '../model/bp-user-role';
-import {BpURLParams} from '../../catalogue/model/publish/bpURLParams';
 import {TranslateService} from '@ngx-translate/core';
 import {ActivityVariableParser} from '../bp-view/activity-variable-parser';
 
@@ -48,13 +47,12 @@ export class ThreadEventComponent implements OnInit {
                 this.history,
                 null,
                 false,
-                this.event.formerStep),
-            true,
-            new BpURLParams(
+                this.event.formerStep,
                 this.event.product.catalogueDocumentReference.id,
                 this.event.product.manufacturersItemIdentification.id,
                 this.event.processInstanceId,
-                ActivityVariableParser.getPrecedingDocumentId(this.event.activityVariables)));
+                ActivityVariableParser.getPrecedingDocumentId(this.event.activityVariables)),
+            true);
     }
 
     cancelBP(){

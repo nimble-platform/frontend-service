@@ -23,7 +23,6 @@ import { CompanySettings } from "../user-mgmt/model/company-settings";
 import {Quantity} from '../catalogue/model/publish/quantity';
 import {DiscountModalComponent} from './discount-modal.component';
 import {BpActivityEvent} from '../catalogue/model/publish/bp-start-event';
-import {BpURLParams} from '../catalogue/model/publish/bpURLParams';
 import { CookieService } from 'ng2-cookies';
 import {FAVOURITE_LINEITEM_PUT_OPTIONS} from '../catalogue/model/constants';
 import * as myGlobals from '../globals';
@@ -206,9 +205,9 @@ export class ProductDetailsComponent implements OnInit {
                 [],
                 this.options,
                 true, // this is a new process
-                false), // there is no subsequent process as this is a new process
-            false,
-            new BpURLParams(this.catalogueId, this.id, null, null,termsSource));
+                false, // there is no subsequent process as this is a new process
+                this.catalogueId, this.id, null, null, termsSource),
+            false);
     }
 
     onOrderQuantityKeyPressed(event:any): boolean {

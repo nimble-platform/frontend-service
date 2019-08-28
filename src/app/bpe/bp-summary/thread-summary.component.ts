@@ -19,7 +19,6 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { Code } from "../../catalogue/model/publish/code";
 import {BpUserRole} from '../model/bp-user-role';
 import {BpActivityEvent} from '../../catalogue/model/publish/bp-start-event';
-import {BpURLParams} from '../../catalogue/model/publish/bpURLParams';
 import {UBLModelUtils} from '../../catalogue/model/ubl-model-utils';
 import {selectPreferredValue} from '../../common/utils';
 import {DashboardProcessInstanceDetails} from '../model/dashboard-process-instance-details';
@@ -163,13 +162,12 @@ export class ThreadSummaryComponent implements OnInit {
                 [this.titleEvent].concat(this.history),
                 null,
                 false,
-                false), // thread summary always shows the last step in the negotiation
-            true,
-            new BpURLParams(
+                false, // thread summary always shows the last step in the negotiation
                 this.titleEvent.product.catalogueDocumentReference.id,
                 this.titleEvent.product.manufacturersItemIdentification.id,
                 this.titleEvent.processInstanceId,
-                ActivityVariableParser.getPrecedingDocumentId(this.titleEvent.activityVariables)));
+                ActivityVariableParser.getPrecedingDocumentId(this.titleEvent.activityVariables)),
+            true);
     }
 
     private fetchEvents(): void {

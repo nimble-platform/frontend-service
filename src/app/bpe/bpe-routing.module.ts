@@ -13,8 +13,8 @@ const routes: Routes = [
     {path: 'bpe-design/create', component: BPDetailComponent},
     {path: 'bpe-design', component: BPsComponent},
     {path: 'bpe-design/configure/:processID', component: BPConfigureComponent},
-    {path: 'bpe-exec', component: ProductBpOptionsComponent},
-    {path: 'bpe-exec/:processInstanceId', component: ThreadSummaryComponent},
+    {path: 'bpe-exec/:processInstanceId', component: ProductBpOptionsComponent},
+    {path: 'bpe-sum/:processInstanceId', component: ThreadSummaryComponent},
     {path: 'frame-contract/:id', component: FrameContractDetailsComponent}
 ];
 

@@ -13,6 +13,12 @@ export class BpActivityEvent{
         public processHistory: ThreadEventMetadata[] = [], // business processes history. if an existing business process continues, the history contains the current step also
         public workflowOptions: BpWorkflowOptions = null, // selected properties of the product (in the search-details page) and negotiation details (in negotiation request page)
         public newProcess: boolean = null, // true indicates that a new process is about the to be started
-        public formerProcess: boolean = null // true indicates that the process has subsequent processes in the history
+        public formerProcess: boolean = null, // true indicates that the process has subsequent processes in the history
+        // parameters previously passed via the BPUrlParams
+        public catalogueId = null,
+        public catalogueLineId = null,
+        public previousProcessInstanceId = null,
+        public previousDocumentId = null,
+        public termsSource: 'product_defaults' | 'frame_contract' = null
     ){}
 }

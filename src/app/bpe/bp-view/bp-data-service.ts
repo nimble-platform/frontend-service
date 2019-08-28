@@ -39,11 +39,11 @@ import {DocumentService} from "./document-service";
 import {ShipmentStage} from "../../catalogue/model/publish/shipment-stage";
 import {PartyName} from '../../catalogue/model/publish/party-name';
 import {BpActivityEvent} from '../../catalogue/model/publish/bp-start-event';
-import {BpURLParams} from '../../catalogue/model/publish/bpURLParams';
 import {Router} from '@angular/router';
 import {Text} from '../../catalogue/model/publish/text';
 import {Contract} from '../../catalogue/model/publish/contract';
 import {Clause} from '../../catalogue/model/publish/clause';
+import {Observable} from "rxjs/Rx";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -86,7 +86,7 @@ export class BPDataService{
     bpActivityEvent:BpActivityEvent = new BpActivityEvent(null,"Item_Information_Request",null,null,null,[], null, true, false);
     // these are used to update view according to the selected process type.
     private bpActivityEventBehaviorSubject: BehaviorSubject<BpActivityEvent> = new BehaviorSubject<BpActivityEvent>(this.bpActivityEvent);
-    bpActivityEventObservable = this.bpActivityEventBehaviorSubject.asObservable();
+    bpActivityEventObservable: Observable<BpActivityEvent> = this.bpActivityEventBehaviorSubject.asObservable();
 
     precedingProcessId: string;
     precedingDocumentId: string;
@@ -214,10 +214,14 @@ export class BPDataService{
         }
     }
 
-    // This function is used to start viewing business processes.
-    // Dashboard and product-details are two way to start viewing business processes. For dashboard, business process history contains process document metadatas since
-    // they are already started/completed. However, in the product-details page, we start a new business process, this is why we check for new process processMetadata.
-    async startBp(bpActivityEvent:BpActivityEvent, clearSearchContext:boolean, bpURLParams:BpURLParams){
+    /*
+     This function is used to start viewing business processes.
+     Dashboard and product-details are two way to start viewing business processes.
+     For dashboard, business process history contains process document metadatas
+     since they are already started/completed. However, in the product-details page, we start a new business process,
+     this is why we check for new process processMetadata.
+     */
+    async startBp(bpActivityEvent: BpActivityEvent, clearSearchContext:boolean){
         this.resetBpData();
         if(clearSearchContext){
             this.searchContextService.clearSearchContext();
@@ -235,32 +239,25 @@ export class BPDataService{
         if(!bpActivityEvent.newProcess){
             await this.setProcessDocuments(bpActivityEvent.processMetadata);
         }
-        this.bpActivityEventBehaviorSubject.next(this.bpActivityEvent);
-        this.navigateToBpExec(bpURLParams);
+        this.navigateToBpExec();
     }
 
-    private navigateToBpExec(bpURLParams: BpURLParams){
-        if(bpURLParams.processInstanceId){
-            this.router.navigate(['bpe/bpe-exec'], {
-                queryParams: {
-                    catalogueId: bpURLParams.catalogueId,
-                    id: bpURLParams.catalogueLineId,
-                    pid: bpURLParams.processInstanceId,
-                    did: bpURLParams.previousDocumentId,
-                    termsSource: bpURLParams.termsSource
-                }
-            });
-        }
-        else {
-            this.router.navigate(['bpe/bpe-exec'], {
-                queryParams: {
-                    catalogueId: bpURLParams.catalogueId,
-                    id: bpURLParams.catalogueLineId,
-                    termsSource: bpURLParams.termsSource
-                }
-            });
+    private navigateToBpExec() {
+        let processInstanceId;
+        if (this.bpActivityEvent.newProcess) {
+            processInstanceId = 'new';
+        } else {
+            processInstanceId = this.bpActivityEvent.processMetadata.processInstanceId;
         }
 
+        let initialized = '';
+        if (processInstanceId !== 'new') {
+            initialized = '?initialized=true';
+        }
+        this.router.navigate([`bpe/bpe-exec/${processInstanceId}${initialized}`]).then(() => {
+                this.bpActivityEventBehaviorSubject.next(this.bpActivityEvent);
+            }
+        );
     }
 
     // For business processes transitions (for example, from PPAP to Negotiation), we have to keep containerGroupId same since all processes are in the same process instance group
