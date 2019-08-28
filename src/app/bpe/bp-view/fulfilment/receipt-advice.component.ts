@@ -62,7 +62,7 @@ export class ReceiptAdviceComponent implements OnInit {
         this.callStatus.submit();
 
         //this.callStatus.submit();
-        this.bpeService.processDocument(this.bpDataService.receiptAdvice)
+        this.bpeService.startProcessWithDocument(this.bpDataService.receiptAdvice)
             .then(res => {
                 this.callStatus.callback("Receipt Advice sent", true);
                 var tab = "PURCHASES";

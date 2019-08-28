@@ -5,67 +5,11 @@
 export const debug = false;
 
 
-// Base path variables - SRFG staging
+// Base path variables
 
 export const base_path = "http://nimble-staging.salzburgresearch.at";
 export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
 export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
-
-
-// Base path variables - MVP productive
-
-// export const base_path = "https://nimble-platform.salzburgresearch.at/nimble";
-// export const ub_base = "https://nimble-platform.salzburgresearch.at/ub-search";
-// export const pw_reset_link = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
-
-
-// Base path variables - FMP productive
-
-// export const base_path = "https://fmp-nimble.salzburgresearch.at/api";
-// export const ub_base = "https://fmp-nimble.salzburgresearch.at/ub-search";
-// export const pw_reset_link = "https://fmp-nimble.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
-
-
-// Base path variables - EFAC productive
-
-// export const base_path = "https://efactory-nimble.salzburgresearch.at/api";
-// export const ub_base = "https://efactory-nimble.salzburgresearch.at/ub-search";
-// export const pw_reset_link = "https://efactory-nimble.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
-
-
-// Base path variables - SRFG K8S
-
-// export const base_path = "https://nimble.salzburgresearch.at";
-// export const ub_base = "https://hydra2.ikap.biba.uni-bremen.de:8443";
-// export const pw_reset_link = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
-
-
-// Base path variables - K8S domain
-
-// export const base_path = "http://nimble.uk-south.containers.mybluemix.net";
-// export const ub_base = "https://hydra2.ikap.biba.uni-bremen.de:8443";
-// export const pw_reset_link = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
-
-
-// Base path variables - BIBA domain
-
-// export const base_path = "http://nimble-dev.ikap.biba.uni-bremen.de";
-// export const ub_base = "http://nimble-dev.ikap.biba.uni-bremen.de:8090";
-// export const pw_reset_link = "http://nimble-dev.ikap.biba.uni-bremen.de:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
-
-
-// Base path variables - IBM domain
-
-// export const base_path = "http://161.156.70.122";
-// export const ub_base = "http://161.156.70.122:8090";
-// export const pw_reset_link = "http://161.156.70.122:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
-
-
-// Base path variables - Local development
-
-// export const base_path = "http://localhost";
-// export const ub_base = "http://localhost:8090";
-// export const pw_reset_link = "http://localhost:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
 
 
 // Service endpoints
@@ -79,7 +23,7 @@ export const trust_service_endpoint=`${base_path}/trust`;
 export const indexing_service_endpoint=`${base_path}/index`;
 export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}/logstash`;
-export const kibana_endpoint = `${base_path}:5601/app/kibana`;
+export const kibana_endpoint = `${base_path}/kibana/app/kibana`;
 export const delegate_endpoint = `${base_path}:9265`;
 
 

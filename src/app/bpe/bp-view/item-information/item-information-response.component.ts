@@ -86,7 +86,7 @@ export class ItemInformationResponseComponent implements OnInit {
         this.callStatus.submit();
 
         //this.callStatus.submit();
-        this.bpeService.processDocument(this.bpDataService.itemInformationResponse).then(() => {
+        this.bpeService.startProcessWithDocument(this.bpDataService.itemInformationResponse).then(() => {
             this.callStatus.callback("Information Response sent", true);
             var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")

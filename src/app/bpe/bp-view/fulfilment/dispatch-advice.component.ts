@@ -148,7 +148,7 @@ export class DispatchAdviceComponent implements OnInit {
         UBLModelUtils.removeHjidFieldsFromObject(dispatchAdvice);
 
         //this.callStatus.submit();
-        this.bpeService.processDocument(dispatchAdvice)
+        this.bpeService.startProcessWithDocument(dispatchAdvice)
             .then(res => {
                 this.callStatus.callback("Dispatch Advice sent", true);
                 var tab = "PURCHASES";
