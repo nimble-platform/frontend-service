@@ -31,6 +31,8 @@ export class ProductCertificatesTabComponent implements OnInit {
     config = myGlobals.config;
     selectedFiles: BinaryObject[] = [];
     selectedCountries: string[] = [];
+    updateMode: 'add' | 'edit';
+    editedCertificate: Certificate;
 
     constructor(private _fb: FormBuilder,
                 private modalService: NgbModal,
@@ -43,22 +45,23 @@ export class ProductCertificatesTabComponent implements OnInit {
         // nothing for now
     }
 
-    onEdit(popup, i: number){
-        let cert:Certificate = this.catalogueLine.goodsItem.item.certificate[i];
+    onEdit(popup, i: number) {
+        this.updateMode = 'edit';
+        this.editedCertificate = this.catalogueLine.goodsItem.item.certificate[i];
         this.certificateFilesProvided = true;
         this.addCertForm = this._fb.group({
-            name: [cert.certificateTypeCode.name],
-            description: [cert.remarks],
-            type: [cert.certificateType]
+            name: [this.editedCertificate.certificateTypeCode.name],
+            description: [this.editedCertificate.remarks],
+            type: [this.editedCertificate.certificateType]
         });
         this.selectedFiles = [];
-        for(let docRef of cert.documentReference) {
+        for(let docRef of this.editedCertificate.documentReference) {
             this.selectedFiles.push(docRef.attachment.embeddedDocumentBinaryObject);
         }
 
         this.countryFormControl = new FormControl('');
         this.selectedCountries = [];
-        for(let country of cert.country) {
+        for(let country of this.editedCertificate.country) {
             this.selectedCountries.push(country.name.value);
         }
 
@@ -70,6 +73,7 @@ export class ProductCertificatesTabComponent implements OnInit {
     }
 
     onAddCertificate(content) {
+        this.updateMode = 'add';
         this.addCertForm = this._fb.group({
             name: [""],
             description: [""],
@@ -96,17 +100,25 @@ export class ProductCertificatesTabComponent implements OnInit {
     onCertificateDetailsProvided(model: FormGroup, close: any) {
         const fields = model.getRawValue();
         let certificate: Certificate = new Certificate();
+        if (this.updateMode === 'edit') {
+            certificate = this.editedCertificate;
+        }
         certificate.certificateType = fields.type;
         certificate.remarks = fields.description;
         certificate.certificateTypeCode.name = fields.name;
-        for(let file of this.selectedFiles) {
+        certificate.documentReference = [];
+        for (let file of this.selectedFiles) {
             certificate.documentReference.push(UBLModelUtils.createDocumentReferenceWithBinaryObject(file));
         }
-        for(let countryName of this.selectedCountries) {
-            let country: Country = new Country(new Text(countryName, "en"));
+        certificate.country = [];
+        for (let countryName of this.selectedCountries) {
+            let country: Country = new Country(new Text(countryName, 'en'));
             certificate.country.push(country);
         }
-        this.catalogueLine.goodsItem.item.certificate.push(certificate);
+
+        if (this.updateMode === 'add') {
+            this.catalogueLine.goodsItem.item.certificate.push(certificate);
+        }
         close();
     }
 
