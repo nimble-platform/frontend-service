@@ -42,7 +42,6 @@ export class ThreadEventComponent implements OnInit {
                 userRole,
                 this.event.processType,
                 this.processInstanceGroup.id,
-                this.collaborationGroupId,
                 this.event,
                 this.history,
                 null,

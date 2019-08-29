@@ -94,8 +94,8 @@ export class PpapDocumentSelectComponent implements OnInit {
 
         this.computeSelectedDocuments();
 
-        this.route.queryParams.subscribe(params => {
-            if (params["pid"] && this.processMetadata) {
+        this.route.params.subscribe(params => {
+            if (params['processInstanceId'] !== 'new' && this.processMetadata) {
                 this.level = 0;
                 this.resetSelectedDocumens();
                 this.ppap = this.bpDataService.ppap;

@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy, Renderer2 } from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute, NavigationEnd, Params, Router} from "@angular/router";
 import { CallStatus } from "../../common/call-status";
 import { CatalogueService } from "../../catalogue/catalogue.service";
 import { CatalogueLine } from "../../catalogue/model/publish/catalogue-line";
 import { BPDataService } from "./bp-data-service";
-import { Subscription } from "rxjs";
+import {combineLatest, ObservableInput, SchedulerLike, Subscription} from "rxjs";
+import { map } from 'rxjs/operators';
 import { ProductBpStepStatus } from "./product-bp-step-status";
 import { ProductWrapper } from "../../common/product-wrapper";
 import { BpWorkflowOptions } from "../model/bp-workflow-options";
@@ -24,6 +25,7 @@ import * as myGlobals from '../../globals';
 import {Headers, Http} from "@angular/http";
 import { DomSanitizer } from '@angular/platform-browser';
 import {TranslateService} from '@ngx-translate/core';
+import {Observable} from "rxjs/Rx";
 
 /**
  * Created by suat on 20-Oct-17.
@@ -115,22 +117,29 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        // This subscription redirects the navigation to the summary component so that the required information is fetched. This happens
-        // when the 'initialized' params is not true
-        this.route.params.subscribe(params => {
-            let processInstanceId = params['processInstanceId'];
+        // This subscription redirects the navigation to the summary component so that the required information is fetched
+        combineLatest(
+            this.route.params, this.route.queryParams
+        ).pipe(
+            map(([pathParams, queryParams]) => ({...pathParams, ...queryParams}))
+        ).subscribe(allParams => {
+            let processInstanceId = allParams['processInstanceId'];
             // navigate to the summary component only if an existing process is being displayed
-            if (processInstanceId !== 'new') {
-                let initialized = params['initialized'];
-                // having bpActivityEvent null means that the page is reloaded.
-                // so even if the initialized parameter is set as true, it is not actually
-                if (this.bpDataService.bpActivityEvent == null || !initialized) {
-                    this.router.navigate([`bpe/bpe-sum/${processInstanceId}`]);
+            // and the page is initially opened/reloaded
+            if (this.bpDataService.bpActivityEvent == null) {
+                if (processInstanceId !== 'new') {
+                    this.router.navigate([`bpe/bpe-sum/${processInstanceId}`], {skipLocationChange: true});
+                } else {
+                    this.router.navigate(['dashboard']);
                 }
             }
         });
 
         this.bpActivityEventSubs = this.bpDataService.bpActivityEventObservable.subscribe(bpActivityEvent => {
+            if (bpActivityEvent == null) {
+                return;
+            }
+
             // get copy of ThreadEventMetadata of the current business process
             this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
@@ -168,46 +177,46 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                         this.bpDataService.bpActivityEvent.containerGroupId ? this.bpeService.checkCollaborationFinished(this.bpDataService.bpActivityEvent.containerGroupId) : false
                     ])
                 })
-                    .then(([referencedLine, settings, isCollaborationFinished]) => {
-                        // if the collaboration is finished, we need to update workflow since it could be different from the current one
-                        // we will retrieve process ids from the process history and use those ids to create new workflow
-                        if(isCollaborationFinished){
-                            let companyWorkflow = [];
-                            let size = this.bpDataService.bpActivityEvent.processHistory.length;
-                            for(let i = size-1; i > -1;i--){
-                                let processType = this.bpDataService.bpActivityEvent.processHistory[i].processType;
-                                if(companyWorkflow.indexOf(processType) == -1){
-                                    companyWorkflow.push(processType);
-                                }
+                .then(([referencedLine, settings, isCollaborationFinished]) => {
+                    // if the collaboration is finished, we need to update workflow since it could be different from the current one
+                    // we will retrieve process ids from the process history and use those ids to create new workflow
+                    if(isCollaborationFinished){
+                        let companyWorkflow = [];
+                        let size = this.bpDataService.bpActivityEvent.processHistory.length;
+                        for(let i = size-1; i > -1;i--){
+                            let processType = this.bpDataService.bpActivityEvent.processHistory[i].processType;
+                            if(companyWorkflow.indexOf(processType) == -1){
+                                companyWorkflow.push(processType);
                             }
-                            // update the workflow of company
-                            settings.negotiationSettings.company.processID = companyWorkflow;
                         }
-                        // set the product line to be the first fetched line, either service or product.
-                        this.bpDataService.setCatalogueLines([this.line], [settings]);
-                        this.bpDataService.computeWorkflowOptions();
+                        // update the workflow of company
+                        settings.negotiationSettings.company.processID = companyWorkflow;
+                    }
+                    // set the product line to be the first fetched line, either service or product.
+                    this.bpDataService.setCatalogueLines([this.line], [settings]);
+                    this.bpDataService.computeWorkflowOptions();
 
-                        // there is an order that references another product -> the line is a service and the referencedLine is the original product
-                        if(referencedLine) {
-                            this.serviceLine = this.line;
-                            this.serviceWrapper = new ProductWrapper(this.serviceLine, settings.negotiationSettings);
-                            this.serviceSettings = settings;
-                            this.line = referencedLine;
-                            return this.userService.getSettingsForProduct(referencedLine);
-                        }
+                    // there is an order that references another product -> the line is a service and the referencedLine is the original product
+                    if(referencedLine) {
+                        this.serviceLine = this.line;
+                        this.serviceWrapper = new ProductWrapper(this.serviceLine, settings.negotiationSettings);
+                        this.serviceSettings = settings;
+                        this.line = referencedLine;
+                        return this.userService.getSettingsForProduct(referencedLine);
+                    }
 
+                    this.initWithCatalogueLine(this.line, settings);
+                    return null;
+                })
+                .then(settings => {
+                    if(settings) {
                         this.initWithCatalogueLine(this.line, settings);
-                        return null;
-                    })
-                    .then(settings => {
-                        if(settings) {
-                            this.initWithCatalogueLine(this.line, settings);
-                        }
-                        this.callStatus.callback("Retrieved product details", true);
-                    })
-                    .catch(error => {
-                        this.callStatus.error("Failed to retrieve product details", error);
-                    });
+                    }
+                    this.callStatus.callback("Retrieved product details", true);
+                })
+                .catch(error => {
+                    this.callStatus.error("Failed to retrieve product details", error);
+                });
             }
         });
     }

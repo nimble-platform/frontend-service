@@ -157,7 +157,6 @@ export class ThreadSummaryComponent implements OnInit {
                 userRole,
                 this.titleEvent.processType,
                 this.processInstanceGroup.id,
-                this.collaborationGroupId,
                 this.titleEvent,
                 [this.titleEvent].concat(this.history),
                 null,

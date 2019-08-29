@@ -56,8 +56,8 @@ export class PpapDocumentUploadComponent {
         // get copy of ThreadEventMetadata of the current business process
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
-        this.route.queryParams.subscribe(params =>{
-            this.processid = params['pid'];
+        this.route.params.subscribe(params => {
+            this.processid = params['processInstanceId'];
 
             this.bpeService.getProcessDetailsHistory(this.processid).then(task => {
                 this.documentService.getInitialDocument(task).then(initialDocument => {

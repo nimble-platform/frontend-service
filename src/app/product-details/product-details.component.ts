@@ -145,9 +145,6 @@ export class ProductDetailsComponent implements OnInit {
                             this.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure);
                         this.productWrapper = new ProductWrapper(this.line, settings.negotiationSettings,this.priceWrapper.orderedQuantity);
                         this.bpDataService.setCatalogueLines([this.line], [settings]);
-                        // we have to set bpActivityEvent.workflowOptions here
-                        // in BPDataService,chooseFirstValuesOfItemProperties method, we use this workflowOptions to select values of the properties correctly
-                        this.bpDataService.bpActivityEvent.workflowOptions = this.options;
 
                         // get the business workflow of seller company
                         this.companyWorkflowMap = this.bpDataService.getCompanyWorkflowMap();
@@ -200,7 +197,6 @@ export class ProductDetailsComponent implements OnInit {
                 'buyer',
                 targetProcess,
                 null,
-                this.bpDataService.bpActivityEvent.collaborationGroupId,
                 null,
                 [],
                 this.options,
@@ -237,7 +233,7 @@ export class ProductDetailsComponent implements OnInit {
         // update price wrapper with user selections
         // copy the selected specific item properties into the price wrapper so that the discounts can be calculated based on the selections
         let copyItem = JSON.parse(JSON.stringify(this.item));
-        this.bpDataService.selectFirstValuesAmongAlternatives(copyItem);
+        this.bpDataService.selectFirstValuesAmongAlternatives(copyItem, this.options);
         this.priceWrapper.additionalItemProperties = copyItem.additionalItemProperty;
 
         if(event == 'product_defaults') {
@@ -336,5 +332,5 @@ export class ProductDetailsComponent implements OnInit {
     	this.tabToOpen = null;
       }
     }
-    
+
 }

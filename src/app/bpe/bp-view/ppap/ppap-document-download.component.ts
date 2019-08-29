@@ -46,10 +46,10 @@ export class PpapDocumentDownloadComponent{
     }
 
     ngOnInit() {
-        if(!this.ppapResponse) {
-            this.route.queryParams.subscribe(params => {
-                const processid = params['pid'];
-    
+        if (!this.ppapResponse) {
+            this.route.params.subscribe(params => {
+                const processid = params['processInstanceId'];
+
                 this.bpeService.getProcessDetailsHistory(processid).then(task => {
                     return Promise.all([
                         this.documentService.getInitialDocument(task),
