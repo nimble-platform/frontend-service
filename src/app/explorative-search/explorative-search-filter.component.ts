@@ -39,8 +39,6 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
     private  _error_detected_slider;
 
     constructor(private expSearch: ExplorativeSearchService, private translate: TranslateService) {
-        translate.setDefaultLang('en');
-        translate.use(translate.getBrowserLang());
     }
 
     /**

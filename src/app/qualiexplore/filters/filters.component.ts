@@ -18,8 +18,6 @@ export class FiltersComponent implements OnInit {
     constructor(private service: FiltersService,
                 private router: Router,
                 private translate: TranslateService) {
-                    translate.setDefaultLang('en');
-                    translate.use(translate.getBrowserLang());
                 }
 
     ngOnInit() {

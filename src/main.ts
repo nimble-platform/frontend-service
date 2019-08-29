@@ -6,4 +6,4 @@ import { enableProdMode } from '@angular/core';
 	if (!myGlobals.debug)
 		enableProdMode();
 	//platformBrowserDynamic().bootstrapModule(AppModule, options);
-	platformBrowserDynamic().bootstrapModule(AppModule);
+	platformBrowserDynamic().bootstrapModule(AppModule, {preserveWhitespaces: true});

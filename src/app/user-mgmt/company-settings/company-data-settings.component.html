@@ -8,7 +8,7 @@
 					<b><span [innerHTML]="'Your company is now registered' | translate"></span></b><br/>
 					<span *ngIf="!config.companyRegistrationRequired"><span [innerHTML]="'You can start publishing your catalogue.' | translate"></span><br/></span>
 					<span [innerHTML]="'In order to execute business processes your company needs to be verified by an administrator - please stay tuned.' | translate"></span><br/>
-					<span [innerHTML]="'If you are not being verified with 24h, please contact our support ' | translate"></span><a href="mailto:{{config.supportMail}}">{{config.supportMail}}</a>.
+					<span [innerHTML]="'If you are not being verified with 24h, please contact our support' | translate"></span> <a href="mailto:{{config.supportMail}}">{{config.supportMail}}</a>.
 				</div>
       </ngb-alert>
     </p>

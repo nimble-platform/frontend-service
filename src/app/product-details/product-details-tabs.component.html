@@ -116,10 +116,10 @@
                     <strong><span [innerHTML]="'Price:' | translate"></span> </strong> {{ wrapper.getPricePerItem() }}
                 </div>
                 <div *ngIf="wrapper.getVat() != ''" class="p-1">
-                    <strong><span [innerHTML]="'VAT: ' | translate"></span></strong> {{ wrapper.getVat() }}%
+                    <strong><span [innerHTML]="'VAT:' | translate"></span></strong> {{ wrapper.getVat() }}%
                 </div>
                 <div *ngIf="wrapper.getFreeSample() != ''" class="p-1">
-                    <strong><span [innerHTML]="'Free Sample: ' | translate"></span></strong> {{ wrapper.getFreeSample() }}
+                    <strong><span [innerHTML]="'Free Sample:' | translate"></span></strong> {{ wrapper.getFreeSample() }}
                 </div>
             </div>
     </div>
@@ -130,13 +130,13 @@
             <div style="flex-grow:1;">
                 <h3 *ngIf="wrapper.getIncoterms() != '' || wrapper.getSpecialTerms() != null || wrapper.getDeliveryPeriod() != ''" class="pt-2 p-1"><span [innerHTML]="'Delivery Terms' | translate"></span></h3>
                 <div *ngIf="wrapper.getIncoterms() != ''" class="p-1">
-                    <strong><span [innerHTML]="'Incoterms: ' | translate"></span></strong> {{ wrapper.getIncoterms() }}
+                    <strong><span [innerHTML]="'Incoterms:' | translate"></span></strong> {{ wrapper.getIncoterms() }}
                 </div>
                 <div  *ngIf="wrapper.getSpecialTerms() != null" class="p-1">
-                    <strong><span [innerHTML]="'Special Terms: ' | translate"></span></strong> {{ wrapper.getSpecialTerms() }}
+                    <strong><span [innerHTML]="'Special Terms:' | translate"></span></strong> {{ wrapper.getSpecialTerms() }}
                 </div>
                 <div  *ngIf="wrapper.getDeliveryPeriod() != ''" class="p-1">
-                    <strong><span [innerHTML]="'Delivery Period: ' | translate"></span></strong> {{ wrapper.getDeliveryPeriod() }}
+                    <strong><span [innerHTML]="'Delivery Period:' | translate"></span></strong> {{ wrapper.getDeliveryPeriod() }}
                 </div>
             </div>
             <div style="flex-grow:1;">

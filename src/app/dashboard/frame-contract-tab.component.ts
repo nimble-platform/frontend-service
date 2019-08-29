@@ -26,8 +26,6 @@ export class FrameContractTabComponent implements OnInit {
                 private cookieService: CookieService,
                 private translate: TranslateService,
                 private router: Router) {
-                    translate.setDefaultLang("en");
-                    translate.use(translate.getBrowserLang());
                 }
 
     ngOnInit() {

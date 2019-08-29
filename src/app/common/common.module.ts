@@ -19,7 +19,7 @@ import { InputLabelComponent } from './input-label.component';
 import {AmountInputComponent} from "./amount-input.component";
 import {ExpandableFlexRow} from "./expandable-flex-row.component";
 import {MultiTypeInputComponent} from "./multi-type-input.component";
-import { HttpClientModule, HttpClient } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
@@ -34,12 +34,13 @@ export function HttpLoaderFactory(http: HttpClient) {
 		HttpModule,
 		ReactiveFormsModule,
 		NgbModule.forRoot(),
-		TranslateModule.forRoot({
+		TranslateModule.forChild({
             loader: {
               provide: TranslateLoader,
               useFactory: HttpLoaderFactory,
               deps: [HttpClient]
-            }
+            },
+            isolate: false
         })
 	],
 	declarations: [
@@ -74,7 +75,8 @@ export function HttpLoaderFactory(http: HttpClient) {
 		InputLabelComponent,
 		AmountInputComponent,
 		ExpandableFlexRow,
-		MultiTypeInputComponent
+		MultiTypeInputComponent,
+    TranslateModule
 	],
 	providers: [
 	]

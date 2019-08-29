@@ -92,8 +92,6 @@ export class CategorySearchComponent implements OnInit {
         public appComponent: AppComponent,
         private translate: TranslateService
     ) {
-        translate.setDefaultLang("en");
-        translate.use(translate.getBrowserLang());
     }
 
     ngOnInit(): void {

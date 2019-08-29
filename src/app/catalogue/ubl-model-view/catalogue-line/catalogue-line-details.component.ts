@@ -32,8 +32,6 @@ export class CatalogueLineDetailsComponent{
     constructor(private translate: TranslateService,
                 private publishService: PublishService) {
         this.propertyBlockCollapsedStates = this.publishService.getCollapsedStates();
-        translate.setDefaultLang("en");
-        translate.use(translate.getBrowserLang());
     }
 
     toggleCollapsed(blockName:string):void {

@@ -70,8 +70,6 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     private root: any;
     // BackEnd Service + Modal Service declared here
     constructor(private expSearch: ExplorativeSearchService, private router: Router, private translate: TranslateService) {
-        translate.setDefaultLang('en');
-        translate.use(translate.getBrowserLang());
      }
 
     /**

@@ -67,7 +67,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     constructor(public bpDataService: BPDataService,
                 public sanitizer: DomSanitizer,
-                public catalogueService: CatalogueService, 
+                public catalogueService: CatalogueService,
                 private searchContextService: SearchContextService,
                 public userService: UserService,
                 public bpeService: BPEService,
@@ -79,8 +79,6 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 private http: Http,
                 private modalService: NgbModal) {
         this.renderer.setStyle(document.body, "background-image", "none");
-        translate.setDefaultLang("en");
-        translate.use(translate.getBrowserLang());
     }
 
     /**

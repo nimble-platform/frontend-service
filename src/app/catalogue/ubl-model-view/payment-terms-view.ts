@@ -18,10 +18,8 @@ export class PaymentTermsView implements OnInit{
     constructor(
         private translate: TranslateService
     ) {
-        translate.setDefaultLang("en");
-        translate.use(translate.getBrowserLang());
     }
-    
+
     ngOnInit(){
         // create initial trading terms list
         this.createTradingTerms();

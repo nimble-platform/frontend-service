@@ -49,8 +49,6 @@ export class TransportExecutionPlanComponent implements OnInit {
                 private documentService: DocumentService,
                 private translate: TranslateService,
                 private route: ActivatedRoute) {
-                    translate.setDefaultLang("en");
-                    translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {

@@ -41,8 +41,6 @@ export class FileInputComponent implements OnInit {
     selectedLanguage: string;
 
     constructor(public catalogueService:CatalogueService,private translate: TranslateService) {
-        translate.setDefaultLang("en");
-        translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {

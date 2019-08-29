@@ -32,9 +32,9 @@ export class PerformanceAnalyticsComponent implements OnInit {
     trade_yellow_perc_str = "0%";
     trade_red_perc_str = "0%";
     cat_loading = true;
-    cat_levels = [];    
+    cat_levels = [];
     cat_level = -2;
-	cat = "";    
+	cat = "";
     product_count = 0;
     service_count = 0;
     loadedps = false;
@@ -43,22 +43,20 @@ export class PerformanceAnalyticsComponent implements OnInit {
 	categoriesCallStatus: CallStatus = new CallStatus();
 
     product_cat_mix = myGlobals.product_cat_mix;
-	getMultilingualLabel = selectNameFromLabelObject;    
+	getMultilingualLabel = selectNameFromLabelObject;
 	config = myGlobals.config;
 
     constructor(private analyticsService: AnalyticsService,
 		private simpleSearchService: SimpleSearchService,
-		private cookieService: CookieService,		
+		private cookieService: CookieService,
 		private categoryService: CategoryService,
 		private translate: TranslateService,
         ) {
-			translate.setDefaultLang("en");
-			translate.use(translate.getBrowserLang());
     	}
 
     ngOnInit(): void {
 		this.callStatus.submit();
-		let compId = this.cookieService.get('company_id');		
+		let compId = this.cookieService.get('company_id');
 		this.comp_id = compId;
 		this.getCatTree();
         this.analyticsService
@@ -109,7 +107,7 @@ export class PerformanceAnalyticsComponent implements OnInit {
 			this.categoriesCallStatus.error("Error while loading category tree.", error);
 		});
     }
-    
+
 
 	private async buildCatTree(categoryCounts: any[]) {
 		var taxonomy = "eClass";
@@ -198,7 +196,7 @@ export class PerformanceAnalyticsComponent implements OnInit {
 				}
 			}
         }
-        
+
         this.cat_levels[0].forEach(catele => {
             if(catele.preferredName != null && catele.preferredName != ''){
                 if(catele.preferredName.toLowerCase().indexOf("service") >= 0 || catele.preferredName.toLowerCase().indexOf("servicio") >= 0){
@@ -211,10 +209,10 @@ export class PerformanceAnalyticsComponent implements OnInit {
 
         this.loadedps = true;
         this.cat_loading = false;
-        
+
 
         this.categoriesCallStatus.callback("Categories loaded.", true);
-        
+
 
 	}
 

@@ -60,8 +60,6 @@ export class QuantityViewComponent extends ChildForm implements OnInit {
                 private translate: TranslateService) {
         super();
         this.quantityForm.addControl('values', this.quantityFormArray);
-        translate.setDefaultLang("en");
-        translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {

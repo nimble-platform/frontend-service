@@ -34,8 +34,6 @@ export class FactorsComponent implements OnInit {
                 private route: ActivatedRoute,
                 private router: Router,
                 private translate: TranslateService) {
-                  translate.setDefaultLang('en');
-                  translate.use(translate.getBrowserLang());
                 }
 
     ngOnInit() {

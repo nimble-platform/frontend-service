@@ -17,11 +17,9 @@ export class AddressViewComponent {
     @Input() presentationMode: string;
     @Input() multiValue: boolean = false;
     @Input() definition: string = null;
-    
+
     constructor(private translate: TranslateService
         ) {
-            translate.setDefaultLang("en");
-            translate.use(translate.getBrowserLang());
         }
 
     addFirstValue(): void {

@@ -26,10 +26,8 @@ export class DetailedAddressViewComponent implements OnInit{
     constructor(
         private cookieService: CookieService,
         private userService: UserService,
-        private translate: TranslateService    
-    ) {	
-        translate.setDefaultLang("en");
-        translate.use(translate.getBrowserLang());
+        private translate: TranslateService
+    ) {
     }
 
     ngOnInit():void{

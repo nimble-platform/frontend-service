@@ -17,7 +17,7 @@
 
 <div *ngIf="cataloguesIds.length > 1 && publishingGranularity !== 'bulk'" class="row space-before">
         <div class="col-2 category-list-label">
-            <strong *ngIf="!productCatalogueRetrievalStatus.isLoading()"><span [innerHTML]="'Catalogue: ' | translate"></span></strong>
+            <strong *ngIf="!productCatalogueRetrievalStatus.isLoading()"><span [innerHTML]="'Catalogue:' | translate"></span></strong>
             <strong class="mr-2" *ngIf="productCatalogueRetrievalStatus.isLoading()"><span [innerHTML]="'Fetching Catalogues' | translate"></span></strong>
             <call-status [callStatus]="productCatalogueRetrievalStatus"></call-status>
         </div>
@@ -31,7 +31,7 @@
 <!-- Selected Categories -->
 <div class="row space-before">
     <div class="col-2 category-list-label">
-        <strong *ngIf="!isProductCategoriesLoading()"><span [innerHTML]="'Categories: ' | translate"></span></strong>
+        <strong *ngIf="!isProductCategoriesLoading()"><span [innerHTML]="'Categories:' | translate"></span></strong>
         <strong class="mr-2" *ngIf="isProductCategoriesLoading()"><span [innerHTML]="'Fetching Categories' | translate"></span> </strong>
         <call-status [callStatus]="productCategoryRetrievalStatus"></call-status>
     </div>
@@ -334,7 +334,7 @@
                         <hr>
                     </div>
                     <div class="col-12">
-                        <span [innerHTML]="'No property matching your search? ' | translate"></span><br>
+                        <span [innerHTML]="'No property matching your search?' | translate"></span><br>
                         <a href class="btn-link" (click)="onAddCategory($event, d)"><span [innerHTML]="'Add more categories to this product / service' | translate"></span></a>
                         <span [innerHTML]="'or' | translate"></span>
                         <a href class="btn-link" (click)="onAddCustomProperty($event, d)"><span [innerHTML]="'Create a custom property' | translate"></span></a>.

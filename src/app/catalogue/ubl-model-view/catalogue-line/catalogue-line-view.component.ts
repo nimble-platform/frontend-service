@@ -29,8 +29,6 @@ export class CatalogueLineViewComponent extends ChildForm {
 
 	constructor(private publishService: PublishService,private translate: TranslateService) {
         super();
-        translate.setDefaultLang("en");
-        translate.use(translate.getBrowserLang());
     }
 
 	ngOnInit() {

@@ -36,8 +36,6 @@ export class AdditionalItemPropertyComponent implements OnInit, OnDestroy {
 
     constructor(private catalogueService:CatalogueService,private translate: TranslateService,
                 private bpDataService: BPDataService) {
-                    translate.setDefaultLang("en");
-                    translate.use(translate.getBrowserLang());
     }
 
     openPropertyDetails(): void {

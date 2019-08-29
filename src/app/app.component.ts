@@ -12,7 +12,7 @@ import {
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from './globals';
 import * as moment from "moment";
-import {DEFAULT_LANGUAGE} from './catalogue/model/constants';
+import {DEFAULT_LANGUAGE,LANGUAGES, FALLBACK_LANGUAGE} from './catalogue/model/constants';
 import {TranslateService} from '@ngx-translate/core';
 
 import 'zone.js';
@@ -42,6 +42,8 @@ export class AppComponent implements OnInit {
     public allowed = false;
     public versions = [];
     public minimalView = false;
+    public language = "en";
+    private availableLanguages = LANGUAGES.sort();
 
     enableLogisticServicePublishing = true;
 
@@ -51,7 +53,7 @@ export class AppComponent implements OnInit {
         private router: Router,
         private route: ActivatedRoute,
         private modalService: NgbModal,
-        private translate: TranslateService
+        public translate: TranslateService
     ) {
         router.events.subscribe(event => {
             if (event instanceof NavigationStart) {
@@ -73,8 +75,22 @@ export class AppComponent implements OnInit {
                 this.checkState(event.url);
             }
         });
-        translate.setDefaultLang("en");
-        translate.use(translate.getBrowserLang());
+        
+        if (cookieService.get("language")) {
+          this.language = cookieService.get("language");
+        }
+        else {
+          let langTmp = translate.getBrowserLang();
+          if(LANGUAGES.indexOf(langTmp) == -1){
+              langTmp = "en";
+          }
+          this.language = langTmp;
+          cookieService.set("language",this.language);
+        }
+        translate.setDefaultLang(FALLBACK_LANGUAGE);
+        translate.use(DEFAULT_LANGUAGE());
+        if (this.debug)
+          console.log("Initialized platform with language: "+DEFAULT_LANGUAGE());
     }
 
     ngOnInit() {
@@ -92,6 +108,14 @@ export class AppComponent implements OnInit {
                 this.minimalView = false;
             }
         });
+    }
+
+    setLang(lang:string) {
+      if (lang != this.language) {
+        this.loading = true;
+        this.cookieService.set("language",lang);
+        location.reload();
+      }
     }
 
     getVersions(): void {

@@ -100,8 +100,6 @@ export class ThreadSummaryComponent implements OnInit {
                 private modalService: NgbModal,
                 private userService: UserService,
                 private translate: TranslateService) {
-                    translate.setDefaultLang("en");
-                    translate.use(translate.getBrowserLang());
     }
 
     ngOnInit(): void {

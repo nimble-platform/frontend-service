@@ -10,17 +10,15 @@ import {TranslateService} from '@ngx-translate/core';
 
 export class CompanyAnalyticsComponent implements OnInit {
 
-    
+
     constructor(
         private analyticsService: AnalyticsService,
         private translate: TranslateService,
     ) {
-        translate.setDefaultLang("en");
-        translate.use(translate.getBrowserLang());
     }
 
     ngOnInit(): void {
-        
+
     }
 
 }

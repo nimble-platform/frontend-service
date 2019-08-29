@@ -126,8 +126,6 @@ export class NegotiationRequestComponent implements OnInit {
                 private documentService: DocumentService,
                 private translate: TranslateService,
                 private router: Router) {
-                    translate.setDefaultLang("en");
-                    translate.use(translate.getBrowserLang());
 
     }
 

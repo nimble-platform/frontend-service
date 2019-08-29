@@ -47,8 +47,6 @@ export class TransportNegotiationRequestComponent implements OnInit {
                 private location: Location,
                 private translate: TranslateService,
                 private router: Router) {
-                    translate.setDefaultLang("en");
-                    translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {

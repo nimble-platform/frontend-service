@@ -75,8 +75,6 @@ export class ExplorativeSearchFormComponent implements OnInit {
         private translate: TranslateService
     ) {
         this._user_id = this.cookieService.get('user_id');
-        translate.setDefaultLang('en');
-        translate.use(translate.getBrowserLang());
     }
 
     ngOnInit(): void {

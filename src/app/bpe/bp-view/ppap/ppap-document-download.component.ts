@@ -41,8 +41,6 @@ export class PpapDocumentDownloadComponent{
                 private location: Location,
                 private translate: TranslateService,
                 private documentService: DocumentService) {
-                    translate.setDefaultLang("en");
-                    translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {
@@ -69,7 +67,7 @@ export class PpapDocumentDownloadComponent{
         }
 
     }
-    
+
     private initFromPpap() {
         this.notesBuyer = this.ppap.note;
         this.additionalDocumentsBuyer = this.ppap.additionalDocumentReference;
@@ -128,4 +126,3 @@ export class PpapDocumentDownloadComponent{
         }
     }
 }
-

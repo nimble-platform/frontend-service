@@ -252,7 +252,7 @@
                 <div class="row">
                     <div class="col-12 mb-0" *ngIf="selectedCategoryWithDetails.properties?.length > 0">
                         <label>
-                            <strong><span [innerHTML]="'Properties: ' | translate"></span></strong>
+                            <strong><span [innerHTML]="'Properties:' | translate"></span></strong>
                         </label>
                     </div>
                 </div>
@@ -294,7 +294,7 @@
 <!-- Selected Categories + Action -->
 <div *ngIf="this.appComponent.checkRoles('catalogue')" class="form-group row">
     <div class="col-9 d-flex align-items-center">
-        <p class="mt-1 mb-0 mr-3 flex-shrink-0"><span [innerHTML]="'Selected Categories: ' | translate"></span></p>
+        <p class="mt-1 mb-0 mr-3 flex-shrink-0"><span [innerHTML]="'Selected Categories:' | translate"></span></p>
         <p class="mt-1 mb-0 mr-3 flex-shrink-0" *ngIf="categoryService.selectedCategories.length === 0"><span [innerHTML]="'None. Please add a category above to proceed.' | translate"></span></p>
         <div class="w-100 h-100 align-self-start">
             <div class="d-flex flex-wrap">

@@ -54,32 +54,17 @@ import {NameDescriptionPanelComponent} from './publish/name-description-panel.co
 import {LogisticServicePublishComponent} from './publish/logistic-service-publish.component';
 import {LogisticPublishDeactivateGuardService} from './logistic-publish-deactivate-guard.service';
 import {DeleteExportCatalogueModalComponent} from "./ubl-model-view/catalogue/delete-export-catalogue-modal.component";
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { HttpClientModule, HttpClient } from "@angular/common/http";
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-
-
-export function HttpLoaderFactory(http: HttpClient) {
-    return new TranslateHttpLoader(http, './assets/i18n/', '.json');
-}
 
 @NgModule({
-	imports: [CommonModule, 
-		AppCommonModule, 
-		FormsModule, 
-		ReactiveFormsModule, 
-		HttpModule, 
-        CatalogueRoutingModule, 
+	imports: [CommonModule,
+		AppCommonModule,
+		FormsModule,
+		ReactiveFormsModule,
+		HttpModule,
+        CatalogueRoutingModule,
         ProductDetailsModule,
         UserMgmtModule,
-        NgbModule.forRoot(),
-        TranslateModule.forRoot({
-            loader: {
-              provide: TranslateLoader,
-              useFactory: HttpLoaderFactory,
-              deps: [HttpClient]
-            }
-        })
+        NgbModule.forRoot()
 	],
     declarations: [
         CategorySearchComponent,

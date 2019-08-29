@@ -42,8 +42,6 @@ export class LogisticServicePublishComponent implements OnInit {
                 private cookieService: CookieService,
                 private logisticPublishingService:LogisticPublishingService,
                 private translate: TranslateService) {
-                    translate.setDefaultLang("en");
-                    translate.use(translate.getBrowserLang());
     }
 
     config = myGlobals.config;

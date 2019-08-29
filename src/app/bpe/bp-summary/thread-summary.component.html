@@ -33,10 +33,10 @@
                           <span *ngIf="processInstanceGroup.status != 'CANCELLED' && titleEvent.actionText !== ''" class="clickable" (click)="openBpProcessView()">{{titleEvent.actionText}}</span>
                         </div>
                         <div class="col-xs-auto align-right pl-1 pr-2" style="min-width:6rem">
-                          <div *ngIf="titleEvent && showDataChannelButton && enableDataChannelButton" class="inline" data-toggle="tooltip" data-placement="top" title="Show Data Channel | translate">
+                          <div *ngIf="titleEvent && showDataChannelButton && enableDataChannelButton" class="inline" data-toggle="tooltip" data-placement="top" [title]="'Show Data Channel' | translate">
                               <i class="fa fa-exchange-alt p-1 pointer" aria-hidden="true" [routerLink]="[channelLink]"></i>
                           </div>
-                          <div *ngIf="titleEvent && showDataChannelButton && !enableDataChannelButton" class="inline" data-toggle="tooltip" data-placement="top" title="'Waiting for trading partner...' | translate" (click)="alertWait()">
+                          <div *ngIf="titleEvent && showDataChannelButton && !enableDataChannelButton" class="inline" data-toggle="tooltip" data-placement="top" [title]="'Waiting for trading partner...' | translate" (click)="alertWait()">
                               <i class="fa fa-exchange-alt p-1 pointer" aria-hidden="true"></i>
                           </div>
                           <!--
@@ -44,10 +44,10 @@
                               <i class="fa fa-trash-alt p-1 pointer" aria-hidden="true"></i>
                           </div>
                           -->
-                          <div *ngIf="titleEvent && showRateCollaborationButton" class="inline" (click)="rateCollaboration(addSuccessRatingModal,addCancelRatingModal)" data-toggle="tooltip" data-placement="top" title="'Rate this collaboration' | translate">
+                          <div *ngIf="titleEvent && showRateCollaborationButton" class="inline" (click)="rateCollaboration(addSuccessRatingModal,addCancelRatingModal)" data-toggle="tooltip" data-placement="top" [title]="'Rate this collaboration' | translate">
                               <i class="fa fa-star p-1 pointer" aria-hidden="true"></i>
                           </div>
-                          <div *ngIf="titleEvent && showCancelCollaborationButton" class="inline" (click)="cancelCollaboration()" data-toggle="tooltip" data-placement="top" title="'Cancel the collaboration' | translate">
+                          <div *ngIf="titleEvent && showCancelCollaborationButton" class="inline" (click)="cancelCollaboration()" data-toggle="tooltip" data-placement="top" [title]="'Cancel the collaboration' | translate">
                               <i class="fa fa-times p-1 pointer" aria-hidden="true"></i>
                           </div>
                           <div *ngIf="!expanded" class="inline" (click)="expanded = !expanded" data-toggle="tooltip" data-placement="top" [title]="'Show details' | translate">

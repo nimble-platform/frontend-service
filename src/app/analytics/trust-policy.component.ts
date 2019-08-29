@@ -16,10 +16,8 @@ export class TrustPolicyComponent implements OnInit {
     callStatus: CallStatus = new CallStatus();
     saveCallStatus: CallStatus = new CallStatus();
 
-    constructor(private analyticsService: AnalyticsService, 
+    constructor(private analyticsService: AnalyticsService,
         private translate: TranslateService) {
-        translate.setDefaultLang("en");
-        translate.use(translate.getBrowserLang());
     }
 
     ngOnInit(): void {

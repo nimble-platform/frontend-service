@@ -84,8 +84,6 @@ export class PpapDocumentSelectComponent implements OnInit {
                 private translate: TranslateService,
                 private documentService: DocumentService,
                 private location: Location) {
-                    translate.setDefaultLang("en");
-                    translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {

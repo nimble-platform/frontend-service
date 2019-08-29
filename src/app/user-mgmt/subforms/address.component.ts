@@ -25,8 +25,6 @@ export class AddressSubForm {
   constructor(
     private translate: TranslateService
     ) {
-        translate.setDefaultLang("en");
-        translate.use(translate.getBrowserLang());
     }
 
   getSuggestions = (text$: Observable<string>) =>

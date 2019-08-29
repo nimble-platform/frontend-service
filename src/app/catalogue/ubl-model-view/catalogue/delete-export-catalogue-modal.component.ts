@@ -23,8 +23,6 @@ export class DeleteExportCatalogueModalComponent {
     constructor(private modalService: NgbModal,
                 private catalogueService: CatalogueService,
                 private translate: TranslateService) {
-                    translate.setDefaultLang("en");
-                    translate.use(translate.getBrowserLang());
     }
 
     open(mode: 'delete' | 'export'): void {

@@ -40,8 +40,6 @@ export class FrameContractDetailsComponent implements OnInit {
                 private route: ActivatedRoute,
                 private translate: TranslateService,
                 private router: Router) {
-                    translate.setDefaultLang("en");
-                    translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {

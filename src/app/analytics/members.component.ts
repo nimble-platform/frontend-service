@@ -37,8 +37,6 @@ export class MembersComponent implements OnInit {
       private route: ActivatedRoute,
       private translate: TranslateService,
     ) {
-      translate.setDefaultLang("en");
-      translate.use(translate.getBrowserLang());
     }
 
     ngOnInit(): void {

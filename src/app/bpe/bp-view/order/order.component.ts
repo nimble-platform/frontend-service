@@ -90,8 +90,6 @@ export class OrderComponent implements OnInit {
                 private router: Router,
                 private translate: TranslateService,
                 private documentService: DocumentService) {
-                    translate.setDefaultLang("en");
-                    translate.use(translate.getBrowserLang());
     }
 
     ngOnInit(): void {

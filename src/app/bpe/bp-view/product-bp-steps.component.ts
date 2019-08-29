@@ -25,8 +25,6 @@ export class ProductBpStepsComponent implements OnInit {
     config = myGlobals.config;
 
     constructor(public bpDataService:BPDataService,private translate: TranslateService) {
-        translate.setDefaultLang("en");
-        translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {

@@ -21,8 +21,6 @@ export class TransportServiceDetailsComponent implements OnInit {
 
     constructor(private bpDataService: BPDataService,
         private translate: TranslateService) {
-            translate.setDefaultLang("en");
-            translate.use(translate.getBrowserLang());
     }
 
     ngOnInit() {
