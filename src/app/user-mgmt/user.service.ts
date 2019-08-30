@@ -329,8 +329,12 @@ export class UserService {
       });
     }
 
-    saveCert(file: File, name: string, description: string, type: string, partyId: string,certID?:string): Promise<void> {
-      const url = `${this.url}/company-settings/${partyId}/certificate?name=${name}&description=${description}&type=${type}&certID=${certID}`;
+    saveCert(file: File, name: string, description: string, type: string, partyId: string,certID?:string,langId:string = "en"): Promise<void> {
+      
+      if(langId == null || langId == ""){
+          langId = "en";
+      }
+      const url = `${this.url}/company-settings/${partyId}/certificate?name=${name}&description=${description}&type=${type}&certID=${certID}&langId=${langId}`;
       const token = 'Bearer '+this.cookieService.get("bearer_token");
       const headers_token = new Headers({'Authorization': token});
       const form_data: FormData = new FormData();
