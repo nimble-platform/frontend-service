@@ -85,19 +85,13 @@ export class CompanyRegistrationComponent implements OnInit {
         this.userService.validateVAT(this.vat)
             .then(response => {
                 this.vatCallStatus.callback("VAT checked", true);
-                if (response.status == "success") {
-                    if (response.valid) {
-                        if (response.company_name)
-                            this.registrationForm.controls['name'].setValue(response.company_name);
-                        this.registrationForm.controls['vatNumber'].setValue(this.vat);
-                        if (response.country_code)
-                            AddressSubForm.update(this.registrationForm.controls['address'] as FormGroup, new Address("", "", "", "", "", getCountryByISO(response.country_code)));
-                        this.vatValidated = true;
-                    } else {
-                        setTimeout(function () {
-                            alert("The VAT is invalid.");
-                        }, 50);
-                    }
+                if (response.IsValid) {
+                    if (response.BusinessName && response.BusinessName != "" && response.BusinessName != "---")
+                        this.registrationForm.controls['name'].setValue(response.BusinessName);
+                    this.registrationForm.controls['vatNumber'].setValue(this.vat);
+                    if (response.CountryCode)
+                        AddressSubForm.update(this.registrationForm.controls['address'] as FormGroup, new Address("", "", "", "", "", getCountryByISO(response.CountryCode)));
+                    this.vatValidated = true;
                 } else {
                     setTimeout(function () {
                         alert("The VAT is invalid.");

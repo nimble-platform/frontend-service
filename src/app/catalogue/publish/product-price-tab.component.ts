@@ -15,6 +15,7 @@ import {UserService} from "../../user-mgmt/user.service";
 import {CookieService} from "ng2-cookies";
 import {Party} from "../model/publish/party";
 import {TranslateService} from '@ngx-translate/core';
+import { getISObyCountry } from "../../common/utils";
 
 @Component({
     selector: "product-price-tab",
@@ -48,7 +49,9 @@ export class ProductPriceTabComponent implements OnInit {
 
         if(this.catalogueLine.requiredItemLocationQuantity.applicableTaxCategory == null || this.catalogueLine.requiredItemLocationQuantity.applicableTaxCategory.length == 0) {
             this.catalogueLine.requiredItemLocationQuantity.applicableTaxCategory = [new TaxCategory()];
+        }
 
+        if (this.catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent == null) {
             let vatRatesPromise: Promise<any> = Promise.resolve(ProductPriceTabComponent.vatRates);
             if(ProductPriceTabComponent.vatRates == null) {
                 vatRatesPromise = this.catalogueService.getTaxRates();
@@ -106,9 +109,9 @@ export class ProductPriceTabComponent implements OnInit {
 
     private getVatRateForCountry(userParty: Party): number {
         if(ProductPriceTabComponent.vatRates != null) {
-            for(let countryCode of Object.keys(ProductPriceTabComponent.vatRates.rates)) {
-                if(ProductPriceTabComponent.vatRates.rates[countryCode].country_name == userParty.postalAddress.country.name.value) {
-                    return ProductPriceTabComponent.vatRates.rates[countryCode].standard_rate;
+            for(let countryCode of Object.keys(ProductPriceTabComponent.vatRates.items)) {
+                if(countryCode == getISObyCountry(userParty.postalAddress.country.name.value)) {
+                    return ProductPriceTabComponent.vatRates.items[countryCode][0].rates.standard;
                 }
             }
         }

@@ -60,6 +60,15 @@ export function getCountryByISO(term: string): string {
   return country;
 }
 
+export function getISObyCountry(term: string): string {
+  var iso = "";
+  for (var i=0; i<COUNTRY_JSON.length; i++) {
+    if (COUNTRY_JSON[i].name.toLowerCase() == term.toLowerCase())
+      iso = COUNTRY_JSON[i].iso.toUpperCase();
+  }
+  return iso;
+}
+
 export function getCountrySuggestions(term: string): string[] {
   var suggestionList = [];
   var suggestions = [];

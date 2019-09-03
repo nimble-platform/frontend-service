@@ -427,9 +427,9 @@ export class CatalogueService {
     }
 
     getTaxRates(): Promise<any> {
-        const url = this.baseUrl + `/catalogue/vat-rates`;
+        const url = `https://raw.githubusercontent.com/ibericode/vat-rates/master/vat-rates.json`;
         return this.http
-            .get(url, {headers: this.getAuthorizedHeaders()})
+            .get(url, {})
             .toPromise()
             .then(res => {
                 return res.json();

@@ -260,11 +260,13 @@ export class UserService {
     }
 
     validateVAT(vat:string): Promise<any> {
-      var vat_url = vat.replace(/ /g,"");
-      const url = `${this.url}/company-settings/vat/${vat_url}`;
-      const headers = new Headers({'Content-Type': 'application/json'});
+      var vat_body = {
+        "VatCode": vat.replace(/ /g,"")
+      };
+      const url = `https://api.cloudmersive.com/validate/vat/lookup`;
+      const headers = new Headers({'Content-Type': 'application/json', 'Apikey': '28e63794-ef8a-4616-80bb-26fdd3709a19'});
       return this.http
-          .get(url, {headers: headers})
+          .post(url, JSON.stringify(vat_body), {headers: headers})
           .toPromise()
           .then(res => res.json())
           .catch(this.handleError);
@@ -330,7 +332,7 @@ export class UserService {
     }
 
     saveCert(file: File, name: string, description: string, type: string, partyId: string,certID?:string,langId:string = "en"): Promise<void> {
-      
+
       if(langId == null || langId == ""){
           langId = "en";
       }

@@ -70,17 +70,11 @@ export class CompanyDetailsComponent implements OnInit {
         .then(response => {
           this.vatCallStatus.callback("VAT checked", true);
           setTimeout(function(){
-            if (response.status == "success") {
-              if (response.valid) {
-                if (response.company_name) {
-                  alert("The VAT is valid and registered for "+response.company_name+".");
-                }
+            if (response.IsValid) {
+                if (response.BusinessName && response.BusinessName != "" && response.BusinessName != "---")
+                    alert("The VAT is valid and registered for "+response.BusinessName+".");
                 else
                   alert("The VAT is valid.");
-              }
-              else {
-                alert("The VAT is invalid.");
-              }
             }
             else {
               alert("The VAT is invalid.");
