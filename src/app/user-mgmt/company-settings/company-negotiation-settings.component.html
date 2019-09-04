@@ -28,6 +28,8 @@
     </div>
 </div>
 
+<ng-container *ngIf="config.showTrade">
+
 <hr>
 
 <!-- Payment Terms -->
@@ -145,6 +147,10 @@
     </div>
 </div>
 
+</ng-container>
+
+<ng-container *ngIf="config.dataChannelsEnabled">
+
 <hr>
 
 <!-- Data Exchange Services-->
@@ -234,6 +240,8 @@
     </div>
 
 </div>
+
+</ng-container>
 
 <hr>
 

@@ -9,6 +9,7 @@ import { copy, deepEquals } from "../../common/utils";
 import { CompanySettings } from "../model/company-settings";
 import { CompanySensor } from "../model/company-sensor";
 import {BPEService} from '../../bpe/bpe.service';
+import * as myGlobals from "../../globals";
 import {TranslateService} from '@ngx-translate/core';
 
 @Component({
@@ -46,6 +47,8 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
     // if all collaborations is finished, then the user can update its workflow
     isAllCollaborationsFinished:boolean;
     alertClosed:boolean = false;
+
+    config = myGlobals.config;
 
     constructor(private userService: UserService,
                 private translate: TranslateService,
