@@ -60,6 +60,15 @@ export function getCountryByISO(term: string): string {
   return country;
 }
 
+export function getISObyCountry(term: string): string {
+  var iso = "";
+  for (var i=0; i<COUNTRY_JSON.length; i++) {
+    if (COUNTRY_JSON[i].name.toLowerCase() == term.toLowerCase())
+      iso = COUNTRY_JSON[i].iso.toUpperCase();
+  }
+  return iso;
+}
+
 export function getCountrySuggestions(term: string): string[] {
   var suggestionList = [];
   var suggestions = [];
@@ -623,6 +632,12 @@ export function isLogisticsService(product: CatalogueLine): boolean {
 }
 
 export function deepEquals(obj1: any, obj2: any): boolean {
+
+    if(obj1 == null && obj2 == null)
+      return true;
+    else if (obj1 == null || obj2 == null)
+      return false;
+
     if(obj1 === obj2) {
         return true;
     }
