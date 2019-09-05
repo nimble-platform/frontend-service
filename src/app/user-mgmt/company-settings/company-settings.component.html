@@ -40,7 +40,7 @@
 				<span [innerHTML]="'Company Details' | translate"></span>
   			</a>
   		</li>
-  		<li *ngIf="viewMode=='full' && config.showTrade" class="nav-item">
+  		<li *ngIf="viewMode=='full'" class="nav-item">
   			<a href id="NEGOTIATION_SETTINGS" class="nav-link" [ngClass]="{ active: selectedTab === 'NEGOTIATION_SETTINGS'}" (click)="onSelectTab($event,'NEGOTIATION_SETTINGS')">
 				<span [innerHTML]="'Trade Details' | translate"></span>
   			</a>
