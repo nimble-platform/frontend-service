@@ -57,6 +57,18 @@ node('nimble-jenkins-slave') {
         stage('Deploy - EFAC') {
             sh 'ssh staging "cd /srv/nimble-staging/ && ./run-staging.sh restart-single frontend-service-efactory"'
         }
+
+        stage('Build Application - Eco House') {
+            sh 'mvn clean install -Denv=ecohouse'
+        }
+
+        stage('Build Docker - Eco House') {
+            sh 'docker build -t nimbleplatform/frontend-service:ecohouse ./target'
+        }
+
+        stage('Push Docker - Eco House') {
+            sh 'docker push nimbleplatform/frontend-service:ecohouse'
+        }
     }
 
     // -----------------------------------------------
@@ -101,7 +113,7 @@ node('nimble-jenkins-slave') {
         }
 
         stage('Deploy - MVP') {
-            sh 'ssh nimble "cd /data/deployment_setup/prod/ && sudo ./run-prod.sh restart-single frontend-service"'
+            sh 'ssh nimble "cd /data/deployment_setup/prod/ && export COMPOSE_HTTP_TIMEOUT=600 && sudo ./run-prod.sh restart-single frontend-service"'
         }
 
         stage('Build Application - FMP') {
