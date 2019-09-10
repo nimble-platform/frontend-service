@@ -702,14 +702,6 @@ export class BPDataService{
                 return;
             }
 
-            // negotiate the price if no price on the line
-            const priceWrapper = new PriceWrapper(
-                line.requiredItemLocationQuantity.price,
-                line.requiredItemLocationQuantity.applicableTaxCategory[0].percent);
-            if(!priceWrapper.itemPrice.hasPrice()) {
-                // this.bpActivityEvent.workflowOptions.negotiation.price = true;
-            }
-
             // this item contains all the properties.
             const lineItem = line.goodsItem.item;
 
