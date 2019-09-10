@@ -36,7 +36,7 @@ export class AnalyticsService {
   		.then(res => res.json())
   		.catch(this.handleError);
     }
-    
+
     getCompAnalytics(comp:string): Promise<any> {
   		const url = `${this.url_da}?companyID=${comp}`;
   		return this.http
@@ -89,7 +89,8 @@ export class AnalyticsService {
     }
 
     getUnverifiedCompanies(page: number, sortBy?: string, orderBy?: string): Promise<any> {
-        const url = `${this.url_identity}/admin/unverified_companies?page=${page}&sortBy=${sortBy}&orderBy=${orderBy}`;
+        var url = `${this.url_identity}/admin/unverified_companies?page=${page}&sortBy=${sortBy}&orderBy=${orderBy}`;
+        url += "&size=99999";
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
         return this.http
