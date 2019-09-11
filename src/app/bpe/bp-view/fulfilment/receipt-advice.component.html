@@ -59,14 +59,14 @@
     <hr class="actions-hr">
 
     <!-- Actions -->
-    <div class="row actions-row" *ngIf="userRole === 'buyer'">
+    <div class="d-flex justify-content-end actions-row" *ngIf="userRole === 'buyer'">
         <div class="col-8 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
-        <div class="col-2">
+        <div *ngIf="!isReadOnly()" class="col-2">
             <button class="btn btn-primary action" [disabled]="isLoading() || isReadOnly()" (click)="onSendReceiptAdvice()">
-                {{ isReadOnly() ? "Advice Sent" : "Send advice" }}
+                <span [innerHTML]="'Send Advice' | translate"></span>
             </button>
         </div>
     </div>
