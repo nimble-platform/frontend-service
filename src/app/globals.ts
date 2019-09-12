@@ -90,6 +90,7 @@ export const config = {
   "kibanaEnabled": true,
   "loggingEnabled": true,
   "logoPath": "./assets/logo_mvp.png",
+  "federationLogoPath": "./assets/logo_mvp_efactory.png",
   "logoRequired": false,
   "phoneNumberRequired": false,
   "projectsEnabled": true,
