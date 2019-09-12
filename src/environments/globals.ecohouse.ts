@@ -9,7 +9,8 @@ export const debug = false;
 
 export const base_path = "http://nimble-dev.ikap.biba.uni-bremen.de";
 export const ub_base = "http://nimble-dev.ikap.biba.uni-bremen.de:10096";
-export const pw_reset_link = "http://nimble-dev.ikap.biba.uni-bremen.de:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+export const idpURL = "http://nimble-dev.ikap.biba.uni-bremen.de:8080/auth/realms/master";
+export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client";
 export const frontendURL = base_path + "/frontend/";
 
 // Service endpoints

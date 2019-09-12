@@ -9,7 +9,8 @@ export const debug = false;
 
 export const base_path = "http://nimble.uk-south.containers.mybluemix.net";
 export const ub_base = "https://hydra2.ikap.biba.uni-bremen.de:8443";
-export const pw_reset_link = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+export const idpURL = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master";
+export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client";
 export const frontendURL = base_path + "/frontend/";
 
 // Service endpoints

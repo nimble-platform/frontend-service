@@ -26,6 +26,8 @@ export class CredentialsFormComponent implements OnInit {
 	objToSubmit = new Credentials('','');
 	response: any;
 	shaObj: any;
+    showLoginFederation = myGlobals.config.showLoginFederation;
+	federationURL = "";
 
 	submitCallStatus: CallStatus = new CallStatus();
 
@@ -60,6 +62,9 @@ export class CredentialsFormComponent implements OnInit {
 				if (input)
 					input.focus();
 			},100);
+		}
+		if (this.showLoginFederation) {
+			this.federationURL = this.generateFederationURL();
 		}
 	}
 
@@ -137,5 +142,16 @@ export class CredentialsFormComponent implements OnInit {
 		*/
 		this.post(this.objToSubmit);
 	}
+
+	generateFederationURL() {
+		let identityURL = myGlobals.idpURL + "/auth";
+		let clientID = "?client_id=" + myGlobals.config.federationClientID;
+		let redirectURI = myGlobals.frontendURL;
+		let hint = "&scope=openid&response_type=code&kc_idp_hint=" + myGlobals.config.federationIDP;
+
+		return identityURL + clientID + redirectURI + hint;
+	}
+
+	//'http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/protocol/openid-connect/auth?client_id=efact-test-client&redirect_uri=http://localhost:9092/&scope=openid&response_type=code&kc_idp_hint=EFS'
 
 }

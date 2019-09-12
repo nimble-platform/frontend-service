@@ -17,6 +17,10 @@ import {TranslateService} from '@ngx-translate/core';
 
 import 'zone.js';
 
+import {Headers, Http} from "@angular/http";
+import {selectValueOfTextObject} from "./common/utils";
+import {CallStatus} from "./common/call-status";
+
 @Component({
     selector: 'nimble-app',
     providers: [CookieService],
@@ -47,7 +51,12 @@ export class AppComponent implements OnInit {
 
     enableLogisticServicePublishing = true;
 
+    private accessToken = null;
+    response: any;
+    submitCallStatus: CallStatus = new CallStatus();
+
     constructor(
+        private http: Http,
         private cookieService: CookieService,
         private credentialsService: CredentialsService,
         private router: Router,
@@ -75,7 +84,7 @@ export class AppComponent implements OnInit {
                 this.checkState(event.url);
             }
         });
-        
+
         if (cookieService.get("language")) {
           this.language = cookieService.get("language");
         }
@@ -93,6 +102,37 @@ export class AppComponent implements OnInit {
           console.log("Initialized platform with language: "+DEFAULT_LANGUAGE());
     }
 
+    getQueryParameter(name): any {
+        let url = window.location.href;
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+
+    }
+
+    setCookiesForFederatedLogin() {
+        this.cookieService.set("user_id", this.response.userID);
+        if (this.response.companyID)
+            this.cookieService.set("company_id", this.response.companyID);
+        else
+            this.cookieService.set("company_id", null);
+        if (this.response.companyName)
+            this.cookieService.set("active_company_name", selectValueOfTextObject(this.response.companyName));
+        else
+            this.cookieService.set("active_company_name", null);
+        if (this.response.showWelcomeInfo)
+            this.cookieService.set("show_welcome", "true");
+        else
+            this.cookieService.set("show_welcome", "false");
+        this.cookieService.set("user_fullname", this.response.firstname + " " + this.response.lastname);
+        this.cookieService.set("user_email", this.response.email);
+        this.cookieService.set("bearer_token", this.response.accessToken);
+        // this.submitCallStatus.callback("Login Successful");
+    }
+
     ngOnInit() {
         // the user could not publish logistic services if the standard taxonomy is 'eClass'
         if(this.config.standardTaxonomy == "eClass"){
@@ -101,6 +141,33 @@ export class AppComponent implements OnInit {
 
         this.getVersions();
         this.checkLogin("");
+
+        let code = this.getQueryParameter('code');
+        let federatedLogin = this.getQueryParameter('federatedLogin');
+
+        if (federatedLogin != undefined && federatedLogin == "efs") {
+            window.location.href = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/protocol/openid-connect/auth?client_id=efact-test-client&redirect_uri=http://localhost:9092/&scope=openid&response_type=code&kc_idp_hint=EFS";
+        }
+
+        if (code != null) {
+            const url = myGlobals.user_mgmt_endpoint + `/federation/login`;
+            this.submitCallStatus.submit();
+            return this.http
+                .post(url, JSON.stringify({'code': code}), {headers: new Headers({'Content-Type': 'application/json'})})
+                .toPromise()
+                .then(res => {
+                    this.submitCallStatus.callback("Login Successful!");
+                    this.response = res.json();
+                    this.setCookiesForFederatedLogin();
+                    if (!this.response.companyID && myGlobals.config.companyRegistrationRequired)
+                        this.checkLogin("/user-mgmt/company-registration");
+                    else
+                        this.checkLogin("/dashboard");
+                }).catch((e) => {
+                    this.submitCallStatus.error("Login failed", e);
+                })
+        }
+
         this.route.queryParams.subscribe(params => {
             if (params["externalView"] && params["externalView"] == "frame") {
                 this.minimalView = true;

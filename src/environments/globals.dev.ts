@@ -9,7 +9,8 @@ export const debug = false;
 
 export const base_path = "http://localhost";
 export const ub_base = "http://localhost:8090";
-export const pw_reset_link = "http://localhost:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
+export const idpURL = "http://localhost:8080/auth/realms/master";
+export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client";
 export const frontendURL = base_path + ":9092";
 
 // Service endpoints
