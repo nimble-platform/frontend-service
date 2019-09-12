@@ -10,7 +10,7 @@ export const debug = false;
 export const base_path = "http://nimble-dev.ikap.biba.uni-bremen.de";
 export const ub_base = "http://nimble-dev.ikap.biba.uni-bremen.de:10096";
 export const pw_reset_link = "http://nimble-dev.ikap.biba.uni-bremen.de:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
-
+export const frontendURL = base_path + "/frontend/";
 
 // Service endpoints
 
@@ -144,7 +144,10 @@ export const config = {
   "supportMail": "wel1@biba.uni-bremen.de",
   "supportMailContent": {
     "en":"Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]"
-  }
+  },
+  "showLoginFederation": false,
+  "federationClientID": "sample-client",
+  "federationIDP": "sampleIDP"
 };
 
 

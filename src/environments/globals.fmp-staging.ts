@@ -10,7 +10,7 @@ export const debug = false;
 export const base_path = "http://nimble-staging.salzburgresearch.at";
 export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
 export const pw_reset_link = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/login-actions/reset-credentials?client_id=nimble_client";
-
+export const frontendURL = base_path + "/frontend/";
 
 // Service endpoints
 
@@ -209,7 +209,10 @@ export const config = {
   "supportMailContent": {
     "en":"Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]",
     "es":"Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
-  }
+  },
+  "showLoginFederation": false,
+  "federationClientID": "sample-client",
+  "federationIDP": "sampleIDP"
 };
 
 
