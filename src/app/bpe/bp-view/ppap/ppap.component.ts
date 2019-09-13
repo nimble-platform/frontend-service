@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import {Component, Input, OnInit} from '@angular/core';
 import { CookieService } from "ng2-cookies";
 import { BPDataService } from "../bp-data-service";
 import { ActivatedRoute } from "@angular/router";
@@ -14,6 +14,9 @@ export class PpapComponent implements OnInit {
     screen: "select" | "upload" | "download";
     userRole: BpUserRole;
     formerProcess: boolean;
+
+    // whether the item is deleted or not
+    @Input() isCatalogueLineDeleted:boolean = false ;
 
     constructor(private bpDataService: BPDataService,
                 private cookieService: CookieService,

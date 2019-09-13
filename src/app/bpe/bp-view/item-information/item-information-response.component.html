@@ -42,7 +42,7 @@
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div *ngIf="!isResponseSent()" class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendResponse()">
+        <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.isProductDeleted" (click)="onSendResponse()">
             <span [innerHTML]="'Send Response' | translate"></span>
         </button>
     </div>
@@ -61,12 +61,12 @@
         <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading() || readonly" (click)="onRestart()">
+        <button class="btn btn-primary action" [disabled]="isLoading() || readonly || processMetadata.isProductDeleted" (click)="onRestart()">
             <span [innerHTML]="'Ask Something Else' | translate"></span>
         </button>
     </div>
     <div class="col-2" *ngIf="!bpDataService.isFinalProcessInTheWorkflow('Item_Information_Request')">
-        <button class="btn btn-primary action" [disabled]="isLoading() || readonly || (isLogisticsService && !isTransportService)" (click)="onNextStep()">
+        <button class="btn btn-primary action" [disabled]="isLoading() || readonly || (isLogisticsService && !isTransportService) || processMetadata.isProductDeleted" (click)="onNextStep()">
             <span [innerHTML]="'Go to Next Step' | translate"></span> 
         </button>
     </div>

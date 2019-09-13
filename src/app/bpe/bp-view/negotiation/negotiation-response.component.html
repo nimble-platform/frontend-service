@@ -14,10 +14,11 @@
     <div class="col-3"><h3 class="font-weight-600"><span [innerHTML]="'Producer Response' | translate"></span></h3></div>
 </div>
 
+<!--Delivery Period-->
 <div class="row content-row" [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(primaryTermsSource, 'deliveryPeriod')}">
     <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Delivery Period' | translate"></span>:</strong></div>
     <ng-container [ngSwitch]="primaryTermsSource">
-        <div *ngSwitchCase="'product_defaults'" class="col-3">{{ wrapper.lineDeliveryPeriodString }}</div>
+        <div *ngSwitchCase="'product_defaults'" class="col-3">{{ isCatalogueLineDeleted ? "Not available" : wrapper.lineDeliveryPeriodString}}</div>
         <div *ngSwitchCase="'frame_contract'" class="col-3">{{ wrapper.frameContractQuotationWrapper.deliveryPeriodString}}</div>
         <div *ngSwitchCase="'last_offer'" class="col-3">{{ wrapper.lastOfferQuotationWrapper.deliveryPeriodString}}</div>
     </ng-container>
@@ -30,11 +31,11 @@
         </quantity-input>
     </div>
 </div>
-
+<!--Warranty-->
 <div class="row content-row" [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(primaryTermsSource, 'warranty')}">
     <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Warranty' | translate"></span>:</strong></div>
     <ng-container [ngSwitch]="primaryTermsSource">
-        <div *ngSwitchCase="'product_defaults'" class="col-3">{{ wrapper.lineWarrantyString }}</div>
+        <div *ngSwitchCase="'product_defaults'" class="col-3">{{ isCatalogueLineDeleted ? "Not available" : wrapper.lineWarrantyString }}</div>
         <div *ngSwitchCase="'frame_contract'" class="col-3">{{ wrapper.frameContractQuotationWrapper.warrantyString}}</div>
         <div *ngSwitchCase="'last_offer'" class="col-3">{{ wrapper.lastOfferQuotationWrapper.warrantyString}}</div>
     </ng-container>
@@ -46,11 +47,11 @@
         </quantity-input>
     </div>
 </div>
-
+<!--Incoterms-->
 <div class="row content-row" [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(primaryTermsSource, 'incoTerms')}">
     <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Incoterms' | translate"></span>:</strong></div>
     <ng-container [ngSwitch]="primaryTermsSource">
-        <div *ngSwitchCase="'product_defaults'" class="col-3">{{ wrapper.lineIncoterms }}</div>
+        <div *ngSwitchCase="'product_defaults'" class="col-3">{{ isCatalogueLineDeleted ? "Not available": wrapper.lineIncoterms }}</div>
         <div *ngSwitchCase="'frame_contract'" class="col-3">{{ wrapper.frameContractQuotationWrapper.incotermsString}}</div>
         <div *ngSwitchCase="'last_offer'" class="col-3">{{ wrapper.lastOfferQuotationWrapper.incotermsString}}</div>
     </ng-container>
@@ -62,7 +63,7 @@
         </options-input>
     </div>
 </div>
-
+<!--Payment Terms-->
 <div class="row content-row" [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(primaryTermsSource, 'paymentTerms')}">
     <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Payment Terms' | translate"></span>:</strong></div>
     <ng-container [ngSwitch]="primaryTermsSource">
@@ -79,7 +80,7 @@
         </options-input>
     </div>
 </div>
-
+<!--Payment Means-->
 <div class="row content-row" [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(primaryTermsSource, 'paymentMeans')}">
     <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Payment Means' | translate"></span>:</strong></div>
     <ng-container [ngSwitch]="primaryTermsSource">
@@ -95,7 +96,7 @@
         </options-input>
     </div>
 </div>
-
+<!--Data monitoring service requested-->
 <div class="row content-row" *ngIf="config.dataChannelsEnabled">
     <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Data monitoring service requested' | translate"></span>:</strong></div>
     <ng-container [ngSwitch]="primaryTermsSource">
@@ -119,7 +120,7 @@
         </div>
     </ng-container>
 </div>
-
+<!--Quantity-->
 <div class="row content-row" [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(primaryTermsSource, 'quantity')}">
     <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Quantity' | translate"></span>:</strong></div>
     <ng-container [ngSwitch]="primaryTermsSource">
@@ -140,8 +141,8 @@
     <!-- Original terms -->
     <ng-container [ngSwitch]="primaryTermsSource">
         <div *ngSwitchCase="'product_defaults'" class="col-3">
-            {{ wrapper.lineDiscountPriceWrapper.totalPriceString }}<br/>
-            <small>( {{ wrapper.lineDiscountPriceWrapper.discountedPricePerItemString }} )</small>
+            {{isCatalogueLineDeleted ? "Not available" : wrapper.lineDiscountPriceWrapper.totalPriceString }}<br/>
+            <small *ngIf="!isCatalogueLineDeleted">( {{ wrapper.lineDiscountPriceWrapper.discountedPricePerItemString }} )</small>
         </div>
         <div *ngSwitchCase="'frame_contract'" class="col-3">
             {{ wrapper.frameContractQuotationWrapper.priceWrapper.totalPriceString }}<br/>
@@ -213,7 +214,7 @@
     <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Gross Total' | translate"></span>:</strong></div>
     <ng-container [ngSwitch]="primaryTermsSource">
         <div *ngSwitchCase="'product_defaults'" class="col-3">
-            {{ wrapper.lineDiscountPriceWrapper.grossTotalString }}
+            {{ isCatalogueLineDeleted ? "Not available" : wrapper.lineDiscountPriceWrapper.grossTotalString }}
         </div>
         <div *ngSwitchCase="'frame_contract'" class="col-3"></div>
         <div *ngSwitchCase="'last_offer'" class="col-3">
@@ -447,15 +448,15 @@
             <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRespondToQuotation(false)">
+            <button class="btn btn-secondary action" [disabled]="isLoading() || isCatalogueLineDeleted" (click)="onRespondToQuotation(false)">
                 <span [innerHTML]="'Reject Offer' | translate"></span>
             </button>
         </div>
         <div class="col-2">
-            <button *ngIf="!hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading() && isFormValid()" (click)="onRespondToQuotation(true)">
+            <button *ngIf="!hasUpdatedTerms()" class="btn btn-primary action" [disabled]="(isLoading() && isFormValid()) || isCatalogueLineDeleted" (click)="onRespondToQuotation(true)">
                 <span [innerHTML]="'Accept Offer' | translate"></span>
             </button>
-            <button *ngIf="hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading() && isFormValid()" (click)="onRespondToQuotation(true)">
+            <button *ngIf="hasUpdatedTerms()" class="btn btn-primary action" [disabled]="(isLoading() && isFormValid()) || isCatalogueLineDeleted" (click)="onRespondToQuotation(true)">
                 <span [innerHTML]="'Submit Response' | translate"></span>
             </button>
         </div>
@@ -476,12 +477,12 @@
             <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div class="col-3">
-            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRequestNewQuotation()">
+            <button class="btn btn-secondary action" [disabled]="isLoading() || isCatalogueLineDeleted" (click)="onRequestNewQuotation()">
                 <span [innerHTML]="'Request new Quotation' | translate"></span>
             </button>
         </div>
         <div *ngIf="quotation.documentStatusCode.name != 'Rejected' && !bpDataService.isFinalProcessInTheWorkflow('Negotiation')" class="col-2">
-            <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onAcceptAndOrder()">
+            <button class="btn btn-primary action" [disabled]="isLoading() || isCatalogueLineDeleted" (click)="onAcceptAndOrder()">
                 <span [innerHTML]="'Accept & Order' | translate"></span>
             </button>
         </div>

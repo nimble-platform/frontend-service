@@ -17,6 +17,7 @@ export class ThreadEventMetadata {
         public activityVariables: any,
         public buyer: boolean,
         public isRated: boolean,
+        public isProductDeleted : boolean,
         public isBeingUpdated: boolean = false, // It's true only while the process instance is being updated.
         public status?: ThreadEventStatus,
         public statusText?: string,

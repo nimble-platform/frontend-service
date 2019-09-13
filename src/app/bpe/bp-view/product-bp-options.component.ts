@@ -26,6 +26,7 @@ import {Headers, Http} from "@angular/http";
 import { DomSanitizer } from '@angular/platform-browser';
 import {TranslateService} from '@ngx-translate/core';
 import {Observable} from "rxjs/Rx";
+import {UBLModelUtils} from '../../catalogue/model/ubl-model-utils';
 
 /**
  * Created by suat on 20-Oct-17.
@@ -64,6 +65,8 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
+    // whether the item is deleted or not
+    isCatalogueLineDeleted:boolean = false ;
 
     constructor(public bpDataService: BPDataService,
                 public sanitizer: DomSanitizer,
@@ -160,7 +163,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 this.callStatus.submit();
                 const userId = this.cookieService.get("user_id");
                 Promise.all([
-                    this.catalogueService.getCatalogueLine(catalogueId, id),
+                    this.getCatalogueLine(catalogueId, id, bpActivityEvent.processMetadata),
                     this.getOriginalOrder(),
                     this.userService.getSettingsForUser(userId)
                 ]).then(([line, order, ownCompanySettings]) => {
@@ -368,5 +371,27 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         return orderCatalogueId !== catalogueId || orderLineId !== lineId;
     }
 
+    /**
+     * Retrieve catalogue line details via catalogue-service if the product exists.
+     * Otherwise, create a simple catalogue line using the item inside the process metadata
+     * */
+    private async getCatalogueLine(catalogueUuid:string, catalogueLineId:string, processMetadata:ThreadEventMetadata){
 
+        let isProductDeleted = false;
+        if(processMetadata){
+            isProductDeleted = processMetadata.isProductDeleted;
+        }
+        // create Catalogue line if it's deleted
+        if(isProductDeleted){
+            // catalogue line is deleted
+            this.isCatalogueLineDeleted = true;
+            return UBLModelUtils.createCatalogueLineForItem(processMetadata.product);
+        }
+        else{
+            // retrieve catalogue line if exists
+            return this.catalogueService.getCatalogueLine(catalogueUuid, catalogueLineId).then( catalogueLine => {
+                return catalogueLine;
+            });
+        }
+    }
 }

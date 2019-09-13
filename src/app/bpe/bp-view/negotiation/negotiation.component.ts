@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy} from "@angular/core";
+import {Component, OnInit, OnDestroy, Input} from '@angular/core';
 import { BPDataService } from "../bp-data-service";
 import { CallStatus } from "../../../common/call-status";
 import {ThreadEventMetadata} from "../../../catalogue/model/publish/thread-event-metadata";
@@ -42,6 +42,9 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     newProcess: boolean;
     formerProcess: boolean = false; // true indicates that the last step of the history IS NOT negotiation
     sliderIndex: number = -1;
+
+    // whether the item is deleted or not
+    @Input() isCatalogueLineDeleted:boolean = false ;
 
     constructor(public bpDataService: BPDataService,
                 private bpeService: BPEService,

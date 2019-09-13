@@ -16,7 +16,8 @@ import {copy} from '../../../common/utils';
 })
 export class ClauseComponent implements OnInit {
     @Input() clause: Clause = null;
-
+    // whether the item is deleted or not
+    @Input() isCatalogueLineDeleted:boolean = false ;
     clauseDocument = null;
     itemInformationRequest: ItemInformationRequest;
     rfq: RequestForQuotation;

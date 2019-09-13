@@ -154,7 +154,7 @@
     <!-- Contract Preview -->
     <ng-container *ngIf="isReady()">
         <!--<div>-->
-        <contract *ngIf="selectedPanel == 'PREVIOUS_STEPS'" [contract]="getOrderContract()" [collapsable]="false"></contract>
+        <contract *ngIf="selectedPanel == 'PREVIOUS_STEPS'" [contract]="getOrderContract()" [collapsable]="false" [isCatalogueLineDeleted]="processMetadata.isProductDeleted"></contract>
         <!--</div>-->
         <div *ngIf="selectedPanel == 'TERMS_AND_CONDITIONS'">
             <ul class="nav nav-tabs space-after space-before">
@@ -370,12 +370,12 @@
                 </button>
             </div>
             <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRespondToOrder(false)">
+                <button class="btn btn-secondary action" [disabled]="isLoading() || processMetadata.isProductDeleted" (click)="onRespondToOrder(false)">
                     <span [innerHTML]="'Reject' | translate"></span>
                 </button>
             </div>
             <div class="col-2">
-                <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToOrder(true)">
+                <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.isProductDeleted" (click)="onRespondToOrder(true)">
                     <span [innerHTML]="'Accept' | translate"></span>
                 </button>
             </div>
@@ -394,12 +394,12 @@
                 </button>
             </div>
             <div class="col-3" *ngIf="companyWorkflowMap.get('Fulfilment')">
-                <button class="btn btn-primary action" [disabled]="isLoading() || isOrderRejected()" (click)="onSearchTransportService()">
+                <button class="btn btn-primary action" [disabled]="isLoading() || isOrderRejected() || processMetadata.isProductDeleted" (click)="onSearchTransportService()">
                     <span [innerHTML]="'Search for Transport Service Provider' | translate"></span>
                 </button>
             </div>
             <div class="col-2" *ngIf="companyWorkflowMap.get('Fulfilment')">
-                <button class="btn btn-primary action" [disabled]="isLoading() || isOrderRejected()" (click)="onDispatchOrder()">
+                <button class="btn btn-primary action" [disabled]="isLoading() || isOrderRejected() || processMetadata.isProductDeleted" (click)="onDispatchOrder()">
                     <span [innerHTML]="'Dispatch Order' | translate"></span>
                 </button>
             </div>

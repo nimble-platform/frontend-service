@@ -11,7 +11,8 @@ export class ContractComponent {
     @Input() contract: Contract = null;
     @Input() showQuotation: boolean = false;
     @Input() collapsable: boolean = true;
-
+    // whether the item is deleted or not
+    @Input() isCatalogueLineDeleted:boolean = false ;
     showClauses:boolean = false;
 
     constructor(private translate: TranslateService) {
