@@ -294,7 +294,8 @@ export class ThreadSummaryComponent implements OnInit {
             initialDoc,
             activityVariables,
             userRole === "buyer",
-            isRated === "true"
+            isRated === "true",
+            initialDoc.isProductDeleted
         );
 
         this.fillStatus(event, processInstance["state"], processType, responseDocumentStatus, userRole === "buyer",isFulfilmentIncludedInWorkflow);

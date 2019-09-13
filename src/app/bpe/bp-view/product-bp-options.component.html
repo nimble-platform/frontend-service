@@ -41,12 +41,12 @@
     </div>
 
     <!-- Product Details Panel -->
-    <product-details-tabs *ngIf="productExpanded" [wrapper]="wrapper" [showOverview]="true" 
+    <product-details-tabs *ngIf="productExpanded" [wrapper]="wrapper" [showOverview]="true" [isCatalogueLineDeleted]="isCatalogueLineDeleted"
         [settings]="settings" [options]="options" [readonly]="true">
     </product-details-tabs>
 
     <!-- Service Details Panel -->
-    <product-details-tabs *ngIf="serviceExpanded" [wrapper]="serviceWrapper" [showOverview]="true"
+    <product-details-tabs *ngIf="serviceExpanded" [wrapper]="serviceWrapper" [showOverview]="true" [isCatalogueLineDeleted]="isCatalogueLineDeleted"
         [settings]="serviceSettings" [options]="options" [readonly]="true">
     </product-details-tabs>
 
@@ -60,9 +60,9 @@
     <!-- Order Content -->
     <item-information *ngIf="currentStep === 'Item_Information_Request' || currentStep === 'Transport_Information_Request'">
     </item-information>
-    <ppap *ngIf="currentStep === 'Ppap'">
+    <ppap *ngIf="currentStep === 'Ppap'" [isCatalogueLineDeleted]="isCatalogueLineDeleted">
     </ppap>
-    <negotiation *ngIf="currentStep === 'Negotiation'">
+    <negotiation *ngIf="currentStep === 'Negotiation'" [isCatalogueLineDeleted]="isCatalogueLineDeleted">
     </negotiation>
     <transport-negotiation *ngIf="currentStep === 'Transport_Negotiation'">
     </transport-negotiation>

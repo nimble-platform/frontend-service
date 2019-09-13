@@ -36,7 +36,8 @@
                                       [defaultTermsAndConditions]="defaultTermsAndConditions"
                                       [primaryTermsSource]="getPrimaryTermsSource(negotiationDocuments[i-1]?.response)"
                                       [readonly]="true"
-                                      [formerProcess]="true">
+                                      [formerProcess]="true"
+                                      [isCatalogueLineDeleted]="isCatalogueLineDeleted">
                 </negotiation-response>
             </div>
         </ng-container>
@@ -62,7 +63,8 @@
                                       [frameContractNegotiation]="isFrameContractBeingNegotiatedInThisNegotiation"
                                       [defaultTermsAndConditions]="defaultTermsAndConditions"
                                       [primaryTermsSource]="getPrimaryTermsSource(lastOfferQuotation)"
-                                      [formerProcess]="formerProcess">
+                                      [formerProcess]="formerProcess"
+                                      [isCatalogueLineDeleted]="isCatalogueLineDeleted">
                 </negotiation-response>
             </div>
         </ng-container>

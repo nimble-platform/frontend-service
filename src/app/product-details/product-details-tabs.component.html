@@ -19,14 +19,14 @@
                 </a>
             </li>
             <!-- For transport/logistic services, we do not need to show Price tab since these services do not have price details -->
-            <li *ngIf="haveTransportServiceDetails && !(isLogistics || isTransportService)" class="nav-item">
+            <li *ngIf="haveTransportServiceDetails && !(isLogistics || isTransportService) && !isCatalogueLineDeleted" class="nav-item">
                     <a href id="PRICE" class="nav-link"
                         [ngClass]="{ active: selectedTab === 'PRICE'}"
                         (click)="onSelectTab($event,'PRICE')">
                         <span [innerHTML]="'Price' | translate"></span>
                     </a>
             </li>
-            <li *ngIf="haveTransportServiceDetails" class="nav-item">
+            <li *ngIf="haveTransportServiceDetails && !isCatalogueLineDeleted" class="nav-item">
                 <a href id="DELIVERY_TRADING" class="nav-link"
                     *ngIf="isLogistics === false"
                     [ngClass]="{ active: selectedTab === 'DELIVERY_TRADING'}"

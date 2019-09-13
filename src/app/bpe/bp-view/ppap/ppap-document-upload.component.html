@@ -36,7 +36,7 @@
                 <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
             </div>
             <div class="col-2">
-                <button class="btn btn-primary action" [disabled]="isLoading()"
+                <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.isProductDeleted"
                         (click)="responseToPpapRequest(true)">
                         <span [innerHTML]="'Send Response' | translate"></span>
                 </button>
