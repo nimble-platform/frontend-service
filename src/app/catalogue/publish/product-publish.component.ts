@@ -172,6 +172,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     ngOnInit() {
+        ProductPublishComponent.dialogBox = true;
         this.selectedCategories = this.categoryService.selectedCategories;
         this.getCatagloueIdsForParty();
         const userId = this.cookieService.get("user_id");

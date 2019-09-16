@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute, Params, Router } from "@angular/router";
+import {ActivatedRoute, Params, Router, RouterStateSnapshot} from "@angular/router";
 import { Category } from "../model/category/category";
 import { CategoryService } from "./category.service";
 import { CookieService } from "ng2-cookies";
@@ -45,8 +45,6 @@ export class CategorySearchComponent implements OnInit {
     pageRef: string = null;
     publishingGranularity: string;
 
-    // It checks whether user will return publishing page or not
-    isReturnPublish: boolean = false;
     // It checks whether user is publishing or not
     inPublish: boolean = false;
 
@@ -284,9 +282,9 @@ export class CategorySearchComponent implements OnInit {
         return "";
     }
 
-    canDeactivate(): boolean {
+    canDeactivate(nextState: RouterStateSnapshot): boolean {
         this.inPublish = false;
-        if (this.pageRef == "publish" && this.isReturnPublish == false) {
+        if (this.pageRef == "publish" && !nextState.url.startsWith("/catalogue/publish")) {
             if (!confirm("You will lose any changes you made, are you sure you want to quit ?")) {
                 return false;
             }
@@ -398,9 +396,7 @@ export class CategorySearchComponent implements OnInit {
 
     navigateToPublishingPage(): void {
         this.addRecentCategories(this.selectedCategories);
-        ProductPublishComponent.dialogBox = true;
-        // set isReturnPublish in order not to show confirmation popup
-        this.isReturnPublish = true;
+        // ProductPublishComponent.dialogBox = true;
         this.router.navigate(["catalogue/publish"], { queryParams: { pg: this.publishingGranularity, productType: this.productType } });
     }
 
