@@ -43,6 +43,9 @@ export class NegotiationResponseComponent implements OnInit {
     @Input() primaryTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = 'product_defaults';
     @Input() readonly: boolean = false;
     @Input() formerProcess: boolean;
+    // whether the item is deleted or not
+    // if the item is deleted, then we will not show Product Defaults section since we do not have those information
+    @Input() isCatalogueLineDeleted:boolean = false ;
     wrapper: NegotiationModelWrapper;
     userRole: BpUserRole;
     quotationTotalPrice: Quantity;

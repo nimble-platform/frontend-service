@@ -23,6 +23,9 @@ export class ProductDetailsTabsComponent implements OnInit {
 
     @Input() showOverview: boolean = false;
     @Input() readonly: boolean = false;
+    // whether the item is deleted or not
+    // if it's deleted PRICE and DELIVERY_TRADING tabs are not shown to the user since it's not possible to retrieve those information anymore
+    @Input() isCatalogueLineDeleted: boolean = false;
 
     @Input()
     set tabToOpen(tab: ProductDetailsTab) {

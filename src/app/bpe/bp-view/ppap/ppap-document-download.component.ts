@@ -24,6 +24,8 @@ export class PpapDocumentDownloadComponent{
     @Input() formerProcess: boolean;
     @Input() ppapResponse: PpapResponse;
     @Input() ppap: Ppap;
+    // whether the item is deleted or not
+    @Input() isCatalogueLineDeleted:boolean = false ;
 
     ppapDocuments : DocumentReference[] = [];
     notes: string[];

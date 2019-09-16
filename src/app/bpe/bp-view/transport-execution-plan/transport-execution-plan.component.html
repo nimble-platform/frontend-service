@@ -104,7 +104,7 @@
         <hr>
         <h3><span [innerHTML]="'Contract' | translate"></span></h3>
         <call-status [callStatus]="contractCallStatus"></call-status>
-        <contract *ngIf="request.transportContract" [contract]="request.transportContract" [showQuotation]="true">
+        <contract *ngIf="request.transportContract" [contract]="request.transportContract" [showQuotation]="true" [isCatalogueLineDeleted]="processMetadata.isProductDeleted">
         </contract>
     </ng-container>
 
@@ -147,12 +147,12 @@
                 <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
             </div>
             <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onSendResponse(false)">
+                <button class="btn btn-secondary action" [disabled]="isLoading() || processMetadata.isProductDeleted" (click)="onSendResponse(false)">
                     <span [innerHTML]="'Reject' | translate"></span>
                 </button>
             </div>
             <div class="col-2">
-                <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendResponse(true)">
+                <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.isProductDeleted" (click)="onSendResponse(true)">
                     <span [innerHTML]="'Accept' | translate"></span>
                 </button>
             </div>
