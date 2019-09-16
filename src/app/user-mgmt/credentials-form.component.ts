@@ -146,7 +146,7 @@ export class CredentialsFormComponent implements OnInit {
 	generateFederationURL() {
 		let identityURL = myGlobals.idpURL + "/auth";
 		let clientID = "?client_id=" + myGlobals.config.federationClientID;
-		let redirectURI = myGlobals.frontendURL;
+		let redirectURI = "&redirect_uri=" + myGlobals.frontendURL;
 		let hint = "&scope=openid&response_type=code&kc_idp_hint=" + myGlobals.config.federationIDP;
 
 		return identityURL + clientID + redirectURI + hint;
