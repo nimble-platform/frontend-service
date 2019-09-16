@@ -118,7 +118,7 @@
                                 <tbody>
                                 <tr *ngFor="let quantity of multiValuedDimension.measure;let i=index">
                                     <td class="pb-0">
-                                        <quantity-input [quantity]="quantity" rowClass="quantity-input" [quantityUnits]="dimensionUnits" large="true">
+                                        <quantity-input [quantity]="quantity" rowClass="quantity-input" [quantityUnits]="dimensionUnits" large="true" [step]="0.01">
                                         </quantity-input>
                                     </td>
                                     <td *ngIf="i>0" class="align-right pb-0" >
@@ -166,14 +166,14 @@
                                         </select>
                                     </td>
                                     <td *ngIf="prop.valueQualifier === 'QUANTITY'" style="vertical-align:middle" class="pb-0">
-                                      <quantity-input [quantity]="prop.valueQuantity[i]" rowClass="quantity-input" large="true">
+                                      <quantity-input [quantity]="prop.valueQuantity[i]" rowClass="quantity-input" large="true" [step]="0.01">
                                       </quantity-input>
                                     </td>
                                     <td *ngIf="prop.valueQualifier === 'BOOLEAN'" style="vertical-align:middle;line-height:2.375rem;" class="pb-0">
                                       <input type="checkbox" [checked]="prop.value[i].value == 'true'" (change)="setBooleanValue(prop, i, $event)">
                                     </td>
                                     <td *ngIf="prop.valueQualifier !== 'STRING' && prop.valueQualifier !== 'QUANTITY' && prop.valueQualifier !== 'BOOLEAN'" style="vertical-align:middle" class="pb-0">
-                                      <input type="number" class="form-control value-input" [ngModel]="prop.valueDecimal[i]" (change)="setValueDecimal(prop, i, $event)">
+                                      <input type="number" class="form-control value-input" [ngModel]="prop.valueDecimal[i]" (change)="setValueDecimal(prop, i, $event)" step="0.01">
                                     </td>
                                     <td *ngIf="i>0 && prop.valueQualifier !== 'BOOLEAN'" class="align-right" style="vertical-align:middle" class="pb-0 align-right">
                                         <button class="btn btn-danger"  type="button" (click)="onRemoveValue(prop,i)">&times;</button>
@@ -315,7 +315,7 @@
                       <div class="col-12">
                         <a href class="btn-link" (click)="selectAllProperties(category,$event)"><span [innerHTML]="'Select all' | translate"></span></a>
                         <span [innerHTML]="'or' | translate"></span>
-                        <a href class="btn-link" (click)="selectNoProperties(category,$event)">S<span [innerHTML]="'Select none' | translate"></span></a>
+                        <a href class="btn-link" (click)="selectNoProperties(category,$event)"><span [innerHTML]="'Select none' | translate"></span></a>
                       </div>
                     </div>
                     <hr>
