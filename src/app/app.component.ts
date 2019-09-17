@@ -133,6 +133,15 @@ export class AppComponent implements OnInit {
         // this.submitCallStatus.callback("Login Successful");
     }
 
+    generateFederationURL() {
+        let identityURL = myGlobals.idpURL + "/protocol/openid-connect/auth";
+        let clientID = "?client_id=" + myGlobals.config.federationClientID;
+        let redirectURI = "&redirect_uri=" + myGlobals.frontendURL;
+        let hint = "&scope=openid&response_type=code&kc_idp_hint=" + myGlobals.config.federationIDP;
+
+        return identityURL + clientID + redirectURI + hint;
+    }
+
     ngOnInit() {
         // the user could not publish logistic services if the standard taxonomy is 'eClass'
         if(this.config.standardTaxonomy == "eClass"){
@@ -146,7 +155,7 @@ export class AppComponent implements OnInit {
         let federatedLogin = this.getQueryParameter('federatedLogin');
 
         if (federatedLogin != undefined && federatedLogin == "efs") {
-            window.location.href = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/protocol/openid-connect/auth?client_id=efact-test-client&redirect_uri=http://localhost:9092/&scope=openid&response_type=code&kc_idp_hint=EFS";
+            window.location.href = this.generateFederationURL();
         }
 
         if (code != null) {
