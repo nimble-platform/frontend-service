@@ -170,11 +170,10 @@ export class ThreadSummaryComponent implements OnInit {
     private fetchEvents(): void {
         this.fetchCallStatus.submit();
         const ids = this.processInstanceGroup.processInstanceIDs;
-        Promise.all(ids.map(id => this.fetchThreadEvent(id)).concat(this.bpeService.checkCollaborationFinished(this.processInstanceGroup.id))).then(responses => {
-            let isCollaborationFinished = responses.pop();
-            let events = responses;
-            // if the collaboration is finished, the user should not be able to cancel the collaboration
-            if(isCollaborationFinished){
+        Promise.all(ids.map(id => this.fetchThreadEvent(id))).then(events => {
+            let isCollaborationInProgress = this.processInstanceGroup.status == "INPROGRESS";
+            // if the collaboration is not in progress, the user should not be able to cancel the collaboration
+            if(!isCollaborationInProgress){
                 this.showCancelCollaborationButton = false;
             }
 
@@ -188,8 +187,8 @@ export class ThreadSummaryComponent implements OnInit {
 
             // if the collaboration is not rated yet, set the RateCollaborationButton status
             if(!this.isCollaborationRated(events) ){
-                // set the status of button to True if the process is cancelled or it is completed (buyer side only)
-                if((isCollaborationFinished && this.lastEvent.buyer) || this.processInstanceGroup.status == "CANCELLED"){
+                // set the status of button to True if the process is cancelled or it is not in progress (completed/finished) (buyer side only)
+                if((!isCollaborationInProgress && this.lastEvent.buyer) || this.processInstanceGroup.status == "CANCELLED"){
                     this.showRateCollaborationButton = true;
                 }
             }
