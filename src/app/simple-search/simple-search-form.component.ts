@@ -121,7 +121,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	partyNamesList :any;
 
 	delegatedSearch: boolean = false;
-	pageRef: string = 'publish'; // page where the user is navigated from. empty string ('') means the search is opened directly
+    pageRef = ''; // page where the user is navigated from. empty string ('') means the search is opened directly
 
     productsSelectedForPublish: any[] = [];
 
