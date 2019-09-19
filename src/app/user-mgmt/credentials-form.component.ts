@@ -151,7 +151,4 @@ export class CredentialsFormComponent implements OnInit {
 
 		return identityURL + clientID + redirectURI + hint;
 	}
-
-	//'http://nimble-staging.salzburgresearch.at:8080/auth/realms/master/protocol/openid-connect/auth?client_id=efact-test-client&redirect_uri=http://localhost:9092/&scope=openid&response_type=code&kc_idp_hint=EFS'
-
 }
