@@ -1,0 +1,54 @@
+<call-status [callStatus]="orderIdsCallStatus"></call-status>
+<ng-container *ngIf="orderIds.length > 0">
+    <!-- Unshipped orders table title -->
+    <div class="title-row">
+        <div class="col-3">
+            <span [innerHTML]="'Order id' | translate"></span>
+        </div>
+        <div class="col-3">
+            <span [innerHTML]="'Ordered by' | translate"></span>
+        </div>
+        <div class="col-2">
+            <span [innerHTML]="'Ordered product' | translate"></span>
+        </div>
+        <div class="col-2">
+            <span [innerHTML]="'Ordered quantity' | translate"></span>
+        </div>
+    </div>
+    <!-- Unshipped orders table data rows -->
+    <div class="data-row" *ngFor="let orderId of orderIds">
+        <call-status [callStatus]="orderCallStatuses.get(orderId)"></call-status>
+        <ng-container *ngIf="orders.get(orderId)">
+            <div class="col-3">
+                {{orders.get(orderId).id}}
+            </div>
+            <div class="col-3">
+                {{selectPartyName(orders.get(orderId).buyerCustomerParty.party.partyName)}}
+            </div>
+            <div class="col-2">
+                {{selectLangLabelFromTextArray(orders.get(orderId).orderLine[0].lineItem.item.name)}}
+            </div>
+            <div class="col-2">
+                {{quantityToString(orders.get(orderId).orderLine[0].lineItem.quantity)}}
+            </div>
+        </ng-container>
+    </div>
+
+
+    <div class="title-row">
+        <div class="col-3">
+            <span [innerHTML]="'Seller' | translate"></span>
+        </div>
+        <div class="col-3">
+            <span [innerHTML]="'Product' | translate"></span>
+        </div>
+        <div class="col-2">
+            <span [innerHTML]="'Quantity' | translate"></span>
+        </div>
+    </div>
+
+</ng-container>
+
+<div class="jumbotron" *ngIf="orderIds.length == 0 && orderIdsCallStatus.fb_callback">
+    <h5><span [innerHTML]="'No unshipped order' | translate"></span></h5>
+</div>

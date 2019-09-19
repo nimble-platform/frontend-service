@@ -505,6 +505,15 @@ export class BPEService {
 		});
 	}
 
+	public getUnshippedOrderIds(partyId: string): Promise<string[]> {
+		const url = `${this.url}/documents/unshipped-order-ids?partyId=${partyId}`;
+		return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
 	private getAuthorizedHeaders(): Headers {
 		const token = 'Bearer '+this.cookieService.get("bearer_token");
 		const headers = new Headers({'Accept': 'application/json','Authorization': token});
