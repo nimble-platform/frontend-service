@@ -42,11 +42,10 @@ export class CategorySearchComponent implements OnInit {
     getCategoryDetailsStatus: CallStatus = new CallStatus();
 
     categories: Category[];
+    originalPageRef: string = null; // keeps the source page, which was the initial page before navigating to this page
     pageRef: string = null;
     publishingGranularity: string;
 
-    // It checks whether user is publishing or not
-    inPublish: boolean = false;
 
     // keeps the query term
     categoryKeyword: string;
@@ -85,7 +84,6 @@ export class CategorySearchComponent implements OnInit {
         private userService: UserService,
         public categoryService: CategoryService,
         private simpleSearchService: SimpleSearchService,
-        private catalogueService: CatalogueService,
         private publishService: PublishService,
         public appComponent: AppComponent,
         private translate: TranslateService
@@ -96,21 +94,23 @@ export class CategorySearchComponent implements OnInit {
         this.route.queryParams.subscribe((params: Params) => {
             // current page regs considered: menu, publish, null
             this.pageRef = params["pageRef"];
+            // original page ref is set once only if it is null
+            if (this.originalPageRef == null) {
+                this.originalPageRef = this.pageRef;
+            }
 
             //set product type
             this.productType = params["productType"] === "transportation" ? "transportation" : "product";
             this.isLogistics = this.productType === "transportation";
 
-            // This part is necessary since only the params has changes,canDeactivate method will not be called.
-            if (this.inPublish == true && this.pageRef == "menu") {
-                if (!confirm("You will lose any changes you made, are you sure you want to quit ?")) {
-                    return;
+            if (this.pageRef === 'menu') {
+                if (this.originalPageRef === 'publish') {
+                    // This part is necessary since only the params has changes,canDeactivate method will not be called.
+                    // This situation occurs when the user clicks on the Publish button in the top menu during the publication process.
+                    if (!confirm('You will lose any changes you made, are you sure you want to quit ?')) {
+                        return;
+                    }
                 }
-            }
-
-            // If pageRef is 'publish',then user is publishing.
-            if (this.pageRef == "publish") {
-                this.inPublish = true;
             }
 
             if (this.pageRef == null || this.pageRef == "menu") {
@@ -132,8 +132,8 @@ export class CategorySearchComponent implements OnInit {
 
             // publishing granularity: single, bulk, null
             this.publishingGranularity = params["pg"];
-            if (this.pageRef == null) {
-                this.pageRef = "single";
+            if (this.publishingGranularity == null) {
+                this.publishingGranularity = "single";
             }
 
             // handle category query term
@@ -283,9 +283,8 @@ export class CategorySearchComponent implements OnInit {
     }
 
     canDeactivate(nextState: RouterStateSnapshot): boolean {
-        this.inPublish = false;
-        if (this.pageRef == "publish" && !nextState.url.startsWith("/catalogue/publish")) {
-            if (!confirm("You will lose any changes you made, are you sure you want to quit ?")) {
+        if (this.originalPageRef === 'publish' && !nextState.url.startsWith('/catalogue/publish')) {
+            if (!confirm('You will lose any changes you made, are you sure you want to quit ?')) {
                 return false;
             }
         }

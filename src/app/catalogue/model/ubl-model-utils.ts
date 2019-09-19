@@ -85,12 +85,12 @@ export class UBLModelUtils {
 
         if (property == null) {
             return new ItemProperty(this.generateUUID(), [], [], [], [],
-                new Array<BinaryObject>(), "STRING", code, null);
+                new Array<BinaryObject>(), "STRING", code, null, []);
         }
 
         let itemProperty = new ItemProperty(property.id, [],
             property.dataType === "BOOLEAN" ? [ new Text("false", "en" ) ] : [], [], [],
-            new Array<BinaryObject>(), property.dataType, code, property.uri);
+            new Array<BinaryObject>(), property.dataType, code, property.uri, []);
 
         itemProperty.name = [].concat(property.preferredName);
         return itemProperty;
