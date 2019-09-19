@@ -265,7 +265,7 @@ export class NegotiationRequestComponent implements OnInit {
                 return;
             }
         }
-        if(this.isNegotiatingAnyTerm() || this.bpDataService.isFinalProcessInTheWorkflow("Negotiation")) {
+        if(!this.doesManufacturerOfferHasPrice() || this.isNegotiatingAnyTerm() || this.bpDataService.isFinalProcessInTheWorkflow("Negotiation")) {
             // create an additional trading term for the frame contract duration
             if(/*this.rfq.negotiationOptions.frameContractDuration && */!UBLModelUtils.isEmptyOrIncompleteQuantity(this.frameContractDuration)) {
                 this.wrapper.rfqFrameContractDuration = this.frameContractDuration;
@@ -724,14 +724,26 @@ export class NegotiationRequestComponent implements OnInit {
         return !!this.processMetadata && !this.processMetadata.isBeingUpdated;
     }
 
-    isFormValid(): boolean {
-        let formValid = /*!this.rfq.negotiationOptions.frameContractDuration ||*/ this.isFrameContractValid();
-        formValid = formValid && this.isDeliveryPeriodValid() && this.isWarrantyPeriodValid() && this.isPriceValid();
-        return formValid;
+    doesManufacturerOfferHasPrice(): boolean{
+        if(this.counterOfferTermsSource == 'last_offer' || this.counterOfferTermsSource == 'frame_contract') {
+            let quotationWrapper = this.wrapper.frameContractQuotationWrapper;
+            if(this.counterOfferTermsSource == 'last_offer') {
+                quotationWrapper = this.wrapper.lastOfferQuotationWrapper;
+            }
+            if(quotationWrapper.priceWrapper.itemPrice.pricePerItemString == "On demand"){
+                return false;
+            }
+        } else if(this.wrapper.lineDiscountPriceWrapper.discountedPricePerItemString == "On demand"){
+                return false;
+        }
+
+        return true;
     }
 
-    isPriceValid(): boolean {
-        return this.wrapper.rfqDiscountPriceWrapper.itemPrice.value > 0;
+    isFormValid(): boolean {
+        let formValid = /*!this.rfq.negotiationOptions.frameContractDuration ||*/ this.isFrameContractValid();
+        formValid = formValid && this.isDeliveryPeriodValid() && this.isWarrantyPeriodValid();
+        return formValid;
     }
 
     isWaitingForReply(): boolean {

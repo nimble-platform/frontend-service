@@ -219,6 +219,10 @@ export class NegotiationResponseComponent implements OnInit {
         return this.isFrameContractDurationValid();
     }
 
+    isPriceValid(): boolean {
+        return this.wrapper.quotationDiscountPriceWrapper.totalPrice > 0;
+    }
+
     isSellerTermsVisible(): boolean {
         return !(this.quotation.documentStatusCode.name == 'Rejected' && this.isReadOnly());
     }

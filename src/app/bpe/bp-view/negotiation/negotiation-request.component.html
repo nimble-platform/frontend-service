@@ -203,7 +203,7 @@
 
         <!-- Price -->
         <div class="row content-row"
-             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'price') || !wrapper.rfqDiscountPriceWrapper.itemPrice.hasPrice()}">
+             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'price')}">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Price:</strong>
             </div>
@@ -231,8 +231,7 @@
                                            [disabled]="isLoading() || isReadOnly()"
                                            [quantity]="wrapper.rfqDiscountPriceWrapper.itemPrice" [step]="0.01"
                                            (quantityChange)="onTermsChange(fixedTerms.PRICE, false)"
-                                           [quantityUnits]="CURRENCIES" [disableQuantityUnit]="lineHasPrice"
-                                           [invalid]="!isPriceValid()">
+                                           [quantityUnits]="CURRENCIES" [disableQuantityUnit]="lineHasPrice">
                 </negotiation-request-input>
             </div>
         </div>
@@ -502,7 +501,7 @@
     </div>
     <div class="col-3"   *ngIf="!(processMetadata && processMetadata.isBeingUpdated)">
         <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onSendRequest()">
-            {{ isNegotiatingAnyTerm() || bpDataService.isFinalProcessInTheWorkflow('Negotiation') ? "Send Request" : "Continue With Manufacturer's Terms" }}
+            {{ !doesManufacturerOfferHasPrice() || isNegotiatingAnyTerm() || bpDataService.isFinalProcessInTheWorkflow('Negotiation') ? "Send Request" : "Continue With Manufacturer's Terms" }}
         </button>
     </div>
     <div class="col-3" *ngIf="processMetadata && processMetadata.isBeingUpdated">
