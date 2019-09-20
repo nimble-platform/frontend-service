@@ -81,7 +81,17 @@ export class BPEService {
             .catch(this.handleError);
     }
 
-	updateBusinessProcess(content: string, processID: string, processInstanceID: string): Promise<any> {
+    finishCollaboration(groupId: string): Promise<any> {
+        let headers = this.getAuthorizedHeaders();
+        const url = `${this.url}/process-instance-groups/${groupId}/finish`;
+        return this.http
+            .post(url, null, {headers: headers})
+            .toPromise()
+            .then(res => res.text())
+            .catch(this.handleError);
+    }
+
+    updateBusinessProcess(content: string, processID: string, processInstanceID: string): Promise<any> {
         const url = `${this.url}/processInstance?processID=${processID}&processInstanceID=${processInstanceID}&creatorUserID=${this.cookieService.get("user_id")}`;
         return this.http
             .patch(url, content,{headers: this.getAuthorizedHeaders()})

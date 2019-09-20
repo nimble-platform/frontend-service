@@ -257,7 +257,7 @@
             <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div class="col-3">
-            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRequestNewQuotation()">
+            <button class="btn btn-secondary action" [disabled]="isLoading() || processMetadata.isCollaborationFinished" (click)="onRequestNewQuotation()">
                 <span [innerHTML]="'Request new Quotation' | translate"></span>
             </button>
         </div>

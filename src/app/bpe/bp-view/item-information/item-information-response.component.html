@@ -61,7 +61,7 @@
         <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading() || readonly || processMetadata.isProductDeleted" (click)="onRestart()">
+        <button class="btn btn-primary action" [disabled]="isLoading() || readonly || processMetadata.isProductDeleted || processMetadata.isCollaborationFinished" (click)="onRestart()">
             <span [innerHTML]="'Ask Something Else' | translate"></span>
         </button>
     </div>
