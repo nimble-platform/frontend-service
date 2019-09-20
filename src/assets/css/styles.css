@@ -573,7 +573,7 @@ ngb-pagination .page-item.active .page-link {
 }
 
 .data-row {
-    margin-bottom: 1rem;
+    margin-bottom: 0.4rem;
     display: flex;
 }
 
