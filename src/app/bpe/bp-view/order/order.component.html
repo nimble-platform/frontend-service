@@ -154,7 +154,7 @@
     <!-- Contract Preview -->
     <ng-container *ngIf="isReady()">
         <!--<div>-->
-        <contract *ngIf="selectedPanel == 'PREVIOUS_STEPS'" [contract]="getOrderContract()" [collapsable]="false" [isCatalogueLineDeleted]="processMetadata.isProductDeleted"></contract>
+        <contract *ngIf="selectedPanel == 'PREVIOUS_STEPS'" [contract]="getOrderContract()" [collapsable]="false" [isCatalogueLineDeleted]="processMetadata != null && processMetadata.isProductDeleted"></contract>
         <!--</div>-->
         <div *ngIf="selectedPanel == 'TERMS_AND_CONDITIONS'">
             <ul class="nav nav-tabs space-after space-before">

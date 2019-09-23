@@ -25,7 +25,8 @@
                         <div class="col pl-1">
                           <strong><span [innerHTML]="'Status' | translate"></span>:</strong><br/>
                           <span *ngIf="processInstanceGroup.status == 'CANCELLED'" class="badge badge-secondary"><span [innerHTML]="'Collaboration cancelled' | translate"></span></span>
-                          <span *ngIf="processInstanceGroup.status != 'CANCELLED'" class="badge" [ngClass]="{'badge-secondary':(titleEvent.status=='CANCELLED'),'badge-success':(titleEvent.status=='DONE'),'badge-warning':(titleEvent.status=='WAITING'),'badge-danger':(titleEvent.status=='ACTION_REQUIRED')}">{{titleEvent.statusText}}</span>
+                          <span *ngIf="processInstanceGroup.status == 'INPROGRESS'" class="badge" [ngClass]="{'badge-secondary':(titleEvent.status=='CANCELLED'),'badge-success':(titleEvent.status=='DONE'),'badge-warning':(titleEvent.status=='WAITING'),'badge-danger':(titleEvent.status=='ACTION_REQUIRED')}">{{titleEvent.statusText}}</span>
+                          <span *ngIf="processInstanceGroup.status == 'COMPLETED'" class="badge badge-primary"><span [innerHTML]="'Collaboration finished' | translate"></span></span>
                         </div>
                         <div class="col pl-1">
                           <strong><span [innerHTML]="'Actions' | translate"></span>:</strong><br/>
@@ -46,6 +47,9 @@
                           -->
                           <div *ngIf="titleEvent && showRateCollaborationButton" class="inline" (click)="rateCollaboration(addSuccessRatingModal,addCancelRatingModal)" data-toggle="tooltip" data-placement="top" [title]="'Rate this collaboration' | translate">
                               <i class="fa fa-star p-1 pointer" aria-hidden="true"></i>
+                          </div>
+                          <div *ngIf="titleEvent && showFinishCollaborationButton" class="inline" (click)="finishCollaboration()" data-toggle="tooltip" data-placement="top" [title]="'Finish the collaboration' | translate">
+                              <i class="far fa-check-circle p-1 pointer" aria-hidden="true"></i>
                           </div>
                           <div *ngIf="titleEvent && showCancelCollaborationButton" class="inline" (click)="cancelCollaboration()" data-toggle="tooltip" data-placement="top" [title]="'Cancel the collaboration' | translate">
                               <i class="fa fa-times p-1 pointer" aria-hidden="true"></i>

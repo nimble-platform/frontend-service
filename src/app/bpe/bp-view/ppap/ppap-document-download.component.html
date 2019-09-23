@@ -26,11 +26,11 @@
     <!-- Action buttons -->
     <ng-container *ngIf="!formerProcess">
         <div *ngIf="isBuyer()" class="row actions-row">
-            <div class="col-8"></div>
+            <div class="{{bpDataService.isFinalProcessInTheWorkflow('Ppap') ? 'col-10':'col-8'}}"></div>
             <div class="col-2">
                 <button class="btn btn-secondary action" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
             </div>
-            <div class="col-2">
+            <div *ngIf="!bpDataService.isFinalProcessInTheWorkflow('Ppap')" class="col-2">
                 <button class="btn btn-primary action" (click)="onNextStep()" [disabled]="isCatalogueLineDeleted">
                     <span [innerHTML]="'Next Step' | translate"></span>
                 </button>
