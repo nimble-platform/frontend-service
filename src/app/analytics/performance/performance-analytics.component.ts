@@ -87,8 +87,8 @@ export class PerformanceAnalyticsComponent implements OnInit {
 		this.callStatus.submit();
 		let compId = this.cookieService.get('company_id');
 		this.comp_id = compId;
-		this.getCatTree();
-        this.analyticsService
+		Promise.resolve(this.getCatTree()).then( res => {
+			this.analyticsService
             .getPerfromanceAnalytics(compId)
             .then(res => {
                 this.callStatus.callback("Successfully loaded platform analytics", true);
@@ -139,6 +139,8 @@ export class PerformanceAnalyticsComponent implements OnInit {
             .catch(error => {
                 this.callStatus.error("Error while loading platform analytics", error);
             });
+		});
+        
     }
 
     isLoading(): boolean {
