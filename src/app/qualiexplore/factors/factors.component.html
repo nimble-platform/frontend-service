@@ -84,11 +84,7 @@
               <i class="fas fa-info-circle"></i> <span [innerHTML]="'Expand the property to obtain further information' | translate"></span>
             </p>
             <div class="factorDescription" *ngIf="selectedFactor.value">
-                <i class="fas fa-quote-left"></i>
-                <blockquote>
-                  {{selectedFactor.value.description}}  
-                </blockquote>
-                <i class="fas fa-quote-right"></i>
+                  {{selectedFactor.value.description}}
             </div>
             <div *ngIf="selectedFactor.value">
               <b><span [innerHTML]="'Sources' | translate"></span></b>
