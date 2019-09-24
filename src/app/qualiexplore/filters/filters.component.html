@@ -8,13 +8,13 @@
 
     <!-- <pre>{{filters | json}}</pre> -->
   <div class="row mt-5">
-    <div class="col-lg-3" *ngFor="let filter of filters">
+    <div class="col-lg-4" *ngFor="let filter of filters">
       
       <h4>
         <i class="fas fa-box" *ngIf="filter['name'] === 'Product'"></i>
         <i class="fas fa-bullseye" *ngIf="filter['name']==='Goal'"></i>
-        <i class="fas fa-info" *ngIf="filter['name'] === 'Information quality'"></i>
-        <i class="fas fa-exchange-alt" *ngIf="filter['name'] === 'Information channel'"></i>
+        <i class="fas fa-info" *ngIf="filter['name'] === 'Sources'"></i>
+        <!-- <i class="fas fa-exchange-alt" *ngIf="filter['name'] === 'Information channel'"></i> -->
         {{filter['name']}}
       </h4>
       <hr>
