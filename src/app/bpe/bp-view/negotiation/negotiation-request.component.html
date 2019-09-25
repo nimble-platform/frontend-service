@@ -472,11 +472,11 @@
                 <div class="col-2"><strong><span [innerHTML]="'Net Price' | translate"></span>:</strong></div>
                 <div class="col-10">{{ wrapper.rfqTotalPriceString }}</div>
             </div>
-            <div class="row">
+            <div *ngIf="config.vatEnabled" class="row">
                 <div class="col-2"><strong><span [innerHTML]="'VAT' | translate"></span>:</strong></div>
                 <div class="col-10">{{ wrapper.rfqTotalPriceString }}</div>
             </div>
-            <div class="row">
+            <div *ngIf="config.vatEnabled" class="row">
                 <div class="col-2"><strong><span [innerHTML]="'Gross Total' | translate"></span>:</strong></div>
                 <div class="col-10">{{ wrapper.rfqGrossTotalString}}</div>
             </div>
@@ -493,8 +493,8 @@
     <div class="col-3 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-4">
         <div class="price-col"><span [innerHTML]="'Net Price' | translate"></span>: {{ wrapper.rfqTotalPriceString}}</div>
-        <div class="price-col"><span [innerHTML]="'VAT' | translate"></span>: {{ wrapper.rfqVatTotalString}}</div>
-        <div class="price-col"><span [innerHTML]="'Gross Total' | translate"></span>: {{ wrapper.rfqGrossTotalString }}</div>
+        <div *ngIf="config.vatEnabled" class="price-col"><span [innerHTML]="'VAT' | translate"></span>: {{ wrapper.rfqVatTotalString}}</div>
+        <div *ngIf="config.vatEnabled" class="price-col"><span [innerHTML]="'Gross Total' | translate"></span>: {{ wrapper.rfqGrossTotalString }}</div>
     </div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
