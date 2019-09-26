@@ -286,8 +286,9 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     setFrameContractNegotiationFlag(): void {
         // first check the current request for quotation contains a frame contract duration. currently it is assumed that if an rfq contains a frame
         // contract duration, the contract is being negotiated in that history
-        let frameContractDuration: Quantity = UBLModelUtils.getFrameContractDurationFromRfq(this.bpDataService.requestForQuotation);
+        let frameContractDuration: Quantity;
         if(this.bpDataService.requestForQuotation) {
+            frameContractDuration = UBLModelUtils.getFrameContractDurationFromRfq(this.bpDataService.requestForQuotation);
             if(!UBLModelUtils.isEmptyQuantity(frameContractDuration)) {
                 this.isFrameContractBeingNegotiatedInThisNegotiation = true;
                 return;
@@ -296,9 +297,9 @@ export class NegotiationComponent implements OnInit, OnDestroy {
 
         // check the negotiation history documents
         for(let i=0; i<this.negotiationDocuments.length; i=i+2) {
-            let rfq: RequestForQuotation = this.negotiationDocuments[i];
+            let rfq: RequestForQuotation = this.negotiationDocuments[i].request;
             frameContractDuration = UBLModelUtils.getFrameContractDurationFromRfq(rfq);
-            if(frameContractDuration != null) {
+            if (!UBLModelUtils.isEmptyQuantity(frameContractDuration)) {
                 this.isFrameContractBeingNegotiatedInThisNegotiation = true;
                 return;
             }
