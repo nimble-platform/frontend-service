@@ -100,7 +100,11 @@ export class ItemInformationResponseComponent implements OnInit {
         if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().tradeDetails.ppapCompatibilityLevel) {
             this.navigateToBusinessProcess("Negotiation");
         } else {
-            this.navigateToBusinessProcess("Ppap");
+            if (this.bpDataService.getCompanyWorkflowMap(null).get('Ppap')) {
+                this.navigateToBusinessProcess('Ppap');
+            } else {
+                this.navigateToBusinessProcess('Negotiation');
+            }
         }
     }
 
