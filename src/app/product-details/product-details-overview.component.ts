@@ -23,6 +23,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
     @Input() itemWithSelectedProps: Item;
     @Input() readonly: boolean;
     @Output() compStatus = new EventEmitter<boolean>();
+    @Output() onPropertyValueChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     selectedImage: number = 0;
     manufacturerPartyName:string = null;
@@ -129,6 +130,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
                     } else if (aip.valueQualifier === 'QUANTITY') {
                         aip.valueQuantity[0] = selectedValue;
                     }
+                    this.onPropertyValueChange.emit(true);
                     return;
                 }
             }

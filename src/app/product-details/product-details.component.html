@@ -21,7 +21,10 @@
         </div>
         <div class="row">
             <div class="col-12">
-              <product-details-overview [wrapper]="productWrapper" [itemWithSelectedProps]="itemWithSelectedProperties" (compStatus)="setTab($event)">
+              <product-details-overview [wrapper]="productWrapper"
+                                        [itemWithSelectedProps]="itemWithSelectedProperties"
+                                        (compStatus)="setTab($event)"
+                                        (onPropertyValueChange)="onTermsChange(termsSelectBoxValue)">
               </product-details-overview>
             </div>
         </div>

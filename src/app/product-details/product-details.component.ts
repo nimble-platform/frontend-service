@@ -107,7 +107,6 @@ export class ProductDetailsComponent implements OnInit {
                         this.item = line.goodsItem.item;
                         this.itemWithSelectedProperties = copy(this.item);
                         this.bpDataService.selectFirstValuesAmongAlternatives(this.itemWithSelectedProperties);
-                        console.log(this.itemWithSelectedProperties);
                         this.isLogistics = isLogisticsService(this.line);
                         this.isTransportService = isTransportService(this.line);
 
