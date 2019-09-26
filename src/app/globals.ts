@@ -93,6 +93,7 @@ export const config = {
   "federationLogoPath": "./assets/logo_mvp_efactory.png",
   "logoRequired": false,
   "phoneNumberRequired": false,
+  "vatEnabled": true,
   "projectsEnabled": true,
   "requiredAgreements": [
     {

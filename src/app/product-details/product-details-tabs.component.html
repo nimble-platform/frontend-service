@@ -116,7 +116,7 @@
                 <div *ngIf="wrapper.getPricePerItem() != ''" class="p-1">
                     <strong><span [innerHTML]="'Price:' | translate"></span> </strong> {{ wrapper.getPricePerItem() }}
                 </div>
-                <div *ngIf="wrapper.getVat() != ''" class="p-1">
+                <div *ngIf="config.vatEnabled && wrapper.getVat() != ''" class="p-1">
                     <strong><span [innerHTML]="'VAT:' | translate"></span></strong> {{ wrapper.getVat() }}%
                 </div>
                 <div *ngIf="wrapper.getFreeSample() != ''" class="p-1">

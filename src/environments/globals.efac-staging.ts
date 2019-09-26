@@ -89,6 +89,7 @@ export const config = {
   "logoPath": "./assets/logo_efac.png",
   "logoRequired": true,
   "phoneNumberRequired": true,
+  "vatEnabled": false,
   "projectsEnabled": true,
   "requiredAgreements": [
     {

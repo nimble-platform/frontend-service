@@ -83,6 +83,8 @@ export class ThreadSummaryComponent implements OnInit {
 
     // this is always true unless an approved order is present in this process group or the collaboration is already cancelled
     showCancelCollaborationButton = true;
+    // as long as the collaboration is not finished/cancelled and all processes in the group are completed , it's true
+    showFinishCollaborationButton = true;
     // this is always false unless the collaboration was cancelled or fully completed (buyer side only)
     showRateCollaborationButton = false;
     expanded: boolean = false;
@@ -171,14 +173,20 @@ export class ThreadSummaryComponent implements OnInit {
     private fetchEvents(): void {
         this.fetchCallStatus.submit();
         const ids = this.processInstanceGroup.processInstanceIDs;
-        Promise.all(ids.map(id => this.fetchThreadEvent(id)).concat(this.bpeService.checkCollaborationFinished(this.processInstanceGroup.id))).then(responses => {
-            let isCollaborationFinished = responses.pop();
-            let events = responses;
-            // if the collaboration is finished, the user should not be able to cancel the collaboration
-            if(isCollaborationFinished){
+        Promise.all(ids.map(id => this.fetchThreadEvent(id))).then(events => {
+            let isCollaborationInProgress = this.processInstanceGroup.status == "INPROGRESS";
+            // if the collaboration is not in progress, the user should not be able to cancel the collaboration
+            if(!isCollaborationInProgress){
                 this.showCancelCollaborationButton = false;
+                this.showFinishCollaborationButton = false;
             }
-
+            // check whether there are processes which are not completed
+            for(let event of events){
+                if(event.processStatus != "Completed"){
+                    this.showFinishCollaborationButton = false;
+                    break;
+                }
+            }
             events.sort((a,b) => moment(a.startTime).diff(moment(b.startTime)));
             events = events.reverse();
             this.completeHistory = events;
@@ -189,8 +197,8 @@ export class ThreadSummaryComponent implements OnInit {
 
             // if the collaboration is not rated yet, set the RateCollaborationButton status
             if(!this.isCollaborationRated(events) ){
-                // set the status of button to True if the process is cancelled or it is completed (buyer side only)
-                if((isCollaborationFinished && this.lastEvent.buyer) || this.processInstanceGroup.status == "CANCELLED"){
+                // set the status of button to True if the process is cancelled or it is not in progress (completed/finished) (buyer side only)
+                if((!isCollaborationInProgress && this.lastEvent.buyer) || this.processInstanceGroup.status == "CANCELLED"){
                     this.showRateCollaborationButton = true;
                 }
             }
@@ -296,11 +304,11 @@ export class ThreadSummaryComponent implements OnInit {
             activityVariables,
             userRole === "buyer",
             isRated === "true",
-            initialDoc.isProductDeleted
+            initialDoc.isProductDeleted,
+            this.processInstanceGroup.status == "COMPLETED"
         );
 
         this.fillStatus(event, processInstance["state"], processType, responseDocumentStatus, userRole === "buyer",isFulfilmentIncludedInWorkflow);
-        this.setCancelCollaborationButtonStatus(processType,responseDocumentStatus,sellerWorkflow);
 
         return event;
     }
@@ -567,6 +575,20 @@ export class ThreadSummaryComponent implements OnInit {
         }
     }
 
+    finishCollaboration(){
+        if (confirm("Are you sure that you want to finish this collaboration?")) {
+            this.archiveCallStatus.submit();
+            this.bpeService.finishCollaboration(this.processInstanceGroup.id)
+                .then(() => {
+                    this.archiveCallStatus.callback("Finished collaboration successfully");
+                    this.threadStateUpdatedNoChange.next();
+                })
+                .catch(err => {
+                    this.archiveCallStatus.error("Failed to finish collaboration",err);
+                });
+        }
+    }
+
     cancelCollaboration(){
         if (confirm("Are you sure that you want to cancel this collaboration?")) {
             this.archiveCallStatus.submit();
@@ -578,21 +600,6 @@ export class ThreadSummaryComponent implements OnInit {
                 .catch(err => {
                     this.archiveCallStatus.error("Failed to cancel collaboration",err);
                 });
-        }
-    }
-
-    setCancelCollaborationButtonStatus(processType: ProcessType, response: any,sellerWorkflow:string[]){
-        switch(processType) {
-            case "Order":
-                if (response && response.acceptedIndicator) {
-                    // since the order is approved, do not show the button
-                    this.showCancelCollaborationButton = false;
-                }
-                break;
-            case "Transport_Execution_Plan":
-                if (response && response.acceptedIndicator == "Accepted") {
-                    this.showCancelCollaborationButton = false;
-                }
         }
     }
 

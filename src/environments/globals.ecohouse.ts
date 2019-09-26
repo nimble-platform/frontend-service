@@ -81,6 +81,7 @@ export const config = {
   "logoPath": "./assets/logo_mvp.png",
   "logoRequired": false,
   "phoneNumberRequired": false,
+  "vatEnabled": true,
   "projectsEnabled": true,
   "requiredAgreements": [
     {

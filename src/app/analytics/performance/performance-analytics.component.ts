@@ -35,6 +35,35 @@ export class PerformanceAnalyticsComponent implements OnInit {
     cat_levels = [];
     cat_level = -2;
 	cat = "";
+
+	greenTotalApproved = 0;
+	yellowTotWaiting = 0;
+	redTotDenide = 0;
+
+	//seller bit
+	green_percSeller = 0;
+    yellow_percSeller = 0;
+    red_percSeller = 0;
+	green_perc_strSeller = "0%";
+    yellow_perc_strSeller = "0%";
+    red_perc_strSeller = "0%";
+	greenTotalApprovedSeller = 0;
+	yellowTotWaitingSeller = 0;
+	redTotDenideSeller = 0;
+	totSeller = 0;
+
+	//buyer bit
+	green_percBuyer = 0;
+    yellow_percBuyer = 0;
+    red_percBuyer = 0;
+	green_perc_strBuyer = "0%";
+    yellow_perc_strBuyer = "0%";
+    red_perc_strBuyer = "0%";
+	greenTotalApprovedBuyer = 0;
+	yellowTotWaitingBuyer = 0;
+	redTotDenideBuyer = 0;
+	totBuyer = 0;
+
     product_count = 0;
     service_count = 0;
     loadedps = false;
@@ -58,20 +87,47 @@ export class PerformanceAnalyticsComponent implements OnInit {
 		this.callStatus.submit();
 		let compId = this.cookieService.get('company_id');
 		this.comp_id = compId;
-		this.getCatTree();
-        this.analyticsService
+		Promise.resolve(this.getCatTree()).then( res => {
+			this.analyticsService
             .getPerfromanceAnalytics(compId)
             .then(res => {
                 this.callStatus.callback("Successfully loaded platform analytics", true);
                 this.user_count = res.identity.totalUsers;
                 this.comp_count = res.identity.totalCompanies;
-                this.bp_count = Math.round(res.businessProcessCount.state.approved + res.businessProcessCount.state.waiting + res.businessProcessCount.state.denied);
+                this.bp_count = Math.round(res.businessProcessCount.total);
                 this.green_perc = Math.round((res.businessProcessCount.state.approved * 100) / this.bp_count);
                 this.green_perc_str = this.green_perc + "%";
                 this.yellow_perc = Math.round((res.businessProcessCount.state.waiting * 100) / this.bp_count);
                 this.yellow_perc_str = this.yellow_perc + "%";
                 this.red_perc = 100 - this.green_perc - this.yellow_perc;
-                this.red_perc_str = this.red_perc + "%";
+				this.red_perc_str = this.red_perc + "%";
+				this.greenTotalApproved = res.businessProcessCount.state.approved;
+				this.yellowTotWaiting= res.businessProcessCount.state.waiting;
+				this.redTotDenide = res.businessProcessCount.state.denied;
+				//seller details
+				this.greenTotalApprovedSeller = res.businessProcessCount.role.seller.approved;
+				this.redTotDenideSeller = res.businessProcessCount.role.seller.denied;
+				this.yellowTotWaitingSeller = res.businessProcessCount.role.seller.waiting;
+				this.totSeller = res.businessProcessCount.role.seller.tot;
+				this.green_percSeller = Math.round((res.businessProcessCount.role.seller.approved * 100) / this.bp_count);
+                this.green_perc_strSeller = this.green_percSeller + "%";
+                this.yellow_percSeller = Math.round((res.businessProcessCount.role.seller.waiting * 100) / this.bp_count);
+                this.yellow_perc_strSeller = this.yellow_percSeller + "%";
+                this.red_percSeller = 100 - this.green_percSeller - this.yellow_percSeller;
+				this.red_perc_strSeller = this.red_percSeller + "%";
+
+				//buyer details
+				this.greenTotalApprovedBuyer = res.businessProcessCount.role.buyer.approved;
+				this.redTotDenideBuyer = res.businessProcessCount.role.buyer.denied;
+				this.yellowTotWaitingBuyer = res.businessProcessCount.role.buyer.waiting;
+				this.totBuyer = res.businessProcessCount.role.buyer.tot;
+				this.green_percBuyer = Math.round((res.businessProcessCount.role.buyer.approved * 100) / this.bp_count);
+                this.green_perc_strBuyer = this.green_percBuyer + "%";
+                this.yellow_percBuyer = Math.round((res.businessProcessCount.role.buyer.waiting * 100) / this.bp_count);
+                this.yellow_perc_strBuyer = this.yellow_percBuyer + "%";
+                this.red_percBuyer = 100 - this.green_percBuyer - this.yellow_percBuyer;
+				this.red_perc_strBuyer = this.red_percBuyer + "%";
+
                 this.trade_count = Math.round(res.tradingVolume.approved + res.tradingVolume.waiting + res.tradingVolume.denied);
                 this.trade_green_perc = Math.round((res.tradingVolume.approved * 100) / this.trade_count);
                 this.trade_green_perc_str = this.trade_green_perc + "%";
@@ -83,6 +139,8 @@ export class PerformanceAnalyticsComponent implements OnInit {
             .catch(error => {
                 this.callStatus.error("Error while loading platform analytics", error);
             });
+		});
+        
     }
 
     isLoading(): boolean {
