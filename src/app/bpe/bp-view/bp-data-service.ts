@@ -123,9 +123,6 @@ export class BPDataService{
             }
         }
 
-        // compute the selected values for the product based on the available process documents
-        // this.computeWorkflowOptions();
-
         // select the first values from the product properties
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.modifiedCatalogueLines[0].goodsItem.item = this.bpActivityEvent.itemWithSelectedProperties;
@@ -328,7 +325,7 @@ export class BPDataService{
         const rfq = UBLModelUtils.createRequestForQuotation(settings);
         this.requestForQuotation = rfq;
 
-        const line = this.catalogueLines[0];
+        const line = this.modifiedCatalogueLines[0];
         const rfqLine = this.requestForQuotation.requestForQuotationLine[0];
 
         rfqLine.lineItem.item = copy(line.goodsItem.item);
@@ -367,7 +364,7 @@ export class BPDataService{
     initRfqForTransportationWithOrder(order: Order): Promise<void> {
         this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithOrder(
             copy(order),
-            copy(this.catalogueLines[0])
+            copy(this.modifiedCatalogueLines[0])
         );
         return Promise.resolve();
     }
