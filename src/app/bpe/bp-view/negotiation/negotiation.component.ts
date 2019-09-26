@@ -54,9 +54,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.route.queryParams.subscribe(params => {
-            this.primaryTermsSource = params["termsSource"];
-        });
+        this.primaryTermsSource = this.bpDataService.bpActivityEvent.termsSource;
 
         // subscribe to the bp change event so that we can update negotiation history when a new negotiation process is initialized with a negotiation response
         // in this case, the view is not refreshed but we have add a new negotiation history element for the new process

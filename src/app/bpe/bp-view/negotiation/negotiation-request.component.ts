@@ -191,22 +191,10 @@ export class NegotiationRequestComponent implements OnInit {
 
         // initialize dirty terms at the beginning so that the term source change would not affect them
         this.initializeDirtyTerms();
-        // if the line does not have a price enable the price negotiation
-        // if(!this.lineHasPrice) {
-            // this.rfq.negotiationOptions.price = true;
-        // }
-
-        // load the terms based on the availability of the terms
-        //this.onTermsSourceChange(this.primaryTermsSource);
 
         // update the price based on the updated conditions
         // this is required to initialize the line discount wrapper with the terms from rfq
         this.onPriceConditionsChange();
-
-        // enable the price negotiation if the product does not have any price
-        // if(this.manufacturersTermsSource == 'product_defaults' && !this.wrapper.lineDiscountPriceWrapper.itemPrice.hasPrice()) {
-            // this.negotiatePrice = true;
-        // }
 
         // set the flag for showing the counter terms if a new negotiation is being initiated
         if(this.processMetadata != null) {

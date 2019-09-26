@@ -287,7 +287,7 @@ export class BPDataService{
             this.bpActivityEvent.catalogueLineId,
             this.bpActivityEvent.previousProcessInstanceId,
             this.bpActivityEvent.previousDocumentId,
-            this.bpActivityEvent.termsSource);
+            null);
         this.bpActivityEvent = bpStartEvent;
         // this event is listened by the product-bp-options.component where the displayed process view is adjusted
         this.bpActivityEventBehaviorSubject.next(bpStartEvent);
