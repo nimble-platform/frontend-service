@@ -21,7 +21,7 @@
         </div>
         <div class="row">
             <div class="col-12">
-              <product-details-overview [wrapper]="productWrapper" [options]="options" (compStatus)="setTab($event)">
+              <product-details-overview [wrapper]="productWrapper" [itemWithSelectedProps]="itemWithSelectedProperties" (compStatus)="setTab($event)">
               </product-details-overview>
             </div>
         </div>
@@ -115,7 +115,7 @@
             <ng-container *ngIf="hasPrice()">
                 <div class="order-group">
                     <label class="order-label">
-                        <span [innerHTML]="'Dashboard' | translate"></span>
+                        <span [innerHTML]="'Price' | translate"></span>
                     </label>
                     <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
                         {{ getPricePerItem() }}
@@ -133,7 +133,7 @@
                     </label>
                     <span class="order-qty-input">
                         <input type="number" min="1" step="1" (keypress)="onOrderQuantityKeyPressed($event)"
-                               [ngModel]="options.quantity" (ngModelChange)="options.quantity=$event; onOrderQuantityChange()"
+                               [ngModel]="orderQuantity.value" (ngModelChange)="orderQuantity.value=$event; onOrderQuantityChange()"
                                class="form-control form-control-sm w-75 px-1"
                                [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()"/>
                         <span *ngIf="getQuantityUnit() !== ''" class="ml-2">{{ getQuantityUnit() }}</span>
@@ -141,7 +141,7 @@
                 </div>
                 <div class="inline-order-group">
                     <span class="order-qty-range">
-                        <input type="range" [ngModel]="options.quantity" (ngModelChange)="options.quantity=$event; onOrderQuantityChange()"
+                        <input type="range" [ngModel]="orderQuantity.value" (ngModelChange)="orderQuantity.value=$event; onOrderQuantityChange()"
                                class="form-control-range"
                                [min]="getSteps()" [max]="getMaximumQuantity()" [step]="getSteps()"
                                [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()"/>
@@ -209,7 +209,7 @@
                     </label>
                     <span class="order-qty-input">
                         <input type="number" min="1" step="1" (keypress)="onOrderQuantityKeyPressed($event)"
-                               [ngModel]="options.quantity" (ngModelChange)="options.quantity=$event;"
+                               [ngModel]="orderQuantity.value" (ngModelChange)="orderQuantity.value=$event;"
                                class="form-control form-control-sm w-75 px-1"
                                [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()"/>
                         <span *ngIf="getQuantityUnit() !== ''" class="ml-2">{{ getQuantityUnit() }}</span>
@@ -217,7 +217,7 @@
                 </div>
                 <div class="inline-order-group">
                     <span class="order-qty-range">
-                        <input type="range" [ngModel]="options.quantity" (ngModelChange)="options.quantity=$event;"
+                        <input type="range" [ngModel]="orderQuantity.value" (ngModelChange)="orderQuantity.value=$event;"
                                class="form-control-range"
                                min="1" max="100" step="1"
                                [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()"/>
@@ -235,7 +235,7 @@
 
             <!-- Action Button -->
             <button *ngIf="companyWorkflowMap.get('Negotiation')" class="btn btn-primary pt-2 w-100"
-                    (click)="onNegotiate(termsSelectBoxValue)" [disabled]="!this.appComponent.checkRoles('bp') || options.quantity <= 0">
+                    (click)="onNegotiate(termsSelectBoxValue)" [disabled]="!this.appComponent.checkRoles('bp') || orderQuantity.value <= 0">
                 {{companyWorkflowMap.get('Order') ? 'Negotiate & Order' : 'Negotiate'}}
             </button>
         </div>
@@ -275,7 +275,7 @@
 
             <!-- Action Button -->
             <button *ngIf="isTransportService && companyWorkflowMap.get('Negotiation')" class="btn btn-primary pt-2 w-100"
-                (click)="onNegotiate(termsSelectBoxValue)" [disabled]="!this.appComponent.checkRoles('bp') || options.quantity <= 0">
+                (click)="onNegotiate(termsSelectBoxValue)" [disabled]="!this.appComponent.checkRoles('bp') || orderQuantity.value <= 0">
                 {{companyWorkflowMap.get('Transport_Execution_Plan') ? 'Negotiate & Order' : 'Negotiate' }}
             </button>
 

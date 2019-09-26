@@ -48,6 +48,13 @@ export class ItemInformationRequestComponent implements OnInit {
     }
 
     ngOnInit() {
+        if (this.bpDataService.itemInformationRequest == null) {
+            // initiating a new business process from scratch
+            this.bpDataService.initItemInformationRequest();
+            // for now we reset the item specification document list in order not to show documents from previous steps
+            this.bpDataService.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference = [];
+        }
+
         // get copy of ThreadEventMetadata of the current business process
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
@@ -69,14 +76,9 @@ export class ItemInformationRequestComponent implements OnInit {
     }
 
     onSkip(): void {
-        this.bpDataService.resetBpData();
         if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().tradeDetails.ppapCompatibilityLevel) {
-            // skip ppap
-            this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings).then(() => {
-                this.bpDataService.proceedNextBpStep(this.bpDataService.bpActivityEvent.userRole,"Negotiation");
-            });
+            this.bpDataService.proceedNextBpStep(this.bpDataService.bpActivityEvent.userRole,"Negotiation");
         } else {
-            this.bpDataService.initPpap([]);
             this.bpDataService.proceedNextBpStep(this.bpDataService.bpActivityEvent.userRole, "Ppap");
         }
     }

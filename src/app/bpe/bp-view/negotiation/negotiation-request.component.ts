@@ -130,6 +130,12 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     ngOnInit() {
+        // Normally, this view is not displayed if the bpDataService.requestForQuotation is null.
+        // However, it should also be checked here also for the second and later iterations of the negotiation business process.
+        // In those cases, the negotiation component is not initialized again but only this component.
+        if (this.bpDataService.requestForQuotation == null) {
+            this.bpDataService.initRfqWithQuotation();
+        }
 
         this.userService.getSettingsForParty(this.cookieService.get("company_id")).then(res => {
             this.deliverytermsOfBuyer = res.tradeDetails.deliveryTerms;
@@ -273,16 +279,9 @@ export class NegotiationRequestComponent implements OnInit {
 
             // final check on the rfq
             const rfq: RequestForQuotation = copy(this.rfq);
-            if(this.bpDataService.modifiedCatalogueLines) {
-                // still needed when initializing RFQ with BpDataService.initRfqWithIir() or BpDataService.initRfqWithQuotation()
-                // but this is a hack, the methods above should be fixed.
-                rfq.requestForQuotationLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
-            }
             UBLModelUtils.removeHjidFieldsFromObject(rfq);
 
             // send request for quotation
-            //this.callStatus.submit();
-
             let sellerParty: Party;
             let buyerParty: Party;
             Promise.all([
@@ -312,7 +311,7 @@ export class NegotiationRequestComponent implements OnInit {
             // set the item price, otherwise we will lose item price information
             this.bpDataService.requestForQuotation.requestForQuotationLine[0].lineItem.price.priceAmount.value = this.wrapper.rfqDiscountPriceWrapper.totalPrice/this.wrapper.rfqDiscountPriceWrapper.orderedQuantity.value;
             // just go to order page
-            this.bpDataService.initOrderWithRfq();
+            this.bpDataService.setCopyDocuments(true, false, false);
             this.bpDataService.proceedNextBpStep("buyer", "Order")
         }
     }

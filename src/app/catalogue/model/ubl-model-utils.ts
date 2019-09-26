@@ -699,6 +699,19 @@ export class UBLModelUtils {
         return false;
     }
 
+    public static areTextsEqual(text1: Text, text2: Text): boolean {
+        if (text1 == null && text2 == null) {
+            return true;
+        }
+        if (text1 == null || text2 == null) {
+            return false;
+        }
+        if (text1.value === text2.value && text1.languageID === text2.languageID) {
+            return true;
+        }
+        return false;
+    }
+
     public static isEmptyQuantity(quantity: Quantity): boolean {
         if(quantity == null) {
             return true;
@@ -905,5 +918,15 @@ export class UBLModelUtils {
         let value2 = UBLModelUtils.getFirstFromMultiTypeValueByQualifier(term2.value);
 
         return value1 == value2;
+    }
+
+    public static areItemPropertyValuesEqual(value1: any, value2: any, valueQualifier: string): boolean {
+        if (valueQualifier === 'QUANTITY') {
+            return UBLModelUtils.areQuantitiesEqual(value1, value2);
+        } else if (valueQualifier === 'STRING') {
+            return UBLModelUtils.areTextsEqual(value1, value2);
+        } else {
+            return value1 === value2;
+        }
     }
 }

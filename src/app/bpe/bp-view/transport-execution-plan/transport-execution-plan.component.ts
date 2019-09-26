@@ -58,11 +58,12 @@ export class TransportExecutionPlanComponent implements OnInit {
 
         if(!this.bpDataService.transportExecutionPlanRequest) {
             if(this.searchContextService.getAssociatedProcessMetadata() != null) {
-                this.bpDataService.initTransportExecutionPlanRequestWithOrder().then(response => {
-                    this.init();
-                });
+                // this.bpDataService.initTransportExecutionPlanRequestWithOrder().then(response => {
+                //     this.init();
+                // });
+                console.log("STILL NAVIGATING TO TEP REQUEST FOLLOWING SEARCH");
             } else {
-                this.bpDataService.initTransportExecutionPlanRequest();
+                this.bpDataService.initTransportExecutionPlanRequestWithQuotation();
                 this.init();
             }
         }

@@ -93,13 +93,21 @@ export class OrderComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        // initiate order according to existence of variables from the previous business process step
+        if (this.bpDataService.order == null) {
+            // quotation is available. This means that the order is navigated from a completed negotiation process
+            if (this.bpDataService.copyQuotation) {
+                this.bpDataService.initOrderWithQuotation();
+
+                // quotation is not available meaning that the user has used the manufacturer's terms
+            } else {
+                this.bpDataService.initOrderWithRfq();
+            }
+        }
+
         // get copy of ThreadEventMetadata of the current business process
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
         this.formerProcess = this.bpDataService.bpActivityEvent.formerProcess;
-
-        if(this.bpDataService.order == null) {
-            this.router.navigate(['dashboard']);
-        }
 
         this.order = this.bpDataService.order;
         this.address = this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
@@ -112,7 +120,7 @@ export class OrderComponent implements OnInit {
             this.order.orderLine[0].lineItem.quantity
         );
 
-        this.companyWorkflowMap = this.bpDataService.getCompanyWorkflowMap();
+        this.companyWorkflowMap = this.bpDataService.getCompanyWorkflowMap(null);
 
         const sellerId: string = UBLModelUtils.getPartyId(this.order.orderLine[0].lineItem.item.manufacturerParty);
         const buyerId: string = this.cookieService.get("company_id");
@@ -207,7 +215,6 @@ export class OrderComponent implements OnInit {
         const order = copy(this.bpDataService.order);
 
         // final check on the order
-        order.orderLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
         UBLModelUtils.removeHjidFieldsFromObject(order);
         order.anticipatedMonetaryTotal.payableAmount.value = this.priceWrapper.totalPrice;
         order.anticipatedMonetaryTotal.payableAmount.currencyID = this.priceWrapper.currency;
@@ -285,6 +292,7 @@ export class OrderComponent implements OnInit {
     }
 
     onDispatchOrder() {
+        this.bpDataService.setCopyDocuments(false, false, true);
         this.bpDataService.proceedNextBpStep(this.userRole, "Fulfilment");
     }
 

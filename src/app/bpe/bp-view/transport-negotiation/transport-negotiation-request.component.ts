@@ -50,6 +50,13 @@ export class TransportNegotiationRequestComponent implements OnInit {
     }
 
     ngOnInit() {
+        // Normally, this view is not displayed if the bpDataService.requestForQuotation is null.
+        // However, it should also be checked here also for the second and later iterations of the negotiation business process.
+        // In those cases, the negotiation component is not initialized again but only this component.
+        if (this.bpDataService.requestForQuotation == null) {
+            this.bpDataService.initRfqWithQuotation();
+        }
+
         // get copy of ThreadEventMetadata of the current business process
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
@@ -96,16 +103,10 @@ export class TransportNegotiationRequestComponent implements OnInit {
         this.callStatus.submit();
         let rfq: RequestForQuotation = copy(this.bpDataService.requestForQuotation);
 
-        //console.log(rfq);
-
         let sellerId: string;
 
         // final check on the rfq
         if(this.bpDataService.modifiedCatalogueLines) {
-            // still needed when initializing RFQ with BpDataService.initRfqWithIir() or BpDataService.initRfqWithQuotation()
-            // but this is a hack, the methods above should be fixed.
-            rfq.requestForQuotationLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
-
             sellerId = UBLModelUtils.getPartyId(this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty);
         }
         else {
@@ -143,13 +144,6 @@ export class TransportNegotiationRequestComponent implements OnInit {
     onUpdateRequest(): void {
         this.callStatus.submit();
         let rfq: RequestForQuotation = copy(this.bpDataService.requestForQuotation);
-        // final check on the rfq
-        if(this.bpDataService.modifiedCatalogueLines) {
-            // still needed when initializing RFQ with BpDataService.initRfqWithIir() or BpDataService.initRfqWithQuotation()
-            // but this is a hack, the methods above should be fixed.
-            rfq.requestForQuotationLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
-        }
-
         this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processInstanceId)
             .then(() => {
                 this.callStatus.callback("Terms updated", true);

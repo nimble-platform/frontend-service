@@ -58,10 +58,10 @@ export class NegotiationComponent implements OnInit, OnDestroy {
             this.primaryTermsSource = params["termsSource"];
         });
 
-
         // subscribe to the bp change event so that we can update negotiation history when a new negotiation process is initialized with a negotiation response
         // in this case, the view is not refreshed but we have add a new negotiation history element for the new process
         this.bpActivityEventSubs = this.bpDataService.bpActivityEventObservable.subscribe(bpActivityEvent => {
+            // we do this null check since the observable is initialized with a null event
             if (bpActivityEvent == null) {
                 return;
             }
@@ -82,14 +82,18 @@ export class NegotiationComponent implements OnInit, OnDestroy {
             this.initCallStatus.submit();
             this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings)
                 .then(() => {
-                    this.setFrameContractNegotiationFlag();
+                    this.performInitCalls();
                     this.initCallStatus.callback("Request for Quotation Initialized.", true);
                 })
                 .catch(error => {
                     this.initCallStatus.error("Error while initializing request for quotation.", error);
                 });
+        } else {
+            this.performInitCalls();
         }
+    }
 
+    performInitCalls(): void {
         this.setFrameContractNegotiationFlag();
         this.initializeLastOffer();
         this.initialDefaultTermsAndConditionsAndFrameContract();

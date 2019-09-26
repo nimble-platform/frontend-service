@@ -42,6 +42,7 @@ export class ThreadEventComponent implements OnInit {
                 this.processInstanceGroup.id,
                 this.event,
                 this.history,
+                this.event.product,
                 null,
                 false,
                 this.event.formerStep,

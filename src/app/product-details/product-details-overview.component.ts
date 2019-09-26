@@ -2,8 +2,7 @@ import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
 import { ProductWrapper } from "../common/product-wrapper";
 import { CommodityClassification } from "../catalogue/model/publish/commodity-classification";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
-import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
-import {getPropertyKey, getPropertyValuesAsStrings, selectName, selectNameFromLabelObject, selectPreferredValue} from '../common/utils';
+import {getPropertyKey, getPropertyValues, getPropertyValuesAsStrings, selectName, selectNameFromLabelObject, selectPreferredValue} from '../common/utils';
 import {Item} from '../catalogue/model/publish/item';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {CategoryService} from '../catalogue/category/category.service';
@@ -21,7 +20,7 @@ import {TranslateService} from '@ngx-translate/core';
 export class ProductDetailsOverviewComponent implements OnInit{
 
     @Input() wrapper: ProductWrapper;
-    @Input() options: BpWorkflowOptions;
+    @Input() itemWithSelectedProps: Item;
     @Input() readonly: boolean;
     @Output() compStatus = new EventEmitter<boolean>();
 
@@ -117,9 +116,22 @@ export class ProductDetailsOverviewComponent implements OnInit{
             .filter(c => c.itemClassificationCode.listID != 'Default');
     }
 
-    onTogglePropertyValue(property: ItemProperty, valueIndex: number): void {
-        if(this.options) {
-            this.options.selectedValues[getPropertyKey(property)] = valueIndex;
+    onTogglePropertyValue(property: ItemProperty, selectedIndex: number): void {
+        if (this.itemWithSelectedProps != null) {
+            let selectedValue = getPropertyValues(property)[selectedIndex];
+            let propKey = getPropertyKey(property);
+            for (let aip of this.itemWithSelectedProps.additionalItemProperty) {
+                if (propKey === getPropertyKey(aip)) {
+                    if (aip.valueQualifier === 'STRING') {
+                        aip.value[0] = selectedValue;
+                    } else if (aip.valueQualifier === 'NUMBER') {
+                        aip.valueDecimal[0] = selectedValue;
+                    } else if (aip.valueQualifier === 'QUANTITY') {
+                        aip.valueQuantity[0] = selectedValue;
+                    }
+                    return;
+                }
+            }
         }
     }
 
@@ -155,22 +167,21 @@ export class ProductDetailsOverviewComponent implements OnInit{
     }
 
     isPropertyValueSelected(property: ItemProperty, valueIndex: number): boolean {
-        if(!this.options) {
+        if (this.itemWithSelectedProps == null) {
             return false;
         }
-        let selected = null;
 
-        // if there is no selected index for the given property, we should set it to 0.
-        // it is important since we will calculate price options according to the selected properties
-
-        if(this.options.selectedValues[getPropertyKey(property)]){
-            selected = this.options.selectedValues[getPropertyKey(property)];
-            // here, we do not need to update options.selectedValues since onTogglePropertyValue function will handle this.
-        } else {
-            selected = 0;
-            this.options.selectedValues[getPropertyKey(property)] = 0
+        let selectedValue;
+        let propKey = getPropertyKey(property);
+        for (let aip of this.itemWithSelectedProps.additionalItemProperty) {
+            if (propKey === getPropertyKey(aip)) {
+                selectedValue = getPropertyValues(aip)[0];
+                break;
+            }
         }
-        return valueIndex === selected;
+
+        let checkedValue = getPropertyValues(property)[valueIndex];
+        return UBLModelUtils.areItemPropertyValuesEqual(selectedValue, checkedValue, property.valueQualifier);
     }
 
     getValuesAsString(property: ItemProperty): string[] {
