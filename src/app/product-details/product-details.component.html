@@ -147,7 +147,7 @@
                                [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()"/>
                     </span>
                 </div>
-                <div class="order-group mt-2">
+                <div *ngIf="config.vatEnabled" class="order-group mt-2">
                     <label class="order-label">
                         <span [innerHTML]="'VAT' | translate"></span>
                     </label>

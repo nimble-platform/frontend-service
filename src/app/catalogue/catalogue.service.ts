@@ -3,7 +3,7 @@
  */
 import { Injectable } from "@angular/core";
 import { Headers, Http } from "@angular/http";
-import { catalogue_endpoint } from "../globals";
+import {catalogue_endpoint, config} from '../globals';
 import { Catalogue } from "./model/publish/catalogue";
 import { UserService } from "../user-mgmt/user.service";
 import { CatalogueLine } from "./model/publish/catalogue-line";
@@ -244,7 +244,7 @@ export class CatalogueService {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
 
         return this.userService.getUserParty(userId).then(party => {
-            const url = this.baseUrl + `/catalogue/template/upload?partyId=${UBLModelUtils.getPartyId(party)}&uploadMode=${uploadMode}`;
+            const url = this.baseUrl + `/catalogue/template/upload?partyId=${UBLModelUtils.getPartyId(party)}&uploadMode=${uploadMode}&includeVat=${config.vatEnabled}`;
             return new Promise<any>((resolve, reject) => {
                 let formData: FormData = new FormData();
                 formData.append("file", template, template.name);

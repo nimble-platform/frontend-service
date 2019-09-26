@@ -23,7 +23,7 @@
 </div>
 
 <!-- VAT -->
-<div class="row space-before">
+<div *ngIf="config.vatEnabled" class="row space-before">
     <div class="col-3">
         <strong><span [innerHTML]="'VAT(%):' | translate"></span></strong>
     </div>
