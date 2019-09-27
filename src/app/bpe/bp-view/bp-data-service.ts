@@ -446,7 +446,7 @@ export class BPDataService{
         this.requestForQuotation.paymentTerms = copyQuotation.paymentTerms;
         this.requestForQuotation.tradingTerms = copyQuotation.tradingTerms;
         this.requestForQuotation.termOrCondition = copyQuotation.termOrCondition;
-        this.requestForQuotation.delivery = copyRfq.delivery;
+        this.requestForQuotation.delivery = copyQuotation.quotationLine[0].lineItem.delivery[0];
         this.requestForQuotation.dataMonitoringRequested = copyRfq.dataMonitoringRequested;
 
         UBLModelUtils.removeHjidFieldsFromObject(this.requestForQuotation);
