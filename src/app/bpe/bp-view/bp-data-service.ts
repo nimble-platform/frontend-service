@@ -125,7 +125,7 @@ export class BPDataService{
 
         // select the first values from the product properties
         this.modifiedCatalogueLines = copy(this.catalogueLines);
-        this.modifiedCatalogueLines[0].goodsItem.item = this.bpActivityEvent.itemWithSelectedProperties;
+        this.modifiedCatalogueLines[0].goodsItem.item = copy(this.bpActivityEvent.itemWithSelectedProperties);
     }
 
     getCatalogueLine(): CatalogueLine {
@@ -147,7 +147,7 @@ export class BPDataService{
             if(quotationVariable == null) {
                 // initialize the quotation only if the user is in seller role
                 if(this.bpActivityEvent.userRole == 'seller') {
-                    this.quotation = copy(UBLModelUtils.createQuotation(this.requestForQuotation));
+                    this.quotation = copy(UBLModelUtils.createQuotationWithRfqCopy(this.requestForQuotation));
                 }
 
             } else {
@@ -163,7 +163,7 @@ export class BPDataService{
             if(orderResponseVariable == null) {
                 // initialize the order response only if the user is in seller role
                 if(this.bpActivityEvent.userRole == 'seller') {
-                    this.orderResponse = UBLModelUtils.createOrderResponseSimple(this.order, true);
+                    this.orderResponse = UBLModelUtils.createOrderResponseSimpleWithOrderCopy(this.order, true);
                 }
 
             } else {
@@ -177,7 +177,7 @@ export class BPDataService{
             let ppapResponseVariable = await this.documentService.getResponseDocument(activityVariables);
             if(ppapResponseVariable == null) {
                 if (this.bpActivityEvent.userRole == 'seller') {
-                    this.ppapResponse = UBLModelUtils.createPpapResponse(this.ppap, true);
+                    this.ppapResponse = UBLModelUtils.createPpapResponseWithPpapCopy(this.ppap, true);
                 }
             }
             else{
@@ -191,7 +191,7 @@ export class BPDataService{
             if(receiptAdviceVariable == null) {
                 // initialize the quotation only if the user is in seller role
                 if(this.bpActivityEvent.userRole == 'buyer') {
-                    this.receiptAdvice = UBLModelUtils.createReceiptAdvice(this.despatchAdvice);
+                    this.receiptAdvice = UBLModelUtils.createReceiptAdviceWithDespatchAdviceCopy(this.despatchAdvice);
                 }
 
             } else {
@@ -204,7 +204,7 @@ export class BPDataService{
             let transportExecutionPlanVariable = await this.documentService.getResponseDocument(activityVariables);
             if(transportExecutionPlanVariable == null) {
                 if(this.bpActivityEvent.userRole == 'seller') {
-                    this.transportExecutionPlan = UBLModelUtils.createTransportExecutionPlan(this.transportExecutionPlanRequest);
+                    this.transportExecutionPlan = UBLModelUtils.createTEPlanWithTERequestCopy(this.transportExecutionPlanRequest);
                 }
 
             } else {
@@ -217,7 +217,7 @@ export class BPDataService{
             let itemInformationResponseVariable = await this.documentService.getResponseDocument(activityVariables);
             if(itemInformationResponseVariable == null) {
                 if(this.bpActivityEvent.userRole == 'seller') {
-                    this.itemInformationResponse = UBLModelUtils.createItemInformationResponse(this.itemInformationRequest);
+                    this.itemInformationResponse = UBLModelUtils.createIIResponseWithIIRequestCopy(this.itemInformationRequest);
                 }
 
             } else {
@@ -325,24 +325,23 @@ export class BPDataService{
         const rfq = UBLModelUtils.createRequestForQuotation(settings);
         this.requestForQuotation = rfq;
 
-        const line = this.modifiedCatalogueLines[0];
+        const copyLine = copy(this.modifiedCatalogueLines[0]);
         const rfqLine = this.requestForQuotation.requestForQuotationLine[0];
 
-        rfqLine.lineItem.item = copy(line.goodsItem.item);
-        rfqLine.lineItem.lineReference = [new LineReference(line.id)];
+        rfqLine.lineItem.item = copyLine.goodsItem.item;
+        rfqLine.lineItem.lineReference = [new LineReference(copyLine.id)];
         const linePriceWrapper = new PriceWrapper(
-            line.requiredItemLocationQuantity.price,
-            line.requiredItemLocationQuantity.applicableTaxCategory[0].percent);
+            copyLine.requiredItemLocationQuantity.price,
+            copyLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent);
         if(linePriceWrapper.itemPrice.hasPrice()) {
-            rfqLine.lineItem.price = copy(line.requiredItemLocationQuantity.price);
+            rfqLine.lineItem.price = copyLine.requiredItemLocationQuantity.price;
         } else {
             rfqLine.lineItem.price.priceAmount.value = 1;
         }
-        rfqLine.lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure =
-            copy(line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure);
-        rfqLine.lineItem.warrantyValidityPeriod = copy(line.warrantyValidityPeriod);
-        rfqLine.lineItem.deliveryTerms.incoterms = line.goodsItem.deliveryTerms.incoterms;
-        rfqLine.lineItem.quantity.unitCode = line.requiredItemLocationQuantity.price.baseQuantity.unitCode;
+        rfqLine.lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = copyLine.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
+        rfqLine.lineItem.warrantyValidityPeriod = copyLine.warrantyValidityPeriod;
+        rfqLine.lineItem.deliveryTerms.incoterms = copyLine.goodsItem.deliveryTerms.incoterms;
+        rfqLine.lineItem.quantity.unitCode = copyLine.requiredItemLocationQuantity.price.baseQuantity.unitCode;
 
         // quantity
         rfqLine.lineItem.quantity.value = this.bpActivityEvent.itemQuantity ? this.bpActivityEvent.itemQuantity.value : 1;
@@ -361,17 +360,14 @@ export class BPDataService{
         });
     }
 
-    initRfqForTransportationWithOrder(order: Order): Promise<void> {
-        this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithOrder(
-            copy(order),
-            copy(this.modifiedCatalogueLines[0])
-        );
-        return Promise.resolve();
+    initRfqForTransportationWithOrder(order: Order): void {
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithCopies(order, this.modifiedCatalogueLines[0]);
     }
 
     async initRfqForTransportationWithThreadMetadata(thread: ThreadEventMetadata): Promise<void> {
         await this.setProcessDocuments(thread);
-        return this.initRfqForTransportationWithOrder(this.order);
+        this.initRfqForTransportationWithOrder(this.order);
+        return Promise.resolve();
     }
 
     private initFetchedRfq(): void {
@@ -381,14 +377,16 @@ export class BPDataService{
     }
 
     initPpap(documents:string[]):void{
+        let copyItem: Item = UBLModelUtils.removeHjidFieldsFromObject(copy(this.modifiedCatalogueLines[0].goodsItem.item));
         this.ppap = UBLModelUtils.createPpap(documents);
-        this.ppap.lineItem.item = this.modifiedCatalogueLines[0].goodsItem.item;
+        this.ppap.lineItem.item = copyItem;
         this.ppap.lineItem.lineReference = [new LineReference(this.modifiedCatalogueLines[0].id)];
     }
 
     initItemInformationRequest():void {
+        let copyItem: Item = UBLModelUtils.removeHjidFieldsFromObject(copy(this.modifiedCatalogueLines[0].goodsItem.item));
         this.itemInformationRequest = UBLModelUtils.createItemInformationRequest();
-        this.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item = this.modifiedCatalogueLines[0].goodsItem.item;
+        this.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item = copyItem;
     }
 
     initOrderWithQuotation() {
@@ -413,6 +411,8 @@ export class BPDataService{
         }
         // push contract to order.contract
         this.order.contract = [contract];
+
+        UBLModelUtils.removeHjidFieldsFromObject(this.order);
     }
 
     initOrderWithRfq() {
@@ -434,6 +434,7 @@ export class BPDataService{
         }
         // push contract to order.contract
         this.order.contract = [contract];
+        UBLModelUtils.removeHjidFieldsFromObject(this.order);
     }
 
     initRfqWithQuotation() {
@@ -447,6 +448,8 @@ export class BPDataService{
         this.requestForQuotation.termOrCondition = copyQuotation.termOrCondition;
         this.requestForQuotation.delivery = copyRfq.delivery;
         this.requestForQuotation.dataMonitoringRequested = copyRfq.dataMonitoringRequested;
+
+        UBLModelUtils.removeHjidFieldsFromObject(this.requestForQuotation);
     }
 
     initDispatchAdvice(handlingInst: Text, carrierName: string, carrierContact: string, deliveredQuantity: Quantity, endDate: string) {
@@ -457,7 +460,7 @@ export class BPDataService{
             copyOrder = copy(this.productOrder)
         }
 
-        this.despatchAdvice = UBLModelUtils.createDespatchAdvice(copyOrder);
+        this.despatchAdvice = UBLModelUtils.createDespatchAdviceWithOrderCopy(copyOrder);
         if(deliveredQuantity.unitCode == null){
             this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = copyOrder.orderLine[0].lineItem.quantity.unitCode;
         }
@@ -481,11 +484,12 @@ export class BPDataService{
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.partyName= [partyName];
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.contact.telephone = carrierContact;
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].estimatedDeliveryDate = endDate;
+
+        UBLModelUtils.removeHjidFieldsFromObject(this.despatchAdvice);
     }
 
     initTransportExecutionPlanRequestWithQuotation() {
-        let copyQuotation:Quotation = copy(this.copyQuotation);
-        this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequestWithQuotation(copyQuotation);
+        this.transportExecutionPlanRequest = UBLModelUtils.createTEPlanRequestWithQuotationCopy(this.copyQuotation);
     }
 
     resetBpData():void {

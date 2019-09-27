@@ -398,7 +398,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         if(isProductDeleted){
             // catalogue line is deleted
             this.isCatalogueLineDeleted = true;
-            return UBLModelUtils.createCatalogueLineForItem(processMetadata.product);
+            return UBLModelUtils.createCatalogueLineWithItemCopy(processMetadata.product);
         }
         else{
             // retrieve catalogue line if exists

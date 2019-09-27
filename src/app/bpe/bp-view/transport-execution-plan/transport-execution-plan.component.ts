@@ -126,10 +126,6 @@ export class TransportExecutionPlanComponent implements OnInit {
         this.callStatus.submit();
         const transportationExecutionPlanRequest: TransportExecutionPlanRequest = copy(this.bpDataService.transportExecutionPlanRequest);
 
-        // final check on the transportationExecutionPlanRequest
-        transportationExecutionPlanRequest.mainTransportationService = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
-        UBLModelUtils.removeHjidFieldsFromObject(transportationExecutionPlanRequest);
-
         // first initialize the seller and buyer parties.
         // once they are fetched continue with starting the ordering process
         const sellerId: string = UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty);

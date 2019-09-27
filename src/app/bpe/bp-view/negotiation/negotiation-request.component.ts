@@ -267,7 +267,6 @@ export class NegotiationRequestComponent implements OnInit {
 
             // final check on the rfq
             const rfq: RequestForQuotation = copy(this.rfq);
-            UBLModelUtils.removeHjidFieldsFromObject(rfq);
 
             // send request for quotation
             let sellerParty: Party;

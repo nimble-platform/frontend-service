@@ -87,10 +87,6 @@ export class ItemInformationRequestComponent implements OnInit {
         this.callStatus.submit();
         const itemInformationRequest: ItemInformationRequest = copy(this.bpDataService.itemInformationRequest);
 
-        // final check on the order
-        itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
-        UBLModelUtils.removeHjidFieldsFromObject(itemInformationRequest);
-
         //first initialize the seller and buyer parties.
         //once they are fetched continue with starting the ordering process
         const sellerId: string = UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty);

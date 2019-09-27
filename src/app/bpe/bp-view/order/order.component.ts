@@ -215,7 +215,6 @@ export class OrderComponent implements OnInit {
         const order = copy(this.bpDataService.order);
 
         // final check on the order
-        UBLModelUtils.removeHjidFieldsFromObject(order);
         order.anticipatedMonetaryTotal.payableAmount.value = this.priceWrapper.totalPrice;
         order.anticipatedMonetaryTotal.payableAmount.currencyID = this.priceWrapper.currency;
 
