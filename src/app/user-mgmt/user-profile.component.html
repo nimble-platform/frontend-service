@@ -35,6 +35,16 @@
                 </tr>
                 -->
             </table>
+            <div class="row actions-row">
+                <div class="col-6 call-status-col">
+                    <call-status [callStatus]="deleteUserCallStatus" [large]="true"></call-status>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-danger action" (click)="deleteUser(userProfile)">
+                            <span [innerHTML]="'Delete' | translate"></span>
+                    </button>
+                </div>
+            </div>
         </div>
         <div class="col-1"></div>
         <div id="change-password" class="col-5">

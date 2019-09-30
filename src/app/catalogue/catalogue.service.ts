@@ -3,7 +3,7 @@
  */
 import { Injectable } from "@angular/core";
 import { Headers, Http } from "@angular/http";
-import { catalogue_endpoint } from "../globals";
+import {catalogue_endpoint, config} from '../globals';
 import { Catalogue } from "./model/publish/catalogue";
 import { UserService } from "../user-mgmt/user.service";
 import { CatalogueLine } from "./model/publish/catalogue-line";
@@ -244,7 +244,7 @@ export class CatalogueService {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
 
         return this.userService.getUserParty(userId).then(party => {
-            const url = this.baseUrl + `/catalogue/template/upload?partyId=${UBLModelUtils.getPartyId(party)}&uploadMode=${uploadMode}`;
+            const url = this.baseUrl + `/catalogue/template/upload?partyId=${UBLModelUtils.getPartyId(party)}&uploadMode=${uploadMode}&includeVat=${config.vatEnabled}`;
             return new Promise<any>((resolve, reject) => {
                 let formData: FormData = new FormData();
                 formData.append("file", template, template.name);
@@ -268,9 +268,10 @@ export class CatalogueService {
         });
     }
 
-    uploadZipPackage(pck:File): Promise<any> {
+    uploadZipPackage(pck:File,catalogueId:string = this.catalogueResponse.catalogueId): Promise<any> {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
-        const url = this.baseUrl + `/catalogue/${this.catalogueResponse.catalogueUuid}/image/upload`;
+        const partyId =this.cookieService.get("company_id");
+        const url = this.baseUrl + `/catalogue/${catalogueId}/image/upload?partyId=${partyId}`;
         return new Promise<any>((resolve, reject) => {
             let formData: FormData = new FormData();
             formData.append("package", pck, pck.name);
@@ -350,9 +351,15 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
-    deleteAllProductImagesInsideCatalogue(catalogueId:string):Promise<any> {
+    deleteAllProductImagesInsideCatalogue(catalogueIds:string[]):Promise<any> {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
-        const url = this.baseUrl + `/catalogue/${catalogueId}/delete-images`;
+        const partyId =this.cookieService.get("company_id");
+        let ids: string = '';
+        for(let id of catalogueIds) {
+            ids += id + ","
+        }
+        ids = ids.substr(0, ids.length-1);
+        const url = this.baseUrl + `/catalogue/delete-images?ids=${ids}&partyId=${partyId}`;
         return this.http
             .get(url,{headers:new Headers({"Authorization":token})})
             .toPromise()

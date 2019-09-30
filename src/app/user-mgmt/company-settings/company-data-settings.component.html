@@ -83,7 +83,7 @@
       </select>
       <textarea rows="3" *ngIf="dataForm.getRawValue()['businessType'] != '' && (!config.supportedActivitySectors[dataForm.getRawValue()['businessType']] || config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length==0 || forceActText)" class="form-control" [formControl]="dataForm.controls['industrySectors']" placeholder="Separate entries using new lines" required maxlength="255"></textarea>
       <!--<input *ngIf="dataForm.getRawValue()['businessType'] != '' && (!config.supportedActivitySectors[dataForm.getRawValue()['businessType']] || config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length==0) || forceActText" type="text" class="form-control" [formControl]="dataForm.controls['industrySectors']" placeholder="Separate entries using ','" required maxlength="255">-->
-      <div *ngIf="config.supportedActivitySectors[dataForm.getRawValue()['businessType']] && config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length>0"><button class="btn btn-link pl-0" type="button" (click)="switchInput()"><span *ngIf="!forceActText"><span [innerHTML]="'Nothing fitting your business? Switch to manual input.' | translate"></span></span> *ngIf="forceActText"><span [innerHTML]="'Want to make use of the predefined sectors? Switch to list input.' | translate"></span></button></div>
+      <div *ngIf="config.supportedActivitySectors[dataForm.getRawValue()['businessType']] && config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length>0"><button class="btn btn-link pl-0" type="button" (click)="switchInput()"><span *ngIf="!forceActText"><span [innerHTML]="'Nothing fitting your business? Switch to manual input.' | translate"></span></span><span *ngIf="forceActText"><span [innerHTML]="'Want to make use of the predefined sectors? Switch to list input.' | translate"></span></span></button></div>
     </div>
   </div>
 
@@ -118,12 +118,17 @@
 
 	<!-- Submit -->
 	<div class="row actions-row">
-		<div class="col-7 call-status-col" [ngClass]="{'col-7':!appComponent.checkRoles('pm'),'col-10':appComponent.checkRoles('pm')}">
+		<div class="call-status-col" [ngClass]="{'col-5':!appComponent.checkRoles('pm'),'col-8':appComponent.checkRoles('pm')}">
 			<call-status [callStatus]="saveCallStatus" [large]="true"></call-status>
 		</div>
     <div *ngIf="!appComponent.checkRoles('pm')" class="col-3">
         <button class="btn btn-primary action" type="button" (click)="changeData(changeModal)">
             <span><span [innerHTML]="'Request Company Data Change' | translate"></span></span>
+        </button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-danger action" type="button" (click)="deleteCompany()">
+            <span><span [innerHTML]="'Delete' | translate"></span></span>
         </button>
     </div>
 		<div class="col-2">

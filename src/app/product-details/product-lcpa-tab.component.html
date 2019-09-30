@@ -1,4 +1,7 @@
 <ng-container *ngIf="lcpaDetails.lcpainput">
+    <div class="col-6">
+        <h5><span>LCPA Inputs</span></h5>
+    </div>
     <div class="d-flex flex-wrap align-items-start fixed-info-container">
         <quantity-input *ngIf="isVisible(lcpaDetails.lcpainput.lifeCycleLength, 'QUANTITY')"
                         [disabled]="isDisabled()"
@@ -124,4 +127,38 @@
     <!-- Edit Property Value(s) Modal -->
     <lcpa-detail-modal (valueAdded)="onDetailSpecified($event)">
     </lcpa-detail-modal>
+</ng-container>
+
+<ng-container *ngIf="lcpaDetails.lcpaoutput">
+    <div class="col-6">
+        <h5><span>LCPA Outputs</span></h5>
+    </div>
+    <div class="d-flex flex-wrap align-items-start fixed-info-container">
+        <quantity-input *ngIf="isVisible(lcpaDetails.lcpaoutput.capexOpexRelation, 'QUANTITY')"
+                        [disabled]="true"
+                        class="col-6"
+                        label="Capex Opex Relation"
+                        [labelClass]="'col-6'"
+                        [valueClass]="'col-6'"
+                        [quantity]="lcpaDetails.lcpaoutput.capexOpexRelation">
+        </quantity-input>
+        <amount-input *ngIf="isVisible(lcpaDetails.lcpaoutput.lifeCycleCost)"
+                      class="col-6"
+                      [disabled]="true"
+                      label="Life Cycle Cost"
+                      [labelClass]="'col-6'"
+                      [valueClass]="'col-6'"
+                      [amount]="lcpaDetails.lcpaoutput.lifeCycleCost"
+                      [amountType]="'currency_quantity'">
+        </amount-input>
+        <amount-input *ngIf="isVisible(lcpaDetails.lcpaoutput.operationCostsPerYear)"
+                      class="col-6"
+                      [disabled]="true"
+                      label="Operation Costs Per Year"
+                      [labelClass]="'col-6'"
+                      [valueClass]="'col-6'"
+                      [amount]="lcpaDetails.lcpaoutput.operationCostsPerYear"
+                      [amountType]="'currency_quantity'">
+        </amount-input>
+    </div>
 </ng-container>

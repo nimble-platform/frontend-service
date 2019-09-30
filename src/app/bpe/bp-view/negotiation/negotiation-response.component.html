@@ -210,7 +210,7 @@
 
 
 <!-- Gross total price -->
-<div class="row content-row mb-3">
+<div *ngIf="config.vatEnabled" class="row content-row mb-3">
     <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Gross Total' | translate"></span>:</strong></div>
     <ng-container [ngSwitch]="primaryTermsSource">
         <div *ngSwitchCase="'product_defaults'" class="col-3">
@@ -418,11 +418,11 @@
                 <div class="col-2"><strong><span [innerHTML]="'Total Price' | translate"></span>:</strong></div>
                 <div class="col-10">{{wrapper.newQuotationWrapper.priceWrapper.totalPriceString}}</div>
             </div>
-            <div class="row">
+            <div *ngIf="config.vatEnabled" class="row">
                 <div class="col-2"><strong><span [innerHTML]="'VAT' | translate"></span>:</strong></div>
                 <div class="col-10">{{ wrapper.newQuotationWrapper.priceWrapper.vatTotalString }}</div>
             </div>
-            <div class="row">
+            <div *ngIf="config.vatEnabled" class="row">
                 <div class="col-2"><strong><span [innerHTML]="'Gross Total' | translate"></span>:</strong></div>
                 <div class="col-10">{{ wrapper.newQuotationWrapper.priceWrapper.grossTotalString}}</div>
             </div>

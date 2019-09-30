@@ -28,22 +28,19 @@
                             <span class="fa fa-bars"></span>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser" ngbDropdownMenu>
-                            <input #imagePackage type="file" (change)="uploadImagePackage($event)"
-                                   accept="application/zip"
-                                   style="display: none">
                             <button class="dropdown-item" (click)="navigateToThePublishPage()">
                                 <span [innerHTML]="'Publish Product' | translate"></span>
                             </button>
                             <button class="dropdown-item" (click)="navigateToBulkUploadPage()">
                                 <span [innerHTML]="'Publish Multiple Products' | translate"></span>
                             </button>
-                            <button class="dropdown-item" (click)="imagePackage.click()">
+                            <button class="dropdown-item" (click)="onUploadImage()">
                                 <span [innerHTML]="'Upload Image Package' | translate"></span>
                             </button>
                             <button class="dropdown-item" (click)="onExportCatalogue()">
                                 <span [innerHTML]="'Export Catalogue' | translate"></span>
                             </button>
-                            <button class="dropdown-item" (click)="deleteAllProductImages()">
+                            <button class="dropdown-item" (click)="onDeleteCatalogueImages()">
                                 <span [innerHTML]="'Delete All Product Images' | translate"></span>
                             </button>
                             <button class="dropdown-item" (click)="onAddingCatalogue()">
