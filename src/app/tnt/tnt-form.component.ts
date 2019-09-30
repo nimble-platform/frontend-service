@@ -1,8 +1,7 @@
-import { Component, ViewChild, ViewEncapsulation, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Search } from './model/search';
 import { TnTService } from './tnt.service';
 import * as moment from 'moment';
-import * as d3 from 'd3';
 import * as myGlobals from '../globals';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -10,23 +9,18 @@ import { TranslateService } from '@ngx-translate/core';
     selector: 'tnt-form',
     templateUrl: './tnt-form.component.html',
     styleUrls: ['./tnt-form.component.css'],
-    providers: [TnTService],
-    encapsulation: ViewEncapsulation.None
+    providers: [TnTService]
 })
 
 export class TnTFormComponent {
     public model = new Search('');
-    @ViewChild('acc') acc;
     public metaData = {};
-    orientation: String = 'BT';
     public trackingInfo: object[] = [];
     public bpInfo = [];
-    public hierarchialGraph = {nodes: [], links: []};
     debug = myGlobals.debug;
     error_detc = false;
     updateInfo = false;
     hideButton = false;
-    curve = d3.curveBundle.beta(1);
     gateInformation = [];
     bizLocationInformation = [];
     currentGate: string;
@@ -52,7 +46,6 @@ export class TnTFormComponent {
                 this.error_detc = false;
                 this.getTableInfo(resp);
                 this.bpInfo = resp;
-                this.showGraph();
                 this.verifyOnBlockchain();
             })
             .catch(error => {
@@ -69,7 +62,6 @@ export class TnTFormComponent {
         this.metaData = {};
         this.bpInfo = [];
         this.trackingInfo = [];
-        this.hierarchialGraph = {nodes: [], links: []};
         this.gateInformation = [];
         this.sstInfo = [];
         this.hideButton = false;
@@ -89,21 +81,6 @@ export class TnTFormComponent {
                     }
                     return _out;
                 });
-    }
-
-    showGraph() {
-        this.bpInfo.reverse().forEach((el, index) => {
-            this.hierarchialGraph.nodes.push({
-                id: index.toString(),
-                label: el.readPoint.id.split(':').pop()
-            });
-            this.hierarchialGraph.links.push({
-                source: index.toString(),
-                target: (index + 1).toString(),
-                label: el.bizStep.split(':').pop()
-            });
-        });
-        this.hierarchialGraph.links.pop();
     }
 
     getGateInfo(gateName) {
