@@ -8,6 +8,7 @@ import { TnTRoutingModule } from './tnt-routing.module';
 
 import { TnTComponent } from './tnt.component';
 import { TnTFormComponent } from './tnt-form.component';
+import { TnTEventDataComponent } from './tnt-event-data.component';
 
 import { HttpClientModule } from '@angular/common/http';
 
@@ -24,11 +25,13 @@ import { HttpClientModule } from '@angular/common/http';
     ],
     declarations: [
       TnTComponent,
-      TnTFormComponent
+      TnTFormComponent,
+      TnTEventDataComponent
     ],
     exports: [
         TnTComponent,
-        TnTFormComponent
+        TnTFormComponent,
+        TnTEventDataComponent
     ],
     providers: [],
     entryComponents: []

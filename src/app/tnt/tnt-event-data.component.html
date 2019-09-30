@@ -1,0 +1,30 @@
+<div class="row" *ngIf="incomingTrackingInfo.length">
+            <h4><span [innerHTML]="'Tracking Information' | translate"></span></h4>
+                <table class="table table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col"><span [innerHTML]="'Event Time' | translate"></span></th>
+                            <th scope="col"><span [innerHTML]="'Business Step' | translate"></span></th>
+                            <!-- <th scope="col"><span [innerHTML]="'Read Point' | translate"></span></th>
+                            <th scope="col"><span [innerHTML]="'Business Location' | translate"></span></th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let entry of events">
+                            <th scope="row">{{entry.eventTime | date:'medium':'UTC'}}</th>
+                            <td>{{entry.bizStep}}</td>
+                            <!-- <td><button class="btn btn-link">{{entry.readPoint}}</button></td>
+                            <td><button class="btn btn-link">{{entry.bizLocation}}</button></td> -->
+                        </tr>
+                    </tbody>
+                </table>
+</div>
+<div class="d-flex justify-content-between p-2"  *ngIf="incomingTrackingInfo.length">
+    <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize">
+    </ngb-pagination>
+              
+    <select class="custom-select" style="width: auto" [(ngModel)]="pageSize">
+        <option [ngValue]="5">5 events per page</option>
+        <option [ngValue]="10">10 events per page</option>
+    </select>
+</div>

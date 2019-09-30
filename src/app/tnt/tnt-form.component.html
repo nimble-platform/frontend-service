@@ -47,68 +47,11 @@
     </div>
 </div>
 
+<tnt-event-data [incomingTrackingInfo]="trackingInfo"></tnt-event-data>
 <div class="row" *ngIf="trackingInfo.length">
-    <div class="col-lg-8">
-        <h4><span [innerHTML]="'Tracking Information' | translate"></span></h4>
-        <!--<div class="row">-->
-            <table class="table table-hover">
-            <thead class="thead-dark">
-            <tr>
-            <th><span [innerHTML]="'Event Time' | translate"></span></th>
-            <th><span [innerHTML]="'Business Step' | translate"></span></th>
-            <!-- <th>Action</th> -->
-            <th><span [innerHTML]="'Read Point' | translate"></span></th>
-            <th><span [innerHTML]="'Business Location' | translate"></span></th>
-            </tr>
-            </thead>
-
-            <tr *ngFor="let entry of trackingInfo">
-            <td>{{entry.eventTime | date:'medium':'UTC'}}</td>
-            <td>{{entry.bizStep}}</td>
-            <!-- <td>{{entry.action}}</td> -->
-                <td><button class="btn btn-link" (click)="getGateInfo(entry.readPoint)">{{entry.readPoint}}</button></td>
-                <td><button class="btn btn-link" (click)="getBizLocInfo(entry.bizLocation)">{{entry.bizLocation}}</button></td>
-            </tr>
-            </table>
-            <div class="row" *ngIf="trackingInfo.length">
-                <ngb-alert type="success" [dismissible]="false" *ngIf="verified">
-                    <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'This Data is Verified by BlockChain' | translate"></span>  <i class="fas fa-project-diagram pl-1"></i> </ngb-alert>
-            </div>
-        <!--</div>-->
-    </div>
-    <div class="col-lg-4" *ngIf="gateInformation.length || bizLocationInformation.length">
-        <h4><span [innerHTML]="'Additional Details' | translate"></span></h4>
-        <!--<div class="row">-->
-            <!--{{gateInformation | json}}-->
-            <!--{{bizLocationInformation | json}}-->
-            <div class="card" *ngIf="gateInformation.length">
-                <div class="card-header">
-                    <strong>{{currentGate}}</strong>
-                </div>
-                <ul class="list-group list-group-flush" *ngFor="let eachInfo of gateInformation">
-                    <li class="list-group-item">{{eachInfo['attributes']['urn:epcglobal:cbv:mda#name']}}</li>
-                    <li class="list-group-item">{{eachInfo['attributes']['urn:epcglobal:cbv:mda:site']}}</li>
-                    <li class="list-group-item">{{eachInfo['attributes']['urn:epcglobal:cbv:mda#streetAddressOne']}}, {{eachInfo['attributes']['urn:epcglobal:cbv:mda#city']}}</li>
-                    <li class="list-group-item">{{eachInfo['attributes']['urn:epcglobal:cbv:mda#countryCode']}}</li>
-                </ul>
-            </div>
-            <!--<div class="row">-->
-            <div class="card" *ngIf="bizLocationInformation.length">
-                <div class="card-header">
-                    <strong>{{currentBizLoc}}</strong>
-                </div>
-                <ul class="list-group list-group-flush" *ngFor="let eachInfo of bizLocationInformation">
-                    <li class="list-group-item">{{eachInfo['attributes']['urn:epcglobal:cbv:mda#name']}}</li>
-                    <li class="list-group-item">{{eachInfo['attributes']['urn:epcglobal:cbv:mda:site']}}</li>
-                    <li class="list-group-item">{{eachInfo['attributes']['urn:epcglobal:cbv:mda#streetAddressOne']}}, {{eachInfo['attributes']['urn:epcglobal:cbv:mda#city']}}</li>
-                    <li class="list-group-item">{{eachInfo['attributes']['urn:epcglobal:cbv:mda#countryCode']}}</li>
-                </ul>
-            </div>
-            <!--</div>-->
-        <!--</div>-->
-    </div>
+        <ngb-alert type="success" [dismissible]="false" *ngIf="verified">
+            <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'This Data is Verified by BlockChain' | translate"></span>  <i class="fas fa-project-diagram pl-1"></i> </ngb-alert>
 </div>
-
 <!--<div>-->
 <!--<pre>{{trackingInfo | json}}</pre>-->
 <!--</div>-->
