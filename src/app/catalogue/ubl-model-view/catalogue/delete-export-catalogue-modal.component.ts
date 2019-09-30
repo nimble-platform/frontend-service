@@ -11,7 +11,7 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 })
 export class DeleteExportCatalogueModalComponent {
 
-    @Input() mode: 'delete' | 'export' = 'delete';
+    @Input() mode: 'delete' | 'export' | 'delete-images' = 'delete';
     private catalogueIds: string[] = []; // keeps list of identifiers of catalogues associated to the user party
     selectedIdMap: any = {}; // keeps catalogue id / boolean pairs as selected indicators
     catalogueRetrievalCallStatus: CallStatus = new CallStatus();
@@ -25,7 +25,7 @@ export class DeleteExportCatalogueModalComponent {
                 private translate: TranslateService) {
     }
 
-    open(mode: 'delete' | 'export'): void {
+    open(mode: 'delete' | 'export' | 'delete-images'): void {
         this.mode = mode;
         this.catalogueRetrievalCallStatus.submit();
         this.catalogueService.getCatalogueIdsForParty().then(ids => {
@@ -58,6 +58,24 @@ export class DeleteExportCatalogueModalComponent {
 
         }).catch(error => {
            this.catalogueOperationCallStatus.error("Failed to delete catalogues", error);
+        });
+    }
+
+    onDeleteImagesClicked(close: any) {
+        let catalogueIdsToDelete: string[] = this.getSelectedCatalogueIds();
+        if(catalogueIdsToDelete.length == 0) {
+            this.resetModalAndClose(close);
+            return;
+        }
+
+        this.catalogueOperationCallStatus.submit();
+        this.catalogueService.deleteAllProductImagesInsideCatalogue(catalogueIdsToDelete).then(result => {
+            this.onSuccessfulDelete.emit(true);
+            this.catalogueOperationCallStatus.callback("Deleted catalogue images successfully", true);
+            this.resetModalAndClose(close);
+
+        }).catch(error => {
+            this.catalogueOperationCallStatus.error("Failed to delete catalogue images", error);
         });
     }
 

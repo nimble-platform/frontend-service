@@ -2,6 +2,7 @@
     <div class="modal-header">
         <h5 *ngIf="mode == 'delete'" class="modal-title"><span [innerHTML]="'Delete Catalogues' | translate"></span></h5>
         <h5 *ngIf="mode == 'export'" class="modal-title"><span [innerHTML]="'Export Catalogues' | translate"></span></h5>
+        <h5 *ngIf="mode == 'delete-images'" class="modal-title"><span [innerHTML]="'Delete All Product Images' | translate"></span></h5>
         <button type="button" class="close" aria-label="Close" (click)="d('cross')">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -20,6 +21,9 @@
         </button>
         <button *ngIf="mode == 'export'" type="button" class="btn btn-primary" (click)="onExportClicked(d);">
             <span><span [innerHTML]="'Export Selected Catalogues' | translate"></span></span>
+        </button>
+        <button *ngIf="mode == 'delete-images'" type="button" class="btn btn-primary" (click)="onDeleteImagesClicked(d);">
+            <span><span [innerHTML]="'Delete All Product Images of Selected Catalogues' | translate"></span></span>
         </button>
     </div>
 </ng-template>

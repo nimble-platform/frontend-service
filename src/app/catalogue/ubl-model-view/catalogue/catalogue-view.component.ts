@@ -176,6 +176,10 @@ export class CatalogueViewComponent implements OnInit {
         this.deleteCatalogueModal.open('delete');
     }
 
+    onDeleteCatalogueImages():void{
+        this.deleteCatalogueModal.open('delete-images');
+    }
+
     onAddCatalogue(){
         const userId = this.cookieService.get("user_id");
         this.userService.getUserParty(userId).then(userParty => {
@@ -320,20 +324,6 @@ export class CatalogueViewComponent implements OnInit {
 
     onExportCatalogue():void{
         this.deleteCatalogueModal.open('export');
-    }
-
-    deleteAllProductImages():void{
-        if (confirm("Are you sure that you want to delete all product images inside the catalogue?")) {
-            this.callStatus.submit();
-            this.catalogueService.deleteAllProductImagesInsideCatalogue(this.catalogueService.catalogueResponse.catalogueUuid)
-                .then(res => {
-                    this.requestCatalogue();
-                    this.callStatus.callback("Product images deleted", true);
-                })
-                .catch(error => {
-                    this.callStatus.error("Error while deleting product images", error);
-                });
-        }
     }
 
     navigateToThePublishPage(){
