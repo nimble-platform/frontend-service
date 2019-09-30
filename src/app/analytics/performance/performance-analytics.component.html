@@ -303,10 +303,26 @@
                 </div>
           </div>
         </div>
-        <div class="col-4">
+        <div class="col-8">
             <div class="row justify-content-center">
-                <div class="card col-9">
-             
+                <div class="col-9">
+                    <ngx-charts-line-chart
+                    *ngIf="showChart"
+                    [view]="view"
+                    [scheme]="colorScheme"
+                    [results]="multi"
+                    [gradient]="gradient"
+                    [xAxis]="showXAxis"
+                    [yAxis]="showYAxis"
+                    [legend]="showLegend"
+                    [showXAxisLabel]="showXAxisLabel"
+                    [showYAxisLabel]="showYAxisLabel"
+                    [xAxisLabel]="xAxisLabel"
+                    [yAxisLabel]="yAxisLabel"
+                    [showGridLines] = "showGridLines"
+                    [autoScale]="autoScale"
+                    (select)="onSelect($event)">
+                  </ngx-charts-line-chart>
                   </div>
             </div>
         </div>
