@@ -13,7 +13,6 @@ export const idpURL = "https://efactory-nimble.salzburgresearch.at:8080/auth/rea
 export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client";
 export const frontendURL = base_path + "/frontend/";
 
-
 // Service endpoints
 
 export const user_mgmt_endpoint=`${base_path}/api/identity`;

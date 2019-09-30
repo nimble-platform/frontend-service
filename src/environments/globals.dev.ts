@@ -13,7 +13,6 @@ export const idpURL = "http://localhost:8080/auth/realms/master";
 export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client";
 export const frontendURL = base_path + ":9092";
 
-
 // Service endpoints
 
 export const user_mgmt_endpoint=`${base_path}/identity`;
