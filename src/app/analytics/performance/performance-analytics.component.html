@@ -1,6 +1,34 @@
-<call-status [callStatus]="callStatus" [large]="true"></call-status>
+<hr/>
+<h5><span [innerHTML]="'Company Analytics' | translate"></span></h5>
+<hr/>
+<div class="row">
+  <div class="col-12">
+      <!-- Product Tabs -->
+      <ul class="nav nav-tabs">
+          <li class="nav-item">
+              <a href id="Performance" class="nav-link"
+                  [ngClass]="{ active: selectedTab === 'Performance'}"
+                  (click)="onSelectTab($event,'Performance')">
+              <span [innerHTML]="'Overall stats' | translate"></span>
+              </a>
+          </li>
+          <li  class="nav-item">
+              <a href id="Collaboration" class="nav-link"
+                  [ngClass]="{ active: selectedTab === 'Collaboration'}"
+                  (click)="onSelectTab($event,'Collaboration')">
+                  <span [innerHTML]="'Collabaration stats' | translate"></span>
+              </a>
+          </li>
+      </ul>
+  </div>
+</div>
 
-<div [hidden]="isLoading()" class="space-before">
+<call-status [callStatus]="callStatus" [large]="true"></call-status>
+<call-status [callStatus]="callStatusCollab" [large]="true"></call-status>
+
+<div  class="space-before">
+
+  <div [hidden]="isLoading()" *ngIf="selectedTab === 'Performance'">
 
   <div class="row justify-content-center" *ngIf="loadedps">
     <div class="card col-3">
@@ -117,7 +145,6 @@
 
     </div>
     <hr>
-    
 
   <!-- <div class="row justify-content-center">
     <div class="card col-3">
@@ -142,6 +169,151 @@
       </div>
     </div>
   </div> -->
+  </div>
 
 
+  <div [hidden]="isCollabLoading()" *ngIf="selectedTab === 'Collaboration'">
+    <div class="row justify-content-center">
+      <div class="col-4">
+        <div class="row justify-content-center">
+            <div class="card col-9" style="height: 170px;">
+                <div class="card-body text-center">
+                  <h4 *ngIf="trade_count>=0" class="card-title"><b>{{trade_count}}€</b></h4>
+                  <h4 *ngIf="trade_count<0" class="card-title"><b>???</b></h4>
+                  <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Trading Volume in collabarations' | translate"></span></h6>
+                  <p class="card-text" style="font-size:32px"><i class="fa fa-money-bill"></i></p>
+                </div>
+              </div>
+              <div class="col-12">
+                <div *ngIf="trade_count>0" class="progress mt-5">
+                  <div class="progress-bar bg-success" role="progressbar" [ngStyle]="{'width':trade_green_perc_str}" [attr.aria-valuenow]="trade_green_perc" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div class="progress-bar bg-warning" role="progressbar" [ngStyle]="{'width':trade_yellow_perc_str}" [attr.aria-valuenow]="trade_yellow_perc" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div class="progress-bar bg-danger" role="progressbar" [ngStyle]="{'width':trade_red_perc_str}" [attr.aria-valuenow]="trade_red_perc" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <div *ngIf="trade_count>0" class="space-before text-center">
+                  <span class="badge badge-pill badge-success">{{trade_green_perc_str}} Approved</span>
+                  <span class="badge badge-pill badge-warning">{{trade_yellow_perc_str}} Waiting</span>
+                  <span class="badge badge-pill badge-danger">{{trade_red_perc_str}} Rejected</span>
+                </div>
+              </div>
+        </div>
+      </div>
+      <div class="col-4">
+          <div class="row justify-content-center">
+              <div class="card col-9">
+                  <div class="card-body text-center">
+                    <h4 *ngIf="trade_count>=0" class="card-title"><b>{{trade_count_buy}}€</b></h4>
+                    <h4 *ngIf="trade_count<0" class="card-title"><b>???</b></h4>
+                    <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Trading Volume in purchases collabarations' | translate"></span></h6>
+                    <p class="card-text" style="font-size:32px"><i class="fa fa-money-bill"></i></p>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div *ngIf="trade_count>0" class="progress mt-5">
+                    <div class="progress-bar bg-success" role="progressbar" [ngStyle]="{'width':trade_green_perc_str_buy}" [attr.aria-valuenow]="trade_green_perc_buy" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar bg-warning" role="progressbar" [ngStyle]="{'width':trade_yellow_perc_str_buy}" [attr.aria-valuenow]="trade_yellow_perc_buy" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar bg-danger" role="progressbar" [ngStyle]="{'width':trade_red_perc_str_buy}" [attr.aria-valuenow]="trade_red_perc_buy" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <div *ngIf="trade_count>0" class="space-before text-center">
+                    <span class="badge badge-pill badge-success">{{trade_green_perc_str_buy}} Approved</span>
+                    <span class="badge badge-pill badge-warning">{{trade_yellow_perc_str_buy}} Waiting</span>
+                    <span class="badge badge-pill badge-danger">{{trade_red_perc_str_buy}} Rejected</span>
+                  </div>
+                </div>
+          </div>
+      </div>
+      <div class="col-4">
+        <div class="row justify-content-center">
+            <div class="card col-9">
+                <div class="card-body text-center">
+                  <h4 *ngIf="trade_count>=0" class="card-title"><b>{{trade_count_sell}}€</b></h4>
+                  <h4 *ngIf="trade_count<0" class="card-title"><b>???</b></h4>
+                  <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Trading Volume in sales collabarations' | translate"></span></h6>
+                  <p class="card-text" style="font-size:32px"><i class="fa fa-money-bill"></i></p>
+                </div>
+              </div>
+              <div class="col-12">
+                <div *ngIf="trade_count>0" class="progress mt-5">
+                  <div class="progress-bar bg-success" role="progressbar" [ngStyle]="{'width':trade_green_perc_str_sell}" [attr.aria-valuenow]="trade_green_perc_sell" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div class="progress-bar bg-warning" role="progressbar" [ngStyle]="{'width':trade_yellow_perc_str_sell}" [attr.aria-valuenow]="trade_yellow_perc_sell" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div class="progress-bar bg-danger" role="progressbar" [ngStyle]="{'width':trade_red_perc_str_sell}" [attr.aria-valuenow]="trade_red_perc_sell" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <div *ngIf="trade_count>0" class="space-before text-center">
+                  <span class="badge badge-pill badge-success">{{trade_green_perc_str}} Approved</span>
+                  <span class="badge badge-pill badge-warning">{{trade_yellow_perc_str_sell}} Waiting</span>
+                  <span class="badge badge-pill badge-danger">{{trade_red_perc_str_sell}} Rejected</span>
+                </div>
+              </div>
+        </div>
+      </div>
+   
+    </div>
+    <hr>
+
+    <div class="row justify-content-center">
+        <div class="col-4">
+          <div class="row justify-content-center">
+              <div class="card col-9" style="height: 170px;">
+                  <div class="card-body text-center">
+                    <h4 *ngIf="trade_count>=0" class="card-title"><b>{{collab_time}} S</b></h4>
+                    <h4 *ngIf="trade_count<0" class="card-title"><b>???</b></h4>
+                    <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average collaboration time' | translate"></span></h6>
+                    <p class="card-text" style="font-size:32px"><i class="fa fa-money-bill"></i></p>
+                  </div>
+                </div>
+          </div>
+        </div>
+        <div class="col-4">
+            <div class="row justify-content-center">
+                <div class="card col-9">
+                    <div class="card-body text-center">
+                      <h4 *ngIf="trade_count>=0" class="card-title"><b>{{collab_time_buy}} S</b></h4>
+                      <h4 *ngIf="trade_count<0" class="card-title"><b>???</b></h4>
+                      <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average collaboration time in purchases' | translate"></span></h6>
+                      <p class="card-text" style="font-size:32px"><i class="fa fa-money-bill"></i></p>
+                    </div>
+                  </div>
+            </div>
+        </div>
+        <div class="col-4">
+          <div class="row justify-content-center">
+              <div class="card col-9">
+                  <div class="card-body text-center">
+                    <h4 *ngIf="trade_count>=0" class="card-title"><b>{{collab_time_sell}} S</b></h4>
+                    <h4 *ngIf="trade_count<0" class="card-title"><b>???</b></h4>
+                    <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average collaboration time in sales' | translate"></span></h6>
+                    <p class="card-text" style="font-size:32px"><i class="fa fa-money-bill"></i></p>
+                  </div>
+                </div>
+          </div>
+        </div>
+     
+    </div>
+    <hr/>
+    <div class="row justify-content-center">
+        <div class="col-4">
+          <div class="row justify-content-center">
+              <div class="card col-9" style="height: 170px;">
+                  <div class="card-body text-center">
+                    <h4 *ngIf="trade_count>=0" class="card-title"><b>{{avg_res_time}} S</b></h4>
+                    <h4 *ngIf="trade_count<0" class="card-title"><b>???</b></h4>
+                    <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average response time (Request Information)' | translate"></span></h6>
+                    <p class="card-text" style="font-size:32px"><i class="fa fa-money-bill"></i></p>
+                  </div>
+                </div>
+          </div>
+        </div>
+        <div class="col-4">
+            <div class="row justify-content-center">
+                <div class="card col-9">
+             
+                  </div>
+            </div>
+        </div>
+     
+    </div>
+
+  </div>
 </div>
+
+
