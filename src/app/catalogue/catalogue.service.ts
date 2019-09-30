@@ -268,9 +268,10 @@ export class CatalogueService {
         });
     }
 
-    uploadZipPackage(pck:File): Promise<any> {
+    uploadZipPackage(pck:File,catalogueId:string = this.catalogueResponse.catalogueId): Promise<any> {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
-        const url = this.baseUrl + `/catalogue/${this.catalogueResponse.catalogueUuid}/image/upload`;
+        const partyId =this.cookieService.get("company_id");
+        const url = this.baseUrl + `/catalogue/${catalogueId}/image/upload?partyId=${partyId}`;
         return new Promise<any>((resolve, reject) => {
             let formData: FormData = new FormData();
             formData.append("package", pck, pck.name);

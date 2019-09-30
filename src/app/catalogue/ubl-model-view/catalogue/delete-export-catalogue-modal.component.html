@@ -3,6 +3,7 @@
         <h5 *ngIf="mode == 'delete'" class="modal-title"><span [innerHTML]="'Delete Catalogues' | translate"></span></h5>
         <h5 *ngIf="mode == 'export'" class="modal-title"><span [innerHTML]="'Export Catalogues' | translate"></span></h5>
         <h5 *ngIf="mode == 'delete-images'" class="modal-title"><span [innerHTML]="'Delete All Product Images' | translate"></span></h5>
+        <h5 *ngIf="mode == 'upload-image'" class="modal-title"><span [innerHTML]="'Upload Image Package' | translate"></span></h5>
         <button type="button" class="close" aria-label="Close" (click)="d('cross')">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -10,7 +11,7 @@
     <div class="modal-body">
         <call-status [callStatus]="catalogueRetrievalCallStatus"></call-status>
         <div *ngFor="let id of catalogueIds" class="d-flex">
-            <input class="id-checkbox" type="checkbox" [(ngModel)]="selectedIdMap[id]">
+            <input class="id-checkbox" type="checkbox" [(ngModel)]="selectedIdMap[id]" (change)="onIdSelection(id)">
             <span>{{id}}</span>
         </div>
         <call-status [callStatus]="catalogueOperationCallStatus"></call-status>
@@ -24,6 +25,12 @@
         </button>
         <button *ngIf="mode == 'delete-images'" type="button" class="btn btn-primary" (click)="onDeleteImagesClicked(d);">
             <span><span [innerHTML]="'Delete All Product Images of Selected Catalogues' | translate"></span></span>
+        </button>
+        <input #imagePackage type="file" (change)="uploadImagePackage($event,d)"
+               accept="application/zip"
+               style="display: none">
+        <button *ngIf="mode == 'upload-image'" type="button" class="btn btn-primary" (click)="imagePackage.click()">
+            <span><span [innerHTML]="'Upload Image Package for the Selected Catalogue' | translate"></span></span>
         </button>
     </div>
 </ng-template>

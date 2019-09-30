@@ -295,35 +295,12 @@ export class CatalogueViewComponent implements OnInit {
         return this.deleteStatuses[index % this.pageSize];
     }
 
-    uploadImagePackage(event: any): void {
-        this.callStatus.submit();
-        let catalogueService = this.catalogueService;
-        let fileList: FileList = event.target.files;
-        if (fileList.length > 0) {
-            let file: File = fileList[0];
-            let self = this;
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                // reset the target value so that the same file could be chosen more than once
-                event.target.value = "";
-                catalogueService.uploadZipPackage(file).then(res => {
-                        if (res.status == 200) {
-                            self.callStatus.callback(null, true);
-                            self.requestCatalogue();
-                        } else if (res.status == 504) {
-                            self.callStatus.callback(res.message);
-                        }
-                    },
-                    error => {
-                        self.callStatus.error("Failed to upload the image package.", error);
-                    });
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
     onExportCatalogue():void{
         this.deleteCatalogueModal.open('export');
+    }
+
+    onUploadImage():void{
+        this.deleteCatalogueModal.open('upload-image');
     }
 
     navigateToThePublishPage(){
