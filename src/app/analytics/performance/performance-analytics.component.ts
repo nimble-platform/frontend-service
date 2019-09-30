@@ -87,11 +87,33 @@ export class PerformanceAnalyticsComponent implements OnInit {
 	trade_red_perc_str_buy = "0%";
 	
 	// collab time
-	collab_time = -1;
-	collab_time_sell = -1;
-	collab_time_buy = -1;
+	collab_time = 0;
+	collab_time_sell = 0;
+	collab_time_buy = 0;
 	
-	avg_res_time = -1;
+	avg_res_time = 0;
+
+	single: any[];
+  
+	view: any[] = [700, 400];
+  
+	// options
+	showXAxis = true;
+	showYAxis = true;
+	gradient = false;
+	showLegend = false;
+	showXAxisLabel = false;
+	xAxisLabel = 'Month';
+	showGridLines = true;
+	showYAxisLabel = true;
+	yAxisLabel = 'Average Response Time(s)';
+	showChart = false;
+	colorScheme = {
+	  domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
+	};
+	// line, area
+	autoScale = true;
+	multi = [];
 
     product_count = 0;
     service_count = 0;
@@ -367,11 +389,15 @@ export class PerformanceAnalyticsComponent implements OnInit {
 				}
 
 				if(obj.length == 6){
-					var dataGr = [
+					var dataGr = 
 						{
 						  "name": "Time series",
 						  "series":obj
-						}];
+						};
+
+					this.multi.push(dataGr);
+					this.showChart = true;
+
 				}
 
 
