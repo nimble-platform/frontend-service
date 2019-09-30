@@ -63,7 +63,7 @@
             </thead>
 
             <tr *ngFor="let entry of trackingInfo">
-            <td>{{entry.eventTime}}</td>
+            <td>{{entry.eventTime | date:'medium':'UTC'}}</td>
             <td>{{entry.bizStep}}</td>
             <!-- <td>{{entry.action}}</td> -->
                 <td><button class="btn btn-link" (click)="getGateInfo(entry.readPoint)">{{entry.readPoint}}</button></td>

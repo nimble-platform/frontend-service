@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Search } from './model/search';
 import { TnTService } from './tnt.service';
-import * as moment from 'moment';
 import * as myGlobals from '../globals';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -70,7 +69,7 @@ export class TnTFormComponent {
     getTableInfo(data) {
                 this.trackingInfo = data.map(el => {
                     let _out = {
-                        'eventTime': moment(Number(el.eventTime.$date)),
+                        'eventTime': el.eventTime.$date,
                         'bizStep': el.bizStep.split(':').pop(),
                         'action': el.action,
                         'readPoint': el.readPoint.id.split(':').pop(),
