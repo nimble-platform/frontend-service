@@ -224,6 +224,7 @@ export const product_vendor = "manufacturer";
 export const product_vendor_id = "id";
 export const product_vendor_img = "logoId";
 export const product_vendor_name = "legalName";
+export const product_vendor_brand_name = "brandName";
 export const product_vendor_rating = "trustRating";
 export const product_vendor_rating_seller = "trustSellerCommunication";
 export const product_vendor_rating_fulfillment = "trustFullfillmentOfTerms";
@@ -271,10 +272,11 @@ export const query_settings = {
   }
 };
 export const query_settings_comp = {
-  "fields": ["STANDARD","legalName"],
+  "fields": ["STANDARD","legalName","{LANG}_brandName"],
   "boosting": true,
   "boostingFactors": {
     "STANDARD": 4,
+    "{LANG}_brandName": 64,
     "legalName": 64
   }
 };

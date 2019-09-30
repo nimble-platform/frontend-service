@@ -26,6 +26,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	product_vendor = myGlobals.product_vendor;
 	product_vendor_id = myGlobals.product_vendor_id;
 	product_vendor_name = myGlobals.product_vendor_name;
+	product_vendor_brand_name = myGlobals.product_vendor_brand_name;
 	product_vendor_rating = myGlobals.product_vendor_rating;
 	product_vendor_rating_seller = myGlobals.product_vendor_rating_seller;
 	product_vendor_rating_fulfillment = myGlobals.product_vendor_rating_fulfillment;
@@ -354,7 +355,7 @@ export class SimpleSearchFormComponent implements OnInit {
 			debounceTime(200),
 			distinctUntilChanged(),
 			switchMap(term =>
-					this.simpleSearchService.getCompSuggestions(term, (this.product_vendor_name))
+					this.simpleSearchService.getCompSuggestions(term, [this.product_vendor_name, ("{LANG}_" + this.product_vendor_brand_name)])
 			)
 		);
 
