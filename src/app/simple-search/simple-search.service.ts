@@ -174,7 +174,7 @@ export class SimpleSearchService {
 			"boosting": false,
 			"boostingFactors": {}
 		};
-		let queryRes = this.buildQueryString(query, querySettings, true, false);
+		let queryRes = this.buildQueryString(query, querySettings, true, true);
 		let url = this.url + `/item/search`;
 		if (search_index == "Category") {
 			url = this.url + `/class/search`;
@@ -204,7 +204,7 @@ export class SimpleSearchService {
 			"boosting": false,
 			"boostingFactors": {}
 		};
-		let queryRes = this.buildQueryString(query, querySettings, true, false);
+		let queryRes = this.buildQueryString(query, querySettings, true, true);
 		let url = this.url + `/party/search`;
 		let searchObject: any = {};
 		searchObject.rows = 0;
