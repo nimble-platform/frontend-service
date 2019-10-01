@@ -4,6 +4,7 @@ import { Address } from '../model/address';
 import { validateCountry, getCountrySuggestions } from '../../common/utils';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     moduleId: module.id,
@@ -11,12 +12,20 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
     templateUrl: 'address.component.html',
     styleUrls: ['address.component.css']
 })
+
+
 export class AddressSubForm {
 
   @Input('group')
   public addressForm: FormGroup;
 	@Input() disabledFlag: boolean = false;
   @Input() requiredFlag: boolean = true;
+
+
+  constructor(
+    private translate: TranslateService
+    ) {
+    }
 
   getSuggestions = (text$: Observable<string>) =>
     text$.pipe(

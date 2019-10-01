@@ -18,6 +18,7 @@ import {Observable} from 'rxjs/Observable';
 import {CATALOGUE_LINE_SORT_OPTIONS} from '../../model/constants';
 import {Catalogue} from '../../model/publish/catalogue';
 import { CatalogueLine } from "../../model/publish/catalogue-line";
+import {TranslateService} from '@ngx-translate/core';
 import {DeleteExportCatalogueModalComponent} from "./delete-export-catalogue-modal.component";
 
 @Component({
@@ -75,9 +76,9 @@ export class CatalogueViewComponent implements OnInit {
                 private publishService: PublishService,
                 private catalogueService: CatalogueService,
                 private categoryService: CategoryService,
+                private translate: TranslateService,
                 private userService: UserService,
                 private router: Router) {
-
     }
 
     ngOnInit() {
@@ -173,6 +174,10 @@ export class CatalogueViewComponent implements OnInit {
 
     onDeleteCatalogue(deleteCatalogueModal): void {
         this.deleteCatalogueModal.open('delete');
+    }
+
+    onDeleteCatalogueImages():void{
+        this.deleteCatalogueModal.open('delete-images');
     }
 
     onAddCatalogue(){
@@ -290,49 +295,12 @@ export class CatalogueViewComponent implements OnInit {
         return this.deleteStatuses[index % this.pageSize];
     }
 
-    uploadImagePackage(event: any): void {
-        this.callStatus.submit();
-        let catalogueService = this.catalogueService;
-        let fileList: FileList = event.target.files;
-        if (fileList.length > 0) {
-            let file: File = fileList[0];
-            let self = this;
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                // reset the target value so that the same file could be chosen more than once
-                event.target.value = "";
-                catalogueService.uploadZipPackage(file).then(res => {
-                        if (res.status == 200) {
-                            self.callStatus.callback(null, true);
-                            self.requestCatalogue();
-                        } else if (res.status == 504) {
-                            self.callStatus.callback(res.message);
-                        }
-                    },
-                    error => {
-                        self.callStatus.error("Failed to upload the image package.", error);
-                    });
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
     onExportCatalogue():void{
         this.deleteCatalogueModal.open('export');
     }
 
-    deleteAllProductImages():void{
-        if (confirm("Are you sure that you want to delete all product images inside the catalogue?")) {
-            this.callStatus.submit();
-            this.catalogueService.deleteAllProductImagesInsideCatalogue(this.catalogueService.catalogueResponse.catalogueUuid)
-                .then(res => {
-                    this.requestCatalogue();
-                    this.callStatus.callback("Product images deleted", true);
-                })
-                .catch(error => {
-                    this.callStatus.error("Error while deleting product images", error);
-                });
-        }
+    onUploadImage():void{
+        this.deleteCatalogueModal.open('upload-image');
     }
 
     navigateToThePublishPage(){

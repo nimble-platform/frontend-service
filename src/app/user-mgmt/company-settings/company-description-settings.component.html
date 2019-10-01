@@ -1,7 +1,7 @@
 <!-- Company Statement -->
 <div class="form-group row space-before">
   <label class="col-2 col-form-label">
-    <strong>Company Description:</strong>
+    <strong><span [innerHTML]="'Company Description:' | translate"></span></strong>
   </label>
   <div class="col-10">
     <textarea class="form-control" rows="3" [formControl]="descriptionForm.controls['companyStatement']" maxlength="255">
@@ -12,7 +12,7 @@
 <!-- Website -->
 <div class="form-group row">
   <label class="col-2 col-form-label">
-    <strong>Website:</strong>
+    <strong><span [innerHTML]="'Website:' | translate"></span></strong>
   </label>
   <div class="col-10">
     <input type="text" class="form-control" [formControl]="descriptionForm.controls['website']" maxlength="255">
@@ -22,7 +22,7 @@
 <!-- Social Media List -->
 <div class="form-group row">
   <label class="col-2 col-form-label">
-    <strong>Social Media:</strong>
+    <strong><span [innerHTML]="'Social Media:' | translate"></span></strong>
   </label>
   <div class="col-10">
     <ng-container *ngFor="let socialMediaEntry of socialMediaList; let i = index; trackBy:trackFn">
@@ -31,7 +31,7 @@
           <input type="text" class="form-control" [(ngModel)]="socialMediaList[i]" (input)="flagSocialMediaChanged()" maxlength="255">
         </div>
         <div class="col-2">
-          <button class="btn btn-danger w-100" (click)="removeSocialMediaEntry(i)">Delete</button>
+          <button class="btn btn-danger w-100" (click)="removeSocialMediaEntry(i)"><span [innerHTML]="'Delete' | translate"></span></button>
         </div>
       </div>
     </ng-container>
@@ -39,7 +39,7 @@
       <div class="col-10"></div>
       <div class="col-2">
         <button class="btn btn-secondary w-100" [disabled]="saveCallStatus.isLoading()" (click)="addSocialMediaEntry()">
-            Add Social Media
+          <span [innerHTML]="'Add Social Media' | translate"></span>
         </button>
       </div>
     </div>
@@ -49,7 +49,7 @@
 <!-- Link (External Resource) List -->
 <div class="form-group row">
   <label class="col-2 col-form-label">
-    <strong>Other Links:</strong>
+    <strong><span [innerHTML]="'Other Links:' | translate"></span></strong>
   </label>
   <div class="col-10">
     <ng-container *ngFor="let extEntry of externalResources; let i = index; trackBy:trackFn">
@@ -58,7 +58,7 @@
           <input type="text" class="form-control" [(ngModel)]="externalResources[i]" (input)="flagExternalResourcesChanged()" maxlength="255">
         </div>
         <div class="col-2 align-right">
-          <button class="btn btn-danger w-100" (click)="removeExternalResourceEntry(i)">Delete</button>
+          <button class="btn btn-danger w-100" (click)="removeExternalResourceEntry(i)"><span [innerHTML]="'Delete' | translate"></span></button>
         </div>
       </div>
     </ng-container>
@@ -66,7 +66,7 @@
       <div class="col-10"></div>
       <div class="col-2">
         <button class="btn btn-secondary w-100" [disabled]="saveCallStatus.isLoading()" (click)="addExternalResourceEntry()">
-            Add Other Link
+          <span [innerHTML]="'Add Other Link' | translate"></span>
         </button>
       </div>
     </div>
@@ -76,7 +76,7 @@
 <!-- Event List -->
 <div class="form-group row">
   <label class="col-2 col-form-label">
-    <strong>Events:</strong>
+    <strong><span [innerHTML]="'Events:' | translate"></span></strong>
   </label>
   <div class="col-10">
       <table class="table table-striped table-bordered mb-1 mt-0" style="table-layout: fixed; width: 100%;">
@@ -87,17 +87,17 @@
               <col style="width: 150%;">
               <col style="width: auto;">
           </colgroup>
-          <tr><th>Date</th><th>Name</th><th>Description</th><th>Location</th><th class="col-2">Actions</th></tr>
-          <tr *ngIf="compEvents.length==0"><td colspan="5">No data</td></tr>
+          <tr><th><span [innerHTML]="'Date' | translate"></span></th><th><span [innerHTML]="'Name' | translate"></span></th><th><span [innerHTML]="'Description' | translate"></span></th><th><span [innerHTML]="'Location' | translate"></span></th><th class="col-2"><span [innerHTML]="'Actions' | translate"></span></th></tr>
+          <tr *ngIf="compEvents.length==0"><td colspan="5"><span [innerHTML]="'No data' | translate"></span></td></tr>
           <tr *ngFor="let ev of compEvents; let i = index">
               <td>{{ev.dateFrom}} - {{ev.dateTo}}</td>
               <td>{{ev.name}}</td>
               <td *ngIf="ev.description">{{ev.description}}</td>
-              <td *ngIf="!ev.description">n/A</td>
+              <td *ngIf="!ev.description"><span [innerHTML]="'n/A' | translate"></span></td>
               <td *ngIf="ev.place.streetName">{{ev.place.streetName}}<span *ngIf="ev.place.buildingNumber"> {{ev.place.buildingNumber}}</span><br/>{{ev.place.postalCode}} {{ev.place.cityName}}<br/>{{ev.place.country}}</td>
-              <td *ngIf="!ev.place.streetName">n/A</td>
+              <td *ngIf="!ev.place.streetName"><span [innerHTML]="'n/A' | translate"></span></td>
               <td>
-                  <button class="btn btn-danger btn-sm" (click)="removeCompEventEntry(i)">Delete</button>
+                  <button class="btn btn-danger btn-sm" (click)="removeCompEventEntry(i)"><span [innerHTML]="'Delete' | translate"></span></button>
               </td>
           </tr>
       </table>
@@ -105,7 +105,7 @@
         <div class="col-10"></div>
         <div class="col-2">
           <button class="btn btn-secondary w-100" [disabled]="saveCallStatus.isLoading()" (click)="addCompEventEntry(addEventModal)">
-              Add Event
+            <span [innerHTML]="'Add Event' | translate"></span>
           </button>
         </div>
       </div>
@@ -135,7 +135,7 @@
     -->
     <div class="col-2">
         <button class="btn btn-primary action" [disabled]="!descriptionForm.valid || (!descriptionForm.dirty && !socialMediaListChanged && !externalResourcesChanged && !compEventsChanged) || saveCallStatus.isLoading()" (click)="onSave(descriptionForm)">
-            Save
+          <span [innerHTML]="'Save' | translate"></span>
         </button>
     </div>
 </div>
@@ -143,11 +143,11 @@
 <hr>
 
 <!-- Images -->
-<h4>Images</h4>
+<h4><span [innerHTML]="'Images' | translate"></span></h4>
 
 <div class="form-group row">
   <label class="col-2 col-form-label">
-    <strong>Logo:</strong>
+    <strong><span [innerHTML]="'Logo:' | translate"></span></strong>
   </label>
   <div class="col-10">
     <div *ngIf="!settings.description.logoImageId" class="card m-2" style="width: 15rem;">
@@ -162,7 +162,7 @@
           <div class="align-center">
             <img class="img-max" src="{{imgEndpoint}}{{settings.description.logoImageId}}">
           </div>
-          <button [disabled]="saveCallStatusImage.isLoading()" class="btn btn-danger btn-sm mt-2" (click)="onDeleteImage(settings.description.logoImageId)">Delete</button>
+          <button [disabled]="saveCallStatusImage.isLoading()" class="btn btn-danger btn-sm mt-2" (click)="onDeleteImage(settings.description.logoImageId)"><span [innerHTML]="'Delete' | translate"></span></button>
       </div>
     </div>
   </div>
@@ -170,7 +170,7 @@
 
 <div class="form-group row">
   <label class="col-2 col-form-label">
-    <strong>Photos "At Work":</strong>
+    <strong><span [innerHTML]="'Photos At Work' | translate"></span></strong>
   </label>
   <div class="col-10 row ml-0 mr-0">
     <div *ngIf="settings.description.companyPhotoList.length == 0" class="card m-2" style="width: 15rem;">
@@ -185,7 +185,7 @@
           <div class="align-center">
             <img class="img-max" src="{{imgEndpoint}}{{photo}}">
           </div>
-          <button [disabled]="saveCallStatusImage.isLoading()" class="btn btn-danger btn-sm mt-2" (click)="onDeleteImage(photo)">Delete</button>
+          <button [disabled]="saveCallStatusImage.isLoading()" class="btn btn-danger btn-sm mt-2" (click)="onDeleteImage(photo)"><span [innerHTML]="'Delete' | translate"></span></button>
       </div>
     </div>
   </div>
@@ -197,23 +197,23 @@
     </div>
     <div class="col-2">
         <button class="btn btn-primary action" [disabled]="saveCallStatusImage.isLoading() || settings.description.logoImageId" (click)="addImage(addImageModal,true)">
-            Add Logo
+          <span [innerHTML]="'Add Logo' | translate"></span>
         </button>
     </div>
     <div class="col-2">
         <button class="btn btn-primary action" [disabled]="saveCallStatusImage.isLoading()" (click)="addImage(addImageModal,false)">
-            Add Photo
+          <span [innerHTML]="'Add Photo' | translate"></span>
         </button>
     </div>
     <div class="col-8"></div>
-    <div class="col-4 align-right mt-1"><small>Maximum allowed filesize: 2 MB; Allowed formats: PNG, JPG, GIF</small></div>
+    <div class="col-4 align-right mt-1"><small><span [innerHTML]="'Maximum allowed filesize: 2 MB; Allowed formats: PNG, JPG, GIF' | translate"></span></small></div>
 </div>
 
 <!-- Event Modal -->
 <ng-template #addEventModal let-d="dismiss">
     <form [formGroup]="addEventForm" novalidate>
         <div class="modal-header">
-            <h4 class="modal-title">Add Event</h4>
+            <h4 class="modal-title"><span [innerHTML]="'Dashboard' | translate"></span></h4>
             <button type="button" class="close" aria-label="Close" (click)="d('')">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -225,7 +225,7 @@
                 </date-input>
                 <div class="form-group row">
                     <label class="col-2 col-form-label">
-                      <strong>Name:</strong>
+                      <strong><span [innerHTML]="'Name:' | translate"></span></strong>
                     </label>
                     <div class="col-10">
                         <input type="text" class="form-control" [formControl]="addEventForm.controls['name']" maxlength="255" required>
@@ -233,7 +233,7 @@
                 </div>
                 <div class="form-group row">
                     <label class="col-2 col-form-label">
-                      <strong>Description:</strong>
+                      <strong><span [innerHTML]="'Description:' | translate"></span></strong>
                     </label>
                     <div class="col-10">
                         <input type="text" class="form-control" [formControl]="addEventForm.controls['description']" maxlength="255">
@@ -243,7 +243,7 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-primary save-cert-btn" [disabled]="!addEventForm.valid" (click)="onSaveEventEntry(addEventForm, d);">
-                <span>Add</span>
+                <span><span [innerHTML]="'Add' | translate"></span></span>
             </button>
         </div>
     </form>
@@ -253,14 +253,14 @@
 <ng-template #addImageModal let-d="dismiss">
     <form [formGroup]="addImageForm" novalidate>
         <div class="modal-header">
-            <h4 class="modal-title">Add Image</h4>
+            <h4 class="modal-title"><span [innerHTML]="'Add Image' | translate"></span></h4>
             <button type="button" class="close" aria-label="Close" (click)="d('')">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
         <div class="modal-body">
           <div class="form-group row">
-            <label class="col-2 col-form-label">Image</label>
+            <label class="col-2 col-form-label"><span [innerHTML]="'Image' | translate"></span></label>
               <div class="col-10">
                   <input type="file" class="form-control" [formControl]="addImageForm.controls['file']" (change)="onSetImageFile($event, addImageForm)" required>
               </div>
@@ -269,7 +269,7 @@
         <div class="modal-footer">
             <call-status [callStatus]="saveCallStatusImage"></call-status>
             <button type="button" class="btn btn-primary save-cert-btn" [disabled]="!addImageForm.valid || saveCallStatusImage.isLoading()" (click)="onSaveImage(addImageForm, d);">
-                <span>Save</span>
+                <span><span [innerHTML]="'Save' | translate"></span></span>
             </button>
         </div>
     </form>

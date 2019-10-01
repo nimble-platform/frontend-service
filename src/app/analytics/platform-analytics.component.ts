@@ -7,6 +7,7 @@ import * as myGlobals from '../globals';
 import {selectNameFromLabelObject} from '../common/utils';
 import { DomSanitizer } from "@angular/platform-browser";
 import { UserService } from "../user-mgmt/user.service";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "platform-analytics",
@@ -46,7 +47,7 @@ export class PlatformAnalyticsComponent implements OnInit {
 	config = myGlobals.config;
   	dashboards = [];
 	selectedTab;
-	
+
 	public secureSrc = ""  ;
 
 	@ViewChild('iframe') iframe: ElementRef;
@@ -54,9 +55,9 @@ export class PlatformAnalyticsComponent implements OnInit {
         private simpleSearchService: SimpleSearchService,
 		private categoryService: CategoryService,
 		private userService:UserService,
-    	private sanitizer: DomSanitizer
+		private sanitizer: DomSanitizer,
+		private translate: TranslateService,
         ) {
-
     }
 
     ngOnInit(): void {
@@ -101,7 +102,7 @@ export class PlatformAnalyticsComponent implements OnInit {
     isLoading(): boolean {
         return this.callStatus.fb_submitted;
 	}
-	
+
 
     private getCatTree(): void {
 		this.categoriesCallStatus.submit();
@@ -240,9 +241,9 @@ export class PlatformAnalyticsComponent implements OnInit {
 		return labelMap;
 	}
 
-  onSelectTab(event: any): void {
+  onSelectTab(event: any, id: any): void {
       event.preventDefault();
-      this.selectedTab = event.target.id;
+      this.selectedTab = id;
   }
 
 }

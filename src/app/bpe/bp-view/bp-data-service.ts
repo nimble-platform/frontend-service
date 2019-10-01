@@ -39,11 +39,11 @@ import {DocumentService} from "./document-service";
 import {ShipmentStage} from "../../catalogue/model/publish/shipment-stage";
 import {PartyName} from '../../catalogue/model/publish/party-name';
 import {BpActivityEvent} from '../../catalogue/model/publish/bp-start-event';
-import {BpURLParams} from '../../catalogue/model/publish/bpURLParams';
 import {Router} from '@angular/router';
 import {Text} from '../../catalogue/model/publish/text';
 import {Contract} from '../../catalogue/model/publish/contract';
 import {Clause} from '../../catalogue/model/publish/clause';
+import {Observable} from "rxjs/Rx";
 
 /**
  * Created by suat on 20-Sep-17.
@@ -83,12 +83,13 @@ export class BPDataService{
     ////////////////////////////////////////////////////////////////////////////
 
     // BpActivityEvent is used to set bp options while navigating to bp details page
-    bpActivityEvent:BpActivityEvent = new BpActivityEvent(null,"Item_Information_Request",null,null,null,[], null, true, false);
+    bpActivityEvent:BpActivityEvent = null;//new BpActivityEvent(null,"Item_Information_Request",null,null,null,[], null, true, false);
     // these are used to update view according to the selected process type.
     private bpActivityEventBehaviorSubject: BehaviorSubject<BpActivityEvent> = new BehaviorSubject<BpActivityEvent>(this.bpActivityEvent);
-    bpActivityEventObservable = this.bpActivityEventBehaviorSubject.asObservable();
+    bpActivityEventObservable: Observable<BpActivityEvent> = this.bpActivityEventBehaviorSubject.asObservable();
 
     precedingProcessId: string;
+    precedingDocumentId: string;
 
     constructor(private searchContextService: SearchContextService,
                 private precedingBPDataService: PrecedingBPDataService,
@@ -213,20 +214,17 @@ export class BPDataService{
         }
     }
 
-    // This function is used to start viewing business processes.
-    // Dashboard and product-details are two way to start viewing business processes. For dashboard, business process history contains process document metadatas since
-    // they are already started/completed. However, in the product-details page, we start a new business process, this is why we check for new process processMetadata.
-    async startBp(bpActivityEvent:BpActivityEvent, clearSearchContext:boolean, bpURLParams:BpURLParams){
+    /*
+     This function is used to start viewing business processes.
+     Dashboard and product-details are two way to start viewing business processes.
+     For dashboard, business process history contains process document metadatas
+     since they are already started/completed. However, in the product-details page, we start a new business process,
+     this is why we check for new process processMetadata.
+     */
+    async startBp(bpActivityEvent: BpActivityEvent, clearSearchContext:boolean){
         this.resetBpData();
         if(clearSearchContext){
             this.searchContextService.clearSearchContext();
-        }
-        else {
-            // If there is an associated process, we need to know collaboration group id since we will add the new process instance group to this collaboration group
-            // Else, it is OK to reset collaboration group id since a new collaboration group will be created for the process.
-            if(this.searchContextService.getAssociatedProcessType() == null){
-                bpActivityEvent.collaborationGroupId = null;
-            }
         }
 
         this.bpActivityEvent = bpActivityEvent;
@@ -234,31 +232,21 @@ export class BPDataService{
         if(!bpActivityEvent.newProcess){
             await this.setProcessDocuments(bpActivityEvent.processMetadata);
         }
-        this.bpActivityEventBehaviorSubject.next(this.bpActivityEvent);
-        this.navigateToBpExec(bpURLParams);
+        this.navigateToBpExec();
     }
 
-    private navigateToBpExec(bpURLParams: BpURLParams){
-        if(bpURLParams.processInstanceId){
-            this.router.navigate(['bpe/bpe-exec'], {
-                queryParams: {
-                    catalogueId: bpURLParams.catalogueId,
-                    id: bpURLParams.catalogueLineId,
-                    pid: bpURLParams.processInstanceId,
-                    termsSource: bpURLParams.termsSource
-                }
-            });
-        }
-        else {
-            this.router.navigate(['bpe/bpe-exec'], {
-                queryParams: {
-                    catalogueId: bpURLParams.catalogueId,
-                    id: bpURLParams.catalogueLineId,
-                    termsSource: bpURLParams.termsSource
-                }
-            });
+    private navigateToBpExec() {
+        let processInstanceId;
+        if (this.bpActivityEvent.newProcess) {
+            processInstanceId = 'new';
+        } else {
+            processInstanceId = this.bpActivityEvent.processMetadata.processInstanceId;
         }
 
+        this.router.navigate([`bpe/bpe-exec/${processInstanceId}`]).then(() => {
+                this.bpActivityEventBehaviorSubject.next(this.bpActivityEvent);
+            }
+        );
     }
 
     // For business processes transitions (for example, from PPAP to Negotiation), we have to keep containerGroupId same since all processes are in the same process instance group
@@ -269,12 +257,18 @@ export class BPDataService{
             userRole,
             processType,
             this.bpActivityEvent.containerGroupId,
-            this.bpActivityEvent.collaborationGroupId,
             null,
             this.bpActivityEvent.processHistory,
             null,
             true, // new process is true
-            false); // as this is a new process there is no subsequent process after this one
+            false, // as this is a new process there is no subsequent process after this one
+            // we get the following values from the previous bp activity event
+            // as they are the same for the BpActivityEvent generated for the request document
+            this.bpActivityEvent.catalogueId,
+            this.bpActivityEvent.catalogueLineId,
+            this.bpActivityEvent.previousProcessInstanceId,
+            this.bpActivityEvent.previousDocumentId,
+            this.bpActivityEvent.termsSource);
         this.bpActivityEvent = bpStartEvent;
         // this event is listened by the product-bp-options.component where the displayed process view is adjusted
         this.bpActivityEventBehaviorSubject.next(bpStartEvent);
@@ -308,7 +302,7 @@ export class BPDataService{
         rfqLine.lineItem.warrantyValidityPeriod = copy(line.warrantyValidityPeriod);
         rfqLine.lineItem.deliveryTerms.incoterms = line.goodsItem.deliveryTerms.incoterms;
         rfqLine.lineItem.quantity.unitCode = line.requiredItemLocationQuantity.price.baseQuantity.unitCode;
-        this.selectFirstValuesAmongAlternatives(rfqLine.lineItem.item);
+        this.selectFirstValuesAmongAlternatives(rfqLine.lineItem.item, this.bpActivityEvent.workflowOptions);
 
         // quantity
         rfqLine.lineItem.quantity.value = this.bpActivityEvent.workflowOptions ? this.bpActivityEvent.workflowOptions.quantity : 1;
@@ -363,14 +357,14 @@ export class BPDataService{
         this.ppap = UBLModelUtils.createPpap(documents);
         this.ppap.lineItem.item = this.modifiedCatalogueLines[0].goodsItem.item;
         this.ppap.lineItem.lineReference = [new LineReference(this.modifiedCatalogueLines[0].id)];
-        this.selectFirstValuesAmongAlternatives(this.modifiedCatalogueLines[0].goodsItem.item);
+        this.selectFirstValuesAmongAlternatives(this.modifiedCatalogueLines[0].goodsItem.item, this.bpActivityEvent.workflowOptions);
     }
 
     initItemInformationRequest():void {
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.itemInformationRequest = UBLModelUtils.createItemInformationRequest();
         this.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item = this.modifiedCatalogueLines[0].goodsItem.item;
-        this.selectFirstValuesAmongAlternatives(this.modifiedCatalogueLines[0].goodsItem.item);
+        this.selectFirstValuesAmongAlternatives(this.modifiedCatalogueLines[0].goodsItem.item, this.bpActivityEvent.workflowOptions);
     }
 
     initOrderWithQuotation() {
@@ -493,7 +487,7 @@ export class BPDataService{
     initTransportExecutionPlanRequest() {
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.transportExecutionPlanRequest = UBLModelUtils.createTransportExecutionPlanRequest(this.modifiedCatalogueLines[0]);
-        this.selectFirstValuesAmongAlternatives(this.modifiedCatalogueLines[0].goodsItem.item);
+        this.selectFirstValuesAmongAlternatives(this.modifiedCatalogueLines[0].goodsItem.item, this.bpActivityEvent.workflowOptions);
 
         if(this.quotation) {
             const quotationPeriod = this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod;
@@ -511,7 +505,7 @@ export class BPDataService{
 
         this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithOrder(copy(this.order),this.modifiedCatalogueLines[0]);
 
-        this.selectFirstValuesAmongAlternatives(this.modifiedCatalogueLines[0].goodsItem.item);
+        this.selectFirstValuesAmongAlternatives(this.modifiedCatalogueLines[0].goodsItem.item, this.bpActivityEvent.workflowOptions);
     }
 
     initTransportExecutionPlanRequestWithIir(): void {
@@ -594,9 +588,9 @@ export class BPDataService{
      * The modified objects reflect the user selections during the continuation of the process.
      ********************************************************************************************/
 
-    selectFirstValuesAmongAlternatives(item: Item): void {
+    selectFirstValuesAmongAlternatives(item: Item, itemOptions: BpWorkflowOptions): void {
         this.chooseAllDimensions(item);
-        this.chooseFirstValuesOfItemProperties(item);
+        this.chooseFirstValuesOfItemProperties(item, itemOptions);
     }
 
     /**
@@ -617,12 +611,13 @@ export class BPDataService{
         item.dimension = finalDimensions;
     }
 
-    private chooseFirstValuesOfItemProperties(item: Item): void {
+    private chooseFirstValuesOfItemProperties(item: Item, itemOptions: BpWorkflowOptions): void {
+        // buraya option geçicez
         for(let i = 0; i < item.additionalItemProperty.length; i++) {
             const prop = item.additionalItemProperty[i];
 
             const key = getPropertyKey(prop);
-            const indexToSelect = this.bpActivityEvent.workflowOptions ? this.bpActivityEvent.workflowOptions.selectedValues[key] || 0 : 0;
+            const indexToSelect = itemOptions ? itemOptions.selectedValues[key] || 0 : 0;
 
             switch(prop.valueQualifier) {
                 case "STRING":
@@ -700,19 +695,11 @@ export class BPDataService{
             this.bpActivityEvent.workflowOptions = new BpWorkflowOptions();
 
             // this item only contains the properties choosen by the user
-            const item = this.getItemFromCurrentWorkflow();
+            const itemWithSelectedProps = this.getItemFromCurrentWorkflow();
 
             const line = this.catalogueLines[0];
-            if(!item || !line) {
+            if(!itemWithSelectedProps || !line) {
                 return;
-            }
-
-            // negotiate the price if no price on the line
-            const priceWrapper = new PriceWrapper(
-                line.requiredItemLocationQuantity.price,
-                line.requiredItemLocationQuantity.applicableTaxCategory[0].percent);
-            if(!priceWrapper.itemPrice.hasPrice()) {
-                // this.bpActivityEvent.workflowOptions.negotiation.price = true;
             }
 
             // this item contains all the properties.
@@ -723,7 +710,7 @@ export class BPDataService{
                 const prop = lineItem.additionalItemProperty[i];
                 const key = getPropertyKey(prop);
 
-                const itemProp = item.additionalItemProperty[i];
+                const itemProp = itemWithSelectedProps.additionalItemProperty[i];
 
                 switch(prop.valueQualifier) {
                     case "STRING":

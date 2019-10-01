@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FactorsService } from './factors.service';
 import { TreeviewConfig, TreeviewItem, TreeItem } from 'ngx-treeview';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'factors',
@@ -29,7 +30,11 @@ export class FactorsComponent implements OnInit {
       selectedFilterDetails = [];
       collapseSelectedFilters = true;
 
-    constructor(private service: FactorsService, private route: ActivatedRoute, private router: Router) {}
+    constructor(private service: FactorsService,
+                private route: ActivatedRoute,
+                private router: Router,
+                private translate: TranslateService) {
+                }
 
     ngOnInit() {
         this.route.queryParams.subscribe(params => {

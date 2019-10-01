@@ -6,6 +6,7 @@ import {selectPartyName, sanitizeLink} from '../common/utils';
 import { AppComponent } from "../app.component";
 import { ActivatedRoute } from "@angular/router";
 import {COMPANY_LIST_SORT_OPTIONS} from './constants';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "members-info",
@@ -34,7 +35,9 @@ export class MembersComponent implements OnInit {
       private analyticsService: AnalyticsService,
       public appComponent: AppComponent,
       private route: ActivatedRoute,
-    ) {}
+      private translate: TranslateService,
+    ) {
+    }
 
     ngOnInit(): void {
         this.route.queryParams.subscribe(params => {

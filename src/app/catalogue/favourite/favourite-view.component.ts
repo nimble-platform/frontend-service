@@ -21,6 +21,7 @@ import { CatalogueLine } from "../model/publish/catalogue-line";
 import { filter } from "rxjs/operator/filter";
 import * as myGlobals from '../../globals';
 import { Search } from '../../simple-search/model/search';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'favourite-view',
@@ -103,8 +104,8 @@ export class FavouriteViewComponent implements OnInit {
                 private bpDataService: BPDataService,
                 private userService: UserService,
                 private route: ActivatedRoute,
-                private router: Router) {
-
+				private router: Router,
+				private translate: TranslateService) {
     }
 
     ngOnInit() {

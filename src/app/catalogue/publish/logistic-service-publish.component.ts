@@ -23,6 +23,7 @@ import {Catalogue} from '../model/publish/catalogue';
 import * as myGlobals from '../../globals';
 import {Category} from '../model/category/category';
 import {LogisticPublishingService} from './logistic-publishing.service';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "logistic-service-publish",
@@ -39,7 +40,8 @@ export class LogisticServicePublishComponent implements OnInit {
                 private router: Router,
                 private location: Location,
                 private cookieService: CookieService,
-                private logisticPublishingService:LogisticPublishingService) {
+                private logisticPublishingService:LogisticPublishingService,
+                private translate: TranslateService) {
     }
 
     config = myGlobals.config;
@@ -152,14 +154,14 @@ export class LogisticServicePublishComponent implements OnInit {
     }
 
     // switching between tabs
-    onSelectTabSinglePublish(event: any) {
+    onSelectTabSinglePublish(event: any, id: any) {
         event.preventDefault();
-        this.selectedTabSinglePublish = event.target.id;
+        this.selectedTabSinglePublish = id;
     }
 
-    onSelectTab(event: any) {
+    onSelectTab(event: any, id: any) {
         event.preventDefault();
-        if(event.target.id === "singleUpload") {
+        if(id === "singleUpload") {
             this.publishingGranularity = "single";
         } else {
             this.publishingGranularity = "bulk";

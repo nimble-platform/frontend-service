@@ -5,21 +5,15 @@ import { BPDataService } from "../bp-data-service";
 import { CallStatus } from "../../../common/call-status";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
 import { Quotation } from "../../../catalogue/model/publish/quotation";
-import { PriceWrapper } from "../../../common/price-wrapper";
 import { INCOTERMS, PAYMENT_MEANS, CURRENCIES, NEGOTIATION_RESPONSES } from "../../../catalogue/model/constants";
 import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
 import { BpUserRole } from "../../model/bp-user-role";
 import { PaymentTermsWrapper } from "../payment-terms-wrapper";
-import { ProcessVariables } from "../../model/process-variables";
-import { ModelUtils } from "../../model/model-utils";
-import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { BPEService } from "../../bpe.service";
 import {CookieService} from 'ng2-cookies';
-import {ItemPriceWrapper} from '../../../common/item-price-wrapper';
-import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
-import {copy} from "../../../common/utils";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "transport-negotiation-response",
@@ -56,8 +50,8 @@ export class TransportNegotiationResponseComponent implements OnInit {
                 private bpDataService: BPDataService,
                 private location: Location,
                 private cookieService: CookieService,
+                private translate: TranslateService,
                 private router: Router) {
-
     }
 
     ngOnInit() {
@@ -96,9 +90,9 @@ export class TransportNegotiationResponseComponent implements OnInit {
         return this.callStatus.fb_submitted;
     }
 
-    onSelectTab(event: any): void {
+    onSelectTab(event: any, id: any): void {
         event.preventDefault();
-        this.selectedTab = event.target.id;
+        this.selectedTab = id;
     }
 
     isReadOnly(): boolean {
@@ -121,12 +115,8 @@ export class TransportNegotiationResponseComponent implements OnInit {
             this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.REJECTED;
         }
 
-        const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.buyerCustomerParty.party),
-            UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.sellerSupplierParty.party), this.cookieService.get("user_id"),this.quotation, this.bpDataService);
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processInstanceId);
-
         //this.callStatus.submit();
-        this.bpeService.continueBusinessProcess(piim)
+        this.bpeService.startProcessWithDocument(this.quotation)
             .then(res => {
                 this.callStatus.callback("Quotation sent", true);
                 var tab = "PURCHASES";

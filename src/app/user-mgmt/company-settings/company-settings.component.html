@@ -5,14 +5,14 @@
     <!-- Title -->
     <div class="row">
         <div class="col-12">
-            <p class="nimble-title">Company Settings</p>
+            <p class="nimble-title"><span [innerHTML]="'Company Settings' | translate"></span></p>
         </div>
     </div>
 
     <!-- Profile Completess Progress Bar -->
     <div class="row">
       <div class="col-2">
-        <strong>Profile Completeness:</strong>
+        <strong><span [innerHTML]="'Profile Completeness:' | translate"></span></strong>
       </div>
       <div class="col-10">
         <div class="progress" style="height:1.5rem">
@@ -31,38 +31,38 @@
   <div>
   	<ul class="nav nav-tabs">
   		<li class="nav-item">
-  			<a href id="COMPANY_DATA" class="nav-link" [ngClass]="{ active: selectedTab === 'COMPANY_DATA'}" (click)="onSelectTab($event)">
-  				Company Data
+  			<a href id="COMPANY_DATA" class="nav-link" [ngClass]="{ active: selectedTab === 'COMPANY_DATA'}" (click)="onSelectTab($event,'COMPANY_DATA')">
+				<span [innerHTML]="'Company Data' | translate"></span>
   			</a>
   		</li>
       <li class="nav-item">
-  			<a href id="COMPANY_DESCRIPTION" class="nav-link" [ngClass]="{ active: selectedTab === 'COMPANY_DESCRIPTION'}" (click)="onSelectTab($event)">
-  				Company Details
+  			<a href id="COMPANY_DESCRIPTION" class="nav-link" [ngClass]="{ active: selectedTab === 'COMPANY_DESCRIPTION'}" (click)="onSelectTab($event,'COMPANY_DESCRIPTION')">
+				<span [innerHTML]="'Company Details' | translate"></span>
   			</a>
   		</li>
-  		<li *ngIf="viewMode=='full' && config.showTrade" class="nav-item">
-  			<a href id="NEGOTIATION_SETTINGS" class="nav-link" [ngClass]="{ active: selectedTab === 'NEGOTIATION_SETTINGS'}" (click)="onSelectTab($event)">
-  				Trade Details
+  		<li *ngIf="viewMode=='full'" class="nav-item">
+  			<a href id="NEGOTIATION_SETTINGS" class="nav-link" [ngClass]="{ active: selectedTab === 'NEGOTIATION_SETTINGS'}" (click)="onSelectTab($event,'NEGOTIATION_SETTINGS')">
+				<span [innerHTML]="'Trade Details' | translate"></span>
   			</a>
   		</li>
 		<li *ngIf="viewMode=='full'" class="nav-item">
-			<a href id="TERMS_AND_CONDITIONS" class="nav-link" [ngClass]="{ active: selectedTab === 'TERMS_AND_CONDITIONS'}" (click)="onSelectTab($event)">
-				Terms and Conditions
+			<a href id="TERMS_AND_CONDITIONS" class="nav-link" [ngClass]="{ active: selectedTab === 'TERMS_AND_CONDITIONS'}" (click)="onSelectTab($event,'TERMS_AND_CONDITIONS')">
+				<span [innerHTML]="'Terms and Conditions' | translate"></span>
 			</a>
 		</li>
   		<li *ngIf="viewMode=='full'" class="nav-item">
-  			<a href id="DELIVERY_TERMS" class="nav-link" [ngClass]="{ active: selectedTab === 'DELIVERY_TERMS'}" (click)="onSelectTab($event)">
-  				Delivery Address
+  			<a href id="DELIVERY_TERMS" class="nav-link" [ngClass]="{ active: selectedTab === 'DELIVERY_TERMS'}" (click)="onSelectTab($event,'DELIVERY_TERMS')">
+				<span [innerHTML]="'Delivery Address' | translate"></span>
   			</a>
   		</li>
   		<li *ngIf="viewMode=='full'" class="nav-item">
-  			<a href id="CERTIFICATES" class="nav-link" [ngClass]="{ active: selectedTab === 'CERTIFICATES'}" (click)="onSelectTab($event)">
-  				Certificates
+  			<a href id="CERTIFICATES" class="nav-link" [ngClass]="{ active: selectedTab === 'CERTIFICATES'}" (click)="onSelectTab($event,'CERTIFICATES')">
+				<span [innerHTML]="'Certificates' | translate"></span>
   			</a>
   		</li>
   		<li *ngIf="viewMode=='full'" class="nav-item">
-  			<a href id="CATEGORIES" class="nav-link" [ngClass]="{ active: selectedTab === 'CATEGORIES'}" (click)="onSelectTab($event)">
-  				Catalogue Categories
+  			<a href id="CATEGORIES" class="nav-link" [ngClass]="{ active: selectedTab === 'CATEGORIES'}" (click)="onSelectTab($event,'CATEGORIES')">
+				<span [innerHTML]="'Catalogue Categories' | translate"></span>
   			</a>
   		</li>
   	</ul>

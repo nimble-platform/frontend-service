@@ -3,6 +3,7 @@ import { CompanySettings } from "../model/company-settings";
 import { CallStatus } from "../../common/call-status";
 import { UserService } from "../user.service";
 import { CookieService } from "ng2-cookies";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "company-categories-settings",
@@ -17,7 +18,8 @@ export class CompanyCategoriesSettingsComponent implements OnInit {
     prefCategoriesCallStatus: CallStatus[] = [];
     recCategoriesCallStatus: CallStatus[] = [];
 
-    constructor(private cookieService: CookieService,
+    constructor(private translate: TranslateService,
+                private cookieService: CookieService,
                 private userService: UserService) {
 
     }

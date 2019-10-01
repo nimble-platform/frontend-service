@@ -7,6 +7,7 @@ import { SelectedProperty } from "../model/publish/selected-property";
 import { PROPERTY_TYPES } from "../model/constants";
 import {Item} from '../model/publish/item';
 import {LANGUAGES} from '../model/constants';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "edit-property-modal",
@@ -24,7 +25,8 @@ export class EditPropertyModalComponent implements OnInit {
 
     PROPERTY_TYPES = PROPERTY_TYPES;
 
-    constructor(private modalService: NgbModal) {
+    constructor(private modalService: NgbModal,
+        private translate: TranslateService) {
     }
 
     ngOnInit() {

@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-12">
-        <p class="nimble-title">User Profile</p>
+        <p class="nimble-title"><span [innerHTML]="'User Profile' | translate"></span></p>
     </div>
 </div>
 
@@ -9,22 +9,22 @@
 <div *ngIf="userProfile">
     <div class="row">
         <div class="col-6">
-            <h5>Details</h5>
+            <h5><span [innerHTML]="'Details' | translate"></span></h5>
             <table class="table">
                 <tr>
-                    <th><span>First Name</span></th>
+                    <th><span><span [innerHTML]="'First Name' | translate"></span></span></th>
                     <td>{{ userProfile.firstName}}</td>
                 </tr>
                 <tr>
-                    <th><span>Last Name</span></th>
+                    <th><span><span [innerHTML]="'Last Name' | translate"></span></span></th>
                     <td>{{ userProfile.familyName}}</td>
                 </tr>
                 <tr>
-                    <th><span>E-Mail</span></th>
+                    <th><span><span [innerHTML]="'Dashboard' | translate"></span></span></th>
                     <td>{{ userProfile.contact.electronicMail}}</td>
                 </tr>
                 <tr>
-                    <th><span>Phone Number</span></th>
+                    <th><span><span [innerHTML]="'Phone Number' | translate"></span></span></th>
                     <td *ngIf="userProfile.contact.telephone">{{ userProfile.contact.telephone}}</td>
                     <td *ngIf="!userProfile.contact.telephone">n/A</td>
                 </tr>
@@ -35,10 +35,20 @@
                 </tr>
                 -->
             </table>
+            <div class="row actions-row">
+                <div class="col-6 call-status-col">
+                    <call-status [callStatus]="deleteUserCallStatus" [large]="true"></call-status>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-danger action" (click)="deleteUser(userProfile)">
+                            <span [innerHTML]="'Delete' | translate"></span>
+                    </button>
+                </div>
+            </div>
         </div>
         <div class="col-1"></div>
         <div id="change-password" class="col-5">
-            <h5>Change password</h5>
+            <h5><span [innerHTML]="'Change password' | translate"></span></h5>
 
             <form (ngSubmit)="onChangePasswordSubmit()" class="space-before" #changePasswordForm="ngForm" novalidate>
                 <div class="form-group row">
@@ -71,7 +81,7 @@
                     </div>
                     <div class="col-6">
                         <button type="submit" class="btn btn-primary action" [disabled]="!changePasswordForm.form.valid || !passwords_matching || changePasswordCallStatus.isLoading()">
-                            Change Password
+                                <span [innerHTML]="'Change Password' | translate"></span>
                         </button>
                     </div>
                 </div>

@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, Output} from "@angular/core";
+import {TranslateService} from '@ngx-translate/core';
 /**
  * Created by suat on 28-Mar-18.
  */
@@ -22,6 +23,12 @@ export class FacetComponent {
 
     expanded: boolean = false;
     maxFacets = 5;
+
+    constructor(
+        private translate: TranslateService
+    ) {
+    }
+
 
     selectStringValue(value: string): void {
         let index = this.selectedStringValues.indexOf(value);

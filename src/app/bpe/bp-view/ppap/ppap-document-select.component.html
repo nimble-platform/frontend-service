@@ -5,18 +5,18 @@
 <div class="row">
     <div class="col-12">
         <h6 class="space-after">
-            <b class="clickable" (click)="showDetails = !showDetails">What is Production Part Approval Process (PPAP)? </b>
+            <b class="clickable" (click)="showDetails = !showDetails"><span [innerHTML]="'What is Production Part Approval Process (PPAP)?' | translate"></span> </b>
         </h6>
         <div *ngIf="showDetails">
-            <p>The Production Part Approval Process (PPAP) is a standardized process that helps manufacturers and suppliers communicate and approve production designs and processes before, during, and after manufacture.</p>
+            <p><span [innerHTML]="'Approval PPAP' | translate"></span>.</p>
             <h6 class="space-after">
-                <b>What is the goal of the PPAP process?</b>
+                <b><span [innerHTML]="'What is the goal of the PPAP process?' | translate"></span></b>
             </h6>
-            <p>The goal of the PPAP process is to ensure that all designs and specifications are understood by the supplier and that the production process and produce products that consistently meet these requirements when running at rate.</p>
+            <p><span [innerHTML]="'Goal of PPAP' | translate"></span>.</p>
             <h6 class="space-after">
-                <b>What is the meaning of the PPAP levels?</b>
+                <b><span [innerHTML]="'What is the meaning of the PPAP levels?' | translate"></span></b>
             </h6>
-            <p>The PPAP levels indicate which elements need to be submitted to the customer.</p>
+            <p><span [innerHTML]="'PPAP levels indicate' | translate"></span>.</p>
         </div>
     </div>
 </div>
@@ -26,15 +26,15 @@
 <!-- Ppap level select -->
 <div class="row form-group space-after">
     <div class="col-2">
-        <label for="ppapLevelSelect" class="mt-2"><strong>Select a PPAP level:</strong></label>
+        <label for="ppapLevelSelect" class="mt-2"><strong><span [innerHTML]="'Select a PPAP level' | translate"></span>:</strong></label>
     </div>
     <div class="col-10">
         <select [(ngModel)]="level" id="ppapLevelSelect" class="custom-select" (change)="computeSelectedDocuments()" [disabled]="isLoading() || isRequestSent()">
-            <option [ngValue]='0'>Level 1 - Part Submission Warrant (PSW) only submitted to the customer.</option>
-            <option [ngValue]='1'>Level 2 – PSW with product samples and limited supporting data.</option>
-            <option [ngValue]='2'>Level 3 – PSW with product samples and complete supporting data.</option>
-            <option [ngValue]='3'>Level 4 – PSW and other requirements as defined by the customer.</option>
-            <option [ngValue]='4'>Level 5 – PSW with product samples and complete supporting data available for review at the supplier’s manufacturing location.</option>
+            <option [ngValue]='0'><span [innerHTML]="'ppadoclevel1' | translate"></span>.</option>
+            <option [ngValue]='1'><span [innerHTML]="'ppadoclevel2' | translate"></span>.</option>
+            <option [ngValue]='2'><span [innerHTML]="'ppadoclevel3' | translate"></span>.</option>
+            <option [ngValue]='3'><span [innerHTML]="'ppadoclevel4' | translate"></span>.</option>
+            <option [ngValue]='4'><span [innerHTML]="'ppadoclevel5' | translate"></span>.</option>
         </select>
     </div>
 </div>
@@ -49,7 +49,7 @@
         <div class="col-1 mt-1">
             <button *ngIf="isDocumentAvailable(doc.name)"
                 class="btn btn-secondary btn-sm" (click)="onDownload(doc.name)">
-                Download
+                <span [innerHTML]="'Download' | translate"></span>
             </button>
         </div>
         <div class="col-1"></div>
@@ -59,7 +59,7 @@
 <hr>
 
 <!--Notes-->
-<h5>Notes and Additional Files</h5>
+<h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
 <note-file-view [notes]="notes"
            [documents]="additionalDocuments"
            [label]="'Notes'"
@@ -74,19 +74,19 @@
         <div *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
         <div *ngIf="processMetadata && processMetadata.isBeingUpdated" class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
         <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div *ngIf="!(processMetadata && processMetadata.isBeingUpdated) && !bpDataService.isFinalProcessInTheWorkflow('Ppap')" class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onSkip()">
-                Skip
+                <span [innerHTML]="'Skip' | translate"></span> 
             </button>
         </div>
         <div class="col-2">
             <button *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading() || areAllDocumentsAvailable()" (click)="onSendRequest()">
-                Send Request
+                <span [innerHTML]="'Send Request' | translate"></span>
             </button>
             <button *ngIf="processMetadata && processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading() || areAllDocumentsAvailable()" (click)="onUpdateRequest()">
-                Update Request
+                <span [innerHTML]="'Update Request' | translate"></span>
             </button>
         </div>
     </div>
@@ -94,11 +94,11 @@
     <div *ngIf="isRequestSent()" class="row actions-row">
         <div class="col-8"></div>
         <div class="col-2">
-            <button class="btn btn-secondary action" (click)="onBack()">Back</button>
+            <button class="btn btn-secondary action" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div class="col-2">
             <button class="btn btn-primary action" disabled>
-                Request Sent
+                <span [innerHTML]="'Request Sent' | translate"></span>
             </button>
         </div>
     </div>

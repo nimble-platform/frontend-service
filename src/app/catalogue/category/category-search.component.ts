@@ -18,6 +18,7 @@ import { Text} from '../model/publish/text';
 import { Observable } from "rxjs/Observable";
 import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
 import { SimpleSearchService } from "../../simple-search/simple-search.service";
+import {TranslateService} from '@ngx-translate/core';
 
 type ProductType = "product" | "transportation";
 type SelectedTab = "TREE"
@@ -88,8 +89,10 @@ export class CategorySearchComponent implements OnInit {
         private simpleSearchService: SimpleSearchService,
         private catalogueService: CatalogueService,
         private publishService: PublishService,
-        public appComponent: AppComponent
-    ) {}
+        public appComponent: AppComponent,
+        private translate: TranslateService
+    ) {
+    }
 
     ngOnInit(): void {
         this.route.queryParams.subscribe((params: Params) => {
@@ -151,10 +154,10 @@ export class CategorySearchComponent implements OnInit {
         })
     }
 
-    onSelectTab(event: any) {
+    onSelectTab(event: any, id: any) {
         event.preventDefault();
         if (!this.getCategoryDetailsStatus.isDisplayed())
-          this.selectedTab = event.target.id;
+          this.selectedTab = id;
     }
 
     private getFavoriteCategories() {

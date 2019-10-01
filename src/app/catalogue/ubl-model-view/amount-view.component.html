@@ -12,7 +12,7 @@
                    [ngClass]="{'offset-3' : i > 0} "
                    [readonly]="presentationMode != 'edit'"
                    [formControlName]="'amount'">
-            <label class="col-1" class="ml-3 mr-3">Currency: </label>
+            <label class="col-1" class="ml-3 mr-3"><span [innerHTML]="'Currency:' | translate"></span></label>
             <input  *ngIf="presentationMode != 'edit'"
                     type="text"
                     class="col-1 form-control"
@@ -30,7 +30,7 @@
                         (amountForm.controls['amount']?.errors ||
                             amountForm.controls['currency']?.errors))"
                class="offset-3 text-danger">
-            Both amount and currency must be filled
+               <span [innerHTML]="'Both amount and currency must be filled' | translate"></span>
         </small>
     </div>
 </form>
@@ -46,7 +46,7 @@
                type="number" class="form-control"
                [(ngModel)]="amount[0].value"
                readonly>
-        <label class="col-1" class="ml-3 mr-3">Currency: </label>
+        <label class="col-1" class="ml-3 mr-3"><span [innerHTML]="'Currency:' | translate"></span></label>
         <label class="col-1">{{amount[0].currencyID}}</label>
     </div>
 </ng-container>

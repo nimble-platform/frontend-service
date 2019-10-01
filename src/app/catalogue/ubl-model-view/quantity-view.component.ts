@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 import {Quantity} from "../model/publish/quantity";
 import {UBLModelUtils} from "../model/ubl-model-utils";
 import {ChildForm} from "../child-form";
+import {TranslateService} from '@ngx-translate/core';
 import {AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {UnitService} from '../../common/unit-service';
 
@@ -55,9 +56,10 @@ export class QuantityViewComponent extends ChildForm implements OnInit {
 
     unitValues = [];
     constructor(private fb:FormBuilder,
-                private unitService:UnitService) {
+                private unitService:UnitService,
+                private translate: TranslateService) {
         super();
-        this.quantityForm.addControl('values', this.quantityFormArray)
+        this.quantityForm.addControl('values', this.quantityFormArray);
     }
 
     ngOnInit() {

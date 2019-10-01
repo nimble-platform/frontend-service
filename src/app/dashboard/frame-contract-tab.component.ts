@@ -6,6 +6,7 @@ import {selectPartyName, selectPreferredValues} from "../common/utils";
 import {CallStatus} from "../common/call-status";
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 import {Router} from "@angular/router";
+import {TranslateService} from '@ngx-translate/core';
 /**
  * Created by suat on 28-Mar-18.
  */
@@ -23,7 +24,9 @@ export class FrameContractTabComponent implements OnInit {
 
     constructor(private bpeService: BPEService,
                 private cookieService: CookieService,
-                private router: Router) {}
+                private translate: TranslateService,
+                private router: Router) {
+                }
 
     ngOnInit() {
         this.retrieveFrameContracts();

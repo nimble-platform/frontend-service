@@ -1,4 +1,5 @@
 import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "boolean-input",
@@ -22,7 +23,7 @@ export class BooleanInputComponent implements OnInit {
     private booleanValue: boolean;
     @Output() valueChange = new EventEmitter<boolean>();
 
-    constructor() {
+    constructor(private translate: TranslateService) {
 
     }
 

@@ -7,6 +7,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from '../globals';
 import { CallStatus } from '../common/call-status';
 import { copy } from '../common/utils';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'company-invitation',
@@ -38,6 +39,7 @@ export class CompanyInvitationComponent implements OnInit {
         private cookieService: CookieService,
         private userService: UserService,
 		public appComponent: AppComponent,
+		private translate: TranslateService,
 		private modalService: NgbModal
 	) {}
 

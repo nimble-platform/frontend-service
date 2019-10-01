@@ -11,12 +11,15 @@ import { TnTFormComponent } from './tnt-form.component';
 import {NgxGraphModule} from '@swimlane/ngx-graph';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
 
+import { HttpClientModule } from '@angular/common/http';
+
 @NgModule({
     imports: [
         CommonModule,
         AppCommonModule,
         FormsModule,
         ReactiveFormsModule,
+        HttpClientModule,
         HttpModule,
         TnTRoutingModule,
         NgxGraphModule,

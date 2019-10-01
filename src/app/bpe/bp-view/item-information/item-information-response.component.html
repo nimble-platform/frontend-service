@@ -1,6 +1,6 @@
 <div class="row space-before">
     <div class="col-3">
-        <strong><label for="customFile">Requested technical data sheet:</label></strong>
+        <strong><label for="customFile"><span [innerHTML]="'Requested technical data sheet' | translate"></span>:</label></strong>
     </div>
     <div class="col-9">
         <file-input [multiple]="true" presentationMode="view" [binaryObjects]="requestFiles">
@@ -10,7 +10,7 @@
 
 <div class="row space-before">
     <div class="col-3">
-        <strong><label for="customFile">Filled technical data sheet(s):</label></strong>
+        <strong><label for="customFile"><span [innerHTML]="'Filled technical data sheet(s)' | translate"></span>:</label></strong>
     </div>
     <div class="col-9">
         <file-input [disabled]="isLoading()" [multiple]="true" [binaryObjects]="responseFiles" [presentationMode]="getPresentationMode()"
@@ -22,7 +22,7 @@
 <hr>
 
 <!--Notes-->
-<h5>Notes and Additional Files</h5>
+<h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
 <note-file-view [notes]="request.note"
            [documents]="request.additionalDocumentReference"
            [label]="'Customer\'s note'"></note-file-view>
@@ -39,16 +39,16 @@
     <div class="col-4"></div>
     <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div *ngIf="!isResponseSent()" class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendResponse()">
-            Send Response
+        <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.isProductDeleted" (click)="onSendResponse()">
+            <span [innerHTML]="'Send Response' | translate"></span>
         </button>
     </div>
     <div *ngIf="isResponseSent()" class="col-2">
         <button class="btn btn-primary action" disabled>
-            Response Sent
+            <span [innerHTML]="'Response Sent' | translate"></span>
         </button>
     </div>
 </div>
@@ -58,16 +58,16 @@
     <div class="{{bpDataService.isFinalProcessInTheWorkflow('Item_Information_Request') ? 'col-4' : 'col-2'}}"></div>
     <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading() || readonly" (click)="onRestart()">
-            Ask Something Else
+        <button class="btn btn-primary action" [disabled]="isLoading() || readonly || processMetadata.isProductDeleted || processMetadata.isCollaborationFinished" (click)="onRestart()">
+            <span [innerHTML]="'Ask Something Else' | translate"></span>
         </button>
     </div>
     <div class="col-2" *ngIf="!bpDataService.isFinalProcessInTheWorkflow('Item_Information_Request')">
-        <button class="btn btn-primary action" [disabled]="isLoading() || readonly || (isLogisticsService && !isTransportService)" (click)="onNextStep()">
-            Go to Next Step
+        <button class="btn btn-primary action" [disabled]="isLoading() || readonly || (isLogisticsService && !isTransportService) || processMetadata.isProductDeleted" (click)="onNextStep()">
+            <span [innerHTML]="'Go to Next Step' | translate"></span> 
         </button>
     </div>
 </div>

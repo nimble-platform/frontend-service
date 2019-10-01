@@ -12,10 +12,15 @@ import {
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from './globals';
 import * as moment from "moment";
-import {DEFAULT_LANGUAGE} from './catalogue/model/constants';
+import {DEFAULT_LANGUAGE,LANGUAGES, FALLBACK_LANGUAGE} from './catalogue/model/constants';
 import {TranslateService} from '@ngx-translate/core';
 
 import 'zone.js';
+
+import {Headers, Http} from "@angular/http";
+import {selectValueOfTextObject} from "./common/utils";
+import {CallStatus} from "./common/call-status";
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
     selector: 'nimble-app',
@@ -42,16 +47,26 @@ export class AppComponent implements OnInit {
     public allowed = false;
     public versions = [];
     public minimalView = false;
+    public chatVisible = false;
+    public chatURL = this.sanitizer.bypassSecurityTrustResourceUrl(myGlobals.rocketChatEndpoint);
+    public language = "en";
+    private availableLanguages = LANGUAGES.sort();
 
     enableLogisticServicePublishing = true;
 
+    private accessToken = null;
+    response: any;
+    submitCallStatus: CallStatus = new CallStatus();
+
     constructor(
+        private http: Http,
         private cookieService: CookieService,
         private credentialsService: CredentialsService,
         private router: Router,
         private route: ActivatedRoute,
         private modalService: NgbModal,
-        private translate: TranslateService
+        public translate: TranslateService,
+        public sanitizer: DomSanitizer
     ) {
         router.events.subscribe(event => {
             if (event instanceof NavigationStart) {
@@ -73,8 +88,66 @@ export class AppComponent implements OnInit {
                 this.checkState(event.url);
             }
         });
-        translate.setDefaultLang("en");
-        translate.use(translate.getBrowserLang());
+
+        if (cookieService.get("language")) {
+          this.language = cookieService.get("language");
+        }
+        else {
+          let langTmp = translate.getBrowserLang();
+          if(LANGUAGES.indexOf(langTmp) == -1){
+              langTmp = "en";
+          }
+          this.language = langTmp;
+          cookieService.set("language",this.language);
+        }
+        translate.setDefaultLang(FALLBACK_LANGUAGE);
+        translate.use(DEFAULT_LANGUAGE());
+        if (this.debug)
+          console.log("Initialized platform with language: "+DEFAULT_LANGUAGE());
+    }
+
+    toggleChat() {
+      this.chatVisible = !this.chatVisible;
+    }
+
+    getQueryParameter(name): any {
+        let url = window.location.href;
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+
+    }
+
+    setCookiesForFederatedLogin() {
+        this.cookieService.set("user_id", this.response.userID);
+        if (this.response.companyID)
+            this.cookieService.set("company_id", this.response.companyID);
+        else
+            this.cookieService.set("company_id", null);
+        if (this.response.companyName)
+            this.cookieService.set("active_company_name", selectValueOfTextObject(this.response.companyName));
+        else
+            this.cookieService.set("active_company_name", null);
+        if (this.response.showWelcomeInfo)
+            this.cookieService.set("show_welcome", "true");
+        else
+            this.cookieService.set("show_welcome", "false");
+        this.cookieService.set("user_fullname", this.response.firstname + " " + this.response.lastname);
+        this.cookieService.set("user_email", this.response.email);
+        this.cookieService.set("bearer_token", this.response.accessToken);
+        // this.submitCallStatus.callback("Login Successful");
+    }
+
+    generateFederationURL() {
+        let identityURL = myGlobals.idpURL + "/protocol/openid-connect/auth";
+        let clientID = "?client_id=" + myGlobals.config.federationClientID;
+        let redirectURI = "&redirect_uri=" + myGlobals.frontendURL;
+        let hint = "&scope=openid&response_type=code&kc_idp_hint=" + myGlobals.config.federationIDP;
+
+        return identityURL + clientID + redirectURI + hint;
     }
 
     ngOnInit() {
@@ -85,6 +158,33 @@ export class AppComponent implements OnInit {
 
         this.getVersions();
         this.checkLogin("");
+
+        let code = this.getQueryParameter('code');
+        let federatedLogin = this.getQueryParameter('federatedLogin');
+
+        if (federatedLogin != undefined && federatedLogin == "efs") {
+            window.location.href = this.generateFederationURL();
+        }
+
+        if (code != null) {
+            const url = myGlobals.user_mgmt_endpoint + `/federation/login`;
+            this.submitCallStatus.submit();
+            return this.http
+                .post(url, JSON.stringify({'code': code}), {headers: new Headers({'Content-Type': 'application/json'})})
+                .toPromise()
+                .then(res => {
+                    this.submitCallStatus.callback("Login Successful!");
+                    this.response = res.json();
+                    this.setCookiesForFederatedLogin();
+                    if (!this.response.companyID && myGlobals.config.companyRegistrationRequired)
+                        this.checkLogin("/user-mgmt/company-registration");
+                    else
+                        this.checkLogin("/dashboard");
+                }).catch((e) => {
+                    this.submitCallStatus.error("Login failed", e);
+                })
+        }
+
         this.route.queryParams.subscribe(params => {
             if (params["externalView"] && params["externalView"] == "frame") {
                 this.minimalView = true;
@@ -92,6 +192,14 @@ export class AppComponent implements OnInit {
                 this.minimalView = false;
             }
         });
+    }
+
+    setLang(lang:string) {
+      if (lang != this.language) {
+        this.loading = true;
+        this.cookieService.set("language",lang);
+        location.reload();
+      }
     }
 
     getVersions(): void {
@@ -317,6 +425,7 @@ export class AppComponent implements OnInit {
             }
         } else {
             this.isLoggedIn = false;
+            this.chatVisible = false;
             this.fullName = "";
             this.eMail = "";
             this.userID = "";

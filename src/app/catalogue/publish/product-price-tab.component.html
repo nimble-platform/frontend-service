@@ -1,7 +1,7 @@
 <!-- Price -->
 <div class="row">
     <div class="col-3">
-        <strong>Default Price: </strong>
+        <strong><span [innerHTML]="'Default Price:' | translate"></span></strong>
     </div>
     <div class="col-3">
         <input type="number" class="form-control form-control-sm"
@@ -23,9 +23,9 @@
 </div>
 
 <!-- VAT -->
-<div class="row space-before">
+<div *ngIf="config.vatEnabled" class="row space-before">
     <div class="col-3">
-        <strong>VAT(%): </strong>
+        <strong><span [innerHTML]="'VAT(%):' | translate"></span></strong>
     </div>
     <div class="col-3">
         <input type="number" class="form-control form-control-sm"
@@ -36,7 +36,7 @@
 <!-- Free Sample -->
 <div class="row space-before">
     <div class="col-3">
-        <strong>Free Sample: </strong>
+        <strong><span [innerHTML]="'Free Sample:' | translate"></span></strong>
     </div>
     <div class="col-9">
         <input type="checkbox" [(ngModel)]="catalogueLine.freeOfChargeIndicator">
@@ -48,7 +48,7 @@
 <!-- add price option -->
 <div class="row mb-3">
     <div class="col-3">
-        <label>Add discount / charge on</label>
+        <label><span [innerHTML]="'Add discount / charge on' | translate"></span></label>
     </div>
     <div class="col-2">
         <select class="form-control form-control-sm" #priceOptionSelect>
@@ -56,7 +56,7 @@
         </select>
     </div>
     <button class="btn btn-outline-primary btn-sm" (click)="addPriceOption(priceOptions[priceOptionSelect.value].typeID)">
-        Add discount / charge
+        <span [innerHTML]="'Add discount / charge' | translate"></span>
     </button>
 </div>
 
@@ -64,7 +64,7 @@
 <ng-container *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.ORDERED_QUANTITY.typeID) > 0">
     <div class="card space-after">
         <div class="card-header">
-            <strong>Price options on ordered quantities</strong>
+            <strong><span [innerHTML]="'Price options on ordered quantities' | translate"></span></strong>
             <span title="'Specified quantities are the minimum amounts required for the indicated discount to be applicable'">&#9432;</span>
         </div>
         <div class="card-body">
@@ -76,7 +76,7 @@
                     </quantity-price-option>
                     <div class="col-1">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
-                            Delete
+                            <span [innerHTML]="'Delete' | translate"></span>
                         </button>
                     </div>
                 </div>
@@ -91,7 +91,7 @@
         *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.PRODUCT_PROPERTY.typeID) > 0 && catalogueLine.goodsItem.item.additionalItemProperty.length > 0">
     <div class="card space-after">
         <div class="card-header">
-            <strong>Product / Service property based price options</strong>
+            <strong><span [innerHTML]="'Product / Service property based price options' | translate"></span></strong>
             <span title="'Different prices could be specified based on different values of product / service properties'">&#9432;</span>
         </div>
         <div class="card-body">
@@ -105,7 +105,7 @@
                     </item-property-price-option>
                     <div class="col-1">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
-                            Delete
+                            <span [innerHTML]="'Delete' | translate"></span>
                         </button>
                     </div>
                 </div>
@@ -120,7 +120,7 @@
         *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.INCOTERM.typeID) > 0">
     <div class="card space-after">
         <div class="card-header">
-            <strong>Incoterms based price options</strong>
+            <strong><span [innerHTML]="'Incoterms based price options' | translate"></span></strong>
             <span title="'Different prices could be specified based on different values of incoterm'">&#9432;</span>
         </div>
         <div class="card-body">
@@ -134,7 +134,7 @@
                     </price-option-view>
                     <div class="col-1">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
-                            Delete
+                            <span [innerHTML]="'Delete' | translate"></span>
                         </button>
                     </div>
                 </div>
@@ -149,7 +149,7 @@
         *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.PAYMENT_MEAN.typeID) > 0">
     <div class="card space-after">
         <div class="card-header">
-            <strong>Payment means based price options</strong>
+            <strong><span [innerHTML]="'Payment means based price options' | translate"></span></strong>
             <span title="'Different prices could be specified based on different values of payment means'">&#9432;</span>
         </div>
         <div class="card-body">
@@ -163,7 +163,7 @@
                     </price-option-view>
                     <div class="col-1">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
-                            Delete
+                            <span [innerHTML]="'Delete' | translate"></span>
                         </button>
                     </div>
                 </div>
@@ -178,7 +178,7 @@
         *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.DELIVERY_LOCATION.typeID) > 0">
     <div class="card space-after">
         <div class="card-header">
-            <strong>Delivery location based price options</strong>
+            <strong><span [innerHTML]="'Delivery location based price options' | translate"></span></strong>
             <span title="'Different prices could be specified based on different values of delivery location'">&#9432;</span>
         </div>
         <div class="card-body">
@@ -191,7 +191,7 @@
                     </price-option-view>
                     <div class="col-1">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
-                            Delete
+                            <span [innerHTML]="'Delete' | translate"></span>
                         </button>
                     </div>
                 </div>
@@ -206,7 +206,7 @@
         *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.DELIVERY_PERIOD.typeID) > 0">
     <div class="card space-after">
         <div class="card-header">
-            <strong>Delivery period based price options</strong>
+            <strong><span [innerHTML]="'Delivery period based price options' | translate"></span></strong>
             <span title="'Different prices could be specified based on different values of delivery period'">&#9432;</span>
         </div>
         <div class="card-body">
@@ -220,7 +220,7 @@
                     </price-option-view>
                     <div class="col-1">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
-                            Delete
+                            <span [innerHTML]="'Delete' | translate"></span>
                         </button>
                     </div>
                 </div>

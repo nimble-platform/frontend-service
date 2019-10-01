@@ -1,9 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { BPEService } from "../../bpe.service";
-import { ProcessVariables } from "../../model/process-variables";
-import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
-import { ModelUtils } from "../../model/model-utils";
 import { BPDataService } from "../bp-data-service";
 import { DespatchAdvice } from "../../../catalogue/model/publish/despatch-advice";
 import { CallStatus } from "../../../common/call-status";
@@ -20,6 +17,7 @@ import { Quotation } from "../../../catalogue/model/publish/quotation";
 import {DocumentService} from "../document-service";
 import {CookieService} from 'ng2-cookies';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'dispatch-advice',
@@ -40,6 +38,7 @@ export class DispatchAdviceComponent implements OnInit {
                 private location: Location,
                 private router: Router,
                 private cookieService: CookieService,
+                private translate: TranslateService,
                 private documentService: DocumentService) {
     }
 
@@ -146,18 +145,8 @@ export class DispatchAdviceComponent implements OnInit {
         let dispatchAdvice: DespatchAdvice = copy(this.dispatchAdvice);
         UBLModelUtils.removeHjidFieldsFromObject(dispatchAdvice);
 
-        let vars: ProcessVariables = ModelUtils.createProcessVariables(
-            "Fulfilment",
-            UBLModelUtils.getPartyId(dispatchAdvice.despatchSupplierParty.party),
-            UBLModelUtils.getPartyId(dispatchAdvice.deliveryCustomerParty.party),
-            this.cookieService.get("user_id"),
-            dispatchAdvice,
-            this.bpDataService
-        );
-        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
-
         //this.callStatus.submit();
-        this.bpeService.startBusinessProcess(piim)
+        this.bpeService.startProcessWithDocument(dispatchAdvice)
             .then(res => {
                 this.callStatus.callback("Dispatch Advice sent", true);
                 var tab = "PURCHASES";

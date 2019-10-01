@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
 import {LANGUAGES} from '../catalogue/model/constants';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "text-input",
@@ -37,8 +38,7 @@ export class TextInputComponent implements OnInit {
 
     languages = LANGUAGES;
 
-    constructor() {
-
+    constructor( private translate: TranslateService) {
     }
 
     ngOnInit() {

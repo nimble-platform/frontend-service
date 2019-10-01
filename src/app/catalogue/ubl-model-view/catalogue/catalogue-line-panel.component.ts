@@ -2,6 +2,7 @@ import {Component, Input, Output,EventEmitter} from "@angular/core";
 import {CatalogueLine} from "../../model/publish/catalogue-line";
 import {CatalogueService} from "../../catalogue.service";
 import {Router} from "@angular/router";
+import {TranslateService} from '@ngx-translate/core';
 import {PublishService} from "../../publish-and-aip.service";
 import {CategoryService} from "../../category/category.service";
 import { ProductWrapper } from "../../../common/product-wrapper";
@@ -33,6 +34,7 @@ export class CatalogueLinePanelComponent {
     constructor(private catalogueService: CatalogueService,
                 private categoryService: CategoryService,
                 private publishService: PublishService,
+                private translate: TranslateService,
                 private router: Router) {
     }
 

@@ -6,8 +6,6 @@ import {BPDataService} from "../bp-data-service";
 import {CustomerParty} from "../../../catalogue/model/publish/customer-party";
 import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
 import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
-import {ModelUtils} from "../../model/model-utils";
-import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
 import {Ppap} from "../../../catalogue/model/publish/ppap";
 import {CallStatus} from "../../../common/call-status";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -16,6 +14,7 @@ import { copy } from "../../../common/utils";
 import { Certificate } from "../../../user-mgmt/model/certificate";
 import {DocumentService} from '../document-service';
 import {DocumentReference} from '../../../catalogue/model/publish/document-reference';
+import {TranslateService} from '@ngx-translate/core';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 
 type PpapLevels = [boolean, boolean, boolean, boolean, boolean]
@@ -82,9 +81,9 @@ export class PpapDocumentSelectComponent implements OnInit {
                 private cookieService: CookieService,
                 private route: ActivatedRoute,
                 private router: Router,
+                private translate: TranslateService,
                 private documentService: DocumentService,
                 private location: Location) {
-
     }
 
     ngOnInit() {
@@ -93,8 +92,8 @@ export class PpapDocumentSelectComponent implements OnInit {
 
         this.computeSelectedDocuments();
 
-        this.route.queryParams.subscribe(params => {
-            if (params["pid"] && this.processMetadata) {
+        this.route.params.subscribe(params => {
+            if (params['processInstanceId'] !== 'new' && this.processMetadata) {
                 this.level = 0;
                 this.resetSelectedDocumens();
                 this.ppap = this.bpDataService.ppap;
@@ -183,10 +182,8 @@ export class PpapDocumentSelectComponent implements OnInit {
 
             this.userService.getParty(sellerId).then(sellerParty => {
                 this.ppap.sellerSupplierParty = new SupplierParty(sellerParty);
-                let vars = ModelUtils.createProcessVariables("Ppap", buyerId, sellerId,this.cookieService.get("user_id"), this.ppap, this.bpDataService);
-                let piim = new ProcessInstanceInputMessage(vars, "");
                 this.bpeService
-                    .startBusinessProcess(piim)
+                    .startProcessWithDocument(this.ppap)
                     .then(() => {
                         this.callStatus.callback("Ppap request sent", true);
                         this.router.navigate(["dashboard"]);

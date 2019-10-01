@@ -5,6 +5,7 @@ import {CatalogueLine} from "../catalogue/model/publish/catalogue-line";
 import {LCPAInput} from "../catalogue/model/publish/lcpa-input";
 import {MultiTypeValue} from "../catalogue/model/publish/multi-type-value";
 import {Quantity} from "../catalogue/model/publish/quantity";
+import {TranslateService} from '@ngx-translate/core';
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 import {Amount} from "../catalogue/model/publish/amount";
 
@@ -24,7 +25,9 @@ export class ProductLcpaTabComponent {
     lcpaDetails: LifeCyclePerformanceAssessmentDetails = new LifeCyclePerformanceAssessmentDetails();
     _catalogueLine: CatalogueLine;
 
-    constructor() {
+    constructor(
+            private translate: TranslateService
+            ) {
     }
 
     @Input()

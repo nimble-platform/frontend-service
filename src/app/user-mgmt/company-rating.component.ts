@@ -4,6 +4,7 @@ import { ActivatedRoute} from "@angular/router";
 import { CookieService } from "ng2-cookies";
 import * as myGlobals from "../globals";
 import { CallStatus } from "../common/call-status";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "company-rating",
@@ -24,6 +25,7 @@ export class CompanyRatingComponent implements OnInit {
 
     constructor(private cookieService: CookieService,
                 private bpeService: BPEService,
+                private translate: TranslateService,
                 public route: ActivatedRoute) {
     }
 
@@ -54,7 +56,7 @@ export class CompanyRatingComponent implements OnInit {
           console.log("Fetched ratings: " + JSON.stringify(ratings));
         }
         this.ratings = ratings;
-        if (this.ratings.totalNumberOfRatings > 0) {
+        if (this.ratings && this.ratings.totalNumberOfRatings > 0) {
           this.calcRatings();
         }else{
           this.ratingStatus.emit(true);

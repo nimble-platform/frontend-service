@@ -3,12 +3,12 @@
   <div *ngIf="!alertClosed && !appComponent.checkRoles('pm')">
     <p class="space-before">
       <ngb-alert type="info" (close)="alertClosed=true">
-				Mandatory and already submitted data during the registration can only be changed after re-validation by a platform manager.
+		<span [innerHTML]="'Mandatory and already submitted data during the registration can only be changed after re-validation by a platform manager.' | translate"></span>
 				<div *ngIf="appComponent.checkRoles('wait_comp')" class="jumbotron space-after" style="margin-top: 25px;">
-					<b>Your company is now registered</b><br/>
-					<span *ngIf="!config.companyRegistrationRequired">You can start publishing your catalogue.<br/></span>
-					In order to execute business processes your company needs to be verified by an administrator - please stay tuned.<br/>
-					If you are not being verified with 24h, please contact our support <a href="mailto:{{config.supportMail}}">{{config.supportMail}}</a>.
+					<b><span [innerHTML]="'Your company is now registered' | translate"></span></b><br/>
+					<span *ngIf="!config.companyRegistrationRequired"><span [innerHTML]="'You can start publishing your catalogue.' | translate"></span><br/></span>
+					<span [innerHTML]="'In order to execute business processes your company needs to be verified by an administrator - please stay tuned.' | translate"></span><br/>
+					<span [innerHTML]="'If you are not being verified with 24h, please contact our support' | translate"></span> <a href="mailto:{{config.supportMail}}">{{config.supportMail}}</a>.
 				</div>
       </ngb-alert>
     </p>
@@ -17,7 +17,7 @@
 	<!-- Legal Name -->
 	<div class="form-group row space-before">
 		<label class="col-2 col-form-label">
-			<strong>Company Name:</strong>
+			<strong><span [innerHTML]="'Company Name:' | translate"></span></strong>
 		</label>
 		<div class="col-10">
 			<input type="text" class="form-control" name="companyName" [formControl]="dataForm.controls['name']" required maxlength="255">
@@ -27,7 +27,7 @@
   <!-- Brand Name -->
 	<div class="form-group row space-before">
 		<label class="col-2 col-form-label">
-			<strong>Trade Name:</strong>
+			<strong><span [innerHTML]="'Trade Name:' | translate"></span></strong>
 		</label>
 		<div class="col-10">
 			<input type="text" class="form-control" name="brandName" [formControl]="dataForm.controls['brandName']" maxlength="255">
@@ -37,7 +37,7 @@
 	<!-- VAT Number -->
 	<div class="form-group row">
 		<label class="col-2 col-form-label">
-			<strong>VAT Number:</strong>
+			<strong><span [innerHTML]="'VAT Number:' | translate"></span></strong>
 		</label>
 		<div class="col-10">
 			<input type="text" class="form-control" [formControl]="dataForm.controls['vatNumber']" required maxlength="255">
@@ -48,7 +48,7 @@
 	<div *ngIf="config.showVerification" class="form-group row">
 		<label class="col-2 col-form-label">
 			<span>
-				<strong>Verification Info:</strong>
+				<strong><span [innerHTML]="'Verification Info:' | translate"></span></strong>
 			</span>
 			<span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><i class="fa fa-question-circle"></i></span>
 		</label>
@@ -60,7 +60,7 @@
 	<!-- Business Type -->
 	<div class="form-group row">
 		<label class="col-2 col-form-label">
-			<strong>Business Type:</strong>
+			<strong><span [innerHTML]="'Business Type:' | translate"></span></strong>
 		</label>
 		<div class="col-10">
 			<select class="form-control" [formControl]="dataForm.controls['businessType']" (change)="dataForm.controls['industrySectors'].setValue('')" required>
@@ -72,7 +72,7 @@
   <!-- Industry Sectors -->
   <div class="form-group row">
     <label class="col-2 col-form-label">
-      <strong>Activity Sectors:</strong>
+      <strong><span [innerHTML]="'Activity Sectors:' | translate"></span></strong>
       <span *ngIf="config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length>0 && !forceActText" class="tooltip-icon" (click)="showSectorTT(tooltip)"><i class="fa fa-question-circle"></i></span>
     </label>
     <div class="col-10">
@@ -83,14 +83,14 @@
       </select>
       <textarea rows="3" *ngIf="dataForm.getRawValue()['businessType'] != '' && (!config.supportedActivitySectors[dataForm.getRawValue()['businessType']] || config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length==0 || forceActText)" class="form-control" [formControl]="dataForm.controls['industrySectors']" placeholder="Separate entries using new lines" required maxlength="255"></textarea>
       <!--<input *ngIf="dataForm.getRawValue()['businessType'] != '' && (!config.supportedActivitySectors[dataForm.getRawValue()['businessType']] || config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length==0) || forceActText" type="text" class="form-control" [formControl]="dataForm.controls['industrySectors']" placeholder="Separate entries using ','" required maxlength="255">-->
-      <div *ngIf="config.supportedActivitySectors[dataForm.getRawValue()['businessType']] && config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length>0"><button class="btn btn-link pl-0" type="button" (click)="switchInput()"><span *ngIf="!forceActText">Nothing fitting your business? Switch to manual input.</span><span *ngIf="forceActText">Want to make use of the predefined sectors? Switch to list input.</span></button></div>
+      <div *ngIf="config.supportedActivitySectors[dataForm.getRawValue()['businessType']] && config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length>0"><button class="btn btn-link pl-0" type="button" (click)="switchInput()"><span *ngIf="!forceActText"><span [innerHTML]="'Nothing fitting your business? Switch to manual input.' | translate"></span></span><span *ngIf="forceActText"><span [innerHTML]="'Want to make use of the predefined sectors? Switch to list input.' | translate"></span></span></button></div>
     </div>
   </div>
 
 	<!-- Business Keywords -->
 	<div class="form-group row">
 		<label class="col-2 col-form-label">
-			<strong>Business Keywords:</strong>
+			<strong><span [innerHTML]="'Business Keywords:' | translate"></span></strong>
 			<span class="tooltip-icon" (click)="showKeywordsTT(tooltip)"><i class="fa fa-question-circle"></i></span>
 		</label>
 		<div class="col-10">
@@ -102,7 +102,7 @@
 	<!-- Year of Comp. Reg. -->
 	<div class="form-group row">
 		<label class="col-2 col-form-label">
-			<strong>Year of Foundation:</strong>
+			<strong><span [innerHTML]="'Year of Foundation:' | translate"></span></strong>
 		</label>
 		<div class="col-10">
 			<input type="number" class="form-control" [formControl]="dataForm.controls['yearOfReg']">
@@ -111,23 +111,28 @@
 
   <hr>
 
-  <h3>Address</h3>
+  <h3><span [innerHTML]="'Address' | translate"></span></h3>
 
 	<!-- Address -->
 	<address-form [group]="dataForm.controls.address" [disabledFlag]="!appComponent.checkRoles('pm')"></address-form>
 
 	<!-- Submit -->
 	<div class="row actions-row">
-		<div class="col-7 call-status-col" [ngClass]="{'col-7':!appComponent.checkRoles('pm'),'col-10':appComponent.checkRoles('pm')}">
+		<div class="call-status-col" [ngClass]="{'col-5':!appComponent.checkRoles('pm'),'col-8':appComponent.checkRoles('pm')}">
 			<call-status [callStatus]="saveCallStatus" [large]="true"></call-status>
 		</div>
     <div *ngIf="!appComponent.checkRoles('pm')" class="col-3">
         <button class="btn btn-primary action" type="button" (click)="changeData(changeModal)">
-            <span>Request Company Data Change</span>
+            <span><span [innerHTML]="'Request Company Data Change' | translate"></span></span>
+        </button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-danger action" type="button" (click)="deleteCompany()">
+            <span><span [innerHTML]="'Delete' | translate"></span></span>
         </button>
     </div>
 		<div class="col-2">
-			<button class="btn btn-primary action" type="submit" [disabled]="!dataForm.valid || !dataForm.dirty || saveCallStatus.isLoading()">Save</button>
+			<button class="btn btn-primary action" type="submit" [disabled]="!dataForm.valid || !dataForm.dirty || saveCallStatus.isLoading()"><span [innerHTML]="'Save' | translate"></span></button>
 		</div>
 	</div>
 </form>
@@ -135,25 +140,25 @@
 <!-- Change Modal -->
 <ng-template #changeModal let-d="dismiss">
     <div class="modal-header">
-        <h4 class="modal-title">Request Company Data Change</h4>
+        <h4 class="modal-title"><span [innerHTML]="'Request Company Data Change' | translate"></span></h4>
         <button type="button" class="close" aria-label="Close" (click)="d('')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
     <div class="modal-body">
-        Any change to your company data has to be validated and processed by a platform administrator.<br/><br/>
-        When you press "Open mail template" a partially prefilled mail template will open in the mail client of your choice.<br/><br/>
-        We will process change requests within one business day.
+        <span [innerHTML]="'Any change to your company data has to be validated and processed by a platform administrator.' | translate"></span><br/><br/>
+        <span [innerHTML]="'When you press Open mail template a partially prefilled mail template will open in the mail client of your choice.' | translate"></span><br/><br/>
+        <span [innerHTML]="'We will process change requests within one business day.' | translate"></span>
     </div>
     <div class="modal-footer">
-        <a [href]="mailto" role="button" class="btn btn-primary" (click)="d('')">Open mail template</a>
+        <a [href]="mailto" role="button" class="btn btn-primary" (click)="d('')"><span [innerHTML]="'Open mail template' | translate"></span></a>
     </div>
 </ng-template>
 
 <!-- Tooltip modal -->
 <ng-template #tooltip let-d="dismiss">
     <div class="modal-header">
-        <h4 class="modal-title">Tooltip</h4>
+        <h4 class="modal-title"><span [innerHTML]="'Tooltip' | translate"></span></h4>
         <button type="button" class="close" aria-label="Close" (click)="d('')">
             <span aria-hidden="true">&times;</span>
         </button>

@@ -1,7 +1,7 @@
 <div *ngIf="defaultTermsAndConditions">
 
     <!-- Default Clauses -->
-    <h5>Choose clauses:</h5>
+    <h5><span [innerHTML]="'Choose clauses:' | translate"></span></h5>
     <div class="row">
         <div class="col-3" *ngFor="let clause of defaultTermsAndConditions;let i=index">
             <label>
@@ -14,7 +14,7 @@
     <br>
 
     <!-- Edit clauses -->
-    <h5>Edit clauses:</h5>
+    <h5><span [innerHTML]="'Edit clauses:' | translate"></span></h5>
     <div *ngFor="let clause of termsAndConditions;let i=index" class="space-after">
         <!-- Clause Id-->
         <button [ngClass]="'btn btn-primary btn-outline-primary small-button'" (click)="showSection.set(clause.id,!showSection.get(clause.id));setSectionText(clause)">
@@ -71,7 +71,7 @@
                                 </td>
                                 <!-- Button to delete trading term-->
                                 <td class="align-right" style="vertical-align:middle">
-                                    <button class="btn btn-outline-primary ml-1" (click)="onEditTradingTerm(clause,tradingTerm)">Edit</button>
+                                    <button class="btn btn-outline-primary ml-1" (click)="onEditTradingTerm(clause,tradingTerm)"><span [innerHTML]="'Edit' | translate"></span></button>
                                     <button class="btn btn-danger"  type="button" (click)="onRemoveTradingTerm(clause,tradingTerm)">&times;</button>
                                 </td>
                             </tr>
@@ -81,7 +81,7 @@
                 </div>
                 <!-- Button to add trading term -->
                 <button [ngClass]="'btn btn-primary btn-outline-primary small-button'" (click)="onAddTradingTerm(clause)">
-                    Add Trading Term
+                    <span [innerHTML]="'Add Trading Term' | translate"></span>
                 </button>
             </div>
         </div>
@@ -93,7 +93,7 @@
     <div class="row actions-row space-before">
         <div class="col-10 call-status-col"><call-status [callStatus]="initPageStatus"></call-status></div>
         <div class="col-2">
-            <button class="btn btn-primary action" (click)="onSave()">Save</button>
+            <button class="btn btn-primary action" (click)="onSave()"><span [innerHTML]="'Save' | translate"></span></button>
         </div>
     </div>
 </div>

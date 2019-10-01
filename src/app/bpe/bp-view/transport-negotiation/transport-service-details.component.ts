@@ -4,6 +4,7 @@ import { RequestForQuotation } from "../../../catalogue/model/publish/request-fo
 import { Shipment } from "../../../catalogue/model/publish/shipment";
 import { LineItem } from "../../../catalogue/model/publish/line-item";
 import {selectPreferredValue} from '../../../common/utils';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "transport-service-details",
@@ -18,8 +19,8 @@ export class TransportServiceDetailsComponent implements OnInit {
     shipment: Shipment;
     itemName:string;
 
-    constructor(private bpDataService: BPDataService) {
-        
+    constructor(private bpDataService: BPDataService,
+        private translate: TranslateService) {
     }
 
     ngOnInit() {

@@ -7,10 +7,10 @@
 
 <div *ngIf="presentationMode=='edit'" class="space-before space-after">
 	<button *ngIf="partyRole == 'Transport Service Provider'" class="btn btn-primary" (click)="changePartyRole('Manufacturer')">
-		Switch to manufacturer view
+		<span [innerHTML]="'Switch to manufacturer view' | translate"></span>
 	</button>
 	<button *ngIf="partyRole == 'Manufacturer' || partyRole == ''" class="btn btn-primary" (click)="changePartyRole('Transport Service Provider')">
-		Switch to logistics view
+		<span [innerHTML]="'Switch to logistics view' | translate"></span>
 	</button>
 </div>
 
@@ -21,14 +21,14 @@
             <a
                     [ngClass]="{'nav-link': true, active: selectedTab === 'Product Details'}"
                     (click)="selectedTab = 'Product Details'"
-            >Details</a>
+            ><span [innerHTML]="'Details' | translate"></span></a>
         </li>
 
         <li class="nav-item pointer">
             <a
                     [ngClass]="{'nav-link': true, active: selectedTab === 'Product Trading & Delivery Terms'}"
                     (click)="selectedTab = 'Product Trading & Delivery Terms';"
-            >Trading & Delivery Terms</a>
+            ><span [innerHTML]="'Trading & Delivery Terms' | translate"></span></a>
         </li>
     </ul>
 
@@ -48,7 +48,7 @@
                     (presentationMode != 'edit' && catalogueLine.goodsItem.item.transportationServiceDetails != null)">
     <ul class="nav nav-tabs mb-3">
         <li class="nav-item pointer">
-            <a class="nav-link active">Transportation Service Details</a>
+            <a class="nav-link active"><span [innerHTML]="'Transportation Service Details' | translate"></span></a>
         </li>
     </ul>
 

@@ -1,10 +1,10 @@
 <ng-container *ngIf="dispatchAdvice">
     <!-- Dispatched Quantity -->
     <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
-        label="Dispatched Quantity" [quantity]="dispatchAdvice.despatchLine[0].deliveredQuantity" 
+        label="Dispatched Quantity" [quantity]="dispatchAdvice.despatchLine[0].deliveredQuantity"
         rowClass="space-before" labelClass="col-2" valueClass="col-10">
     </quantity-input>
-    
+
     <hr>
 
     <!-- Shipment -->
@@ -14,7 +14,7 @@
     <hr>
 
     <!--Notes-->
-    <h5>Notes and Additional Files</h5>
+    <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
     <note-file-view [notes]="dispatchAdvice.note"
                [documents]="dispatchAdvice.additionalDocumentReference"
                [label]="'Notes'"
@@ -25,17 +25,18 @@
     <hr class="actions-hr">
 
     <!-- Actions -->
-    <div class="row actions-row">
+    <div class="d-flex justify-content-end actions-row">
         <div class="col-8 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
         </div>
-        <div class="col-2">
+        <div *ngIf="!isReadOnly()" class="col-2">
             <button *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading() || isReadOnly()" (click)="onSendDispatchAdvice()">
-                {{ isReadOnly() ? "Advice Sent" : "Send advice" }}
+                <span [innerHTML]="'Send Advice' | translate"></span>
             </button>
             <button *ngIf="processMetadata && processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading() || isReadOnly()" (click)="onUpdateDispatchAdvice()">
-                Update Advice
+                <span [innerHTML]="'Update Advice' | translate"></span>
+
             </button>
         </div>
     </div>

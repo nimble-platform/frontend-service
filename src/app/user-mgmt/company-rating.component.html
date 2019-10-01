@@ -1,18 +1,23 @@
 <div *ngIf="!hideTitle" class="row">
     <div class="col-12">
-        <p class="nimble-title">Company Ratings</p>
+        <p class="nimble-title"><span [innerHTML]="'Company Ratings' | translate"></span></p>
     </div>
 </div>
 
+<div *ngIf="!ratings" class="row">
+    <div class="col-12">
+        <span [innerHTML]="'Unrated' | translate"></span>
+    </div>
+</div>
 <div *ngIf="ratings" class="row">
   <div class="col-12">
     <div *ngIf="ratings.totalNumberOfRatings==0">
-      Unrated
+        <span [innerHTML]="'Unrated' | translate"></span>
     </div>
     <div *ngIf="ratings.totalNumberOfRatings>0">
         <div class="form-group row">
           <label class="col-6 col-form-label">
-            <strong>Overall Rating 
+            <strong><span [innerHTML]="'Overall Rating' | translate"></span> 
               <span title="Overall rating of the company based on 'Seller Communication','Fulfillment of Terms' and 'Delivery & Packaging'. See the subitems for more details.">
                 <i class="fa fa-exclamation-circle"></i>
               </span>
@@ -31,7 +36,7 @@
         </div>
         <div class="form-group row">
           <label class="col-6 col-form-label">
-            <strong>Seller Communication 
+            <strong><span [innerHTML]="'Seller Communication' | translate"></span> 
               <span title=' Overall rating of how well the seller communicated based on "Quality of Negotiation Process","Quality of Ordering Process" and "Response Time". See the subitems for more details.'>
                 <i class="fa fa-exclamation-circle"></i>
               </span>
@@ -48,7 +53,7 @@
             </div>
         </div>
         <div class="form-group row">
-          <label class="col-6 col-form-label">Quality of Negotiation Process 
+          <label class="col-6 col-form-label"><span [innerHTML]="'Quality of Negotiation Process' | translate"></span> 
             <span title='Indicates how well the negotiation was executed; e.g. clear responses, flexibility on provided terms, supporting documentation, etc.'>
               <i class="fa fa-exclamation-circle"></i>
             </span>
@@ -64,7 +69,7 @@
             </div>
         </div>
         <div class="form-group row">
-          <label class="col-6 col-form-label">Quality of Ordering Process 
+          <label class="col-6 col-form-label"><span [innerHTML]="'Quality of Ordering Process' | translate"></span> 
             <span title=' Indicates how well the ordering was executed; e.g. clear responses, supporting documentation, transition to fulfillment, etc.'>
               <i class="fa fa-exclamation-circle"></i>
             </span>
@@ -80,7 +85,7 @@
             </div>
         </div>
         <div class="form-group row">
-          <label class="col-6 col-form-label">Response Time 
+          <label class="col-6 col-form-label"><span [innerHTML]="'Response Time' | translate"></span> 
             <span title="Indicates how the response times were perceived by the trading partner. This is a subjective value.">
               <i class="fa fa-exclamation-circle"></i>
             </span>
@@ -97,7 +102,7 @@
         </div>
         <div class="form-group row">
           <label class="col-6 col-form-label">
-            <strong>Fulfillment of Terms 
+            <strong><span [innerHTML]="'Fulfillment of Terms' | translate"></span> 
               <span title='Overall rating of how accurately the seller fulfilled the agreed upon terms based on "Quality of Requested Information" and "Conformance to Contractual Terms". See the subitems for more details.'>
                 <i class="fa fa-exclamation-circle"></i>
               </span>
@@ -114,7 +119,7 @@
             </div>
         </div>
         <div class="form-group row">
-          <label class="col-6 col-form-label">Quality of Requested Information 
+          <label class="col-6 col-form-label"><span [innerHTML]="'Quality of Requested Information' | translate"></span> 
             <span title="Indicates how well the received product or service matches the listed details.">
               <i class="fa fa-exclamation-circle"></i>
             </span>
@@ -130,7 +135,7 @@
             </div>
         </div>
         <div class="form-group row">
-          <label class="col-6 col-form-label">Conformance to Contractual Terms 
+          <label class="col-6 col-form-label"><span [innerHTML]="'Conformance to Contractual Terms' | translate"></span> 
             <span title="Indicates how accurately the seller conformed to the agreed upon contractual terms; e.g. dispatch date, payment method, additional services, etc.">
               <i class="fa fa-exclamation-circle"></i>
             </span>
@@ -147,7 +152,7 @@
         </div>
         <div class="form-group row">
           <label class="col-6 col-form-label">
-            <strong>Delivery & Packaging 
+            <strong><span [innerHTML]="'Delivery & Packaging' | translate"></span> 
               <span title="Overall rating of the quality of delivery and packaging, e.g. delivery date, adequate packing, adequate delivery method, etc.">
                 <i class="fa fa-exclamation-circle"></i>
               </span>

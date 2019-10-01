@@ -2,7 +2,7 @@
     <!-- Consolidated Shipment -->
     <div class="row">
         <div class="col-12">
-            <h3>Consolidated Shipment</h3>
+            <h3><span [innerHTML]="'Consolidated Shipment' | translate"></span></h3>
 
             <!-- Goods Item -->
             <text-input presentationMode="view" label="Goods Item" definition="The goods item included in this shipment" [disabled]="isRequestDisabled()"
@@ -41,7 +41,7 @@
     <!-- Dates -->
     <div class="row">
         <div class="col-12">
-            <h3>Pick-up Dates</h3>
+            <h3><span [innerHTML]="'Pick-up Dates' | translate"></span></h3>
             <!-- Service Start Date -->
             <date-input label="Pick-Up Date" definition="The period within which the services referred to in the Transport Execution Plan Request must begin."
                         [(date)]="request.serviceStartTimePeriod.startDate" rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
@@ -61,7 +61,7 @@
     <!-- Origin Address -->
     <div class="row">
         <div class="col-12">
-            <h3>Origin</h3>
+            <h3><span [innerHTML]="'Origin' | translate"></span></h3>
             <address-input [address]="request.fromLocation.address" presentationMode="view">
             </address-input>
         </div>
@@ -74,7 +74,7 @@
     <!-- To Address -->
     <div class="row">
         <div class="col-12">
-            <h3>Destination</h3>
+            <h3><span [innerHTML]="'Destination' | translate"></span></h3>
             <address-input [address]="request.toLocation.address" presentationMode="view">
             </address-input>
         </div>
@@ -85,7 +85,7 @@
 
 
     <!--Notes-->
-    <h5>Notes and Additional Files</h5>
+    <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
     <note-file-view [notes]="request.note"
                [documents]="request.additionalDocumentReference"
                [firstCol]="'col-2'"
@@ -102,9 +102,9 @@
     <!-- Contract -->
     <ng-container *ngIf="request.transportContract?.clause || contractCallStatus.isDisplayed()">
         <hr>
-        <h3>Contract</h3>
+        <h3><span [innerHTML]="'Contract' | translate"></span></h3>
         <call-status [callStatus]="contractCallStatus"></call-status>
-        <contract *ngIf="request.transportContract" [contract]="request.transportContract" [showQuotation]="true">
+        <contract *ngIf="request.transportContract" [contract]="request.transportContract" [showQuotation]="true" [isCatalogueLineDeleted]="processMetadata.isProductDeleted">
         </contract>
     </ng-container>
 
@@ -116,14 +116,14 @@
             <div class="col-3"></div>
             <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
             <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
             </div>
             <div class="col-3">
                 <button *ngIf="!updatingProcess" class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()">
-                    Send Execution Plan Terms
+                    <span [innerHTML]="'Send Execution Plan Terms' | translate"></span>
                 </button>
                 <button *ngIf="updatingProcess"class="btn btn-primary action" [disabled]="isLoading()" (click)="onUpdateRequest()">
-                    Update Execution Plan Terms
+                    <span [innerHTML]="'Update Execution Plan Terms' | translate"></span>
                 </button>
             </div>
         </div>
@@ -132,11 +132,11 @@
             <div class="{{productOrder ? 'col-3' : 'col-6'}}"></div>
             <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
             <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
             </div>
             <div *ngIf="productOrder" class="col-3">
                 <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onDispatchAdvice()">
-                    Dispatch Order
+                    <span [innerHTML]="'Dispatch Order' | translate"></span> 
                 </button>
             </div>
         </div>
@@ -144,16 +144,16 @@
         <div class="row actions-row" *ngIf="userRole === 'seller' && !isFinished()">
             <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
             <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
             </div>
             <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onSendResponse(false)">
-                    Reject
+                <button class="btn btn-secondary action" [disabled]="isLoading() || processMetadata.isProductDeleted" (click)="onSendResponse(false)">
+                    <span [innerHTML]="'Reject' | translate"></span>
                 </button>
             </div>
             <div class="col-2">
-                <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendResponse(true)">
-                    Accept
+                <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.isProductDeleted" (click)="onSendResponse(true)">
+                    <span [innerHTML]="'Accept' | translate"></span>
                 </button>
             </div>
         </div>
@@ -162,7 +162,7 @@
             <div class="col-6"></div>
             <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
             <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
             </div>
         </div>
     </ng-container>

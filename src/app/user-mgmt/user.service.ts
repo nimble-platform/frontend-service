@@ -55,6 +55,17 @@ export class UserService {
             .catch(this.handleError);
     }
 
+    deleteUser(userId:string): Promise<any> {
+        const url = `${this.url}/admin/delete_user/${userId}`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
+            .delete(url, {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(res => res)
+            .catch(this.handleError);
+    }
+
     registerCompany(company: CompanyRegistration) {
         const url = `${this.url}/register/company`;
         const token = 'Bearer '+this.cookieService.get("bearer_token");
@@ -63,6 +74,18 @@ export class UserService {
             .post(url, JSON.stringify(company), {headers: headers_token, withCredentials: true})
             .toPromise()
             .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    deleteCompany(companyId:string): Promise<any> {
+        const userId = this.cookieService.get("user_id");
+        const url = `${this.url}/admin/delete_company/${companyId}?userId=${userId}`;
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+        return this.http
+            .delete(url, {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(res => res)
             .catch(this.handleError);
     }
 
@@ -260,11 +283,13 @@ export class UserService {
     }
 
     validateVAT(vat:string): Promise<any> {
-      var vat_url = vat.replace(/ /g,"");
-      const url = `${this.url}/company-settings/vat/${vat_url}`;
-      const headers = new Headers({'Content-Type': 'application/json'});
+      var vat_body = {
+        "VatCode": vat.replace(/ /g,"")
+      };
+      const url = `https://api.cloudmersive.com/validate/vat/lookup`;
+      const headers = new Headers({'Content-Type': 'application/json', 'Apikey': '28e63794-ef8a-4616-80bb-26fdd3709a19'});
       return this.http
-          .get(url, {headers: headers})
+          .post(url, JSON.stringify(vat_body), {headers: headers})
           .toPromise()
           .then(res => res.json())
           .catch(this.handleError);
@@ -329,8 +354,12 @@ export class UserService {
       });
     }
 
-    saveCert(file: File, name: string, description: string, type: string, partyId: string,certID?:string): Promise<void> {
-      const url = `${this.url}/company-settings/${partyId}/certificate?name=${name}&description=${description}&type=${type}&certID=${certID}`;
+    saveCert(file: File, name: string, description: string, type: string, partyId: string,certID?:string,langId:string = "en"): Promise<void> {
+
+      if(langId == null || langId == ""){
+          langId = "en";
+      }
+      const url = `${this.url}/company-settings/${partyId}/certificate?name=${name}&description=${description}&type=${type}&certID=${certID}&langId=${langId}`;
       const token = 'Bearer '+this.cookieService.get("bearer_token");
       const headers_token = new Headers({'Authorization': token});
       const form_data: FormData = new FormData();
@@ -483,44 +512,5 @@ export class UserService {
         .toPromise()
         .then(() => {})
         .catch(this.handleError)
-    }
-
-    // getCallKibana(){
-    //     const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': 'Basic YWRtaW46KnBsYXRmb3JtKg==' });
-    //     let options = new RequestOptions();
-    //     options.headers = new Headers();
-    //     options.headers.append('authorization', 'Basic YWRtaW46KnBsYXRmb3JtKg==');
-    //     options.responseType = ResponseContentType.Blob;
-
-    //     return new Observable((observer: Subscriber<any>) => {
-    //         let objectUrl: string = null;
-
-    //         this.http
-    //             .get("http://nimble-staging.salzburgresearch.at/kibana/app/kibana#/dashboard/27836650-8907-11e9-9609-0520e65d66da?_g=(refreshInterval%3A(display%3A'30%20minutes'%2Cpause%3A!f%2Csection%3A2%2Cvalue%3A1800000)%2Ctime%3A(from%3Anow%2FM%2Cmode%3Aquick%2Cto%3Anow%2FM))", options)
-    //             .subscribe(m => {
-    //                 objectUrl = URL.createObjectURL(m.blob());
-    //                 observer.next(objectUrl);
-    //             });
-
-    //         return () => {
-    //             if (objectUrl) {
-    //                 URL.revokeObjectURL(objectUrl);
-    //                 objectUrl = null;
-    //             }
-    //         };
-    //     });
-        
-    // }
-    
-    getCallKibana(){
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'kbn-version': '6.7.1','User-Agent': 'Mozilla', "withCredentials": "true","Access-Control-Allow-Origi":"*"});
-        let options = new RequestOptions();
-        
-        return this.http
-        .post("http://nimble-staging.salzburgresearch.at:5601/api/v1/auth/login", JSON.stringify({"username": "admin", "password": "admin"}), {headers: headers_token})
-        .toPromise()
-        .then(res => res.json())
-        .catch(this.handleError);
-        
     }
 }

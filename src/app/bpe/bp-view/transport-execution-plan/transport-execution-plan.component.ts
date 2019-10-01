@@ -9,17 +9,14 @@ import { TransportExecutionPlanRequest } from "../../../catalogue/model/publish/
 import { BPEService } from "../../bpe.service";
 import { UserService } from "../../../user-mgmt/user.service";
 import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
-import { ProcessVariables } from "../../model/process-variables";
-import { ModelUtils } from "../../model/model-utils";
-import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { TransportExecutionPlan } from "../../../catalogue/model/publish/transport-execution-plan";
 import { BpUserRole } from "../../model/bp-user-role";
 import {copy, selectPreferredValue} from '../../../common/utils';
 import { Order } from "../../../catalogue/model/publish/order";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 import {DocumentService} from '../document-service';
-import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "transport-execution-plan",
@@ -50,8 +47,8 @@ export class TransportExecutionPlanComponent implements OnInit {
                 private location: Location,
                 private router: Router,
                 private documentService: DocumentService,
+                private translate: TranslateService,
                 private route: ActivatedRoute) {
-
     }
 
     ngOnInit() {
@@ -145,10 +142,7 @@ export class TransportExecutionPlanComponent implements OnInit {
             transportationExecutionPlanRequest.transportUserParty = buyerParty;
             transportationExecutionPlanRequest.transportServiceProviderParty = sellerParty;
 
-            const vars: ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan", buyerId, sellerId,this.cookieService.get("user_id"), transportationExecutionPlanRequest, this.bpDataService);
-            const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
-
-            return this.bpeService.startBusinessProcess(piim);
+            return this.bpeService.startProcessWithDocument(transportationExecutionPlanRequest);
         })
         .then(() => {
             this.callStatus.callback("Transport Execution Plan sent", true);
@@ -184,16 +178,8 @@ export class TransportExecutionPlanComponent implements OnInit {
         this.callStatus.submit();
         this.response.documentStatusCode.name = accepted ? "Accepted" : "Rejected";
 
-        const vars: ProcessVariables = ModelUtils.createProcessVariables("Transport_Execution_Plan",
-            UBLModelUtils.getPartyId(this.bpDataService.transportExecutionPlan.transportUserParty),
-            UBLModelUtils.getPartyId(this.bpDataService.transportExecutionPlan.transportServiceProviderParty),
-            this.cookieService.get("user_id"),
-            this.bpDataService.transportExecutionPlan, this.bpDataService);
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars,
-            this.processMetadata.processInstanceId);
-
         //this.callStatus.submit();
-        this.bpeService.continueBusinessProcess(piim)
+        this.bpeService.startProcessWithDocument(this.bpDataService.transportExecutionPlan)
             .then(res => {
                 this.callStatus.callback("Transport Execution Plan sent", true);
                 this.router.navigate(["dashboard"]);

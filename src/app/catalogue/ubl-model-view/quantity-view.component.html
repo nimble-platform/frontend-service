@@ -12,7 +12,7 @@
                    [(ngModel)]="value.value"
                    [ngClass]="{'offset-3' : i > 0} "
                    readonly>
-            <label class="col-1" class="ml-3 mr-3">Unit: </label>
+            <label class="col-1" class="ml-3 mr-3"><span [innerHTML]="'Unit:' | translate"></span></label>
             <input type="text"
                    class="col-1 form-control align-self-start"
                    [(ngModel)]="value.unitCode"
@@ -26,7 +26,7 @@
                     &#9432;
                 </span></label>
             <input type="text" class="form-control" readonly>
-            <label class="col-1" class="ml-3 mr-3 align-self-start">Unit: </label>
+            <label class="col-1" class="ml-3 mr-3 align-self-start"><span [innerHTML]="'Unit:' | translate"></span></label>
             <input type="text" class="col-1 form-control" readonly>
         </div>
     </ng-container>
@@ -58,7 +58,7 @@
                        [formControlName]="'quantity'"
                        placeholder="Quantity">
 
-                <label class="col-1" class="ml-3 mr-3">Unit: </label>
+                <label class="col-1" class="ml-3 mr-3"><span [innerHTML]="'Unit:' | translate"></span></label>
                 <input *ngIf="!type"
                         type="text"
                        class="col-1 form-control align-self-start"
@@ -90,14 +90,14 @@
                             (quantityFormArray.controls[0]?.controls['orderedQuantity']?.errors ||
                             quantityFormArray.controls[0]?.controls['unit']?.errors))"
                        class="offset-3 text-danger">
-                    Property name, quantity and unit must be filled
+                       <span [innerHTML]="'Property name, quantity and unit must be filled' | translate"></span>
                 </small>
                 <small *ngIf="(!editablePropName || i > 0) &&
                             (quantityFormArray.controls[i]?.errors ||
                                 (quantityFormArray.controls[i]?.controls['orderedQuantity']?.errors ||
                                  quantityFormArray.controls[i]?.controls['unit']?.errors))"
                        class="offset-3 text-danger">
-                    Both quantity and unit must be filled
+                       <span [innerHTML]="'Both quantity and unit must be filled' | translate"></span>
                 </small>
             </ng-container>
         </div>
@@ -121,7 +121,7 @@
                type="text" class="form-control align-self-start"
                [(ngModel)]="quantity[0].value"
                [readonly]="readonly">
-        <label class="col-1" class="ml-3 mr-3">Unit: </label>
+        <label class="col-1" class="ml-3 mr-3"><span [innerHTML]="'Unit:' | translate"></span></label>
         <input type="text"
                class="form-control col-1 align-self-start"
                [(ngModel)]="quantity[0].unitCode"

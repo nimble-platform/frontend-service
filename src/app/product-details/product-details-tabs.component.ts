@@ -8,6 +8,7 @@ import { getPropertyValuesAsStrings, selectPartyName } from "../common/utils";
 import { CompanySettings } from "../user-mgmt/model/company-settings";
 import * as myGlobals from '../globals';
 import {Quantity} from '../catalogue/model/publish/quantity';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'product-details-tabs',
@@ -22,6 +23,9 @@ export class ProductDetailsTabsComponent implements OnInit {
 
     @Input() showOverview: boolean = false;
     @Input() readonly: boolean = false;
+    // whether the item is deleted or not
+    // if it's deleted PRICE and DELIVERY_TRADING tabs are not shown to the user since it's not possible to retrieve those information anymore
+    @Input() isCatalogueLineDeleted: boolean = false;
 
     @Input()
     set tabToOpen(tab: ProductDetailsTab) {
@@ -47,6 +51,7 @@ export class ProductDetailsTabsComponent implements OnInit {
     haveRating = false;
 
     constructor(
+        private translate: TranslateService,
         private bpeService: BPEService,
     ) {}
 
@@ -116,9 +121,9 @@ export class ProductDetailsTabsComponent implements OnInit {
 
     }
 
-    onSelectTab(event: any): void {
+    onSelectTab(event: any, id: any): void {
         event.preventDefault();
-        this.selectedTab = event.target.id;
+        this.selectedTab = id;
         this.tabStatus.emit(false);
     }
 

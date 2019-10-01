@@ -8,9 +8,6 @@ import { Router } from "@angular/router";
 import { Quotation } from "../../../catalogue/model/publish/quotation";
 import { NegotiationModelWrapper } from "./negotiation-model-wrapper";
 import { NEGOTIATION_RESPONSES, CURRENCIES } from "../../../catalogue/model/constants";
-import { ModelUtils } from "../../model/model-utils";
-import { ProcessVariables } from "../../model/process-variables";
-import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { CallStatus } from "../../../common/call-status";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { BpUserRole } from "../../model/bp-user-role";
@@ -24,6 +21,7 @@ import {DigitalAgreement} from "../../../catalogue/model/publish/digital-agreeme
 import * as moment from "moment";
 import {Moment, unitOfTime} from "moment";
 import {Clause} from '../../../catalogue/model/publish/clause';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "negotiation-response",
@@ -45,6 +43,9 @@ export class NegotiationResponseComponent implements OnInit {
     @Input() primaryTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = 'product_defaults';
     @Input() readonly: boolean = false;
     @Input() formerProcess: boolean;
+    // whether the item is deleted or not
+    // if the item is deleted, then we will not show Product Defaults section since we do not have those information
+    @Input() isCatalogueLineDeleted:boolean = false ;
     wrapper: NegotiationModelWrapper;
     userRole: BpUserRole;
     quotationTotalPrice: Quantity;
@@ -77,8 +78,8 @@ export class NegotiationResponseComponent implements OnInit {
                 private bpDataService: BPDataService,
                 private location: Location,
                 private cookieService: CookieService,
+                private translate: TranslateService,
                 private router: Router) {
-
     }
 
     ngOnInit() {
@@ -139,11 +140,8 @@ export class NegotiationResponseComponent implements OnInit {
         }
 
         //this.callStatus.submit();
-        const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.buyerCustomerParty.party),
-            UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.sellerSupplierParty.party),this.cookieService.get("user_id"), this.quotation, this.bpDataService);
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, this.processMetadata.processInstanceId);
 
-        this.bpeService.continueBusinessProcess(piim).then(() => {
+        this.bpeService.startProcessWithDocument(this.quotation).then(() => {
             this.callStatus.callback("Quotation sent", true);
             var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")
@@ -169,9 +167,9 @@ export class NegotiationResponseComponent implements OnInit {
         this.wrapper.quotationDiscountPriceWrapper.totalPrice = totalPrice;
     }
 
-    onTCTabSelect(event): void {
+    onTCTabSelect(event:any,id:any): void {
         event.preventDefault();
-        this.selectedTCTab = event.target.id;
+        this.selectedTCTab = id;
     }
 
     /*
@@ -219,6 +217,10 @@ export class NegotiationResponseComponent implements OnInit {
     isFormValid(): boolean {
         // TODO check other elements
         return this.isFrameContractDurationValid();
+    }
+
+    isPriceValid(): boolean {
+        return this.wrapper.quotationDiscountPriceWrapper.totalPrice > 0;
     }
 
     isSellerTermsVisible(): boolean {

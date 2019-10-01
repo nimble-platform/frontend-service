@@ -56,15 +56,15 @@ import {LogisticPublishDeactivateGuardService} from './logistic-publish-deactiva
 import {DeleteExportCatalogueModalComponent} from "./ubl-model-view/catalogue/delete-export-catalogue-modal.component";
 
 @NgModule({
-	imports: [CommonModule, 
-		AppCommonModule, 
-		FormsModule, 
-		ReactiveFormsModule, 
-		HttpModule, 
-        CatalogueRoutingModule, 
+	imports: [CommonModule,
+		AppCommonModule,
+		FormsModule,
+		ReactiveFormsModule,
+		HttpModule,
+        CatalogueRoutingModule,
         ProductDetailsModule,
         UserMgmtModule,
-		NgbModule.forRoot()
+        NgbModule.forRoot()
 	],
     declarations: [
         CategorySearchComponent,

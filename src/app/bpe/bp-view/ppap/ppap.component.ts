@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import {Component, Input, OnInit} from '@angular/core';
 import { CookieService } from "ng2-cookies";
 import { BPDataService } from "../bp-data-service";
 import { ActivatedRoute } from "@angular/router";
@@ -15,6 +15,9 @@ export class PpapComponent implements OnInit {
     userRole: BpUserRole;
     formerProcess: boolean;
 
+    // whether the item is deleted or not
+    @Input() isCatalogueLineDeleted:boolean = false ;
+
     constructor(private bpDataService: BPDataService,
                 private cookieService: CookieService,
                 public route: ActivatedRoute) {
@@ -29,8 +32,8 @@ export class PpapComponent implements OnInit {
         const sellerId: string = UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty);
         this.formerProcess = this.bpDataService.bpActivityEvent.formerProcess;
 
-        this.route.queryParams.subscribe(params => {
-            if (!params['pid']) {
+        this.route.params.subscribe(params => {
+            if (params['processInstanceId'] === 'new') {
                 this.screen = "select";
                 this.userRole = "buyer";
             } else if (currentCompanyId === sellerId) {

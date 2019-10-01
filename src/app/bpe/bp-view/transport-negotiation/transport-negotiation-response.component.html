@@ -4,22 +4,22 @@
         <li class="nav-item">
             <a href id="OVERVIEW" class="nav-link"
                 [ngClass]="{ active: selectedTab === 'OVERVIEW'}"
-                (click)="onSelectTab($event)">
-                Transport Service Details
+                (click)="onSelectTab($event,'OVERVIEW')">
+                <span [innerHTML]="'Transport Service Details' | translate"></span>
             </a>
         </li>
         <li class="nav-item">
             <a href id="ADDRESS" class="nav-link"
                 [ngClass]="{ active: selectedTab === 'ADDRESS'}"
-                (click)="onSelectTab($event)">
-                Pick-up & Drop-off
+                (click)="onSelectTab($event,'ADDRESS')">
+                <span [innerHTML]="'Pick-up & Drop-off' | translate"></span>
             </a>
         </li>
         <li class="nav-item">
             <a href id="NEGOTIATION" class="nav-link"
                 [ngClass]="{ active: selectedTab === 'NEGOTIATION'}"
-                (click)="onSelectTab($event)">
-                Negotiable Terms
+                (click)="onSelectTab($event,'NEGOTIATION')">
+                <span [innerHTML]="'Negotiable Terms' | translate"></span>
             </a>
         </li>
     </ul>
@@ -38,19 +38,19 @@
     <transport-negotiation-address [lineItem]="rfq.requestForQuotationLine[0].lineItem" [disabled]="true">
     </transport-negotiation-address>
 </ng-container>
-    
+
 
 <!-- Negotiable Terms Tab -->
 <ng-container *ngIf="selectedTab === 'NEGOTIATION'">
     <div  class="row space-before title-row">
         <div class="col-2">
-            <h5 class="space-before">Term</h5>
+            <h5 class="space-before"><span [innerHTML]="'Term' | translate"></span></h5>
         </div>
         <div class="col-5">
-            <h5 class="space-before">Request</h5>
+            <h5 class="space-before"><span [innerHTML]="'Request' | translate"></span></h5>
         </div>
         <div class="col-5">
-            <h5 class="space-before">Response</h5>
+            <h5 class="space-before"><span [innerHTML]="'Response' | translate"></span></h5>
         </div>
     </div>
 
@@ -61,13 +61,13 @@
             </input-label>
         </div>
         <div class="col-5">
-            <quantity-input [disabled]="true" 
+            <quantity-input [disabled]="true"
                 [quantity]="rfqPrice.itemPrice"
                 [quantityUnits]="CURRENCIES">
             </quantity-input>
         </div>
         <div class="col-5">
-            <quantity-input [disabled]="isDisabled()" 
+            <quantity-input [disabled]="isDisabled()"
                 [quantity]="quotationPrice.itemPrice"
                 [quantityUnits]="CURRENCIES">
             </quantity-input>
@@ -81,14 +81,14 @@
             </input-label>
         </div>
         <div class="col-5">
-            <options-input [disabled]="true" 
-                [(selected)]="rfq.paymentMeans.paymentMeansCode.value" 
+            <options-input [disabled]="true"
+                [(selected)]="rfq.paymentMeans.paymentMeansCode.value"
                 [options]="PAYMENT_MEANS">
             </options-input>
         </div>
         <div class="col-5">
-            <options-input [disabled]="isDisabled()" 
-                [(selected)]="quotation.paymentMeans.paymentMeansCode.value" 
+            <options-input [disabled]="isDisabled()"
+                [(selected)]="quotation.paymentMeans.paymentMeansCode.value"
                 [options]="PAYMENT_MEANS">
             </options-input>
         </div>
@@ -101,14 +101,14 @@
             </input-label>
         </div>
         <div class="col-5">
-            <options-input [disabled]="true" 
-                [(selected)]="rfqPaymentTerms.paymentTerm" 
+            <options-input [disabled]="true"
+                [(selected)]="rfqPaymentTerms.paymentTerm"
                 [options]="PAYMENT_TERMS">
             </options-input>
         </div>
         <div class="col-5">
-            <options-input [disabled]="isDisabled()" 
-                [(selected)]="quotationPaymentTerms.paymentTerm" 
+            <options-input [disabled]="isDisabled()"
+                [(selected)]="quotationPaymentTerms.paymentTerm"
                 [options]="PAYMENT_TERMS">
             </options-input>
         </div>
@@ -121,14 +121,14 @@
             </input-label>
         </div>
         <div class="col-5">
-            <options-input [disabled]="true" 
-                [(selected)]="rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms" 
+            <options-input [disabled]="true"
+                [(selected)]="rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms"
                 [options]="INCOTERMS">
             </options-input>
         </div>
         <div class="col-5">
-            <options-input [disabled]="isDisabled()" 
-                [(selected)]="quotation.quotationLine[0].lineItem.deliveryTerms.incoterms" 
+            <options-input [disabled]="isDisabled()"
+                [(selected)]="quotation.quotationLine[0].lineItem.deliveryTerms.incoterms"
                 [options]="INCOTERMS">
             </options-input>
         </div>
@@ -162,13 +162,13 @@
             </input-label>
         </div>
         <div class="col-5">
-            <quantity-input [disabled]="true" 
-                [quantity]="rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure" 
+            <quantity-input [disabled]="true"
+                [quantity]="rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure"
                 quantityType="time_quantity">
             </quantity-input>
         </div>
         <div class="col-5">
-            <quantity-input [disabled]="isDisabled()" 
+            <quantity-input [disabled]="isDisabled()"
                 [quantity]="quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure"
                 quantityType="time_quantity">
             </quantity-input>
@@ -206,11 +206,11 @@
             </date-input>
         </div>
     </div>
-    
+
     <hr>
 
     <!--Notes-->
-    <h5>Notes and Additional Files</h5>
+    <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
     <note-file-view [notes]="quotation.note"
                [requestNotes]="rfq.note"
                [documents]="quotation.additionalDocumentReference"
@@ -230,16 +230,16 @@
     <div class="row actions-row" *ngIf="userRole === 'seller' && !isReadOnly()">
         <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
         <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRespondToQuotation(false)">
-                Reject Offer
+                <span [innerHTML]="'Reject Offer' | translate"></span>
             </button>
         </div>
         <div class="col-2">
             <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToQuotation(true)">
-                Accept Offer
+                <span [innerHTML]="'Accept Offer' | translate"></span>
             </button>
         </div>
     </div>
@@ -247,23 +247,23 @@
     <div class="row actions-row" *ngIf="userRole === 'seller' && isReadOnly() && !readonly">
         <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
         <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
     </div>
 
     <div class="row actions-row" *ngIf="userRole === 'buyer' && !readonly">
-        <div class="col-5 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="{{bpDataService.isFinalProcessInTheWorkflow('Negotiation') ? 'col-7' : 'col-5' }} call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
         <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div class="col-3">
-            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRequestNewQuotation()">
-                Request new Quotation
+            <button class="btn btn-secondary action" [disabled]="isLoading() || processMetadata.isCollaborationFinished" (click)="onRequestNewQuotation()">
+                <span [innerHTML]="'Request new Quotation' | translate"></span>
             </button>
         </div>
-        <div class="col-2">
+        <div *ngIf="!bpDataService.isFinalProcessInTheWorkflow('Negotiation')" class="col-2">
             <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onAcceptAndOrder()">
-                Accept & Order
+                <span [innerHTML]="'Accept & Order' | translate"></span>
             </button>
         </div>
     </div>

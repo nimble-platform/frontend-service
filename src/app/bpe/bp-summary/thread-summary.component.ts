@@ -19,7 +19,6 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { Code } from "../../catalogue/model/publish/code";
 import {BpUserRole} from '../model/bp-user-role';
 import {BpActivityEvent} from '../../catalogue/model/publish/bp-start-event';
-import {BpURLParams} from '../../catalogue/model/publish/bpURLParams';
 import {UBLModelUtils} from '../../catalogue/model/ubl-model-utils';
 import {selectPreferredValue} from '../../common/utils';
 import {DashboardProcessInstanceDetails} from '../model/dashboard-process-instance-details';
@@ -84,6 +83,8 @@ export class ThreadSummaryComponent implements OnInit {
 
     // this is always true unless an approved order is present in this process group or the collaboration is already cancelled
     showCancelCollaborationButton = true;
+    // as long as the collaboration is not finished/cancelled and all processes in the group are completed , it's true
+    showFinishCollaborationButton = true;
     // this is always false unless the collaboration was cancelled or fully completed (buyer side only)
     showRateCollaborationButton = false;
     expanded: boolean = false;
@@ -156,30 +157,35 @@ export class ThreadSummaryComponent implements OnInit {
                 userRole,
                 this.titleEvent.processType,
                 this.processInstanceGroup.id,
-                this.collaborationGroupId,
                 this.titleEvent,
                 [this.titleEvent].concat(this.history),
                 null,
                 false,
-                false), // thread summary always shows the last step in the negotiation
-            true,
-            new BpURLParams(
+                false, // thread summary always shows the last step in the negotiation
                 this.titleEvent.product.catalogueDocumentReference.id,
                 this.titleEvent.product.manufacturersItemIdentification.id,
-                this.titleEvent.processInstanceId));
+                this.titleEvent.processInstanceId,
+                ActivityVariableParser.getPrecedingDocumentId(this.titleEvent.activityVariables)),
+            true);
     }
 
     private fetchEvents(): void {
         this.fetchCallStatus.submit();
         const ids = this.processInstanceGroup.processInstanceIDs;
-        Promise.all(ids.map(id => this.fetchThreadEvent(id)).concat(this.bpeService.checkCollaborationFinished(this.processInstanceGroup.id))).then(responses => {
-            let isCollaborationFinished = responses.pop();
-            let events = responses;
-            // if the collaboration is finished, the user should not be able to cancel the collaboration
-            if(isCollaborationFinished){
+        Promise.all(ids.map(id => this.fetchThreadEvent(id))).then(events => {
+            let isCollaborationInProgress = this.processInstanceGroup.status == "INPROGRESS";
+            // if the collaboration is not in progress, the user should not be able to cancel the collaboration
+            if(!isCollaborationInProgress){
                 this.showCancelCollaborationButton = false;
+                this.showFinishCollaborationButton = false;
             }
-
+            // check whether there are processes which are not completed
+            for(let event of events){
+                if(event.processStatus != "Completed"){
+                    this.showFinishCollaborationButton = false;
+                    break;
+                }
+            }
             events.sort((a,b) => moment(a.startTime).diff(moment(b.startTime)));
             events = events.reverse();
             this.completeHistory = events;
@@ -190,12 +196,13 @@ export class ThreadSummaryComponent implements OnInit {
 
             // if the collaboration is not rated yet, set the RateCollaborationButton status
             if(!this.isCollaborationRated(events) ){
-                // set the status of button to True if the process is cancelled or it is completed (buyer side only)
-                if((isCollaborationFinished && this.lastEvent.buyer) || this.processInstanceGroup.status == "CANCELLED"){
+                // set the status of button to True if the process is cancelled or it is not in progress (completed/finished) (buyer side only)
+                if((!isCollaborationInProgress && this.lastEvent.buyer) || this.processInstanceGroup.status == "CANCELLED"){
                     this.showRateCollaborationButton = true;
                 }
             }
             this.computeTitleEvent();
+            this.checkDataChannel();
 
             // update the former step field of events after sorting and other population
             events[0].formerStep = false;
@@ -295,12 +302,12 @@ export class ThreadSummaryComponent implements OnInit {
             initialDoc,
             activityVariables,
             userRole === "buyer",
-            isRated === "true"
+            isRated === "true",
+            initialDoc.isProductDeleted,
+            this.processInstanceGroup.status == "COMPLETED"
         );
 
         this.fillStatus(event, processInstance["state"], processType, responseDocumentStatus, userRole === "buyer",isFulfilmentIncludedInWorkflow);
-        this.setCancelCollaborationButtonStatus(processType,responseDocumentStatus,sellerWorkflow);
-        this.checkDataChannel(event);
 
         return event;
     }
@@ -537,39 +544,48 @@ export class ThreadSummaryComponent implements OnInit {
         }
     }
 
-    checkDataChannel(event:ThreadEventMetadata) {
-        //if(event.processType === 'Order') {
-            let processGroupId = this.processInstanceGroup.id;
-            let role = this.processInstanceGroup.collaborationRole;
-            if (role == "BUYER" && this.processInstanceGroup && this.processInstanceGroup.associatedGroups && this.processInstanceGroup.associatedGroups.length > 0)
-              processGroupId = this.processInstanceGroup.associatedGroups[0];
-            this.dataChannelService.channelsForBusinessProcess(processGroupId)
-                .then(channels => {
-                    if (channels && channels.channelID) {
-                        if (role == "BUYER") {
-                            if (channels.negotiationStepcounter % 5 == 1 || channels.negotiationStepcounter % 5 == 3)
-                                this.enableDataChannelButton = true;
-                            else
-                                this.enableDataChannelButton = false;
-                        }
-                        else {
-                            if (channels.negotiationStepcounter % 5 != 1)
-                                this.enableDataChannelButton = true;
-                            else
-                                this.enableDataChannelButton = false;
-                        }
-                        this.showDataChannelButton = true;
-                        const channelId = channels.channelID;
-                        this.channelLink = `/data-channel/details/${channelId}`
-                    }
-                    else {
-                      this.showDataChannelButton = false;
-                    }
+    checkDataChannel() {
+        let channelId = this.processInstanceGroup.dataChannelId;
+        let role = this.processInstanceGroup.collaborationRole;
+
+        if(channelId){
+            this.dataChannelService.getChannelConfig(channelId).then(channel => {
+                if (role == "BUYER") {
+                    if (channel.negotiationStepcounter % 5 == 1 || channel.negotiationStepcounter % 5 == 3)
+                        this.enableDataChannelButton = true;
+                    else
+                        this.enableDataChannelButton = false;
+                }
+                else {
+                    if (channel.negotiationStepcounter % 5 != 1)
+                        this.enableDataChannelButton = true;
+                    else
+                        this.enableDataChannelButton = false;
+                }
+                this.showDataChannelButton = true;
+                this.channelLink = `/data-channel/details/${channelId}`
+            }).catch(err => {
+                this.showDataChannelButton = false;
+                console.error(err);
+            });
+        }
+        else{
+            this.showDataChannelButton = false;
+        }
+    }
+
+    finishCollaboration(){
+        if (confirm("Are you sure that you want to finish this collaboration?")) {
+            this.archiveCallStatus.submit();
+            this.bpeService.finishCollaboration(this.processInstanceGroup.id)
+                .then(() => {
+                    this.archiveCallStatus.callback("Finished collaboration successfully");
+                    this.threadStateUpdatedNoChange.next();
                 })
                 .catch(err => {
-                    this.showDataChannelButton = false;
+                    this.archiveCallStatus.error("Failed to finish collaboration",err);
                 });
-        //}
+        }
     }
 
     cancelCollaboration(){
@@ -583,21 +599,6 @@ export class ThreadSummaryComponent implements OnInit {
                 .catch(err => {
                     this.archiveCallStatus.error("Failed to cancel collaboration",err);
                 });
-        }
-    }
-
-    setCancelCollaborationButtonStatus(processType: ProcessType, response: any,sellerWorkflow:string[]){
-        switch(processType) {
-            case "Order":
-                if (response && response.acceptedIndicator) {
-                    // since the order is approved, do not show the button
-                    this.showCancelCollaborationButton = false;
-                }
-                break;
-            case "Transport_Execution_Plan":
-                if (response && response.acceptedIndicator == "Accepted") {
-                    this.showCancelCollaborationButton = false;
-                }
         }
     }
 
@@ -699,20 +700,6 @@ export class ThreadSummaryComponent implements OnInit {
     checkCompComment(): boolean {
       return this.compComment == "";
     }
-
-    createDatachannelNegotiation(): void {
-        let channel: DataChannel = new DataChannel(this.processInstanceGroup.id, this.titleEvent.content.buyerPartyId, "Demo-Channel", this.titleEvent.content.sellerPartyId);
-        this.dataChannelService.createChannel(channel)
-            .then(() => {
-                //alert("created a new channel");
-                this.threadStateUpdatedNoChange.next();
-            })
-            .catch(err => {
-                console.error("Failed to create a data channel",err);
-                alert("Failed to create a data channel... try again later.");
-            });
-	}
-
 
 	alertWait() {
 	    alert('Waiting for trading partner... try again later.');

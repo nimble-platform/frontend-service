@@ -3,6 +3,7 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {MultiTypeValue} from "../catalogue/model/publish/multi-type-value";
 import {Quantity} from "../catalogue/model/publish/quantity";
 import {Text} from "../catalogue/model/publish/text";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "lcpa-detail-modal",
@@ -20,7 +21,8 @@ export class LcpaDetailModalComponent {
         { name: "Quantity", value: "QUANTITY" },
     ];
 
-    constructor(private modalService: NgbModal) {
+    constructor(private translate: TranslateService,
+                private modalService: NgbModal) {
     }
 
     open() {

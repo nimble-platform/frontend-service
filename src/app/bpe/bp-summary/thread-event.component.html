@@ -16,7 +16,7 @@
           <div class="pt-1"><strong><span [innerHTML]="'In Progress' | translate"></span></strong></div>
           <div class="py-1">{{event.statusText}}</div>
           <button class="btn btn-secondary" (click)="openBpProcessView(false)">{{event.actionText}}</button>
-          <button class="btn btn-secondary" (click)="openBpProcessView(true)"><span [innerHTML]="'Update Request' | translate"></span></button>
+          <button *ngIf="!event.isProductDeleted" class="btn btn-secondary" (click)="openBpProcessView(true)"><span [innerHTML]="'Update Request' | translate"></span></button>
           <button class="btn btn-secondary" (click)="cancelBP()"><span [innerHTML]="'Cancel' | translate"></span></button>
         </div>
         <div *ngIf="processInstanceGroup.status == 'CANCELLED'">

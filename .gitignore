@@ -6,7 +6,7 @@
 node/
 node_modules/
 package-lock.json
-src/*.js.map
+src/*.js*
 src/vendor.js*
 src/polyfills.js*
 src/app/*.css.map

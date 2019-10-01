@@ -8,6 +8,7 @@ import { CallStatus } from '../common/call-status';
 import {copy, selectValueOfTextObject} from '../common/utils';
 import {CategoryService} from '../catalogue/category/category.service';
 import * as constants from "../common/constants";
+import {TranslateService} from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
 //declare var jsSHA: any;
 
@@ -25,6 +26,8 @@ export class CredentialsFormComponent implements OnInit {
 	objToSubmit = new Credentials('','');
 	response: any;
 	shaObj: any;
+    showLoginFederation = myGlobals.config.showLoginFederation;
+	federationURL = "";
 
 	submitCallStatus: CallStatus = new CallStatus();
 
@@ -35,6 +38,7 @@ export class CredentialsFormComponent implements OnInit {
 		private cookieService: CookieService,
 		private appComponent: AppComponent,
 		private categoryService:CategoryService,
+		private translate: TranslateService,
 		private route: ActivatedRoute,
 	) {	}
 
@@ -58,6 +62,9 @@ export class CredentialsFormComponent implements OnInit {
 				if (input)
 					input.focus();
 			},100);
+		}
+		if (this.showLoginFederation) {
+			this.federationURL = this.generateFederationURL();
 		}
 	}
 
@@ -136,4 +143,12 @@ export class CredentialsFormComponent implements OnInit {
 		this.post(this.objToSubmit);
 	}
 
+	generateFederationURL() {
+		let identityURL = myGlobals.idpURL + "/protocol/openid-connect/auth";
+		let clientID = "?client_id=" + myGlobals.config.federationClientID;
+		let redirectURI = "&redirect_uri=" + myGlobals.frontendURL;
+		let hint = "&scope=openid&response_type=code&kc_idp_hint=" + myGlobals.config.federationIDP;
+
+		return identityURL + clientID + redirectURI + hint;
+	}
 }

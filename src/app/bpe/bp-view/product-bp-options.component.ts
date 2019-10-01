@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy, Renderer2 } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import {ActivatedRoute, NavigationEnd, Params, Router} from "@angular/router";
 import { CallStatus } from "../../common/call-status";
 import { CatalogueService } from "../../catalogue/catalogue.service";
 import { CatalogueLine } from "../../catalogue/model/publish/catalogue-line";
 import { BPDataService } from "./bp-data-service";
-import { Subscription } from "rxjs";
+import {combineLatest, ObservableInput, SchedulerLike, Subscription} from "rxjs";
+import { map } from 'rxjs/operators';
 import { ProductBpStepStatus } from "./product-bp-step-status";
 import { ProductWrapper } from "../../common/product-wrapper";
 import { BpWorkflowOptions } from "../model/bp-workflow-options";
@@ -23,6 +24,10 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from '../../globals';
 import {Headers, Http} from "@angular/http";
 import { DomSanitizer } from '@angular/platform-browser';
+import {TranslateService} from '@ngx-translate/core';
+import {Observable} from "rxjs/Rx";
+import {UBLModelUtils} from '../../catalogue/model/ubl-model-utils';
+import { AppComponent } from "../../app.component";
 
 /**
  * Created by suat on 20-Oct-17.
@@ -61,18 +66,23 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
+    // whether the item is deleted or not
+    isCatalogueLineDeleted:boolean = false ;
 
     constructor(public bpDataService: BPDataService,
                 public sanitizer: DomSanitizer,
-                public catalogueService: CatalogueService, 
+                public catalogueService: CatalogueService,
                 private searchContextService: SearchContextService,
                 public userService: UserService,
                 public bpeService: BPEService,
                 public route: ActivatedRoute,
+                private router: Router,
                 private cookieService: CookieService,
                 private renderer: Renderer2,
+                private translate: TranslateService,
                 private http: Http,
-                private modalService: NgbModal) {
+                private modalService: NgbModal,
+                public appComponent: AppComponent) {
         this.renderer.setStyle(document.body, "background-image", "none");
     }
 
@@ -102,7 +112,9 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             .then(res => {
                 let channelDetails = res.json();
                 this.chatURL = this.sanitizer.bypassSecurityTrustResourceUrl(myGlobals.rocketChatEndpoint + "/channel/" + channelDetails.channelName);
-                this.modalService.open(content, {})
+                this.appComponent.chatURL = this.chatURL;
+                this.appComponent.chatVisible = true;
+                //this.modalService.open(content, {})
             })
             .catch(e => {
                 alert("Error occurred while creating the channel. Please try again later")
@@ -110,24 +122,43 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        // get copy of ThreadEventMetadata of the current business process
-        this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
-
-        this.bpActivityEventSubs = this.bpDataService.bpActivityEventObservable.subscribe(bpActivityEvent => {
-            if (bpActivityEvent) {
-                if(this.bpDataService.bpActivityEvent.newProcess) {
-                    this.processMetadata = null;
+        // This subscription redirects the navigation to the summary component so that the required information is fetched
+        combineLatest(
+            this.route.params, this.route.queryParams
+        ).pipe(
+            map(([pathParams, queryParams]) => ({...pathParams, ...queryParams}))
+        ).subscribe(allParams => {
+            let processInstanceId = allParams['processInstanceId'];
+            // navigate to the summary component only if an existing process is being displayed
+            // and the page is initially opened/reloaded
+            if (this.bpDataService.bpActivityEvent == null) {
+                if (processInstanceId !== 'new') {
+                    this.router.navigate([`bpe/bpe-sum/${processInstanceId}`], {skipLocationChange: true});
+                } else {
+                    this.router.navigate(['dashboard']);
                 }
-                this.processType = bpActivityEvent.processType;
-                this.currentStep = this.getCurrentStep(bpActivityEvent.processType);
-                this.stepsDisplayMode = this.getStepsDisplayMode();
             }
         });
 
-        this.route.queryParams.subscribe(params => {
-            const id = params["id"];
-            const catalogueId = params["catalogueId"];
-            this.bpDataService.precedingProcessId = params["pid"];
+        this.bpActivityEventSubs = this.bpDataService.bpActivityEventObservable.subscribe(bpActivityEvent => {
+            if (bpActivityEvent == null) {
+                return;
+            }
+
+            // get copy of ThreadEventMetadata of the current business process
+            this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
+
+            if (this.bpDataService.bpActivityEvent.newProcess) {
+                this.processMetadata = null;
+            }
+            this.processType = bpActivityEvent.processType;
+            this.currentStep = this.getCurrentStep(bpActivityEvent.processType);
+            this.stepsDisplayMode = this.getStepsDisplayMode();
+
+            const id = bpActivityEvent.catalogueLineId;
+            const catalogueId = bpActivityEvent.catalogueId;
+            this.bpDataService.precedingProcessId = bpActivityEvent.previousProcessInstanceId;
+            this.bpDataService.precedingDocumentId = bpActivityEvent.previousDocumentId;
 
             if (this.id !== id || this.catalogueId !== catalogueId) {
                 this.id = id;
@@ -136,7 +167,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 this.callStatus.submit();
                 const userId = this.cookieService.get("user_id");
                 Promise.all([
-                    this.catalogueService.getCatalogueLine(catalogueId, id),
+                    this.getCatalogueLine(catalogueId, id, bpActivityEvent.processMetadata),
                     this.getOriginalOrder(),
                     this.userService.getSettingsForUser(userId)
                 ]).then(([line, order, ownCompanySettings]) => {
@@ -169,7 +200,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                     // set the product line to be the first fetched line, either service or product.
                     this.bpDataService.setCatalogueLines([this.line], [settings]);
                     this.bpDataService.computeWorkflowOptions();
-                    
+
                     // there is an order that references another product -> the line is a service and the referencedLine is the original product
                     if(referencedLine) {
                         this.serviceLine = this.line;
@@ -344,5 +375,27 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         return orderCatalogueId !== catalogueId || orderLineId !== lineId;
     }
 
+    /**
+     * Retrieve catalogue line details via catalogue-service if the product exists.
+     * Otherwise, create a simple catalogue line using the item inside the process metadata
+     * */
+    private async getCatalogueLine(catalogueUuid:string, catalogueLineId:string, processMetadata:ThreadEventMetadata){
 
+        let isProductDeleted = false;
+        if(processMetadata){
+            isProductDeleted = processMetadata.isProductDeleted;
+        }
+        // create Catalogue line if it's deleted
+        if(isProductDeleted){
+            // catalogue line is deleted
+            this.isCatalogueLineDeleted = true;
+            return UBLModelUtils.createCatalogueLineForItem(processMetadata.product);
+        }
+        else{
+            // retrieve catalogue line if exists
+            return this.catalogueService.getCatalogueLine(catalogueUuid, catalogueLineId).then( catalogueLine => {
+                return catalogueLine;
+            });
+        }
+    }
 }

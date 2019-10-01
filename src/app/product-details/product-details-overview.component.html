@@ -1,13 +1,13 @@
 <div class="row">
         <div class="col-4">
-            <strong>Product / Service by:</strong><br/>
+            <strong><span [innerHTML]="'Product / Service by:' | translate"></span></strong><br/>
              <span (click)="openCompTab()" class="clickable">
                 {{manufacturerPartyName}}
             </span>
         </div>
         <div class="col-6">
             <!-- Categories -->
-            <strong>Categories:</strong><br/>
+            <strong><span [innerHTML]="'Categories:' | translate"></span></strong><br/>
             <div class="d-flex flex-wrap">
               <div *ngFor="let name of classificationNames" >
                   <div class="rounded px-1 inline space-left" style="color:#919191; border:1px solid #919191;">
@@ -19,7 +19,7 @@
             </call-status>
         </div>
         <div class="col-2">
-            <strong>Catalogue:</strong><br/>
+            <strong><span [innerHTML]="'Catalogue:' | translate"></span></strong><br/>
              <span>
                 {{catalogueName}}
             </span>
@@ -84,9 +84,9 @@
         <div class="col-8 pt-4">
             <div>
                 <!-- Description -->
-                <strong>Description:</strong>
+                <strong><span [innerHTML]="'Description:' | translate"></span></strong>
                 <p *ngIf="wrapper.item.description.length > 0">{{selectPreferredValue(wrapper.item.description)}}</p>
-                <p *ngIf="wrapper.item.description.length == 0">No description provided.</p>
+                <p *ngIf="wrapper.item.description.length == 0"><span [innerHTML]="'No description provided.' | translate"></span></p>
             </div>
             <!-- Properties with multiple values to select from -->
             <div class="d-flex flex-column">

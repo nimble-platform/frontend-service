@@ -17,6 +17,7 @@ import { Explorative } from './model/explorative';
 import { Search } from './model/search';
 import {NgbTabChangeEvent} from '@ng-bootstrap/ng-bootstrap';
 import { CookieService} from 'ng2-cookies';
+import { TranslateService } from '@ngx-translate/core';
 
 /**
  * Array for storing incoming HTTP responses
@@ -70,7 +71,8 @@ export class ExplorativeSearchFormComponent implements OnInit {
 
     constructor(
         private expSearch: ExplorativeSearchService,
-        private cookieService: CookieService
+        private cookieService: CookieService,
+        private translate: TranslateService
     ) {
         this._user_id = this.cookieService.get('user_id');
     }
@@ -146,7 +148,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
      * @param inputIndex index number of the output keyword that needs to hidden
      */
     hideKW(inputIndex: number) {
-        //console.log(this.cbInput);
+        // console.log(this.cbInput);
         if (inputIndex > -1) {
             this.showParticularKeyword[inputIndex] = !this.showParticularKeyword[inputIndex];
         }
@@ -199,7 +201,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
             }
         )
             .catch(error => {
-                //console.log(error);
+                // console.log(error);
                 this._error_detected_query = true;
             });
     }

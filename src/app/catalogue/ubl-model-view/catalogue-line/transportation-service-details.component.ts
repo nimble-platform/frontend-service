@@ -10,6 +10,7 @@ import {UBLModelUtils} from "../../model/ubl-model-utils";
 import {PropertyBlockPipe} from "../../property-block-pipe";
 import {PublishService} from "../../publish-and-aip.service";
 import {TransportationService} from "../../model/publish/transportation-service";
+import {TranslateService} from '@ngx-translate/core';
 import {FormGroup} from "@angular/forms";
 
 @Component({
@@ -33,7 +34,7 @@ export class TransportationServiceDetails implements OnInit{
     propertyBlockCollapsedStates: Map<string, boolean> = new Map<string, boolean>();
 
 
-    constructor(private publishService: PublishService) {
+    constructor(private publishService: PublishService,private translate: TranslateService) {
         this.propertyBlockCollapsedStates = this.publishService.getCollapsedStates();
     }
 

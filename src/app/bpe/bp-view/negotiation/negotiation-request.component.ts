@@ -13,9 +13,6 @@ import {CookieService} from "ng2-cookies";
 import {Router} from "@angular/router";
 import {CustomerParty} from "../../../catalogue/model/publish/customer-party";
 import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
-import {ProcessVariables} from "../../model/process-variables";
-import {ModelUtils} from "../../model/model-utils";
-import {ProcessInstanceInputMessage} from "../../model/process-instance-input-message";
 import {NegotiationModelWrapper} from "./negotiation-model-wrapper";
 import {copy, durationToString, getMaximumQuantityForPrice, getStepForPrice, isValidPrice, roundToTwoDecimals, trimRedundantDecimals} from "../../../common/utils";
 import {PeriodRange} from "../../../user-mgmt/model/period-range";
@@ -33,6 +30,7 @@ import {Quantity} from "../../../catalogue/model/publish/quantity";
 import {Quotation} from "../../../catalogue/model/publish/quotation";
 import {Clause} from "../../../catalogue/model/publish/clause";
 import {CustomTermModalComponent} from "./custom-term-modal.component";
+import {TranslateService} from '@ngx-translate/core';
 
 enum FIXED_NEGOTIATION_TERMS {
     DELIVERY_PERIOD = 'deliveryPeriod',
@@ -126,6 +124,7 @@ export class NegotiationRequestComponent implements OnInit {
                 private cookieService: CookieService,
                 private location: Location,
                 private documentService: DocumentService,
+                private translate: TranslateService,
                 private router: Router) {
 
     }
@@ -266,7 +265,7 @@ export class NegotiationRequestComponent implements OnInit {
                 return;
             }
         }
-        if(this.isNegotiatingAnyTerm() || this.bpDataService.isFinalProcessInTheWorkflow("Negotiation")) {
+        if(!this.doesManufacturerOfferHasPrice() || this.isNegotiatingAnyTerm() || this.bpDataService.isFinalProcessInTheWorkflow("Negotiation")) {
             // create an additional trading term for the frame contract duration
             if(/*this.rfq.negotiationOptions.frameContractDuration && */!UBLModelUtils.isEmptyOrIncompleteQuantity(this.frameContractDuration)) {
                 this.wrapper.rfqFrameContractDuration = this.frameContractDuration;
@@ -296,10 +295,7 @@ export class NegotiationRequestComponent implements OnInit {
                 rfq.buyerCustomerParty = new CustomerParty(buyerParty);
                 rfq.sellerSupplierParty = new SupplierParty(sellerParty);
 
-                const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", this.buyerId, this.sellerId,this.cookieService.get("user_id"), rfq, this.bpDataService);
-                const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
-
-                return this.bpeService.startBusinessProcess(piim);
+                return this.bpeService.startProcessWithDocument(rfq);
 
             }).then(() => {
                 this.callStatus.callback("Terms sent", true);
@@ -483,9 +479,9 @@ export class NegotiationRequestComponent implements OnInit {
         }
     }
 
-    onTCTabSelect(event): void {
+    onTCTabSelect(event:any, id:any): void {
         event.preventDefault();
-        this.selectedTCTab = event.target.id;
+        this.selectedTCTab = id;
     }
 
     onDeleteTradingTerm(termName: string): void {
@@ -728,14 +724,26 @@ export class NegotiationRequestComponent implements OnInit {
         return !!this.processMetadata && !this.processMetadata.isBeingUpdated;
     }
 
-    isFormValid(): boolean {
-        let formValid = /*!this.rfq.negotiationOptions.frameContractDuration ||*/ this.isFrameContractValid();
-        formValid = formValid && this.isDeliveryPeriodValid() && this.isWarrantyPeriodValid() && this.isPriceValid();
-        return formValid;
+    doesManufacturerOfferHasPrice(): boolean{
+        if(this.counterOfferTermsSource == 'last_offer' || this.counterOfferTermsSource == 'frame_contract') {
+            let quotationWrapper = this.wrapper.frameContractQuotationWrapper;
+            if(this.counterOfferTermsSource == 'last_offer') {
+                quotationWrapper = this.wrapper.lastOfferQuotationWrapper;
+            }
+            if(quotationWrapper.priceWrapper.itemPrice.pricePerItemString == "On demand"){
+                return false;
+            }
+        } else if(this.wrapper.lineDiscountPriceWrapper.discountedPricePerItemString == "On demand"){
+                return false;
+        }
+
+        return true;
     }
 
-    isPriceValid(): boolean {
-        return this.wrapper.rfqDiscountPriceWrapper.itemPrice.value > 0;
+    isFormValid(): boolean {
+        let formValid = /*!this.rfq.negotiationOptions.frameContractDuration ||*/ this.isFrameContractValid();
+        formValid = formValid && this.isDeliveryPeriodValid() && this.isWarrantyPeriodValid();
+        return formValid;
     }
 
     isWaitingForReply(): boolean {

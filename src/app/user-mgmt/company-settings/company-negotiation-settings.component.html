@@ -8,18 +8,18 @@
 <!-- Business Workflow -->
 <div class="row space-before">
     <div class="col-12">
-        <h4>Business Workflow</h4>
+        <h4><span [innerHTML]="'Business Workflow' | translate"></span></h4>
     </div>
     <div class="col-12">
         <div *ngIf="!alertClosed" class="alert alert-danger" role="alert">
-            To be able to update the workflow, all processes should be finished.
+            <span [innerHTML]="'To be able to update the workflow, all processes should be finished.' | translate"></span>
             <button type="button" class="close" aria-label="Close" (click)="alertClosed = true">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
     </div>
     <div class="col-12">
-        <label>Choose processes you want to include in your workflow:</label>
+        <label><span [innerHTML]="'Choose processes you want to include in your workflow:' | translate"></span></label>
         <div *ngFor="let process of PROCESSES; let i = index" class="row">
             <input class="col-1" type="checkbox" [disabled]="isProcessIdSelectionDisabled(process.id)"
                    [checked]="process_ids.isSelected(process.id)" (change)="onProcessIdToggle(process.id)" style="margin-top: 5px">
@@ -27,6 +27,8 @@
         </div>
     </div>
 </div>
+
+<ng-container *ngIf="config.showTrade">
 
 <hr>
 
@@ -102,7 +104,7 @@
 <!-- Delivery Period -->
 <div class="row space-before">
     <div class="col-12">
-        <h4>Delivery Period</h4>
+        <h4><span [innerHTML]="'Delivery Period' | translate"></span></h4>
     </div>
 </div>
 
@@ -126,7 +128,7 @@
 <!-- Warranty Period -->
 <div class="row space-before">
     <div class="col-12">
-        <h4>Warranty Period</h4>
+        <h4><span [innerHTML]="'Warranty Period' | translate"></span></h4>
     </div>
 </div>
 
@@ -145,12 +147,16 @@
     </div>
 </div>
 
+</ng-container>
+
+<ng-container *ngIf="config.dataChannelsEnabled">
+
 <hr>
 
 <!-- Data Exchange Services-->
 <div class="row space-before">
     <div class="col-12">
-        <h4>Data Exchange Services</h4>
+        <h4><span [innerHTML]="'Data Exchange Services' | translate"></span></h4>
     </div>
 </div>
 
@@ -200,7 +206,7 @@
     <!-- Add a Sensor: Formular  -->
     <!------------------------------------------------------------------------------------------------------------>
     <div class="form-group" id="new-sensor">
-        <h6>Add new sensor streaming description</h6><br/>
+        <h6><span [innerHTML]="'Add new sensor streaming description' | translate"></span></h6><br/>
         <form id="add-sensor-form" #customPropertyForm="ngForm" class="row space-before col-12">
 
             <div class="col-3">
@@ -227,7 +233,7 @@
             <div class="row actions-row col-3">
                 <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
                 <div class="col-6">
-                    <button class="btn btn-success action" [disabled]="isLoading()" (click)="onAddSensor()">Add a Sensor</button>
+                    <button class="btn btn-success action" [disabled]="isLoading()" (click)="onAddSensor()"><span [innerHTML]="'Add a Sensor' | translate"></span></button>
                 </div>
             </div>
         </form>
@@ -235,12 +241,14 @@
 
 </div>
 
+</ng-container>
+
 <hr>
 
 <!-- Actions -->
 <div class="row actions-row space-before">
     <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading() || !isDirty()" (click)="onSave()">Save</button>
+        <button class="btn btn-primary action" [disabled]="isLoading() || !isDirty()" (click)="onSave()"><span [innerHTML]="'Save' | translate"></span></button>
     </div>
 </div>

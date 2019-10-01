@@ -7,7 +7,9 @@ import { CookieService } from "ng2-cookies";
 import { FormGroup, FormBuilder } from "@angular/forms";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import * as myGlobals from '../../globals';
+import {TranslateService} from '@ngx-translate/core';
 import {BinaryObject} from "../../catalogue/model/publish/binary-object";
+import {UBLModelUtils} from "../../catalogue/model/ubl-model-utils";
 
 @Component({
     selector: "company-certificates-settings",
@@ -26,6 +28,8 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
     savePpapLevelCallStatus: CallStatus = new CallStatus();
 
     certFile = null;
+    certificateFilesProvided = false;
+    selectedFiles: BinaryObject[] = [];
     editCert = null;
     addCertForm: FormGroup;
     saveCertCallStatus: CallStatus = new CallStatus();
@@ -34,6 +38,7 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
     constructor(private _fb: FormBuilder,
                 private userService: UserService,
                 private modalService: NgbModal,
+                private translate: TranslateService,
                 private cookieService: CookieService) {
 
     }
@@ -47,6 +52,8 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
     }
 
     onAddCertificate(content) {
+        this.certificateFilesProvided = false;
+        this.selectedFiles = [];
         this.addCertForm = this._fb.group({
             file: [""],
             name: [""],
@@ -60,8 +67,15 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
     onSaveCertificate(model: FormGroup, close: any) {
         this.saveCertCallStatus.submit();
         const fields = model.getRawValue();
+        this.selectedFiles;
+
+        var parts = [new Blob([this.selectedFiles[0].value], {type: this.selectedFiles[0].mimeCode})];
+        this.certFile = new File(parts, this.selectedFiles[0].fileName, {
+            type: this.selectedFiles[0].mimeCode
+        });
+
         this.userService
-            .saveCert(this.certFile, encodeURIComponent(fields.name), encodeURIComponent(fields.description), encodeURIComponent(fields.type), this.settings.companyID,this.editCert)
+            .saveCert(this.certFile, encodeURIComponent(fields.name), encodeURIComponent(fields.description), encodeURIComponent(fields.type), this.settings.companyID,this.editCert,this.selectedFiles[0].languageID)
             .then(() => {
                 close();
                 this.saveCertCallStatus.callback("Certificate saved", true);
@@ -89,15 +103,17 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
     }
 
     onSetCertificateFile(event: any) {
-        let fileList: FileList = event.target.files;
-        if (fileList.length > 0) {
-            let file: File = fileList[0];
-            this.certFile = file;
-        } else {
-            this.certFile = null;
-        }
+        this.certificateFilesProvided = true;
     }
 
+    removedFile(event:boolean){
+        if(event){
+            if(this.selectedFiles.length == 0) {
+                this.certificateFilesProvided = false;
+            }
+        }
+    }
+    
     onSavePpapLevel(): void {
         this.savePpapLevelCallStatus.submit();
 
@@ -115,6 +131,7 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
 
     onEditCertificate(popup, i: number): void {
         let cert = this.certificates[i];
+        this.certificateFilesProvided = true;
         this.editCert = cert.id;
         this.userService.downloadCertObject(cert.id).then(certObj => {
             let binaryObject: BinaryObject = certObj.documentReference[0].attachment.embeddedDocumentBinaryObject;
@@ -128,6 +145,7 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
                 description: [cert.description],
                 type: [cert.type]
             });
+            this.selectedFiles = [binaryObject];
             this.certFile = null;
             this.modalService.open(popup);
         });

@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
 import { BinaryObject } from "../catalogue/model/publish/binary-object";
 import {CatalogueService} from '../catalogue/catalogue.service';
 import {DEFAULT_LANGUAGE, LANGUAGES} from "../catalogue/model/constants";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "file-input",
@@ -39,8 +40,7 @@ export class FileInputComponent implements OnInit {
     private languages: Array<string> = LANGUAGES;
     selectedLanguage: string;
 
-    constructor(public catalogueService:CatalogueService) {
-
+    constructor(public catalogueService:CatalogueService,private translate: TranslateService) {
     }
 
     ngOnInit() {

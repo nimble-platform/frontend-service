@@ -138,6 +138,22 @@ export class UBLModelUtils {
         return catalogueLine;
     }
 
+    public static createCatalogueLineForItem(item:Item): CatalogueLine {
+        let dummyItemLocationQuantity = new ItemLocationQuantity();
+        dummyItemLocationQuantity.price = new Price();
+        return new CatalogueLine(
+            null,
+            null,
+            null,
+            null,
+            new Period(),
+            null,
+            dummyItemLocationQuantity,
+            [],
+            new GoodsItem(null, item)
+        );
+    }
+
     public static createCatalogueLinesForLogistics(catalogueUuid:string, providerParty: Party, settings: CompanyNegotiationSettings,logisticRelatedServices, eClassLogisticCategories:Category[],furnitureOntologyLogisticCategories:Category[]): Map<string,CatalogueLine>{
         let logisticCatalogueLines: Map<string,CatalogueLine> = new Map<string, CatalogueLine>();
         // if we have furniture ontology categories for logistics services,then use them.
@@ -680,7 +696,18 @@ export class UBLModelUtils {
     }
 
     public static isFilledLCPAOutput(lcpaDetails: LifeCyclePerformanceAssessmentDetails): boolean {
-        return false;
+        if(lcpaDetails.lcpaoutput == null) {
+            return false;
+        }
+        let lcpaOutput = lcpaDetails.lcpaoutput;
+
+        if(!isNaNNullAware(lcpaOutput.operationCostsPerYear.value) ||
+            !isNaNNullAware(lcpaOutput.lifeCycleCost.value) ||
+            !isNaNNullAware(lcpaOutput.capexOpexRelation.value)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static isEmptyQuantity(quantity: Quantity): boolean {

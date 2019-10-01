@@ -3,7 +3,7 @@
     <div class="row space-before">
         <div class="col-12">
             <div *ngIf="documents.length == 0">
-                <h3>No File Requested</h3>
+                <h3><span [innerHTML]="'No File Requested' | translate"></span></h3>
             </div>
             <div *ngFor="let document of documents" class="space-before">
                 <file-input label="{{ document }}" accept="file/*" [multiple]="true" [disabled]="isLoading()"
@@ -16,7 +16,7 @@
     <hr>
 
     <!--Notes-->
-    <h5>Notes and Additional Files</h5>
+    <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
     <note-file-view [notes]="notes"
                [documents]="additionalDocuments"
                [label]="'Request Notes'"></note-file-view>
@@ -33,12 +33,12 @@
             <div class="col-4"></div>
             <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
             <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
             </div>
             <div class="col-2">
-                <button class="btn btn-primary action" [disabled]="isLoading()"
+                <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.isProductDeleted"
                         (click)="responseToPpapRequest(true)">
-                    Send Response
+                        <span [innerHTML]="'Send Response' | translate"></span>
                 </button>
             </div>
         </div>

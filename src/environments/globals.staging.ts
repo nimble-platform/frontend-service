@@ -76,13 +76,13 @@ export const config = {
     "dashboards": [
         {
             "title": "User Logins & Registrations",
-            "url": "#/dashboard/407d6ed0-ac89-11e9-94eb-b71f5a648539?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
+            "url": "#/dashboard/5d41a2b0-cd6e-11e9-b5e8-e908493e1aa7?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2FM%2Cmode%3Aquick%2Cto%3Anow%2FM))"
         }, {
             "title": "Business Process Activities",
-            "url": "#/dashboard/70532e10-ad4c-11e9-94eb-b71f5a648539?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
+            "url": "#/dashboard/548c5e20-cd6f-11e9-b5e8-e908493e1aa7?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2FM%2Cmode%3Aquick%2Cto%3Anow%2FM))"
         }, {
             "title": "Products Activities",
-            "url": "#/dashboard/ebcf1a20-ad53-11e9-94eb-b71f5a648539?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
+            "url": "#/dashboard/48ed8e30-cd70-11e9-b5e8-e908493e1aa7?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2FM%2Cmode%3Aquick%2Cto%3Anow%2FM))"
         }
     ]
   },
@@ -91,6 +91,7 @@ export const config = {
   "logoPath": "./assets/logo_mvp.png",
   "logoRequired": false,
   "phoneNumberRequired": false,
+  "vatEnabled": true,
   "projectsEnabled": true,
   "requiredAgreements": [
     {
@@ -156,7 +157,10 @@ export const config = {
   "supportMailContent": {
     "en":"Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]",
     "es":"Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
-  }
+  },
+  "showLoginFederation": false,
+  "federationClientID": "sample-client",
+  "federationIDP": "sampleIDP"
 };
 
 
@@ -166,6 +170,7 @@ export const product_vendor = "manufacturer";
 export const product_vendor_id = "id";
 export const product_vendor_img = "logoId";
 export const product_vendor_name = "legalName";
+export const product_vendor_brand_name = "brandName";
 export const product_vendor_rating = "trustRating";
 export const product_vendor_rating_seller = "trustSellerCommunication";
 export const product_vendor_rating_fulfillment = "trustFullfillmentOfTerms";
@@ -180,8 +185,8 @@ export const product_currency = "currency";
 export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
 export const product_filter_prod = ["freeOfCharge","certificateType","applicableCountries"];
-export const product_filter_comp = ["manufacturer.legalName","manufacturer.businessType","manufacturer.activitySectors","manufacturer.businessKeywords","manufacturer.origin","manufacturer.certificateType","manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType"];
-export const party_facet_field_list = ["legalName","businessType","activitySectors","businessKeywords","origin","certificateType","ppapComplianceLevel","ppapDocumentType"];
+export const product_filter_comp = ["manufacturer.legalName","manufacturer.brandName","manufacturer.businessType","manufacturer.activitySectors","manufacturer.businessKeywords","manufacturer.origin","manufacturer.certificateType","manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType"];
+export const party_facet_field_list = ["legalName","{LANG}_brandName","businessType","{LANG}_activitySectors","{LANG}_businessKeywords","{LANG}_origin","{LANG}_certificateType","ppapComplianceLevel","ppapDocumentType"];
 export const party_filter_main = ["businessType","activitySectors","businessKeywords","origin","certificateType","ppapComplianceLevel","ppapDocumentType"];
 export const party_filter_trust = ["trustScore","trustRating","trustSellerCommunication","trustFullfillmentOfTerms","trustDeliveryPackaging","trustNumberOfTransactions"];
 export const item_manufacturer_id = "manufacturerId";
@@ -213,10 +218,11 @@ export const query_settings = {
   }
 };
 export const query_settings_comp = {
-  "fields": ["STANDARD","legalName"],
+  "fields": ["STANDARD","legalName","{LANG}_brandName"],
   "boosting": true,
   "boostingFactors": {
     "STANDARD": 4,
+    "{LANG}_brandName": 64,
     "legalName": 64
   }
 };

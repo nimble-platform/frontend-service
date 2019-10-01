@@ -2,16 +2,16 @@
 <ng-container *ngIf="frameContracts.length > 0">
     <div class="row title-row">
         <div class="col-3">
-            Product
+            <span [innerHTML]="'Product' | translate"></span> 
         </div>
         <div class="col-3">
-            Corresponding company
+            <span [innerHTML]="'Corresponding company' | translate"></span>
         </div>
         <div class="col-2">
-            Agreed on
+            <span [innerHTML]="'Agreed on' | translate"></span>
         </div>
         <div class="col-2">
-            Valid until
+            <span [innerHTML]="'Valid until' | translate"></span>
         </div>
     </div>
     <div class="row data-row" *ngFor="let frameContract of frameContracts">
@@ -23,9 +23,9 @@
         </div>
         <div class="col-2">{{frameContract.digitalAgreementTerms.validityPeriod.startDate}}</div>
         <div class="col-2">{{frameContract.digitalAgreementTerms.validityPeriod.endDate}}</div>
-        <div class="col-2" (click)="navigateToQuotationDetails(frameContract)"><div class="btn btn-outline-primary">See Details</div></div>
+        <div class="col-2" (click)="navigateToQuotationDetails(frameContract)"><div class="btn btn-outline-primary"><span [innerHTML]="'See Details' | translate"></span></div></div>
     </div>
 </ng-container>
 <ng-container *ngIf="frameContracts.length == 0 && frameContractsRetrievalCallStatus.isComplete() && !frameContractsRetrievalCallStatus.isError()">
-    No frame contract exists
+    <span [innerHTML]="'No frame contract exists' | translate"></span> 
 </ng-container>

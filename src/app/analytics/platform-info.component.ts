@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
 import * as myGlobals from '../globals';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "platform-info",
@@ -11,7 +12,8 @@ export class PlatformInfoComponent {
 
     config = myGlobals.config;
 
-    constructor(
-    ) {}
+    constructor(private translate: TranslateService,
+    ) {
+    }
 
 }

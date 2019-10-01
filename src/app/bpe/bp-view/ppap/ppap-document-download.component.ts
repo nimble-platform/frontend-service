@@ -8,6 +8,7 @@ import {DocumentReference} from "../../../catalogue/model/publish/document-refer
 import { Location } from "@angular/common";
 import { BinaryObject } from "../../../catalogue/model/publish/binary-object";
 import {DocumentService} from "../document-service";
+import {TranslateService} from '@ngx-translate/core';
 
 interface UploadedDocuments {
     [doc: string]: BinaryObject[];
@@ -23,6 +24,8 @@ export class PpapDocumentDownloadComponent{
     @Input() formerProcess: boolean;
     @Input() ppapResponse: PpapResponse;
     @Input() ppap: Ppap;
+    // whether the item is deleted or not
+    @Input() isCatalogueLineDeleted:boolean = false ;
 
     ppapDocuments : DocumentReference[] = [];
     notes: string[];
@@ -38,14 +41,15 @@ export class PpapDocumentDownloadComponent{
                 private bpeService: BPEService,
                 private route: ActivatedRoute,
                 private location: Location,
+                private translate: TranslateService,
                 private documentService: DocumentService) {
     }
 
     ngOnInit() {
-        if(!this.ppapResponse) {
-            this.route.queryParams.subscribe(params => {
-                const processid = params['pid'];
-    
+        if (!this.ppapResponse) {
+            this.route.params.subscribe(params => {
+                const processid = params['processInstanceId'];
+
                 this.bpeService.getProcessDetailsHistory(processid).then(task => {
                     return Promise.all([
                         this.documentService.getInitialDocument(task),
@@ -65,7 +69,7 @@ export class PpapDocumentDownloadComponent{
         }
 
     }
-    
+
     private initFromPpap() {
         this.notesBuyer = this.ppap.note;
         this.additionalDocumentsBuyer = this.ppap.additionalDocumentReference;
@@ -124,4 +128,3 @@ export class PpapDocumentDownloadComponent{
         }
     }
 }
-

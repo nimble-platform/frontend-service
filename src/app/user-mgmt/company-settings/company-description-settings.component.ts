@@ -11,6 +11,7 @@ import { CookieService } from "ng2-cookies";
 import { UserService } from "../user.service";
 import { AppComponent } from "../../app.component";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import {TranslateService} from '@ngx-translate/core';
 import { createTextObject, selectValueOfTextObject } from "../../common/utils";
 
 @Component({
@@ -41,6 +42,7 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
                 private modalService: NgbModal,
                 private _fb: FormBuilder,
                 private cookieService: CookieService,
+                private translate: TranslateService,
                 private userService: UserService) {
 
     }

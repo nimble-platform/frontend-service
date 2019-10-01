@@ -7,6 +7,7 @@ import { CatalogueLine } from "../catalogue/model/publish/catalogue-line";
 import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
 import { ProcessType } from "../bpe/model/process-type";
 import { ProductWrapper } from "../common/product-wrapper";
+import {TranslateService} from '@ngx-translate/core';
 import { Item } from "../catalogue/model/publish/item";
 import {
     copy,
@@ -22,7 +23,6 @@ import { CompanySettings } from "../user-mgmt/model/company-settings";
 import {Quantity} from '../catalogue/model/publish/quantity';
 import {DiscountModalComponent} from './discount-modal.component';
 import {BpActivityEvent} from '../catalogue/model/publish/bp-start-event';
-import {BpURLParams} from '../catalogue/model/publish/bpURLParams';
 import { CookieService } from 'ng2-cookies';
 import {FAVOURITE_LINEITEM_PUT_OPTIONS} from '../catalogue/model/constants';
 import * as myGlobals from '../globals';
@@ -83,6 +83,7 @@ export class ProductDetailsComponent implements OnInit {
                 private userService: UserService,
                 private route: ActivatedRoute,
                 private cookieService: CookieService,
+                private translate: TranslateService,
                 public appComponent: AppComponent,) {
 
     }
@@ -144,9 +145,6 @@ export class ProductDetailsComponent implements OnInit {
                             this.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure);
                         this.productWrapper = new ProductWrapper(this.line, settings.negotiationSettings,this.priceWrapper.orderedQuantity);
                         this.bpDataService.setCatalogueLines([this.line], [settings]);
-                        // we have to set bpActivityEvent.workflowOptions here
-                        // in BPDataService,chooseFirstValuesOfItemProperties method, we use this workflowOptions to select values of the properties correctly
-                        this.bpDataService.bpActivityEvent.workflowOptions = this.options;
 
                         // get the business workflow of seller company
                         this.companyWorkflowMap = this.bpDataService.getCompanyWorkflowMap();
@@ -199,14 +197,13 @@ export class ProductDetailsComponent implements OnInit {
                 'buyer',
                 targetProcess,
                 null,
-                this.bpDataService.bpActivityEvent.collaborationGroupId,
                 null,
                 [],
                 this.options,
                 true, // this is a new process
-                false), // there is no subsequent process as this is a new process
-            false,
-            new BpURLParams(this.catalogueId, this.id, null, termsSource));
+                false, // there is no subsequent process as this is a new process
+                this.catalogueId, this.id, null, null, termsSource),
+            false);
     }
 
     onOrderQuantityKeyPressed(event:any): boolean {
@@ -236,7 +233,7 @@ export class ProductDetailsComponent implements OnInit {
         // update price wrapper with user selections
         // copy the selected specific item properties into the price wrapper so that the discounts can be calculated based on the selections
         let copyItem = JSON.parse(JSON.stringify(this.item));
-        this.bpDataService.selectFirstValuesAmongAlternatives(copyItem);
+        this.bpDataService.selectFirstValuesAmongAlternatives(copyItem, this.options);
         this.priceWrapper.additionalItemProperties = copyItem.additionalItemProperty;
 
         if(event == 'product_defaults') {
@@ -335,5 +332,5 @@ export class ProductDetailsComponent implements OnInit {
     	this.tabToOpen = null;
       }
     }
-    
+
 }

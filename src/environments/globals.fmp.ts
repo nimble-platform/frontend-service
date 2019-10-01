@@ -91,6 +91,7 @@ export const config = {
   "logoPath": "./assets/logo_fmp.png",
   "logoRequired": true,
   "phoneNumberRequired": true,
+  "vatEnabled": false,
   "projectsEnabled": true,
   "requiredAgreements": [
     {
@@ -210,7 +211,10 @@ export const config = {
   "supportMailContent": {
     "en":"Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]",
     "es":"Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
-  }
+  },
+  "showLoginFederation": false,
+  "federationClientID": "sample-client",
+  "federationIDP": "sampleIDP"
 };
 
 
@@ -220,6 +224,7 @@ export const product_vendor = "manufacturer";
 export const product_vendor_id = "id";
 export const product_vendor_img = "logoId";
 export const product_vendor_name = "legalName";
+export const product_vendor_brand_name = "brandName";
 export const product_vendor_rating = "trustRating";
 export const product_vendor_rating_seller = "trustSellerCommunication";
 export const product_vendor_rating_fulfillment = "trustFullfillmentOfTerms";
@@ -234,8 +239,8 @@ export const product_currency = "currency";
 export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
 export const product_filter_prod = ["freeOfCharge","certificateType","applicableCountries"];
-export const product_filter_comp = ["manufacturer.legalName","manufacturer.businessType","manufacturer.activitySectors","manufacturer.businessKeywords","manufacturer.origin","manufacturer.certificateType"];
-export const party_facet_field_list = ["legalName","businessType","activitySectors","businessKeywords","origin","certificateType"];
+export const product_filter_comp = ["manufacturer.legalName","manufacturer.brandName","manufacturer.businessType","manufacturer.activitySectors","manufacturer.businessKeywords","manufacturer.origin","manufacturer.certificateType"];
+export const party_facet_field_list = ["legalName","{LANG}_brandName","businessType","{LANG}_activitySectors","{LANG}_businessKeywords","{LANG}_origin","{LANG}_certificateType"];
 export const party_filter_main = ["businessType","activitySectors","businessKeywords","origin","certificateType"];
 export const party_filter_trust = ["trustScore","trustRating","trustSellerCommunication","trustFullfillmentOfTerms","trustDeliveryPackaging","trustNumberOfTransactions"];
 export const item_manufacturer_id = "manufacturerId";
@@ -267,10 +272,11 @@ export const query_settings = {
   }
 };
 export const query_settings_comp = {
-  "fields": ["STANDARD","legalName"],
+  "fields": ["STANDARD","legalName","{LANG}_brandName"],
   "boosting": true,
   "boostingFactors": {
     "STANDARD": 4,
+    "{LANG}_brandName": 64,
     "legalName": 64
   }
 };

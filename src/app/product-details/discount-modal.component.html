@@ -1,6 +1,6 @@
 <ng-template #modal let-c="close" let-d="dismiss">
     <div class="modal-header">
-        <h5 class="modal-title" id="modal-basic-title">Discounts/Charges applied:</h5>
+        <h5 class="modal-title" id="modal-basic-title"><span [innerHTML]="'Discounts/Charges applied:' | translate"></span></h5>
         <button type="button" class="close" aria-label="Close" (click)="d('cross')">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -169,9 +169,9 @@
         </div>
     </div>
     <div class="modal-footer">
-        <h5 *ngIf="totalDiscount >= 0" class="col-9">Total Discount:</h5>
-        <h5 *ngIf="totalDiscount < 0" class="col-9">Total Charge:</h5>
+        <h5 *ngIf="totalDiscount >= 0" class="col-9"><span [innerHTML]="'Total Discount:' | translate"></span></h5>
+        <h5 *ngIf="totalDiscount < 0" class="col-9"><span [innerHTML]="'Total Charge:' | translate"></span></h5>
         <div class="col-2" style="padding-left: 30px">{{getAbsValue(totalDiscount)}} {{currencyId}}</div>
-        <button type="button" class="btn btn-primary col-1" (click)="c('ok')">OK</button>
+        <button type="button" class="btn btn-primary col-1" (click)="c('ok')"><span [innerHTML]="'OK' | translate"></span></button>
     </div>
 </ng-template>

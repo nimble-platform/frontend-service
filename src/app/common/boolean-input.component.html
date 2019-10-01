@@ -8,8 +8,8 @@
           [(ngModel)]="value"
           *ngIf="presentationMode === 'edit'">
       <div *ngIf="presentationMode != 'edit'">
-        <p [class]="valueTextClass" *ngIf="value === true">Yes</p>
-        <p [class]="valueTextClass" *ngIf="value === false">No</p>
+        <p [class]="valueTextClass" *ngIf="value === true"><span [innerHTML]="'Yes' | translate"></span></p>
+        <p [class]="valueTextClass" *ngIf="value === false"><span [innerHTML]="'No' | translate"></span></p>
       </div>
   </div>
 </div>

@@ -3,14 +3,14 @@
         <div class="col-6">
             <!-- Title -->
             <h2 class="nimble-title">
-                Order for:
+                <span [innerHTML]="'Order for' | translate"></span>:
             </h2>
             <h2>{{ line.goodsItem.item.name[0].value }}
                 <button class="btn btn-outline-dark inline ml-2" (click)="onToggleProductExpanded()">
                     <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="productExpanded"></i>
                     <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!productExpanded"></i>
-                    <span class="inline" *ngIf="!productExpanded"><small>Show Details</small></span>
-                    <span class="inline" *ngIf="productExpanded"><small>Hide Details</small></span>
+                    <span class="inline" *ngIf="!productExpanded"><small><span [innerHTML]="'Show Details' | translate"></span></small></span>
+                    <span class="inline" *ngIf="productExpanded"><small><span [innerHTML]="'Hide Details' | translate"></span></small></span>
                 </button>
                 <ng-template #content let-modal>
                     <div class="modal-body">
@@ -21,32 +21,32 @@
                     <!--</div>-->
                 </ng-template>
 
-                <button class="btn btn-outline-dark inline" (click)="open(content)" *ngIf="config.showChat">Start chat</button>
+                <button class="btn btn-outline-dark inline" (click)="open(content)" *ngIf="config.showChat"><span [innerHTML]="'Start chat' | translate"></span></button>
             </h2>
         </div>
         <div *ngIf="serviceLine" class="col-6 title-right">
             <!-- Transport Service Title -->
             <h2 class="nimble-title">
-                Transport service:
+                <span [innerHTML]="'Transport service' | translate"></span>:
             </h2>
             <h2>{{ serviceLine.goodsItem.item.name[0].value }}
                 <button class="btn btn-outline-dark inline ml-2" (click)="onToggleServiceExpanded()">
                     <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="serviceExpanded"></i>
                     <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!serviceExpanded"></i>
-                    <span class="inline" *ngIf="!serviceExpanded"><small>Show Details</small></span>
-                    <span class="inline" *ngIf="serviceExpanded"><small>Hide Details</small></span>
+                    <span class="inline" *ngIf="!serviceExpanded"><small><span [innerHTML]="'Show Details' | translate"></span></small></span>
+                    <span class="inline" *ngIf="serviceExpanded"><small><span [innerHTML]="'Hide Details' | translate"></span></small></span>
                 </button>
             </h2>
         </div>
     </div>
 
     <!-- Product Details Panel -->
-    <product-details-tabs *ngIf="productExpanded" [wrapper]="wrapper" [showOverview]="true" 
+    <product-details-tabs *ngIf="productExpanded" [wrapper]="wrapper" [showOverview]="true" [isCatalogueLineDeleted]="isCatalogueLineDeleted"
         [settings]="settings" [options]="options" [readonly]="true">
     </product-details-tabs>
 
     <!-- Service Details Panel -->
-    <product-details-tabs *ngIf="serviceExpanded" [wrapper]="serviceWrapper" [showOverview]="true"
+    <product-details-tabs *ngIf="serviceExpanded" [wrapper]="serviceWrapper" [showOverview]="true" [isCatalogueLineDeleted]="isCatalogueLineDeleted"
         [settings]="serviceSettings" [options]="options" [readonly]="true">
     </product-details-tabs>
 
@@ -60,9 +60,9 @@
     <!-- Order Content -->
     <item-information *ngIf="currentStep === 'Item_Information_Request' || currentStep === 'Transport_Information_Request'">
     </item-information>
-    <ppap *ngIf="currentStep === 'Ppap'">
+    <ppap *ngIf="currentStep === 'Ppap'" [isCatalogueLineDeleted]="isCatalogueLineDeleted">
     </ppap>
-    <negotiation *ngIf="currentStep === 'Negotiation'">
+    <negotiation *ngIf="currentStep === 'Negotiation'" [isCatalogueLineDeleted]="isCatalogueLineDeleted">
     </negotiation>
     <transport-negotiation *ngIf="currentStep === 'Transport_Negotiation'">
     </transport-negotiation>

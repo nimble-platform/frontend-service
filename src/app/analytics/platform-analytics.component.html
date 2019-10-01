@@ -1,4 +1,4 @@
-<h3>Platform Analytics</h3>
+<h3><span [innerHTML]="'Platform Analytics' | translate"></span></h3>
 
 <div class="row">
   <div class="col-12">
@@ -8,16 +8,16 @@
               <li class="nav-item">
                   <a href id="LOG" class="nav-link"
                       [ngClass]="{ active: selectedTab === 'LOG'}"
-                      (click)="onSelectTab($event)">
-                      Log Analytics
+                      (click)="onSelectTab($event,'LOG')">
+                      <span [innerHTML]="'Log Analytics' | translate"></span>
                   </a>
               </li>
           </ng-container>
           <li  class="nav-item">
               <a href id="DB" class="nav-link"
                   [ngClass]="{ active: selectedTab === 'DB'}"
-                  (click)="onSelectTab($event)">
-                  Database Analytics
+                  (click)="onSelectTab($event,'DB')">
+                  <span [innerHTML]="'Database Analytics' | translate"></span>
               </a>
           </li>
       </ul>
@@ -49,7 +49,7 @@
         <div class="card-body text-center">
           <h4 *ngIf="user_count>=0" class="card-title"><b>{{user_count}}</b></h4>
           <h4 *ngIf="user_count<0" class="card-title"><b>???</b></h4>
-          <h6 class="card-subtitle mb-2 text-muted">Registered Users</h6>
+          <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Registered Users' | translate"></span></h6>
           <p class="card-text" style="font-size:32px"><i class="fa fa-user"></i></p>
         </div>
       </div>
@@ -58,7 +58,7 @@
         <div class="card-body text-center">
           <h4 *ngIf="comp_count>=0" class="card-title"><b>{{comp_count}}</b></h4>
           <h4 *ngIf="comp_count<0" class="card-title"><b>???</b></h4>
-          <h6 class="card-subtitle mb-2 text-muted">Registered Companies</h6>
+          <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Registered Companies' | translate"></span></h6>
           <p class="card-text" style="font-size:32px"><i class="fa fa-building"></i></p>
         </div>
       </div>
@@ -80,7 +80,7 @@
         <div class="card-body text-center">
           <h4 *ngIf="comp_count>=0" class="card-title"><b>{{service_count}}</b></h4>
           <h4 *ngIf="comp_count<0" class="card-title"><b>???</b></h4>
-          <h6 class="card-subtitle mb-2 text-muted">No Of Services</h6>
+          <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'No Of Services' | translate"></span></h6>
           <p class="card-text" style="font-size:32px"><i class="fa fa-wrench"></i></p>
         </div>
       </div>
@@ -93,7 +93,7 @@
         <div class="card-body text-center">
           <h4 *ngIf="bp_count>=0" class="card-title"><b>{{bp_count}}</b></h4>
           <h4 *ngIf="bp_count<0" class="card-title"><b>???</b></h4>
-          <h6 class="card-subtitle mb-2 text-muted">Executed Business Transactions</h6>
+          <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Executed Business Transactions' | translate"></span></h6>
           <p class="card-text" style="font-size:32px"><i class="fa fa-briefcase"></i></p>
         </div>
       </div>
@@ -119,7 +119,7 @@
         <div class="card-body text-center">
           <h4 *ngIf="trade_count>=0" class="card-title"><b>{{trade_count}}€</b></h4>
           <h4 *ngIf="trade_count<0" class="card-title"><b>???</b></h4>
-          <h6 class="card-subtitle mb-2 text-muted">Trading Volume</h6>
+          <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Trading Volume' | translate"></span></h6>
           <p class="card-text" style="font-size:32px"><i class="fa fa-money-bill"></i></p>
         </div>
       </div>

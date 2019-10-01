@@ -9,6 +9,8 @@ import { copy, deepEquals } from "../../common/utils";
 import { CompanySettings } from "../model/company-settings";
 import { CompanySensor } from "../model/company-sensor";
 import {BPEService} from '../../bpe/bpe.service';
+import * as myGlobals from "../../globals";
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "company-negotiation-settings",
@@ -46,7 +48,10 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
     isAllCollaborationsFinished:boolean;
     alertClosed:boolean = false;
 
+    config = myGlobals.config;
+
     constructor(private userService: UserService,
+                private translate: TranslateService,
                 private bpeService: BPEService) {
 
     }

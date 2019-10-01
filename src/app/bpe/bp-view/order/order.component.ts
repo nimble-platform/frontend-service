@@ -12,9 +12,6 @@ import { UserService } from "../../../user-mgmt/user.service";
 import { CookieService } from "ng2-cookies";
 import { CustomerParty } from "../../../catalogue/model/publish/customer-party";
 import { SupplierParty } from "../../../catalogue/model/publish/supplier-party";
-import { ProcessVariables } from "../../model/process-variables";
-import { ModelUtils } from "../../model/model-utils";
-import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { BPEService } from "../../bpe.service";
 import { BpUserRole } from "../../model/bp-user-role";
 import { OrderResponseSimple } from "../../../catalogue/model/publish/order-response-simple";
@@ -27,12 +24,12 @@ import { SearchContextService } from "../../../simple-search/search-context.serv
 import { EpcCodes } from "../../../data-channel/model/epc-codes";
 import { EpcService } from "../epc-service";
 import {DocumentService} from "../document-service";
-import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import * as myGlobals from '../../../globals';
 import {Contract} from '../../../catalogue/model/publish/contract';
 import {Clause} from '../../../catalogue/model/publish/clause';
 import {BinaryObject} from "../../../catalogue/model/publish/binary-object";
+import {TranslateService} from '@ngx-translate/core';
 import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
 
 /**
@@ -91,8 +88,8 @@ export class OrderComponent implements OnInit {
                 private epcService: EpcService,
                 private location: Location,
                 private router: Router,
+                private translate: TranslateService,
                 private documentService: DocumentService) {
-
     }
 
     ngOnInit(): void {
@@ -217,16 +214,10 @@ export class OrderComponent implements OnInit {
 
         //first initialize the seller and buyer parties.
         //once they are fetched continue with starting the ordering process
-        const buyerId: string = this.cookieService.get("company_id");
         order.buyerCustomerParty = new CustomerParty(this.buyerParty);
-
-        const sellerId: string = UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty);
         order.sellerSupplierParty = new SupplierParty(this.sellerParty);
 
-        const vars: ProcessVariables = ModelUtils.createProcessVariables("Order", buyerId, sellerId,this.cookieService.get("user_id"), order, this.bpDataService);
-        const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
-
-        this.bpeService.startBusinessProcess(piim)
+        this.bpeService.startProcessWithDocument(order)
             .then(res => {
                 this.submitCallStatus.callback("Order placed", true);
                 var tab = "PURCHASES";
@@ -260,21 +251,8 @@ export class OrderComponent implements OnInit {
         this.submitCallStatus.submit();
         this.bpDataService.orderResponse.acceptedIndicator = accepted;
 
-        let vars: ProcessVariables = ModelUtils.createProcessVariables(
-            "Order",
-            UBLModelUtils.getPartyId(this.bpDataService.order.buyerCustomerParty.party),
-            UBLModelUtils.getPartyId(this.bpDataService.order.sellerSupplierParty.party),
-            this.cookieService.get("user_id"),
-            this.bpDataService.orderResponse,
-            this.bpDataService
-        );
-        let piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(
-            vars,
-            this.processMetadata.processInstanceId
-        );
-
         //this.submitCallStatus.submit();
-        this.bpeService.continueBusinessProcess(piim)
+        this.bpeService.startProcessWithDocument(this.bpDataService.orderResponse)
             .then(res => {
                 this.submitCallStatus.callback("Order Response placed", true);
                 var tab = "PURCHASES";
@@ -311,7 +289,7 @@ export class OrderComponent implements OnInit {
     }
 
     onSearchTransportService() {
-        this.searchContextService.setSearchContext('Transport Service Provider','Order',this.processMetadata,this.bpDataService.bpActivityEvent.containerGroupId);
+        this.searchContextService.setSearchContext('Transport Service Provider','Order',this.processMetadata);
         this.router.navigate(['simple-search'], {
             queryParams: {
                 searchContext: 'orderbp',
@@ -350,9 +328,9 @@ export class OrderComponent implements OnInit {
             });
     }
 
-    onTTTabSelect(event): void {
+    onTTTabSelect(event:any,id:any): void {
         event.preventDefault();
-        this.selectedTrackAndTraceTab = event.target.id;
+        this.selectedTrackAndTraceTab = id;
     }
 
     onTTFileSelected(binaryObject: BinaryObject): void {
@@ -382,9 +360,9 @@ export class OrderComponent implements OnInit {
         this.epcCodes.codes.push("");
     }
 
-    onTCTabSelect(event): void {
+    onTCTabSelect(event:any,id:any): void {
         event.preventDefault();
-        this.selectedTCTab = event.target.id;
+        this.selectedTCTab = id;
     }
 
     /*

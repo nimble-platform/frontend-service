@@ -13,6 +13,8 @@ import { FactorsComponent } from './factors/factors.component';
 // ngx-treeview Component
 import { TreeviewModule } from 'ngx-treeview';
 
+import { HttpClientModule } from '@angular/common/http';
+
 @NgModule({
     imports: [
         CommonModule,
@@ -20,6 +22,7 @@ import { TreeviewModule } from 'ngx-treeview';
         FormsModule,
         HttpModule,
         QualiExploreRoutingModule,
+        HttpClientModule,
         TreeviewModule.forRoot(),
         NgbModule.forRoot()
     ],

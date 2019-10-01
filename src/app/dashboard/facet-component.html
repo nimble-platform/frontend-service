@@ -17,7 +17,7 @@
 
       <!-- No results -->
       <div *ngIf="noResults()">
-          <div class="ml-2 mr-2 mt-1 mb-1">No results</div>
+          <div class="ml-2 mr-2 mt-1 mb-1"><span [innerHTML]="'No results' | translate"></span></div>
       </div>
 
       <!-- boolean data type -->
@@ -42,7 +42,7 @@
           </div>
           <div *ngIf="stringValues.length>maxFacets" class="ml-2 mr-2">
             <hr>
-            <span (click)="expanded=!expanded"><span class="clickable" *ngIf="!expanded">Show more</span><span class="clickable" *ngIf="expanded">Show less</span></span>
+            <span (click)="expanded=!expanded"><span class="clickable" *ngIf="!expanded"><span [innerHTML]="'Show more' | translate"></span></span><span class="clickable" *ngIf="expanded"><span [innerHTML]="'Show less' | translate"></span></span></span>
           </div>
       </ng-container>
 

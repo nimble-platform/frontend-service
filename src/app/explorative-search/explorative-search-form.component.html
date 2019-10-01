@@ -2,13 +2,13 @@
 <!-- Search Bar -->
 
 <div>
-    <p class="nimble-title">Explore</p>
+    <p class="nimble-title"><span [innerHTML]="'Explore' | translate"></span></p>
         <form class="space-before" (ngSubmit)="Search(model.q, language)" #exSearchForm="ngForm" novalidate>
             <div class="form-group row">
-          		<label for="expSearch" class="col-2 col-form-label">Search</label>
+          		<label for="expSearch" class="col-2 col-form-label"><span [innerHTML]="'Search' | translate"></span></label>
           		<div class="col-10">
           			<div class="input-group">
-          			  <input type="text" class="form-control" id="expSearch" required [(ngModel)]="model.q" name="expSearch" #q="ngModel" pattern=".{1,}" placeholder="Product / Service / Company">
+          			  <input type="text" class="form-control" id="expSearch" required [(ngModel)]="model.q" name="expSearch" #q="ngModel" pattern=".{1,}" [placeholder]="'Product / Service / Company' | translate">
           			  <div class="input-group-append">
                             <select [(ngModel)]="language"
                                     [ngModelOptions]="{standalone: true}"
@@ -31,12 +31,12 @@
     <div [hidden]="!_error_detected_kw">
         <div class="alert alert-danger space-before"
              role="alert">
-            <em>An Error Occured</em> - Check Your Keyword or Please Try Again Later.
+            <em><span [innerHTML]="'An Error Occured' | translate"></span></em> - <span [innerHTML]="'Check Your Keyword or Please Try Again Later.' | translate"></span>
         </div>
     </div>
     <div [hidden]="!_warning_kw">
-        <div class="alert alert-warning space-before" role="alert">No Such Result Found.
-            Check Your Keyword and Language Selections.
+        <div class="alert alert-warning space-before" role="alert">
+            <span [innerHTML]="'exp-search-form-help-1' | translate"></span>
         </div>
     </div>
 </div>
@@ -50,8 +50,8 @@
         </div>
         <div class="row">
             <div class="col-md-12 align-center">
-                <h4>No Search Results</h4>
-                <p class="text-secondary">Try searching for a product/service above</p>
+                <h4><span [innerHTML]="'No Search Results' | translate"></span></h4>
+                <p class="text-secondary"><span [innerHTML]="'Try searching for a product/service above' | translate"></span></p>
             </div>
         </div>
     </div>
@@ -65,7 +65,7 @@
         <div class="row">
             <div class="col-sm-2">
                 <label class="col-form-label-lg">
-                    <b> Results </b>
+                    <b> <span [innerHTML]="'Results' | translate"></span> </b>
                     <sup><i class="fas fa-question-circle"
                        placement="top"
                        ngbTooltip="Click Product For More Info."
@@ -88,7 +88,7 @@
                                 <button type="button" class="btn btn-link btn-sm"
                                         *ngIf="eachOutput.resp.conceptOverview.length > 1"
                                         (click)="showMore[outerIndex]=!showMore[outerIndex]">
-                                    {{showMore[outerIndex] ? 'Hide': 'Show More'}} Results</button>
+                                    {{showMore[outerIndex] ? 'Hide': 'Show More'}} <span [innerHTML]="'Results' | translate"></span></button>
                             </div>
                         </div>
                     </div>
@@ -102,7 +102,7 @@
         <div class="row">
             <div class="col-sm-2">
                 <label class="col-form-label-sm">
-                    <b> Search History </b>
+                    <b> <span [innerHTML]="'Search History' | translate"></span> </b>
                     <sup><i class="fas fa-question-circle"
                        placement="bottom"
                        ngbTooltip="Hide/Remove Results"
@@ -150,7 +150,7 @@
         <ng-template ngbTabContent>
             <explore-search-details [config]="visData" [lang]="language"></explore-search-details>
             <div [hidden]="!_error_detected_query">
-                <div class="alert alert-danger space-before" role="alert">An error occured - please try again later</div>
+                <div class="alert alert-danger space-before" role="alert"><span [innerHTML]="'An Error Occured' | translate"></span></div>
             </div>
         </ng-template>
     </ngb-tab>

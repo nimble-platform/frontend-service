@@ -4,6 +4,7 @@ import { TnTService } from './tnt.service';
 import * as moment from 'moment';
 import * as d3 from 'd3';
 import * as myGlobals from '../globals';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'tnt-form',
@@ -34,7 +35,8 @@ export class TnTFormComponent {
     falsecode = '';
     verified: boolean;
 
-    constructor(private tntBackend: TnTService) {}
+    constructor(private tntBackend: TnTService, private translate: TranslateService) {
+    }
 
     ngOnInit(): void {
         this.updateInfo = true;

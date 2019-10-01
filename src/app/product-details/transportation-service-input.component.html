@@ -1,4 +1,4 @@
-<h5 *ngIf="haveTransporationServiceDetails" [class]="titleClass">Transportation Service Details</h5>
+<h5 *ngIf="haveTransporationServiceDetails" [class]="titleClass"><span [innerHTML]="'Transportation Service Details' | translate"></span></h5>
 <text-input [label]="'Service Type'" [presentationMode]="presentationMode"
   [definition]="'The type of service provided,e.g.,port-to-port'"
   [(text)]="catalogueLine.goodsItem.item.transportationServiceDetails.transportServiceCode.name"
@@ -30,7 +30,7 @@
   [rows]="1" [rowClass]="spacingClass" [valueTextClass]="valueTextClass">
 </text-input>
 <hr *ngIf="haveTransporationServiceDetails">
-<h5 *ngIf="haveCountries" [class]="titleClass">Applicable Countries</h5>
+<h5 *ngIf="haveCountries" [class]="titleClass"><span [innerHTML]="'Applicable Countries' | translate"></span></h5>
 <multi-address-input *ngIf="haveCountries" [presentationMode]="presentationMode"
             [label]="'Applicable Countries'"
             [multiValue]="true"
@@ -39,7 +39,7 @@
             [valueTextClass]="valueTextClass" valueClass="col-9 input-group" [rowClass]="spacingClass">
 </multi-address-input>
 <hr *ngIf="haveCountries">
-<h5 *ngIf="shipmentStage" [class]="titleClass">Shipment Stage</h5>
+<h5 *ngIf="shipmentStage" [class]="titleClass"><span [innerHTML]="'Shipment Stage' | translate"></span></h5>
 <text-input [label]="'Transportation Mode'" [presentationMode]="presentationMode"
             [definition]="'The method of transport used for this shipment stage,e.g.,road,air or rail'"
             [(text)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportModeCode.name"
@@ -51,7 +51,7 @@
             [rows]="1" [rowClass]="spacingClass" [valueTextClass]="valueTextClass">
 </text-input>
 <hr *ngIf="shipmentStage">
-<h5 *ngIf="haveTransportMeans" [class]="titleClass">Transport Means / Equipment</h5>
+<h5 *ngIf="haveTransportMeans" [class]="titleClass"><span [innerHTML]="'Transport Means / Equipment' | translate"></span></h5>
 <text-input [label]="'Transport Means'" [presentationMode]="presentationMode"
             [definition]="'Transport means associated with this piece of transport equipment,e.g.,automobiles, airplanes or trains'"
             [(text)]="catalogueLine.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportMeansTypeCode.name"
@@ -78,7 +78,7 @@
             [rows]="1" [rowClass]="spacingClass" [valueTextClass]="valueTextClass">
 </text-input>
 <hr *ngIf="haveTransportMeans">
-<h5 *ngIf="haveEnvironmentalEmission" [class]="titleClass">Environmental Emission</h5>
+<h5 *ngIf="haveEnvironmentalEmission" [class]="titleClass"><span [innerHTML]="'Environmental Emission' | translate"></span></h5>
 <text-input [label]="'Emission Type'" [presentationMode]="presentationMode"
             [(text)]="catalogueLine.goodsItem.item.transportationServiceDetails.environmentalEmission[0].environmentalEmissionTypeCode.name"
             [rows]="1" [rowClass]="spacingClass" [valueTextClass]="valueTextClass">

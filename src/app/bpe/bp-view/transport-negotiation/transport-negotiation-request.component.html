@@ -2,18 +2,18 @@
 <div class="col-12 pt-4">
     <ul class="nav nav-tabs">
         <li class="nav-item">
-            <a href id="OVERVIEW" class="nav-link" [ngClass]="{ active: selectedTab === 'OVERVIEW'}" (click)="onSelectTab($event)">
-                Transport Service Details
+            <a href id="OVERVIEW" class="nav-link" [ngClass]="{ active: selectedTab === 'OVERVIEW'}" (click)="onSelectTab($event,'OVERVIEW')">
+                <span [innerHTML]="'Transport Service Details' | translate"></span>
             </a>
         </li>
         <li class="nav-item">
-            <a href id="ADDRESS" class="nav-link" [ngClass]="{ active: selectedTab === 'ADDRESS'}" (click)="onSelectTab($event)">
-                Pick-up & Drop-off
+            <a href id="ADDRESS" class="nav-link" [ngClass]="{ active: selectedTab === 'ADDRESS'}" (click)="onSelectTab($event,'ADDRESS')">
+                <span [innerHTML]="'Pick-up & Drop-off' | translate"></span>
             </a>
         </li>
         <li class="nav-item">
-            <a href id="NEGOTIATION" class="nav-link" [ngClass]="{ active: selectedTab === 'NEGOTIATION'}" (click)="onSelectTab($event)">
-                Negotiable Terms
+            <a href id="NEGOTIATION" class="nav-link" [ngClass]="{ active: selectedTab === 'NEGOTIATION'}" (click)="onSelectTab($event,'NEGOTIATION')">
+                <span [innerHTML]="'Negotiable Terms' | translate"></span>
             </a>
         </li>
     </ul>
@@ -37,7 +37,7 @@
 <!-- Negotiable Terms Tab -->
 <div *ngIf="selectedTab === 'NEGOTIATION'" class="row space-before">
     <div class="col-12">
-        <h4 class="space-before">Negotiable Terms</h4>
+        <h4 class="space-before"><span [innerHTML]="'Negotiable Terms' | translate"></span></h4>
 
         <!-- Price -->
         <quantity-input label="Price" [disabled]="isDisabled()" [quantity]="rfqPrice.itemPrice" [quantityUnits]="CURRENCIES" labelClass="col-2"
@@ -88,7 +88,7 @@
         <hr>
 
         <!--Notes-->
-        <h5>Notes and Additional Files</h5>
+        <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
         <note-file-view [notes]="rfq.note"
                    [documents]="rfq.additionalDocumentReference"
                    [label]="'Notes'"
@@ -107,16 +107,16 @@
         <call-status [callStatus]="callStatus"></call-status>
     </div>
     <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isDisabled()" (click)="onBack()">Back</button>
+        <button class="btn btn-secondary action" [disabled]="isDisabled()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div class="col-3" *ngIf="!updatingProcess">
         <button class="btn btn-primary action" [disabled]="isDisabled()" (click)="onSendRequest()">
-            Send Request
+            <span [innerHTML]="'Send Request' | translate"></span>
         </button>
     </div>
     <div class="col-3" *ngIf="updatingProcess">
         <button class="btn btn-primary action"  (click)="onUpdateRequest()">
-            Update Request
+            <span [innerHTML]="'Update Request' | translate"></span>
         </button>
     </div>
 </div>
@@ -127,6 +127,6 @@
         <call-status [callStatus]="callStatus"></call-status>
     </div>
     <div class="col-3">
-        <button class="btn btn-secondary action" (click)="onBack()">Back</button>
+        <button class="btn btn-secondary action" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
 </div>

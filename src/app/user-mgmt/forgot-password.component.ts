@@ -7,6 +7,7 @@ import { CatalogueService } from '../catalogue/catalogue.service';
 import {CredentialsService} from "./credentials.service";
 import {ForgotPasswordCredentials} from "./model/forgot-password-credentials";
 import {CallStatus} from "../common/call-status";
+import {TranslateService} from '@ngx-translate/core';
 import {ActivatedRoute} from "@angular/router";
 
 @Component({
@@ -32,6 +33,7 @@ export class ForgotPasswordComponent implements OnInit {
 		private userService: UserService,
         private categoryService: CategoryService,
 		private credentialsService: CredentialsService,
+		private translate: TranslateService,
         private catalogueService: CatalogueService
 	) {	}
 

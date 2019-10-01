@@ -12,14 +12,11 @@ import { PaymentTermsWrapper } from "../payment-terms-wrapper";
 import { UserService } from "../../../user-mgmt/user.service";
 import { CustomerParty } from "../../../catalogue/model/publish/customer-party";
 import { SupplierParty } from "../../../catalogue/model/publish/supplier-party";
-import { ProcessVariables } from "../../model/process-variables";
-import { ModelUtils } from "../../model/model-utils";
-import { ProcessInstanceInputMessage } from "../../model/process-instance-input-message";
 import { BPEService } from "../../bpe.service";
-import {ItemPriceWrapper} from '../../../common/item-price-wrapper';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
 import {Text} from '../../../catalogue/model/publish/text';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "transport-negotiation-request",
@@ -48,8 +45,8 @@ export class TransportNegotiationRequestComponent implements OnInit {
                 private cookieService: CookieService,
                 private userService:UserService,
                 private location: Location,
+                private translate: TranslateService,
                 private router: Router) {
-
     }
 
     ngOnInit() {
@@ -85,9 +82,9 @@ export class TransportNegotiationRequestComponent implements OnInit {
         return !!this.processMetadata && !this.processMetadata.isBeingUpdated;
     }
 
-    onSelectTab(event: any): void {
+    onSelectTab(event: any, id: any): void {
         event.preventDefault();
-        this.selectedTab = event.target.id;
+        this.selectedTab = id;
     }
 
     onBack(): void {
@@ -129,10 +126,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
             rfq.buyerCustomerParty = new CustomerParty(buyerParty);
             rfq.sellerSupplierParty = new SupplierParty(sellerParty);
 
-            const vars: ProcessVariables = ModelUtils.createProcessVariables("Negotiation", buyerId, sellerId,this.cookieService.get("user_id"), rfq, this.bpDataService);
-            const piim: ProcessInstanceInputMessage = new ProcessInstanceInputMessage(vars, "");
-
-            return this.bpeService.startBusinessProcess(piim);
+            return this.bpeService.startProcessWithDocument(rfq);
         })
         .then(() => {
             this.callStatus.callback("Terms sent", true);

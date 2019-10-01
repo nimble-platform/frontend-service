@@ -1,6 +1,6 @@
 <div class="row space-before">
     <div class="col-3">
-        <strong class="font-weight-500"><label for="customFile">Requested filled technical data sheet(s):</label></strong>
+        <strong class="font-weight-500"><label for="customFile"><span [innerHTML]="'Requested filled technical data sheet(s)' | translate"></span>:</label></strong>
     </div>
     <div class="col-9">
         <file-input [disabled]="isLoading() || isRequestSent()" [multiple]="true" [presentationMode]="getPresentationMode()"
@@ -13,7 +13,7 @@
 <hr>
 
 <!--Notes-->
-<h5>Notes and Additional Files</h5>
+<h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
 <note-file-view [notes]="request.note"
            [label]="'Notes'"
            [documents]="request.additionalDocumentReference"
@@ -27,19 +27,19 @@
     <div *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div *ngIf="processMetadata && processMetadata.isBeingUpdated" class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div *ngIf="!(processMetadata && processMetadata.isBeingUpdated) && !bpDataService.isFinalProcessInTheWorkflow('Item_Information_Request')" class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onSkip()">
-            Skip
+            <span [innerHTML]="'Skip' | translate"></span>
         </button>
     </div>
     <div class="col-2">
         <button *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading()||isEmpty()" (click)="onSendRequest()">
-            Send Request
+            <span [innerHTML]="'Send Request' | translate"></span>
         </button>
         <button *ngIf="processMetadata && processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading()||isEmpty()" (click)="onUpdateRequest()">
-            Update Request
+            <span [innerHTML]="'Update Request' | translate"></span>
         </button>
     </div>
 </div>
@@ -47,11 +47,11 @@
 <div *ngIf="isRequestSent()" class="row actions-row">
     <div class="col-8"></div>
     <div class="col-2">
-        <button class="btn btn-secondary action" (click)="onBack()">Back</button>
+        <button class="btn btn-secondary action" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div class="col-2">
         <button class="btn btn-primary action" disabled="true">
-            Request Sent
+            <span [innerHTML]="'Request Sent' | translate"></span>
         </button>
     </div>
 </div>

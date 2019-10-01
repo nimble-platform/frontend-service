@@ -2,21 +2,21 @@
 <!------------------------------------------------------------------------------------------------------------>
 <!-- Negotiation Steps -->
 <!------------------------------------------------------------------------------------------------------------>
-<h1>Negotiation Overview</h1>
+<h1><span [innerHTML]="'Negotiation Overview' | translate"></span></h1>
 <br/>
 <div class="col-12">
     <div class="steps">
         <div [ngClass]="getCurrentNegotiationStep(0)">
-            <span>Initial Offer</span>
+            <span [innerHTML]="'Initial Offer' | translate"></span>
         </div>
         <div [ngClass]="getCurrentNegotiationStep(1)">
-            <span>Counter Offer</span>
+            <span [innerHTML]="'Counter Offer' | translate"></span>
         </div>
         <div [ngClass]="getCurrentNegotiationStep(2)">
-            <span>Confrontation</span>
+            <span [innerHTML]="'Confrontation' | translate"></span>
         </div>
         <div [ngClass]="getCurrentNegotiationStep(3)">
-            <span>Exchange Data</span>
+            <span [innerHTML]="'Exchange Data' | translate"></span>
         </div>
     </div>
 </div>
@@ -25,15 +25,15 @@
 <!------------------------------------------------------------------------------------------------------------>
 <!-- Channel Details -->
 <!------------------------------------------------------------------------------------------------------------>
-<h1>Channel Details</h1>
+<h1><span [innerHTML]="'Channel Details' | translate"></span></h1>
 
 <table id="channel-details" class="table table-striped table-bordered">
     <tr>
-        <th><span>Channel ID</span></th>
-        <th><span>Business Process</span></th>
-        <th><span>Description</span></th>
-        <th><span>Start Time</span></th>
-        <th><span>End Time</span></th>
+        <th><span [innerHTML]="'Channel ID' | translate"></span></th>
+        <th><span [innerHTML]="'Business Process' | translate"></span></th>
+        <th><span [innerHTML]="'Description' | translate"></span></th>
+        <th><span [innerHTML]="'Start Time' | translate"></span></th>
+        <th><span [innerHTML]="'End Time' | translate"></span></th>
     </tr>
     <tr>
         <td>{{channelConfig["channelID"]}}</td>
@@ -62,19 +62,19 @@
 
 
 <div *ngIf="pageNumber == 0" class="interactions">
-    <button class="btn btn-success" [disabled]="pageSubmitted" (click)="confirmPage()">Confirm Inital Offer</button>
+    <button class="btn btn-success" [disabled]="pageSubmitted" (click)="confirmPage()"><span [innerHTML]="'Confirm Inital Offer' | translate"></span></button>
 </div>
 <div *ngIf="pageNumber == 1" class="interactions">
-    <button class="btn btn-success" [disabled]="pageSubmitted" (click)="confirmPage()">Confirm Counter Offer</button>
+    <button class="btn btn-success" [disabled]="pageSubmitted" (click)="confirmPage()"><span [innerHTML]="'Confirm Counter Offer' | translate"></span></button>
 </div>
 <div *ngIf="pageNumber == 2" class="interactions">
-    <button class="btn btn-success" [disabled]="pageSubmitted" (click)="confirmPage()">Accept Counter Offer</button>
-    <button class="btn btn-danger" [disabled]="pageRenegotiated" (click)="renegotiateTerms(3)">Renegotiate Terms</button>
+    <button class="btn btn-success" [disabled]="pageSubmitted" (click)="confirmPage()"><span [innerHTML]="'Accept Counter Offer' | translate"></span></button>
+    <button class="btn btn-danger" [disabled]="pageRenegotiated" (click)="renegotiateTerms(3)"><span [innerHTML]="'Renegotiate Terms' | translate"></span></button>
 </div>
 <div *ngIf="pageNumber == 3" class="interactions">
-    <button [disabled]="!checkClosed()" class="btn btn-success" (click)="openChannel()">Open Channel</button>
-    <button [disabled]="checkClosed()" class="btn btn-danger" (click)="closeChannel()">Close Channel</button>
-    <button [disabled]="!checkClosed() || pageRegnegotiated" class="btn btn-danger" (click)="renegotiateTerms(2)">Renegotiate Terms</button>
+    <button [disabled]="!checkClosed()" class="btn btn-success" (click)="openChannel()"><span [innerHTML]="'Open Channel' | translate"></span></button>
+    <button [disabled]="checkClosed()" class="btn btn-danger" (click)="closeChannel()"><span [innerHTML]="'Close Channel' | translate"></span></button>
+    <button [disabled]="!checkClosed() || pageRegnegotiated" class="btn btn-danger" (click)="renegotiateTerms(2)"><span [innerHTML]="'Renegotiate Terms' | translate"></span></button>
 </div>
 
 <div style="clear: right;"></div>
@@ -83,26 +83,26 @@
 <!------------------------------------------------------------------------------------------------------------>
 <!-- Associated Sensors -->
 <!------------------------------------------------------------------------------------------------------------>
-<div *ngIf="pageNumber < 2"><h1>Associated Sensors</h1></div>
+<div *ngIf="pageNumber < 2"><h1><span [innerHTML]="'Associated Sensors' | translate"></span></h1></div>
 <div  *ngIf="pageNumber == 2">
-    <h1 id="comparison-header-left">Initial Sensors</h1>
-    <h1 id="comparison-header-right">Counter Sensors</h1>
+    <h1 id="comparison-header-left"><span [innerHTML]="'Initial Sensors' | translate"></span></h1>
+    <h1 id="comparison-header-right"><span [innerHTML]="'Counter Sensors' | translate"></span></h1>
     <hr style="clear:both;"/>
 </div>
-<div  *ngIf="pageNumber == 3"><h1>Agreed Sensors</h1></div>
+<div  *ngIf="pageNumber == 3"><h1><span [innerHTML]="'Agreed Sensors' | translate"></span></h1></div>
 
 <div class="row">
     <div *ngIf="pageNumber == 0" class="col-12"> <!-- Page 0 -->
         <ng-container *ngFor="let sensor of initialChannelSensors">
             <table class="table table-striped table-bordered">
                 <tr>
-                    <th><span>Machine</span></th>
-                    <th><span>Sensor</span></th>
-                    <th><span>Interval</span></th>
-                    <th><span>Description</span></th>
-                    <th *ngIf="hasFilteringService"><span>Datakey</span></th>
-                    <th *ngIf="hasFilteringService"><span>Metadata</span></th>
-                    <th *ngIf="hasFilteringService"><span>Advanced Filtering</span></th>
+                    <th><span [innerHTML]="'Machine' | translate"></span></th>
+                    <th><span [innerHTML]="'Sensor' | translate"></span></th>
+                    <th><span [innerHTML]="'Interval' | translate"></span></th>
+                    <th><span [innerHTML]="'Description' | translate"></span></th>
+                    <th *ngIf="hasFilteringService"><span [innerHTML]="'Datakey' | translate"></span></th>
+                    <th *ngIf="hasFilteringService"><span [innerHTML]="'Metadata' | translate"></span></th>
+                    <th *ngIf="hasFilteringService"><span [innerHTML]="'Advanced Filtering' | translate"></span></th>
                     <th *ngIf="pageNumber <= 1" class="interaction-column"></th>
                 </tr>
                 <tr>
@@ -115,7 +115,7 @@
                     <td *ngIf="hasFilteringService">{{sensor.advancedFiltering}}</td>
                     <td *ngIf="pageNumber <= 1">
                         <button class="btn btn-warning remove-channel-btn"
-                                (click)="removeSensor(sensor)">Remove
+                                (click)="removeSensor(sensor)"><span [innerHTML]="'Remove' | translate"></span>
                         </button>
                     </td>
                 </tr>
@@ -126,10 +126,10 @@
         <ng-container *ngFor="let sensor of initialChannelSensors">
             <table class="table table-striped table-bordered">
                 <tr>
-                    <th><span>Machine</span></th>
-                    <th><span>Sensor</span></th>
-                    <th><span>Interval</span></th>
-                    <th><span>Description</span></th>
+                    <th><span [innerHTML]="'Machine' | translate"></span></th>
+                    <th><span [innerHTML]="'Sensor' | translate"></span></th>
+                    <th><span [innerHTML]="'Interval' | translate"></span></th>
+                    <th><span [innerHTML]="'Description' | translate"></span></th>
                 </tr>
                 <tr>
                     <td>{{sensor.machine.name}}</td>
@@ -138,9 +138,9 @@
                     <td>{{sensor.description}}</td>
                 </tr>
                 <tr *ngIf="hasFilteringService">
-                    <th><span>Metadata</span></th>
-                    <th><span>Advanced Filtering</span></th>
-                    <th><span>Datakey</span></th>
+                    <th><span [innerHTML]="'Metadata' | translate"></span></th>
+                    <th><span [innerHTML]="'Advanced Filtering' | translate"></span></th>
+                    <th><span [innerHTML]="'Datakey' | translate"></span></th>
                 </tr>
                 <tr *ngIf="hasFilteringService">
                     <td>{{sensor.metadata}}</td>
@@ -156,10 +156,10 @@
             <table class="table table-striped table-bordered">
 
                 <tr>
-                    <th><span>Machine</span></th>
-                    <th><span>Sensor</span></th>
-                    <th><span>Interval</span></th>
-                    <th><span>Description</span></th>
+                    <th><span [innerHTML]="'Machine' | translate"></span></th>
+                    <th><span [innerHTML]="'Sensor' | translate"></span></th>
+                    <th><span [innerHTML]="'Interval' | translate"></span></th>
+                    <th><span [innerHTML]="'Description' | translate"></span></th>
                 </tr>
                 <tr>
                     <td>{{sensor.machine.name}}</td>
@@ -168,9 +168,9 @@
                     <td>{{sensor.description}}</td>
                 </tr>
                 <tr *ngIf="hasFilteringService">
-                    <th><span>Metadata</span></th>
-                    <th><span>Advanced Filtering</span></th>
-                    <th><span>Datakey</span></th>
+                    <th><span [innerHTML]="'Metadata' | translate"></span></th>
+                    <th><span [innerHTML]="'Advanced Filtering' | translate"></span></th>
+                    <th><span [innerHTML]="'Datakey' | translate"></span></th>
                 </tr>
                 <tr *ngIf="hasFilteringService">
                     <td>{{sensor.metadata}}</td>
@@ -183,7 +183,7 @@
                 <tr>
                     <td>
                         <button class="btn btn-warning remove-channel-btn"
-                                (click)="removeSensor(sensor)">Remove
+                                (click)="removeSensor(sensor)"><span [innerHTML]="'Remove' | translate"></span>
                         </button>
                     </td>
                 </tr>
@@ -196,10 +196,10 @@
         <ng-container *ngFor="let sensor of initialChannelSensors">
             <table class="table table-striped table-bordered">
                 <tr>
-                    <th><span>Machine</span></th>
-                    <th><span>Sensor</span></th>
-                    <th><span>Interval</span></th>
-                    <th><span>Description</span></th>
+                    <th><span [innerHTML]="'Machine' | translate"></span></th>
+                    <th><span [innerHTML]="'Sensor' | translate"></span></th>
+                    <th><span [innerHTML]="'Interval' | translate"></span></th>
+                    <th><span [innerHTML]="'Description' | translate"></span></th>
                 </tr>
                 <tr>
                     <td>{{sensor.machine.name}}</td>
@@ -208,9 +208,9 @@
                     <td>{{sensor.description}}</td>
                 </tr>
                 <tr *ngIf="hasFilteringService">
-                    <th><span>Metadata</span></th>
-                    <th><span>Advanced Filtering</span></th>
-                    <th><span>Datakey</span></th>
+                    <th><span [innerHTML]="'Metadata' | translate"></span></th>
+                    <th><span [innerHTML]="'Advanced Filtering' | translate"></span></th>
+                    <th><span [innerHTML]="'Datakey' | translate"></span></th>
                 </tr>
                 <tr *ngIf="hasFilteringService">
                     <td>{{sensor.metadata}}</td>
@@ -224,10 +224,10 @@
         <ng-container *ngFor="let sensor of counterChannelSensors">
             <table class="table table-striped table-bordered">
                 <tr>
-                    <th><span>Machine</span></th>
-                    <th><span>Sensor</span></th>
-                    <th><span>Interval</span></th>
-                    <th><span>Description</span></th>
+                    <th><span [innerHTML]="'Machine' | translate"></span></th>
+                    <th><span [innerHTML]="'Sensor' | translate"></span></th>
+                    <th><span [innerHTML]="'Interval' | translate"></span></th>
+                    <th><span [innerHTML]="'Description' | translate"></span></th>
                 </tr>
                 <tr>
                     <td>{{sensor.machine.name}}</td>
@@ -236,9 +236,9 @@
                     <td>{{sensor.description}}</td>
                 </tr>
                 <tr *ngIf="hasFilteringService">
-                    <th><span>Metadata</span></th>
-                    <th><span>Advanced Filtering</span></th>
-                    <th><span>Datakey</span></th>
+                    <th><span [innerHTML]="'Metadata' | translate"></span></th>
+                    <th><span [innerHTML]="'Advanced Filtering' | translate"></span></th>
+                    <th><span [innerHTML]="'Datakey' | translate"></span></th>
                 </tr>
                 <tr *ngIf="hasFilteringService">
                     <td>{{sensor.metadata}}</td>
@@ -252,13 +252,13 @@
         <ng-container *ngFor="let sensor of counterChannelSensors">
             <table class="table table-striped table-bordered">
                 <tr>
-                    <th><span>Machine</span></th>
-                    <th><span>Sensor</span></th>
-                    <th><span>Interval</span></th>
-                    <th><span>Description</span></th>
-                    <th *ngIf="hasFilteringService"><span>Datakey</span></th>
-                    <th *ngIf="hasFilteringService"><span>Metadata</span></th>
-                    <th *ngIf="hasFilteringService"><span>Advanced Filtering</span></th>
+                    <th><span [innerHTML]="'Machine' | translate"></span></th>
+                    <th><span [innerHTML]="'Sensor' | translate"></span></th>
+                    <th><span [innerHTML]="'Interval' | translate"></span></th>
+                    <th><span [innerHTML]="'Description' | translate"></span></th>
+                    <th *ngIf="hasFilteringService"><span [innerHTML]="'Datakey' | translate"></span></th>
+                    <th *ngIf="hasFilteringService"><span [innerHTML]="'Metadata' | translate"></span></th>
+                    <th *ngIf="hasFilteringService"><span [innerHTML]="'Advanced Filtering' | translate"></span></th>
                 </tr>
                 <tr>
                     <td>{{sensor.machine.name}}</td>
@@ -278,7 +278,7 @@
 <!-- Add a Sensor: Formular  -->
 <!------------------------------------------------------------------------------------------------------------>
 <div *ngIf="pageNumber <= 1" class="form-group" id="new-sensor">
-    <h6>Add new sensor</h6><br/>
+    <h6><span [innerHTML]="'Add new sensor' | translate"></span></h6><br/>
     <form id="add-sensor-form" #customPropertyForm="ngForm" class="col-12">
 
         <!-- machine name-->
@@ -320,11 +320,11 @@
         <button [disabled]="!customPropertyForm.form.valid"
                 class="btn btn-success ml-2 add-sensor-btn"
                 (click)="addSensor()">
-            <span>Add sensor</span>
+            <span [innerHTML]="'Add sensor' | translate"></span>
         </button>
     </form>
-    <p>Names of sensors are unique. Entering the name of an existing sensor, will
-        associate it to this channel.</p>
+    <p><span [innerHTML]="'Names of sensors are unique. Entering the name of an existing sensor, will
+        associate it to this channel.' | translate"></span></p>
 </div>
 
 
@@ -334,7 +334,7 @@
 <table *ngIf="pageNumber < 2 && hasInternalService == true" id="DataStorageHeader">
     <td width="35%" style="vertical-align:middle">
         <div id="HeaderTextArea">
-            <h1>Private Data Storage</h1>
+            <h1><span [innerHTML]="'Private Data Storage' | translate"></span></h1>
         </div>
     </td>
     <td width="5%" style="vertical-align:middle">
@@ -348,7 +348,7 @@
         </div>
     </td>
     <td width="60%" style="vertical-align:middle">
-        <div id="DescriptionTextArea">enabling this option will switch the data channel storage from kafka streams to a private DB</div>
+        <div id="DescriptionTextArea"><span [innerHTML]="'enabling this option will switch the data channel storage from kafka streams to a private DB' | translate"></span></div>
     </td>
 </table>
 
@@ -360,27 +360,27 @@
     <!------------------------------------------------------------------------------------------------------------>
     <!-- Hosted Servers -->
     <!------------------------------------------------------------------------------------------------------------>
-    <div *ngIf="pageNumber < 2"><h1>Hosted Servers</h1></div>
+    <div *ngIf="pageNumber < 2"><h1><span [innerHTML]="'Hosted Servers' | translate"></span></h1></div>
     <div  *ngIf="pageNumber == 2">
-        <h1 id="comparison-header-left">Initial Servers</h1>
-        <h1 id="comparison-header-right">Counter Servers</h1>
+        <h1 id="comparison-header-left"><span [innerHTML]="'Initial Servers' | translate"></span></h1>
+        <h1 id="comparison-header-right"><span [innerHTML]="'Counter Servers' | translate"></span></h1>
         <hr style="clear:both;"/>
     </div>
-    <div *ngIf="pageNumber == 3"><h1>Agreed Servers</h1></div>
+    <div *ngIf="pageNumber == 3"><h1><span [innerHTML]="'Agreed Servers' | translate"></span></h1></div>
 
     <div class="row">
         <div *ngIf="pageNumber == 0" class="col-12">
            <ng-container *ngFor="let server of initialChannelServers">
                <table class="table table-striped table-bordered">
                    <tr>
-                       <th><span>Prio</span></th>
-                       <th><span>Server Name</span></th>
-                       <th><span>Endpoint Address</span></th>
-                       <th><span>Storage Duration</span></th>
-                       <th><span>Ownership</span></th>
-                       <th><span>Login</span></th>
-                       <th><span>Password</span></th>
-                       <th><span>Description</span></th>
+                       <th><span [innerHTML]="'Prio' | translate"></span></th>
+                       <th><span [innerHTML]="'Server Name' | translate"></span></th>
+                       <th><span [innerHTML]="'Endpoint Address' | translate"></span></th>
+                       <th><span [innerHTML]="'Storage Duration' | translate"></span></th>
+                       <th><span [innerHTML]="'Ownership' | translate"></span></th>
+                       <th><span [innerHTML]="'Login' | translate"></span></th>
+                       <th><span [innerHTML]="'Password' | translate"></span></th>
+                       <th><span [innerHTML]="'Description' | translate"></span></th>
                        <th *ngIf="pageNumber <= 1" class="interaction-column"></th>
                    </tr>
                    <tr>
@@ -394,7 +394,7 @@
                        <td>{{server.description}}</td>
                        <td *ngIf="pageNumber <= 1">
                            <button class="btn btn-warning remove-channel-btn"
-                                   (click)="removeServer(server)">Remove
+                                   (click)="removeServer(server)"><span [innerHTML]="'Remove' | translate"></span>
                            </button>
                        </td>
                    </tr>
@@ -405,10 +405,10 @@
             <ng-container *ngFor="let server of initialChannelServers">
                 <table class="table table-striped table-bordered">
                     <tr>
-                        <th><span>Prio</span></th>
-                        <th><span>Server Name</span></th>
-                        <th><span>Endpoint Address</span></th>
-                        <th><span>Storage Duration</span></th>
+                        <th><span [innerHTML]="'Prio' | translate"></span></th>
+                        <th><span [innerHTML]="'Server Name' | translate"></span></th>
+                        <th><span [innerHTML]="'Endpoint Address' | translate"></span></th>
+                        <th><span [innerHTML]="'Storage Duration' | translate"></span></th>
                     </tr>
                     <tr>
                         <td>{{server.priority}}</td>
@@ -418,10 +418,10 @@
                     </tr>
 
                     <tr>
-                        <th><span>Ownership</span></th>
-                        <th><span>Login</span></th>
-                        <th><span>Password</span></th>
-                        <th><span>Description</span></th>
+                        <th><span [innerHTML]="'Ownership' | translate"></span></th>
+                        <th><span [innerHTML]="'Login' | translate"></span></th>
+                        <th><span [innerHTML]="'Password' | translate"></span></th>
+                        <th><span [innerHTML]="'Description' | translate"></span></th>
                     </tr>
                     <tr>
                         <td>{{server.ownership}}</td>
@@ -437,10 +437,10 @@
                 <table class="table table-striped table-bordered">
 
                     <tr>
-                        <th><span>Prio</span></th>
-                        <th><span>Server Name</span></th>
-                        <th><span>Endpoint Address</span></th>
-                        <th><span>Storage Duration</span></th>
+                        <th><span [innerHTML]="'Prio' | translate"></span></th>
+                        <th><span [innerHTML]="'Server Name' | translate"></span></th>
+                        <th><span [innerHTML]="'Endpoint Address' | translate"></span></th>
+                        <th><span [innerHTML]="'Storage Duration' | translate"></span></th>
                     </tr>
                     <tr>
                         <td>{{server.priority}}</td>
@@ -449,10 +449,10 @@
                         <td>{{server.duration}}</td>
                     </tr>
                     <tr>
-                        <th><span>Ownership</span></th>
-                        <th><span>Login</span></th>
-                        <th><span>Password</span></th>
-                        <th><span>Description</span></th>
+                        <th><span [innerHTML]="'Ownership' | translate"></span></th>
+                        <th><span [innerHTML]="'Login' | translate"></span></th>
+                        <th><span [innerHTML]="'Password' | translate"></span></th>
+                        <th><span [innerHTML]="'Description' | translate"></span></th>
                     </tr>
                     <tr>
                         <td>{{server.ownership}}</td>
@@ -466,7 +466,7 @@
                     <tr>
                         <td>
                             <button class="btn btn-warning remove-channel-btn"
-                                    (click)="removeServer(server)">Remove
+                                    (click)="removeServer(server)"><span [innerHTML]="'Remove' | translate"></span>
                             </button>
                         </td>
                     </tr>
@@ -478,10 +478,10 @@
             <ng-container *ngFor="let server of initialChannelServers">
                 <table class="table table-striped table-bordered">
                     <tr>
-                        <th><span>Prio</span></th>
-                        <th><span>Server Name</span></th>
-                        <th><span>Endpoint Address</span></th>
-                        <th><span>Storage Duration</span></th>
+                        <th><span [innerHTML]="'Prio' | translate"></span></th>
+                        <th><span [innerHTML]="'Server Name' | translate"></span></th>
+                        <th><span [innerHTML]="'Endpoint Address' | translate"></span></th>
+                        <th><span [innerHTML]="'Storage Duration' | translate"></span></th>
                     </tr>
                     <tr>
                         <td>{{server.priority}}</td>
@@ -491,10 +491,10 @@
                     </tr>
 
                     <tr>
-                        <th><span>Ownership</span></th>
-                        <th><span>Login</span></th>
-                        <th><span>Password</span></th>
-                        <th><span>Description</span></th>
+                        <th><span [innerHTML]="'Ownership' | translate"></span></th>
+                        <th><span [innerHTML]="'Login' | translate"></span></th>
+                        <th><span [innerHTML]="'Password' | translate"></span></th>
+                        <th><span [innerHTML]="'Description' | translate"></span></th>
                     </tr>
                     <tr>
                         <td>{{server.ownership}}</td>
@@ -510,10 +510,10 @@
             <ng-container *ngFor="let server of counterChannelServers">
                 <table class="table table-striped table-bordered">
                     <tr>
-                        <th><span>Prio</span></th>
-                        <th><span>Server Name</span></th>
-                        <th><span>Endpoint Address</span></th>
-                        <th><span>Storage Duration</span></th>
+                        <th><span [innerHTML]="'Prio' | translate"></span></th>
+                        <th><span [innerHTML]="'Server Name' | translate"></span></th>
+                        <th><span [innerHTML]="'Endpoint Address' | translate"></span></th>
+                        <th><span [innerHTML]="'Storage Duration' | translate"></span></th>
                     </tr>
                     <tr>
                         <td>{{server.priority}}</td>
@@ -523,10 +523,10 @@
                     </tr>
 
                     <tr>
-                        <th><span>Ownership</span></th>
-                        <th><span>Login</span></th>
-                        <th><span>Password</span></th>
-                        <th><span>Description</span></th>
+                        <th><span [innerHTML]="'Ownership' | translate"></span></th>
+                        <th><span [innerHTML]="'Login' | translate"></span></th>
+                        <th><span [innerHTML]="'Password' | translate"></span></th>
+                        <th><span [innerHTML]="'Description' | translate"></span></th>
                     </tr>
                     <tr>
                         <td>{{server.ownership}}</td>
@@ -542,14 +542,14 @@
             <ng-container *ngFor="let server of counterChannelServers">
                 <table class="table table-striped table-bordered">
                     <tr>
-                        <th><span>Prio</span></th>
-                        <th><span>Server Name</span></th>
-                        <th><span>Endpoint Address</span></th>
-                        <th><span>Storage Duration</span></th>
-                        <th><span>Ownership</span></th>
-                        <th><span>Login</span></th>
-                        <th><span>Password</span></th>
-                        <th><span>Description</span></th>
+                        <th><span [innerHTML]="'Prio' | translate"></span></th>
+                        <th><span [innerHTML]="'Server Name' | translate"></span></th>
+                        <th><span [innerHTML]="'Endpoint Address' | translate"></span></th>
+                        <th><span [innerHTML]="'Storage Duration' | translate"></span></th>
+                        <th><span [innerHTML]="'Ownership' | translate"></span></th>
+                        <th><span [innerHTML]="'Login' | translate"></span></th>
+                        <th><span [innerHTML]="'Password' | translate"></span></th>
+                        <th><span [innerHTML]="'Description' | translate"></span></th>
                     </tr>
                     <tr>
                         <td>{{server.priority}}</td>
@@ -570,7 +570,7 @@
     <!-- Add a Server: Formular -->
     <!------------------------------------------------------------------------------------------------------------>
     <div *ngIf="pageNumber <= 1" class="form-group" id="new-server">
-        <h6>Add new server</h6><br/>
+        <h6><span [innerHTML]="'Add new server' | translate"></span></h6><br/>
         <form id="add-server-form" #customPropertyForm="ngForm" class="col-12">
 
             <!-- server prio-->
@@ -617,11 +617,11 @@
             <button [disabled]="!customPropertyForm.form.valid"
                     class="btn btn-success ml-2 add-sensor-btn"
                     (click)="addServer()">
-                <span>Add server</span>
+                <span [innerHTML]="'Add server' | translate"></span>
             </button>
         </form>
-        <p>Names of servers are unique. Entering the name of an existing server, will
-            associate it to this channel.</p>
+        <p><span [innerHTML]="'Names of servers are unique. Entering the name of an existing server, will
+            associate it to this channel.' | translate"></span></p>
     </div>
 
 

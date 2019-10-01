@@ -98,10 +98,12 @@ or
 
 For Internationalization [@ngx-translate/core](https://www.npmjs.com/package/@ngx-translate/core#usage) is used.
 
-Import the TranslateService for every component that requires translations and add it to the constructor, e.g.
+Import the TranslateService for every component that requires translations and declare it to the constructor, e.g.
 ```shell
 import {TranslateService} from '@ngx-translate/core';
+constructor(private translate: TranslateService){}
 ```
+Also make sure that the AppCommonModule is imported in the corresponding module.
 
 The translations themself have to be added to src/assets/[LANG].json
 

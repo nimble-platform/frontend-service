@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FiltersService } from './filters.service';
 import { Router } from '@angular/router';
 import { Filter } from './model/filter';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'filters',
@@ -14,7 +15,10 @@ export class FiltersComponent implements OnInit {
     filters: Filter[] = [];
     selections: number[] = [];
     private _selectionsSet: Set<number> = new Set();
-    constructor(private service: FiltersService, private router: Router) {}
+    constructor(private service: FiltersService,
+                private router: Router,
+                private translate: TranslateService) {
+                }
 
     ngOnInit() {
         // Get previously selected Filters and Selection Array

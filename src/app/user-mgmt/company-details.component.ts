@@ -8,6 +8,7 @@ import { CallStatus } from "../common/call-status";
 import { CompanySettings } from "./model/company-settings";
 import { AppComponent } from "../app.component";
 import {selectValueOfTextObject, sanitizeLink} from '../common/utils';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "company-details",
@@ -29,6 +30,7 @@ export class CompanyDetailsComponent implements OnInit {
     constructor(private cookieService: CookieService,
                 private userService: UserService,
                 public appComponent: AppComponent,
+                private translate: TranslateService,
                 public route: ActivatedRoute,
                 public router: Router) {
     }
@@ -68,17 +70,11 @@ export class CompanyDetailsComponent implements OnInit {
         .then(response => {
           this.vatCallStatus.callback("VAT checked", true);
           setTimeout(function(){
-            if (response.status == "success") {
-              if (response.valid) {
-                if (response.company_name) {
-                  alert("The VAT is valid and registered for "+response.company_name+".");
-                }
+            if (response.IsValid) {
+                if (response.BusinessName && response.BusinessName != "" && response.BusinessName != "---")
+                    alert("The VAT is valid and registered for "+response.BusinessName+".");
                 else
                   alert("The VAT is valid.");
-              }
-              else {
-                alert("The VAT is invalid.");
-              }
             }
             else {
               alert("The VAT is invalid.");

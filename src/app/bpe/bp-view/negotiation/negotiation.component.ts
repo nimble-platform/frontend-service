@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy} from "@angular/core";
+import {Component, OnInit, OnDestroy, Input} from '@angular/core';
 import { BPDataService } from "../bp-data-service";
 import { CallStatus } from "../../../common/call-status";
 import {ThreadEventMetadata} from "../../../catalogue/model/publish/thread-event-metadata";
@@ -43,6 +43,9 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     formerProcess: boolean = false; // true indicates that the last step of the history IS NOT negotiation
     sliderIndex: number = -1;
 
+    // whether the item is deleted or not
+    @Input() isCatalogueLineDeleted:boolean = false ;
+
     constructor(public bpDataService: BPDataService,
                 private bpeService: BPEService,
                 private documentService: DocumentService,
@@ -59,17 +62,19 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         // subscribe to the bp change event so that we can update negotiation history when a new negotiation process is initialized with a negotiation response
         // in this case, the view is not refreshed but we have add a new negotiation history element for the new process
         this.bpActivityEventSubs = this.bpDataService.bpActivityEventObservable.subscribe(bpActivityEvent => {
-            if (bpActivityEvent) {
-                if(bpActivityEvent.processType == 'Negotiation' &&
-                    bpActivityEvent.newProcess &&
-                    // this check is required in order to prevent double initialization of last offer and negotiation history
-                    // when a negotiation process is created for the first time
-                    this.isLastStepNegotiation(bpActivityEvent)) {
+            if (bpActivityEvent == null) {
+                return;
+            }
 
-                    this.formerProcess = false;
-                    this.initializeLastOffer();
-                    this.initializeNegotiationHistory();
-                }
+            if(bpActivityEvent.processType == 'Negotiation' &&
+                bpActivityEvent.newProcess &&
+                // this check is required in order to prevent double initialization of last offer and negotiation history
+                // when a negotiation process is created for the first time
+                this.isLastStepNegotiation(bpActivityEvent)) {
+
+                this.formerProcess = false;
+                this.initializeLastOffer();
+                this.initializeNegotiationHistory();
             }
         });
 

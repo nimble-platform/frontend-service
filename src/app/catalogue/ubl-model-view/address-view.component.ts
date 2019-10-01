@@ -1,5 +1,6 @@
 import {Component, Input} from "@angular/core";
 import {Address} from "../model/publish/address";
+import {TranslateService} from '@ngx-translate/core';
 import {UBLModelUtils} from "../model/ubl-model-utils";
 /**
  * Created by suat on 22-Sep-17.
@@ -17,6 +18,9 @@ export class AddressViewComponent {
     @Input() multiValue: boolean = false;
     @Input() definition: string = null;
 
+    constructor(private translate: TranslateService
+        ) {
+        }
 
     addFirstValue(): void {
         this.address.push(new Address());

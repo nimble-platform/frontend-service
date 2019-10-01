@@ -4,6 +4,7 @@ import { CallStatus } from '../common/call-status';
 import {selectPartyName} from '../common/utils';
 import { CompanyManagementTab } from "./model/company-management-tab";
 import {COMPANY_LIST_SORT_OPTIONS} from './constants';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "company-management",
@@ -35,7 +36,8 @@ export class CompanyManagementComponent implements OnInit {
 
     selectedTab: CompanyManagementTab;
 
-    constructor(private analyticsService: AnalyticsService) {
+    constructor(private analyticsService: AnalyticsService,
+      private translate: TranslateService,) {
     }
 
     ngOnInit(): void {
@@ -115,6 +117,20 @@ export class CompanyManagementComponent implements OnInit {
         }
     }
 
+    deleteCompany(company): void {
+        if (confirm("Are you sure that you want to delete this company?")) {
+          this.registeredCompaniesCallStatus.submit();
+          this.analyticsService.deleteCompany(company.hjid)
+              .then(res => {
+                  this.registeredCompaniesPage.content = this.registeredCompaniesPage.content.filter(c => c.hjid !== company.hjid);
+                  this.updateRegisteredCompanies(this.registeredCompaniesPage.number);
+              })
+              .catch(error => {
+                  this.registeredCompaniesCallStatus.error("Error while deleting company", error);
+              });
+        }
+    }
+
     onUnverifiedPageChange(newPage): void {
         this.unverifiedCompaniesCallStatus.submit();
         if (newPage && newPage !== this.unverifiedCompaniesPage.number) {
@@ -142,9 +158,9 @@ export class CompanyManagementComponent implements OnInit {
         return selectedSortOption[0];
     }
 
-    onSelectTab(event: any): void {
+    onSelectTab(event: any, id: any): void {
         event.preventDefault();
-        this.selectedTab = event.target.id;
+        this.selectedTab = id;
     }
 
     toggleVerifiedExpand() {

@@ -1,20 +1,20 @@
 <div class="container mt-5">
-    <h2>QualiExplore</h2>
+    <h2><span [innerHTML]="'QualiExplore' | translate"></span></h2>
     <div class="mt-lg-auto jumbotron">
-      <h3 class="display-5">Step - 1</h3>
-      <p class="lead">Select one or more items that fit to the work task that you would like to support with Product Usage Information. QualiExplore will show you factors that influence the quality of the information that you can use in your task.</p>
+      <h3 class="display-5"><span [innerHTML]="'Step - 1' | translate"></span></h3>
+      <p class="lead"><span [innerHTML]="'quali-desc-1' | translate"></span></p>
       <!-- <p>It highlights the most relevant factors with a  <i class="fas fa-flag fa-1x"></i> symbol.</p> -->
     </div>
 
     <!-- <pre>{{filters | json}}</pre> -->
   <div class="row mt-5">
-    <div class="col-lg-3" *ngFor="let filter of filters">
+    <div class="col-lg-4" *ngFor="let filter of filters">
       
       <h4>
         <i class="fas fa-box" *ngIf="filter['name'] === 'Product'"></i>
         <i class="fas fa-bullseye" *ngIf="filter['name']==='Goal'"></i>
-        <i class="fas fa-info" *ngIf="filter['name'] === 'Information quality'"></i>
-        <i class="fas fa-exchange-alt" *ngIf="filter['name'] === 'Information channel'"></i>
+        <i class="fas fa-info" *ngIf="filter['name'] === 'Sources'"></i>
+        <!-- <i class="fas fa-exchange-alt" *ngIf="filter['name'] === 'Information channel'"></i> -->
         {{filter['name']}}
       </h4>
       <hr>
@@ -37,10 +37,10 @@
   <hr>
   <div class="text-right">
     <button class="btn btn-md btn-outline-secondary float-left" (click)="reset()" [disabled]="!selections.length">
-      Reset Filters
+      <span [innerHTML]="'Reset Filters' | translate"></span>
     </button>
     <button class="btn btn-lg btn-primary" (click)="proceed()" [disabled]="!selections.length">
-    Proceed
+      <span [innerHTML]="'Proceed' | translate"></span>
   </button>
   </div>
 </div>

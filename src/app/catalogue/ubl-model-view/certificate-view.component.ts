@@ -1,5 +1,6 @@
 import {Component, Input} from "@angular/core";
 import {Certificate} from "../model/publish/certificate";
+import {TranslateService} from '@ngx-translate/core';
 import {BPDataService} from "../../bpe/bp-view/bp-data-service";
 /**
  * Created by suat on 22-Sep-17.
@@ -13,7 +14,7 @@ export class CertificateViewComponent {
     @Input() presentationMode: string;
     @Input() certificates: Certificate[];
 
-    constructor(private bpDataService: BPDataService) {
+    constructor(private bpDataService: BPDataService,private translate: TranslateService) {
     }
 
     addNewValue():void {

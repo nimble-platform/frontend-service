@@ -11,7 +11,7 @@
             <!-- Trading term id -->
             <div class="row space-before">
                 <div class="col-3">
-                    <strong>Id:</strong>
+                    <strong><span [innerHTML]="'Id:' | translate"></span></strong>
                 </div>
                 <div class="col-9">
                     <input [(ngModel)]="tradingTerm.id" class="form-control" type="text" (keyup)="onIdUpdate()"/>
@@ -24,7 +24,7 @@
             <!-- Trading term default values -->
             <div class="row space-before">
                 <div class="col-3">
-                    <strong>Default Value(s):</strong>
+                    <strong><span [innerHTML]="'Default Value(s):' | translate"></span></strong>
                 </div>
                 <div class="col-9">
                     <!-- STRING data type-->
@@ -73,7 +73,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="d('cancel')">Cancel</button>
-        <button type="button" class="btn btn-primary" (click)="c('ok')" [disabled]="tradingTerm.id=='' || idExists()">OK</button>
+        <button type="button" class="btn btn-secondary" (click)="d('cancel')"><span [innerHTML]="'Cancel' | translate"></span></button>
+        <button type="button" class="btn btn-primary" (click)="c('ok')" [disabled]="tradingTerm.id=='' || idExists()"><span [innerHTML]="'OK' | translate"></span></button>
     </div>
 </ng-template>
