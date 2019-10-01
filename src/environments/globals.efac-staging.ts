@@ -54,7 +54,7 @@ export const tntMasterDataEndpoint = 'http://nimble-dev.ikap.biba.uni-bremen.de:
 
 export const config = {
   "platformName": "FMP Staging",
-  "companyRegistrationRequired": true,
+  "companyRegistrationRequired": false,
   "categoryFilter": {
     "eClass": {
       "hiddenCategories": [],
@@ -100,7 +100,7 @@ export const config = {
       "src":"./assets/tos.pdf"
     }
   ],
-  "showChat": true,
+  "showChat": false,
   "showCompanyMembers": true,
   "showExplorative": false,
   "showLCPA": false,
@@ -205,7 +205,7 @@ export const config = {
       "purchaser",
       "sales_officer"
   ],
-  "supportMail": "nimbleFMP@aidimme.es",
+  "supportMail": "support@efactory-project.eu",
   "supportMailContent": {
     "en":"Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]",
     "es":"Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
