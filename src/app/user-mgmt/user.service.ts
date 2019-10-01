@@ -78,7 +78,8 @@ export class UserService {
     }
 
     deleteCompany(companyId:string): Promise<any> {
-        const url = `${this.url}/admin/delete_company/${companyId}`;
+        const userId = this.cookieService.get("user_id");
+        const url = `${this.url}/admin/delete_company/${companyId}?userId=${userId}`;
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
         return this.http
