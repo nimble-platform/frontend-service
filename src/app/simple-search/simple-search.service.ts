@@ -198,9 +198,9 @@ export class SimpleSearchService {
 			);
 	}
 
-  getCompSuggestions(query: string, item_field: string) {
+  getCompSuggestions(query: string, item_field: string[]) {
 		let querySettings = {
-			"fields": [item_field],
+			"fields": item_field,
 			"boosting": false,
 			"boostingFactors": {}
 		};
@@ -461,7 +461,7 @@ export class SimpleSearchService {
 				searchObject.facet.field.push(facet)
 			}
 		}
-		
+
 		return this.http
 		.post(url, searchObject, {headers: new Headers({'Content-Type': 'application/json','Authorization':'Bearer ' +this.cookieService.get("bearer_token")})})
 		.toPromise()

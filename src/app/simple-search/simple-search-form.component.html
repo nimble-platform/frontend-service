@@ -276,9 +276,9 @@
 
 							<div *ngIf="showCompSection">
 								<div *ngFor="let facet of facetObj">
-									<div *ngIf="facet.total > 0 && checkCompCat(facet.name)" class="card mb-3">
+									<div *ngIf="facet.total > 0 && checkCompCat(facet.genName)" class="card mb-3">
 										<div class="card-header">
-											{{ getName(facet.realName) }}
+											{{ getName(facet.genName) }}
 										</div>
 										<div class="card-body">
 											<div *ngFor="let facetInner of facet.options; let i = index">
@@ -421,9 +421,9 @@
 
 							<div *ngIf="showCompSection">
 								<div *ngFor="let facet of facetObj">
-									<div *ngIf="facet.total > 0 && checkCompMainCat(facet.name)" class="card mb-3">
+									<div *ngIf="facet.total > 0 && checkCompMainCat(facet.genName)" class="card mb-3">
 										<div class="card-header">
-											{{ getName(facet.name,product_vendor) }}
+											{{ getName(facet.genName,product_vendor) }}
 										</div>
 										<div class="card-body">
 											<div *ngFor="let facetInner of facet.options; let i = index">
@@ -552,9 +552,10 @@
 										</div>
 										<div *ngIf="result[product_vendor]" [ngClass]="{'col-2':display=='list','col-12 pt-2':display=='panel'}">
 											<div style="max-height:1.5rem;overflow:hidden">
-												<span [title]="result[product_vendor][product_vendor_name]"><i>{{ result[product_vendor][product_vendor_name] }}</i></span>
+												<span *ngIf="result[product_vendor][product_vendor_brand_name]" [title]="result[product_vendor][product_vendor_name]">{{ getMultilingualLabel(result[product_vendor][product_vendor_brand_name]) }}</span>
+												<span *ngIf="!result[product_vendor][product_vendor_brand_name]" [title]="result[product_vendor][product_vendor_name]">{{ result[product_vendor][product_vendor_name] }}</span>
 											</div>
-											<div *ngIf="!checkNaN(result[product_vendor][product_vendor_rating])">
+											<div *ngIf="!checkNaN(result[product_vendor][product_vendor_rating])" [title]="getName(product_vendor_rating,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating],1)+'/5\n\n'+getName(product_vendor_rating_seller,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating_seller],1)+'/5\n\n'+getName(product_vendor_rating_fulfillment,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating_fulfillment],1)+'/5\n\n'+getName(product_vendor_rating_delivery,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating_delivery],1)+'/5'">
 												<ngb-rating [rate]="calcRating(result[product_vendor][product_vendor_rating],1)" [readonly]="true" max="5">
 													<ng-template let-fill="fill">
 													  <span class="star" [class.full]="fill === 100">
@@ -563,7 +564,7 @@
 													</ng-template>
 												</ngb-rating>
 											</div>
-											<div *ngIf="checkNaN(result[product_vendor][product_vendor_rating])">
+											<div *ngIf="checkNaN(result[product_vendor][product_vendor_rating])" [title]="getName(product_vendor_rating,product_vendor)+':\n-'">
 												<ngb-rating [rate]="0" [readonly]="true" max="5">
 													<ng-template let-fill="fill">
 													  <span class="star" [class.full]="fill === 100">
@@ -572,7 +573,7 @@
 													</ng-template>
 												</ngb-rating>
 											</div>
-											<div *ngIf="!checkNaN(result[product_vendor][product_vendor_trust])">
+											<div *ngIf="!checkNaN(result[product_vendor][product_vendor_trust])" [title]="getName(product_vendor_trust,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_trust],5)+'/5'">
 												<ngb-rating [rate]="calcRating(result[product_vendor][product_vendor_trust],5)" [readonly]="true" max="5">
 													<ng-template let-fill="fill">
 													  <span class="heart" [class.full-heart]="fill === 100">
@@ -581,7 +582,7 @@
 													</ng-template>
 												</ngb-rating>
 											</div>
-											<div *ngIf="checkNaN(result[product_vendor][product_vendor_trust])">
+											<div *ngIf="checkNaN(result[product_vendor][product_vendor_trust])" [title]="getName(product_vendor_trust,product_vendor)+':\n-'">
 												<ngb-rating [rate]="0" [readonly]="true" max="5">
 													<ng-template let-fill="fill">
 													  <span class="heart" [class.full-heart]="fill === 100">
@@ -612,14 +613,15 @@
 										</div>
 										<div [ngClass]="{'col-8 border-right':display=='list','col-12 pt-1 pb-2 border-bottom':display=='panel'}">
 											<div style="max-height:1.5rem;overflow:hidden">
-												<span [title]="result[product_vendor_name]"><b>{{ result[product_vendor_name] }}</b></span>
+												<span *ngIf="result[product_vendor_brand_name]" [title]="result[product_vendor_name]"><b>{{ getMultilingualLabel(result[product_vendor_brand_name]) }}</b></span>
+												<span *ngIf="!result[product_vendor_brand_name]" [title]="result[product_vendor_name]"><b>{{ result[product_vendor_name] }}</b></span>
 											</div>
 											<div *ngIf="display=='list'" style="max-height:3rem;overflow:hidden">
 												<span *ngIf="result.businessType" [title]="result.businessType"><small>{{result.businessType}}</small></span>
 											</div>
 										</div>
 										<div [ngClass]="{'col-2':display=='list','col-12 pt-2':display=='panel'}">
-											<div *ngIf="!checkNaN(result[product_vendor_rating])">
+											<div *ngIf="!checkNaN(result[product_vendor_rating])" [title]="getName(product_vendor_rating,product_vendor)+':\n'+calcRating(result[product_vendor_rating],1)+'/5\n\n'+getName(product_vendor_rating_seller,product_vendor)+':\n'+calcRating(result[product_vendor_rating_seller],1)+'/5\n\n'+getName(product_vendor_rating_fulfillment,product_vendor)+':\n'+calcRating(result[product_vendor_rating_fulfillment],1)+'/5\n\n'+getName(product_vendor_rating_delivery,product_vendor)+':\n'+calcRating(result[product_vendor_rating_delivery],1)+'/5'">
 												<ngb-rating [rate]="calcRating(result[product_vendor_rating],1)" [readonly]="true" max="5">
 													<ng-template let-fill="fill">
 													  <span class="star" [class.full]="fill === 100">
@@ -628,7 +630,7 @@
 													</ng-template>
 												</ngb-rating>
 											</div>
-											<div *ngIf="checkNaN(result[product_vendor_rating])">
+											<div *ngIf="checkNaN(result[product_vendor_rating])" [title]="getName(product_vendor_rating,product_vendor)+':\n-'">
 												<ngb-rating [rate]="0" [readonly]="true" max="5">
 													<ng-template let-fill="fill">
 													  <span class="star" [class.full]="fill === 100">
@@ -637,7 +639,7 @@
 													</ng-template>
 												</ngb-rating>
 											</div>
-											<div *ngIf="!checkNaN(result[product_vendor_trust])">
+											<div *ngIf="!checkNaN(result[product_vendor_trust])" [title]="getName(product_vendor_trust,product_vendor)+':\n'+calcRating(result[product_vendor_trust],5)+'/5'">
 												<ngb-rating [rate]="calcRating(result[product_vendor_trust],5)" [readonly]="true" max="5">
 													<ng-template let-fill="fill">
 													  <span class="heart" [class.full-heart]="fill === 100">
@@ -646,7 +648,7 @@
 													</ng-template>
 												</ngb-rating>
 											</div>
-											<div *ngIf="checkNaN(result[product_vendor_trust])">
+											<div *ngIf="checkNaN(result[product_vendor_trust])" [title]="getName(product_vendor_trust,product_vendor)+':\n-'">
 												<ngb-rating [rate]="0" [readonly]="true" max="5">
 													<ng-template let-fill="fill">
 													  <span class="heart" [class.full-heart]="fill === 100">

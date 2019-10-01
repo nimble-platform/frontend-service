@@ -14,6 +14,7 @@ import {PlatformInfoComponent} from './platform-info.component';
 import {MembersComponent} from './members.component';
 import {ChatComponent} from './chat.component';
 import { HttpClientModule } from "@angular/common/http";
+import {NgxChartsModule} from '@swimlane/ngx-charts';
 
 @NgModule({
     imports: [
@@ -24,6 +25,7 @@ import { HttpClientModule } from "@angular/common/http";
         HttpModule,
         ReactiveFormsModule,
         AnalyticsRoutingModule,
+        NgxChartsModule,
         NgbModule.forRoot()
     ],
     declarations: [
