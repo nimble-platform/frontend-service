@@ -36,9 +36,9 @@ export class AnalyticsService {
   		.then(res => res.json())
   		.catch(this.handleError);
     }
-	
-	
-	getCollabAnalytics(comp:string): Promise<any> {
+
+
+    getCollabAnalytics(comp:string): Promise<any> {
   		const url = `${this.url_da}/company/collabaration?companyID=${comp}`;
   		return this.http
   		.get(url, {headers: this.getAuthorizedHeaders()})
