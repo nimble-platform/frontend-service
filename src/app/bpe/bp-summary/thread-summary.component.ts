@@ -159,6 +159,7 @@ export class ThreadSummaryComponent implements OnInit {
                 this.processInstanceGroup.id,
                 this.titleEvent,
                 [this.titleEvent].concat(this.history),
+                this.titleEvent.product,
                 null,
                 false,
                 false, // thread summary always shows the last step in the negotiation

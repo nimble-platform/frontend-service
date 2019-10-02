@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, EventEmitter, Output } from "@angular/core";
 import { ProductDetailsTab } from "./model/product-details-tab";
 import { ProductWrapper } from "../common/product-wrapper";
-import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
 import { BPEService } from "../bpe/bpe.service";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import { getPropertyValuesAsStrings, selectPartyName } from "../common/utils";
@@ -9,6 +8,8 @@ import { CompanySettings } from "../user-mgmt/model/company-settings";
 import * as myGlobals from '../globals';
 import {Quantity} from '../catalogue/model/publish/quantity';
 import {TranslateService} from '@ngx-translate/core';
+import {Item} from "../catalogue/model/publish/item";
+import {CatalogueLine} from '../catalogue/model/publish/catalogue-line';
 
 @Component({
     selector: 'product-details-tabs',
@@ -18,7 +19,9 @@ import {TranslateService} from '@ngx-translate/core';
 export class ProductDetailsTabsComponent implements OnInit {
 
     @Input() wrapper: ProductWrapper;
-    @Input() options: BpWorkflowOptions;
+    // @Input() options: BpWorkflowOptions;
+    @Input() itemWithSelectedProps: Item;
+    @Input() associatedProducts: CatalogueLine[];
     @Input() settings: CompanySettings;
 
     @Input() showOverview: boolean = false;

@@ -54,14 +54,12 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.route.queryParams.subscribe(params => {
-            this.primaryTermsSource = params["termsSource"];
-        });
-
+        this.primaryTermsSource = this.bpDataService.bpActivityEvent.termsSource;
 
         // subscribe to the bp change event so that we can update negotiation history when a new negotiation process is initialized with a negotiation response
         // in this case, the view is not refreshed but we have add a new negotiation history element for the new process
         this.bpActivityEventSubs = this.bpDataService.bpActivityEventObservable.subscribe(bpActivityEvent => {
+            // we do this null check since the observable is initialized with a null event
             if (bpActivityEvent == null) {
                 return;
             }
@@ -82,14 +80,18 @@ export class NegotiationComponent implements OnInit, OnDestroy {
             this.initCallStatus.submit();
             this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings)
                 .then(() => {
-                    this.setFrameContractNegotiationFlag();
+                    this.performInitCalls();
                     this.initCallStatus.callback("Request for Quotation Initialized.", true);
                 })
                 .catch(error => {
                     this.initCallStatus.error("Error while initializing request for quotation.", error);
                 });
+        } else {
+            this.performInitCalls();
         }
+    }
 
+    performInitCalls(): void {
         this.setFrameContractNegotiationFlag();
         this.initializeLastOffer();
         this.initialDefaultTermsAndConditionsAndFrameContract();
@@ -282,8 +284,9 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     setFrameContractNegotiationFlag(): void {
         // first check the current request for quotation contains a frame contract duration. currently it is assumed that if an rfq contains a frame
         // contract duration, the contract is being negotiated in that history
-        let frameContractDuration: Quantity = UBLModelUtils.getFrameContractDurationFromRfq(this.bpDataService.requestForQuotation);
+        let frameContractDuration: Quantity;
         if(this.bpDataService.requestForQuotation) {
+            frameContractDuration = UBLModelUtils.getFrameContractDurationFromRfq(this.bpDataService.requestForQuotation);
             if(!UBLModelUtils.isEmptyQuantity(frameContractDuration)) {
                 this.isFrameContractBeingNegotiatedInThisNegotiation = true;
                 return;
@@ -292,9 +295,9 @@ export class NegotiationComponent implements OnInit, OnDestroy {
 
         // check the negotiation history documents
         for(let i=0; i<this.negotiationDocuments.length; i=i+2) {
-            let rfq: RequestForQuotation = this.negotiationDocuments[i];
+            let rfq: RequestForQuotation = this.negotiationDocuments[i].request;
             frameContractDuration = UBLModelUtils.getFrameContractDurationFromRfq(rfq);
-            if(frameContractDuration != null) {
+            if (!UBLModelUtils.isEmptyQuantity(frameContractDuration)) {
                 this.isFrameContractBeingNegotiatedInThisNegotiation = true;
                 return;
             }

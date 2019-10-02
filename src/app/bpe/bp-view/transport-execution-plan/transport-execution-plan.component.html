@@ -104,7 +104,12 @@
         <hr>
         <h3><span [innerHTML]="'Contract' | translate"></span></h3>
         <call-status [callStatus]="contractCallStatus"></call-status>
-        <contract *ngIf="request.transportContract" [contract]="request.transportContract" [showQuotation]="true" [isCatalogueLineDeleted]="processMetadata.isProductDeleted">
+        <!-- having a non-null processMetadata indicates that the product is not still deleted. -->
+        <!-- Otherwise, it would not have been possible to proceed with the next business process step -->
+        <contract *ngIf="request.transportContract"
+                  [contract]="request.transportContract"
+                  [showQuotation]="true"
+                  [isCatalogueLineDeleted]="processMetadata != null && processMetadata.isProductDeleted">
         </contract>
     </ng-container>
 

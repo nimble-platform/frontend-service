@@ -8,6 +8,9 @@ import { PROPERTY_TYPES } from "../model/constants";
 import {Item} from '../model/publish/item';
 import {LANGUAGES} from '../model/constants';
 import {TranslateService} from '@ngx-translate/core';
+import {Router} from "@angular/router";
+import {ProductPublishComponent} from "./product-publish.component";
+import {PublishService} from "../publish-and-aip.service";
 
 @Component({
     selector: "edit-property-modal",
@@ -25,7 +28,10 @@ export class EditPropertyModalComponent implements OnInit {
 
     PROPERTY_TYPES = PROPERTY_TYPES;
 
-    constructor(private modalService: NgbModal,
+    constructor(
+        private publishService: PublishService,
+        private router: Router,
+        private modalService: NgbModal,
         private translate: TranslateService) {
     }
 
@@ -34,6 +40,11 @@ export class EditPropertyModalComponent implements OnInit {
     }
 
     open(property: ItemProperty, selectedProperty: SelectedProperty, ref: any) {
+        // property might be null when the publish page is refreshed with searchRef=true parameter
+        if (property == null) {
+            return;
+        }
+
         this.selectedProperty = selectedProperty;
         this.orgProperty = copy(property);
         this.property = copy(property);
@@ -55,7 +66,6 @@ export class EditPropertyModalComponent implements OnInit {
               ref.push(property);
             }
         }, () => {
-
         });
     }
 
@@ -195,6 +205,12 @@ export class EditPropertyModalComponent implements OnInit {
             default:
                 // BINARY and BOOLEAN: nothing
         }
+    }
+
+    onAssociateProduct(): void {
+        ProductPublishComponent.dialogBox = false;
+        this.publishService.itemPropertyLinkedToOtherProducts = this.property;
+        this.router.navigate(['/simple-search'], {queryParams: {sTop: 'prod', pageRef: 'publish'}});
     }
 
     setValue(i: number, event: any) {

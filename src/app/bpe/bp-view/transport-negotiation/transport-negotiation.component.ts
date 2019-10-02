@@ -32,7 +32,8 @@ export class TransportNegotiationComponent implements OnInit {
         if(this.searchContextService.getAssociatedProcessMetadata()) {
             return await this.bpDataService.initRfqForTransportationWithThreadMetadata(this.searchContextService.getAssociatedProcessMetadata());
         } else if(this.bpDataService.productOrder) {
-            return this.bpDataService.initRfqForTransportationWithOrder(this.bpDataService.productOrder);
+            this.bpDataService.initRfqForTransportationWithOrder(this.bpDataService.productOrder);
+            return Promise.resolve();
         }
         return this.bpDataService.initRfq(null);
     }

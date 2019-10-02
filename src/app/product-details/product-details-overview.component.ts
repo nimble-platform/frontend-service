@@ -2,8 +2,7 @@ import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
 import { ProductWrapper } from "../common/product-wrapper";
 import { CommodityClassification } from "../catalogue/model/publish/commodity-classification";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
-import { BpWorkflowOptions } from "../bpe/model/bp-workflow-options";
-import {getPropertyKey, getPropertyValuesAsStrings, selectName, selectNameFromLabelObject, selectPreferredValue} from '../common/utils';
+import {getPropertyKey, getPropertyValues, getPropertyValuesAsStrings, selectName, selectNameFromLabelObject, selectPreferredValue} from '../common/utils';
 import {Item} from '../catalogue/model/publish/item';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {CategoryService} from '../catalogue/category/category.service';
@@ -12,6 +11,8 @@ import {CallStatus} from '../common/call-status';
 import { ActivatedRoute,Router } from "@angular/router";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {TranslateService} from '@ngx-translate/core';
+import {CatalogueLine} from "../catalogue/model/publish/catalogue-line";
+import {Text} from "../catalogue/model/publish/text";
 
 @Component({
     selector: 'product-details-overview',
@@ -21,15 +22,18 @@ import {TranslateService} from '@ngx-translate/core';
 export class ProductDetailsOverviewComponent implements OnInit{
 
     @Input() wrapper: ProductWrapper;
-    @Input() options: BpWorkflowOptions;
+    @Input() itemWithSelectedProps: Item;
+    @Input() associatedProducts: CatalogueLine[];
     @Input() readonly: boolean;
     @Output() compStatus = new EventEmitter<boolean>();
+    @Output() onPropertyValueChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     selectedImage: number = 0;
     manufacturerPartyName:string = null;
 
     getClassificationNamesStatus: CallStatus = new CallStatus();
     productCatalogueNameRetrievalStatus: CallStatus = new CallStatus();
+    associatedProductsRetrievalCallStatus: CallStatus = new CallStatus();
 
     classificationNames = [];
     productId = "";
@@ -108,6 +112,8 @@ export class ProductDetailsOverviewComponent implements OnInit{
         });
     }
 
+
+
     getClassifications(): CommodityClassification[] {
         if(!this.wrapper) {
             return [];
@@ -117,9 +123,45 @@ export class ProductDetailsOverviewComponent implements OnInit{
             .filter(c => c.itemClassificationCode.listID != 'Default');
     }
 
-    onTogglePropertyValue(property: ItemProperty, valueIndex: number): void {
-        if(this.options) {
-            this.options.selectedValues[getPropertyKey(property)] = valueIndex;
+    onTogglePropertyValue(property: ItemProperty, selectedIndex: number): void {
+        if (this.itemWithSelectedProps != null) {
+            let selectedValue = getPropertyValues(property)[selectedIndex];
+            let propKey = getPropertyKey(property);
+            for (let aip of this.itemWithSelectedProps.additionalItemProperty) {
+                if (propKey === getPropertyKey(aip)) {
+                    // update the actual value
+                    if (aip.valueQualifier === 'STRING') {
+                        aip.value[0] = selectedValue;
+                    } else if (aip.valueQualifier === 'NUMBER') {
+                        aip.valueDecimal[0] = selectedValue;
+                    } else if (aip.valueQualifier === 'QUANTITY') {
+                        aip.valueQuantity[0] = selectedValue;
+                    }
+
+                    // update the associated item id
+                    if (property.associatedCatalogueLineID != null && property.associatedCatalogueLineID.length > 0) {
+                        // find the corresponding product id
+                        let foundProduct = false;
+                        for (let associatedProduct of this.associatedProducts) {
+                            // checking the names of the associated product against the selected value
+                            if (UBLModelUtils.doesTextArraysContainText(associatedProduct.goodsItem.item.name, selectedValue)) {
+                                aip.associatedCatalogueLineID = [associatedProduct.hjid];
+                                foundProduct = true;
+                                break;
+                            }
+                        }
+                        // Somehow, most probably because of an update in the associated product or values not linked to any product,
+                        // the selected value cannot be existing product. Therefore, we clear the associated catalogue line id list
+                        // to prevent wrong association.
+                        if (!foundProduct) {
+                            aip.associatedCatalogueLineID = [];
+                        }
+                    }
+
+                    this.onPropertyValueChange.emit(true);
+                    return;
+                }
+            }
         }
     }
 
@@ -155,22 +197,25 @@ export class ProductDetailsOverviewComponent implements OnInit{
     }
 
     isPropertyValueSelected(property: ItemProperty, valueIndex: number): boolean {
-        if(!this.options) {
+        if (this.itemWithSelectedProps == null) {
             return false;
         }
-        let selected = null;
 
-        // if there is no selected index for the given property, we should set it to 0.
-        // it is important since we will calculate price options according to the selected properties
-
-        if(this.options.selectedValues[getPropertyKey(property)]){
-            selected = this.options.selectedValues[getPropertyKey(property)];
-            // here, we do not need to update options.selectedValues since onTogglePropertyValue function will handle this.
-        } else {
-            selected = 0;
-            this.options.selectedValues[getPropertyKey(property)] = 0
+        let selectedValue;
+        let propKey = getPropertyKey(property);
+        for (let aip of this.itemWithSelectedProps.additionalItemProperty) {
+            if (propKey === getPropertyKey(aip)) {
+                selectedValue = getPropertyValues(aip)[0];
+                break;
+            }
         }
-        return valueIndex === selected;
+
+        let checkedValue = getPropertyValues(property)[valueIndex];
+        return UBLModelUtils.areItemPropertyValuesEqual(selectedValue, checkedValue, property.valueQualifier);
+    }
+
+    isDisabled(): boolean {
+        return this.readonly || this.associatedProductsRetrievalCallStatus.isLoading();
     }
 
     getValuesAsString(property: ItemProperty): string[] {
@@ -185,5 +230,4 @@ export class ProductDetailsOverviewComponent implements OnInit{
       this.zoomedImgURL = "data:"+this.wrapper.item.productImage[this.selectedImage].mimeCode+";base64,"+this.wrapper.item.productImage[this.selectedImage].value
     	this.modalService.open(content);
     }
-
 }

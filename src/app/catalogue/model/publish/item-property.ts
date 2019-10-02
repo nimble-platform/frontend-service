@@ -19,6 +19,7 @@ export class ItemProperty {
         public valueBinary: BinaryObject[],
         public valueQualifier: PropertyValueQualifier,
         public itemClassificationCode: Code,
-        public uri: string
+        public uri: string,
+        public associatedCatalogueLineID: number[] // hjids of catalogue lines
     ) {  }
 }

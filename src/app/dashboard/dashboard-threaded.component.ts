@@ -365,7 +365,6 @@ export class DashboardThreadedComponent implements OnInit{
             case TABS.COMPARE:
             case TABS.PROJECTS:
             case TABS.PERFORMANCE:
-            case TABS.FRAME_CONTRACTS:
             case TABS.SALES:
                 this.queryOrdersIfNeeded();
                 return;
@@ -392,7 +391,8 @@ export class DashboardThreadedComponent implements OnInit{
                 upped == TABS.COMPARE ||
                 upped == TABS.PROJECTS ||
                 upped == TABS.PERFORMANCE ||
-                upped == TABS.FRAME_CONTRACTS) {
+                upped == TABS.FRAME_CONTRACTS ||
+                upped == TABS.UNSHIPPED_ORDERS) {
                 return upped;
             }
         }

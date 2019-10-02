@@ -102,10 +102,7 @@ export class PpapDocumentDownloadComponent{
     }
 
     onNextStep() {
-        this.bpDataService.resetBpData();
-        this.bpDataService.initRfq(null).then(() => {
-            this.bpDataService.proceedNextBpStep(this.bpDataService.bpActivityEvent.userRole, "Negotiation");
-        })
+        this.bpDataService.proceedNextBpStep(this.bpDataService.bpActivityEvent.userRole, "Negotiation");
     }
 
     downloadFile(key) :void {

@@ -98,7 +98,23 @@
 	</div>
 
 	<div [hidden]="!callback || searchCallStatus.isLoading() || searchCallStatus.isError()">
+		<ng-container *ngIf="pageRef === 'publish'">
+			<hr>
+			<div class="row">
+				<div class="offset-4 col-6">
+					<span *ngFor="let selectedProduct of productsSelectedForPublish">
+						<span class="badge badge-secondary mr-1 mb-2 pointer" (click)="onRemoveSelectedProduct(selectedProduct.uri)">
+							{{getMultilingualLabel(selectedProduct[product_name])}}
+						</span>
+					</span>
+				</div>
+				<div class="col-2">
+					<div class="btn btn-primary float-right" (click)="onContinuePublishing()"><span [innerHTML]="'Continue Publishing' | translate"></span></div>
+				</div>
+			</div>
+		</ng-container>
 		<hr/>
+
 		<div>
 
 			<div class="row">
@@ -108,10 +124,14 @@
 				<div *ngIf="size>0" class="col-4">
 					<span>Showing results</span> {{ start }} - {{ end }} <span>of</span> {{ size }}
 				</div>
+
+				<!-- Search headers -->
 				<div *ngIf="size>0" class="col-8">
+					<!-- Pagination -->
 					<div class="justify-content-center pagination">
 						<ngb-pagination [(collectionSize)]="size" [(page)]="page" [pageSize]="rows" [maxSize]="5" [boundaryLinks]="true" (pageChange)="get(objToSubmit)"></ngb-pagination>
 					</div>
+					<!-- Display options -->
 					<div class="form-group row">
 				    <label class="col-sm-2 col-form-label">Per page:</label>
 				    <div class="col-sm-2">
@@ -152,6 +172,7 @@
 			</div>
 
 			<div class="row align-items-start">
+				<!-- Facets -->
 				<div class="col-4">
 
 					<div class="row mb-3">
@@ -523,19 +544,24 @@
 					</div>
 
 				</div>
-
+				<!-- End of facets -->
+				<!-- Results -->
 				<div class="col-8 row pr-0">
 
+					<!-- Product results -->
 					<div *ngFor="let result of response" class="pr-0" [ngClass]="{'col-12':display=='list','col-4':display=='panel'}">
 						<div *ngIf="result.uri != null && searchTopic=='prod'" class="card pointer mb-3">
-							<a class="text-std" [href]="getProdLink(result)">
+							<a class="text-std" [href]="getProdLink(result)" (click)="onSearchResultClicked($event)">
 							<!--<a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: result.catalogueId, id: result.manufactuerItemId}">-->
 								<div class="card-body">
 									<div *ngIf="!result.isFromLocalInstance && result.nimbleInstanceName && result.sourceFrontendServiceUrl && result.nimbleInstanceName != '' && result.sourceFrontendServiceUrl != ''" [title]="result.nimbleInstanceName" class="badge badge-pill badge-secondary p-2" style="position:absolute;right:-0.7rem;top:-0.7rem">
 										<i class="fa fa-database pr-1"></i> <span>{{result.nimbleInstanceName}}</span>
 									</div>
-									<div class="row">
-										<div class="align-center" [ngClass]="{'col-2':display=='list','col-12 pb-1':display=='panel'}">
+									<div class="d-flex">
+										<div *ngIf="pageRef === 'publish'" #productSelect class="align-self-center p-2" (click)="onToggleProductSelectForPublish(result, $event)">
+											<input type="checkbox" [checked]="productSelected(result.uri)" (click)="$event.preventDefault();  $event.stopPropagation(); productSelect.click();">
+										</div>
+										<div class="align-center" [ngClass]="{'col-2':display=='list','col-12 pb-1':display=='panel','pl-0': pageRef === 'publish'}">
 											<img src="{{imageMap[result.uri]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
 										</div>
 										<div [ngClass]="{'col-6':display=='list','col-12 pt-1 pb-1':display=='panel'}">
@@ -600,6 +626,7 @@
 							</a>
 						</div>
 
+						<!-- Company results -->
 						<div *ngIf="result.uri != null && searchTopic=='comp'" class="card pointer mb-3">
 							<a class="text-std" [href]="getCompLink(result)">
 							<!--<a class="text-std" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: result.id}">-->

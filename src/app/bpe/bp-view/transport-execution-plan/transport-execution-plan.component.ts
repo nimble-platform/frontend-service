@@ -58,11 +58,12 @@ export class TransportExecutionPlanComponent implements OnInit {
 
         if(!this.bpDataService.transportExecutionPlanRequest) {
             if(this.searchContextService.getAssociatedProcessMetadata() != null) {
-                this.bpDataService.initTransportExecutionPlanRequestWithOrder().then(response => {
-                    this.init();
-                });
+                // this.bpDataService.initTransportExecutionPlanRequestWithOrder().then(response => {
+                //     this.init();
+                // });
+                console.log("STILL NAVIGATING TO TEP REQUEST FOLLOWING SEARCH");
             } else {
-                this.bpDataService.initTransportExecutionPlanRequest();
+                this.bpDataService.initTransportExecutionPlanRequestWithQuotation();
                 this.init();
             }
         }
@@ -124,10 +125,6 @@ export class TransportExecutionPlanComponent implements OnInit {
     onSendRequest(): void {
         this.callStatus.submit();
         const transportationExecutionPlanRequest: TransportExecutionPlanRequest = copy(this.bpDataService.transportExecutionPlanRequest);
-
-        // final check on the transportationExecutionPlanRequest
-        transportationExecutionPlanRequest.mainTransportationService = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
-        UBLModelUtils.removeHjidFieldsFromObject(transportationExecutionPlanRequest);
 
         // first initialize the seller and buyer parties.
         // once they are fetched continue with starting the ordering process
