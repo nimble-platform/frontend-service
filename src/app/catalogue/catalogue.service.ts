@@ -274,9 +274,10 @@ export class CatalogueService {
         });
     }
 
-    uploadZipPackage(pck:File): Promise<any> {
+    uploadZipPackage(pck:File,catalogueId:string = this.catalogueResponse.catalogueId): Promise<any> {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
-        const url = this.baseUrl + `/catalogue/${this.catalogueResponse.catalogueUuid}/image/upload`;
+        const partyId =this.cookieService.get("company_id");
+        const url = this.baseUrl + `/catalogue/${catalogueId}/image/upload?partyId=${partyId}`;
         return new Promise<any>((resolve, reject) => {
             let formData: FormData = new FormData();
             formData.append("package", pck, pck.name);
@@ -356,9 +357,15 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
-    deleteAllProductImagesInsideCatalogue(catalogueId:string):Promise<any> {
+    deleteAllProductImagesInsideCatalogue(catalogueIds:string[]):Promise<any> {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
-        const url = this.baseUrl + `/catalogue/${catalogueId}/delete-images`;
+        const partyId =this.cookieService.get("company_id");
+        let ids: string = '';
+        for(let id of catalogueIds) {
+            ids += id + ","
+        }
+        ids = ids.substr(0, ids.length-1);
+        const url = this.baseUrl + `/catalogue/delete-images?ids=${ids}&partyId=${partyId}`;
         return this.http
             .get(url,{headers:new Headers({"Authorization":token})})
             .toPromise()

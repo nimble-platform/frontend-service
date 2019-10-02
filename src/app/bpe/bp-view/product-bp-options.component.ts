@@ -25,6 +25,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import {TranslateService} from '@ngx-translate/core';
 import {UBLModelUtils} from '../../catalogue/model/ubl-model-utils';
 import {Item} from "../../catalogue/model/publish/item";
+import { AppComponent } from '../../app.component';
 
 /**
  * Created by suat on 20-Oct-17.
@@ -84,7 +85,8 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 private renderer: Renderer2,
                 private translate: TranslateService,
                 private http: Http,
-                private modalService: NgbModal) {
+                private modalService: NgbModal,
+                public appComponent: AppComponent) {
         this.renderer.setStyle(document.body, "background-image", "none");
     }
 
@@ -114,7 +116,9 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             .then(res => {
                 let channelDetails = res.json();
                 this.chatURL = this.sanitizer.bypassSecurityTrustResourceUrl(myGlobals.rocketChatEndpoint + "/channel/" + channelDetails.channelName);
-                this.modalService.open(content, {})
+                this.appComponent.chatURL = this.chatURL;
+                this.appComponent.chatVisible = true;
+                //this.modalService.open(content, {})
             })
             .catch(e => {
                 alert("Error occurred while creating the channel. Please try again later")

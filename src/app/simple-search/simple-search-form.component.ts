@@ -27,6 +27,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	product_vendor = myGlobals.product_vendor;
 	product_vendor_id = myGlobals.product_vendor_id;
 	product_vendor_name = myGlobals.product_vendor_name;
+	product_vendor_brand_name = myGlobals.product_vendor_brand_name;
 	product_vendor_rating = myGlobals.product_vendor_rating;
 	product_vendor_rating_seller = myGlobals.product_vendor_rating_seller;
 	product_vendor_rating_fulfillment = myGlobals.product_vendor_rating_fulfillment;
@@ -368,7 +369,7 @@ export class SimpleSearchFormComponent implements OnInit {
 			debounceTime(200),
 			distinctUntilChanged(),
 			switchMap(term =>
-					this.simpleSearchService.getCompSuggestions(term, (this.product_vendor_name))
+					this.simpleSearchService.getCompSuggestions(term, [this.product_vendor_name, ("{LANG}_" + this.product_vendor_brand_name)])
 			)
 		);
 
@@ -773,6 +774,11 @@ export class SimpleSearchFormComponent implements OnInit {
 
 					let name = prefix + res.facets[facet].fieldName;
 					let realName = prefix + res.facets[facet].fieldName;
+
+					let genName = name;
+					if (genName.indexOf(DEFAULT_LANGUAGE()+"_") != -1)
+						genName = genName.replace(DEFAULT_LANGUAGE()+"_","");
+
 					let total = 0;
 					let selected = false;
 
@@ -812,6 +818,7 @@ export class SimpleSearchFormComponent implements OnInit {
 						total = 1;
 					this.facetObj.push({
 						"name": name,
+						"genName": genName,
 						"realName": realName,
 						"options": options,
 						"total": total,
@@ -832,9 +839,13 @@ export class SimpleSearchFormComponent implements OnInit {
 			if (this.simpleSearchService.checkField(facet)) {
 				let facetMetadataExists: boolean = facetMetadata[facet] != null && facetMetadata[facet].label != null;
 				let propertyLabel = this.getName(facet);
+				let genName = facet;
+				if (genName.indexOf(DEFAULT_LANGUAGE()+"_") != -1)
+					genName = genName.replace(DEFAULT_LANGUAGE()+"_","");
 
 				this.facetObj.push({
 					"name":facet,
+					"genName":genName,
 					"realName":facetMetadataExists ? selectNameFromLabelObject(facetMetadata[facet].label) : propertyLabel,
 					"options":[],
 					"total":0,
@@ -1253,6 +1264,8 @@ export class SimpleSearchFormComponent implements OnInit {
 
 	getFacetQueryName(facet:string):string {
 		var name = facet.split(":")[0];
+		if (name.indexOf(DEFAULT_LANGUAGE()+"_") != -1)
+			name = name.replace(DEFAULT_LANGUAGE()+"_","");
 		name = this.getFacetName(name);
 		return name;
 	}
@@ -1384,7 +1397,10 @@ export class SimpleSearchFormComponent implements OnInit {
 	}
 
 	getCompanyNameFromIds(idList: any[]): Promise<any>{
-		let facets = this.party_facet_field_list;
+		let facets = this.party_facet_field_list.slice();
+		for(let i=0; i<facets.length; i++) {
+			facets[i] = facets[i].replace("{LANG}_",(DEFAULT_LANGUAGE()+"_"));
+		}
 		/*
 		if (this.delegatedSearch)
 			facets = [this.product_vendor_name];

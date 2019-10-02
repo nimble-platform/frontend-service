@@ -9,6 +9,7 @@ import { AddressSubForm } from "../subforms/address.component";
 import { CallStatus } from "../../common/call-status";
 import { UserService } from "../user.service";
 import {TranslateService} from '@ngx-translate/core';
+import { Router } from "@angular/router";
 
 @Component({
     selector: "company-data-settings",
@@ -32,7 +33,8 @@ export class CompanyDataSettingsComponent implements OnInit {
                 private _fb: FormBuilder,
                 private translate: TranslateService,
                 private modalService: NgbModal,
-                private userService: UserService) {
+                private userService: UserService,
+                private router: Router) {
 
     }
 
@@ -59,6 +61,22 @@ export class CompanyDataSettingsComponent implements OnInit {
           yearOfReg: new FormControl({value: (this.settings.details.yearOfCompanyRegistration || ""), disabled: (!this.appComponent.checkRoles('pm') && this.settings.details.yearOfCompanyRegistration)}),
           address: AddressSubForm.update(AddressSubForm.generateForm(this._fb), this.settings.details.address)
       });
+    }
+
+    deleteCompany(): void {
+        if (this.settings.companyID) {
+          if (confirm("Are you sure that you want to delete this company?")) {
+            this.saveCallStatus.submit();
+            this.userService.deleteCompany(this.settings.companyID)
+                .then(res => {
+                    this.saveCallStatus.callback("Successfully deleted company");
+                    this.router.navigate(['/user-mgmt/logout']);
+                })
+                .catch(error => {
+                    this.saveCallStatus.error("Error while deleting company", error);
+                });
+          }
+        }
     }
 
     save(model: FormGroup) {

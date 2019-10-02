@@ -20,6 +20,7 @@ import 'zone.js';
 import {Headers, Http} from "@angular/http";
 import {selectValueOfTextObject} from "./common/utils";
 import {CallStatus} from "./common/call-status";
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
     selector: 'nimble-app',
@@ -46,6 +47,8 @@ export class AppComponent implements OnInit {
     public allowed = false;
     public versions = [];
     public minimalView = false;
+    public chatVisible = false;
+    public chatURL = this.sanitizer.bypassSecurityTrustResourceUrl(myGlobals.rocketChatEndpoint);
     public language = "en";
     private availableLanguages = LANGUAGES.sort();
 
@@ -62,7 +65,8 @@ export class AppComponent implements OnInit {
         private router: Router,
         private route: ActivatedRoute,
         private modalService: NgbModal,
-        public translate: TranslateService
+        public translate: TranslateService,
+        public sanitizer: DomSanitizer
     ) {
         router.events.subscribe(event => {
             if (event instanceof NavigationStart) {
@@ -100,6 +104,10 @@ export class AppComponent implements OnInit {
         translate.use(DEFAULT_LANGUAGE());
         if (this.debug)
           console.log("Initialized platform with language: "+DEFAULT_LANGUAGE());
+    }
+
+    toggleChat() {
+      this.chatVisible = !this.chatVisible;
     }
 
     getQueryParameter(name): any {
@@ -417,6 +425,7 @@ export class AppComponent implements OnInit {
             }
         } else {
             this.isLoggedIn = false;
+            this.chatVisible = false;
             this.fullName = "";
             this.eMail = "";
             this.userID = "";

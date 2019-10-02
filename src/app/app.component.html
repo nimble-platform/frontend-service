@@ -142,8 +142,13 @@
                 </div>
             </li>
 
-            <li class="nav-item" routerLinkActive="active" *ngIf="config.showChat">
+            <li class="nav-item" [ngClass]="{'active':chatVisible}" routerLinkActive="active" *ngIf="config.showChat">
+                <!--
                 <a class="nav-link" routerLink="/analytics/chat">
+                    <i class="fa fa-comments"></i> <span [innerHTML]="'Chat' | translate"></span>
+                </a>
+                -->
+                <a class="nav-link pointer" (click)="toggleChat()">
                     <i class="fa fa-comments"></i> <span [innerHTML]="'Chat' | translate"></span>
                 </a>
             </li>
@@ -251,8 +256,15 @@
 </ng-template>
 <!--<div id="support-btn" (click)="open(support)"><img id="support-img" src="assets/support_white.png"/></div>-->
 
-<div id="wrapper" [ngClass]="{'max-container':minimalView}">
-    <router-outlet></router-outlet>
+<div id="wrapper" [ngClass]="{'max-container':minimalView,'wrapper-max':chatVisible}">
+    <div class="row">
+      <div [ngClass]="{'col-12':!chatVisible,'col-6':chatVisible}">
+        <router-outlet></router-outlet>
+      </div>
+      <div *ngIf="chatVisible" class="col-6">
+        <iframe id="chatWindow" [src]="chatURL" frameborder="0"></iframe>
+      </div>
+    </div>
 </div>
 
 <div *ngIf="!minimalView" id="footer">

@@ -117,6 +117,20 @@ export class CompanyManagementComponent implements OnInit {
         }
     }
 
+    deleteCompany(company): void {
+        if (confirm("Are you sure that you want to delete this company?")) {
+          this.registeredCompaniesCallStatus.submit();
+          this.analyticsService.deleteCompany(company.hjid)
+              .then(res => {
+                  this.registeredCompaniesPage.content = this.registeredCompaniesPage.content.filter(c => c.hjid !== company.hjid);
+                  this.updateRegisteredCompanies(this.registeredCompaniesPage.number);
+              })
+              .catch(error => {
+                  this.registeredCompaniesCallStatus.error("Error while deleting company", error);
+              });
+        }
+    }
+
     onUnverifiedPageChange(newPage): void {
         this.unverifiedCompaniesCallStatus.submit();
         if (newPage && newPage !== this.unverifiedCompaniesPage.number) {

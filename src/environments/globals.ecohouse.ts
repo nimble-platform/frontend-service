@@ -159,6 +159,7 @@ export const product_vendor = "manufacturer";
 export const product_vendor_id = "id";
 export const product_vendor_img = "logoId";
 export const product_vendor_name = "legalName";
+export const product_vendor_brand_name = "brandName";
 export const product_vendor_rating = "trustRating";
 export const product_vendor_rating_seller = "trustSellerCommunication";
 export const product_vendor_rating_fulfillment = "trustFullfillmentOfTerms";
@@ -173,8 +174,8 @@ export const product_currency = "currency";
 export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
 export const product_filter_prod = ["freeOfCharge","certificateType","applicableCountries"];
-export const product_filter_comp = ["manufacturer.legalName","manufacturer.businessType","manufacturer.activitySectors","manufacturer.businessKeywords","manufacturer.origin","manufacturer.certificateType","manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType"];
-export const party_facet_field_list = ["legalName","businessType","activitySectors","businessKeywords","origin","certificateType","ppapComplianceLevel","ppapDocumentType"];
+export const product_filter_comp = ["manufacturer.legalName","manufacturer.brandName","manufacturer.businessType","manufacturer.activitySectors","manufacturer.businessKeywords","manufacturer.origin","manufacturer.certificateType","manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType"];
+export const party_facet_field_list = ["legalName","{LANG}_brandName","businessType","{LANG}_activitySectors","{LANG}_businessKeywords","{LANG}_origin","{LANG}_certificateType","ppapComplianceLevel","ppapDocumentType"];
 export const party_filter_main = ["businessType","activitySectors","businessKeywords","origin","certificateType","ppapComplianceLevel","ppapDocumentType"];
 export const party_filter_trust = ["trustScore","trustRating","trustSellerCommunication","trustFullfillmentOfTerms","trustDeliveryPackaging","trustNumberOfTransactions"];
 export const item_manufacturer_id = "manufacturerId";
@@ -206,10 +207,11 @@ export const query_settings = {
   }
 };
 export const query_settings_comp = {
-  "fields": ["STANDARD","legalName"],
+  "fields": ["STANDARD","legalName","{LANG}_brandName"],
   "boosting": true,
   "boostingFactors": {
     "STANDARD": 4,
+    "{LANG}_brandName": 64,
     "legalName": 64
   }
 };

@@ -15,6 +15,16 @@
 	padding-right: 15px;
 }
 
+#chatWindow {
+	position: fixed;
+	width: 48%;
+	height: 80vh;
+}
+
+.wrapper-max {
+	max-width: 100% !important;
+}
+
 .dd-icon {
 	min-width: 1.5rem;
 	text-align: center;

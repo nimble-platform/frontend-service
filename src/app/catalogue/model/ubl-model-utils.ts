@@ -615,7 +615,18 @@ export class UBLModelUtils {
     }
 
     public static isFilledLCPAOutput(lcpaDetails: LifeCyclePerformanceAssessmentDetails): boolean {
-        return false;
+        if(lcpaDetails.lcpaoutput == null) {
+            return false;
+        }
+        let lcpaOutput = lcpaDetails.lcpaoutput;
+
+        if(!isNaNNullAware(lcpaOutput.operationCostsPerYear.value) ||
+            !isNaNNullAware(lcpaOutput.lifeCycleCost.value) ||
+            !isNaNNullAware(lcpaOutput.capexOpexRelation.value)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static areTextsEqual(text1: Text, text2: Text): boolean {

@@ -37,6 +37,16 @@ export class AnalyticsService {
   		.catch(this.handleError);
     }
 
+
+    getCollabAnalytics(comp:string): Promise<any> {
+  		const url = `${this.url_da}/company/collabaration?companyID=${comp}`;
+  		return this.http
+  		.get(url, {headers: this.getAuthorizedHeaders()})
+  		.toPromise()
+  		.then(res => res.json())
+  		.catch(this.handleError);
+    }
+
     getCompAnalytics(comp:string): Promise<any> {
   		const url = `${this.url_da}?companyID=${comp}`;
   		return this.http
@@ -137,7 +147,8 @@ export class AnalyticsService {
     }
 
     deleteCompany(companyId:string): Promise<any> {
-        const url = `${this.url_identity}/admin/delete_company/${companyId}`;
+        const userId = this.cookieService.get("user_id");
+        const url = `${this.url_identity}/admin/delete_company/${companyId}?userId=${userId}`;
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
 

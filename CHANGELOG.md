@@ -1,6 +1,31 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [13.0.0] - 2019-10-01
+### Added
+- Frontend internationalization, language selection and translation to Spanish (ongoing)
+- Product / service comparison
+- Finish collaboration functionality
+- Delete user / company capabilities
+- Added flag to hide VAT tax information
+
+### Changed
+- Transformed chat window to globally available slide-in
+- Added brand name and other company data to search
+- Extended analytics
+- Switched to new VAT rate and validation service (Cloudmersive)
+
+## [12.0.0] - 2019-08-16
+### Added
+- QualiExplore Front-end component
+- Configurable company-specific BP workflows
+- Edit functionality for existing certificates
+
+### Changed
+- Major refactoring to Angular 7 and Webpack 4
+- Reworked discount display
+- Minor bugfixes regarding Terms & Conditions
+
 ## [11.0.0] - 2019-06-17
 ### Added
 - Delegated / federated search (staging only)
