@@ -295,10 +295,6 @@ export class BPDataService{
         // TODO make getting the user role and process type more systematic, we should not have a logic as below
         // it is crucial to update userRole after updating process type. Otherwise, we will have problems while viewing transport execution plan details.
         this.bpActivityEvent.userRole = userRole;
-        //
-        // // We return an empty promise in order to have a callback following after calling this method. The main intention to have
-        // // such a callback is to set the relevant document as it is nullified by calling the resetBpData.
-        // return new Promise<void>();
     }
 
     setCopyDocuments(rfq: boolean, quotation: boolean, order: boolean): void {

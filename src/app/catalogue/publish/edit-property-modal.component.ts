@@ -66,7 +66,6 @@ export class EditPropertyModalComponent implements OnInit {
               ref.push(property);
             }
         }, () => {
-            console.log("dismissed");
         });
     }
 
