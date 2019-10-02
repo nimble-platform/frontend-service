@@ -547,9 +547,9 @@ export class BPDataService{
      * The modified objects reflect the user selections during the continuation of the process.
      ********************************************************************************************/
 
-    selectFirstValuesAmongAlternatives(item: Item): void {
+    selectFirstValuesAmongAlternatives(item: Item, associatedProducts: CatalogueLine[]): void {
         this.chooseAllDimensions(item);
-        this.chooseFirstValuesOfItemProperties(item);
+        this.chooseFirstValuesOfItemProperties(item, associatedProducts);
     }
 
     /**
@@ -570,7 +570,7 @@ export class BPDataService{
         item.dimension = finalDimensions;
     }
 
-    private chooseFirstValuesOfItemProperties(item: Item): void {
+    private chooseFirstValuesOfItemProperties(item: Item, associatedProducts: CatalogueLine[]): void {
         for(let i = 0; i < item.additionalItemProperty.length; i++) {
             const prop = item.additionalItemProperty[i];
 
@@ -583,6 +583,26 @@ export class BPDataService{
                     if(possibleTexts.length > 0){
                         // instead of possibleTexts, if we use prop variable, property value may be wrong.
                         prop.value = [possibleTexts[0]];
+
+                        // update the associated item id
+                        if (prop.associatedCatalogueLineID != null && prop.associatedCatalogueLineID.length > 0) {
+                            // find the corresponding product id
+                            let foundProduct = false;
+                            for (let associatedProduct of associatedProducts) {
+                                // checking the names of the associated product against the selected value
+                                if (UBLModelUtils.doesTextArraysContainText(associatedProduct.goodsItem.item.name, prop.value[0])) {
+                                    prop.associatedCatalogueLineID = [associatedProduct.hjid];
+                                    foundProduct = true;
+                                    break;
+                                }
+                            }
+                            // Somehow, most probably because of an update in the associated product or values not linked to any product,
+                            // the selected value cannot be existing product. Therefore, we clear the associated catalogue line id list
+                            // to prevent wrong association.
+                            if (!foundProduct) {
+                                prop.associatedCatalogueLineID = [];
+                            }
+                        }
                     }
                     break;
                 case "NUMBER":

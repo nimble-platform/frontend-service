@@ -43,6 +43,7 @@ export class ProductDetailsComponent implements OnInit {
     initCheckGetFrameContractStatus: CallStatus = new CallStatus();
     initCheckGetProductStatus: CallStatus = new CallStatus();
     getProductStatus: CallStatus = new CallStatus();
+    associatedProductsRetrievalCallStatus: CallStatus = new CallStatus();
 
     id: string;
     catalogueId: string;
@@ -50,11 +51,12 @@ export class ProductDetailsComponent implements OnInit {
 
     // options: BpWorkflowOptions = new BpWorkflowOptions();
     itemWithSelectedProperties: Item = new Item();
-    orderQuantity: Quantity = new Quantity(1, '');
+    orderQuantity = 1;
 
     line?: CatalogueLine;
     item?: Item;
     productWrapper?: ProductWrapper;
+    associatedProducts: CatalogueLine[] = [];
     settings?: CompanySettings;
     priceWrapper?: DiscountPriceWrapper;
     frameContractQuotationWrapper: QuotationWrapper;
@@ -93,6 +95,10 @@ export class ProductDetailsComponent implements OnInit {
 			let id = params['id'];
             let catalogueId = params['catalogueId'];
             this.tabToOpen = params['tabToOpen'];
+            let orderQuantity: string = params['orderQuantity'];
+            if (orderQuantity) {
+                this.orderQuantity = Number.parseInt(orderQuantity);
+            }
 
             if(id !== this.id || catalogueId !== this.catalogueId) {
                 this.id = id;
@@ -106,7 +112,6 @@ export class ProductDetailsComponent implements OnInit {
                         this.line = line;
                         this.item = line.goodsItem.item;
                         this.itemWithSelectedProperties = copy(this.item);
-                        this.bpDataService.selectFirstValuesAmongAlternatives(this.itemWithSelectedProperties);
                         this.isLogistics = isLogisticsService(this.line);
                         this.isTransportService = isTransportService(this.line);
 
@@ -120,7 +125,7 @@ export class ProductDetailsComponent implements OnInit {
                                 this.frameContractQuotationWrapper = new QuotationWrapper(document, this.line);
                                 // quotation ordered quantity contains the actual ordered quantity in that business process,
                                 // so we overwrite it with the options's quantity, which is by default 1
-                                this.frameContractQuotationWrapper.orderedQuantity.value = this.orderQuantity.value;
+                                this.frameContractQuotationWrapper.orderedQuantity.value = this.orderQuantity;
 
                                 this.initCheckGetFrameContractStatus.callback(null, true);
                             }).catch(error => {
@@ -130,10 +135,12 @@ export class ProductDetailsComponent implements OnInit {
                             this.initCheckGetFrameContractStatus.callback(null, true);
                         });
 
-                        return this.userService.getSettingsForProduct(line)
+                        return Promise.all([this.userService.getSettingsForProduct(line), this.retrieveAssociatedProductDetails()]);
                     })
-                    .then(settings => {
+                    .then(([settings, associatedProducts]) => {
+                        this.bpDataService.selectFirstValuesAmongAlternatives(this.itemWithSelectedProperties, associatedProducts);
                         this.settings = settings;
+                        this.associatedProducts = associatedProducts;
                         this.priceWrapper = new DiscountPriceWrapper(
                             this.line.requiredItemLocationQuantity.price,
                             this.line.requiredItemLocationQuantity.price,
@@ -148,6 +155,9 @@ export class ProductDetailsComponent implements OnInit {
 
                         // get the business workflow of seller company
                         this.companyWorkflowMap = this.bpDataService.getCompanyWorkflowMap(settings.negotiationSettings.company.processID);
+
+                        // the quantity change event handler is called here to update the price in case a specific quantity is provided as a query parameter
+                        this.onOrderQuantityChange();
 
                         this.getProductStatus.callback("Retrieved product details", true);
                         this.initCheckGetProductStatus.error(null);
@@ -200,7 +210,7 @@ export class ProductDetailsComponent implements OnInit {
                 null,
                 [],
                 this.itemWithSelectedProperties,
-                this.orderQuantity,
+                new Quantity(this.orderQuantity, this.getQuantityUnit()),
                 true, // this is a new process
                 false, // there is no subsequent process as this is a new process
                 this.catalogueId, this.id, null, null, termsSource),
@@ -216,15 +226,14 @@ export class ProductDetailsComponent implements OnInit {
     }
 
     onOrderQuantityChange(): void {
-        this.priceWrapper.orderedQuantity.value = this.orderQuantity.value;
+        this.priceWrapper.orderedQuantity.value = this.orderQuantity;
         if(this.frameContractQuotationWrapper != null) {
-            this.frameContractQuotationWrapper.orderedQuantity.value = this.orderQuantity.value;
+            this.frameContractQuotationWrapper.orderedQuantity.value = this.orderQuantity;
         }
 
         // quantity change must be activated in the next iteration of execution
         // otherwise, the update discount method will use the old value of the quantity
-        setTimeout((()=>{
-            //this.priceWrapper.itemPrice.value = this.priceWrapper.pricePerItem;
+        setTimeout((() => {
             this.onTermsChange(this.termsSelectBoxValue);
         }), 0);
     }
@@ -330,4 +339,21 @@ export class ProductDetailsComponent implements OnInit {
       }
     }
 
+    /**
+     * Retrieves products associated via the item properties of this product
+     */
+    retrieveAssociatedProductDetails(): Promise<CatalogueLine[]> {
+        // We retrieve the associated product details if editing is active.
+        let associatedProductIds: number[] = [];
+
+        // aggregate identifiers of all associated products
+        for (let itemProperty of this.line.goodsItem.item.additionalItemProperty) {
+            if (itemProperty.associatedCatalogueLineID.length > 0) {
+                associatedProductIds = associatedProductIds.concat(itemProperty.associatedCatalogueLineID);
+            }
+        }
+
+        // retrieve the associated products
+        return this.catalogueService.getCatalogueLinesByHjids(associatedProductIds);
+    }
 }

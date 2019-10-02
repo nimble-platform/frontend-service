@@ -8,7 +8,7 @@ import {PriceOption} from "./price-option";
 export class CatalogueLine {
     constructor(
         public id:string,
-        public hjid:string,
+        public hjid: number,
         public orderableUnit: string,
         public freeOfChargeIndicator: boolean = null,
         public warrantyValidityPeriod: Period,

@@ -75,22 +75,19 @@
         </ng-container>
 
         <!-- associated products -->
-        <div class="data-row" *ngFor="let orderId of displayedOrderIds">
-            <call-status [callStatus]="orderCallStatuses.get(orderId)"></call-status>
-            <ng-container *ngIf="orders.get(orderId)">
-                <div class="col-4">
-                    {{orders.get(orderId).id}}
-                </div>
-                <div class="col-3">
-                    {{selectPartyName(orders.get(orderId).buyerCustomerParty.party.partyName)}}
-                </div>
-                <div class="col-3">
-                    {{selectLangLabelFromTextArray(orders.get(orderId).orderLine[0].lineItem.item.name)}}
-                </div>
-                <div class="col-2">
-                    {{quantityToString(orders.get(orderId).orderLine[0].lineItem.quantity)}}
-                </div>
-            </ng-container>
+        <div class="data-row" *ngFor="let pa of associatedProductAggregates">
+            <div class="col-3">
+                {{selectPartyName(pa.catalogueLine.goodsItem.item.manufacturerParty.partyName)}}
+            </div>
+            <div class="col-3">
+                {{selectLangLabelFromTextArray(pa.catalogueLine.goodsItem.item.name)}}
+            </div>
+            <div class="col-2">
+                {{quantityToString(pa.quantity)}}
+            </div>
+            <div class="col-2">
+                <div class="btn btn-primary" (click)="onProductDetailsClicked(pa)"><span [innerHTML]="'Negotiate & Order' | translate"></span></div>
+            </div>
         </div>
     </ng-container>
 </ng-container>

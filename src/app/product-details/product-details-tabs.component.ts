@@ -9,6 +9,7 @@ import * as myGlobals from '../globals';
 import {Quantity} from '../catalogue/model/publish/quantity';
 import {TranslateService} from '@ngx-translate/core';
 import {Item} from "../catalogue/model/publish/item";
+import {CatalogueLine} from '../catalogue/model/publish/catalogue-line';
 
 @Component({
     selector: 'product-details-tabs',
@@ -20,6 +21,7 @@ export class ProductDetailsTabsComponent implements OnInit {
     @Input() wrapper: ProductWrapper;
     // @Input() options: BpWorkflowOptions;
     @Input() itemWithSelectedProps: Item;
+    @Input() associatedProducts: CatalogueLine[];
     @Input() settings: CompanySettings;
 
     @Input() showOverview: boolean = false;

@@ -11,6 +11,8 @@ import {CallStatus} from '../common/call-status';
 import { ActivatedRoute,Router } from "@angular/router";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {TranslateService} from '@ngx-translate/core';
+import {CatalogueLine} from "../catalogue/model/publish/catalogue-line";
+import {Text} from "../catalogue/model/publish/text";
 
 @Component({
     selector: 'product-details-overview',
@@ -21,6 +23,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
 
     @Input() wrapper: ProductWrapper;
     @Input() itemWithSelectedProps: Item;
+    @Input() associatedProducts: CatalogueLine[];
     @Input() readonly: boolean;
     @Output() compStatus = new EventEmitter<boolean>();
     @Output() onPropertyValueChange: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -30,6 +33,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
 
     getClassificationNamesStatus: CallStatus = new CallStatus();
     productCatalogueNameRetrievalStatus: CallStatus = new CallStatus();
+    associatedProductsRetrievalCallStatus: CallStatus = new CallStatus();
 
     classificationNames = [];
     productId = "";
@@ -108,6 +112,8 @@ export class ProductDetailsOverviewComponent implements OnInit{
         });
     }
 
+
+
     getClassifications(): CommodityClassification[] {
         if(!this.wrapper) {
             return [];
@@ -123,6 +129,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
             let propKey = getPropertyKey(property);
             for (let aip of this.itemWithSelectedProps.additionalItemProperty) {
                 if (propKey === getPropertyKey(aip)) {
+                    // update the actual value
                     if (aip.valueQualifier === 'STRING') {
                         aip.value[0] = selectedValue;
                     } else if (aip.valueQualifier === 'NUMBER') {
@@ -130,6 +137,27 @@ export class ProductDetailsOverviewComponent implements OnInit{
                     } else if (aip.valueQualifier === 'QUANTITY') {
                         aip.valueQuantity[0] = selectedValue;
                     }
+
+                    // update the associated item id
+                    if (property.associatedCatalogueLineID != null && property.associatedCatalogueLineID.length > 0) {
+                        // find the corresponding product id
+                        let foundProduct = false;
+                        for (let associatedProduct of this.associatedProducts) {
+                            // checking the names of the associated product against the selected value
+                            if (UBLModelUtils.doesTextArraysContainText(associatedProduct.goodsItem.item.name, selectedValue)) {
+                                aip.associatedCatalogueLineID = [associatedProduct.hjid];
+                                foundProduct = true;
+                                break;
+                            }
+                        }
+                        // Somehow, most probably because of an update in the associated product or values not linked to any product,
+                        // the selected value cannot be existing product. Therefore, we clear the associated catalogue line id list
+                        // to prevent wrong association.
+                        if (!foundProduct) {
+                            aip.associatedCatalogueLineID = [];
+                        }
+                    }
+
                     this.onPropertyValueChange.emit(true);
                     return;
                 }
@@ -186,6 +214,10 @@ export class ProductDetailsOverviewComponent implements OnInit{
         return UBLModelUtils.areItemPropertyValuesEqual(selectedValue, checkedValue, property.valueQualifier);
     }
 
+    isDisabled(): boolean {
+        return this.readonly || this.associatedProductsRetrievalCallStatus.isLoading();
+    }
+
     getValuesAsString(property: ItemProperty): string[] {
         return getPropertyValuesAsStrings(property);
     }
@@ -198,5 +230,4 @@ export class ProductDetailsOverviewComponent implements OnInit{
       this.zoomedImgURL = "data:"+this.wrapper.item.productImage[this.selectedImage].mimeCode+";base64,"+this.wrapper.item.productImage[this.selectedImage].value
     	this.modalService.open(content);
     }
-
 }

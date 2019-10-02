@@ -123,7 +123,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	delegatedSearch: boolean = false;
     pageRef = ''; // page where the user is navigated from. empty string ('') means the search is opened directly
 
-    productsSelectedForPublish: any[] = [];
+    productsSelectedForPublish: any[] = []; // keeps the products in the Solr format
 
 	constructor(
 		private simpleSearchService: SimpleSearchService,

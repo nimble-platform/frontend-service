@@ -848,4 +848,13 @@ export class UBLModelUtils {
             return value1 === value2;
         }
     }
+
+    public static doesTextArraysContainText(texts1: Text[], text2: Text): boolean {
+        for (let text1 of texts1) {
+            if (text1.value === text2.value && text1.languageID === text2.languageID) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
