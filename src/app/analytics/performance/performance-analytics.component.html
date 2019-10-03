@@ -19,6 +19,13 @@
                   <span [innerHTML]="'Collaboration stats' | translate"></span>
               </a>
           </li>
+          <li  class="nav-item">
+            <a href id="Visits" class="nav-link"
+                [ngClass]="{ active: selectedTab === 'Visits'}"
+                (click)="onSelectTab($event,'Visits')">
+                <span [innerHTML]="'Visit stats' | translate"></span>
+            </a>
+        </li>
       </ul>
   </div>
 </div>
@@ -330,6 +337,31 @@
     </div>
 
   </div>
+
+
+  <div *ngIf="selectedTab === 'Visits'">
+    <div *ngFor="let dashboard of dashboards">
+    <div class="row">
+      <div class="col">
+        <h6>{{dashboard.title}}</h6>
+        <iframe [src]="dashboard.safeUrl"
+                height="480" width="100%" frameborder="0" class="border"></iframe>
+      </div>
+    </div>
+    <hr>
+    </div>
+
+    <div class="row">
+      <div  class="col-6" *ngFor="let dashboard of graphsa">
+          <h6>{{dashboard.title}}</h6>
+          <iframe [src]="dashboard.safeUrl"
+                  height="480" width="100%" frameborder="0" class="border"></iframe>
+        <hr>
+      </div>
+    </div>
+
+  </div>
+
 </div>
 
 
