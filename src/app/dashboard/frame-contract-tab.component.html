@@ -27,5 +27,7 @@
     </div>
 </ng-container>
 <ng-container *ngIf="frameContracts.length == 0 && frameContractsRetrievalCallStatus.isComplete() && !frameContractsRetrievalCallStatus.isError()">
-    <span [innerHTML]="'No frame contract exists' | translate"></span> 
+            <div style="margin-top: 20vh">
+                <h4 class="space-before text-center"><span [innerHTML]="'No frame contract exists' | translate"></span></h4>
+            </div>
 </ng-container>
