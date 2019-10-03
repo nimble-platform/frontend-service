@@ -13,6 +13,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {TranslateService} from '@ngx-translate/core';
 import {CatalogueLine} from "../catalogue/model/publish/catalogue-line";
 import {Text} from "../catalogue/model/publish/text";
+import * as moment from "moment";
+import { CookieService } from 'ng2-cookies';
+import {CredentialsService} from '../user-mgmt/credentials.service';
+import * as myGlobals from '../globals';
 
 @Component({
     selector: 'product-details-overview',
@@ -40,6 +44,10 @@ export class ProductDetailsOverviewComponent implements OnInit{
     selectPreferredValue = selectPreferredValue;
     catalogueId = "";
     catalogueName = "";
+    debug = myGlobals.debug;
+    config = myGlobals.config;
+    companyId = '';
+    activeComp = '';
 
     zoomedImgURL = "";
 
@@ -49,11 +57,16 @@ export class ProductDetailsOverviewComponent implements OnInit{
         public catalogueService:CatalogueService,
         private modalService: NgbModal,
         private route: ActivatedRoute,
+        private cookieService: CookieService,
+        private credentialsService: CredentialsService,
 		public router: Router
 
     ) {}
 
     ngOnInit(){
+		this.companyId = this.cookieService.get("company_id");
+		this.activeComp = this.cookieService.get("active_company_name");
+
         if(this.wrapper){
             this.manufacturerPartyName = UBLModelUtils.getPartyDisplayName(this.wrapper.item.manufacturerParty);
         }
@@ -69,9 +82,31 @@ export class ProductDetailsOverviewComponent implements OnInit{
                 categoryUris.push(classification.itemClassificationCode.uri);
             }
             this.classificationNames = [];
+            let manPartyId  =  UBLModelUtils.getPartyId(this.wrapper.goodsItem.item.manufacturerParty);
             this.categoryService.getCategories(categoryUris).then(response => {
                 for(let category of response.result) {
                     this.classificationNames.push(selectNameFromLabelObject(category.label));
+                    let LabelName = selectNameFromLabelObject(category.label);
+                    if (this.config.loggingEnabled && this.companyId != manPartyId) {
+                      let userId = this.cookieService.get("user_id");
+                      let log = {
+                        "@timestamp": moment().utc().toISOString(),
+                        "level": "INFO",
+                        "serviceID": "frontend-service",
+                        "userId": userId,
+                        "companyId": this.companyId,
+                        "active_company": this.activeComp,
+                        "manufactured_companyId" : manPartyId,
+                        "category" : LabelName,
+                        "activity": "product_visit"
+                      };
+        
+                      if (this.debug)
+                        console.log("Writing log "+JSON.stringify(log));
+                      this.credentialsService.logUrl(log)
+                        .then(res => {})
+                        .catch(error => {});
+                    }
                 }
 
                 // sort labels
