@@ -7,7 +7,7 @@ import * as myGlobals from '../../globals';
 import {selectNameFromLabelObject} from '../../common/utils';
 import { CookieService } from "ng2-cookies";
 import {TranslateService} from '@ngx-translate/core';
-
+import { DomSanitizer } from "@angular/platform-browser";
 
 @Component({
     selector: "performance-analytics",
@@ -127,12 +127,15 @@ export class PerformanceAnalyticsComponent implements OnInit {
     product_cat_mix = myGlobals.product_cat_mix;
 	getMultilingualLabel = selectNameFromLabelObject;
 	config = myGlobals.config;
+	dashboards = [];
+	graphsa = [];
 
     constructor(private analyticsService: AnalyticsService,
 		private simpleSearchService: SimpleSearchService,
 		private cookieService: CookieService,
 		private categoryService: CategoryService,
 		private translate: TranslateService,
+		private sanitizer: DomSanitizer
         ) {
     	}
 
@@ -184,7 +187,29 @@ export class PerformanceAnalyticsComponent implements OnInit {
             })
             .catch(error => {
                 this.callStatus.error("Error while loading platform analytics", error);
-            });
+			});
+			
+			if (this.config.kibanaEnabled) {
+				let tmpDashboards = this.config.kibanaConfig.companydashboards;
+				for (let i=0; i<tmpDashboards.length; i++) {
+				  let tmpUrl=tmpDashboards[i].url;
+				  tmpUrl=tmpUrl.replace(/'41915'/g,"'"+compId+"'");
+				  let full_url = myGlobals.kibana_endpoint +tmpUrl;
+				  tmpDashboards[i]["safeUrl"] = this.sanitizer.bypassSecurityTrustResourceUrl(full_url);
+				}
+				this.dashboards = tmpDashboards;
+
+				let tmpGraphs = this.config.kibanaConfig.companygrpahs;
+				for (let i=0; i<tmpGraphs.length; i++) {
+					let tmpUrl=tmpGraphs[i].url;
+					tmpUrl=tmpUrl.replace(/'41915'/g,"'"+compId+"'");
+					let full_url = myGlobals.kibana_endpoint +tmpUrl;
+					tmpGraphs[i]["safeUrl"] = this.sanitizer.bypassSecurityTrustResourceUrl(full_url);
+				  }
+				  this.graphsa = tmpGraphs;
+			  }
+
+			  
 		});
         
     }
