@@ -410,28 +410,12 @@ export class ThreadSummaryComponent implements OnInit {
         } else {
             switch(processType) {
                 case "Order":
-                    if (response.documentStatus) {
-                        if(buyer) {
-                            if(isFulfilmentIncludedInWorkflow){
-                                event.statusText = "Waiting for Dispatch Advice";
-                            }
-                            else{
-                                event.statusText = "Order approved";
-                            }
-                            event.actionText = "See Order";
-                        } else {
-                            if(isFulfilmentIncludedInWorkflow){
-                                event.actionText = "Send Dispatch Advice";
-                            }
-                            else{
-                                event.actionText = "See Order";
-                            }
-                            event.statusText = "Order approved";
-                        }
+                    if (response.documentStatus == "true") {
+                        event.statusText = "Order approved";
                     } else {
                         event.statusText = "Order declined";
-                        event.actionText = "See Order";
                     }
+                    event.actionText = "See Order";
                     break;
                 case "Negotiation":
                     if (buyer) {
@@ -457,7 +441,7 @@ export class ThreadSummaryComponent implements OnInit {
                     event.actionText = "See Receipt Advice";
                     break;
                 case "Ppap":
-                    if (response.documentStatus) {
+                    if (response.documentStatus == "true") {
                         event.statusText = "Ppap approved";
                     } else {
                         event.statusText = "Ppap declined";
@@ -488,10 +472,6 @@ export class ThreadSummaryComponent implements OnInit {
                       processType: ProcessType, response: any, buyer: boolean,isFulfilmentIncludedInWorkflow:boolean): ThreadEventStatus {
         switch(processState) {
             case "COMPLETED":
-                if(processType === "Order") {
-                    if(isFulfilmentIncludedInWorkflow)
-                        return buyer ? "WAITING" : "ACTION_REQUIRED";
-                }
                 return "DONE";
             case "EXTERNALLY_TERMINATED":
                 return "CANCELLED";
