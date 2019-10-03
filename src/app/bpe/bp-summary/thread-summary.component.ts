@@ -410,7 +410,7 @@ export class ThreadSummaryComponent implements OnInit {
         } else {
             switch(processType) {
                 case "Order":
-                    if (response.documentStatus) {
+                    if (response.documentStatus == "true") {
                         if(buyer) {
                             if(isFulfilmentIncludedInWorkflow){
                                 event.statusText = "Waiting for Dispatch Advice";
@@ -457,7 +457,7 @@ export class ThreadSummaryComponent implements OnInit {
                     event.actionText = "See Receipt Advice";
                     break;
                 case "Ppap":
-                    if (response.documentStatus) {
+                    if (response.documentStatus == "true") {
                         event.statusText = "Ppap approved";
                     } else {
                         event.statusText = "Ppap declined";
