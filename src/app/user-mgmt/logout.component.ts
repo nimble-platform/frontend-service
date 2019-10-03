@@ -3,11 +3,14 @@ import { AppComponent } from '../app.component';
 import { CookieService } from 'ng2-cookies';
 import { UserService } from './user.service';
 import { CategoryService } from '../catalogue/category/category.service';
+import {CredentialsService} from './credentials.service';
 import { CatalogueService } from '../catalogue/catalogue.service';
 import * as constants from "../common/constants";
 import {Headers, Http} from "@angular/http";
 import * as myGlobals from "../globals";
 import {TranslateService} from '@ngx-translate/core';
+import * as moment from "moment";
+
 
 @Component({
 	selector: 'nimble-logout',
@@ -16,6 +19,11 @@ import {TranslateService} from '@ngx-translate/core';
 })
 
 export class LogoutComponent implements OnInit {
+	
+	public config = myGlobals.config;
+	companyId = "";
+	userId = "";
+	public debug = myGlobals.debug;
 
 	constructor(
 		private cookieService: CookieService,
@@ -24,10 +32,14 @@ export class LogoutComponent implements OnInit {
         private categoryService: CategoryService,
 		private catalogueService: CatalogueService,
 		private translate: TranslateService,
+        private credentialsService: CredentialsService,
         private http: Http
 	) {	}
 
 	ngOnInit() {
+
+		this.companyId = this.cookieService.get("company_id");
+		this.userId = this.cookieService.get("user_id");
 		this.cookieService.delete("user_id");
 		this.cookieService.delete("company_id");
 		this.cookieService.delete("user_fullname");
@@ -47,7 +59,7 @@ export class LogoutComponent implements OnInit {
             .post(url, JSON.stringify({}), {headers: headers})
             .toPromise()
             .then(res => {
-                console.log(res);
+				console.log(res);
                 this.cookieService.delete(constants.chatRCConnect, '/');
                 this.cookieService.delete(constants.chatRCToken, '/');
                 this.cookieService.delete(constants.chatRCID, '/');
@@ -60,6 +72,31 @@ export class LogoutComponent implements OnInit {
                 console.error("Error occurred while logging off from rocket chat");
             });
 
+		if (this.config.loggingEnabled) {
+			let cID = "";
+			if (this.companyId){
+				cID = this.companyId;
+				let params = {};
+			
+				let log = {
+					"@timestamp": moment().utc().toISOString(),
+					"level": "INFO",
+					"serviceID": "frontend-service",
+					"companyId": cID,
+					"userId" : this.userId,
+					"activity": "logout",
+					"message": JSON.stringify({
+					"params": params
+					})
+				};
+				if (this.debug)
+					console.log("Writing log "+JSON.stringify(log));
+						this.credentialsService.logUrl(log)
+					.then(res => {})
+					.catch(error => {});
+				}
+				
+			  }
 		this.userService.resetData();
 		this.appComponent.checkLogin("/user-mgmt/login");
 	}
