@@ -54,7 +54,7 @@ export const tntMasterDataEndpoint = 'http://nimble-dev.ikap.biba.uni-bremen.de:
 
 export const config = {
   "platformName": "FMP Staging",
-  "companyRegistrationRequired": false,
+  "companyRegistrationRequired": true,
   "categoryFilter": {
     "eClass": {
       "hiddenCategories": [],
