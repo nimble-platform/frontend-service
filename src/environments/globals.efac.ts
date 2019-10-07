@@ -73,11 +73,14 @@ export const config = {
   "frameContractTabEnabled":true,
   "imprint": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Platform Owner</u><br/><b>AIDIMME - Technological Institute of Metalworking, Furniture, Wood, Packaging and Related sectors</b><br/>Technological Park, Benjamín Franklin Street 13<br/>46980 Paterna (Valencia), Spain<br/>Phone: +34.961.366.070<br/>E-Mail: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>CIF: G46261590</td><td class='w-50 p-0 pl-3'><u>Platform Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)</td></tr></table>",
   "kibanaConfig": {
+    "companyDashboards": [],
+    "companyGraphs": [],
     "dashboards": []
   },
   "kibanaEnabled": false,
   "loggingEnabled": false,
-  "logoPath": "./assets/logo_fmp.png",
+  "logoPath": "./assets/logo_efac.png",
+  "federationLogoPath": "./assets/logo_mvp_efactory.png",
   "logoRequired": true,
   "phoneNumberRequired": true,
   "vatEnabled": false,
