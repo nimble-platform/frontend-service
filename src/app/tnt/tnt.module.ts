@@ -9,6 +9,8 @@ import { TnTRoutingModule } from './tnt-routing.module';
 import { TnTComponent } from './tnt.component';
 import { TnTFormComponent } from './tnt-form.component';
 import { TnTEventDataComponent } from './tnt-event-data.component';
+import { TnTEventDetailsComponent } from './tnt-event-details.component';
+import { SafePipe } from './model/SafePipe';
 
 import { HttpClientModule } from '@angular/common/http';
 
@@ -24,14 +26,17 @@ import { HttpClientModule } from '@angular/common/http';
         NgbModule.forRoot()
     ],
     declarations: [
-      TnTComponent,
-      TnTFormComponent,
-      TnTEventDataComponent
+        SafePipe,
+        TnTComponent,
+        TnTFormComponent,
+        TnTEventDataComponent,
+        TnTEventDetailsComponent
     ],
     exports: [
         TnTComponent,
         TnTFormComponent,
-        TnTEventDataComponent
+        TnTEventDataComponent,
+        TnTEventDetailsComponent
     ],
     providers: [],
     entryComponents: []
