@@ -13,6 +13,7 @@ export class TnTEventDataComponent {
     page = 1;
     pageSize = 5;
     verified: boolean;
+    selectedEvent = {};
 
     get events(): TrackInfo[] {
         const everyEvent = this.incomingTrackingInfo;

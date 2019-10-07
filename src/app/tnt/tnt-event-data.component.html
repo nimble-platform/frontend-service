@@ -5,6 +5,7 @@
                         <tr>
                             <th scope="col"><span [innerHTML]="'Event Time' | translate"></span></th>
                             <th scope="col"><span [innerHTML]="'Business Step' | translate"></span></th>
+                            <th scope="col">Details</th>
                             <!-- <th scope="col"><span [innerHTML]="'Read Point' | translate"></span></th>
                             <th scope="col"><span [innerHTML]="'Business Location' | translate"></span></th> -->
                         </tr>
@@ -13,6 +14,7 @@
                         <tr *ngFor="let entry of events">
                             <th scope="row">{{entry.eventTime | date:'medium':'UTC'}}</th>
                             <td>{{entry.bizStep}}</td>
+                            <td><button class="btn btn-outline-primary" (click)="selectedEvent=entry"><i class="fas fa-box"></i>More</button></td>
                             <!-- <td><button class="btn btn-link">{{entry.readPoint}}</button></td>
                             <td><button class="btn btn-link">{{entry.bizLocation}}</button></td> -->
                         </tr>
@@ -28,3 +30,5 @@
         <option [ngValue]="10">10 events per page</option>
     </select>
 </div>
+
+<tnt-event-details [eventToDisplay]="selectedEvent"></tnt-event-details>
