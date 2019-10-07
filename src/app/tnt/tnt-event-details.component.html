@@ -1,0 +1,59 @@
+<div class="row" *ngIf="gateInformation.length && bizLocationInformation.length">
+    <div class="col-md-12">
+        <!-- <pre>{{ gateInformation[0] | json}}</pre> -->
+        <table class="table table-bordered">
+            <thead>
+                <th scope="col">Attributes</th>
+                <th scope="col">Read Point Information</th>
+                <th scope="col">Business Location Information</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Site</th>
+                    <td>{{ gateInformation[gateInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:site'] }}</td>
+                    <td>{{ bizLocationInformation[bizLocationInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:site'] }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Country</th>
+                    <td>{{ gateInformation[gateInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:countryCode'] }}</td>
+                    <td>{{ bizLocationInformation[bizLocationInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:countryCode'] }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Name</th>
+                    <td>{{ gateInformation[gateInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:name'] }}</td>
+                    <td>{{ bizLocationInformation[bizLocationInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:name'] }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">City</th>
+                    <td>{{ gateInformation[gateInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:city'] }}</td>
+                    <td>{{ bizLocationInformation[bizLocationInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:city'] }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Address</th>
+                    <td>{{ gateInformation[gateInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:streetAddressOne'] }}</td>
+                    <td>{{ bizLocationInformation[bizLocationInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:streetAddressOne'] }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">ID</th>
+                    <td><code> {{ gateInformation[gateInformation.length - 1]['id'] }} </code></td>
+                    <td><code>{{ bizLocationInformation[bizLocationInformation.length - 1]['id'] }}</code></td>
+                </tr>
+                <tr>
+                    <th scope="row">Last Updated</th>
+                    <td>{{ gateInformation[gateInformation.length - 1]['lastUpdated']['$date'] | date: 'medium'}}</td>
+                    <td>{{ bizLocationInformation[bizLocationInformation.length - 1]['lastUpdated']['$date'] | date: 'medium'}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div *ngIf="gateInformation.length && bizLocationInformation.length">
+    <!-- <iframe src="https://snapshot.raintank.io/dashboard-solo/snapshot/y7zwi2bZ7FcoTlB93WN7yWO4aMiz3pZb?from=1493369923321&to=1493377123321&panelId=4" width="650" height="300" frameborder="0"></iframe> -->
+    
+    <!-- <iframe [src]="dashboardURL" + "?var-bizLocation=" + {{ selectedBizLocation }} + "&from=1570007314754&to=1570007369896&orgId=2&panelId=2" width="650" height="400" frameborder="0"></iframe> -->
+    <!-- ?var-bizLocation=urn%3Aepc%3Aid%3Asgln%3AbizLocation.PodComp.3&from=1570007314754&to=1570007369896&orgId=2&panelId=2" -->
+    <button class="btn btn-secondary" (click)="displaySensorDashboard()"> Show Sensor Data</button>
+    <div *ngIf='dashboardQuery'>
+        <iframe [src]="dashboardQuery | safe" width="650" height="400" frameborder="0"></iframe>
+    </div>
+</div>
