@@ -26,6 +26,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {UBLModelUtils} from '../../catalogue/model/ubl-model-utils';
 import {Item} from "../../catalogue/model/publish/item";
 import { AppComponent } from '../../app.component';
+import {DocumentService} from "./document-service";
 
 /**
  * Created by suat on 20-Oct-17.
@@ -51,9 +52,8 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     productWithSelectedProperties: Item;
     settings: CompanySettings;
 
-    // Keeps the order document generated in the order process included in a business process collaboration
-    // (i.e. the set of sequential processes). It also refers to the previous order document for transport related business processes.
-    orderWithinCollaboration?: Order;
+    // Refers to the previous order document for transport related business processes.
+    correspondingOrderOfTransportProcess?: Order;
     // The four variables below are used to represent a logistics service related information in case a previous order exists
     serviceLine?: CatalogueLine;
     serviceWrapper?: ProductWrapper;
@@ -79,6 +79,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 private searchContextService: SearchContextService,
                 public userService: UserService,
                 public bpeService: BPEService,
+                private documentService: DocumentService,
                 public route: ActivatedRoute,
                 private router: Router,
                 private cookieService: CookieService,
@@ -186,14 +187,13 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 const userId = this.cookieService.get("user_id");
                 Promise.all([
                     this.getCatalogueLine(catalogueId, id, bpActivityEvent.processMetadata),
-                    this.getOrderWithinCollaboration(),
+                    this.getOrderForTransportService(),
                     this.userService.getSettingsForUser(userId)
 
                 ]).then(([line, order, ownCompanySettings]) => {
                     this.line = line;
-                    this.orderWithinCollaboration = order;
+                    this.correspondingOrderOfTransportProcess = order;
                     this.bpDataService.productOrder = order;
-                    // this.setC
                     this.bpDataService.currentUserSettings = ownCompanySettings;
 
                     return Promise.all([
@@ -209,18 +209,16 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                     // set the product line to be the first fetched line, either service or product.
                     this.bpDataService.setProductAndCompanyInformation([this.line], sellerSettings);
                     this.productWithSelectedProperties = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
-                    //this.bpDataService.computeWorkflowOptions();
 
                     // there is an order that references another product -> the line is a service and the referencedLine is the original product
                     if (referencedLine) {
                         this.serviceLine = this.line;
                         this.serviceWrapper = new ProductWrapper(this.serviceLine, sellerSettings.negotiationSettings);
                         this.serviceSettings = sellerSettings;
-                        // this.serviceOptions = this.bpDataService.bpActivityEvent.workflowOptions;
                         this.serviceWithSelectedProperties = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
 
                         this.line = referencedLine;
-                        this.productWithSelectedProperties = this.orderWithinCollaboration.orderLine[0].lineItem.item;
+                        this.productWithSelectedProperties = this.correspondingOrderOfTransportProcess.orderLine[0].lineItem.item;
 
                         return this.userService.getSettingsForProduct(referencedLine);
 
@@ -234,7 +232,6 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                     this.wrapper = new ProductWrapper(this.line, settings.negotiationSettings);
                     this.settings = settings;
 
-                    // this.options = this.bpDataService.bpActivityEvent.workflowOptions;
                     if(this.processType) {
                         this.currentStep = this.getCurrentStep(this.processType);
                     }
@@ -285,13 +282,14 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             && this.processMetadata.processStatus === "Completed";
     }
 
-    private getOrderWithinCollaboration(): Promise<Order | null> {
+    private getOrderForTransportService(): Promise<Order | null> {
         if(this.bpDataService.bpActivityEvent.userRole === "seller") {
             return Promise.resolve(null);
         }
+        // search context has some value only when the user is navigated to the search for searching a transport service provider
+        // for an existing order
         if(this.searchContextService.getAssociatedProcessMetadata()) {
-            const processId = this.searchContextService.getAssociatedProcessMetadata().processInstanceId;
-            return this.bpeService.getOriginalOrderForProcess(processId)
+            return this.documentService.getInitialDocument(this.searchContextService.getAssociatedProcessMetadata().activityVariables);
         }
         if(this.processMetadata) {
             const processId = this.processMetadata.processInstanceId;
@@ -342,7 +340,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             if(this.bpDataService.bpActivityEvent.processType == 'Transport_Execution_Plan' && this.bpDataService.bpActivityEvent.userRole === "seller") {
                 // The service provider only sees transport steps
                 return "Transport";
-            } else if(!this.orderWithinCollaboration) {
+            } else if(!this.correspondingOrderOfTransportProcess) {
                 // No original order: this is just a transport order without previous order from the customer
                 return "Transport";
             } else {
