@@ -78,13 +78,13 @@ export const config = {
     "dashboards": [
       {
         "title": "User Logins & Registrations",
-        "url": "#/dashboard/8a582c30-b3a9-11e9-b67b-bf3c078ca1ec?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
+        "url": "#/dashboard/f1ab15d0-cda5-11e9-b692-35aea039cd0a?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2FM%2Cmode%3Aquick%2Cto%3Anow%2FM))"
       }, {
         "title": "Business Process Activities",
-        "url": "#/dashboard/ec3fbb50-b3ab-11e9-b67b-bf3c078ca1ec?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
+        "url": "#/dashboard/7e864f20-cda5-11e9-b692-35aea039cd0a?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2FM%2Cmode%3Aquick%2Cto%3Anow%2FM))"
       }, {
         "title": "Products Activities",
-        "url": "#/dashboard/370fcd00-b3ac-11e9-b67b-bf3c078ca1ec?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2Fw%2Cmode%3Aquick%2Cto%3Anow%2Fw))"
+        "url": "#/dashboard/bae8fd00-cda5-11e9-b692-35aea039cd0a?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2FM%2Cmode%3Aquick%2Cto%3Anow%2FM))"
       }
     ]
   },

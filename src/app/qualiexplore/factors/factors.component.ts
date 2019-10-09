@@ -118,7 +118,7 @@ export class FactorsComponent implements OnInit {
      */
     parseTree(factors: TreeviewItem[]): TreeviewItem[] {
       factors.forEach(factor => {
-        if (factor.value !== null) {
+        if ('label_ids' in factor.value) {
           let labels: number[] = factor.value['label_ids'];
           labels.forEach(label => {
             if (this.selected.findIndex(l => l === label) > -1) {
