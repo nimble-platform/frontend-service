@@ -81,8 +81,6 @@ export class ItemInformationResponseComponent implements OnInit {
 
     onSendResponse(): void {
         this.callStatus.submit();
-
-        //this.callStatus.submit();
         this.bpeService.startProcessWithDocument(this.bpDataService.itemInformationResponse).then(() => {
             this.callStatus.callback("Information Response sent", true);
             var tab = "PURCHASES";
@@ -102,18 +100,19 @@ export class ItemInformationResponseComponent implements OnInit {
         if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().tradeDetails.ppapCompatibilityLevel) {
             this.navigateToBusinessProcess("Negotiation");
         } else {
-            this.navigateToBusinessProcess("Ppap");
+            if (this.bpDataService.getCompanyWorkflowMap(null).get('Ppap')) {
+                this.navigateToBusinessProcess('Ppap');
+            } else {
+                this.navigateToBusinessProcess('Negotiation');
+            }
         }
     }
 
     private navigateToBusinessProcess(targetProcess: ProcessType): void {
-        this.bpDataService.resetBpData();
+        // this.bpDataService.resetBpData();
+        this.request = null;
+        this.response = null;
         this.bpDataService.proceedNextBpStep("buyer", targetProcess);
-
-        if(targetProcess === "Item_Information_Request") {
-            this.bpDataService.resetBpData();
-            this.bpDataService.initItemInformationRequest();
-        }
     }
 
     onSelectItemSpecificationFile(binaryObject: BinaryObject): void {

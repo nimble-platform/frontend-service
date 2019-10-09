@@ -29,7 +29,7 @@ export class ProductBpStepsComponent implements OnInit {
 
     ngOnInit() {
         // set companyWorkflowMap
-        this.companyWorkflowMap = this.bpDataService.getCompanyWorkflowMap();
+        this.companyWorkflowMap = this.bpDataService.getCompanyWorkflowMap(null);
     }
 
     getStepClasses(step: ProductBpStep): any {

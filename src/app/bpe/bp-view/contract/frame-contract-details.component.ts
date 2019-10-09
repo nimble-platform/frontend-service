@@ -67,7 +67,11 @@ export class FrameContractDetailsComponent implements OnInit {
                         let catalogueId: string = contractRes.item.catalogueDocumentReference.id;
                         let lineId: string = contractRes.item.manufacturersItemIdentification.id;
 
-                        let catalogueLinePromise: Promise<CatalogueLine> = this.catalogueService.getCatalogueLine(catalogueId, lineId);
+                        let catalogueLinePromise: Promise<any> = this.catalogueService.getCatalogueLine(catalogueId, lineId).catch(error => {
+                            if(error.status == 404){
+                                this.frameContractRetrievalCallStatus.error("The product with id "+lineId+" is deleted");
+                            }
+                        });
                         let quotationPromise: Promise<any> = this.documentService.getDocumentJsonContent(quotationId);
 
                         Promise.all([
@@ -75,9 +79,10 @@ export class FrameContractDetailsComponent implements OnInit {
                             quotationPromise
 
                         ]).then(([catalogueLine, quotation]) => {
-                            this.quotationWrapper = new QuotationWrapper(quotation, catalogueLine);
-
-                            this.frameContractRetrievalCallStatus.callback(null, true);
+                            if(catalogueLine){
+                                this.quotationWrapper = new QuotationWrapper(quotation, catalogueLine);
+                                this.frameContractRetrievalCallStatus.callback(null, true);
+                            }
                         }).catch(error => {
                             this.frameContractRetrievalCallStatus.error("Failed to retrieve corresponding quotation and catalogue line", error);
                         });

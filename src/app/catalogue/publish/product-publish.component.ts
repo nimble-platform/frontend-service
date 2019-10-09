@@ -106,6 +106,9 @@ export class ProductPublishComponent implements OnInit {
     private selectedPropertiesUpdates: SelectedPropertiesUpdate = {};
     selectedProperty: ItemProperty;
     categoryModalPropertyKeyword: string = "";
+    // Flag indicating that the source page is the search page.
+    // This is passed true when the user has searched products associated to a property
+    searchRef = false;
 
     @ViewChild(EditPropertyModalComponent)
     private editPropertyModal: EditPropertyModalComponent;
@@ -172,20 +175,39 @@ export class ProductPublishComponent implements OnInit {
     }
 
     ngOnInit() {
+        ProductPublishComponent.dialogBox = true;
         this.selectedCategories = this.categoryService.selectedCategories;
+        // TODO: asych calls like below should have proper chain.
+        // E.g. the below line is expected to be called upon a change in the query params.
         this.getCatagloueIdsForParty();
         const userId = this.cookieService.get("user_id");
         this.callStatus.submit();
-        this.userService.getUserParty(userId).then(party => {
-            return Promise.all([
-                Promise.resolve(party),
-                this.catalogueService.getCatalogueResponse(userId),
-                this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party)),
-                this.unitService.getCachedUnitList("dimensions"),
-                this.unitService.getCachedUnitList("length_quantity")
-            ])
-        })
-            .then(([party, catalogueResponse, settings, dimensions,dimensionUnits]) => {
+
+        this.route.queryParams.subscribe((params: Params) => {
+            // read the query parameters
+            // handle publishing granularity: single, bulk, null
+            this.publishingGranularity = params['pg'];
+            if(this.publishingGranularity == null) {
+                this.publishingGranularity = 'single';
+            }
+            let catalogueId = params['cat'];
+            if(catalogueId != null){
+                this.selectedCatalogueId = catalogueId;
+            }
+            // searchRef is true if the searchRef parameter is set
+            this.searchRef = !!params['searchRef'];
+
+
+            // fetch various information required for initialization
+            this.userService.getUserParty(userId).then(party => {
+                return Promise.all([
+                    Promise.resolve(party),
+                    this.catalogueService.getCatalogueResponse(userId),
+                    this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party)),
+                    this.unitService.getCachedUnitList("dimensions"),
+                    this.unitService.getCachedUnitList("length_quantity")
+                ])
+            }).then(([party, catalogueResponse, settings, dimensions,dimensionUnits]) => {
                 // set dimensions and units lists
                 this.dimensions = dimensions;
                 this.dimensionUnits = dimensionUnits;
@@ -197,21 +219,7 @@ export class ProductPublishComponent implements OnInit {
             .catch(error => {
                 this.callStatus.error("Error while initializing the publish view.", error);
             });
-
-        this.route.queryParams.subscribe((params: Params) => {
-            // handle publishing granularity: single, bulk, null
-            this.publishingGranularity = params['pg'];
-            if(this.publishingGranularity == null) {
-                this.publishingGranularity = 'single';
-            }
-
-            let catalogueId = params['cat'];
-            if(catalogueId != null){
-                this.selectedCatalogueId = catalogueId;
-            }
         });
-        //this.selectedCatalogueuuid = this.catalogueService.catalogueResponse.catalogueUuid;
-
     }
 
     ngOnDestroy() {
@@ -735,9 +743,33 @@ export class ProductPublishComponent implements OnInit {
                 }
             }
         }
+
+        // check the search page reference to update the property values with the selected products
+        this.checkSearchReference();
+
         // call this function with dimension unit list to be sure that item will have some dimension
         this.multiValuedDimensions = this.productWrapper.getDimensionMultiValue(true,this.dimensions);
         this.recomputeSelectedProperties();
+    }
+
+    private checkSearchReference(): void {
+        // check whether the user is navigated from the search page
+        if (this.searchRef) {
+            // set the selected products as associated products of the property
+            // setTimeout is needed as we want to wait init method to complete
+            setTimeout(() => {
+                let targetItemProperty: ItemProperty = this.publishStateService.itemPropertyLinkedToOtherProducts;
+                targetItemProperty.valueQualifier = 'STRING';
+                targetItemProperty.value = [];
+                for (let associatedProduct of this.publishStateService.selectedProductsInSearch) {
+                    targetItemProperty.associatedCatalogueLineID.push(associatedProduct.hjid);
+                    for (let lang of Object.keys(associatedProduct.label)) {
+                        targetItemProperty.value.push(new Text(associatedProduct.label[lang], lang));
+                    }
+                }
+                this.editPropertyModal.open(targetItemProperty, null, this.catalogueLine.goodsItem.item.additionalItemProperty);
+            });
+        }
     }
 
     private updateItemWithNewCategory(category: Category): void {

@@ -4,11 +4,9 @@ import { CallStatus } from "../../common/call-status";
 import { CatalogueService } from "../../catalogue/catalogue.service";
 import { CatalogueLine } from "../../catalogue/model/publish/catalogue-line";
 import { BPDataService } from "./bp-data-service";
-import {combineLatest, ObservableInput, SchedulerLike, Subscription} from "rxjs";
-import { map } from 'rxjs/operators';
+import {Subscription} from "rxjs";
 import { ProductBpStepStatus } from "./product-bp-step-status";
 import { ProductWrapper } from "../../common/product-wrapper";
-import { BpWorkflowOptions } from "../model/bp-workflow-options";
 import { ProcessType } from "../model/process-type";
 import { ProductBpStep } from "./product-bp-step";
 import { ProductBpStepsDisplay } from "./product-bp-steps-display";
@@ -25,9 +23,9 @@ import * as myGlobals from '../../globals';
 import {Headers, Http} from "@angular/http";
 import { DomSanitizer } from '@angular/platform-browser';
 import {TranslateService} from '@ngx-translate/core';
-import {Observable} from "rxjs/Rx";
 import {UBLModelUtils} from '../../catalogue/model/ubl-model-utils';
-import { AppComponent } from "../../app.component";
+import {Item} from "../../catalogue/model/publish/item";
+import { AppComponent } from '../../app.component';
 
 /**
  * Created by suat on 20-Oct-17.
@@ -49,12 +47,18 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     line: CatalogueLine;
     wrapper: ProductWrapper;
-    options: BpWorkflowOptions;
+    // options: BpWorkflowOptions;
+    productWithSelectedProperties: Item;
     settings: CompanySettings;
 
-    originalOrder?: Order;
+    // Keeps the order document generated in the order process included in a business process collaboration
+    // (i.e. the set of sequential processes). It also refers to the previous order document for transport related business processes.
+    orderWithinCollaboration?: Order;
+    // The four variables below are used to represent a logistics service related information in case a previous order exists
     serviceLine?: CatalogueLine;
     serviceWrapper?: ProductWrapper;
+    serviceWithSelectedProperties: Item;
+    // serviceOptions?: BpWorkflowOptions;
     serviceSettings?: CompanySettings;
 
     productExpanded: boolean = false;
@@ -122,15 +126,28 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        // This subscription redirects the navigation to the summary component so that the required information is fetched
-        combineLatest(
-            this.route.params, this.route.queryParams
-        ).pipe(
-            map(([pathParams, queryParams]) => ({...pathParams, ...queryParams}))
-        ).subscribe(allParams => {
-            let processInstanceId = allParams['processInstanceId'];
-            // navigate to the summary component only if an existing process is being displayed
-            // and the page is initially opened/reloaded
+        // combineLatest(
+        //     this.route.params, this.route.queryParams
+        // ).pipe(
+        //     map(([pathParams, queryParams]) => ({...pathParams, ...queryParams}))
+        // )
+
+        // Upon a change in the route param i.e. when the user is navigated to this page, (s)he is redirect to the
+        // bpe/bpe-sum endpoint (ThreadSummaryComponent) if the bpDataService.bpActivityEvent variable is not set.
+        // This case occurs when the user opens a business process with a direct link (e.g. <base_url>/bpe/bpe-exec/<process_instance_id>
+        // by (re)loading the page. In  this case, the rest of the flow to view a process is as follows:
+        // 1) bpe-sum fetches the necessary information to display the details of the business process
+        // 2) BpDataService's startBp method is called, which initiates the bpDataService.bpActivity field and redirects the navigation
+        // to the bpe-exec (this page)
+        //
+        // In cases where the business process is viewed within the application, e.g. by navigating from the dashboard,
+        // bpDataService.bpActivityEvent is set, which would eliminate the redirecting to the bpe-sum endpoint.
+        //
+        // As another side note, switches between the business process steps, e.g. from negotiation to order, is realized by calling the
+        // BpDataService's proceedNextBpStep method.
+        this.route.params.subscribe(routeParams => {
+            let processInstanceId = routeParams['processInstanceId'];
+            // Having bpDataService.bpActivityEvent null indicates that the page is (re)loaded directly.
             if (this.bpDataService.bpActivityEvent == null) {
                 if (processInstanceId !== 'new') {
                     this.router.navigate([`bpe/bpe-sum/${processInstanceId}`], {skipLocationChange: true});
@@ -141,6 +158,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         });
 
         this.bpActivityEventSubs = this.bpDataService.bpActivityEventObservable.subscribe(bpActivityEvent => {
+            // we do this null check since the observable is initialized with a null event
             if (bpActivityEvent == null) {
                 return;
             }
@@ -168,12 +186,14 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 const userId = this.cookieService.get("user_id");
                 Promise.all([
                     this.getCatalogueLine(catalogueId, id, bpActivityEvent.processMetadata),
-                    this.getOriginalOrder(),
+                    this.getOrderWithinCollaboration(),
                     this.userService.getSettingsForUser(userId)
+
                 ]).then(([line, order, ownCompanySettings]) => {
                     this.line = line;
-                    this.originalOrder = order;
+                    this.orderWithinCollaboration = order;
                     this.bpDataService.productOrder = order;
+                    // this.setC
                     this.bpDataService.currentUserSettings = ownCompanySettings;
 
                     return Promise.all([
@@ -182,41 +202,44 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                         this.bpDataService.bpActivityEvent.containerGroupId ? this.bpeService.checkCollaborationFinished(this.bpDataService.bpActivityEvent.containerGroupId) : false
                     ])
                 })
-                .then(([referencedLine, settings, isCollaborationFinished]) => {
-                    // if the collaboration is finished, we need to update workflow since it could be different from the current one
-                    // we will retrieve process ids from the process history and use those ids to create new workflow
-                    if(isCollaborationFinished){
-                        let companyWorkflow = [];
-                        let size = this.bpDataService.bpActivityEvent.processHistory.length;
-                        for(let i = size-1; i > -1;i--){
-                            let processType = this.bpDataService.bpActivityEvent.processHistory[i].processType;
-                            if(companyWorkflow.indexOf(processType) == -1){
-                                companyWorkflow.push(processType);
-                            }
-                        }
-                        // update the workflow of company
-                        settings.negotiationSettings.company.processID = companyWorkflow;
-                    }
+                .then(([referencedLine, sellerSettings, isCollaborationFinished]) => {
+                    // updates the company's business process workflow in order to eliminate the unnecessary steps from the displayed flow
+                    this.updateCompanyProcessWorkflowForThisProcess(isCollaborationFinished, sellerSettings);
+
                     // set the product line to be the first fetched line, either service or product.
-                    this.bpDataService.setCatalogueLines([this.line], [settings]);
-                    this.bpDataService.computeWorkflowOptions();
+                    this.bpDataService.setProductAndCompanyInformation([this.line], sellerSettings);
+                    this.productWithSelectedProperties = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
+                    //this.bpDataService.computeWorkflowOptions();
 
                     // there is an order that references another product -> the line is a service and the referencedLine is the original product
-                    if(referencedLine) {
+                    if (referencedLine) {
                         this.serviceLine = this.line;
-                        this.serviceWrapper = new ProductWrapper(this.serviceLine, settings.negotiationSettings);
-                        this.serviceSettings = settings;
-                        this.line = referencedLine;
-                        return this.userService.getSettingsForProduct(referencedLine);
-                    }
+                        this.serviceWrapper = new ProductWrapper(this.serviceLine, sellerSettings.negotiationSettings);
+                        this.serviceSettings = sellerSettings;
+                        // this.serviceOptions = this.bpDataService.bpActivityEvent.workflowOptions;
+                        this.serviceWithSelectedProperties = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
 
-                    this.initWithCatalogueLine(this.line, settings);
-                    return null;
+                        this.line = referencedLine;
+                        this.productWithSelectedProperties = this.orderWithinCollaboration.orderLine[0].lineItem.item;
+
+                        return this.userService.getSettingsForProduct(referencedLine);
+
+                    } else {
+                        return Promise.resolve(sellerSettings);
+                    }
                 })
                 .then(settings => {
-                    if(settings) {
-                        this.initWithCatalogueLine(this.line, settings);
+                    // settings here always corresponds to the settings of the catalogue line either as the product itself being traded
+                    // or the product ordered before a logistics related business process
+                    this.wrapper = new ProductWrapper(this.line, settings.negotiationSettings);
+                    this.settings = settings;
+
+                    // this.options = this.bpDataService.bpActivityEvent.workflowOptions;
+                    if(this.processType) {
+                        this.currentStep = this.getCurrentStep(this.processType);
                     }
+                    this.stepsDisplayMode = this.getStepsDisplayMode();
+
                     this.callStatus.callback("Retrieved product details", true);
                 })
                 .catch(error => {
@@ -262,7 +285,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             && this.processMetadata.processStatus === "Completed";
     }
 
-    private getOriginalOrder(): Promise<Order | null> {
+    private getOrderWithinCollaboration(): Promise<Order | null> {
         if(this.bpDataService.bpActivityEvent.userRole === "seller") {
             return Promise.resolve(null);
         }
@@ -275,16 +298,6 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             return this.bpeService.getOriginalOrderForProcess(processId);
         }
         return Promise.resolve(null);
-    }
-
-    private initWithCatalogueLine(line: CatalogueLine, settings: CompanySettings) {
-        this.wrapper = new ProductWrapper(line, settings.negotiationSettings);
-        this.settings = settings;
-        this.options = this.bpDataService.bpActivityEvent.workflowOptions;
-        if(this.processType) {
-            this.currentStep = this.getCurrentStep(this.processType);
-        }
-        this.stepsDisplayMode = this.getStepsDisplayMode();
     }
 
     private getCurrentStep(processType: ProcessType): ProductBpStep {
@@ -329,7 +342,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             if(this.bpDataService.bpActivityEvent.processType == 'Transport_Execution_Plan' && this.bpDataService.bpActivityEvent.userRole === "seller") {
                 // The service provider only sees transport steps
                 return "Transport";
-            } else if(!this.originalOrder) {
+            } else if(!this.orderWithinCollaboration) {
                 // No original order: this is just a transport order without previous order from the customer
                 return "Transport";
             } else {
@@ -389,13 +402,30 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         if(isProductDeleted){
             // catalogue line is deleted
             this.isCatalogueLineDeleted = true;
-            return UBLModelUtils.createCatalogueLineForItem(processMetadata.product);
+            return UBLModelUtils.createCatalogueLineWithItemCopy(processMetadata.product);
         }
         else{
             // retrieve catalogue line if exists
             return this.catalogueService.getCatalogueLine(catalogueUuid, catalogueLineId).then( catalogueLine => {
                 return catalogueLine;
             });
+        }
+    }
+
+    private updateCompanyProcessWorkflowForThisProcess(isCollaborationFinished: boolean, settings: CompanySettings): void {
+        // if the collaboration is finished, we need to update workflow since it could be different from the current one
+        // we will retrieve process ids from the process history and use those ids to create new workflow
+        if (isCollaborationFinished) {
+            let companyWorkflow = [];
+            let size = this.bpDataService.bpActivityEvent.processHistory.length;
+            for (let i = size - 1; i > -1; i--) {
+                let processType = this.bpDataService.bpActivityEvent.processHistory[i].processType;
+                if (companyWorkflow.indexOf(processType) === -1) {
+                    companyWorkflow.push(processType);
+                }
+            }
+            // update the workflow of company
+            settings.negotiationSettings.company.processID = companyWorkflow;
         }
     }
 }

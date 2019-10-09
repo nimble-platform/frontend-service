@@ -12,9 +12,8 @@ import {TranslateService} from '@ngx-translate/core';
  */
 
 @Component({
-    selector: "frame-contract-tab",
-    templateUrl: "./frame-contract-tab.component.html",
-    styleUrls: ["./frame-contract-tab.component.css"]
+    selector: 'frame-contract-tab',
+    templateUrl: './frame-contract-tab.component.html'
 })
 export class FrameContractTabComponent implements OnInit {
     frameContracts: DigitalAgreement[] = [];

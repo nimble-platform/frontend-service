@@ -9,6 +9,7 @@ import { CompanySettings } from "./model/company-settings";
 import { AppComponent } from "../app.component";
 import {selectValueOfTextObject, sanitizeLink} from '../common/utils';
 import {TranslateService} from '@ngx-translate/core';
+import {CredentialsService} from './credentials.service';
 
 @Component({
     selector: "company-details",
@@ -26,11 +27,14 @@ export class CompanyDetailsComponent implements OnInit {
     party : any = {};
     selectValueOfTextObject = selectValueOfTextObject;
     getLink = sanitizeLink;
+	  config = myGlobals.config;
+    debug = myGlobals.debug;
 
     constructor(private cookieService: CookieService,
                 private userService: UserService,
                 public appComponent: AppComponent,
                 private translate: TranslateService,
+                private credentialsService: CredentialsService,
                 public route: ActivatedRoute,
                 public router: Router) {
     }
@@ -45,6 +49,28 @@ export class CompanyDetailsComponent implements OnInit {
             this.managementMode = true;
           }
   				if (id) {
+
+            if (this.config.loggingEnabled) {
+              let cID = "";
+              if (id)
+              cID = id;
+	            let userId = this.cookieService.get("user_id");
+              let log = {
+                "@timestamp": moment().utc().toISOString(),
+                "level": "INFO",
+                "serviceID": "frontend-service",
+                "userId": userId,
+                "companyId": cID,
+                "activity": "company_visit"
+              };
+
+              if (this.debug)
+                console.log("Writing log "+JSON.stringify(log));
+              this.credentialsService.logUrl(log)
+                .then(res => {})
+                .catch(error => {});
+            }
+
             this.party.partyId = id;
   					this.userService.getSettingsForParty(id).then(details => {
   						if (myGlobals.debug) {

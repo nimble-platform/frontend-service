@@ -94,7 +94,7 @@
                     <strong>{{selectName(property)}}: </strong>
                     <span *ngFor="let val of getValuesAsString(property); let i = index" class="btn-group-toggle" data-toggle="buttons">
                         <button type="button" class="btn btn-outline-primary no-y-padding" (click)="onTogglePropertyValue(property, i)"
-                            [disabled]="readonly" [ngClass]="{ 'active': isPropertyValueSelected(property, i) }">
+                            [disabled]="isDisabled()" [ngClass]="{ 'active': isPropertyValueSelected(property, i) }">
                             {{val}}
                         </button>
                     </span>

@@ -14,6 +14,7 @@ import { Category } from '../catalogue/model/category/category';
 import { DEFAULT_LANGUAGE} from '../catalogue/model/constants';
 import {Code} from '../catalogue/model/publish/code';
 import {CatalogueService} from "../catalogue/catalogue.service";
+import {PublishService} from "../catalogue/publish-and-aip.service";
 
 @Component({
 	selector: 'simple-search-form',
@@ -121,12 +122,16 @@ export class SimpleSearchFormComponent implements OnInit {
 	partyNamesList :any;
 
 	delegatedSearch: boolean = false;
+    pageRef = ''; // page where the user is navigated from. empty string ('') means the search is opened directly
+
+    productsSelectedForPublish: any[] = []; // keeps the products in the Solr format
 
 	constructor(
 		private simpleSearchService: SimpleSearchService,
 		private searchContextService: SearchContextService,
 		private categoryService: CategoryService,
 		private catalogueService: CatalogueService,
+		private publishService: PublishService,
 		public route: ActivatedRoute,
 		public router: Router
 	) {
@@ -142,6 +147,7 @@ export class SimpleSearchFormComponent implements OnInit {
 			let cat = params['cat'];
 			let catID = params['catID'];
 			let del = params['del'];
+			let pageRef = params['pageRef'];
 			if(p){
 				this.noP = false;
 			}
@@ -199,6 +205,9 @@ export class SimpleSearchFormComponent implements OnInit {
 				this.delegatedSearch = true;
 			else
 				this.delegatedSearch = false;
+			if (pageRef) {
+			    this.pageRef = pageRef;
+            }
 			if (searchContext == null) {
 				this.searchContextService.clearSearchContext();
 			} else {
@@ -254,7 +263,8 @@ export class SimpleSearchFormComponent implements OnInit {
 				catID: this.catID,
 				sIdx: this.searchIndex,
 				sTop: this.searchTopic,
-				del: this.delegatedSearch?'1':'0'
+				del: this.delegatedSearch?'1':'0',
+                pageRef: this.pageRef
 			}
 		});
 	}
@@ -273,7 +283,8 @@ export class SimpleSearchFormComponent implements OnInit {
 				catID: this.catID,
 				sIdx: this.searchIndex,
 				sTop: sTop,
-				del: this.delegatedSearch?'1':'0'
+				del: this.delegatedSearch?'1':'0',
+                pageRef: this.pageRef
 			}
 		});
 	}
@@ -292,7 +303,8 @@ export class SimpleSearchFormComponent implements OnInit {
 				catID: this.catID,
 				sIdx: this.searchIndex,
 				sTop: this.searchTopic,
-				del: this.delegatedSearch?'1':'0'
+				del: this.delegatedSearch?'1':'0',
+                pageRef: this.pageRef
 			}
 		});
 	}
@@ -311,7 +323,8 @@ export class SimpleSearchFormComponent implements OnInit {
 				catID: this.catID,
 				sIdx: this.searchIndex,
 				sTop: this.searchTopic,
-				del: this.delegatedSearch?'1':'0'
+				del: this.delegatedSearch?'1':'0',
+                pageRef: this.pageRef
 			}
 		});
 	}
@@ -330,7 +343,8 @@ export class SimpleSearchFormComponent implements OnInit {
 				catID: this.catID,
 				sIdx: this.searchIndex,
 				sTop: this.searchTopic,
-				del: this.delegatedSearch?'1':'0'
+				del: this.delegatedSearch?'1':'0',
+                pageRef: this.pageRef
 			}
 		});
 	}
@@ -935,6 +949,13 @@ export class SimpleSearchFormComponent implements OnInit {
 		this.get(this.objToSubmit);
 	}
 
+    onSearchResultClicked(event): void {
+        // if the page reference is publish, we don't let users navigating to product details
+        if (this.pageRef === 'publish') {
+            event.preventDefault();
+        }
+    }
+
 	callCat(name:string,id:string) {
 		this.model.q="*";
 		this.objToSubmit = copy(this.model);
@@ -1416,4 +1437,33 @@ export class SimpleSearchFormComponent implements OnInit {
 		return link;
 	}
 
+    productSelected(productHjid): boolean {
+        let i: number = this.productsSelectedForPublish.findIndex(product => product.uri === productHjid);
+        return i !== -1;
+    }
+
+    onToggleProductSelectForPublish(toggledProduct: any, event): void {
+        event.preventDefault();
+        // set timeout is required since the default checkbox implementation prevents updating status of the checkbox
+        setTimeout(() => {
+            let i: number = this.productsSelectedForPublish.findIndex(product => product.uri === toggledProduct.uri);
+            if (i === -1) {
+                this.productsSelectedForPublish.push(toggledProduct);
+            } else {
+                this.onRemoveSelectedProduct(toggledProduct.uri);
+            }
+        });
+    }
+
+    onRemoveSelectedProduct(removedProductHjid: any): void {
+        let selectedIndex: number = this.productsSelectedForPublish.findIndex(product => product.uri === removedProductHjid);
+        this.productsSelectedForPublish.splice(selectedIndex, 1);
+    }
+
+    onContinuePublishing(): void {
+        this.publishService.selectedProductsInSearch = this.productsSelectedForPublish.map(product => {
+            return {hjid: product.uri, label: product.label};
+        });
+        this.router.navigate(['catalogue/publish'], { queryParams: { pg: 'single', productType: 'product', searchRef: 'true' }});
+    }
 }

@@ -143,9 +143,7 @@ export class DispatchAdviceComponent implements OnInit {
     onSendDispatchAdvice(): void {
         this.callStatus.submit();
         let dispatchAdvice: DespatchAdvice = copy(this.dispatchAdvice);
-        UBLModelUtils.removeHjidFieldsFromObject(dispatchAdvice);
 
-        //this.callStatus.submit();
         this.bpeService.startProcessWithDocument(dispatchAdvice)
             .then(res => {
                 this.callStatus.callback("Dispatch Advice sent", true);

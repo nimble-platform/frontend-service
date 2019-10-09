@@ -85,12 +85,12 @@ export class UBLModelUtils {
 
         if (property == null) {
             return new ItemProperty(this.generateUUID(), [], [], [], [],
-                new Array<BinaryObject>(), "STRING", code, null);
+                new Array<BinaryObject>(), "STRING", code, null, []);
         }
 
         let itemProperty = new ItemProperty(property.id, [],
             property.dataType === "BOOLEAN" ? [ new Text("false", "en" ) ] : [], [], [],
-            new Array<BinaryObject>(), property.dataType, code, property.uri);
+            new Array<BinaryObject>(), property.dataType, code, property.uri, []);
 
         itemProperty.name = [].concat(property.preferredName);
         return itemProperty;
@@ -110,8 +110,10 @@ export class UBLModelUtils {
         return ilq;
     }
 
-    public static createCatalogueLine(catalogueUuid:string, providerParty: Party,
-        settings: CompanyNegotiationSettings,dimensionUnits:string[]=[]): CatalogueLine {
+    public static createCatalogueLine(catalogueUuid: string,
+                                      providerParty: Party,
+                                      settings: CompanyNegotiationSettings,
+                                      dimensionUnits: string[] = []): CatalogueLine {
         // create additional item properties
         const additionalItemProperties = new Array<ItemProperty>();
 
@@ -138,7 +140,8 @@ export class UBLModelUtils {
         return catalogueLine;
     }
 
-    public static createCatalogueLineForItem(item:Item): CatalogueLine {
+    public static createCatalogueLineWithItemCopy(item: Item): CatalogueLine {
+        let copyItem = copy(item);
         let dummyItemLocationQuantity = new ItemLocationQuantity();
         dummyItemLocationQuantity.price = new Price();
         return new CatalogueLine(
@@ -150,7 +153,7 @@ export class UBLModelUtils {
             null,
             dummyItemLocationQuantity,
             [],
-            new GoodsItem(null, item)
+            new GoodsItem(null, copyItem)
         );
     }
 
@@ -226,13 +229,14 @@ export class UBLModelUtils {
         this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), new MonetaryTotal(), [orderLine]);
     }
 
-    public static createOrderResponseSimple(order:Order, acceptedIndicator:boolean):OrderResponseSimple {
-        const orderReference:OrderReference = this.createOrderReference(order.id);
-        this.removeHjidFieldsFromObject(order.buyerCustomerParty);
-        this.removeHjidFieldsFromObject(order.sellerSupplierParty);
-        const customerParty:CustomerParty = order.buyerCustomerParty;
-        const supplierParty:SupplierParty = order.sellerSupplierParty;
+    public static createOrderResponseSimpleWithOrderCopy(order:Order, acceptedIndicator:boolean):OrderResponseSimple {
+        let copyOrder: Order = copy(order);
+        const orderReference:OrderReference = this.createOrderReference(copyOrder.id);
+        const customerParty:CustomerParty = copyOrder.buyerCustomerParty;
+        const supplierParty:SupplierParty = copyOrder.sellerSupplierParty;
         const orderResponseSimple:OrderResponseSimple = new OrderResponseSimple(this.generateUUID(), [''], "", acceptedIndicator, orderReference, supplierParty, customerParty);
+
+        this.removeHjidFieldsFromObject(orderResponseSimple);
         return orderResponseSimple;
     }
 
@@ -245,24 +249,16 @@ export class UBLModelUtils {
         return ppap;
     }
 
-    public static createPpapResponse(ppap:Ppap,acceptedIndicator:boolean):PpapResponse{
-        /*
-        let documentReference:DocumentReference = new DocumentReference(ppap.id);
-        let ppapDocumentReference:PPAPDocumentReference = new PPAPDocumentReference(documentReference);
-        this.removeHjidFieldsFromObject(ppap.buyerCustomerParty);
-        this.removeHjidFieldsFromObject(ppap.sellerSupplierParty);
-        let customerParty:CustomerParty = ppap.buyerCustomerParty;
-        let supplierParty:SupplierParty = ppap.sellerSupplierParty;
-        let ppapResponse:PpapResponse = new PpapResponse("","",acceptedIndicator,customerParty,supplierParty,null,documentReference);
-        return ppapResponse;*/
+    public static createPpapResponseWithPpapCopy(ppap: Ppap, acceptedIndicator: boolean): PpapResponse{
+        let copyPpap: Ppap = copy(ppap);
         const ppapResponse:PpapResponse = new PpapResponse();
         ppapResponse.id = this.generateUUID();
-        ppapResponse.ppapDocumentReference = new DocumentReference(ppap.id);
-        this.removeHjidFieldsFromObject(ppap.buyerCustomerParty);
-        this.removeHjidFieldsFromObject(ppap.sellerSupplierParty);
-        ppapResponse.buyerCustomerParty = ppap.buyerCustomerParty;
-        ppapResponse.sellerSupplierParty = ppap.sellerSupplierParty;
+        ppapResponse.ppapDocumentReference = new DocumentReference(copyPpap.id);
+        ppapResponse.buyerCustomerParty = copyPpap.buyerCustomerParty;
+        ppapResponse.sellerSupplierParty = copyPpap.sellerSupplierParty;
         ppapResponse.acceptedIndicator = acceptedIndicator;
+
+        this.removeHjidFieldsFromObject(ppapResponse);
         return ppapResponse;
     }
 
@@ -285,27 +281,32 @@ export class UBLModelUtils {
         handlingUnitDimension = new Dimension();
         handlingUnitDimension.attributeID = 'Handling Unit Width';
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension.push(handlingUnitDimension);
+
+        this.removeHjidFieldsFromObject(rfq);
         return rfq;
     }
 
-    public static createRequestForQuotationWithOrder(order: Order, catalogueLine: CatalogueLine):RequestForQuotation{
+    public static createRequestForQuotationWithCopies(order: Order, catalogueLine: CatalogueLine): RequestForQuotation{
+        let copyOrder: Order = copy(order);
+        let copyLine: CatalogueLine = copy(catalogueLine);
+
         const quantity: Quantity = new Quantity(null, "", null);
-        const item: Item = catalogueLine.goodsItem.item;
-        const price: Price = catalogueLine.requiredItemLocationQuantity.price;
+        const item: Item = copyLine.goodsItem.item;
+        const price: Price = copyLine.requiredItemLocationQuantity.price;
         const lineItem: LineItem = this.createLineItem(quantity, price, item);
         const requestForQuotationLine: RequestForQuotationLine = new RequestForQuotationLine(lineItem);
         const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
             [requestForQuotationLine], null, null, null, null);
 
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = order.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
-        rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity = order.orderLine[0].lineItem.quantity;
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.originAddress = order.orderLine[0].lineItem.item.manufacturerParty.postalAddress;
-        rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails = catalogueLine.goodsItem.item.transportationServiceDetails;
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = order.orderLine[0].lineItem.item.name;
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity = order.orderLine[0].lineItem.quantity;
-        rfq.paymentTerms = copy(order.paymentTerms);
-        rfq.paymentMeans = copy(order.paymentMeans);
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = copyOrder.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
+        rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = copyOrder.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity = copyOrder.orderLine[0].lineItem.quantity;
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.originAddress = copyOrder.orderLine[0].lineItem.item.manufacturerParty.postalAddress;
+        rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails = copyLine.goodsItem.item.transportationServiceDetails;
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = copyOrder.orderLine[0].lineItem.item.name;
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity = copyOrder.orderLine[0].lineItem.quantity;
+        rfq.paymentTerms = copyOrder.paymentTerms;
+        rfq.paymentMeans = copyOrder.paymentMeans;
         // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
         let handlingUnitDimension:Dimension = new Dimension();
         handlingUnitDimension.attributeID = 'Handling Unit Length';
@@ -313,37 +314,8 @@ export class UBLModelUtils {
         handlingUnitDimension = new Dimension();
         handlingUnitDimension.attributeID = 'Handling Unit Width';
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension.push(handlingUnitDimension);
+
         this.removeHjidFieldsFromObject(rfq);
-
-        return rfq;
-    }
-
-    public static createRequestForQuotationWithTransportExecutionPlanRequest(
-        transportExecutionPlanRequest: TransportExecutionPlanRequest,catalogueLine: CatalogueLine): RequestForQuotation{
-        const quantity:Quantity = new Quantity(null, "", null);
-        const item:Item = this.createItem();
-        const price:Price = this.createPrice();
-        const lineItem:LineItem = this.createLineItem(quantity, price, item);
-        const requestForQuotationLine:RequestForQuotationLine = new RequestForQuotationLine(lineItem);
-        const settings = new CompanyNegotiationSettings();
-        const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
-            [requestForQuotationLine], this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), [], []);
-
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name;
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure = transportExecutionPlanRequest.consignment[0].grossVolumeMeasure;
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossWeightMeasure = transportExecutionPlanRequest.consignment[0].grossWeightMeasure;
-        rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = transportExecutionPlanRequest.toLocation.address;
-        rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails = catalogueLine.goodsItem.item.transportationServiceDetails;
-
-        // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
-        let handlingUnitDimension:Dimension = new Dimension();
-        handlingUnitDimension.attributeID = 'Handling Unit Length';
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension.push(handlingUnitDimension);
-        handlingUnitDimension = new Dimension();
-        handlingUnitDimension.attributeID = 'Handling Unit Width';
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.transportHandlingUnit[0].measurementDimension.push(handlingUnitDimension);
-        this.removeHjidFieldsFromObject(rfq);
-
         return rfq;
     }
 
@@ -384,26 +356,12 @@ export class UBLModelUtils {
         return new PaymentMeans(new Code(settings.paymentMeans[0], settings.paymentMeans[0]));
     }
 
-    public static createRequestForQuotationWithIir(iir: ItemInformationResponse, fromAddress: Address, toAddress: Address, orderMetadata: any): RequestForQuotation {
-        const rfq: RequestForQuotation = this.createRequestForQuotation(null);
-        rfq.requestForQuotationLine[0].lineItem.item = iir.item[0];
-        if(iir.item[0].transportationServiceDetails != null) {
-            rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.originAddress = fromAddress;
-            rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = toAddress;
-            rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = orderMetadata.content.orderLine[0].lineItem.item.name;
-            rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity = orderMetadata.content.orderLine[0].lineItem.quantity;
-        }
-        this.removeHjidFieldsFromObject(rfq);
-        return rfq;
-    }
-
-    public static createQuotation(rfq: RequestForQuotation): Quotation {
-        const quotationLine: QuotationLine = new QuotationLine(copy(rfq.requestForQuotationLine[0].lineItem));
+    public static createQuotationWithRfqCopy(rfq: RequestForQuotation): Quotation {
+        let copyRfq: RequestForQuotation = copy(rfq);
+        const quotationLine: QuotationLine = new QuotationLine(copyRfq.requestForQuotationLine[0].lineItem);
         // set start and end dates
         quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.startDate = rfq.delivery.requestedDeliveryPeriod.startDate;
         quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.endDate = rfq.delivery.requestedDeliveryPeriod.endDate;
-        this.removeHjidFieldsFromObject(rfq.buyerCustomerParty);
-        this.removeHjidFieldsFromObject(rfq.sellerSupplierParty);
         const customerParty: CustomerParty = rfq.buyerCustomerParty;
         const supplierParty: SupplierParty = rfq.sellerSupplierParty;
 
@@ -411,95 +369,66 @@ export class UBLModelUtils {
 
         const quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, false, documentReference,
             customerParty, supplierParty, [quotationLine], rfq.paymentMeans, rfq.paymentTerms, rfq.tradingTerms, rfq.termOrCondition);
+
+        this.removeHjidFieldsFromObject(quotation);
         return quotation;
     }
 
-    public static createDespatchAdvice(order:Order):DespatchAdvice {
+    public static createDespatchAdviceWithOrderCopy(order: Order): DespatchAdvice {
+        let copyOrder: Order = copy(order);
         const despatchAdvice:DespatchAdvice = new DespatchAdvice();
         despatchAdvice.id = this.generateUUID();
-        despatchAdvice.orderReference = [UBLModelUtils.createOrderReference(order.id)];
-        despatchAdvice.despatchLine = [new DespatchLine(new Quantity(), order.orderLine[0].lineItem.item, [new Shipment()])];
+        despatchAdvice.orderReference = [UBLModelUtils.createOrderReference(copyOrder.id)];
+        despatchAdvice.despatchLine = [new DespatchLine(new Quantity(), copyOrder.orderLine[0].lineItem.item, [new Shipment()])];
         despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());
-        despatchAdvice.despatchSupplierParty = order.sellerSupplierParty;
-        despatchAdvice.deliveryCustomerParty = order.buyerCustomerParty;
+        despatchAdvice.despatchSupplierParty = copyOrder.sellerSupplierParty;
+        despatchAdvice.deliveryCustomerParty = copyOrder.buyerCustomerParty;
+
+        this.removeHjidFieldsFromObject(despatchAdvice);
         return despatchAdvice
     }
 
-    public static createReceiptAdvice(despatchAdvice:DespatchAdvice):ReceiptAdvice {
+    public static createReceiptAdviceWithDespatchAdviceCopy(despatchAdvice: DespatchAdvice): ReceiptAdvice {
+        let copyDespatchAdvice: DespatchAdvice = copy(despatchAdvice);
         const receiptAdvice:ReceiptAdvice = new ReceiptAdvice();
         receiptAdvice.id = this.generateUUID();
-        receiptAdvice.orderReference = [copy(despatchAdvice.orderReference[0])];
-        receiptAdvice.despatchDocumentReference = [new DocumentReference(despatchAdvice.id)];
-        receiptAdvice.deliveryCustomerParty = despatchAdvice.deliveryCustomerParty;
-        receiptAdvice.despatchSupplierParty = despatchAdvice.despatchSupplierParty;
+        receiptAdvice.orderReference = [copyDespatchAdvice.orderReference[0]];
+        receiptAdvice.despatchDocumentReference = [new DocumentReference(copyDespatchAdvice.id)];
+        receiptAdvice.deliveryCustomerParty = copyDespatchAdvice.deliveryCustomerParty;
+        receiptAdvice.despatchSupplierParty = copyDespatchAdvice.despatchSupplierParty;
         receiptAdvice.receiptLine = [
-            new ReceiptLine(new Quantity(0, despatchAdvice.despatchLine[0].deliveredQuantity.unitCode),
-                [], despatchAdvice.despatchLine[0].item)];
+            new ReceiptLine(new Quantity(0, copyDespatchAdvice.despatchLine[0].deliveredQuantity.unitCode),
+                [], copyDespatchAdvice.despatchLine[0].item)];
+
+        this.removeHjidFieldsFromObject(receiptAdvice);
         return receiptAdvice;
     }
 
-    public static createTransportExecutionPlanRequest(transportationServiceLine:CatalogueLine): TransportExecutionPlanRequest {
+    public static createTEPlanRequestWithQuotationCopy(quotation: Quotation): TransportExecutionPlanRequest {
+        let copyQuotation: Quotation = copy(quotation);
         const transportExecutionPlanRequest:TransportExecutionPlanRequest = new TransportExecutionPlanRequest();
         transportExecutionPlanRequest.id = this.generateUUID();
-        transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(new Shipment());
-        transportExecutionPlanRequest.mainTransportationService = transportationServiceLine.goodsItem.item;
-        this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
-        return transportExecutionPlanRequest;
-    }
+        transportExecutionPlanRequest.mainTransportationService = copyQuotation.quotationLine[0].lineItem.item;
+        transportExecutionPlanRequest.fromLocation.address = copyQuotation.quotationLine[0].lineItem.delivery[0].shipment.originAddress;
+        transportExecutionPlanRequest.toLocation.address = copyQuotation.quotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
+        transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(copyQuotation.quotationLine[0].lineItem.delivery[0].shipment);
+        transportExecutionPlanRequest.consignment[0].grossVolumeMeasure = copyQuotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure;
+        transportExecutionPlanRequest.consignment[0].grossWeightMeasure = copyQuotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossWeightMeasure;
+        transportExecutionPlanRequest.serviceStartTimePeriod.startDate = copyQuotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.startDate;
+        transportExecutionPlanRequest.serviceStartTimePeriod.endDate = copyQuotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.endDate;
 
-    public static createTransportExecutionPlanRequestWithOrder(order:Order, transportationServiceLine:CatalogueLine):TransportExecutionPlanRequest {
-        const transportExecutionPlanRequest:TransportExecutionPlanRequest = new TransportExecutionPlanRequest();
-        transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(new Shipment());
-        transportExecutionPlanRequest.id = this.generateUUID();
-        transportExecutionPlanRequest.mainTransportationService = transportationServiceLine.goodsItem.item;
-        transportExecutionPlanRequest.toLocation.address = order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
-        transportExecutionPlanRequest.fromLocation.address = order.orderLine[0].lineItem.item.manufacturerParty.postalAddress;
-        transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item = order.orderLine[0].lineItem.item;
         this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
         return transportExecutionPlanRequest
     }
 
-    public static createTransportExecutionPlanRequestWithIir(iir: ItemInformationResponse, fromAddress: Address, toAddress:Address, orderMetadata: any): TransportExecutionPlanRequest {
-        const transportExecutionPlanRequest:TransportExecutionPlanRequest = new TransportExecutionPlanRequest();
-        transportExecutionPlanRequest.id = this.generateUUID();
-        transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(new Shipment());
-        transportExecutionPlanRequest.mainTransportationService = iir.item[0];
-        transportExecutionPlanRequest.toLocation.address = toAddress;
-        transportExecutionPlanRequest.fromLocation.address = fromAddress;
-        transportExecutionPlanRequest.consignment[0].consolidatedShipment[0].goodsItem[0].item.name = orderMetadata.content.orderLine[0].lineItem.item.name;
-        this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
-        return transportExecutionPlanRequest;
-    }
-
-    public static createTransportExecutionPlanRequestWithQuotation(quotation:Quotation): TransportExecutionPlanRequest {
-        const transportExecutionPlanRequest:TransportExecutionPlanRequest = new TransportExecutionPlanRequest();
-        transportExecutionPlanRequest.id = this.generateUUID();
-        transportExecutionPlanRequest.mainTransportationService = quotation.quotationLine[0].lineItem.item;
-        transportExecutionPlanRequest.fromLocation.address = quotation.quotationLine[0].lineItem.delivery[0].shipment.originAddress;
-        transportExecutionPlanRequest.toLocation.address = quotation.quotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
-        transportExecutionPlanRequest.consignment[0].consolidatedShipment.push(quotation.quotationLine[0].lineItem.delivery[0].shipment);
-        transportExecutionPlanRequest.consignment[0].grossVolumeMeasure = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossVolumeMeasure;
-        transportExecutionPlanRequest.consignment[0].grossWeightMeasure = quotation.quotationLine[0].lineItem.delivery[0].shipment.consignment[0].grossWeightMeasure;
-        transportExecutionPlanRequest.serviceStartTimePeriod.startDate = quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.startDate;
-        transportExecutionPlanRequest.serviceStartTimePeriod.endDate = quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.endDate;
-        this.removeHjidFieldsFromObject(transportExecutionPlanRequest);
-        return transportExecutionPlanRequest
-    }
-
-    public static createTransportExecutionPlanRequestWithTransportExecutionPlanRequest(
-        transportExecutionPlanRequest: TransportExecutionPlanRequest): TransportExecutionPlanRequest{
-        let tep = copy(transportExecutionPlanRequest);
-        tep.id = this.generateUUID();
-        this.removeHjidFieldsFromObject(tep);
-        return tep;
-    }
-
-    public static createTransportExecutionPlan(transportExecutionPlanRequest:TransportExecutionPlanRequest):TransportExecutionPlan {
+    public static createTEPlanWithTERequestCopy(transportExecutionPlanRequest: TransportExecutionPlanRequest): TransportExecutionPlan {
+        let copyTepRequest: TransportExecutionPlanRequest = copy(transportExecutionPlanRequest);
         const transportExecutionPlan:TransportExecutionPlan = new TransportExecutionPlan();
         transportExecutionPlan.id = this.generateUUID();
-        transportExecutionPlan.transportExecutionPlanRequestDocumentReference = new DocumentReference(transportExecutionPlanRequest.id);
-        transportExecutionPlan.transportUserParty = transportExecutionPlanRequest.transportUserParty;
-        transportExecutionPlan.transportServiceProviderParty = transportExecutionPlanRequest.transportServiceProviderParty;
+        transportExecutionPlan.transportExecutionPlanRequestDocumentReference = new DocumentReference(copyTepRequest.id);
+        transportExecutionPlan.transportUserParty = copyTepRequest.transportUserParty;
+        transportExecutionPlan.transportServiceProviderParty = copyTepRequest.transportServiceProviderParty;
+
         this.removeHjidFieldsFromObject(transportExecutionPlan);
         return transportExecutionPlan;
     }
@@ -510,14 +439,16 @@ export class UBLModelUtils {
         return itemInformationRequest;
     }
 
-    public static createItemInformationResponse(itemInformationRequest:ItemInformationRequest):ItemInformationResponse {
+    public static createIIResponseWithIIRequestCopy(itemInformationRequest: ItemInformationRequest): ItemInformationResponse {
+        let copyItemInformationRequest: ItemInformationRequest = copy(itemInformationRequest);
         const itemInformationResponse:ItemInformationResponse = new ItemInformationResponse();
         itemInformationResponse.id = this.generateUUID();
-        itemInformationResponse.itemInformationRequestDocumentReference = new DocumentReference(itemInformationRequest.id);
-        itemInformationResponse.item[0] = JSON.parse(JSON.stringify(itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item));
+        itemInformationResponse.itemInformationRequestDocumentReference = new DocumentReference(copyItemInformationRequest.id);
+        itemInformationResponse.item[0] = copyItemInformationRequest.itemInformationRequestLine[0].salesItem[0].item;
         itemInformationResponse.item[0].itemSpecificationDocumentReference = [];
-        itemInformationResponse.sellerSupplierParty = itemInformationRequest.sellerSupplierParty;
-        itemInformationResponse.buyerCustomerParty = itemInformationRequest.buyerCustomerParty;
+        itemInformationResponse.sellerSupplierParty = copyItemInformationRequest.sellerSupplierParty;
+        itemInformationResponse.buyerCustomerParty = copyItemInformationRequest.buyerCustomerParty;
+
         this.removeHjidFieldsFromObject(itemInformationResponse);
         return itemInformationResponse;
     }
@@ -610,18 +541,6 @@ export class UBLModelUtils {
         return this.createItemIdentificationWithId(this.generateUUID());
     }
 
-
-    public static mapAddress(address): Address {
-        const addr: Address = new Address();
-        addr.buildingNumber = address.buildingNumber;
-        addr.cityName = address.cityName;
-        addr.region = address.region;
-        addr.postalZone = address.postalCode;
-        addr.streetName = address.streetName;
-        addr.country = new Country(address.country);
-        return addr;
-    }
-
     public static removeHjidFieldsFromObject(object:any):any {
         delete object.hjid;
         delete object.startDateItem;
@@ -708,6 +627,19 @@ export class UBLModelUtils {
         } else {
             return false;
         }
+    }
+
+    public static areTextsEqual(text1: Text, text2: Text): boolean {
+        if (text1 == null && text2 == null) {
+            return true;
+        }
+        if (text1 == null || text2 == null) {
+            return false;
+        }
+        if (text1.value === text2.value && text1.languageID === text2.languageID) {
+            return true;
+        }
+        return false;
     }
 
     public static isEmptyQuantity(quantity: Quantity): boolean {
@@ -916,5 +848,24 @@ export class UBLModelUtils {
         let value2 = UBLModelUtils.getFirstFromMultiTypeValueByQualifier(term2.value);
 
         return value1 == value2;
+    }
+
+    public static areItemPropertyValuesEqual(value1: any, value2: any, valueQualifier: string): boolean {
+        if (valueQualifier === 'QUANTITY') {
+            return UBLModelUtils.areQuantitiesEqual(value1, value2);
+        } else if (valueQualifier === 'STRING') {
+            return UBLModelUtils.areTextsEqual(value1, value2);
+        } else {
+            return value1 === value2;
+        }
+    }
+
+    public static doesTextArraysContainText(texts1: Text[], text2: Text): boolean {
+        for (let text1 of texts1) {
+            if (text1.value === text2.value && text1.languageID === text2.languageID) {
+                return true;
+            }
+        }
+        return false;
     }
 }

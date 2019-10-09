@@ -18,6 +18,7 @@ import {DashboardProcessInstanceDetails} from './model/dashboard-process-instanc
 import {DigitalAgreement} from "../catalogue/model/publish/digital-agreement";
 import {CollaborationGroup} from "./model/collaboration-group";
 import {DocumentReference} from '../catalogue/model/publish/document-reference';
+import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 
 @Injectable()
 export class BPEService {
@@ -50,6 +51,7 @@ export class BPEService {
             document.additionalDocumentReference.push(documentRef);
         }
 
+		UBLModelUtils.removeHjidFieldsFromObject(document);
         return this.http
             .post(url, JSON.stringify(document), {headers: headers})
             .toPromise()
@@ -513,6 +515,15 @@ export class BPEService {
 			};
 			xhr.send();
 		});
+	}
+
+	public getUnshippedOrderIds(partyId: string): Promise<string[]> {
+		const url = `${this.url}/documents/unshipped-order-ids?partyId=${partyId}`;
+		return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
 	}
 
 	private getAuthorizedHeaders(): Headers {

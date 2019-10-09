@@ -563,3 +563,18 @@ ngb-pagination .page-item.active .page-link {
 
 /* ------------------- */
 
+/* Title row with bolder text and bottom border */
+.title-row {
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    font-weight: bold;
+    display: flex;
+}
+
+.data-row {
+    margin-bottom: 0.4rem;
+    display: flex;
+}
+
+

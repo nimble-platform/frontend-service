@@ -123,7 +123,7 @@ export class PpapDocumentUploadComponent {
         }
 
 
-        this.ppapResponse = UBLModelUtils.createPpapResponse(this.ppap,acceptedIndicator);
+        this.ppapResponse = UBLModelUtils.createPpapResponseWithPpapCopy(this.ppap,acceptedIndicator);
         if(this.ppapDocuments.length == 0){
             this.ppapResponse.requestedDocument = [];
         } else {
