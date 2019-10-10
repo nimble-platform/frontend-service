@@ -387,27 +387,27 @@ export class PerformanceAnalyticsComponent implements OnInit {
                 this.trade_red_perc_str = this.trade_red_perc + "%";
 
 				// average trade seller
-        this.trade_green_sell = Math.round(res.tradingVolumesales.approved);
-        this.trade_yellow_sell = Math.round(res.tradingVolumesales.waiting);
-        this.trade_red_sell = Math.round(res.tradingVolumesales.denied);
+        		this.trade_green_sell = Math.round(res.tradingVolumesales.approved);
+        		this.trade_yellow_sell = Math.round(res.tradingVolumesales.waiting);
+        		this.trade_red_sell = Math.round(res.tradingVolumesales.denied);
 				this.trade_count_sell = Math.round(res.tradingVolumesales.approved + res.tradingVolumesales.waiting + res.tradingVolumesales.denied);
 				this.trade_green_perc_sell = Math.round((res.tradingVolumesales.approved * 100) / this.trade_count_sell);
 				this.trade_green_perc_str_sell = this.trade_green_perc_sell + "%";
 				this.trade_yellow_perc_sell = Math.round((res.tradingVolumesales.waiting * 100) / this.trade_count_sell);
 				this.trade_yellow_perc_str_sell = this.trade_yellow_perc_sell + "%";
-				this.trade_red_perc_sell = this.trade_green_perc_sell - this.trade_yellow_perc_sell;
+				this.trade_red_perc_sell = 100-this.trade_green_perc_sell - this.trade_yellow_perc_sell;
 				this.trade_red_perc_str_sell = this.trade_red_perc_sell + "%";
 
 				// average trade buyer
-        this.trade_green_buy = Math.round(res.tradingVolumespurchase.approved);
-        this.trade_yellow_buy = Math.round(res.tradingVolumespurchase.waiting);
-        this.trade_red_buy = Math.round(res.tradingVolumespurchase.denied);
+        		this.trade_green_buy = Math.round(res.tradingVolumespurchase.approved);
+        		this.trade_yellow_buy = Math.round(res.tradingVolumespurchase.waiting);
+        		this.trade_red_buy = Math.round(res.tradingVolumespurchase.denied);
 				this.trade_count_buy = Math.round(res.tradingVolumespurchase.approved + res.tradingVolumespurchase.waiting + res.tradingVolumespurchase.denied);
 				this.trade_green_perc_buy = Math.round((res.tradingVolumespurchase.approved * 100) / this.trade_count_buy);
 				this.trade_green_perc_str_buy = this.trade_green_perc_buy + "%";
 				this.trade_yellow_perc_buy = Math.round((res.tradingVolumespurchase.waiting * 100) / this.trade_count_buy);
 				this.trade_yellow_perc_str_buy = this.trade_yellow_perc_buy + "%";
-				this.trade_red_perc_buy = this.trade_green_perc_buy - this.trade_yellow_perc_buy;
+				this.trade_red_perc_buy = 100-this.trade_green_perc_buy - this.trade_yellow_perc_buy;
 				this.trade_red_perc_str_buy = this.trade_red_perc_buy + "%";
 
 				//collab time
