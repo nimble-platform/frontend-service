@@ -45,7 +45,6 @@ export class ThreadEventComponent implements OnInit {
                 this.event.product,
                 null,
                 false,
-                this.event.formerStep,
                 this.event.product.catalogueDocumentReference.id,
                 this.event.product.manufacturersItemIdentification.id,
                 this.event.processInstanceId,

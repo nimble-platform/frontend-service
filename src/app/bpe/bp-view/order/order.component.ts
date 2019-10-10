@@ -49,7 +49,6 @@ export class OrderComponent implements OnInit {
     paymentTermsWrapper: PaymentTermsWrapper;
     priceWrapper: PriceWrapper;
     userRole: BpUserRole;
-    formerProcess: boolean;
     config = myGlobals.config;
 
     buyerParty: Party;
@@ -107,7 +106,6 @@ export class OrderComponent implements OnInit {
 
         // get copy of ThreadEventMetadata of the current business process
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
-        this.formerProcess = this.bpDataService.bpActivityEvent.formerProcess;
 
         this.order = this.bpDataService.order;
         this.address = this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
@@ -409,6 +407,10 @@ export class OrderComponent implements OnInit {
 
     isEpcTabShown(): boolean {
         return this.isReady() && this.isOrderCompleted() && this.config.showTrack;
+    }
+
+    isDispatchDisabled(): boolean {
+        return this.isLoading() || this.isOrderRejected() || this.processMetadata.isProductDeleted || this.processMetadata.isCollaborationFinished;
     }
 
     getQuantityText(): string {

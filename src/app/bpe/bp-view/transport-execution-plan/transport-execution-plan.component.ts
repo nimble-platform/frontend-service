@@ -27,7 +27,6 @@ export class TransportExecutionPlanComponent implements OnInit {
     request: TransportExecutionPlanRequest;
     response: TransportExecutionPlan;
     userRole: BpUserRole;
-    formerProcess: boolean;
     productOrder?: Order;
     updatingProcess: boolean = false;
 
@@ -54,7 +53,6 @@ export class TransportExecutionPlanComponent implements OnInit {
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
-        this.formerProcess = this.bpDataService.bpActivityEvent.formerProcess;
 
         if(!this.bpDataService.transportExecutionPlanRequest) {
             if(this.searchContextService.getAssociatedProcessMetadata() != null) {

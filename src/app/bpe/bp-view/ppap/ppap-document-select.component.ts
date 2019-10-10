@@ -32,7 +32,6 @@ interface PpapDocument {
 export class PpapDocumentSelectComponent implements OnInit {
 
     callStatus: CallStatus = new CallStatus();
-    @Input() formerProcess: boolean;
     ppap: Ppap;
 
 

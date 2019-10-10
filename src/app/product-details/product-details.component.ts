@@ -212,7 +212,6 @@ export class ProductDetailsComponent implements OnInit {
                 this.itemWithSelectedProperties,
                 new Quantity(this.orderQuantity, this.getQuantityUnit()),
                 true, // this is a new process
-                false, // there is no subsequent process as this is a new process
                 this.catalogueId, this.id, null, null, termsSource),
             false);
     }

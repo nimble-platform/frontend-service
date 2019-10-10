@@ -14,7 +14,6 @@ export class BpActivityEvent{
         public itemWithSelectedProperties: Item = null, // selected properties of the product (in the search-details page)
         public itemQuantity: Quantity = null, // order amount of the product. This property is of interest while initiating a new business process.
         public newProcess: boolean = null, // true indicates that a new process is about the to be started
-        public formerProcess: boolean = null, // true indicates that the process has subsequent processes in the history
         // parameters previously passed via the BPUrlParams
         public catalogueId = null,
         public catalogueLineId = null,

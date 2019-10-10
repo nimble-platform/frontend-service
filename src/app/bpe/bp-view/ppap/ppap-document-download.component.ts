@@ -21,12 +21,12 @@ interface UploadedDocuments {
 })
 export class PpapDocumentDownloadComponent{
 
-    @Input() formerProcess: boolean;
     @Input() ppapResponse: PpapResponse;
     @Input() ppap: Ppap;
     // whether the item is deleted or not
     @Input() isCatalogueLineDeleted:boolean = false ;
 
+    processMetadata;
     ppapDocuments : DocumentReference[] = [];
     notes: string[];
     notesBuyer: string[];
@@ -46,6 +46,8 @@ export class PpapDocumentDownloadComponent{
     }
 
     ngOnInit() {
+        this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
+
         if (!this.ppapResponse) {
             this.route.params.subscribe(params => {
                 const processid = params['processInstanceId'];
@@ -93,10 +95,6 @@ export class PpapDocumentDownloadComponent{
         this.requestedDocuments = this.ppap.documentType;
     }
 
-    isBuyer(): boolean {
-        return this.bpDataService.bpActivityEvent.userRole === "buyer";
-    }
-
     onBack() {
         this.location.back();
     }
@@ -105,23 +103,11 @@ export class PpapDocumentDownloadComponent{
         this.bpDataService.proceedNextBpStep(this.bpDataService.bpActivityEvent.userRole, "Negotiation");
     }
 
-    downloadFile(key) :void {
-        const binaryObjects: BinaryObject[] = this.documents[key];
-        for(let j=0; j < binaryObjects.length; j++) {
-            const binaryString = window.atob(binaryObjects[j].value);
-            const binaryLen = binaryString.length;
-            const bytes = new Uint8Array(binaryLen);
-            for (let i = 0; i < binaryLen; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
-            }
-            const a = document.createElement("a");
-            document.body.appendChild(a);
-            const blob = new Blob([bytes], {type:binaryObjects[j].mimeCode});
-            const url = window.URL.createObjectURL(blob);
-            a.href = url;
-            a.download = binaryObjects[j].fileName;
-            a.click();
-            window.URL.revokeObjectURL(url);
-        }
+    isNextStepDisabled(): boolean {
+        return this.bpDataService.isFinalProcessInTheWorkflow('Ppap') || this.isCatalogueLineDeleted || this.processMetadata.isCollaborationFinished;
+    }
+
+    isBuyer(): boolean {
+        return this.bpDataService.bpActivityEvent.userRole === "buyer";
     }
 }

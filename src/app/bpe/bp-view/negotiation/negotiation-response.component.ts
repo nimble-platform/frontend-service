@@ -42,7 +42,6 @@ export class NegotiationResponseComponent implements OnInit {
     @Input() defaultTermsAndConditions: Clause[];
     @Input() primaryTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = 'product_defaults';
     @Input() readonly: boolean = false;
-    @Input() formerProcess: boolean;
     // whether the item is deleted or not
     // if the item is deleted, then we will not show Product Defaults section since we do not have those information
     @Input() isCatalogueLineDeleted:boolean = false ;
@@ -201,19 +200,6 @@ export class NegotiationResponseComponent implements OnInit {
             this.wrapper.rfqTotalPriceString == this.wrapper.lineDiscountPriceWrapper.totalPriceString;
     }
 
-    getContractEndDate(): string {
-        let rangeUnit: string;
-        switch (this.wrapper.newQuotationWrapper.frameContractDuration.unitCode) {
-            case "year(s)": rangeUnit = 'y'; break;
-            case "month(s)": rangeUnit = 'M'; break;
-            case "week(s)": rangeUnit = 'w'; break;
-            case "day(s)": rangeUnit = 'd'; break;
-        }
-        let m:Moment = moment().add(this.wrapper.newQuotationWrapper.frameContractDuration.value, <unitOfTime.DurationConstructor>rangeUnit);
-        let date: string = m.format(this.dateFormat);
-        return date;
-    }
-
     isFormValid(): boolean {
         // TODO check other elements
         return this.isFrameContractDurationValid();
@@ -229,6 +215,19 @@ export class NegotiationResponseComponent implements OnInit {
 
     isTermDropDownVisible(): boolean {
         return this.lastOfferQuotation != null || (this.frameContractQuotation != null && !this.frameContractNegotiation);
+    }
+
+    isRequestNewQuotationDisabled(): boolean {
+        return this.isLoading() || this.isCatalogueLineDeleted || this.processMetadata.isCollaborationFinished;
+    }
+
+    isAcceptAndOrderDisabled(): boolean {
+        return this.isLoading() ||
+            this.isCatalogueLineDeleted ||
+            !this.isPriceValid() ||
+            this.processMetadata.isCollaborationFinished ||
+            this.quotation.documentStatusCode.name === 'Rejected' ||
+            this.bpDataService.isFinalProcessInTheWorkflow('Negotiation');
     }
 
     getNonFrameContractTermNumber(): number {
@@ -306,4 +305,16 @@ export class NegotiationResponseComponent implements OnInit {
       return ret;
     }
 
+    getContractEndDate(): string {
+        let rangeUnit: string;
+        switch (this.wrapper.newQuotationWrapper.frameContractDuration.unitCode) {
+            case "year(s)": rangeUnit = 'y'; break;
+            case "month(s)": rangeUnit = 'M'; break;
+            case "week(s)": rangeUnit = 'w'; break;
+            case "day(s)": rangeUnit = 'd'; break;
+        }
+        let m:Moment = moment().add(this.wrapper.newQuotationWrapper.frameContractDuration.value, <unitOfTime.DurationConstructor>rangeUnit);
+        let date: string = m.format(this.dateFormat);
+        return date;
+    }
 }
