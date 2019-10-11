@@ -17,7 +17,7 @@
               <a href id="DB" class="nav-link"
                   [ngClass]="{ active: selectedTab === 'DB'}"
                   (click)="onSelectTab($event,'DB')">
-                  <span [innerHTML]="'Database Analytics' | translate"></span>
+                  <span [innerHTML]="'Overall Stats' | translate"></span>
               </a>
           </li>
       </ul>
@@ -26,7 +26,7 @@
 
 <call-status [callStatus]="callStatus" [large]="true"></call-status>
 
-<div [hidden]="isLoading()" class="space-before">
+<div class="space-before">
 
   <div [hidden]="selectedTab !== 'LOG'">
     <div *ngFor="let dashboard of dashboards">
@@ -42,14 +42,14 @@
 
   </div>
 
-  <div *ngIf="selectedTab === 'DB'">
+  <div [hidden]="isLoading()"  *ngIf="selectedTab === 'DB'">
 
     <div class="row justify-content-center">
       <div class="card col-3">
         <div class="card-body text-center">
           <h4 *ngIf="user_count>=0" class="card-title"><b>{{user_count}}</b></h4>
           <h4 *ngIf="user_count<0" class="card-title"><b>???</b></h4>
-          <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Registered Users' | translate"></span></h6>
+          <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'No Of Registered Users' | translate"></span></h6>
           <p class="card-text" style="font-size:32px"><i class="fa fa-user"></i></p>
         </div>
       </div>
@@ -58,7 +58,7 @@
         <div class="card-body text-center">
           <h4 *ngIf="comp_count>=0" class="card-title"><b>{{comp_count}}</b></h4>
           <h4 *ngIf="comp_count<0" class="card-title"><b>???</b></h4>
-          <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Registered Companies' | translate"></span></h6>
+          <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'No Of Registered Companies' | translate"></span></h6>
           <p class="card-text" style="font-size:32px"><i class="fa fa-building"></i></p>
         </div>
       </div>
@@ -93,7 +93,7 @@
         <div class="card-body text-center">
           <h4 *ngIf="bp_count>=0" class="card-title"><b>{{bp_count}}</b></h4>
           <h4 *ngIf="bp_count<0" class="card-title"><b>???</b></h4>
-          <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Executed Business Transactions' | translate"></span></h6>
+          <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Total No of Collabarations' | translate"></span></h6>
           <p class="card-text" style="font-size:32px"><i class="fa fa-briefcase"></i></p>
         </div>
       </div>
@@ -137,8 +137,88 @@
         </div>
       </div>
     </div>
-
+    
     <hr>
+
+    <div class="row justify-content-center">
+      <div class="col-4">
+        <div class="row justify-content-center">
+            <div class="card col-9" style="height: 170px;">
+                <div class="card-body text-center">
+                  <h4 *ngIf="collab_time>=0" class="card-title"><b>{{collab_time}} Days</b></h4>
+                  <h4 *ngIf="collab_time<0" class="card-title"><b>???</b></h4>
+                  <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average collaboration time' | translate"></span></h6>
+                  <p class="card-text" style="font-size:32px"><i class="fa fa-clock"></i></p>
+                </div>
+              </div>
+        </div>
+      </div>
+      <div class="col-4">
+          <div class="row justify-content-center">
+              <div class="card col-9" style="height: 170px;">
+                  <div class="card-body text-center">
+                    <h4 *ngIf="collab_time_buy>=0" class="card-title"><b>{{collab_time_buy}} Days</b></h4>
+                    <h4 *ngIf="collab_time_buy<0" class="card-title"><b>???</b></h4>
+                    <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average collaboration time in purchases' | translate"></span></h6>
+                    <p class="card-text" style="font-size:32px"><i class="fa fa-clock"></i></p>
+                  </div>
+                </div>
+          </div>
+      </div>
+      <div class="col-4">
+        <div class="row justify-content-center">
+            <div class="card col-9" style="height: 170px;">
+                <div class="card-body text-center">
+                  <h4 *ngIf="collab_time_sell>=0" class="card-title"><b>{{collab_time_sell}} Days</b></h4>
+                  <h4 *ngIf="collab_time_sell<0" class="card-title"><b>???</b></h4>
+                  <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average collaboration time in sales' | translate"></span></h6>
+                  <p class="card-text" style="font-size:32px"><i class="fa fa-clock"></i></p>
+                </div>
+              </div>
+        </div>
+      </div>
+
+    </div>
+    <hr>
+    <div class="row justify-content-center">
+        <div class="col-4">
+          <div class="row justify-content-center">
+              <div class="card col-9" style="height: 170px;">
+                  <div class="card-body text-center">
+                    <h4 *ngIf="avg_res_time>=0" class="card-title"><b>{{avg_res_time}} Days</b></h4>
+                    <h4 *ngIf="avg_res_time<0" class="card-title"><b>???</b></h4>
+                    <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average response time (Request Information)' | translate"></span></h6>
+                    <p class="card-text" style="font-size:32px"><i class="fa fa-clock"></i></p>
+                  </div>
+                </div>
+          </div>
+        </div>
+        <div class="col-8">
+            <div class="row justify-content-center">
+                <div class="col-9">
+                    <ngx-charts-line-chart
+                    *ngIf="showChart"
+                    [view]="view"
+                    [scheme]="colorScheme"
+                    [results]="multi"
+                    [gradient]="gradient"
+                    [xAxis]="showXAxis"
+                    [yAxis]="showYAxis"
+                    [legend]="showLegend"
+                    [showXAxisLabel]="showXAxisLabel"
+                    [showYAxisLabel]="showYAxisLabel"
+                    [xAxisLabel]="xAxisLabel"
+                    [yAxisLabel]="yAxisLabel"
+                    [showGridLines] = "showGridLines"
+                    [autoScale]="autoScale"
+                    (select)="onSelect($event)">
+                  </ngx-charts-line-chart>
+                  </div>
+            </div>
+        </div>
+
+    </div>
+    <hr/>
 
   </div>
 

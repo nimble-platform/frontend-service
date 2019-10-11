@@ -26,6 +26,15 @@ export class AnalyticsService {
   		.toPromise()
   		.then(res => res.json())
   		.catch(this.handleError);
+    }
+    
+    getPlatCollabAnalytics(): Promise<any> {
+  		const url = `${this.url_da}/platform/collabaration`;
+  		return this.http
+  		.get(url, {headers: this.getAuthorizedHeaders()})
+  		.toPromise()
+  		.then(res => res.json())
+  		.catch(this.handleError);
   	}
 
     getPerfromanceAnalytics(comp:string): Promise<any> {

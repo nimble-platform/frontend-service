@@ -54,6 +54,34 @@ export class PlatformAnalyticsComponent implements OnInit {
   	dashboards = [];
 	selectedTab;
 
+	// collab time
+	collab_time = 0;
+	collab_time_sell = 0;
+	collab_time_buy = 0;
+	avg_res_time = 0;
+
+	// options
+	showXAxis = true;
+	showYAxis = true;
+	gradient = false;
+	showLegend = false;
+	showXAxisLabel = false;
+	xAxisLabel = 'Month';
+	showGridLines = true;
+	showYAxisLabel = true;
+	yAxisLabel = 'Average Response Time(s)';
+	showChart = false;
+	colorScheme = {
+	  domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
+	};
+	// line, area
+	autoScale = true;
+	multi = [];
+
+	months = ["Jan", "Feb", "March", "April", "May", "June", "July","Aug","Sep","Oct","Nov","Dec"];
+
+
+
 	public secureSrc = ""  ;
 
 	@ViewChild('iframe') iframe: ElementRef;
@@ -82,7 +110,6 @@ export class PlatformAnalyticsComponent implements OnInit {
         this.analyticsService
             .getPlatAnalytics()
             .then(res => {
-                this.callStatus.callback("Successfully loaded platform analytics", true);
                 this.user_count = res.identity.totalUsers;
                 this.comp_count = res.identity.totalCompanies;
                 this.bp_count = Math.round(res.businessProcessCount.state.approved + res.businessProcessCount.state.waiting + res.businessProcessCount.state.denied);
@@ -104,7 +131,48 @@ export class PlatformAnalyticsComponent implements OnInit {
                 this.trade_yellow_perc = Math.round((res.tradingVolume.waiting * 100) / this.trade_count);
                 this.trade_yellow_perc_str = this.trade_yellow_perc + "%";
                 this.trade_red_perc = 100 - this.trade_green_perc - this.trade_yellow_perc;
-                this.trade_red_perc_str = this.trade_red_perc + "%";
+				this.trade_red_perc_str = this.trade_red_perc + "%";
+				
+				this.analyticsService.getPlatCollabAnalytics()
+				.then(res => {
+					this.callStatus.callback("Successfully loaded platform analytics", true);
+					//collab time
+					this.collab_time = Math.round(res.collaborationTime.averageCollabTime * 10) /10 ;
+					this.collab_time_buy = Math.round(res.collaborationTime.averageCollabTimePurchases * 10) /10;
+					this.collab_time_sell = Math.round(res.collaborationTime.averageCollabTimeSales * 10) /10;
+
+					this.avg_res_time = Math.round(res.responseTime.averageTime * 10) /10;
+					var map1 = res.responseTime.averageTimeForMonths;
+					var i = 0 ;
+					var obj = [];
+	
+	
+					for(var y = 0 ; y < 12 ; y++){
+						if(map1[y] != undefined){
+							obj.push({
+								"value" : map1[y],
+								"name" : this.months[y]
+							})
+						}
+					}
+	
+					if(obj.length == 6){
+						var dataGr =
+							{
+							  "name": "Time series",
+							  "series":obj
+							};
+	
+						this.multi.push(dataGr);
+						this.showChart = true;
+	
+					}
+
+
+				}).catch(error => {
+					this.callStatus.error("Error while loading platform analytics", error);
+				});
+
             })
             .catch(error => {
                 this.callStatus.error("Error while loading platform analytics", error);
