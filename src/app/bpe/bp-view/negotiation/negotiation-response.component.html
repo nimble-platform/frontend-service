@@ -440,52 +440,50 @@
 </div>
 
 <!-- Actions -->
-<ng-container *ngIf="!formerProcess">
-    <hr class="actions-hr">
-    <div class="row actions-row" *ngIf="userRole === 'seller' && !isReadOnly()">
-        <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-        <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
-        </div>
-        <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading() || isCatalogueLineDeleted" (click)="onRespondToQuotation(false)">
-                <span [innerHTML]="'Reject Offer' | translate"></span>
-            </button>
-        </div>
-        <div class="col-2">
-            <button *ngIf="!hasUpdatedTerms()" class="btn btn-primary action" [disabled]="(isLoading() && isFormValid()) || isCatalogueLineDeleted" (click)="onRespondToQuotation(true)">
-                <span [innerHTML]="'Accept Offer' | translate"></span>
-            </button>
-            <button *ngIf="hasUpdatedTerms()" class="btn btn-primary action" [disabled]="(isLoading() && isFormValid()) || isCatalogueLineDeleted" (click)="onRespondToQuotation(true)">
-                <span [innerHTML]="'Submit Response' | translate"></span>
-            </button>
-        </div>
+<hr class="actions-hr">
+<div class="row actions-row" *ngIf="userRole === 'seller' && !isReadOnly()">
+    <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading() || isCatalogueLineDeleted" (click)="onRespondToQuotation(false)">
+            <span [innerHTML]="'Reject Offer' | translate"></span>
+        </button>
+    </div>
+    <div class="col-2">
+        <button *ngIf="!hasUpdatedTerms()" class="btn btn-primary action" [disabled]="(isLoading() && isFormValid()) || isCatalogueLineDeleted" (click)="onRespondToQuotation(true)">
+            <span [innerHTML]="'Accept Offer' | translate"></span>
+        </button>
+        <button *ngIf="hasUpdatedTerms()" class="btn btn-primary action" [disabled]="(isLoading() && isFormValid()) || isCatalogueLineDeleted" (click)="onRespondToQuotation(true)">
+            <span [innerHTML]="'Submit Response' | translate"></span>
+        </button>
+    </div>
+</div>
 
-    <div class="row actions-row" *ngIf="userRole === 'seller' && isReadOnly()">
-        <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-        <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
-        </div>
+<div class="row actions-row" *ngIf="userRole === 'seller' && isReadOnly()">
+    <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
+</div>
 
-    <div class="row actions-row" *ngIf="userRole === 'buyer' && !readonly">
-        <div class="col-5 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-        <!-- the bottom div shifts the buttons below to the right in case the quotation is rejected -->
-        <div *ngIf="quotation.documentStatusCode.name == 'Rejected' || bpDataService.isFinalProcessInTheWorkflow('Negotiation')" class="col-2"></div>
-        <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
-        </div>
-        <div class="col-3">
-            <button class="btn btn-secondary action" [disabled]="isLoading() || isCatalogueLineDeleted || processMetadata.isCollaborationFinished" (click)="onRequestNewQuotation()">
-                <span [innerHTML]="'Request new Quotation' | translate"></span>
-            </button>
-        </div>
-        <div *ngIf="quotation.documentStatusCode.name != 'Rejected' && !bpDataService.isFinalProcessInTheWorkflow('Negotiation')" class="col-2">
-            <button class="btn btn-primary action" [disabled]="isLoading() || isCatalogueLineDeleted || !isPriceValid()" (click)="onAcceptAndOrder()">
-                <span [innerHTML]="'Accept & Order' | translate"></span>
-            </button>
-        </div>
+<div class="row actions-row" *ngIf="userRole === 'buyer' && !readonly">
+    <div class="col-5 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <!-- the bottom div shifts the buttons below to the right in case the quotation is rejected -->
+    <div *ngIf="quotation.documentStatusCode.name == 'Rejected' || bpDataService.isFinalProcessInTheWorkflow('Negotiation')" class="col-2"></div>
+    <div class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
-</ng-container>
+    <div class="col-3">
+        <button class="btn btn-secondary action" [disabled]="isRequestNewQuotationDisabled()" (click)="onRequestNewQuotation()">
+            <span [innerHTML]="'Request new Quotation' | translate"></span>
+        </button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary action" [disabled]="isAcceptAndOrderDisabled()" (click)="onAcceptAndOrder()">
+            <span [innerHTML]="'Accept & Order' | translate"></span>
+        </button>
+    </div>
+</div>
 <discount-modal></discount-modal>

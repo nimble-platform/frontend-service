@@ -162,7 +162,6 @@ export class ThreadSummaryComponent implements OnInit {
                 this.titleEvent.product,
                 null,
                 false,
-                false, // thread summary always shows the last step in the negotiation
                 this.titleEvent.product.catalogueDocumentReference.id,
                 this.titleEvent.product.manufacturersItemIdentification.id,
                 this.titleEvent.processInstanceId,

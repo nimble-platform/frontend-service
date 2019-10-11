@@ -40,7 +40,6 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     defaultTermsAndConditions: Clause[];
 
     newProcess: boolean;
-    formerProcess: boolean = false; // true indicates that the last step of the history IS NOT negotiation
     sliderIndex: number = -1;
 
     // whether the item is deleted or not
@@ -70,7 +69,6 @@ export class NegotiationComponent implements OnInit, OnDestroy {
                 // when a negotiation process is created for the first time
                 this.isLastStepNegotiation(bpActivityEvent)) {
 
-                this.formerProcess = false;
                 this.initializeLastOffer();
                 this.initializeNegotiationHistory();
             }
@@ -196,11 +194,6 @@ export class NegotiationComponent implements OnInit, OnDestroy {
                 if(processMetadata.processType == 'Negotiation') {
                     this.negotiationProcessList.push(processMetadata);
                 }
-            }
-
-            // check the last step of the history to set the formerProcess parameter
-            if(history[0].processType != 'Negotiation') {
-                this.formerProcess = true;
             }
 
             // reverse the list so that the most recent item will be at the end

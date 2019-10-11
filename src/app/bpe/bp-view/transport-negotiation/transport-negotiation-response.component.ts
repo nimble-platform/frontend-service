@@ -34,7 +34,6 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
     selectedTab: string = "OVERVIEW";
     userRole: BpUserRole;
-    formerProcess: boolean;
 
     callStatus: CallStatus = new CallStatus();
 
@@ -57,7 +56,6 @@ export class TransportNegotiationResponseComponent implements OnInit {
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
-        this.formerProcess = this.bpDataService.bpActivityEvent.formerProcess;
 
         if(!this.rfq) {
             this.rfq = this.bpDataService.requestForQuotation;

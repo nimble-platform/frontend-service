@@ -280,7 +280,6 @@ export class BPDataService{
             this.bpActivityEvent.itemWithSelectedProperties, // continue with the item having the same configurations
             this.bpActivityEvent.itemQuantity,
             true, // new process is true
-            false, // as this is a new process there is no subsequent process after this one
             // we get the following values from the previous bp activity event
             // as they are the same for the BpActivityEvent generated for the request document
             this.bpActivityEvent.catalogueId,

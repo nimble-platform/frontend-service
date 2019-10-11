@@ -34,7 +34,6 @@ export class ItemInformationResponseComponent implements OnInit {
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
-    isFormerStep: boolean;
     isLogisticsService:boolean = false;
     isTransportService:boolean = false;
 
@@ -51,7 +50,6 @@ export class ItemInformationResponseComponent implements OnInit {
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
-        this.isFormerStep = this.bpDataService.bpActivityEvent.formerProcess;
 
         if (!this.request) {
             this.request = this.bpDataService.itemInformationRequest;
@@ -147,15 +145,6 @@ export class ItemInformationResponseComponent implements OnInit {
         return this.isResponseSent() ? "view" : "edit";
     }
 
-    getResponseFile(): BinaryObject | null {
-        const docs = this.getResponseDocuments();
-        return docs.length > 0 ? docs[0].attachment.embeddedDocumentBinaryObject : null;
-    }
-
-    hasResponseFile(): boolean {
-        return this.getResponseDocuments().length > 0;
-    }
-
     getResponseDocuments(): DocumentReference[] {
         return this.response.item[0].itemSpecificationDocumentReference;
     }
@@ -164,20 +153,20 @@ export class ItemInformationResponseComponent implements OnInit {
         return this.bpDataService.bpActivityEvent.userRole === "buyer";
     }
 
-    getRequestFile(): BinaryObject | null {
-        const docs = this.getRequestDocuments();
-        return docs.length > 0 ? docs[0].attachment.embeddedDocumentBinaryObject : null;
-    }
-
-    hasRequestFile(): boolean {
-        return this.getRequestDocuments().length > 0;
-    }
-
     getRequestDocuments(): DocumentReference[] {
         return this.request.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference;
     }
 
     isLoading(): boolean {
         return this.callStatus.fb_submitted;
+    }
+
+    isNextStepDisabled(): boolean {
+        // next steps do not make sense for logistics services like warehouse management, so next step is disable for them
+        return this.isRepeatRequestDisabled() || (this.isLogisticsService && !this.isTransportService) || this.bpDataService.isFinalProcessInTheWorkflow('Item_Information_Request');
+    }
+
+    isRepeatRequestDisabled(): boolean {
+        return this.isLoading() || this.readonly || this.processMetadata.isProductDeleted || this.processMetadata.isCollaborationFinished;
     }
 }

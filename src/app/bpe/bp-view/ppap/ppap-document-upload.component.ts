@@ -22,7 +22,6 @@ import {TranslateService} from '@ngx-translate/core';
 })
 export class PpapDocumentUploadComponent {
 
-    @Input() formerProcess: boolean;
     processid : any;
     ppap : Ppap;
     documents = [];
