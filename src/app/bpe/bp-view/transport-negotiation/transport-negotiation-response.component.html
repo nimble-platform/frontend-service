@@ -261,7 +261,7 @@
         </button>
     </div>
     <div *ngIf="!bpDataService.isFinalProcessInTheWorkflow('Negotiation')" class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.isCollaborationFinished" (click)="onAcceptAndOrder()">
+        <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.isCollaborationFinished || quotation.documentStatusCode.name == 'Rejected'" (click)="onAcceptAndOrder()">
             <span [innerHTML]="'Accept & Order' | translate"></span>
         </button>
     </div>
