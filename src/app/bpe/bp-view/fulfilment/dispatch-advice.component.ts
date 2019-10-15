@@ -9,15 +9,12 @@ import { copy } from "../../../common/utils";
 import { Location } from "@angular/common";
 import { ProcessInstanceGroup } from '../../model/process-instance-group';
 import { ActivityVariableParser } from '../activity-variable-parser';
-import { TransportExecutionPlanRequest } from '../../../catalogue/model/publish/transport-execution-plan-request';
-import { RequestForQuotation } from '../../../catalogue/model/publish/request-for-quotation';
 import { Quantity } from '../../../catalogue/model/publish/quantity';
-import { TransportExecutionPlan } from "../../../catalogue/model/publish/transport-execution-plan";
-import { Quotation } from "../../../catalogue/model/publish/quotation";
 import {DocumentService} from "../document-service";
 import {CookieService} from 'ng2-cookies';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {TranslateService} from '@ngx-translate/core';
+import {DocumentReference} from '../../../catalogue/model/publish/document-reference';
 
 @Component({
     selector: 'dispatch-advice',
@@ -70,12 +67,6 @@ export class DispatchAdviceComponent implements OnInit {
             return b_comp.localeCompare(a_comp);
         });
 
-        let tepExists = false;
-        let negoExists = false;
-
-        // values are needed to find the correct negotiation
-        let catalogueDocRef = "";
-        let manuItemId = "";
         // values are needed for despatch advice
         let handlingInst = null;
         let carrierName = null;
@@ -84,44 +75,39 @@ export class DispatchAdviceComponent implements OnInit {
         let deliveredQuantity:Quantity = new Quantity();
 
         for(let processDetails of details){
-            const processType = ActivityVariableParser.getProcessType(processDetails[1]);
-            const initialDoc: any = await this.documentService.getInitialDocument(processDetails[1]);
-            const response: any = await this.documentService.getResponseDocument(processDetails[1]);
-            if(!tepExists && processType == "Transport_Execution_Plan"){
-                let res = response as TransportExecutionPlan;
-                if(res.documentStatusCode.name == "Accepted"){
-                    tepExists = true;
+            const processInstanceId = ActivityVariableParser.getProcessInstanceId(processDetails[0]);
+            // Previous process is the one used to create an Dispatch Advice
+            // get details of the previous process instance
+            if(processInstanceId == this.bpDataService.bpActivityEvent.previousProcessInstanceId){
+                const processType = ActivityVariableParser.getProcessType(processDetails[1]);
 
-                    let tep = initialDoc as TransportExecutionPlanRequest;
-
-                    if(tep.consignment[0].consolidatedShipment[0].handlingInstructions.length > 0){
-                        handlingInst = tep.consignment[0].consolidatedShipment[0].handlingInstructions[0];
+                // additionalDocumentReferences are used to retrieve previous Negotiation
+                let additionalDocumentReferences: DocumentReference[];
+                // we only need to consider Order/TEP processes which are the ones used to initiate an Dispatch Advice
+                if(processType == "Order" || processType == "Transport_Execution_Plan"){
+                    if(processType == "Order"){
+                        const orderRequest: any = await this.documentService.getInitialDocument(processDetails[1]);
+                        additionalDocumentReferences = orderRequest.additionalDocumentReference;
                     }
-                    carrierName = UBLModelUtils.getPartyDisplayName(tep.transportServiceProviderParty);
-                    endDate = tep.serviceStartTimePeriod.endDate;
-                    if(tep.transportServiceProviderParty.contact){
-                        carrierContact = tep.transportServiceProviderParty.contact.telephone;
+                    else {
+                        const tep: any = await this.documentService.getInitialDocument(processDetails[1]);
+
+                        if(tep.consignment[0].consolidatedShipment[0].handlingInstructions.length > 0){
+                            handlingInst = tep.consignment[0].consolidatedShipment[0].handlingInstructions[0];
+                        }
+                        carrierName = UBLModelUtils.getPartyDisplayName(tep.transportServiceProviderParty);
+                        endDate = tep.serviceStartTimePeriod.endDate;
+                        if(tep.transportServiceProviderParty.contact){
+                            carrierContact = tep.transportServiceProviderParty.contact.telephone;
+                        }
+                        additionalDocumentReferences = tep.additionalDocumentReference;
                     }
-
-                    catalogueDocRef = tep.mainTransportationService.catalogueDocumentReference.id;
-                    manuItemId = tep.mainTransportationService.manufacturersItemIdentification.id;
+                    const quotationId = UBLModelUtils.getPreviousDocumentId(additionalDocumentReferences);
+                    const negotiationResponse: any = await this.documentService.getCachedDocument(quotationId);
+                    const negotiationRequest: any = await this.documentService.getCachedDocument(negotiationResponse.requestForQuotationDocumentReference.id);
+                    deliveredQuantity.value = negotiationRequest.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity.value;
+                    deliveredQuantity.unitCode = negotiationRequest.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity.unitCode;
                 }
-            }
-            if(!negoExists && processType == "Negotiation"){
-                let res = response as Quotation;
-                let nego = initialDoc as RequestForQuotation;
-                // check whether this negotiation is correct one or not
-                if(res.documentStatusCode.name == "Accepted" &&
-                    nego.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id == manuItemId &&
-                    nego.requestForQuotationLine[0].lineItem.item.catalogueDocumentReference.id == catalogueDocRef){
-                    negoExists = true;
-
-                    deliveredQuantity.value = nego.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity.value;
-                    deliveredQuantity.unitCode = nego.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity.unitCode;
-                }
-            }
-            if(tepExists && negoExists){
-                break;
             }
         }
 
