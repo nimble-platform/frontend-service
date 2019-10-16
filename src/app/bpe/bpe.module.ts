@@ -47,6 +47,7 @@ import {FrameContractDetailsComponent} from "./bp-view/contract/frame-contract-d
 import {ThreadSummaryComponent} from "./bp-summary/thread-summary.component";
 import {ThreadEventComponent} from "./bp-summary/thread-event.component";
 import {CustomTermModalComponent} from "./bp-view/negotiation/custom-term-modal.component";
+import {ShoppingCartComponent} from './shopping-cart/shopping-cart.component';
 
 @NgModule({
     imports: [
@@ -95,7 +96,8 @@ import {CustomTermModalComponent} from "./bp-view/negotiation/custom-term-modal.
         ShipmentInputComponent,
         ThreadSummaryComponent,
         ThreadEventComponent,
-        CustomTermModalComponent
+        CustomTermModalComponent,
+        ShoppingCartComponent
     ],
     exports: [
         BPConfigureComponent,

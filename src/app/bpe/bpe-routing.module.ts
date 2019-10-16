@@ -7,6 +7,7 @@ import {BPConfigureComponent} from './bp-configure.component';
 import {ProductBpOptionsComponent} from "./bp-view/product-bp-options.component";
 import {FrameContractDetailsComponent} from "./bp-view/contract/frame-contract-details.component";
 import {ThreadSummaryComponent} from "./bp-summary/thread-summary.component";
+import {ShoppingCartComponent} from './shopping-cart/shopping-cart.component';
 
 const routes: Routes = [
 	{path: 'bpe-design/detail/:processID', component: BPDetailComponent},
@@ -15,7 +16,8 @@ const routes: Routes = [
     {path: 'bpe-design/configure/:processID', component: BPConfigureComponent},
     {path: 'bpe-exec/:processInstanceId', component: ProductBpOptionsComponent},
     {path: 'bpe-sum/:processInstanceId', component: ThreadSummaryComponent},
-    {path: 'frame-contract/:id', component: FrameContractDetailsComponent}
+    {path: 'frame-contract/:id', component: FrameContractDetailsComponent},
+    {path: 'shopping-cart', component: ShoppingCartComponent}
 ];
 
 @NgModule({

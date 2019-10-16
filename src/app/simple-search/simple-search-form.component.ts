@@ -75,7 +75,7 @@ export class SimpleSearchFormComponent implements OnInit {
     showOtherSection = false;
 
     categoriesCallStatus: CallStatus = new CallStatus();
-    companyCallStatus: CallStatus = new CallStatus();
+    shoppingCartCallStatus: CallStatus = new CallStatus();
     searchCallStatus: CallStatus = new CallStatus();
     searchDone = false;
     callback = false;
@@ -247,6 +247,9 @@ export class SimpleSearchFormComponent implements OnInit {
                 this.sort = sort;
             }
         });
+
+        // initialize the shopping cart
+        this.shoppingCartDataService.getShoppingCart();
     }
 
     get(search: Search): void {
@@ -1495,5 +1498,20 @@ export class SimpleSearchFormComponent implements OnInit {
             return {hjid: product.uri, label: product.label};
         });
         this.router.navigate(['catalogue/publish'], {queryParams: {pg: 'single', productType: 'product', searchRef: 'true'}});
+    }
+
+    onAddToCart(result: any, event: any): void {
+        event.preventDefault();
+        // do not add item to the cart if a process is still being added
+        if (this.shoppingCartCallStatus.isLoading()) {
+            return;
+        }
+
+        this.shoppingCartCallStatus.submit();
+        this.shoppingCartDataService.addItemToCart(result).then(() => {
+            this.shoppingCartCallStatus.callback(null, true);
+        }).catch(() => {
+            this.shoppingCartCallStatus.error(null);
+        });
     }
 }
