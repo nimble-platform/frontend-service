@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import {Component, Input, OnInit} from '@angular/core';
 import { BPEService } from "../../bpe.service";
 import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
 import { BPDataService } from "../bp-data-service";
@@ -9,12 +9,10 @@ import { copy } from "../../../common/utils";
 import { Location } from "@angular/common";
 import { ProcessInstanceGroup } from '../../model/process-instance-group';
 import { ActivityVariableParser } from '../activity-variable-parser';
-import { Quantity } from '../../../catalogue/model/publish/quantity';
 import {DocumentService} from "../document-service";
 import {CookieService} from 'ng2-cookies';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {TranslateService} from '@ngx-translate/core';
-import {DocumentReference} from '../../../catalogue/model/publish/document-reference';
 
 @Component({
     selector: 'dispatch-advice',
@@ -29,6 +27,8 @@ export class DispatchAdviceComponent implements OnInit {
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
+
+    @Input() waitingQuantityValue: number = 0;
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
@@ -56,7 +56,7 @@ export class DispatchAdviceComponent implements OnInit {
 
         // since we start a new Despatch Advice after Receipt Advice step, bpDataService.copyDespatchAdvice is not null.
         if(this.bpDataService.copyDespatchAdvice){
-            this.bpDataService.initDispatchAdviceWithCopyDispatchAdvice();
+            this.bpDataService.initDispatchAdviceWithCopyDispatchAdvice(this.waitingQuantityValue);
         }
         else{
             const processInstanceGroup = await this.bpeService.getProcessInstanceGroup(this.bpDataService.bpActivityEvent.containerGroupId) as ProcessInstanceGroup;
@@ -78,7 +78,6 @@ export class DispatchAdviceComponent implements OnInit {
             let carrierName = null;
             let carrierContact = null;
             let endDate = null;
-            let deliveredQuantity:Quantity = new Quantity();
 
             for(let processDetails of details){
                 const processInstanceId = ActivityVariableParser.getProcessInstanceId(processDetails[0]);
@@ -87,39 +86,22 @@ export class DispatchAdviceComponent implements OnInit {
                 if(processInstanceId == this.bpDataService.bpActivityEvent.previousProcessInstanceId){
                     const processType = ActivityVariableParser.getProcessType(processDetails[1]);
 
-                    // additionalDocumentReferences are used to retrieve previous Negotiation
-                    let additionalDocumentReferences: DocumentReference[];
-                    // we only need to consider Order/TEP processes which are the ones used to initiate an Dispatch Advice
-                    if(processType == "Order" || processType == "Transport_Execution_Plan"){
-                        if(processType == "Order"){
-                            const orderRequest: any = await this.documentService.getInitialDocument(processDetails[1]);
-                            additionalDocumentReferences = orderRequest.additionalDocumentReference;
-                        }
-                        else {
-                            const tep: any = await this.documentService.getInitialDocument(processDetails[1]);
+                    if(processType == "Transport_Execution_Plan"){
+                        const tep: any = await this.documentService.getInitialDocument(processDetails[1]);
 
-                            if(tep.consignment[0].consolidatedShipment[0].handlingInstructions.length > 0){
-                                handlingInst = tep.consignment[0].consolidatedShipment[0].handlingInstructions[0];
-                            }
-                            carrierName = UBLModelUtils.getPartyDisplayName(tep.transportServiceProviderParty);
-                            endDate = tep.serviceStartTimePeriod.endDate;
-                            if(tep.transportServiceProviderParty.contact){
-                                carrierContact = tep.transportServiceProviderParty.contact.telephone;
-                            }
-                            additionalDocumentReferences = tep.additionalDocumentReference;
+                        if(tep.consignment[0].consolidatedShipment[0].handlingInstructions.length > 0){
+                            handlingInst = tep.consignment[0].consolidatedShipment[0].handlingInstructions[0];
                         }
-                        const quotationId = UBLModelUtils.getPreviousDocumentId(additionalDocumentReferences);
-                        if(quotationId){
-                            const negotiationResponse: any = await this.documentService.getCachedDocument(quotationId);
-                            const negotiationRequest: any = await this.documentService.getCachedDocument(negotiationResponse.requestForQuotationDocumentReference.id);
-                            deliveredQuantity.value = negotiationRequest.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity.value;
-                            deliveredQuantity.unitCode = negotiationRequest.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity.unitCode;
+                        carrierName = UBLModelUtils.getPartyDisplayName(tep.transportServiceProviderParty);
+                        endDate = tep.serviceStartTimePeriod.endDate;
+                        if(tep.transportServiceProviderParty.contact){
+                            carrierContact = tep.transportServiceProviderParty.contact.telephone;
                         }
                     }
                 }
             }
 
-            this.bpDataService.initDispatchAdvice(handlingInst,carrierName,carrierContact, deliveredQuantity, endDate);
+            this.bpDataService.initDispatchAdvice(handlingInst,carrierName,carrierContact, this.waitingQuantityValue, endDate);
         }
 
         this.dispatchAdvice = this.bpDataService.despatchAdvice;

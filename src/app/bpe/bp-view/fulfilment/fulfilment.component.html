@@ -22,7 +22,7 @@
 </div>
 <hr class="mb-3">
 <ng-container *ngIf="line && !isLoading()">
-    <dispatch-advice *ngIf="!showReceiptAdvice()">
+    <dispatch-advice *ngIf="!showReceiptAdvice()" [waitingQuantityValue]="yellowTotalWaiting">
     </dispatch-advice>
     <receipt-advice *ngIf="showReceiptAdvice()">
     </receipt-advice>

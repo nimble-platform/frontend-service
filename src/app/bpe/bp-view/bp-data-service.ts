@@ -455,7 +455,7 @@ export class BPDataService{
         UBLModelUtils.removeHjidFieldsFromObject(this.requestForQuotation);
     }
 
-    initDispatchAdvice(handlingInst: Text, carrierName: string, carrierContact: string, deliveredQuantity: Quantity, endDate: string) {
+    initDispatchAdvice(handlingInst: Text, carrierName: string, carrierContact: string, deliveredQuantityValue: number, endDate: string) {
         let copyOrder:Order;
         if (this.copyOrder) {
             copyOrder = copy(this.copyOrder);
@@ -464,14 +464,9 @@ export class BPDataService{
         }
 
         this.despatchAdvice = UBLModelUtils.createDespatchAdviceWithOrderCopy(copyOrder);
-        if(deliveredQuantity.unitCode == null){
-            this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = copyOrder.orderLine[0].lineItem.quantity.unitCode;
-        }
-        else {
-            this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = deliveredQuantity.unitCode;
-        }
+        this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = copyOrder.orderLine[0].lineItem.quantity.unitCode;
 
-        this.despatchAdvice.despatchLine[0].deliveredQuantity.value = deliveredQuantity.value;
+        this.despatchAdvice.despatchLine[0].deliveredQuantity.value = deliveredQuantityValue;
         if(handlingInst){
             this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = [handlingInst];
         }else{
@@ -491,7 +486,7 @@ export class BPDataService{
         UBLModelUtils.removeHjidFieldsFromObject(this.despatchAdvice);
     }
 
-    initDispatchAdviceWithCopyDispatchAdvice() {
+    initDispatchAdviceWithCopyDispatchAdvice(deliveredQuantityValue: number) {
         let copyDespatchAdvice:DespatchAdvice = copy(this.copyDespatchAdvice);
         this.despatchAdvice = new DespatchAdvice();
         this.despatchAdvice.id = UBLModelUtils.generateUUID();
@@ -501,7 +496,8 @@ export class BPDataService{
         this.despatchAdvice.despatchSupplierParty = copyDespatchAdvice.despatchSupplierParty;
         this.despatchAdvice.deliveryCustomerParty = copyDespatchAdvice.deliveryCustomerParty;
 
-        this.despatchAdvice.despatchLine[0].deliveredQuantity = copyDespatchAdvice.despatchLine[0].deliveredQuantity;
+        this.despatchAdvice.despatchLine[0].deliveredQuantity.value = deliveredQuantityValue;
+        this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = copyDespatchAdvice.despatchLine[0].deliveredQuantity.unitCode;
         this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = copyDespatchAdvice.despatchLine[0].shipment[0].handlingInstructions;
 
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());
