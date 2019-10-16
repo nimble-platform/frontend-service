@@ -29,7 +29,7 @@ import { ProcessType } from "../model/process-type";
 import { PaymentMeans } from "../../catalogue/model/publish/payment-means";
 import { Code } from "../../catalogue/model/publish/code";
 import { PaymentTerms } from "../../catalogue/model/publish/payment-terms";
-import {copy, getPropertyKey, selectName} from '../../common/utils';
+import {copy, getPropertyKey} from '../../common/utils';
 import { PriceWrapper } from "../../common/price-wrapper";
 import { Quantity } from "../../catalogue/model/publish/quantity";
 import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
@@ -692,40 +692,4 @@ export class BPDataService{
         }
     }
 
-    updateItemProperty(itemProperty:ItemProperty):void {
-        if(itemProperty.valueQualifier == 'STRING') {
-            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => selectName(item) == selectName(itemProperty));
-            this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].value[0] = itemProperty.value[0];
-        } else if(itemProperty.valueQualifier == 'NUMBER') {
-            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => selectName(item) == selectName(itemProperty));
-            this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].valueDecimal[0] = itemProperty.valueDecimal[0];
-        } else if(itemProperty.valueQualifier == 'BOOLEAN') {
-            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => selectName(item) == selectName(itemProperty));
-            this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].value[0] = itemProperty.value[0];
-        } else if(itemProperty.valueQualifier == 'QUANTITY') {
-            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => selectName(item) == selectName(itemProperty));
-            this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].valueQuantity[0] = itemProperty.valueQuantity[0];
-        }
-    }
-
-    /**
-     * Keeps only the selected value for the given attribute in the dimension array
-     */
-
-    updateDimension(attributeId:string, event: any):void {
-        // update catalogueLine
-        let allDimensions:Dimension[] = this.catalogueLines[0].goodsItem.item.dimension;
-        let index = allDimensions.findIndex(dim => attributeId == dim.attributeID);
-        let firstDim = this.catalogueLines[0].goodsItem.item.dimension[index];
-
-        this.catalogueLines[0].goodsItem.item.dimension[index] = this.catalogueLines[0].goodsItem.item.dimension[index+event.target.selectedIndex];
-        this.catalogueLines[0].goodsItem.item.dimension[index+event.target.selectedIndex] = firstDim;
-        this.catalogueLines[0].goodsItem.item.dimension = [].concat(this.catalogueLines[0].goodsItem.item.dimension);
-
-        // update modifiedCatalogueLine
-        let dimensions:Dimension[] = this.modifiedCatalogueLines[0].goodsItem.item.dimension;
-        let attIndexInModified = dimensions.findIndex(dim => attributeId == dim.attributeID);
-        dimensions[attIndexInModified] = this.catalogueLines[0].goodsItem.item.dimension[index];
-        this.modifiedCatalogueLines[0].goodsItem.item.dimension = dimensions;
-    }
 }
