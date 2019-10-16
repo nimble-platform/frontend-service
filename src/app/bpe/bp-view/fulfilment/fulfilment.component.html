@@ -1,4 +1,27 @@
-<ng-container *ngIf="line">
+<!--Show fulfilment statistics-->
+<div class="row justify-content-center">
+    <div class="card col-7">
+        <div class="card-body text-center">
+            <h4 class="card-title"><b>{{blueTotalDispatched}}</b></h4>
+            <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Dispatched Quantity' | translate"></span></h6>
+            <p class="card-text" style="font-size:32px"><i class="fa fa-truck"></i></p>
+        </div>
+    </div>
+    <div class="col-8">
+        <div class="progress space-before">
+            <div class="progress-bar bg-success" role="progressbar" [ngStyle]="{'width':green_perc_str}" [attr.aria-valuenow]="green_perc" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress-bar bg-warning" role="progressbar" [ngStyle]="{'width':yellow_perc_str}" [attr.aria-valuenow]="yellow_perc" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress-bar bg-danger" role="progressbar" [ngStyle]="{'width':red_perc_str}" [attr.aria-valuenow]="red_perc" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <div class="space-before text-center">
+            <span class="badge badge-pill badge-success">{{greenTotalAccepted}} Accepted ({{green_perc_str}})</span>
+            <span class="badge badge-pill badge-warning">{{yellowTotalWaiting}} Waiting ({{yellow_perc_str}})</span>
+            <span class="badge badge-pill badge-danger">{{redTotalRejected}} Rejected ({{red_perc_str}})</span>
+        </div>
+    </div>
+</div>
+<hr class="mb-3">
+<ng-container *ngIf="line && !isLoading()">
     <dispatch-advice *ngIf="!showReceiptAdvice()">
     </dispatch-advice>
     <receipt-advice *ngIf="showReceiptAdvice()">
