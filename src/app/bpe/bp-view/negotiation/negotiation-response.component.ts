@@ -153,12 +153,12 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     onRequestNewQuotation() {
-        this.bpDataService.setCopyDocuments(true, true, false);
+        this.bpDataService.setCopyDocuments(true, true, false,false);
         this.bpDataService.proceedNextBpStep("buyer", "Negotiation");
     }
 
     onAcceptAndOrder() {
-        this.bpDataService.setCopyDocuments(true, true, false);
+        this.bpDataService.setCopyDocuments(true, true, false,false);
         this.bpDataService.proceedNextBpStep("buyer", "Order");
     }
 

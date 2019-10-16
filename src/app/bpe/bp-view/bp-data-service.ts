@@ -43,6 +43,8 @@ import {Text} from '../../catalogue/model/publish/text';
 import {Contract} from '../../catalogue/model/publish/contract';
 import {Clause} from '../../catalogue/model/publish/clause';
 import {Observable} from "rxjs/Rx";
+import {DespatchLine} from '../../catalogue/model/publish/despatch-line';
+import {Shipment} from '../../catalogue/model/publish/shipment';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -85,6 +87,7 @@ export class BPDataService{
     copyRequestForQuotation: RequestForQuotation;
     copyQuotation: Quotation;
     copyOrder: Order;
+    copyDespatchAdvice: DespatchAdvice;
 
     ////////////////////////////////////////////////////////////////////////////
     // variables used when navigating to bp options details page //////
@@ -296,7 +299,7 @@ export class BPDataService{
         this.bpActivityEvent.userRole = userRole;
     }
 
-    setCopyDocuments(rfq: boolean, quotation: boolean, order: boolean): void {
+    setCopyDocuments(rfq: boolean, quotation: boolean, order: boolean, despatchAdvice: boolean): void {
         if (rfq) {
             this.copyRequestForQuotation = this.requestForQuotation;
         } else {
@@ -311,6 +314,11 @@ export class BPDataService{
             this.copyOrder = this.order;
         } else {
             this.copyOrder = null;
+        }
+        if(despatchAdvice){
+            this.copyDespatchAdvice = this.despatchAdvice;
+        } else {
+            this.copyDespatchAdvice = null;
         }
     }
 
@@ -479,6 +487,28 @@ export class BPDataService{
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.partyName= [partyName];
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.contact.telephone = carrierContact;
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].estimatedDeliveryDate = endDate;
+
+        UBLModelUtils.removeHjidFieldsFromObject(this.despatchAdvice);
+    }
+
+    initDispatchAdviceWithCopyDispatchAdvice() {
+        let copyDespatchAdvice:DespatchAdvice = copy(this.copyDespatchAdvice);
+        this.despatchAdvice = new DespatchAdvice();
+        this.despatchAdvice.id = UBLModelUtils.generateUUID();
+        this.despatchAdvice.orderReference = copyDespatchAdvice.orderReference;
+        this.despatchAdvice.despatchLine = [new DespatchLine(new Quantity(), copyDespatchAdvice.despatchLine[0].item, [new Shipment()])];
+        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());
+        this.despatchAdvice.despatchSupplierParty = copyDespatchAdvice.despatchSupplierParty;
+        this.despatchAdvice.deliveryCustomerParty = copyDespatchAdvice.deliveryCustomerParty;
+
+        this.despatchAdvice.despatchLine[0].deliveredQuantity = copyDespatchAdvice.despatchLine[0].deliveredQuantity;
+        this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = copyDespatchAdvice.despatchLine[0].shipment[0].handlingInstructions;
+
+        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());
+
+        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.partyName= copyDespatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.partyName;
+        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.contact.telephone = copyDespatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.contact.telephone;
+        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].estimatedDeliveryDate = copyDespatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].estimatedDeliveryDate;
 
         UBLModelUtils.removeHjidFieldsFromObject(this.despatchAdvice);
     }

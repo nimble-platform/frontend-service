@@ -72,6 +72,11 @@ export class ReceiptAdviceComponent implements OnInit {
             });
     }
 
+    onDispatchOrder(): void{
+        this.bpDataService.setCopyDocuments(false, false, false,true);
+        this.bpDataService.proceedNextBpStep(this.userRole, "Fulfilment");
+    }
+
     /*
      * Getters & Setters
      */
@@ -82,5 +87,9 @@ export class ReceiptAdviceComponent implements OnInit {
 
     isReadOnly(): boolean {
         return this.userRole === "seller" || this.processMetadata.processStatus == "Completed";
+    }
+
+    isDispatchOrderDisabled(): boolean {
+        return this.isLoading() || this.processMetadata.isProductDeleted || this.processMetadata.isCollaborationFinished;
     }
 }

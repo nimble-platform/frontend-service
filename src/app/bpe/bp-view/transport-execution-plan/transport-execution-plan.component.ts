@@ -184,7 +184,7 @@ export class TransportExecutionPlanComponent implements OnInit {
     }
 
     onDispatchAdvice() {
-        this.bpDataService.setCopyDocuments(false, false, false);
+        this.bpDataService.setCopyDocuments(false, false, false,false);
         this.bpDataService.proceedNextBpStep("seller", "Fulfilment");
     }
 }
