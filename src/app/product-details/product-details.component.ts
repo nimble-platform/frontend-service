@@ -14,7 +14,7 @@ import {
     getStepForPrice,
     isTransportService,
     selectPreferredValue,
-    isLogisticsService
+    isLogisticsService, validateNumberInput
 } from '../common/utils';
 import { AppComponent } from "../app.component";
 import { UserService } from "../user-mgmt/user.service";
@@ -65,18 +65,20 @@ export class ProductDetailsComponent implements OnInit {
     isLogistics: boolean = false;
     isTransportService:boolean = false;
 
-    config = myGlobals.config;
-
     termsSelectBoxValue: 'product_defaults' | 'frame_contract' = 'product_defaults';
+
+    // business workflow of seller company
+    companyWorkflowMap = null;
+
     addFavoriteCategoryStatus: CallStatus = new CallStatus();
     callStatus: CallStatus = new CallStatus();
 
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
-    selectPreferredValue = selectPreferredValue;
 
-    // business workflow of seller company
-    companyWorkflowMap = null;
+    config = myGlobals.config;
+    selectPreferredValue = selectPreferredValue;
+    onOrderQuantityKeyPressed = validateNumberInput;
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
@@ -214,14 +216,6 @@ export class ProductDetailsComponent implements OnInit {
                 true, // this is a new process
                 this.catalogueId, this.id, null, null, termsSource),
             false);
-    }
-
-    onOrderQuantityKeyPressed(event:any): boolean {
-        const charCode = (event.which) ? event.which : event.keyCode;
-        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-            return false;
-        }
-        return true;
     }
 
     onOrderQuantityChange(): void {

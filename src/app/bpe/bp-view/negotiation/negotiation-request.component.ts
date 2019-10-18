@@ -14,7 +14,10 @@ import {Router} from "@angular/router";
 import {CustomerParty} from "../../../catalogue/model/publish/customer-party";
 import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
 import {NegotiationModelWrapper} from "./negotiation-model-wrapper";
-import {copy, durationToString, getMaximumQuantityForPrice, getStepForPrice, isValidPrice, roundToTwoDecimals, trimRedundantDecimals} from "../../../common/utils";
+import {
+    copy, durationToString, getMaximumQuantityForPrice, getStepForPrice, isValidPrice, roundToTwoDecimals, trimRedundantDecimals,
+    validateNumberInput
+} from "../../../common/utils";
 import {PeriodRange} from "../../../user-mgmt/model/period-range";
 import {Option} from "../../../common/options-input.component";
 import {addressToString} from "../../../user-mgmt/utils";
@@ -112,6 +115,7 @@ export class NegotiationRequestComponent implements OnInit {
     private customTermModal: CustomTermModalComponent;
 
     config = myGlobals.config;
+    onOrderQuantityKeyPressed = validateNumberInput;
 
     onClauseUpdate(event): void {
         this.clausesDiffer = UBLModelUtils.areTermsAndConditionListsDifferent(this.wrapper.initialImmutableRfq.termOrCondition, this.rfq.termOrCondition);
@@ -326,14 +330,6 @@ export class NegotiationRequestComponent implements OnInit {
 
     onBack(): void {
         this.location.back();
-    }
-
-    onOrderQuantityKeyPressed(event:any): boolean {
-        const charCode = (event.which) ? event.which : event.keyCode;
-        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-            return false;
-        }
-        return true;
     }
 
     onOrderQuantityChange(): void {

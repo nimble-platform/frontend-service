@@ -2,7 +2,10 @@ import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
 import { ProductWrapper } from "../common/product-wrapper";
 import { CommodityClassification } from "../catalogue/model/publish/commodity-classification";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
-import {getPropertyKey, getPropertyValues, getPropertyValuesAsStrings, selectName, selectNameFromLabelObject, selectPreferredValue} from '../common/utils';
+import {
+    getPropertyKey, getPropertyValues, getPropertyValuesAsStrings, selectName, selectNameFromLabelObject, selectPreferredValue,
+    validateNumberInput
+} from '../common/utils';
 import {Item} from '../catalogue/model/publish/item';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {CategoryService} from '../catalogue/category/category.service';
@@ -31,6 +34,8 @@ export class ProductDetailsOverviewComponent implements OnInit{
     @Input() associatedProducts: CatalogueLine[];
     @Input() readonly: boolean;
     @Input() showAddToCartButton: boolean;
+    @Input() inShoppingBasket: boolean;
+    @Output() onCartItemDeleted: EventEmitter<CatalogueLine> = new EventEmitter<CatalogueLine>();
     @Output() compStatus = new EventEmitter<boolean>();
     @Output() onPropertyValueChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
@@ -53,6 +58,8 @@ export class ProductDetailsOverviewComponent implements OnInit{
     activeComp = '';
 
     zoomedImgURL = "";
+
+    onOrderQuantityKeyPressed = validateNumberInput;
 
     constructor(
         private translate: TranslateService,
@@ -208,10 +215,6 @@ export class ProductDetailsOverviewComponent implements OnInit{
         }
     }
 
-    selectName (ip: ItemProperty | Item) {
-        return selectName(ip);
-    }
-
     onSelectImage(index: number): void {
         this.selectedImage = index;
         if(!this.wrapper) {
@@ -226,17 +229,16 @@ export class ProductDetailsOverviewComponent implements OnInit{
         }
     }
 
-    navigateImages(index: number, length: number): number {
-        if(index < 0) {
-            return length - 1;
-        }
-        else if(index < length) {
-            return index;
-        }
-        // also works if productImage.length === 0
-        else if(index >= length) {
-            return 0;
-        }
+    onRemoveFromCartButtonClicked(): void {
+        this.onCartItemDeleted.emit(this.wrapper.line);
+    }
+
+    onNegotiateAndOrderButtonClicked(): void {
+        // TODO
+    }
+
+    selectName (ip: ItemProperty | Item) {
+        return selectName(ip);
     }
 
     getClassifications(): CommodityClassification[] {
@@ -281,5 +283,18 @@ export class ProductDetailsOverviewComponent implements OnInit{
     open(content) {
       this.zoomedImgURL = "data:"+this.wrapper.item.productImage[this.selectedImage].mimeCode+";base64,"+this.wrapper.item.productImage[this.selectedImage].value
     	this.modalService.open(content);
+    }
+
+    navigateImages(index: number, length: number): number {
+        if(index < 0) {
+            return length - 1;
+        }
+        else if(index < length) {
+            return index;
+        }
+        // also works if productImage.length === 0
+        else if(index >= length) {
+            return 0;
+        }
     }
 }

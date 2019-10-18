@@ -2,7 +2,7 @@ import {Catalogue} from '../../catalogue/model/publish/catalogue';
 import {Router} from '@angular/router';
 import {Component, OnInit} from '@angular/core';
 import {ShoppingCartDataService} from './shopping-cart-data-service';
-import {copy, selectDescription, selectName} from '../../common/utils';
+import {copy, selectDescription, selectName, selectPreferredValues} from '../../common/utils';
 import {ItemPriceWrapper} from '../../common/item-price-wrapper';
 import {CatalogueLine} from '../../catalogue/model/publish/catalogue-line';
 import {Item} from '../../catalogue/model/publish/item';
@@ -32,13 +32,15 @@ export class ShoppingCartComponent implements OnInit {
     // company settings for each distinct company providing one or more product in the cart
     companiesSettings: Map<string, CompanySettings> = new Map<string, CompanySettings>();
 
+    collapsedStatusesOfCartItems: Map<number, boolean> = new Map<number, boolean>();
+    deleteCallStatuses: Map<number, CallStatus> = new Map<number, CallStatus>();
+
     companySettingsCallStatus: CallStatus = new CallStatus();
     associatedProductsCallStatus: CallStatus = new CallStatus();
     // call status to be able to show a single loading icon
     initCallStatus: CallStatus = new CallStatus();
 
-    selectName = selectName;
-    selectDescription = selectDescription;
+    getProductName = selectPreferredValues;
     getPartyId = UBLModelUtils.getPartyId;
 
     constructor(private shoppingCartDataService: ShoppingCartDataService,
@@ -54,6 +56,10 @@ export class ShoppingCartComponent implements OnInit {
     ngOnInit() {
         // first get the cart catalogue
         this.shoppingCartDataService.getShoppingCart().then(cart => {
+            if (cart == null) {
+                return;
+            }
+
             this.shoppingCart = cart;
             // for each product in the cart get the settings of the corresponding companies
             let settingsPromises: Promise<CompanySettings>[] = [];
@@ -66,6 +72,7 @@ export class ShoppingCartComponent implements OnInit {
                 }
             }
 
+            // prepare the promises
             this.companySettingsCallStatus.submit();
             let aggregatedSettingsPromise: Promise<void | CompanySettings[]> = Promise.all(settingsPromises).catch(err => {
                 return this.companySettingsCallStatus.error('Failed to retrieve company settings', err);
@@ -73,6 +80,8 @@ export class ShoppingCartComponent implements OnInit {
             let associatedProductsPromise: Promise<void | CatalogueLine[]> = this.retrieveAssociatedProductDetails().catch(err => {
                 return this.associatedProductsCallStatus.error('Failed to retrieve associated products', err);
             });
+
+            // submit all promises at once so that each of them would run in parallel
             this.initCallStatus.submit();
             Promise.all([aggregatedSettingsPromise, associatedProductsPromise]).then(([settingsResults, associatedProductsResults]) => {
                 console.log("in all results");
@@ -118,6 +127,15 @@ export class ShoppingCartComponent implements OnInit {
                 this.companySettingsCallStatus.callback(null, true);
                 this.initCallStatus.callback(null, true);
             });
+
+            // initialize the collapsed statuses, the first product is open
+            let lines: CatalogueLine[] = this.shoppingCart.catalogueLine;
+            if (lines.length > 0) {
+                for (let i = 0; i < lines.length; i++) {
+                    this.collapsedStatusesOfCartItems.set(lines[i].hjid, i === 0 ? true : false);
+                    this.deleteCallStatuses.set(lines[i].hjid, new CallStatus());
+                }
+            }
         })
     }
 
@@ -154,14 +172,6 @@ export class ShoppingCartComponent implements OnInit {
      * event handlers
      */
 
-    onOrderQuantityKeyPressed(event: any): boolean {
-        const charCode = (event.which) ? event.which : event.keyCode;
-        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-            return false;
-        }
-        return true;
-    }
-
     onOrderQuantityChange(): void {
         // nothing for now
     }
@@ -171,10 +181,13 @@ export class ShoppingCartComponent implements OnInit {
     }
 
     onRemoveFromCart(cartLineHjid: number): void {
+        let callStatus: CallStatus = this.deleteCallStatuses.get(cartLineHjid);
+        callStatus.submit();
         this.shoppingCartDataService.removeItemFromCart(cartLineHjid).then(cartCatalogue => {
             this.shoppingCart = cartCatalogue;
+            callStatus.callback(null, true);
         }).catch(error => {
-            console.log('Failed to delete product from the shopping cart');
+            callStatus.error('Failed to delete product from the shopping cart');
         })
     }
 
