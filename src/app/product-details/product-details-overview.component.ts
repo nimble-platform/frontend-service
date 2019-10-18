@@ -17,6 +17,7 @@ import * as moment from "moment";
 import { CookieService } from 'ng2-cookies';
 import {CredentialsService} from '../user-mgmt/credentials.service';
 import * as myGlobals from '../globals';
+import {ShoppingCartDataService} from '../bpe/shopping-cart/shopping-cart-data-service';
 
 @Component({
     selector: 'product-details-overview',
@@ -29,6 +30,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
     @Input() itemWithSelectedProps: Item;
     @Input() associatedProducts: CatalogueLine[];
     @Input() readonly: boolean;
+    @Input() showAddToCartButton: boolean;
     @Output() compStatus = new EventEmitter<boolean>();
     @Output() onPropertyValueChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
@@ -38,6 +40,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
     getClassificationNamesStatus: CallStatus = new CallStatus();
     productCatalogueNameRetrievalStatus: CallStatus = new CallStatus();
     associatedProductsRetrievalCallStatus: CallStatus = new CallStatus();
+    shoppingCartCallStatus: CallStatus = new CallStatus();
 
     classificationNames = [];
     productId = "";
@@ -55,6 +58,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
         private translate: TranslateService,
         public categoryService:CategoryService,
         public catalogueService:CatalogueService,
+        private shoppingCartDataService: ShoppingCartDataService,
         private modalService: NgbModal,
         private route: ActivatedRoute,
         private cookieService: CookieService,
@@ -147,15 +151,19 @@ export class ProductDetailsOverviewComponent implements OnInit{
         });
     }
 
-
-
-    getClassifications(): CommodityClassification[] {
-        if(!this.wrapper) {
-            return [];
+    onAddToCart(): void {
+        event.preventDefault();
+        // do not add item to the cart if a process is still being added
+        if (this.shoppingCartCallStatus.isLoading()) {
+            return;
         }
 
-        return this.wrapper.item.commodityClassification
-            .filter(c => c.itemClassificationCode.listID != 'Default');
+        this.shoppingCartCallStatus.submit();
+        this.shoppingCartDataService.addItemToCart(this.wrapper.line.hjid).then(() => {
+            this.shoppingCartCallStatus.callback(null, true);
+        }).catch(() => {
+            this.shoppingCartCallStatus.error(null);
+        });
     }
 
     onTogglePropertyValue(property: ItemProperty, selectedIndex: number): void {
@@ -229,6 +237,15 @@ export class ProductDetailsOverviewComponent implements OnInit{
         else if(index >= length) {
             return 0;
         }
+    }
+
+    getClassifications(): CommodityClassification[] {
+        if(!this.wrapper) {
+            return [];
+        }
+
+        return this.wrapper.item.commodityClassification
+            .filter(c => c.itemClassificationCode.listID != 'Default');
     }
 
     isPropertyValueSelected(property: ItemProperty, valueIndex: number): boolean {

@@ -1,56 +1,36 @@
+<!-- title -->
 <div class="row">
     <div class="col-12">
         <p class="nimble-title"><span [innerHTML]="'Shopping Cart' | translate"></span></p>
     </div>
 </div>
 
-<div *ngFor="let catLine of shoppingCart?.catalogueLine; let i = index" class="space-before">
-    <div class="card pointer">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-2">
-                    <div style="text-align:center">
-                        <img *ngIf="catLine.goodsItem.item.productImage.length == 0"
-                             style="max-height:150px; max-width:100%"
-                             src="../../../assets/images/empty_img.png">
-                        <img *ngIf="catLine.goodsItem.item.productImage.length > 0"
-                             style="max-height:150px; max-width:100%"
-                             src="data:{{catLine.goodsItem.item.productImage[0].mimeCode}};base64,{{catLine.goodsItem.item.productImage[0].value}}"/>
-                    </div>
-                </div>
-                <div class="col-10 d-flex justify-content-between">
-                    <div class="col-8">
-                        <p style="word-break: break-all;word-wrap: break-word;">
-                            <strong>{{selectName(catLine.goodsItem.item)}}
-                                <a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.goodsItem.item.catalogueDocumentReference.id, id: catLine.goodsItem.item.manufacturersItemIdentification.id}" (click)="onOpenCatalogueLine($event)" target="_blank">
-                                    <i class="fas fa-external-link-alt btn-light"></i>
-                                </a>
-                            </strong>
-                        </p>
-                        <p style="word-break: break-all;word-wrap: break-word;">{{selectDescription(catLine.goodsItem.item)}}</p>
-                        <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" style="word-break: break-all;word-wrap: break-word;">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p>
-                    </div>
-                    <div class="col-2">
-                        <button type="button" class="btn btn-primary space-after col"
-                                (click)="onRemoveFromCart(catLine.hjid); $event.stopPropagation();" style="display: block">
-                            <span [innerHTML]="'Remove from Cart' | translate"></span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--<catalogue-line-panel [catalogueLine]="catLine"-->
-                              <!--[settings]="settings"-->
-                              <!--[presentationMode]="'view'"-->
-                              <!--(catalogueLineDeleted)="deleteCatalogueLine(catLine,i)"-->
-                              <!--[(show)]="catalogueLineView[catLine.id]">-->
-        <!--</catalogue-line-panel>-->
+<ng-container *ngIf="initCallStatus.fb_callback">
+    <div *ngFor="let cartLine of shoppingCart?.catalogueLine; let i = index" class="space-before cart-item">
+        <!--<cart-item [cartLine]="cartLine"></cart-item>-->
+        <product-details-overview [wrapper]="productWrappers.get(cartLine.hjid)"
+                                  [itemWithSelectedProps]="itemsWithSelectedProperties.get(cartLine.hjid)"
+                                  [associatedProducts]="associatedProducts.get(cartLine.hjid)">
+        </product-details-overview>
+        <product-details-tabs [wrapper]="productWrappers.get(cartLine.hjid)"
+                              [settings]="companiesSettings.get(getPartyId(cartLine.goodsItem.item.manufacturerParty))">
+        </product-details-tabs>
     </div>
-</div>
-<div class="jumbotron" *ngIf="shoppingCart == null || shoppingCart.catalogueLine.length == 0">
-    <h3><span [innerHTML]="'No products in the shopping cart.' | translate"></span></h3>
-    <h5 class="mt-3">
-        <span (click)="onNavigateToTheSearchPage()" class="pointer"><span [innerHTML]="'Search for Products' | translate"></span></span>
-        <i class="fa fa-search pointer" (click)="onNavigateToTheSearchPage()"></i>
-    </h5>
-</div>
+
+    <!-- no item in the cart -->
+    <div class="jumbotron" *ngIf="shoppingCart == null || shoppingCart.catalogueLine.length == 0">
+        <h3><span [innerHTML]="'No products in the shopping cart.' | translate"></span></h3>
+        <h5 class="mt-3">
+            <span (click)="onNavigateToTheSearchPage()" class="pointer"><span [innerHTML]="'Search for Products' | translate"></span></span>
+            <i class="fa fa-search pointer" (click)="onNavigateToTheSearchPage()"></i>
+        </h5>
+    </div>
+</ng-container>
+
+<!-- error cases -->
+<ng-container *ngIf="associatedProductsCallStatus.isError()">
+    <call-status [callStatus]="associatedProductsCallStatus"></call-status>
+</ng-container>
+<ng-container *ngIf="companySettingsCallStatus.isError()">
+    <call-status [callStatus]="companySettingsCallStatus"></call-status>
+</ng-container>

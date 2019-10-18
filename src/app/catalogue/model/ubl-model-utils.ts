@@ -126,7 +126,7 @@ export class UBLModelUtils {
         const item = new Item([], [], [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, [], [], this.createDimensions(dimensionUnits), null);
 
         // create goods item
-        const goodsItem = new GoodsItem(uuid, item, this.createPackage(),
+        const goodsItem = new GoodsItem(uuid, null, item, this.createPackage(),
             this.createDeliveryTerms(null, settings.deliveryPeriodUnits[0]));
 
         // create required item location quantity
@@ -153,7 +153,7 @@ export class UBLModelUtils {
             null,
             dummyItemLocationQuantity,
             [],
-            new GoodsItem(null, copyItem)
+            new GoodsItem(null, null, copyItem)
         );
     }
 
