@@ -36,7 +36,8 @@ export class NegotiationModelWrapper {
                 public newQuotation: Quotation, // quotation object of the current negotiation step instantiated as a result of the rfq. It's supposed to be provided in the negotiation response phase
                 public frameContractQuotation: Quotation, // quotation object associated to a frame contract, if any
                 public lastOfferQuotation: Quotation, // in second or later steps of negotiation, this parameter keeps the quotation coming from the previous step
-                public settings: CompanyNegotiationSettings) {
+                public settings: CompanyNegotiationSettings,
+                public lineIndex: number = 0) {
 
         if(rfq) {
             this.initialImmutableRfq = copy(rfq);
@@ -54,55 +55,55 @@ export class NegotiationModelWrapper {
                 catalogueLine.requiredItemLocationQuantity.price,
                 copy(catalogueLine.requiredItemLocationQuantity.price), // we don't want the original catalogueLine.requiredItemLocationQuantity.price to be updated in price changes
                 catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
-                rfq.requestForQuotationLine[0].lineItem.quantity,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.quantity,
                 catalogueLine.priceOption,
-                rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty,
-                rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.item.additionalItemProperty,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.incoterms,
                 rfq.paymentMeans.paymentMeansCode.value,
-                rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
-                rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address,
                 //null,
                 //true // disable calculation of discounts
             );
             this.rfqDiscountPriceWrapper = new DiscountPriceWrapper(
                 catalogueLine.requiredItemLocationQuantity.price,
-                rfq.requestForQuotationLine[0].lineItem.price,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.price,
                 catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
-                rfq.requestForQuotationLine[0].lineItem.quantity,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.quantity,
                 catalogueLine.priceOption,
-                rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty,
-                rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.item.additionalItemProperty,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.incoterms,
                 rfq.paymentMeans.paymentMeansCode.value,
-                rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
-                rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address
             );
 
             if(newQuotation) {
                 this.quotationDiscountPriceWrapper = new DiscountPriceWrapper(
                     catalogueLine.requiredItemLocationQuantity.price,
-                    newQuotation.quotationLine[0].lineItem.price,
+                    newQuotation.quotationLine[this.lineIndex].lineItem.price,
                     catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
-                    newQuotation.quotationLine[0].lineItem.quantity,
+                    newQuotation.quotationLine[this.lineIndex].lineItem.quantity,
                     catalogueLine.priceOption,
-                    rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty,
-                    rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms,
+                    rfq.requestForQuotationLine[this.lineIndex].lineItem.item.additionalItemProperty,
+                    rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.incoterms,
                     rfq.paymentMeans.paymentMeansCode.value,
-                    rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
-                    rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address
+                    rfq.requestForQuotationLine[this.lineIndex].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
+                    rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address
                 );
             }
         }
 
         if(newQuotation) {
-            this.newQuotationWrapper = new QuotationWrapper(newQuotation, catalogueLine);
+            this.newQuotationWrapper = new QuotationWrapper(newQuotation, catalogueLine,lineIndex);
         }
 
         if(frameContractQuotation) {
-            this.frameContractQuotationWrapper = new QuotationWrapper(frameContractQuotation, catalogueLine);
+            this.frameContractQuotationWrapper = new QuotationWrapper(frameContractQuotation, catalogueLine,lineIndex);
         }
 
         if(lastOfferQuotation) {
-            this.lastOfferQuotationWrapper = new QuotationWrapper(lastOfferQuotation, catalogueLine);
+            this.lastOfferQuotationWrapper = new QuotationWrapper(lastOfferQuotation, catalogueLine,lineIndex);
         }
     }
 
@@ -182,16 +183,24 @@ export class NegotiationModelWrapper {
         return this.rfqDiscountPriceWrapper.totalPrice + this.rfqVatTotal;
     }
 
+    public get rfqTotal(): number {
+        return this.rfqDiscountPriceWrapper.totalPrice;
+    }
+
+    public get currency(): string {
+        return this.rfqDiscountPriceWrapper.itemPrice.currency;
+    }
+
     public get rfqGrossTotalString(): string {
         return `${roundToTwoDecimals(this.rfqGrossTotal)} ${this.rfqDiscountPriceWrapper.itemPrice.currency}`
     }
 
     public get rfqDeliveryPeriod(): Quantity {
-        return this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
     }
 
     public set rfqDeliveryPeriod(quantity: Quantity) {
-        this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = quantity;
+        this.rfq.requestForQuotationLine[this.lineIndex].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = quantity;
     }
 
     public get rfqDeliveryPeriodString(): string {
@@ -199,11 +208,11 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqWarranty(): Quantity {
-        return this.rfq.requestForQuotationLine[0].lineItem.warrantyValidityPeriod.durationMeasure;
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.warrantyValidityPeriod.durationMeasure;
     }
 
     public set rfqWarranty(quantity: Quantity) {
-        this.rfq.requestForQuotationLine[0].lineItem.warrantyValidityPeriod.durationMeasure = quantity;
+        this.rfq.requestForQuotationLine[this.lineIndex].lineItem.warrantyValidityPeriod.durationMeasure = quantity;
     }
 
     public get rfqWarrantyString(): string {
@@ -211,15 +220,15 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqIncoterms(): string {
-        return this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms;
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.incoterms;
     }
 
     public set rfqIncoterms(incoterms: string) {
-        this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms = incoterms;
+        this.rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.incoterms = incoterms;
     }
 
     public get rfqIncotermsString(): string {
-        return this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms || 'None';
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.incoterms || 'None';
     }
 
     public get rfqPaymentTermsToString(): string {
@@ -293,7 +302,7 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqDeliveryAddress(): Address {
-        return this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address;
     }
 
     public checkEqual(termsSource: 'product_defaults' | 'frame_contract' | 'last_offer', part): boolean {
@@ -342,9 +351,9 @@ export class NegotiationModelWrapper {
                 if (termsSource == "product_defaults")
                     return true;
                 else if (termsSource == "frame_contract")
-                    return (this.rfq.requestForQuotationLine[0].lineItem.quantity.value == this.frameContractQuotationWrapper.orderedQuantity.value);
+                    return (this.rfq.requestForQuotationLine[this.lineIndex].lineItem.quantity.value == this.frameContractQuotationWrapper.orderedQuantity.value);
                 else if (termsSource == "last_offer")
-                    return (this.rfq.requestForQuotationLine[0].lineItem.quantity.value == this.lastOfferQuotationWrapper.orderedQuantity.value);
+                    return (this.rfq.requestForQuotationLine[this.lineIndex].lineItem.quantity.value == this.lastOfferQuotationWrapper.orderedQuantity.value);
                 break;
             case "price":
                 if (termsSource == "product_defaults")

@@ -65,7 +65,7 @@
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div *ngIf="!isReadOnly()" class="col-2">
-            <button class="btn btn-primary action" [disabled]="isLoading() || isReadOnly() || processMetadata.isProductDeleted" (click)="onSendReceiptAdvice()">
+            <button class="btn btn-primary action" [disabled]="isLoading() || isReadOnly() || isThereADeletedProduct()" (click)="onSendReceiptAdvice()">
                 <span [innerHTML]="'Send Advice' | translate"></span>
             </button>
         </div>

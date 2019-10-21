@@ -1,4 +1,4 @@
-<ng-container *ngIf="!isLoading() && bpDataService.getCatalogueLine()">
+<ng-container *ngIf="!isLoading() && bpDataService.getCatalogueLines()">
     <ng-container *ngIf="negotiationProcessList.length > 1 && negotiationDocumentsCallStatus.fb_callback">
         <!-- slider -->
         <input #processHistorySlider
@@ -36,7 +36,8 @@
                                       [defaultTermsAndConditions]="defaultTermsAndConditions"
                                       [primaryTermsSource]="getPrimaryTermsSource(negotiationDocuments[i-1]?.response)"
                                       [readonly]="true"
-                                      [isCatalogueLineDeleted]="isCatalogueLineDeleted">
+                                      [areCatalogueLinesDeleted]="areCatalogueLinesDeleted"
+                                      [selectedLine]="selectedLine">
                 </negotiation-response>
             </div>
         </ng-container>
@@ -53,7 +54,8 @@
                                      [frameContractNegotiation]="isFrameContractBeingNegotiatedInThisNegotiation"
                                      [lastOfferQuotation]="lastOfferQuotation"
                                      [defaultTermsAndConditions]="defaultTermsAndConditions"
-                                     [manufacturersTermsSource]="getPrimaryTermsSource(lastOfferQuotation)">
+                                     [manufacturersTermsSource]="getPrimaryTermsSource(lastOfferQuotation)"
+                                     [selectedLine]="selectedLine">
                 </negotiation-request>
                 <negotiation-response *ngIf="bpDataService.quotation"
                                       [lastOfferQuotation]="lastOfferQuotation"
@@ -62,7 +64,8 @@
                                       [frameContractNegotiation]="isFrameContractBeingNegotiatedInThisNegotiation"
                                       [defaultTermsAndConditions]="defaultTermsAndConditions"
                                       [primaryTermsSource]="getPrimaryTermsSource(lastOfferQuotation)"
-                                      [isCatalogueLineDeleted]="isCatalogueLineDeleted">
+                                      [areCatalogueLinesDeleted]="areCatalogueLinesDeleted"
+                                      [selectedLine]="selectedLine">
                 </negotiation-response>
             </div>
         </ng-container>

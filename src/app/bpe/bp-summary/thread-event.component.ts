@@ -35,6 +35,15 @@ export class ThreadEventComponent implements OnInit {
         // whether we are updating the process instance or not
         this.event.isBeingUpdated = updateProcess;
         let userRole:BpUserRole = this.event.buyer ? "buyer": "seller";
+
+        let catalogueIds = [];
+        let catalogueLineIds = [];
+
+        for(let product of this.event.products){
+            catalogueIds.push(product.catalogueDocumentReference.id);
+            catalogueLineIds.push(product.manufacturersItemIdentification.id);
+        }
+
         this.bpDataService.startBp(
             new BpActivityEvent(
                 userRole,
@@ -42,11 +51,11 @@ export class ThreadEventComponent implements OnInit {
                 this.processInstanceGroup.id,
                 this.event,
                 this.history,
-                this.event.product,
+                this.event.products,
                 null,
                 false,
-                this.event.product.catalogueDocumentReference.id,
-                this.event.product.manufacturersItemIdentification.id,
+                catalogueIds,
+                catalogueLineIds,
                 this.event.processInstanceId,
                 ActivityVariableParser.getPrecedingDocumentId(this.event.activityVariables)),
             true);
@@ -62,5 +71,15 @@ export class ThreadEventComponent implements OnInit {
                     console.error(error);
                 });
         }
+    }
+
+    // do not allow the user to update the request document if the event has some deleted products
+    doesEventHaveDeletedProduct(){
+        for(let isProductDeleted of this.event.areProductsDeleted){
+            if(isProductDeleted){
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -48,6 +48,9 @@ import {ThreadSummaryComponent} from "./bp-summary/thread-summary.component";
 import {ThreadEventComponent} from "./bp-summary/thread-event.component";
 import {CustomTermModalComponent} from "./bp-view/negotiation/custom-term-modal.component";
 import {ShoppingCartComponent} from './shopping-cart/shopping-cart.component';
+import {NegotiationRequestItemComponent} from './bp-view/negotiation/negotiation-request-item.component';
+import {NegotiationResponseItemComponent} from './bp-view/negotiation/negotiation-response-item.component';
+import {OrderItemComponent} from './bp-view/order/order-item.component';
 
 @NgModule({
     imports: [
@@ -68,6 +71,7 @@ import {ShoppingCartComponent} from './shopping-cart/shopping-cart.component';
         ProductBpOptionsComponent,
         ProductBpStepsComponent,
         OrderComponent,
+        OrderItemComponent,
         TermsAndConditionsComponent,
         FrameContractDetailsComponent,
         FulfilmentComponent,
@@ -79,7 +83,9 @@ import {ShoppingCartComponent} from './shopping-cart/shopping-cart.component';
         NegotiationComponent,
         NegotiationRequestComponent,
         NegotiationRequestInputComponent,
+        NegotiationRequestItemComponent,
         NegotiationResponseComponent,
+        NegotiationResponseItemComponent,
         TransportExecutionPlanComponent,
         TransportNegotiationRequestComponent,
         TransportNegotiationResponseComponent,

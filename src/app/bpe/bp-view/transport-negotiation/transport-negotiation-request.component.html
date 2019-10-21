@@ -21,10 +21,10 @@
 
 
 <!-- Transport Service Details Tab -->
-<ng-container *ngIf="selectedTab === 'OVERVIEW'">
+<div [hidden]="selectedTab != 'OVERVIEW'">
     <transport-service-details [rfq]="rfq" [disabled]="isDisabled()">
     </transport-service-details>
-</ng-container>
+</div>
 
 
 <!-- Address Tab -->
@@ -110,12 +110,12 @@
         <button class="btn btn-secondary action" [disabled]="isDisabled()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div class="col-3" *ngIf="!updatingProcess">
-        <button class="btn btn-primary action" [disabled]="isDisabled()" (click)="onSendRequest()">
+        <button class="btn btn-primary action" [disabled]="isDisabled() || rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem.length == 0" (click)="onSendRequest()">
             <span [innerHTML]="'Send Request' | translate"></span>
         </button>
     </div>
     <div class="col-3" *ngIf="updatingProcess">
-        <button class="btn btn-primary action"  (click)="onUpdateRequest()">
+        <button class="btn btn-primary action" [disabled]="rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem.length == 0" (click)="onUpdateRequest()">
             <span [innerHTML]="'Update Request' | translate"></span>
         </button>
     </div>

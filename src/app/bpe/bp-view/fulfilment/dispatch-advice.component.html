@@ -1,9 +1,31 @@
 <ng-container *ngIf="dispatchAdvice">
     <!-- Dispatched Quantity -->
-    <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
+    <quantity-input *ngIf="dispatchAdvice.despatchLine.length == 1" [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
         label="Dispatched Quantity" [quantity]="dispatchAdvice.despatchLine[0].deliveredQuantity"
         rowClass="space-before" labelClass="col-2" valueClass="col-10">
     </quantity-input>
+
+    <div *ngIf="dispatchAdvice.despatchLine.length > 1" class="row space-before">
+        <div [class]="'col-2'">
+            <input-label [label]="'Dispatched Quantities'">
+            </input-label>
+        </div>
+        <div [class]="'col-10'">
+            <div class="row space-after" *ngFor="let dispatchLine of dispatchAdvice.despatchLine;let i=index">
+                <div class="col-1" style="text-align: center">
+                    <input type="checkbox" [(ngModel)]="selectedProducts[i]" [disabled]="isLoading()  || isReadOnly()">
+                </div>
+                <div class="col-2">
+                    {{dispatchLine.item.name[0].value}}
+                </div>
+                <div class="col-9">
+                    <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
+                                    [quantity]="dispatchLine.deliveredQuantity" labelClass="col-2" valueClass="col-10">
+                    </quantity-input>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <hr>
 
@@ -31,10 +53,10 @@
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
         </div>
         <div *ngIf="!isReadOnly()" class="col-2">
-            <button *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading() || isReadOnly()" (click)="onSendDispatchAdvice()">
+            <button *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading() || isReadOnly() || (dispatchAdvice.despatchLine.length > 1 && !isAtLeastOneProductSelected())" (click)="onSendDispatchAdvice()">
                 <span [innerHTML]="'Send Advice' | translate"></span>
             </button>
-            <button *ngIf="processMetadata && processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading() || isReadOnly()" (click)="onUpdateDispatchAdvice()">
+            <button *ngIf="processMetadata && processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading() || isReadOnly() || (dispatchAdvice.despatchLine.length > 1 && !isAtLeastOneProductSelected())" (click)="onUpdateDispatchAdvice()">
                 <span [innerHTML]="'Update Advice' | translate"></span>
 
             </button>

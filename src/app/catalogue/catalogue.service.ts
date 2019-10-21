@@ -144,6 +144,34 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
+    getLinesForDifferentCatalogues(catalogueIds:string[], lineIds:string[]):Promise<CatalogueLine[]> {
+        let url = this.baseUrl + `/catalogue/cataloguelines`;
+        // append catalogue line ids to the url
+        let catalogueUuidsParam = "?catalogueUuids=";
+        let lineIdsParam = "&lineIds=";
+        let size = lineIds.length;
+        for(let i = 0; i < size ;i++){
+
+            lineIdsParam += lineIds[i];
+            catalogueUuidsParam += catalogueIds[i];
+
+            if(i != size-1){
+                lineIdsParam += ",";
+                catalogueUuidsParam += ",";
+            }
+        }
+        url += catalogueUuidsParam + lineIdsParam;
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => {
+                let sorted = this.sortImages(res,null,true);
+                return sorted as CatalogueLine[];
+                //return res.json() as CatalogueLine[];
+            })
+            .catch(this.handleError);
+    }
+
     getCatalogueLines(catalogueId:string, lineIds:string[]):Promise<CatalogueLine[]> {
         let url = this.baseUrl + `/catalogue/${catalogueId}/cataloguelines`;
         // append catalogue line ids to the url

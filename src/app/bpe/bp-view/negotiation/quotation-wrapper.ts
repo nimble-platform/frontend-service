@@ -1,18 +1,12 @@
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
-import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
 import { Quotation } from "../../../catalogue/model/publish/quotation";
 import { Amount } from "../../../catalogue/model/publish/amount";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { PaymentTermsWrapper } from "../payment-terms-wrapper";
-import {copy, durationToString} from "../../../common/utils";
+import { durationToString} from "../../../common/utils";
 import { PriceWrapper } from "../../../common/price-wrapper";
-import { Address } from "../../../catalogue/model/publish/address";
-import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
 import {TradingTerm} from "../../../catalogue/model/publish/trading-term";
 import {MultiTypeValue} from "../../../catalogue/model/publish/multi-type-value";
-import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
-import {Clause} from "../../../catalogue/model/publish/clause";
-import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 
 const FRAME_CONTRACT_TERM_ID = "FRAME_CONTRACT_DURATION";
 
@@ -22,28 +16,29 @@ export class QuotationWrapper {
     priceWrapper: PriceWrapper;
 
     constructor(public quotation: Quotation,
-                private catalogueLine: CatalogueLine) {
+                private catalogueLine: CatalogueLine,
+                private quotationLineIndex:number=0) {
         this.paymentTermsWrapper = new PaymentTermsWrapper(quotation.paymentTerms);
         this.priceWrapper = new PriceWrapper(
-            quotation.quotationLine[0].lineItem.price,
+            quotation.quotationLine[this.quotationLineIndex].lineItem.price,
             catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
-            quotation.quotationLine[0].lineItem.quantity);
+            quotation.quotationLine[this.quotationLineIndex].lineItem.quantity);
     }
 
     public get priceAmount(): Amount {
-        return this.quotation.quotationLine[0].lineItem.price.priceAmount;
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.price.priceAmount;
     }
 
     public get orderedQuantity(): Quantity {
-        return this.quotation.quotationLine[0].lineItem.quantity;
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.quantity;
     }
 
     public set orderedQuantity(quantity: Quantity) {
-        this.quotation.quotationLine[0].lineItem.quantity = quantity;
+        this.quotation.quotationLine[this.quotationLineIndex].lineItem.quantity = quantity;
     }
 
     public get deliveryPeriod(): Quantity {
-        return this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
     }
 
     public get deliveryPeriodString(): string {
@@ -51,7 +46,7 @@ export class QuotationWrapper {
     }
 
     public get warranty(): Quantity {
-        return this.quotation.quotationLine[0].lineItem.warrantyValidityPeriod.durationMeasure;
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.warrantyValidityPeriod.durationMeasure;
     }
 
     public get warrantyString(): string {
@@ -59,15 +54,15 @@ export class QuotationWrapper {
     }
 
     public get incoterms(): string {
-        return this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms;
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.deliveryTerms.incoterms;
     }
 
     public get incotermsString(): string {
-        return this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms || "None";
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.deliveryTerms.incoterms || "None";
     }
 
     public set incoterms(incoterms: string) {
-        this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms = incoterms;
+        this.quotation.quotationLine[this.quotationLineIndex].lineItem.deliveryTerms.incoterms = incoterms;
     }
 
     public get paymentMeans(): string {

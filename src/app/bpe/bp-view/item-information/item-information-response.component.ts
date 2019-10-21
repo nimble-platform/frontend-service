@@ -167,6 +167,6 @@ export class ItemInformationResponseComponent implements OnInit {
     }
 
     isRepeatRequestDisabled(): boolean {
-        return this.isLoading() || this.readonly || this.processMetadata.isProductDeleted || this.processMetadata.isCollaborationFinished;
+        return this.isLoading() || this.readonly || this.processMetadata.areProductsDeleted[0] || this.processMetadata.isCollaborationFinished;
     }
 }

@@ -606,6 +606,17 @@ export function getPropertyValuesAsStrings(property: ItemProperty): string[] {
     }
 }
 
+export function areTransportServices(products: CatalogueLine[]): boolean {
+    if(products){
+        for(let product of products){
+            if(!isTransportService(product)){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 export function isTransportService(product: CatalogueLine): boolean {
     if(product){
         for(let commodityClassification of product.goodsItem.item.commodityClassification){
@@ -615,6 +626,17 @@ export function isTransportService(product: CatalogueLine): boolean {
         }
     }
     return false;
+}
+
+export function areLogisticsService(products: CatalogueLine[]): boolean {
+    if(products){
+        for(let product of products){
+            if(!isLogisticsService(product)){
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 export function isLogisticsService(product: CatalogueLine): boolean {

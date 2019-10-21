@@ -15,6 +15,7 @@ import {Clause} from "../../../catalogue/model/publish/clause";
 import {frameContractDurationUnitListId} from "../../../common/constants";
 import {RequestForQuotation} from "../../../catalogue/model/publish/request-for-quotation";
 import {Quantity} from "../../../catalogue/model/publish/quantity";
+import {CatalogueLine} from '../../../catalogue/model/publish/catalogue-line';
 
 @Component({
     selector: 'negotiation',
@@ -43,7 +44,9 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     sliderIndex: number = -1;
 
     // whether the item is deleted or not
-    @Input() isCatalogueLineDeleted:boolean = false ;
+    @Input() areCatalogueLinesDeleted:boolean[];
+    // the product for which the users negotiate
+    @Input() selectedLine:CatalogueLine;
 
     constructor(public bpDataService: BPDataService,
                 private bpeService: BPEService,
@@ -122,15 +125,15 @@ export class NegotiationComponent implements OnInit, OnDestroy {
                 : this.bpeService.getTermsAndConditions( // otherwise, use the default T&Cs
                     null,
                     buyerPartyId,
-                    UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty),
+                    UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLines()[0].goodsItem.item.manufacturerParty),
                     null,
-                    this.bpDataService.getCatalogueLine().goodsItem.deliveryTerms.incoterms,
+                    this.bpDataService.getCatalogueLines()[0].goodsItem.deliveryTerms.incoterms,
                     this.bpDataService.getCompanySettings().negotiationSettings.paymentTerms[0]
                 ),
 
             // retrieve frame contract
             this.bpeService.getFrameContract(
-                UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty),
+                UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLines()[0].goodsItem.item.manufacturerParty),
                 buyerPartyId,
                 this.bpDataService.requestForQuotation.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id)
         ]);

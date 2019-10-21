@@ -43,6 +43,10 @@ import {Text} from '../../catalogue/model/publish/text';
 import {Contract} from '../../catalogue/model/publish/contract';
 import {Clause} from '../../catalogue/model/publish/clause';
 import {Observable} from "rxjs/Rx";
+import {OrderLine} from '../../catalogue/model/publish/order-line';
+import {LineItem} from '../../catalogue/model/publish/line-item';
+import {RequestForQuotationLine} from '../../catalogue/model/publish/request-for-quotation-line';
+import {Price} from '../../catalogue/model/publish/price';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -125,7 +129,11 @@ export class BPDataService{
 
         // select the first values from the product properties
         this.modifiedCatalogueLines = copy(this.catalogueLines);
-        this.modifiedCatalogueLines[0].goodsItem.item = copy(this.bpActivityEvent.itemWithSelectedProperties);
+        this.modifiedCatalogueLines[0].goodsItem.item = copy(this.bpActivityEvent.itemsWithSelectedProperties[0]);
+    }
+
+    getCatalogueLines(): CatalogueLine[] {
+        return this.catalogueLines;
     }
 
     getCatalogueLine(): CatalogueLine {
@@ -277,13 +285,13 @@ export class BPDataService{
             this.bpActivityEvent.containerGroupId,
             null,
             this.bpActivityEvent.processHistory,
-            this.bpActivityEvent.itemWithSelectedProperties, // continue with the item having the same configurations
+            this.bpActivityEvent.itemsWithSelectedProperties, // continue with the item having the same configurations
             this.bpActivityEvent.itemQuantity,
             true, // new process is true
             // we get the following values from the previous bp activity event
             // as they are the same for the BpActivityEvent generated for the request document
-            this.bpActivityEvent.catalogueId,
-            this.bpActivityEvent.catalogueLineId,
+            this.bpActivityEvent.catalogueIds,
+            this.bpActivityEvent.catalogueLineIds,
             this.bpActivityEvent.previousProcessInstanceId,
             this.bpActivityEvent.previousDocumentId,
             null);
@@ -388,9 +396,15 @@ export class BPDataService{
         let copyQuotation: Quotation = copy(this.copyQuotation);
         let copyRfq = copy(this.copyRequestForQuotation);
         this.order = UBLModelUtils.createOrder();
-        this.order.orderLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
-        const copyLineItem = copyRfq.requestForQuotationLine[0].lineItem;
-        this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address = copyLineItem.deliveryTerms.deliveryLocation.address;
+        this.order.orderLine = [];
+        for(let quotationLine of copyQuotation.quotationLine){
+            this.order.orderLine.push(new OrderLine(quotationLine.lineItem));
+        }
+        let size = copyRfq.requestForQuotationLine.length;
+        for(let i = 0; i < size; i++){
+            this.order.orderLine[i].lineItem.deliveryTerms.deliveryLocation.address = copyRfq.requestForQuotationLine[i].lineItem.deliveryTerms.deliveryLocation.address;
+        }
+
         this.order.paymentMeans = copyQuotation.paymentMeans;
         this.order.paymentTerms = copyQuotation.paymentTerms;
 
@@ -413,9 +427,12 @@ export class BPDataService{
     initOrderWithRfq() {
         let copyRfq = copy(this.copyRequestForQuotation);
         this.order = UBLModelUtils.createOrder();
-        this.order.orderLine[0].lineItem = copyRfq.requestForQuotationLine[0].lineItem;
-        const copyLineItem = copyRfq.requestForQuotationLine[0].lineItem;
-        this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address = copyLineItem.deliveryTerms.deliveryLocation.address;
+        let size = copyRfq.requestForQuotationLine.length;
+        for(let i = 0; i < size; i++){
+            this.order.orderLine[i].lineItem = copyRfq.requestForQuotationLine[i].lineItem;
+            this.order.orderLine[i].lineItem.deliveryTerms.deliveryLocation.address = copyRfq.requestForQuotationLine[i].lineItem.deliveryTerms.deliveryLocation.address;
+        }
+
         this.order.paymentMeans = copyRfq.paymentMeans;
         this.order.paymentTerms = copyRfq.paymentTerms;
 
@@ -436,7 +453,18 @@ export class BPDataService{
         const copyQuotation = copy(this.copyQuotation);
         const copyRfq = copy(this.copyRequestForQuotation);
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation(null);
-        this.requestForQuotation.requestForQuotationLine[0].lineItem = copyQuotation.quotationLine[0].lineItem;
+
+        let size = copyQuotation.quotationLine.length;
+        for(let i = 0 ; i < size; i++){
+            if(i != 0){
+                const quantity: Quantity = new Quantity(null, "", null);
+                const item: Item = UBLModelUtils.createItem();
+                const price: Price = UBLModelUtils.createPrice();
+                const lineItem: LineItem = UBLModelUtils.createLineItem(quantity, price, item);
+                this.requestForQuotation.requestForQuotationLine[i] = new RequestForQuotationLine(lineItem);
+            }
+            this.requestForQuotation.requestForQuotationLine[i].lineItem = copyQuotation.quotationLine[i].lineItem;
+        }
         this.requestForQuotation.paymentMeans = copyQuotation.paymentMeans;
         this.requestForQuotation.paymentTerms = copyQuotation.paymentTerms;
         this.requestForQuotation.tradingTerms = copyQuotation.tradingTerms;
@@ -456,29 +484,32 @@ export class BPDataService{
         }
 
         this.despatchAdvice = UBLModelUtils.createDespatchAdviceWithOrderCopy(copyOrder);
-        if(deliveredQuantity.unitCode == null){
-            this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = copyOrder.orderLine[0].lineItem.quantity.unitCode;
+        let size = this.despatchAdvice.despatchLine.length;
+        for(let i = 0; i < size; i++){
+            if(deliveredQuantity.unitCode == null){
+                this.despatchAdvice.despatchLine[i].deliveredQuantity.unitCode = copyOrder.orderLine[i].lineItem.quantity.unitCode;
+            }
+            else {
+                this.despatchAdvice.despatchLine[i].deliveredQuantity.unitCode = deliveredQuantity.unitCode;
+            }
+
+            this.despatchAdvice.despatchLine[i].deliveredQuantity.value = deliveredQuantity.value;
+            if(handlingInst){
+                this.despatchAdvice.despatchLine[i].shipment[0].handlingInstructions = [handlingInst];
+            }else{
+                this.despatchAdvice.despatchLine[i].shipment[0].handlingInstructions = [new Text("",DEFAULT_LANGUAGE())];
+            }
+
+            this.despatchAdvice.despatchLine[i].shipment[0].shipmentStage.push(new ShipmentStage());
+
+            let partyName: PartyName = new PartyName();
+            partyName.name.value = carrierName;
+            partyName.name.languageID = DEFAULT_LANGUAGE();
+
+            this.despatchAdvice.despatchLine[i].shipment[0].shipmentStage[0].carrierParty.partyName= [partyName];
+            this.despatchAdvice.despatchLine[i].shipment[0].shipmentStage[0].carrierParty.contact.telephone = carrierContact;
+            this.despatchAdvice.despatchLine[i].shipment[0].shipmentStage[0].estimatedDeliveryDate = endDate;
         }
-        else {
-            this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = deliveredQuantity.unitCode;
-        }
-
-        this.despatchAdvice.despatchLine[0].deliveredQuantity.value = deliveredQuantity.value;
-        if(handlingInst){
-            this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = [handlingInst];
-        }else{
-            this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = [new Text("",DEFAULT_LANGUAGE())];
-        }
-
-        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());
-
-        let partyName: PartyName = new PartyName();
-        partyName.name.value = carrierName;
-        partyName.name.languageID = DEFAULT_LANGUAGE();
-
-        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.partyName= [partyName];
-        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.contact.telephone = carrierContact;
-        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].estimatedDeliveryDate = endDate;
 
         UBLModelUtils.removeHjidFieldsFromObject(this.despatchAdvice);
     }

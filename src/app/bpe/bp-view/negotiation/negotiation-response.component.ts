@@ -9,19 +9,17 @@ import { Quotation } from "../../../catalogue/model/publish/quotation";
 import { NegotiationModelWrapper } from "./negotiation-model-wrapper";
 import { NEGOTIATION_RESPONSES, CURRENCIES } from "../../../catalogue/model/constants";
 import { CallStatus } from "../../../common/call-status";
-import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { BpUserRole } from "../../model/bp-user-role";
 import {CookieService} from 'ng2-cookies';
 import {DiscountModalComponent} from '../../../product-details/discount-modal.component';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
 import * as myGlobals from '../../../globals';
-import {isValidPrice} from "../../../common/utils";
+import {isValidPrice, roundToTwoDecimals} from '../../../common/utils';
 import {DigitalAgreement} from "../../../catalogue/model/publish/digital-agreement";
-import * as moment from "moment";
-import {Moment, unitOfTime} from "moment";
 import {Clause} from '../../../catalogue/model/publish/clause';
 import {TranslateService} from '@ngx-translate/core';
+import {Item} from '../../../catalogue/model/publish/item';
 
 @Component({
     selector: "negotiation-response",
@@ -30,9 +28,8 @@ import {TranslateService} from '@ngx-translate/core';
 })
 export class NegotiationResponseComponent implements OnInit {
 
-    dateFormat = "YYYY-MM-DD";
-
-    line: CatalogueLine;
+    lines: CatalogueLine[];
+    @Input() selectedLine: CatalogueLine;
     @Input() rfq: RequestForQuotation;
     @Input() quotation: Quotation;
     @Input() lastOfferQuotation: Quotation;
@@ -44,11 +41,12 @@ export class NegotiationResponseComponent implements OnInit {
     @Input() readonly: boolean = false;
     // whether the item is deleted or not
     // if the item is deleted, then we will not show Product Defaults section since we do not have those information
-    @Input() isCatalogueLineDeleted:boolean = false ;
-    wrapper: NegotiationModelWrapper;
+    @Input() areCatalogueLinesDeleted:boolean[] ;
+    wrappers: NegotiationModelWrapper[];
     userRole: BpUserRole;
-    quotationTotalPrice: Quantity;
     config = myGlobals.config;
+
+    showPurchaseOrder:boolean = false;
 
     CURRENCIES: string[] = CURRENCIES;
 
@@ -61,17 +59,6 @@ export class NegotiationResponseComponent implements OnInit {
     private discountModal: DiscountModalComponent;
 
     getPartyId = UBLModelUtils.getPartyId;
-    showFrameContractDetails: boolean = false;
-    showNotesAndAdditionalFiles: boolean = false;
-    showDeliveryAddress: boolean = false;
-    showTermsAndConditions:boolean = false;
-    showPurchaseOrder:boolean = false;
-    selectedTCTab: 'CUSTOM_TERMS' | 'CLAUSES' = 'CUSTOM_TERMS';
-    tcChanged:boolean = false;
-
-    onClauseUpdate(event): void {
-        this.tcChanged = UBLModelUtils.areTermsAndConditionListsDifferent(this.wrapper.rfq.termOrCondition, this.wrapper.newQuotation.termOrCondition);
-    }
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
@@ -84,50 +71,62 @@ export class NegotiationResponseComponent implements OnInit {
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
-        this.line = this.bpDataService.getCatalogueLine();
+        this.lines = this.bpDataService.getCatalogueLines();
         if(this.rfq == null) {
             this.rfq = this.bpDataService.requestForQuotation;
         }
         if(this.quotation == null) {
             this.quotation = this.bpDataService.quotation;
         }
-        this.wrapper = new NegotiationModelWrapper(
-            this.line,
-            this.rfq,
-            this.quotation,
-            this.frameContractQuotation,
-            this.lastOfferQuotation,
-            this.bpDataService.getCompanySettings().negotiationSettings);
 
-        this.wrapper.lineDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.discountedPricePerItem;
-        this.quotationTotalPrice = new Quantity(this.wrapper.quotationDiscountPriceWrapper.totalPrice, this.wrapper.quotationDiscountPriceWrapper.currency);
+        this.wrappers = [];
+        let size = this.rfq.requestForQuotationLine.length;
+        for(let i = 0 ; i < size; i++){
+            this.wrappers.push(new NegotiationModelWrapper(
+                this.getCatalogueLine(this.rfq.requestForQuotationLine[i].lineItem.item),
+                this.rfq,
+                this.quotation,
+                this.frameContractQuotation,
+                this.lastOfferQuotation,
+                this.bpDataService.getCompanySettings().negotiationSettings,
+                i));
+        }
+
+        for(let wrapper of this.wrappers){
+            wrapper.lineDiscountPriceWrapper.itemPrice.value = wrapper.lineDiscountPriceWrapper.discountedPricePerItem;
+        }
 
         this.userRole = this.bpDataService.bpActivityEvent.userRole;
-
-        // change the selected TC tab if there is no custom trading term
-        if(this.getNonFrameContractTermNumber() == 0) {
-            this.selectedTCTab = 'CLAUSES';
-        }
-
-        // initialize data monitoring request based on the frame contract and last offer
-        if (this.lastOfferQuotation) {
-            this.quotation.dataMonitoringPromised = this.lastOfferQuotation.dataMonitoringPromised;
-        } else if (this.frameContractQuotation) {
-           this.quotation.dataMonitoringPromised = this.frameContractQuotation.dataMonitoringPromised;
-        }
     }
 
     onBack(): void {
         this.location.back();
     }
 
+    private getCatalogueLine(item:Item):CatalogueLine{
+        for(let catalogueLine of this.lines){
+            if(item.catalogueDocumentReference.id == catalogueLine.goodsItem.item.catalogueDocumentReference.id &&
+                item.manufacturersItemIdentification.id == catalogueLine.goodsItem.item.manufacturersItemIdentification.id){
+                return catalogueLine;
+            }
+        }
+        return null;
+    }
+
+    isCatalogueLineDeleted(catalogueLine:CatalogueLine){
+        return this.areCatalogueLinesDeleted[this.lines.indexOf(catalogueLine)];
+    }
     onRespondToQuotation(accepted: boolean) {
         this.callStatus.submit();
-        if (!isValidPrice(this.wrapper.quotationDiscountPriceWrapper.totalPrice)) {
-            this.callStatus.callback("Quotation aborted", true);
-            alert("Price cannot have more than 2 decimal places");
-            return false;
+
+        for(let wrapper of this.wrappers){
+            if (!isValidPrice(wrapper.quotationDiscountPriceWrapper.totalPrice)) {
+                this.callStatus.callback("Quotation aborted", true);
+                alert("Price cannot have more than 2 decimal places");
+                return false;
+            }
         }
+
         if(accepted) {
             if(this.hasUpdatedTerms()) {
                 this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.TERMS_UPDATED;
@@ -162,15 +161,6 @@ export class NegotiationResponseComponent implements OnInit {
         this.bpDataService.proceedNextBpStep("buyer", "Order");
     }
 
-    onTotalPriceChanged(totalPrice: number): void {
-        this.wrapper.quotationDiscountPriceWrapper.totalPrice = totalPrice;
-    }
-
-    onTCTabSelect(event:any,id:any): void {
-        event.preventDefault();
-        this.selectedTCTab = id;
-    }
-
     /*
      * Getters and Setters
      */
@@ -191,61 +181,40 @@ export class NegotiationResponseComponent implements OnInit {
         return this.processMetadata == null || this.processMetadata.processStatus !== 'Started' || this.readonly;
     }
 
-    isFrameContractPanelVisible(): boolean {
-        return !UBLModelUtils.isEmptyQuantity(this.wrapper.rfqFrameContractDuration);
-    }
-
-    isDiscountIconVisibleInCustomerRequestColumn(): boolean {
-        return this.wrapper.quotationDiscountPriceWrapper.appliedDiscounts.length > 0 &&
-            this.wrapper.rfqTotalPriceString == this.wrapper.lineDiscountPriceWrapper.totalPriceString;
-    }
-
     isFormValid(): boolean {
         // TODO check other elements
         return this.isFrameContractDurationValid();
     }
 
     isPriceValid(): boolean {
-        return this.wrapper.quotationDiscountPriceWrapper.totalPrice > 0;
-    }
-
-    isSellerTermsVisible(): boolean {
-        return !(this.quotation.documentStatusCode.name == 'Rejected' && this.isReadOnly());
-    }
-
-    isTermDropDownVisible(): boolean {
-        return this.lastOfferQuotation != null || (this.frameContractQuotation != null && !this.frameContractNegotiation);
+        for(let wrapper of this.wrappers){
+            if(wrapper.quotationDiscountPriceWrapper.totalPrice <= 0){
+                return false;
+            }
+        }
+        return true;
     }
 
     isRequestNewQuotationDisabled(): boolean {
-        return this.isLoading() || this.isCatalogueLineDeleted || this.processMetadata.isCollaborationFinished;
+        return this.isLoading() || this.isThereADeletedProduct() || this.processMetadata.isCollaborationFinished;
     }
 
     isAcceptAndOrderDisabled(): boolean {
         return this.isLoading() ||
-            this.isCatalogueLineDeleted ||
+            this.isThereADeletedProduct() ||
             !this.isPriceValid() ||
             this.processMetadata.isCollaborationFinished ||
             this.quotation.documentStatusCode.name === 'Rejected' ||
             this.bpDataService.isFinalProcessInTheWorkflow('Negotiation');
     }
 
-    getNonFrameContractTermNumber(): number {
-        let termCount: number = 0;
-        for(let tradingTerm of this.wrapper.newQuotation.tradingTerms) {
-            if(tradingTerm.id != 'FRAME_CONTRACT_DURATION') {
-                termCount++;
+    isThereADeletedProduct():boolean{
+        for(let isProductDeleted of this.areCatalogueLinesDeleted){
+            if(isProductDeleted){
+                return true;
             }
         }
-        return termCount;
-    }
-
-    areTermsEqual(termId: string): boolean {
-        let termsEqual: boolean = this.wrapper.checkTermEquivalance(this.primaryTermsSource, termId);
-        if(!termsEqual) {
-            this.tcChanged = true;
-        }
-        return termsEqual;
+        return false;
     }
 
     /*
@@ -253,30 +222,33 @@ export class NegotiationResponseComponent implements OnInit {
      */
 
     hasUpdatedTerms(): boolean {
-        if(!UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqDeliveryPeriod, this.wrapper.newQuotationWrapper.deliveryPeriod)) {
-            return true;
+        for(let wrapper of this.wrappers){
+            if(!UBLModelUtils.areQuantitiesEqual(wrapper.rfqDeliveryPeriod, wrapper.newQuotationWrapper.deliveryPeriod)) {
+                return true;
+            }
+            if(wrapper.rfqIncoterms !== wrapper.newQuotationWrapper.incoterms) {
+                return true;
+            }
+            if(wrapper.rfqPaymentMeans !== wrapper.newQuotationWrapper.paymentMeans) {
+                return true;
+            }
+            if(wrapper.rfqPaymentTerms.paymentTerm !== wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm) {
+                return true;
+            }
+            if(wrapper.rfqDiscountPriceWrapper.totalPriceString !== wrapper.quotationDiscountPriceWrapper.totalPriceString) {
+                return true;
+            }
+            if(!UBLModelUtils.areQuantitiesEqual(wrapper.rfqWarranty, wrapper.newQuotationWrapper.warranty)) {
+                return true;
+            }
+            if(!UBLModelUtils.areQuantitiesEqual(wrapper.rfqFrameContractDuration, wrapper.newQuotationWrapper.frameContractDuration)) {
+                return true;
+            }
+            if(UBLModelUtils.areTermsAndConditionListsDifferent(wrapper.rfq.termOrCondition, wrapper.newQuotation.termOrCondition)) {
+                return true;
+            }
         }
-        if(this.wrapper.rfqIncoterms !== this.wrapper.newQuotationWrapper.incoterms) {
-            return true;
-        }
-        if(this.wrapper.rfqPaymentMeans !== this.wrapper.newQuotationWrapper.paymentMeans) {
-            return true;
-        }
-        if(this.wrapper.rfqPaymentTerms.paymentTerm !== this.wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm) {
-            return true;
-        }
-        if(this.wrapper.rfqDiscountPriceWrapper.totalPriceString !== this.wrapper.quotationDiscountPriceWrapper.totalPriceString) {
-            return true;
-        }
-        if(!UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqWarranty, this.wrapper.newQuotationWrapper.warranty)) {
-            return true;
-        }
-        if(!UBLModelUtils.areQuantitiesEqual(this.wrapper.rfqFrameContractDuration, this.wrapper.newQuotationWrapper.frameContractDuration)) {
-            return true;
-        }
-        if(UBLModelUtils.areTermsAndConditionListsDifferent(this.wrapper.rfq.termOrCondition, this.wrapper.newQuotation.termOrCondition)) {
-            return true;
-        }
+
 
         return false;
     }
@@ -289,32 +261,27 @@ export class NegotiationResponseComponent implements OnInit {
         return false;
     }
 
-    private openDiscountModal(): void{
-        this.discountModal.open(this.wrapper.quotationDiscountPriceWrapper);
-    }
-
-    showTab(tab:boolean):boolean {
-      let ret = true;
-      if (tab)
-        ret = false;
-      this.showFrameContractDetails = false;
-      this.showNotesAndAdditionalFiles = false;
-      this.showDeliveryAddress = false;
-      this.showTermsAndConditions = false;
-      this.showPurchaseOrder = false;
-      return ret;
-    }
-
-    getContractEndDate(): string {
-        let rangeUnit: string;
-        switch (this.wrapper.newQuotationWrapper.frameContractDuration.unitCode) {
-            case "year(s)": rangeUnit = 'y'; break;
-            case "month(s)": rangeUnit = 'M'; break;
-            case "week(s)": rangeUnit = 'w'; break;
-            case "day(s)": rangeUnit = 'd'; break;
+    getTotalPriceString(){
+        let totalPrice = 0;
+        for(let wrapper of this.wrappers){
+            totalPrice += wrapper.newQuotationWrapper.priceWrapper.totalPrice;
         }
-        let m:Moment = moment().add(this.wrapper.newQuotationWrapper.frameContractDuration.value, <unitOfTime.DurationConstructor>rangeUnit);
-        let date: string = m.format(this.dateFormat);
-        return date;
+        return roundToTwoDecimals(totalPrice) + " " + this.wrappers[0].currency;
+    }
+
+    getVatTotalString(){
+        let vatTotal = 0;
+        for(let wrapper of this.wrappers){
+            vatTotal += wrapper.newQuotationWrapper.priceWrapper.vatTotal;
+        }
+        return roundToTwoDecimals(vatTotal) + " " + this.wrappers[0].currency;
+    }
+
+    getGrossTotalString(){
+        let grossTotal = 0;
+        for(let wrapper of this.wrappers){
+            grossTotal += wrapper.newQuotationWrapper.priceWrapper.grossTotal;
+        }
+        return roundToTwoDecimals(grossTotal) + " " + this.wrappers[0].currency;
     }
 }

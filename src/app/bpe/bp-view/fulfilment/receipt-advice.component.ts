@@ -83,4 +83,13 @@ export class ReceiptAdviceComponent implements OnInit {
     isReadOnly(): boolean {
         return this.userRole === "seller" || this.processMetadata.processStatus == "Completed";
     }
+
+    isThereADeletedProduct():boolean{
+        for(let isProductDeleted of this.processMetadata.areProductsDeleted){
+            if(isProductDeleted){
+                return true;
+            }
+        }
+        return false;
+    }
 }

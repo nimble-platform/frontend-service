@@ -303,7 +303,13 @@ export class UBLModelUtils {
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity = copyOrder.orderLine[0].lineItem.quantity;
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.originAddress = copyOrder.orderLine[0].lineItem.item.manufacturerParty.postalAddress;
         rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails = copyLine.goodsItem.item.transportationServiceDetails;
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = copyOrder.orderLine[0].lineItem.item.name;
+        let size = copyOrder.orderLine.length;
+        for(let i = 0; i < size ; i++){
+            if(i != 0){
+                rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem.push(new GoodsItem());
+            }
+            rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[i].item = copyOrder.orderLine[i].lineItem.item;
+        }
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity = copyOrder.orderLine[0].lineItem.quantity;
         rfq.paymentTerms = copyOrder.paymentTerms;
         rfq.paymentMeans = copyOrder.paymentMeans;
@@ -358,17 +364,22 @@ export class UBLModelUtils {
 
     public static createQuotationWithRfqCopy(rfq: RequestForQuotation): Quotation {
         let copyRfq: RequestForQuotation = copy(rfq);
-        const quotationLine: QuotationLine = new QuotationLine(copyRfq.requestForQuotationLine[0].lineItem);
-        // set start and end dates
-        quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.startDate = rfq.delivery.requestedDeliveryPeriod.startDate;
-        quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.endDate = rfq.delivery.requestedDeliveryPeriod.endDate;
+        let quotationLines:QuotationLine[] = [];
+        for(let requestForQuotationLine of copyRfq.requestForQuotationLine){
+            let quotationLine: QuotationLine = new QuotationLine(requestForQuotationLine.lineItem);
+            // set start and end dates
+            quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.startDate = rfq.delivery.requestedDeliveryPeriod.startDate;
+            quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.endDate = rfq.delivery.requestedDeliveryPeriod.endDate;
+            quotationLines.push(quotationLine);
+        }
+
         const customerParty: CustomerParty = rfq.buyerCustomerParty;
         const supplierParty: SupplierParty = rfq.sellerSupplierParty;
 
         const documentReference: DocumentReference = new DocumentReference(rfq.id);
 
         const quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, false, documentReference,
-            customerParty, supplierParty, [quotationLine], rfq.paymentMeans, rfq.paymentTerms, rfq.tradingTerms, rfq.termOrCondition);
+            customerParty, supplierParty, quotationLines, rfq.paymentMeans, rfq.paymentTerms, rfq.tradingTerms, rfq.termOrCondition);
 
         this.removeHjidFieldsFromObject(quotation);
         return quotation;
@@ -379,8 +390,12 @@ export class UBLModelUtils {
         const despatchAdvice:DespatchAdvice = new DespatchAdvice();
         despatchAdvice.id = this.generateUUID();
         despatchAdvice.orderReference = [UBLModelUtils.createOrderReference(copyOrder.id)];
-        despatchAdvice.despatchLine = [new DespatchLine(new Quantity(), copyOrder.orderLine[0].lineItem.item, [new Shipment()])];
-        despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());
+        despatchAdvice.despatchLine = [];
+        for(let orderLine of copyOrder.orderLine){
+            let dispatchLine = new DespatchLine(new Quantity(), orderLine.lineItem.item, [new Shipment()]);
+            dispatchLine.shipment[0].shipmentStage.push(new ShipmentStage());
+            despatchAdvice.despatchLine.push(dispatchLine);
+        }
         despatchAdvice.despatchSupplierParty = copyOrder.sellerSupplierParty;
         despatchAdvice.deliveryCustomerParty = copyOrder.buyerCustomerParty;
 

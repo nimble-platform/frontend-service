@@ -18,6 +18,7 @@ import {DocumentService} from "../document-service";
 import {CookieService} from 'ng2-cookies';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {TranslateService} from '@ngx-translate/core';
+import {DespatchLine} from '../../../catalogue/model/publish/despatch-line';
 
 @Component({
     selector: 'dispatch-advice',
@@ -32,6 +33,8 @@ export class DispatchAdviceComponent implements OnInit {
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
+
+    selectedProducts:boolean[];
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
@@ -51,6 +54,14 @@ export class DispatchAdviceComponent implements OnInit {
         }
         else{
             this.dispatchAdvice = this.bpDataService.despatchAdvice;
+            this.populateSelectedProductsArray();
+        }
+    }
+
+    private populateSelectedProductsArray(){
+        this.selectedProducts = [];
+        for(let dispatchAdviceLine of this.dispatchAdvice.despatchLine){
+            this.selectedProducts.push(true);
         }
     }
 
@@ -128,6 +139,7 @@ export class DispatchAdviceComponent implements OnInit {
         this.bpDataService.initDispatchAdvice(handlingInst,carrierName,carrierContact, deliveredQuantity, endDate);
 
         this.dispatchAdvice = this.bpDataService.despatchAdvice;
+        this.populateSelectedProductsArray();
 
         this.initiatingDispatchAdvice.callback("Dispatch Advice initiated", true);
     }
@@ -142,7 +154,7 @@ export class DispatchAdviceComponent implements OnInit {
 
     onSendDispatchAdvice(): void {
         this.callStatus.submit();
-        let dispatchAdvice: DespatchAdvice = copy(this.dispatchAdvice);
+        let dispatchAdvice: DespatchAdvice = this.setShipmentOfAllProducts(copy(this.dispatchAdvice));
 
         this.bpeService.startProcessWithDocument(dispatchAdvice)
             .then(res => {
@@ -160,7 +172,7 @@ export class DispatchAdviceComponent implements OnInit {
     onUpdateDispatchAdvice():void {
         this.callStatus.submit();
 
-        let dispatchAdvice: DespatchAdvice = copy(this.bpDataService.despatchAdvice);
+        let dispatchAdvice: DespatchAdvice = this.setShipmentOfAllProducts(copy(this.bpDataService.despatchAdvice));
 
         this.bpeService.updateBusinessProcess(JSON.stringify(dispatchAdvice),"DESPATCHADVICE",this.processMetadata.processInstanceId)
             .then(() => {
@@ -186,5 +198,30 @@ export class DispatchAdviceComponent implements OnInit {
 
     isReadOnly(): boolean {
         return !!this.processMetadata && !this.processMetadata.isBeingUpdated;
+    }
+
+    setShipmentOfAllProducts(despatchAdvice:DespatchAdvice):DespatchAdvice{
+        let dispatchAdviceLines:DespatchLine[] = [];
+        let size = despatchAdvice.despatchLine.length;
+        for(let i = 0 ; i < size ; i++){
+            if(i != 0){
+                despatchAdvice.despatchLine[i].shipment[0] = copy(despatchAdvice.despatchLine[0].shipment[0]);
+            }
+            if(this.selectedProducts[i]){
+                dispatchAdviceLines.push(despatchAdvice.despatchLine[i]);
+            }
+        }
+
+        despatchAdvice.despatchLine = dispatchAdviceLines;
+        return despatchAdvice;
+    }
+
+    isAtLeastOneProductSelected():boolean{
+        for(let isSelected of this.selectedProducts){
+            if(isSelected){
+                return true;
+            }
+        }
+        return false;
     }
 }
