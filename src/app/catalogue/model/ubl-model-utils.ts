@@ -504,6 +504,15 @@ export class UBLModelUtils {
         return new Package(this.createQuantity(), new Code(), null);
     }
 
+    public static getPreviousDocumentId(documentReferences:DocumentReference[]):string{
+        for(let documentReference of documentReferences){
+            if(documentReference.documentType == "previousDocument"){
+                return documentReference.id;
+            }
+        }
+        return null;
+    }
+
     public static createPrice(): Price {
         const amountObj: Amount = this.createAmountWithCurrency(CURRENCIES[0]);
         const quantity: Quantity = this.createQuantity();

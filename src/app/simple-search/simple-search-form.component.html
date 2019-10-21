@@ -557,14 +557,14 @@
 									<div *ngIf="!result.isFromLocalInstance && result.nimbleInstanceName && result.sourceFrontendServiceUrl && result.nimbleInstanceName != '' && result.sourceFrontendServiceUrl != ''" [title]="result.nimbleInstanceName" class="badge badge-pill badge-secondary p-2" style="position:absolute;right:-0.7rem;top:-0.7rem">
 										<i class="fa fa-database pr-1"></i> <span>{{result.nimbleInstanceName}}</span>
 									</div>
-									<div class="d-flex">
-										<div *ngIf="pageRef === 'publish'" #productSelect class="align-self-center p-2" (click)="onToggleProductSelectForPublish(result, $event)">
+									<div class="row">
+										<div *ngIf="pageRef === 'publish'" #productSelect class="align-self-center" [ngClass]="{'col-1':display=='list','col-12 pb-1':display=='panel'}" (click)="onToggleProductSelectForPublish(result, $event)">
 											<input type="checkbox" [checked]="productSelected(result.uri)" (click)="$event.preventDefault();  $event.stopPropagation(); productSelect.click();">
 										</div>
-										<div class="align-center" [ngClass]="{'col-2':display=='list','col-12 pb-1':display=='panel','pl-0': pageRef === 'publish'}">
+										<div class="align-center" [ngClass]="{'col-2':display=='list','col-12 pb-1':display=='panel'}">
 											<img src="{{imageMap[result.uri]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
 										</div>
-										<div [ngClass]="{'col-6':display=='list','col-12 pt-1 pb-1':display=='panel'}">
+										<div [ngClass]="{'col-6':display=='list'&&pageRef!=='publish','col-5':display=='list'&&pageRef==='publish','col-12 pt-1 pb-1':display=='panel'}">
 											<div style="max-height:1.5rem;overflow:hidden">
 												<span [title]="getMultilingualLabel(result[product_name])"><b>{{ getMultilingualLabel(result[product_name]) }}</b></span>
 											</div>

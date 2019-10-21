@@ -214,7 +214,7 @@ export class NegotiationRequestComponent implements OnInit {
                 this.bpDataService.requestForQuotation.requestForQuotationLine[0].lineItem.price.priceAmount.value = wrapper.rfqDiscountPriceWrapper.totalPrice/wrapper.rfqDiscountPriceWrapper.orderedQuantity.value;
             }
             // just go to order page
-            this.bpDataService.setCopyDocuments(true, false, false);
+            this.bpDataService.setCopyDocuments(true, false, false,false);
             this.bpDataService.proceedNextBpStep("buyer", "Order")
         }
     }

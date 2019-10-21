@@ -63,8 +63,6 @@
 
 <div class="row actions-row" *ngIf="userRole === 'buyer' && !readonly">
     <div class="col-5 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-    <!-- the bottom div shifts the buttons below to the right in case the quotation is rejected -->
-    <div *ngIf="quotation.documentStatusCode.name == 'Rejected' || bpDataService.isFinalProcessInTheWorkflow('Negotiation')" class="col-2"></div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>

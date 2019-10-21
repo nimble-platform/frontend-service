@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import {Component, Input, OnInit} from '@angular/core';
 import { BPEService } from "../../bpe.service";
 import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
 import { BPDataService } from "../bp-data-service";
@@ -9,11 +9,6 @@ import { copy } from "../../../common/utils";
 import { Location } from "@angular/common";
 import { ProcessInstanceGroup } from '../../model/process-instance-group';
 import { ActivityVariableParser } from '../activity-variable-parser';
-import { TransportExecutionPlanRequest } from '../../../catalogue/model/publish/transport-execution-plan-request';
-import { RequestForQuotation } from '../../../catalogue/model/publish/request-for-quotation';
-import { Quantity } from '../../../catalogue/model/publish/quantity';
-import { TransportExecutionPlan } from "../../../catalogue/model/publish/transport-execution-plan";
-import { Quotation } from "../../../catalogue/model/publish/quotation";
 import {DocumentService} from "../document-service";
 import {CookieService} from 'ng2-cookies';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
@@ -35,6 +30,8 @@ export class DispatchAdviceComponent implements OnInit {
     processMetadata: ThreadEventMetadata;
 
     selectedProducts:boolean[];
+
+    @Input() waitingQuantityValue: number = 0;
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
@@ -67,76 +64,56 @@ export class DispatchAdviceComponent implements OnInit {
 
     async initDispatchAdvice() {
         this.initiatingDispatchAdvice.submit();
-        const processInstanceGroup = await this.bpeService.getProcessInstanceGroup(this.bpDataService.bpActivityEvent.containerGroupId) as ProcessInstanceGroup;
-        let details = [];
-        for(let id of processInstanceGroup.processInstanceIDs){
-            details.push(await Promise.all([
-                this.bpeService.getLastActivityForProcessInstance(id),
-                this.bpeService.getProcessDetailsHistory(id)]
-            ));
+
+        // since we start a new Despatch Advice after Receipt Advice step, bpDataService.copyDespatchAdvice is not null.
+        if(this.bpDataService.copyDespatchAdvice){
+            this.bpDataService.initDispatchAdviceWithCopyDispatchAdvice(this.waitingQuantityValue);
         }
-        details = details.sort(function(a,b){
-            let a_comp = a[0].startTime;
-            let b_comp = b[0].startTime;
-            return b_comp.localeCompare(a_comp);
-        });
+        else{
+            const processInstanceGroup = await this.bpeService.getProcessInstanceGroup(this.bpDataService.bpActivityEvent.containerGroupId) as ProcessInstanceGroup;
+            let details = [];
+            for(let id of processInstanceGroup.processInstanceIDs){
+                details.push(await Promise.all([
+                    this.bpeService.getLastActivityForProcessInstance(id),
+                    this.bpeService.getProcessDetailsHistory(id)]
+                ));
+            }
+            details = details.sort(function(a,b){
+                let a_comp = a[0].startTime;
+                let b_comp = b[0].startTime;
+                return b_comp.localeCompare(a_comp);
+            });
 
-        let tepExists = false;
-        let negoExists = false;
+            // values are needed for despatch advice
+            let handlingInst = null;
+            let carrierName = null;
+            let carrierContact = null;
+            let endDate = null;
 
-        // values are needed to find the correct negotiation
-        let catalogueDocRef = "";
-        let manuItemId = "";
-        // values are needed for despatch advice
-        let handlingInst = null;
-        let carrierName = null;
-        let carrierContact = null;
-        let endDate = null;
-        let deliveredQuantity:Quantity = new Quantity();
+            for(let processDetails of details){
+                const processInstanceId = ActivityVariableParser.getProcessInstanceId(processDetails[0]);
+                // Previous process is the one used to create an Dispatch Advice
+                // get details of the previous process instance
+                if(processInstanceId == this.bpDataService.bpActivityEvent.previousProcessInstanceId){
+                    const processType = ActivityVariableParser.getProcessType(processDetails[1]);
 
-        for(let processDetails of details){
-            const processType = ActivityVariableParser.getProcessType(processDetails[1]);
-            const initialDoc: any = await this.documentService.getInitialDocument(processDetails[1]);
-            const response: any = await this.documentService.getResponseDocument(processDetails[1]);
-            if(!tepExists && processType == "Transport_Execution_Plan"){
-                let res = response as TransportExecutionPlan;
-                if(res.documentStatusCode.name == "Accepted"){
-                    tepExists = true;
+                    if(processType == "Transport_Execution_Plan"){
+                        const tep: any = await this.documentService.getInitialDocument(processDetails[1]);
 
-                    let tep = initialDoc as TransportExecutionPlanRequest;
-
-                    if(tep.consignment[0].consolidatedShipment[0].handlingInstructions.length > 0){
-                        handlingInst = tep.consignment[0].consolidatedShipment[0].handlingInstructions[0];
+                        if(tep.consignment[0].consolidatedShipment[0].handlingInstructions.length > 0){
+                            handlingInst = tep.consignment[0].consolidatedShipment[0].handlingInstructions[0];
+                        }
+                        carrierName = UBLModelUtils.getPartyDisplayName(tep.transportServiceProviderParty);
+                        endDate = tep.serviceStartTimePeriod.endDate;
+                        if(tep.transportServiceProviderParty.contact){
+                            carrierContact = tep.transportServiceProviderParty.contact.telephone;
+                        }
                     }
-                    carrierName = UBLModelUtils.getPartyDisplayName(tep.transportServiceProviderParty);
-                    endDate = tep.serviceStartTimePeriod.endDate;
-                    if(tep.transportServiceProviderParty.contact){
-                        carrierContact = tep.transportServiceProviderParty.contact.telephone;
-                    }
-
-                    catalogueDocRef = tep.mainTransportationService.catalogueDocumentReference.id;
-                    manuItemId = tep.mainTransportationService.manufacturersItemIdentification.id;
                 }
             }
-            if(!negoExists && processType == "Negotiation"){
-                let res = response as Quotation;
-                let nego = initialDoc as RequestForQuotation;
-                // check whether this negotiation is correct one or not
-                if(res.documentStatusCode.name == "Accepted" &&
-                    nego.requestForQuotationLine[0].lineItem.item.manufacturersItemIdentification.id == manuItemId &&
-                    nego.requestForQuotationLine[0].lineItem.item.catalogueDocumentReference.id == catalogueDocRef){
-                    negoExists = true;
 
-                    deliveredQuantity.value = nego.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity.value;
-                    deliveredQuantity.unitCode = nego.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity.unitCode;
-                }
-            }
-            if(tepExists && negoExists){
-                break;
-            }
+            this.bpDataService.initDispatchAdvice(handlingInst,carrierName,carrierContact, this.waitingQuantityValue, endDate);
         }
-
-        this.bpDataService.initDispatchAdvice(handlingInst,carrierName,carrierContact, deliveredQuantity, endDate);
 
         this.dispatchAdvice = this.bpDataService.despatchAdvice;
         this.populateSelectedProductsArray();
