@@ -1508,7 +1508,7 @@ export class SimpleSearchFormComponent implements OnInit {
         }
 
         this.shoppingCartCallStatus.submit();
-        this.shoppingCartDataService.addItemToCart(result).then(() => {
+        this.shoppingCartDataService.addItemToCart(result.uri).then(() => {
             this.shoppingCartCallStatus.callback(null, true);
         }).catch(() => {
             this.shoppingCartCallStatus.error(null);

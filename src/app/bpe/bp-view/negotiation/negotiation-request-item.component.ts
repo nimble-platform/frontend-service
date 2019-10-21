@@ -12,7 +12,7 @@ import {UserService} from "../../../user-mgmt/user.service";
 import {CookieService} from "ng2-cookies";
 import {Router} from "@angular/router";
 import {NegotiationModelWrapper} from "./negotiation-model-wrapper";
-import {copy, durationToString, trimRedundantDecimals} from "../../../common/utils";
+import {copy, durationToString, trimRedundantDecimals, validateNumberInput} from '../../../common/utils';
 import {PeriodRange} from "../../../user-mgmt/model/period-range";
 import {Option} from "../../../common/options-input.component";
 import {addressToString} from "../../../user-mgmt/utils";
@@ -101,6 +101,8 @@ export class NegotiationRequestItemComponent implements OnInit {
     enableDirtyUpdate: boolean = true; // if true, dirty map is update updated with user activities, otherwise the map is not updated in onTermsChange method.
     // the aim is to prevent updating dirty map when the terms sources is changed.
 
+
+    onOrderQuantityKeyPressed = validateNumberInput;
 
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
@@ -221,14 +223,6 @@ export class NegotiationRequestItemComponent implements OnInit {
     /*
      * Event handlers
      */
-
-    onOrderQuantityKeyPressed(event:any): boolean {
-        const charCode = (event.which) ? event.which : event.keyCode;
-        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-            return false;
-        }
-        return true;
-    }
 
     onOrderQuantityChange(): void {
         // quantity change must be activated in the next iteration of execution

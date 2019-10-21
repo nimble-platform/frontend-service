@@ -705,6 +705,14 @@ export function deepEquals(obj1: any, obj2: any): boolean {
     return true;
 }
 
+export function validateNumberInput(event: any): boolean {
+    const charCode = (event.which) ? event.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+    }
+    return true;
+}
+
 export function removeHjids(json): any {
     let ret = JSON.parse(JSON.stringify(json));
     let keys = Object.keys(ret);

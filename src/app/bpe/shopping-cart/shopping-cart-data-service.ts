@@ -19,11 +19,8 @@ export class ShoppingCartDataService {
     constructor(private cookieService: CookieService,
                 private http: Http) {}
 
-    /**
-     * @param product in the form Solr result
-     */
-    public addItemToCart(product: any): Promise<Catalogue> {
-        let url = `${this.url}/shopping-cart?productId=${product.uri}`;
+    public addItemToCart(productHjid: string | number): Promise<Catalogue> {
+        let url = `${this.url}/shopping-cart?productId=${productHjid}`;
         return this.http
             .post(url, null, {headers: getAuthorizedHeaders(this.cookieService)})
             .toPromise()
@@ -42,7 +39,8 @@ export class ShoppingCartDataService {
             .delete(url, {headers: getAuthorizedHeaders(this.cookieService)})
             .toPromise()
             .then(res => {
-                this.cartCatalogue = res.json();
+                let indexToRemove = this.cartCatalogue.catalogueLine.findIndex(line => line.hjid === cartLineHjid);
+                this.cartCatalogue.catalogueLine.splice(indexToRemove, 1);
                 return Promise.resolve(this.cartCatalogue);
             })
             .catch(error => {
