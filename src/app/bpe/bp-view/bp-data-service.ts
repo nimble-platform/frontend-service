@@ -29,7 +29,7 @@ import { ProcessType } from "../model/process-type";
 import { PaymentMeans } from "../../catalogue/model/publish/payment-means";
 import { Code } from "../../catalogue/model/publish/code";
 import { PaymentTerms } from "../../catalogue/model/publish/payment-terms";
-import {copy, getPropertyKey, selectName} from '../../common/utils';
+import {copy, getPropertyKey} from '../../common/utils';
 import { PriceWrapper } from "../../common/price-wrapper";
 import { Quantity } from "../../catalogue/model/publish/quantity";
 import { CompanyNegotiationSettings } from "../../user-mgmt/model/company-negotiation-settings";
@@ -43,6 +43,8 @@ import {Text} from '../../catalogue/model/publish/text';
 import {Contract} from '../../catalogue/model/publish/contract';
 import {Clause} from '../../catalogue/model/publish/clause';
 import {Observable} from "rxjs/Rx";
+import {DespatchLine} from '../../catalogue/model/publish/despatch-line';
+import {Shipment} from '../../catalogue/model/publish/shipment';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -85,6 +87,7 @@ export class BPDataService{
     copyRequestForQuotation: RequestForQuotation;
     copyQuotation: Quotation;
     copyOrder: Order;
+    copyDespatchAdvice: DespatchAdvice;
 
     ////////////////////////////////////////////////////////////////////////////
     // variables used when navigating to bp options details page //////
@@ -296,7 +299,7 @@ export class BPDataService{
         this.bpActivityEvent.userRole = userRole;
     }
 
-    setCopyDocuments(rfq: boolean, quotation: boolean, order: boolean): void {
+    setCopyDocuments(rfq: boolean, quotation: boolean, order: boolean, despatchAdvice: boolean): void {
         if (rfq) {
             this.copyRequestForQuotation = this.requestForQuotation;
         } else {
@@ -311,6 +314,11 @@ export class BPDataService{
             this.copyOrder = this.order;
         } else {
             this.copyOrder = null;
+        }
+        if(despatchAdvice){
+            this.copyDespatchAdvice = this.despatchAdvice;
+        } else {
+            this.copyDespatchAdvice = null;
         }
     }
 
@@ -447,7 +455,7 @@ export class BPDataService{
         UBLModelUtils.removeHjidFieldsFromObject(this.requestForQuotation);
     }
 
-    initDispatchAdvice(handlingInst: Text, carrierName: string, carrierContact: string, deliveredQuantity: Quantity, endDate: string) {
+    initDispatchAdvice(handlingInst: Text, carrierName: string, carrierContact: string, deliveredQuantityValue: number, endDate: string) {
         let copyOrder:Order;
         if (this.copyOrder) {
             copyOrder = copy(this.copyOrder);
@@ -456,14 +464,9 @@ export class BPDataService{
         }
 
         this.despatchAdvice = UBLModelUtils.createDespatchAdviceWithOrderCopy(copyOrder);
-        if(deliveredQuantity.unitCode == null){
-            this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = copyOrder.orderLine[0].lineItem.quantity.unitCode;
-        }
-        else {
-            this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = deliveredQuantity.unitCode;
-        }
+        this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = copyOrder.orderLine[0].lineItem.quantity.unitCode;
 
-        this.despatchAdvice.despatchLine[0].deliveredQuantity.value = deliveredQuantity.value;
+        this.despatchAdvice.despatchLine[0].deliveredQuantity.value = deliveredQuantityValue;
         if(handlingInst){
             this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = [handlingInst];
         }else{
@@ -479,6 +482,29 @@ export class BPDataService{
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.partyName= [partyName];
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.contact.telephone = carrierContact;
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].estimatedDeliveryDate = endDate;
+
+        UBLModelUtils.removeHjidFieldsFromObject(this.despatchAdvice);
+    }
+
+    initDispatchAdviceWithCopyDispatchAdvice(deliveredQuantityValue: number) {
+        let copyDespatchAdvice:DespatchAdvice = copy(this.copyDespatchAdvice);
+        this.despatchAdvice = new DespatchAdvice();
+        this.despatchAdvice.id = UBLModelUtils.generateUUID();
+        this.despatchAdvice.orderReference = copyDespatchAdvice.orderReference;
+        this.despatchAdvice.despatchLine = [new DespatchLine(new Quantity(), copyDespatchAdvice.despatchLine[0].item, [new Shipment()])];
+        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());
+        this.despatchAdvice.despatchSupplierParty = copyDespatchAdvice.despatchSupplierParty;
+        this.despatchAdvice.deliveryCustomerParty = copyDespatchAdvice.deliveryCustomerParty;
+
+        this.despatchAdvice.despatchLine[0].deliveredQuantity.value = deliveredQuantityValue;
+        this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = copyDespatchAdvice.despatchLine[0].deliveredQuantity.unitCode;
+        this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = copyDespatchAdvice.despatchLine[0].shipment[0].handlingInstructions;
+
+        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());
+
+        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.partyName= copyDespatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.partyName;
+        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.contact.telephone = copyDespatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].carrierParty.contact.telephone;
+        this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].estimatedDeliveryDate = copyDespatchAdvice.despatchLine[0].shipment[0].shipmentStage[0].estimatedDeliveryDate;
 
         UBLModelUtils.removeHjidFieldsFromObject(this.despatchAdvice);
     }
@@ -662,40 +688,4 @@ export class BPDataService{
         }
     }
 
-    updateItemProperty(itemProperty:ItemProperty):void {
-        if(itemProperty.valueQualifier == 'STRING') {
-            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => selectName(item) == selectName(itemProperty));
-            this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].value[0] = itemProperty.value[0];
-        } else if(itemProperty.valueQualifier == 'NUMBER') {
-            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => selectName(item) == selectName(itemProperty));
-            this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].valueDecimal[0] = itemProperty.valueDecimal[0];
-        } else if(itemProperty.valueQualifier == 'BOOLEAN') {
-            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => selectName(item) == selectName(itemProperty));
-            this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].value[0] = itemProperty.value[0];
-        } else if(itemProperty.valueQualifier == 'QUANTITY') {
-            let index = this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty.findIndex(item => selectName(item) == selectName(itemProperty));
-            this.modifiedCatalogueLines[0].goodsItem.item.additionalItemProperty[index].valueQuantity[0] = itemProperty.valueQuantity[0];
-        }
-    }
-
-    /**
-     * Keeps only the selected value for the given attribute in the dimension array
-     */
-
-    updateDimension(attributeId:string, event: any):void {
-        // update catalogueLine
-        let allDimensions:Dimension[] = this.catalogueLines[0].goodsItem.item.dimension;
-        let index = allDimensions.findIndex(dim => attributeId == dim.attributeID);
-        let firstDim = this.catalogueLines[0].goodsItem.item.dimension[index];
-
-        this.catalogueLines[0].goodsItem.item.dimension[index] = this.catalogueLines[0].goodsItem.item.dimension[index+event.target.selectedIndex];
-        this.catalogueLines[0].goodsItem.item.dimension[index+event.target.selectedIndex] = firstDim;
-        this.catalogueLines[0].goodsItem.item.dimension = [].concat(this.catalogueLines[0].goodsItem.item.dimension);
-
-        // update modifiedCatalogueLine
-        let dimensions:Dimension[] = this.modifiedCatalogueLines[0].goodsItem.item.dimension;
-        let attIndexInModified = dimensions.findIndex(dim => attributeId == dim.attributeID);
-        dimensions[attIndexInModified] = this.catalogueLines[0].goodsItem.item.dimension[index];
-        this.modifiedCatalogueLines[0].goodsItem.item.dimension = dimensions;
-    }
 }
