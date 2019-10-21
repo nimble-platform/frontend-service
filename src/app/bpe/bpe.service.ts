@@ -156,6 +156,15 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
+	getFulfilmentStatistics(orderId: string): Promise<any> {
+		const url = `${this.url}/statistics/fulfilment?orderId=${orderId}`;
+		return this.http
+			.get(url, {headers: this.getAuthorizedHeaders()})
+			.toPromise()
+			.then(res => res.json())
+			.catch(this.handleError);
+	}
+
 	getProcessInstanceGroupFilters(partyId:string, collaborationRole: CollaborationRole, archived: boolean, products: string[],
 		categories: string[], partners: string[],status: string[],isProject:boolean): Promise<ProcessInstanceGroupFilter> {
 		const headers = this.getAuthorizedHeaders();

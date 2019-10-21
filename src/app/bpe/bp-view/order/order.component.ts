@@ -289,7 +289,7 @@ export class OrderComponent implements OnInit {
     }
 
     onDispatchOrder() {
-        this.bpDataService.setCopyDocuments(false, false, true);
+        this.bpDataService.setCopyDocuments(false, false, true,false);
         this.bpDataService.proceedNextBpStep(this.userRole, "Fulfilment");
     }
 
