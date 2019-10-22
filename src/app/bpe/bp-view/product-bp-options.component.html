@@ -32,7 +32,6 @@
                 <span [innerHTML]="'Transport service' | translate"></span>:
             </h2>
             <ng-container *ngFor="let serviceLine of serviceLines;let i=index">
-<!--                TODO: have a button here as well-->
                 <h2>{{ serviceLine.goodsItem.item.name[0].value }}
                     <button class="btn btn-outline-dark inline ml-2" (click)="onToggleServiceExpanded()">
                         <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="serviceExpanded"></i>
