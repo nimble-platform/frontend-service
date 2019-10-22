@@ -300,7 +300,6 @@ export class UBLModelUtils {
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = copyOrder.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
         rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = copyOrder.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity = copyOrder.orderLine[0].lineItem.quantity;
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.originAddress = copyOrder.orderLine[0].lineItem.item.manufacturerParty.postalAddress;
         rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails = copyLine.goodsItem.item.transportationServiceDetails;
         let size = copyOrder.orderLine.length;
@@ -310,7 +309,6 @@ export class UBLModelUtils {
             }
             rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[i].item = copyOrder.orderLine[i].lineItem.item;
         }
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity = copyOrder.orderLine[0].lineItem.quantity;
         rfq.paymentTerms = copyOrder.paymentTerms;
         rfq.paymentMeans = copyOrder.paymentMeans;
         // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases

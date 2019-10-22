@@ -15,7 +15,7 @@
                 <!-- Quantity -->
                 <div class="col-6">
                     <quantity-input label="Quantity" definition="The quantity to transport." [disabled]="true"
-                                    [quantity]="request.consignment[0].consolidatedShipment[0].totalTransportHandlingUnitQuantity"
+                                    [quantity]="goodsItem.quantity"
                                     labelClass="col-3" valueClass="col-9" presentationMode="view">
                     </quantity-input>
                 </div>

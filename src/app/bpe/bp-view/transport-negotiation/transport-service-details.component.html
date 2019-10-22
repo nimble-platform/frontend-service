@@ -10,7 +10,7 @@
 
             <!-- Quantity -->
             <quantity-input label="Quantity" definition="The quantity to transport."
-                            [quantity]="shipment.totalTransportHandlingUnitQuantity" [disabled]="disabled"
+                            [quantity]="shipment.goodsItem[0].quantity" [disabled]="disabled"
                             labelClass="col-2" valueClass="col-10">
             </quantity-input>
         </div>
@@ -26,7 +26,7 @@
                 </div>
                 <div class="col-9">
                     <quantity-input [disabled]="disabled" [disableQuantityUnit]="true"
-                                    [quantity]="shipment.totalTransportHandlingUnitQuantity" valueClass="col-12">
+                                    [quantity]="goodsItem.quantity" valueClass="col-12">
                     </quantity-input>
                 </div>
             </div>
