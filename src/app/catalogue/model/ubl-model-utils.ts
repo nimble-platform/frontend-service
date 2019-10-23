@@ -262,17 +262,24 @@ export class UBLModelUtils {
         return ppapResponse;
     }
 
-    public static createRequestForQuotation(settings: CompanyNegotiationSettings): RequestForQuotation {
+    public static createRequestForQuotation(items: Item[], settings: CompanyNegotiationSettings): RequestForQuotation {
         if(settings == null){
             settings = new CompanyNegotiationSettings();
         }
-        const quantity: Quantity = new Quantity(null, "", null);
-        const item: Item = this.createItem();
-        const price: Price = this.createPrice();
-        const lineItem: LineItem = this.createLineItem(quantity, price, item);
-        const requestForQuotationLine: RequestForQuotationLine = new RequestForQuotationLine(lineItem);
+
+        let rfqLines: RequestForQuotationLine[];
+        if (items == null) {
+            rfqLines = [UBLModelUtils.createRequestForQuotationLine()];
+
+        } else {
+            rfqLines = [];
+            for (let item of items) {
+                rfqLines.push(UBLModelUtils.createRequestForQuotationLine(item));
+            }
+        }
+
         const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
-        [requestForQuotationLine], this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), [], []);
+            rfqLines, this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), [], []);
 
         // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
         let handlingUnitDimension: Dimension = new Dimension();
@@ -323,6 +330,16 @@ export class UBLModelUtils {
 
         this.removeHjidFieldsFromObject(rfq);
         return rfq;
+    }
+
+    public static createRequestForQuotationLine(item: Item = null): RequestForQuotationLine {
+        const quantity: Quantity = new Quantity(null, "", null);
+        const price: Price = this.createPrice();
+        if (item == null) {
+            item = UBLModelUtils.createItem();
+        }
+        const lineItem: LineItem = this.createLineItem(quantity, price, item);
+        return new RequestForQuotationLine(lineItem);
     }
 
     public static getDefaultPaymentTerms(settings?: CompanyNegotiationSettings): PaymentTerms {
@@ -615,6 +632,10 @@ export class UBLModelUtils {
             return englishName;
         }
         return partyNames[0].name.value;
+    }
+
+    public static getLinePartyId(catalogueLine: CatalogueLine) {
+        return UBLModelUtils.getPartyId(catalogueLine.goodsItem.item.manufacturerParty);
     }
 
     public static isFilledLCPAInput(lcpaDetails: LifeCyclePerformanceAssessmentDetails): boolean {

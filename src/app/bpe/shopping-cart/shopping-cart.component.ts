@@ -13,6 +13,15 @@ import {UBLModelUtils} from '../../catalogue/model/ubl-model-utils';
 import {CallStatus} from '../../common/call-status';
 import {ProductWrapper} from '../../common/product-wrapper';
 import {CatalogueService} from '../../catalogue/catalogue.service';
+import {RequestForQuotation} from '../../catalogue/model/publish/request-for-quotation';
+import {RequestForQuotationLine} from '../../catalogue/model/publish/request-for-quotation-line';
+import {DigitalAgreement} from '../../catalogue/model/publish/digital-agreement';
+import {Quotation} from '../../catalogue/model/publish/quotation';
+import {BPEService} from '../bpe.service';
+import {CookieService} from 'ng2-cookies';
+import {DocumentService} from '../bp-view/document-service';
+import {Clause} from '../../catalogue/model/publish/clause';
+import {NegotiationModelWrapper} from '../bp-view/negotiation/negotiation-model-wrapper';
 /**
  * Created by suat on 11-Oct-19.
  */
@@ -24,19 +33,28 @@ import {CatalogueService} from '../../catalogue/catalogue.service';
 export class ShoppingCartComponent implements OnInit {
     shoppingCart: Catalogue;
     // keeps the user selections for each cart item
-    itemsWithSelectedProperties: Map<number, Item> = new Map<number, Item>();
+    modifiedCatalogueLines: Map<number, CatalogueLine> = new Map<number, CatalogueLine>();
     // wrappers wrapping each cart item
     productWrappers: Map<number, ProductWrapper> = new Map<number, ProductWrapper>();
+    // wrappers for the negotiation request item components
+    negotiationModelWrappers: Map<number, NegotiationModelWrapper> = new Map<number, NegotiationModelWrapper>();
     // associated products map of catalogue lines referred from the cart items
     associatedProducts: Map<number, CatalogueLine[]> = new Map<number, CatalogueLine[]>();
     // company settings for each distinct company providing one or more product in the cart
-    companiesSettings: Map<string, CompanySettings> = new Map<string, CompanySettings>();
+    sellersSettings: Map<string, CompanySettings> = new Map<string, CompanySettings>();
+    // default settings to be used in case the seller does not have default terms and conditions
+    platformTermsAndConditions: Map<number, Clause[]> = new Map<number, Clause[]>();
+    buyerCompanySettings: CompanySettings;
+    // rfqs created for the products in the shopping cart
+    // a dedicated rfq is created for each seller in the cart
+    // key of the map below keeps the seller id
+    rfqs: Map<string, RequestForQuotation> = new Map<string, RequestForQuotation>();
+    // frame contracts for the products in cart
+    frameContracts: Map<number, [DigitalAgreement, Quotation]> = new Map<number, [DigitalAgreement, Quotation]>();
 
     collapsedStatusesOfCartItems: Map<number, boolean> = new Map<number, boolean>();
     deleteCallStatuses: Map<number, CallStatus> = new Map<number, CallStatus>();
 
-    companySettingsCallStatus: CallStatus = new CallStatus();
-    associatedProductsCallStatus: CallStatus = new CallStatus();
     // call status to be able to show a single loading icon
     initCallStatus: CallStatus = new CallStatus();
 
@@ -45,8 +63,11 @@ export class ShoppingCartComponent implements OnInit {
 
     constructor(private shoppingCartDataService: ShoppingCartDataService,
                 private catalogueService: CatalogueService,
+                private bpeService: BPEService,
+                private documentService: DocumentService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
+                private cookieService: CookieService,
                 private router: Router) {}
 
     /*
@@ -73,59 +94,47 @@ export class ShoppingCartComponent implements OnInit {
             }
 
             // prepare the promises
-            this.companySettingsCallStatus.submit();
+            // settings for all sellers
             let aggregatedSettingsPromise: Promise<void | CompanySettings[]> = Promise.all(settingsPromises).catch(err => {
-                return this.companySettingsCallStatus.error('Failed to retrieve company settings', err);
+                return this.initCallStatus.aggregatedError('Failed to retrieve company settings', err);
             });
-            let associatedProductsPromise: Promise<void | CatalogueLine[]> = this.retrieveAssociatedProductDetails().catch(err => {
-                return this.associatedProductsCallStatus.error('Failed to retrieve associated products', err);
+            // buyer terms promises
+            let buyersSettingsPromise: Promise<void | CompanySettings> = this.userService.getSettingsForParty(this.cookieService.get('company_id')).catch(err => {
+                return this.initCallStatus.aggregatedError('Failed to retrieve buyer terms', err);
             });
 
             // submit all promises at once so that each of them would run in parallel
-            this.initCallStatus.submit();
-            Promise.all([aggregatedSettingsPromise, associatedProductsPromise]).then(([settingsResults, associatedProductsResults]) => {
-                console.log("in all results");
-                console.log(settingsResults);
-                console.log(associatedProductsResults);
+            let rootPromiseArray: Promise<any>[] = [aggregatedSettingsPromise, buyersSettingsPromise];
+            this.initCallStatus.aggregatedSubmit(rootPromiseArray.length);
+            Promise.all(rootPromiseArray)
+                .then(([sellerSettingsResults, buyersSettings]) => {
 
-                if (!associatedProductsResults || !settingsResults) {
-                    return;
-                }
+                    // initialize the buyer and seller(s) company settings
+                    this.initializeCompanySettings(sellerSettingsResults, buyersSettings);
 
-                // populate company settings
-                for (let companySettings of settingsResults) {
-                    this.companiesSettings.set(companySettings.companyID, companySettings);
-                }
+                    // retrive rfqs
+                    this.initCallStatus.aggregatedSubmit();
+                    Promise.all(this.createRfqPromises()).then(rfqs => {
+                        // initialize rfqs
+                        this.initializeRfqs(rfqs);
+                        // set product wrappers and negotiation model wrappers
+                        this.initializeModelWrappers();
+                        // first, retrieve the associated products referred from the properties of cart lines
+                        // then, select the first alternatives for each product
+                        this.getAssociatedProductDetailsAndSelectFirstAlternatives();
+                        // get frame contracts
+                        this.getFrameContracts();
+                        // get platform default terms and conditions for each cart line
+                        this.getDefaultPlatformTermsAndConditionsForAllCartLines();
+                        // initialize negotiation model wrappers
+                        this.initializeModelWrappers();
 
-                // associated product for easy access
-                let associatedProducts: Map<number, CatalogueLine> = new Map<number, CatalogueLine>();
-                for (let associatedProduct of associatedProductsResults) {
-                    associatedProducts.set(associatedProduct.hjid, associatedProduct);
-                }
+                        this.initCallStatus.aggregatedCallBack();
+                    }).catch(err => {
+                        this.initCallStatus.aggregatedError('Failed to construct request for quotation documents', err);
+                    });
 
-                for (let cartLine of this.shoppingCart.catalogueLine) {
-                    // construct associated products list for each cart item
-                    let ids: number[] = this.getAssociatedProductIdsForOneProduct(cartLine);
-                    let lines: CatalogueLine[] = [];
-                    for (let id of ids) {
-                        lines.push(associatedProducts.get(id));
-                    }
-                    this.associatedProducts.set(cartLine.hjid, lines);
-
-                    // product wrappers for each cart item
-                    let companyId: string = UBLModelUtils.getPartyId(cartLine.goodsItem.item.manufacturerParty);
-                    let productWrapper: ProductWrapper = new ProductWrapper(cartLine, this.companiesSettings.get(companyId).negotiationSettings);
-                    this.productWrappers.set(cartLine.hjid, productWrapper);
-
-                    // set the default preferences for each product
-                    let itemWithDefaultSelections: Item = copy(cartLine.goodsItem.item);
-                    this.bpDataService.selectFirstValuesAmongAlternatives(itemWithDefaultSelections, lines);
-                    this.itemsWithSelectedProperties.set(cartLine.hjid, itemWithDefaultSelections);
-                }
-
-                this.associatedProductsCallStatus.callback(null, true);
-                this.companySettingsCallStatus.callback(null, true);
-                this.initCallStatus.callback(null, true);
+                    this.initCallStatus.aggregatedCallBack(null, true, rootPromiseArray.length);
             });
 
             // initialize the collapsed statuses, the first product is open
@@ -139,7 +148,17 @@ export class ShoppingCartComponent implements OnInit {
         })
     }
 
-    retrieveAssociatedProductDetails(): Promise<CatalogueLine[]> {
+    private initializeCompanySettings(sellerSettings: CompanySettings[], buyerSettings: CompanySettings): void {
+        // set the current user's company's settings
+        this.buyerCompanySettings = buyerSettings;
+
+        // populate company settings
+        for (let companySettings of sellerSettings) {
+            this.sellersSettings.set(companySettings.companyID, companySettings);
+        }
+    }
+
+    private getAssociatedProductDetailsAndSelectFirstAlternatives(): void {
         // We retrieve the associated product details if editing is active.
         let associatedProductIds: number[] = [];
 
@@ -156,7 +175,149 @@ export class ShoppingCartComponent implements OnInit {
         associatedProductIds = associatedProductIds.filter((productId, i) => associatedProductIds.indexOf(productId) === i);
 
         // retrieve the associated products
-        return this.catalogueService.getCatalogueLinesByHjids(associatedProductIds);
+        this.initCallStatus.aggregatedSubmit();
+        this.catalogueService.getCatalogueLinesByHjids(associatedProductIds).then(associatedProductsResults => {
+            // associated product for easy access
+            let associatedProducts: Map<number, CatalogueLine> = new Map<number, CatalogueLine>();
+            for (let associatedProduct of associatedProductsResults) {
+                associatedProducts.set(associatedProduct.hjid, associatedProduct);
+            }
+
+            // construct associated products list for each cart item
+            for (let cartLine of this.shoppingCart.catalogueLine) {
+                let ids: number[] = this.getAssociatedProductIdsForOneProduct(cartLine);
+                let lines: CatalogueLine[] = [];
+                for (let id of ids) {
+                    lines.push(associatedProducts.get(id));
+                }
+                this.associatedProducts.set(cartLine.hjid, lines);
+
+                // set the default preferences for each product
+                let itemWithDefaultSelections: Item = copy(cartLine.goodsItem.item);
+                this.bpDataService.selectFirstValuesAmongAlternatives(itemWithDefaultSelections, lines);
+                let copyLine: CatalogueLine = copy(cartLine);
+                copyLine.goodsItem.item = itemWithDefaultSelections;
+                this.modifiedCatalogueLines.set(cartLine.hjid, copyLine);
+            }
+
+            this.initCallStatus.aggregatedCallBack();
+
+        }).catch(err => {
+            return this.initCallStatus.aggregatedError('Failed to retrieve associated products', err);
+        });
+    }
+
+    private createRfqPromises(): Promise<RequestForQuotation>[] {
+        // aggregate cart lines according to the seller
+        let sellerProducts: Map<string, CatalogueLine[]> = new Map<string, CatalogueLine[]>();
+        for (let cartLine of this.shoppingCart.catalogueLine) {
+            let partyId: string = UBLModelUtils.getLinePartyId(cartLine);
+            if (!sellerProducts.has(partyId)) {
+                sellerProducts.set(partyId, []);
+            }
+            sellerProducts.get(partyId).push(cartLine);
+        }
+
+        // create on rfq for each seller
+        let rfqPromises: Promise<RequestForQuotation>[] = [];
+        for (let sellerId of Array.from(sellerProducts.keys())) {
+            rfqPromises.push(this.bpDataService.initRfq(sellerProducts.get(sellerId), this.sellersSettings.get(sellerId).negotiationSettings));
+        }
+        return rfqPromises;
+    }
+
+    private initializeRfqs(rfqs: RequestForQuotation[]): void {
+        for (let rfq of rfqs) {
+            let sellerId: string = UBLModelUtils.getPartyId(rfq.requestForQuotationLine[0].lineItem.item.manufacturerParty);
+            this.rfqs.set(sellerId, rfq);
+        }
+    }
+
+    private getFrameContracts(): void {
+        for (let cartLine of this.shoppingCart.catalogueLine) {
+            this.initCallStatus.aggregatedSubmit();
+            this.bpeService.getFrameContract(
+                UBLModelUtils.getPartyId(cartLine.goodsItem.item.manufacturerParty),
+                this.cookieService.get('company_id'),
+                cartLine.id).then(frameContract => {
+
+                if (frameContract != null) {
+                    this.initCallStatus.aggregatedSubmit();
+                    this.documentService.getCachedDocument(frameContract.quotationReference.id).then(quotation => {
+                        this.frameContracts.set(cartLine.hjid, [frameContract, quotation]);
+
+                        this.initCallStatus.aggregatedCallBack();
+                    }).catch(error => {
+                        this.initCallStatus.aggregatedError('Failed to retrieve frame contract quotation', error);
+                    });
+                }
+
+                this.initCallStatus.aggregatedCallBack();
+
+            }).catch(error => {
+                this.initCallStatus.aggregatedError('Failed to retrieve frame contract', error);
+            });
+        }
+    }
+
+    private getDefaultPlatformTermsAndConditionsForAllCartLines(): void {
+        let firstProduct: CatalogueLine = this.shoppingCart.catalogueLine[0];
+        let sellerId: string = UBLModelUtils.getLinePartyId(firstProduct);
+
+        this.initCallStatus.aggregatedSubmit();
+        this.bpeService.getTermsAndConditions(
+            null,
+            this.cookieService.get('company_id'),
+            sellerId,
+            null,
+            firstProduct.goodsItem.deliveryTerms.incoterms,
+            this.sellersSettings.get(sellerId).negotiationSettings.paymentTerms[0]
+
+        ).then(termsAndConditions => {
+            // set the terms and conditions for the first cart line
+            this.platformTermsAndConditions.set(this.shoppingCart.catalogueLine[0].hjid, termsAndConditions);
+            // adapt the terms and conditions for the other products by updating the terms including
+            // incoterm and payment terms
+            for (let i = 1; i < this.shoppingCart.catalogueLine.length; i++) {
+                sellerId = UBLModelUtils.getLinePartyId(this.shoppingCart.catalogueLine[i]);
+                let copyTCs: Clause[] = copy(termsAndConditions);
+                for (let clause of copyTCs) {
+                    for (let tradingTerm of clause.tradingTerms) {
+                        if (tradingTerm.id.includes('incoterms_id')) {
+                            tradingTerm.value.valueCode[0].value = this.shoppingCart.catalogueLine[i].goodsItem.deliveryTerms.incoterms;
+                        } else if (tradingTerm.id.includes('payment_id')) {
+                            tradingTerm.value.valueCode[0].value = this.sellersSettings.get(sellerId).negotiationSettings.paymentTerms[0];
+                        }
+                    }
+                }
+                this.platformTermsAndConditions.set(this.shoppingCart.catalogueLine[i].hjid, copyTCs);
+            }
+
+            this.initCallStatus.aggregatedCallBack();
+        }).catch(err => {
+            this.initCallStatus.aggregatedError('Failed to retrieve platform settings', err);
+        });
+    }
+
+    private initializeModelWrappers(): void {
+        for (let cartLine of this.shoppingCart.catalogueLine) {
+            let lineHjid: number = cartLine.hjid;
+
+            // initialize product wrapper
+            let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
+            let productWrapper: ProductWrapper = new ProductWrapper(cartLine, this.sellersSettings.get(sellerId).negotiationSettings);
+            this.productWrappers.set(lineHjid, productWrapper);
+
+            // initialize negotiation model wrapper
+            let negotiationModelWrapper = new NegotiationModelWrapper(
+                cartLine,
+                this.rfqs.get(sellerId),
+                null,
+                this.frameContracts.has(lineHjid) ? this.frameContracts.has(lineHjid)[1] : null,
+                null,
+                this.sellersSettings.get(sellerId).negotiationSettings);
+            this.negotiationModelWrappers.set(lineHjid, negotiationModelWrapper)
+        }
     }
 
     /**
@@ -166,6 +327,22 @@ export class ShoppingCartComponent implements OnInit {
     getPriceString(cartLine: CatalogueLine): string {
         let priceWrapper: ItemPriceWrapper = new ItemPriceWrapper(cartLine.requiredItemLocationQuantity.price);
         return priceWrapper.pricePerItemString;
+    }
+
+    getRfqLine(cartLine: CatalogueLine): RequestForQuotationLine {
+        for (let sellerId of Array.from(this.rfqs.keys())) {
+            for (let rfqLine of this.rfqs.get(sellerId).requestForQuotationLine) {
+                if (rfqLine.lineItem.item.manufacturersItemIdentification.id == cartLine.goodsItem.item.manufacturersItemIdentification.id) {
+                    return rfqLine;
+                }
+            }
+        }
+        return null;
+    }
+
+    getRfq(cartLine: CatalogueLine): RequestForQuotation {
+        let sellerId: string = UBLModelUtils.getPartyId(cartLine.goodsItem.item.manufacturerParty);
+        return this.rfqs.get(sellerId);
     }
 
     /**

@@ -34,6 +34,8 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     negotiationProcessList: any[] = [];
     negotiationDocuments: any[] = [];
 
+    // rfq document to be passed into the inner negotiation request component
+    rfq: RequestForQuotation;
     frameContract:DigitalAgreement;
     frameContractQuotation: Quotation;
     isFrameContractBeingNegotiatedInThisNegotiation: boolean = false;
@@ -66,12 +68,16 @@ export class NegotiationComponent implements OnInit, OnDestroy {
                 return;
             }
 
-            if(bpActivityEvent.processType == 'Negotiation' &&
+            if (bpActivityEvent.processType === 'Negotiation' &&
                 bpActivityEvent.newProcess &&
                 // this check is required in order to prevent double initialization of last offer and negotiation history
                 // when a negotiation process is created for the first time
                 this.isLastStepNegotiation(bpActivityEvent)) {
 
+                // upon initiating a new negotiation step, the variables in the BpDataService are reset.
+                // so we initialize the required rfq document again
+                this.bpDataService.initRfqWithQuotation();
+                this.rfq = this.bpDataService.requestForQuotation;
                 this.initializeLastOffer();
                 this.initializeNegotiationHistory();
             }
@@ -79,7 +85,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
 
         if(this.bpDataService.requestForQuotation == null) {
             this.initCallStatus.submit();
-            this.bpDataService.initRfq(this.bpDataService.getCompanySettings().negotiationSettings)
+            this.bpDataService.initRfq(null, this.bpDataService.getCompanySettings().negotiationSettings)
                 .then(() => {
                     this.performInitCalls();
                     this.initCallStatus.callback("Request for Quotation Initialized.", true);
@@ -93,6 +99,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     }
 
     performInitCalls(): void {
+        this.rfq = this.bpDataService.requestForQuotation;
         this.setFrameContractNegotiationFlag();
         this.initializeLastOffer();
         this.initialDefaultTermsAndConditionsAndFrameContract();
@@ -120,7 +127,8 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         this.frameContractAndTermsCallStatus.submit();
         let [termsAndConditions, frameContract] = await Promise.all([
             // retrieve T&Cs
-            this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms && this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms.termOrCondition.length > 0
+            (this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms &&
+            this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms.termOrCondition.length > 0)
                 ? this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms.termOrCondition // if the seller company has T&Cs, use them
                 : this.bpeService.getTermsAndConditions( // otherwise, use the default T&Cs
                     null,

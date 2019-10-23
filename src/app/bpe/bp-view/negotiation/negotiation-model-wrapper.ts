@@ -31,18 +31,20 @@ export class NegotiationModelWrapper {
     initialImmutableRfq: RequestForQuotation; // immutable rfq object that is used to load manufacturers' terms defined as product defaults
     initialImmutableCatalogueLine: CatalogueLine; // immutable catalogue line
 
+    lineIndex = 0;
+
     constructor(public catalogueLine: CatalogueLine,
                 public rfq: RequestForQuotation,
                 public newQuotation: Quotation, // quotation object of the current negotiation step instantiated as a result of the rfq. It's supposed to be provided in the negotiation response phase
                 public frameContractQuotation: Quotation, // quotation object associated to a frame contract, if any
                 public lastOfferQuotation: Quotation, // in second or later steps of negotiation, this parameter keeps the quotation coming from the previous step
-                public settings: CompanyNegotiationSettings,
-                public lineIndex: number = 0) {
+                public settings: CompanyNegotiationSettings) {
 
-        if(rfq) {
-            this.initialImmutableRfq = copy(rfq);
-            this.rfqPaymentTerms = new PaymentTermsWrapper(rfq.paymentTerms);
-        }
+        // find the line index in order to acquire the corresponding information in rfq and quotation documents for the given catalogue line
+        this.lineIndex = rfq.requestForQuotationLine.findIndex(line => line.lineItem.item.manufacturersItemIdentification.id === catalogueLine.id);
+
+        this.initialImmutableRfq = copy(rfq);
+        this.rfqPaymentTerms = new PaymentTermsWrapper(rfq.paymentTerms);
 
         if(catalogueLine) {
             this.initialImmutableCatalogueLine = copy(catalogueLine);
@@ -95,15 +97,15 @@ export class NegotiationModelWrapper {
         }
 
         if(newQuotation) {
-            this.newQuotationWrapper = new QuotationWrapper(newQuotation, catalogueLine,lineIndex);
+            this.newQuotationWrapper = new QuotationWrapper(newQuotation, catalogueLine, this.lineIndex);
         }
 
         if(frameContractQuotation) {
-            this.frameContractQuotationWrapper = new QuotationWrapper(frameContractQuotation, catalogueLine,lineIndex);
+            this.frameContractQuotationWrapper = new QuotationWrapper(frameContractQuotation, catalogueLine, this.lineIndex);
         }
 
         if(lastOfferQuotation) {
-            this.lastOfferQuotationWrapper = new QuotationWrapper(lastOfferQuotation, catalogueLine,lineIndex);
+            this.lastOfferQuotationWrapper = new QuotationWrapper(lastOfferQuotation, catalogueLine, this.lineIndex);
         }
     }
 

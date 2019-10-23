@@ -1,6 +1,18 @@
-<negotiation-request-item *ngFor="let wrapper of wrappers;let i=index" [selectedLine]="selectedLine" [rfqLine]="rfqLines[i]" [rfq]="rfq" [manufacturersTermsSource]="manufacturersTermsSource" [lastOfferQuotation]="lastOfferQuotation"
-[frameContractQuotation]="frameContractQuotation" [frameContractNegotiation]="frameContractNegotiation" [frameContract]="frameContract" [defaultTermsAndConditions]="defaultTermsAndConditions"
-[deliverytermsOfBuyer]="deliverytermsOfBuyer" [wrapper]="wrapper" [hidden]="selectedLine != wrapper.catalogueLine"></negotiation-request-item>
+<negotiation-request-item *ngFor="let wrapper of wrappers;let i=index"
+                          [selectedLine]="selectedLine"
+                          [rfqLine]="rfq.requestForQuotationLine[i]"
+                          [rfq]="rfq"
+                          [bpActivityEvent]="bpActivityEvent"
+                          [manufacturersTermsSource]="manufacturersTermsSource"
+                          [lastOfferQuotation]="lastOfferQuotation"
+                          [frameContractQuotation]="frameContractQuotation"
+                          [frameContractNegotiation]="frameContractNegotiation"
+                          [frameContract]="frameContract"
+                          [defaultTermsAndConditions]="defaultTermsAndConditions"
+                          [deliverytermsOfBuyer]="deliverytermsOfBuyer"
+                          [wrapper]="wrapper"
+                          [hidden]="selectedLine != wrapper.catalogueLine">
+</negotiation-request-item>
 
 <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showPurchaseOrder}" (click)="showPurchaseOrder = !showPurchaseOrder"><span [innerHTML]="'Purchase Order' | translate" ></span></div>
 
@@ -17,7 +29,7 @@
     <tr *ngFor="let wrapper of wrappers;let i=index">
         <th scope="row"><span>{{wrapper.catalogueLine.goodsItem.item.name[0].value }}</span></th>
         <td><span>{{wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.item.manufacturersItemIdentification.id}}</span></td>
-        <td><span>{{rfqLines[i].lineItem.quantity.value}} {{getQuantityUnit(wrapper.catalogueLine)}}</span></td>
+        <td><span>{{rfq.requestForQuotationLine[i].lineItem.quantity.value}} {{getQuantityUnit(wrapper.catalogueLine)}}</span></td>
         <td><span>{{wrapper.rfqTotalPriceString}}</span></td>
         <td *ngIf="config.vatEnabled"><span>{{wrapper.rfqVatTotalString}}</span></td>
         <td *ngIf="config.vatEnabled"><span>{{wrapper.rfqGrossTotalString}}</span></td>

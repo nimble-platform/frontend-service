@@ -63,10 +63,10 @@ export class BPDataService{
     // variables to keep the products and product categories related to the active business process
     relatedProducts: string[];
     relatedProductCategories: string[];
-    // the company settings for the producers of the catalogue lines
-    private sellerSettings: CompanySettings[] = [];
+    // the company settings for the producer of the catalogue lines
+    private sellerSettings: CompanySettings;
     // the company settings of the current user
-    currentUserSettings: CompanySettings;
+    currentUsersCompanySettings: CompanySettings;
 
     requestForQuotation: RequestForQuotation;
     quotation: Quotation;
@@ -118,7 +118,7 @@ export class BPDataService{
         this.catalogueLines = [];
         this.relatedProducts = [];
         this.relatedProductCategories = [];
-        this.sellerSettings = [sellerSettings];
+        this.sellerSettings = sellerSettings;
 
         for(let line of catalogueLines) {
             this.catalogueLines.push(line);
@@ -133,6 +133,7 @@ export class BPDataService{
         // select the first values from the product properties
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.modifiedCatalogueLines[0].goodsItem.item = copy(this.bpActivityEvent.itemsWithSelectedProperties[0]);
+        this.modifiedCatalogueLines[0].goodsItem.quantity = this.bpActivityEvent.itemQuantity;
     }
 
     getCatalogueLines(): CatalogueLine[] {
@@ -144,7 +145,7 @@ export class BPDataService{
     }
 
     getCompanySettings(): CompanySettings {
-        return this.sellerSettings[0];
+        return this.sellerSettings;
     }
 
     private async setProcessDocuments(processMetadata: ThreadEventMetadata) {
@@ -330,44 +331,53 @@ export class BPDataService{
         }
     }
 
-    // this method is supposed to be called when the user is about to initialize a business process via the
-    // search details page
-    initRfq(settings: CompanyNegotiationSettings): Promise<void> {
-        const rfq = UBLModelUtils.createRequestForQuotation(settings);
-        this.requestForQuotation = rfq;
+    initRfq(modifiedLines: CatalogueLine[] = null, sellerSettings: CompanyNegotiationSettings = null): Promise<RequestForQuotation> {
+        const rfq = UBLModelUtils.createRequestForQuotation(modifiedLines.map(line => line.goodsItem.item), sellerSettings);
 
-        const copyLine = copy(this.modifiedCatalogueLines[0]);
-        const rfqLine = this.requestForQuotation.requestForQuotationLine[0];
-
-        rfqLine.lineItem.item = copyLine.goodsItem.item;
-        rfqLine.lineItem.lineReference = [new LineReference(copyLine.id)];
-        const linePriceWrapper = new PriceWrapper(
-            copyLine.requiredItemLocationQuantity.price,
-            copyLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent);
-        if(linePriceWrapper.itemPrice.hasPrice()) {
-            rfqLine.lineItem.price = copyLine.requiredItemLocationQuantity.price;
-        } else {
-            rfqLine.lineItem.price.priceAmount.value = 1;
+        // modified lines are passed as null while initializing rfq from the negotiation and transport negotiation views
+        if (modifiedLines == null) {
+            modifiedLines = this.modifiedCatalogueLines;
         }
-        rfqLine.lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = copyLine.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
-        rfqLine.lineItem.warrantyValidityPeriod = copyLine.warrantyValidityPeriod;
-        rfqLine.lineItem.deliveryTerms.incoterms = copyLine.goodsItem.deliveryTerms.incoterms;
-        rfqLine.lineItem.quantity.unitCode = copyLine.requiredItemLocationQuantity.price.baseQuantity.unitCode;
 
-        // quantity
-        rfqLine.lineItem.quantity.value = this.bpActivityEvent.itemQuantity ? this.bpActivityEvent.itemQuantity.value : 1;
+        for (let i = 0; i < modifiedLines.length; i++) {
+            const line = modifiedLines[i];
+            const rfqLine: RequestForQuotationLine = rfq.requestForQuotationLine[i];
+
+            rfqLine.lineItem.item = line.goodsItem.item;
+            rfqLine.lineItem.lineReference = [new LineReference(line.id)];
+            const linePriceWrapper = new PriceWrapper(
+                line.requiredItemLocationQuantity.price,
+                line.requiredItemLocationQuantity.applicableTaxCategory[0].percent);
+            if (linePriceWrapper.itemPrice.hasPrice()) {
+                rfqLine.lineItem.price = line.requiredItemLocationQuantity.price;
+            } else {
+                rfqLine.lineItem.price.priceAmount.value = 1;
+            }
+            rfqLine.lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
+            rfqLine.lineItem.warrantyValidityPeriod = line.warrantyValidityPeriod;
+            rfqLine.lineItem.deliveryTerms.incoterms = line.goodsItem.deliveryTerms.incoterms;
+            rfqLine.lineItem.quantity.unitCode = line.requiredItemLocationQuantity.price.baseQuantity.unitCode;
+
+            // quantity
+            rfqLine.lineItem.quantity = modifiedLines[i].goodsItem.quantity;
+        }
 
         let userId = this.cookieService.get('user_id');
         return this.userService.getSettingsForUser(userId).then(settings => {
             // we can't copy because those are 2 different types of addresses.
-            const lineItem = this.requestForQuotation.requestForQuotationLine[0].lineItem;
-            const address = lineItem.deliveryTerms.deliveryLocation.address;
-            address.country.name = new Text(settings.details.address.country,DEFAULT_LANGUAGE());
-            address.postalZone = settings.details.address.postalCode;
-            address.cityName = settings.details.address.cityName;
-            address.region = settings.details.address.region;
-            address.buildingNumber = settings.details.address.buildingNumber;
-            address.streetName = settings.details.address.streetName;
+            for (let reqLine of rfq.requestForQuotationLine) {
+                const lineItem = reqLine.lineItem;
+                const address = lineItem.deliveryTerms.deliveryLocation.address;
+                address.country.name = new Text(settings.details.address.country, DEFAULT_LANGUAGE());
+                address.postalZone = settings.details.address.postalCode;
+                address.cityName = settings.details.address.cityName;
+                address.region = settings.details.address.region;
+                address.buildingNumber = settings.details.address.buildingNumber;
+                address.streetName = settings.details.address.streetName;
+            }
+
+            this.requestForQuotation = rfq;
+            return rfq;
         });
     }
 
@@ -375,10 +385,10 @@ export class BPDataService{
         this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithCopies(order, this.modifiedCatalogueLines[0]);
     }
 
-    async initRfqForTransportationWithThreadMetadata(thread: ThreadEventMetadata): Promise<void> {
+    async initRfqForTransportationWithThreadMetadata(thread: ThreadEventMetadata): Promise<RequestForQuotation> {
         await this.setProcessDocuments(thread);
         this.initRfqForTransportationWithOrder(this.order);
-        return Promise.resolve();
+        return Promise.resolve(this.requestForQuotation);
     }
 
     private initFetchedRfq(): void {
@@ -460,19 +470,7 @@ export class BPDataService{
     initRfqWithQuotation() {
         const copyQuotation = copy(this.copyQuotation);
         const copyRfq = copy(this.copyRequestForQuotation);
-        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(null);
-
-        let size = copyQuotation.quotationLine.length;
-        for(let i = 0 ; i < size; i++){
-            if(i != 0){
-                const quantity: Quantity = new Quantity(null, "", null);
-                const item: Item = UBLModelUtils.createItem();
-                const price: Price = UBLModelUtils.createPrice();
-                const lineItem: LineItem = UBLModelUtils.createLineItem(quantity, price, item);
-                this.requestForQuotation.requestForQuotationLine[i] = new RequestForQuotationLine(lineItem);
-            }
-            this.requestForQuotation.requestForQuotationLine[i].lineItem = copyQuotation.quotationLine[i].lineItem;
-        }
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(this.copyQuotation.quotationLine.map(quotationLine => quotationLine.lineItem.item), null);
         this.requestForQuotation.paymentMeans = copyQuotation.paymentMeans;
         this.requestForQuotation.paymentTerms = copyQuotation.paymentTerms;
         this.requestForQuotation.tradingTerms = copyQuotation.tradingTerms;
@@ -560,7 +558,7 @@ export class BPDataService{
     }
 
     // checks whether the given process is the final step in the workflow or not
-    isFinalProcessInTheWorkflow(processId:string){
+    isFinalProcessInTheWorkflow(processId: string){
         let companyWorkflow = this.getCompanySettings().negotiationSettings.company.processID;
         // if there is no workflow specified, then consider the default flow
         // Fulfilment or TEP is the final step in the default flow

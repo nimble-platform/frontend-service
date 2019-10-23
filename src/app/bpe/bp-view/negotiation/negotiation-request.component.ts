@@ -30,6 +30,8 @@ import {CustomTermModalComponent} from "./custom-term-modal.component";
 import {TranslateService} from '@ngx-translate/core';
 import {Item} from '../../../catalogue/model/publish/item';
 import {NegotiationRequestItemComponent} from './negotiation-request-item.component';
+import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {CompanySettings} from '../../../user-mgmt/model/company-settings';
 
 @Component({
     selector: "negotiation-request",
@@ -46,9 +48,10 @@ export class NegotiationRequestComponent implements OnInit {
 
     @ViewChildren(NegotiationRequestItemComponent) viewChildren: QueryList<NegotiationRequestItemComponent>;
     @Input() selectedLine: CatalogueLine;
-    catalogueLines: CatalogueLine[];
-    rfq: RequestForQuotation;
-    rfqLines: RequestForQuotationLine[];
+    @Input() catalogueLines: CatalogueLine[];
+    @Input() sellerSettings: CompanySettings;
+
+    @Input() rfq: RequestForQuotation;
     wrappers: NegotiationModelWrapper[];
     @Input() frameContract: DigitalAgreement = new DigitalAgreement();
     @Input() frameContractQuotation: Quotation;
@@ -69,6 +72,7 @@ export class NegotiationRequestComponent implements OnInit {
     /**
      * View control fields
      */
+    @Input() bpActivityEvent: BpActivityEvent;
     @Input() manufacturersTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = 'product_defaults';
     counterOfferTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = this.manufacturersTermsSource;
     callStatus: CallStatus = new CallStatus();
@@ -77,7 +81,6 @@ export class NegotiationRequestComponent implements OnInit {
      * Logic control fields
      */
     processMetadata: ThreadEventMetadata = null; // the copy of ThreadEventMetadata of the current business process
-    processMetadataHistory: ThreadEventMetadata[];
 
 
     @ViewChild(DiscountModalComponent)
@@ -100,41 +103,29 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     ngOnInit() {
-        // Normally, this view is not displayed if the bpDataService.requestForQuotation is null.
-        // However, it should also be checked here also for the second and later iterations of the negotiation business process.
-        // In those cases, the negotiation component is not initialized again but only this component.
-        if (this.bpDataService.requestForQuotation == null) {
-            this.bpDataService.initRfqWithQuotation();
-        }
-
         this.userService.getSettingsForParty(this.cookieService.get("company_id")).then(res => {
             this.deliverytermsOfBuyer = res.tradeDetails.deliveryTerms;
         });
 
-        // get copy of ThreadEventMetadata of the current business process
-        this.setProcessMetadataFields(this.bpDataService.bpActivityEvent.processHistory);
-
-        // copying the original rfq so that the updates (which might be temporary) wouldn't effect the original document
-        // if the document is updated, the cached one should be updated in the document service
-        this.rfq = this.bpDataService.requestForQuotation;
-        this.rfqLines = this.rfq.requestForQuotationLine;
-        this.catalogueLines = this.bpDataService.getCatalogueLines();
+        if (this.bpActivityEvent && this.bpActivityEvent.newProcess) {
+            this.processMetadata = this.bpActivityEvent.processMetadata;
+        }
 
         this.sellerId = UBLModelUtils.getPartyId(this.catalogueLines[0].goodsItem.item.manufacturerParty);
         this.buyerId = this.cookieService.get("company_id");
 
         // construct wrapper with the retrieved documents
         this.wrappers = [];
-        let size = this.rfqLines.length;
+        let size = this.rfq.requestForQuotationLine.length;
         for(let i = 0; i <size;i++){
             this.wrappers.push(new NegotiationModelWrapper(
-                this.getCatalogueLine(this.rfqLines[i].lineItem.item),
+                this.getCatalogueLine(this.rfq.requestForQuotationLine[i].lineItem.item),
                 this.rfq,
                 null,
                 this.frameContractQuotation,
                 this.lastOfferQuotation,
-                this.bpDataService.getCompanySettings().negotiationSettings,
-                i));
+                this.sellerSettings.negotiationSettings)
+            );
         }
     }
 
@@ -146,13 +137,6 @@ export class NegotiationRequestComponent implements OnInit {
             }
         }
         return null;
-    }
-
-    private setProcessMetadataFields(processHistory: ThreadEventMetadata[]): void {
-        this.processMetadataHistory = this.bpDataService.bpActivityEvent.processHistory;
-        if(!this.bpDataService.bpActivityEvent.newProcess) {
-            this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
-        }
     }
 
     /*
@@ -211,7 +195,7 @@ export class NegotiationRequestComponent implements OnInit {
             this.callStatus.callback("Terms sent", true);
             // set the item price, otherwise we will lose item price information
             for(let wrapper of this.wrappers){
-                this.bpDataService.requestForQuotation.requestForQuotationLine[0].lineItem.price.priceAmount.value = wrapper.rfqDiscountPriceWrapper.totalPrice/wrapper.rfqDiscountPriceWrapper.orderedQuantity.value;
+                this.rfq.requestForQuotationLine[0].lineItem.price.priceAmount.value = wrapper.rfqDiscountPriceWrapper.totalPrice/wrapper.rfqDiscountPriceWrapper.orderedQuantity.value;
             }
             // just go to order page
             this.bpDataService.setCopyDocuments(true, false, false,false);
