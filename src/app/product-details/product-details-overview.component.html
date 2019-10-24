@@ -114,17 +114,6 @@
                 </span>
             </div>
         </div>
-        <!-- quantity in shopping basket -->
-        <div *ngIf="inShoppingBasket" class="d-flex mt-3">
-            <span class="mr-2" [innerHTML]="'Quantity:' | translate"></span>
-            <span class="d-flex">
-                <input type="number" min="1" step="1" (keypress)="onOrderQuantityKeyPressed($event)"
-                       [ngModel]="wrapper.line.goodsItem.quantity.value" (ngModelChange)="wrapper.line.goodsItem.quantity.value=$event; onOrderQuantityChange()"
-                       class="form-control form-control-sm px-1"/>
-                <span class="ml-2">{{ wrapper.line.requiredItemLocationQuantity.price.baseQuantity.unitCode }}</span>
-            </span>
-        </div>
-
         <div class="col-12 pr-0 space-before">
           <small class="float-right">ID: {{productId}}</small>
         </div>

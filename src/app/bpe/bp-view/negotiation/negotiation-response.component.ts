@@ -90,7 +90,8 @@ export class NegotiationResponseComponent implements OnInit {
                 this.frameContractQuotations ? this.frameContractQuotations[i] : null,
                 this.lastOfferQuotation,
                 this.bpDataService.getCompanySettings().negotiationSettings,
-                i));
+                i)
+            );
         }
 
         for(let wrapper of this.wrappers){

@@ -20,6 +20,16 @@ export class ShoppingCartDataService {
                 private http: Http) {}
 
     public addItemToCart(productHjid: string | number): Promise<Catalogue> {
+        if (this.cartCatalogue == null) {
+            return this.getShoppingCart().then(() => {
+                return this.execAddItemToCart(productHjid);
+            });
+        } else {
+            return this.execAddItemToCart(productHjid);
+        }
+    }
+
+    private execAddItemToCart(productHjid: string | number): Promise<Catalogue> {
         let url = `${this.url}/shopping-cart?productId=${productHjid}`;
         return this.http
             .post(url, null, {headers: getAuthorizedHeaders(this.cookieService)})

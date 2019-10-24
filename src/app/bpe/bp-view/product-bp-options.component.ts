@@ -191,12 +191,12 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                     this.getOrderForTransportService(),
                     this.userService.getSettingsForUser(userId)
 
-                ]).then(([lines, order, ownCompanySettings]) => {
+                ]).then(([lines, order, currentUserSettings]) => {
                     this.selectedLine = lines[0];
                     this.lines = lines;
                     this.correspondingOrderOfTransportProcess = order;
                     this.bpDataService.productOrder = order;
-                    this.bpDataService.currentUserSettings = ownCompanySettings;
+                    this.bpDataService.currentUsersCompanySettings = currentUserSettings;
 
                     return Promise.all([
                         this.getReferencedCatalogueLines(lines, order),

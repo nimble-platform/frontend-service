@@ -1,33 +1,29 @@
-import {Component, Input, OnInit, ViewChild} from "@angular/core";
-import {CatalogueLine} from "../../../catalogue/model/publish/catalogue-line";
-import {BPDataService} from "../bp-data-service";
-import {CURRENCIES} from "../../../catalogue/model/constants";
-import {RequestForQuotation} from "../../../catalogue/model/publish/request-for-quotation";
-import {RequestForQuotationLine} from "../../../catalogue/model/publish/request-for-quotation-line";
-import {Location} from "@angular/common";
-import {CallStatus} from "../../../common/call-status";
-import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
-import {BPEService} from "../../bpe.service";
-import {UserService} from "../../../user-mgmt/user.service";
-import {CookieService} from "ng2-cookies";
-import {Router} from "@angular/router";
-import {NegotiationModelWrapper} from "./negotiation-model-wrapper";
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {CatalogueLine} from '../../../catalogue/model/publish/catalogue-line';
+import {BPDataService} from '../bp-data-service';
+import {CURRENCIES} from '../../../catalogue/model/constants';
+import {RequestForQuotation} from '../../../catalogue/model/publish/request-for-quotation';
+import {RequestForQuotationLine} from '../../../catalogue/model/publish/request-for-quotation-line';
+import {CallStatus} from '../../../common/call-status';
+import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
+import {CookieService} from 'ng2-cookies';
+import {NegotiationModelWrapper} from './negotiation-model-wrapper';
 import {copy, durationToString, trimRedundantDecimals, validateNumberInput} from '../../../common/utils';
-import {PeriodRange} from "../../../user-mgmt/model/period-range";
-import {Option} from "../../../common/options-input.component";
-import {addressToString} from "../../../user-mgmt/utils";
-import {DocumentService} from "../document-service";
-import {DiscountModalComponent} from "../../../product-details/discount-modal.component";
-import {ThreadEventMetadata} from "../../../catalogue/model/publish/thread-event-metadata";
-import * as myGlobals from "../../../globals";
-import {DigitalAgreement} from "../../../catalogue/model/publish/digital-agreement";
-import {UnitService} from "../../../common/unit-service";
-import {frameContractDurationUnitListId} from "../../../common/constants";
-import {Quantity} from "../../../catalogue/model/publish/quantity";
-import {Quotation} from "../../../catalogue/model/publish/quotation";
-import {Clause} from "../../../catalogue/model/publish/clause";
-import {CustomTermModalComponent} from "./custom-term-modal.component";
+import {PeriodRange} from '../../../user-mgmt/model/period-range';
+import {Option} from '../../../common/options-input.component';
+import {addressToString} from '../../../user-mgmt/utils';
+import {DiscountModalComponent} from '../../../product-details/discount-modal.component';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
+import * as myGlobals from '../../../globals';
+import {DigitalAgreement} from '../../../catalogue/model/publish/digital-agreement';
+import {UnitService} from '../../../common/unit-service';
+import {frameContractDurationUnitListId} from '../../../common/constants';
+import {Quantity} from '../../../catalogue/model/publish/quantity';
+import {Quotation} from '../../../catalogue/model/publish/quotation';
+import {Clause} from '../../../catalogue/model/publish/clause';
+import {CustomTermModalComponent} from './custom-term-modal.component';
 import {TranslateService} from '@ngx-translate/core';
+import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 
 enum FIXED_NEGOTIATION_TERMS {
     DELIVERY_PERIOD = 'deliveryPeriod',
@@ -77,6 +73,7 @@ export class NegotiationRequestItemComponent implements OnInit {
     /**
      * View control fields
      */
+    @Input() bpActivityEvent: BpActivityEvent;
     @Input() manufacturersTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer';
     counterOfferTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = this.manufacturersTermsSource;
     showCounterOfferTerms:boolean = false;
@@ -95,7 +92,6 @@ export class NegotiationRequestItemComponent implements OnInit {
      * Logic control fields
      */
     processMetadata: ThreadEventMetadata = null; // the copy of ThreadEventMetadata of the current business process
-    processMetadataHistory: ThreadEventMetadata[];
     dirtyNegotiationFields: any = {}; // keeps the negotiation fields that are updated by the user
     enableDirtyUpdate: boolean = true; // if true, dirty map is update updated with user activities, otherwise the map is not updated in onTermsChange method.
     // the aim is to prevent updating dirty map when the terms sources is changed.
@@ -115,14 +111,9 @@ export class NegotiationRequestItemComponent implements OnInit {
     }
 
     constructor(private bpDataService: BPDataService,
-                private bpeService:BPEService,
-                private userService:UserService,
                 private unitService: UnitService,
                 private cookieService: CookieService,
-                private location: Location,
-                private documentService: DocumentService,
-                private translate: TranslateService,
-                private router: Router) {
+                private translate: TranslateService) {
 
     }
 
@@ -130,8 +121,9 @@ export class NegotiationRequestItemComponent implements OnInit {
         if(this.manufacturersTermsSource == null){
             this.manufacturersTermsSource = 'product_defaults';
         }
-        // get copy of ThreadEventMetadata of the current business process
-        this.setProcessMetadataFields(this.bpDataService.bpActivityEvent.processHistory);
+        if (this.bpActivityEvent && this.bpActivityEvent.newProcess) {
+            this.processMetadata = this.bpActivityEvent.processMetadata;
+        }
 
         this.sellerId = UBLModelUtils.getPartyId(this.wrapper.catalogueLine.goodsItem.item.manufacturerParty);
         this.buyerId = this.cookieService.get("company_id");
@@ -184,18 +176,6 @@ export class NegotiationRequestItemComponent implements OnInit {
         // set tc tab based on the existence of custom terms
         if(this.isReadOnly() && this.getNonFrameContractTermNumber() == 0) {
             this.selectedTCTab = 'CLAUSES';
-        }
-    }
-
-
-    private setProcessMetadataFields(processHistory: ThreadEventMetadata[]): void {
-        this.processMetadataHistory = this.bpDataService.bpActivityEvent.processHistory;
-        if(!this.bpDataService.bpActivityEvent.newProcess) {
-            this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
-        } else {
-            if(this.processMetadataHistory.length > 0 && this.processMetadataHistory[0].processType == "Negotiation") {
-                this.manufacturersTermsExistence.last_offer = true;
-            }
         }
     }
 
@@ -607,7 +587,7 @@ export class NegotiationRequestItemComponent implements OnInit {
 
     private getDeliveryPeriodRange(): PeriodRange | null {
         const unit = this.wrapper.rfqDeliveryPeriod.unitCode;
-        const settings = this.wrapper.settings;
+        const settings = this.wrapper.sellerSettings;
 
         const index = settings.deliveryPeriodUnits.indexOf(unit);
         return index >= 0 ? settings.deliveryPeriodRanges[index] : null;
@@ -615,7 +595,7 @@ export class NegotiationRequestItemComponent implements OnInit {
 
     private getWarrantyPeriodRange(): PeriodRange | null {
         const unit = this.wrapper.rfqWarranty.unitCode;
-        const settings = this.wrapper.settings;
+        const settings = this.wrapper.sellerSettings;
 
         const index = settings.warrantyPeriodUnits.indexOf(unit);
         return index >= 0 ? settings.warrantyPeriodRanges[index] : null;

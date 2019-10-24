@@ -5,7 +5,7 @@
     </div>
 </div>
 
-<ng-container *ngIf="initCallStatus.fb_callback">
+<ng-container *ngIf="initCallStatus.isAllSuccessful()">
     <div *ngFor="let cartLine of shoppingCart?.catalogueLine; let i = index">
         <div class="d-flex space-before">
             <div class="btn btn-primary btn-outline-primary" (click)="collapsedStatusesOfCartItems.set(cartLine.hjid, !collapsedStatusesOfCartItems.get(cartLine.hjid))">
@@ -15,31 +15,40 @@
         </div>
         <div *ngIf="collapsedStatusesOfCartItems.get(cartLine.hjid)" class="space-before cart-item">
             <product-details-overview [wrapper]="productWrappers.get(cartLine.hjid)"
-                                      [itemWithSelectedProps]="itemsWithSelectedProperties.get(cartLine.hjid)"
+                                      [itemWithSelectedProps]="modifiedCatalogueLines.get(cartLine.hjid).goodsItem.item"
                                       [associatedProducts]="associatedProducts.get(cartLine.hjid)"
                                       [inShoppingBasket]="true"
                                       (onCartItemDeleted)="onRemoveFromCart($event.hjid)">
             </product-details-overview>
             <product-details-tabs [wrapper]="productWrappers.get(cartLine.hjid)"
-                                  [settings]="companiesSettings.get(getPartyId(cartLine.goodsItem.item.manufacturerParty))">
+                                  [settings]="sellersSettings.get(getPartyId(cartLine.goodsItem.item.manufacturerParty))">
             </product-details-tabs>
+            <negotiation-request-item [selectedLine]="cartLine"
+                                      [rfqLine]="getRfqLine(cartLine, i)"
+                                      [rfq]="getRfq(cartLine)"
+                                      [lastOfferQuotation]="null"
+                                      [frameContractQuotation]="frameContracts.has(cartLine.hjid) ? frameContracts.get(cartLine.hjid)[1] : null"
+                                      [frameContractNegotiation]="false"
+                                      [frameContract]="frameContracts.has(cartLine.hjid) ? frameContracts.get(cartLine.hjid)[0] : null"
+                                      [manufacturersTermsSource]="frameContracts.has(cartLine.hjid) ? 'frame_contract' : 'product_defaults'"
+                                      [defaultTermsAndConditions]="platformTermsAndConditions.get(cartLine.hjid)"
+                                      [deliverytermsOfBuyer]="buyerCompanySettings.tradeDetails.deliveryTerms"
+                                      [wrapper]="negotiationModelWrappers.get(cartLine.hjid)"
+                                      [hidden]="false">
+            </negotiation-request-item>
         </div>
     </div>
-
-    <!-- no item in the cart -->
-    <div class="jumbotron" *ngIf="shoppingCart == null || shoppingCart.catalogueLine.length == 0">
-        <h3><span [innerHTML]="'No products in the shopping cart.' | translate"></span></h3>
-        <h5 class="mt-3">
-            <span (click)="onNavigateToTheSearchPage()" class="pointer"><span [innerHTML]="'Search for Products' | translate"></span></span>
-            <i class="fa fa-search pointer" (click)="onNavigateToTheSearchPage()"></i>
-        </h5>
-    </div>
 </ng-container>
+
+<!-- no item in the cart -->
+<div class="jumbotron" *ngIf="shoppingCart == null || shoppingCart.catalogueLine.length == 0">
+    <h3><span [innerHTML]="'No products in the shopping cart.' | translate"></span></h3>
+    <h5 class="mt-3">
+        <span (click)="onNavigateToTheSearchPage()" class="pointer"><span [innerHTML]="'Search for Products' | translate"></span></span>
+        <i class="fa fa-search pointer" (click)="onNavigateToTheSearchPage()"></i>
+    </h5>
+</div>
 
 <!-- error cases -->
-<ng-container *ngIf="associatedProductsCallStatus.isError()">
-    <call-status [callStatus]="associatedProductsCallStatus"></call-status>
-</ng-container>
-<ng-container *ngIf="companySettingsCallStatus.isError()">
-    <call-status [callStatus]="companySettingsCallStatus"></call-status>
-</ng-container>
+<call-status [callStatus]="initCallStatus">
+</call-status>

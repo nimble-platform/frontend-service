@@ -36,13 +36,13 @@ export class NegotiationModelWrapper {
                 public newQuotation: Quotation, // quotation object of the current negotiation step instantiated as a result of the rfq. It's supposed to be provided in the negotiation response phase
                 public frameContractQuotation: Quotation, // quotation object associated to a frame contract, if any
                 public lastOfferQuotation: Quotation, // in second or later steps of negotiation, this parameter keeps the quotation coming from the previous step
-                public settings: CompanyNegotiationSettings,
-                public lineIndex: number = 0) {
+                public sellerSettings: CompanyNegotiationSettings,
+                public lineIndex: number // line index is required in case the same product is included in the rfq multiple times
+    ) {
 
-        if(rfq) {
-            this.initialImmutableRfq = copy(rfq);
-            this.rfqPaymentTerms = new PaymentTermsWrapper(rfq.requestForQuotationLine[lineIndex].lineItem.paymentTerms);
-        }
+        this.initialImmutableRfq = copy(rfq);
+        this.rfqPaymentTerms = new PaymentTermsWrapper(rfq.requestForQuotationLine[lineIndex].lineItem.paymentTerms);
+
 
         if(catalogueLine) {
             this.initialImmutableCatalogueLine = copy(catalogueLine);
@@ -95,15 +95,15 @@ export class NegotiationModelWrapper {
         }
 
         if(newQuotation) {
-            this.newQuotationWrapper = new QuotationWrapper(newQuotation, catalogueLine,lineIndex);
+            this.newQuotationWrapper = new QuotationWrapper(newQuotation, catalogueLine, this.lineIndex);
         }
 
         if(frameContractQuotation) {
-            this.frameContractQuotationWrapper = new QuotationWrapper(frameContractQuotation, catalogueLine,lineIndex);
+            this.frameContractQuotationWrapper = new QuotationWrapper(frameContractQuotation, catalogueLine, this.lineIndex);
         }
 
         if(lastOfferQuotation) {
-            this.lastOfferQuotationWrapper = new QuotationWrapper(lastOfferQuotation, catalogueLine,lineIndex);
+            this.lastOfferQuotationWrapper = new QuotationWrapper(lastOfferQuotation, catalogueLine, this.lineIndex);
         }
     }
 
@@ -132,11 +132,11 @@ export class NegotiationModelWrapper {
     }
 
     public get linePaymentTerms(): string {
-        return this.settings.paymentTerms[0];
+        return this.sellerSettings.paymentTerms[0];
     }
 
     public get linePaymentMeans(): string {
-        return this.settings.paymentMeans[0];
+        return this.sellerSettings.paymentMeans[0];
     }
 
     public get lineVatPercentage(): number {

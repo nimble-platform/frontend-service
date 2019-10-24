@@ -49,13 +49,17 @@
         <ng-container *ngIf="lastOfferCalStatus.isComplete() && frameContractAndTermsCallStatus.isComplete()">
             <div [hidden]="!(sliderIndex == negotiationProcessList.length-1 && i == negotiationProcessList.length-1)">
                 <negotiation-request *ngIf="!bpDataService.quotation && bpDataService.bpActivityEvent.userRole === 'buyer'"
+                                     [rfq]="rfq"
                                      [frameContracts]="frameContracts"
                                      [frameContractQuotations]="frameContractQuotations"
                                      [frameContractNegotiations]="isFrameContractBeingNegotiatedInThisNegotiation"
                                      [lastOfferQuotation]="lastOfferQuotation"
                                      [defaultTermsAndConditions]="defaultTermsAndConditions"
                                      [manufacturersTermsSources]="getPrimaryTermsSource(lastOfferQuotation)"
-                                     [selectedLine]="selectedLine">
+                                     [selectedLine]="selectedLine",
+                                     [bpActivityEvent]="bpDataService.bpActivityEvent"
+                                     [catalogueLines]="bpDataService.catalogueLines"
+                                     [sellerSettings]="bpDataService.sellerSettings">
                 </negotiation-request>
                 <negotiation-response *ngIf="bpDataService.quotation"
                                       [lastOfferQuotation]="lastOfferQuotation"
