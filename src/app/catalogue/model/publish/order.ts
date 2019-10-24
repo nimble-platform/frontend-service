@@ -1,11 +1,9 @@
 import { OrderLine } from "./order-line";
 import { CustomerParty } from "./customer-party";
 import { SupplierParty } from "./supplier-party";
-import { PaymentMeans } from "./payment-means";
 import { Address } from "./address";
 import { Period } from "./period";
 import { Contract } from "./contract";
-import { PaymentTerms } from "./payment-terms";
 import { MonetaryTotal } from "./monetary-total";
 import {DocumentReference} from './document-reference';
 export class Order {
@@ -19,8 +17,6 @@ export class Order {
         public contract: Contract[] = null,
         public buyerCustomerParty: CustomerParty = null,
         public sellerSupplierParty: SupplierParty = null,
-        public paymentMeans: PaymentMeans = new PaymentMeans(),
-        public paymentTerms: PaymentTerms = new PaymentTerms(),
         public anticipatedMonetaryTotal: MonetaryTotal = new MonetaryTotal(),
         public orderLine: OrderLine[] = null,
         public additionalDocumentReference:DocumentReference[] = []

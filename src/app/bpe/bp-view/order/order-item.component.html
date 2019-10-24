@@ -101,32 +101,8 @@
 
     <div class="row mb-4 mt-4">
         <div class="btn btn-outline-primary" [ngClass]="{'active':selectedPanel == 'TERMS_AND_CONDITIONS'}" (click)="selectedPanel = 'TERMS_AND_CONDITIONS'"><span [innerHTML]="'Terms and Conditions' | translate"></span></div>
-        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'NOTES_AND_FILES'}" (click)="selectedPanel = 'NOTES_AND_FILES'"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>
         <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'PREVIOUS_STEPS'}" (click)="selectedPanel = 'PREVIOUS_STEPS'"><span [innerHTML]="'Previous Steps' | translate"></span></div>
     </div>
-
-    <!-- Notes -->
-    <ng-container *ngIf="selectedPanel == 'NOTES_AND_FILES'">
-        <div class="row content-row" *ngIf="isReady()">
-            <div class="col-6">
-                <note-file-view [notes]="order.note"
-                                [label]="'Customer\'s Note'"
-                                [documents]="order.additionalDocumentReference"
-                                [firstCol]="'col-4'"
-                                [lastCol]="'col-8'"
-                                [readonly]="isReadOnly() || isSeller()"></note-file-view>
-            </div>
-            <div class="col-6">
-                <note-file-view *ngIf="orderResponse"
-                                [notes]="orderResponse.note"
-                                [documents]="orderResponse.additionalDocumentReference"
-                                [label]="'Supplier\'s Note'"
-                                [firstCol]="'col-4'"
-                                [lastCol]="'col-8'"
-                                [readonly]="isReadOnly()"></note-file-view>
-            </div>
-        </div>
-    </ng-container>
 
     <!-- Contract Preview -->
     <ng-container *ngIf="isReady()">
@@ -154,7 +130,7 @@
 
             <!-- Custom trading terms -->
             <ng-container *ngIf="selectedTCTab == 'CUSTOM_TERMS'">
-                <ng-container *ngFor="let tradingTerm of lastQuotation?.tradingTerms">
+                <ng-container *ngFor="let tradingTerm of lastQuotation?.quotationLine[lineIndex].lineItem.tradingTerms">
                     <div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row">
                         <div class="col-2">
                             <strong class="font-weight-500">{{tradingTerm.id}}:</strong>
@@ -171,7 +147,7 @@
             <terms-and-conditions *ngIf="selectedTCTab == 'CLAUSES'"
                                   [buyerPartyId]="getPartyId(buyerParty)"
                                   [selectedIncoterm]="order.orderLine[0].lineItem.deliveryTerms.incoterms"
-                                  [selectedTradingTerm]="order.paymentTerms.tradingTerms"
+                                  [selectedTradingTerm]="order.orderLine[lineIndex].lineItem.paymentTerms.tradingTerms"
                                   [sellerPartyId]="getPartyId(sellerParty)"
                                   [readOnly]="true"
                                   [enableComparisonWithOtherTerms]="false"

@@ -17,8 +17,8 @@ export class QuotationWrapper {
 
     constructor(public quotation: Quotation,
                 private catalogueLine: CatalogueLine,
-                private quotationLineIndex:number=0) {
-        this.paymentTermsWrapper = new PaymentTermsWrapper(quotation.paymentTerms);
+                public quotationLineIndex:number=0) {
+        this.paymentTermsWrapper = new PaymentTermsWrapper(quotation.quotationLine[quotationLineIndex].lineItem.paymentTerms);
         this.priceWrapper = new PriceWrapper(
             quotation.quotationLine[this.quotationLineIndex].lineItem.price,
             catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
@@ -66,15 +66,15 @@ export class QuotationWrapper {
     }
 
     public get paymentMeans(): string {
-        return this.quotation.paymentMeans.paymentMeansCode.value;
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.paymentMeans.paymentMeansCode.value;
     }
 
     public set paymentMeans(paymentMeans: string) {
-        this.quotation.paymentMeans.paymentMeansCode.value = paymentMeans;
+        this.quotation.quotationLine[this.quotationLineIndex].lineItem.paymentMeans.paymentMeansCode.value = paymentMeans;
     }
 
     public get frameContractDuration(): Quantity {
-        let tradingTerm: TradingTerm = this.quotation.tradingTerms.find(tradingTerm => tradingTerm.id == FRAME_CONTRACT_TERM_ID);
+        let tradingTerm: TradingTerm = this.quotation.quotationLine[this.quotationLineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == FRAME_CONTRACT_TERM_ID);
         if(tradingTerm != null) {
             return tradingTerm.value.valueQuantity[0];
         }
@@ -90,29 +90,29 @@ export class QuotationWrapper {
     }
 
     public set frameContractDuration(duration: Quantity) {
-        let tradingTerm: TradingTerm = this.quotation.tradingTerms.find(tradingTerm => tradingTerm.id == FRAME_CONTRACT_TERM_ID);
+        let tradingTerm: TradingTerm = this.quotation.quotationLine[this.quotationLineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == FRAME_CONTRACT_TERM_ID);
         if(tradingTerm == null) {
             tradingTerm = new TradingTerm(FRAME_CONTRACT_TERM_ID, null, null, new MultiTypeValue());
             tradingTerm.value.valueQuantity.push(duration)
-            this.quotation.tradingTerms.push(tradingTerm);
+            this.quotation.quotationLine[this.quotationLineIndex].lineItem.tradingTerms.push(tradingTerm);
         } else {
             tradingTerm.value.valueQuantity[0] = duration;
         }
     }
 
     public get dataMonitoringPromised(): boolean {
-        return this.quotation.dataMonitoringPromised;
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.dataMonitoringRequested;
     }
 
     public get dataMonitoringPromisedString(): string {
-        return this.quotation.dataMonitoringPromised ? 'Confirmed' : 'Not Confirmed';
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.dataMonitoringRequested ? 'Confirmed' : 'Not Confirmed';
     }
 
     public getTradingTerm(termName: string): TradingTerm {
-        return this.quotation.tradingTerms.find(tradingTerm => tradingTerm.id == termName);
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == termName);
     }
 
     public get tradingTerms(): TradingTerm[] {
-        return this.quotation.tradingTerms.filter(tradingTerm => tradingTerm.id != FRAME_CONTRACT_TERM_ID).map(tradingTerm => tradingTerm);
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.tradingTerms.filter(tradingTerm => tradingTerm.id != FRAME_CONTRACT_TERM_ID).map(tradingTerm => tradingTerm);
     }
 }

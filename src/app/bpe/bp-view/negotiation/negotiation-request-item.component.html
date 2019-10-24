@@ -265,7 +265,7 @@
                 <strong class="font-weight-500"><span [innerHTML]="'Quantity' | translate"></span>:</strong>
             </div>
             <div class="col-4 quantity-input">
-                <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [ngModel]="rfqLine.lineItem.quantity.value" (ngModelChange)="rfqLine[i].lineItem.quantity.value = $event; onOrderQuantityChange()"
+                <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [ngModel]="rfqLine.lineItem.quantity.value" (ngModelChange)="rfqLine.lineItem.quantity.value = $event; onOrderQuantityChange()"
                        class="form-control form-control-sm"
                        [disabled]="isLoading() || isReadOnly()"/>
             </div>
@@ -281,7 +281,6 @@
         <ng-container *ngIf="isFrameContractVisible()">
             <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showFrameContractDetails}" (click)="showFrameContractDetails=showTab(showFrameContractDetails)"><span [innerHTML]="'Frame Contract' | translate"></span></div>
         </ng-container>
-        <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showNotesAndAdditionalFiles}" (click)="showNotesAndAdditionalFiles=showTab(showNotesAndAdditionalFiles)"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>
         <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showDeliveryAddress}" (click)="showDeliveryAddress=showTab(showDeliveryAddress)"><span [innerHTML]="'Delivery Address' | translate"></span></div>
     </div>
 </div>
@@ -311,17 +310,6 @@
             </ng-container>
         </ng-container>
 
-        <!--Notes-->
-        <note-file-view *ngIf="showNotesAndAdditionalFiles"
-                        class="mb-2"
-                        [notes]="rfq.note"
-                        [documents]="rfq.additionalDocumentReference"
-                        [label]="'Notes'"
-                        [firstCol]="'col-2'"
-                        [secondCol]="'col-5'"
-                        [lastCol]="'col-5'"
-                        [readonly]="isLoading() || isReadOnly()"></note-file-view>
-
         <!-- Data Monitoring -->
         <ng-container *ngIf="config.dataChannelsEnabled">
             <div *ngIf="showDataMonitoring" class="row mb-3">
@@ -336,7 +324,7 @@
                     <ng-template #editDataMonitoringRequest>
                         <div class="input-group">
                             <div class="d-flex align-items-center">
-                                <input type="checkbox" [(ngModel)]="rfq.dataMonitoringRequested" [disabled]="isLoading() || isReadOnly()" >
+                                <input type="checkbox" [(ngModel)]="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.dataMonitoringRequested" [disabled]="isLoading() || isReadOnly()" >
                             </div>
                             <span class="form-control d-inline border-0">
                         <strong class="font-weight-500"><span [innerHTML]="'Request data monitoring service' | translate"></span></strong>
@@ -379,7 +367,7 @@
             </ul>
 
             <ng-container *ngIf="selectedTCTab == 'CUSTOM_TERMS'">
-                <ng-container *ngFor="let tradingTerm of wrapper.rfq.tradingTerms">
+                <ng-container *ngFor="let tradingTerm of wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.tradingTerms">
                     <div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row content-row mb-1"
                          [ngClass]="{'bg-danger text-white' : !areTermsEqual(tradingTerm.id,wrapper)}">
                         <div class="col-2">
@@ -425,14 +413,14 @@
                         </terms-and-conditions>
                         <terms-and-conditions *ngIf="wrapper.frameContractQuotation" [hidden]="manufacturersTermsSource != 'frame_contract'" [buyerPartyId]="buyerId"
                                               [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-frame-contract'"
-                                              [termsAndConditions]="wrapper.frameContractQuotation.termOrCondition"
-                                              [originalTermAndConditionClauses]="wrapper.frameContractQuotation.termOrCondition">
+                                              [termsAndConditions]="wrapper.frameContractQuotation.quotationLine[wrapper.lineIndex].lineItem.clause"
+                                              [originalTermAndConditionClauses]="wrapper.frameContractQuotation.quotationLine[wrapper.lineIndex].lineItem.clause">
                         </terms-and-conditions>
                         <terms-and-conditions *ngIf="wrapper.lastOfferQuotation" [hidden]="manufacturersTermsSource != 'last_offer'"
                                               [buyerPartyId]="buyerId"
                                               [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-last-offer'"
-                                              [termsAndConditions]="wrapper.lastOfferQuotation.termOrCondition"
-                                              [originalTermAndConditionClauses]="wrapper.lastOfferQuotation.termOrCondition">
+                                              [termsAndConditions]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause"
+                                              [originalTermAndConditionClauses]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause">
                         </terms-and-conditions>
                     </div>
                     <div class="col-5">
@@ -444,10 +432,10 @@
                                               (onPaymentMeansChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event; onTermsChange(fixedTerms.PAYMENT_MEANS);"
                                               (onClauseUpdated)="onClauseUpdate($event,wrapper);"
                                               [originalTermAndConditionClauses]=
-                                                      "manufacturersTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.termOrCondition :
-                                              (manufacturersTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.termOrCondition :
+                                                      "manufacturersTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause :
+                                              (manufacturersTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.quotationLine[wrapper.lineIndex].lineItem.clause :
                                               defaultTermsAndConditions)"
-                                              [termsAndConditions]="wrapper.rfq.termOrCondition"
+                                              [termsAndConditions]="wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.clause"
                                               [readOnly]="isLoading() || isReadOnly()"
                                               [documentType]="'rfq'">
                         </terms-and-conditions>

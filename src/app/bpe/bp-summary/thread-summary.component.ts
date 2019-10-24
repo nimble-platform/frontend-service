@@ -155,10 +155,12 @@ export class ThreadSummaryComponent implements OnInit {
 
         let catalogueIds = [];
         let catalogueLineIds = [];
+        let termsSources = [];
 
         for(let product of this.titleEvent.products){
             catalogueIds.push(product.catalogueDocumentReference.id);
             catalogueLineIds.push(product.manufacturersItemIdentification.id);
+            termsSources.push(null);
         }
         this.bpDataService.startBp(
             new BpActivityEvent(
@@ -173,7 +175,8 @@ export class ThreadSummaryComponent implements OnInit {
                 catalogueIds,
                 catalogueLineIds,
                 this.titleEvent.processInstanceId,
-                ActivityVariableParser.getPrecedingDocumentId(this.titleEvent.activityVariables)),
+                ActivityVariableParser.getPrecedingDocumentId(this.titleEvent.activityVariables),
+                termsSources),
             true);
     }
 

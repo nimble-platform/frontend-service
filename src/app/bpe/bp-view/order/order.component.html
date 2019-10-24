@@ -1,9 +1,10 @@
 <div *ngIf="isReady()">
-    <order-item *ngFor="let priceWrapper of priceWrappers" [buyerParty]="buyerParty" [sellerParty]="sellerParty" [priceWrapper]="priceWrapper" [hidden]="isHidden(priceWrapper.item)" [selectedLine]="selectedLine"></order-item>
+    <order-item *ngFor="let priceWrapper of priceWrappers;let i=index" [lineIndex]="i" [buyerParty]="buyerParty" [sellerParty]="sellerParty" [priceWrapper]="priceWrapper" [hidden]="isHidden(priceWrapper.item)" [selectedLine]="selectedLine"></order-item>
 
     <div class="row mb-4 mt-4">
         <div *ngIf="isEpcTabShown()" class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'TRACK_AND_TRACE'}" (click)="selectedPanel = 'TRACK_AND_TRACE'"><span [innerHTML]="'Track and Trace' | translate"></span></div>
-        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':showPurchaseOrder}" (click)="showPurchaseOrder = !showPurchaseOrder"><span [innerHTML]="'Purchase Order' | translate"></span></div>
+        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'NOTES_AND_FILES'}" (click)="selectedPanel = 'NOTES_AND_FILES'"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>
+        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'PURCHASE_ORDER'}" (click)="selectedPanel = 'PURCHASE_ORDER'"><span [innerHTML]="'Purchase Order' | translate"></span></div>
     </div>
 
     <!-- EPC Codes -->
@@ -90,8 +91,31 @@
         </div>
     </ng-container>
 
+    <!-- Notes -->
+    <ng-container *ngIf="selectedPanel == 'NOTES_AND_FILES'">
+        <div class="row content-row" *ngIf="isReady()">
+            <div class="col-6">
+                <note-file-view [notes]="order.note"
+                                [label]="'Customer\'s Note'"
+                                [documents]="order.additionalDocumentReference"
+                                [firstCol]="'col-4'"
+                                [lastCol]="'col-8'"
+                                [readonly]="isReadOnly() || isSeller()"></note-file-view>
+            </div>
+            <div class="col-6">
+                <note-file-view *ngIf="orderResponse"
+                                [notes]="orderResponse.note"
+                                [documents]="orderResponse.additionalDocumentReference"
+                                [label]="'Supplier\'s Note'"
+                                [firstCol]="'col-4'"
+                                [lastCol]="'col-8'"
+                                [readonly]="isReadOnly()"></note-file-view>
+            </div>
+        </div>
+    </ng-container>
+
     <!--Purchase Order-->
-    <table class="table table-striped" *ngIf="showPurchaseOrder">
+    <table class="table table-striped" *ngIf="selectedPanel == 'PURCHASE_ORDER'">
         <tr>
             <th><span>Ordered Product</span></th>
             <th><span [innerHTML]="'Product Id' | translate">Product Id</span></th>

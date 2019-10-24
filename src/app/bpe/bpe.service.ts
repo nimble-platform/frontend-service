@@ -411,8 +411,17 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getFrameContract(sellerId: string, buyerId: string, productId: string): Promise<DigitalAgreement> {
-		const url = `${this.url}/contract/digital-agreement?sellerId=${sellerId}&buyerId=${buyerId}&productId=${productId}`;
+	getFrameContract(sellerId: string, buyerId: string, productIds: string[]): Promise<DigitalAgreement> {
+		let productIdsParam = "";
+		let size = productIds.length;
+		for (let i = 0; i < size; i++) {
+			productIdsParam += productIds[i];
+
+			if (i != size - 1) {
+				productIdsParam += ",";
+			}
+		}
+		const url = `${this.url}/contract/digital-agreement?sellerId=${sellerId}&buyerId=${buyerId}&productIds=${productIds}`;
 		return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()

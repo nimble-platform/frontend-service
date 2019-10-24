@@ -46,7 +46,6 @@ export class OrderComponent implements OnInit {
     address: Address
     orderResponse: OrderResponseSimple;
     lastQuotation: Quotation;
-    paymentTermsWrapper: PaymentTermsWrapper;
     priceWrappers: PriceWrapper[];
     userRole: BpUserRole;
     config = myGlobals.config;
@@ -68,7 +67,6 @@ export class OrderComponent implements OnInit {
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
 
-    showPurchaseOrder:boolean = false;
     getPartyId = UBLModelUtils.getPartyId;
 
     selectedPanel: string;
@@ -109,7 +107,6 @@ export class OrderComponent implements OnInit {
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
         this.order = this.bpDataService.order;
-        this.paymentTermsWrapper = new PaymentTermsWrapper(this.order.paymentTerms);
         this.userRole = this.bpDataService.bpActivityEvent.userRole;
         this.orderResponse = this.bpDataService.orderResponse;
 

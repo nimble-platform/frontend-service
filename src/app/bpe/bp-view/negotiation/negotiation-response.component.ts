@@ -33,11 +33,11 @@ export class NegotiationResponseComponent implements OnInit {
     @Input() rfq: RequestForQuotation;
     @Input() quotation: Quotation;
     @Input() lastOfferQuotation: Quotation;
-    @Input() frameContractQuotation: Quotation;
-    @Input() frameContract: DigitalAgreement;
-    @Input() frameContractNegotiation: boolean = false;
+    @Input() frameContractQuotations: Quotation[];
+    @Input() frameContracts: DigitalAgreement[];
+    @Input() frameContractNegotiations: boolean[];
     @Input() defaultTermsAndConditions: Clause[];
-    @Input() primaryTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = 'product_defaults';
+    @Input() primaryTermsSources: ('product_defaults' | 'frame_contract' | 'last_offer')[];
     @Input() readonly: boolean = false;
     // whether the item is deleted or not
     // if the item is deleted, then we will not show Product Defaults section since we do not have those information
@@ -47,6 +47,7 @@ export class NegotiationResponseComponent implements OnInit {
     config = myGlobals.config;
 
     showPurchaseOrder:boolean = false;
+    showNotesAndAdditionalFiles:boolean = false;
 
     CURRENCIES: string[] = CURRENCIES;
 
@@ -86,7 +87,7 @@ export class NegotiationResponseComponent implements OnInit {
                 this.getCatalogueLine(this.rfq.requestForQuotationLine[i].lineItem.item),
                 this.rfq,
                 this.quotation,
-                this.frameContractQuotation,
+                this.frameContractQuotations ? this.frameContractQuotations[i] : null,
                 this.lastOfferQuotation,
                 this.bpDataService.getCompanySettings().negotiationSettings,
                 i));
@@ -244,7 +245,7 @@ export class NegotiationResponseComponent implements OnInit {
             if(!UBLModelUtils.areQuantitiesEqual(wrapper.rfqFrameContractDuration, wrapper.newQuotationWrapper.frameContractDuration)) {
                 return true;
             }
-            if(UBLModelUtils.areTermsAndConditionListsDifferent(wrapper.rfq.termOrCondition, wrapper.newQuotation.termOrCondition)) {
+            if(UBLModelUtils.areTermsAndConditionListsDifferent(wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.clause, wrapper.newQuotation.quotationLine[wrapper.lineIndex].lineItem.clause)) {
                 return true;
             }
         }
@@ -254,11 +255,15 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     private isFrameContractDurationValid(): boolean {
-        if(this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure.unitCode != null &&
-            this.frameContract.digitalAgreementTerms.validityPeriod.durationMeasure.value != null) {
-            return true;
+        if(this.frameContracts){
+            for(let frameContract of this.frameContracts){
+                if(frameContract.digitalAgreementTerms.validityPeriod.durationMeasure.unitCode == null ||
+                    frameContract.digitalAgreementTerms.validityPeriod.durationMeasure.value == null) {
+                    return false;
+                }
+            }
         }
-        return false;
+        return true;
     }
 
     getTotalPriceString(){
@@ -283,5 +288,14 @@ export class NegotiationResponseComponent implements OnInit {
             grossTotal += wrapper.newQuotationWrapper.priceWrapper.grossTotal;
         }
         return roundToTwoDecimals(grossTotal) + " " + this.wrappers[0].currency;
+    }
+
+    showTab(tab:boolean):boolean {
+        let ret = true;
+        if (tab)
+            ret = false;
+        this.showNotesAndAdditionalFiles = false;
+        this.showPurchaseOrder = false;
+        return ret;
     }
 }

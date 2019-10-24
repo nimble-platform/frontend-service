@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import {Component, OnInit, ViewChild} from '@angular/core';
 import { Location } from "@angular/common";
 import { Router } from "@angular/router";
 import { CookieService } from "ng2-cookies";
@@ -18,6 +18,7 @@ import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
 import {Text} from '../../../catalogue/model/publish/text';
 import {TranslateService} from '@ngx-translate/core';
 import {DocumentService} from "../document-service";
+import {TransportServiceDetailsComponent} from './transport-service-details.component';
 
 @Component({
     selector: "transport-negotiation-request",
@@ -25,6 +26,7 @@ import {DocumentService} from "../document-service";
 })
 export class TransportNegotiationRequestComponent implements OnInit {
 
+    @ViewChild(TransportServiceDetailsComponent) viewChild: TransportServiceDetailsComponent;
     rfq: RequestForQuotation;
     selectedTab: string = "OVERVIEW";
     rfqPrice: DiscountPriceWrapper;
@@ -69,7 +71,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
             this.rfq.requestForQuotationLine[0].lineItem.price,
             this.bpDataService.getCatalogueLine().requiredItemLocationQuantity.applicableTaxCategory[0].percent);
         //this.rfqPrice.quotationLinePriceWrapper = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
-        this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.paymentTerms);
+        this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.requestForQuotationLine[0].lineItem.paymentTerms);
         if(this.processMetadata && this.processMetadata.isBeingUpdated){
             this.updatingProcess = true;
         }
@@ -108,6 +110,8 @@ export class TransportNegotiationRequestComponent implements OnInit {
         let sellerId: string;
 
         // final check on the rfq
+        // set the goods items which will be shipped by this transport service
+        this.rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem = this.viewChild.getSelectedProductsToShip();
         if(this.bpDataService.modifiedCatalogueLines) {
             sellerId = UBLModelUtils.getPartyId(this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty);
         }

@@ -39,6 +39,7 @@ import {CatalogueLine} from '../../../catalogue/model/publish/catalogue-line';
 export class OrderItemComponent implements OnInit {
 
     @Input() selectedLine:CatalogueLine;
+    @Input() lineIndex:number;
     order: Order;
     address: Address
     orderResponse: OrderResponseSimple;
@@ -85,8 +86,8 @@ export class OrderItemComponent implements OnInit {
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
         this.order = this.bpDataService.order;
-        this.address = this.order.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
-        this.paymentTermsWrapper = new PaymentTermsWrapper(this.order.paymentTerms);
+        this.address = this.order.orderLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address;
+        this.paymentTermsWrapper = new PaymentTermsWrapper(this.order.orderLine[this.lineIndex].lineItem.paymentTerms);
         this.userRole = this.bpDataService.bpActivityEvent.userRole;
         this.orderResponse = this.bpDataService.orderResponse;
 
@@ -206,11 +207,11 @@ export class OrderItemComponent implements OnInit {
     }
 
     getPaymentMeans(): string {
-        return this.order.paymentMeans.paymentMeansCode.name;
+        return this.order.orderLine[this.lineIndex].lineItem.paymentMeans.paymentMeansCode.value;
     }
 
     getLineItem(): LineItem {
-        return this.order.orderLine[0].lineItem;
+        return this.order.orderLine[this.lineIndex].lineItem;
     }
 
     /*
@@ -240,7 +241,7 @@ export class OrderItemComponent implements OnInit {
             return this.documentService.getDocumentJsonContent(docClause.clauseDocumentRef.id).then(result => {
                 this.fetchDataMonitoringStatus.callback("Successfully fetched data monitoring service", true);
                 this.lastQuotation = result as Quotation;
-                return this.lastQuotation.dataMonitoringPromised;
+                return this.lastQuotation.quotationLine[this.lineIndex].lineItem.dataMonitoringRequested;
             })
                 .catch(error => {
                     this.fetchDataMonitoringStatus.error("Error while fetching data monitoring service", error);

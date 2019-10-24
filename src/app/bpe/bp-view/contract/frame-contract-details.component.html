@@ -69,7 +69,7 @@
     <terms-and-conditions *ngIf="shownTab == 'TERMS_AND_CONDITIONS'"
                           [readOnly]="true"
                           [enableComparisonWithOtherTerms]="false"
-                          [termsAndConditions]="quotationWrapper.quotation.termOrCondition">
+                          [termsAndConditions]="quotationWrapper.quotation.quotationLine[quotationWrapper.quotationLineIndex].lineItem.clause">
     </terms-and-conditions>
 
     <note-file-view *ngIf="shownTab == 'NOTES_AND_ADDITIONAL_FILES'"

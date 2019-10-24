@@ -19,7 +19,7 @@
             <h4>Shipped Products</h4>
             <div class="row" *ngFor="let goodsItem of goodsItems;let i=index">
                 <div class="col-1" style="text-align: center">
-                    <input type="checkbox" [disabled]="disabled" (change)="onProductSelection($event.target.checked,goodsItem)" [defaultChecked]="true">
+                    <input type="checkbox" [disabled]="disabled"  [(ngModel)]="selectedProducts[i]" [defaultChecked]="true">
                 </div>
                 <div class="col-2">
                     {{selectPreferredValue(goodsItem.item.name)}}

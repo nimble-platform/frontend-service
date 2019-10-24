@@ -120,10 +120,10 @@ export class ProductDetailsComponent implements OnInit {
                         // check frame contract for the current line
                         this.bpeService.getFrameContract(UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty),
                             this.cookieService.get("company_id"),
-                            this.line.id).then(contract => {
+                            [this.line.id]).then(contracts => {
                             // contract exists, get the corresponding quotation including the terms
-                            this.documentService.getDocumentJsonContent(contract.quotationReference.id).then(document => {
-                                this.frameContract = contract;
+                            this.documentService.getDocumentJsonContent(contracts[0].quotationReference.id).then(document => {
+                                this.frameContract = contracts[0];
                                 this.frameContractQuotationWrapper = new QuotationWrapper(document, this.line);
                                 // quotation ordered quantity contains the actual ordered quantity in that business process,
                                 // so we overwrite it with the options's quantity, which is by default 1
@@ -214,7 +214,7 @@ export class ProductDetailsComponent implements OnInit {
                 [this.itemWithSelectedProperties],
                 new Quantity(this.orderQuantity, this.getQuantityUnit()),
                 true, // this is a new process
-                [this.catalogueId], [this.id], null, null, termsSource),
+                [this.catalogueId], [this.id], null, null, [termsSource]),
             false);
     }
 

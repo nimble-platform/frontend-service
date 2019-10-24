@@ -5,6 +5,10 @@ import {LineReference} from "./line-reference";
 import {Period} from "./period";
 import {DeliveryTerms} from "./delivery-terms";
 import {Delivery} from "./delivery";
+import {PaymentMeans} from './payment-means';
+import {PaymentTerms} from './payment-terms';
+import {TradingTerm} from './trading-term';
+import {Clause} from './clause';
 
 /**
  * Created by suat on 23-Aug-17.
@@ -18,6 +22,11 @@ export class LineItem {
         public price:Price = new Price(),
         public item:Item = new Item(),
         public warrantyValidityPeriod:Period = new Period(),
-        public lineReference:LineReference[] = [new LineReference()]
+        public lineReference:LineReference[] = [new LineReference()],
+        public dataMonitoringRequested: boolean,
+        public paymentMeans: PaymentMeans,
+        public paymentTerms: PaymentTerms,
+        public tradingTerms: TradingTerm[],
+        public clause: Clause[] = [],
     ) {  }
 }

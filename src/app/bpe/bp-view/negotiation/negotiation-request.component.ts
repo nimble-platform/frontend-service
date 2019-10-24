@@ -50,12 +50,12 @@ export class NegotiationRequestComponent implements OnInit {
     rfq: RequestForQuotation;
     rfqLines: RequestForQuotationLine[];
     wrappers: NegotiationModelWrapper[];
-    @Input() frameContract: DigitalAgreement = new DigitalAgreement();
-    @Input() frameContractQuotation: Quotation;
+    @Input() frameContracts: DigitalAgreement[];
+    @Input() frameContractQuotations: Quotation[];
     // whether the frame contract is being negotiated in the negotiation workflow containing this request
     // this input is added in order to control the visibility of the frame contract option while loading terms.
     // frame contract option is disabled when displaying the history through which the contract is being negotiated.
-    @Input() frameContractNegotiation: boolean;
+    @Input() frameContractNegotiations: boolean[];
     @Input() lastOfferQuotation: Quotation;
     @Input() defaultTermsAndConditions: Clause[];
     frameContractDuration: Quantity = new Quantity(); // we have a dedicated variable to keep this in order not to create an empty trading term in the rfq
@@ -65,12 +65,13 @@ export class NegotiationRequestComponent implements OnInit {
     deliverytermsOfBuyer = null;
 
     showPurchaseOrder:boolean = false;
+    showNotesAndAdditionalFiles: boolean = false;
 
     /**
      * View control fields
      */
-    @Input() manufacturersTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = 'product_defaults';
-    counterOfferTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = this.manufacturersTermsSource;
+    @Input() manufacturersTermsSources: ('product_defaults' | 'frame_contract' | 'last_offer')[];
+    counterOfferTermsSources: ('product_defaults' | 'frame_contract' | 'last_offer')[] = [];
     callStatus: CallStatus = new CallStatus();
 
     /**
@@ -100,6 +101,9 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     ngOnInit() {
+        for(let manufacturersTermsSource of this.manufacturersTermsSources){
+            this.counterOfferTermsSources.push(manufacturersTermsSource);
+        }
         // Normally, this view is not displayed if the bpDataService.requestForQuotation is null.
         // However, it should also be checked here also for the second and later iterations of the negotiation business process.
         // In those cases, the negotiation component is not initialized again but only this component.
@@ -131,7 +135,7 @@ export class NegotiationRequestComponent implements OnInit {
                 this.getCatalogueLine(this.rfqLines[i].lineItem.item),
                 this.rfq,
                 null,
-                this.frameContractQuotation,
+                this.frameContractQuotations[i],
                 this.lastOfferQuotation,
                 this.bpDataService.getCompanySettings().negotiationSettings,
                 i));
@@ -173,9 +177,11 @@ export class NegotiationRequestComponent implements OnInit {
 
         if(!this.doesManufacturerOfferHasPrice() || this.isNegotiatingAnyTerm() || this.bpDataService.isFinalProcessInTheWorkflow("Negotiation")) {
             // create an additional trading term for the frame contract duration
-            if(/*this.rfq.negotiationOptions.frameContractDuration && */!UBLModelUtils.isEmptyOrIncompleteQuantity(this.frameContractDuration)) {
-                for(let wrapper of this.wrappers){
-                    wrapper.rfqFrameContractDuration = this.frameContractDuration;
+            let negotiationRequestItemComponents = this.viewChildren.toArray();
+            for(let negotiationRequestItemComponent of negotiationRequestItemComponents){
+                let frameContractDuration = negotiationRequestItemComponent.getFrameContractDuration();
+                if(!UBLModelUtils.isEmptyOrIncompleteQuantity(frameContractDuration)){
+                    this.wrappers[negotiationRequestItemComponent.wrapper.lineIndex].rfqFrameContractDuration = frameContractDuration;
                 }
             }
 
@@ -222,10 +228,11 @@ export class NegotiationRequestComponent implements OnInit {
     onUpdateRequest(): void {
         this.callStatus.submit();
 
-        // check frame contract explicitly. this is required e.g. if the frame contract is specified in the update itself.
-        if(/*this.rfq.negotiationOptions.frameContractDuration && */!UBLModelUtils.isEmptyOrIncompleteQuantity(this.frameContractDuration)) {
-            for(let wrapper of this.wrappers){
-                wrapper.rfqFrameContractDuration = this.frameContractDuration;
+        let negotiationRequestItemComponents = this.viewChildren.toArray();
+        for(let negotiationRequestItemComponent of negotiationRequestItemComponents){
+            let frameContractDuration = negotiationRequestItemComponent.getFrameContractDuration();
+            if(!UBLModelUtils.isEmptyOrIncompleteQuantity(frameContractDuration)){
+                this.wrappers[negotiationRequestItemComponent.wrapper.lineIndex].rfqFrameContractDuration = frameContractDuration;
             }
         }
 
@@ -279,7 +286,16 @@ export class NegotiationRequestComponent implements OnInit {
     isFrameContractValid(): boolean {
         // either the frame contract duration should be empty indicating that it is not being negotiated
         // or it should be provided with both a value and a unit
-        return UBLModelUtils.isEmptyQuantity(this.frameContractDuration) || !UBLModelUtils.isEmptyOrIncompleteQuantity(this.frameContractDuration);
+        if(this.viewChildren){
+            let negotiationRequestItemComponents = this.viewChildren.toArray();
+            for(let negotiationRequestItemComponent of negotiationRequestItemComponents){
+                let frameContractDuration = negotiationRequestItemComponent.getFrameContractDuration()
+                if(!(UBLModelUtils.isEmptyQuantity(frameContractDuration) || !UBLModelUtils.isEmptyOrIncompleteQuantity(frameContractDuration))){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     isWarrantyPeriodValid(): boolean {
@@ -322,10 +338,12 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     doesManufacturerOfferHasPrice(): boolean{
-        for(let wrapper of this.wrappers){
-            if(this.counterOfferTermsSource == 'last_offer' || this.counterOfferTermsSource == 'frame_contract') {
+        let size = this.wrappers.length;
+        for(let i = 0 ; i < size; i++){
+            let wrapper = this.wrappers[i];
+            if(this.counterOfferTermsSources[i] == 'last_offer' || this.counterOfferTermsSources[i] == 'frame_contract') {
                 let quotationWrapper = wrapper.frameContractQuotationWrapper;
-                if(this.counterOfferTermsSource == 'last_offer') {
+                if(this.counterOfferTermsSources[i] == 'last_offer') {
                     quotationWrapper = wrapper.lastOfferQuotationWrapper;
                 }
                 if(quotationWrapper.priceWrapper.itemPrice.pricePerItemString == "On demand"){
@@ -380,6 +398,15 @@ export class NegotiationRequestComponent implements OnInit {
             grossTotal += wrapper.rfqGrossTotal;
         }
         return roundToTwoDecimals(grossTotal) + " " + this.wrappers[0].currency;
+    }
+
+    showTab(tab:boolean):boolean {
+        let ret = true;
+        if (tab)
+            ret = false;
+        this.showNotesAndAdditionalFiles = false;
+        this.showPurchaseOrder = false;
+        return ret;
     }
 
 }
