@@ -59,7 +59,7 @@
     <div class="col-3">
         <options-input *ngIf="isSellerTermsVisible()"
                        [presentationMode]="getPresentationMode()"
-                       [disabled]="isDisabled()" [options]="wrapper.settings.incoterms" [(selected)]="wrapper.newQuotationWrapper.incoterms">
+                       [disabled]="isDisabled()" [options]="wrapper.sellerSettings.incoterms" [(selected)]="wrapper.newQuotationWrapper.incoterms">
         </options-input>
     </div>
 </div>
@@ -75,7 +75,7 @@
     <div class="col-3">
         <options-input *ngIf="isSellerTermsVisible()"
                        [presentationMode]="getPresentationMode()"
-                       [disabled]="isDisabled()" [options]="wrapper.settings.paymentTerms"
+                       [disabled]="isDisabled()" [options]="wrapper.sellerSettings.paymentTerms"
                        [(selected)]="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm">
         </options-input>
     </div>
@@ -92,7 +92,7 @@
     <div class="col-3">
         <options-input *ngIf="isSellerTermsVisible()"
                        [presentationMode]="getPresentationMode()"
-                       [disabled]="isDisabled()" [options]="wrapper.settings.paymentMeans" [(selected)]="wrapper.newQuotationWrapper.paymentMeans">
+                       [disabled]="isDisabled()" [options]="wrapper.sellerSettings.paymentMeans" [(selected)]="wrapper.newQuotationWrapper.paymentMeans">
         </options-input>
     </div>
 </div>

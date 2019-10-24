@@ -59,8 +59,6 @@ export class ProductDetailsOverviewComponent implements OnInit{
 
     zoomedImgURL = "";
 
-    onOrderQuantityKeyPressed = validateNumberInput;
-
     constructor(
         private translate: TranslateService,
         public categoryService:CategoryService,
@@ -168,8 +166,8 @@ export class ProductDetailsOverviewComponent implements OnInit{
         this.shoppingCartCallStatus.submit();
         this.shoppingCartDataService.addItemToCart(this.wrapper.line.hjid).then(() => {
             this.shoppingCartCallStatus.callback(null, true);
-        }).catch(() => {
-            this.shoppingCartCallStatus.error(null);
+        }).catch((err) => {
+            this.shoppingCartCallStatus.error('Failed to add product to cart', err);
         });
     }
 

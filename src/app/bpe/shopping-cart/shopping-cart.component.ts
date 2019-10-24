@@ -77,7 +77,7 @@ export class ShoppingCartComponent implements OnInit {
     ngOnInit() {
         // first get the cart catalogue
         this.shoppingCartDataService.getShoppingCart().then(cart => {
-            if (cart == null) {
+            if (cart == null || cart.catalogueLine.length === 0) {
                 return;
             }
 
@@ -300,7 +300,8 @@ export class ShoppingCartComponent implements OnInit {
     }
 
     private initializeModelWrappers(): void {
-        for (let cartLine of this.shoppingCart.catalogueLine) {
+        for (let i = 0; i < this.shoppingCart.catalogueLine.length; i++) {
+            let cartLine: CatalogueLine = this.shoppingCart.catalogueLine[i];
             let lineHjid: number = cartLine.hjid;
 
             // initialize product wrapper
@@ -315,7 +316,8 @@ export class ShoppingCartComponent implements OnInit {
                 null,
                 this.frameContracts.has(lineHjid) ? this.frameContracts.has(lineHjid)[1] : null,
                 null,
-                this.sellersSettings.get(sellerId).negotiationSettings);
+                this.sellersSettings.get(sellerId).negotiationSettings,
+                i);
             this.negotiationModelWrappers.set(lineHjid, negotiationModelWrapper)
         }
     }
@@ -329,15 +331,10 @@ export class ShoppingCartComponent implements OnInit {
         return priceWrapper.pricePerItemString;
     }
 
-    getRfqLine(cartLine: CatalogueLine): RequestForQuotationLine {
-        for (let sellerId of Array.from(this.rfqs.keys())) {
-            for (let rfqLine of this.rfqs.get(sellerId).requestForQuotationLine) {
-                if (rfqLine.lineItem.item.manufacturersItemIdentification.id == cartLine.goodsItem.item.manufacturersItemIdentification.id) {
-                    return rfqLine;
-                }
-            }
-        }
-        return null;
+    getRfqLine(cartLine: CatalogueLine, lineIndex: number): RequestForQuotationLine {
+        let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
+        let rfq: RequestForQuotation = this.rfqs.get(sellerId);
+        return rfq.requestForQuotationLine[lineIndex];
     }
 
     getRfq(cartLine: CatalogueLine): RequestForQuotation {

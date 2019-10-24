@@ -332,12 +332,12 @@ export class BPDataService{
     }
 
     initRfq(modifiedLines: CatalogueLine[] = null, sellerSettings: CompanyNegotiationSettings = null): Promise<RequestForQuotation> {
-        const rfq = UBLModelUtils.createRequestForQuotation(modifiedLines.map(line => line.goodsItem.item), sellerSettings);
-
         // modified lines are passed as null while initializing rfq from the negotiation and transport negotiation views
         if (modifiedLines == null) {
             modifiedLines = this.modifiedCatalogueLines;
         }
+
+        const rfq = UBLModelUtils.createRequestForQuotation(modifiedLines.map(line => line.goodsItem.item), sellerSettings);
 
         for (let i = 0; i < modifiedLines.length; i++) {
             const line = modifiedLines[i];

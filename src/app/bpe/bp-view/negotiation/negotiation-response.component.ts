@@ -88,7 +88,8 @@ export class NegotiationResponseComponent implements OnInit {
                 this.quotation,
                 this.frameContractQuotation,
                 this.lastOfferQuotation,
-                this.bpDataService.getCompanySettings().negotiationSettings)
+                this.bpDataService.getCompanySettings().negotiationSettings,
+                i)
             );
         }
 

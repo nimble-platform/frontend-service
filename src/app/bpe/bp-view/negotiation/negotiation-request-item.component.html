@@ -71,7 +71,7 @@
                                            id="deliveryCb"
                                            [quantity]="wrapper.rfqDeliveryPeriod"
                                            (quantityChange)="onTermsChange(fixedTerms.DELIVERY_PERIOD)"
-                                           [quantityUnits]="wrapper.settings.deliveryPeriodUnits"
+                                           [quantityUnits]="wrapper.sellerSettings.deliveryPeriodUnits"
                                            [invalid]="!isDeliveryPeriodValid()">
                 </negotiation-request-input>
             </div>
@@ -107,7 +107,7 @@
                                            id="warrantyCb"
                                            [quantity]="wrapper.rfqWarranty"
                                            (quantityChange)="onTermsChange(fixedTerms.WARRANTY_PERIOD)"
-                                           [quantityUnits]="wrapper.settings.warrantyPeriodUnits"
+                                           [quantityUnits]="wrapper.sellerSettings.warrantyPeriodUnits"
                                            [invalid]="!isWarrantyPeriodValid()">
                 </negotiation-request-input>
             </div>
@@ -136,7 +136,7 @@
                 <negotiation-request-input label="Request Incoterms"
                                            [disabled]="isLoading() || isReadOnly()"
                                            id="incotermsCb"
-                                           [options]="wrapper.settings.incoterms"
+                                           [options]="wrapper.sellerSettings.incoterms"
                                            [selected]="wrapper.rfqIncoterms"
                                            (selectedChange)="wrapper.rfqIncoterms = $event; onTermsChange(fixedTerms.INCOTERMS)">
                 </negotiation-request-input>
@@ -164,7 +164,7 @@
             </div>
             <div *ngIf="showCounterOfferTerms" class="col-5">
                 <negotiation-request-input label="Request Payment Terms"
-                                           id="paymentTermsCb" [options]="wrapper.settings.paymentTerms"
+                                           id="paymentTermsCb" [options]="wrapper.sellerSettings.paymentTerms"
                                            [selected]="wrapper.rfqPaymentTerms.paymentTerm"
                                            (selectedChange)="wrapper.rfqPaymentTerms.paymentTerm = $event; onTermsChange(fixedTerms.PAYMENT_TERMS)"
                                            [disabled]="isLoading() || isReadOnly()">
@@ -193,7 +193,7 @@
             </div>
             <div *ngIf="showCounterOfferTerms" class="col-5">
                 <negotiation-request-input label="Request Payment Means"
-                                           id="paymentMeansCb" [options]="wrapper.settings.paymentMeans"
+                                           id="paymentMeansCb" [options]="wrapper.sellerSettings.paymentMeans"
                                            [selected]="wrapper.rfqPaymentMeans"
                                            (selectedChange)="wrapper.rfqPaymentMeans = $event; onTermsChange(fixedTerms.PAYMENT_MEANS)"
                                            [disabled]="isLoading() || isReadOnly()">
@@ -265,7 +265,7 @@
                 <strong class="font-weight-500"><span [innerHTML]="'Quantity' | translate"></span>:</strong>
             </div>
             <div class="col-4 quantity-input">
-                <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [ngModel]="rfqLine.lineItem.quantity.value" (ngModelChange)="rfqLine[i].lineItem.quantity.value = $event; onOrderQuantityChange()"
+                <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [ngModel]="rfqLine.lineItem.quantity.value" (ngModelChange)="rfqLine.lineItem.quantity.value = $event; onOrderQuantityChange()"
                        class="form-control form-control-sm"
                        [disabled]="isLoading() || isReadOnly()"/>
             </div>

@@ -31,17 +31,14 @@ export class NegotiationModelWrapper {
     initialImmutableRfq: RequestForQuotation; // immutable rfq object that is used to load manufacturers' terms defined as product defaults
     initialImmutableCatalogueLine: CatalogueLine; // immutable catalogue line
 
-    lineIndex = 0;
-
     constructor(public catalogueLine: CatalogueLine,
                 public rfq: RequestForQuotation,
                 public newQuotation: Quotation, // quotation object of the current negotiation step instantiated as a result of the rfq. It's supposed to be provided in the negotiation response phase
                 public frameContractQuotation: Quotation, // quotation object associated to a frame contract, if any
                 public lastOfferQuotation: Quotation, // in second or later steps of negotiation, this parameter keeps the quotation coming from the previous step
-                public settings: CompanyNegotiationSettings) {
-
-        // find the line index in order to acquire the corresponding information in rfq and quotation documents for the given catalogue line
-        this.lineIndex = rfq.requestForQuotationLine.findIndex(line => line.lineItem.item.manufacturersItemIdentification.id === catalogueLine.id);
+                public sellerSettings: CompanyNegotiationSettings,
+                public lineIndex: number // line index is required in case the same product is included in the rfq multiple times
+    ) {
 
         this.initialImmutableRfq = copy(rfq);
         this.rfqPaymentTerms = new PaymentTermsWrapper(rfq.paymentTerms);
@@ -134,11 +131,11 @@ export class NegotiationModelWrapper {
     }
 
     public get linePaymentTerms(): string {
-        return this.settings.paymentTerms[0];
+        return this.sellerSettings.paymentTerms[0];
     }
 
     public get linePaymentMeans(): string {
-        return this.settings.paymentMeans[0];
+        return this.sellerSettings.paymentMeans[0];
     }
 
     public get lineVatPercentage(): number {

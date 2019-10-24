@@ -93,7 +93,6 @@ export class NegotiationRequestItemComponent implements OnInit {
      * Logic control fields
      */
     processMetadata: ThreadEventMetadata = null; // the copy of ThreadEventMetadata of the current business process
-    processMetadataHistory: ThreadEventMetadata[];
     dirtyNegotiationFields: any = {}; // keeps the negotiation fields that are updated by the user
     enableDirtyUpdate: boolean = true; // if true, dirty map is update updated with user activities, otherwise the map is not updated in onTermsChange method.
     // the aim is to prevent updating dirty map when the terms sources is changed.
@@ -586,7 +585,7 @@ export class NegotiationRequestItemComponent implements OnInit {
 
     private getDeliveryPeriodRange(): PeriodRange | null {
         const unit = this.wrapper.rfqDeliveryPeriod.unitCode;
-        const settings = this.wrapper.settings;
+        const settings = this.wrapper.sellerSettings;
 
         const index = settings.deliveryPeriodUnits.indexOf(unit);
         return index >= 0 ? settings.deliveryPeriodRanges[index] : null;
@@ -594,7 +593,7 @@ export class NegotiationRequestItemComponent implements OnInit {
 
     private getWarrantyPeriodRange(): PeriodRange | null {
         const unit = this.wrapper.rfqWarranty.unitCode;
-        const settings = this.wrapper.settings;
+        const settings = this.wrapper.sellerSettings;
 
         const index = settings.warrantyPeriodUnits.indexOf(unit);
         return index >= 0 ? settings.warrantyPeriodRanges[index] : null;

@@ -124,7 +124,8 @@ export class NegotiationRequestComponent implements OnInit {
                 null,
                 this.frameContractQuotation,
                 this.lastOfferQuotation,
-                this.sellerSettings.negotiationSettings)
+                this.sellerSettings.negotiationSettings,
+                i)
             );
         }
     }
@@ -275,7 +276,7 @@ export class NegotiationRequestComponent implements OnInit {
 
     private getWarrantyPeriodRange(wrapper:NegotiationModelWrapper): PeriodRange | null {
         const unit = wrapper.rfqWarranty.unitCode;
-        const settings = wrapper.settings;
+        const settings = wrapper.sellerSettings;
 
         const index = settings.warrantyPeriodUnits.indexOf(unit);
         return index >= 0 ? settings.warrantyPeriodRanges[index] : null;
@@ -299,7 +300,7 @@ export class NegotiationRequestComponent implements OnInit {
 
     private getDeliveryPeriodRange(wrapper:NegotiationModelWrapper): PeriodRange | null {
         const unit = wrapper.rfqDeliveryPeriod.unitCode;
-        const settings = wrapper.settings;
+        const settings = wrapper.sellerSettings;
 
         const index = settings.deliveryPeriodUnits.indexOf(unit);
         return index >= 0 ? settings.deliveryPeriodRanges[index] : null;
