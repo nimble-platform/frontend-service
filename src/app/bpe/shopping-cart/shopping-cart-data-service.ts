@@ -98,6 +98,10 @@ export class ShoppingCartDataService {
             });
     }
 
+    public resetData(): void {
+        this.cartCatalogue = null;
+    }
+
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);
     }
