@@ -6,7 +6,7 @@
                 <span [innerHTML]="'Order for' | translate"></span>:
             </h2>
             <ng-container *ngFor="let line of lines;let i=index">
-                <h2><div class="btn btn-outline-primary btn-light inline" [ngClass]="{'active':selectedLine == line}" (click)="selectedLine=line"><h2>{{ line.goodsItem.item.name[0].value }}</h2></div>
+                <h2><div class="btn btn-outline-primary btn-light inline" [ngClass]="{'active':selectedLine == line}" (click)="selectedLine=line">{{ line.goodsItem.item.name[0].value }}</div>
                     <button class="btn btn-outline-dark inline ml-2" (click)="onToggleProductExpanded(i)">
                         <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="productsExpanded[i]"></i>
                         <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!productsExpanded[i]"></i>
