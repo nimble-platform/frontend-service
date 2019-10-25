@@ -136,10 +136,8 @@ export class NegotiationComponent implements OnInit, OnDestroy {
             termsAndConditionsPromises.push(this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms && this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms.termOrCondition.length > 0
                 ? this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms.termOrCondition // if the seller company has T&Cs, use them
                 : this.bpeService.getTermsAndConditions( // otherwise, use the default T&Cs
-                    null,
                     buyerPartyId,
                     UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLines()[0].goodsItem.item.manufacturerParty),
-                    null,
                     catalogueLine.goodsItem.deliveryTerms.incoterms,
                     this.bpDataService.getCompanySettings().negotiationSettings.paymentTerms[0]
                 ));

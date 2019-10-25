@@ -266,10 +266,8 @@ export class ShoppingCartComponent implements OnInit {
 
         this.initCallStatus.aggregatedSubmit();
         this.bpeService.getTermsAndConditions(
-            null,
             this.cookieService.get('company_id'),
             sellerId,
-            null,
             firstProduct.goodsItem.deliveryTerms.incoterms,
             this.sellersSettings.get(sellerId).negotiationSettings.paymentTerms[0]
 

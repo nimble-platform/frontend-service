@@ -7,7 +7,6 @@ import {COUNTRY_NAMES} from '../../../common/utils';
 import {UnitService} from '../../../common/unit-service';
 import {deliveryPeriodUnitListId, warrantyPeriodUnitListId} from '../../../common/constants';
 import {TradingTerm} from '../../../catalogue/model/publish/trading-term';
-import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 
 
 @Component({
@@ -22,7 +21,6 @@ export class TermsAndConditionsComponent implements OnInit {
     @Input() sellerPartyId:string;
     @Input() readOnly:boolean = false;
     @Input() enableComparisonWithOtherTerms: boolean = true; // if true, original and current terms are compared and differences are highlighted
-    @Input() rfqId:string = null;
     @Input() documentType:string; // "order", "rfq", "quotation";
     _originalTermAndConditionClauses:Clause[] = null; // original terms and conditions of the object
     _termsAndConditions:Clause[] = []; // updated terms and conditions of the object

@@ -64,10 +64,8 @@ export class ClauseComponent implements OnInit {
                             // otherwise, use the default T&Cs
                             else {
                                 this.bpeService.getTermsAndConditions(
-                                    null,
                                     UBLModelUtils.getPartyId(this.rfq.buyerCustomerParty.party),
                                     UBLModelUtils.getPartyId(this.rfq.sellerSupplierParty.party),
-                                    null,
                                     this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms,
                                     this.bpDataService.getCompanySettings().negotiationSettings.paymentTerms[0]
                                 ).then(defaultTermsAndConditions => {
