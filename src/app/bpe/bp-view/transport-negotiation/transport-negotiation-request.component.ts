@@ -111,7 +111,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
 
         // final check on the rfq
         // set the goods items which will be shipped by this transport service
-        this.rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem = this.viewChild.getSelectedProductsToShip();
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem = this.viewChild.getSelectedProductsToShip();
         if(this.bpDataService.modifiedCatalogueLines) {
             sellerId = UBLModelUtils.getPartyId(this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty);
         }
