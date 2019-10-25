@@ -526,17 +526,18 @@ export class BPDataService{
         this.despatchAdvice = new DespatchAdvice();
         this.despatchAdvice.id = UBLModelUtils.generateUUID();
         this.despatchAdvice.orderReference = copyDespatchAdvice.orderReference;
-        this.despatchAdvice.despatchLine = [new DespatchLine(new Quantity(), copyDespatchAdvice.despatchLine[0].item, [new Shipment()])];
+
+        let size = copyDespatchAdvice.despatchLine.length;
+        this.despatchAdvice.despatchLine = [];
+        for(let i = 0; i < size; i++){
+            this.despatchAdvice.despatchLine.push(new DespatchLine(new Quantity(), copyDespatchAdvice.despatchLine[i].item, [new Shipment()]));
+            this.despatchAdvice.despatchLine[i].deliveredQuantity.value = deliveredQuantityValues[i];
+            this.despatchAdvice.despatchLine[i].deliveredQuantity.unitCode = copyDespatchAdvice.despatchLine[i].deliveredQuantity.unitCode;
+        }
+
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());
         this.despatchAdvice.despatchSupplierParty = copyDespatchAdvice.despatchSupplierParty;
         this.despatchAdvice.deliveryCustomerParty = copyDespatchAdvice.deliveryCustomerParty;
-
-        let size = this.despatchAdvice.despatchLine.length;
-        for(let i = 0; i < size; i++){
-            this.despatchAdvice.despatchLine[i].deliveredQuantity.value = deliveredQuantityValues[i];
-        }
-
-        this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = copyDespatchAdvice.despatchLine[0].deliveredQuantity.unitCode;
         this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = copyDespatchAdvice.despatchLine[0].shipment[0].handlingInstructions;
 
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());

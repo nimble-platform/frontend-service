@@ -10,6 +10,7 @@ import { DespatchAdvice } from "../../../catalogue/model/publish/despatch-advice
 import {CookieService} from 'ng2-cookies';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {TranslateService} from '@ngx-translate/core';
+import {quantityToString} from '../../../common/utils';
 
 
 /**
@@ -30,6 +31,8 @@ export class ReceiptAdviceComponent implements OnInit {
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
+
+    quantityToString = quantityToString;
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,

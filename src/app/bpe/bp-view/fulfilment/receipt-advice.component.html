@@ -5,7 +5,7 @@
         <div class="col-6"><h4><span [innerHTML]="'Receipt Advice' | translate"></span></h4></div>
     </div>
 
-    <div class="row content-row bg-light">
+    <div class="row content-row bg-light" *ngIf="dispatchAdvice.despatchLine.length == 1">
         <div class="col-6">
             <!-- Dispatched Quantity -->
             <quantity-input presentationMode="view" [disableQuantityUnit]="true"
@@ -17,6 +17,27 @@
             <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
                 label="Rejected Quantity" [quantity]="receiptAdvice.receiptLine[0].rejectedQuantity">
             </quantity-input>
+        </div>
+    </div>
+
+    <div class="content-row bg-light" *ngIf="dispatchAdvice.despatchLine.length > 1">
+        <div class="row">
+            <div class="col-6"><h5><span>Dispatched Quantities</span></h5></div>
+        </div>
+        <div *ngFor="let dispatchAdviceLine of dispatchAdvice.despatchLine;let i=index" class="row">
+            <div class="col-2">
+                {{dispatchAdviceLine.item.name[0].value}}
+            </div>
+            <div class="col-4">
+                {{quantityToString(dispatchAdviceLine.deliveredQuantity)}}
+            </div>
+
+            <div class="col-6">
+                <!-- Rejected Quantity -->
+                <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
+                                label="Rejected Quantity" [quantity]="receiptAdvice.receiptLine[i].rejectedQuantity">
+                </quantity-input>
+            </div>
         </div>
     </div>
 

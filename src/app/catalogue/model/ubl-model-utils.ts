@@ -424,9 +424,12 @@ export class UBLModelUtils {
         receiptAdvice.despatchDocumentReference = [new DocumentReference(copyDespatchAdvice.id)];
         receiptAdvice.deliveryCustomerParty = copyDespatchAdvice.deliveryCustomerParty;
         receiptAdvice.despatchSupplierParty = copyDespatchAdvice.despatchSupplierParty;
-        receiptAdvice.receiptLine = [
-            new ReceiptLine(new Quantity(0, copyDespatchAdvice.despatchLine[0].deliveredQuantity.unitCode),
-                [], copyDespatchAdvice.despatchLine[0].item)];
+
+        receiptAdvice.receiptLine = [];
+        for(let dispatchLine of copyDespatchAdvice.despatchLine){
+            receiptAdvice.receiptLine.push(new ReceiptLine(new Quantity(0, dispatchLine.deliveredQuantity.unitCode),
+                [], dispatchLine.item))
+        }
 
         this.removeHjidFieldsFromObject(receiptAdvice);
         return receiptAdvice;
