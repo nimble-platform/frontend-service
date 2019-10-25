@@ -199,14 +199,12 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                     this.bpDataService.currentUsersCompanySettings = currentUserSettings;
 
                     return Promise.all([
-                        // TODO: fix this.getReferencedCatalogueLine method and uncomment the following line
-                        // this.getReferencedCatalogueLine(lines, order),
-                        null,
+                        this.getReferencedCatalogueLines(lines, order),
                         this.userService.getSettingsForProduct(lines[0]),
                         this.bpDataService.bpActivityEvent.containerGroupId ? this.bpeService.checkCollaborationFinished(this.bpDataService.bpActivityEvent.containerGroupId) : false
                     ])
                 })
-                .then(([referencedLine, sellerSettings, isCollaborationFinished]) => {
+                .then(([referencedLines, sellerSettings, isCollaborationFinished]) => {
                     // updates the company's business process workflow in order to eliminate the unnecessary steps from the displayed flow
                     this.updateCompanyProcessWorkflowForThisProcess(isCollaborationFinished, sellerSettings);
 
@@ -214,8 +212,8 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                     this.bpDataService.setProductAndCompanyInformation(this.lines, sellerSettings);
                     this.productWithSelectedProperties = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
 
-                    // there is an order that references another product -> the line is a service and the referencedLine is the original product
-                    if (referencedLine) {
+                    // there is an order that references other products -> the line are services and the referencedLines are the original products
+                    if (referencedLines) {
                         this.serviceLines = this.lines;
                         this.serviceWrappers = [];
                         for(let serviceLine of this.serviceLines){
@@ -224,10 +222,12 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                         this.serviceSettings = sellerSettings;
                         this.serviceWithSelectedProperties = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
 
+                        this.lines = referencedLines;
+                        this.selectedLine = referencedLines[0];
                         this.productWithSelectedProperties = this.correspondingOrderOfTransportProcess.orderLine[0].lineItem.item;
 
                         this.setProductsExpandedArray(false);
-                        return this.userService.getSettingsForProduct(referencedLine);
+                        return this.userService.getSettingsForProduct(referencedLines[0]);
 
                     } else {
                         return Promise.resolve(sellerSettings);
@@ -387,32 +387,69 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         }
     }
 
-    private getReferencedCatalogueLine(line: CatalogueLine, order: Order): Promise<CatalogueLine> {
-        if(!this.hasReferencedCatalogueLine(line, order)) {
+    private getReferencedCatalogueLines(lines: CatalogueLine[], order: Order): Promise<CatalogueLine[]> {
+        if(!this.hasReferencedCatalogueLines(lines, order)) {
             return Promise.resolve(null);
         }
 
-        const item = order.orderLine[0].lineItem.item;
-        const catalogueId = item.catalogueDocumentReference.id;
-        const lineId = item.manufacturersItemIdentification.id;
+        let catalogueUuids:string[] = [];
+        let catalogueIds:string[] = [];
 
-        return this.catalogueService.getCatalogueLine(catalogueId, lineId)
+        for(let orderLine of order.orderLine){
+            const item = orderLine.lineItem.item;
+            const catalogueId = item.catalogueDocumentReference.id;
+            const lineId = item.manufacturersItemIdentification.id;
+
+            catalogueUuids.push(catalogueId);
+            catalogueIds.push(lineId);
+        }
+
+        // create dummy catalogue lines for the deleted products using the corresponding item of the order
+        return this.catalogueService.getLinesForDifferentCatalogues(catalogueUuids,catalogueIds).then(catalogueLines => {
+            // update catalogueUuids and catalogueIds lists so that they keep only the identifiers for the deleted products
+            for(let catalogueLine of catalogueLines){
+                const catalogueId = catalogueLine.goodsItem.item.catalogueDocumentReference.id;
+                const lineId = catalogueLine.goodsItem.item.manufacturersItemIdentification.id;
+
+                catalogueUuids.splice(catalogueUuids.indexOf(catalogueId),1);
+                catalogueIds.splice(catalogueIds.indexOf(lineId),1);
+            }
+
+            for(let orderLine of order.orderLine){
+                const item = orderLine.lineItem.item;
+                const catalogueId = item.catalogueDocumentReference.id;
+                const lineId = item.manufacturersItemIdentification.id;
+                // create dummy catalogue line for the deleted product
+                if(catalogueUuids.indexOf(catalogueId) != -1 && catalogueIds.indexOf(lineId) != -1){
+                    catalogueLines.push(UBLModelUtils.createCatalogueLineWithItemCopy(item));
+                }
+            }
+
+            return catalogueLines;
+        });
     }
 
-    private hasReferencedCatalogueLine(line: CatalogueLine, order: Order): boolean {
+    private hasReferencedCatalogueLines(lines: CatalogueLine[], order: Order): boolean {
         if(!order) {
             return false;
         }
 
-        const orderItem = order.orderLine[0].lineItem.item;
-        const orderCatalogueId = orderItem.catalogueDocumentReference.id;
-        const orderLineId = orderItem.manufacturersItemIdentification.id;
+        for(let orderLine of order.orderLine){
+            const orderItem = orderLine.lineItem.item;
+            const orderCatalogueId = orderItem.catalogueDocumentReference.id;
+            const orderLineId = orderItem.manufacturersItemIdentification.id;
+            for(let line of lines){
+                const item = line.goodsItem.item;
+                const catalogueId = item.catalogueDocumentReference.id;
+                const lineId = item.manufacturersItemIdentification.id;
 
-        const item = line.goodsItem.item;
-        const catalogueId = item.catalogueDocumentReference.id;
-        const lineId = item.manufacturersItemIdentification.id;
+                if(orderCatalogueId !== catalogueId || orderLineId !== lineId){
+                    return true;
+                }
+            }
+        }
 
-        return orderCatalogueId !== catalogueId || orderLineId !== lineId;
+        return false;
     }
 
     /**

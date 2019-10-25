@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, Input, OnInit} from '@angular/core';
 import {BPDataService} from "../bp-data-service";
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import {CallStatus} from '../../../common/call-status';
@@ -14,22 +14,25 @@ import {BPEService} from '../../bpe.service';
 export class FulfilmentComponent implements OnInit {
     
     line: CatalogueLine;
+    _selectedLineIndex:number = 0;
+
+    @Input() catalogueLines:CatalogueLine[] = [];
 
     constructor(private bpDataService:BPDataService,
                 private bpeService: BPEService) {
 
     }
 
-    green_perc = 0;
-    yellow_perc = 0;
-    red_perc = 0;
-    green_perc_str = "0%";
-    yellow_perc_str = "0%";
-    red_perc_str = "0%";
-    blueTotalDispatched = 0;
-    greenTotalAccepted = 0;
-    yellowTotalWaiting = 0;
-    redTotalRejected = 0;
+    green_perc:number[] = [];
+    yellow_perc:number[] = [];
+    red_perc:number[] = [];
+    green_perc_str:string[] = [];
+    yellow_perc_str:string[] = [];
+    red_perc_str:string[] = [];
+    blueTotalDispatched:number[] = [];
+    greenTotalAccepted:number[] = [];
+    yellowTotalWaiting:number[] = [];
+    redTotalRejected:number[] = [];
 
     fulfilmentStatisticsCallStatus: CallStatus = new CallStatus();
 
@@ -58,26 +61,43 @@ export class FulfilmentComponent implements OnInit {
         }
         this.fulfilmentStatisticsCallStatus.submit();
         this.bpeService.getFulfilmentStatistics(orderId).then(result => {
+            for(let line of this.catalogueLines){
+                for(let statistics of result){
+                    if(statistics.item.catalogueDocumentReference.id == line.goodsItem.item.catalogueDocumentReference.id && statistics.item.manufacturersItemIdentification.id == line.goodsItem.item.manufacturersItemIdentification.id){
+                        let blueTotalDispatched = statistics.dispatchedQuantity;
+                        let greenTotalAccepted = statistics.dispatchedQuantity - statistics.rejectedQuantity;
+                        let redTotalRejected = statistics.rejectedQuantity;
+                        let waitingQuantity = statistics.requestedQuantity - greenTotalAccepted;
+                        let yellowTotalWaiting = waitingQuantity > 0 ? waitingQuantity: 0;
 
-            this.blueTotalDispatched = result.dispatchedQuantity;
-            this.greenTotalAccepted = result.dispatchedQuantity - result.rejectedQuantity;
-            this.redTotalRejected = result.rejectedQuantity;
-            let waitingQuantity = result.requestedQuantity - this.greenTotalAccepted;
-            this.yellowTotalWaiting = waitingQuantity > 0 ? waitingQuantity: 0;
+                        let total = greenTotalAccepted + redTotalRejected + yellowTotalWaiting;
 
-            // let total = this.blueTotalDispatched + this.greenTotalAccepted + this.redTotalRejected + this.yellowTotalWaiting;
-            let total = this.greenTotalAccepted + this.redTotalRejected + this.yellowTotalWaiting;
+                        let green_perc = Math.round(greenTotalAccepted*100/total);
+                        let yellow_perc = Math.round(yellowTotalWaiting*100/total);
+                        let red_perc = Math.round(redTotalRejected*100/total);
 
-            // this.blue_perc = Math.round(this.blueTotalDispatched*100/total);
-            this.green_perc = Math.round(this.greenTotalAccepted*100/total);
-            this.yellow_perc = Math.round(this.yellowTotalWaiting*100/total);
-            this.red_perc = Math.round(this.redTotalRejected*100/total);
+                        let green_perc_str = green_perc+"%";
+                        let yellow_perc_str = yellow_perc+"%";
+                        let red_perc_str = (100 - green_perc - yellow_perc) +"%";
 
-            // this.blue_perc_str = this.blue_perc+"%";
-            this.green_perc_str = this.green_perc+"%";
-            this.yellow_perc_str = this.yellow_perc+"%";
-            this.red_perc_str = (100 - this.green_perc - this.yellow_perc) +"%";
 
+                        this.blueTotalDispatched.push(blueTotalDispatched);
+                        this.greenTotalAccepted.push(greenTotalAccepted);
+                        this.redTotalRejected.push(redTotalRejected);
+                        this.yellowTotalWaiting.push(yellowTotalWaiting);
+
+                        this.green_perc.push(green_perc);
+                        this.yellow_perc.push(yellow_perc);
+                        this.red_perc.push(red_perc);
+
+                        this.green_perc_str.push(green_perc_str);
+                        this.yellow_perc_str.push(yellow_perc_str);
+                        this.red_perc_str.push(red_perc_str);
+
+                        break;
+                    }
+                }
+            }
 
             this.fulfilmentStatisticsCallStatus.callback(null,true);
         }).catch(error => {
@@ -87,6 +107,15 @@ export class FulfilmentComponent implements OnInit {
 
     isLoading(): boolean {
         return this.fulfilmentStatisticsCallStatus.fb_submitted;
+    }
+
+    @Input()
+    set selectedLineIndex(index:number) {
+        this._selectedLineIndex = index;
+    }
+
+    get selectedLineIndex(): number {
+        return this._selectedLineIndex;
     }
 
 }

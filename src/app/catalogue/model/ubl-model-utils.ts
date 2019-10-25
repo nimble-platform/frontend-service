@@ -218,15 +218,14 @@ export class UBLModelUtils {
     }
 
     public static createOrder(): Order {
+        const settings = new CompanyNegotiationSettings();
         const quantity: Quantity = new Quantity(null, "", null);
         const item: Item = this.createItem();
         const price: Price = this.createPrice();
-        const lineItem: LineItem = this.createLineItem(quantity, price, item);
+        const lineItem: LineItem = this.createLineItem(quantity, price, item,settings);
         const orderLine: OrderLine = new OrderLine(lineItem);
-        const settings = new CompanyNegotiationSettings();
 
-        return new Order(this.generateUUID(), [''], new Period(), new Address(), null, null, null,
-        this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), new MonetaryTotal(), [orderLine]);
+        return new Order(this.generateUUID(), [''], new Period(), new Address(), null, null, null, new MonetaryTotal(), [orderLine]);
     }
 
     public static createOrderResponseSimpleWithOrderCopy(order:Order, acceptedIndicator:boolean):OrderResponseSimple {
@@ -244,7 +243,7 @@ export class UBLModelUtils {
         const quantity:Quantity = new Quantity(null, "", null);
         const item:Item = this.createItem();
         const price: Price = this.createPrice();
-        const lineItem:LineItem = this.createLineItem(quantity, price, item);
+        const lineItem:LineItem = this.createLineItem(quantity, price, item,null);
         const ppap = new Ppap(this.generateUUID(), [''],documents, null, null, lineItem);
         return ppap;
     }
@@ -278,8 +277,8 @@ export class UBLModelUtils {
             }
         }
 
-        const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
-            rfqLines, this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), [], []);
+        const rfq = new RequestForQuotation(this.generateUUID(), [""], null, null, new Delivery(),
+            rfqLines, []);
 
         // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
         let handlingUnitDimension: Dimension = new Dimension();
@@ -300,14 +299,13 @@ export class UBLModelUtils {
         const quantity: Quantity = new Quantity(null, "", null);
         const item: Item = copyLine.goodsItem.item;
         const price: Price = copyLine.requiredItemLocationQuantity.price;
-        const lineItem: LineItem = this.createLineItem(quantity, price, item);
+        const lineItem: LineItem = this.createLineItem(quantity, price, item,null);
         const requestForQuotationLine: RequestForQuotationLine = new RequestForQuotationLine(lineItem);
-        const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
-            [requestForQuotationLine], null, null, null, null);
+        const rfq = new RequestForQuotation(this.generateUUID(), [""],  null, null, new Delivery(),
+            [requestForQuotationLine],  []);
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = copyOrder.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
         rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = copyOrder.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity = copyOrder.orderLine[0].lineItem.quantity;
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.originAddress = copyOrder.orderLine[0].lineItem.item.manufacturerParty.postalAddress;
         rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails = copyLine.goodsItem.item.transportationServiceDetails;
         let size = copyOrder.orderLine.length;
@@ -316,10 +314,8 @@ export class UBLModelUtils {
                 rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem.push(new GoodsItem());
             }
             rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[i].item = copyOrder.orderLine[i].lineItem.item;
+            rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[i].quantity = copyOrder.orderLine[i].lineItem.quantity;
         }
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity = copyOrder.orderLine[0].lineItem.quantity;
-        rfq.paymentTerms = copyOrder.paymentTerms;
-        rfq.paymentMeans = copyOrder.paymentMeans;
         // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
         let handlingUnitDimension:Dimension = new Dimension();
         handlingUnitDimension.attributeID = 'Handling Unit Length';
@@ -338,7 +334,7 @@ export class UBLModelUtils {
         if (item == null) {
             item = UBLModelUtils.createItem();
         }
-        const lineItem: LineItem = this.createLineItem(quantity, price, item);
+        const lineItem: LineItem = this.createLineItem(quantity, price, item,null);
         return new RequestForQuotationLine(lineItem);
     }
 
@@ -395,8 +391,8 @@ export class UBLModelUtils {
 
         const documentReference: DocumentReference = new DocumentReference(rfq.id);
 
-        const quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, false, documentReference,
-            customerParty, supplierParty, quotationLines, rfq.paymentMeans, rfq.paymentTerms, rfq.tradingTerms, rfq.termOrCondition);
+        const quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1,  documentReference,
+            customerParty, supplierParty, quotationLines);
 
         this.removeHjidFieldsFromObject(quotation);
         return quotation;
@@ -428,9 +424,12 @@ export class UBLModelUtils {
         receiptAdvice.despatchDocumentReference = [new DocumentReference(copyDespatchAdvice.id)];
         receiptAdvice.deliveryCustomerParty = copyDespatchAdvice.deliveryCustomerParty;
         receiptAdvice.despatchSupplierParty = copyDespatchAdvice.despatchSupplierParty;
-        receiptAdvice.receiptLine = [
-            new ReceiptLine(new Quantity(0, copyDespatchAdvice.despatchLine[0].deliveredQuantity.unitCode),
-                [], copyDespatchAdvice.despatchLine[0].item)];
+
+        receiptAdvice.receiptLine = [];
+        for(let dispatchLine of copyDespatchAdvice.despatchLine){
+            receiptAdvice.receiptLine.push(new ReceiptLine(new Quantity(0, dispatchLine.deliveredQuantity.unitCode),
+                [], dispatchLine.item))
+        }
 
         this.removeHjidFieldsFromObject(receiptAdvice);
         return receiptAdvice;
@@ -513,8 +512,11 @@ export class UBLModelUtils {
         return dimensions;
     }
 
-    public static createLineItem(quantity, price, item):LineItem {
-        return new LineItem(quantity, [], [new Delivery()], new DeliveryTerms(), price, item, new Period(), null);
+    public static createLineItem(quantity, price, item, settings:CompanyNegotiationSettings):LineItem {
+        if(settings == null){
+            settings = new CompanyNegotiationSettings();
+        }
+        return new LineItem(quantity, [], [new Delivery()], new DeliveryTerms(), price, item, new Period(), null,false,this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), [], []);
     }
 
     public static createPackage():Package {
@@ -830,8 +832,8 @@ export class UBLModelUtils {
         }
     }
 
-    public static getFrameContractDurationFromRfq(rfq: RequestForQuotation): Quantity {
-        let tradingTerm: TradingTerm = rfq.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
+    public static getFrameContractDurationFromRfqLine(rfqLine: RequestForQuotationLine): Quantity {
+        let tradingTerm: TradingTerm = rfqLine.lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
         if(tradingTerm != null) {
             return tradingTerm.value.valueQuantity[0];
         }

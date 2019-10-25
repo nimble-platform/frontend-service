@@ -41,7 +41,8 @@ export class NegotiationModelWrapper {
     ) {
 
         this.initialImmutableRfq = copy(rfq);
-        this.rfqPaymentTerms = new PaymentTermsWrapper(rfq.paymentTerms);
+        this.rfqPaymentTerms = new PaymentTermsWrapper(rfq.requestForQuotationLine[lineIndex].lineItem.paymentTerms);
+
 
         if(catalogueLine) {
             this.initialImmutableCatalogueLine = copy(catalogueLine);
@@ -58,7 +59,7 @@ export class NegotiationModelWrapper {
                 catalogueLine.priceOption,
                 rfq.requestForQuotationLine[this.lineIndex].lineItem.item.additionalItemProperty,
                 rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.incoterms,
-                rfq.paymentMeans.paymentMeansCode.value,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.paymentMeans.paymentMeansCode.value,
                 rfq.requestForQuotationLine[this.lineIndex].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
                 rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address,
                 //null,
@@ -72,7 +73,7 @@ export class NegotiationModelWrapper {
                 catalogueLine.priceOption,
                 rfq.requestForQuotationLine[this.lineIndex].lineItem.item.additionalItemProperty,
                 rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.incoterms,
-                rfq.paymentMeans.paymentMeansCode.value,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.paymentMeans.paymentMeansCode.value,
                 rfq.requestForQuotationLine[this.lineIndex].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
                 rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address
             );
@@ -86,7 +87,7 @@ export class NegotiationModelWrapper {
                     catalogueLine.priceOption,
                     rfq.requestForQuotationLine[this.lineIndex].lineItem.item.additionalItemProperty,
                     rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.incoterms,
-                    rfq.paymentMeans.paymentMeansCode.value,
+                    rfq.requestForQuotationLine[this.lineIndex].lineItem.paymentMeans.paymentMeansCode.value,
                     rfq.requestForQuotationLine[this.lineIndex].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
                     rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address
                 );
@@ -235,15 +236,15 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqPaymentMeans(): string {
-        return this.rfq.paymentMeans.paymentMeansCode.value;
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.paymentMeans.paymentMeansCode.value;
     }
 
     public set rfqPaymentMeans(paymentMeans: string) {
-        this.rfq.paymentMeans.paymentMeansCode.value = paymentMeans;
+        this.rfq.requestForQuotationLine[this.lineIndex].lineItem.paymentMeans.paymentMeansCode.value = paymentMeans;
     }
 
     public get rfqFrameContractDuration(): Quantity {
-        let tradingTerm: TradingTerm = this.rfq.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
+        let tradingTerm: TradingTerm = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
         if(tradingTerm != null) {
             return tradingTerm.value.valueQuantity[0];
         }
@@ -251,26 +252,26 @@ export class NegotiationModelWrapper {
     }
 
     public set rfqFrameContractDuration(duration: Quantity) {
-        let tradingTerm: TradingTerm = this.rfq.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
+        let tradingTerm: TradingTerm = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
         if(tradingTerm == null) {
             tradingTerm = new TradingTerm("FRAME_CONTRACT_DURATION", null, null, new MultiTypeValue());
             tradingTerm.value.valueQuantity.push(duration)
-            this.rfq.tradingTerms.push(tradingTerm);
+            this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.push(tradingTerm);
         } else {
             tradingTerm.value.valueQuantity[0] = duration;
         }
     }
 
     public get rfqTradingTerms(): TradingTerm[] {
-        return this.rfq.tradingTerms.filter(tradingTerm => tradingTerm.id != "FRAME_CONTRACT_DURATION").map(tradingTerm => tradingTerm);
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.filter(tradingTerm => tradingTerm.id != "FRAME_CONTRACT_DURATION").map(tradingTerm => tradingTerm);
     }
 
     public getRfqTradingTerm(termName: string): TradingTerm {
-        return this.rfq.tradingTerms.find(tradingTerm => tradingTerm.id == termName);
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == termName);
     }
 
     public addRfqTradingTerm(termName: string, termDescription: string, value, type: string): void {
-        let tradingTerm: TradingTerm = this.rfq.tradingTerms.find(tradingTerm => tradingTerm.id == termName);
+        let tradingTerm: TradingTerm = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == termName);
         if(tradingTerm != null) {
             return;
         } else {
@@ -289,14 +290,14 @@ export class NegotiationModelWrapper {
 
             let description: Text[] = [new Text(termDescription, null)];
             tradingTerm = new TradingTerm(termName, description, null, termValue);
-            this.rfq.tradingTerms.push(tradingTerm);
+            this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.push(tradingTerm);
         }
     }
 
     public deleteRfqTradingTerm(termName: string): void {
-        let indexToRemove = this.rfq.tradingTerms.findIndex(term => term.id === termName);
+        let indexToRemove = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.findIndex(term => term.id === termName);
         if(indexToRemove != -1) {
-            this.rfq.tradingTerms.splice(indexToRemove, 1);
+            this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.splice(indexToRemove, 1);
         }
     }
 

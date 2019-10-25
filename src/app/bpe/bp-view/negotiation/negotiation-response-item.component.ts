@@ -39,7 +39,7 @@ export class NegotiationResponseItemComponent implements OnInit {
     @Input() frameContract: DigitalAgreement;
     @Input() frameContractNegotiation: boolean = false;
     @Input() defaultTermsAndConditions: Clause[];
-    @Input() primaryTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = 'product_defaults';
+    @Input() primaryTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer';
     @Input() readonly: boolean = false;
     // whether the item is deleted or not
     // if the item is deleted, then we will not show Product Defaults section since we do not have those information
@@ -61,14 +61,13 @@ export class NegotiationResponseItemComponent implements OnInit {
 
     getPartyId = UBLModelUtils.getPartyId;
     showFrameContractDetails: boolean = false;
-    showNotesAndAdditionalFiles: boolean = false;
     showDeliveryAddress: boolean = false;
     showTermsAndConditions:boolean = false;
     selectedTCTab: 'CUSTOM_TERMS' | 'CLAUSES' = 'CUSTOM_TERMS';
     tcChanged:boolean = false;
 
     onClauseUpdate(event): void {
-        this.tcChanged = UBLModelUtils.areTermsAndConditionListsDifferent(this.wrapper.rfq.termOrCondition, this.wrapper.newQuotation.termOrCondition);
+        this.tcChanged = UBLModelUtils.areTermsAndConditionListsDifferent(this.wrapper.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.clause, this.wrapper.newQuotation.quotationLine[this.wrapper.lineIndex].lineItem.clause);
     }
 
     constructor(private bpeService: BPEService,
@@ -80,6 +79,9 @@ export class NegotiationResponseItemComponent implements OnInit {
     }
 
     ngOnInit() {
+        if(this.primaryTermsSource == null){
+            this.primaryTermsSource =  'product_defaults';
+        }
         // get copy of ThreadEventMetadata of the current business process
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
         this.line = this.bpDataService.getCatalogueLine();
@@ -95,9 +97,9 @@ export class NegotiationResponseItemComponent implements OnInit {
 
         // initialize data monitoring request based on the frame contract and last offer
         if (this.lastOfferQuotation) {
-            this.quotation.dataMonitoringPromised = this.lastOfferQuotation.dataMonitoringPromised;
+            this.quotation.quotationLine[this.wrapper.lineIndex].lineItem.dataMonitoringRequested = this.lastOfferQuotation.quotationLine[this.wrapper.lineIndex].lineItem.dataMonitoringRequested;
         } else if (this.frameContractQuotation) {
-            this.quotation.dataMonitoringPromised = this.frameContractQuotation.dataMonitoringPromised;
+            this.quotation.quotationLine[this.wrapper.lineIndex].lineItem.dataMonitoringRequested = this.frameContractQuotation.quotationLine[this.wrapper.lineIndex].lineItem.dataMonitoringRequested;
         }
     }
 
@@ -149,7 +151,7 @@ export class NegotiationResponseItemComponent implements OnInit {
 
     getNonFrameContractTermNumber(): number {
         let termCount: number = 0;
-        for(let tradingTerm of this.wrapper.newQuotation.tradingTerms) {
+        for(let tradingTerm of this.wrapper.newQuotation.quotationLine[this.wrapper.lineIndex].lineItem.tradingTerms) {
             if(tradingTerm.id != 'FRAME_CONTRACT_DURATION') {
                 termCount++;
             }
@@ -178,7 +180,6 @@ export class NegotiationResponseItemComponent implements OnInit {
         if (tab)
             ret = false;
         this.showFrameContractDetails = false;
-        this.showNotesAndAdditionalFiles = false;
         this.showDeliveryAddress = false;
         this.showTermsAndConditions = false;
         return ret;

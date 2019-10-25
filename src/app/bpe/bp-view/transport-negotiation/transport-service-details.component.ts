@@ -20,8 +20,9 @@ export class TransportServiceDetailsComponent implements OnInit {
     shipment: Shipment;
     itemName:string;
 
-    // items which is shipped by this transport service
+    // items which are shipped by this transport service
     goodsItems:GoodsItem[];
+    selectedProducts:boolean[];
 
     selectPreferredValue=selectPreferredValue;
     constructor(private bpDataService: BPDataService,
@@ -33,23 +34,20 @@ export class TransportServiceDetailsComponent implements OnInit {
         this.shipment = this.lineItem.delivery[0].shipment;
         this.goodsItems = copy(this.shipment.goodsItem);
         this.itemName = selectPreferredValue(this.shipment.goodsItem[0].item.name);
+        this.selectedProducts = [];
+        for(let goodsItem of this.goodsItems){
+            this.selectedProducts.push(true);
+        }
     }
 
-    onProductSelection(checked,goodsItem:GoodsItem){
-        // get goods item
-        if(checked){
-            this.shipment.goodsItem.push(goodsItem);
-        }
-        else {
-            let goodsItemToBeRemoved:GoodsItem;
-            for(let item of this.shipment.goodsItem){
-                if(goodsItem.item.manufacturersItemIdentification.id == item.item.manufacturersItemIdentification.id && goodsItem.item.catalogueDocumentReference.id == item.item.catalogueDocumentReference.id){
-                    goodsItemToBeRemoved = item;
-                    break;
-                }
+    getSelectedProductsToShip(){
+        let goodsItemsToShip:GoodsItem[] = [];
+        let size = this.selectedProducts.length;
+        for(let i = 0; i < size;i++){
+            if(this.selectedProducts[i]){
+                goodsItemsToShip.push(this.goodsItems[i]);
             }
-            let index = this.shipment.goodsItem.indexOf(goodsItemToBeRemoved);
-            this.shipment.goodsItem.splice(index,1);
         }
+        return goodsItemsToShip;
     }
 }

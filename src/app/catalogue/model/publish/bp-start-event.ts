@@ -19,6 +19,6 @@ export class BpActivityEvent{
         public catalogueLineIds = null,
         public previousProcessInstanceId = null,
         public previousDocumentId = null,
-        public termsSource: 'product_defaults' | 'frame_contract' = null
+        public termsSources: ('product_defaults' | 'frame_contract')[] = null
     ){}
 }

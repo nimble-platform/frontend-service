@@ -38,10 +38,12 @@ export class ThreadEventComponent implements OnInit {
 
         let catalogueIds = [];
         let catalogueLineIds = [];
+        let termsSources = [];
 
         for(let product of this.event.products){
             catalogueIds.push(product.catalogueDocumentReference.id);
             catalogueLineIds.push(product.manufacturersItemIdentification.id);
+            termsSources.push(null);
         }
 
         this.bpDataService.startBp(
@@ -57,7 +59,8 @@ export class ThreadEventComponent implements OnInit {
                 catalogueIds,
                 catalogueLineIds,
                 this.event.processInstanceId,
-                ActivityVariableParser.getPrecedingDocumentId(this.event.activityVariables)),
+                ActivityVariableParser.getPrecedingDocumentId(this.event.activityVariables),
+                termsSources),
             true);
     }
 

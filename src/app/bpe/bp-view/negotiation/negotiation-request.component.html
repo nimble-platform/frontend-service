@@ -3,18 +3,30 @@
                           [rfqLine]="rfq.requestForQuotationLine[i]"
                           [rfq]="rfq"
                           [bpActivityEvent]="bpActivityEvent"
-                          [manufacturersTermsSource]="manufacturersTermsSource"
+                          [manufacturersTermsSource]="manufacturersTermsSources[i]"
                           [lastOfferQuotation]="lastOfferQuotation"
-                          [frameContractQuotation]="frameContractQuotation"
-                          [frameContractNegotiation]="frameContractNegotiation"
-                          [frameContract]="frameContract"
+                          [frameContractQuotation]="frameContractQuotations[i]"
+                          [frameContractNegotiation]="frameContractNegotiations[i]"
+                          [frameContract]="frameContracts[i]"
                           [defaultTermsAndConditions]="defaultTermsAndConditions"
                           [deliverytermsOfBuyer]="deliverytermsOfBuyer"
                           [wrapper]="wrapper"
                           [hidden]="selectedLine != wrapper.catalogueLine">
 </negotiation-request-item>
 
-<div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showPurchaseOrder}" (click)="showPurchaseOrder = !showPurchaseOrder"><span [innerHTML]="'Purchase Order' | translate" ></span></div>
+<div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showNotesAndAdditionalFiles}" (click)="showNotesAndAdditionalFiles= showTab(showNotesAndAdditionalFiles)"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>
+<div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showPurchaseOrder}" (click)="showPurchaseOrder = showTab(showPurchaseOrder)"><span [innerHTML]="'Purchase Order' | translate" ></span></div>
+
+<!--Notes-->
+<note-file-view *ngIf="showNotesAndAdditionalFiles"
+                class="mb-2"
+                [notes]="rfq.note"
+                [documents]="rfq.additionalDocumentReference"
+                [label]="'Notes'"
+                [firstCol]="'col-2'"
+                [secondCol]="'col-5'"
+                [lastCol]="'col-5'"
+                [readonly]="isLoading() || isReadOnly()"></note-file-view>
 
 <!--Purchase Order-->
 <table class="table table-striped" *ngIf="showPurchaseOrder">

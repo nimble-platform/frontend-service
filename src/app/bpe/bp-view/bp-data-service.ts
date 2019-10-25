@@ -283,6 +283,11 @@ export class BPDataService{
     proceedNextBpStep(userRole: BpUserRole, processType:ProcessType){
         this.resetBpData();
 
+        let termsSources = [];
+        for(let catalogueLineId of this.bpActivityEvent.catalogueLineIds){
+            termsSources.push(null);
+        }
+
         let bpStartEvent: BpActivityEvent = new BpActivityEvent(
             userRole,
             processType,
@@ -298,7 +303,7 @@ export class BPDataService{
             this.bpActivityEvent.catalogueLineIds,
             this.bpActivityEvent.previousProcessInstanceId,
             this.bpActivityEvent.previousDocumentId,
-            null);
+            termsSources);
         this.bpActivityEvent = bpStartEvent;
         // this event is listened by the product-bp-options.component where the displayed process view is adjusted
         this.bpActivityEventBehaviorSubject.next(bpStartEvent);
@@ -395,8 +400,10 @@ export class BPDataService{
 
     private initFetchedRfq(): void {
         const rfq = this.requestForQuotation;
-        rfq.paymentMeans = rfq.paymentMeans || new PaymentMeans(new Code(PAYMENT_MEANS[0], PAYMENT_MEANS[0]));
-        rfq.paymentTerms = rfq.paymentTerms || new PaymentTerms();
+        for(let rfqLine of rfq.requestForQuotationLine){
+            rfqLine.lineItem.paymentMeans = rfqLine.lineItem.paymentMeans || new PaymentMeans(new Code(PAYMENT_MEANS[0], PAYMENT_MEANS[0]));
+            rfqLine.lineItem.paymentTerms = rfqLine.lineItem.paymentTerms || new PaymentTerms();
+        }
     }
 
     initPpap(documents:string[]):void{
@@ -423,24 +430,26 @@ export class BPDataService{
         let size = copyRfq.requestForQuotationLine.length;
         for(let i = 0; i < size; i++){
             this.order.orderLine[i].lineItem.deliveryTerms.deliveryLocation.address = copyRfq.requestForQuotationLine[i].lineItem.deliveryTerms.deliveryLocation.address;
+            this.order.orderLine[i].lineItem.paymentMeans = copyQuotation.quotationLine[i].lineItem.paymentMeans;
+            this.order.orderLine[i].lineItem.paymentTerms = copyQuotation.quotationLine[i].lineItem.paymentTerms;
         }
-
-        this.order.paymentMeans = copyQuotation.paymentMeans;
-        this.order.paymentTerms = copyQuotation.paymentTerms;
 
         this.order.anticipatedMonetaryTotal.payableAmount.currencyID = copyRfq.requestForQuotationLine[0].lineItem.price.priceAmount.currencyID;
 
-        // create a contract for Terms and Conditions
-        let contract = new Contract();
-        contract.id = UBLModelUtils.generateUUID();
+        // create contracts for Terms and Conditions
+        let contracts = [];
+        for(let quotationLine of copyQuotation.quotationLine){
+            let contract = new Contract();
+            contract.id = UBLModelUtils.generateUUID();
 
-        for(let clause of copyQuotation.termOrCondition){
-            let newClause:Clause = JSON.parse(JSON.stringify(clause));
-            contract.clause.push(newClause);
+            for(let clause of quotationLine.lineItem.clause){
+                let newClause:Clause = JSON.parse(JSON.stringify(clause));
+                contract.clause.push(newClause);
+            }
+            contracts.push(contract);
         }
         // push contract to order.contract
-        this.order.contract = [contract];
-
+        this.order.contract = contracts;
         UBLModelUtils.removeHjidFieldsFromObject(this.order);
     }
 
@@ -451,39 +460,36 @@ export class BPDataService{
         for(let i = 0; i < size; i++){
             this.order.orderLine[i].lineItem = copyRfq.requestForQuotationLine[i].lineItem;
             this.order.orderLine[i].lineItem.deliveryTerms.deliveryLocation.address = copyRfq.requestForQuotationLine[i].lineItem.deliveryTerms.deliveryLocation.address;
+            this.order.orderLine[i].lineItem.paymentMeans = copyRfq.requestForQuotationLine[i].lineItem.paymentMeans;
+            this.order.orderLine[i].lineItem.paymentTerms = copyRfq.requestForQuotationLine[i].lineItem.paymentTerms;
         }
 
-        this.order.paymentMeans = copyRfq.paymentMeans;
-        this.order.paymentTerms = copyRfq.paymentTerms;
+        // create contracts for Terms and Conditions
+        let contracts = [];
+        for(let rfqLine of copyRfq.requestForQuotationLine){
+            let contract = new Contract();
+            contract.id = UBLModelUtils.generateUUID();
 
-        // create a contract for Terms and Conditions
-        let contract = new Contract();
-        contract.id = UBLModelUtils.generateUUID();
-
-        for(let clause of copyRfq.termOrCondition){
-            let newClause:Clause = JSON.parse(JSON.stringify(clause));
-            contract.clause.push(newClause);
+            for(let clause of rfqLine.lineItem.clause){
+                let newClause:Clause = JSON.parse(JSON.stringify(clause));
+                contract.clause.push(newClause);
+            }
+            contracts.push(contract);
         }
         // push contract to order.contract
-        this.order.contract = [contract];
+        this.order.contract = contracts;
         UBLModelUtils.removeHjidFieldsFromObject(this.order);
     }
 
     initRfqWithQuotation() {
         const copyQuotation = copy(this.copyQuotation);
-        const copyRfq = copy(this.copyRequestForQuotation);
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation(this.copyQuotation.quotationLine.map(quotationLine => quotationLine.lineItem.item), null);
-        this.requestForQuotation.paymentMeans = copyQuotation.paymentMeans;
-        this.requestForQuotation.paymentTerms = copyQuotation.paymentTerms;
-        this.requestForQuotation.tradingTerms = copyQuotation.tradingTerms;
-        this.requestForQuotation.termOrCondition = copyQuotation.termOrCondition;
         this.requestForQuotation.delivery = copyQuotation.quotationLine[0].lineItem.delivery[0];
-        this.requestForQuotation.dataMonitoringRequested = copyRfq.dataMonitoringRequested;
 
         UBLModelUtils.removeHjidFieldsFromObject(this.requestForQuotation);
     }
 
-    initDispatchAdvice(handlingInst: Text, carrierName: string, carrierContact: string, deliveredQuantityValue: number, endDate: string) {
+    initDispatchAdvice(handlingInst: Text, carrierName: string, carrierContact: string, deliveredQuantityValues: number[], endDate: string) {
         let copyOrder:Order;
         if (this.copyOrder) {
             copyOrder = copy(this.copyOrder);
@@ -496,7 +502,7 @@ export class BPDataService{
         for(let i = 0; i < size; i++){
             this.despatchAdvice.despatchLine[i].deliveredQuantity.unitCode = copyOrder.orderLine[i].lineItem.quantity.unitCode;
 
-            this.despatchAdvice.despatchLine[i].deliveredQuantity.value = deliveredQuantityValue;
+            this.despatchAdvice.despatchLine[i].deliveredQuantity.value = deliveredQuantityValues[i];
             if(handlingInst){
                 this.despatchAdvice.despatchLine[i].shipment[0].handlingInstructions = [handlingInst];
             }else{
@@ -517,18 +523,23 @@ export class BPDataService{
         UBLModelUtils.removeHjidFieldsFromObject(this.despatchAdvice);
     }
 
-    initDispatchAdviceWithCopyDispatchAdvice(deliveredQuantityValue: number) {
+    initDispatchAdviceWithCopyDispatchAdvice(deliveredQuantityValues: number[]) {
         let copyDespatchAdvice:DespatchAdvice = copy(this.copyDespatchAdvice);
         this.despatchAdvice = new DespatchAdvice();
         this.despatchAdvice.id = UBLModelUtils.generateUUID();
         this.despatchAdvice.orderReference = copyDespatchAdvice.orderReference;
-        this.despatchAdvice.despatchLine = [new DespatchLine(new Quantity(), copyDespatchAdvice.despatchLine[0].item, [new Shipment()])];
+
+        let size = copyDespatchAdvice.despatchLine.length;
+        this.despatchAdvice.despatchLine = [];
+        for(let i = 0; i < size; i++){
+            this.despatchAdvice.despatchLine.push(new DespatchLine(new Quantity(), copyDespatchAdvice.despatchLine[i].item, [new Shipment()]));
+            this.despatchAdvice.despatchLine[i].deliveredQuantity.value = deliveredQuantityValues[i];
+            this.despatchAdvice.despatchLine[i].deliveredQuantity.unitCode = copyDespatchAdvice.despatchLine[i].deliveredQuantity.unitCode;
+        }
+
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());
         this.despatchAdvice.despatchSupplierParty = copyDespatchAdvice.despatchSupplierParty;
         this.despatchAdvice.deliveryCustomerParty = copyDespatchAdvice.deliveryCustomerParty;
-
-        this.despatchAdvice.despatchLine[0].deliveredQuantity.value = deliveredQuantityValue;
-        this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = copyDespatchAdvice.despatchLine[0].deliveredQuantity.unitCode;
         this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = copyDespatchAdvice.despatchLine[0].shipment[0].handlingInstructions;
 
         this.despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());

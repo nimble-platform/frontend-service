@@ -239,7 +239,7 @@ export class ShoppingCartComponent implements OnInit {
             this.bpeService.getFrameContract(
                 UBLModelUtils.getPartyId(cartLine.goodsItem.item.manufacturerParty),
                 this.cookieService.get('company_id'),
-                cartLine.id).then(frameContract => {
+                [cartLine.id]).then(frameContract => {
 
                 if (frameContract != null) {
                     this.initCallStatus.aggregatedSubmit();
