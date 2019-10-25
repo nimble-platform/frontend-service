@@ -22,7 +22,9 @@ export const bpe_endpoint=`${base_path}/business-process`;
 export const data_channel_endpoint=`${base_path}/data-channel`;
 export const data_aggregation_endpoint=`${base_path}/data-aggregation`;
 export const trust_service_endpoint=`${base_path}/trust`;
-export const indexing_service_endpoint=`${base_path}/index`;
+// export const indexing_service_endpoint=`${base_path}/index`;
+export const indexing_service_endpoint=`https://efactory-security-portal.salzburgresearch.at/api/index`;
+
 export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}/logstash`;
 export const kibana_endpoint = `${base_path}/kibana/app/kibana`;
@@ -98,28 +100,28 @@ export const config = {
       {
         "title": "User Logins & Registrations",
         "url": "#/dashboard/5d41a2b0-cd6e-11e9-b5e8-e908493e1aa7?embed=true&_g=(refreshInterval:(pause:!t,value:0),time:(from:now-1y,mode:quick,to:now))"
-      }, 
-      {
-            "title": "Business Process Activities",
-            "url": "#/dashboard/548c5e20-cd6f-11e9-b5e8-e908493e1aa7?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2FM%2Cmode%3Aquick%2Cto%3Anow%2FM))"
-      }, 
-      {
-            "title": "Products Activities",
-            "url": "#/dashboard/48ed8e30-cd70-11e9-b5e8-e908493e1aa7?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2FM%2Cmode%3Aquick%2Cto%3Anow%2FM))"
       },
       {
-            "title": "Product / Service Visits",
-            "url": "#/dashboard/3296ca60-ec07-11e9-a14e-bde7739ac822?embed=true&_g=(refreshInterval:(pause:!t,value:0),time:(from:now-1y,mode:quick,to:now))&_a=(description:'',filters:!(),fullScreenMode:!f,options:(darkTheme:!f,hidePanelTitles:!f,useMargins:!t),panels:!((embeddableConfig:(),gridData:(h:11,i:'1',w:14,x:0,y:0),id:b0b3cdd0-e5d1-11e9-a14e-bde7739ac822,panelIndex:'1',type:visualization,version:'6.7.1'),(embeddableConfig:(),gridData:(h:11,i:'4',w:10,x:14,y:0),id:'699fc8d0-e5c8-11e9-a14e-bde7739ac822',panelIndex:'4',type:visualization,version:'6.7.1'),(embeddableConfig:(),gridData:(h:11,i:'5',w:10,x:24,y:0),id:'680d45d0-ec06-11e9-a14e-bde7739ac822',panelIndex:'5',type:visualization,version:'6.7.1'),(embeddableConfig:(),gridData:(h:11,i:'6',w:14,x:34,y:0),id:'0d278210-ec07-11e9-a14e-bde7739ac822',panelIndex:'6',type:visualization,version:'6.7.1')),query:(language:lucene,query:''),timeRestore:!f,title:'Platform+Visits+Dashboard',viewMode:view)"
+        "title": "Business Process Activities",
+        "url": "#/dashboard/548c5e20-cd6f-11e9-b5e8-e908493e1aa7?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2FM%2Cmode%3Aquick%2Cto%3Anow%2FM))"
       },
       {
-            "title": "Compay Visits",
-            "url": "#/dashboard/a6b560c0-ec0f-11e9-a14e-bde7739ac822?embed=true&_g=(refreshInterval:(pause:!t,value:0),time:(from:now-1y,mode:quick,to:now))&_a=(description:'',filters:!(),fullScreenMode:!f,options:(darkTheme:!f,hidePanelTitles:!f,useMargins:!t),panels:!((embeddableConfig:(),gridData:(h:11,i:'1',w:24,x:0,y:0),id:ef9d04f0-e520-11e9-a14e-bde7739ac822,panelIndex:'1',type:visualization,version:'6.7.1'),(embeddableConfig:(),gridData:(h:11,i:'2',w:24,x:24,y:0),id:ff5d3930-e5bd-11e9-a14e-bde7739ac822,panelIndex:'2',type:visualization,version:'6.7.1')),query:(language:lucene,query:''),timeRestore:!f,title:'Platform+Company+Visits',viewMode:view)"
+        "title": "Products Activities",
+        "url": "#/dashboard/48ed8e30-cd70-11e9-b5e8-e908493e1aa7?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2FM%2Cmode%3Aquick%2Cto%3Anow%2FM))"
+      },
+      {
+        "title": "Product / Service Visits",
+        "url": "#/dashboard/3296ca60-ec07-11e9-a14e-bde7739ac822?embed=true&_g=(refreshInterval:(pause:!t,value:0),time:(from:now-1y,mode:quick,to:now))&_a=(description:'',filters:!(),fullScreenMode:!f,options:(darkTheme:!f,hidePanelTitles:!f,useMargins:!t),panels:!((embeddableConfig:(),gridData:(h:11,i:'1',w:14,x:0,y:0),id:b0b3cdd0-e5d1-11e9-a14e-bde7739ac822,panelIndex:'1',type:visualization,version:'6.7.1'),(embeddableConfig:(),gridData:(h:11,i:'4',w:10,x:14,y:0),id:'699fc8d0-e5c8-11e9-a14e-bde7739ac822',panelIndex:'4',type:visualization,version:'6.7.1'),(embeddableConfig:(),gridData:(h:11,i:'5',w:10,x:24,y:0),id:'680d45d0-ec06-11e9-a14e-bde7739ac822',panelIndex:'5',type:visualization,version:'6.7.1'),(embeddableConfig:(),gridData:(h:11,i:'6',w:14,x:34,y:0),id:'0d278210-ec07-11e9-a14e-bde7739ac822',panelIndex:'6',type:visualization,version:'6.7.1')),query:(language:lucene,query:''),timeRestore:!f,title:'Platform+Visits+Dashboard',viewMode:view)"
+      },
+      {
+        "title": "Compay Visits",
+        "url": "#/dashboard/a6b560c0-ec0f-11e9-a14e-bde7739ac822?embed=true&_g=(refreshInterval:(pause:!t,value:0),time:(from:now-1y,mode:quick,to:now))&_a=(description:'',filters:!(),fullScreenMode:!f,options:(darkTheme:!f,hidePanelTitles:!f,useMargins:!t),panels:!((embeddableConfig:(),gridData:(h:11,i:'1',w:24,x:0,y:0),id:ef9d04f0-e520-11e9-a14e-bde7739ac822,panelIndex:'1',type:visualization,version:'6.7.1'),(embeddableConfig:(),gridData:(h:11,i:'2',w:24,x:24,y:0),id:ff5d3930-e5bd-11e9-a14e-bde7739ac822,panelIndex:'2',type:visualization,version:'6.7.1')),query:(language:lucene,query:''),timeRestore:!f,title:'Platform+Company+Visits',viewMode:view)"
       }
     ]
   },
   "kibanaEnabled": true,
   "loggingEnabled": true,
-  "logoPath": "./assets/logo_mvp.png",
+  "logoPath": "./assets/logo_efac.png",
   "federationLogoPath": "./assets/logo_mvp_efactory.png",
   "logoRequired": false,
   "phoneNumberRequired": false,
@@ -140,50 +142,50 @@ export const config = {
   "showTrade": true,
   "showVerification": true,
   "standardCurrency": "EUR",
-  "standardTaxonomy": "All",
+  "standardTaxonomy": "FurnitureOntology",
   "supportedActivitySectors": {
-  	"": [],
-  	"Logistics Provider": [],
-  	"Manufacturer": [],
-  	"Service Provider": [],
-  	"Other": []
+    "": [],
+    "Logistics Provider": [],
+    "Manufacturer": [],
+    "Service Provider": [],
+    "Other": []
   },
   "supportedBusinessTypes": [
-  	"",
-  	"Logistics Provider",
-  	"Manufacturer",
-  	"Service Provider",
-  	"Other"
+    "",
+    "Logistics Provider",
+    "Manufacturer",
+    "Service Provider",
+    "Other"
   ],
   "supportedCertificates": [
-      "Appearance Approval Report",
-      "Checking Aids",
-      "Control Plan",
-      "Customer Engineering Approval",
-      "Customer Specific Requirements",
-      "Design Documentation",
-      "Design Failure Mode and Effects Analysis",
-      "Dimensional Results",
-      "Engineering Change Documentation",
-      "Initial Process Studies",
-      "Master Sample",
-      "Measurement System Analysis Studies",
-      "Part Submission Warrant",
-      "Process Failure Mode and Effects Analysis",
-      "Process Flow Diagram",
-      "Qualified Laboratory Documentation",
-      "Records of Material / Performance Tests",
-      "Sample Production Parts",
-      "Other"
+    "Appearance Approval Report",
+    "Checking Aids",
+    "Control Plan",
+    "Customer Engineering Approval",
+    "Customer Specific Requirements",
+    "Design Documentation",
+    "Design Failure Mode and Effects Analysis",
+    "Dimensional Results",
+    "Engineering Change Documentation",
+    "Initial Process Studies",
+    "Master Sample",
+    "Measurement System Analysis Studies",
+    "Part Submission Warrant",
+    "Process Failure Mode and Effects Analysis",
+    "Process Flow Diagram",
+    "Qualified Laboratory Documentation",
+    "Records of Material / Performance Tests",
+    "Sample Production Parts",
+    "Other"
   ],
   "supportedRoles": [
-      "company_admin",
-      "external_representative",
-      "legal_representative",
-      "monitor",
-      "publisher",
-      "purchaser",
-      "sales_officer"
+    "company_admin",
+    "external_representative",
+    "legal_representative",
+    "monitor",
+    "publisher",
+    "purchaser",
+    "sales_officer"
   ],
   "supportMail": "nimble-support@salzburgresearch.at",
   "supportMailContent": {
@@ -216,10 +218,10 @@ export const product_price = "price";
 export const product_currency = "currency";
 export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
-export const product_filter_prod = ["freeOfCharge","certificateType","applicableCountries"];
+export const product_filter_prod = ["basePlatform", "freeOfCharge","certificateType","applicableCountries"];
 export const product_filter_comp = ["manufacturer.legalName","manufacturer.brandName","manufacturer.businessType","manufacturer.activitySectors","manufacturer.businessKeywords","manufacturer.origin","manufacturer.certificateType","manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType"];
-export const party_facet_field_list = ["legalName","{LANG}_brandName","businessType","{LANG}_activitySectors","{LANG}_businessKeywords","{LANG}_origin","{LANG}_certificateType","ppapComplianceLevel","ppapDocumentType"];
-export const party_filter_main = ["businessType","activitySectors","businessKeywords","origin","certificateType","ppapComplianceLevel","ppapDocumentType"];
+export const party_facet_field_list = ["legalName","{LANG}_brandName","businessType","{LANG}_activitySectors","{LANG}_businessKeywords","{LANG}_origin","{LANG}_certificateType","ppapComplianceLevel","ppapDocumentType", "basePlatform"];
+export const party_filter_main = ["businessType","activitySectors","businessKeywords","origin","certificateType","ppapComplianceLevel","ppapDocumentType", "basePlatform"];
 export const party_filter_trust = ["trustScore","trustRating","trustSellerCommunication","trustFullfillmentOfTerms","trustDeliveryPackaging","trustNumberOfTransactions"];
 export const item_manufacturer_id = "manufacturerId";
 export const product_filter_trust = ["manufacturer.trustScore","manufacturer.trustRating","manufacturer.trustSellerCommunication","manufacturer.trustFullfillmentOfTerms","manufacturer.trustDeliveryPackaging","manufacturer.trustNumberOfTransactions"];
@@ -231,7 +233,8 @@ export const product_filter_mappings = {
   "manufacturer.businessKeywords": "Business Keywords",
   "businessType": "Business Type",
   "activitySectors": "Activity Sectors",
-  "businessKeywords": "Business Keywords"
+  "businessKeywords": "Business Keywords",
+  "basePlatform" : "Platform"
 };
 export const product_nonfilter_full = ["_text_","_version_","id","image","localName","languages","catalogueId","doctype","manufacturerId","manufacturerItemId","allLabels"];
 export const product_nonfilter_regex = ["lmf.","_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];

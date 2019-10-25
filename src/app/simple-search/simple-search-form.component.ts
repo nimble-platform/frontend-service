@@ -737,9 +737,15 @@ export class SimpleSearchFormComponent implements OnInit {
 
 		let imageUris: string[] = [];
 		for(let productUri in imageMap) {
-			imageUris.push(imageMap[productUri]);
+			// listing other platform images
+			// if image uri contains CatalogBinaryContentUri then
+			if(imageMap[productUri].startsWith("CatalogBinaryContentUri")) {
+				//console.log("its a catalog image.. adding it to imageUris for catalogueService");
+				imageUris.push(imageMap[productUri]);
+			}
 		}
 		if(imageUris.length > 0) {
+
 			this.catalogueService.getBinaryObjects(imageUris).then(images => {
 				for (let image of images) {
 					for (let productUri in imageMap) {
