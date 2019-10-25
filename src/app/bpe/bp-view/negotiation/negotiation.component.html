@@ -56,10 +56,10 @@
                                      [lastOfferQuotation]="lastOfferQuotation"
                                      [defaultTermsAndConditions]="defaultTermsAndConditions"
                                      [manufacturersTermsSources]="getPrimaryTermsSource(lastOfferQuotation)"
-                                     [selectedLine]="selectedLine",
+                                     [selectedLine]="selectedLine"
                                      [bpActivityEvent]="bpDataService.bpActivityEvent"
-                                     [catalogueLines]="bpDataService.catalogueLines"
-                                     [sellerSettings]="bpDataService.sellerSettings">
+                                     [catalogueLines]="bpDataService.getCatalogueLines()"
+                                     [sellerSettings]="bpDataService.getCompanySettings()">
                 </negotiation-request>
                 <negotiation-response *ngIf="bpDataService.quotation"
                                       [lastOfferQuotation]="lastOfferQuotation"
