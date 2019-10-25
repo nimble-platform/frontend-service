@@ -31,7 +31,7 @@ export class DispatchAdviceComponent implements OnInit {
 
     selectedProducts:boolean[];
 
-    @Input() waitingQuantityValue: number = 0;
+    @Input() waitingQuantityValues: number[];
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
@@ -67,7 +67,7 @@ export class DispatchAdviceComponent implements OnInit {
 
         // since we start a new Despatch Advice after Receipt Advice step, bpDataService.copyDespatchAdvice is not null.
         if(this.bpDataService.copyDespatchAdvice){
-            this.bpDataService.initDispatchAdviceWithCopyDispatchAdvice(this.waitingQuantityValue);
+            this.bpDataService.initDispatchAdviceWithCopyDispatchAdvice(this.waitingQuantityValues);
         }
         else{
             const processInstanceGroup = await this.bpeService.getProcessInstanceGroup(this.bpDataService.bpActivityEvent.containerGroupId) as ProcessInstanceGroup;
@@ -112,7 +112,7 @@ export class DispatchAdviceComponent implements OnInit {
                 }
             }
 
-            this.bpDataService.initDispatchAdvice(handlingInst,carrierName,carrierContact, this.waitingQuantityValue, endDate);
+            this.bpDataService.initDispatchAdvice(handlingInst,carrierName,carrierContact, this.waitingQuantityValues, endDate);
         }
 
         this.dispatchAdvice = this.bpDataService.despatchAdvice;

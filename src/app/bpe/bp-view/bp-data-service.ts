@@ -487,7 +487,7 @@ export class BPDataService{
         UBLModelUtils.removeHjidFieldsFromObject(this.requestForQuotation);
     }
 
-    initDispatchAdvice(handlingInst: Text, carrierName: string, carrierContact: string, deliveredQuantityValue: number, endDate: string) {
+    initDispatchAdvice(handlingInst: Text, carrierName: string, carrierContact: string, deliveredQuantityValues: number[], endDate: string) {
         let copyOrder:Order;
         if (this.copyOrder) {
             copyOrder = copy(this.copyOrder);
@@ -500,7 +500,7 @@ export class BPDataService{
         for(let i = 0; i < size; i++){
             this.despatchAdvice.despatchLine[i].deliveredQuantity.unitCode = copyOrder.orderLine[i].lineItem.quantity.unitCode;
 
-            this.despatchAdvice.despatchLine[i].deliveredQuantity.value = deliveredQuantityValue;
+            this.despatchAdvice.despatchLine[i].deliveredQuantity.value = deliveredQuantityValues[i];
             if(handlingInst){
                 this.despatchAdvice.despatchLine[i].shipment[0].handlingInstructions = [handlingInst];
             }else{
@@ -521,7 +521,7 @@ export class BPDataService{
         UBLModelUtils.removeHjidFieldsFromObject(this.despatchAdvice);
     }
 
-    initDispatchAdviceWithCopyDispatchAdvice(deliveredQuantityValue: number) {
+    initDispatchAdviceWithCopyDispatchAdvice(deliveredQuantityValues: number[]) {
         let copyDespatchAdvice:DespatchAdvice = copy(this.copyDespatchAdvice);
         this.despatchAdvice = new DespatchAdvice();
         this.despatchAdvice.id = UBLModelUtils.generateUUID();
@@ -531,7 +531,11 @@ export class BPDataService{
         this.despatchAdvice.despatchSupplierParty = copyDespatchAdvice.despatchSupplierParty;
         this.despatchAdvice.deliveryCustomerParty = copyDespatchAdvice.deliveryCustomerParty;
 
-        this.despatchAdvice.despatchLine[0].deliveredQuantity.value = deliveredQuantityValue;
+        let size = this.despatchAdvice.despatchLine.length;
+        for(let i = 0; i < size; i++){
+            this.despatchAdvice.despatchLine[i].deliveredQuantity.value = deliveredQuantityValues[i];
+        }
+
         this.despatchAdvice.despatchLine[0].deliveredQuantity.unitCode = copyDespatchAdvice.despatchLine[0].deliveredQuantity.unitCode;
         this.despatchAdvice.despatchLine[0].shipment[0].handlingInstructions = copyDespatchAdvice.despatchLine[0].shipment[0].handlingInstructions;
 
