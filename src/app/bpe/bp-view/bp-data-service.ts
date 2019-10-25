@@ -337,10 +337,12 @@ export class BPDataService{
             modifiedLines = this.modifiedCatalogueLines;
         }
 
+        // we copy the lines so that the reused inner blocks of lines are not affected from the changes on the rfq object
+        let copyLines: CatalogueLine[] = copy(modifiedLines);
         const rfq = UBLModelUtils.createRequestForQuotation(modifiedLines.map(line => line.goodsItem.item), sellerSettings);
 
         for (let i = 0; i < modifiedLines.length; i++) {
-            const line = modifiedLines[i];
+            const line = copy(modifiedLines[i]);
             const rfqLine: RequestForQuotationLine = rfq.requestForQuotationLine[i];
 
             rfqLine.lineItem.item = line.goodsItem.item;

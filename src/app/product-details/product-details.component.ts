@@ -145,7 +145,7 @@ export class ProductDetailsComponent implements OnInit {
                         this.associatedProducts = associatedProducts;
                         this.priceWrapper = new DiscountPriceWrapper(
                             this.line.requiredItemLocationQuantity.price,
-                            this.line.requiredItemLocationQuantity.price,
+                            copy(this.line.requiredItemLocationQuantity.price),
                             this.line.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
                             new Quantity(1,this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode),
                             this.line.priceOption,
