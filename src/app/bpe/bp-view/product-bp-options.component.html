@@ -79,7 +79,7 @@
     </order>
     <transport-execution-plan *ngIf="currentStep === 'Transport_Order' || currentStep === 'Transport_Order_Confirmed'">
     </transport-execution-plan>
-    <fulfilment *ngIf="currentStep === 'Fulfilment'">
+    <fulfilment *ngIf="currentStep === 'Fulfilment'" [selectedLine]="selectedLine">
     </fulfilment>
 </ng-container>
 

@@ -223,6 +223,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                         this.serviceWithSelectedProperties = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
 
                         this.lines = referencedLines;
+                        this.selectedLine = referencedLines[0];
                         this.productWithSelectedProperties = this.correspondingOrderOfTransportProcess.orderLine[0].lineItem.item;
 
                         this.setProductsExpandedArray(false);
