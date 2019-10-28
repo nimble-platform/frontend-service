@@ -85,7 +85,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
 
         if(this.bpDataService.requestForQuotation == null) {
             this.initCallStatus.submit();
-            this.bpDataService.initRfq(null, this.bpDataService.getCompanySettings().negotiationSettings)
+            this.bpDataService.initRfq()
                 .then(() => {
                     this.performInitCalls();
                     this.initCallStatus.callback("Request for Quotation Initialized.", true);

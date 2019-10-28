@@ -336,7 +336,7 @@ export class BPDataService{
         }
     }
 
-    initRfq(modifiedLines: CatalogueLine[] = null, sellerSettings: CompanyNegotiationSettings = null): Promise<RequestForQuotation> {
+    initRfq(modifiedLines: CatalogueLine[] = null): Promise<RequestForQuotation> {
         // modified lines are passed as null while initializing rfq from the negotiation and transport negotiation views
         if (modifiedLines == null) {
             modifiedLines = this.modifiedCatalogueLines;
@@ -344,7 +344,7 @@ export class BPDataService{
 
         // we copy the lines so that the reused inner blocks of lines are not affected from the changes on the rfq object
         let copyLines: CatalogueLine[] = copy(modifiedLines);
-        const rfq = UBLModelUtils.createRequestForQuotation(modifiedLines.map(line => line.goodsItem.item), sellerSettings);
+        const rfq = UBLModelUtils.createRequestForQuotation(modifiedLines.map(line => line.goodsItem.item));
 
         for (let i = 0; i < modifiedLines.length; i++) {
             const line = copy(modifiedLines[i]);
@@ -482,7 +482,7 @@ export class BPDataService{
 
     initRfqWithQuotation() {
         const copyQuotation = copy(this.copyQuotation);
-        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(this.copyQuotation.quotationLine.map(quotationLine => quotationLine.lineItem), null);
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(this.copyQuotation.quotationLine.map(quotationLine => quotationLine.lineItem));
         this.requestForQuotation.delivery = copyQuotation.quotationLine[0].lineItem.delivery[0];
 
         UBLModelUtils.removeHjidFieldsFromObject(this.requestForQuotation);

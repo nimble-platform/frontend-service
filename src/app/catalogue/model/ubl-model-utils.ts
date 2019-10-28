@@ -261,11 +261,7 @@ export class UBLModelUtils {
         return ppapResponse;
     }
 
-    public static createRequestForQuotation(items: Item[]|LineItem[], settings: CompanyNegotiationSettings): RequestForQuotation {
-        if(settings == null){
-            settings = new CompanyNegotiationSettings();
-        }
-
+    public static createRequestForQuotation(items: Item[]|LineItem[]): RequestForQuotation {
         let rfqLines: RequestForQuotationLine[];
         if (items == null) {
             rfqLines = [UBLModelUtils.createRequestForQuotationLine()];

@@ -221,7 +221,7 @@ export class ShoppingCartComponent implements OnInit {
         // create on rfq for each seller
         let rfqPromises: Promise<RequestForQuotation>[] = [];
         for (let sellerId of Array.from(sellerProducts.keys())) {
-            rfqPromises.push(this.bpDataService.initRfq(sellerProducts.get(sellerId), this.sellersSettings.get(sellerId).negotiationSettings));
+            rfqPromises.push(this.bpDataService.initRfq(sellerProducts.get(sellerId)));
         }
         return rfqPromises;
     }
