@@ -133,7 +133,7 @@ export class BPDataService{
         // select the first values from the product properties
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.modifiedCatalogueLines[0].goodsItem.item = copy(this.bpActivityEvent.itemsWithSelectedProperties[0]);
-        this.modifiedCatalogueLines[0].goodsItem.quantity = this.bpActivityEvent.itemQuantity;
+        this.modifiedCatalogueLines[0].goodsItem.quantity = this.bpActivityEvent.itemQuantity ? this.bpActivityEvent.itemQuantity: new Quantity(1,this.modifiedCatalogueLines[0].requiredItemLocationQuantity.price.baseQuantity.unitCode);
     }
 
     getCatalogueLines(): CatalogueLine[] {
@@ -363,7 +363,6 @@ export class BPDataService{
             rfqLine.lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
             rfqLine.lineItem.warrantyValidityPeriod = line.warrantyValidityPeriod;
             rfqLine.lineItem.deliveryTerms.incoterms = line.goodsItem.deliveryTerms.incoterms;
-            rfqLine.lineItem.quantity.unitCode = line.requiredItemLocationQuantity.price.baseQuantity.unitCode;
 
             // quantity
             rfqLine.lineItem.quantity = modifiedLines[i].goodsItem.quantity;
