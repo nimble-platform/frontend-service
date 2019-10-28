@@ -482,7 +482,7 @@ export class BPDataService{
 
     initRfqWithQuotation() {
         const copyQuotation = copy(this.copyQuotation);
-        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(this.copyQuotation.quotationLine.map(quotationLine => quotationLine.lineItem.item), null);
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(this.copyQuotation.quotationLine.map(quotationLine => quotationLine.lineItem), null);
         this.requestForQuotation.delivery = copyQuotation.quotationLine[0].lineItem.delivery[0];
 
         UBLModelUtils.removeHjidFieldsFromObject(this.requestForQuotation);
