@@ -23,7 +23,8 @@ export const data_channel_endpoint=`${base_path}/data-channel`;
 export const data_aggregation_endpoint=`${base_path}/data-aggregation`;
 export const trust_service_endpoint=`${base_path}/trust`;
 // export const indexing_service_endpoint=`${base_path}/index`;
-export const indexing_service_endpoint=`https://efactory-security-portal.salzburgresearch.at/api/index`;
+export const indexing_service_endpoint=`${base_path}/efsindex`;
+
 
 export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}/logstash`;
