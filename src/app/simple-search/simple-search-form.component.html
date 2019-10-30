@@ -472,13 +472,52 @@
 
 						<div *ngIf="checkCompMainCatCount()>0">
 
+							<div class="pointer" (click)="showPlatformComp=!showPlatformComp">
+								<h5><span>eFactory Platform</span> <span *ngIf="!showPlatformComp"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showPlatformComp"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+							</div>
+
+							<div *ngIf="showPlatformComp">
+								<div *ngFor="let facet of facetObj">
+									<div *ngIf="facet.total > 0 && checkCompMainCat(facet.genName)  && getName(facet.realName) == 'Platform'" class="card mb-3">
+										<div class="card border-primary-nimble mb-3">
+										<div class="card-header text-white bg-primary-nimble">
+											{{ getName(facet.genName,product_vendor) }}
+										</div>
+										<div class="card-body">
+											<div *ngFor="let facetInner of facet.options; let i = index">
+												<div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> ({{ facetInner.count }})
+												</div>
+												<div *ngIf="checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> ({{ facetInner.count }})
+												</div>
+											</div>
+											<div *ngIf="facet.options.length>maxFacets">
+												<hr>
+												<span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded">Show more</span><span *ngIf="facet.expanded">Show less</span></span>
+											</div>
+										</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<hr/>
+
+						</div>
+					</div>
+
+					<div *ngIf="size>0 && searchTopic=='comp'">
+
+						<div *ngIf="checkCompMainCatCount()>0">
+
 							<div class="pointer" (click)="showCompSection=!showCompSection">
 								<h5><span>Company Filters</span> <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
 							</div>
 
 							<div *ngIf="showCompSection">
 								<div *ngFor="let facet of facetObj">
-									<div *ngIf="facet.total > 0 && checkCompMainCat(facet.genName)" class="card mb-3">
+									<div *ngIf="facet.total > 0 && checkCompMainCat(facet.genName)  && getName(facet.realName) != 'Platform'" class="card mb-3">
 										<div class="card-header">
 											{{ getName(facet.genName,product_vendor) }}
 										</div>
