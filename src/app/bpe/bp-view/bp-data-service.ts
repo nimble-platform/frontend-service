@@ -133,7 +133,7 @@ export class BPDataService{
         // select the first values from the product properties
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         this.modifiedCatalogueLines[0].goodsItem.item = copy(this.bpActivityEvent.itemsWithSelectedProperties[0]);
-        this.modifiedCatalogueLines[0].goodsItem.quantity = this.bpActivityEvent.itemQuantity;
+        this.modifiedCatalogueLines[0].goodsItem.quantity = this.bpActivityEvent.itemQuantity ? this.bpActivityEvent.itemQuantity: new Quantity(1,this.modifiedCatalogueLines[0].requiredItemLocationQuantity.price.baseQuantity.unitCode);
     }
 
     getCatalogueLines(): CatalogueLine[] {
@@ -336,7 +336,7 @@ export class BPDataService{
         }
     }
 
-    initRfq(modifiedLines: CatalogueLine[] = null, sellerSettings: CompanyNegotiationSettings = null): Promise<RequestForQuotation> {
+    initRfq(modifiedLines: CatalogueLine[] = null): Promise<RequestForQuotation> {
         // modified lines are passed as null while initializing rfq from the negotiation and transport negotiation views
         if (modifiedLines == null) {
             modifiedLines = this.modifiedCatalogueLines;
@@ -344,7 +344,7 @@ export class BPDataService{
 
         // we copy the lines so that the reused inner blocks of lines are not affected from the changes on the rfq object
         let copyLines: CatalogueLine[] = copy(modifiedLines);
-        const rfq = UBLModelUtils.createRequestForQuotation(modifiedLines.map(line => line.goodsItem.item), sellerSettings);
+        const rfq = UBLModelUtils.createRequestForQuotation(modifiedLines.map(line => line.goodsItem.item));
 
         for (let i = 0; i < modifiedLines.length; i++) {
             const line = copy(modifiedLines[i]);
@@ -363,7 +363,6 @@ export class BPDataService{
             rfqLine.lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
             rfqLine.lineItem.warrantyValidityPeriod = line.warrantyValidityPeriod;
             rfqLine.lineItem.deliveryTerms.incoterms = line.goodsItem.deliveryTerms.incoterms;
-            rfqLine.lineItem.quantity.unitCode = line.requiredItemLocationQuantity.price.baseQuantity.unitCode;
 
             // quantity
             rfqLine.lineItem.quantity = modifiedLines[i].goodsItem.quantity;
@@ -483,7 +482,7 @@ export class BPDataService{
 
     initRfqWithQuotation() {
         const copyQuotation = copy(this.copyQuotation);
-        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(this.copyQuotation.quotationLine.map(quotationLine => quotationLine.lineItem.item), null);
+        this.requestForQuotation = UBLModelUtils.createRequestForQuotation(this.copyQuotation.quotationLine.map(quotationLine => quotationLine.lineItem));
         this.requestForQuotation.delivery = copyQuotation.quotationLine[0].lineItem.delivery[0];
 
         UBLModelUtils.removeHjidFieldsFromObject(this.requestForQuotation);

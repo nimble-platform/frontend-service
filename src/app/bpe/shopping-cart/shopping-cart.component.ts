@@ -227,7 +227,7 @@ export class ShoppingCartComponent implements OnInit {
         // create on rfq for each seller
         let rfqPromises: Promise<RequestForQuotation>[] = [];
         for (let sellerId of Array.from(sellerProducts.keys())) {
-            rfqPromises.push(this.bpDataService.initRfq(sellerProducts.get(sellerId), this.sellersSettings.get(sellerId).negotiationSettings));
+            rfqPromises.push(this.bpDataService.initRfq(sellerProducts.get(sellerId)));
         }
         return rfqPromises;
     }
@@ -272,10 +272,8 @@ export class ShoppingCartComponent implements OnInit {
 
         this.initCallStatus.aggregatedSubmit();
         this.bpeService.getTermsAndConditions(
-            null,
             this.cookieService.get('company_id'),
             sellerId,
-            null,
             firstProduct.goodsItem.deliveryTerms.incoterms,
             this.sellersSettings.get(sellerId).negotiationSettings.paymentTerms[0]
 

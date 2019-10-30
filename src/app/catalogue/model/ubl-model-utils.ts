@@ -261,11 +261,7 @@ export class UBLModelUtils {
         return ppapResponse;
     }
 
-    public static createRequestForQuotation(items: Item[], settings: CompanyNegotiationSettings): RequestForQuotation {
-        if(settings == null){
-            settings = new CompanyNegotiationSettings();
-        }
-
+    public static createRequestForQuotation(items: Item[]|LineItem[]): RequestForQuotation {
         let rfqLines: RequestForQuotationLine[];
         if (items == null) {
             rfqLines = [UBLModelUtils.createRequestForQuotationLine()];
@@ -328,13 +324,26 @@ export class UBLModelUtils {
         return rfq;
     }
 
-    public static createRequestForQuotationLine(item: Item = null): RequestForQuotationLine {
-        const quantity: Quantity = new Quantity(null, "", null);
-        const price: Price = this.createPrice();
-        if (item == null) {
+    public static createRequestForQuotationLine(item: Item|LineItem = null): RequestForQuotationLine {
+        if(item == null){
             item = UBLModelUtils.createItem();
         }
-        const lineItem: LineItem = this.createLineItem(quantity, price, item,null);
+
+        // check the type of item parameter
+        // its type is LineItem if it contains a field called item, otherwise, its type is Item.
+        // instanceof does not work since the given object is not created using a constructor
+        let isLineItem:boolean = "item" in item;
+
+        let lineItem;
+        if(isLineItem){
+            lineItem = item;
+        }
+        else{
+            const quantity: Quantity = new Quantity(null, "", null);
+            const price: Price = this.createPrice();
+            lineItem = this.createLineItem(quantity, price, item,null);
+        }
+
         return new RequestForQuotationLine(lineItem);
     }
 
