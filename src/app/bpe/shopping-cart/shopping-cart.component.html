@@ -18,7 +18,7 @@
                                       [itemWithSelectedProps]="modifiedCatalogueLines.get(cartLine.hjid).goodsItem.item"
                                       [associatedProducts]="associatedProducts.get(cartLine.hjid)"
                                       [inShoppingBasket]="true"
-                                      [isNegotiatingAnyTerm]="areNegotiationConditionsSatisfied(cartLine.hjid)"
+                                      [isNegotiatingAnyTerm]="areNegotiationConditionsSatisfied(cartLine)"
                                       (onCartItemDeleted)="onRemoveFromCart($event.hjid)"
                                       (onNegotiate)="onSingleLineNegotiation($event)">
             </product-details-overview>
