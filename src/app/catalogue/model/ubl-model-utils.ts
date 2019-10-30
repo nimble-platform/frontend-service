@@ -58,6 +58,7 @@ import {LifeCyclePerformanceAssessmentDetails} from "./publish/life-cycle-perfor
 import {PartyName} from './publish/party-name';
 import {MultiTypeValue} from "./publish/multi-type-value";
 import {Clause} from "./publish/clause";
+import {Contract} from './publish/contract';
 
 /**
  * Created by suat on 05-Jul-17.
@@ -226,6 +227,33 @@ export class UBLModelUtils {
         const orderLine: OrderLine = new OrderLine(lineItem);
 
         return new Order(this.generateUUID(), [''], new Period(), new Address(), null, null, null, new MonetaryTotal(), [orderLine]);
+    }
+
+    public static createOrderWithRfqCopy(rfq:RequestForQuotation): Order {
+        let order = UBLModelUtils.createOrder();
+        let size = rfq.requestForQuotationLine.length;
+        for(let i = 0; i < size; i++){
+            order.orderLine[i].lineItem = rfq.requestForQuotationLine[i].lineItem;
+            order.orderLine[i].lineItem.deliveryTerms.deliveryLocation.address = rfq.requestForQuotationLine[i].lineItem.deliveryTerms.deliveryLocation.address;
+            order.orderLine[i].lineItem.paymentMeans = rfq.requestForQuotationLine[i].lineItem.paymentMeans;
+            order.orderLine[i].lineItem.paymentTerms = rfq.requestForQuotationLine[i].lineItem.paymentTerms;
+        }
+
+        // create contracts for Terms and Conditions
+        let contracts = [];
+        for(let rfqLine of rfq.requestForQuotationLine){
+            let contract = new Contract();
+            contract.id = UBLModelUtils.generateUUID();
+
+            for(let clause of rfqLine.lineItem.clause){
+                let newClause:Clause = JSON.parse(JSON.stringify(clause));
+                contract.clause.push(newClause);
+            }
+            contracts.push(contract);
+        }
+        // push contract to order.contract
+        order.contract = contracts;
+        return order;
     }
 
     public static createOrderResponseSimpleWithOrderCopy(order:Order, acceptedIndicator:boolean):OrderResponseSimple {

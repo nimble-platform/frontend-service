@@ -25,6 +25,7 @@ import {NegotiationModelWrapper} from '../bp-view/negotiation/negotiation-model-
 import {NegotiationRequestItemComponent} from '../bp-view/negotiation/negotiation-request-item.component';
 import {SupplierParty} from '../../catalogue/model/publish/supplier-party';
 import {CustomerParty} from '../../catalogue/model/publish/customer-party';
+import {Order} from '../../catalogue/model/publish/order';
 /**
  * Created by suat on 11-Oct-19.
  */
@@ -404,47 +405,37 @@ export class ShoppingCartComponent implements OnInit {
     }
 
     onSingleLineNegotiation(cartLine: CatalogueLine): void {
-        if (this.areNegotiationConditionsSatisfied(cartLine)) {
-            let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
+        let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
 
-            // final check on the rfq
-            const rfq: RequestForQuotation = copy(this.rfqs.get(sellerId));
-            // in the final rfq, there should be a single rfq line relating to selected catalogue line
-            // find this rfq line and remove the rest
-            let index = this.getRfqLineIndex(rfq,cartLine);
-            rfq.requestForQuotationLine = [rfq.requestForQuotationLine[index]];
-            // replace properties of rfq line with the selected ones
-            rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty = this.modifiedCatalogueLines.get(cartLine.hjid).goodsItem.item.additionalItemProperty;
+        // final check on the rfq
+        const rfq: RequestForQuotation = copy(this.rfqs.get(sellerId));
+        // in the final rfq, there should be a single rfq line relating to selected catalogue line
+        // find this rfq line and remove the rest
+        let index = this.getRfqLineIndex(rfq,cartLine);
+        rfq.requestForQuotationLine = [rfq.requestForQuotationLine[index]];
+        // replace properties of rfq line with the selected ones
+        rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty = this.modifiedCatalogueLines.get(cartLine.hjid).goodsItem.item.additionalItemProperty;
 
-            // send request for quotation
-            this.startBpCallStatus.submit();
-            Promise.all([
-                this.userService.getParty(this.cookieService.get('company_id')),
-                this.userService.getParty(sellerId),
+        this.startBpCallStatus.submit();
+        Promise.all([
+            this.userService.getParty(this.cookieService.get('company_id')),
+            this.userService.getParty(sellerId),
 
-            ]).then(([buyerPartyResp, sellerPartyResp]) => {
-                rfq.buyerCustomerParty = new CustomerParty(buyerPartyResp);
-                rfq.sellerSupplierParty = new SupplierParty(sellerPartyResp);
+        ]).then(([buyerPartyResp, sellerPartyResp]) => {
+            rfq.buyerCustomerParty = new CustomerParty(buyerPartyResp);
+            rfq.sellerSupplierParty = new SupplierParty(sellerPartyResp);
 
-                return this.bpeService.startProcessWithDocument(rfq);
+            // start a request for quotation or order created using the rfq we have
+            let document:RequestForQuotation | Order = this.areNegotiationConditionsSatisfied(cartLine) ? rfq: this.createOrderWithRfq(rfq,cartLine.hjid);
 
-            }).then(() => {
-                this.startBpCallStatus.callback(null, true);
-                this.router.navigate(['dashboard'], {queryParams: {tab: 'PURCHASES'}});
+            return this.bpeService.startProcessWithDocument(document);
+        }).then(() => {
+            this.startBpCallStatus.callback(null, true);
+            this.router.navigate(['dashboard'], {queryParams: {tab: 'PURCHASES'}});
 
-            }).catch(error => {
-                this.startBpCallStatus.error('Failed to start negotiation process', error);
-            });
-        } else {
-            // this.callStatus.callback("Terms sent", true);
-            // // set the item price, otherwise we will lose item price information
-            // for(let wrapper of this.wrappers){
-            //     this.rfq.requestForQuotationLine[0].lineItem.price.priceAmount.value = wrapper.rfqDiscountPriceWrapper.totalPrice/wrapper.rfqDiscountPriceWrapper.orderedQuantity.value;
-            // }
-            // // just go to order page
-            // this.bpDataService.setCopyDocuments(true, false, false,false);
-            // this.bpDataService.proceedNextBpStep("buyer", "Order")
-        }
+        }).catch(error => {
+            this.startBpCallStatus.error('Failed to start process', error);
+        });
     }
 
     /**
@@ -461,5 +452,20 @@ export class ShoppingCartComponent implements OnInit {
         // eliminate duplicate ids
         associatedProductIds = associatedProductIds.filter((productId, i) => associatedProductIds.indexOf(productId) === i);
         return associatedProductIds;
+    }
+
+    private createOrderWithRfq(rfq:RequestForQuotation,catHjid:number):Order{
+        let order = UBLModelUtils.createOrderWithRfqCopy(rfq);
+
+        // final check on the order
+        let negotiationModelWrapper:NegotiationModelWrapper = this.negotiationModelWrappers.get(catHjid);
+        order.anticipatedMonetaryTotal.payableAmount.value = negotiationModelWrapper.rfqDiscountPriceWrapper.totalPrice;
+        order.anticipatedMonetaryTotal.payableAmount.currencyID = negotiationModelWrapper.currency;
+
+        // initialize the seller and buyer parties.
+        order.buyerCustomerParty = rfq.buyerCustomerParty;
+        order.sellerSupplierParty = rfq.sellerSupplierParty;
+
+        return order;
     }
 }

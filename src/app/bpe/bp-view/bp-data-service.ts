@@ -454,29 +454,8 @@ export class BPDataService{
 
     initOrderWithRfq() {
         let copyRfq = copy(this.copyRequestForQuotation);
-        this.order = UBLModelUtils.createOrder();
-        let size = copyRfq.requestForQuotationLine.length;
-        for(let i = 0; i < size; i++){
-            this.order.orderLine[i].lineItem = copyRfq.requestForQuotationLine[i].lineItem;
-            this.order.orderLine[i].lineItem.deliveryTerms.deliveryLocation.address = copyRfq.requestForQuotationLine[i].lineItem.deliveryTerms.deliveryLocation.address;
-            this.order.orderLine[i].lineItem.paymentMeans = copyRfq.requestForQuotationLine[i].lineItem.paymentMeans;
-            this.order.orderLine[i].lineItem.paymentTerms = copyRfq.requestForQuotationLine[i].lineItem.paymentTerms;
-        }
+        this.order = UBLModelUtils.createOrderWithRfqCopy(copyRfq);
 
-        // create contracts for Terms and Conditions
-        let contracts = [];
-        for(let rfqLine of copyRfq.requestForQuotationLine){
-            let contract = new Contract();
-            contract.id = UBLModelUtils.generateUUID();
-
-            for(let clause of rfqLine.lineItem.clause){
-                let newClause:Clause = JSON.parse(JSON.stringify(clause));
-                contract.clause.push(newClause);
-            }
-            contracts.push(contract);
-        }
-        // push contract to order.contract
-        this.order.contract = contracts;
         UBLModelUtils.removeHjidFieldsFromObject(this.order);
     }
 
