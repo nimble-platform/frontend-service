@@ -26,7 +26,7 @@
                                   [settings]="sellersSettings.get(getPartyId(cartLine.goodsItem.item.manufacturerParty))">
             </product-details-tabs>
             <negotiation-request-item [selectedLine]="cartLine"
-                                      [rfqLine]="getRfqLine(cartLine, i)"
+                                      [rfqLine]="getRfqLine(cartLine)"
                                       [rfq]="getRfq(cartLine)"
                                       [lastOfferQuotation]="null"
                                       [frameContractQuotation]="frameContracts.has(cartLine.hjid) ? frameContracts.get(cartLine.hjid)[1] : null"

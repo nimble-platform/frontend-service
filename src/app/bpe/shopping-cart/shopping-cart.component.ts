@@ -312,16 +312,18 @@ export class ShoppingCartComponent implements OnInit {
             let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
             let productWrapper: ProductWrapper = new ProductWrapper(cartLine, this.sellersSettings.get(sellerId).negotiationSettings);
             this.productWrappers.set(lineHjid, productWrapper);
-
+            // find the index of rfq line relating to this catalogue line
+            let rfq:RequestForQuotation = this.rfqs.get(sellerId);
+            let index = this.getRfqLineIndex(rfq,cartLine);
             // initialize negotiation model wrapper
             let negotiationModelWrapper = new NegotiationModelWrapper(
                 cartLine,
-                this.rfqs.get(sellerId),
+                rfq,
                 null,
                 this.frameContracts.has(lineHjid) ? this.frameContracts.has(lineHjid)[1] : null,
                 null,
                 this.sellersSettings.get(sellerId).negotiationSettings,
-                i);
+                index);
             this.negotiationModelWrappers.set(lineHjid, negotiationModelWrapper)
         }
     }
@@ -335,10 +337,22 @@ export class ShoppingCartComponent implements OnInit {
         return priceWrapper.pricePerItemString;
     }
 
-    getRfqLine(cartLine: CatalogueLine, lineIndex: number): RequestForQuotationLine {
+    getRfqLine(cartLine: CatalogueLine): RequestForQuotationLine {
         let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
         let rfq: RequestForQuotation = this.rfqs.get(sellerId);
-        return rfq.requestForQuotationLine[lineIndex];
+        let index = this.getRfqLineIndex(rfq,cartLine);
+        return rfq.requestForQuotationLine[index];
+    }
+
+    getRfqLineIndex(rfq:RequestForQuotation,cartLine: CatalogueLine): number {
+        let index;
+        for(index = 0 ; index < rfq.requestForQuotationLine.length;index++){
+            if(rfq.requestForQuotationLine[index].lineItem.item.catalogueDocumentReference.id == cartLine.goodsItem.item.catalogueDocumentReference.id &&
+                rfq.requestForQuotationLine[index].lineItem.item.manufacturersItemIdentification.id == cartLine.goodsItem.item.manufacturersItemIdentification.id){
+                break;
+            }
+        }
+        return index;
     }
 
     getRfq(cartLine: CatalogueLine): RequestForQuotation {
