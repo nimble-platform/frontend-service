@@ -408,7 +408,11 @@ export class ShoppingCartComponent implements OnInit {
             let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
 
             // final check on the rfq
-            const rfq: RequestForQuotation = this.rfqs.get(sellerId);
+            const rfq: RequestForQuotation = copy(this.rfqs.get(sellerId));
+            // in the final rfq, there should be a single rfq line relating to selected catalogue line
+            // find this rfq line and remove the rest
+            let index = this.getRfqLineIndex(rfq,cartLine);
+            rfq.requestForQuotationLine = [rfq.requestForQuotationLine[index]];
 
             // send request for quotation
             this.startBpCallStatus.submit();
