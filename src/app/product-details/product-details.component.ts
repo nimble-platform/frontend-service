@@ -88,7 +88,7 @@ export class ProductDetailsComponent implements OnInit {
                 private route: ActivatedRoute,
                 private cookieService: CookieService,
                 private translate: TranslateService,
-                public appComponent: AppComponent,) {
+                public appComponent: AppComponent) {
 
     }
 
@@ -159,7 +159,7 @@ export class ProductDetailsComponent implements OnInit {
                         this.companyWorkflowMap = this.bpDataService.getCompanyWorkflowMap(settings.negotiationSettings.company.processID);
 
                         // the quantity change event handler is called here to update the price in case a specific quantity is provided as a query parameter
-                        this.onOrderQuantityChange();
+                        this.onOrderQuantityChange(this.orderQuantity);
 
                         this.getProductStatus.callback("Retrieved product details", true);
                         this.initCheckGetProductStatus.error(null);
@@ -218,7 +218,8 @@ export class ProductDetailsComponent implements OnInit {
             false);
     }
 
-    onOrderQuantityChange(): void {
+    onOrderQuantityChange(value: number): void {
+        this.orderQuantity = value;
         this.priceWrapper.orderedQuantity.value = this.orderQuantity;
         if(this.frameContractQuotationWrapper != null) {
             this.frameContractQuotationWrapper.orderedQuantity.value = this.orderQuantity;
