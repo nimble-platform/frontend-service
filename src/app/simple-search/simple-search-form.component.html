@@ -184,6 +184,42 @@
 
 					<div *ngIf="size>0 && searchTopic=='prod'">
 
+						<div *ngIf="checkProdCatCount()>0">
+
+							<div class="pointer" (click)="showPlatform=!showPlatform">
+								<h5><span>eFactory Platform</span> <span *ngIf="!showPlatform"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showPlatform"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+							</div>
+
+							<div *ngIf="showPlatform">
+								<div *ngFor="let facet of facetObj">
+									<div *ngIf="facet.total > 0 && checkProdCat(facet.name) && getName(facet.realName) == 'Platform'" class="card mb-3">
+										<div class="card border-primary-nimble mb-3">
+										
+										<div class="card-header text-white bg-primary-nimble">
+											{{ getName(facet.realName) }}
+										</div>
+										<div class="card-body">
+											<div *ngFor="let facetInner of facet.options; let i=index">
+												<div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> ({{ facetInner.count }})
+												</div>
+												<div *ngIf="checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
+													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> ({{ facetInner.count }})
+												</div>
+											</div>
+											<div *ngIf="facet.options.length>maxFacets">
+												<hr>
+												<span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded">Show more</span><span *ngIf="facet.expanded">Show less</span></span>
+											</div>
+										</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<hr/>
+
+						</div>
 						<!-- category facet panel -->
 						<div class="pointer" (click)="showCatSection=!showCatSection">
 							<h5><span>Categories</span> <span *ngIf="!showCatSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCatSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
@@ -263,7 +299,7 @@
 									</div>
 								</div>
 								<div *ngFor="let facet of facetObj">
-									<div *ngIf="facet.total > 0 && checkProdCat(facet.name)" class="card mb-3">
+									<div *ngIf="facet.total > 0 && checkProdCat(facet.name) && getName(facet.realName) != 'Platform'" class="card mb-3">
 										<div class="card-header">
 											{{ getName(facet.realName) }}
 										</div>
