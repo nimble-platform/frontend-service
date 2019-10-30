@@ -56,7 +56,7 @@ export class PriceWrapper {
         const qty = this.price.baseQuantity
         const baseQuantity = qty.value || 1;
 
-        if(!amount.value || !qty.value) {
+        if(!amount.value || !this.isOrderedQuantityValid()) {
             return "On demand";
         }
 
@@ -88,6 +88,10 @@ export class PriceWrapper {
 
     set currency(currency: string) {
         this.price.priceAmount.currencyID = currency;
+    }
+
+    private isOrderedQuantityValid(): boolean {
+        return !isNaN(this.orderedQuantity.value) && !!this.orderedQuantity.value;
     }
 
     /**
