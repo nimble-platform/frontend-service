@@ -61,7 +61,6 @@ export class NegotiationRequestComponent implements OnInit {
     @Input() frameContractNegotiations: boolean[];
     @Input() lastOfferQuotation: Quotation;
     @Input() defaultTermsAndConditions: Clause[];
-    frameContractDuration: Quantity = new Quantity(); // we have a dedicated variable to keep this in order not to create an empty trading term in the rfq
 
     sellerId:string = null;
     buyerId:string = null;
@@ -111,7 +110,7 @@ export class NegotiationRequestComponent implements OnInit {
             this.deliverytermsOfBuyer = res.tradeDetails.deliveryTerms;
         });
 
-        if (this.bpActivityEvent && this.bpActivityEvent.newProcess) {
+        if (this.bpActivityEvent && !this.bpActivityEvent.newProcess) {
             this.processMetadata = this.bpActivityEvent.processMetadata;
         }
 
@@ -161,17 +160,8 @@ export class NegotiationRequestComponent implements OnInit {
         }
 
         if(!this.doesManufacturerOfferHasPrice() || this.isNegotiatingAnyTerm() || this.bpDataService.isFinalProcessInTheWorkflow("Negotiation")) {
-            // create an additional trading term for the frame contract duration
-            let negotiationRequestItemComponents = this.viewChildren.toArray();
-            for(let negotiationRequestItemComponent of negotiationRequestItemComponents){
-                let frameContractDuration = negotiationRequestItemComponent.getFrameContractDuration();
-                if(!UBLModelUtils.isEmptyOrIncompleteQuantity(frameContractDuration)){
-                    this.wrappers[negotiationRequestItemComponent.wrapper.lineIndex].rfqFrameContractDuration = frameContractDuration;
-                }
-            }
-
             // final check on the rfq
-            const rfq: RequestForQuotation = copy(this.rfq);
+            const rfq: RequestForQuotation = this.rfq;
 
             // send request for quotation
             let sellerParty: Party;
@@ -213,15 +203,7 @@ export class NegotiationRequestComponent implements OnInit {
     onUpdateRequest(): void {
         this.callStatus.submit();
 
-        let negotiationRequestItemComponents = this.viewChildren.toArray();
-        for(let negotiationRequestItemComponent of negotiationRequestItemComponents){
-            let frameContractDuration = negotiationRequestItemComponent.getFrameContractDuration();
-            if(!UBLModelUtils.isEmptyOrIncompleteQuantity(frameContractDuration)){
-                this.wrappers[negotiationRequestItemComponent.wrapper.lineIndex].rfqFrameContractDuration = frameContractDuration;
-            }
-        }
-
-        const rfq: RequestForQuotation = copy(this.rfq);
+        const rfq: RequestForQuotation = this.rfq;
         this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processInstanceId).then(() => {
             this.documentService.updateCachedDocument(rfq.id,rfq);
             this.callStatus.callback("Terms updated", true);

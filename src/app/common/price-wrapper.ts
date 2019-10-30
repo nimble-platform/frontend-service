@@ -90,11 +90,6 @@ export class PriceWrapper {
         this.price.priceAmount.currencyID = currency;
     }
 
-    hasPrice(): boolean {
-        // != here gives "not null or undefined", which is the behaviour we want.
-        return (this.price.priceAmount.value != null && !isNaN(this.price.priceAmount.value));
-    }
-
     /**
      * Getters/Setters for quantity
      */

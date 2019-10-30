@@ -2,7 +2,7 @@
                           [selectedLine]="selectedLine"
                           [rfqLine]="rfq.requestForQuotationLine[i]"
                           [rfq]="rfq"
-                          [bpActivityEvent]="bpActivityEvent"
+                          [processMetadata]="bpActivityEvent ? bpActivityEvent.processMetadata : null"
                           [manufacturersTermsSource]="manufacturersTermsSources[i]"
                           [lastOfferQuotation]="lastOfferQuotation"
                           [frameContractQuotation]="frameContractQuotations[i]"

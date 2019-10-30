@@ -18,7 +18,9 @@
                                       [itemWithSelectedProps]="modifiedCatalogueLines.get(cartLine.hjid).goodsItem.item"
                                       [associatedProducts]="associatedProducts.get(cartLine.hjid)"
                                       [inShoppingBasket]="true"
-                                      (onCartItemDeleted)="onRemoveFromCart($event.hjid)">
+                                      [isNegotiatingAnyTerm]="areNegotiationConditionsSatisfied(cartLine.hjid)"
+                                      (onCartItemDeleted)="onRemoveFromCart($event.hjid)"
+                                      (onNegotiate)="onSingleLineNegotiation($event)">
             </product-details-overview>
             <product-details-tabs [wrapper]="productWrappers.get(cartLine.hjid)"
                                   [settings]="sellersSettings.get(getPartyId(cartLine.goodsItem.item.manufacturerParty))">

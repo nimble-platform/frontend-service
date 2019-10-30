@@ -35,7 +35,11 @@ export class ProductDetailsOverviewComponent implements OnInit{
     @Input() readonly: boolean;
     @Input() showAddToCartButton: boolean;
     @Input() inShoppingBasket: boolean;
+    // flag to adjust the name of the negotiate or order button,
+    // true means the there are some negotiated terms and a negotiation process should be started. otherwise an order process is started
+    @Input() isNegotiatingAnyTerm: boolean;
     @Output() onCartItemDeleted: EventEmitter<CatalogueLine> = new EventEmitter<CatalogueLine>();
+    @Output() onNegotiate: EventEmitter<CatalogueLine> = new EventEmitter<CatalogueLine>();
     @Output() compStatus = new EventEmitter<boolean>();
     @Output() onPropertyValueChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
@@ -232,7 +236,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
     }
 
     onNegotiateAndOrderButtonClicked(): void {
-        // TODO
+        this.onNegotiate.emit(this.wrapper.line);
     }
 
     selectName (ip: ItemProperty | Item) {

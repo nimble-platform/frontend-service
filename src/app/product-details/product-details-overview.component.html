@@ -22,8 +22,11 @@
         <div class="btn btn-primary" (click)="onRemoveFromCartButtonClicked()">
             <span [innerHTML]="'Remove from Cart' | translate"></span>
         </div>
-        <div class="btn btn-primary" (click)="onNegotiateAndOrderButtonClicked()">
-            <span [innerHTML]="'Negotiate & Order' | translate"></span>
+        <div *ngIf="isNegotiatingAnyTerm" class="btn btn-primary" (click)="onNegotiateAndOrderButtonClicked()">
+            <span [innerHTML]="'Negotiate' | translate"></span>
+        </div>
+        <div *ngIf="!isNegotiatingAnyTerm" class="btn btn-primary" (click)="onNegotiateAndOrderButtonClicked()">
+            <span [innerHTML]="'Order' | translate"></span>
         </div>
     </div>
 </div>

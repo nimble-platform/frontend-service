@@ -1,6 +1,6 @@
 import {Catalogue} from '../../catalogue/model/publish/catalogue';
 import {Router} from '@angular/router';
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {ShoppingCartDataService} from './shopping-cart-data-service';
 import {copy, selectDescription, selectName, selectPreferredValues} from '../../common/utils';
 import {ItemPriceWrapper} from '../../common/item-price-wrapper';
@@ -22,6 +22,9 @@ import {CookieService} from 'ng2-cookies';
 import {DocumentService} from '../bp-view/document-service';
 import {Clause} from '../../catalogue/model/publish/clause';
 import {NegotiationModelWrapper} from '../bp-view/negotiation/negotiation-model-wrapper';
+import {NegotiationRequestItemComponent} from '../bp-view/negotiation/negotiation-request-item.component';
+import {SupplierParty} from '../../catalogue/model/publish/supplier-party';
+import {CustomerParty} from '../../catalogue/model/publish/customer-party';
 /**
  * Created by suat on 11-Oct-19.
  */
@@ -57,9 +60,12 @@ export class ShoppingCartComponent implements OnInit {
 
     // call status to be able to show a single loading icon
     initCallStatus: CallStatus = new CallStatus();
+    startBpCallStatus: CallStatus = new CallStatus();
 
     getProductName = selectPreferredValues;
     getPartyId = UBLModelUtils.getPartyId;
+
+    @ViewChildren(NegotiationRequestItemComponent) negotiationRequestItemComponents: QueryList<NegotiationRequestItemComponent>;
 
     constructor(private shoppingCartDataService: ShoppingCartDataService,
                 private catalogueService: CatalogueService,
@@ -363,6 +369,64 @@ export class ShoppingCartComponent implements OnInit {
         }).catch(error => {
             callStatus.error('Failed to delete product from the shopping cart');
         })
+    }
+
+    /**
+     * Checked conditions are:
+     * 1) whether the cart line has a price or not
+     * 2) whether a term is being negotiated
+     * 3) whether the negotiation is the last entry in the seller's business workflow
+     */
+    areNegotiationConditionsSatisfied(cartLine: CatalogueLine): boolean {
+        if (this.negotiationRequestItemComponents) {
+            for (let component of this.negotiationRequestItemComponents.toArray()) {
+                if (component.wrapper.catalogueLine.hjid === cartLine.hjid) {
+                    let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
+                    return !component.wrapper.lineDiscountPriceWrapper.itemPrice.hasPrice() ||
+                    component.isNegotiatingAnyTerm() ||
+                    this.bpDataService.isFinalProcessInTheWorkflow('Negotiation', this.sellersSettings.get(sellerId));
+                }
+            }
+        }
+        return false;
+    }
+
+    onSingleLineNegotiation(cartLine: CatalogueLine): void {
+        if (this.areNegotiationConditionsSatisfied(cartLine)) {
+            let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
+
+            // final check on the rfq
+            const rfq: RequestForQuotation = this.rfqs.get(sellerId);
+
+            // send request for quotation
+            this.startBpCallStatus.submit();
+            Promise.all([
+                this.userService.getParty(this.cookieService.get('company_id')),
+                this.userService.getParty(sellerId),
+
+            ]).then(([buyerPartyResp, sellerPartyResp]) => {
+                rfq.buyerCustomerParty = new CustomerParty(buyerPartyResp);
+                rfq.sellerSupplierParty = new SupplierParty(sellerPartyResp);
+
+                return this.bpeService.startProcessWithDocument(rfq);
+
+            }).then(() => {
+                this.startBpCallStatus.callback(null, true);
+                this.router.navigate(['dashboard'], {queryParams: {tab: 'PURCHASES'}});
+
+            }).catch(error => {
+                this.startBpCallStatus.error('Failed to start negotiation process', error);
+            });
+        } else {
+            // this.callStatus.callback("Terms sent", true);
+            // // set the item price, otherwise we will lose item price information
+            // for(let wrapper of this.wrappers){
+            //     this.rfq.requestForQuotationLine[0].lineItem.price.priceAmount.value = wrapper.rfqDiscountPriceWrapper.totalPrice/wrapper.rfqDiscountPriceWrapper.orderedQuantity.value;
+            // }
+            // // just go to order page
+            // this.bpDataService.setCopyDocuments(true, false, false,false);
+            // this.bpDataService.proceedNextBpStep("buyer", "Order")
+        }
     }
 
     /**

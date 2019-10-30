@@ -12,6 +12,7 @@ import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
 import {QuotationWrapper} from "./quotation-wrapper";
 import {Text} from "../../../catalogue/model/publish/text";
 import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
+import {FRAME_CONTRACT_DURATION_TERM_NAME} from '../../../common/constants';
 
 /**
  * Convenient getters (and some setters) for catalogue line, request for quotations and quotations.
@@ -254,7 +255,7 @@ export class NegotiationModelWrapper {
     public set rfqFrameContractDuration(duration: Quantity) {
         let tradingTerm: TradingTerm = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
         if(tradingTerm == null) {
-            tradingTerm = new TradingTerm("FRAME_CONTRACT_DURATION", null, null, new MultiTypeValue());
+            tradingTerm = new TradingTerm(FRAME_CONTRACT_DURATION_TERM_NAME, null, null, new MultiTypeValue());
             tradingTerm.value.valueQuantity.push(duration)
             this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.push(tradingTerm);
         } else {

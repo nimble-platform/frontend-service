@@ -13,7 +13,7 @@
             </div>
             <div class="col-5">
                 <label class="column-title"><span [innerHTML]="'Counter Offer' | translate"></span></label><br>
-                <ng-container *ngIf="showCounterOfferTerms">
+                <ng-container *ngIf="showCounterOfferTerms && !isReadOnly()">
                     <button *ngIf="manufacturersTermsSource == 'product_defaults'"
                             class="btn btn-outline-secondary"
                             (click)="onLoadCounterOfferTerms('product_defaults')"><span [innerHTML]="'Use product defaults' | translate"></span>
@@ -70,7 +70,7 @@
                                            [disabled]="isLoading() || isReadOnly()"
                                            id="deliveryCb"
                                            [quantity]="wrapper.rfqDeliveryPeriod"
-                                           (quantityChange)="onTermsChange(fixedTerms.DELIVERY_PERIOD)"
+                                           (quantityChange)="onTermsChange(FIXED_NEGOTIATION_TERMS.DELIVERY_PERIOD)"
                                            [quantityUnits]="wrapper.sellerSettings.deliveryPeriodUnits"
                                            [invalid]="!isDeliveryPeriodValid()">
                 </negotiation-request-input>
@@ -106,7 +106,7 @@
                                            [disabled]="isLoading() || isReadOnly()"
                                            id="warrantyCb"
                                            [quantity]="wrapper.rfqWarranty"
-                                           (quantityChange)="onTermsChange(fixedTerms.WARRANTY_PERIOD)"
+                                           (quantityChange)="onTermsChange(FIXED_NEGOTIATION_TERMS.WARRANTY_PERIOD)"
                                            [quantityUnits]="wrapper.sellerSettings.warrantyPeriodUnits"
                                            [invalid]="!isWarrantyPeriodValid()">
                 </negotiation-request-input>
@@ -138,7 +138,7 @@
                                            id="incotermsCb"
                                            [options]="wrapper.sellerSettings.incoterms"
                                            [selected]="wrapper.rfqIncoterms"
-                                           (selectedChange)="wrapper.rfqIncoterms = $event; onTermsChange(fixedTerms.INCOTERMS)">
+                                           (selectedChange)="wrapper.rfqIncoterms = $event; onTermsChange(FIXED_NEGOTIATION_TERMS.INCOTERMS)">
                 </negotiation-request-input>
             </div>
         </div>
@@ -166,7 +166,7 @@
                 <negotiation-request-input label="Request Payment Terms"
                                            id="paymentTermsCb" [options]="wrapper.sellerSettings.paymentTerms"
                                            [selected]="wrapper.rfqPaymentTerms.paymentTerm"
-                                           (selectedChange)="wrapper.rfqPaymentTerms.paymentTerm = $event; onTermsChange(fixedTerms.PAYMENT_TERMS)"
+                                           (selectedChange)="wrapper.rfqPaymentTerms.paymentTerm = $event; onTermsChange(FIXED_NEGOTIATION_TERMS.PAYMENT_TERMS)"
                                            [disabled]="isLoading() || isReadOnly()">
                 </negotiation-request-input>
             </div>
@@ -195,7 +195,7 @@
                 <negotiation-request-input label="Request Payment Means"
                                            id="paymentMeansCb" [options]="wrapper.sellerSettings.paymentMeans"
                                            [selected]="wrapper.rfqPaymentMeans"
-                                           (selectedChange)="wrapper.rfqPaymentMeans = $event; onTermsChange(fixedTerms.PAYMENT_MEANS)"
+                                           (selectedChange)="wrapper.rfqPaymentMeans = $event; onTermsChange(FIXED_NEGOTIATION_TERMS.PAYMENT_MEANS)"
                                            [disabled]="isLoading() || isReadOnly()">
                 </negotiation-request-input>
             </div>
@@ -230,7 +230,7 @@
                 <negotiation-request-input label="Request Item Price" id="priceCb"
                                            [disabled]="isLoading() || isReadOnly()"
                                            [quantity]="wrapper.rfqDiscountPriceWrapper.itemPrice" [step]="0.01"
-                                           (quantityChange)="onTermsChange(fixedTerms.PRICE, false)"
+                                           (quantityChange)="onTermsChange(FIXED_NEGOTIATION_TERMS.PRICE, false)"
                                            [quantityUnits]="CURRENCIES" [disableQuantityUnit]="lineHasPrice()">
                 </negotiation-request-input>
             </div>
@@ -301,7 +301,7 @@
                         <negotiation-request-input label="Request Frame Contract"
                                                    id="frameContractCb"
                                                    [quantityUnits]="frameContractDurationUnits"
-                                                   (quantityChange)="onTermsChange(fixedTerms.FRAME_CONTRACT_DURATION, false)"
+                                                   (quantityChange)="onFrameContractDurationChanged($event); onTermsChange(FIXED_NEGOTIATION_TERMS.FRAME_CONTRACT_DURATION, false)"
                                                    [quantity]="frameContractDuration"
                                                    [disabled]="isFrameContractDisabled()">
                         </negotiation-request-input>
@@ -428,8 +428,8 @@
                                               [sellerPartyId]="sellerId"
                                               [selectedIncoterm]="wrapper.rfqIncoterms"
                                               [selectedTradingTerm]="wrapper.rfqPaymentTerms.paymentTerm"
-                                              (onIncotermChanged)="wrapper.rfqIncoterms = $event; onTermsChange(fixedTerms.INCOTERMS);"
-                                              (onPaymentMeansChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event; onTermsChange(fixedTerms.PAYMENT_MEANS);"
+                                              (onIncotermChanged)="wrapper.rfqIncoterms = $event; onTermsChange(FIXED_NEGOTIATION_TERMS.INCOTERMS);"
+                                              (onPaymentMeansChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event; onTermsChange(FIXED_NEGOTIATION_TERMS.PAYMENT_MEANS);"
                                               (onClauseUpdated)="onClauseUpdate($event,wrapper);"
                                               [originalTermAndConditionClauses]=
                                                       "manufacturersTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause :

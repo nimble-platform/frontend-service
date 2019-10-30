@@ -17,13 +17,12 @@ import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event
 import * as myGlobals from '../../../globals';
 import {DigitalAgreement} from '../../../catalogue/model/publish/digital-agreement';
 import {UnitService} from '../../../common/unit-service';
-import {frameContractDurationUnitListId} from '../../../common/constants';
+import {FRAME_CONTRACT_DURATION_TERM_NAME, frameContractDurationUnitListId} from '../../../common/constants';
 import {Quantity} from '../../../catalogue/model/publish/quantity';
 import {Quotation} from '../../../catalogue/model/publish/quotation';
 import {Clause} from '../../../catalogue/model/publish/clause';
 import {CustomTermModalComponent} from './custom-term-modal.component';
 import {TranslateService} from '@ngx-translate/core';
-import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 
 enum FIXED_NEGOTIATION_TERMS {
     DELIVERY_PERIOD = 'deliveryPeriod',
@@ -41,9 +40,6 @@ enum FIXED_NEGOTIATION_TERMS {
     styleUrls: ["./negotiation-request-item.component.css"]
 })
 export class NegotiationRequestItemComponent implements OnInit {
-
-    CURRENCIES: string[] = CURRENCIES;
-    fixedTerms = FIXED_NEGOTIATION_TERMS;
 
     /**
      * View data fields
@@ -73,7 +69,7 @@ export class NegotiationRequestItemComponent implements OnInit {
     /**
      * View control fields
      */
-    @Input() bpActivityEvent: BpActivityEvent;
+    @Input() processMetadata: ThreadEventMetadata;
     @Input() manufacturersTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer';
     counterOfferTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = this.manufacturersTermsSource;
     showCounterOfferTerms:boolean = false;
@@ -91,11 +87,9 @@ export class NegotiationRequestItemComponent implements OnInit {
     /**
      * Logic control fields
      */
-    processMetadata: ThreadEventMetadata = null; // the copy of ThreadEventMetadata of the current business process
     dirtyNegotiationFields: any = {}; // keeps the negotiation fields that are updated by the user
     enableDirtyUpdate: boolean = true; // if true, dirty map is update updated with user activities, otherwise the map is not updated in onTermsChange method.
     // the aim is to prevent updating dirty map when the terms sources is changed.
-
 
     onOrderQuantityKeyPressed = validateNumberInput;
 
@@ -104,11 +98,9 @@ export class NegotiationRequestItemComponent implements OnInit {
     @ViewChild(CustomTermModalComponent)
     private customTermModal: CustomTermModalComponent;
 
+    CURRENCIES: string[] = CURRENCIES;
+    FIXED_NEGOTIATION_TERMS = FIXED_NEGOTIATION_TERMS;
     config = myGlobals.config;
-
-    onClauseUpdate(event,wrapper:NegotiationModelWrapper): void {
-        this.clausesDiffer = UBLModelUtils.areTermsAndConditionListsDifferent(wrapper.initialImmutableRfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.clause, this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.clause);
-    }
 
     constructor(private bpDataService: BPDataService,
                 private unitService: UnitService,
@@ -120,9 +112,6 @@ export class NegotiationRequestItemComponent implements OnInit {
     ngOnInit() {
         if(this.manufacturersTermsSource == null){
             this.manufacturersTermsSource = 'product_defaults';
-        }
-        if (this.bpActivityEvent && this.bpActivityEvent.newProcess) {
-            this.processMetadata = this.bpActivityEvent.processMetadata;
         }
 
         this.sellerId = UBLModelUtils.getPartyId(this.wrapper.catalogueLine.goodsItem.item.manufacturerParty);
@@ -206,6 +195,12 @@ export class NegotiationRequestItemComponent implements OnInit {
      * Event handlers
      */
 
+    onClauseUpdate(event, wrapper: NegotiationModelWrapper): void {
+        this.clausesDiffer = UBLModelUtils.areTermsAndConditionListsDifferent(
+            wrapper.initialImmutableRfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.clause,
+            this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.clause);
+    }
+
     onOrderQuantityChange(): void {
         // quantity change must be activated in the next iteration of execution
         // otherwise, the update discount method will use the old value of the quantity
@@ -228,7 +223,7 @@ export class NegotiationRequestItemComponent implements OnInit {
             this.dirtyNegotiationFields = {};
         }
 
-        // we disable dirty update because we don't want that dirty map when the terms sources is changed
+        // we disable dirty update because we don't want update it when the terms source is changed
         this.enableDirtyUpdate = false;
 
         if(termSource == 'frame_contract' || termSource == 'last_offer') {
@@ -326,12 +321,20 @@ export class NegotiationRequestItemComponent implements OnInit {
         setImmediate(() => this.enableDirtyUpdate = true);
     }
 
-    onTermsChange(termId: string, affectsPrice: boolean = true,): void {
+    onTermsChange(termId: string, affectsPrice: boolean = true): void {
         if(this.enableDirtyUpdate) {
             this.dirtyNegotiationFields[termId] = true;
         }
         if(affectsPrice) {
             this.onPriceConditionsChange();
+        }
+    }
+
+    onFrameContractDurationChanged(quantity: Quantity): void {
+        if (!UBLModelUtils.isEmptyOrIncompleteQuantity(quantity)) {
+            this.wrapper.rfqFrameContractDuration = quantity;
+        } else {
+            this.wrapper.deleteRfqTradingTerm(FRAME_CONTRACT_DURATION_TERM_NAME);
         }
     }
 

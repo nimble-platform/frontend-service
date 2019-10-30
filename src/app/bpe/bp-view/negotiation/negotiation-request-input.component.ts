@@ -30,7 +30,7 @@ export class NegotiationRequestInputComponent implements OnInit {
 
     // Set if the input is a quantity
     @Input() quantity: Quantity;
-    @Output() quantityChange = new EventEmitter<number>();
+    @Output() quantityChange = new EventEmitter<Quantity>();
     @Input() quantityUnits?: string[];
     @Input() quantityType?: string;
     @Input() disableQuantityUnit?: boolean = false;
@@ -86,7 +86,7 @@ export class NegotiationRequestInputComponent implements OnInit {
     }
 
     onQuantityValueChanged(): void {
-        this.quantityChange.emit(this.quantity.value);
+        this.quantityChange.emit(this.quantity);
     }
 
     @Input()
