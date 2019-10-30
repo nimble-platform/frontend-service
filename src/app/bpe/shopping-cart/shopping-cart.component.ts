@@ -26,6 +26,7 @@ import {NegotiationRequestItemComponent} from '../bp-view/negotiation/negotiatio
 import {SupplierParty} from '../../catalogue/model/publish/supplier-party';
 import {CustomerParty} from '../../catalogue/model/publish/customer-party';
 import {Order} from '../../catalogue/model/publish/order';
+import {Party} from '../../catalogue/model/publish/party';
 /**
  * Created by suat on 11-Oct-19.
  */
@@ -426,7 +427,7 @@ export class ShoppingCartComponent implements OnInit {
             rfq.sellerSupplierParty = new SupplierParty(sellerPartyResp);
 
             // start a request for quotation or order created using the rfq we have
-            let document:RequestForQuotation | Order = this.areNegotiationConditionsSatisfied(cartLine) ? rfq: this.createOrderWithRfq(rfq,cartLine.hjid);
+            let document:RequestForQuotation | Order = this.areNegotiationConditionsSatisfied(cartLine) ? rfq: this.createOrderWithRfq(rfq,[cartLine.hjid]);
 
             return this.bpeService.startProcessWithDocument(document);
         }).then(() => {
@@ -436,6 +437,68 @@ export class ShoppingCartComponent implements OnInit {
         }).catch(error => {
             this.startBpCallStatus.error('Failed to start process', error);
         });
+    }
+
+    // starts Negotiation/Order for the products included in the shopping basket
+    onMultipleLineNegotiation():void{
+        // identifier of the buyer company
+        let companyId = this.cookieService.get('company_id');
+        // this array contains the identifiers of buyer and seller companies
+        let partyIds = Array.from(this.sellersSettings.keys()).concat(companyId);
+
+        this.startBpCallStatus.submit();
+
+        // get parties
+        this.userService.getParties(partyIds).then(parties => {
+            // create party id-party map
+            let partyMap:Map<string,Party> = this.createPartyMap(parties);
+            let promises: Promise<any>[] = [];
+            // for each rfq, start a Negotiation or Order
+            this.rfqs.forEach(rfq => {
+                let copyRfq = copy(rfq);
+                let sellerId: string = null;
+                // if negotiation conditions are satisfied for at least one product included in the rfq, create a Request For Quotation
+                // otherwise, create an Order
+                let areNegotiationConditionsSatisfiedForAtLeastOneProduct:boolean = false;
+                // we need line hjids to retrieve correct NegotiationModelWrapper which is necessary to calculate the price for Order
+                let lineHjids:number[] = [];
+                // replace properties of rfq lines with the selected ones
+                for(let copyRfqLine of copyRfq.requestForQuotationLine){
+                    let catalogueLine = this.getCatalogueLine(copyRfqLine);
+
+                    // set seller id
+                    if(!sellerId){
+                        sellerId = UBLModelUtils.getLinePartyId(catalogueLine);
+                    }
+                    // push line hjid to the list
+                    lineHjids.push(catalogueLine.hjid);
+                    // replace item properties
+                    copyRfqLine.lineItem.item.additionalItemProperty = this.modifiedCatalogueLines.get(catalogueLine.hjid).goodsItem.item.additionalItemProperty;
+
+                    if(!areNegotiationConditionsSatisfiedForAtLeastOneProduct){
+                        let areNegotiationConditionsSatisfied = this.areNegotiationConditionsSatisfied(catalogueLine);
+                        if(areNegotiationConditionsSatisfied){
+                            areNegotiationConditionsSatisfiedForAtLeastOneProduct = true;
+                        }
+                    }
+                }
+                // set buyer and seller parties
+                rfq.buyerCustomerParty = new CustomerParty(partyMap.get(companyId));
+                rfq.sellerSupplierParty = new SupplierParty(partyMap.get(sellerId));
+
+                // start a request for quotation or order created using the rfq we have
+                let document:RequestForQuotation | Order = areNegotiationConditionsSatisfiedForAtLeastOneProduct ? rfq: this.createOrderWithRfq(rfq,lineHjids);
+                promises.push(this.bpeService.startProcessWithDocument(document));
+            });
+            Promise.all(promises).then(response => {
+                this.startBpCallStatus.callback(null, true);
+                this.router.navigate(['dashboard'], {queryParams: {tab: 'PURCHASES'}});
+            }).catch(error => {
+                this.startBpCallStatus.error('Failed to start processes', error);
+            });
+        }).catch(error => {
+            this.startBpCallStatus.error('Failed to get details of seller parties', error);
+        })
     }
 
     /**
@@ -454,18 +517,41 @@ export class ShoppingCartComponent implements OnInit {
         return associatedProductIds;
     }
 
-    private createOrderWithRfq(rfq:RequestForQuotation,catHjid:number):Order{
+    private createOrderWithRfq(rfq:RequestForQuotation,catHjids:number[]):Order{
         let order = UBLModelUtils.createOrderWithRfqCopy(rfq);
 
         // final check on the order
-        let negotiationModelWrapper:NegotiationModelWrapper = this.negotiationModelWrappers.get(catHjid);
-        order.anticipatedMonetaryTotal.payableAmount.value = negotiationModelWrapper.rfqDiscountPriceWrapper.totalPrice;
-        order.anticipatedMonetaryTotal.payableAmount.currencyID = negotiationModelWrapper.currency;
+        let totalPrice:number = 0;
+        for(let catHjid of catHjids){
+            let negotiationModelWrapper:NegotiationModelWrapper = this.negotiationModelWrappers.get(catHjid);
+            totalPrice += negotiationModelWrapper.rfqDiscountPriceWrapper.totalPrice;
+        }
+
+        order.anticipatedMonetaryTotal.payableAmount.value = totalPrice;
+        order.anticipatedMonetaryTotal.payableAmount.currencyID = this.negotiationModelWrappers.get(catHjids[0]).currency;
 
         // initialize the seller and buyer parties.
         order.buyerCustomerParty = rfq.buyerCustomerParty;
         order.sellerSupplierParty = rfq.sellerSupplierParty;
 
         return order;
+    }
+
+    // for the given parties, this method creates party id - party map
+    private createPartyMap(parties:Party[]):Map<string,Party>{
+        let partyMap:Map<string,Party> = new Map<string, Party>();
+        for(let party of parties){
+            partyMap.set(party.partyIdentification[0].id,party);
+        }
+        return partyMap;
+    }
+
+    private getCatalogueLine(rfqLine:RequestForQuotationLine):CatalogueLine{
+        for(let catalogueLine of this.shoppingCart.catalogueLine){
+            if(rfqLine.lineItem.item.manufacturersItemIdentification.id == catalogueLine.goodsItem.item.manufacturersItemIdentification.id &&
+                rfqLine.lineItem.item.catalogueDocumentReference.id == catalogueLine.goodsItem.item.catalogueDocumentReference.id){
+                return catalogueLine;
+            }
+        }
     }
 }
