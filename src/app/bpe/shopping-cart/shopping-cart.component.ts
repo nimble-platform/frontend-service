@@ -413,6 +413,8 @@ export class ShoppingCartComponent implements OnInit {
             // find this rfq line and remove the rest
             let index = this.getRfqLineIndex(rfq,cartLine);
             rfq.requestForQuotationLine = [rfq.requestForQuotationLine[index]];
+            // replace properties of rfq line with the selected ones
+            rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty = this.modifiedCatalogueLines.get(cartLine.hjid).goodsItem.item.additionalItemProperty;
 
             // send request for quotation
             this.startBpCallStatus.submit();
