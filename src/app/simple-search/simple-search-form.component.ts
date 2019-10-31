@@ -107,6 +107,10 @@ export class SimpleSearchFormComponent implements OnInit {
 
 	maxFacets = 5;
 
+	CompanyFacet = [];
+	InnerCompFacet = [];
+	CompNameFacet = [];
+
 	//manufacturer.legalName : {id,count}
 	//manufacturerIdCountMap : { [indx : string], string};
 	manufacturerIdCountMap : any;
@@ -138,6 +142,11 @@ export class SimpleSearchFormComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
+
+		this.CompanyFacet = [];
+		this.CompNameFacet = [];
+		this.InnerCompFacet= [];
+
 		this.route.queryParams.subscribe(params => {
 			let q = params['q'];
 			let fq = params['fq'];
@@ -1129,6 +1138,53 @@ export class SimpleSearchFormComponent implements OnInit {
 		return found;
 	}
 
+	changeComapnyFacetList(){
+		var fq = "";
+		debugger
+		if(this.InnerCompFacet.length >0) {
+			fq = "basePlatform:(\""+this.InnerCompFacet[0] + "\" OR ";
+		}
+		let y = 0;
+		let x = this.CompNameFacet.length;
+		for(var t in this.CompanyFacet){
+			if(y != 0 && y != x-1){
+				fq = fq +"\""+ this.InnerCompFacet[y] + "\"  OR ";
+			}else if(y == x-1){
+				fq = fq +"\""+ this.InnerCompFacet[y]
+			}
+			y++;
+		}
+
+		fq = fq+"\")"
+		this.facetQuery.push(fq);
+		this.get(this.objToSubmit);
+		this.InnerCompFacet = [];
+		this.CompNameFacet = [];
+		this.CompanyFacet = [];
+	}
+
+	checkRemovedFacetList(name:String){
+		// if(this.CompanyFacet.indexOf(name) == -1){
+		// 	return true;
+		// }
+
+		// return false;
+	}
+
+	changeList(name:String,fname,inner){
+		if(this.CompanyFacet.indexOf(name) == -1){
+			this.CompanyFacet.push(name);
+			this.CompNameFacet.push(fname);
+			this.InnerCompFacet.push(inner);
+
+		}else{
+			this.CompanyFacet.splice(this.CompanyFacet.indexOf(name),this.CompanyFacet.indexOf(name)+1)
+			this.CompNameFacet.splice(this.CompanyFacet.indexOf(name),this.CompanyFacet.indexOf(name)+1)
+			this.InnerCompFacet.splice(this.CompanyFacet.indexOf(name),this.CompanyFacet.indexOf(name)+1)
+
+		}
+	}
+
 	checkProdCatCount() {
 		var count = 1;
 		if (this.facetObj) {
@@ -1289,6 +1345,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	}
 
 	setFacet(outer:string, inner:string, prefix?:string) {
+		debugger
 		if (prefix)
 			outer = prefix+"."+outer;
 		var fq = outer+":\""+inner+"\"";

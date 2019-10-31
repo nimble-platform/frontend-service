@@ -201,12 +201,17 @@
 										<div class="card-body">
 											<div *ngFor="let facetInner of facet.options; let i=index">
 												<div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
+													<input class="form-check-input"  type="checkbox" (change)="changeList(facetInner.realName.substring(0,30),facet.name,facetInner.name)" />
 													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> ({{ facetInner.count }})
 												</div>
 												<div *ngIf="checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
+													<input class="form-check-input"  type="checkbox" (change)="changeList(facetInner.realName.substring(0,30),facet.name,facetInner.name)" />
 													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> ({{ facetInner.count }})
 												</div>
 											</div>
+											<hr/>
+										<button class="btn btn-primary" (click)="changeComapnyFacetList()" >Apply</button>
+
 											<div *ngIf="facet.options.length>maxFacets">
 												<hr>
 												<span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded">Show more</span><span *ngIf="facet.expanded">Show less</span></span>
