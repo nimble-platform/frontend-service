@@ -1,6 +1,5 @@
 <negotiation-request-item *ngFor="let wrapper of wrappers;let i=index"
                           [selectedLine]="selectedLine"
-                          [rfqLine]="rfq.requestForQuotationLine[i]"
                           [rfq]="rfq"
                           [processMetadata]="bpActivityEvent ? bpActivityEvent.processMetadata : null"
                           [manufacturersTermsSource]="manufacturersTermsSources[i]"
