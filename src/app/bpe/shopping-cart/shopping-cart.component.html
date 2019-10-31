@@ -1,18 +1,17 @@
 <!-- title -->
 <div class="row">
-    <div class="col-12">
+    <div class="col-3">
         <p class="nimble-title"><span [innerHTML]="'Shopping Cart' | translate"></span></p>
     </div>
-</div>
-
-<ng-container *ngIf="initCallStatus.isAllSuccessful()">
-<!--    Button to Negotiate/Order All-->
-    <div class="d-flex align-items-end flex-column">
+    <!--    Button to Negotiate/Order All-->
+    <div *ngIf="initCallStatus.isAllSuccessful()" class="col-9 d-flex align-items-end flex-column negotiate-all">
         <div class="btn btn-primary" (click)="onMultipleLineNegotiation()">
             <span [innerHTML]="'Negotiate / Order All' | translate"></span>
         </div>
     </div>
+</div>
 
+<ng-container *ngIf="initCallStatus.isAllSuccessful()">
     <div *ngFor="let cartLine of shoppingCart?.catalogueLine; let i = index">
         <div class="d-flex space-before">
             <div class="btn btn-primary btn-outline-primary" (click)="collapsedStatusesOfCartItems.set(cartLine.hjid, !collapsedStatusesOfCartItems.get(cartLine.hjid))">
