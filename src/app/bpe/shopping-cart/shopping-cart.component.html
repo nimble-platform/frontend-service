@@ -31,8 +31,7 @@
             <product-details-tabs [wrapper]="productWrappers.get(cartLine.hjid)"
                                   [settings]="sellersSettings.get(getPartyId(cartLine.goodsItem.item.manufacturerParty))">
             </product-details-tabs>
-            <negotiation-request-item [selectedLine]="cartLine"
-                                      [rfq]="getRfq(cartLine)"
+            <negotiation-request-item [rfq]="getRfq(cartLine)"
                                       [lastOfferQuotation]="null"
                                       [frameContractQuotation]="frameContracts.has(cartLine.hjid) ? frameContracts.get(cartLine.hjid)[1] : null"
                                       [frameContractNegotiation]="false"

@@ -1,5 +1,4 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {CatalogueLine} from '../../../catalogue/model/publish/catalogue-line';
 import {BPDataService} from '../bp-data-service';
 import {CURRENCIES} from '../../../catalogue/model/constants';
 import {RequestForQuotation} from '../../../catalogue/model/publish/request-for-quotation';
@@ -44,7 +43,6 @@ export class NegotiationRequestItemComponent implements OnInit {
      * View data fields
      */
 
-    @Input() selectedLine: CatalogueLine;
     @Input() rfq: RequestForQuotation;
     @Input() wrapper: NegotiationModelWrapper;
     @Input() frameContract: DigitalAgreement = new DigitalAgreement();
