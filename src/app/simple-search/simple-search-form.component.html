@@ -192,9 +192,7 @@
 
 							<div *ngIf="showPlatform">
 								<div *ngFor="let facet of facetObj">
-									<div *ngIf="facet.total > 0 && checkProdCat(facet.name) && getName(facet.realName) == 'Platform'" class="card mb-3">
-										<div class="card border-primary-nimble mb-3">
-										
+									<div *ngIf="facet.total > 0 && checkProdCat(facet.name) && getName(facet.realName) == 'Platform'" class="card border-primary-nimble mb-3">
 										<div class="card-header text-white bg-primary-nimble">
 											{{ getName(facet.realName) }}
 										</div>
@@ -216,7 +214,6 @@
 												<hr>
 												<span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded">Show more</span><span *ngIf="facet.expanded">Show less</span></span>
 											</div>
-										</div>
 										</div>
 									</div>
 								</div>
@@ -483,8 +480,7 @@
 
 							<div *ngIf="showPlatformComp">
 								<div *ngFor="let facet of facetObj">
-									<div *ngIf="facet.total > 0 && checkCompMainCat(facet.genName)  && getName(facet.realName) == 'Platform'" class="card mb-3">
-										<div class="card border-primary-nimble mb-3">
+									<div *ngIf="facet.total > 0 && checkCompMainCat(facet.genName)  && getName(facet.realName) == 'Platform'" class="card border-primary-nimble mb-3">
 										<div class="card-header text-white bg-primary-nimble">
 											{{ getName(facet.genName,product_vendor) }}
 										</div>
@@ -506,7 +502,6 @@
 												<hr>
 												<span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded">Show more</span><span *ngIf="facet.expanded">Show less</span></span>
 											</div>
-										</div>
 										</div>
 									</div>
 								</div>
