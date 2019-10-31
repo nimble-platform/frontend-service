@@ -73,6 +73,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	showCompSection = false;
 	showTrustSection = false;
 	showOtherSection = false;
+	showPlatformComp = true;
 
 	categoriesCallStatus: CallStatus = new CallStatus();
 	companyCallStatus: CallStatus = new CallStatus();
@@ -1141,7 +1142,6 @@ export class SimpleSearchFormComponent implements OnInit {
 
 	changeComapnyFacetList(){
 		var fq = "";
-		debugger
 		if(this.InnerCompFacet.length >0) {
 			fq = "basePlatform:(\""+this.InnerCompFacet[0] + "\" OR ";
 		}
@@ -1346,7 +1346,6 @@ export class SimpleSearchFormComponent implements OnInit {
 	}
 
 	setFacet(outer:string, inner:string, prefix?:string) {
-		debugger
 		if (prefix)
 			outer = prefix+"."+outer;
 		var fq = outer+":\""+inner+"\"";
