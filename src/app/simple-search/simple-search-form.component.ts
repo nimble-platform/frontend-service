@@ -68,6 +68,7 @@ export class SimpleSearchFormComponent implements OnInit {
 	ratingTrust = 0;
 
 	showCatSection = true;
+	showPlatform = true;
 	showProductSection = false;
 	showCompSection = false;
 	showTrustSection = false;
