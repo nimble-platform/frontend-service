@@ -14,6 +14,7 @@ import {CookieService} from 'ng2-cookies';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {TranslateService} from '@ngx-translate/core';
 import {DespatchLine} from '../../../catalogue/model/publish/despatch-line';
+import {GoodsItem} from '../../../catalogue/model/publish/goods-item';
 
 @Component({
     selector: 'dispatch-advice',
@@ -31,6 +32,8 @@ export class DispatchAdviceComponent implements OnInit {
 
     selectedProducts:boolean[];
 
+    // this array stores the waiting quantities for each product included in the order
+    // however, notice that products which are dispatched can be a subset of these products
     @Input() waitingQuantityValues: number[];
 
     constructor(private bpeService: BPEService,
@@ -89,6 +92,8 @@ export class DispatchAdviceComponent implements OnInit {
             let carrierName = null;
             let carrierContact = null;
             let endDate = null;
+            let waitingQuantityValues:number[] = [];
+            let goodsItems:GoodsItem[] = null;
 
             for(let processDetails of details){
                 const processInstanceId = ActivityVariableParser.getProcessInstanceId(processDetails[0]);
@@ -108,11 +113,23 @@ export class DispatchAdviceComponent implements OnInit {
                         if(tep.transportServiceProviderParty.contact){
                             carrierContact = tep.transportServiceProviderParty.contact.telephone;
                         }
+                        // retrieve the products which are dispatched using this transport service
+                        // moreover, get waiting quantities for these products from this.waitingQuantityValues array
+                        goodsItems = [];
+                        for(let goodsItem of tep.consignment[0].consolidatedShipment[0].goodsItem){
+                            goodsItems.push(copy(goodsItem));
+                            waitingQuantityValues.push(this.waitingQuantityValues[parseInt(goodsItem.sequenceNumberID)])
+                        }
                     }
                 }
             }
+            // waitingQuantityValues is empty,that is, all products included in the order will be dispatched
+            // therefore, we can use original this.waitingQuantityValues array
+            if(waitingQuantityValues.length == 0){
+                waitingQuantityValues = this.waitingQuantityValues;
+            }
 
-            this.bpDataService.initDispatchAdvice(handlingInst,carrierName,carrierContact, this.waitingQuantityValues, endDate);
+            this.bpDataService.initDispatchAdvice(handlingInst,carrierName,carrierContact, waitingQuantityValues, endDate,goodsItems);
         }
 
         this.dispatchAdvice = this.bpDataService.despatchAdvice;

@@ -435,17 +435,31 @@ export class UBLModelUtils {
         return quotation;
     }
 
-    public static createDespatchAdviceWithOrderCopy(order: Order): DespatchAdvice {
+    // if goodsItems are provided, use them to create Dispatch Advice, otherwise order lines are used
+    public static createDespatchAdviceWithOrderCopy(order: Order,goodsItems:GoodsItem[] ): DespatchAdvice {
         let copyOrder: Order = copy(order);
         const despatchAdvice:DespatchAdvice = new DespatchAdvice();
         despatchAdvice.id = this.generateUUID();
         despatchAdvice.orderReference = [UBLModelUtils.createOrderReference(copyOrder.id)];
         despatchAdvice.despatchLine = [];
-        for(let orderLine of copyOrder.orderLine){
-            let dispatchLine = new DespatchLine(new Quantity(), orderLine.lineItem.item, [new Shipment()]);
-            dispatchLine.shipment[0].shipmentStage.push(new ShipmentStage());
-            despatchAdvice.despatchLine.push(dispatchLine);
+
+        if(goodsItems == null){
+            for(let orderLine of copyOrder.orderLine){
+                let dispatchLine = new DespatchLine(new Quantity(), orderLine.lineItem.item, [new Shipment()]);
+                dispatchLine.deliveredQuantity.unitCode = orderLine.lineItem.quantity.unitCode;
+                dispatchLine.shipment[0].shipmentStage.push(new ShipmentStage());
+                despatchAdvice.despatchLine.push(dispatchLine);
+            }
         }
+        else{
+            for(let goodsItem of goodsItems){
+                let dispatchLine = new DespatchLine(new Quantity(), goodsItem.item, [new Shipment()]);
+                dispatchLine.deliveredQuantity.unitCode = goodsItem.quantity.unitCode;
+                dispatchLine.shipment[0].shipmentStage.push(new ShipmentStage());
+                despatchAdvice.despatchLine.push(dispatchLine);
+            }
+        }
+
         despatchAdvice.despatchSupplierParty = copyOrder.sellerSupplierParty;
         despatchAdvice.deliveryCustomerParty = copyOrder.buyerCustomerParty;
 

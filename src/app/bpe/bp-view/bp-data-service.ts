@@ -49,6 +49,7 @@ import {RequestForQuotationLine} from '../../catalogue/model/publish/request-for
 import {Price} from '../../catalogue/model/publish/price';
 import {DespatchLine} from '../../catalogue/model/publish/despatch-line';
 import {Shipment} from '../../catalogue/model/publish/shipment';
+import {GoodsItem} from '../../catalogue/model/publish/goods-item';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -467,7 +468,9 @@ export class BPDataService{
         UBLModelUtils.removeHjidFieldsFromObject(this.requestForQuotation);
     }
 
-    initDispatchAdvice(handlingInst: Text, carrierName: string, carrierContact: string, deliveredQuantityValues: number[], endDate: string) {
+    // the information about which products will be dispatched is taken from the order.
+    // however, the user may want to select a subset of these products, then,we need to use given goods items,i.e. goodsItems, to initiate dispatch advice
+    initDispatchAdvice(handlingInst: Text, carrierName: string, carrierContact: string, deliveredQuantityValues: number[], endDate: string,goodsItems:GoodsItem[]) {
         let copyOrder:Order;
         if (this.copyOrder) {
             copyOrder = copy(this.copyOrder);
@@ -475,11 +478,9 @@ export class BPDataService{
             copyOrder = copy(this.productOrder)
         }
 
-        this.despatchAdvice = UBLModelUtils.createDespatchAdviceWithOrderCopy(copyOrder);
+        this.despatchAdvice = UBLModelUtils.createDespatchAdviceWithOrderCopy(copyOrder,goodsItems);
         let size = this.despatchAdvice.despatchLine.length;
         for(let i = 0; i < size; i++){
-            this.despatchAdvice.despatchLine[i].deliveredQuantity.unitCode = copyOrder.orderLine[i].lineItem.quantity.unitCode;
-
             this.despatchAdvice.despatchLine[i].deliveredQuantity.value = deliveredQuantityValues[i];
             if(handlingInst){
                 this.despatchAdvice.despatchLine[i].shipment[0].handlingInstructions = [handlingInst];
