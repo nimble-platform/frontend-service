@@ -35,7 +35,10 @@ export class TransportServiceDetailsComponent implements OnInit {
         this.goodsItems = copy(this.shipment.goodsItem);
         this.itemName = selectPreferredValue(this.shipment.goodsItem[0].item.name);
         this.selectedProducts = [];
-        for(let goodsItem of this.goodsItems){
+        // populate selectedProducts array and set the sequence number of each goods item
+        let size = this.goodsItems.length;
+        for(let i = 0; i < size ; i++){
+            this.goodsItems[i].sequenceNumberID = i.toString();
             this.selectedProducts.push(true);
         }
     }
