@@ -13,6 +13,7 @@ export class GoodsItem {
         public quantity: Quantity = new Quantity(),
         public item: Item = UBLModelUtils.createItem(),
         public containingPackage: Package = new Package(),
-        public deliveryTerms: DeliveryTerms = new DeliveryTerms()
+        public deliveryTerms: DeliveryTerms = new DeliveryTerms(),
+        public sequenceNumberID:string = null
     ) {  }
 }
