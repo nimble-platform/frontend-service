@@ -430,8 +430,6 @@ export class BPDataService{
         let size = copyRfq.requestForQuotationLine.length;
         for(let i = 0; i < size; i++){
             this.order.orderLine[i].lineItem.deliveryTerms.deliveryLocation.address = copyRfq.requestForQuotationLine[i].lineItem.deliveryTerms.deliveryLocation.address;
-            this.order.orderLine[i].lineItem.paymentMeans = copyQuotation.quotationLine[i].lineItem.paymentMeans;
-            this.order.orderLine[i].lineItem.paymentTerms = copyQuotation.quotationLine[i].lineItem.paymentTerms;
         }
 
         this.order.anticipatedMonetaryTotal.payableAmount.currencyID = copyRfq.requestForQuotationLine[0].lineItem.price.priceAmount.currencyID;
