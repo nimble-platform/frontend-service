@@ -218,26 +218,21 @@ export class UBLModelUtils {
         }
     }
 
-    public static createOrder(): Order {
-        const settings = new CompanyNegotiationSettings();
-        const quantity: Quantity = new Quantity(null, "", null);
-        const item: Item = this.createItem();
-        const price: Price = this.createPrice();
-        const lineItem: LineItem = this.createLineItem(quantity, price, item,settings);
-        const orderLine: OrderLine = new OrderLine(lineItem);
+    public static createOrder(lineItems:LineItem[]): Order {
+        let orderLines:OrderLine[] = [];
+        for(let lineItem of lineItems){
+            orderLines.push(new OrderLine(lineItem));
+        }
 
-        return new Order(this.generateUUID(), [''], new Period(), new Address(), null, null, null, new MonetaryTotal(), [orderLine]);
+        return new Order(this.generateUUID(), [''], new Period(), new Address(), null, null, null, new MonetaryTotal(), orderLines);
     }
 
     public static createOrderWithRfqCopy(rfq:RequestForQuotation): Order {
-        let order = UBLModelUtils.createOrder();
-        let size = rfq.requestForQuotationLine.length;
-        for(let i = 0; i < size; i++){
-            order.orderLine[i].lineItem = rfq.requestForQuotationLine[i].lineItem;
-            order.orderLine[i].lineItem.deliveryTerms.deliveryLocation.address = rfq.requestForQuotationLine[i].lineItem.deliveryTerms.deliveryLocation.address;
-            order.orderLine[i].lineItem.paymentMeans = rfq.requestForQuotationLine[i].lineItem.paymentMeans;
-            order.orderLine[i].lineItem.paymentTerms = rfq.requestForQuotationLine[i].lineItem.paymentTerms;
+        let lineItems:LineItem[] = [];
+        for(let rfqLine of rfq.requestForQuotationLine){
+            lineItems.push(rfqLine.lineItem);
         }
+        let order = UBLModelUtils.createOrder(lineItems);
 
         // create contracts for Terms and Conditions
         let contracts = [];

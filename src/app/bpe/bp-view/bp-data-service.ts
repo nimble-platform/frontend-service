@@ -165,8 +165,7 @@ export class BPDataService{
 
             } else {
                 this.quotation = quotationVariable;
-                this.order = UBLModelUtils.createOrder();
-                this.order.orderLine[0].lineItem = this.quotation.quotationLine[0].lineItem;
+                this.order = UBLModelUtils.createOrder([this.quotation.quotationLine[0].lineItem]);
             }
 
         } else if(processType == 'Order') {
@@ -422,11 +421,11 @@ export class BPDataService{
     initOrderWithQuotation() {
         let copyQuotation: Quotation = copy(this.copyQuotation);
         let copyRfq = copy(this.copyRequestForQuotation);
-        this.order = UBLModelUtils.createOrder();
-        this.order.orderLine = [];
+        let lineItems:LineItem[] = [];
         for(let quotationLine of copyQuotation.quotationLine){
-            this.order.orderLine.push(new OrderLine(quotationLine.lineItem));
+            lineItems.push(quotationLine.lineItem);
         }
+        this.order = UBLModelUtils.createOrder(lineItems);
         let size = copyRfq.requestForQuotationLine.length;
         for(let i = 0; i < size; i++){
             this.order.orderLine[i].lineItem.deliveryTerms.deliveryLocation.address = copyRfq.requestForQuotationLine[i].lineItem.deliveryTerms.deliveryLocation.address;
