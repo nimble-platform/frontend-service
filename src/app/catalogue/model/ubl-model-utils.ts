@@ -59,6 +59,7 @@ import {PartyName} from './publish/party-name';
 import {MultiTypeValue} from "./publish/multi-type-value";
 import {Clause} from "./publish/clause";
 import {Contract} from './publish/contract';
+import {OrderLineReference} from './publish/order-line-reference';
 
 /**
  * Created by suat on 05-Jul-17.
@@ -440,7 +441,8 @@ export class UBLModelUtils {
 
         if(goodsItems == null){
             for(let orderLine of copyOrder.orderLine){
-                let dispatchLine = new DespatchLine(new Quantity(), orderLine.lineItem.item, [new Shipment()]);
+                let orderLineReference:OrderLineReference = new OrderLineReference(orderLine.hjid.toString());
+                let dispatchLine = new DespatchLine(new Quantity(), orderLine.lineItem.item, [new Shipment()],orderLineReference);
                 dispatchLine.deliveredQuantity.unitCode = orderLine.lineItem.quantity.unitCode;
                 dispatchLine.shipment[0].shipmentStage.push(new ShipmentStage());
                 despatchAdvice.despatchLine.push(dispatchLine);
@@ -448,7 +450,8 @@ export class UBLModelUtils {
         }
         else{
             for(let goodsItem of goodsItems){
-                let dispatchLine = new DespatchLine(new Quantity(), goodsItem.item, [new Shipment()]);
+                let orderLineReference:OrderLineReference = new OrderLineReference(order.orderLine[parseInt(goodsItem.sequenceNumberID)].hjid.toString());
+                let dispatchLine = new DespatchLine(new Quantity(), goodsItem.item, [new Shipment()],orderLineReference);
                 dispatchLine.deliveredQuantity.unitCode = goodsItem.quantity.unitCode;
                 dispatchLine.shipment[0].shipmentStage.push(new ShipmentStage());
                 despatchAdvice.despatchLine.push(dispatchLine);

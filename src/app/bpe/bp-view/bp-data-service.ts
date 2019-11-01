@@ -508,7 +508,7 @@ export class BPDataService{
         let size = copyDespatchAdvice.despatchLine.length;
         this.despatchAdvice.despatchLine = [];
         for(let i = 0; i < size; i++){
-            this.despatchAdvice.despatchLine.push(new DespatchLine(new Quantity(), copyDespatchAdvice.despatchLine[i].item, [new Shipment()]));
+            this.despatchAdvice.despatchLine.push(new DespatchLine(new Quantity(), copyDespatchAdvice.despatchLine[i].item, [new Shipment()],copyDespatchAdvice.despatchLine[i].orderLineReference));
             this.despatchAdvice.despatchLine[i].deliveredQuantity.value = deliveredQuantityValues[i];
             this.despatchAdvice.despatchLine[i].deliveredQuantity.unitCode = copyDespatchAdvice.despatchLine[i].deliveredQuantity.unitCode;
         }
