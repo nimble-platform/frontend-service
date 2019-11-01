@@ -483,11 +483,11 @@ export class ShoppingCartComponent implements OnInit {
                     }
                 }
                 // set buyer and seller parties
-                rfq.buyerCustomerParty = new CustomerParty(partyMap.get(companyId));
-                rfq.sellerSupplierParty = new SupplierParty(partyMap.get(sellerId));
+                copyRfq.buyerCustomerParty = new CustomerParty(partyMap.get(companyId));
+                copyRfq.sellerSupplierParty = new SupplierParty(partyMap.get(sellerId));
 
                 // start a request for quotation or order created using the rfq we have
-                let document:RequestForQuotation | Order = areNegotiationConditionsSatisfiedForAtLeastOneProduct ? rfq: this.createOrderWithRfq(rfq,lineHjids);
+                let document:RequestForQuotation | Order = areNegotiationConditionsSatisfiedForAtLeastOneProduct ? copyRfq: this.createOrderWithRfq(copyRfq,lineHjids);
                 promises.push(this.bpeService.startProcessWithDocument(document));
             });
             Promise.all(promises).then(response => {
