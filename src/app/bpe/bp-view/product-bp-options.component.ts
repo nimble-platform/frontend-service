@@ -95,19 +95,20 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     /**
      * This function will create a separate chat channel for business negotiations
      * @param content
+     * @param productName
      */
-    open(content) {
+    open(content, productName:string) {
 
         let createChannelRequest = {
             userId: this.cookieService.get("rocket_chat_userID"),
             userToken: this.cookieService.get("rocket_chat_token"),
             initiatingPartyID: this.cookieService.get("company_id"),
             respondingPartyID: this.bpDataService.getCompanySettings().companyID,
-            productName: this.lines[0].goodsItem.item.name[0].value
+            productName: productName
         };
 
-        if (createChannelRequest.initiatingPartyID == createChannelRequest.respondingPartyID) {
-            createChannelRequest.initiatingPartyID =  this.bpDataService.documentService.getBuyerParty()['id'];
+        if (createChannelRequest.initiatingPartyID == createChannelRequest.respondingPartyID && this.processMetadata) {
+            createChannelRequest.initiatingPartyID = this.processMetadata.content.buyerPartyId;
         }
 
         let headers = new Headers({'Content-Type': 'application/json'});
