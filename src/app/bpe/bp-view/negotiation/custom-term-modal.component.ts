@@ -1,8 +1,7 @@
-import {Component, ElementRef, Input, ViewChild} from "@angular/core";
+import {Component, ElementRef, EventEmitter, Output, ViewChild} from "@angular/core";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {Quantity} from "../../../catalogue/model/publish/quantity";
 import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
-import {NegotiationModelWrapper} from "./negotiation-model-wrapper";
 import {TranslateService} from '@ngx-translate/core';
 
 @Component({
@@ -11,7 +10,8 @@ import {TranslateService} from '@ngx-translate/core';
 })
 export class CustomTermModalComponent {
 
-    @Input() negotiationModelWrapper: NegotiationModelWrapper;
+    // emits the term details when the term is added
+    @Output() onCustomTermAdded: EventEmitter<any> = new EventEmitter<any>();
 
     termName: string = '';
     termDescription: string = '';
@@ -41,7 +41,12 @@ export class CustomTermModalComponent {
         } else  {
             value = this.quantityValue;
         }
-        this.negotiationModelWrapper.addRfqTradingTerm(this.termName, this.termDescription, value, this.selectedDataType);
+        let termDetails: any = {};
+        termDetails.name = this.termName;
+        termDetails.description = this.termDescription;
+        termDetails.value = value;
+        termDetails.dataType = this.selectedDataType;
+        this.onCustomTermAdded.emit(termDetails);
     }
 
     validValueSpecified(): boolean {

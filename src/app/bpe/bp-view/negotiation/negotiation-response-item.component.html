@@ -344,27 +344,24 @@
             <div [hidden]="selectedTCTab != 'CLAUSES'" class="row content-row">
                 <div class="col-3"></div>
                 <div class="col-3">
-                    <terms-and-conditions [hidden]="primaryTermsSource != 'product_defaults'" [buyerPartyId]="getPartyId(rfq.buyerCustomerParty.party)"
+                    <terms-and-conditions [hidden]="primaryTermsSource != 'product_defaults'"
                                           [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer-product-defaults'"
                                           [termsAndConditions]="defaultTermsAndConditions"
                                           [originalTermAndConditionClauses]="defaultTermsAndConditions">
                     </terms-and-conditions>
                     <terms-and-conditions *ngIf="wrapper.frameContractQuotation" [hidden]="primaryTermsSource != 'frame_contract'"
-                                          [buyerPartyId]="getPartyId(rfq.buyerCustomerParty.party)"
                                           [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer-frame-contract'"
                                           [termsAndConditions]="wrapper.frameContractQuotation.quotationLine[wrapper.lineIndex].lineItem.clause"
                                           [originalTermAndConditionClauses]="wrapper.frameContractQuotation.quotationLine[wrapper.lineIndex].lineItem.clause">
                     </terms-and-conditions>
                     <terms-and-conditions *ngIf="wrapper.lastOfferQuotation" [hidden]="primaryTermsSource != 'last_offer'"
-                                          [buyerPartyId]="getPartyId(rfq.buyerCustomerParty.party)"
                                           [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer-last-offer'"
                                           [termsAndConditions]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause"
                                           [originalTermAndConditionClauses]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause">
                     </terms-and-conditions>
                 </div>
                 <div class="col-3">
-                    <terms-and-conditions [buyerPartyId]="getPartyId(rfq.buyerCustomerParty.party)"
-                                          [originalTermAndConditionClauses]="primaryTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause :
+                    <terms-and-conditions [originalTermAndConditionClauses]="primaryTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause :
                                       (primaryTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.quotationLine[wrapper.lineIndex].lineItem.clause : defaultTermsAndConditions)"
                                           (onClauseUpdated)="onClauseUpdate($event);"
                                           [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq'"
@@ -372,7 +369,6 @@
                 </div>
                 <div class="col-3">
                     <terms-and-conditions *ngIf="isSellerTermsVisible()"
-                                          [buyerPartyId]="getPartyId(quotation.buyerCustomerParty.party)"
                                           [selectedIncoterm]="wrapper.newQuotationWrapper.incoterms"
                                           [selectedTradingTerm]="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm"
                                           (onClauseUpdated)="onClauseUpdate($event);"

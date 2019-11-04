@@ -968,4 +968,22 @@ export class UBLModelUtils {
         }
         return false;
     }
+
+    public static createTradingTerm(termName: string, termDescription: string, value, type: string) {
+        let termValue: MultiTypeValue = new MultiTypeValue();
+        termValue.valueQualifier = type;
+
+        if(type == 'TEXT') {
+            let text: Text = new Text(value, null);
+            text.value = value;
+            termValue.value.push(text);
+        } else if(type == 'NUMBER') {
+            termValue.valueDecimal.push(value);
+        } else if(type == 'QUANTITY') {
+            termValue.valueQuantity.push(value);
+        }
+
+        let description: Text[] = [new Text(termDescription, null)];
+        return new TradingTerm(termName, description, null, termValue);
+    }
 }

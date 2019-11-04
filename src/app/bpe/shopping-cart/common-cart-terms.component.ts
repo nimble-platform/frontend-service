@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import * as myGlobals from '../../globals';
 import {UnitService} from '../../common/unit-service';
 import {Quantity} from '../../catalogue/model/publish/quantity';
@@ -6,8 +6,11 @@ import {deliveryPeriodUnitListId, frameContractDurationUnitListId, warrantyPerio
 import {INCOTERMS, PAYMENT_MEANS} from '../../catalogue/model/constants';
 import {UBLModelUtils} from '../../catalogue/model/ubl-model-utils';
 import {CallStatus} from '../../common/call-status';
-import {DeliveryTerms} from '../../user-mgmt/model/delivery-terms';
 import {Address} from '../../catalogue/model/publish/address';
+import {TradingTerm} from '../../catalogue/model/publish/trading-term';
+import {NegotiationModelWrapper} from '../bp-view/negotiation/negotiation-model-wrapper';
+import {CompanySettings} from '../../user-mgmt/model/company-settings';
+import {CustomTermModalComponent} from '../bp-view/negotiation/custom-term-modal.component';
 /**
  * Created by suat on 31-Oct-19.
  */
@@ -23,8 +26,9 @@ export class CommonCartTermsComponent implements OnInit {
     PAYMENT_TERMS = UBLModelUtils.getDefaultPaymentTermsAsStrings();
     INCOTERMS = INCOTERMS;
 
-    @Input() deliveryTermsOfBuyer: DeliveryTerms[];
-
+    @Input() wrapper: NegotiationModelWrapper;
+    @Input() buyerCompanySettings: CompanySettings;
+    tradingTerms: TradingTerm[] = [];
     deliveryPeriodUnits: string[];
     deliveryPeriod: Quantity = new Quantity();
     warrantyPeriodUnits: string[];
@@ -45,6 +49,8 @@ export class CommonCartTermsComponent implements OnInit {
     selectedTCTab: 'CUSTOM_TERMS' | 'CLAUSES' = 'CUSTOM_TERMS';
 
     initCallStatus: CallStatus = new CallStatus();
+    @ViewChild(CustomTermModalComponent)
+    private customTermModal: CustomTermModalComponent;
 
     constructor(private unitService: UnitService) {}
 
@@ -94,11 +100,24 @@ export class CommonCartTermsComponent implements OnInit {
         return tab;
     }
 
-    onDeleteTradingTerm(termName: string): void {
-        // this.wrapper.deleteRfqTradingTerm(termName);
-        // let termListsEqual: boolean = this.checkTradingTermListEquivalance();
-        // if(termListsEqual) {
-        //     this.custTermsDiffer = false;
-        // }
+    private onDeleteTradingTerm(termName: string): void {
+        let indexToRemove = this.tradingTerms.findIndex(term => term.id === termName);
+        if (indexToRemove !== -1) {
+            this.tradingTerms.splice(indexToRemove, 1);
+        }
+    }
+
+    private onCustomTermAdded(termName: string, termDescription: string, value, type: string): void {
+        let tradingTerm: TradingTerm = this.tradingTerms.find(term => term.id === termName);
+        if (tradingTerm != null) {
+            return;
+        } else {
+            tradingTerm = UBLModelUtils.createTradingTerm(termName, termDescription, value, type);
+            this.tradingTerms.push(tradingTerm);
+        }
+    }
+
+    private openCustomTermModal(): void {
+        this.customTermModal.open();
     }
 }
