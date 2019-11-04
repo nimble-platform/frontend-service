@@ -373,11 +373,28 @@ export class ShoppingCartComponent implements OnInit {
         this.router.navigate(['simple-search']);
     }
 
-    onRemoveFromCart(cartLineHjid: number): void {
-        let callStatus: CallStatus = this.deleteCallStatuses.get(cartLineHjid);
+    // remove the given catalogue line from the shopping cart
+    // moreover, update this.rfqs array accordingly
+    onRemoveFromCart(cartLine: CatalogueLine): void {
+        let callStatus: CallStatus = this.deleteCallStatuses.get(cartLine.hjid);
         callStatus.submit();
-        this.shoppingCartDataService.removeItemFromCart(cartLineHjid).then(cartCatalogue => {
+        // get seller id
+        let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
+        this.shoppingCartDataService.removeItemFromCart(cartLine.hjid).then(cartCatalogue => {
             this.shoppingCart = cartCatalogue;
+            // get rfq for the seller
+            let rfq: RequestForQuotation = this.rfqs.get(sellerId);
+            // if rfq only contains this line, delete rfq as well
+            if(rfq.requestForQuotationLine.length == 1){
+                this.rfqs.delete(sellerId);
+            }
+            // otherwise, remove the rfq line created for this product
+            else{
+                // get the index of catalogue line
+                let index = this.catalogueLineRfqLineIndexMap.get(cartLine.hjid);
+                rfq.requestForQuotationLine.splice(index,1);
+            }
+
             callStatus.callback(null, true);
         }).catch(error => {
             callStatus.error('Failed to delete product from the shopping cart');
