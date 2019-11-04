@@ -41,7 +41,7 @@ import {Item} from '../../../catalogue/model/publish/item';
 })
 export class OrderComponent implements OnInit {
 
-    @Input() selectedLine:CatalogueLine;
+    @Input() selectedLineIndex:number;
     order: Order;
     address: Address
     orderResponse: OrderResponseSimple;
@@ -175,14 +175,6 @@ export class OrderComponent implements OnInit {
             }
         }
         return null;
-    }
-
-    private isHidden(item:Item){
-        if(this.selectedLine.goodsItem.item.catalogueDocumentReference.id == item.catalogueDocumentReference.id &&
-            this.selectedLine.goodsItem.item.manufacturersItemIdentification.id == item.manufacturersItemIdentification.id){
-            return false;
-        }
-        return true;
     }
 
     // retrieve the order contract which is not the Term and Condition contract

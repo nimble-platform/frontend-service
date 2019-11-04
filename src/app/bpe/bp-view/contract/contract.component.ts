@@ -1,7 +1,6 @@
 import {Component, Input} from "@angular/core";
 import {Contract} from "../../../catalogue/model/publish/contract";
 import {TranslateService} from '@ngx-translate/core';
-import {CatalogueLine} from '../../../catalogue/model/publish/catalogue-line';
 
 @Component({
     selector: 'contract',
@@ -14,7 +13,7 @@ export class ContractComponent {
     @Input() collapsable: boolean = true;
     // whether the item is deleted or not
     @Input() areCatalogueLinesDeleted:boolean[];
-    @Input() selectedLine:CatalogueLine;
+    @Input() selectedLineIndex:number;
     showClauses:boolean = false;
 
     constructor(private translate: TranslateService) {

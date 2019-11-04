@@ -38,7 +38,7 @@ import {CatalogueLine} from '../../../catalogue/model/publish/catalogue-line';
 })
 export class OrderItemComponent implements OnInit {
 
-    @Input() selectedLine:CatalogueLine;
+    @Input() selectedLineIndex:number;
     @Input() lineIndex:number;
     order: Order;
     address: Address

@@ -48,7 +48,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     // whether the item is deleted or not
     @Input() areCatalogueLinesDeleted:boolean[];
     // the product for which the users negotiate
-    @Input() selectedLine:CatalogueLine;
+    @Input() selectedLineIndex:number;
 
     constructor(public bpDataService: BPDataService,
                 private bpeService: BPEService,

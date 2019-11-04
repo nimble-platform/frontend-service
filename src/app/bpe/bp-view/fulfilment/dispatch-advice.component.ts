@@ -35,6 +35,8 @@ export class DispatchAdviceComponent implements OnInit {
     // this array stores the waiting quantities for each product included in the order
     // however, notice that products which are dispatched can be a subset of these products
     @Input() waitingQuantityValues: number[];
+    // hjids of the line items included in the order
+    @Input() orderLineItemHjids: string[];
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
@@ -70,7 +72,13 @@ export class DispatchAdviceComponent implements OnInit {
 
         // since we start a new Despatch Advice after Receipt Advice step, bpDataService.copyDespatchAdvice is not null.
         if(this.bpDataService.copyDespatchAdvice){
-            this.bpDataService.initDispatchAdviceWithCopyDispatchAdvice(this.waitingQuantityValues);
+            // get the correct waiting quantities for the products dispatched
+            let waitingQuantityValues:number[] = [];
+            for(let dispatchAdviceLine of this.bpDataService.copyDespatchAdvice.despatchLine){
+                let index = this.orderLineItemHjids.indexOf(dispatchAdviceLine.orderLineReference.lineID);
+                waitingQuantityValues.push(this.waitingQuantityValues[index]);
+            }
+            this.bpDataService.initDispatchAdviceWithCopyDispatchAdvice(waitingQuantityValues);
         }
         else{
             const processInstanceGroup = await this.bpeService.getProcessInstanceGroup(this.bpDataService.bpActivityEvent.containerGroupId) as ProcessInstanceGroup;
