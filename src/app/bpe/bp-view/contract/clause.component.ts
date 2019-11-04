@@ -9,7 +9,6 @@ import {DocumentService} from "../document-service";
 import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
 import {BPDataService} from '../bp-data-service';
 import {copy} from '../../../common/utils';
-import {CatalogueLine} from '../../../catalogue/model/publish/catalogue-line';
 
 @Component({
     selector: 'clause',
@@ -19,7 +18,7 @@ export class ClauseComponent implements OnInit {
     @Input() clause: Clause = null;
     // whether the items are deleted or not
     @Input() areCatalogueLinesDeleted:boolean[];
-    @Input() selectedLine:CatalogueLine;
+    @Input() selectedLineIndex:number;
     clauseDocument = null;
     itemInformationRequest: ItemInformationRequest;
     rfq: RequestForQuotation;

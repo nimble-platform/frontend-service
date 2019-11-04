@@ -47,7 +47,7 @@ export class NegotiationRequestComponent implements OnInit {
      */
 
     @ViewChildren(NegotiationRequestItemComponent) viewChildren: QueryList<NegotiationRequestItemComponent>;
-    @Input() selectedLine: CatalogueLine;
+    @Input() selectedLineIndex: number;
     @Input() catalogueLines: CatalogueLine[];
     @Input() sellerSettings: CompanySettings;
 

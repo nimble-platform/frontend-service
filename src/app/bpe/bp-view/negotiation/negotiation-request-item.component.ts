@@ -1,9 +1,7 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {CatalogueLine} from '../../../catalogue/model/publish/catalogue-line';
 import {BPDataService} from '../bp-data-service';
 import {CURRENCIES} from '../../../catalogue/model/constants';
 import {RequestForQuotation} from '../../../catalogue/model/publish/request-for-quotation';
-import {RequestForQuotationLine} from '../../../catalogue/model/publish/request-for-quotation-line';
 import {CallStatus} from '../../../common/call-status';
 import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
 import {CookieService} from 'ng2-cookies';
@@ -46,9 +44,7 @@ export class NegotiationRequestItemComponent implements OnInit {
      * View data fields
      */
 
-    @Input() selectedLine: CatalogueLine;
     @Input() rfq: RequestForQuotation;
-    @Input() rfqLine: RequestForQuotationLine;
     @Input() wrapper: NegotiationModelWrapper;
     @Input() frameContract: DigitalAgreement = new DigitalAgreement();
     @Input() frameContractQuotation: Quotation;

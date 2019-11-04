@@ -5,22 +5,7 @@
         <div class="col-6"><h4><span [innerHTML]="'Receipt Advice' | translate"></span></h4></div>
     </div>
 
-    <div class="row content-row bg-light" *ngIf="dispatchAdvice.despatchLine.length == 1">
-        <div class="col-6">
-            <!-- Dispatched Quantity -->
-            <quantity-input presentationMode="view" [disableQuantityUnit]="true"
-                label="Dispatched Quantity" [quantity]="dispatchAdvice.despatchLine[0].deliveredQuantity">
-            </quantity-input>
-        </div>
-        <div class="col-6">
-            <!-- Rejected Quantity -->
-            <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
-                label="Rejected Quantity" [quantity]="receiptAdvice.receiptLine[0].rejectedQuantity">
-            </quantity-input>
-        </div>
-    </div>
-
-    <div class="content-row bg-light" *ngIf="dispatchAdvice.despatchLine.length > 1">
+    <div class="content-row bg-light">
         <div class="row">
             <div class="col-6"><h5><span>Dispatched Quantities</span></h5></div>
         </div>

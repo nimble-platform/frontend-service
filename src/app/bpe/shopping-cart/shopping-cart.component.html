@@ -1,22 +1,24 @@
 <!-- title -->
 <div class="row">
-    <div class="col-12">
+    <div class="col-3">
         <p class="nimble-title"><span [innerHTML]="'Shopping Cart' | translate"></span></p>
     </div>
 </div>
 
 <ng-container *ngIf="initCallStatus.isAllSuccessful()">
-<!--    Button to Negotiate/Order All-->
-    <div *ngIf="!showCommonTerms" class="d-flex align-items-end flex-column">
-        <button class="btn btn-secondary" (click)="showCommonTerms = true">
+    <div class="d-flex justify-content-end mb-2">
+        <div class="btn btn-secondary" (click)="showCommonTerms = !showCommonTerms">
             <i class="fas fa-chevron-down mr-2"></i>
             <span [innerHTML]="'Show Common Cart Terms' | translate"></span>
-        </button>
+        </div>
+        <div class="btn btn-primary ml-2" (click)="onMultipleLineNegotiation()">
+            <span [innerHTML]="'Negotiate / Order All' | translate"></span>
+        </div>
     </div>
     <common-cart-terms *ngIf="showCommonTerms"
-                       [deliveryTermsOfBuyer]="buyerCompanySettings.tradeDetails.deliveryTerms"
-                       (onHideTermBox)="showCommonTerms = false">
+                       [deliveryTermsOfBuyer]="buyerCompanySettings.tradeDetails.deliveryTerms">
     </common-cart-terms>
+
     <div *ngFor="let cartLine of shoppingCart?.catalogueLine; let i = index"
          class="cart-item space-before">
         <div class="d-flex">
@@ -37,9 +39,7 @@
             <product-details-tabs [wrapper]="productWrappers.get(cartLine.hjid)"
                                   [settings]="sellersSettings.get(getPartyId(cartLine.goodsItem.item.manufacturerParty))">
             </product-details-tabs>
-            <negotiation-request-item [selectedLine]="cartLine"
-                                      [rfqLine]="getRfqLine(cartLine)"
-                                      [rfq]="getRfq(cartLine)"
+            <negotiation-request-item [rfq]="getRfq(cartLine)"
                                       [lastOfferQuotation]="null"
                                       [frameContractQuotation]="frameContracts.has(cartLine.hjid) ? frameContracts.get(cartLine.hjid)[1] : null"
                                       [frameContract]="frameContracts.has(cartLine.hjid) ? frameContracts.get(cartLine.hjid)[0] : null"

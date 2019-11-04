@@ -56,6 +56,10 @@ export class ShoppingCartComponent implements OnInit {
     rfqs: Map<string, RequestForQuotation> = new Map<string, RequestForQuotation>();
     // frame contracts for the products in cart
     frameContracts: Map<number, [DigitalAgreement, Quotation]> = new Map<number, [DigitalAgreement, Quotation]>();
+    // we use the map below to retrieve the index of rfq line which belongs to the given catalogue line
+    // key of the map is the hjid of catalogue line
+    // value of the map is the index of rfq line
+    catalogueLineRfqLineIndexMap:Map<number,number> = new Map<number, number>();
 
     collapsedStatusesOfCartItems: Map<number, boolean> = new Map<number, boolean>();
     deleteCallStatuses: Map<number, CallStatus> = new Map<number, CallStatus>();
@@ -240,6 +244,19 @@ export class ShoppingCartComponent implements OnInit {
             let sellerId: string = UBLModelUtils.getPartyId(rfq.requestForQuotationLine[0].lineItem.item.manufacturerParty);
             this.rfqs.set(sellerId, rfq);
         }
+        // populate catalogueLineRfqLineIndexMap
+        let catalogueLineCopies:CatalogueLine[] = copy(this.shoppingCart.catalogueLine);
+        for(let rfq of rfqs){
+            let size = rfq.requestForQuotationLine.length;
+            for(let i = 0; i < size; i++){
+                let rfqLine = rfq.requestForQuotationLine[i];
+                let catalogueLine = catalogueLineCopies.find(catalogueLine => catalogueLine.goodsItem.item.manufacturersItemIdentification.id == rfqLine.lineItem.item.manufacturersItemIdentification.id &&
+                                                                                        catalogueLine.goodsItem.item.catalogueDocumentReference.id == rfqLine.lineItem.item.catalogueDocumentReference.id);
+                catalogueLineCopies.splice(catalogueLineCopies.indexOf(catalogueLine),1);
+
+                this.catalogueLineRfqLineIndexMap.set(catalogueLine.hjid,i);
+            }
+        }
     }
 
     private getFrameContracts(): void {
@@ -317,7 +334,7 @@ export class ShoppingCartComponent implements OnInit {
             this.productWrappers.set(lineHjid, productWrapper);
             // find the index of rfq line relating to this catalogue line
             let rfq:RequestForQuotation = this.rfqs.get(sellerId);
-            let index = this.getRfqLineIndex(rfq,cartLine);
+            let index = this.catalogueLineRfqLineIndexMap.get(lineHjid);
             // initialize negotiation model wrapper
             let negotiationModelWrapper = new NegotiationModelWrapper(
                 cartLine,
@@ -338,24 +355,6 @@ export class ShoppingCartComponent implements OnInit {
     getPriceString(cartLine: CatalogueLine): string {
         let priceWrapper: ItemPriceWrapper = new ItemPriceWrapper(cartLine.requiredItemLocationQuantity.price);
         return priceWrapper.pricePerItemString;
-    }
-
-    getRfqLine(cartLine: CatalogueLine): RequestForQuotationLine {
-        let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
-        let rfq: RequestForQuotation = this.rfqs.get(sellerId);
-        let index = this.getRfqLineIndex(rfq,cartLine);
-        return rfq.requestForQuotationLine[index];
-    }
-
-    getRfqLineIndex(rfq:RequestForQuotation,cartLine: CatalogueLine): number {
-        let index;
-        for(index = 0 ; index < rfq.requestForQuotationLine.length;index++){
-            if(rfq.requestForQuotationLine[index].lineItem.item.catalogueDocumentReference.id == cartLine.goodsItem.item.catalogueDocumentReference.id &&
-                rfq.requestForQuotationLine[index].lineItem.item.manufacturersItemIdentification.id == cartLine.goodsItem.item.manufacturersItemIdentification.id){
-                break;
-            }
-        }
-        return index;
     }
 
     getRfq(cartLine: CatalogueLine): RequestForQuotation {
@@ -413,7 +412,7 @@ export class ShoppingCartComponent implements OnInit {
         const rfq: RequestForQuotation = copy(this.rfqs.get(sellerId));
         // in the final rfq, there should be a single rfq line relating to selected catalogue line
         // find this rfq line and remove the rest
-        let index = this.getRfqLineIndex(rfq,cartLine);
+        let index = this.catalogueLineRfqLineIndexMap.get(cartLine.hjid);
         rfq.requestForQuotationLine = [rfq.requestForQuotationLine[index]];
         // replace properties of rfq line with the selected ones
         rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty = this.modifiedCatalogueLines.get(cartLine.hjid).goodsItem.item.additionalItemProperty;
@@ -484,11 +483,11 @@ export class ShoppingCartComponent implements OnInit {
                     }
                 }
                 // set buyer and seller parties
-                rfq.buyerCustomerParty = new CustomerParty(partyMap.get(companyId));
-                rfq.sellerSupplierParty = new SupplierParty(partyMap.get(sellerId));
+                copyRfq.buyerCustomerParty = new CustomerParty(partyMap.get(companyId));
+                copyRfq.sellerSupplierParty = new SupplierParty(partyMap.get(sellerId));
 
                 // start a request for quotation or order created using the rfq we have
-                let document:RequestForQuotation | Order = areNegotiationConditionsSatisfiedForAtLeastOneProduct ? rfq: this.createOrderWithRfq(rfq,lineHjids);
+                let document:RequestForQuotation | Order = areNegotiationConditionsSatisfiedForAtLeastOneProduct ? copyRfq: this.createOrderWithRfq(copyRfq,lineHjids);
                 promises.push(this.bpeService.startProcessWithDocument(document));
             });
             Promise.all(promises).then(response => {

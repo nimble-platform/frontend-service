@@ -60,6 +60,7 @@ import {MultiTypeValue} from "./publish/multi-type-value";
 import {Clause} from "./publish/clause";
 import {Contract} from './publish/contract';
 import {Address as UserMgmtAddress} from '../../user-mgmt/model/address';
+import {OrderLineReference} from './publish/order-line-reference';
 
 /**
  * Created by suat on 05-Jul-17.
@@ -219,26 +220,21 @@ export class UBLModelUtils {
         }
     }
 
-    public static createOrder(): Order {
-        const settings = new CompanyNegotiationSettings();
-        const quantity: Quantity = new Quantity(null, "", null);
-        const item: Item = this.createItem();
-        const price: Price = this.createPrice();
-        const lineItem: LineItem = this.createLineItem(quantity, price, item,settings);
-        const orderLine: OrderLine = new OrderLine(lineItem);
+    public static createOrder(lineItems:LineItem[]): Order {
+        let orderLines:OrderLine[] = [];
+        for(let lineItem of lineItems){
+            orderLines.push(new OrderLine(lineItem));
+        }
 
-        return new Order(this.generateUUID(), [''], new Period(), new Address(), null, null, null, new MonetaryTotal(), [orderLine]);
+        return new Order(this.generateUUID(), [''], new Period(), new Address(), null, null, null, new MonetaryTotal(), orderLines);
     }
 
     public static createOrderWithRfqCopy(rfq:RequestForQuotation): Order {
-        let order = UBLModelUtils.createOrder();
-        let size = rfq.requestForQuotationLine.length;
-        for(let i = 0; i < size; i++){
-            order.orderLine[i].lineItem = rfq.requestForQuotationLine[i].lineItem;
-            order.orderLine[i].lineItem.deliveryTerms.deliveryLocation.address = rfq.requestForQuotationLine[i].lineItem.deliveryTerms.deliveryLocation.address;
-            order.orderLine[i].lineItem.paymentMeans = rfq.requestForQuotationLine[i].lineItem.paymentMeans;
-            order.orderLine[i].lineItem.paymentTerms = rfq.requestForQuotationLine[i].lineItem.paymentTerms;
+        let lineItems:LineItem[] = [];
+        for(let rfqLine of rfq.requestForQuotationLine){
+            lineItems.push(rfqLine.lineItem);
         }
+        let order = UBLModelUtils.createOrder(lineItems);
 
         // create contracts for Terms and Conditions
         let contracts = [];
@@ -436,17 +432,33 @@ export class UBLModelUtils {
         return quotation;
     }
 
-    public static createDespatchAdviceWithOrderCopy(order: Order): DespatchAdvice {
+    // if goodsItems are provided, use them to create Dispatch Advice, otherwise order lines are used
+    public static createDespatchAdviceWithOrderCopy(order: Order,goodsItems:GoodsItem[] ): DespatchAdvice {
         let copyOrder: Order = copy(order);
         const despatchAdvice:DespatchAdvice = new DespatchAdvice();
         despatchAdvice.id = this.generateUUID();
         despatchAdvice.orderReference = [UBLModelUtils.createOrderReference(copyOrder.id)];
         despatchAdvice.despatchLine = [];
-        for(let orderLine of copyOrder.orderLine){
-            let dispatchLine = new DespatchLine(new Quantity(), orderLine.lineItem.item, [new Shipment()]);
-            dispatchLine.shipment[0].shipmentStage.push(new ShipmentStage());
-            despatchAdvice.despatchLine.push(dispatchLine);
+
+        if(goodsItems == null){
+            for(let orderLine of copyOrder.orderLine){
+                let orderLineReference:OrderLineReference = new OrderLineReference(orderLine.hjid.toString());
+                let dispatchLine = new DespatchLine(new Quantity(), orderLine.lineItem.item, [new Shipment()],orderLineReference);
+                dispatchLine.deliveredQuantity.unitCode = orderLine.lineItem.quantity.unitCode;
+                dispatchLine.shipment[0].shipmentStage.push(new ShipmentStage());
+                despatchAdvice.despatchLine.push(dispatchLine);
+            }
         }
+        else{
+            for(let goodsItem of goodsItems){
+                let orderLineReference:OrderLineReference = new OrderLineReference(order.orderLine[parseInt(goodsItem.sequenceNumberID)].hjid.toString());
+                let dispatchLine = new DespatchLine(new Quantity(), goodsItem.item, [new Shipment()],orderLineReference);
+                dispatchLine.deliveredQuantity.unitCode = goodsItem.quantity.unitCode;
+                dispatchLine.shipment[0].shipmentStage.push(new ShipmentStage());
+                despatchAdvice.despatchLine.push(dispatchLine);
+            }
+        }
+
         despatchAdvice.despatchSupplierParty = copyOrder.sellerSupplierParty;
         despatchAdvice.deliveryCustomerParty = copyOrder.buyerCustomerParty;
 

@@ -49,6 +49,7 @@ import {RequestForQuotationLine} from '../../catalogue/model/publish/request-for
 import {Price} from '../../catalogue/model/publish/price';
 import {DespatchLine} from '../../catalogue/model/publish/despatch-line';
 import {Shipment} from '../../catalogue/model/publish/shipment';
+import {GoodsItem} from '../../catalogue/model/publish/goods-item';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -164,8 +165,7 @@ export class BPDataService{
 
             } else {
                 this.quotation = quotationVariable;
-                this.order = UBLModelUtils.createOrder();
-                this.order.orderLine[0].lineItem = this.quotation.quotationLine[0].lineItem;
+                this.order = UBLModelUtils.createOrder([this.quotation.quotationLine[0].lineItem]);
             }
 
         } else if(processType == 'Order') {
@@ -421,16 +421,14 @@ export class BPDataService{
     initOrderWithQuotation() {
         let copyQuotation: Quotation = copy(this.copyQuotation);
         let copyRfq = copy(this.copyRequestForQuotation);
-        this.order = UBLModelUtils.createOrder();
-        this.order.orderLine = [];
+        let lineItems:LineItem[] = [];
         for(let quotationLine of copyQuotation.quotationLine){
-            this.order.orderLine.push(new OrderLine(quotationLine.lineItem));
+            lineItems.push(quotationLine.lineItem);
         }
+        this.order = UBLModelUtils.createOrder(lineItems);
         let size = copyRfq.requestForQuotationLine.length;
         for(let i = 0; i < size; i++){
             this.order.orderLine[i].lineItem.deliveryTerms.deliveryLocation.address = copyRfq.requestForQuotationLine[i].lineItem.deliveryTerms.deliveryLocation.address;
-            this.order.orderLine[i].lineItem.paymentMeans = copyQuotation.quotationLine[i].lineItem.paymentMeans;
-            this.order.orderLine[i].lineItem.paymentTerms = copyQuotation.quotationLine[i].lineItem.paymentTerms;
         }
 
         this.order.anticipatedMonetaryTotal.payableAmount.currencyID = copyRfq.requestForQuotationLine[0].lineItem.price.priceAmount.currencyID;
@@ -467,7 +465,9 @@ export class BPDataService{
         UBLModelUtils.removeHjidFieldsFromObject(this.requestForQuotation);
     }
 
-    initDispatchAdvice(handlingInst: Text, carrierName: string, carrierContact: string, deliveredQuantityValues: number[], endDate: string) {
+    // the information about which products will be dispatched is taken from the order.
+    // however, the user may want to select a subset of these products, then,we need to use given goods items,i.e. goodsItems, to initiate dispatch advice
+    initDispatchAdvice(handlingInst: Text, carrierName: string, carrierContact: string, deliveredQuantityValues: number[], endDate: string,goodsItems:GoodsItem[]) {
         let copyOrder:Order;
         if (this.copyOrder) {
             copyOrder = copy(this.copyOrder);
@@ -475,11 +475,9 @@ export class BPDataService{
             copyOrder = copy(this.productOrder)
         }
 
-        this.despatchAdvice = UBLModelUtils.createDespatchAdviceWithOrderCopy(copyOrder);
+        this.despatchAdvice = UBLModelUtils.createDespatchAdviceWithOrderCopy(copyOrder,goodsItems);
         let size = this.despatchAdvice.despatchLine.length;
         for(let i = 0; i < size; i++){
-            this.despatchAdvice.despatchLine[i].deliveredQuantity.unitCode = copyOrder.orderLine[i].lineItem.quantity.unitCode;
-
             this.despatchAdvice.despatchLine[i].deliveredQuantity.value = deliveredQuantityValues[i];
             if(handlingInst){
                 this.despatchAdvice.despatchLine[i].shipment[0].handlingInstructions = [handlingInst];
@@ -510,7 +508,7 @@ export class BPDataService{
         let size = copyDespatchAdvice.despatchLine.length;
         this.despatchAdvice.despatchLine = [];
         for(let i = 0; i < size; i++){
-            this.despatchAdvice.despatchLine.push(new DespatchLine(new Quantity(), copyDespatchAdvice.despatchLine[i].item, [new Shipment()]));
+            this.despatchAdvice.despatchLine.push(new DespatchLine(new Quantity(), copyDespatchAdvice.despatchLine[i].item, [new Shipment()],copyDespatchAdvice.despatchLine[i].orderLineReference));
             this.despatchAdvice.despatchLine[i].deliveredQuantity.value = deliveredQuantityValues[i];
             this.despatchAdvice.despatchLine[i].deliveredQuantity.unitCode = copyDespatchAdvice.despatchLine[i].deliveredQuantity.unitCode;
         }

@@ -46,7 +46,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     id: string;
     catalogueId: string;
 
-    selectedLine: CatalogueLine;
+    selectedLineIndex:number = 0;
     lines: CatalogueLine[];
     wrappers: ProductWrapper[];
     // options: BpWorkflowOptions;
@@ -192,7 +192,6 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                     this.userService.getSettingsForUser(userId)
 
                 ]).then(([lines, order, currentUserSettings]) => {
-                    this.selectedLine = lines[0];
                     this.lines = lines;
                     this.correspondingOrderOfTransportProcess = order;
                     this.bpDataService.productOrder = order;
@@ -223,7 +222,6 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                         this.serviceWithSelectedProperties = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
 
                         this.lines = referencedLines;
-                        this.selectedLine = referencedLines[0];
                         this.productWithSelectedProperties = this.correspondingOrderOfTransportProcess.orderLine[0].lineItem.item;
 
                         this.setProductsExpandedArray(false);
@@ -288,7 +286,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             }
         }
 
-        this.selectedLine = this.lines[index];
+        this.selectedLineIndex = index;
 
         this.serviceExpanded = false;
     }

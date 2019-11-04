@@ -12,7 +12,8 @@
     <ng-container *ngFor="let clause of contract.clause">
         <!-- show clauses if it's document clause. Check quotation clause specifically -->
         <ng-container *ngIf="clause.clauseDocumentRef && ((showQuotation && clause.clauseDocumentRef.documentType === 'QUOTATION') || true)">
-            <clause [clause]="clause" [areCatalogueLinesDeleted]="areCatalogueLinesDeleted" [selectedLine]="selectedLine">
+            <clause [clause]="clause" [areCatalogueLinesDeleted]="areCatalogueLinesDeleted"
+                    [selectedLineIndex]="selectedLineIndex">
             </clause>
         </ng-container>
     </ng-container>

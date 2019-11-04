@@ -4,6 +4,7 @@ import {LineItem} from "./line-item";
  */
 export class OrderLine {
     constructor(
-        public lineItem:LineItem
+        public lineItem:LineItem,
+        public hjid:number = null
     ) {  }
 }

@@ -1,5 +1,6 @@
 <div *ngIf="isReady()">
-    <order-item *ngFor="let priceWrapper of priceWrappers;let i=index" [lineIndex]="i" [buyerParty]="buyerParty" [sellerParty]="sellerParty" [priceWrapper]="priceWrapper" [hidden]="isHidden(priceWrapper.item)" [selectedLine]="selectedLine"></order-item>
+    <order-item *ngFor="let priceWrapper of priceWrappers;let i=index" [lineIndex]="i" [buyerParty]="buyerParty" [sellerParty]="sellerParty" [priceWrapper]="priceWrapper" [hidden]="selectedLineIndex != i"
+                [selectedLineIndex]="selectedLineIndex"></order-item>
 
     <div class="row mb-4 mt-4">
         <div *ngIf="isEpcTabShown()" class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'TRACK_AND_TRACE'}" (click)="selectedPanel = 'TRACK_AND_TRACE'"><span [innerHTML]="'Track and Trace' | translate"></span></div>

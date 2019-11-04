@@ -1,6 +1,4 @@
 <negotiation-request-item *ngFor="let wrapper of wrappers;let i=index"
-                          [selectedLine]="selectedLine"
-                          [rfqLine]="rfq.requestForQuotationLine[i]"
                           [rfq]="rfq"
                           [processMetadata]="bpActivityEvent ? bpActivityEvent.processMetadata : null"
                           [manufacturersTermsSource]="manufacturersTermsSources[i]"
@@ -11,7 +9,7 @@
                           [defaultTermsAndConditions]="defaultTermsAndConditions"
                           [deliverytermsOfBuyer]="deliverytermsOfBuyer"
                           [wrapper]="wrapper"
-                          [hidden]="selectedLine != wrapper.catalogueLine">
+                          [hidden]="selectedLineIndex != wrapper.lineIndex">
 </negotiation-request-item>
 
 <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showNotesAndAdditionalFiles}" (click)="showNotesAndAdditionalFiles= showTab(showNotesAndAdditionalFiles)"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>

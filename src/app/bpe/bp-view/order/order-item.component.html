@@ -107,7 +107,8 @@
     <!-- Contract Preview -->
     <ng-container *ngIf="isReady()">
         <!--<div>-->
-        <contract *ngIf="selectedPanel == 'PREVIOUS_STEPS'" [contract]="getOrderContract()" [collapsable]="false" [selectedLine]="selectedLine"
+        <contract *ngIf="selectedPanel == 'PREVIOUS_STEPS'" [contract]="getOrderContract()" [collapsable]="false"
+                  [selectedLineIndex]="selectedLineIndex"
                   [areCatalogueLinesDeleted]="populateAreCatalogueLinesDeletedArray()"></contract>
         <!--</div>-->
         <div *ngIf="selectedPanel == 'TERMS_AND_CONDITIONS'">

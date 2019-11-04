@@ -1,21 +1,16 @@
 <ng-container *ngIf="dispatchAdvice">
-    <!-- Dispatched Quantity -->
-    <quantity-input *ngIf="dispatchAdvice.despatchLine.length == 1" [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
-        label="Dispatched Quantity" [quantity]="dispatchAdvice.despatchLine[0].deliveredQuantity"
-        rowClass="space-before" labelClass="col-2" valueClass="col-10">
-    </quantity-input>
-
-    <div *ngIf="dispatchAdvice.despatchLine.length > 1" class="row space-before">
+    <!-- Dispatched Quantities -->
+    <div class="row space-before">
         <div [class]="'col-2'">
             <input-label [label]="'Dispatched Quantities'">
             </input-label>
         </div>
         <div [class]="'col-10'">
             <div class="row space-after" *ngFor="let dispatchLine of dispatchAdvice.despatchLine;let i=index">
-                <div class="col-1" style="text-align: center">
+                <div *ngIf="dispatchAdvice.despatchLine.length > 1" class="col-1" style="text-align: center">
                     <input type="checkbox" [(ngModel)]="selectedProducts[i]" [disabled]="isLoading()  || isReadOnly()">
                 </div>
-                <div class="col-2">
+                <div [ngClass]="dispatchAdvice.despatchLine.length == 1 ? 'col-3':'col-2'">
                     {{dispatchLine.item.name[0].value}}
                 </div>
                 <div class="col-9">

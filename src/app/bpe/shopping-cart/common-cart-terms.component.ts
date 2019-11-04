@@ -24,7 +24,6 @@ export class CommonCartTermsComponent implements OnInit {
     INCOTERMS = INCOTERMS;
 
     @Input() deliveryTermsOfBuyer: DeliveryTerms[];
-    @Output() onHideTermBox: EventEmitter<boolean> = new EventEmitter();
 
     deliveryPeriodUnits: string[];
     deliveryPeriod: Quantity = new Quantity();
@@ -73,10 +72,6 @@ export class CommonCartTermsComponent implements OnInit {
     /**
      * event handlers
      */
-
-    onHideTerms(): void {
-        this.onHideTermBox.emit(true);
-    }
 
     onApplyTerms(): void {
         if (confirm('Are you sure that you want to apply terms to all products?\nExisting terms will be overwritten.')) {

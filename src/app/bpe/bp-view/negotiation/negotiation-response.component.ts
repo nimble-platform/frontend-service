@@ -29,7 +29,7 @@ import {Item} from '../../../catalogue/model/publish/item';
 export class NegotiationResponseComponent implements OnInit {
 
     lines: CatalogueLine[];
-    @Input() selectedLine: CatalogueLine;
+    @Input() selectedLineIndex: number;
     @Input() rfq: RequestForQuotation;
     @Input() quotation: Quotation;
     @Input() lastOfferQuotation: Quotation;

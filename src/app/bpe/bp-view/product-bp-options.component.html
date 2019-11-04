@@ -6,7 +6,7 @@
                 <span [innerHTML]="'Order for' | translate"></span>:
             </h2>
             <ng-container *ngFor="let line of lines;let i=index">
-                <h2><div class="btn btn-outline-primary btn-light inline" [ngClass]="{'active':selectedLine == line}" (click)="selectedLine=line">{{ line.goodsItem.item.name[0].value }}</div>
+                <h2><div class="btn btn-outline-primary btn-light inline" [ngClass]="{'active':selectedLineIndex == i}" (click)="selectedLineIndex=i">{{ line.goodsItem.item.name[0].value }}</div>
                     <button class="btn btn-outline-dark inline ml-2" (click)="onToggleProductExpanded(i)">
                         <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="productsExpanded[i]"></i>
                         <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!productsExpanded[i]"></i>
@@ -71,15 +71,17 @@
     </item-information>
     <ppap *ngIf="currentStep === 'Ppap'" [isCatalogueLineDeleted]="areCatalogueLinesDeleted[0]">
     </ppap>
-    <negotiation *ngIf="currentStep === 'Negotiation'" [areCatalogueLinesDeleted]="areCatalogueLinesDeleted" [selectedLine]="selectedLine">
+    <negotiation *ngIf="currentStep === 'Negotiation'" [areCatalogueLinesDeleted]="areCatalogueLinesDeleted"
+                 [selectedLineIndex]="selectedLineIndex">
     </negotiation>
     <transport-negotiation *ngIf="currentStep === 'Transport_Negotiation'">
     </transport-negotiation>
-    <order *ngIf="currentStep === 'Order' || currentStep === 'Order_Confirmed'" [selectedLine]="selectedLine">
+    <order *ngIf="currentStep === 'Order' || currentStep === 'Order_Confirmed'" [selectedLineIndex]="selectedLineIndex">
     </order>
     <transport-execution-plan *ngIf="currentStep === 'Transport_Order' || currentStep === 'Transport_Order_Confirmed'">
     </transport-execution-plan>
-    <fulfilment *ngIf="currentStep === 'Fulfilment'" [selectedLineIndex]="lines.indexOf(selectedLine)" [catalogueLines]="lines">
+    <fulfilment *ngIf="currentStep === 'Fulfilment'" [selectedLineIndex]="selectedLineIndex"
+                [catalogueLines]="lines">
     </fulfilment>
 </ng-container>
 
