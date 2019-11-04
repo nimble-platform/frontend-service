@@ -324,7 +324,7 @@
                     <ng-template #editDataMonitoringRequest>
                         <div class="input-group">
                             <div class="d-flex align-items-center">
-                                <input type="checkbox" [(ngModel)]="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.dataMonitoringRequested" [disabled]="isLoading() || isReadOnly()" >
+                                <input type="checkbox" [(ngModel)]="wrapper.rfqDataMonitoringRequested" [disabled]="isLoading() || isReadOnly()" >
                             </div>
                             <span class="form-control d-inline border-0">
                         <strong class="font-weight-500"><span [innerHTML]="'Request data monitoring service' | translate"></span></strong>

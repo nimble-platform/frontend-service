@@ -102,13 +102,13 @@
     <ng-container [ngSwitch]="primaryTermsSource">
         <div *ngSwitchCase="'product_defaults'" class="col-3"></div>
         <div *ngSwitchCase="'frame_contract'" class="col-3">{{ wrapper.frameContractQuotationWrapper.dataMonitoringPromisedString}}</div>
-        <div *ngSwitchCase="'last_offer'" class="col-3">{{ rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.dataMonitoringRequested ? wrapper.lastOfferQuotationWrapper.dataMonitoringPromisedString : ''}}</div>
+        <div *ngSwitchCase="'last_offer'" class="col-3">{{ wrapper.rfqDataMonitoringRequested ? wrapper.lastOfferQuotationWrapper.dataMonitoringPromisedString : ''}}</div>
     </ng-container>
-    <div *ngIf="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.dataMonitoringRequested" class="col-3"><b><span [innerHTML]="'Requested' | translate"></span></b></div>
-    <div *ngIf="!rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.dataMonitoringRequested" class="col-3"><span [innerHTML]="'Not Requested' | translate"></span></div>
+    <div *ngIf="wrapper.rfqDataMonitoringRequested" class="col-3"><b><span [innerHTML]="'Requested' | translate"></span></b></div>
+    <div *ngIf="!wrapper.rfqDataMonitoringRequested" class="col-3"><span [innerHTML]="'Not Requested' | translate"></span></div>
 
     <!-- Manufacturer's response -->
-    <ng-container *ngIf="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.dataMonitoringRequested">
+    <ng-container *ngIf="wrapper.rfqDataMonitoringRequested">
         <div class="col-3" *ngIf="!isReadOnly()">
             <input type="checkbox" [(ngModel)]="quotation.quotationLine[wrapper.lineIndex].lineItem.dataMonitoringRequested"
                    [disabled]="isDisabled()">

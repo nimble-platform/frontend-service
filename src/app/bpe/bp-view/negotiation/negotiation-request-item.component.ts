@@ -256,7 +256,7 @@ export class NegotiationRequestItemComponent implements OnInit {
             this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.clause = copy(quotationWrapper.quotation.quotationLine[this.wrapper.lineIndex].lineItem.clause);
             // }
             this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.tradingTerms = copy(quotationWrapper.tradingTerms);
-            this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.dataMonitoringRequested = quotationWrapper.dataMonitoringPromised;
+            this.wrapper.rfqDataMonitoringRequested = quotationWrapper.dataMonitoringPromised;
 
         } else if(termSource == 'product_defaults') {
             if(this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.DELIVERY_PERIOD]) {
@@ -379,7 +379,7 @@ export class NegotiationRequestItemComponent implements OnInit {
                 durationToString(this.frameContractDuration) != quotationWrapper.rfqFrameContractDurationString;
             customTermsDiffer = !UBLModelUtils.areTradingTermListsEqual(this.wrapper.rfqTradingTerms, quotationWrapper.tradingTerms);
             clausesDiffer = UBLModelUtils.areTermsAndConditionListsDifferent(quotationWrapper.quotation.quotationLine[this.wrapper.lineIndex].lineItem.clause, this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.clause);
-            dataDataMonitoringRequestDiffers = !quotationWrapper.dataMonitoringPromised ? this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.dataMonitoringRequested : false;
+            dataDataMonitoringRequestDiffers = !quotationWrapper.dataMonitoringPromised ? this.wrapper.rfqDataMonitoringRequested : false;
 
         } else {
             priceDiffers = this.wrapper.rfqPricePerItemString != this.wrapper.lineDiscountPriceWrapper.discountedPricePerItemString;
@@ -394,7 +394,7 @@ export class NegotiationRequestItemComponent implements OnInit {
                 !UBLModelUtils.areQuantitiesEqual(this.frameContractDuration, UBLModelUtils.getFrameContractDurationFromRfqLine(this.wrapper.initialImmutableRfq.requestForQuotationLine[this.wrapper.lineIndex]));
             customTermsDiffer = this.wrapper.rfqTradingTerms.length > 0 ? true : false;
             clausesDiffer = UBLModelUtils.areTermsAndConditionListsDifferent(this.wrapper.initialImmutableRfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.clause, this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.clause);
-            dataDataMonitoringRequestDiffers = this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.dataMonitoringRequested;
+            dataDataMonitoringRequestDiffers = this.wrapper.rfqDataMonitoringRequested;
         }
 
         return priceDiffers ||

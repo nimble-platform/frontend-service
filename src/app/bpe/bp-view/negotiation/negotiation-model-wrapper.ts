@@ -236,6 +236,14 @@ export class NegotiationModelWrapper {
         return this.rfqPaymentTerms.paymentTerm;
     }
 
+    public get rfqDataMonitoringRequested(): boolean {
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.dataMonitoringRequested;
+    }
+
+    public set rfqDataMonitoringRequested(isDataMonitoringRequested: boolean) {
+        this.rfq.requestForQuotationLine[this.lineIndex].lineItem.dataMonitoringRequested = isDataMonitoringRequested;
+    }
+
     public get rfqPaymentMeans(): string {
         return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.paymentMeans.paymentMeansCode.value;
     }
