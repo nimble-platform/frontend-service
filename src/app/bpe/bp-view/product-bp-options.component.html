@@ -22,7 +22,7 @@
                         <!--</div>-->
                     </ng-template>
 
-                    <button class="btn btn-outline-dark inline" (click)="open(content)" *ngIf="config.showChat"><span [innerHTML]="'Start chat' | translate"></span></button>
+                    <button class="btn btn-outline-dark inline" (click)="open(content,line.goodsItem.item.name[0].value)" *ngIf="config.showChat"><span [innerHTML]="'Start chat' | translate"></span></button>
                 </h2>
             </ng-container>
         </div>
