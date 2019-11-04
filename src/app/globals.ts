@@ -17,8 +17,8 @@ export const frontendURL = base_path + "/frontend/";
 // Service endpoints
 
 export const user_mgmt_endpoint=`${base_path}/identity`;
-export const catalogue_endpoint=`http://localhost:8095`;
-export const bpe_endpoint=`http://localhost:8081`;
+export const catalogue_endpoint=`${base_path}/catalog`;
+export const bpe_endpoint=`${base_path}/business-process`;
 export const data_channel_endpoint=`${base_path}/data-channel`;
 export const data_aggregation_endpoint=`${base_path}/data-aggregation`;
 export const trust_service_endpoint=`${base_path}/trust`;
