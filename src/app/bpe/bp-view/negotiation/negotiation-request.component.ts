@@ -82,12 +82,6 @@ export class NegotiationRequestComponent implements OnInit {
      */
     processMetadata: ThreadEventMetadata = null; // the copy of ThreadEventMetadata of the current business process
 
-
-    @ViewChild(DiscountModalComponent)
-    private discountModal: DiscountModalComponent;
-    @ViewChild(CustomTermModalComponent)
-    private customTermModal: CustomTermModalComponent;
-
     config = myGlobals.config;
 
     constructor(private bpDataService: BPDataService,

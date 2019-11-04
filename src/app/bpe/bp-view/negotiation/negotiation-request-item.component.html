@@ -338,12 +338,10 @@
         <!-- Delivery -->
         <div *ngIf="showDeliveryAddress" class="row mb-3">
             <div class="col-12">
-                <options-input label="Use Existing Address" [(selected)]="selectedAddress" [options]="addressOptions"
-                               rowClass="mb-1" labelClass="col-2" valueClass="col-10">
-                </options-input>
-
-                <address-input [address]="wrapper.rfqDeliveryAddress" [disabled]="isLoading() || isReadOnly() || selectedAddressValue !== ''">
-                </address-input>
+                <multi-address-input [deliveryTerms]="deliverytermsOfBuyer"
+                                     [disabled]="isLoading() || isReadOnly()"
+                                     [address]="wrapper.rfqDeliveryAddress">
+                </multi-address-input>
             </div>
         </div>
 

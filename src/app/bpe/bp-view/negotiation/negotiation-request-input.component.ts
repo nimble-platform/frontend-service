@@ -10,6 +10,7 @@ import { UnitService } from "../../../common/unit-service";
 export class NegotiationRequestInputComponent implements OnInit {
 
     @Input() label: string;
+    @Input() description: string;
 
     // see https://blog.angulartraining.com/tutorial-create-your-own-two-way-data-binding-in-angular-46487650ea82 for this trick
     // private cbModelValue: boolean;

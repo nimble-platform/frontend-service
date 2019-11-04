@@ -59,6 +59,7 @@ import {PartyName} from './publish/party-name';
 import {MultiTypeValue} from "./publish/multi-type-value";
 import {Clause} from "./publish/clause";
 import {Contract} from './publish/contract';
+import {Address as UserMgmtAddress} from '../../user-mgmt/model/address';
 
 /**
  * Created by suat on 05-Jul-17.
@@ -586,14 +587,17 @@ export class UBLModelUtils {
         return new Period(null, null, null, null, this.createQuantity(value, unit), null);
     }
 
-    public static createDimension(attributeId:string, unitCode:string):Dimension {
-        const quantity:Quantity = this.createQuantity();
-        quantity.unitCode = unitCode;
-        return new Dimension(attributeId, quantity);
-    }
-
-    public static createAddress():Address {
-        return new Address(null,null,null,null,null, this.createCountry());
+    /**
+     * Converts the address in src/app/user-mgmt/model to UBL address
+     * @param userMgmtAddress address entity with the type defined in the user management module
+     */
+    public static mapUserMgmtAddressToUblAddress(ublAddress: Address, userMgmtAddress: UserMgmtAddress): void {
+        ublAddress.cityName = userMgmtAddress.cityName;
+        ublAddress.region = userMgmtAddress.region;
+        ublAddress.postalZone = userMgmtAddress.postalCode;
+        ublAddress.buildingNumber = userMgmtAddress.buildingNumber;
+        ublAddress.streetName = userMgmtAddress.streetName;
+        ublAddress.country.name.value = userMgmtAddress.country;
     }
 
     public static createCountry():Country {

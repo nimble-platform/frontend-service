@@ -23,6 +23,7 @@ import {Quotation} from '../../../catalogue/model/publish/quotation';
 import {Clause} from '../../../catalogue/model/publish/clause';
 import {CustomTermModalComponent} from './custom-term-modal.component';
 import {TranslateService} from '@ngx-translate/core';
+import {DeliveryTerms} from '../../../user-mgmt/model/delivery-terms';
 
 enum FIXED_NEGOTIATION_TERMS {
     DELIVERY_PERIOD = 'deliveryPeriod',
@@ -63,8 +64,7 @@ export class NegotiationRequestItemComponent implements OnInit {
     manufacturersTermsExistence: any = {'product_defaults': true}; // a (term source -> boolean) map indicating the existence of term sources
     sellerId:string = null;
     buyerId:string = null;
-    selectedAddressValue = "";
-    @Input() deliverytermsOfBuyer = null;
+    @Input() deliverytermsOfBuyer: DeliveryTerms[] = null;
 
     /**
      * View control fields
@@ -425,45 +425,6 @@ export class NegotiationRequestItemComponent implements OnInit {
     lineHasPrice(): boolean {
         return this.wrapper.lineDiscountPriceWrapper.itemPrice.hasPrice();
     }
-
-    get selectedAddress(): string {
-        return this.selectedAddressValue;
-    }
-
-    set selectedAddress(addressStr: string) {
-        this.selectedAddressValue = addressStr;
-
-        if(addressStr !== "") {
-            const index = Number(addressStr);
-            const address = this.deliverytermsOfBuyer[index].deliveryAddress;
-            const rfqAddress = this.wrapper.rfqDeliveryAddress;
-            rfqAddress.buildingNumber = address.buildingNumber;
-            rfqAddress.cityName = address.cityName;
-            rfqAddress.region = address.region;
-            rfqAddress.country.name.value = address.country;
-            rfqAddress.postalZone = address.postalCode;
-            rfqAddress.streetName = address.streetName;
-        }
-    }
-
-    get addressOptions(): Option[] {
-        const deliveryTerms = this.deliverytermsOfBuyer;
-        var ret = [];
-        if (deliveryTerms.length == 0 || !deliveryTerms[0].deliveryAddress || !deliveryTerms[0].deliveryAddress.streetName) {
-            ret = [
-                { name: "No", value: "" }
-            ];
-        }
-        else {
-            ret = [
-                { name: "No", value: "" }
-            ].concat(deliveryTerms.map((term, i) => {
-                return { name: addressToString(term.deliveryAddress), value: String(i) };
-            }));
-        }
-        return ret;
-    }
-
 
     getQuantityUnit(): string {
         if(!this.wrapper.catalogueLine) {

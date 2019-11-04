@@ -59,6 +59,7 @@ export class ShoppingCartComponent implements OnInit {
 
     collapsedStatusesOfCartItems: Map<number, boolean> = new Map<number, boolean>();
     deleteCallStatuses: Map<number, CallStatus> = new Map<number, CallStatus>();
+    showCommonTerms = false;
 
     // call status to be able to show a single loading icon
     initCallStatus: CallStatus = new CallStatus();

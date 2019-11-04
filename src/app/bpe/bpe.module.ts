@@ -51,6 +51,7 @@ import {ShoppingCartComponent} from './shopping-cart/shopping-cart.component';
 import {NegotiationRequestItemComponent} from './bp-view/negotiation/negotiation-request-item.component';
 import {NegotiationResponseItemComponent} from './bp-view/negotiation/negotiation-response-item.component';
 import {OrderItemComponent} from './bp-view/order/order-item.component';
+import {CommonCartTermsComponent} from './shopping-cart/common-cart-terms.component';
 
 @NgModule({
     imports: [
@@ -103,7 +104,8 @@ import {OrderItemComponent} from './bp-view/order/order-item.component';
         ThreadSummaryComponent,
         ThreadEventComponent,
         CustomTermModalComponent,
-        ShoppingCartComponent
+        ShoppingCartComponent,
+        CommonCartTermsComponent
     ],
     exports: [
         BPConfigureComponent,
