@@ -304,7 +304,8 @@ export class ShoppingCartComponent implements OnInit {
             // incoterm and payment terms
             for (let i = 0; i < this.shoppingCart.catalogueLine.length; i++) {
                 sellerId = UBLModelUtils.getLinePartyId(this.shoppingCart.catalogueLine[i]);
-                if (this.sellersSettings.get(sellerId) == null) {
+                // get default T&Cs for the products whose seller does not have specific T&Cs
+                if (this.sellersSettings.get(sellerId).negotiationSettings.company.salesTerms == null || this.sellersSettings.get(sellerId).negotiationSettings.company.salesTerms.termOrCondition.length == 0) {
                     let copyTCs: Clause[] = copy(termsAndConditions);
                     for (let clause of copyTCs) {
                         for (let tradingTerm of clause.tradingTerms) {

@@ -44,8 +44,8 @@
                                       [frameContractQuotation]="frameContracts.has(cartLine.hjid) ? frameContracts.get(cartLine.hjid)[1] : null"
                                       [frameContract]="frameContracts.has(cartLine.hjid) ? frameContracts.get(cartLine.hjid)[0] : null"
                                       [manufacturersTermsSource]="frameContracts.has(cartLine.hjid) ? 'frame_contract' : 'product_defaults'"
-                                      [defaultTermsAndConditions]="sellersSettings.get(getLinePartyId(cartLine)).negotiationSettings.company.salesTerms != null
-                                                                    ? sellersSettings.get(getLinePartyId(cartLine)).negotiationSettings.company.salesTerms
+                                      [defaultTermsAndConditions]="sellersSettings.get(getLinePartyId(cartLine)).negotiationSettings.company.salesTerms != null && sellersSettings.get(getLinePartyId(cartLine)).negotiationSettings.company.salesTerms.termOrCondition.length > 0
+                                                                    ? sellersSettings.get(getLinePartyId(cartLine)).negotiationSettings.company.salesTerms.termOrCondition
                                                                     : platformTermsAndConditions.get(cartLine.hjid)"
                                       [deliverytermsOfBuyer]="buyerCompanySettings.tradeDetails.deliveryTerms"
                                       [wrapper]="negotiationModelWrappers.get(cartLine.hjid)"
