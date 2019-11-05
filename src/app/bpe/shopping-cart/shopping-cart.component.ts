@@ -27,6 +27,7 @@ import {SupplierParty} from '../../catalogue/model/publish/supplier-party';
 import {CustomerParty} from '../../catalogue/model/publish/customer-party';
 import {Order} from '../../catalogue/model/publish/order';
 import {Party} from '../../catalogue/model/publish/party';
+import {TradingPreferences} from '../../catalogue/model/publish/trading-preferences';
 /**
  * Created by suat on 11-Oct-19.
  */
@@ -71,6 +72,7 @@ export class ShoppingCartComponent implements OnInit {
 
     getProductName = selectPreferredValues;
     getPartyId = UBLModelUtils.getPartyId;
+    getLinePartyId = UBLModelUtils.getLinePartyId;
 
     @ViewChildren(NegotiationRequestItemComponent) negotiationRequestItemComponents: QueryList<NegotiationRequestItemComponent>;
 
@@ -298,23 +300,38 @@ export class ShoppingCartComponent implements OnInit {
             this.sellersSettings.get(sellerId).negotiationSettings.paymentTerms[0]
 
         ).then(termsAndConditions => {
-            // set the terms and conditions for the first cart line
-            this.platformTermsAndConditions.set(this.shoppingCart.catalogueLine[0].hjid, termsAndConditions);
             // adapt the terms and conditions for the other products by updating the terms including
             // incoterm and payment terms
-            for (let i = 1; i < this.shoppingCart.catalogueLine.length; i++) {
+            for (let i = 0; i < this.shoppingCart.catalogueLine.length; i++) {
                 sellerId = UBLModelUtils.getLinePartyId(this.shoppingCart.catalogueLine[i]);
+                if (this.sellersSettings.get(sellerId) == null) {
+                    let copyTCs: Clause[] = copy(termsAndConditions);
+                    for (let clause of copyTCs) {
+                        for (let tradingTerm of clause.tradingTerms) {
+                            if (tradingTerm.id.includes('incoterms_id')) {
+                                tradingTerm.value.valueCode[0].value = this.shoppingCart.catalogueLine[i].goodsItem.deliveryTerms.incoterms;
+                            } else if (tradingTerm.id.includes('payment_id')) {
+                                tradingTerm.value.valueCode[0].value = this.sellersSettings.get(sellerId).negotiationSettings.paymentTerms[0];
+                            }
+                        }
+                    }
+                    this.platformTermsAndConditions.set(this.shoppingCart.catalogueLine[i].hjid, copyTCs);
+                }
+            }
+
+            // Check buyers terms and conditions also. Buyer terms are used in the common terms component as initial default values
+            if (this.buyerCompanySettings.negotiationSettings.company.salesTerms == null) {
                 let copyTCs: Clause[] = copy(termsAndConditions);
                 for (let clause of copyTCs) {
                     for (let tradingTerm of clause.tradingTerms) {
                         if (tradingTerm.id.includes('incoterms_id')) {
-                            tradingTerm.value.valueCode[0].value = this.shoppingCart.catalogueLine[i].goodsItem.deliveryTerms.incoterms;
+                            tradingTerm.value.valueCode[0].value = this.buyerCompanySettings.negotiationSettings.incoterms[0];
                         } else if (tradingTerm.id.includes('payment_id')) {
-                            tradingTerm.value.valueCode[0].value = this.sellersSettings.get(sellerId).negotiationSettings.paymentTerms[0];
+                            tradingTerm.value.valueCode[0].value = this.buyerCompanySettings.negotiationSettings.paymentTerms[0];
                         }
                     }
                 }
-                this.platformTermsAndConditions.set(this.shoppingCart.catalogueLine[i].hjid, copyTCs);
+                this.buyerCompanySettings.negotiationSettings.company.salesTerms = new TradingPreferences(copyTCs);
             }
 
             this.initCallStatus.aggregatedCallBack();

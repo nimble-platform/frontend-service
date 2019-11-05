@@ -17,7 +17,6 @@ import {TradingTerm} from '../../../catalogue/model/publish/trading-term';
 export class TermsAndConditionsComponent implements OnInit {
 
     // Inputs
-    @Input() buyerPartyId:string;
     @Input() sellerPartyId:string;
     @Input() readOnly:boolean = false;
     @Input() enableComparisonWithOtherTerms: boolean = true; // if true, original and current terms are compared and differences are highlighted
@@ -48,8 +47,8 @@ export class TermsAndConditionsComponent implements OnInit {
     _selectedTradingTerm: string = null;
 
     // options
-    INCOTERMS: string[] = [];
-    PAYMENT_TERMS:string[] = [];
+    @Input() availableIncoTerms: string[] = [];
+    @Input() availablePaymentTerms: string[] = [];
     COUNTRY_NAMES = COUNTRY_NAMES;
 
     constructor(public bpeService: BPEService,
@@ -63,7 +62,7 @@ export class TermsAndConditionsComponent implements OnInit {
         window.crypto.getRandomValues(array);
         this.randomComponentId = "" + array[0];
 
-        if(this.enableComparisonWithOtherTerms) {
+        if(this.enableComparisonWithOtherTerms && this.sellerPartyId != null) {
             this.callStatus.submit();
             Promise.all([
                 this.userService.getSettingsForParty(this.sellerPartyId),
@@ -73,9 +72,9 @@ export class TermsAndConditionsComponent implements OnInit {
             ]).then(([sellerPartySettings, deliveryPeriodUnits, warrantyPeriodUnits]) => {
 
                 // populate available incoterms
-                this.INCOTERMS = sellerPartySettings.negotiationSettings.incoterms;
+                this.availableIncoTerms = sellerPartySettings.negotiationSettings.incoterms;
                 // populate available payment terms
-                this.PAYMENT_TERMS = sellerPartySettings.negotiationSettings.paymentTerms;
+                this.availablePaymentTerms = sellerPartySettings.negotiationSettings.paymentTerms;
 
                 this.callStatus.callback("Successfully fetched terms and conditions", true);
             }).catch(error => {

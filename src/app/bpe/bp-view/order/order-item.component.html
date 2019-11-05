@@ -146,7 +146,6 @@
 
             <!-- Clauses -->
             <terms-and-conditions *ngIf="selectedTCTab == 'CLAUSES'"
-                                  [buyerPartyId]="getPartyId(buyerParty)"
                                   [selectedIncoterm]="order.orderLine[0].lineItem.deliveryTerms.incoterms"
                                   [selectedTradingTerm]="order.orderLine[lineIndex].lineItem.paymentTerms.tradingTerms"
                                   [sellerPartyId]="getPartyId(sellerParty)"

@@ -87,7 +87,7 @@
 
     <div *ngIf="showDeliveryAddress" class="row mb-3">
         <div class="col-12">
-            <multi-address-input [deliveryTerms]="deliveryTermsOfBuyer"
+            <multi-address-input [deliveryTerms]="buyerCompanySettings.tradeDetails.deliveryTerms"
                                  [address]="deliveryAddress">
             </multi-address-input>
         </div>
@@ -111,40 +111,41 @@
             </li>
         </ul>
 
-        <!--<ng-container *ngIf="selectedTCTab == 'CUSTOM_TERMS'">-->
-            <!--<ng-container *ngFor="let tradingTerm of wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.tradingTerms">-->
-                <!--<div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row content-row mb-1">-->
-                    <!--<div class="col-2">-->
-                        <!--<strong class="font-weight-500">{{tradingTerm.id}}:</strong>-->
-                        <!--<span *ngIf="tradingTerm.description?.length > 0" [title]="tradingTerm.description[0].value">&#9432;</span>-->
-                    <!--</div>-->
-                    <!--<div class="col-5">-->
-                        <!--<div class="d-flex">-->
-                            <!--<multi-type-input [multiTypeValue]="tradingTerm.value"></multi-type-input>-->
-                            <!--<div class="btn btn-danger ml-2" (click)="onDeleteTradingTerm(tradingTerm.id)"><span [innerHTML]="'Delete' | translate"></span></div>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</ng-container>-->
-            <!--<div class="btn btn-outline-primary mt-1" (click)="openCustomTermModal()"><span [innerHTML]="'Add Custom Term' | translate"></span></div>-->
-        <!--</ng-container>-->
+        <ng-container *ngIf="selectedTCTab == 'CUSTOM_TERMS'">
+            <ng-container *ngFor="let tradingTerm of tradingTerms">
+                <div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row content-row mb-1">
+                    <div class="col-2">
+                        <strong class="font-weight-500">{{tradingTerm.id}}:</strong>
+                        <span *ngIf="tradingTerm.description?.length > 0" [title]="tradingTerm.description[0].value">&#9432;</span>
+                    </div>
+                    <div class="col-5">
+                        <div class="d-flex">
+                            <multi-type-input [multiTypeValue]="tradingTerm.value"></multi-type-input>
+                            <div class="btn btn-danger ml-2" (click)="onDeleteTradingTerm(tradingTerm.id)"><span [innerHTML]="'Delete' | translate"></span></div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+            <div class="btn btn-outline-primary mt-1" (click)="openCustomTermModal()"><span [innerHTML]="'Add Custom Term' | translate"></span></div>
+        </ng-container>
 
-        <!--<ng-container *ngIf="selectedTCTab == 'CLAUSES'">-->
-            <!--<div class="row content-row mt-2">-->
-                <!--<div class="col-2"></div>-->
-                <!--<div class="col-5">-->
-                    <!--<terms-and-conditions [sellerPartyId]="sellerId"-->
-                                          <!--[selectedIncoterm]="wrapper.rfqIncoterms"-->
-                                          <!--[selectedTradingTerm]="wrapper.rfqPaymentTerms.paymentTerm"-->
-                                          <!--(onIncotermChanged)="wrapper.rfqIncoterms = $event; onTermsChange(FIXED_NEGOTIATION_TERMS.INCOTERMS);"-->
-                                          <!--(onPaymentMeansChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event; onTermsChange(FIXED_NEGOTIATION_TERMS.PAYMENT_MEANS);"-->
-                                          <!--(onClauseUpdated)="onClauseUpdate($event,wrapper);"-->
-                                          <!--[originalTermAndConditionClauses]="buyerCompanySettings.negotiationSettings.company.salesTerms.termOrCondition"-->
-                                          <!--[termsAndConditions]="buyerCompanySettings.negotiationSettings.company.salesTerms.termOrCondition"-->
-                                          <!--[documentType]="'shopping-cart'">-->
-                    <!--</terms-and-conditions>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</ng-container>-->
+        <ng-container *ngIf="selectedTCTab == 'CLAUSES'">
+            <div class="row content-row mt-2">
+                <div class="col-2"></div>
+                <div class="col-5">
+                    <terms-and-conditions [availableIncoTerms]="buyerCompanySettings.negotiationSettings.incoterms"
+                                          [availablePaymentTerms]="buyerCompanySettings.negotiationSettings.paymentTerms"
+                                          (onIncotermChanged)="incoTerm = $event"
+                                          (onPaymentMeansChanged)="paymentMean = $event"
+                                          [originalTermAndConditionClauses]="buyerCompanySettings.negotiationSettings.company.salesTerms.termOrCondition"
+                                          [termsAndConditions]="buyerCompanySettings.negotiationSettings.company.salesTerms.termOrCondition"
+                                          [documentType]="'shopping-cart'">
+                    </terms-and-conditions>
+                </div>
+            </div>
+        </ng-container>
     </div>
 </div>
+
+<custom-term-modal (onCustomTermAdded)="onCustomTermAdded($event.name, $event.description, $event.value, $event.dataType)">
+</custom-term-modal>

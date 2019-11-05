@@ -284,21 +284,7 @@ export class NegotiationModelWrapper {
         if(tradingTerm != null) {
             return;
         } else {
-            let termValue: MultiTypeValue = new MultiTypeValue();
-            termValue.valueQualifier = type;
-
-            if(type == 'TEXT') {
-                let text: Text = new Text(value, null);
-                text.value = value;
-                termValue.value.push(text);
-            } else if(type == 'NUMBER') {
-                termValue.valueDecimal.push(value);
-            } else if(type == 'QUANTITY') {
-                termValue.valueQuantity.push(value);
-            }
-
-            let description: Text[] = [new Text(termDescription, null)];
-            tradingTerm = new TradingTerm(termName, description, null, termValue);
+            tradingTerm = UBLModelUtils.createTradingTerm(termName, termDescription, value, type);
             this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.push(tradingTerm);
         }
     }
