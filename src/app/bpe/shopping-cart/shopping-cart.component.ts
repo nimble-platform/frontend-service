@@ -358,7 +358,7 @@ export class ShoppingCartComponent implements OnInit {
                 cartLine,
                 rfq,
                 null,
-                this.frameContracts.has(lineHjid) ? this.frameContracts.has(lineHjid)[1] : null,
+                this.frameContracts.has(lineHjid) ? this.frameContracts.get(lineHjid)[1] : null,
                 null,
                 this.sellersSettings.get(sellerId).negotiationSettings,
                 index);
