@@ -336,19 +336,36 @@ export class NegotiationComponent implements OnInit, OnDestroy {
 
     // this method is called a few times as soon as various information is fetched
     setFrameContractNegotiationFlag(): void {
+        // stores the products (catalogue id, line id pairs) for which the frame contracts are being negotiated
+        let productsFrameContractsBeingNegotiatedFor:any = [];
         this.isFrameContractBeingNegotiatedInThisNegotiation = [];
         for(let primaryTermsSource of this.primaryTermsSource){
             this.isFrameContractBeingNegotiatedInThisNegotiation.push(false);
         }
+
+        let requestForQuotation = null;
         // first check the current request for quotation contains a frame contract duration. currently it is assumed that if an rfq contains a frame
         // contract duration, the contract is being negotiated in that history
         let frameContractDuration: Quantity;
         if(this.bpDataService.requestForQuotation) {
-            let size = this.bpDataService.requestForQuotation.requestForQuotationLine.length;
+            requestForQuotation = this.bpDataService.requestForQuotation;
+            let size = requestForQuotation.requestForQuotationLine.length;
             for(let i = 0; i <size;i++){
-                frameContractDuration = UBLModelUtils.getFrameContractDurationFromRfqLine(this.bpDataService.requestForQuotation.requestForQuotationLine[i]);
+                let catalogueId = requestForQuotation.requestForQuotationLine[i].lineItem.item.catalogueDocumentReference.id;
+                let lineId = requestForQuotation.requestForQuotationLine[i].lineItem.item.manufacturersItemIdentification.id;
+                frameContractDuration = UBLModelUtils.getFrameContractDurationFromRfqLine(requestForQuotation.requestForQuotationLine[i]);
                 if(!UBLModelUtils.isEmptyQuantity(frameContractDuration)) {
-                    this.isFrameContractBeingNegotiatedInThisNegotiation[i] = true;
+                    // frame contract is being negotiated for the product
+                    let productExists = false;
+                    for (let productFrameContractsBeingNegotiatedFor of productsFrameContractsBeingNegotiatedFor) {
+                        if(catalogueId == productFrameContractsBeingNegotiatedFor.catalogueId && lineId == productFrameContractsBeingNegotiatedFor.lineId ){
+                            productExists = true;
+                            break;
+                        }
+                    }
+                    if(!productExists){
+                        productsFrameContractsBeingNegotiatedFor.push({catalogueId:catalogueId,lineId:lineId});
+                    }
                 }
             }
         }
@@ -356,11 +373,38 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         // check the negotiation history documents
         for(let i=0; i<this.negotiationDocuments.length; i=i+2) {
             let rfq: RequestForQuotation = this.negotiationDocuments[i].request;
+            if(requestForQuotation == null){
+                requestForQuotation = rfq;
+            }
             let size = rfq.requestForQuotationLine.length;
             for(let i = 0; i <size;i++){
+                let catalogueId = rfq.requestForQuotationLine[i].lineItem.item.catalogueDocumentReference.id;
+                let lineId = rfq.requestForQuotationLine[i].lineItem.item.manufacturersItemIdentification.id;
                 frameContractDuration = UBLModelUtils.getFrameContractDurationFromRfqLine(rfq.requestForQuotationLine[i]);
                 if (!UBLModelUtils.isEmptyQuantity(frameContractDuration)) {
+                    // frame contract is being negotiated for the product
+                    let productExists = false;
+                    for (let productFrameContractsBeingNegotiatedFor of productsFrameContractsBeingNegotiatedFor) {
+                        if(catalogueId == productFrameContractsBeingNegotiatedFor.catalogueId && lineId == productFrameContractsBeingNegotiatedFor.lineId ){
+                            productExists = true;
+                            break;
+                        }
+                    }
+                    if(!productExists){
+                        productsFrameContractsBeingNegotiatedFor.push({catalogueId:catalogueId,lineId:lineId});
+                    }
+                }
+            }
+        }
+        // update this.isFrameContractBeingNegotiatedInThisNegotiation array according to the productsFrameContractsBeingNegotiatedFor array
+        let size = requestForQuotation.requestForQuotationLine.length;
+        for(let i = 0; i < size ;i++){
+            let catalogueId = requestForQuotation.requestForQuotationLine[i].lineItem.item.catalogueDocumentReference.id;
+            let lineId = requestForQuotation.requestForQuotationLine[i].lineItem.item.manufacturersItemIdentification.id;
+            for (let productFrameContractsBeingNegotiatedFor of productsFrameContractsBeingNegotiatedFor) {
+                if(catalogueId == productFrameContractsBeingNegotiatedFor.catalogueId && lineId == productFrameContractsBeingNegotiatedFor.lineId ){
                     this.isFrameContractBeingNegotiatedInThisNegotiation[i] = true;
+                    break;
                 }
             }
         }
