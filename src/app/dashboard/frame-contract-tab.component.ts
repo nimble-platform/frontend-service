@@ -66,6 +66,21 @@ export class FrameContractTabComponent implements OnInit {
         this.router.navigate(['/bpe/frame-contract/' + frameContract.hjid]);
     }
 
+    deleteFrameContract(frameContract: DigitalAgreement): void {
+        if (confirm("Are you sure that you want to delete this frame contract?")){
+            this.frameContractsRetrievalCallStatus.submit();
+            this.bpeService.deleteFrameContract(frameContract.hjid).then(response => {
+                // remove the deleted frame contract from the list
+                let index = this.frameContracts.findIndex(fc => fc.hjid == frameContract.hjid);
+                this.frameContracts.splice(index,1);
+
+                this.frameContractsRetrievalCallStatus.callback(null, true);
+            }).catch(error => {
+                this.frameContractsRetrievalCallStatus.error("Failed to delete frame contract");
+            })
+        }
+    }
+
     getCorrespondingPartyId(frameContract: DigitalAgreement): string {
         let userPartyId = this.cookieService.get("company_id");
 
