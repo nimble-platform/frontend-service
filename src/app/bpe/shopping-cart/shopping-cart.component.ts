@@ -28,6 +28,7 @@ import {CustomerParty} from '../../catalogue/model/publish/customer-party';
 import {Order} from '../../catalogue/model/publish/order';
 import {Party} from '../../catalogue/model/publish/party';
 import {TradingPreferences} from '../../catalogue/model/publish/trading-preferences';
+import {CommonTerms} from '../../common/common-terms';
 /**
  * Created by suat on 11-Oct-19.
  */
@@ -64,7 +65,7 @@ export class ShoppingCartComponent implements OnInit {
 
     collapsedStatusesOfCartItems: Map<number, boolean> = new Map<number, boolean>();
     deleteCallStatuses: Map<number, CallStatus> = new Map<number, CallStatus>();
-    showCommonTerms = false;
+    showCommonTerms = true;
 
     // call status to be able to show a single loading icon
     initCallStatus: CallStatus = new CallStatus();
@@ -337,7 +338,7 @@ export class ShoppingCartComponent implements OnInit {
             }
 
             // Check buyers terms and conditions also. Buyer terms are used in the common terms component as initial default values
-            if (this.buyerCompanySettings.negotiationSettings.company.salesTerms == null) {
+            if (this.buyerCompanySettings.negotiationSettings.company.salesTerms == null || this.buyerCompanySettings.negotiationSettings.company.salesTerms.termOrCondition.length == 0) {
                 let copyTCs: Clause[] = copy(termsAndConditions);
                 for (let clause of copyTCs) {
                     for (let tradingTerm of clause.tradingTerms) {
@@ -402,6 +403,31 @@ export class ShoppingCartComponent implements OnInit {
 
     onOrderQuantityChange(): void {
         // nothing for now
+    }
+
+    onApplyTerms(commonTerms:CommonTerms): void {
+        if(commonTerms){
+            let negotiationModelWrappers:NegotiationModelWrapper[] = Array.from(this.negotiationModelWrappers.values());
+            for(let negotiationModelWrapper of negotiationModelWrappers){
+                negotiationModelWrapper.rfqIncoterms = commonTerms.incoTerm;
+                negotiationModelWrapper.rfqPaymentMeans = commonTerms.paymentMean;
+                negotiationModelWrapper.rfqPaymentTerms.paymentTerm = commonTerms.paymentTerm;
+                negotiationModelWrapper.rfqDeliveryPeriod = copy(commonTerms.deliveryPeriod);
+                negotiationModelWrapper.rfqWarranty = copy(commonTerms.warrantyPeriod);
+                negotiationModelWrapper.rfqDeliveryAddress = copy(commonTerms.deliveryAddress);
+                negotiationModelWrapper.rfqDataMonitoringRequested = commonTerms.dataMonitoringRequested;
+
+                negotiationModelWrapper.rfqTradingTerms = copy(commonTerms.tradingTerms);
+
+                if(commonTerms.clauses.length > 0){
+                    negotiationModelWrapper.rfq.requestForQuotationLine[negotiationModelWrapper.lineIndex].lineItem.clause = copy(commonTerms.clauses);
+                }
+            }
+
+            for(let negotiationRequestItem of this.negotiationRequestItemComponents.toArray()){
+                negotiationRequestItem.onFrameContractDurationChanged(copy(commonTerms.frameContractDuration))
+            }
+        }
     }
 
     onNavigateToTheSearchPage(): void {

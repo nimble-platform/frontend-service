@@ -16,7 +16,8 @@
         </div>
     </div>
     <common-cart-terms *ngIf="showCommonTerms"
-                       [buyerCompanySettings]="buyerCompanySettings">
+                       [buyerCompanySettings]="buyerCompanySettings"
+                       (onApplyTermsEvent)="onApplyTerms($event)">
     </common-cart-terms>
 
     <div *ngFor="let cartLine of shoppingCart?.catalogueLine; let i = index"

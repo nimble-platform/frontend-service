@@ -11,6 +11,7 @@ import {TradingTerm} from '../../catalogue/model/publish/trading-term';
 import {NegotiationModelWrapper} from '../bp-view/negotiation/negotiation-model-wrapper';
 import {CompanySettings} from '../../user-mgmt/model/company-settings';
 import {CustomTermModalComponent} from '../bp-view/negotiation/custom-term-modal.component';
+import {CommonTerms} from '../../common/common-terms';
 /**
  * Created by suat on 31-Oct-19.
  */
@@ -28,6 +29,7 @@ export class CommonCartTermsComponent implements OnInit {
 
     @Input() wrapper: NegotiationModelWrapper;
     @Input() buyerCompanySettings: CompanySettings;
+    @Output() onApplyTermsEvent:EventEmitter<CommonTerms> = new EventEmitter();
     tradingTerms: TradingTerm[] = [];
     deliveryPeriodUnits: string[];
     deliveryPeriod: Quantity = new Quantity();
@@ -81,7 +83,17 @@ export class CommonCartTermsComponent implements OnInit {
 
     onApplyTerms(): void {
         if (confirm('Are you sure that you want to apply terms to all products?\nExisting terms will be overwritten.')) {
-
+            let commonTerms:CommonTerms = new CommonTerms(this.deliveryPeriod,
+                this.warrantyPeriod,
+                this.incoTerm,
+                this.paymentTerm,
+                this.paymentMean,
+                this.dataMonitoringRequested,
+                this.frameContractDuration,
+                this.deliveryAddress,
+                this.tradingTerms,
+                this.buyerCompanySettings.negotiationSettings.company.salesTerms.termOrCondition);
+            this.onApplyTermsEvent.emit(commonTerms);
         }
     }
 

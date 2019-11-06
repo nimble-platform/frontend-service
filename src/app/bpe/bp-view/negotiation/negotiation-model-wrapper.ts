@@ -271,8 +271,18 @@ export class NegotiationModelWrapper {
         }
     }
 
+    // get trading terms except the one representing frame contract duration
     public get rfqTradingTerms(): TradingTerm[] {
         return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.filter(tradingTerm => tradingTerm.id != "FRAME_CONTRACT_DURATION").map(tradingTerm => tradingTerm);
+    }
+
+    // set trading terms except the one representing frame contract duration
+    public set rfqTradingTerms(tradingTerms:TradingTerm[])  {
+        let frameContractDuration: TradingTerm = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
+        if(frameContractDuration){
+            tradingTerms.push(frameContractDuration);
+        }
+        this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms = tradingTerms;
     }
 
     public getRfqTradingTerm(termName: string): TradingTerm {
@@ -298,6 +308,10 @@ export class NegotiationModelWrapper {
 
     public get rfqDeliveryAddress(): Address {
         return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address;
+    }
+
+    public set rfqDeliveryAddress(address:Address) {
+        this.rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address = address;
     }
 
     public checkEqual(termsSource: 'product_defaults' | 'frame_contract' | 'last_offer', part): boolean {

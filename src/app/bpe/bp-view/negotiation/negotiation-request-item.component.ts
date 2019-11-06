@@ -327,10 +327,15 @@ export class NegotiationRequestItemComponent implements OnInit {
     }
 
     onFrameContractDurationChanged(quantity: Quantity): void {
-        if (!UBLModelUtils.isEmptyOrIncompleteQuantity(quantity)) {
-            this.wrapper.rfqFrameContractDuration = quantity;
-        } else {
-            this.wrapper.deleteRfqTradingTerm(FRAME_CONTRACT_DURATION_TERM_NAME);
+        // we need to set frameContractDuration in case of being called by other components
+        // we set it if and only if the user is allowed to update it,i.e., frame contract tab is visible
+        if(this.isFrameContractVisible()){
+            this.frameContractDuration = quantity;
+            if (!UBLModelUtils.isEmptyOrIncompleteQuantity(quantity)) {
+                this.wrapper.rfqFrameContractDuration = quantity;
+            } else {
+                this.wrapper.deleteRfqTradingTerm(FRAME_CONTRACT_DURATION_TERM_NAME);
+            }
         }
     }
 
