@@ -132,8 +132,6 @@ export class ShoppingCartComponent implements OnInit {
                     Promise.all(this.createRfqPromises()).then(rfqs => {
                         // initialize rfqs
                         this.initializeRfqs(rfqs);
-                        // set product wrappers and negotiation model wrappers
-                        this.initializeModelWrappers();
                         // first, retrieve the associated products referred from the properties of cart lines
                         // then, select the first alternatives for each product
                         this.getAssociatedProductDetailsAndSelectFirstAlternatives();
@@ -141,8 +139,6 @@ export class ShoppingCartComponent implements OnInit {
                         this.getFrameContracts();
                         // get platform default terms and conditions for each cart line
                         this.getDefaultPlatformTermsAndConditionsForAllCartLines();
-                        // initialize negotiation model wrappers
-                        this.initializeModelWrappers();
 
                         this.initCallStatus.aggregatedCallBack();
                     }).catch(err => {
@@ -261,31 +257,51 @@ export class ShoppingCartComponent implements OnInit {
         }
     }
 
+    // retrieve frame contracts first and then, set product wrappers and negotiation model wrappers which need frame contracts to be initialized properly
     private getFrameContracts(): void {
+        // create frame contract promises
+        let frameContractPromises: Promise<any>[] = [];
         for (let cartLine of this.shoppingCart.catalogueLine) {
-            this.initCallStatus.aggregatedSubmit();
-            this.bpeService.getFrameContract(
+            frameContractPromises.push(this.bpeService.getFrameContract(
                 UBLModelUtils.getPartyId(cartLine.goodsItem.item.manufacturerParty),
                 this.cookieService.get('company_id'),
-                [cartLine.id]).then(frameContract => {
-
-                if (frameContract != null) {
-                    this.initCallStatus.aggregatedSubmit();
-                    this.documentService.getCachedDocument(frameContract.quotationReference.id).then(quotation => {
-                        this.frameContracts.set(cartLine.hjid, [frameContract, quotation]);
-
-                        this.initCallStatus.aggregatedCallBack();
-                    }).catch(error => {
-                        this.initCallStatus.aggregatedError('Failed to retrieve frame contract quotation', error);
-                    });
+                [cartLine.id]));
+        }
+        this.initCallStatus.aggregatedSubmit();
+        Promise.all(frameContractPromises).then(frameContractsForProducts => {
+            // create quotation promises
+            let quotationPromises: Promise<any>[] = [];
+            for (let frameContracts of frameContractsForProducts) {
+                if (frameContracts != null) {
+                    quotationPromises.push(this.documentService.getCachedDocument(frameContracts[0].quotationReference.id));
                 }
+                else{
+                    quotationPromises.push(Promise.resolve(null));
+                }
+            }
+
+            this.initCallStatus.aggregatedSubmit();
+            Promise.all(quotationPromises).then(quotations => {
+                let size = quotations.length;
+                for(let i = 0;i<size;i++){
+                    let quotation = quotations[i];
+                    if(quotation){
+                        // set frame contract
+                        this.frameContracts.set(this.shoppingCart.catalogueLine[i].hjid, [frameContractsForProducts[i][0],quotation ]);
+                    }
+                }
+                // set product wrappers and negotiation model wrappers
+                this.initializeModelWrappers();
 
                 this.initCallStatus.aggregatedCallBack();
-
             }).catch(error => {
-                this.initCallStatus.aggregatedError('Failed to retrieve frame contract', error);
+                this.initCallStatus.aggregatedError('Failed to retrieve frame contract quotation', error);
             });
-        }
+
+            this.initCallStatus.aggregatedCallBack();
+        }).catch(error => {
+            this.initCallStatus.aggregatedError('Failed to retrieve frame contract', error);
+        });
     }
 
     private getDefaultPlatformTermsAndConditionsForAllCartLines(): void {
