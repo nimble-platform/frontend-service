@@ -349,7 +349,6 @@ export class NegotiationComponent implements OnInit, OnDestroy {
                 frameContractDuration = UBLModelUtils.getFrameContractDurationFromRfqLine(this.bpDataService.requestForQuotation.requestForQuotationLine[i]);
                 if(!UBLModelUtils.isEmptyQuantity(frameContractDuration)) {
                     this.isFrameContractBeingNegotiatedInThisNegotiation[i] = true;
-                    return;
                 }
             }
         }
@@ -362,7 +361,6 @@ export class NegotiationComponent implements OnInit, OnDestroy {
                 frameContractDuration = UBLModelUtils.getFrameContractDurationFromRfqLine(rfq.requestForQuotationLine[i]);
                 if (!UBLModelUtils.isEmptyQuantity(frameContractDuration)) {
                     this.isFrameContractBeingNegotiatedInThisNegotiation[i] = true;
-                    return;
                 }
             }
         }
