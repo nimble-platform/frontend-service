@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { TrackInfo } from './model/TrackInfo';
 
 @Component({
@@ -7,13 +7,20 @@ import { TrackInfo } from './model/TrackInfo';
     styleUrls: ['./tnt-event-data.component.css']
 })
 
-export class TnTEventDataComponent {
+export class TnTEventDataComponent implements OnChanges {
     @Input('incomingTrackingInfo') incomingTrackingInfo: TrackInfo[];
     collectionSize = 0;
     page = 1;
     pageSize = 5;
     verified: boolean;
     selectedEvent = {};
+
+    ngOnChanges() {
+        if (!this.incomingTrackingInfo.length) {
+            return;
+        }
+        this.selectedEvent = {};
+    }
 
     get events(): TrackInfo[] {
         const everyEvent = this.incomingTrackingInfo;
