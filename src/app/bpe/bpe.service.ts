@@ -438,6 +438,15 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
+	deleteFrameContract(hjid: number): Promise<DigitalAgreement[]> {
+		const url = `${this.url}/contract/digital-agreement/${hjid}`;
+		return this.http
+			.delete(url, {headers: this.getAuthorizedHeaders()})
+			.toPromise()
+			.then(res => res.text())
+			.catch(this.handleError);
+	}
+
 	checkAllCollaborationsFinished(partyId:string){
         const url = `${this.url}/collaboration-groups/all-finished?partyId=${partyId}`;
         return this.http
