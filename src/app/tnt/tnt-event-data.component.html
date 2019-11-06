@@ -1,11 +1,11 @@
+<div class="row mt-3" *ngIf="incomingTrackingInfo.length">
+        <h4><span [innerHTML]="'Tracking Information' | translate"></span>
+            <span><i class="fas fa-box"></i></span></h4>
+</div>
 <ngb-tabset  *ngIf="incomingTrackingInfo.length">
     <ngb-tab>
         <ng-template ngbTabTitle>Tabular View <i class="fas fa-table"></i></ng-template>
         <ng-template ngbTabContent>
-            <div class="row mt-3">
-                    <h4><span [innerHTML]="'Tracking Information' | translate"></span></h4>
-            </div>
-    
             <div class="d-flex justify-content-between p-2">
                     <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize">
                     </ngb-pagination>
@@ -20,7 +20,7 @@
                     <table class="table table-hover table-bordered">
                         <thead>
                             <tr>
-                                <th scope="col"><span [innerHTML]="'Event Time' | translate"></span></th>
+                                <th scope="col"><span [innerHTML]="'Event Time' | translate"></span> in UTC</th>
                                 <th scope="col"><span [innerHTML]="'Business Step' | translate"></span></th>
                                 <th scope="col">Details</th>
                             </tr>
@@ -29,7 +29,7 @@
                             <tr *ngFor="let entry of events">
                                 <th scope="row">{{entry.eventTime | date:'medium':'UTC'}}</th>
                                 <td>{{entry.bizStep}}</td>
-                                <td><button class="btn btn-outline-primary btn-sm" (click)="selectedEvent=entry"><i class="fas fa-box"></i>More</button></td>
+                                <td><button class="btn btn-link btn-sm" (click)="selectedEvent=entry"><i class="fas fa-info-circle"></i>More Info</button></td>
                             </tr>
                         </tbody>
                     </table>
@@ -43,10 +43,6 @@
     <ngb-tab>
         <ng-template ngbTabTitle>Timeline View <i class="fas fa-ellipsis-v"></i></ng-template>
         <ng-template ngbTabContent>
-            <div class="row mt-3">
-                    <h4><span [innerHTML]="'Tracking Information' | translate"></span></h4>
-            </div>
-    
             <div class="d-flex justify-content-between p-2">
                     <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize">
                     </ngb-pagination>
@@ -63,7 +59,7 @@
                             <div class="tl-content">
                                 <h4>{{entry.eventTime | date:'medium':'UTC'}}</h4>
                                 <p>{{entry.bizStep}}</p>
-                                <button class="btn btn-outline-primary" (click)="selectedEvent=entry"><i class="fas fa-box"></i>More</button>
+                                <button class="btn btn-outline-primary" (click)="selectedEvent=entry"><i class="fas fa-info-circle"></i>More Info</button>
                             </div>
                         </div>
                     </div>
