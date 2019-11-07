@@ -1,73 +1,81 @@
-<div class="row mt-3" *ngIf="incomingTrackingInfo.length">
-        <h4><span [innerHTML]="'Tracking Information' | translate"></span>
-            <span><i class="fas fa-box"></i></span></h4>
-</div>
-<ngb-tabset  *ngIf="incomingTrackingInfo.length">
-    <ngb-tab>
-        <ng-template ngbTabTitle>Tabular View <i class="fas fa-table"></i></ng-template>
-        <ng-template ngbTabContent>
-            <div class="d-flex justify-content-between p-2">
-                    <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize">
-                    </ngb-pagination>
-                            
-                    <select class="custom-select" style="width: auto" [(ngModel)]="pageSize">
-                        <option [ngValue]="5">5 events per page</option>
-                        <option [ngValue]="10">10 events per page</option>
-                    </select>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <table class="table table-hover table-bordered">
-                        <thead>
-                            <tr>
-                                <th scope="col"><span [innerHTML]="'Event Time' | translate"></span> in UTC</th>
-                                <th scope="col"><span [innerHTML]="'Business Step' | translate"></span></th>
-                                <th scope="col">Details</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let entry of events">
-                                <th scope="row">{{entry.eventTime | date:'medium':'UTC'}}</th>
-                                <td>{{entry.bizStep}}</td>
-                                <td><button class="btn btn-link btn-sm" (click)="selectedEvent=entry"><i class="fas fa-info-circle"></i>More Info</button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="col-md-8">
-                    <tnt-event-details [eventToDisplay]="selectedEvent"></tnt-event-details>
-                </div>
-            </div>
-        </ng-template>
-    </ngb-tab>
-    <ngb-tab>
-        <ng-template ngbTabTitle>Timeline View <i class="fas fa-ellipsis-v"></i></ng-template>
-        <ng-template ngbTabContent>
-            <div class="d-flex justify-content-between p-2">
-                    <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize">
-                    </ngb-pagination>
-                            
-                    <select class="custom-select" style="width: auto" [(ngModel)]="pageSize">
-                        <option [ngValue]="5">5 events per page</option>
-                        <option [ngValue]="10">10 events per page</option>
-                    </select>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="timeline">
-                        <div class="tl-container right" *ngFor="let entry of events">
-                            <div class="tl-content">
-                                <h4>{{entry.eventTime | date:'medium':'UTC'}}</h4>
-                                <p>{{entry.bizStep}}</p>
-                                <button class="btn btn-outline-primary" (click)="selectedEvent=entry"><i class="fas fa-info-circle"></i>More Info</button>
-                            </div>
+<div class="container-fluid"  *ngIf="incomingTrackingInfo.length">
+    <div class="row mt-3">
+        <div class="col-sm-12">
+            <h4><span [innerHTML]="'Tracking Information' | translate"></span>
+                <span><i class="fas fa-box"></i></span></h4>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-sm-5">
+            <ngb-tabset>
+                <ngb-tab>
+                    <ng-template ngbTabTitle>Tabular View <i class="fas fa-table"></i></ng-template>
+                    <ng-template ngbTabContent>
+                        <!-- <div class="row"> -->
+                            <!-- <div class="col-md-4"> -->
+                                <div class="d-flex justify-content-between p-2">
+                                        <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize">
+                                        </ngb-pagination>
+                                                
+                                        <select class="custom-select" style="width: auto" [(ngModel)]="pageSize">
+                                            <option [ngValue]="5">5 events per page</option>
+                                            <option [ngValue]="10">10 events per page</option>
+                                        </select>
+                                </div>
+                                <table class="table table-hover table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col"><span [innerHTML]="'Event Time' | translate"></span> in UTC</th>
+                                            <th scope="col"><span [innerHTML]="'Business Step' | translate"></span></th>
+                                            <th scope="col">Details</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let entry of events">
+                                            <th scope="row">{{entry.eventTime | date:'medium':'UTC'}}</th>
+                                            <td>{{entry.bizStep}}</td>
+                                            <td><button class="btn btn-link btn-sm" (click)="selectedEvent=entry"><i class="fas fa-info-circle"></i>More Info</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            <!-- </div> -->
+                        <!-- </div> -->
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle>Timeline View <i class="fas fa-ellipsis-v"></i></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="d-flex justify-content-between p-2">
+                                <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize">
+                                </ngb-pagination>
+                                        
+                                <select class="custom-select" style="width: auto" [(ngModel)]="pageSize">
+                                    <option [ngValue]="5">5 events per page</option>
+                                    <option [ngValue]="10">10 events per page</option>
+                                </select>
                         </div>
-                    </div>
-                </div>
-                <div class="col-md-8">
-                    <tnt-event-details [eventToDisplay]="selectedEvent"></tnt-event-details>
-                </div>
+                        <!-- <div class="row"> -->
+                            <!-- <div class="col-md-4"> -->
+                                <div class="timeline">
+                                    <div class="tl-container right" *ngFor="let entry of events">
+                                        <div class="tl-content">
+                                            <h4>{{entry.eventTime | date:'medium':'UTC'}}</h4>
+                                            <p>{{entry.bizStep}}</p>
+                                            <button class="btn btn-outline-primary" (click)="selectedEvent=entry"><i class="fas fa-info-circle"></i>More Info</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            <!-- </div> -->
+                            <!-- <div class="col-md-8">
+                                <tnt-event-details [eventToDisplay]="selectedEvent"></tnt-event-details>
+                            </div> -->
+                        <!-- </div> -->
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </div>
+        <div class="col-sm-7 d-flex justify-content-center align-self-center">
+                <tnt-event-details [eventToDisplay]="selectedEvent"></tnt-event-details>
             </div>
-        </ng-template>
-    </ngb-tab>
-</ngb-tabset>
+    </div>
+</div>
