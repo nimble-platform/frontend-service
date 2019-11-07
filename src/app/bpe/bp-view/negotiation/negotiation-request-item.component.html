@@ -411,8 +411,8 @@
                         </terms-and-conditions>
                         <terms-and-conditions *ngIf="wrapper.frameContractQuotation" [hidden]="manufacturersTermsSource != 'frame_contract'"
                                               [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-frame-contract'"
-                                              [termsAndConditions]="wrapper.frameContractQuotation.quotationLine[wrapper.lineIndex].lineItem.clause"
-                                              [originalTermAndConditionClauses]="wrapper.frameContractQuotation.quotationLine[wrapper.lineIndex].lineItem.clause">
+                                              [termsAndConditions]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause"
+                                              [originalTermAndConditionClauses]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause">
                         </terms-and-conditions>
                         <terms-and-conditions *ngIf="wrapper.lastOfferQuotation" [hidden]="manufacturersTermsSource != 'last_offer'"
                                               [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-last-offer'"
@@ -429,7 +429,7 @@
                                               (onClauseUpdated)="onClauseUpdate($event,wrapper);"
                                               [originalTermAndConditionClauses]=
                                                       "manufacturersTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause :
-                                              (manufacturersTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.quotationLine[wrapper.lineIndex].lineItem.clause :
+                                              (manufacturersTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause :
                                               defaultTermsAndConditions)"
                                               [termsAndConditions]="wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.clause"
                                               [readOnly]="isLoading() || isReadOnly()"

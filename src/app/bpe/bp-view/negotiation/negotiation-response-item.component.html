@@ -351,8 +351,8 @@
                     </terms-and-conditions>
                     <terms-and-conditions *ngIf="wrapper.frameContractQuotation" [hidden]="primaryTermsSource != 'frame_contract'"
                                           [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer-frame-contract'"
-                                          [termsAndConditions]="wrapper.frameContractQuotation.quotationLine[wrapper.lineIndex].lineItem.clause"
-                                          [originalTermAndConditionClauses]="wrapper.frameContractQuotation.quotationLine[wrapper.lineIndex].lineItem.clause">
+                                          [termsAndConditions]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause"
+                                          [originalTermAndConditionClauses]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause">
                     </terms-and-conditions>
                     <terms-and-conditions *ngIf="wrapper.lastOfferQuotation" [hidden]="primaryTermsSource != 'last_offer'"
                                           [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer-last-offer'"
@@ -362,7 +362,7 @@
                 </div>
                 <div class="col-3">
                     <terms-and-conditions [originalTermAndConditionClauses]="primaryTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause :
-                                      (primaryTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.quotationLine[wrapper.lineIndex].lineItem.clause : defaultTermsAndConditions)"
+                                      (primaryTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause : defaultTermsAndConditions)"
                                           (onClauseUpdated)="onClauseUpdate($event);"
                                           [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq'"
                                           [termsAndConditions]="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.clause"></terms-and-conditions>
@@ -375,7 +375,7 @@
                                           (onIncotermChanged)="wrapper.newQuotationWrapper.incoterms = $event"
                                           (onPaymentMeansChanged)="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm = $event"
                                           [originalTermAndConditionClauses]="primaryTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause :
-                                      (primaryTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.quotationLine[wrapper.lineIndex].lineItem.clause : defaultTermsAndConditions)"
+                                      (primaryTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause : defaultTermsAndConditions)"
                                           [sellerPartyId]="getPartyId(quotation.sellerSupplierParty.party)" [readOnly]="isLoading() || isReadOnly()"
                                           [documentType]="'quotation'"
                                           [termsAndConditions]="quotation.quotationLine[wrapper.lineIndex].lineItem.clause"></terms-and-conditions>
