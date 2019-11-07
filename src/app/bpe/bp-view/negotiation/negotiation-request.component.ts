@@ -262,8 +262,11 @@ export class NegotiationRequestComponent implements OnInit {
     isWarrantyPeriodValid(): boolean {
         for(let wrapper of this.wrappers){
             const range = this.getWarrantyPeriodRange(wrapper);
-            return !range || this.isPeriodValid(wrapper.rfqWarranty.value, range);
+            if(range && !this.isPeriodValid(wrapper.rfqWarranty.value, range)){
+                return false;
+            }
         }
+        return true;
     }
 
     private getWarrantyPeriodRange(wrapper:NegotiationModelWrapper): PeriodRange | null {
@@ -277,9 +280,11 @@ export class NegotiationRequestComponent implements OnInit {
     isDeliveryPeriodValid(): boolean {
         for(let wrapper of this.wrappers){
             const range = this.getDeliveryPeriodRange(wrapper);
-            return !range || this.isPeriodValid(wrapper.rfqDeliveryPeriod.value, range);
+            if(range && !this.isPeriodValid(wrapper.rfqDeliveryPeriod.value, range)){
+                return false;
+            }
         }
-
+        return true;
     }
 
     private isPeriodValid(value: number, range: PeriodRange): boolean {
