@@ -26,7 +26,7 @@
                             class="btn btn-outline-secondary"
                             (click)="onLoadCounterOfferTerms('product_defaults')"><span [innerHTML]="'Use terms of last offer' | translate"></span>
                     </button>
-                    <ng-container *ngIf="isThereDirtyTerm()">
+                    <ng-container>
                         <input class="ml-2" type="checkbox" [(ngModel)]="resetUpdatesChecked"><label class="ml-2"><span [innerHTML]="'Reset changes' | translate"></span></label>
                         <span title="Explicitly specified terms will also be reset with the ones from the selected source.">&#9432;</span>
                     </ng-container>

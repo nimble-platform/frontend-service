@@ -418,15 +418,6 @@ export class NegotiationRequestItemComponent implements OnInit {
             clausesDiffer;
     }
 
-    isThereDirtyTerm(): boolean {
-        for(let term of Object.keys(this.dirtyNegotiationFields)) {
-            if(this.dirtyNegotiationFields[term]) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     lineHasPrice(): boolean {
         return this.wrapper.lineDiscountPriceWrapper.itemPrice.hasPrice();
     }
