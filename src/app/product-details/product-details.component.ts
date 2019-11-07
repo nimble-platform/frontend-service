@@ -124,7 +124,7 @@ export class ProductDetailsComponent implements OnInit {
                             // contract exists, get the corresponding quotation including the terms
                             this.documentService.getDocumentJsonContent(contracts[0].quotationReference.id).then(document => {
                                 this.frameContract = contracts[0];
-                                this.frameContractQuotationWrapper = new QuotationWrapper(document, this.line);
+                                this.frameContractQuotationWrapper = new QuotationWrapper(document, this.line, UBLModelUtils.getFrameContractQuotationLineIndexForProduct(document.quotationLine,catalogueId,id));
                                 // quotation ordered quantity contains the actual ordered quantity in that business process,
                                 // so we overwrite it with the options's quantity, which is by default 1
                                 this.frameContractQuotationWrapper.orderedQuantity.value = this.orderQuantity;

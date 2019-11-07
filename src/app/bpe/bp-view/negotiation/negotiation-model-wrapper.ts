@@ -100,7 +100,9 @@ export class NegotiationModelWrapper {
         }
 
         if(frameContractQuotation) {
-            this.frameContractQuotationWrapper = new QuotationWrapper(frameContractQuotation, catalogueLine, this.lineIndex);
+            // we can not use this.lineIndex to create a QuotationWrapper for frame contract since there may be different products in frame contract quotation
+            let frameContractQuotationLineIndex = UBLModelUtils.getFrameContractQuotationLineIndexForProduct(frameContractQuotation.quotationLine,catalogueLine.goodsItem.item.catalogueDocumentReference.id,catalogueLine.goodsItem.item.manufacturersItemIdentification.id);
+            this.frameContractQuotationWrapper = new QuotationWrapper(frameContractQuotation, catalogueLine, frameContractQuotationLineIndex);
         }
 
         if(lastOfferQuotation) {

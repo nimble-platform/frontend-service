@@ -80,7 +80,7 @@ export class FrameContractDetailsComponent implements OnInit {
 
                         ]).then(([catalogueLine, quotation]) => {
                             if(catalogueLine){
-                                this.quotationWrapper = new QuotationWrapper(quotation, catalogueLine, this.getQuotationLineIndex(quotation.quotationLine,catalogueId,lineId));
+                                this.quotationWrapper = new QuotationWrapper(quotation, catalogueLine, UBLModelUtils.getFrameContractQuotationLineIndexForProduct(quotation.quotationLine,catalogueId,lineId));
                                 this.frameContractRetrievalCallStatus.callback(null, true);
                             }
                         }).catch(error => {
@@ -96,19 +96,6 @@ export class FrameContractDetailsComponent implements OnInit {
                 }
             }
         });
-    }
-
-    // we need to traverse quotation lines in the reverse order since we assume that if the same product exists in the negotiation multiple times,
-    // frame contract is created for the last one
-    getQuotationLineIndex(quotationLines:QuotationLine[],catalogueId:string,lineId:string):number{
-        let size = quotationLines.length;
-        for(let i = size-1; i > -1 ;i--){
-            let quotationLine = quotationLines[i];
-            if(quotationLine.lineItem.item.manufacturersItemIdentification.id == lineId && quotationLine.lineItem.item.catalogueDocumentReference.id == catalogueId){
-               return i;
-            }
-        }
-        return 0;
     }
 
     navigateToProductDetails(): void {

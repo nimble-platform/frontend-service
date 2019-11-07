@@ -224,8 +224,10 @@ export class NegotiationRequestItemComponent implements OnInit {
 
         if(termSource == 'frame_contract' || termSource == 'last_offer') {
             let quotationWrapper = this.wrapper.frameContractQuotationWrapper;
+            let index = this.wrapper.frameContractQuotationWrapper.quotationLineIndex;
             if(termSource == 'last_offer') {
                 quotationWrapper = this.wrapper.lastOfferQuotationWrapper;
+                index = this.wrapper.lineIndex;
             }
             if(this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.DELIVERY_PERIOD]) {
                 this.wrapper.rfqDeliveryPeriod = copy(quotationWrapper.deliveryPeriod);
@@ -253,7 +255,7 @@ export class NegotiationRequestItemComponent implements OnInit {
                 this.frameContractDuration = copy(quotationWrapper.frameContractDuration);
             }
             // if(!this.rfq.negotiationOptions.termsAndConditions || ignoreNegotiationOptions) {
-            this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.clause = copy(quotationWrapper.quotation.quotationLine[this.wrapper.lineIndex].lineItem.clause);
+            this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.clause = copy(quotationWrapper.quotation.quotationLine[index].lineItem.clause);
             // }
             this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.tradingTerms = copy(quotationWrapper.tradingTerms);
             this.wrapper.rfqDataMonitoringRequested = quotationWrapper.dataMonitoringPromised;
@@ -370,8 +372,10 @@ export class NegotiationRequestItemComponent implements OnInit {
 
         if(this.counterOfferTermsSource == 'last_offer' || this.counterOfferTermsSource == 'frame_contract') {
             let quotationWrapper = this.wrapper.frameContractQuotationWrapper;
+            let index = this.wrapper.frameContractQuotationWrapper.quotationLineIndex;
             if(this.counterOfferTermsSource == 'last_offer') {
                 quotationWrapper = this.wrapper.lastOfferQuotationWrapper;
+                index = this.wrapper.lineIndex;
             }
 
             priceDiffers = this.wrapper.rfqPricePerItemString != quotationWrapper.priceWrapper.itemPrice.pricePerItemString;
@@ -383,7 +387,7 @@ export class NegotiationRequestItemComponent implements OnInit {
             frameContractDurationDiffers = this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.FRAME_CONTRACT_DURATION] &&
                 durationToString(this.frameContractDuration) != quotationWrapper.rfqFrameContractDurationString;
             customTermsDiffer = !UBLModelUtils.areTradingTermListsEqual(this.wrapper.rfqTradingTerms, quotationWrapper.tradingTerms);
-            clausesDiffer = UBLModelUtils.areTermsAndConditionListsDifferent(quotationWrapper.quotation.quotationLine[this.wrapper.lineIndex].lineItem.clause, this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.clause);
+            clausesDiffer = UBLModelUtils.areTermsAndConditionListsDifferent(quotationWrapper.quotation.quotationLine[index].lineItem.clause, this.rfq.requestForQuotationLine[index].lineItem.clause);
             dataDataMonitoringRequestDiffers = !quotationWrapper.dataMonitoringPromised ? this.wrapper.rfqDataMonitoringRequested : false;
 
         } else {
