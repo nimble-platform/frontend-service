@@ -23,7 +23,7 @@
                                         </select>
                                 </div>
                                 <table class="table table-hover table-bordered">
-                                    <thead>
+                                    <thead class="thead-dark">
                                         <tr>
                                             <th scope="col"><span [innerHTML]="'Event Time' | translate"></span> in UTC</th>
                                             <th scope="col"><span [innerHTML]="'Business Step' | translate"></span></th>
@@ -31,10 +31,10 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr *ngFor="let entry of events">
+                                        <tr *ngFor="let entry of events; let i = index" [ngClass]="{'selected': selectedEvent==entry}">
                                             <th scope="row">{{entry.eventTime | date:'medium':'UTC'}}</th>
                                             <td>{{entry.bizStep}}</td>
-                                            <td><button class="btn btn-link btn-sm" (click)="selectedEvent=entry"><i class="fas fa-info-circle"></i>More Info</button></td>
+                                            <td><button class="btn btn-link btn-sm" (click)="eventSelection(entry, i)"><i class="fas fa-info-circle"></i>More Info</button></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -57,11 +57,11 @@
                         <!-- <div class="row"> -->
                             <!-- <div class="col-md-4"> -->
                                 <div class="timeline">
-                                    <div class="tl-container right" *ngFor="let entry of events">
-                                        <div class="tl-content">
+                                    <div class="tl-container right" *ngFor="let entry of events; let i = index">
+                                        <div class="tl-content" [ngClass]="{'selected': selectedEvent == entry}">
                                             <h4>{{entry.eventTime | date:'medium':'UTC'}}</h4>
                                             <p>{{entry.bizStep}}</p>
-                                            <button class="btn btn-outline-primary" (click)="selectedEvent=entry"><i class="fas fa-info-circle"></i>More Info</button>
+                                            <button class="btn btn-outline-primary" (click)="eventSelection(entry, i)"><i class="fas fa-info-circle"></i>More Info</button>
                                         </div>
                                     </div>
                                 </div>
@@ -75,7 +75,7 @@
             </ngb-tabset>
         </div>
         <div class="col-sm-7 d-flex justify-content-center align-self-center">
-                <tnt-event-details [eventToDisplay]="selectedEvent"></tnt-event-details>
-            </div>
+                <tnt-event-details [eventsToDisplay]="eventsToDescribe"></tnt-event-details>
+        </div>
     </div>
 </div>

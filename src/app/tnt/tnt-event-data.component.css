@@ -71,3 +71,7 @@
   position: relative;
   border-radius: 6px;
 }
+
+.selected {
+  background-color: lightgrey;
+}
