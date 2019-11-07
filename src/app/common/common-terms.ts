@@ -14,6 +14,7 @@ export class CommonTerms {
         public frameContractDuration: Quantity,
         public deliveryAddress: Address,
         public tradingTerms: TradingTerm[],
-        public clauses: Clause[]
+        public clauses: Clause[],
+        public areDefaultTermsAndConditions:boolean // whether the clauses are the default ones of the platform or not
     ) {  }
 }

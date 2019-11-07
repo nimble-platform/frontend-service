@@ -52,6 +52,8 @@ export class ShoppingCartComponent implements OnInit {
     // default settings to be used in case the seller does not have default terms and conditions
     platformTermsAndConditions: Map<number, Clause[]> = new Map<number, Clause[]>();
     buyerCompanySettings: CompanySettings;
+    // whether the buyer company has its own T&Cs
+    doesBuyerCompanyHasItsOwnTerms:boolean = true;
     // rfqs created for the products in the shopping cart
     // a dedicated rfq is created for each seller in the cart
     // key of the map below keeps the seller id
@@ -339,6 +341,8 @@ export class ShoppingCartComponent implements OnInit {
 
             // Check buyers terms and conditions also. Buyer terms are used in the common terms component as initial default values
             if (this.buyerCompanySettings.negotiationSettings.company.salesTerms == null || this.buyerCompanySettings.negotiationSettings.company.salesTerms.termOrCondition.length == 0) {
+                // the buyer company uses the default T&Cs of the platform
+                this.doesBuyerCompanyHasItsOwnTerms = false;
                 let copyTCs: Clause[] = copy(termsAndConditions);
                 for (let clause of copyTCs) {
                     for (let tradingTerm of clause.tradingTerms) {
@@ -420,7 +424,14 @@ export class ShoppingCartComponent implements OnInit {
                 negotiationModelWrapper.rfqTradingTerms = copy(commonTerms.tradingTerms);
 
                 if(commonTerms.clauses.length > 0){
-                    negotiationModelWrapper.rfq.requestForQuotationLine[negotiationModelWrapper.lineIndex].lineItem.clause = copy(commonTerms.clauses);
+                    // if T&Cs are the default ones of the platform, we need to keep the first clause and replace the rest,
+                    // otherwise it's ok to replace all of them.
+                    if(commonTerms.areDefaultTermsAndConditions){
+                        negotiationModelWrapper.rfq.requestForQuotationLine[negotiationModelWrapper.lineIndex].lineItem.clause = [negotiationModelWrapper.rfq.requestForQuotationLine[negotiationModelWrapper.lineIndex].lineItem.clause[0]].concat(copy(commonTerms.clauses));
+                    }
+                    else{
+                        negotiationModelWrapper.rfq.requestForQuotationLine[negotiationModelWrapper.lineIndex].lineItem.clause = copy(commonTerms.clauses);
+                    }
                 }
             }
 

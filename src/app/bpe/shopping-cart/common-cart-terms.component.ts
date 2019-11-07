@@ -29,6 +29,8 @@ export class CommonCartTermsComponent implements OnInit {
 
     @Input() wrapper: NegotiationModelWrapper;
     @Input() buyerCompanySettings: CompanySettings;
+    // whether the buyer company has its own T&Cs
+    @Input() doesBuyerCompanyHasItsOwnTerms:boolean = true;
     @Output() onApplyTermsEvent:EventEmitter<CommonTerms> = new EventEmitter();
     tradingTerms: TradingTerm[] = [];
     deliveryPeriodUnits: string[];
@@ -70,6 +72,11 @@ export class CommonCartTermsComponent implements OnInit {
             this.deliveryPeriod.unitCode = this.deliveryPeriodUnits[0];
             this.frameContractDuration.unitCode = this.frameContractDurationUnits[0];
 
+            // if the buyer company uses the default T&Cs of the platform, we need to remove the first clause
+            // since it asks information about the seller which is not a common term
+            if(!this.doesBuyerCompanyHasItsOwnTerms){
+                this.buyerCompanySettings.negotiationSettings.company.salesTerms.termOrCondition.splice(0,1);
+            }
             this.initCallStatus.callback(null, true);
 
         }).catch(err => {
@@ -92,7 +99,8 @@ export class CommonCartTermsComponent implements OnInit {
                 this.frameContractDuration,
                 this.deliveryAddress,
                 this.tradingTerms,
-                this.buyerCompanySettings.negotiationSettings.company.salesTerms.termOrCondition);
+                this.buyerCompanySettings.negotiationSettings.company.salesTerms.termOrCondition,
+                !this.doesBuyerCompanyHasItsOwnTerms);
             this.onApplyTermsEvent.emit(commonTerms);
         }
     }

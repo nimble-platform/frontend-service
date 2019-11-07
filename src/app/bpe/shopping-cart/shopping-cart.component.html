@@ -17,6 +17,7 @@
     </div>
     <common-cart-terms *ngIf="showCommonTerms"
                        [buyerCompanySettings]="buyerCompanySettings"
+                       [doesBuyerCompanyHasItsOwnTerms]="doesBuyerCompanyHasItsOwnTerms"
                        (onApplyTermsEvent)="onApplyTerms($event)">
     </common-cart-terms>
 
