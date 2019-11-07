@@ -99,7 +99,7 @@ export class NegotiationResponseItemComponent implements OnInit {
         if (this.lastOfferQuotation) {
             this.quotation.quotationLine[this.wrapper.lineIndex].lineItem.dataMonitoringRequested = this.lastOfferQuotation.quotationLine[this.wrapper.lineIndex].lineItem.dataMonitoringRequested;
         } else if (this.frameContractQuotation) {
-            this.quotation.quotationLine[this.wrapper.lineIndex].lineItem.dataMonitoringRequested = this.frameContractQuotation.quotationLine[this.wrapper.lineIndex].lineItem.dataMonitoringRequested;
+            this.quotation.quotationLine[this.wrapper.lineIndex].lineItem.dataMonitoringRequested = this.frameContractQuotation.quotationLine[this.wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.dataMonitoringRequested;
         }
     }
 
