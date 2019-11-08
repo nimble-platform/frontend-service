@@ -1,18 +1,20 @@
-import { Component, Input, OnChanges } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { Component, Input, OnChanges, ViewEncapsulation } from '@angular/core';
 import { TrackInfo } from './model/trackinfo';
 import * as myGlobals from '../globals';
 import { TnTService } from './tnt.service';
+import moment = require('moment');
+
 
 @Component({
     selector: 'tnt-event-details',
     templateUrl: './tnt-event-details.component.html',
     styleUrls: ['./tnt-event-details.component.css'],
-    providers: [TnTService]
+    providers: [TnTService],
+    encapsulation: ViewEncapsulation.None
 })
 
 export class TnTEventDetailsComponent implements OnChanges {
-    @Input('eventToDisplay') event: TrackInfo;
+    @Input('eventsToDisplay') events: TrackInfo[];
     debug = myGlobals.debug;
     falsecode = '';
     gateInformation = [];
@@ -20,24 +22,25 @@ export class TnTEventDetailsComponent implements OnChanges {
     dashboardURL = 'https://grafana5.ips.biba.uni-bremen.de/d-solo/FhrdyH2Wk/nimble-epcis-iot-testbed';
     dashboardQuery: any;
     selectedBizLocation = '';
-    selectedTimeStamp = 0;
 
-    constructor(private tntBackend: TnTService, private dom: DomSanitizer) {}
+    constructor(private tntBackend: TnTService) {}
 
     ngOnChanges() {
-        if (!this.event) {
+        if (!this.events.length) {
             return;
         }
         this.getGateInfo();
         this.getBizLocInfo();
+        this.displaySensorDashboard();
+        this.callIoTBCApi();
     }
 
     getGateInfo() {
         if (this.debug) {
-            console.log(this.event.readPoint);
+            console.log(this.events[0].readPoint);
         }
         const prefix = 'urn:epc:id:sgln:';
-         this.tntBackend.getGateInfo(prefix + this.event.readPoint)
+         this.tntBackend.getGateInfo(prefix + this.events[0].readPoint)
             .then(resp => {
                 this.gateInformation = resp;
                 }
@@ -50,11 +53,11 @@ export class TnTEventDetailsComponent implements OnChanges {
 
     getBizLocInfo() {
         if (this.debug) {
-            console.log(this.event.bizLocation);
+            console.log(this.events[0].bizLocation);
         }
         const prefix = 'urn:epc:id:sgln:';
-        this.selectedBizLocation = prefix + this.event.bizLocation;
-        this.tntBackend.getGateInfo(prefix + this.event.bizLocation)
+        this.selectedBizLocation = prefix + this.events[0].bizLocation;
+        this.tntBackend.getGateInfo(prefix + this.events[0].bizLocation)
             .then(resp => {
                     this.bizLocationInformation = resp;
                 }
@@ -65,13 +68,26 @@ export class TnTEventDetailsComponent implements OnChanges {
     }
 
     displaySensorDashboard() {
-        console.log(this.selectedBizLocation);
-        this.selectedTimeStamp = this.bizLocationInformation[this.bizLocationInformation.length - 1]['lastUpdated']['$date'];
-        console.log(this.selectedTimeStamp);
+        // console.log(this.selectedBizLocation);
+        let fromTimeStamp = Number(this.events[1].eventTime);
+        let toTimeStamp = Number(this.events[0].eventTime);
         this.dashboardQuery =
             `${this.dashboardURL}?var-bizLocation=${encodeURIComponent(this.selectedBizLocation)}` +
-            `&from=${this.selectedTimeStamp}&to=${this.selectedTimeStamp + 3600000}&orgId=2&panelId=2"`;
+            `&from=${fromTimeStamp}&to=${toTimeStamp}&orgId=2&panelId=2"`;
         console.log(this.dashboardQuery);
+    }
+
+    callIoTBCApi() {
+        let fromTimeStamp = moment(this.events[1].eventTime).toISOString();
+        let toTimeStamp = moment(this.events[0].eventTime).toISOString();
+        console.log(this.events[0].epc);
+        console.log(fromTimeStamp);
+        console.log(toTimeStamp);
+        this.tntBackend.testIOTBC(this.events[0].epc,
+         {'from': fromTimeStamp, 'to': toTimeStamp})
+        .then(resp => {
+            console.log(resp);
+        })
     }
 
 }

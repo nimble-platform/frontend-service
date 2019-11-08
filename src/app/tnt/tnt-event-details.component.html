@@ -65,6 +65,20 @@
             <div class="row mt-2">
                 <iframe [src]="dashboardQuery | safe" width="650" height="400" frameborder="0"></iframe>
             </div>
+            <div class="row mt-1">
+                <div class="col-sm-12">
+                    <h5>Sensor Information</h5>
+                    <ul>
+                        <li>Time Range:</li>
+                        <ul>
+                            <li>Previous Event: {{events[1]['eventTime'] | date:'medium': 'UTC'}}</li>
+                            <li>Current Event: {{events[0]['eventTime'] | date: 'medium': 'UTC'}}</li>
+                        </ul>
+                        <li><i class="fas fa-info-circle"></i> Drag the Graph to zoom out</li>
+                        <li><i class="fas fa-info-circle"></i> Drouble-Click the Graph to zoom in</li>
+                    </ul>
+                </div>
+            </div>
         </ng-template>
     </ngb-tab>
 </ngb-tabset>
