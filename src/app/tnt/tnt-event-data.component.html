@@ -55,7 +55,7 @@
                                 </select>
                         </div>
                         <!-- <div class="row"> -->
-                            <!-- <div class="col-md-4"> -->
+                            <div class="scroll-container">
                                 <div class="timeline">
                                     <div class="tl-container right" *ngFor="let entry of events; let i = index">
                                         <div class="tl-content" [ngClass]="{'selected': selectedEvent == entry}">
@@ -65,7 +65,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            <!-- </div> -->
+                            </div>
                             <!-- <div class="col-md-8">
                                 <tnt-event-details [eventToDisplay]="selectedEvent"></tnt-event-details>
                             </div> -->
