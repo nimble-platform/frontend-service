@@ -13,26 +13,14 @@ import { TranslateService } from '@ngx-translate/core';
 
 export class TnTFormComponent {
     public model = new Search('');
-    public metaData = {};
     public trackingInfo: object[] = [];
     public bpInfo = [];
     debug = myGlobals.debug;
     error_detc = false;
-    updateInfo = false;
-    hideButton = false;
-    gateInformation = [];
-    bizLocationInformation = [];
-    currentGate: string;
-    currentBizLoc: string;
-    sstInfo = [];
     falsecode = '';
     verified: boolean;
 
     constructor(private tntBackend: TnTService, private translate: TranslateService) {
-    }
-
-    ngOnInit(): void {
-        this.updateInfo = true;
     }
 
     Search(code: string) {
@@ -58,12 +46,8 @@ export class TnTFormComponent {
 
     clearData() {
         this.falsecode = '';
-        this.metaData = {};
         this.bpInfo = [];
         this.trackingInfo = [];
-        this.gateInformation = [];
-        this.sstInfo = [];
-        this.hideButton = false;
     }
 
     getTableInfo(code, data) {
@@ -83,60 +67,13 @@ export class TnTFormComponent {
                 });
     }
 
-    getGateInfo(gateName) {
-        let selectedGate = this.bpInfo.find(el => el.readPoint.id.split(':').pop() === gateName);
-        if (this.debug) {
-            console.log(selectedGate);
-        }
-        this.currentGate = gateName;
-         this.tntBackend.getGateInfo(selectedGate.readPoint.id)
-            .then(resp => {
-                this.gateInformation = resp;
-                }
-            )
-            .catch(err => {
-                this.falsecode = err._body;
-            });
-
-    }
-
-    getBizLocInfo(bizLocName) {
-        let selectedLocation = this.bpInfo.find(el => el.bizLocation.id.split(':').pop() === bizLocName);
-        if (this.debug) {
-            console.log(selectedLocation);
-        }
-        this.currentBizLoc = bizLocName;
-        this.tntBackend.getGateInfo(selectedLocation.bizLocation.id)
-            .then(resp => {
-                    this.bizLocationInformation = resp;
-                }
-            )
-            .catch(err => {
-                this.falsecode = err._body;
-            });
-    }
-
-    getSST(sstDescp) {
-        this.tntBackend.getSubSiteTypeInfo(this.metaData['masterUrl'], sstDescp)
-            .then(res => {
-                this.error_detc = false;
-                this.sstInfo = res;
-            })
-            .catch(error => {
-                this.error_detc = true;
-                this.falsecode = error._body;
-            });
-    }
-
     verifyOnBlockchain() {
-        let result = this.tntBackend.verifyOnBC(this.bpInfo)
+        this.tntBackend.verifyOnBC(this.bpInfo)
             .then(res => {
                 if (this.debug) {
                     console.log(res);
                 }
-                // result = res;
                 this.verified = res;
-                // this.verified = true;
             })
             .catch(err => {
                 this.falsecode = err._body;
