@@ -4,6 +4,8 @@
          <span (click)="openCompTab()" class="clickable">
             {{manufacturerPartyName}}
         </span>
+        <call-status [callStatus]="getManufacturerPartyNameStatus">
+        </call-status>
     </div>
     <div class="col-2">
         <strong><span [innerHTML]="'Catalogue:' | translate"></span></strong><br/>

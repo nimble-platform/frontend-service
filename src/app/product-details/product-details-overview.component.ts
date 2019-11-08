@@ -4,7 +4,6 @@ import { CommodityClassification } from "../catalogue/model/publish/commodity-cl
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import {
     getPropertyKey, getPropertyValues, getPropertyValuesAsStrings, selectName, selectNameFromLabelObject, selectPreferredValue,
-    validateNumberInput
 } from '../common/utils';
 import {Item} from '../catalogue/model/publish/item';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
@@ -20,6 +19,7 @@ import * as moment from "moment";
 import { CookieService } from 'ng2-cookies';
 import {CredentialsService} from '../user-mgmt/credentials.service';
 import * as myGlobals from '../globals';
+import {UserService} from '../user-mgmt/user.service';
 import {ShoppingCartDataService} from '../bpe/shopping-cart/shopping-cart-data-service';
 
 @Component({
@@ -46,6 +46,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
     selectedImage: number = 0;
     manufacturerPartyName:string = null;
 
+    getManufacturerPartyNameStatus: CallStatus = new CallStatus();
     getClassificationNamesStatus: CallStatus = new CallStatus();
     productCatalogueNameRetrievalStatus: CallStatus = new CallStatus();
     associatedProductsRetrievalCallStatus: CallStatus = new CallStatus();
@@ -72,8 +73,8 @@ export class ProductDetailsOverviewComponent implements OnInit{
         private route: ActivatedRoute,
         private cookieService: CookieService,
         private credentialsService: CredentialsService,
-		public router: Router
-
+		public router: Router,
+        public userService: UserService
     ) {}
 
     ngOnInit(){
@@ -81,7 +82,13 @@ export class ProductDetailsOverviewComponent implements OnInit{
 		this.activeComp = this.cookieService.get("active_company_name");
 
         if(this.wrapper){
-            this.manufacturerPartyName = UBLModelUtils.getPartyDisplayName(this.wrapper.item.manufacturerParty);
+            this.getManufacturerPartyNameStatus.submit();
+            this.userService.getParty(this.wrapper.item.manufacturerParty.partyIdentification[0].id).then(party => {
+                this.manufacturerPartyName = UBLModelUtils.getPartyDisplayName(party);
+                this.getManufacturerPartyNameStatus.callback(null,true);
+            }).catch(error => {
+                this.getManufacturerPartyNameStatus.error("Failed to get manufacturer party name", error);
+            })
         }
         /*
             Cache FurnitureOntology categories. Then, use cached categories to get correct category label according

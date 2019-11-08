@@ -36,7 +36,7 @@
                     {{orders.get(orderId).id}}
                 </div>
                 <div class="col-3">
-                    {{selectPartyName(orders.get(orderId).buyerCustomerParty.party.partyName)}}
+                    {{partyNames.get(orders.get(orderId).buyerCustomerParty.party.partyIdentification[0].id)}}
                 </div>
                 <div class="col-3">
                     {{selectLangLabelFromTextArray(orders.get(orderId).orderLine[0].lineItem.item.name)}}

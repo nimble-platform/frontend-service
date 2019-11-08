@@ -10,6 +10,7 @@ export class CompanyDetails {
       public industrySectors: {},
       public vatNumber: string,
       public verificationInformation: string,
-      public yearOfCompanyRegistration: number
+      public yearOfCompanyRegistration: number,
+      public processIds: string[]
     ) {  }
 }

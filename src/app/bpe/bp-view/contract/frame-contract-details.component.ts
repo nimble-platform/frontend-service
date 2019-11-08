@@ -11,6 +11,7 @@ import {selectPartyName, selectPreferredValues} from '../../../common/utils';
 import {CookieService} from "ng2-cookies";
 import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 import {TranslateService} from '@ngx-translate/core';
+import {UserService} from '../../../user-mgmt/user.service';
 import {QuotationLine} from '../../../catalogue/model/publish/quotation-line';
 
 /**
@@ -32,12 +33,15 @@ export class FrameContractDetailsComponent implements OnInit {
     frameContractRetrievalCallStatus: CallStatus = new CallStatus();
     showNoFrameContractLabel: boolean = false;
 
+    correspondingPartyName:string = null;
+
     constructor(private catalogueService: CatalogueService,
                 private bpeService: BPEService,
                 private frameContractTransitionService: FrameContractTransitionService,
                 private documentService: DocumentService,
                 private cookieService: CookieService,
                 private route: ActivatedRoute,
+                private userService: UserService,
                 private translate: TranslateService,
                 private router: Router) {
     }
@@ -66,6 +70,7 @@ export class FrameContractDetailsComponent implements OnInit {
                         quotationId = contractRes.quotationReference.id;
                         let catalogueId: string = contractRes.item.catalogueDocumentReference.id;
                         let lineId: string = contractRes.item.manufacturersItemIdentification.id;
+                        let partyId: string = this.getCorrespondingPartyId();
 
                         let catalogueLinePromise: Promise<any> = this.catalogueService.getCatalogueLine(catalogueId, lineId).catch(error => {
                             if(error.status == 404){
@@ -73,16 +78,18 @@ export class FrameContractDetailsComponent implements OnInit {
                             }
                         });
                         let quotationPromise: Promise<any> = this.documentService.getDocumentJsonContent(quotationId);
+                        let partyPromise: Promise<any> = this.userService.getParty(partyId);
 
                         Promise.all([
                             catalogueLinePromise,
-                            quotationPromise
-
-                        ]).then(([catalogueLine, quotation]) => {
+                            quotationPromise,
+                            partyPromise
+                        ]).then(([catalogueLine, quotation, party]) => {
                             if(catalogueLine){
                                 this.quotationWrapper = new QuotationWrapper(quotation, catalogueLine, UBLModelUtils.getFrameContractQuotationLineIndexForProduct(quotation.quotationLine,catalogueId,lineId));
                                 this.frameContractRetrievalCallStatus.callback(null, true);
                             }
+                            this.correspondingPartyName = selectPartyName(party.partyName);
                         }).catch(error => {
                             this.frameContractRetrievalCallStatus.error("Failed to retrieve corresponding quotation and catalogue line", error);
                         });
