@@ -69,6 +69,8 @@ export const config = {
     }
   },
   "dataChannelsEnabled" : true,
+  "defaultBusinessProcessIds": [
+  ],
   "defaultSearchIndex": "Name",
   "delegationEnabled": true,
   "frameContractTabEnabled":true,
