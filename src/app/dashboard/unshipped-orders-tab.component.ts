@@ -12,6 +12,7 @@ import {CatalogueLine} from '../catalogue/model/publish/catalogue-line';
 import {Quantity} from '../catalogue/model/publish/quantity';
 import {CatalogueService} from '../catalogue/catalogue.service';
 import {LineItem} from '../catalogue/model/publish/line-item';
+import {UserService} from '../user-mgmt/user.service';
 
 /**
  * Created by suat on 19-Sep-19.
@@ -24,6 +25,7 @@ export class UnshippedOrdersTabComponent implements OnInit {
 
     allOrderIds: string[] = [];
     displayedOrderIds: string[] = [];
+    partyNames:Map<string, string> = new Map<string, string>();
     orders: Map<string, Order> = new Map<string, Order>();
     // keeps the aggregated products referred by the orders
     associatedProductAggregates: ProductAggregate[] = [];
@@ -46,6 +48,7 @@ export class UnshippedOrdersTabComponent implements OnInit {
     constructor(private catalogueService: CatalogueService,
                 private bpeService: BPEService,
                 private documentService: DocumentService,
+                private userService: UserService,
                 private cookieService: CookieService,
                 private translate: TranslateService,
                 private router: Router) {
@@ -89,11 +92,22 @@ export class UnshippedOrdersTabComponent implements OnInit {
             if (this.failedOrderMessages.length > 0) {
                 this.allOrdersCallStatus.error('Failed to retrieve some of the orders.')
             } else {
+                let partyIds = new Set();
                 for (let order of orders) {
                     this.orders.set(order.id, order);
+                    partyIds.add(order.buyerCustomerParty.party.partyIdentification[0].id)
                 }
-                this.aggregateAssociatedProducts();
-                this.allOrdersCallStatus.callback(null, true);
+                this.userService.getParties(Array.from(partyIds)).then(parties => {
+
+                    for(let party of parties){
+                       this.partyNames.set(party.partyIdentification[0].id,selectPartyName(party.partyName));
+                    }
+
+                    this.aggregateAssociatedProducts();
+                    this.allOrdersCallStatus.callback(null, true);
+                }).catch(error => {
+                    this.allOrdersCallStatus.error('Failed to retrieve buyer party details')
+                });
             }
         });
     }
@@ -116,8 +130,14 @@ export class UnshippedOrdersTabComponent implements OnInit {
             }
 
             this.documentService.getCachedDocument(this.displayedOrderIds[i]).then(order => {
-                this.orders.set(this.displayedOrderIds[i], order);
-                callStatus.callback(null, true);
+                this.userService.getParty(order.buyerCustomerParty.party.partyIdentification[0].id).then(party => {
+                    this.orders.set(this.displayedOrderIds[i], order);
+                    this.partyNames.set(party.partyIdentification[0].id,selectPartyName(party.partyName));
+                    callStatus.callback(null, true);
+                }).catch(error => {
+                    callStatus.error('Failed to retrieve buyer party details for order: ' + this.displayedOrderIds[i]);
+                });
+
 
             }).catch(error => {
                 callStatus.error('Failed to retrieve order: ' + this.displayedOrderIds[i]);
@@ -143,9 +163,22 @@ export class UnshippedOrdersTabComponent implements OnInit {
         // this part might be improved by retrieving only the required information instead of whole product information
         this.associatedProductsCallStatus.submit();
         this.catalogueService.getCatalogueLinesByHjids(associatedProductIds).then(products => {
-            this.populateAggregatedProductMap(products);
+            let partyIds = new Set();
+            for(let product of products){
+                partyIds.add(product.goodsItem.item.manufacturerParty.partyIdentification[0].id);
+            }
+            this.userService.getParties(Array.from(partyIds)).then(parties => {
 
-            this.associatedProductsCallStatus.callback(null, true);
+                for(let party of parties){
+                    this.partyNames.set(party.partyIdentification[0].id,selectPartyName(party.partyName));
+                }
+
+                this.populateAggregatedProductMap(products);
+
+                this.associatedProductsCallStatus.callback(null, true);
+            }).catch(err => {
+                this.associatedProductsCallStatus.error(err);
+            });
         }).catch(err => {
             this.associatedProductsCallStatus.error(err);
         });

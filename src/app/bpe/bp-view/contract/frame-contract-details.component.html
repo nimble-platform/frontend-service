@@ -3,7 +3,7 @@
     <h4>
         <span [innerHTML]="'Frame Contract on' | translate"></span>
         <span class="clickable" (click)="navigateToProductDetails()">{{getProductName(frameContract.item.name)}}</span> with
-        <span class="clickable" (click)="navigateToCompanyDetails()">{{getCorrespondingPartyName()}}</span>
+        <span class="clickable" (click)="navigateToCompanyDetails()">{{correspondingPartyName}}</span>
     </h4>
     <div class="row space-after">
         <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Agreed on' | translate"></span>:</strong></div>

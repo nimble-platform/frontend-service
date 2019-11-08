@@ -7,6 +7,7 @@ import {CallStatus} from "../common/call-status";
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 import {Router} from "@angular/router";
 import {TranslateService} from '@ngx-translate/core';
+import {UserService} from '../user-mgmt/user.service';
 /**
  * Created by suat on 28-Mar-18.
  */
@@ -19,11 +20,13 @@ export class FrameContractTabComponent implements OnInit {
     frameContracts: DigitalAgreement[] = [];
     frameContractsRetrievalCallStatus: CallStatus = new CallStatus();
 
+    partyNames:Map<string, string> = new Map<string, string>();
     getProductName = selectPreferredValues;
 
     constructor(private bpeService: BPEService,
                 private cookieService: CookieService,
                 private translate: TranslateService,
+                private userService: UserService,
                 private router: Router) {
                 }
 
@@ -36,8 +39,15 @@ export class FrameContractTabComponent implements OnInit {
         this.frameContractsRetrievalCallStatus.submit();
         this.bpeService.getAllFrameContractsForParty(partyId).then(frameContracts => {
             this.frameContracts = frameContracts;
-            this.frameContractsRetrievalCallStatus.callback(null, true);
-
+            let correspondingUserIds = this.getCorrespondingPartyIds(frameContracts);
+            this.userService.getParties(correspondingUserIds).then(parties => {
+                for(let party of parties){
+                    this.partyNames.set(party.partyIdentification[0].id,selectPartyName(party.partyName));
+                }
+                this.frameContractsRetrievalCallStatus.callback(null, true);
+            }).catch(error => {
+                this.frameContractsRetrievalCallStatus.error("Failed to retrieve corresponding party details");
+            })
         }).catch(error => {
             this.frameContractsRetrievalCallStatus.error("Failed to retrieve frame contracts");
         });
@@ -91,12 +101,27 @@ export class FrameContractTabComponent implements OnInit {
         }
     }
 
+    getCorrespondingPartyIds(frameContracts: DigitalAgreement[] ): string[] {
+        let correspondingPartyIds = new Set();
+        let userPartyId = this.cookieService.get("company_id");
+
+        for(let frameContract of frameContracts){
+            for(let party of frameContract.participantParty) {
+                if(party.partyIdentification[0].id != userPartyId) {
+                    correspondingPartyIds.add(party.partyIdentification[0].id);
+                }
+            }
+        }
+
+        return Array.from(correspondingPartyIds);
+    }
+
     getCorrespondingPartyName(frameContract: DigitalAgreement ): string {
         let userPartyId = this.cookieService.get("company_id");
 
         for(let party of frameContract.participantParty) {
             if(party.partyIdentification[0].id != userPartyId) {
-                return selectPartyName(party.partyName);
+                return this.partyNames.get((party.partyIdentification[0].id));
             }
         }
     }
