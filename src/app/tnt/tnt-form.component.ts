@@ -43,7 +43,7 @@ export class TnTFormComponent {
         this.tntBackend.getMetaData(code)
             .then(resp => {
                 this.error_detc = false;
-                this.getTableInfo(resp);
+                this.getTableInfo(code, resp);
                 this.bpInfo = resp;
                 this.verifyOnBlockchain();
             })
@@ -66,9 +66,10 @@ export class TnTFormComponent {
         this.hideButton = false;
     }
 
-    getTableInfo(data) {
+    getTableInfo(code, data) {
                 this.trackingInfo = data.map(el => {
                     let _out = {
+                        'epc': code,
                         'eventTime': el.eventTime.$date,
                         'bizStep': el.bizStep.split(':').pop(),
                         'action': el.action,
