@@ -120,14 +120,14 @@ export class CommonCartTermsComponent implements OnInit {
         return tab;
     }
 
-    private onDeleteTradingTerm(termName: string): void {
+    onDeleteTradingTerm(termName: string): void {
         let indexToRemove = this.tradingTerms.findIndex(term => term.id === termName);
         if (indexToRemove !== -1) {
             this.tradingTerms.splice(indexToRemove, 1);
         }
     }
 
-    private onCustomTermAdded(termName: string, termDescription: string, value, type: string): void {
+    onCustomTermAdded(termName: string, termDescription: string, value, type: string): void {
         let tradingTerm: TradingTerm = this.tradingTerms.find(term => term.id === termName);
         if (tradingTerm != null) {
             return;
