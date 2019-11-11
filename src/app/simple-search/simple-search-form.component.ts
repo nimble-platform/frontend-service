@@ -126,6 +126,9 @@ export class SimpleSearchFormComponent implements OnInit {
     pageRef = ''; // page where the user is navigated from. empty string ('') means the search is opened directly
 
     productsSelectedForPublish: any[] = []; // keeps the products in the Solr format
+    // we use the following field to show call status properly
+    // it stores the selected line which will be added to the shopping basket
+    selectedLineForShoppingBasket:any = null;
 
     constructor(private simpleSearchService: SimpleSearchService,
                 private searchContextService: SearchContextService,
@@ -1506,7 +1509,8 @@ export class SimpleSearchFormComponent implements OnInit {
         if (this.shoppingCartCallStatus.isLoading()) {
             return;
         }
-
+        // set the selected line
+        this.selectedLineForShoppingBasket = result;
         this.shoppingCartCallStatus.submit();
         this.shoppingCartDataService.addItemToCart(result.uri).then(() => {
             this.shoppingCartCallStatus.callback(null, true);

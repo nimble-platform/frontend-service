@@ -576,10 +576,11 @@
 											<span class="badge badge-primary-nimble" *ngIf="result[product_price] && !checkEmpty(result[product_price])">{{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}</span>
 											<span class="badge badge-warning" *ngIf="!result[product_price] || checkEmpty(result[product_price])">Upon request</span><br/>
 											<ng-container *ngIf="shoppingCartDataService.cartFetched()">
-												<span class="badge badge-primary pointer mt-1" (click)="onAddToCart(result, $event)">
+												<span *ngIf="!shoppingCartCallStatus.fb_submitted" class="badge badge-primary pointer mt-1" (click)="onAddToCart(result, $event)">
 													<span class="fas fa-shopping-cart mr-1"></span>
 													<span [innerHTML]="'Add to Cart' | translate"></span>
 												</span>
+												<call-status *ngIf="selectedLineForShoppingBasket == result" [callStatus]="shoppingCartCallStatus"></call-status>
 											</ng-container>
 										</div>
 										<div *ngIf="result[product_vendor]" [ngClass]="{'col-2':display=='list','col-12 pt-2':display=='panel'}">
