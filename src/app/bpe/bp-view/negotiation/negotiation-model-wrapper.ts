@@ -13,6 +13,7 @@ import {QuotationWrapper} from "./quotation-wrapper";
 import {Text} from "../../../catalogue/model/publish/text";
 import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 import {FRAME_CONTRACT_DURATION_TERM_NAME} from '../../../common/constants';
+import {Delivery} from '../../../catalogue/model/publish/delivery';
 
 /**
  * Convenient getters (and some setters) for catalogue line, request for quotations and quotations.
@@ -204,6 +205,10 @@ export class NegotiationModelWrapper {
 
     public set rfqDeliveryPeriod(quantity: Quantity) {
         this.rfq.requestForQuotationLine[this.lineIndex].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = quantity;
+    }
+
+    public get rfqDelivery(): Delivery[] {
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.delivery;
     }
 
     public get rfqDeliveryPeriodString(): string {

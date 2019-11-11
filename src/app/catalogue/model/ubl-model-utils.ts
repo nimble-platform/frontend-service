@@ -414,9 +414,11 @@ export class UBLModelUtils {
         let quotationLines:QuotationLine[] = [];
         for(let requestForQuotationLine of copyRfq.requestForQuotationLine){
             let quotationLine: QuotationLine = new QuotationLine(requestForQuotationLine.lineItem);
-            // set start and end dates
-            quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.startDate = rfq.delivery.requestedDeliveryPeriod.startDate;
-            quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.endDate = rfq.delivery.requestedDeliveryPeriod.endDate;
+            // set start and end dates of tep
+            if(rfq.delivery.requestedDeliveryPeriod.startDate || rfq.delivery.requestedDeliveryPeriod.endDate ){
+                quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.startDate = rfq.delivery.requestedDeliveryPeriod.startDate;
+                quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.endDate = rfq.delivery.requestedDeliveryPeriod.endDate;
+            }
             quotationLines.push(quotationLine);
         }
 
@@ -883,6 +885,14 @@ export class UBLModelUtils {
                 }
             }
         }
+    }
+
+    // check whether delivery dates are included in the given delivery
+    public static areDeliveryDatesAvailable(delivery:Delivery[]):boolean {
+        if(delivery){
+            return delivery.length > 1 || delivery[0].requestedDeliveryPeriod.endDate != null || !UBLModelUtils.isEmptyQuantity(delivery[0].shipment.goodsItem[0].quantity);
+        }
+        return false;
     }
 
     public static getFrameContractDurationFromRfqLine(rfqLine: RequestForQuotationLine): Quantity {

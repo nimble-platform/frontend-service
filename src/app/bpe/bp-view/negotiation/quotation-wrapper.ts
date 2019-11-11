@@ -7,6 +7,7 @@ import { durationToString} from "../../../common/utils";
 import { PriceWrapper } from "../../../common/price-wrapper";
 import {TradingTerm} from "../../../catalogue/model/publish/trading-term";
 import {MultiTypeValue} from "../../../catalogue/model/publish/multi-type-value";
+import {Delivery} from '../../../catalogue/model/publish/delivery';
 
 const FRAME_CONTRACT_TERM_ID = "FRAME_CONTRACT_DURATION";
 
@@ -39,6 +40,10 @@ export class QuotationWrapper {
 
     public get deliveryPeriod(): Quantity {
         return this.quotation.quotationLine[this.quotationLineIndex].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
+    }
+
+    public get delivery(): Delivery[] {
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.delivery;
     }
 
     public get deliveryPeriodString(): string {

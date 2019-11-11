@@ -22,6 +22,7 @@ import {Clause} from '../../../catalogue/model/publish/clause';
 import {CustomTermModalComponent} from './custom-term-modal.component';
 import {TranslateService} from '@ngx-translate/core';
 import {DeliveryTerms} from '../../../user-mgmt/model/delivery-terms';
+import {Delivery} from '../../../catalogue/model/publish/delivery';
 
 enum FIXED_NEGOTIATION_TERMS {
     DELIVERY_PERIOD = 'deliveryPeriod',
@@ -72,13 +73,19 @@ export class NegotiationRequestItemComponent implements OnInit {
     showFrameContractDetails: boolean = false;
     frameContractAvailable: boolean = false;
     showDataMonitoring: boolean = false;
-    showDeliveryAddress: boolean = false;
+    showDeliveryDetails: boolean = false;
     showTermsAndConditions:boolean = false;
     selectedTCTab: 'CUSTOM_TERMS' | 'CLAUSES' = 'CUSTOM_TERMS';
+    selectedDeliveryTab: 'DELIVERY_ADDRESS' | 'DELIVERY_DATE' = 'DELIVERY_ADDRESS';
     clausesDiffer: boolean = false;
     custTermsDiffer: boolean = false;
     resetUpdatesChecked: boolean = false;
     callStatus: CallStatus = new CallStatus();
+    // the user can set a delivery period or add multiple delivery date-quantity pairs in the negotiation
+    // if the user is adding delivery date-quantity pairs to the request, this field is true.
+    isDeliveryDateSectionOpen:boolean = false;
+
+    areDeliveryDatesAvailable = UBLModelUtils.areDeliveryDatesAvailable;
 
     /**
      * Logic control fields
@@ -108,6 +115,11 @@ export class NegotiationRequestItemComponent implements OnInit {
     ngOnInit() {
         if(this.manufacturersTermsSource == null){
             this.manufacturersTermsSource = 'product_defaults';
+        }
+
+        // check whether we need to show delivery date section or not
+        if(this.areDeliveryDatesAvailable(this.wrapper.rfqDelivery)){
+            this.isDeliveryDateSectionOpen = true;
         }
 
         this.sellerId = UBLModelUtils.getPartyId(this.wrapper.catalogueLine.goodsItem.item.manufacturerParty);
@@ -346,6 +358,11 @@ export class NegotiationRequestItemComponent implements OnInit {
         this.selectedTCTab = id;
     }
 
+    onDeliveryTabSelect(event:any, id:any): void {
+        event.preventDefault();
+        this.selectedDeliveryTab = id;
+    }
+
     onDeleteTradingTerm(termName: string): void {
         this.wrapper.deleteRfqTradingTerm(termName);
         let termListsEqual: boolean = this.checkTradingTermListEquivalance();
@@ -354,6 +371,38 @@ export class NegotiationRequestItemComponent implements OnInit {
         }
     }
 
+    onAddDeliveryDate(){
+        // if delivery date section is open, add a new Delivery to store delivery date-quantity info
+        if(this.isDeliveryDateSectionOpen){
+            let delivery:Delivery = new Delivery();
+            delivery.shipment.goodsItem[0].quantity.unitCode = this.getQuantityUnit();
+            this.wrapper.rfqDelivery.push(delivery);
+        }
+        // else, open the section
+        else {
+            // open the section
+            this.isDeliveryDateSectionOpen = true;
+            this.wrapper.rfqDelivery[0].shipment.goodsItem[0].quantity.unitCode = this.getQuantityUnit();
+            // clear delivery period selection
+            this.wrapper.rfqDeliveryPeriod.value = null;
+            this.wrapper.rfqDeliveryPeriod.unitCode = this.wrapper.lineDeliveryPeriod.unitCode;
+        }
+    }
+
+    onDeleteDeliveryDate(index:number){
+        // if there are more than one delivery date-quantity pairs, remove the one with the given index
+        if(this.wrapper.rfqDelivery.length > 1){
+            this.wrapper.rfqDelivery.splice(index,1);
+        }
+        // else, close delivery date section
+        else{
+            // close the delivery date section
+            this.isDeliveryDateSectionOpen = false;
+            // clear delivery date-quantity selection for the first delivery
+            this.wrapper.rfqDelivery[0].requestedDeliveryPeriod.endDate = null;
+            this.wrapper.rfqDelivery[0].shipment.goodsItem[0].quantity = new Quantity();
+        }
+    }
     /*
      * Getters and setters for the template.
      */
@@ -369,6 +418,7 @@ export class NegotiationRequestItemComponent implements OnInit {
         let customTermsDiffer: boolean;
         let clausesDiffer: boolean;
         let dataDataMonitoringRequestDiffers = false;
+        let isDeliveryDateAdded:boolean = this.areDeliveryDatesAvailable(this.wrapper.rfqDelivery);
 
         if(this.counterOfferTermsSource == 'last_offer' || this.counterOfferTermsSource == 'frame_contract') {
             let quotationWrapper = this.wrapper.frameContractQuotationWrapper;
@@ -415,7 +465,8 @@ export class NegotiationRequestItemComponent implements OnInit {
             frameContractDurationDiffers ||
             dataDataMonitoringRequestDiffers ||
             customTermsDiffer ||
-            clausesDiffer;
+            clausesDiffer ||
+            isDeliveryDateAdded;
     }
 
     lineHasPrice(): boolean {
@@ -583,7 +634,7 @@ export class NegotiationRequestItemComponent implements OnInit {
             ret = false;
         this.showFrameContractDetails = false;
         this.showDataMonitoring = false;
-        this.showDeliveryAddress = false;
+        this.showDeliveryDetails = false;
         this.showTermsAndConditions = false;
         return ret;
     }

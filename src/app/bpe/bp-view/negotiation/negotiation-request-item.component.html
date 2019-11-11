@@ -38,45 +38,6 @@
 </div>
 <div class="row mb-3">
     <div class="{{showCounterOfferTerms ? 'col-12' : 'col-7'}}">
-        <!-- Delivery Period -->
-        <div class="row content-row"
-             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'deliveryPeriod')}">
-            <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
-                <strong class="font-weight-500"><span [innerHTML]="'Delivery Period' | translate"></span>:</strong>
-            </div>
-            <!-- Manufacturers's offer -->
-            <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
-                <ng-container [ngSwitch]="manufacturersTermsSource">
-                    <ng-container *ngSwitchCase="'product_defaults'">
-                        {{ wrapper.lineDeliveryPeriod.value }}
-                        {{ wrapper.lineDeliveryPeriod.unitCode }}
-                    </ng-container>
-                    <ng-container *ngSwitchCase="'frame_contract'">
-                        {{ wrapper.frameContractQuotationWrapper.deliveryPeriod.value }}
-                        {{ wrapper.frameContractQuotationWrapper.deliveryPeriod.unitCode }}
-                    </ng-container>
-                    <ng-container *ngSwitchCase="'last_offer'">
-                        {{ wrapper.lastOfferQuotationWrapper.deliveryPeriod.value }}
-                        {{ wrapper.lastOfferQuotationWrapper.deliveryPeriod.unitCode }}
-                    </ng-container>
-                </ng-container>
-                <span [ngStyle]="getDeliveryPeriodStyle()">
-                {{ getDeliveryPeriodText() }}
-            </span>
-            </div>
-            <!-- Customer's offer-->
-            <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input [label]="'Request Delivery Period'"
-                                           [disabled]="isLoading() || isReadOnly()"
-                                           id="deliveryCb"
-                                           [quantity]="wrapper.rfqDeliveryPeriod"
-                                           (quantityChange)="onTermsChange(FIXED_NEGOTIATION_TERMS.DELIVERY_PERIOD)"
-                                           [quantityUnits]="wrapper.sellerSettings.deliveryPeriodUnits"
-                                           [invalid]="!isDeliveryPeriodValid()">
-                </negotiation-request-input>
-            </div>
-        </div>
-
         <!-- Warranty -->
         <div class="row content-row"
              [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'warranty')}">
@@ -281,7 +242,7 @@
         <ng-container *ngIf="isFrameContractVisible()">
             <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showFrameContractDetails}" (click)="showFrameContractDetails=showTab(showFrameContractDetails)"><span [innerHTML]="'Frame Contract' | translate"></span></div>
         </ng-container>
-        <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showDeliveryAddress}" (click)="showDeliveryAddress=showTab(showDeliveryAddress)"><span [innerHTML]="'Delivery Address' | translate"></span></div>
+        <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'btn-outline-primary':wrapper.checkEqual(manufacturersTermsSource, 'deliveryPeriod') && !areDeliveryDatesAvailable(wrapper.rfqDelivery),'bg-danger':!wrapper.checkEqual(manufacturersTermsSource, 'deliveryPeriod') || areDeliveryDatesAvailable(),'active':showDeliveryDetails}" (click)="showDeliveryDetails=showTab(showDeliveryDetails)"><span [innerHTML]="'Delivery Details' | translate"></span></div>
     </div>
 </div>
 
@@ -336,13 +297,105 @@
         </ng-container>
 
         <!-- Delivery -->
-        <div *ngIf="showDeliveryAddress" class="row mb-3">
-            <div class="col-12">
-                <multi-address-input [deliveryTerms]="deliverytermsOfBuyer"
-                                     [disabled]="isLoading() || isReadOnly()"
-                                     [address]="wrapper.rfqDeliveryAddress">
-                </multi-address-input>
-            </div>
+        <div *ngIf="showDeliveryDetails" class="row mb-3">
+            <ul class="nav nav-tabs space-after space-before">
+                <li class="nav-item">
+                    <a href id="DELIVERY_ADDRESS" class="nav-link"
+                       [ngClass]="{ active: selectedDeliveryTab === 'DELIVERY_ADDRESS'}"
+                       (click)="onDeliveryTabSelect($event,'DELIVERY_ADDRESS')">
+                        <span [innerHTML]="'Delivery Address' | translate"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href id="DELIVERY_DATE" class="nav-link"
+                       [ngClass]="{ active: selectedDeliveryTab === 'DELIVERY_DATE'}"
+                       (click)="onDeliveryTabSelect($event,'DELIVERY_DATE')">
+                        <span [innerHTML]="'Delivery Date' | translate"></span>
+                    </a>
+                </li>
+            </ul>
+
+            <ng-container *ngIf="selectedDeliveryTab == 'DELIVERY_ADDRESS'">
+                <div class="col-12">
+                    <multi-address-input [deliveryTerms]="deliverytermsOfBuyer"
+                                         [disabled]="isLoading() || isReadOnly()"
+                                         [address]="wrapper.rfqDeliveryAddress">
+                    </multi-address-input>
+                </div>
+            </ng-container>
+
+            <ng-container *ngIf="selectedDeliveryTab == 'DELIVERY_DATE'">
+                <div class="col-12">
+                    <!-- Delivery Period -->
+                    <div *ngIf="!isDeliveryDateSectionOpen" class="row content-row"
+                         [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'deliveryPeriod')}">
+                        <div class="col-2">
+                            <strong class="font-weight-500"><span [innerHTML]="'Delivery Period' | translate"></span>:</strong>
+                        </div>
+                        <!-- Manufacturers's offer -->
+                        <div class="col-5">
+                            <ng-container [ngSwitch]="manufacturersTermsSource">
+                                <ng-container *ngSwitchCase="'product_defaults'">
+                                    {{ wrapper.lineDeliveryPeriod.value }}
+                                    {{ wrapper.lineDeliveryPeriod.unitCode }}
+                                </ng-container>
+                                <ng-container *ngSwitchCase="'frame_contract'">
+                                    {{ wrapper.frameContractQuotationWrapper.deliveryPeriod.value }}
+                                    {{ wrapper.frameContractQuotationWrapper.deliveryPeriod.unitCode }}
+                                </ng-container>
+                                <ng-container *ngSwitchCase="'last_offer'">
+                                    {{ wrapper.lastOfferQuotationWrapper.deliveryPeriod.value }}
+                                    {{ wrapper.lastOfferQuotationWrapper.deliveryPeriod.unitCode }}
+                                </ng-container>
+                            </ng-container>
+                            <span [ngStyle]="getDeliveryPeriodStyle()">
+                                {{ getDeliveryPeriodText() }}
+                            </span>
+                        </div>
+                        <!-- Customer's offer-->
+                        <div class="col-5">
+                            <negotiation-request-input [label]="'Request Delivery Period'"
+                                                       [disabled]="isLoading() || isReadOnly()"
+                                                       id="deliveryCb"
+                                                       [quantity]="wrapper.rfqDeliveryPeriod"
+                                                       (quantityChange)="onTermsChange(FIXED_NEGOTIATION_TERMS.DELIVERY_PERIOD)"
+                                                       [quantityUnits]="wrapper.sellerSettings.deliveryPeriodUnits"
+                                                       [invalid]="!isDeliveryPeriodValid()">
+                            </negotiation-request-input>
+                        </div>
+                    </div>
+                    <!-- Delivery Dates -->
+                    <div *ngIf="isDeliveryDateSectionOpen">
+                        <div *ngFor="let rfqDelivery of wrapper.rfqDelivery;let i=index" class="row content-row">
+                            <div class="col-2">
+                                <strong class="font-weight-500"><span [innerHTML]="'Delivery Date' | translate"></span>:</strong>
+                            </div>
+                            <div class="col-5">
+                                <date-input [disabled]="isLoading() || isReadOnly()" [(date)]="rfqDelivery.requestedDeliveryPeriod.endDate">
+                                </date-input>
+                            </div>
+                            <div class="col-5">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <strong class="font-weight-500"><span [innerHTML]="'Quantity' | translate"></span>:</strong>
+                                    </div>
+                                    <div class="col-4 quantity-input">
+                                        <input type="number" [ngModel]="rfqDelivery.shipment.goodsItem[0].quantity.value" (ngModelChange)="rfqDelivery.shipment.goodsItem[0].quantity.value = $event;"
+                                               class="form-control form-control-sm"
+                                               [disabled]="isLoading() || isReadOnly()"/>
+                                    </div>
+                                    <span class="col-3">{{ rfqDelivery.shipment.goodsItem[0].quantity.unitCode }}</span>
+                                    <button *ngIf="!isReadOnly()" class="btn btn-danger action col-2" type="button" (click)="onDeleteDeliveryDate(i)">
+                                        <span><span [innerHTML]="'Delete' | translate"></span></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Button to add a delivery date -->
+                    <div *ngIf="!isReadOnly()" class="btn btn-outline-primary mt-1 " (click)="onAddDeliveryDate()"><span [innerHTML]="'Add Delivery Date' | translate"></span></div>
+                </div>
+            </ng-container>
         </div>
 
         <!-- Terms and conditions -->

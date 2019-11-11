@@ -61,7 +61,7 @@
             </div>
         </div>
         <div class="col-6">
-            <div>
+            <div *ngIf="!areDeliveryDatesAvailable">
                 <text-input presentationMode="view" label="Delivery Period"
                             [text]="getDeliveryPeriodText()" labelClass="col-4" valueClass="col-8">
                 </text-input>
@@ -95,6 +95,27 @@
                 <text-input presentationMode="view" label="Country"
                             [text]="address.country.name.value" labelClass="col-4" valueClass="col-8">
                 </text-input>
+            </div>
+            <div *ngIf="areDeliveryDatesAvailable">
+                <div *ngFor="let delivery of getDelivery();let i=index" class="row">
+                    <div class="col-4">
+                        <strong class="font-weight-500"><span [innerHTML]="'Delivery Date' | translate"></span>:</strong>
+                    </div>
+                    <div class="col-4">
+                        <date-input [disabled]="true" [(date)]="delivery.requestedDeliveryPeriod.endDate">
+                        </date-input>
+                    </div>
+                    <div class="col-4">
+                        <div class="row">
+                            <div class="col-4">
+                                <strong class="font-weight-500"><span [innerHTML]="'Quantity' | translate"></span>:</strong>
+                            </div>
+                            <div class="col-8 quantity-input">
+                                {{delivery.shipment.goodsItem[0].quantity.value}} {{delivery.shipment.goodsItem[0].quantity.unitCode}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

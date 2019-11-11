@@ -185,7 +185,21 @@ export class NegotiationResponseComponent implements OnInit {
 
     isFormValid(): boolean {
         // TODO check other elements
-        return this.isFrameContractDurationValid();
+        return this.isFrameContractDurationValid() && this.areDeliveryDatesValid();
+    }
+
+    areDeliveryDatesValid(): boolean{
+        for(let wrapper of this.wrappers){
+            for(let delivery of wrapper.newQuotationWrapper.delivery){
+                let date = delivery.requestedDeliveryPeriod.endDate;
+                let quantity = delivery.shipment.goodsItem[0].quantity;
+
+                if(!(date == null && UBLModelUtils.isEmptyQuantity(quantity)) && !(date != null && !UBLModelUtils.isEmptyOrIncompleteQuantity(quantity))){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     isPriceValid(): boolean {
@@ -249,6 +263,30 @@ export class NegotiationResponseComponent implements OnInit {
             if(UBLModelUtils.areTermsAndConditionListsDifferent(wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.clause, wrapper.newQuotation.quotationLine[wrapper.lineIndex].lineItem.clause)) {
                 return true;
             }
+            // compare delivery date-quantity pairs of rfq with that of quotation
+            // the length of deliveries are not equal, so terms are updated
+            if(wrapper.rfqDelivery.length != wrapper.newQuotationWrapper.delivery.length){
+                return true;
+            }
+            // the length of deliveries are equal, so we need to compare each delivery date-quantity pair of rfq and quotation
+            let rfqDeliveryDatesWithQuantities = [];
+            for(let delivery of wrapper.rfqDelivery){
+                rfqDeliveryDatesWithQuantities.push([delivery.requestedDeliveryPeriod.endDate,delivery.shipment.goodsItem[0].quantity]);
+            }
+            // remove the rfq delivery date-quantity pair from the list iff it's included in the quotation
+            for(let delivery of wrapper.newQuotationWrapper.delivery){
+                let size = rfqDeliveryDatesWithQuantities.length;
+                for(let i = 0; i<size ; i++){
+                    if(delivery.requestedDeliveryPeriod.endDate == rfqDeliveryDatesWithQuantities[i][0] && UBLModelUtils.areQuantitiesEqual(delivery.shipment.goodsItem[0].quantity,rfqDeliveryDatesWithQuantities[i][1])){
+                        rfqDeliveryDatesWithQuantities.splice(i,1);
+                        break;
+                    }
+                }
+            }
+            // terms are updated since some delivery date-quantity pairs are updated in the quotation
+            if(rfqDeliveryDatesWithQuantities.length > 0){
+                return true;
+            }
         }
 
 
@@ -258,9 +296,11 @@ export class NegotiationResponseComponent implements OnInit {
     private isFrameContractDurationValid(): boolean {
         if(this.frameContracts){
             for(let frameContract of this.frameContracts){
-                if(frameContract.digitalAgreementTerms.validityPeriod.durationMeasure.unitCode == null ||
-                    frameContract.digitalAgreementTerms.validityPeriod.durationMeasure.value == null) {
-                    return false;
+                if(frameContract){
+                    if(frameContract.digitalAgreementTerms.validityPeriod.durationMeasure.unitCode == null ||
+                        frameContract.digitalAgreementTerms.validityPeriod.durationMeasure.value == null) {
+                        return false;
+                    }
                 }
             }
         }

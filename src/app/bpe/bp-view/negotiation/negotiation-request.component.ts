@@ -240,7 +240,7 @@ export class NegotiationRequestComponent implements OnInit {
 
     isFormValid(): boolean {
         let formValid = /*!this.rfq.negotiationOptions.frameContractDuration ||*/ this.isFrameContractValid();
-        formValid = formValid && this.isDeliveryPeriodValid() && this.isWarrantyPeriodValid();
+        formValid = formValid && this.isDeliveryPeriodValid() && this.isWarrantyPeriodValid() && this.areDeliveryDatesValid();
         return formValid;
     }
 
@@ -282,6 +282,20 @@ export class NegotiationRequestComponent implements OnInit {
             const range = this.getDeliveryPeriodRange(wrapper);
             if(range && !this.isPeriodValid(wrapper.rfqDeliveryPeriod.value, range)){
                 return false;
+            }
+        }
+        return true;
+    }
+
+    areDeliveryDatesValid(): boolean{
+        for(let wrapper of this.wrappers){
+            for(let delivery of wrapper.rfqDelivery){
+                let date = delivery.requestedDeliveryPeriod.endDate;
+                let quantity = delivery.shipment.goodsItem[0].quantity;
+
+                if(!(date == null && UBLModelUtils.isEmptyQuantity(quantity)) && !(date != null && !UBLModelUtils.isEmptyOrIncompleteQuantity(quantity))){
+                    return false;
+                }
             }
         }
         return true;

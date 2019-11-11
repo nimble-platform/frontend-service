@@ -418,12 +418,14 @@ export class ShoppingCartComponent implements OnInit {
                     negotiationModelWrapper.rfqIncoterms = commonTerms.incoTerm;
                     negotiationModelWrapper.rfqPaymentMeans = commonTerms.paymentMean;
                     negotiationModelWrapper.rfqPaymentTerms.paymentTerm = commonTerms.paymentTerm;
-                    negotiationModelWrapper.rfqDeliveryPeriod = copy(commonTerms.deliveryPeriod);
                     negotiationModelWrapper.rfqWarranty = copy(commonTerms.warrantyPeriod);
                     negotiationModelWrapper.rfqDeliveryAddress = copy(commonTerms.deliveryAddress);
                     negotiationModelWrapper.rfqDataMonitoringRequested = commonTerms.dataMonitoringRequested;
-
                     negotiationModelWrapper.rfqTradingTerms = copy(commonTerms.tradingTerms);
+
+                    if(!negotiationRequestItem.isDeliveryDateSectionOpen){
+                        negotiationModelWrapper.rfqDeliveryPeriod = copy(commonTerms.deliveryPeriod);
+                    }
 
                     if(commonTerms.clauses.length > 0){
                         // if T&Cs are the default ones of the platform, we need to keep the first clause and replace the rest,

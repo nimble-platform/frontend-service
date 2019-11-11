@@ -27,6 +27,7 @@ import {Contract} from '../../../catalogue/model/publish/contract';
 import {Clause} from '../../../catalogue/model/publish/clause';
 import {TranslateService} from '@ngx-translate/core';
 import {CatalogueLine} from '../../../catalogue/model/publish/catalogue-line';
+import {Delivery} from '../../../catalogue/model/publish/delivery';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -68,6 +69,8 @@ export class OrderItemComponent implements OnInit {
 
     // map representing the workflow of seller's company
     companyWorkflowMap = null;
+    // whether multiple delivery dates are specified instead of a delivery period in the order
+    areDeliveryDatesAvailable:boolean = false;
 
     constructor(public bpDataService: BPDataService,
                 private userService: UserService,
@@ -94,6 +97,10 @@ export class OrderItemComponent implements OnInit {
         this.companyWorkflowMap = this.bpDataService.getCompanyWorkflowMap(null);
 
         this.initCallStatus.submit();
+
+        if(UBLModelUtils.areDeliveryDatesAvailable(this.getDelivery())){
+            this.areDeliveryDatesAvailable = true;
+        }
 
         // null check is for checking whether a new order is initialized
         // preceding process id check is for checking whether there is any preceding process before the order
@@ -192,6 +199,10 @@ export class OrderItemComponent implements OnInit {
     getDeliveryPeriodText(): string {
         const qty = this.getLineItem().delivery[0].requestedDeliveryPeriod.durationMeasure;
         return `${qty.value} ${qty.unitCode}`;
+    }
+
+    getDelivery():Delivery[]{
+        return this.getLineItem().delivery;
     }
 
     getWarrantyPeriodText(): string {

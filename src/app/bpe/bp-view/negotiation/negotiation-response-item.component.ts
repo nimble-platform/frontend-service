@@ -21,6 +21,7 @@ import * as moment from "moment";
 import {Moment, unitOfTime} from "moment";
 import {Clause} from '../../../catalogue/model/publish/clause';
 import {TranslateService} from '@ngx-translate/core';
+import {Delivery} from '../../../catalogue/model/publish/delivery';
 
 @Component({
     selector: "negotiation-response-item",
@@ -61,10 +62,13 @@ export class NegotiationResponseItemComponent implements OnInit {
 
     getPartyId = UBLModelUtils.getPartyId;
     showFrameContractDetails: boolean = false;
-    showDeliveryAddress: boolean = false;
+    showDeliveryDetails: boolean = false;
     showTermsAndConditions:boolean = false;
     selectedTCTab: 'CUSTOM_TERMS' | 'CLAUSES' = 'CUSTOM_TERMS';
+    selectedDeliveryTab: 'DELIVERY_ADDRESS' | 'DELIVERY_DATE' = 'DELIVERY_ADDRESS';
     tcChanged:boolean = false;
+    // if there are delivery date-quantity pairs instead of delivery period in the request, this field is true.
+    isDeliveryDateSectionOpen:boolean = false;
 
     onClauseUpdate(event): void {
         this.tcChanged = UBLModelUtils.areTermsAndConditionListsDifferent(this.wrapper.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.clause, this.wrapper.newQuotation.quotationLine[this.wrapper.lineIndex].lineItem.clause);
@@ -82,6 +86,12 @@ export class NegotiationResponseItemComponent implements OnInit {
         if(this.primaryTermsSource == null){
             this.primaryTermsSource =  'product_defaults';
         }
+
+        if(UBLModelUtils.areDeliveryDatesAvailable(this.wrapper.rfqDelivery)){
+            // open delivery date section
+            this.isDeliveryDateSectionOpen = true;
+        }
+
         // get copy of ThreadEventMetadata of the current business process
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
         this.line = this.bpDataService.getCatalogueLine();
@@ -110,6 +120,11 @@ export class NegotiationResponseItemComponent implements OnInit {
     onTCTabSelect(event:any,id:any): void {
         event.preventDefault();
         this.selectedTCTab = id;
+    }
+
+    onDeliveryTabSelect(event:any, id:any): void {
+        event.preventDefault();
+        this.selectedDeliveryTab = id;
     }
 
     /*
@@ -180,7 +195,7 @@ export class NegotiationResponseItemComponent implements OnInit {
         if (tab)
             ret = false;
         this.showFrameContractDetails = false;
-        this.showDeliveryAddress = false;
+        this.showDeliveryDetails = false;
         this.showTermsAndConditions = false;
         return ret;
     }
@@ -196,5 +211,16 @@ export class NegotiationResponseItemComponent implements OnInit {
         let m:Moment = moment().add(this.wrapper.newQuotationWrapper.frameContractDuration.value, <unitOfTime.DurationConstructor>rangeUnit);
         let date: string = m.format(this.dateFormat);
         return date;
+    }
+
+    onAddDeliveryDate(){
+        let delivery:Delivery = new Delivery();
+        delivery.shipment.goodsItem[0].quantity.unitCode = this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.quantity.unitCode;
+        this.wrapper.newQuotationWrapper.delivery.push(delivery);
+    }
+
+    onDeleteDeliveryDate(){
+        let index = this.wrapper.newQuotationWrapper.delivery.length-1;
+        this.wrapper.newQuotationWrapper.delivery.splice(index,1);
     }
 }
