@@ -242,7 +242,7 @@
         <ng-container *ngIf="isFrameContractVisible()">
             <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showFrameContractDetails}" (click)="showFrameContractDetails=showTab(showFrameContractDetails)"><span [innerHTML]="'Frame Contract' | translate"></span></div>
         </ng-container>
-        <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'btn-outline-primary':wrapper.checkEqual(manufacturersTermsSource, 'deliveryPeriod') && !areDeliveryDatesAvailable(wrapper.rfqDelivery),'bg-danger':!wrapper.checkEqual(manufacturersTermsSource, 'deliveryPeriod') || areDeliveryDatesAvailable(),'active':showDeliveryDetails}" (click)="showDeliveryDetails=showTab(showDeliveryDetails)"><span [innerHTML]="'Delivery Details' | translate"></span></div>
+        <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'btn-outline-primary':wrapper.checkEqual(manufacturersTermsSource, 'deliveryPeriod') && !areDeliveryDatesAvailable(wrapper.rfqDelivery),'bg-danger':!wrapper.checkEqual(manufacturersTermsSource, 'deliveryPeriod') || areDeliveryDatesAvailable(wrapper.rfqDelivery),'active':showDeliveryDetails}" (click)="showDeliveryDetails=showTab(showDeliveryDetails)"><span [innerHTML]="'Delivery Details' | translate"></span></div>
     </div>
 </div>
 
