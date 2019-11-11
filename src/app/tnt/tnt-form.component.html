@@ -46,12 +46,9 @@
         </div>
     </div>
 </div>
-<div class="row" *ngIf="trackingInfo.length">
-    <ngb-alert type="success" [dismissible]="false" *ngIf="verified">
-        <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'This Data is Verified by BlockChain' | translate"></span>  <i class="fas fa-project-diagram pl-1"></i> </ngb-alert>
-</div>
-<tnt-event-data [incomingTrackingInfo]="trackingInfo"></tnt-event-data>
 
-<!--<div>-->
-<!--<pre>{{trackingInfo | json}}</pre>-->
-<!--</div>-->
+<tnt-event-data [incomingTrackingInfo]="trackingInfo"></tnt-event-data>
+<!-- 
+<div>
+    <pre>{{trackingInfo | json}}</pre>
+</div> -->

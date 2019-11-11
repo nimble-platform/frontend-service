@@ -18,6 +18,10 @@
     <ngb-tab>
         <ng-template ngbTabTitle>Event Information</ng-template>
         <ng-template ngbTabContent>
+            
+            <ngb-alert type="success" [dismissible]="false" *ngIf="bcEventVerified">
+                    <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'This Data is Verified by BlockChain' | translate"></span>  <i class="fas fa-project-diagram pl-1"></i>
+            </ngb-alert>
             <table class="table table-bordered mt-2">
                 <thead>
                     <th scope="col">Attributes</th>

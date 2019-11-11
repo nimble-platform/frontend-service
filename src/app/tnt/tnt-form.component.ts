@@ -74,6 +74,9 @@ export class TnTFormComponent {
                     console.log(res);
                 }
                 this.verified = res;
+                this.trackingInfo.forEach(event => {
+                    event['verified'] = this.verified
+                });
             })
             .catch(err => {
                 this.falsecode = err._body;

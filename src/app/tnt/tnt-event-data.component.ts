@@ -12,7 +12,6 @@ export class TnTEventDataComponent implements OnChanges {
     collectionSize = 0;
     page = 1;
     pageSize = 5;
-    verified: boolean;
     selectedEvent = {};
     eventsToDescribe: TrackInfo[] = [];
 

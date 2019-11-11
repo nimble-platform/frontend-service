@@ -16,6 +16,7 @@ import moment = require('moment');
 export class TnTEventDetailsComponent implements OnChanges {
     @Input('eventsToDisplay') events: TrackInfo[];
     debug = myGlobals.debug;
+    bcEventVerified: boolean;
     falsecode = '';
     gateInformation = [];
     bizLocationInformation = [];
@@ -29,6 +30,7 @@ export class TnTEventDetailsComponent implements OnChanges {
         if (!this.events.length) {
             return;
         }
+        this.bcEventVerified = this.events[0].verified;
         this.getGateInfo();
         this.getBizLocInfo();
         this.displaySensorDashboard();

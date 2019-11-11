@@ -5,4 +5,5 @@ export interface TrackInfo {
     action: string;
     readPoint: string;
     bizLocation: string;
+    verified: boolean;
 }
