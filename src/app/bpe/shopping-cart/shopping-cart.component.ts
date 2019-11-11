@@ -497,6 +497,8 @@ export class ShoppingCartComponent implements OnInit {
     }
 
     onSingleLineNegotiation(cartLine: CatalogueLine): void {
+        let callStatus: CallStatus = this.deleteCallStatuses.get(cartLine.hjid);
+        callStatus.submit();
         let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
 
         // final check on the rfq
@@ -508,7 +510,7 @@ export class ShoppingCartComponent implements OnInit {
         // replace properties of rfq line with the selected ones
         rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty = this.modifiedCatalogueLines.get(cartLine.hjid).goodsItem.item.additionalItemProperty;
 
-        this.startBpCallStatus.submit();
+        callStatus.submit();
         Promise.all([
             this.userService.getParty(this.cookieService.get('company_id')),
             this.userService.getParty(sellerId),
@@ -522,11 +524,11 @@ export class ShoppingCartComponent implements OnInit {
 
             return this.bpeService.startProcessWithDocument(document);
         }).then(() => {
-            this.startBpCallStatus.callback(null, true);
+            callStatus.callback(null, true);
             this.router.navigate(['dashboard'], {queryParams: {tab: 'PURCHASES'}});
 
         }).catch(error => {
-            this.startBpCallStatus.error('Failed to start process', error);
+            callStatus.error('Failed to start process', error);
         });
     }
 
