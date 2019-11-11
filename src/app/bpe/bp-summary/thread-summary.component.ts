@@ -322,14 +322,13 @@ export class ThreadSummaryComponent implements OnInit {
         return event;
     }
 
-    navigateToSearchDetails() {
-        const items = this.titleEvent.products;
+    navigateToSearchDetails(item:Item) {
         this.searchContextService.clearSearchContext();
         this.router.navigate(['/product-details'],
             {
                 queryParams: {
-                    catalogueId: items[0].catalogueDocumentReference.id,
-                    id: items[0].manufacturersItemIdentification.id
+                    catalogueId: item.catalogueDocumentReference.id,
+                    id: item.manufacturersItemIdentification.id
                 }
             });
     }
