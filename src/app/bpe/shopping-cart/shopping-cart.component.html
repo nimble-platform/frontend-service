@@ -29,7 +29,7 @@
             </div>
             <call-status class="ml-auto" [callStatus]="deleteCallStatuses.get(cartLine.hjid)"></call-status>
         </div>
-        <div *ngIf="collapsedStatusesOfCartItems.get(cartLine.hjid)" class="space-before">
+        <div [hidden]="!collapsedStatusesOfCartItems.get(cartLine.hjid)" class="space-before">
             <product-details-overview [wrapper]="productWrappers.get(cartLine.hjid)"
                                       [itemWithSelectedProps]="modifiedCatalogueLines.get(cartLine.hjid).goodsItem.item"
                                       [associatedProducts]="associatedProducts.get(cartLine.hjid)"
