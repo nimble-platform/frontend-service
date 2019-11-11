@@ -16,8 +16,9 @@
     </ppap-clause>
 
     <!-- Negotiation -->
-    <negotiation-response *ngIf="clause.clauseDocumentRef?.documentType === 'QUOTATION' && rfq && rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails == null" [isCatalogueLineDeleted]="isCatalogueLineDeleted"
-        [rfq]="rfq" [quotation]="clauseDocument" [readonly]="true" [defaultTermsAndConditions]="defaultTermsAndConditions">
+    <negotiation-response *ngIf="clause.clauseDocumentRef?.documentType === 'QUOTATION' && rfq && rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails == null"
+                          [areCatalogueLinesDeleted]="areCatalogueLinesDeleted" [selectedLineIndex]="selectedLineIndex"
+                          [rfq]="rfq" [quotation]="clauseDocument" [readonly]="true" [defaultTermsAndConditions]="defaultTermsAndConditions">
     </negotiation-response>
 
     <!-- Negotiation Transport -->

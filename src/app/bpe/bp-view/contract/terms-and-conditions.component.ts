@@ -7,7 +7,6 @@ import {COUNTRY_NAMES} from '../../../common/utils';
 import {UnitService} from '../../../common/unit-service';
 import {deliveryPeriodUnitListId, warrantyPeriodUnitListId} from '../../../common/constants';
 import {TradingTerm} from '../../../catalogue/model/publish/trading-term';
-import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 
 
 @Component({
@@ -18,11 +17,9 @@ import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 export class TermsAndConditionsComponent implements OnInit {
 
     // Inputs
-    @Input() buyerPartyId:string;
     @Input() sellerPartyId:string;
     @Input() readOnly:boolean = false;
     @Input() enableComparisonWithOtherTerms: boolean = true; // if true, original and current terms are compared and differences are highlighted
-    @Input() rfqId:string = null;
     @Input() documentType:string; // "order", "rfq", "quotation";
     _originalTermAndConditionClauses:Clause[] = null; // original terms and conditions of the object
     _termsAndConditions:Clause[] = []; // updated terms and conditions of the object
@@ -50,8 +47,8 @@ export class TermsAndConditionsComponent implements OnInit {
     _selectedTradingTerm: string = null;
 
     // options
-    INCOTERMS: string[] = [];
-    PAYMENT_TERMS:string[] = [];
+    @Input() availableIncoTerms: string[] = [];
+    @Input() availablePaymentTerms: string[] = [];
     COUNTRY_NAMES = COUNTRY_NAMES;
 
     constructor(public bpeService: BPEService,
@@ -65,7 +62,7 @@ export class TermsAndConditionsComponent implements OnInit {
         window.crypto.getRandomValues(array);
         this.randomComponentId = "" + array[0];
 
-        if(this.enableComparisonWithOtherTerms) {
+        if(this.enableComparisonWithOtherTerms && this.sellerPartyId != null) {
             this.callStatus.submit();
             Promise.all([
                 this.userService.getSettingsForParty(this.sellerPartyId),
@@ -75,9 +72,9 @@ export class TermsAndConditionsComponent implements OnInit {
             ]).then(([sellerPartySettings, deliveryPeriodUnits, warrantyPeriodUnits]) => {
 
                 // populate available incoterms
-                this.INCOTERMS = sellerPartySettings.negotiationSettings.incoterms;
+                this.availableIncoTerms = sellerPartySettings.negotiationSettings.incoterms;
                 // populate available payment terms
-                this.PAYMENT_TERMS = sellerPartySettings.negotiationSettings.paymentTerms;
+                this.availablePaymentTerms = sellerPartySettings.negotiationSettings.paymentTerms;
 
                 this.callStatus.callback("Successfully fetched terms and conditions", true);
             }).catch(error => {

@@ -6,13 +6,13 @@ import {CatalogueService} from "../../../catalogue/catalogue.service";
 import {FrameContractTransitionService} from "./frame-contract-transition.service";
 import {DigitalAgreement} from "../../../catalogue/model/publish/digital-agreement";
 import {BPEService} from "../../bpe.service";
-import {CatalogueLine} from "../../../catalogue/model/publish/catalogue-line";
 import {QuotationWrapper} from "../negotiation/quotation-wrapper";
-import {selectPartyName, selectPreferredValues} from "../../../common/utils";
+import {selectPartyName, selectPreferredValues} from '../../../common/utils';
 import {CookieService} from "ng2-cookies";
 import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
 import {TranslateService} from '@ngx-translate/core';
 import {UserService} from '../../../user-mgmt/user.service';
+import {QuotationLine} from '../../../catalogue/model/publish/quotation-line';
 
 /**
  * Created by suat on 02-Jul-19.
@@ -86,7 +86,7 @@ export class FrameContractDetailsComponent implements OnInit {
                             partyPromise
                         ]).then(([catalogueLine, quotation, party]) => {
                             if(catalogueLine){
-                                this.quotationWrapper = new QuotationWrapper(quotation, catalogueLine);
+                                this.quotationWrapper = new QuotationWrapper(quotation, catalogueLine, UBLModelUtils.getFrameContractQuotationLineIndexForProduct(quotation.quotationLine,catalogueId,lineId));
                                 this.frameContractRetrievalCallStatus.callback(null, true);
                             }
                             this.correspondingPartyName = selectPartyName(party.partyName);

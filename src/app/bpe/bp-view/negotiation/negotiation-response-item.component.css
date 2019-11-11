@@ -1,0 +1,16 @@
+.title-row {
+    padding: 0rem 0.3rem 0.3rem 0.3rem;
+    border-bottom: 1px solid gray;
+}
+
+.content-row {
+    padding: 0.3rem;
+}
+
+.quantity-input {
+    padding-left: 0.1rem;
+}
+
+.delivery-date-label {
+    padding-left: 0;
+}

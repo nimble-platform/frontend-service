@@ -36,8 +36,7 @@ export class TransportExecutionPlanComponent implements OnInit {
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
 
-    itemName:string;
-
+    selectPreferredValue=selectPreferredValue
     constructor(private bpDataService: BPDataService,
                 private searchContextService: SearchContextService,
                 private cookieService: CookieService,
@@ -72,7 +71,6 @@ export class TransportExecutionPlanComponent implements OnInit {
 
     init(){
         this.request = this.bpDataService.transportExecutionPlanRequest;
-        this.itemName = selectPreferredValue(this.request.consignment[0].consolidatedShipment[0].goodsItem[0].item.name)
         this.response = this.bpDataService.transportExecutionPlan;
         this.productOrder = this.bpDataService.productOrder;
         this.userRole = this.bpDataService.bpActivityEvent.userRole;
@@ -186,5 +184,33 @@ export class TransportExecutionPlanComponent implements OnInit {
     onDispatchAdvice() {
         this.bpDataService.setCopyDocuments(false, false, false,false);
         this.bpDataService.proceedNextBpStep("seller", "Fulfilment");
+    }
+
+    isThereADeletedProduct():boolean{
+        for(let isProductDeleted of this.processMetadata.areProductsDeleted){
+            if(isProductDeleted){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    populateAreCatalogueLinesDeletedArray():boolean[]{
+        let areCatalogueLinesDeleted:boolean[] = [];
+        if(this.processMetadata){
+            for(let isProductDeleted of this.processMetadata.areProductsDeleted){
+                if(isProductDeleted){
+                    areCatalogueLinesDeleted.push(true);
+                }
+                else {
+                    areCatalogueLinesDeleted.push(false);
+                }
+            }
+        }
+        else {
+            areCatalogueLinesDeleted.push(false);
+        }
+
+        return areCatalogueLinesDeleted;
     }
 }

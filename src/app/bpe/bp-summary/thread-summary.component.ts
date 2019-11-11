@@ -152,6 +152,16 @@ export class ThreadSummaryComponent implements OnInit {
 
     async openBpProcessView() {
         let userRole:BpUserRole = this.titleEvent.buyer ? "buyer": "seller";
+
+        let catalogueIds = [];
+        let catalogueLineIds = [];
+        let termsSources = [];
+
+        for(let product of this.titleEvent.products){
+            catalogueIds.push(product.catalogueDocumentReference.id);
+            catalogueLineIds.push(product.manufacturersItemIdentification.id);
+            termsSources.push(null);
+        }
         this.bpDataService.startBp(
             new BpActivityEvent(
                 userRole,
@@ -159,13 +169,14 @@ export class ThreadSummaryComponent implements OnInit {
                 this.processInstanceGroup.id,
                 this.titleEvent,
                 [this.titleEvent].concat(this.history),
-                this.titleEvent.product,
+                this.titleEvent.products,
                 null,
                 false,
-                this.titleEvent.product.catalogueDocumentReference.id,
-                this.titleEvent.product.manufacturersItemIdentification.id,
+                catalogueIds,
+                catalogueLineIds,
                 this.titleEvent.processInstanceId,
-                ActivityVariableParser.getPrecedingDocumentId(this.titleEvent.activityVariables)),
+                ActivityVariableParser.getPrecedingDocumentId(this.titleEvent.activityVariables),
+                termsSources),
             true);
     }
 
@@ -275,14 +286,13 @@ export class ThreadSummaryComponent implements OnInit {
 
         // get seller's business process workflow
         // we need this information to set status and labels for Order properly
-        const sellerNegotiationSettings = await this.userService.getCompanyNegotiationSettingsForParty(initialDoc.item.manufacturerParty.partyIdentification[0].id);
+        const sellerNegotiationSettings = await this.userService.getCompanyNegotiationSettingsForParty(initialDoc.items[0].manufacturerParty.partyIdentification[0].id);
         const sellerWorkflow = sellerNegotiationSettings.company.processID;
         // check whether Fulfilment is included or not in seller's workflow
         const isFulfilmentIncludedInWorkflow = !sellerWorkflow || sellerWorkflow.length == 0 || sellerWorkflow.indexOf('Fulfilment') != -1;
 
         if (userRole === "buyer") {
-            let item:Item = initialDoc.item;
-            this.lastEventPartnerID = UBLModelUtils.getPartyId(item.manufacturerParty);
+            this.lastEventPartnerID = UBLModelUtils.getPartyId(initialDoc.items[0].manufacturerParty);
         }
         else {
             this.lastEventPartnerID = initialDoc.buyerPartyId;
@@ -296,14 +306,14 @@ export class ThreadSummaryComponent implements OnInit {
             processInstanceId,
             moment(new Date(lastActivity["startTime"]), 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss"),
             ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"),processType),
-            initialDoc.item,
+            initialDoc.items,
             correspondent,
             this.getBPStatus(responseDocumentStatus),
             initialDoc,
             activityVariables,
             userRole === "buyer",
             isRated === "true",
-            initialDoc.isProductDeleted,
+            initialDoc.areProductsDeleted,
             this.processInstanceGroup.status == "COMPLETED"
         );
 
@@ -312,8 +322,7 @@ export class ThreadSummaryComponent implements OnInit {
         return event;
     }
 
-    navigateToSearchDetails() {
-        const item = this.titleEvent.product;
+    navigateToSearchDetails(item:Item) {
         this.searchContextService.clearSearchContext();
         this.router.navigate(['/product-details'],
             {
@@ -498,16 +507,25 @@ export class ThreadSummaryComponent implements OnInit {
     private computeTitleEvent() {
         this.titleEvent = this.lastEvent;
         // if the event is a transportation service, go through the history and check the last event that is not (if any)
-        if(this.lastEvent.product.transportationServiceDetails) {
+        if(this.areTransportationServices(this.lastEvent.products)) {
             // history ordered from new to old
             for(let i = this.history.length - 1; i >= 0; i--) {
                 const event = this.history[i]
-                if(!event.product.transportationServiceDetails) {
+                if(!this.areTransportationServices(event.products)) {
                     // if not a transport, this is relevant, doing it in the for loop makes sure the LAST non-transport event is the relevant one.
                     this.titleEvent = event;
                 }
             }
         }
+    }
+
+    private areTransportationServices(items: Item[]){
+        for(let item of items){
+            if(!item.transportationServiceDetails){
+                return false;
+            }
+        }
+        return true;
     }
 
     deleteGroup(): void {

@@ -1,54 +1,63 @@
-<ng-container *ngIf="wrapper">
+<ng-container *ngIf="wrappers">
     <div class="row">
         <div class="col-6">
             <!-- Title -->
             <h2 class="nimble-title">
                 <span [innerHTML]="'Order for' | translate"></span>:
             </h2>
-            <h2>{{ line.goodsItem.item.name[0].value }}
-                <button class="btn btn-outline-dark inline ml-2" (click)="onToggleProductExpanded()">
-                    <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="productExpanded"></i>
-                    <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!productExpanded"></i>
-                    <span class="inline" *ngIf="!productExpanded"><small><span [innerHTML]="'Show Details' | translate"></span></small></span>
-                    <span class="inline" *ngIf="productExpanded"><small><span [innerHTML]="'Hide Details' | translate"></span></small></span>
-                </button>
-                <ng-template #content let-modal>
-                    <div class="modal-body">
-                        <iframe width='100%;' height='800px'  [src]="chatURL" frameborder="0"></iframe>
-                    </div>
-                    <!--<div class="modal-footer">-->
+            <ng-container *ngFor="let line of lines;let i=index">
+                <h2><div class="btn btn-outline-primary btn-light inline" [ngClass]="{'active':selectedLineIndex == i}" (click)="selectedLineIndex=i">{{ line.goodsItem.item.name[0].value }}</div>
+                    <button class="btn btn-outline-dark inline ml-2" (click)="onToggleProductExpanded(i)">
+                        <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="productsExpanded[i]"></i>
+                        <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!productsExpanded[i]"></i>
+                        <span class="inline" *ngIf="!productsExpanded[i]"><small><span [innerHTML]="'Show Details' | translate"></span></small></span>
+                        <span class="inline" *ngIf="productsExpanded[i]"><small><span [innerHTML]="'Hide Details' | translate"></span></small></span>
+                    </button>
+                    <ng-template #content let-modal>
+                        <div class="modal-body">
+                            <iframe width='100%;' height='800px'  [src]="chatURL" frameborder="0"></iframe>
+                        </div>
+                        <!--<div class="modal-footer">-->
                         <!--<button type="button" class="btn btn-outline-dark" (click)="modal.dismiss('close')">Save</button>-->
-                    <!--</div>-->
-                </ng-template>
+                        <!--</div>-->
+                    </ng-template>
 
-                <button class="btn btn-outline-dark inline" (click)="open(content)" *ngIf="config.showChat"><span [innerHTML]="'Start chat' | translate"></span></button>
-            </h2>
+                    <button class="btn btn-outline-dark inline" (click)="open(content,line.goodsItem.item.name[0].value)" *ngIf="config.showChat"><span [innerHTML]="'Start chat' | translate"></span></button>
+                </h2>
+            </ng-container>
         </div>
-        <div *ngIf="serviceLine" class="col-6 title-right">
+        <div *ngIf="serviceLines" class="col-6 title-right">
             <!-- Transport Service Title -->
             <h2 class="nimble-title">
                 <span [innerHTML]="'Transport service' | translate"></span>:
             </h2>
-            <h2>{{ serviceLine.goodsItem.item.name[0].value }}
-                <button class="btn btn-outline-dark inline ml-2" (click)="onToggleServiceExpanded()">
-                    <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="serviceExpanded"></i>
-                    <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!serviceExpanded"></i>
-                    <span class="inline" *ngIf="!serviceExpanded"><small><span [innerHTML]="'Show Details' | translate"></span></small></span>
-                    <span class="inline" *ngIf="serviceExpanded"><small><span [innerHTML]="'Hide Details' | translate"></span></small></span>
-                </button>
-            </h2>
+            <ng-container *ngFor="let serviceLine of serviceLines;let i=index">
+                <h2>{{ serviceLine.goodsItem.item.name[0].value }}
+                    <button class="btn btn-outline-dark inline ml-2" (click)="onToggleServiceExpanded()">
+                        <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="serviceExpanded"></i>
+                        <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!serviceExpanded"></i>
+                        <span class="inline" *ngIf="!serviceExpanded"><small><span [innerHTML]="'Show Details' | translate"></span></small></span>
+                        <span class="inline" *ngIf="serviceExpanded"><small><span [innerHTML]="'Hide Details' | translate"></span></small></span>
+                    </button>
+                </h2>
+            </ng-container>
         </div>
     </div>
 
     <!-- Product Details Panel -->
-    <product-details-tabs *ngIf="productExpanded" [wrapper]="wrapper" [showOverview]="true" [isCatalogueLineDeleted]="isCatalogueLineDeleted"
-        [settings]="settings" [itemWithSelectedProps]="productWithSelectedProperties" [readonly]="true">
-    </product-details-tabs>
+    <ng-container *ngFor="let wrapper of wrappers;let i=index">
+        <product-details-tabs *ngIf="productsExpanded[i]" [wrapper]="wrapper" [showOverview]="true" [isCatalogueLineDeleted]="areCatalogueLinesDeleted[i]"
+                              [settings]="settings" [itemWithSelectedProps]="productWithSelectedProperties" [readonly]="true">
+        </product-details-tabs>
+    </ng-container>
+
 
     <!-- Service Details Panel -->
-    <product-details-tabs *ngIf="serviceExpanded" [wrapper]="serviceWrapper" [showOverview]="true" [isCatalogueLineDeleted]="isCatalogueLineDeleted"
-        [settings]="serviceSettings" [itemWithSelectedProps]="serviceWithSelectedProperties" [readonly]="true">
-    </product-details-tabs>
+    <ng-container *ngFor="let serviceWrapper of serviceWrappers;let i=index">
+        <product-details-tabs *ngIf="serviceExpanded" [wrapper]="serviceWrapper" [showOverview]="true" [isCatalogueLineDeleted]="areCatalogueLinesDeleted[i]"
+                              [settings]="serviceSettings" [itemWithSelectedProps]="serviceWithSelectedProperties" [readonly]="true">
+        </product-details-tabs>
+    </ng-container>
 
     <!-- BP Steps -->
     <product-bp-steps [currentStep]="currentStep" [status]="getStepsStatus()"
@@ -60,17 +69,19 @@
     <!-- Order Content -->
     <item-information *ngIf="currentStep === 'Item_Information_Request' || currentStep === 'Transport_Information_Request'">
     </item-information>
-    <ppap *ngIf="currentStep === 'Ppap'" [isCatalogueLineDeleted]="isCatalogueLineDeleted">
+    <ppap *ngIf="currentStep === 'Ppap'" [isCatalogueLineDeleted]="areCatalogueLinesDeleted[0]">
     </ppap>
-    <negotiation *ngIf="currentStep === 'Negotiation'" [isCatalogueLineDeleted]="isCatalogueLineDeleted">
+    <negotiation *ngIf="currentStep === 'Negotiation'" [areCatalogueLinesDeleted]="areCatalogueLinesDeleted"
+                 [selectedLineIndex]="selectedLineIndex">
     </negotiation>
     <transport-negotiation *ngIf="currentStep === 'Transport_Negotiation'">
     </transport-negotiation>
-    <order *ngIf="currentStep === 'Order' || currentStep === 'Order_Confirmed'">
+    <order *ngIf="currentStep === 'Order' || currentStep === 'Order_Confirmed'" [selectedLineIndex]="selectedLineIndex">
     </order>
     <transport-execution-plan *ngIf="currentStep === 'Transport_Order' || currentStep === 'Transport_Order_Confirmed'">
     </transport-execution-plan>
-    <fulfilment *ngIf="currentStep === 'Fulfilment'">
+    <fulfilment *ngIf="currentStep === 'Fulfilment'" [selectedLineIndex]="selectedLineIndex"
+                [catalogueLines]="lines">
     </fulfilment>
 </ng-container>
 

@@ -38,7 +38,8 @@ import {LcpaDetailModalComponent} from "./lcpa-detail-modal.component";
 		ProductDetailsTabsComponent,
 		DiscountModalComponent,
 		ProductLcpaTabComponent,
-		LcpaDetailModalComponent
+		LcpaDetailModalComponent,
+		ProductDetailsOverviewComponent
 	],
 	providers: [
 	]

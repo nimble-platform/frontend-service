@@ -16,7 +16,9 @@
                     <div class="row w-100 m-0">
                         <div class="col pl-2">
                           <strong><span [innerHTML]="'Product / Service' | translate"></span>:</strong><br/>
-                          <span class="clickable" (click)="navigateToSearchDetails()">{{selectPreferredValue(titleEvent.product.name)}}</span>
+                          <span *ngFor="let product of titleEvent.products;let i=index" >
+                              <span class="clickable" (click)="navigateToSearchDetails(product)">{{selectPreferredValue(product.name)}}</span> {{i != titleEvent.products.length-1 ? " / ":""}}
+                          </span>
                         </div>
                         <div class="col pl-1">
                           <strong><span [innerHTML]="'Trading Partner' | translate"></span>:</strong><br/>

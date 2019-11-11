@@ -153,6 +153,12 @@
                 </a>
             </li>
 
+            <li class="nav-item" *ngIf="checkRoles('purchases')" routerLinkActive="active">
+                <a class="nav-link" routerLink="/bpe/shopping-cart" routerLinkActive="active">
+                    <i class="fas fa-shopping-cart"></i> <span [innerHTML]="'Shopping Cart' | translate"></span>
+                </a>
+            </li>
+
         </ul>
 
         <ul class="nav navbar-nav">

@@ -10,7 +10,7 @@ import { ProductWrapper } from "../../common/product-wrapper";
 import { ProcessType } from "../model/process-type";
 import { ProductBpStep } from "./product-bp-step";
 import { ProductBpStepsDisplay } from "./product-bp-steps-display";
-import {isLogisticsService, isTransportService} from '../../common/utils';
+import {areLogisticsService, areTransportServices} from '../../common/utils';
 import { UserService } from "../../user-mgmt/user.service";
 import { CompanySettings } from "../../user-mgmt/model/company-settings";
 import { BPEService } from "../bpe.service";
@@ -46,8 +46,9 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     id: string;
     catalogueId: string;
 
-    line: CatalogueLine;
-    wrapper: ProductWrapper;
+    selectedLineIndex:number = 0;
+    lines: CatalogueLine[];
+    wrappers: ProductWrapper[];
     // options: BpWorkflowOptions;
     productWithSelectedProperties: Item;
     settings: CompanySettings;
@@ -55,13 +56,13 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     // Refers to the previous order document for transport related business processes.
     correspondingOrderOfTransportProcess?: Order;
     // The four variables below are used to represent a logistics service related information in case a previous order exists
-    serviceLine?: CatalogueLine;
-    serviceWrapper?: ProductWrapper;
+    serviceLines?: CatalogueLine[];
+    serviceWrappers?: ProductWrapper[];
     serviceWithSelectedProperties: Item;
     // serviceOptions?: BpWorkflowOptions;
     serviceSettings?: CompanySettings;
 
-    productExpanded: boolean = false;
+    productsExpanded: boolean[];
     serviceExpanded: boolean = false;
     public config = myGlobals.config;
 
@@ -71,7 +72,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
     // whether the item is deleted or not
-    isCatalogueLineDeleted:boolean = false ;
+    areCatalogueLinesDeleted:boolean[] = [] ;
 
     constructor(public bpDataService: BPDataService,
                 public sanitizer: DomSanitizer,
@@ -94,19 +95,20 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     /**
      * This function will create a separate chat channel for business negotiations
      * @param content
+     * @param productName
      */
-    open(content) {
+    open(content, productName:string) {
 
         let createChannelRequest = {
             userId: this.cookieService.get("rocket_chat_userID"),
             userToken: this.cookieService.get("rocket_chat_token"),
             initiatingPartyID: this.cookieService.get("company_id"),
             respondingPartyID: this.bpDataService.getCompanySettings().companyID,
-            productName: this.line.goodsItem.item.name[0].value
+            productName: productName
         };
 
-        if (createChannelRequest.initiatingPartyID == createChannelRequest.respondingPartyID) {
-            createChannelRequest.initiatingPartyID =  this.bpDataService.documentService.getBuyerParty()['id'];
+        if (createChannelRequest.initiatingPartyID == createChannelRequest.respondingPartyID && this.processMetadata) {
+            createChannelRequest.initiatingPartyID = this.processMetadata.content.buyerPartyId;
         }
 
         let headers = new Headers({'Content-Type': 'application/json'});
@@ -174,53 +176,57 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             this.currentStep = this.getCurrentStep(bpActivityEvent.processType);
             this.stepsDisplayMode = this.getStepsDisplayMode();
 
-            const id = bpActivityEvent.catalogueLineId;
-            const catalogueId = bpActivityEvent.catalogueId;
+            const ids = bpActivityEvent.catalogueLineIds;
+            const catalogueIds = bpActivityEvent.catalogueIds;
             this.bpDataService.precedingProcessId = bpActivityEvent.previousProcessInstanceId;
             this.bpDataService.precedingDocumentId = bpActivityEvent.previousDocumentId;
 
-            if (this.id !== id || this.catalogueId !== catalogueId) {
-                this.id = id;
-                this.catalogueId = catalogueId;
+            if (this.id !== ids || this.catalogueId !== catalogueIds) {
+                this.id = ids;
+                this.catalogueId = catalogueIds;
 
                 this.callStatus.submit();
                 const userId = this.cookieService.get("user_id");
                 Promise.all([
-                    this.getCatalogueLine(catalogueId, id, bpActivityEvent.processMetadata),
+                    this.getCatalogueLines(catalogueIds, ids, bpActivityEvent.processMetadata),
                     this.getOrderForTransportService(),
                     this.userService.getSettingsForUser(userId)
 
-                ]).then(([line, order, ownCompanySettings]) => {
-                    this.line = line;
+                ]).then(([lines, order, currentUserSettings]) => {
+                    this.lines = lines;
                     this.correspondingOrderOfTransportProcess = order;
                     this.bpDataService.productOrder = order;
-                    this.bpDataService.currentUserSettings = ownCompanySettings;
+                    this.bpDataService.currentUsersCompanySettings = currentUserSettings;
 
                     return Promise.all([
-                        this.getReferencedCatalogueLine(line, order),
-                        this.userService.getSettingsForProduct(line),
+                        this.getReferencedCatalogueLines(lines, order),
+                        this.userService.getSettingsForProduct(lines[0]),
                         this.bpDataService.bpActivityEvent.containerGroupId ? this.bpeService.checkCollaborationFinished(this.bpDataService.bpActivityEvent.containerGroupId) : false
                     ])
                 })
-                .then(([referencedLine, sellerSettings, isCollaborationFinished]) => {
+                .then(([referencedLines, sellerSettings, isCollaborationFinished]) => {
                     // updates the company's business process workflow in order to eliminate the unnecessary steps from the displayed flow
                     this.updateCompanyProcessWorkflowForThisProcess(isCollaborationFinished, sellerSettings);
 
                     // set the product line to be the first fetched line, either service or product.
-                    this.bpDataService.setProductAndCompanyInformation([this.line], sellerSettings);
+                    this.bpDataService.setProductAndCompanyInformation(this.lines, sellerSettings);
                     this.productWithSelectedProperties = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
 
-                    // there is an order that references another product -> the line is a service and the referencedLine is the original product
-                    if (referencedLine) {
-                        this.serviceLine = this.line;
-                        this.serviceWrapper = new ProductWrapper(this.serviceLine, sellerSettings.negotiationSettings);
+                    // there is an order that references other products -> the line are services and the referencedLines are the original products
+                    if (referencedLines) {
+                        this.serviceLines = this.lines;
+                        this.serviceWrappers = [];
+                        for(let serviceLine of this.serviceLines){
+                            this.serviceWrappers.push(new ProductWrapper(serviceLine, sellerSettings.negotiationSettings));
+                        }
                         this.serviceSettings = sellerSettings;
                         this.serviceWithSelectedProperties = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
 
-                        this.line = referencedLine;
+                        this.lines = referencedLines;
                         this.productWithSelectedProperties = this.correspondingOrderOfTransportProcess.orderLine[0].lineItem.item;
 
-                        return this.userService.getSettingsForProduct(referencedLine);
+                        this.setProductsExpandedArray(false);
+                        return this.userService.getSettingsForProduct(referencedLines[0]);
 
                     } else {
                         return Promise.resolve(sellerSettings);
@@ -229,7 +235,10 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 .then(settings => {
                     // settings here always corresponds to the settings of the catalogue line either as the product itself being traded
                     // or the product ordered before a logistics related business process
-                    this.wrapper = new ProductWrapper(this.line, settings.negotiationSettings);
+                    this.wrappers = [];
+                    for(let line of this.lines){
+                        this.wrappers.push(new ProductWrapper(line, settings.negotiationSettings));
+                    }
                     this.settings = settings;
 
                     if(this.processType) {
@@ -237,6 +246,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                     }
                     this.stepsDisplayMode = this.getStepsDisplayMode();
 
+                    this.setProductsExpandedArray(false);
                     this.callStatus.callback("Retrieved product details", true);
                 })
                 .catch(error => {
@@ -266,14 +276,32 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         return !(this.processMetadata && this.processMetadata.isBeingUpdated) || this.bpDataService.bpActivityEvent.processType == 'Fulfilment' || this.bpDataService.bpActivityEvent.processType == 'Transport_Execution_Plan';
     }
 
-    onToggleProductExpanded() {
-        this.productExpanded = !this.productExpanded;
+    onToggleProductExpanded(index:number) {
+        let size = this.productsExpanded.length;
+        for(let i = 0; i < size;i++){
+            if(i == index){
+                this.productsExpanded[index] = !this.productsExpanded[index];
+            }
+            else {
+                this.productsExpanded[i] = false;
+            }
+        }
+
+        this.selectedLineIndex = index;
+
         this.serviceExpanded = false;
     }
 
     onToggleServiceExpanded() {
         this.serviceExpanded = !this.serviceExpanded;
-        this.productExpanded = false;
+        this.setProductsExpandedArray(false);
+    }
+
+    setProductsExpandedArray(value:boolean){
+        this.productsExpanded = [];
+        for(let line of this.lines){
+            this.productsExpanded.push(value);
+        }
     }
 
     private isOrderDone(): boolean {
@@ -301,7 +329,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     private getCurrentStep(processType: ProcessType): ProductBpStep {
         switch(processType) {
             case "Item_Information_Request":
-                if(this.isTransportService()) {
+                if(this.areTransportServices()) {
                     return "Transport_Information_Request";
                 } else {
                     return "Item_Information_Request";
@@ -309,7 +337,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             case "Ppap":
                 return "Ppap";
             case "Negotiation":
-                if(this.isTransportService()) {
+                if(this.areTransportServices()) {
                     return "Transport_Negotiation";
                 } else {
                     return "Negotiation";
@@ -319,7 +347,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             case "Transport_Execution_Plan":
                 return this.isOrderDone() ? "Transport_Order_Confirmed" : "Transport_Order";
             case "Order":
-                if(this.isTransportService()) {
+                if(this.areTransportServices()) {
                     return this.isOrderDone() ? "Transport_Order_Confirmed" : "Transport_Order";
                 } else {
                     return this.isOrderDone() ? "Order_Confirmed" : "Order";
@@ -327,16 +355,16 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         }
     }
 
-    private isTransportService(): boolean {
-        return !!this.serviceLine || isTransportService(this.line);
+    private areTransportServices(): boolean {
+        return !!this.serviceLines || areTransportServices(this.lines);
     }
 
-    private isLogisticsService(): boolean {
-        return !!this.serviceLine || isLogisticsService(this.line);
+    private areLogisticsServices(): boolean {
+        return !!this.serviceLines || areLogisticsService(this.lines);
     }
 
     private getStepsDisplayMode(): ProductBpStepsDisplay {
-        if(this.isTransportService()) {
+        if(this.areTransportServices()) {
             if(this.bpDataService.bpActivityEvent.processType == 'Transport_Execution_Plan' && this.bpDataService.bpActivityEvent.userRole === "seller") {
                 // The service provider only sees transport steps
                 return "Transport";
@@ -347,7 +375,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 return "Transport_After_Order";
             }
         } else {
-            if(this.isLogisticsService()){
+            if(this.areLogisticsServices()){
                 return "Logistics";
             }
             if(this.bpDataService.bpActivityEvent.userRole === "seller") {
@@ -358,56 +386,105 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         }
     }
 
-    private getReferencedCatalogueLine(line: CatalogueLine, order: Order): Promise<CatalogueLine> {
-        if(!this.hasReferencedCatalogueLine(line, order)) {
+    private getReferencedCatalogueLines(lines: CatalogueLine[], order: Order): Promise<CatalogueLine[]> {
+        if(!this.hasReferencedCatalogueLines(lines, order)) {
             return Promise.resolve(null);
         }
 
-        const item = order.orderLine[0].lineItem.item;
-        const catalogueId = item.catalogueDocumentReference.id;
-        const lineId = item.manufacturersItemIdentification.id;
+        let catalogueUuids:string[] = [];
+        let catalogueIds:string[] = [];
 
-        return this.catalogueService.getCatalogueLine(catalogueId, lineId)
+        for(let orderLine of order.orderLine){
+            const item = orderLine.lineItem.item;
+            const catalogueId = item.catalogueDocumentReference.id;
+            const lineId = item.manufacturersItemIdentification.id;
+
+            catalogueUuids.push(catalogueId);
+            catalogueIds.push(lineId);
+        }
+
+        // create dummy catalogue lines for the deleted products using the corresponding item of the order
+        return this.catalogueService.getLinesForDifferentCatalogues(catalogueUuids,catalogueIds).then(catalogueLines => {
+            // update catalogueUuids and catalogueIds lists so that they keep only the identifiers for the deleted products
+            for(let catalogueLine of catalogueLines){
+                const catalogueId = catalogueLine.goodsItem.item.catalogueDocumentReference.id;
+                const lineId = catalogueLine.goodsItem.item.manufacturersItemIdentification.id;
+
+                catalogueUuids.splice(catalogueUuids.indexOf(catalogueId),1);
+                catalogueIds.splice(catalogueIds.indexOf(lineId),1);
+            }
+
+            for(let orderLine of order.orderLine){
+                const item = orderLine.lineItem.item;
+                const catalogueId = item.catalogueDocumentReference.id;
+                const lineId = item.manufacturersItemIdentification.id;
+                // create dummy catalogue line for the deleted product
+                if(catalogueUuids.indexOf(catalogueId) != -1 && catalogueIds.indexOf(lineId) != -1){
+                    catalogueLines.push(UBLModelUtils.createCatalogueLineWithItemCopy(item));
+                }
+            }
+
+            return catalogueLines;
+        });
     }
 
-    private hasReferencedCatalogueLine(line: CatalogueLine, order: Order): boolean {
+    private hasReferencedCatalogueLines(lines: CatalogueLine[], order: Order): boolean {
         if(!order) {
             return false;
         }
 
-        const orderItem = order.orderLine[0].lineItem.item;
-        const orderCatalogueId = orderItem.catalogueDocumentReference.id;
-        const orderLineId = orderItem.manufacturersItemIdentification.id;
+        for(let orderLine of order.orderLine){
+            const orderItem = orderLine.lineItem.item;
+            const orderCatalogueId = orderItem.catalogueDocumentReference.id;
+            const orderLineId = orderItem.manufacturersItemIdentification.id;
+            for(let line of lines){
+                const item = line.goodsItem.item;
+                const catalogueId = item.catalogueDocumentReference.id;
+                const lineId = item.manufacturersItemIdentification.id;
 
-        const item = line.goodsItem.item;
-        const catalogueId = item.catalogueDocumentReference.id;
-        const lineId = item.manufacturersItemIdentification.id;
+                if(orderCatalogueId !== catalogueId || orderLineId !== lineId){
+                    return true;
+                }
+            }
+        }
 
-        return orderCatalogueId !== catalogueId || orderLineId !== lineId;
+        return false;
     }
 
     /**
      * Retrieve catalogue line details via catalogue-service if the product exists.
      * Otherwise, create a simple catalogue line using the item inside the process metadata
      * */
-    private async getCatalogueLine(catalogueUuid:string, catalogueLineId:string, processMetadata:ThreadEventMetadata){
+    private async getCatalogueLines(catalogueUuids:string[], catalogueLineIds:string[], processMetadata:ThreadEventMetadata){
 
-        let isProductDeleted = false;
-        if(processMetadata){
-            isProductDeleted = processMetadata.isProductDeleted;
+        let catalogueLines:CatalogueLine[] = [];
+
+        let existingCatalogueUuids = [];
+        let existingCatalogueLineIds = [];
+
+        let catalogueLineSize = catalogueUuids.length;
+        for(let i = 0; i < catalogueLineSize ; i++){
+            let isProductDeleted = false;
+            if(processMetadata){
+                isProductDeleted = processMetadata.areProductsDeleted[i];
+            }
+            // create Catalogue line if it's deleted
+            if(isProductDeleted){
+                // catalogue line is deleted
+                this.areCatalogueLinesDeleted.push(true);
+                catalogueLines.push(UBLModelUtils.createCatalogueLineWithItemCopy(processMetadata.products[i]));
+            }
+            else{
+                this.areCatalogueLinesDeleted.push(false);
+                existingCatalogueUuids.push(catalogueUuids[i]);
+                existingCatalogueLineIds.push(catalogueLineIds[i]);
+            }
         }
-        // create Catalogue line if it's deleted
-        if(isProductDeleted){
-            // catalogue line is deleted
-            this.isCatalogueLineDeleted = true;
-            return UBLModelUtils.createCatalogueLineWithItemCopy(processMetadata.product);
-        }
-        else{
-            // retrieve catalogue line if exists
-            return this.catalogueService.getCatalogueLine(catalogueUuid, catalogueLineId).then( catalogueLine => {
-                return catalogueLine;
-            });
-        }
+
+        return this.catalogueService.getLinesForDifferentCatalogues(existingCatalogueUuids,existingCatalogueLineIds).then(existingCatalogueLines => {
+            return catalogueLines.concat(existingCatalogueLines);
+        })
+
     }
 
     private updateCompanyProcessWorkflowForThisProcess(isCollaborationFinished: boolean, settings: CompanySettings): void {

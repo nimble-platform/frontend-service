@@ -2,7 +2,9 @@ import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
 import { ProductWrapper } from "../common/product-wrapper";
 import { CommodityClassification } from "../catalogue/model/publish/commodity-classification";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
-import {getPropertyKey, getPropertyValues, getPropertyValuesAsStrings, selectName, selectNameFromLabelObject, selectPreferredValue} from '../common/utils';
+import {
+    getPropertyKey, getPropertyValues, getPropertyValuesAsStrings, selectName, selectNameFromLabelObject, selectPreferredValue,
+} from '../common/utils';
 import {Item} from '../catalogue/model/publish/item';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {CategoryService} from '../catalogue/category/category.service';
@@ -18,6 +20,7 @@ import { CookieService } from 'ng2-cookies';
 import {CredentialsService} from '../user-mgmt/credentials.service';
 import * as myGlobals from '../globals';
 import {UserService} from '../user-mgmt/user.service';
+import {ShoppingCartDataService} from '../bpe/shopping-cart/shopping-cart-data-service';
 
 @Component({
     selector: 'product-details-overview',
@@ -30,6 +33,13 @@ export class ProductDetailsOverviewComponent implements OnInit{
     @Input() itemWithSelectedProps: Item;
     @Input() associatedProducts: CatalogueLine[];
     @Input() readonly: boolean;
+    @Input() showAddToCartButton: boolean;
+    @Input() inShoppingBasket: boolean;
+    // flag to adjust the name of the negotiate or order button,
+    // true means the there are some negotiated terms and a negotiation process should be started. otherwise an order process is started
+    @Input() isNegotiatingAnyTerm: boolean;
+    @Output() onCartItemDeleted: EventEmitter<CatalogueLine> = new EventEmitter<CatalogueLine>();
+    @Output() onNegotiate: EventEmitter<CatalogueLine> = new EventEmitter<CatalogueLine>();
     @Output() compStatus = new EventEmitter<boolean>();
     @Output() onPropertyValueChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
@@ -40,6 +50,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
     getClassificationNamesStatus: CallStatus = new CallStatus();
     productCatalogueNameRetrievalStatus: CallStatus = new CallStatus();
     associatedProductsRetrievalCallStatus: CallStatus = new CallStatus();
+    shoppingCartCallStatus: CallStatus = new CallStatus();
 
     classificationNames = [];
     productId = "";
@@ -57,6 +68,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
         private translate: TranslateService,
         public categoryService:CategoryService,
         public catalogueService:CatalogueService,
+        private shoppingCartDataService: ShoppingCartDataService,
         private modalService: NgbModal,
         private route: ActivatedRoute,
         private cookieService: CookieService,
@@ -155,15 +167,19 @@ export class ProductDetailsOverviewComponent implements OnInit{
         });
     }
 
-
-
-    getClassifications(): CommodityClassification[] {
-        if(!this.wrapper) {
-            return [];
+    onAddToCart(): void {
+        event.preventDefault();
+        // do not add item to the cart if a process is still being added
+        if (this.shoppingCartCallStatus.isLoading()) {
+            return;
         }
 
-        return this.wrapper.item.commodityClassification
-            .filter(c => c.itemClassificationCode.listID != 'Default');
+        this.shoppingCartCallStatus.submit();
+        this.shoppingCartDataService.addItemToCart(this.wrapper.line.hjid).then(() => {
+            this.shoppingCartCallStatus.callback(null, true);
+        }).catch((err) => {
+            this.shoppingCartCallStatus.error('Failed to add product to cart', err);
+        });
     }
 
     onTogglePropertyValue(property: ItemProperty, selectedIndex: number): void {
@@ -208,10 +224,6 @@ export class ProductDetailsOverviewComponent implements OnInit{
         }
     }
 
-    selectName (ip: ItemProperty | Item) {
-        return selectName(ip);
-    }
-
     onSelectImage(index: number): void {
         this.selectedImage = index;
         if(!this.wrapper) {
@@ -226,17 +238,25 @@ export class ProductDetailsOverviewComponent implements OnInit{
         }
     }
 
-    navigateImages(index: number, length: number): number {
-        if(index < 0) {
-            return length - 1;
+    onRemoveFromCartButtonClicked(): void {
+        this.onCartItemDeleted.emit(this.wrapper.line);
+    }
+
+    onNegotiateAndOrderButtonClicked(): void {
+        this.onNegotiate.emit(this.wrapper.line);
+    }
+
+    selectName (ip: ItemProperty | Item) {
+        return selectName(ip);
+    }
+
+    getClassifications(): CommodityClassification[] {
+        if(!this.wrapper) {
+            return [];
         }
-        else if(index < length) {
-            return index;
-        }
-        // also works if productImage.length === 0
-        else if(index >= length) {
-            return 0;
-        }
+
+        return this.wrapper.item.commodityClassification
+            .filter(c => c.itemClassificationCode.listID != 'Default');
     }
 
     isPropertyValueSelected(property: ItemProperty, valueIndex: number): boolean {
@@ -272,5 +292,18 @@ export class ProductDetailsOverviewComponent implements OnInit{
     open(content) {
       this.zoomedImgURL = "data:"+this.wrapper.item.productImage[this.selectedImage].mimeCode+";base64,"+this.wrapper.item.productImage[this.selectedImage].value
     	this.modalService.open(content);
+    }
+
+    navigateImages(index: number, length: number): number {
+        if(index < 0) {
+            return length - 1;
+        }
+        else if(index < length) {
+            return index;
+        }
+        // also works if productImage.length === 0
+        else if(index >= length) {
+            return 0;
+        }
     }
 }

@@ -10,6 +10,7 @@ import {Headers, Http} from "@angular/http";
 import * as myGlobals from "../globals";
 import {TranslateService} from '@ngx-translate/core';
 import * as moment from "moment";
+import {ShoppingCartDataService} from '../bpe/shopping-cart/shopping-cart-data-service';
 
 
 @Component({
@@ -31,6 +32,7 @@ export class LogoutComponent implements OnInit {
 		private userService: UserService,
         private categoryService: CategoryService,
 		private catalogueService: CatalogueService,
+		private shoppingCartDataService: ShoppingCartDataService,
 		private translate: TranslateService,
         private credentialsService: CredentialsService,
         private http: Http
@@ -50,6 +52,7 @@ export class LogoutComponent implements OnInit {
 		this.cookieService.delete("active_company_name");
 		this.cookieService.delete("show_welcome");
 		this.cookieService.delete("bearer_token");
+		this.shoppingCartDataService.resetData();
 
 		// if rocket chat enabled
 

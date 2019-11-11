@@ -323,21 +323,12 @@ export class BPEService {
         });
     }
 
-	getTermsAndConditions(orderId: string,buyerPartyId, sellerPartyId, rfqId:string, incoterms:string, tradingTerm:string): Promise<Clause[]>{
+	getTermsAndConditions(buyerPartyId, sellerPartyId, incoterms:string, tradingTerm:string): Promise<Clause[]>{
 		const token = 'Bearer '+this.cookieService.get("bearer_token");
 		const headers = new Headers({'Authorization': token});
 		this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
 
-		let url;
-		if(orderId){
-			url = `${this.url}/contracts/terms-and-conditions?orderId=${orderId}&sellerPartyId=${sellerPartyId}&incoterms=${incoterms == null ? "" :incoterms}`;
-		}
-		else if(rfqId){
-			url = `${this.url}/contracts/terms-and-conditions?rfqId=${rfqId}&sellerPartyId=${sellerPartyId}&incoterms=${incoterms == null ? "" :incoterms}`;
-		}
-		else{
-            url = `${this.url}/contracts/terms-and-conditions?sellerPartyId=${sellerPartyId}&incoterms=${incoterms == null ? "" :incoterms}`;
-        }
+		let url = `${this.url}/contracts/terms-and-conditions?sellerPartyId=${sellerPartyId}&incoterms=${incoterms == null ? "" :incoterms}`;
         // add parameters
         if(buyerPartyId){
             url += `&buyerPartyId=${buyerPartyId}`;
@@ -411,8 +402,17 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getFrameContract(sellerId: string, buyerId: string, productId: string): Promise<DigitalAgreement> {
-		const url = `${this.url}/contract/digital-agreement?sellerId=${sellerId}&buyerId=${buyerId}&productId=${productId}`;
+	getFrameContract(sellerId: string, buyerId: string, productIds: string[]): Promise<DigitalAgreement> {
+		let productIdsParam = "";
+		let size = productIds.length;
+		for (let i = 0; i < size; i++) {
+			productIdsParam += productIds[i];
+
+			if (i != size - 1) {
+				productIdsParam += ",";
+			}
+		}
+		const url = `${this.url}/contract/digital-agreement?sellerId=${sellerId}&buyerId=${buyerId}&productIds=${productIds}`;
 		return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()

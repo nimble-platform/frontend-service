@@ -58,6 +58,9 @@ import {LifeCyclePerformanceAssessmentDetails} from "./publish/life-cycle-perfor
 import {PartyName} from './publish/party-name';
 import {MultiTypeValue} from "./publish/multi-type-value";
 import {Clause} from "./publish/clause";
+import {Contract} from './publish/contract';
+import {Address as UserMgmtAddress} from '../../user-mgmt/model/address';
+import {OrderLineReference} from './publish/order-line-reference';
 
 /**
  * Created by suat on 05-Jul-17.
@@ -126,7 +129,7 @@ export class UBLModelUtils {
         const item = new Item([], [], [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, [], [], this.createDimensions(dimensionUnits), null);
 
         // create goods item
-        const goodsItem = new GoodsItem(uuid, item, this.createPackage(),
+        const goodsItem = new GoodsItem(uuid, null, item, this.createPackage(),
             this.createDeliveryTerms(null, settings.deliveryPeriodUnits[0]));
 
         // create required item location quantity
@@ -153,7 +156,7 @@ export class UBLModelUtils {
             null,
             dummyItemLocationQuantity,
             [],
-            new GoodsItem(null, copyItem)
+            new GoodsItem(null, null, copyItem)
         );
     }
 
@@ -217,16 +220,37 @@ export class UBLModelUtils {
         }
     }
 
-    public static createOrder(): Order {
-        const quantity: Quantity = new Quantity(null, "", null);
-        const item: Item = this.createItem();
-        const price: Price = this.createPrice();
-        const lineItem: LineItem = this.createLineItem(quantity, price, item);
-        const orderLine: OrderLine = new OrderLine(lineItem);
-        const settings = new CompanyNegotiationSettings();
+    public static createOrder(lineItems:LineItem[]): Order {
+        let orderLines:OrderLine[] = [];
+        for(let lineItem of lineItems){
+            orderLines.push(new OrderLine(lineItem));
+        }
 
-        return new Order(this.generateUUID(), [''], new Period(), new Address(), null, null, null,
-        this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), new MonetaryTotal(), [orderLine]);
+        return new Order(this.generateUUID(), [''], new Period(), new Address(), null, null, null, new MonetaryTotal(), orderLines);
+    }
+
+    public static createOrderWithRfqCopy(rfq:RequestForQuotation): Order {
+        let lineItems:LineItem[] = [];
+        for(let rfqLine of rfq.requestForQuotationLine){
+            lineItems.push(rfqLine.lineItem);
+        }
+        let order = UBLModelUtils.createOrder(lineItems);
+
+        // create contracts for Terms and Conditions
+        let contracts = [];
+        for(let rfqLine of rfq.requestForQuotationLine){
+            let contract = new Contract();
+            contract.id = UBLModelUtils.generateUUID();
+
+            for(let clause of rfqLine.lineItem.clause){
+                let newClause:Clause = JSON.parse(JSON.stringify(clause));
+                contract.clause.push(newClause);
+            }
+            contracts.push(contract);
+        }
+        // push contract to order.contract
+        order.contract = contracts;
+        return order;
     }
 
     public static createOrderResponseSimpleWithOrderCopy(order:Order, acceptedIndicator:boolean):OrderResponseSimple {
@@ -244,7 +268,7 @@ export class UBLModelUtils {
         const quantity:Quantity = new Quantity(null, "", null);
         const item:Item = this.createItem();
         const price: Price = this.createPrice();
-        const lineItem:LineItem = this.createLineItem(quantity, price, item);
+        const lineItem:LineItem = this.createLineItem(quantity, price, item,null);
         const ppap = new Ppap(this.generateUUID(), [''],documents, null, null, lineItem);
         return ppap;
     }
@@ -262,17 +286,20 @@ export class UBLModelUtils {
         return ppapResponse;
     }
 
-    public static createRequestForQuotation(settings: CompanyNegotiationSettings): RequestForQuotation {
-        if(settings == null){
-            settings = new CompanyNegotiationSettings();
+    public static createRequestForQuotation(items: Item[]|LineItem[]): RequestForQuotation {
+        let rfqLines: RequestForQuotationLine[];
+        if (items == null) {
+            rfqLines = [UBLModelUtils.createRequestForQuotationLine()];
+
+        } else {
+            rfqLines = [];
+            for (let item of items) {
+                rfqLines.push(UBLModelUtils.createRequestForQuotationLine(item));
+            }
         }
-        const quantity: Quantity = new Quantity(null, "", null);
-        const item: Item = this.createItem();
-        const price: Price = this.createPrice();
-        const lineItem: LineItem = this.createLineItem(quantity, price, item);
-        const requestForQuotationLine: RequestForQuotationLine = new RequestForQuotationLine(lineItem);
-        const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
-        [requestForQuotationLine], this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), [], []);
+
+        const rfq = new RequestForQuotation(this.generateUUID(), [""], null, null, new Delivery(),
+            rfqLines, []);
 
         // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
         let handlingUnitDimension: Dimension = new Dimension();
@@ -293,20 +320,23 @@ export class UBLModelUtils {
         const quantity: Quantity = new Quantity(null, "", null);
         const item: Item = copyLine.goodsItem.item;
         const price: Price = copyLine.requiredItemLocationQuantity.price;
-        const lineItem: LineItem = this.createLineItem(quantity, price, item);
+        const lineItem: LineItem = this.createLineItem(quantity, price, item,null);
         const requestForQuotationLine: RequestForQuotationLine = new RequestForQuotationLine(lineItem);
-        const rfq = new RequestForQuotation(this.generateUUID(), [""], false, null, null, new Delivery(),
-            [requestForQuotationLine], null, null, null, null);
+        const rfq = new RequestForQuotation(this.generateUUID(), [""],  null, null, new Delivery(),
+            [requestForQuotationLine],  []);
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = copyOrder.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
         rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = copyOrder.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity = copyOrder.orderLine[0].lineItem.quantity;
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.originAddress = copyOrder.orderLine[0].lineItem.item.manufacturerParty.postalAddress;
         rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails = copyLine.goodsItem.item.transportationServiceDetails;
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[0].item.name = copyOrder.orderLine[0].lineItem.item.name;
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.totalTransportHandlingUnitQuantity = copyOrder.orderLine[0].lineItem.quantity;
-        rfq.paymentTerms = copyOrder.paymentTerms;
-        rfq.paymentMeans = copyOrder.paymentMeans;
+        let size = copyOrder.orderLine.length;
+        for(let i = 0; i < size ; i++){
+            if(i != 0){
+                rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem.push(new GoodsItem());
+            }
+            rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[i].item = copyOrder.orderLine[i].lineItem.item;
+            rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem[i].quantity = copyOrder.orderLine[i].lineItem.quantity;
+        }
         // TODO remove this custom dimension addition once the dimension-view is improved to handle such cases
         let handlingUnitDimension:Dimension = new Dimension();
         handlingUnitDimension.attributeID = 'Handling Unit Length';
@@ -317,6 +347,29 @@ export class UBLModelUtils {
 
         this.removeHjidFieldsFromObject(rfq);
         return rfq;
+    }
+
+    public static createRequestForQuotationLine(item: Item|LineItem = null): RequestForQuotationLine {
+        if(item == null){
+            item = UBLModelUtils.createItem();
+        }
+
+        // check the type of item parameter
+        // its type is LineItem if it contains a field called item, otherwise, its type is Item.
+        // instanceof does not work since the given object is not created using a constructor
+        let isLineItem:boolean = "item" in item;
+
+        let lineItem;
+        if(isLineItem){
+            lineItem = item;
+        }
+        else{
+            const quantity: Quantity = new Quantity(null, "", null);
+            const price: Price = this.createPrice();
+            lineItem = this.createLineItem(quantity, price, item,null);
+        }
+
+        return new RequestForQuotationLine(lineItem);
     }
 
     public static getDefaultPaymentTerms(settings?: CompanyNegotiationSettings): PaymentTerms {
@@ -358,29 +411,56 @@ export class UBLModelUtils {
 
     public static createQuotationWithRfqCopy(rfq: RequestForQuotation): Quotation {
         let copyRfq: RequestForQuotation = copy(rfq);
-        const quotationLine: QuotationLine = new QuotationLine(copyRfq.requestForQuotationLine[0].lineItem);
-        // set start and end dates
-        quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.startDate = rfq.delivery.requestedDeliveryPeriod.startDate;
-        quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.endDate = rfq.delivery.requestedDeliveryPeriod.endDate;
+        let quotationLines:QuotationLine[] = [];
+        for(let requestForQuotationLine of copyRfq.requestForQuotationLine){
+            let quotationLine: QuotationLine = new QuotationLine(requestForQuotationLine.lineItem);
+            // set start and end dates of tep
+            if(rfq.delivery.requestedDeliveryPeriod.startDate || rfq.delivery.requestedDeliveryPeriod.endDate ){
+                quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.startDate = rfq.delivery.requestedDeliveryPeriod.startDate;
+                quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.endDate = rfq.delivery.requestedDeliveryPeriod.endDate;
+            }
+            quotationLines.push(quotationLine);
+        }
+
         const customerParty: CustomerParty = rfq.buyerCustomerParty;
         const supplierParty: SupplierParty = rfq.sellerSupplierParty;
 
         const documentReference: DocumentReference = new DocumentReference(rfq.id);
 
-        const quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, false, documentReference,
-            customerParty, supplierParty, [quotationLine], rfq.paymentMeans, rfq.paymentTerms, rfq.tradingTerms, rfq.termOrCondition);
+        const quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1,  documentReference,
+            customerParty, supplierParty, quotationLines);
 
         this.removeHjidFieldsFromObject(quotation);
         return quotation;
     }
 
-    public static createDespatchAdviceWithOrderCopy(order: Order): DespatchAdvice {
+    // if goodsItems are provided, use them to create Dispatch Advice, otherwise order lines are used
+    public static createDespatchAdviceWithOrderCopy(order: Order,goodsItems:GoodsItem[] ): DespatchAdvice {
         let copyOrder: Order = copy(order);
         const despatchAdvice:DespatchAdvice = new DespatchAdvice();
         despatchAdvice.id = this.generateUUID();
         despatchAdvice.orderReference = [UBLModelUtils.createOrderReference(copyOrder.id)];
-        despatchAdvice.despatchLine = [new DespatchLine(new Quantity(), copyOrder.orderLine[0].lineItem.item, [new Shipment()])];
-        despatchAdvice.despatchLine[0].shipment[0].shipmentStage.push(new ShipmentStage());
+        despatchAdvice.despatchLine = [];
+
+        if(goodsItems == null){
+            for(let orderLine of copyOrder.orderLine){
+                let orderLineReference:OrderLineReference = new OrderLineReference(orderLine.hjid.toString());
+                let dispatchLine = new DespatchLine(new Quantity(), orderLine.lineItem.item, [new Shipment()],orderLineReference);
+                dispatchLine.deliveredQuantity.unitCode = orderLine.lineItem.quantity.unitCode;
+                dispatchLine.shipment[0].shipmentStage.push(new ShipmentStage());
+                despatchAdvice.despatchLine.push(dispatchLine);
+            }
+        }
+        else{
+            for(let goodsItem of goodsItems){
+                let orderLineReference:OrderLineReference = new OrderLineReference(order.orderLine[parseInt(goodsItem.sequenceNumberID)].hjid.toString());
+                let dispatchLine = new DespatchLine(new Quantity(), goodsItem.item, [new Shipment()],orderLineReference);
+                dispatchLine.deliveredQuantity.unitCode = goodsItem.quantity.unitCode;
+                dispatchLine.shipment[0].shipmentStage.push(new ShipmentStage());
+                despatchAdvice.despatchLine.push(dispatchLine);
+            }
+        }
+
         despatchAdvice.despatchSupplierParty = copyOrder.sellerSupplierParty;
         despatchAdvice.deliveryCustomerParty = copyOrder.buyerCustomerParty;
 
@@ -396,9 +476,12 @@ export class UBLModelUtils {
         receiptAdvice.despatchDocumentReference = [new DocumentReference(copyDespatchAdvice.id)];
         receiptAdvice.deliveryCustomerParty = copyDespatchAdvice.deliveryCustomerParty;
         receiptAdvice.despatchSupplierParty = copyDespatchAdvice.despatchSupplierParty;
-        receiptAdvice.receiptLine = [
-            new ReceiptLine(new Quantity(0, copyDespatchAdvice.despatchLine[0].deliveredQuantity.unitCode),
-                [], copyDespatchAdvice.despatchLine[0].item)];
+
+        receiptAdvice.receiptLine = [];
+        for(let dispatchLine of copyDespatchAdvice.despatchLine){
+            receiptAdvice.receiptLine.push(new ReceiptLine(new Quantity(0, dispatchLine.deliveredQuantity.unitCode),
+                [], dispatchLine.item))
+        }
 
         this.removeHjidFieldsFromObject(receiptAdvice);
         return receiptAdvice;
@@ -481,8 +564,11 @@ export class UBLModelUtils {
         return dimensions;
     }
 
-    public static createLineItem(quantity, price, item):LineItem {
-        return new LineItem(quantity, [], [new Delivery()], new DeliveryTerms(), price, item, new Period(), null);
+    public static createLineItem(quantity, price, item, settings:CompanyNegotiationSettings):LineItem {
+        if(settings == null){
+            settings = new CompanyNegotiationSettings();
+        }
+        return new LineItem(quantity, [], [new Delivery()], new DeliveryTerms(), price, item, new Period(), null,false,this.getDefaultPaymentMeans(settings), this.getDefaultPaymentTerms(settings), [], []);
     }
 
     public static createPackage():Package {
@@ -515,14 +601,17 @@ export class UBLModelUtils {
         return new Period(null, null, null, null, this.createQuantity(value, unit), null);
     }
 
-    public static createDimension(attributeId:string, unitCode:string):Dimension {
-        const quantity:Quantity = this.createQuantity();
-        quantity.unitCode = unitCode;
-        return new Dimension(attributeId, quantity);
-    }
-
-    public static createAddress():Address {
-        return new Address(null,null,null,null,null, this.createCountry());
+    /**
+     * Converts the address in src/app/user-mgmt/model to UBL address
+     * @param userMgmtAddress address entity with the type defined in the user management module
+     */
+    public static mapUserMgmtAddressToUblAddress(ublAddress: Address, userMgmtAddress: UserMgmtAddress): void {
+        ublAddress.cityName = userMgmtAddress.cityName;
+        ublAddress.region = userMgmtAddress.region;
+        ublAddress.postalZone = userMgmtAddress.postalCode;
+        ublAddress.buildingNumber = userMgmtAddress.buildingNumber;
+        ublAddress.streetName = userMgmtAddress.streetName;
+        ublAddress.country.name.value = userMgmtAddress.country;
     }
 
     public static createCountry():Country {
@@ -600,6 +689,10 @@ export class UBLModelUtils {
             return englishName;
         }
         return partyNames[0].name.value;
+    }
+
+    public static getLinePartyId(catalogueLine: CatalogueLine) {
+        return UBLModelUtils.getPartyId(catalogueLine.goodsItem.item.manufacturerParty);
     }
 
     public static isFilledLCPAInput(lcpaDetails: LifeCyclePerformanceAssessmentDetails): boolean {
@@ -794,12 +887,33 @@ export class UBLModelUtils {
         }
     }
 
-    public static getFrameContractDurationFromRfq(rfq: RequestForQuotation): Quantity {
-        let tradingTerm: TradingTerm = rfq.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
+    // check whether delivery dates are included in the given delivery
+    public static areDeliveryDatesAvailable(delivery:Delivery[]):boolean {
+        if(delivery){
+            return delivery.length > 1 || delivery[0].requestedDeliveryPeriod.endDate != null || !UBLModelUtils.isEmptyQuantity(delivery[0].shipment.goodsItem[0].quantity);
+        }
+        return false;
+    }
+
+    public static getFrameContractDurationFromRfqLine(rfqLine: RequestForQuotationLine): Quantity {
+        let tradingTerm: TradingTerm = rfqLine.lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
         if(tradingTerm != null) {
             return tradingTerm.value.valueQuantity[0];
         }
         return null;
+    }
+
+    // we need to traverse quotation lines in the reverse order since we assume that if the same product exists in the negotiation multiple times,
+    // frame contract is created for the last one
+    public static getFrameContractQuotationLineIndexForProduct(quotationLines:QuotationLine[],catalogueId:string,lineId:string):number{
+        let size = quotationLines.length;
+        for(let i = size-1; i > -1 ;i--){
+            let quotationLine = quotationLines[i];
+            if(quotationLine.lineItem.item.manufacturersItemIdentification.id == lineId && quotationLine.lineItem.item.catalogueDocumentReference.id == catalogueId){
+                return i;
+            }
+        }
+        return 0;
     }
 
     public static getFirstFromMultiTypeValueByQualifier(multiTypeValue: MultiTypeValue): any {
@@ -876,5 +990,23 @@ export class UBLModelUtils {
             }
         }
         return false;
+    }
+
+    public static createTradingTerm(termName: string, termDescription: string, value, type: string) {
+        let termValue: MultiTypeValue = new MultiTypeValue();
+        termValue.valueQualifier = type;
+
+        if(type == 'TEXT') {
+            let text: Text = new Text(value, null);
+            text.value = value;
+            termValue.value.push(text);
+        } else if(type == 'NUMBER') {
+            termValue.valueDecimal.push(value);
+        } else if(type == 'QUANTITY') {
+            termValue.valueQuantity.push(value);
+        }
+
+        let description: Text[] = [new Text(termDescription, null)];
+        return new TradingTerm(termName, description, null, termValue);
     }
 }

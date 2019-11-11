@@ -12,6 +12,8 @@ import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
 import {QuotationWrapper} from "./quotation-wrapper";
 import {Text} from "../../../catalogue/model/publish/text";
 import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
+import {FRAME_CONTRACT_DURATION_TERM_NAME} from '../../../common/constants';
+import {Delivery} from '../../../catalogue/model/publish/delivery';
 
 /**
  * Convenient getters (and some setters) for catalogue line, request for quotations and quotations.
@@ -36,12 +38,13 @@ export class NegotiationModelWrapper {
                 public newQuotation: Quotation, // quotation object of the current negotiation step instantiated as a result of the rfq. It's supposed to be provided in the negotiation response phase
                 public frameContractQuotation: Quotation, // quotation object associated to a frame contract, if any
                 public lastOfferQuotation: Quotation, // in second or later steps of negotiation, this parameter keeps the quotation coming from the previous step
-                public settings: CompanyNegotiationSettings) {
+                public sellerSettings: CompanyNegotiationSettings,
+                public lineIndex: number // line index is required in case the same product is included in the rfq multiple times
+    ) {
 
-        if(rfq) {
-            this.initialImmutableRfq = copy(rfq);
-            this.rfqPaymentTerms = new PaymentTermsWrapper(rfq.paymentTerms);
-        }
+        this.initialImmutableRfq = copy(rfq);
+        this.rfqPaymentTerms = new PaymentTermsWrapper(rfq.requestForQuotationLine[lineIndex].lineItem.paymentTerms);
+
 
         if(catalogueLine) {
             this.initialImmutableCatalogueLine = copy(catalogueLine);
@@ -54,55 +57,57 @@ export class NegotiationModelWrapper {
                 catalogueLine.requiredItemLocationQuantity.price,
                 copy(catalogueLine.requiredItemLocationQuantity.price), // we don't want the original catalogueLine.requiredItemLocationQuantity.price to be updated in price changes
                 catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
-                rfq.requestForQuotationLine[0].lineItem.quantity,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.quantity,
                 catalogueLine.priceOption,
-                rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty,
-                rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms,
-                rfq.paymentMeans.paymentMeansCode.value,
-                rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
-                rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.item.additionalItemProperty,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.incoterms,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.paymentMeans.paymentMeansCode.value,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address,
                 //null,
                 //true // disable calculation of discounts
             );
             this.rfqDiscountPriceWrapper = new DiscountPriceWrapper(
                 catalogueLine.requiredItemLocationQuantity.price,
-                rfq.requestForQuotationLine[0].lineItem.price,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.price,
                 catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
-                rfq.requestForQuotationLine[0].lineItem.quantity,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.quantity,
                 catalogueLine.priceOption,
-                rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty,
-                rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms,
-                rfq.paymentMeans.paymentMeansCode.value,
-                rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
-                rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.item.additionalItemProperty,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.incoterms,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.paymentMeans.paymentMeansCode.value,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
+                rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address
             );
 
             if(newQuotation) {
                 this.quotationDiscountPriceWrapper = new DiscountPriceWrapper(
                     catalogueLine.requiredItemLocationQuantity.price,
-                    newQuotation.quotationLine[0].lineItem.price,
+                    newQuotation.quotationLine[this.lineIndex].lineItem.price,
                     catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
-                    newQuotation.quotationLine[0].lineItem.quantity,
+                    newQuotation.quotationLine[this.lineIndex].lineItem.quantity,
                     catalogueLine.priceOption,
-                    rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty,
-                    rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms,
-                    rfq.paymentMeans.paymentMeansCode.value,
-                    rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
-                    rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address
+                    rfq.requestForQuotationLine[this.lineIndex].lineItem.item.additionalItemProperty,
+                    rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.incoterms,
+                    rfq.requestForQuotationLine[this.lineIndex].lineItem.paymentMeans.paymentMeansCode.value,
+                    rfq.requestForQuotationLine[this.lineIndex].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
+                    rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address
                 );
             }
         }
 
         if(newQuotation) {
-            this.newQuotationWrapper = new QuotationWrapper(newQuotation, catalogueLine);
+            this.newQuotationWrapper = new QuotationWrapper(newQuotation, catalogueLine, this.lineIndex);
         }
 
         if(frameContractQuotation) {
-            this.frameContractQuotationWrapper = new QuotationWrapper(frameContractQuotation, catalogueLine);
+            // we can not use this.lineIndex to create a QuotationWrapper for frame contract since there may be different products in frame contract quotation
+            let frameContractQuotationLineIndex = UBLModelUtils.getFrameContractQuotationLineIndexForProduct(frameContractQuotation.quotationLine,catalogueLine.goodsItem.item.catalogueDocumentReference.id,catalogueLine.goodsItem.item.manufacturersItemIdentification.id);
+            this.frameContractQuotationWrapper = new QuotationWrapper(frameContractQuotation, catalogueLine, frameContractQuotationLineIndex);
         }
 
         if(lastOfferQuotation) {
-            this.lastOfferQuotationWrapper = new QuotationWrapper(lastOfferQuotation, catalogueLine);
+            this.lastOfferQuotationWrapper = new QuotationWrapper(lastOfferQuotation, catalogueLine, this.lineIndex);
         }
     }
 
@@ -131,11 +136,11 @@ export class NegotiationModelWrapper {
     }
 
     public get linePaymentTerms(): string {
-        return this.settings.paymentTerms[0];
+        return this.sellerSettings.paymentTerms[0];
     }
 
     public get linePaymentMeans(): string {
-        return this.settings.paymentMeans[0];
+        return this.sellerSettings.paymentMeans[0];
     }
 
     public get lineVatPercentage(): number {
@@ -182,16 +187,28 @@ export class NegotiationModelWrapper {
         return this.rfqDiscountPriceWrapper.totalPrice + this.rfqVatTotal;
     }
 
+    public get rfqTotal(): number {
+        return this.rfqDiscountPriceWrapper.totalPrice;
+    }
+
+    public get currency(): string {
+        return this.rfqDiscountPriceWrapper.itemPrice.currency;
+    }
+
     public get rfqGrossTotalString(): string {
         return `${roundToTwoDecimals(this.rfqGrossTotal)} ${this.rfqDiscountPriceWrapper.itemPrice.currency}`
     }
 
     public get rfqDeliveryPeriod(): Quantity {
-        return this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
     }
 
     public set rfqDeliveryPeriod(quantity: Quantity) {
-        this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = quantity;
+        this.rfq.requestForQuotationLine[this.lineIndex].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = quantity;
+    }
+
+    public get rfqDelivery(): Delivery[] {
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.delivery;
     }
 
     public get rfqDeliveryPeriodString(): string {
@@ -199,11 +216,11 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqWarranty(): Quantity {
-        return this.rfq.requestForQuotationLine[0].lineItem.warrantyValidityPeriod.durationMeasure;
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.warrantyValidityPeriod.durationMeasure;
     }
 
     public set rfqWarranty(quantity: Quantity) {
-        this.rfq.requestForQuotationLine[0].lineItem.warrantyValidityPeriod.durationMeasure = quantity;
+        this.rfq.requestForQuotationLine[this.lineIndex].lineItem.warrantyValidityPeriod.durationMeasure = quantity;
     }
 
     public get rfqWarrantyString(): string {
@@ -211,31 +228,39 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqIncoterms(): string {
-        return this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms;
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.incoterms;
     }
 
     public set rfqIncoterms(incoterms: string) {
-        this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms = incoterms;
+        this.rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.incoterms = incoterms;
     }
 
     public get rfqIncotermsString(): string {
-        return this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms || 'None';
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.incoterms || 'None';
     }
 
     public get rfqPaymentTermsToString(): string {
         return this.rfqPaymentTerms.paymentTerm;
     }
 
+    public get rfqDataMonitoringRequested(): boolean {
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.dataMonitoringRequested;
+    }
+
+    public set rfqDataMonitoringRequested(isDataMonitoringRequested: boolean) {
+        this.rfq.requestForQuotationLine[this.lineIndex].lineItem.dataMonitoringRequested = isDataMonitoringRequested;
+    }
+
     public get rfqPaymentMeans(): string {
-        return this.rfq.paymentMeans.paymentMeansCode.value;
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.paymentMeans.paymentMeansCode.value;
     }
 
     public set rfqPaymentMeans(paymentMeans: string) {
-        this.rfq.paymentMeans.paymentMeansCode.value = paymentMeans;
+        this.rfq.requestForQuotationLine[this.lineIndex].lineItem.paymentMeans.paymentMeansCode.value = paymentMeans;
     }
 
     public get rfqFrameContractDuration(): Quantity {
-        let tradingTerm: TradingTerm = this.rfq.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
+        let tradingTerm: TradingTerm = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
         if(tradingTerm != null) {
             return tradingTerm.value.valueQuantity[0];
         }
@@ -243,57 +268,57 @@ export class NegotiationModelWrapper {
     }
 
     public set rfqFrameContractDuration(duration: Quantity) {
-        let tradingTerm: TradingTerm = this.rfq.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
+        let tradingTerm: TradingTerm = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
         if(tradingTerm == null) {
-            tradingTerm = new TradingTerm("FRAME_CONTRACT_DURATION", null, null, new MultiTypeValue());
+            tradingTerm = new TradingTerm(FRAME_CONTRACT_DURATION_TERM_NAME, null, null, new MultiTypeValue());
             tradingTerm.value.valueQuantity.push(duration)
-            this.rfq.tradingTerms.push(tradingTerm);
+            this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.push(tradingTerm);
         } else {
             tradingTerm.value.valueQuantity[0] = duration;
         }
     }
 
+    // get trading terms except the one representing frame contract duration
     public get rfqTradingTerms(): TradingTerm[] {
-        return this.rfq.tradingTerms.filter(tradingTerm => tradingTerm.id != "FRAME_CONTRACT_DURATION").map(tradingTerm => tradingTerm);
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.filter(tradingTerm => tradingTerm.id != "FRAME_CONTRACT_DURATION").map(tradingTerm => tradingTerm);
+    }
+
+    // set trading terms except the one representing frame contract duration
+    public set rfqTradingTerms(tradingTerms:TradingTerm[])  {
+        let frameContractDuration: TradingTerm = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
+        if(frameContractDuration){
+            tradingTerms.push(frameContractDuration);
+        }
+        this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms = tradingTerms;
     }
 
     public getRfqTradingTerm(termName: string): TradingTerm {
-        return this.rfq.tradingTerms.find(tradingTerm => tradingTerm.id == termName);
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == termName);
     }
 
     public addRfqTradingTerm(termName: string, termDescription: string, value, type: string): void {
-        let tradingTerm: TradingTerm = this.rfq.tradingTerms.find(tradingTerm => tradingTerm.id == termName);
+        let tradingTerm: TradingTerm = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == termName);
         if(tradingTerm != null) {
             return;
         } else {
-            let termValue: MultiTypeValue = new MultiTypeValue();
-            termValue.valueQualifier = type;
-
-            if(type == 'TEXT') {
-                let text: Text = new Text(value, null);
-                text.value = value;
-                termValue.value.push(text);
-            } else if(type == 'NUMBER') {
-                termValue.valueDecimal.push(value);
-            } else if(type == 'QUANTITY') {
-                termValue.valueQuantity.push(value);
-            }
-
-            let description: Text[] = [new Text(termDescription, null)];
-            tradingTerm = new TradingTerm(termName, description, null, termValue);
-            this.rfq.tradingTerms.push(tradingTerm);
+            tradingTerm = UBLModelUtils.createTradingTerm(termName, termDescription, value, type);
+            this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.push(tradingTerm);
         }
     }
 
     public deleteRfqTradingTerm(termName: string): void {
-        let indexToRemove = this.rfq.tradingTerms.findIndex(term => term.id === termName);
+        let indexToRemove = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.findIndex(term => term.id === termName);
         if(indexToRemove != -1) {
-            this.rfq.tradingTerms.splice(indexToRemove, 1);
+            this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.splice(indexToRemove, 1);
         }
     }
 
     public get rfqDeliveryAddress(): Address {
-        return this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address;
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address;
+    }
+
+    public set rfqDeliveryAddress(address:Address) {
+        this.rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address = address;
     }
 
     public checkEqual(termsSource: 'product_defaults' | 'frame_contract' | 'last_offer', part): boolean {
@@ -342,9 +367,9 @@ export class NegotiationModelWrapper {
                 if (termsSource == "product_defaults")
                     return true;
                 else if (termsSource == "frame_contract")
-                    return (this.rfq.requestForQuotationLine[0].lineItem.quantity.value == this.frameContractQuotationWrapper.orderedQuantity.value);
+                    return (this.rfq.requestForQuotationLine[this.lineIndex].lineItem.quantity.value == this.frameContractQuotationWrapper.orderedQuantity.value);
                 else if (termsSource == "last_offer")
-                    return (this.rfq.requestForQuotationLine[0].lineItem.quantity.value == this.lastOfferQuotationWrapper.orderedQuantity.value);
+                    return (this.rfq.requestForQuotationLine[this.lineIndex].lineItem.quantity.value == this.lastOfferQuotationWrapper.orderedQuantity.value);
                 break;
             case "price":
                 if (termsSource == "product_defaults")

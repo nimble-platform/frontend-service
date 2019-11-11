@@ -14,7 +14,7 @@ import {
     getStepForPrice,
     isTransportService,
     selectPreferredValue,
-    isLogisticsService
+    isLogisticsService, validateNumberInput
 } from '../common/utils';
 import { AppComponent } from "../app.component";
 import { UserService } from "../user-mgmt/user.service";
@@ -65,18 +65,20 @@ export class ProductDetailsComponent implements OnInit {
     isLogistics: boolean = false;
     isTransportService:boolean = false;
 
-    config = myGlobals.config;
-
     termsSelectBoxValue: 'product_defaults' | 'frame_contract' = 'product_defaults';
+
+    // business workflow of seller company
+    companyWorkflowMap = null;
+
     addFavoriteCategoryStatus: CallStatus = new CallStatus();
     callStatus: CallStatus = new CallStatus();
 
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
-    selectPreferredValue = selectPreferredValue;
 
-    // business workflow of seller company
-    companyWorkflowMap = null;
+    config = myGlobals.config;
+    selectPreferredValue = selectPreferredValue;
+    onOrderQuantityKeyPressed = validateNumberInput;
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
@@ -86,7 +88,7 @@ export class ProductDetailsComponent implements OnInit {
                 private route: ActivatedRoute,
                 private cookieService: CookieService,
                 private translate: TranslateService,
-                public appComponent: AppComponent,) {
+                public appComponent: AppComponent) {
 
     }
 
@@ -118,11 +120,11 @@ export class ProductDetailsComponent implements OnInit {
                         // check frame contract for the current line
                         this.bpeService.getFrameContract(UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty),
                             this.cookieService.get("company_id"),
-                            this.line.id).then(contract => {
+                            [this.line.id]).then(contracts => {
                             // contract exists, get the corresponding quotation including the terms
-                            this.documentService.getDocumentJsonContent(contract.quotationReference.id).then(document => {
-                                this.frameContract = contract;
-                                this.frameContractQuotationWrapper = new QuotationWrapper(document, this.line);
+                            this.documentService.getDocumentJsonContent(contracts[0].quotationReference.id).then(document => {
+                                this.frameContract = contracts[0];
+                                this.frameContractQuotationWrapper = new QuotationWrapper(document, this.line, UBLModelUtils.getFrameContractQuotationLineIndexForProduct(document.quotationLine,catalogueId,id));
                                 // quotation ordered quantity contains the actual ordered quantity in that business process,
                                 // so we overwrite it with the options's quantity, which is by default 1
                                 this.frameContractQuotationWrapper.orderedQuantity.value = this.orderQuantity;
@@ -143,7 +145,7 @@ export class ProductDetailsComponent implements OnInit {
                         this.associatedProducts = associatedProducts;
                         this.priceWrapper = new DiscountPriceWrapper(
                             this.line.requiredItemLocationQuantity.price,
-                            this.line.requiredItemLocationQuantity.price,
+                            copy(this.line.requiredItemLocationQuantity.price),
                             this.line.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
                             new Quantity(1,this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode),
                             this.line.priceOption,
@@ -157,7 +159,7 @@ export class ProductDetailsComponent implements OnInit {
                         this.companyWorkflowMap = this.bpDataService.getCompanyWorkflowMap(settings.negotiationSettings.company.processID);
 
                         // the quantity change event handler is called here to update the price in case a specific quantity is provided as a query parameter
-                        this.onOrderQuantityChange();
+                        this.onOrderQuantityChange(this.orderQuantity);
 
                         this.getProductStatus.callback("Retrieved product details", true);
                         this.initCheckGetProductStatus.error(null);
@@ -209,22 +211,15 @@ export class ProductDetailsComponent implements OnInit {
                 null,
                 null,
                 [],
-                this.itemWithSelectedProperties,
+                [this.itemWithSelectedProperties],
                 new Quantity(this.orderQuantity, this.getQuantityUnit()),
                 true, // this is a new process
-                this.catalogueId, this.id, null, null, termsSource),
+                [this.catalogueId], [this.id], null, null, [termsSource]),
             false);
     }
 
-    onOrderQuantityKeyPressed(event:any): boolean {
-        const charCode = (event.which) ? event.which : event.keyCode;
-        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-            return false;
-        }
-        return true;
-    }
-
-    onOrderQuantityChange(): void {
+    onOrderQuantityChange(value: number): void {
+        this.orderQuantity = value;
         this.priceWrapper.orderedQuantity.value = this.orderQuantity;
         if(this.frameContractQuotationWrapper != null) {
             this.frameContractQuotationWrapper.orderedQuantity.value = this.orderQuantity;

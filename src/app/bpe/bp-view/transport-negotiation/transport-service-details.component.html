@@ -2,16 +2,35 @@
     <div class="col-12">
         <h4><span [innerHTML]="'Transport Service Details' | translate"></span></h4>
 
-        <!-- Goods Item -->
-        <text-input presentationMode="view" label="Goods Item" definition="The goods item included in this shipment"
-            [(text)]="itemName" [disabled]="disabled" labelClass="col-2" valueClass="col-10" rowClass="space-before">
-        </text-input>
+        <div *ngIf="goodsItems.length == 1">
+            <!-- Goods Item -->
+            <text-input presentationMode="view" label="Goods Item" definition="The goods item included in this shipment"
+                        [(text)]="itemName" [disabled]="disabled" labelClass="col-2" valueClass="col-10" rowClass="space-before">
+            </text-input>
 
-        <!-- Quantity -->
-        <quantity-input label="Quantity" definition="The quantity to transport."
-            [quantity]="shipment.totalTransportHandlingUnitQuantity" [disabled]="disabled" 
-            labelClass="col-2" valueClass="col-10">
-        </quantity-input>
+            <!-- Quantity -->
+            <quantity-input label="Quantity" definition="The quantity to transport."
+                            [quantity]="shipment.goodsItem[0].quantity" [disabled]="disabled"
+                            labelClass="col-2" valueClass="col-10">
+            </quantity-input>
+        </div>
+
+        <div *ngIf="goodsItems.length > 1">
+            <h4>Shipped Products</h4>
+            <div class="row" *ngFor="let goodsItem of goodsItems;let i=index">
+                <div class="col-1" style="text-align: center">
+                    <input type="checkbox" [disabled]="disabled"  [(ngModel)]="selectedProducts[i]" [defaultChecked]="true">
+                </div>
+                <div class="col-2">
+                    {{selectPreferredValue(goodsItem.item.name)}}
+                </div>
+                <div class="col-9">
+                    <quantity-input [disabled]="disabled" [disableQuantityUnit]="true"
+                                    [quantity]="goodsItem.quantity" valueClass="col-12">
+                    </quantity-input>
+                </div>
+            </div>
+        </div>
 
         <!-- Gross Volume -->
         <quantity-input label="Gross Volume" definition="The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L"
