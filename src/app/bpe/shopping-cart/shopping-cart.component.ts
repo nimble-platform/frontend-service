@@ -500,6 +500,8 @@ export class ShoppingCartComponent implements OnInit {
         let callStatus: CallStatus = this.deleteCallStatuses.get(cartLine.hjid);
         callStatus.submit();
         let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
+        // reset BP data
+        this.bpDataService.resetBpData();
 
         // final check on the rfq
         const rfq: RequestForQuotation = copy(this.rfqs.get(sellerId));
@@ -540,6 +542,8 @@ export class ShoppingCartComponent implements OnInit {
         let partyIds = Array.from(this.sellersSettings.keys()).concat(companyId);
 
         this.startBpCallStatus.submit();
+        // reset BP data
+        this.bpDataService.resetBpData();
 
         // get parties
         this.userService.getParties(partyIds).then(parties => {

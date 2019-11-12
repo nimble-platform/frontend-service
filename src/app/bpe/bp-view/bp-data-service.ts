@@ -244,10 +244,7 @@ export class BPDataService{
      However, in the product-details page, we start a new business process, this is why we check for new process processMetadata.
      */
     async startBp(bpActivityEvent: BpActivityEvent, clearSearchContext:boolean){
-        this.resetBpData();
-        if(clearSearchContext){
-            this.searchContextService.clearSearchContext();
-        }
+        this.resetBpData(clearSearchContext);
 
         this.bpActivityEvent = bpActivityEvent;
         // if the event is not created for a new process, processMetadata contains the process metadata for the continued process
@@ -531,7 +528,7 @@ export class BPDataService{
         this.transportExecutionPlanRequest = UBLModelUtils.createTEPlanRequestWithQuotationCopy(this.copyQuotation);
     }
 
-    resetBpData():void {
+    resetBpData(clearSearchContext:boolean=true):void {
         this.requestForQuotation = null;
         this.quotation = null;
         this.order = null;
@@ -544,6 +541,11 @@ export class BPDataService{
         this.transportExecutionPlan = null;
         this.itemInformationRequest = null;
         this.itemInformationResponse = null;
+
+        this.precedingDocumentId = null;
+        if(clearSearchContext){
+            this.searchContextService.clearSearchContext();
+        }
     }
 
     // checks whether the given process is the final step in the workflow or not
