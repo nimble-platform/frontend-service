@@ -13,6 +13,7 @@ import {Quantity} from '../catalogue/model/publish/quantity';
 import {CatalogueService} from '../catalogue/catalogue.service';
 import {LineItem} from '../catalogue/model/publish/line-item';
 import {UserService} from '../user-mgmt/user.service';
+import {Item} from '../catalogue/model/publish/item';
 
 /**
  * Created by suat on 19-Sep-19.
@@ -180,13 +181,13 @@ export class UnshippedOrdersTabComponent implements OnInit {
         }
     }
 
-    onProductDetailsClicked(productAggregate: ProductAggregate): void {
+    onProductDetailsClicked(item:Item, quantity:Quantity): void {
         this.router.navigate(['/product-details'],
             {
                 queryParams: {
-                    catalogueId: productAggregate.catalogueLine.goodsItem.item.catalogueDocumentReference.id,
-                    id: productAggregate.catalogueLine.goodsItem.item.manufacturersItemIdentification.id,
-                    orderQuantity: productAggregate.quantity.value
+                    catalogueId: item.catalogueDocumentReference.id,
+                    id: item.manufacturersItemIdentification.id,
+                    orderQuantity: quantity.value
                 }
             });
     }

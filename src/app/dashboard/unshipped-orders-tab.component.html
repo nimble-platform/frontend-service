@@ -32,13 +32,13 @@
                     {{selectPartyName(pa.catalogueLine.goodsItem.item.manufacturerParty.partyName)}}
                 </div>
                 <div class="col-3">
-                    <span class="clickable" (click)="onProductDetailsClicked(pa)">{{selectLangLabelFromTextArray(pa.catalogueLine.goodsItem.item.name)}}</span>
+                    <span class="clickable" (click)="onProductDetailsClicked(pa.catalogueLine.goodsItem.item,pa.quantity)">{{selectLangLabelFromTextArray(pa.catalogueLine.goodsItem.item.name)}}</span>
                 </div>
                 <div class="col-2">
                     {{quantityToString(pa.quantity)}}
                 </div>
                 <div class="col-2">
-                    <div class="btn btn-primary" (click)="onProductDetailsClicked(pa)"><span [innerHTML]="'Negotiate & Order' | translate"></span></div>
+                    <div class="btn btn-primary" (click)="onProductDetailsClicked(pa.catalogueLine.goodsItem.item,pa.quantity)"><span [innerHTML]="'Negotiate & Order' | translate"></span></div>
                 </div>
                 <div class="col-2">
                     <div class="btn btn-primary" (click)="showSalesOrders[i]=!showSalesOrders[i]"><span [innerHTML]="'View Sales Orders' | translate"></span></div>
@@ -70,7 +70,7 @@
                             {{partyNames.get(order.buyerCustomerParty.party.partyIdentification[0].id)}}
                         </div>
                         <div class="col-3">
-                            {{selectLangLabelFromTextArray(order.orderLine[0].lineItem.item.name)}}
+                            <span class="clickable" (click)="onProductDetailsClicked(order.orderLine[0].lineItem.item,order.orderLine[0].lineItem.quantity)">{{selectLangLabelFromTextArray(order.orderLine[0].lineItem.item.name)}}</span>
                         </div>
                         <div class="col-2">
                             {{quantityToString(order.orderLine[0].lineItem.quantity)}}
