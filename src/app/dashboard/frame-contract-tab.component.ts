@@ -40,14 +40,19 @@ export class FrameContractTabComponent implements OnInit {
         this.bpeService.getAllFrameContractsForParty(partyId).then(frameContracts => {
             this.frameContracts = frameContracts;
             let correspondingUserIds = this.getCorrespondingPartyIds(frameContracts);
-            this.userService.getParties(correspondingUserIds).then(parties => {
-                for(let party of parties){
-                    this.partyNames.set(party.partyIdentification[0].id,selectPartyName(party.partyName));
-                }
+            if(correspondingUserIds.length > 0){
+                this.userService.getParties(correspondingUserIds).then(parties => {
+                    for(let party of parties){
+                        this.partyNames.set(party.partyIdentification[0].id,selectPartyName(party.partyName));
+                    }
+                    this.frameContractsRetrievalCallStatus.callback(null, true);
+                }).catch(error => {
+                    this.frameContractsRetrievalCallStatus.error("Failed to retrieve corresponding party details");
+                })
+            }
+            else{
                 this.frameContractsRetrievalCallStatus.callback(null, true);
-            }).catch(error => {
-                this.frameContractsRetrievalCallStatus.error("Failed to retrieve corresponding party details");
-            })
+            }
         }).catch(error => {
             this.frameContractsRetrievalCallStatus.error("Failed to retrieve frame contracts");
         });
