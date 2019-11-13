@@ -26,18 +26,57 @@
         </ng-container>
 
         <!-- associated products -->
-        <div class="data-row" *ngFor="let pa of associatedProductAggregates">
-            <div class="col-3">
-                {{selectPartyName(pa.catalogueLine.goodsItem.item.manufacturerParty.partyName)}}
+        <div *ngFor="let pa of associatedProductAggregates;let i=index">
+            <div class="data-row">
+                <div class="col-3">
+                    {{selectPartyName(pa.catalogueLine.goodsItem.item.manufacturerParty.partyName)}}
+                </div>
+                <div class="col-3">
+                    <span class="clickable" (click)="onProductDetailsClicked(pa)">{{selectLangLabelFromTextArray(pa.catalogueLine.goodsItem.item.name)}}</span>
+                </div>
+                <div class="col-2">
+                    {{quantityToString(pa.quantity)}}
+                </div>
+                <div class="col-2">
+                    <div class="btn btn-primary" (click)="onProductDetailsClicked(pa)"><span [innerHTML]="'Negotiate & Order' | translate"></span></div>
+                </div>
+                <div class="col-2">
+                    <div class="btn btn-primary" (click)="showSalesOrders[i]=!showSalesOrders[i]"><span [innerHTML]="'View Sales Orders' | translate"></span></div>
+                </div>
             </div>
-            <div class="col-3">
-                <span class="clickable" (click)="onProductDetailsClicked(pa)">{{selectLangLabelFromTextArray(pa.catalogueLine.goodsItem.item.name)}}</span>
-            </div>
-            <div class="col-2">
-                {{quantityToString(pa.quantity)}}
-            </div>
-            <div class="col-2">
-                <div class="btn btn-primary" (click)="onProductDetailsClicked(pa)"><span [innerHTML]="'Negotiate & Order' | translate"></span></div>
+            <div *ngIf="showSalesOrders[i]" class="ml-3 space-after">
+                <!-- Unshipped orders table title -->
+                <div class="title-row">
+                    <div class="col-4">
+                        <span [innerHTML]="'Order id' | translate"></span>
+                    </div>
+                    <div class="col-3">
+                        <span [innerHTML]="'Ordered by' | translate"></span>
+                    </div>
+                    <div class="col-3">
+                        <span [innerHTML]="'Ordered product' | translate"></span>
+                    </div>
+                    <div class="col-2">
+                        <span [innerHTML]="'Ordered quantity' | translate"></span>
+                    </div>
+                </div>
+                <!-- Unshipped orders table data rows -->
+                <div class="data-row" *ngFor="let order of pa.salesOrders">
+                    <ng-container>
+                        <div class="col-4">
+                            {{order.id}}
+                        </div>
+                        <div class="col-3">
+                            {{partyNames.get(order.buyerCustomerParty.party.partyIdentification[0].id)}}
+                        </div>
+                        <div class="col-3">
+                            {{selectLangLabelFromTextArray(order.orderLine[0].lineItem.item.name)}}
+                        </div>
+                        <div class="col-2">
+                            {{quantityToString(order.orderLine[0].lineItem.quantity)}}
+                        </div>
+                    </ng-container>
+                </div>
             </div>
         </div>
     </ng-container>

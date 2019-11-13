@@ -39,6 +39,8 @@ export class UnshippedOrdersTabComponent implements OnInit {
     selectLangLabelFromTextArray = selectPreferredValue;
     quantityToString = quantityToString;
 
+    showSalesOrders:boolean[] = [];
+
     constructor(private catalogueService: CatalogueService,
                 private bpeService: BPEService,
                 private documentService: DocumentService,
@@ -71,6 +73,7 @@ export class UnshippedOrdersTabComponent implements OnInit {
 
         let promises: Promise<any>[] = [];
         for (let i = 0; i < this.allOrderIds.length; i++) {
+            this.showSalesOrders.push(false);
             let orderRetrievalPromise: Promise<any> = this.documentService.getCachedDocument(this.allOrderIds[i]);
             promises.push(orderRetrievalPromise);
         }
@@ -161,10 +164,12 @@ export class UnshippedOrdersTabComponent implements OnInit {
                         pa.catalogueLine = associatedProductMap.get(associatedProductId);
                         // quantity is copied since we will update the amount if needed
                         pa.quantity = copy(orderLineItem.quantity);
+                        pa.salesOrders.push(copy(order));
                         this.associatedProductAggregates.push(pa);
                     } else {
                         let pa: ProductAggregate = this.associatedProductAggregates[paIndex];
                         pa.quantity.value += orderLineItem.quantity.value;
+                        pa.salesOrders.push(copy(order));
                     }
                 }
             }
@@ -189,5 +194,6 @@ export class UnshippedOrdersTabComponent implements OnInit {
 
 class ProductAggregate {
     constructor(public catalogueLine: CatalogueLine = null,
-                public quantity: Quantity = null) {}
+                public quantity: Quantity = null,
+                public salesOrders:Order[] = []) {}
 }
