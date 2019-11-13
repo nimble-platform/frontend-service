@@ -80,7 +80,7 @@
                 {{selectPartyName(pa.catalogueLine.goodsItem.item.manufacturerParty.partyName)}}
             </div>
             <div class="col-3">
-                {{selectLangLabelFromTextArray(pa.catalogueLine.goodsItem.item.name)}}
+                <span class="clickable" (click)="onProductDetailsClicked(pa)">{{selectLangLabelFromTextArray(pa.catalogueLine.goodsItem.item.name)}}</span>
             </div>
             <div class="col-2">
                 {{quantityToString(pa.quantity)}}
