@@ -153,6 +153,7 @@ export const config = {
     "es":"Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
   },
   "showLoginFederation": false,
+  "unshippedOrdersTabEnabled":true,
   "federationClientID": "sample-client",
   "federationIDP": "sampleIDP"
 };
