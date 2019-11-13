@@ -252,20 +252,22 @@
         <!-- Frame contract -->
         <ng-container *ngIf="isFrameContractVisible()">
             <ng-container *ngIf="showFrameContractDetails">
-                <div class="row">
-                    <div class="col-2">
-                        <strong class="font-weight-500"><span [innerHTML]="'Frame Contract' | translate"></span>:</strong>
-                        <span title="The period within which the offered conditions will be valid upon confirmation by the seller.">&#9432;</span>
-                    </div>
-                    <div class="col-5"></div>
-                    <div class="col-5">
-                        <negotiation-request-input label="Request Frame Contract"
-                                                   id="frameContractCb"
-                                                   [quantityUnits]="frameContractDurationUnits"
-                                                   (quantityChange)="onFrameContractDurationChanged($event); onTermsChange(FIXED_NEGOTIATION_TERMS.FRAME_CONTRACT_DURATION, false)"
-                                                   [quantity]="frameContractDuration"
-                                                   [disabled]="isFrameContractDisabled()">
-                        </negotiation-request-input>
+                <div class="ml-2">
+                    <div class="row">
+                        <div class="col-2">
+                            <strong class="font-weight-500"><span [innerHTML]="'Frame Contract' | translate"></span>:</strong>
+                            <span title="The period within which the offered conditions will be valid upon confirmation by the seller.">&#9432;</span>
+                        </div>
+                        <div class="col-5"></div>
+                        <div class="col-5">
+                            <negotiation-request-input label="Contract Duration"
+                                                       id="frameContractCb"
+                                                       [quantityUnits]="frameContractDurationUnits"
+                                                       (quantityChange)="onFrameContractDurationChanged($event); onTermsChange(FIXED_NEGOTIATION_TERMS.FRAME_CONTRACT_DURATION, false)"
+                                                       [quantity]="frameContractDuration"
+                                                       [disabled]="isFrameContractDisabled()">
+                            </negotiation-request-input>
+                        </div>
                     </div>
                 </div>
             </ng-container>
@@ -274,7 +276,7 @@
         <!-- Data Monitoring -->
         <ng-container *ngIf="config.dataChannelsEnabled">
             <div *ngIf="showDataMonitoring" class="row mb-3">
-                <div class="col-12">
+                <div class="col-12 ml-2">
                     <!-- frame contract exists, so, indicate that the data monitoring request -->
                     <ng-container *ngIf="((manufacturersTermsSource == 'frame_contract' &&
                                     wrapper.frameContractQuotationWrapper.dataMonitoringPromised) ||
@@ -297,7 +299,7 @@
         </ng-container>
 
         <!-- Delivery -->
-        <div *ngIf="showDeliveryDetails" class="row mb-3">
+        <div *ngIf="showDeliveryDetails" class="row mb-3 ml-1">
             <ul class="nav nav-tabs space-after space-before">
                 <li class="nav-item">
                     <a href id="DELIVERY_ADDRESS" class="nav-link"
@@ -399,7 +401,7 @@
         </div>
 
         <!-- Terms and conditions -->
-        <div *ngIf="showTermsAndConditions">
+        <div *ngIf="showTermsAndConditions" class="ml-2">
             <ul *ngIf="!isReadOnly() || getNonFrameContractTermNumber() > 0" class="nav nav-tabs space-after space-before">
                 <li class="nav-item">
                     <a href id="CUSTOM_TERMS" class="nav-link"

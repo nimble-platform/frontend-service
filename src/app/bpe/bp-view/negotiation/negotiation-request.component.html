@@ -16,18 +16,20 @@
 <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showPurchaseOrder}" (click)="showPurchaseOrder = showTab(showPurchaseOrder)"><span [innerHTML]="'Purchase Order' | translate" ></span></div>
 
 <!--Notes-->
-<note-file-view *ngIf="showNotesAndAdditionalFiles"
-                class="mb-2"
-                [notes]="rfq.note"
-                [documents]="rfq.additionalDocumentReference"
-                [label]="'Notes'"
-                [firstCol]="'col-2'"
-                [secondCol]="'col-5'"
-                [lastCol]="'col-5'"
-                [readonly]="isLoading() || isReadOnly()"></note-file-view>
+<div class="ml-2 space-before">
+    <note-file-view *ngIf="showNotesAndAdditionalFiles"
+                    class="mb-2"
+                    [notes]="rfq.note"
+                    [documents]="rfq.additionalDocumentReference"
+                    [label]="'Notes'"
+                    [firstCol]="'col-2'"
+                    [secondCol]="'col-5'"
+                    [lastCol]="'col-5'"
+                    [readonly]="isLoading() || isReadOnly()"></note-file-view>
+</div>
 
 <!--Purchase Order-->
-<table class="table table-striped" *ngIf="showPurchaseOrder">
+<table class="table table-striped ml-2 space-before" *ngIf="showPurchaseOrder">
     <tr>
         <th><span>Ordered Product</span></th>
         <th><span [innerHTML]="'Product Id' | translate">Product Id</span></th>

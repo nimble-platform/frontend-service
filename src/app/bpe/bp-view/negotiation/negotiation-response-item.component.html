@@ -227,25 +227,13 @@
         <!-- Frame contract -->
         <ng-container *ngIf="isFrameContractPanelVisible()">
             <ng-container *ngIf="showFrameContractDetails">
-                <div class="row">
-                    <div class="col-3">
-                        <strong class="font-weight-500"><span [innerHTML]="'Frame Contract' | translate"></span>:</strong>
-                    </div>
-                    <div class="col-3"></div>
-                    <div class="col-3">
-                        <quantity-input [rowClass]="'space-before'"
-                                        [label]="'Valid for'"
-                                        [labelClass]="'col-5'"
-                                        [valueClass]="'col-7'"
-                                        [valueSizeClass]="'col-5'"
-                                        [unitSizeClass]="'col-7'"
-                                        [definition]="'The period within which the offered conditions will be valid upon confirmation by the seller.'"
-                                        [quantity]="wrapper.rfqFrameContractDuration"
-                                        [disabled]="true">
-                        </quantity-input>
-                    </div>
-                    <div class="col-3">
-                        <ng-container *ngIf="isSellerTermsVisible()">
+                <div class="ml-2">
+                    <div class="row">
+                        <div class="col-3">
+                            <strong class="font-weight-500"><span [innerHTML]="'Frame Contract' | translate"></span>:</strong>
+                        </div>
+                        <div class="col-3"></div>
+                        <div class="col-3">
                             <quantity-input [rowClass]="'space-before'"
                                             [label]="'Valid for'"
                                             [labelClass]="'col-5'"
@@ -253,27 +241,41 @@
                                             [valueSizeClass]="'col-5'"
                                             [unitSizeClass]="'col-7'"
                                             [definition]="'The period within which the offered conditions will be valid upon confirmation by the seller.'"
-                                            [quantity]="wrapper.newQuotationWrapper.frameContractDuration"
-                                            [quantityType]="'frame_contract_period'"
-                                            [disabled]="isReadOnly()">
+                                            [quantity]="wrapper.rfqFrameContractDuration"
+                                            [disabled]="true">
                             </quantity-input>
-                            <text-input [rowClass]="'space-before'"
-                                        [rows]="1"
-                                        [label]="'Until'"
-                                        [labelClass]="'col-5'"
-                                        [valueClass]="'col-7'"
-                                        [definition]="'The date until which the frame contract will be valid.'"
-                                        [disabled]="true"
-                                        [text]="getContractEndDate()">
-                            </text-input>
-                        </ng-container>
+                        </div>
+                        <div class="col-3">
+                            <ng-container *ngIf="isSellerTermsVisible()">
+                                <quantity-input [rowClass]="'space-before'"
+                                                [label]="'Valid for'"
+                                                [labelClass]="'col-5'"
+                                                [valueClass]="'col-7'"
+                                                [valueSizeClass]="'col-5'"
+                                                [unitSizeClass]="'col-7'"
+                                                [definition]="'The period within which the offered conditions will be valid upon confirmation by the seller.'"
+                                                [quantity]="wrapper.newQuotationWrapper.frameContractDuration"
+                                                [quantityType]="'frame_contract_period'"
+                                                [disabled]="isReadOnly()">
+                                </quantity-input>
+                                <text-input [rowClass]="'space-before'"
+                                            [rows]="1"
+                                            [label]="'Until'"
+                                            [labelClass]="'col-5'"
+                                            [valueClass]="'col-7'"
+                                            [definition]="'The date until which the frame contract will be valid.'"
+                                            [disabled]="true"
+                                            [text]="getContractEndDate()">
+                                </text-input>
+                            </ng-container>
+                        </div>
                     </div>
                 </div>
             </ng-container>
         </ng-container>
 
         <!-- Terms and conditions -->
-        <div [hidden]="!showTermsAndConditions||!defaultTermsAndConditions">
+        <div [hidden]="!showTermsAndConditions||!defaultTermsAndConditions" class="ml-2">
             <ul *ngIf="getNonFrameContractTermNumber() > 0" class="nav nav-tabs space-after space-before">
                 <li class="nav-item">
                     <a href id="CUSTOM_TERMS" class="nav-link"
@@ -367,7 +369,7 @@
         </div>
 
         <!-- Delivery-->
-        <div *ngIf="showDeliveryDetails" class="row mb-3">
+        <div *ngIf="showDeliveryDetails" class="row mb-3 ml-1">
             <ul class="nav nav-tabs space-after space-before">
                 <li class="nav-item">
                     <a href id="DELIVERY_ADDRESS" class="nav-link"
