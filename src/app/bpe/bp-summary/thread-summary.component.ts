@@ -62,6 +62,8 @@ export class ThreadSummaryComponent implements OnInit {
     ratingSeller = 0;
     ratingFulfillment = 0;
 
+    sellerNegoSettings = null;
+
     // Utilities
     eventCount: number = 0;
     collaborationGroupRetrievalCallStatus: CallStatus = new CallStatus();
@@ -80,6 +82,15 @@ export class ThreadSummaryComponent implements OnInit {
       "DeliveryAndPackaging": 0
     };
     compComment: any = [];
+
+    // Rate attributes
+
+    negotiationQuality = false;
+    orderQuality = false;
+    responsetime= false;
+    prodListingAccu = false;
+    conformToOtherAggre = false;
+    deliveryPackage = false;
 
     // this is always true unless an approved order is present in this process group or the collaboration is already cancelled
     showCancelCollaborationButton = true;
@@ -287,7 +298,9 @@ export class ThreadSummaryComponent implements OnInit {
         // get seller's business process workflow
         // we need this information to set status and labels for Order properly
         const sellerNegotiationSettings = await this.userService.getCompanyNegotiationSettingsForParty(initialDoc.items[0].manufacturerParty.partyIdentification[0].id);
+        this.sellerNegoSettings = sellerNegotiationSettings;
         const sellerWorkflow = sellerNegotiationSettings.company.processID;
+
         // check whether Fulfilment is included or not in seller's workflow
         const isFulfilmentIncludedInWorkflow = !sellerWorkflow || sellerWorkflow.length == 0 || sellerWorkflow.indexOf('Fulfilment') != -1;
 
@@ -610,12 +623,12 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     changeCommunicationRating(){
-        this.ratingSeller = (this.compRating.QualityOfTheNegotiationProcess + this.compRating.QualityOfTheOrderingProcess + this.compRating.ResponseTime) / 3;
+        this.ratingSeller = (this.compRating.QualityOfTheNegotiationProcess + this.compRating.ResponseTime) / 2;
         this.ratingOverall = (this.ratingSeller + this.ratingFulfillment + this.compRating.DeliveryAndPackaging) / 3;
     }
 
     changeFullfillmentRating(){
-      this.ratingFulfillment = (this.compRating.ProductListingAccuracy + this.compRating.ConformanceToOtherAgreedTerms) / 2;
+      this.ratingFulfillment = (this.compRating.ProductListingAccuracy + this.compRating.ConformanceToOtherAgreedTerms+ this.compRating.QualityOfTheOrderingProcess) / 3;
       this.ratingOverall = (this.ratingSeller + this.ratingFulfillment + this.compRating.DeliveryAndPackaging) / 3;
     }
 
@@ -624,17 +637,60 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     rateCollaborationSuccess(content) {
-      this.compRating = {
-        "QualityOfTheNegotiationProcess": 0,
-        "QualityOfTheOrderingProcess": 0,
-        "ResponseTime": 0,
-        "ProductListingAccuracy": 0,
-        "ConformanceToOtherAgreedTerms": 0,
-        "DeliveryAndPackaging": 0
-      };
+     
+      if( this.sellerNegoSettings != null && this.sellerNegoSettings.company.processID.length !=0){
+        this.compRating = {};
+
+        if(this.sellerNegoSettings.company.processID.indexOf('Fulfilment') != -1){
+            this.compRating["DeliveryAndPackaging"] = 0;
+            this.deliveryPackage = true;
+        }
+
+        if(this.sellerNegoSettings.company.processID.indexOf('Ppap') != -1 || this.sellerNegoSettings.company.processID.indexOf('Item_Information_Request') != -1){
+            this.compRating["ProductListingAccuracy"] = 0;
+            this.prodListingAccu = true;
+            this.compRating["ConformanceToOtherAgreedTerms"] = 0;
+            this.conformToOtherAggre = true;
+            this.ratingFulfillment = 0
+        }
+
+        if(this.sellerNegoSettings.company.processID.indexOf('Negotiation') != -1){
+            this.compRating["QualityOfTheNegotiationProcess"] = 0;
+            this.negotiationQuality = true;
+            this.ratingSeller = 0;
+            this.compRating["ResponseTime"] =0;
+            this.responsetime = true;
+        }
+
+        if(this.sellerNegoSettings.company.processID.indexOf('Order') != -1 || this.sellerNegoSettings.company.processID.indexOf('Transport_Execution_Plan') != -1){
+            this.compRating["QualityOfTheOrderingProcess"] = 0;
+            this.orderQuality = true;
+            this.ratingSeller = 0;
+        }
+
+      }else{
+        this.compRating = {
+            "QualityOfTheNegotiationProcess": 0,
+            "QualityOfTheOrderingProcess": 0,
+            "ResponseTime": 0,
+            "ProductListingAccuracy": 0,
+            "ConformanceToOtherAgreedTerms": 0,
+            "DeliveryAndPackaging": 0
+          };
+          this.deliveryPackage = true;
+          this.orderQuality = true;
+          this.negotiationQuality = true;
+          this.prodListingAccu = true;
+          this.responsetime = true;
+          this.conformToOtherAggre = true;
+          
+          this.ratingSeller = 0;
+          this.ratingFulfillment = 0
+      }
+
       this.ratingOverall = 0;
-      this.ratingSeller = 0;
-      this.ratingFulfillment = 0
+      
+   
       this.compComment = "";
       this.modalService.open(content);
     }

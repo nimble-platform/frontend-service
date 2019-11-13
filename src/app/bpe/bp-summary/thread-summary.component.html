@@ -166,7 +166,7 @@
                     </ngb-rating>
                   </div>
               </div>
-          <div class="form-group row">
+          <div  *ngIf="responsetime || negotiationQuality"  class="form-group row">
             <label class="col-5 col-form-label offset-1 border border-dark" >
               <strong><span [innerHTML]="'Seller Communication' | translate"></span>
                 <span title=' Overall rating of how well the seller communicated based on "Quality of Negotiation Process","Quality of Ordering Process" and "Response Time". See the subitems for more details.'>
@@ -184,7 +184,7 @@
                 </ngb-rating>
               </div>
           </div>
-          <div class="form-group row">
+          <div *ngIf="negotiationQuality" class="form-group row">
             <label class="col-6 col-form-label offset-2 border border-warning"><span [innerHTML]="'Quality of Negotiation Process' | translate"></span>
                 <span title='Indicates how well the negotiation was executed; e.g. clear responses, flexibility on provided terms, supporting documentation, etc.'>
                     <i class="fa fa-exclamation-circle"></i>
@@ -200,23 +200,7 @@
                 </ngb-rating>
               </div>
           </div>
-          <div class="form-group row">
-            <label class="col-6 col-form-label offset-2 border border-warning"><span [innerHTML]="'Quality of Ordering Process' | translate"></span>
-                <span title=' Indicates how well the ordering was executed; e.g. clear responses, supporting documentation, transition to fulfillment, etc.'>
-                    <i class="fa fa-exclamation-circle"></i>
-                  </span>
-            </label>
-              <div class="col-4 align-right">
-                <ngb-rating [(rate)]="compRating.QualityOfTheOrderingProcess" max="5" (rateChange)= "changeCommunicationRating()">
-                  <ng-template let-fill="fill">
-                    <span class="star star-b" [class.full]="fill === 100">
-                      <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-                    </span>
-                  </ng-template>
-                </ngb-rating>
-              </div>
-          </div>
-          <div class="form-group row">
+          <div *ngIf="responsetime"  class="form-group row">
             <label class="col-6 col-form-label offset-2 border border-warning"><span [innerHTML]="'Response Time' | translate"></span>
                 <span title="Indicates how the response times were perceived by the trading partner. This is a subjective value.">
                     <i class="fa fa-exclamation-circle"></i>
@@ -232,7 +216,7 @@
                 </ngb-rating>
               </div>
           </div>
-          <div class="form-group row">
+          <div  *ngIf="conformToOtherAggre || prodListingAccu || orderQuality"  class="form-group row">
               <label class="col-5 col-form-label offset-1 border border-dark">
                 <strong><span [innerHTML]="'Fulfillment of Terms' | translate"></span>
                   <span title='Overall rating of how accurately the seller fulfilled the agreed upon terms based on "Quality of Requested Information" and "Conformance to Contractual Terms". See the subitems for more details.'>
@@ -251,7 +235,7 @@
                 </div>
             </div>
 
-          <div class="form-group row">
+          <div *ngIf="prodListingAccu"  class="form-group row">
             <label class="col-6 col-form-label offset-2 border border-warning"><span [innerHTML]="'Quality of Requested Information' | translate"></span>
                 <span title="Indicates how well the received product or service matches the listed details.">
                     <i class="fa fa-exclamation-circle"></i>
@@ -267,7 +251,23 @@
                 </ngb-rating>
               </div>
           </div>
-          <div class="form-group row">
+          <div *ngIf="orderQuality" class="form-group row">
+            <label class="col-6 col-form-label offset-2 border border-warning"><span [innerHTML]="'Quality of Ordering Process' | translate"></span>
+                <span title=' Indicates how well the ordering was executed; e.g. clear responses, supporting documentation, transition to fulfillment, etc.'>
+                    <i class="fa fa-exclamation-circle"></i>
+                  </span>
+            </label>
+              <div class="col-4 align-right">
+                <ngb-rating [(rate)]="compRating.QualityOfTheOrderingProcess" max="5" (rateChange)= "changeFullfillmentRating()">
+                  <ng-template let-fill="fill">
+                    <span class="star star-b" [class.full]="fill === 100">
+                      <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                    </span>
+                  </ng-template>
+                </ngb-rating>
+              </div>
+          </div>
+          <div *ngIf="conformToOtherAggre" class="form-group row">
             <label class="col-6 col-form-label offset-2 border border-warning "><span [innerHTML]="'Conformance to Contractual Terms' | translate"></span>
                 <span title="Indicates how accurately the seller conformed to the agreed upon contractual terms; e.g. dispatch date, payment method, additional services, etc.">
                     <i class="fa fa-exclamation-circle"></i>
@@ -283,7 +283,7 @@
                 </ngb-rating>
               </div>
           </div>
-          <div class="form-group row">
+          <div *ngIf="deliveryPackage" class="form-group row">
             <label class="col-5 col-form-label offset-1 border border-warning">
               <strong><span [innerHTML]="'Delivery & Packaging' | translate"></span></strong>
               <span title="Overall rating of the quality of delivery and packaging, e.g. delivery date, adequate packing, adequate delivery method, etc.">
