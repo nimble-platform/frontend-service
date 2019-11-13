@@ -24,21 +24,15 @@ import {UserService} from '../user-mgmt/user.service';
 export class UnshippedOrdersTabComponent implements OnInit {
 
     allOrderIds: string[] = [];
-    displayedOrderIds: string[] = [];
     partyNames:Map<string, string> = new Map<string, string>();
     orders: Map<string, Order> = new Map<string, Order>();
     // keeps the aggregated products referred by the orders
     associatedProductAggregates: ProductAggregate[] = [];
     allOrdersCallStatus: CallStatus = new CallStatus();
     orderIdsCallStatus: CallStatus = new CallStatus();
-    orderCallStatuses: Map<string, CallStatus> = new Map<string, CallStatus>();
     associatedProductsCallStatus: CallStatus = new CallStatus();
-    showUnshippedOrders = true;
     // keeps the error messages, if any, received when getting all orders
     failedOrderMessages: string[] = [];
-
-    pageNum = 0;
-    pageSize = 10;
 
     // utility methods
     selectPartyName = selectPartyName;
@@ -64,8 +58,6 @@ export class UnshippedOrdersTabComponent implements OnInit {
         this.bpeService.getUnshippedOrderIds(partyId).then(orderIds => {
             this.allOrderIds = orderIds;
             this.retrieveAllOrders();
-            // set timeout is added in order to trigger a page change event of the navigation component
-            setTimeout(() => this.pageNum = 1);
 
             this.orderIdsCallStatus.callback(null, true);
 
@@ -110,39 +102,6 @@ export class UnshippedOrdersTabComponent implements OnInit {
                 });
             }
         });
-    }
-
-    onUnshippedOrdersPageChange(): void {
-        this.displayedOrderIds = [];
-        let offset: number = (this.pageNum - 1) * this.pageSize;
-        for (let i = offset; i < offset + this.pageSize && i < this.allOrderIds.length; i++) {
-            this.displayedOrderIds.push(this.allOrderIds[i]);
-        }
-
-        for (let i = 0; i < this.displayedOrderIds.length; i++) {
-            let callStatus: CallStatus = new CallStatus();
-            callStatus.submit();
-            this.orderCallStatuses.set(this.displayedOrderIds[i], callStatus);
-
-            if (this.orders.has(this.displayedOrderIds[i])) {
-                callStatus.callback(null, true);
-                continue;
-            }
-
-            this.documentService.getCachedDocument(this.displayedOrderIds[i]).then(order => {
-                this.userService.getParty(order.buyerCustomerParty.party.partyIdentification[0].id).then(party => {
-                    this.orders.set(this.displayedOrderIds[i], order);
-                    this.partyNames.set(party.partyIdentification[0].id,selectPartyName(party.partyName));
-                    callStatus.callback(null, true);
-                }).catch(error => {
-                    callStatus.error('Failed to retrieve buyer party details for order: ' + this.displayedOrderIds[i]);
-                });
-
-
-            }).catch(error => {
-                callStatus.error('Failed to retrieve order: ' + this.displayedOrderIds[i]);
-            });
-        }
     }
 
     aggregateAssociatedProducts(): void {
