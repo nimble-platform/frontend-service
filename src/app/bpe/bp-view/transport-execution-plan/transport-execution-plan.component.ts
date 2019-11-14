@@ -4,7 +4,6 @@ import { Location } from "@angular/common";
 import { Router, ActivatedRoute } from "@angular/router";
 import { BPDataService } from "../bp-data-service";
 import { CallStatus } from "../../../common/call-status";
-import { SearchContextService } from "../../../simple-search/search-context.service";
 import { TransportExecutionPlanRequest } from "../../../catalogue/model/publish/transport-execution-plan-request";
 import { BPEService } from "../../bpe.service";
 import { UserService } from "../../../user-mgmt/user.service";
@@ -38,7 +37,6 @@ export class TransportExecutionPlanComponent implements OnInit {
 
     selectPreferredValue=selectPreferredValue
     constructor(private bpDataService: BPDataService,
-                private searchContextService: SearchContextService,
                 private cookieService: CookieService,
                 private userService: UserService,
                 private bpeService: BPEService,
@@ -54,19 +52,9 @@ export class TransportExecutionPlanComponent implements OnInit {
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
         if(!this.bpDataService.transportExecutionPlanRequest) {
-            if(this.searchContextService.getAssociatedProcessMetadata() != null) {
-                // this.bpDataService.initTransportExecutionPlanRequestWithOrder().then(response => {
-                //     this.init();
-                // });
-                console.log("STILL NAVIGATING TO TEP REQUEST FOLLOWING SEARCH");
-            } else {
-                this.bpDataService.initTransportExecutionPlanRequestWithQuotation();
-                this.init();
-            }
+            this.bpDataService.initTransportExecutionPlanRequestWithQuotation();
         }
-        else {
-            this.init();
-        }
+        this.init();
     }
 
     init(){

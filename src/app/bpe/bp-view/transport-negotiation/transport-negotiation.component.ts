@@ -1,7 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { BPDataService } from "../bp-data-service";
 import { CallStatus } from "../../../common/call-status";
-import { SearchContextService } from "../../../simple-search/search-context.service";
 import {RequestForQuotation} from '../../../catalogue/model/publish/request-for-quotation';
 
 @Component({
@@ -12,8 +11,7 @@ export class TransportNegotiationComponent implements OnInit {
 
     initCallStatus: CallStatus = new CallStatus();
 
-    constructor(public bpDataService: BPDataService,
-                private searchContextService: SearchContextService) {
+    constructor(public bpDataService: BPDataService) {
     }
 
     ngOnInit() {
@@ -30,9 +28,7 @@ export class TransportNegotiationComponent implements OnInit {
     }
 
     async initRfq(): Promise<RequestForQuotation> {
-        if(this.searchContextService.getAssociatedProcessMetadata()) {
-            return await this.bpDataService.initRfqForTransportationWithThreadMetadata(this.searchContextService.getAssociatedProcessMetadata());
-        } else if(this.bpDataService.productOrder) {
+        if(this.bpDataService.productOrder){
             this.bpDataService.initRfqForTransportationWithOrder(this.bpDataService.productOrder);
             return Promise.resolve(this.bpDataService.requestForQuotation);
         }
