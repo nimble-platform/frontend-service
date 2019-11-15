@@ -48,6 +48,7 @@ export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 export const tntEndpoint = `${bpe_endpoint}/t-t/epc-details`;
 export const tntMasterDataEndpoint = 'http://nimble-dev.ikap.biba.uni-bremen.de:8117';
 export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
+export const tntIoTBlockchainEndpoint = 'http://localhost:5000/api/verify'; // Initial Endpoint; Will be changed soon;
 
 
 // Platform Configuration
