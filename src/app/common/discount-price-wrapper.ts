@@ -38,7 +38,7 @@ export class DiscountPriceWrapper {
     }
 
     get originalPricePerItem(): number {
-        if(!this.itemPrice.hasPrice() || isNaN(this.orderedQuantity.value)) {
+        if(!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
             return 0;
         }
 
@@ -47,7 +47,7 @@ export class DiscountPriceWrapper {
     }
 
     get pricePerItem(): number {
-        if(!this.itemPrice.hasPrice() || isNaN(this.orderedQuantity.value)) {
+        if(!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
             return 0;
         }
 
@@ -57,7 +57,7 @@ export class DiscountPriceWrapper {
     get pricePerItemString(): string {
         const qty = this.orderedQuantity;
 
-        if(!this.itemPrice.hasPrice() || !qty.value) {
+        if(!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
             return "On demand";
         }
 
@@ -65,7 +65,7 @@ export class DiscountPriceWrapper {
     }
 
     get discountedPricePerItem(): number {
-        if(!this.itemPrice.hasPrice() || isNaN(this.orderedQuantity.value)) {
+        if(!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
             return 0;
         }
 
@@ -76,7 +76,7 @@ export class DiscountPriceWrapper {
     get discountedPricePerItemString(): string {
         const qty = this.orderedQuantity;
 
-        if(!this.itemPrice.hasPrice() || !qty.value) {
+        if(!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
             return "On demand";
         }
 
@@ -84,7 +84,7 @@ export class DiscountPriceWrapper {
     }
 
     get totalPrice(): number {
-        if(!this.itemPrice.hasPrice() || !this.orderedQuantity.value) {
+        if(!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
             return 0;
         }
 
@@ -290,5 +290,9 @@ export class DiscountPriceWrapper {
             }
         }
         return false;
+    }
+
+    private isOrderedQuantityValid(): boolean {
+        return !isNaN(this.orderedQuantity.value) && !!this.orderedQuantity.value;
     }
 }

@@ -34,10 +34,9 @@
       <div id="collapseFilters" [ngbCollapse]="collapseSelectedFilters">
         <ul class="filter-details" *ngFor="let filter of selectedFilterDetails">
           <li>
-              <i class="fas fa-box mr-2" *ngIf="filter['parent'] === 'Product'"></i>
-              <i class="fas fa-bullseye mr-2" *ngIf="filter['parent']==='Goal'"></i>
-              <i class="fas fa-info mr-2" *ngIf="filter['parent'] === 'Information quality'"></i>
-              <i class="fas fa-exchange-alt mr-2" *ngIf="filter['parent'] === 'Information channel'"></i>
+              <i class="fas fa-check" *ngIf="filter['parent'] === 'Quality'"></i>
+              <i class="fas fa-bullseye" *ngIf="filter['parent']==='Goals'"></i>
+              <i class="fas fa-info" *ngIf="filter['parent'] === 'Sources'"></i>
               {{filter['name']}}
           </li>
         </ul>
@@ -80,23 +79,24 @@
             <b>{{selectedFactor.text}}</b>
           </div>
           <div class="card-body">
-            <p *ngIf="selectedFactor.value == null">
+            <p *ngIf="selectedFactor.value.description == null">
               <i class="fas fa-info-circle"></i> <span [innerHTML]="'Expand the property to obtain further information' | translate"></span>
             </p>
-            <div class="factorDescription" *ngIf="selectedFactor.value">
+            <div class="factorDescription" *ngIf="selectedFactor.value.description !== null">
                   {{selectedFactor.value.description}}
             </div>
-            <div *ngIf="selectedFactor.value">
-              <b><span [innerHTML]="'Sources' | translate"></span></b>
-              <ul id="sourceList" *ngFor="let source of selectedFactor.value.source">
-                  <li *ngIf="!isUrl(source)"><a href="https://doi.org/{{source}}" target="_blank" id="sourceList">{{source}} </a>
+            <div *ngIf="selectedFactor.value.source">
+              <div *ngIf="selectedFactor.value.source.length">
+                <b><span [innerHTML]="'Sources' | translate"></span></b>
+                <ul id="sourceList" *ngFor="let source of selectedFactor.value.source">
+                    <li *ngIf="!isUrl(source)"><a href="https://doi.org/{{source}}" target="_blank" id="sourceList">{{source}} </a>
+                      <i class="fas fa-external-link-alt"></i>
+                    </li>
+                    <li *ngIf="isUrl(source)"><a href="{{source}}" target="_blank" id="sourceList"><span [innerHTML]="'Link To Source' | translate"></span> </a>
                     <i class="fas fa-external-link-alt"></i>
-                  </li>
-                  <li *ngIf="isUrl(source)"><a href="{{source}}" target="_blank" id="sourceList"><span [innerHTML]="'Link To Source' | translate"></span> </a>
-                   <i class="fas fa-external-link-alt"></i>
-                  </li>
-                  
-              </ul>
+                    </li>
+                </ul>
+              </div>
                 <button class="btn btn-md btn-primary float-right" 
                   (click)="markRead(selectedFactor); proceedButtonDisabled = !proceedButtonDisabled" [disabled]="proceedButtonDisabled"><span [innerHTML]="'Proceed' | translate"></span></button>
             </div>

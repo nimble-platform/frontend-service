@@ -1,0 +1,6 @@
+.common-terms-box {
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+    border-radius: 0.25rem !important;
+    padding: 1.5rem !important;
+    background: rgba(0, 0, 0, 0.03);
+}

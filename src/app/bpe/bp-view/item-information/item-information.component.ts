@@ -18,11 +18,6 @@ export class ItemInformationComponent implements OnInit {
         if(this.bpDataService.bpActivityEvent.userRole == null) {
             this.router.navigate(['dashboard']);
         }
-
-        if(this.bpDataService.itemInformationRequest == null) {
-            // initiating a new business process from scratch
-            this.bpDataService.initItemInformationRequest();
-        }
     }
 
     shouldShowResponse(): boolean {

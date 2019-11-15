@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import {Component, OnInit, ViewChild} from '@angular/core';
 import { Location } from "@angular/common";
 import { Router } from "@angular/router";
 import { CookieService } from "ng2-cookies";
@@ -17,6 +17,8 @@ import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event
 import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
 import {Text} from '../../../catalogue/model/publish/text';
 import {TranslateService} from '@ngx-translate/core';
+import {DocumentService} from "../document-service";
+import {TransportServiceDetailsComponent} from './transport-service-details.component';
 
 @Component({
     selector: "transport-negotiation-request",
@@ -24,6 +26,7 @@ import {TranslateService} from '@ngx-translate/core';
 })
 export class TransportNegotiationRequestComponent implements OnInit {
 
+    @ViewChild(TransportServiceDetailsComponent) viewChild: TransportServiceDetailsComponent;
     rfq: RequestForQuotation;
     selectedTab: string = "OVERVIEW";
     rfqPrice: DiscountPriceWrapper;
@@ -42,6 +45,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
 
     constructor(private bpDataService: BPDataService,
                 private bpeService:BPEService,
+                private documentService: DocumentService,
                 private cookieService: CookieService,
                 private userService:UserService,
                 private location: Location,
@@ -50,6 +54,13 @@ export class TransportNegotiationRequestComponent implements OnInit {
     }
 
     ngOnInit() {
+        // Normally, this view is not displayed if the bpDataService.requestForQuotation is null.
+        // However, it should also be checked here also for the second and later iterations of the negotiation business process.
+        // In those cases, the negotiation component is not initialized again but only this component.
+        if (this.bpDataService.requestForQuotation == null) {
+            this.bpDataService.initRfqWithQuotation();
+        }
+
         // get copy of ThreadEventMetadata of the current business process
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
@@ -60,7 +71,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
             this.rfq.requestForQuotationLine[0].lineItem.price,
             this.bpDataService.getCatalogueLine().requiredItemLocationQuantity.applicableTaxCategory[0].percent);
         //this.rfqPrice.quotationLinePriceWrapper = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
-        this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.paymentTerms);
+        this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.requestForQuotationLine[0].lineItem.paymentTerms);
         if(this.processMetadata && this.processMetadata.isBeingUpdated){
             this.updatingProcess = true;
         }
@@ -96,23 +107,17 @@ export class TransportNegotiationRequestComponent implements OnInit {
         this.callStatus.submit();
         let rfq: RequestForQuotation = copy(this.bpDataService.requestForQuotation);
 
-        //console.log(rfq);
-
         let sellerId: string;
 
         // final check on the rfq
+        // set the goods items which will be shipped by this transport service
+        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem = this.viewChild.getSelectedProductsToShip();
         if(this.bpDataService.modifiedCatalogueLines) {
-            // still needed when initializing RFQ with BpDataService.initRfqWithIir() or BpDataService.initRfqWithQuotation()
-            // but this is a hack, the methods above should be fixed.
-            rfq.requestForQuotationLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
-
             sellerId = UBLModelUtils.getPartyId(this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty);
         }
         else {
             sellerId = UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty);
         }
-
-        UBLModelUtils.removeHjidFieldsFromObject(rfq);
 
         //first initialize the seller and buyer parties.
         //once they are fetched continue with starting the ordering process
@@ -143,15 +148,9 @@ export class TransportNegotiationRequestComponent implements OnInit {
     onUpdateRequest(): void {
         this.callStatus.submit();
         let rfq: RequestForQuotation = copy(this.bpDataService.requestForQuotation);
-        // final check on the rfq
-        if(this.bpDataService.modifiedCatalogueLines) {
-            // still needed when initializing RFQ with BpDataService.initRfqWithIir() or BpDataService.initRfqWithQuotation()
-            // but this is a hack, the methods above should be fixed.
-            rfq.requestForQuotationLine[0].lineItem.item = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
-        }
-
         this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processInstanceId)
             .then(() => {
+                this.documentService.updateCachedDocument(rfq.id, rfq);
                 this.callStatus.callback("Terms updated", true);
                 var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")

@@ -28,6 +28,12 @@
                     <td *ngIf="userProfile.contact.telephone">{{ userProfile.contact.telephone}}</td>
                     <td *ngIf="!userProfile.contact.telephone">n/A</td>
                 </tr>
+                <tr *ngIf="userProfile.role">
+                    <th><span><span [innerHTML]="'Platform Roles' | translate"></span></span></th>
+                    <div style="border-top: 1px solid #dee2e6" *ngFor="let role of userProfile.role">
+                        <td style="border-top: 0px solid">{{role}}</td>
+                    </div>
+                </tr>
                 <!--
                 <tr>
                     <th><span>ID</span></th>
@@ -35,6 +41,16 @@
                 </tr>
                 -->
             </table>
+            <div class="row actions-row">
+                <div class="col-6 call-status-col">
+                    <call-status [callStatus]="deleteUserCallStatus" [large]="true"></call-status>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-danger action" (click)="deleteUser(userProfile)">
+                            <span [innerHTML]="'Delete' | translate"></span>
+                    </button>
+                </div>
+            </div>
         </div>
         <div class="col-1"></div>
         <div id="change-password" class="col-5">

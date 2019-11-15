@@ -3,6 +3,7 @@ import { Quantity } from "../catalogue/model/publish/quantity";
 import {currencyToString, roundToTwoDecimals} from "./utils";
 import { ItemPriceWrapper } from "./item-price-wrapper";
 import {defaultVatRate} from "./constants";
+import {Item} from '../catalogue/model/publish/item';
 
 /**
  * Wrapper around a price and a quantity, contains convenience methods to get the total price,
@@ -18,7 +19,8 @@ export class PriceWrapper {
 
     constructor(public price: Price,
                 public vatPercentage: number = defaultVatRate,
-                public orderedQuantity: Quantity = new Quantity(1, price.baseQuantity.unitCode)) {
+                public orderedQuantity: Quantity = new Quantity(1, price.baseQuantity.unitCode),
+                public item:Item = null) {
         this.itemPrice = new ItemPriceWrapper(price);
     }
 
@@ -54,7 +56,7 @@ export class PriceWrapper {
         const qty = this.price.baseQuantity
         const baseQuantity = qty.value || 1;
 
-        if(!amount.value || !qty.value) {
+        if(!amount.value || !this.isOrderedQuantityValid()) {
             return "On demand";
         }
 
@@ -88,9 +90,8 @@ export class PriceWrapper {
         this.price.priceAmount.currencyID = currency;
     }
 
-    hasPrice(): boolean {
-        // != here gives "not null or undefined", which is the behaviour we want.
-        return (this.price.priceAmount.value != null && !isNaN(this.price.priceAmount.value));
+    private isOrderedQuantityValid(): boolean {
+        return !isNaN(this.orderedQuantity.value) && !!this.orderedQuantity.value;
     }
 
     /**

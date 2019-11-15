@@ -10,6 +10,10 @@ export class ActivityVariableParser {
         return processVariables[0]["processDefinitionKey"]
     }
 
+    static getProcessInstanceId(processVariables): ProcessType {
+        return processVariables["processInstanceId"]
+    }
+
     static getTradingPartnerName(initialDocument: any, partyId: string, processType: string): string {
         if(initialDocument.buyerPartyId == partyId){
             return UBLModelUtils.getPartyDisplayNameForPartyName(initialDocument.sellerPartyName);

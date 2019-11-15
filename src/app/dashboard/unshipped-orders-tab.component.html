@@ -1,0 +1,97 @@
+<call-status [callStatus]="orderIdsCallStatus"></call-status>
+<ng-container *ngIf="allOrderIds.length > 0">
+    <div class="flex-row mb-4 mt-4">
+        <div class="col-12">
+            <div class="btn btn-outline-primary align-self-start mr-2" [ngClass]="{'active':showUnshippedOrders}" (click)="showUnshippedOrders = !showUnshippedOrders">
+                <span [innerHTML]="'Unshipped orders' | translate"></span>
+            </div>
+            <div class="btn btn-outline-primary align-self-start mr-2" [ngClass]="{'active':!showUnshippedOrders}" (click)="showUnshippedOrders = !showUnshippedOrders">
+                <span [innerHTML]="'Associated products' | translate"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- unshipped orders panel -->
+    <ng-container *ngIf="showUnshippedOrders">
+        <!-- Unshipped orders table title -->
+        <div class="title-row">
+            <div class="col-4">
+                <span [innerHTML]="'Order id' | translate"></span>
+            </div>
+            <div class="col-3">
+                <span [innerHTML]="'Ordered by' | translate"></span>
+            </div>
+            <div class="col-3">
+                <span [innerHTML]="'Ordered product' | translate"></span>
+            </div>
+            <div class="col-2">
+                <span [innerHTML]="'Ordered quantity' | translate"></span>
+            </div>
+        </div>
+        <!-- Unshipped orders table data rows -->
+        <div class="data-row" *ngFor="let orderId of displayedOrderIds">
+            <call-status [callStatus]="orderCallStatuses.get(orderId)"></call-status>
+            <ng-container *ngIf="orders.get(orderId)">
+                <div class="col-4">
+                    {{orders.get(orderId).id}}
+                </div>
+                <div class="col-3">
+                    {{partyNames.get(orders.get(orderId).buyerCustomerParty.party.partyIdentification[0].id)}}
+                </div>
+                <div class="col-3">
+                    {{selectLangLabelFromTextArray(orders.get(orderId).orderLine[0].lineItem.item.name)}}
+                </div>
+                <div class="col-2">
+                    {{quantityToString(orders.get(orderId).orderLine[0].lineItem.quantity)}}
+                </div>
+            </ng-container>
+        </div>
+        <!-- pagination -->
+        <div class="justify-content-center pagination">
+            <ngb-pagination [(collectionSize)]="allOrderIds.length"
+                            [(page)]="pageNum"
+                            [pageSize]="pageSize"
+                            [maxSize]="pageSize"
+                            [boundaryLinks]="true"
+                            (pageChange)="onUnshippedOrdersPageChange()"></ngb-pagination>
+        </div>
+    </ng-container>
+
+    <!-- associated products panel -->
+    <ng-container *ngIf="!showUnshippedOrders">
+        <call-status [callStatus]="allOrdersCallStatus"></call-status>
+        <ng-container *ngIf="allOrdersCallStatus.fb_callback">
+            <div class="title-row">
+                <div class="col-3">
+                    <span [innerHTML]="'Seller' | translate"></span>
+                </div>
+                <div class="col-3">
+                    <span [innerHTML]="'Product' | translate"></span>
+                </div>
+                <div class="col-2">
+                    <span [innerHTML]="'Quantity' | translate"></span>
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- associated products -->
+        <div class="data-row" *ngFor="let pa of associatedProductAggregates">
+            <div class="col-3">
+                {{selectPartyName(pa.catalogueLine.goodsItem.item.manufacturerParty.partyName)}}
+            </div>
+            <div class="col-3">
+                {{selectLangLabelFromTextArray(pa.catalogueLine.goodsItem.item.name)}}
+            </div>
+            <div class="col-2">
+                {{quantityToString(pa.quantity)}}
+            </div>
+            <div class="col-2">
+                <div class="btn btn-primary" (click)="onProductDetailsClicked(pa)"><span [innerHTML]="'Negotiate & Order' | translate"></span></div>
+            </div>
+        </div>
+    </ng-container>
+</ng-container>
+
+<div class="jumbotron" *ngIf="allOrderIds.length == 0 && orderIdsCallStatus.fb_callback">
+    <h5><span [innerHTML]="'No unshipped order' | translate"></span></h5>
+</div>

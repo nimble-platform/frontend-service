@@ -10,6 +10,7 @@ import { DespatchAdvice } from "../../../catalogue/model/publish/despatch-advice
 import {CookieService} from 'ng2-cookies';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {TranslateService} from '@ngx-translate/core';
+import {quantityToString} from '../../../common/utils';
 
 
 /**
@@ -30,6 +31,8 @@ export class ReceiptAdviceComponent implements OnInit {
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
+
+    quantityToString = quantityToString;
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
@@ -72,6 +75,11 @@ export class ReceiptAdviceComponent implements OnInit {
             });
     }
 
+    onDispatchOrder(): void{
+        this.bpDataService.setCopyDocuments(false, false, false,true);
+        this.bpDataService.proceedNextBpStep(this.userRole, "Fulfilment");
+    }
+
     /*
      * Getters & Setters
      */
@@ -82,5 +90,18 @@ export class ReceiptAdviceComponent implements OnInit {
 
     isReadOnly(): boolean {
         return this.userRole === "seller" || this.processMetadata.processStatus == "Completed";
+    }
+
+    isThereADeletedProduct():boolean{
+        for(let isProductDeleted of this.processMetadata.areProductsDeleted){
+            if(isProductDeleted){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    isDispatchOrderDisabled(): boolean {
+        return this.isLoading() || this.isThereADeletedProduct() || this.processMetadata.isCollaborationFinished;
     }
 }

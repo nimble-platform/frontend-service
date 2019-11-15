@@ -79,25 +79,31 @@ export class CatalogueService {
         })
     }
 
+    getCatalogueLinesByHjids(hjids: number[], limit = 0, offset = 0, sortOption = null): Promise<any> {
+        let url = this.baseUrl + `/cataloguelines?limit=${limit}&offset=${offset}&ids=${hjids}`;
+
+        if (sortOption) {
+            url += `&sortOption=${sortOption}`;
+        }
+
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => {
+                return res.json() as Array<CatalogueLine>;
+            })
+            .catch(res => {
+                this.handleError(res.getBody());
+            });
+    }
 
     getFavouriteResponse(userId: string,limit:number=0, offset:number=0, sortOption=null): Promise<any>{
         return this.userService.getPerson(userId).then(person => {
-
-            let url = this.baseUrl + `/cataloguelines?limit=${limit}&offset=${offset}`;
-            // if there is a selected category to filter the results, then add it to the url
-
-            if(sortOption){
-                url += `&sortOption=${sortOption}`;
+            if (!person) {
+                return Promise.resolve([]);
             }
 
-            if(person){
-                url += `&ids=${person.favouriteProductID}`;
-            }
-
-            return this.http
-                .get(url, {headers: this.getAuthorizedHeaders()})
-                .toPromise()
-                .then(res => {
+            return this.getCatalogueLinesByHjids(person.favouriteProductID.map(id => Number.parseInt(id)), limit, offset, sortOption).then(res => {
                     let sorted = this.sortImages(res,null,true);
                     return sorted as Array<CatalogueLine>;
                     //return res.json() as Array<CatalogueLine>;
@@ -134,6 +140,34 @@ export class CatalogueService {
                 let sorted = this.sortImages(res,null,false);
                 return sorted as CatalogueLine;
                 //return res.json() as CatalogueLine;
+            })
+            .catch(this.handleError);
+    }
+
+    getLinesForDifferentCatalogues(catalogueIds:string[], lineIds:string[]):Promise<CatalogueLine[]> {
+        let url = this.baseUrl + `/catalogue/cataloguelines`;
+        // append catalogue line ids to the url
+        let catalogueUuidsParam = "?catalogueUuids=";
+        let lineIdsParam = "&lineIds=";
+        let size = lineIds.length;
+        for(let i = 0; i < size ;i++){
+
+            lineIdsParam += lineIds[i];
+            catalogueUuidsParam += catalogueIds[i];
+
+            if(i != size-1){
+                lineIdsParam += ",";
+                catalogueUuidsParam += ",";
+            }
+        }
+        url += catalogueUuidsParam + lineIdsParam;
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => {
+                let sorted = this.sortImages(res,null,true);
+                return sorted as CatalogueLine[];
+                //return res.json() as CatalogueLine[];
             })
             .catch(this.handleError);
     }
@@ -268,9 +302,10 @@ export class CatalogueService {
         });
     }
 
-    uploadZipPackage(pck:File): Promise<any> {
+    uploadZipPackage(pck:File,catalogueId:string = this.catalogueResponse.catalogueId): Promise<any> {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
-        const url = this.baseUrl + `/catalogue/${this.catalogueResponse.catalogueUuid}/image/upload`;
+        const partyId =this.cookieService.get("company_id");
+        const url = this.baseUrl + `/catalogue/${catalogueId}/image/upload?partyId=${partyId}`;
         return new Promise<any>((resolve, reject) => {
             let formData: FormData = new FormData();
             formData.append("package", pck, pck.name);
@@ -350,9 +385,15 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
-    deleteAllProductImagesInsideCatalogue(catalogueId:string):Promise<any> {
+    deleteAllProductImagesInsideCatalogue(catalogueIds:string[]):Promise<any> {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
-        const url = this.baseUrl + `/catalogue/${catalogueId}/delete-images`;
+        const partyId =this.cookieService.get("company_id");
+        let ids: string = '';
+        for(let id of catalogueIds) {
+            ids += id + ","
+        }
+        ids = ids.substr(0, ids.length-1);
+        const url = this.baseUrl + `/catalogue/delete-images?ids=${ids}&partyId=${partyId}`;
         return this.http
             .get(url,{headers:new Headers({"Authorization":token})})
             .toPromise()

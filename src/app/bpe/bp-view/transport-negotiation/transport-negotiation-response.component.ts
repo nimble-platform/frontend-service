@@ -34,7 +34,6 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
     selectedTab: string = "OVERVIEW";
     userRole: BpUserRole;
-    formerProcess: boolean;
 
     callStatus: CallStatus = new CallStatus();
 
@@ -57,7 +56,6 @@ export class TransportNegotiationResponseComponent implements OnInit {
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
-        this.formerProcess = this.bpDataService.bpActivityEvent.formerProcess;
 
         if(!this.rfq) {
             this.rfq = this.bpDataService.requestForQuotation;
@@ -67,7 +65,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
             this.rfq.requestForQuotationLine[0].lineItem.price,
             this.bpDataService.getCatalogueLine().requiredItemLocationQuantity.applicableTaxCategory[0].percent);
         //this.rfqPrice.quotationLinePriceWrapper = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
-        this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.paymentTerms);
+        this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.requestForQuotationLine[0].lineItem.paymentTerms);
 
         if(!this.quotation) {
             this.quotation = this.bpDataService.quotation;
@@ -77,7 +75,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
             this.quotation.quotationLine[0].lineItem.price,
             this.bpDataService.getCatalogueLine().requiredItemLocationQuantity.applicableTaxCategory[0].percent);
         //this.quotationPrice.quotationLinePriceWrapper = new ItemPriceWrapper(this.quotation.quotationLine[0].lineItem.price);
-        this.quotationPaymentTerms = new PaymentTermsWrapper(this.quotation.paymentTerms);
+        this.quotationPaymentTerms = new PaymentTermsWrapper(this.quotation.quotationLine[0].lineItem.paymentTerms);
 
         this.userRole = this.bpDataService.bpActivityEvent.userRole;
     }
@@ -130,12 +128,12 @@ export class TransportNegotiationResponseComponent implements OnInit {
     }
 
     onRequestNewQuotation() {
-        this.bpDataService.initRfqWithQuotation();
+        this.bpDataService.setCopyDocuments(true, true, false,false);
         this.bpDataService.proceedNextBpStep("buyer", "Negotiation");
     }
 
     onAcceptAndOrder() {
-        this.bpDataService.initTransportExecutionPlanRequestWithQuotation();
+        this.bpDataService.setCopyDocuments(false, true, false,false);
         this.bpDataService.proceedNextBpStep(this.userRole,'Transport_Execution_Plan');
     }
 }

@@ -62,6 +62,8 @@ export class ThreadSummaryComponent implements OnInit {
     ratingSeller = 0;
     ratingFulfillment = 0;
 
+    sellerNegoSettings = null;
+
     // Utilities
     eventCount: number = 0;
     collaborationGroupRetrievalCallStatus: CallStatus = new CallStatus();
@@ -80,6 +82,15 @@ export class ThreadSummaryComponent implements OnInit {
       "DeliveryAndPackaging": 0
     };
     compComment: any = [];
+
+    // Rate attributes
+
+    negotiationQuality = false;
+    orderQuality = false;
+    responsetime= false;
+    prodListingAccu = false;
+    conformToOtherAggre = false;
+    deliveryPackage = false;
 
     // this is always true unless an approved order is present in this process group or the collaboration is already cancelled
     showCancelCollaborationButton = true;
@@ -152,6 +163,16 @@ export class ThreadSummaryComponent implements OnInit {
 
     async openBpProcessView() {
         let userRole:BpUserRole = this.titleEvent.buyer ? "buyer": "seller";
+
+        let catalogueIds = [];
+        let catalogueLineIds = [];
+        let termsSources = [];
+
+        for(let product of this.titleEvent.products){
+            catalogueIds.push(product.catalogueDocumentReference.id);
+            catalogueLineIds.push(product.manufacturersItemIdentification.id);
+            termsSources.push(null);
+        }
         this.bpDataService.startBp(
             new BpActivityEvent(
                 userRole,
@@ -159,13 +180,14 @@ export class ThreadSummaryComponent implements OnInit {
                 this.processInstanceGroup.id,
                 this.titleEvent,
                 [this.titleEvent].concat(this.history),
+                this.titleEvent.products,
                 null,
                 false,
-                false, // thread summary always shows the last step in the negotiation
-                this.titleEvent.product.catalogueDocumentReference.id,
-                this.titleEvent.product.manufacturersItemIdentification.id,
+                catalogueIds,
+                catalogueLineIds,
                 this.titleEvent.processInstanceId,
-                ActivityVariableParser.getPrecedingDocumentId(this.titleEvent.activityVariables)),
+                ActivityVariableParser.getPrecedingDocumentId(this.titleEvent.activityVariables),
+                termsSources),
             true);
     }
 
@@ -275,14 +297,15 @@ export class ThreadSummaryComponent implements OnInit {
 
         // get seller's business process workflow
         // we need this information to set status and labels for Order properly
-        const sellerNegotiationSettings = await this.userService.getCompanyNegotiationSettingsForParty(initialDoc.item.manufacturerParty.partyIdentification[0].id);
+        const sellerNegotiationSettings = await this.userService.getCompanyNegotiationSettingsForParty(initialDoc.items[0].manufacturerParty.partyIdentification[0].id);
+        this.sellerNegoSettings = sellerNegotiationSettings;
         const sellerWorkflow = sellerNegotiationSettings.company.processID;
+
         // check whether Fulfilment is included or not in seller's workflow
         const isFulfilmentIncludedInWorkflow = !sellerWorkflow || sellerWorkflow.length == 0 || sellerWorkflow.indexOf('Fulfilment') != -1;
 
         if (userRole === "buyer") {
-            let item:Item = initialDoc.item;
-            this.lastEventPartnerID = UBLModelUtils.getPartyId(item.manufacturerParty);
+            this.lastEventPartnerID = UBLModelUtils.getPartyId(initialDoc.items[0].manufacturerParty);
         }
         else {
             this.lastEventPartnerID = initialDoc.buyerPartyId;
@@ -296,14 +319,14 @@ export class ThreadSummaryComponent implements OnInit {
             processInstanceId,
             moment(new Date(lastActivity["startTime"]), 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss"),
             ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"),processType),
-            initialDoc.item,
+            initialDoc.items,
             correspondent,
             this.getBPStatus(responseDocumentStatus),
             initialDoc,
             activityVariables,
             userRole === "buyer",
             isRated === "true",
-            initialDoc.isProductDeleted,
+            initialDoc.areProductsDeleted,
             this.processInstanceGroup.status == "COMPLETED"
         );
 
@@ -312,8 +335,7 @@ export class ThreadSummaryComponent implements OnInit {
         return event;
     }
 
-    navigateToSearchDetails() {
-        const item = this.titleEvent.product;
+    navigateToSearchDetails(item:Item) {
         this.searchContextService.clearSearchContext();
         this.router.navigate(['/product-details'],
             {
@@ -409,28 +431,12 @@ export class ThreadSummaryComponent implements OnInit {
         } else {
             switch(processType) {
                 case "Order":
-                    if (response.documentStatus) {
-                        if(buyer) {
-                            if(isFulfilmentIncludedInWorkflow){
-                                event.statusText = "Waiting for Dispatch Advice";
-                            }
-                            else{
-                                event.statusText = "Order approved";
-                            }
-                            event.actionText = "See Order";
-                        } else {
-                            if(isFulfilmentIncludedInWorkflow){
-                                event.actionText = "Send Dispatch Advice";
-                            }
-                            else{
-                                event.actionText = "See Order";
-                            }
-                            event.statusText = "Order approved";
-                        }
+                    if (response.documentStatus == "true") {
+                        event.statusText = "Order approved";
                     } else {
                         event.statusText = "Order declined";
-                        event.actionText = "See Order";
                     }
+                    event.actionText = "See Order";
                     break;
                 case "Negotiation":
                     if (buyer) {
@@ -456,7 +462,7 @@ export class ThreadSummaryComponent implements OnInit {
                     event.actionText = "See Receipt Advice";
                     break;
                 case "Ppap":
-                    if (response.documentStatus) {
+                    if (response.documentStatus == "true") {
                         event.statusText = "Ppap approved";
                     } else {
                         event.statusText = "Ppap declined";
@@ -487,10 +493,6 @@ export class ThreadSummaryComponent implements OnInit {
                       processType: ProcessType, response: any, buyer: boolean,isFulfilmentIncludedInWorkflow:boolean): ThreadEventStatus {
         switch(processState) {
             case "COMPLETED":
-                if(processType === "Order") {
-                    if(isFulfilmentIncludedInWorkflow)
-                        return buyer ? "WAITING" : "ACTION_REQUIRED";
-                }
                 return "DONE";
             case "EXTERNALLY_TERMINATED":
                 return "CANCELLED";
@@ -518,16 +520,25 @@ export class ThreadSummaryComponent implements OnInit {
     private computeTitleEvent() {
         this.titleEvent = this.lastEvent;
         // if the event is a transportation service, go through the history and check the last event that is not (if any)
-        if(this.lastEvent.product.transportationServiceDetails) {
+        if(this.areTransportationServices(this.lastEvent.products)) {
             // history ordered from new to old
             for(let i = this.history.length - 1; i >= 0; i--) {
                 const event = this.history[i]
-                if(!event.product.transportationServiceDetails) {
+                if(!this.areTransportationServices(event.products)) {
                     // if not a transport, this is relevant, doing it in the for loop makes sure the LAST non-transport event is the relevant one.
                     this.titleEvent = event;
                 }
             }
         }
+    }
+
+    private areTransportationServices(items: Item[]){
+        for(let item of items){
+            if(!item.transportationServiceDetails){
+                return false;
+            }
+        }
+        return true;
     }
 
     deleteGroup(): void {
@@ -612,12 +623,12 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     changeCommunicationRating(){
-        this.ratingSeller = (this.compRating.QualityOfTheNegotiationProcess + this.compRating.QualityOfTheOrderingProcess + this.compRating.ResponseTime) / 3;
+        this.ratingSeller = (this.compRating.QualityOfTheNegotiationProcess + this.compRating.ResponseTime) / 2;
         this.ratingOverall = (this.ratingSeller + this.ratingFulfillment + this.compRating.DeliveryAndPackaging) / 3;
     }
 
     changeFullfillmentRating(){
-      this.ratingFulfillment = (this.compRating.ProductListingAccuracy + this.compRating.ConformanceToOtherAgreedTerms) / 2;
+      this.ratingFulfillment = (this.compRating.ProductListingAccuracy + this.compRating.ConformanceToOtherAgreedTerms+ this.compRating.QualityOfTheOrderingProcess) / 3;
       this.ratingOverall = (this.ratingSeller + this.ratingFulfillment + this.compRating.DeliveryAndPackaging) / 3;
     }
 
@@ -626,17 +637,60 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     rateCollaborationSuccess(content) {
-      this.compRating = {
-        "QualityOfTheNegotiationProcess": 0,
-        "QualityOfTheOrderingProcess": 0,
-        "ResponseTime": 0,
-        "ProductListingAccuracy": 0,
-        "ConformanceToOtherAgreedTerms": 0,
-        "DeliveryAndPackaging": 0
-      };
+     
+      if( this.sellerNegoSettings != null && this.sellerNegoSettings.company.processID.length !=0){
+        this.compRating = {};
+
+        if(this.sellerNegoSettings.company.processID.indexOf('Fulfilment') != -1){
+            this.compRating["DeliveryAndPackaging"] = 0;
+            this.deliveryPackage = true;
+        }
+
+        if(this.sellerNegoSettings.company.processID.indexOf('Ppap') != -1 || this.sellerNegoSettings.company.processID.indexOf('Item_Information_Request') != -1){
+            this.compRating["ProductListingAccuracy"] = 0;
+            this.prodListingAccu = true;
+            this.compRating["ConformanceToOtherAgreedTerms"] = 0;
+            this.conformToOtherAggre = true;
+            this.ratingFulfillment = 0
+        }
+
+        if(this.sellerNegoSettings.company.processID.indexOf('Negotiation') != -1){
+            this.compRating["QualityOfTheNegotiationProcess"] = 0;
+            this.negotiationQuality = true;
+            this.ratingSeller = 0;
+            this.compRating["ResponseTime"] =0;
+            this.responsetime = true;
+        }
+
+        if(this.sellerNegoSettings.company.processID.indexOf('Order') != -1 || this.sellerNegoSettings.company.processID.indexOf('Transport_Execution_Plan') != -1){
+            this.compRating["QualityOfTheOrderingProcess"] = 0;
+            this.orderQuality = true;
+            this.ratingSeller = 0;
+        }
+
+      }else{
+        this.compRating = {
+            "QualityOfTheNegotiationProcess": 0,
+            "QualityOfTheOrderingProcess": 0,
+            "ResponseTime": 0,
+            "ProductListingAccuracy": 0,
+            "ConformanceToOtherAgreedTerms": 0,
+            "DeliveryAndPackaging": 0
+          };
+          this.deliveryPackage = true;
+          this.orderQuality = true;
+          this.negotiationQuality = true;
+          this.prodListingAccu = true;
+          this.responsetime = true;
+          this.conformToOtherAggre = true;
+          
+          this.ratingSeller = 0;
+          this.ratingFulfillment = 0
+      }
+
       this.ratingOverall = 0;
-      this.ratingSeller = 0;
-      this.ratingFulfillment = 0
+      
+   
       this.compComment = "";
       this.modalService.open(content);
     }

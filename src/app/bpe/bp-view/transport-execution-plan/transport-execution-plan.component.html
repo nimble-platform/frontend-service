@@ -4,16 +4,22 @@
         <div class="col-12">
             <h3><span [innerHTML]="'Consolidated Shipment' | translate"></span></h3>
 
-            <!-- Goods Item -->
-            <text-input presentationMode="view" label="Goods Item" definition="The goods item included in this shipment" [disabled]="isRequestDisabled()"
-                        [(text)]="itemName" labelClass="col-2" valueClass="col-10">
-            </text-input>
+            <div class="row" *ngFor="let goodsItem of request.consignment[0].consolidatedShipment[0].goodsItem">
+                <!-- Goods Item -->
+                <div class="col-3">
+                    <input-label [label]="'Goods Item'" [definition]="'The goods item included in this shipment'">
+                    </input-label>
+                </div>
+                <span class="col-3">{{selectPreferredValue(goodsItem.item.name)}}</span>
 
-            <!-- Quantity -->
-            <quantity-input label="Quantity" definition="The quantity to transport." [disabled]="isRequestDisabled()"
-                            [quantity]="request.consignment[0].consolidatedShipment[0].totalTransportHandlingUnitQuantity"
-                            labelClass="col-2" valueClass="col-10" presentationMode="view">
-            </quantity-input>
+                <!-- Quantity -->
+                <div class="col-6">
+                    <quantity-input label="Quantity" definition="The quantity to transport." [disabled]="true"
+                                    [quantity]="goodsItem.quantity"
+                                    labelClass="col-3" valueClass="col-9" presentationMode="view">
+                    </quantity-input>
+                </div>
+            </div>
 
             <!-- Gross Volume -->
             <quantity-input label="Gross Volume" definition="The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L"
@@ -104,66 +110,69 @@
         <hr>
         <h3><span [innerHTML]="'Contract' | translate"></span></h3>
         <call-status [callStatus]="contractCallStatus"></call-status>
-        <contract *ngIf="request.transportContract" [contract]="request.transportContract" [showQuotation]="true" [isCatalogueLineDeleted]="processMetadata.isProductDeleted">
+        <!-- having a non-null processMetadata indicates that the product is not still deleted. -->
+        <!-- Otherwise, it would not have been possible to proceed with the next business process step -->
+        <contract *ngIf="request.transportContract"
+                  [contract]="request.transportContract"
+                  [showQuotation]="true"
+                  [areCatalogueLinesDeleted]="populateAreCatalogueLinesDeletedArray()">
         </contract>
     </ng-container>
 
     <hr class="actions-hr">
 
     <!-- Actions -->
-    <ng-container *ngIf="!formerProcess">
-        <div class="row actions-row" *ngIf="userRole === 'buyer' && !isStarted() && !isFinished()">
-            <div class="col-3"></div>
-            <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-            <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
-            </div>
-            <div class="col-3">
-                <button *ngIf="!updatingProcess" class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()">
-                    <span [innerHTML]="'Send Execution Plan Terms' | translate"></span>
-                </button>
-                <button *ngIf="updatingProcess"class="btn btn-primary action" [disabled]="isLoading()" (click)="onUpdateRequest()">
-                    <span [innerHTML]="'Update Execution Plan Terms' | translate"></span>
-                </button>
-            </div>
+    <div class="row actions-row" *ngIf="userRole === 'buyer' && !isStarted() && !isFinished()">
+        <div class="col-3"></div>
+        <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
+        <div class="col-3">
+            <button *ngIf="!updatingProcess" class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()">
+                <span [innerHTML]="'Send Execution Plan Terms' | translate"></span>
+            </button>
+            <button *ngIf="updatingProcess"class="btn btn-primary action" [disabled]="isLoading()" (click)="onUpdateRequest()">
+                <span [innerHTML]="'Update Execution Plan Terms' | translate"></span>
+            </button>
+        </div>
+    </div>
 
-        <div class="row actions-row" *ngIf="userRole === 'buyer' && isFinished()">
-            <div class="{{productOrder ? 'col-3' : 'col-6'}}"></div>
-            <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-            <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
-            </div>
-            <div *ngIf="productOrder" class="col-3">
-                <button class="btn btn-primary action" [disabled]="isLoading()" (click)="onDispatchAdvice()">
-                    <span [innerHTML]="'Dispatch Order' | translate"></span> 
-                </button>
-            </div>
+    <div class="row actions-row" *ngIf="userRole === 'buyer' && isFinished()">
+        <div class="{{productOrder ? 'col-3' : 'col-6'}}"></div>
+        <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
+        <div *ngIf="productOrder" class="col-3">
+            <button class="btn btn-primary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.isCollaborationFinished" (click)="onDispatchAdvice()">
+                <span [innerHTML]="'Dispatch Order' | translate"></span>
+            </button>
+        </div>
+    </div>
 
-        <div class="row actions-row" *ngIf="userRole === 'seller' && !isFinished()">
-            <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-            <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
-            </div>
-            <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading() || processMetadata.isProductDeleted" (click)="onSendResponse(false)">
-                    <span [innerHTML]="'Reject' | translate"></span>
-                </button>
-            </div>
-            <div class="col-2">
-                <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.isProductDeleted" (click)="onSendResponse(true)">
-                    <span [innerHTML]="'Accept' | translate"></span>
-                </button>
-            </div>
+    <div class="row actions-row" *ngIf="userRole === 'seller' && !isFinished()">
+        <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading() || isThereADeletedProduct()" (click)="onSendResponse(false)">
+                <span [innerHTML]="'Reject' | translate"></span>
+            </button>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-primary action" [disabled]="isLoading() || isThereADeletedProduct()" (click)="onSendResponse(true)">
+                <span [innerHTML]="'Accept' | translate"></span>
+            </button>
+        </div>
+    </div>
 
-        <div class="row actions-row" *ngIf="(userRole === 'buyer' && isStarted()) || (userRole === 'seller' && isFinished())">
-            <div class="col-6"></div>
-            <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-            <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
-            </div>
+    <div class="row actions-row" *ngIf="(userRole === 'buyer' && isStarted()) || (userRole === 'seller' && isFinished())">
+        <div class="col-6"></div>
+        <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
-    </ng-container>
+    </div>
 </div>

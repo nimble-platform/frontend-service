@@ -76,25 +76,30 @@
                         </file-input>
                         <table *ngIf="property.valueQualifier === 'STRING'" class="table borderless mb-0">
                             <tbody>
-                                <tr *ngFor="let pvalue of getValues(); let i = index">
-                                    <td class="pr-0" style="padding-bottom: 0.3rem">
+                                <tr *ngFor="let pvalue of getValues(); let i = index" class="ml-2">
+                                    <td class="pr-0">
                                         <input [(ngModel)]="pvalue.value" class="form-control" type="text" name="{{pvalue.value}}" />
                                     </td>
-                                    <td class="pr-0" style="padding-left: .75rem; padding-bottom: 0.3rem;">
+                                    <td class="pr-0" style="padding-left: .75rem;">
                                         <select [(ngModel)]="pvalue.languageID" class="form-control" type="text" name="{{pvalue.languageID}}">
                                             <option *ngFor='let language of languages' [value]="language" [selected]="language === pvalue.languageID">{{language}}</option>
                                         </select>
                                     </td>
-                                    <td class="pr-0 align-right" style="padding-left: .75rem; padding-bottom: 0.3rem;" *ngIf="i>0">
+                                    <td class="pr-0 align-right" style="padding-left: .75rem;" *ngIf="i>0">
                                         <button class="btn btn-danger"  type="button" (click)="onRemoveValue(i)">&times;</button>
                                     </td>
                                 </tr>
                                 <tr>
-                                  <td colspan="3" class="pr-0 pb-0">
-                                    <button class="btn btn-outline-primary add-value-button" (click)="onAddValue()">
-                                        <span [innerHTML]="'Add Value' | translate"></span>
-                                    </button>
-                                  </td>
+                                    <td colspan="3" class="pr-0 pb-0">
+                                        <div class="d-flex flex-row-reverse">
+                                            <button class="btn btn-outline-primary ml-2" (click)="onAddValue()">
+                                                <span [innerHTML]="'Add Value' | translate"></span>
+                                            </button>
+                                            <button class="btn btn-outline-primary" (click)="d(); onAssociateProduct();">
+                                                <span [innerHTML]="'Associate Product' | translate"></span>
+                                            </button>
+                                        </div>
+                                    </td>
                                 </tr>
                                 <!--
                                 <tr>

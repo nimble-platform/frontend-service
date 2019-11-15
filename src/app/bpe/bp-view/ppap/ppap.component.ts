@@ -13,7 +13,6 @@ export class PpapComponent implements OnInit {
 
     screen: "select" | "upload" | "download";
     userRole: BpUserRole;
-    formerProcess: boolean;
 
     // whether the item is deleted or not
     @Input() isCatalogueLineDeleted:boolean = false ;
@@ -30,7 +29,6 @@ export class PpapComponent implements OnInit {
 
         const currentCompanyId: string = this.cookieService.get("company_id");
         const sellerId: string = UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty);
-        this.formerProcess = this.bpDataService.bpActivityEvent.formerProcess;
 
         this.route.params.subscribe(params => {
             if (params['processInstanceId'] === 'new') {

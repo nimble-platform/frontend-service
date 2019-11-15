@@ -61,3 +61,8 @@ button.active:disabled {
     background-color: #007bff;
     border-color: #007bff;
 }
+
+.add-cart-button {
+    margin-left: auto;
+    display: inline-block;
+}

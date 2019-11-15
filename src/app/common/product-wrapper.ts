@@ -5,7 +5,7 @@ import { PAYMENT_MEANS } from "../catalogue/model/constants";
 import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
 import {
     sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty, getPropertyValues, isTransportService, selectName,
-    isLogisticsService
+    isLogisticsService, copy
 } from './utils';
 import { PriceWrapper } from "./price-wrapper";
 import { CompanyNegotiationSettings } from "../user-mgmt/model/company-negotiation-settings";
@@ -27,7 +27,7 @@ export class ProductWrapper {
                 public quantity: Quantity = new Quantity(1,line.requiredItemLocationQuantity.price.baseQuantity.unitCode)) {
         this.priceWrapper = new DiscountPriceWrapper(
             line.requiredItemLocationQuantity.price,
-            line.requiredItemLocationQuantity.price,
+            copy(line.requiredItemLocationQuantity.price),
             line.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
             this.quantity,
             this.line.priceOption);

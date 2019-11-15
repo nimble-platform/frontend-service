@@ -10,6 +10,7 @@ import { UnitService } from "../../../common/unit-service";
 export class NegotiationRequestInputComponent implements OnInit {
 
     @Input() label: string;
+    @Input() description: string;
 
     // see https://blog.angulartraining.com/tutorial-create-your-own-two-way-data-binding-in-angular-46487650ea82 for this trick
     // private cbModelValue: boolean;
@@ -30,7 +31,7 @@ export class NegotiationRequestInputComponent implements OnInit {
 
     // Set if the input is a quantity
     @Input() quantity: Quantity;
-    @Output() quantityChange = new EventEmitter<number>();
+    @Output() quantityChange = new EventEmitter<Quantity>();
     @Input() quantityUnits?: string[];
     @Input() quantityType?: string;
     @Input() disableQuantityUnit?: boolean = false;
@@ -86,7 +87,7 @@ export class NegotiationRequestInputComponent implements OnInit {
     }
 
     onQuantityValueChanged(): void {
-        this.quantityChange.emit(this.quantity.value);
+        this.quantityChange.emit(this.quantity);
     }
 
     @Input()

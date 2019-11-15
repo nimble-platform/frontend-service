@@ -5,6 +5,7 @@ import { CookieService } from 'ng2-cookies';
 import { CallStatus } from '../common/call-status';
 import {TranslateService} from '@ngx-translate/core';
 import { ResetPasswordCredentials } from './model/reset-password-credentials';
+import { Router } from "@angular/router";
 
 @Component({
     selector: "user-profile",
@@ -15,6 +16,7 @@ export class UserProfileComponent implements OnInit {
 
     userProfile: Person = null;
     callStatus: CallStatus = new CallStatus();
+    deleteUserCallStatus: CallStatus = new CallStatus();
     changePasswordCallStatus: CallStatus = new CallStatus();
     changePasswordCredentials: ResetPasswordCredentials = new ResetPasswordCredentials(null, null);
     newPasswordRepeated: string = null;
@@ -24,6 +26,7 @@ export class UserProfileComponent implements OnInit {
     constructor(private userService: UserService,
                 private translate: TranslateService,
                 private cookieService: CookieService,
+                private router: Router,
     ) {
 
     }
@@ -68,4 +71,19 @@ export class UserProfileComponent implements OnInit {
             this.pw_val_class = "ng-invalid";
         }
     }
+
+    deleteUser(user): void {
+        if (confirm("Are you sure that you want to delete this user?")) {
+          this.deleteUserCallStatus.submit();
+          this.userService.deleteUser(user.hjid)
+              .then(res => {
+                  this.deleteUserCallStatus.callback("Successfully deleted user");
+                  this.router.navigate(['/user-mgmt/logout']);
+              })
+              .catch(error => {
+                  this.deleteUserCallStatus.error("Error while deleting user", error);
+              });
+        }
+    }
+
 }

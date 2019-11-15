@@ -125,7 +125,8 @@ export class CompanyRegistrationComponent implements OnInit {
                     createTextObject(sectorString,"en"),
                     model.getRawValue()['vatNumber'],
                     model.getRawValue()['verificationInformation'],
-                    model.getRawValue()['yearOfReg']
+                    model.getRawValue()['yearOfReg'],
+                    this.config.defaultBusinessProcessIds
                 ),
                 null,
                 null,

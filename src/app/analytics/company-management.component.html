@@ -74,7 +74,7 @@
                     <th><span [innerHTML]="'Company Name' | translate">></span></th>
                     <th><span [innerHTML]="'Address' | translate"></span></th>
                     <th><span [innerHTML]="'Initial Representative' | translate"></span></th>
-                    <th style="width:20rem !important;"></th>
+                    <th style="width:22rem !important;"></th>
                 </tr>
                 <ng-container *ngFor="let company of unverifiedCompaniesPage.content">
                     <tr>
@@ -166,7 +166,7 @@
                         <th><span [innerHTML]="'Company Name' | translate"></span></th>
                         <th><span [innerHTML]="'Address' | translate"></span></th>
                         <th><span [innerHTML]="'Legal Representative' | translate"></span></th>
-                        <th style="width:20rem !important;"></th>
+                        <th style="width:22rem !important;"></th>
                     </tr>
                     <ng-container *ngFor="let company of registeredCompaniesPage.content">
                         <tr>
@@ -188,6 +188,9 @@
                             <td>
                                 <a class="btn btn-primary" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: company.hjid, viewMode:'mgmt'}">Details</a>
                                 <a class="btn btn-primary ml-2" role="button" target="_blank" [routerLink]="['/user-mgmt/company-settings']" [queryParams]="{id: company.hjid, viewMode:'data'}">Change Data</a>
+                                <button class="btn btn-danger ml-2" (click)="deleteCompany(company)">
+                                  <span [innerHTML]="'Delete' | translate"></span>
+                                </button>
                             </td>
                         </tr>
                     </ng-container>

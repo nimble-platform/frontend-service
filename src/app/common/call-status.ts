@@ -3,20 +3,27 @@
  */
 export class CallStatus {
 
+    callCount = 0
+    errorCount = 0;
+    successCount = 0;
+    aggregatedErrors: [string, any][] = [];
+
     constructor(
         public fb_submitted = false,
         public fb_callback = false,
         public fb_errordetc = false,
         public fb_autoCloseOnCallBack = false,
-        public fb_message = "",
-        public fb_details = "",
-        public fb_showDetails = false
+        public fb_message = ""
     ) {    }
 
-    public submit() {
+    public submit(reset = true) {
+        if (reset) {
+            this.reset();
+        }
         this.fb_submitted = true;
         this.fb_errordetc = false;
         this.fb_callback = false;
+        this.callCount++;
     }
 
     public callback(msg: string, autoClose: boolean = false) {
@@ -25,45 +32,66 @@ export class CallStatus {
         this.fb_errordetc = false;
         this.fb_callback = true;
         this.fb_autoCloseOnCallBack = autoClose;
+        this.successCount++;
     }
 
-    public error(msg: string, error?: any) {
+    public error(msg: string, error: any = null) {
         this.fb_message = msg;
         this.fb_submitted = false;
         this.fb_errordetc = true;
         this.fb_callback = false;
-        this.fb_details = "";
-        this.fb_showDetails = false;
+        this.errorCount++;
+
+        let errorDetails = '';
         if(error) {
-            this.fb_details = "Error "+error.status;
+            errorDetails = 'Error ' + error.status;
             if (error._body != "") {
               let errorJSON = {};
               try {
                   errorJSON = JSON.parse(error._body);
                   if (errorJSON["error"] || errorJSON["exception"] || errorJSON["message"]) {
                       if (errorJSON["error"]) {
-                          this.fb_details += "<br/>";
-                          this.fb_details += errorJSON["error"];
+                          errorDetails += "<br/>";
+                          errorDetails += errorJSON["error"];
                       }
                       if (errorJSON["message"]) {
-                          this.fb_details += "<br/>";
-                          this.fb_details += errorJSON["message"];
+                          errorDetails += "<br/>";
+                          errorDetails += errorJSON["message"];
                       }
                       if (errorJSON["exception"]) {
-                          this.fb_details += "<br/>";
-                          this.fb_details += errorJSON["exception"];
+                          errorDetails += "<br/>";
+                          errorDetails += errorJSON["exception"];
                       }
                   }
 
                 // the error data is not in the json format, so it's shown as it is
               } catch (e) {
                   if(error._body != null) {
-                      this.fb_details = error._body;
+                      errorDetails = error._body;
                   } else {
-                      this.fb_details = error;
+                      errorDetails = error;
                   }
               }
             }
+        }
+        this.aggregatedErrors.push([msg, errorDetails]);
+    }
+
+    public aggregatedSubmit(aggregate = 1) {
+        for (let i = 0; i < aggregate; i++) {
+            this.submit(false);
+        }
+    }
+
+    public aggregatedCallBack(msg: string = null, autoClose = true, aggregate = 1) {
+        for (let i = 0; i < aggregate; i++) {
+            this.callback(msg, autoClose);
+        }
+    }
+
+    public aggregatedError(msg: string, error: any = null, aggregate = 1) {
+        for (let i = 0; i < aggregate; i++) {
+            this.error(msg, error);
         }
     }
 
@@ -71,6 +99,10 @@ export class CallStatus {
         this.fb_submitted = false;
         this.fb_errordetc = false;
         this.fb_callback = false;
+        this.callCount = 0;
+        this.successCount = 0;
+        this.errorCount = 0;
+        this.aggregatedErrors = [];
     }
 
     public isComplete(): boolean {
@@ -87,5 +119,17 @@ export class CallStatus {
 
     public isError(): boolean {
         return this.fb_errordetc;
+    }
+
+    public isAllComplete(): boolean {
+        return this.callExists() && this.callCount === (this.errorCount + this.successCount);
+    }
+
+    public isAllSuccessful(): boolean {
+        return this.callExists() && this.callCount === this.successCount;
+    }
+
+    public callExists(): boolean {
+        return this.callCount !== 0;
     }
 }

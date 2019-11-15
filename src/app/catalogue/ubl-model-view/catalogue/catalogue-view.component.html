@@ -28,22 +28,19 @@
                             <span class="fa fa-bars"></span>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser" ngbDropdownMenu>
-                            <input #imagePackage type="file" (change)="uploadImagePackage($event)"
-                                   accept="application/zip"
-                                   style="display: none">
                             <button class="dropdown-item" (click)="navigateToThePublishPage()">
                                 <span [innerHTML]="'Publish Product' | translate"></span>
                             </button>
                             <button class="dropdown-item" (click)="navigateToBulkUploadPage()">
                                 <span [innerHTML]="'Publish Multiple Products' | translate"></span>
                             </button>
-                            <button class="dropdown-item" (click)="imagePackage.click()">
+                            <button class="dropdown-item" (click)="onUploadImage()">
                                 <span [innerHTML]="'Upload Image Package' | translate"></span>
                             </button>
                             <button class="dropdown-item" (click)="onExportCatalogue()">
                                 <span [innerHTML]="'Export Catalogue' | translate"></span>
                             </button>
-                            <button class="dropdown-item" (click)="deleteAllProductImages()">
+                            <button class="dropdown-item" (click)="onDeleteCatalogueImages()">
                                 <span [innerHTML]="'Delete All Product Images' | translate"></span>
                             </button>
                             <button class="dropdown-item" (click)="onAddingCatalogue()">
@@ -83,7 +80,7 @@
                 </button>
             </div>
         </div>
-        
+
         <div *ngIf="catalogueLinesArray.length > 0" class="pagination justify-content-center space-before">
             <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="5" [boundaryLinks]="true" (pageChange)="requestCatalogue()"></ngb-pagination>
         </div>
@@ -104,15 +101,15 @@
                         </div>
                         <div class="col-10 d-flex justify-content-between">
                             <div class="col-8">
-                                <p style="word-break: break-all;word-wrap: break-word;">
+                                <p class="all-break">
                                     <strong>{{selectName(catLine.goodsItem.item)}}
                                         <a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.goodsItem.item.catalogueDocumentReference.id, id: catLine.goodsItem.item.manufacturersItemIdentification.id}" (click)="onOpenCatalogueLine($event)" target="_blank">
                                             <i class="fas fa-external-link-alt btn-light"></i>
                                         </a>
                                     </strong>
                                 </p>
-                                <p style="word-break: break-all;word-wrap: break-word;">{{selectDescription(catLine.goodsItem.item)}}</p>
-                                <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" style="word-break: break-all;word-wrap: break-word;">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p>
+                                <p>{{selectDescription(catLine.goodsItem.item)}}</p>
+                                <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" class="all-break">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p>
                             </div>
                             <div class="col-2">
                                 <button type="button" class="btn btn-primary space-after col"
@@ -205,7 +202,7 @@
         </h5>
     </div>
 </div>
-    
+
 <delete-export-catalogue-modal #deleteCatalogueModal (onSuccessfulDelete)="ngOnInit()"></delete-export-catalogue-modal>
 
 <call-status [callStatus]="getCatalogueStatus" [large]="true">

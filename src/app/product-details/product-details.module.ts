@@ -8,7 +8,6 @@ import { ProductDetailsComponent } from "./product-details.component";
 import { ProductDetailsRoutingModule } from "./product-details-routing.module";
 import { ProductDetailsTabsComponent } from "./product-details-tabs.component";
 import { ProductDetailsOverviewComponent } from "./product-details-overview.component";
-import { TransportationServiceInput } from "./transportation-service-input.component";
 import { ProductDetailsCertificatesComponent } from "./product-details-certificates.component";
 import { UserMgmtModule } from "../user-mgmt/user-mgmt.module";
 import {DiscountModalComponent} from './discount-modal.component';
@@ -31,17 +30,16 @@ import {LcpaDetailModalComponent} from "./lcpa-detail-modal.component";
 		ProductDetailsTabsComponent,
 		ProductDetailsOverviewComponent,
 		ProductDetailsCertificatesComponent,
-		TransportationServiceInput,
         DiscountModalComponent,
 		ProductLcpaTabComponent,
 		LcpaDetailModalComponent
 	],
 	exports: [
 		ProductDetailsTabsComponent,
-		TransportationServiceInput,
 		DiscountModalComponent,
 		ProductLcpaTabComponent,
-		LcpaDetailModalComponent
+		LcpaDetailModalComponent,
+		ProductDetailsOverviewComponent
 	],
 	providers: [
 	]

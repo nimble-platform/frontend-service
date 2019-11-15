@@ -35,14 +35,14 @@
 <hr class="actions-hr">
 
 <!-- Actions -->
-<div *ngIf="!isBuyer() && !readonly && !isFormerStep" class="row actions-row">
+<div *ngIf="!isBuyer() && !readonly" class="row actions-row">
     <div class="col-4"></div>
     <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div *ngIf="!isResponseSent()" class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.isProductDeleted" (click)="onSendResponse()">
+        <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.areProductsDeleted[0]" (click)="onSendResponse()">
             <span [innerHTML]="'Send Response' | translate"></span>
         </button>
     </div>
@@ -54,19 +54,19 @@
 </div>
 
 <!-- Buyer only sees once the response has been sent -->
-<div *ngIf="isBuyer() && !readonly && !isFormerStep" class="row actions-row">
+<div *ngIf="isBuyer() && !readonly" class="row actions-row">
     <div class="{{bpDataService.isFinalProcessInTheWorkflow('Item_Information_Request') ? 'col-4' : 'col-2'}}"></div>
     <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading() || readonly || processMetadata.isProductDeleted || processMetadata.isCollaborationFinished" (click)="onRestart()">
+        <button class="btn btn-primary action" (click)="onRestart()" [disabled]="isRepeatRequestDisabled()">
             <span [innerHTML]="'Ask Something Else' | translate"></span>
         </button>
     </div>
-    <div class="col-2" *ngIf="!bpDataService.isFinalProcessInTheWorkflow('Item_Information_Request')">
-        <button class="btn btn-primary action" [disabled]="isLoading() || readonly || (isLogisticsService && !isTransportService) || processMetadata.isProductDeleted" (click)="onNextStep()">
+    <div class="col-2">
+        <button class="btn btn-primary action" (click)="onNextStep()" [disabled]="isNextStepDisabled()">
             <span [innerHTML]="'Go to Next Step' | translate"></span> 
         </button>
     </div>

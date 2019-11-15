@@ -1,50 +1,58 @@
-import { Component, OnInit, Input } from "@angular/core";
-import { Address } from "../catalogue/model/publish/address";
-import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
+import {Component, Input, OnInit} from '@angular/core';
+import {Address} from '../catalogue/model/publish/address';
+import {addressToString} from '../user-mgmt/utils';
+import {DeliveryTerms} from '../user-mgmt/model/delivery-terms';
+import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
+import {Option} from './options-input.component';
 
 
 @Component({
-    selector: "multi-address-input",
-    templateUrl: "./multi-address-input.component.html",
-    styleUrls: ["./multi-address-input.component.css"],
+    selector: 'multi-address-input',
+    templateUrl: './multi-address-input.component.html'
 })
 
-export class MultiAddressInputComponent implements OnInit {
-    @Input() address: Address[];
-    @Input() label: string;
-    @Input() multiValue: boolean = true;
+export class MultiAddressInputComponent {
 
-    @Input() visible: boolean = true;
-    @Input() disabled: boolean = false;
-    @Input() presentationMode: "edit" | "view" = "edit";
+    @Input() address: Address;
+    @Input() disabled: boolean;
+    @Input() deliveryTerms: DeliveryTerms[];
 
-    @Input() definition: string;
-    @Input() labelClass: string = "col-3";
-    @Input() labelMainClass: string = "";
-    @Input() rowClass: string = "";
-    @Input() valueClass: string; // set based on label
-    @Input() valueTextClass: string = "";
+    selectedAddressValue = '';
 
-    constructor(
+    constructor() { }
 
-    ) { }
+    get selectedAddress(): string {
+        return this.selectedAddressValue;
+    }
 
-    ngOnInit() {
-        if(this.address.length === 0) {
-            this.address.push(new Address());
-        }
-        if(!this.valueClass) {
-            this.valueClass = this.label ? "col-9" : "col-12";
+    set selectedAddress(addressStr: string) {
+        this.selectedAddressValue = addressStr;
+
+        if (addressStr !== '') {
+            const index = Number(addressStr);
+            UBLModelUtils.mapUserMgmtAddressToUblAddress(this.address, this.deliveryTerms[index].deliveryAddress);
         }
     }
 
-    addNewValue():void {
-        let value:Address = UBLModelUtils.createAddress();
-        this.address.push(value);
+    get addressOptions(): Option[] {
+        const deliveryTerms = this.deliveryTerms;
+        let ret = [];
+        if (deliveryTerms.length === 0 || !deliveryTerms[0].deliveryAddress || !deliveryTerms[0].deliveryAddress.streetName) {
+            ret = [
+                { name: 'No', value: '' }
+            ];
+        } else {
+            ret = [
+                { name: 'No', value: '' }
+            ].concat(deliveryTerms.map((term, i) => {
+                return { name: addressToString(term.deliveryAddress), value: String(i) };
+            }));
+        }
+        return ret;
     }
 
-    removeValue(index:number):void {
-        this.address.splice(index, 1);
+    isDisabled(): boolean {
+        // additional check for the disabled status
+        return this.disabled || this.selectedAddressValue !== '';
     }
-
 }
