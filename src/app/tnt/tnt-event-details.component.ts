@@ -16,6 +16,7 @@ import moment = require('moment');
 export class TnTEventDetailsComponent implements OnChanges {
     @Input('eventsToDisplay') events: TrackInfo[];
     debug = myGlobals.debug;
+    bcIoTDataVerified: boolean;
     bcEventVerified: boolean;
     falsecode = '';
     gateInformation = [];
@@ -31,6 +32,7 @@ export class TnTEventDetailsComponent implements OnChanges {
             return;
         }
         this.bcEventVerified = this.events[0].verified;
+        this.bcIoTDataVerified = false;
         this.getGateInfo();
         this.getBizLocInfo();
         this.displaySensorDashboard();
@@ -76,19 +78,33 @@ export class TnTEventDetailsComponent implements OnChanges {
         this.dashboardQuery =
             `${this.dashboardURL}?var-bizLocation=${encodeURIComponent(this.selectedBizLocation)}` +
             `&from=${fromTimeStamp}&to=${toTimeStamp}&orgId=2&panelId=2"`;
-        console.log(this.dashboardQuery);
+
+        if (this.debug) {
+            console.log(this.dashboardQuery);
+        }
     }
 
     callIoTBCApi() {
         let fromTimeStamp = moment(this.events[1].eventTime).toISOString();
         let toTimeStamp = moment(this.events[0].eventTime).toISOString();
-        console.log(this.events[0].epc);
-        console.log(fromTimeStamp);
-        console.log(toTimeStamp);
-        this.tntBackend.testIOTBC(this.events[0].epc,
-         {'from': fromTimeStamp, 'to': toTimeStamp})
+        if (this.debug) {
+            console.log(this.events[0].epc);
+            console.log(fromTimeStamp);
+            console.log(toTimeStamp);
+        }
+        let verification_query = {
+            'productID': this.events[0].epc,
+            'from': fromTimeStamp,
+            'to': toTimeStamp
+        };
+        this.tntBackend.verifyIOTBC(verification_query)
         .then(resp => {
-            console.log(resp);
+            if (this.debug) {
+                console.log(resp);
+            }
+            this.bcIoTDataVerified = resp['validated'];
+        }).catch(err => {
+            console.log(err);
         })
     }
 

@@ -76,9 +76,11 @@ export class TnTService {
 
     // IoT Sensor Data + Blockchain Service
 
-    testIOTBC(product_code: string, duration: object): Promise<any> {
+    verifyIOTBC(input: object): Promise<any> {
         // console.log(duration);
-        return this.http.get(`${this.iotBlockchainEndpoint}hash/${product_code}?from=${duration['from']}&to=${duration['to']}`)
+        let verifyQuery = `?productID=${input['productID']}&from=${input['from']}&to=${input['to']}`;
+        return this.http.get(
+            `${this.iotBlockchainEndpoint}${verifyQuery}`)
             .toPromise()
             .then(resp => resp.json());
     }
