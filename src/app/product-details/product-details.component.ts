@@ -31,6 +31,7 @@ import {DocumentService} from "../bpe/bp-view/document-service";
 import {BPEService} from "../bpe/bpe.service";
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 import {QuotationWrapper} from "../bpe/bp-view/negotiation/quotation-wrapper";
+import {SearchContextService} from '../simple-search/search-context.service';
 
 @Component({
     selector: 'product-details',
@@ -85,6 +86,7 @@ export class ProductDetailsComponent implements OnInit {
                 private catalogueService: CatalogueService,
                 private documentService: DocumentService,
                 private userService: UserService,
+                private searchContextService: SearchContextService,
                 private route: ActivatedRoute,
                 private cookieService: CookieService,
                 private translate: TranslateService,
@@ -204,6 +206,10 @@ export class ProductDetailsComponent implements OnInit {
     }
 
     private navigateToBusinessProcess(targetProcess: ProcessType, termsSource: 'product_defaults' | 'frame_contract' = 'product_defaults'): void {
+        // precedingOrderId and activityVariablesOfAssociatedOrder have some values only when the user is navigated to the search for searching a transport service provider
+        // for an existing order
+        let precedingOrderId = this.searchContextService.getPrecedingOrderId();
+        let activityVariablesOfAssociatedOrder = this.searchContextService.getAssociatedProcessMetadata() ? this.searchContextService.getAssociatedProcessMetadata().activityVariables : null;
         this.bpDataService.startBp(
             new BpActivityEvent(
                 'buyer',
@@ -214,7 +220,13 @@ export class ProductDetailsComponent implements OnInit {
                 [this.itemWithSelectedProperties],
                 new Quantity(this.orderQuantity, this.getQuantityUnit()),
                 true, // this is a new process
-                [this.catalogueId], [this.id], null, null, [termsSource]),
+                [this.catalogueId],
+                [this.id],
+                null,
+                null,
+                [termsSource],
+                precedingOrderId,
+                activityVariablesOfAssociatedOrder),
             false);
     }
 

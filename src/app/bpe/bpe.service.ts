@@ -13,7 +13,6 @@ import { CollaborationRole } from "./model/collaboration-role";
 import { Order } from '../catalogue/model/publish/order';
 import { EvidenceSupplied } from '../catalogue/model/publish/evidence-supplied';
 import { Comment } from '../catalogue/model/publish/comment';
-import {SearchContextService} from '../simple-search/search-context.service';
 import {DashboardProcessInstanceDetails} from './model/dashboard-process-instance-details';
 import {DigitalAgreement} from "../catalogue/model/publish/digital-agreement";
 import {CollaborationGroup} from "./model/collaboration-group";
@@ -28,7 +27,6 @@ export class BPEService {
 
 	constructor(private http: Http,
 				private bpDataService:BPDataService,
-                private searchContextService: SearchContextService,
 				private cookieService: CookieService) { }
 
     startProcessWithDocument(document:any):Promise<ProcessInstance> {
@@ -43,9 +41,9 @@ export class BPEService {
             document.additionalDocumentReference.push(documentRef);
         }
         // create a DocumentReference for the previous order
-        if(this.searchContextService.getPrecedingOrderId()){
+        if(this.bpDataService.precedingOrderId){
             let documentRef:DocumentReference = new DocumentReference();
-            documentRef.id = this.searchContextService.getPrecedingOrderId();
+            documentRef.id = this.bpDataService.precedingOrderId;
             documentRef.documentType = "previousOrder";
 
             document.additionalDocumentReference.push(documentRef);

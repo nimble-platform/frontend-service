@@ -106,6 +106,7 @@ export class BPDataService{
 
     precedingProcessId: string;
     precedingDocumentId: string;
+    precedingOrderId: string;
 
     constructor(private searchContextService: SearchContextService,
                 private precedingBPDataService: PrecedingBPDataService,
@@ -300,7 +301,9 @@ export class BPDataService{
             this.bpActivityEvent.catalogueLineIds,
             this.bpActivityEvent.previousProcessInstanceId,
             this.bpActivityEvent.previousDocumentId,
-            termsSources);
+            termsSources,
+            this.bpActivityEvent.precedingOrderId,
+            this.bpActivityEvent.activityVariablesOfAssociatedOrder);
         this.bpActivityEvent = bpStartEvent;
         // this event is listened by the product-bp-options.component where the displayed process view is adjusted
         this.bpActivityEventBehaviorSubject.next(bpStartEvent);
@@ -543,6 +546,7 @@ export class BPDataService{
         this.itemInformationResponse = null;
 
         this.precedingDocumentId = null;
+        this.precedingOrderId = null;
         if(clearSearchContext){
             this.searchContextService.clearSearchContext();
         }
