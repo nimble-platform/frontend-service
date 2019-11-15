@@ -66,22 +66,27 @@
     <ngb-tab>
         <ng-template ngbTabTitle> IoT Information </ng-template>
         <ng-template ngbTabContent>
+            <ngb-alert type="success" [dismissible]="false" *ngIf="bcIoTDataVerified">
+                    <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'This Data is Verified by BlockChain' | translate"></span>  <i class="fas fa-project-diagram pl-1"></i>
+            </ngb-alert>
             <div class="row mt-2">
                 <iframe [src]="dashboardQuery | safe" width="650" height="400" frameborder="0"></iframe>
             </div>
             <div class="row mt-1">
-                <div class="col-sm-12">
-                    <h5>Sensor Information</h5>
-                    <ul>
-                        <li>Time Range:</li>
-                        <ul>
-                            <li>Previous Event: {{events[1]['eventTime'] | date:'medium': 'UTC'}}</li>
-                            <li>Current Event: {{events[0]['eventTime'] | date: 'medium': 'UTC'}}</li>
-                        </ul>
-                        <li><i class="fas fa-info-circle"></i> Drag the Graph to zoom out</li>
-                        <li><i class="fas fa-info-circle"></i> Drouble-Click the Graph to zoom in</li>
-                    </ul>
-                </div>
+                <!-- <div class="col-sm-12"> -->
+                    <ngb-alert type="info" [dismissible]="false">
+                        <h5>Overview</h5>
+                        <p>
+                         Previous Event: {{events[1]['eventTime'] | date:'medium': 'UTC'}} <i class="fas fa-arrow-right"></i> Current Event: {{events[0]['eventTime'] | date: 'medium': 'UTC'}}
+                        </p>
+                        <p>
+                            <i class="fas fa-info-circle"></i> Drag the Graph to zoom in.
+                        </p>
+                        <p>
+                            <i class="fas fa-info-circle"></i> Double-Click the Graph to zoom out.
+                        </p>
+                    </ngb-alert>
+                <!-- </div> -->
             </div>
         </ng-template>
     </ngb-tab>
