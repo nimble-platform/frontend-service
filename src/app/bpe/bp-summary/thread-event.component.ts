@@ -60,8 +60,7 @@ export class ThreadEventComponent implements OnInit {
                 catalogueLineIds,
                 this.event.processInstanceId,
                 ActivityVariableParser.getPrecedingDocumentId(this.event.activityVariables),
-                termsSources),
-            true);
+                termsSources));
     }
 
     cancelBP(){

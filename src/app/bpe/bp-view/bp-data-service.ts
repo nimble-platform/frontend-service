@@ -244,8 +244,8 @@ export class BPDataService{
      For dashboard, business process history contains process document metadatas since they are already started/completed.
      However, in the product-details page, we start a new business process, this is why we check for new process processMetadata.
      */
-    async startBp(bpActivityEvent: BpActivityEvent, clearSearchContext:boolean){
-        this.resetBpData(clearSearchContext);
+    async startBp(bpActivityEvent: BpActivityEvent){
+        this.resetBpData();
 
         this.bpActivityEvent = bpActivityEvent;
         // if the event is not created for a new process, processMetadata contains the process metadata for the continued process
@@ -531,7 +531,7 @@ export class BPDataService{
         this.transportExecutionPlanRequest = UBLModelUtils.createTEPlanRequestWithQuotationCopy(this.copyQuotation);
     }
 
-    resetBpData(clearSearchContext:boolean=true):void {
+    resetBpData():void {
         this.requestForQuotation = null;
         this.quotation = null;
         this.order = null;
@@ -547,9 +547,6 @@ export class BPDataService{
 
         this.precedingDocumentId = null;
         this.precedingOrderId = null;
-        if(clearSearchContext){
-            this.searchContextService.clearSearchContext();
-        }
     }
 
     // checks whether the given process is the final step in the workflow or not
