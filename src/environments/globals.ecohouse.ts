@@ -46,9 +46,9 @@ export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 // TnT Endpoints
 
 export const tntEndpoint = `${base_path}/tracking`;
-export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
 export const tntMasterDataEndpoint = `${base_path}/tracking/masterData/id/`;
-export const tntIoTBlockchainEndpoint = 'http://localhost:5000/api/verify'; // Initial Endpoint; Will be changed soon;
+export const tntAnalysisEndpoint = `${base_path}/tracking-analysis/`;
+export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 
 
 // Platform Configuration
