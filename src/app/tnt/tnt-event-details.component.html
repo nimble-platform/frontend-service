@@ -69,11 +69,10 @@
             <ngb-alert type="success" [dismissible]="false" *ngIf="bcIoTDataVerified">
                     <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'This Data is Verified by BlockChain' | translate"></span>  <i class="fas fa-project-diagram pl-1"></i>
             </ngb-alert>
-            <div class="row mt-2">
+            <div class="row mt-2" *ngIf="dashboardQuery.length">
                 <iframe [src]="dashboardQuery | safe" width="650" height="400" frameborder="0"></iframe>
             </div>
-            <div class="row mt-1">
-                <!-- <div class="col-sm-12"> -->
+            <div class="row mt-1" *ngIf="events.length > 1">
                     <ngb-alert type="info" [dismissible]="false">
                         <h5>Overview</h5>
                         <p>
@@ -86,7 +85,21 @@
                             <i class="fas fa-info-circle"></i> Double-Click the Graph to zoom out.
                         </p>
                     </ngb-alert>
-                <!-- </div> -->
+            </div>
+            <div class="jumbotron mt-1" *ngIf="events.length === 1">
+                <div class="row">
+                    <div class="col-md-12 align-center">
+                        <i class="fas fa-info fa-5x"></i>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 align-center">
+                        <h4>No IoT Sensor Information Available</h4>
+                        <p class="text-secondary">
+                                This Event is the first every scanned information of the product. Since there was no previous event we do not have IoT information for it.
+                        </p>
+                    </div>
+                </div>
             </div>
         </ng-template>
     </ngb-tab>

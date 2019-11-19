@@ -22,7 +22,7 @@ export class TnTEventDetailsComponent implements OnChanges {
     gateInformation = [];
     bizLocationInformation = [];
     dashboardURL = 'https://grafana5.ips.biba.uni-bremen.de/d-solo/FhrdyH2Wk/nimble-epcis-iot-testbed';
-    dashboardQuery: any;
+    dashboardQuery: string;
     selectedBizLocation = '';
 
     constructor(private tntBackend: TnTService) {}
@@ -31,12 +31,22 @@ export class TnTEventDetailsComponent implements OnChanges {
         if (!this.events.length) {
             return;
         }
+
+        // Get Event Information irrespective if last event
         this.bcEventVerified = this.events[0].verified;
-        this.bcIoTDataVerified = false;
         this.getGateInfo();
         this.getBizLocInfo();
-        this.displaySensorDashboard();
-        this.callIoTBCApi();
+
+        if (this.events.length > 1) {
+            // Display IoT information only if there was a previous event
+            // Avoid calling this information on the last event
+            this.bcIoTDataVerified = false;
+            this.displaySensorDashboard();
+            this.callIoTBCApi();
+        } else {
+            // clear out any previous Sensor Data Dashboard
+            this.dashboardQuery = '';
+        }
     }
 
     getGateInfo() {
@@ -72,7 +82,6 @@ export class TnTEventDetailsComponent implements OnChanges {
     }
 
     displaySensorDashboard() {
-        // console.log(this.selectedBizLocation);
         let fromTimeStamp = Number(this.events[1].eventTime);
         let toTimeStamp = Number(this.events[0].eventTime);
         this.dashboardQuery =
@@ -80,6 +89,7 @@ export class TnTEventDetailsComponent implements OnChanges {
             `&from=${fromTimeStamp}&to=${toTimeStamp}&orgId=2&panelId=2"`;
 
         if (this.debug) {
+            console.log(this.selectedBizLocation);
             console.log(this.dashboardQuery);
         }
     }
