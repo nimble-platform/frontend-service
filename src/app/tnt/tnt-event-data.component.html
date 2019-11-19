@@ -28,7 +28,7 @@
                                         <tr *ngFor="let entry of events; let i = index" [ngClass]="{'selected': selectedEvent==entry}">
                                             <th scope="row">{{entry.eventTime | date:'medium':'UTC'}}</th>
                                             <td>{{entry.bizStep}}</td>
-                                            <td><button class="btn btn-link btn-sm" (click)="eventSelection(entry, i)"><i class="fas fa-info-circle"></i>More Info</button></td>
+                                            <td><button class="btn btn-link btn-sm" (click)="eventSelection(entry)"><i class="fas fa-info-circle"></i>More Info</button></td>
                                         </tr>
                                     </tbody>
                                 </table>
