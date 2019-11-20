@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { TrackInfo } from './model/TrackInfo';
+import { TrackInfo } from './model/Trackinfo';
 import * as myGlobals from '../globals';
 
 @Component({
