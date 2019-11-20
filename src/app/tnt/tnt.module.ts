@@ -8,8 +8,9 @@ import { TnTRoutingModule } from './tnt-routing.module';
 
 import { TnTComponent } from './tnt.component';
 import { TnTFormComponent } from './tnt-form.component';
-import {NgxGraphModule} from '@swimlane/ngx-graph';
-import {NgxChartsModule} from '@swimlane/ngx-charts';
+import { TnTEventDataComponent } from './tnt-event-data.component';
+import { TnTEventDetailsComponent } from './tnt-event-details.component';
+import { SafePipe } from './model/SafePipe';
 
 import { HttpClientModule } from '@angular/common/http';
 
@@ -22,17 +23,20 @@ import { HttpClientModule } from '@angular/common/http';
         HttpClientModule,
         HttpModule,
         TnTRoutingModule,
-        NgxGraphModule,
-        NgxChartsModule,
         NgbModule.forRoot()
     ],
     declarations: [
-      TnTComponent,
-      TnTFormComponent
+        SafePipe,
+        TnTComponent,
+        TnTFormComponent,
+        TnTEventDataComponent,
+        TnTEventDetailsComponent
     ],
     exports: [
         TnTComponent,
-        TnTFormComponent
+        TnTFormComponent,
+        TnTEventDataComponent,
+        TnTEventDetailsComponent
     ],
     providers: [],
     entryComponents: []

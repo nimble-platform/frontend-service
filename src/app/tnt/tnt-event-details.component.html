@@ -1,0 +1,106 @@
+<div class="jumbotron" *ngIf="!gateInformation.length && !bizLocationInformation.length">
+    <div class="row">
+        <div class="col-md-12 align-center">
+            <i class="fas fa-chart-area fa-5x"></i>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 align-center">
+            <h4>Event & IoT Information</h4>
+            <p class="text-secondary">
+                    View more Information about the Event and IoT Information relating to it.
+            </p>
+        </div>
+    </div>
+</div>
+
+<ngb-tabset *ngIf="gateInformation.length && bizLocationInformation.length">
+    <ngb-tab>
+        <ng-template ngbTabTitle>Event Information</ng-template>
+        <ng-template ngbTabContent>
+            
+            <ngb-alert type="success" [dismissible]="false" *ngIf="bcEventVerified">
+                    <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'This Data is Verified by BlockChain' | translate"></span>  <i class="fas fa-project-diagram pl-1"></i>
+            </ngb-alert>
+            <table class="table table-bordered mt-2">
+                <thead>
+                    <th scope="col">Attributes</th>
+                    <th scope="col">Read Point Information</th>
+                    <th scope="col">Business Location Information</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">Site</th>
+                        <td>{{ gateInformation[gateInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:site'] }}</td>
+                        <td>{{ bizLocationInformation[bizLocationInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:site'] }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Country</th>
+                        <td>{{ gateInformation[gateInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:countryCode'] }}</td>
+                        <td>{{ bizLocationInformation[bizLocationInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:countryCode'] }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Name</th>
+                        <td>{{ gateInformation[gateInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:name'] }}</td>
+                        <td>{{ bizLocationInformation[bizLocationInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:name'] }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">City</th>
+                        <td>{{ gateInformation[gateInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:city'] }}</td>
+                        <td>{{ bizLocationInformation[bizLocationInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:city'] }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Address</th>
+                        <td>{{ gateInformation[gateInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:streetAddressOne'] }}</td>
+                        <td>{{ bizLocationInformation[bizLocationInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:streetAddressOne'] }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">ID</th>
+                        <td><code> {{ gateInformation[gateInformation.length - 1]['id'] }} </code></td>
+                        <td><code>{{ bizLocationInformation[bizLocationInformation.length - 1]['id'] }}</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </ng-template>
+    </ngb-tab>
+    <ngb-tab>
+        <ng-template ngbTabTitle> IoT Information </ng-template>
+        <ng-template ngbTabContent>
+            <ngb-alert type="success" [dismissible]="false" *ngIf="bcIoTDataVerified">
+                    <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'This Data is Verified by BlockChain' | translate"></span>  <i class="fas fa-project-diagram pl-1"></i>
+            </ngb-alert>
+            <div class="row mt-2" *ngIf="dashboardQuery.length">
+                <iframe [src]="dashboardQuery | safe" width="650" height="400" frameborder="0"></iframe>
+            </div>
+            <div class="row mt-1" *ngIf="events.length > 1">
+                    <ngb-alert type="info" [dismissible]="false">
+                        <h5>Overview</h5>
+                        <p>
+                         Previous Event: {{events[1]['eventTime'] | date:'medium': 'UTC'}} <i class="fas fa-arrow-right"></i> Current Event: {{events[0]['eventTime'] | date: 'medium': 'UTC'}}
+                        </p>
+                        <p>
+                            <i class="fas fa-info-circle"></i> Drag the Graph to zoom in.
+                        </p>
+                        <p>
+                            <i class="fas fa-info-circle"></i> Double-Click the Graph to zoom out.
+                        </p>
+                    </ngb-alert>
+            </div>
+            <div class="jumbotron mt-1" *ngIf="events.length === 1">
+                <div class="row">
+                    <div class="col-md-12 align-center">
+                        <i class="fas fa-info fa-5x"></i>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 align-center">
+                        <h4>No IoT Sensor Information Available</h4>
+                        <p class="text-secondary">
+                                This Event is the first every scanned information of the product. Since there was no previous event we do not have IoT information for it.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </ngb-tab>
+</ngb-tabset>
