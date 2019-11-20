@@ -12,7 +12,7 @@
         <div class="col-sm-5">
             <ngb-tabset>
                 <ngb-tab>
-                    <ng-template ngbTabTitle>Tabular View <i class="fas fa-table"></i></ng-template>
+                    <ng-template ngbTabTitle><span [innerHTML]="'Tabular View' | translate"></span> <i class="fas fa-table"></i></ng-template>
                     <ng-template ngbTabContent>
                         <!-- <div class="row"> -->
                             <!-- <div class="col-md-4"> -->
@@ -21,14 +21,17 @@
                                         <tr>
                                             <th scope="col"><span [innerHTML]="'Event Time' | translate"></span> in UTC</th>
                                             <th scope="col"><span [innerHTML]="'Business Step' | translate"></span></th>
-                                            <th scope="col">Details</th>
+                                            <th scope="col"><span [innerHTML]="'Details' | translate"></span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let entry of events; let i = index" [ngClass]="{'selected': selectedEvent==entry}">
                                             <th scope="row">{{entry.eventTime | date:'medium':'UTC'}}</th>
                                             <td>{{entry.bizStep}}</td>
-                                            <td><button class="btn btn-link btn-sm" (click)="eventSelection(entry)"><i class="fas fa-info-circle"></i>More Info</button></td>
+                                            <td><button class="btn btn-link btn-sm" (click)="eventSelection(entry)"><i class="fas fa-info-circle"></i>
+                                                    <span [innerHTML]="'More Info' | translate"></span>
+                                                </button>
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -46,7 +49,7 @@
                     </ng-template>
                 </ngb-tab>
                 <ngb-tab>
-                    <ng-template ngbTabTitle>Timeline View <i class="fas fa-ellipsis-v"></i></ng-template>
+                    <ng-template ngbTabTitle><span [innerHTML]="'Timeline View' | translate"></span> <i class="fas fa-ellipsis-v"></i></ng-template>
                     <ng-template ngbTabContent>
                         <div class="d-flex justify-content-between p-2">
                                 <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize">
@@ -64,7 +67,9 @@
                                         <div class="tl-content" [ngClass]="{'selected': selectedEvent == entry}">
                                             <h4>{{entry.eventTime | date:'medium':'UTC'}}</h4>
                                             <p>{{entry.bizStep}}</p>
-                                            <button class="btn btn-outline-primary" (click)="eventSelection(entry, i)"><i class="fas fa-info-circle"></i>More Info</button>
+                                            <button class="btn btn-outline-primary" (click)="eventSelection(entry, i)"><i class="fas fa-info-circle"></i>
+                                                <span [innerHTML]="'More Info' | translate"></span>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
