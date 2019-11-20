@@ -101,11 +101,11 @@ export const config = {
       {
         "title": "User Logins & Registrations",
         "url": "#/dashboard/5d41a2b0-cd6e-11e9-b5e8-e908493e1aa7?embed=true&_g=(refreshInterval:(pause:!t,value:0),time:(from:now-1y,mode:quick,to:now))"
-      }, 
+      },
       {
             "title": "Business Process Activities",
             "url": "#/dashboard/548c5e20-cd6f-11e9-b5e8-e908493e1aa7?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2FM%2Cmode%3Aquick%2Cto%3Anow%2FM))"
-      }, 
+      },
       {
             "title": "Products Activities",
             "url": "#/dashboard/48ed8e30-cd70-11e9-b5e8-e908493e1aa7?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2FM%2Cmode%3Aquick%2Cto%3Anow%2FM))"
@@ -121,6 +121,10 @@ export const config = {
     ]
   },
   "kibanaEnabled": true,
+  "languageSettings": {
+    "available": ["en", "es", "de", "tr", "it", "sv"],
+    "fallback": "en"
+  },
   "loggingEnabled": true,
   "logoPath": "./assets/logo_mvp.png",
   "federationLogoPath": "./assets/logo_mvp_efactory.png",

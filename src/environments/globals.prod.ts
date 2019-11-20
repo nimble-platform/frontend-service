@@ -81,6 +81,10 @@ export const config = {
     "dashboards": []
   },
   "kibanaEnabled": false,
+  "languageSettings": {
+    "available": ["en", "es", "de", "tr", "it", "sv"],
+    "fallback": "en"
+  },
   "loggingEnabled": true,
   "logoPath": "./assets/logo_mvp.png",
   "federationLogoPath": "./assets/logo_mvp_efactory.png",

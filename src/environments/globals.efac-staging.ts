@@ -116,6 +116,10 @@ export const config = {
     ]
   },
   "kibanaEnabled": true,
+  "languageSettings": {
+    "available": ["en", "es", "de", "tr", "it", "sv"],
+    "fallback": "en"
+  },
   "loggingEnabled": true,
   "logoPath": "./assets/logo_efac.png",
   "federationLogoPath": "./assets/logo_mvp_efactory.png",
