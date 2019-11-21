@@ -122,13 +122,13 @@
 
     <div class="row mb-4 mt-4 ml-1">
         <div class="btn btn-outline-primary" [ngClass]="{'active':selectedPanel == 'TERMS_AND_CONDITIONS'}" (click)="selectedPanel = 'TERMS_AND_CONDITIONS'"><span [innerHTML]="'Terms and Conditions' | translate"></span></div>
-        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'PREVIOUS_STEPS'}" (click)="selectedPanel = 'PREVIOUS_STEPS'"><span [innerHTML]="'Previous Steps' | translate"></span></div>
+        <div *ngIf="orderContract" class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'PREVIOUS_STEPS'}" (click)="selectedPanel = 'PREVIOUS_STEPS'"><span [innerHTML]="'Previous Steps' | translate"></span></div>
     </div>
 
     <!-- Contract Preview -->
     <ng-container *ngIf="isReady()">
         <!--<div>-->
-        <contract *ngIf="selectedPanel == 'PREVIOUS_STEPS'" [contract]="getOrderContract()" [collapsable]="false"
+        <contract *ngIf="selectedPanel == 'PREVIOUS_STEPS'" [contract]="orderContract" [collapsable]="false"
                   [selectedLineIndex]="selectedLineIndex"
                   [areCatalogueLinesDeleted]="populateAreCatalogueLinesDeletedArray()"></contract>
         <!--</div>-->

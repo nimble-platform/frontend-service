@@ -71,6 +71,8 @@ export class OrderItemComponent implements OnInit {
     companyWorkflowMap = null;
     // whether multiple delivery dates are specified instead of a delivery period in the order
     areDeliveryDatesAvailable:boolean = false;
+    // contract consisting of the details of previous steps such as PPAP and Negotiation
+    orderContract:Contract = null;
 
     constructor(public bpDataService: BPDataService,
                 private userService: UserService,
@@ -93,6 +95,7 @@ export class OrderItemComponent implements OnInit {
         this.paymentTermsWrapper = new PaymentTermsWrapper(this.order.orderLine[this.lineIndex].lineItem.paymentTerms);
         this.userRole = this.bpDataService.bpActivityEvent.userRole;
         this.orderResponse = this.bpDataService.orderResponse;
+        this.orderContract = this.getOrderContract();
 
         this.companyWorkflowMap = this.bpDataService.getCompanyWorkflowMap(null);
 
@@ -282,7 +285,7 @@ export class OrderItemComponent implements OnInit {
         return areCatalogueLinesDeleted;
     }
 
-    getOrderContract():Contract{
+    private getOrderContract():Contract{
         let orderContract = null;
         if(this.order.contract){
             for(let contract of this.order.contract){
