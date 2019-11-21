@@ -228,6 +228,26 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
+	paymentDone(orderId: string): Promise<any> {
+		let headers = this.getAuthorizedHeaders();
+		const url = `${this.url}/paymentDone/${orderId}`;
+		return this.http
+			.post(url, null, {headers: headers})
+			.toPromise()
+			.then(res => res.text())
+			.catch(this.handleError);
+	}
+
+	isPaymentDone(orderId: string): Promise<any> {
+		let headers = this.getAuthorizedHeaders();
+		const url = `${this.url}/paymentDone/${orderId}`;
+		return this.http
+			.get(url,  {headers: headers})
+			.toPromise()
+			.then(res => res.text())
+			.catch(this.handleError);
+	}
+
 	getDashboardProcessInstanceDetails(processInstanceId:string): Promise<DashboardProcessInstanceDetails>{
         let url:string = `${this.url}/processInstance/${processInstanceId}/details`;
         return this.http

@@ -52,6 +52,7 @@ export class OrderComponent implements OnInit {
 
     buyerParty: Party;
     sellerParty: Party;
+    isPaymentDone: boolean = false;
 
     epcCodes: EpcCodes;
     savedEpcCodes: EpcCodes;
@@ -132,13 +133,15 @@ export class OrderComponent implements OnInit {
             Promise.all([
                 this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId),
                 this.userService.getParty(buyerId),
-                this.userService.getParty(sellerId)
+                this.userService.getParty(sellerId),
+                this.bpeService.isPaymentDone(this.order.id)
             ])
-            .then(([contract, buyerParty, sellerParty]) => {
-                this.buyerParty = buyerParty;
-                this.sellerParty = sellerParty;
-                this.order.contract.push(contract);
-                this.initCallStatus.callback("Initialized", true);
+                .then(([contract, buyerParty, sellerParty,isPaymentDone]) => {
+                    this.buyerParty = buyerParty;
+                    this.sellerParty = sellerParty;
+                    this.isPaymentDone = isPaymentDone == "true";
+                    this.order.contract.push(contract);
+                    this.initCallStatus.callback("Initialized", true);
 
             }).catch(error => {
                 this.initCallStatus.error("Error while initializing", error);
@@ -147,10 +150,12 @@ export class OrderComponent implements OnInit {
         } else {
             Promise.all([
                 this.userService.getParty(buyerId),
-                this.userService.getParty(sellerId)
-            ]).then(([buyerParty, sellerParty]) => {
+                this.userService.getParty(sellerId),
+                this.bpeService.isPaymentDone(this.order.id)
+            ]).then(([buyerParty, sellerParty, isPaymentDone]) => {
                 this.buyerParty = buyerParty;
                 this.sellerParty = sellerParty;
+                this.isPaymentDone = isPaymentDone == "true";
                 this.initCallStatus.callback("Initialized", true);
             })
             .catch(error => {
@@ -281,6 +286,16 @@ export class OrderComponent implements OnInit {
             error => {
                 this.submitCallStatus.error("Error while downloading bundle.", error);
             });
+    }
+
+    onPaymentDone(){
+        this.submitCallStatus.submit();
+        this.bpeService.paymentDone(this.order.id).then(response => {
+            this.isPaymentDone = true;
+            this.submitCallStatus.callback(null,true);
+        }).catch(error => {
+            this.submitCallStatus.error("Error while processing the payment", error);
+        })
     }
 
     onDispatchOrder() {
@@ -532,5 +547,9 @@ export class OrderComponent implements OnInit {
             }
         }
         return false;
+    }
+
+    isPaymentButtonDisabled():boolean{
+        return this.isLoading() || this.isOrderRejected() || this.isPaymentDone;
     }
 }
