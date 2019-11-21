@@ -83,7 +83,7 @@ export const config = {
   },
   "kibanaEnabled": false,
   "languageSettings": {
-    "available": ["en", "es", "de", "tr", "it", "sv"],
+    "available": ["en", "se"],
     "fallback": "en"
   },
   "loggingEnabled": false,
@@ -99,7 +99,7 @@ export const config = {
       "src":"./assets/eula.pdf"
     }
   ],
-  "showChat": false,
+  "showChat": true,
   "showCompanyMembers": false,
   "showExplorative": true,
   "showLCPA": true,
@@ -108,7 +108,7 @@ export const config = {
   "showTrade": true,
   "showVerification": true,
   "standardCurrency": "SEK",
-  "standardTaxonomy": "All",
+  "standardTaxonomy": "FurnitureOntology",
   "supportedActivitySectors": {
   	"": [],
   	"Logistics Provider": [],

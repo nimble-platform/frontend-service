@@ -1,6 +1,7 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { TrackInfo } from './model/trackinfo';
 import * as myGlobals from '../globals';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'tnt-event-data',
@@ -16,6 +17,8 @@ export class TnTEventDataComponent implements OnChanges {
     selectedEvent = {};
     eventsToDescribe: TrackInfo[] = [];
     debug = myGlobals.debug;
+
+    constructor(private translate: TranslateService) {}
 
     ngOnChanges() {
         if (!this.incomingTrackingInfo.length) {
