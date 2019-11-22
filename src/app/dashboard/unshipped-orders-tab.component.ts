@@ -14,6 +14,7 @@ import {CatalogueService} from '../catalogue/catalogue.service';
 import {LineItem} from '../catalogue/model/publish/line-item';
 import {UserService} from '../user-mgmt/user.service';
 import {Item} from '../catalogue/model/publish/item';
+import {BPDataService} from '../bpe/bp-view/bp-data-service';
 
 /**
  * Created by suat on 19-Sep-19.
@@ -46,6 +47,7 @@ export class UnshippedOrdersTabComponent implements OnInit {
                 private bpeService: BPEService,
                 private documentService: DocumentService,
                 private userService: UserService,
+                private bpDataService: BPDataService,
                 private cookieService: CookieService,
                 private translate: TranslateService,
                 private router: Router) {
@@ -190,6 +192,17 @@ export class UnshippedOrdersTabComponent implements OnInit {
                     orderQuantity: quantity.value
                 }
             });
+    }
+
+    onOrderDetailsClicked(orderId:string): void {
+        this.orderIdsCallStatus.submit();
+        this.bpeService.getProcessInstanceIdForDocument(orderId).then(processInstanceId => {
+            this.bpDataService.viewProcessDetails(processInstanceId);
+            this.orderIdsCallStatus.callback(null,true);
+        }).catch(error => {
+            this.orderIdsCallStatus.error("Failed to retrieve process instance id for the order",true)
+        });
+
     }
 }
 

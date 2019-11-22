@@ -64,7 +64,7 @@
                 <div class="data-row" *ngFor="let order of pa.salesOrders">
                     <ng-container>
                         <div class="col-4">
-                            {{order.id}}
+                            <span class="clickable" (click)="onOrderDetailsClicked(order.id)">{{order.id}}</span>
                         </div>
                         <div class="col-3">
                             {{partyNames.get(order.buyerCustomerParty.party.partyIdentification[0].id)}}

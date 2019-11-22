@@ -268,6 +268,14 @@ export class BPDataService{
         });
     }
 
+    // used to view details of the process with given id
+    // in this case, since this.bpActivityEvent might have the details of a different process, we need to clear it
+    public viewProcessDetails(processInstanceId:string){
+        // clear bpActivityEvent
+        this.bpActivityEvent = null;
+        this.router.navigate([`bpe/bpe-exec/${processInstanceId}`]);
+    }
+
     /*
      This method creates a new BpActivityEvent upon proceeding to a next business process from the current step.
      It fires this event without initiating a new navigation. The method does not create a new navigation but emits a new

@@ -400,6 +400,17 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
+	getProcessInstanceIdForDocument(documentId: string): Promise<any> {
+		const token = 'Bearer '+this.cookieService.get("bearer_token");
+		const headers = new Headers({'Accept': 'text/plain','Authorization': token});
+		let url: string = `${this.url}/processInstance/document/${documentId}`;
+		return this.http
+            .get(url, {headers: headers})
+            .toPromise()
+            .then(res => res.text())
+            .catch(this.handleError);
+	}
+
 	getFrameContract(sellerId: string, buyerId: string, productIds: string[]): Promise<DigitalAgreement> {
 		let productIdsParam = "";
 		let size = productIds.length;
