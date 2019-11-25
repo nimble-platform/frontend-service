@@ -466,8 +466,19 @@ export class ShoppingCartComponent implements OnInit {
             // otherwise, remove the rfq line created for this product
             else{
                 // get the index of catalogue line
-                let index = this.catalogueLineRfqLineIndexMap.get(cartLine.hjid);
+                let index = this.negotiationModelWrappers.get(cartLine.hjid).lineIndex;
                 rfq.requestForQuotationLine.splice(index,1);
+                // when one product is removed from the rfq, indexes in negotiationModelWrappers should be updated
+                let rfqLineSize = rfq.requestForQuotationLine.length;
+                for(let i = 0; i < rfqLineSize; i++){
+                    let rfqLine = rfq.requestForQuotationLine[i];
+                    // get corresponding product
+                    let catalogueLine = this.shoppingCart.catalogueLine.find(catalogueLine => catalogueLine.goodsItem.item.manufacturersItemIdentification.id == rfqLine.lineItem.item.manufacturersItemIdentification.id &&
+                        catalogueLine.goodsItem.item.catalogueDocumentReference.id == rfqLine.lineItem.item.catalogueDocumentReference.id);
+                    // update its line index
+                    this.negotiationModelWrappers.get(catalogueLine.hjid).lineIndex = i;
+                }
+
             }
 
             callStatus.callback(null, true);
@@ -507,7 +518,7 @@ export class ShoppingCartComponent implements OnInit {
         const rfq: RequestForQuotation = copy(this.rfqs.get(sellerId));
         // in the final rfq, there should be a single rfq line relating to selected catalogue line
         // find this rfq line and remove the rest
-        let index = this.catalogueLineRfqLineIndexMap.get(cartLine.hjid);
+        let index = this.negotiationModelWrappers.get(cartLine.hjid).lineIndex;
         rfq.requestForQuotationLine = [rfq.requestForQuotationLine[index]];
         // replace properties of rfq line with the selected ones
         rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty = this.modifiedCatalogueLines.get(cartLine.hjid).goodsItem.item.additionalItemProperty;
