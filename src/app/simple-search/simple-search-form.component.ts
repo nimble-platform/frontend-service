@@ -1513,7 +1513,7 @@ export class SimpleSearchFormComponent implements OnInit {
         this.selectedLineForShoppingBasket = result;
         this.shoppingCartCallStatus.submit();
         this.shoppingCartDataService.addItemToCart(result.uri).then(() => {
-            this.shoppingCartCallStatus.callback(null, true);
+            this.shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
         }).catch(() => {
             this.shoppingCartCallStatus.error(null);
         });
