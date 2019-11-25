@@ -122,7 +122,8 @@ export class CallStatus {
     }
 
     public isAllComplete(): boolean {
-        return this.callExists() && this.callCount === (this.errorCount + this.successCount);
+        let callExists = this.callExists();
+        return (callExists && this.callCount === (this.errorCount + this.successCount)) || !callExists;
     }
 
     public isAllSuccessful(): boolean {
