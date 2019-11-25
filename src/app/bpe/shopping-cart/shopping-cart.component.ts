@@ -526,6 +526,8 @@ export class ShoppingCartComponent implements OnInit {
 
             return this.bpeService.startProcessWithDocument(document);
         }).then(() => {
+            // started the negotiation for the product successfully,so remove it from the shopping cart
+            this.onRemoveFromCart(cartLine);
             callStatus.callback(null, true);
             this.router.navigate(['dashboard'], {queryParams: {tab: 'PURCHASES'}});
 
@@ -588,6 +590,10 @@ export class ShoppingCartComponent implements OnInit {
                 promises.push(this.bpeService.startProcessWithDocument(document));
             });
             Promise.all(promises).then(response => {
+                // started the negotiation for all products successfully,so remove them from the shopping cart
+                for(let cartLine of this.shoppingCart.catalogueLine){
+                    this.onRemoveFromCart(cartLine);
+                }
                 this.startBpCallStatus.callback(null, true);
                 this.router.navigate(['dashboard'], {queryParams: {tab: 'PURCHASES'}});
             }).catch(error => {
