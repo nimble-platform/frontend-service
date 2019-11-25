@@ -18,7 +18,7 @@
         </div>
         <call-status [large]="true" [callStatus]="startBpCallStatus"></call-status>
     </div>
-    <common-cart-terms *ngIf="showCommonTerms"
+    <common-cart-terms *ngIf="showCommonTerms && shoppingCart?.catalogueLine.length > 0"
                        [buyerCompanySettings]="buyerCompanySettings"
                        [doesBuyerCompanyHasItsOwnTerms]="doesBuyerCompanyHasItsOwnTerms"
                        (onApplyTermsEvent)="onApplyTerms($event)">
