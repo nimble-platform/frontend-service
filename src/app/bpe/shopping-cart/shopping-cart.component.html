@@ -39,7 +39,8 @@
                                       [inShoppingBasket]="true"
                                       [isNegotiatingAnyTerm]="areNegotiationConditionsSatisfied(cartLine)"
                                       (onCartItemDeleted)="onRemoveFromCart($event)"
-                                      (onNegotiate)="onSingleLineNegotiation($event)">
+                                      (onNegotiate)="onSingleLineNegotiation($event)"
+                                      [isNegotiateOrderButtonDisabled]="deleteCallStatuses.get(cartLine.hjid).fb_submitted">
             </product-details-overview>
             <product-details-tabs [wrapper]="productWrappers.get(cartLine.hjid)"
                                   [settings]="sellersSettings.get(getPartyId(cartLine.goodsItem.item.manufacturerParty))">
