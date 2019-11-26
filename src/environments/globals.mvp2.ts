@@ -10,6 +10,7 @@ export const debug = false;
 export const base_path = "http://161.156.70.122";
 export const ub_base = "http://161.156.70.122:8090";
 export const idpURL = "http://161.156.70.122:8080/auth/realms/master";
+export const collab_path = "http://nimble.eu-de.containers.appdomain.cloud/collaborations";
 export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client";
 export const frontendURL = base_path + "/frontend/";
 
@@ -26,6 +27,7 @@ export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}/logstash`;
 export const kibana_endpoint = `${base_path}/kibana/app/kibana`;
 export const delegate_endpoint = `${base_path}:9265`;
+export const collaboration_endpoint = `${collab_path}`;
 
 
 // BIBA endpoints
@@ -68,6 +70,7 @@ export const config = {
       "ontologyPrefix": "http://www.aidimme.es/FurnitureSectorOntology.owl#"
     }
   },
+  "collaborationEnabled": true,
   "dataChannelsEnabled" : true,
   "defaultBusinessProcessIds": [
   ],

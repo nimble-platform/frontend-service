@@ -545,6 +545,10 @@ export class AppComponent implements OnInit {
                 if (legal)
                     this.allowed = true;
                 break;
+            case "collaboration":
+                if (all_rights || publish)
+                    this.allowed = true;
+                break;
             default:
                 break;
         }

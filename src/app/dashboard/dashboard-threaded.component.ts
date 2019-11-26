@@ -392,7 +392,8 @@ export class DashboardThreadedComponent implements OnInit{
                 upped == TABS.PROJECTS ||
                 upped == TABS.PERFORMANCE ||
                 upped == TABS.FRAME_CONTRACTS ||
-                upped == TABS.UNSHIPPED_ORDERS) {
+                upped == TABS.UNSHIPPED_ORDERS ||
+                upped == TABS.COLLABORATION) {
                 return upped;
             }
         }
@@ -402,6 +403,8 @@ export class DashboardThreadedComponent implements OnInit{
           return TABS.SALES;
         if (this.appComponent.checkRoles('catalogue'))
           return TABS.CATALOGUE;
+        if (this.config.collaborationEnabled && this.appComponent.checkRoles('collaboration'))
+          return TABS.COLLABORATION;
         if (this.appComponent.checkRoles('favourite'))
           return TABS.FAVOURITE;
         if (this.appComponent.checkRoles('compare'))

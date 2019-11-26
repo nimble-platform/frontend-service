@@ -54,6 +54,9 @@
                     <a href id="CATALOGUE" *ngIf="this.appComponent.checkRoles('catalogue')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.CATALOGUE}" (click)="onChangeTab($event,'CATALOGUE')"><span [innerHTML]="'Catalogue' | translate"></span></a>
                 </li>
                 <li class="nav-item">
+                    <a href id="COLLABORATION" *ngIf="config.collaborationEnabled && this.appComponent.checkRoles('collaboration')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.COLLABORATION}" (click)="onChangeTab($event,'COLLABORATION')"><span [innerHTML]="'Collaboration' | translate"></span></a>
+                </li>
+                <li class="nav-item">
                     <a href id="FAVOURITE" *ngIf="this.appComponent.checkRoles('favourite')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.FAVOURITE}" (click)="onChangeTab($event,'FAVOURITE')"><span [innerHTML]="'Favourite' | translate"></span></a>
                 </li>
                 <li class="nav-item">
@@ -352,6 +355,13 @@
     <div *ngIf="queryParameters.tab === TABS.CATALOGUE" class="row">
         <div class="col-12">
             <catalogue-view></catalogue-view>
+        </div>
+    </div>
+
+    <!-- Collaboration tab -->
+    <div *ngIf="queryParameters.tab === TABS.COLLABORATION" class="row">
+        <div class="col-12">
+            <collaboration-view></collaboration-view>
         </div>
     </div>
 

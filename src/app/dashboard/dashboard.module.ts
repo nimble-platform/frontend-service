@@ -12,6 +12,7 @@ import { BPEModule } from "../bpe/bpe.module";
 import { AnalyticsModule } from "../analytics/analytics.module";
 import {FrameContractTabComponent} from "./frame-contract-tab.component";
 import {UnshippedOrdersTabComponent} from './unshipped-orders-tab.component';
+import {CollaborationModule} from '../catalogue/collaboration/collaboration.module';
 
 @NgModule({
 	imports: [
@@ -23,6 +24,7 @@ import {UnshippedOrdersTabComponent} from './unshipped-orders-tab.component';
 		DashboardRoutingModule,
 		CatalogueModule,
 		AnalyticsModule,
+		CollaborationModule,
 		BPEModule,
 		NgbModule.forRoot()
 	],
