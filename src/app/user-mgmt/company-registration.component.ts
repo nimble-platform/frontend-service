@@ -13,9 +13,10 @@ import * as myGlobals from '../globals';
 import {CallStatus} from '../common/call-status';
 import {Address} from './model/address';
 import {TranslateService} from '@ngx-translate/core';
-import {getCountryByISO, getFileExtension} from '../common/utils';
+import {getCountryByISO, getFileExtension, getArrayOfTextObject, createTextObjectFromArray} from '../common/utils';
 import {ALLOWED_EXTENSIONS} from '../common/constants';
 import {createTextObject, selectValueOfTextObject} from '../common/utils';
+import { LANGUAGES, DEFAULT_LANGUAGE } from '../catalogue/model/constants';
 
 @Component({
     selector: 'company-registration',
@@ -27,6 +28,10 @@ export class CompanyRegistrationComponent implements OnInit {
 
     public alertClosed = false;
     public registrationForm: FormGroup;
+    companyNameArr: any;
+    brandNameArr: any;
+    industrySectorsArr: any;
+    businessKeywordsArr: any;
     config = myGlobals.config;
     submitCallStatus: CallStatus = new CallStatus();
     vatCallStatus: CallStatus = new CallStatus();
@@ -36,6 +41,7 @@ export class CompanyRegistrationComponent implements OnInit {
     vatValidated = false;
     vat = "";
     forceActText = false;
+    languages = LANGUAGES;
 
     constructor(private _fb: FormBuilder,
                 private appComponent: AppComponent,
@@ -48,17 +54,57 @@ export class CompanyRegistrationComponent implements OnInit {
 
     ngOnInit() {
         this.registrationForm = this._fb.group({
-            name: [''],
-            brandName: [''],
             vatNumber: [''],
             logo: [''],
             verificationInformation: [''],
             businessType: [''],
-            businessKeywords: [''],
-            industrySectors: [''],
             yearOfReg: [''],
             address: AddressSubForm.generateForm(this._fb),
         });
+        this.companyNameArr = getArrayOfTextObject({});
+        this.brandNameArr = getArrayOfTextObject({});
+        this.industrySectorsArr = getArrayOfTextObject({});
+        this.businessKeywordsArr = getArrayOfTextObject({});
+    }
+
+    addCompanyName() {
+      this.companyNameArr.push({"text":"","lang":""});
+    }
+
+    removeCompanyName(index:number){
+      this.companyNameArr.splice(index,1);
+      if (this.companyNameArr.length == 0)
+        this.companyNameArr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
+    }
+
+    addBrandName() {
+      this.brandNameArr.push({"text":"","lang":""});
+    }
+
+    removeBrandName(index:number){
+      this.brandNameArr.splice(index,1);
+      if (this.brandNameArr.length == 0)
+        this.brandNameArr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
+    }
+
+    addIndustrySectors() {
+      this.industrySectorsArr.push({"text":"","lang":""});
+    }
+
+    removeIndustrySectors(index:number){
+      this.industrySectorsArr.splice(index,1);
+      if (this.industrySectorsArr.length == 0)
+        this.industrySectorsArr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
+    }
+
+    addBusinessKeywords() {
+      this.businessKeywordsArr.push({"text":"","lang":""});
+    }
+
+    removeBusinessKeywords(index:number){
+      this.businessKeywordsArr.splice(index,1);
+      if (this.businessKeywordsArr.length == 0)
+        this.businessKeywordsArr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
     }
 
     skipVAT() {
@@ -68,14 +114,14 @@ export class CompanyRegistrationComponent implements OnInit {
     backToVAT() {
         this.vatSkipped = false;
         this.vatValidated = false;
-        this.registrationForm.controls['name'].setValue("");
-        this.registrationForm.controls['brandName'].setValue("");
+        this.companyNameArr = getArrayOfTextObject({});
+        this.brandNameArr = getArrayOfTextObject({});
         this.registrationForm.controls['vatNumber'].setValue("");
         this.registrationForm.controls['logo'].setValue("");
         this.registrationForm.controls['verificationInformation'].setValue("");
         this.registrationForm.controls['businessType'].setValue("");
-        this.registrationForm.controls['businessKeywords'].setValue("");
-        this.registrationForm.controls['industrySectors'].setValue("");
+        this.businessKeywordsArr = getArrayOfTextObject({});
+        this.industrySectorsArr = getArrayOfTextObject({});
         this.registrationForm.controls['yearOfReg'].setValue("");
         AddressSubForm.update(this.registrationForm.controls['address'] as FormGroup, new Address("", "", "", "", "", ""));
     }
@@ -86,8 +132,9 @@ export class CompanyRegistrationComponent implements OnInit {
             .then(response => {
                 this.vatCallStatus.callback("VAT checked", true);
                 if (response.IsValid) {
-                    if (response.BusinessName && response.BusinessName != "" && response.BusinessName != "---")
-                        this.registrationForm.controls['name'].setValue(response.BusinessName);
+                    if (response.BusinessName && response.BusinessName != "" && response.BusinessName != "---") {
+                        this.companyNameArr[0].text = response.BusinessName;
+                    }
                     this.registrationForm.controls['vatNumber'].setValue(this.vat);
                     if (response.CountryCode)
                         AddressSubForm.update(this.registrationForm.controls['address'] as FormGroup, new Address("", "", "", "", "", getCountryByISO(response.CountryCode)));
@@ -103,10 +150,20 @@ export class CompanyRegistrationComponent implements OnInit {
             });
     }
 
+    isRequiredEmpty() {
+      let empty = false;
+      if (Object.keys(createTextObjectFromArray(this.companyNameArr)).length == 0)
+        empty = true;
+      if (Object.keys(createTextObjectFromArray(this.industrySectorsArr)).length == 0)
+        empty = true;
+      return empty;
+    }
+
     save(model: FormGroup) {
-        var sectorString = model.getRawValue()['industrySectors'];
-        if (Array.isArray(sectorString))
-            sectorString = sectorString.join("\n");
+        if (this.industrySectorsArr.length == 1 && Array.isArray(this.industrySectorsArr[0].text)) {
+          this.industrySectorsArr[0].text = this.industrySectorsArr[0].text.join("\n");
+          this.industrySectorsArr[0].lang = DEFAULT_LANGUAGE();
+        }
         // create company registration DTO
         let userId = this.cookieService.get('user_id');
         let companyRegistration: CompanyRegistration = new CompanyRegistration(
@@ -118,11 +175,11 @@ export class CompanyRegistrationComponent implements OnInit {
                 null,
                 new CompanyDetails(
                     model.getRawValue()['address'],
-                    createTextObject(model.getRawValue()['businessKeywords'],"en"),
+                    createTextObjectFromArray(this.businessKeywordsArr),
                     model.getRawValue()['businessType'],
-                    createTextObject(model.getRawValue()['name'],"en"),
-                    createTextObject(model.getRawValue()['brandName'],"en"),
-                    createTextObject(sectorString,"en"),
+                    createTextObjectFromArray(this.companyNameArr),
+                    createTextObjectFromArray(this.brandNameArr),
+                    createTextObjectFromArray(this.industrySectorsArr),
                     model.getRawValue()['vatNumber'],
                     model.getRawValue()['verificationInformation'],
                     model.getRawValue()['yearOfReg'],
@@ -175,7 +232,7 @@ export class CompanyRegistrationComponent implements OnInit {
     }
 
     switchInput() {
-      this.registrationForm.controls['industrySectors'].setValue("");
+      this.industrySectorsArr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
       this.forceActText = !this.forceActText;
     }
 

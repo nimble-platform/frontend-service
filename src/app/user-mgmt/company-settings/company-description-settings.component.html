@@ -4,8 +4,29 @@
     <strong><span [innerHTML]="'Company Description:' | translate"></span></strong>
   </label>
   <div class="col-10">
-    <textarea class="form-control" rows="3" [formControl]="descriptionForm.controls['companyStatement']" maxlength="255">
-    </textarea>
+    <ng-container *ngFor="let companyStatementEntry of companyStatementArr; let i = index; trackBy:trackFn">
+      <div class="row mb-1">
+        <div class="col-8">
+          <textarea rows="3" class="form-control" [(ngModel)]="companyStatementArr[i].text" [ngModelOptions]="{standalone: true}" (input)="flagChanged()" maxlength="255"></textarea>
+        </div>
+        <div class="col-2">
+          <select class="form-control" [(ngModel)]="companyStatementArr[i].lang" [ngModelOptions]="{standalone: true}" (change)="flagChanged()">
+              <option *ngFor='let language of languages' [value]="language">{{language}}</option>
+          </select>
+        </div>
+        <div class="col-2">
+          <button class="btn btn-danger w-100" type="button" (click)="removeCompanyStatement(i)"><span [innerHTML]="'Delete' | translate"></span></button>
+        </div>
+      </div>
+    </ng-container>
+    <div class="row mt-2 mb-1">
+      <div class="col-10"></div>
+      <div class="col-2">
+        <button class="btn btn-secondary w-100" type="button" (click)="addCompanyStatement()">
+          <span [innerHTML]="'Add' | translate"></span>
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -134,7 +155,7 @@
     </div>
     -->
     <div class="col-2">
-        <button class="btn btn-primary action" [disabled]="!descriptionForm.valid || (!descriptionForm.dirty && !socialMediaListChanged && !externalResourcesChanged && !compEventsChanged) || saveCallStatus.isLoading()" (click)="onSave(descriptionForm)">
+        <button class="btn btn-primary action" [disabled]="!descriptionForm.valid || (!descriptionForm.dirty && !inputChanged && !socialMediaListChanged && !externalResourcesChanged && !compEventsChanged) || saveCallStatus.isLoading()" (click)="onSave(descriptionForm)">
           <span [innerHTML]="'Save' | translate"></span>
         </button>
     </div>

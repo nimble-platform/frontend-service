@@ -5,7 +5,7 @@ import { Price } from "../catalogue/model/publish/price";
 import { Category } from "../catalogue/model/category/category";
 import { Property } from "../catalogue/model/category/property";
 import { PropertyValueQualifier } from "../catalogue/model/publish/property-value-qualifier";
-import {CUSTOM_PROPERTY_LIST_ID, DEFAULT_LANGUAGE} from '../catalogue/model/constants';
+import {CUSTOM_PROPERTY_LIST_ID, DEFAULT_LANGUAGE, LANGUAGES} from '../catalogue/model/constants';
 import {Item} from '../catalogue/model/publish/item';
 import {Text} from '../catalogue/model/publish/text';
 import { CatalogueLine } from "../catalogue/model/publish/catalogue-line";
@@ -345,6 +345,29 @@ export function createTextObject(value:string,lang?:string):Object{
     let textObject = {};
     textObject[defaultLanguage] = value;
     return textObject;
+}
+
+// For a given TextObject get an array of objects with text and lang keys
+export function getArrayOfTextObject(textObject):any {
+  let arr = [];
+  let keys = Object.keys(textObject);
+  for(let key of keys){
+      arr.push({"text":textObject[key],"lang":key});
+  }
+  if (arr.length == 0)
+    arr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
+  return arr;
+}
+
+// Transform an array created using the getArrayOfTextObject function back to a TextObject
+export function createTextObjectFromArray(arr):Object {
+  let textObject = {};
+  for (let i=0; i<arr.length; i++) {
+    if (arr[i].lang != "" && arr[i].text != "") {
+      textObject[arr[i].lang] = arr[i].text;
+    }
+  }
+  return textObject;
 }
 
 // For the given PartyName array, it finds the correct name of the party according to the default language of the browser.

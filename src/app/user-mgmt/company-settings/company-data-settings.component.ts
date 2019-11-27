@@ -3,13 +3,14 @@ import { CompanySettings } from "../model/company-settings";
 import { AppComponent } from "../../app.component";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import * as myGlobals from '../../globals';
-import {selectValueOfTextObject, createTextObject} from '../../common/utils';
+import {selectValueOfTextObject, createTextObject, getArrayOfTextObject, createTextObjectFromArray} from '../../common/utils';
 import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 import { AddressSubForm } from "../subforms/address.component";
 import { CallStatus } from "../../common/call-status";
 import { UserService } from "../user.service";
 import {TranslateService} from '@ngx-translate/core';
 import { Router } from "@angular/router";
+import { LANGUAGES, DEFAULT_LANGUAGE } from "../../catalogue/model/constants";
 
 @Component({
     selector: "company-data-settings",
@@ -18,7 +19,13 @@ import { Router } from "@angular/router";
 export class CompanyDataSettingsComponent implements OnInit {
 
     @Input() settings: CompanySettings;
+    companyNameArr: any;
+    brandNameArr: any;
+    industrySectorsArr: any;
+    businessKeywordsArr: any;
     dataForm: FormGroup;
+    inputChanged = false;
+    languages = LANGUAGES;
     mailto: string;
     tooltipHTML: string;
     config = myGlobals.config;
@@ -39,28 +46,84 @@ export class CompanyDataSettingsComponent implements OnInit {
     }
 
     ngOnInit() {
-      let industrySectorVal;
-      if (this.settings.details.industrySectors && this.selectValueOfTextObject(this.settings.details.industrySectors))
-        industrySectorVal = this.selectValueOfTextObject(this.settings.details.industrySectors);
-      else
-        industrySectorVal = "";
-      if (this.isSectorArray(industrySectorVal)) {
-        industrySectorVal = this.getSectorArray(industrySectorVal);
+      this.companyNameArr = getArrayOfTextObject(this.settings.details.legalName);
+      this.brandNameArr = getArrayOfTextObject(this.settings.details.brandName);
+      this.industrySectorsArr = getArrayOfTextObject(this.settings.details.industrySectors);
+      if (this.industrySectorsArr.length == 1 && this.isSectorArray(this.industrySectorsArr[0].text)) {
+        this.industrySectorsArr[0].text = this.getSectorArray(this.industrySectorsArr[0].text);
         this.forceActText = false;
       }
       else
         this.forceActText = true;
+      this.businessKeywordsArr = getArrayOfTextObject(this.settings.details.businessKeywords);
       this.dataForm = this._fb.group({
-          name: new FormControl({value: (this.selectValueOfTextObject(this.settings.details.legalName) || ""), disabled: !this.appComponent.checkRoles('pm')}),
-          brandName: new FormControl({value: (this.selectValueOfTextObject(this.settings.details.brandName) || ""), disabled: (!this.appComponent.checkRoles('pm') && Object.keys(this.settings.details.brandName).length == 0)}),
           vatNumber: new FormControl({value: (this.settings.details.vatNumber || ""), disabled: !this.appComponent.checkRoles('pm')}),
           verificationInformation: new FormControl({value: (this.settings.details.verificationInformation || ""), disabled: (!this.appComponent.checkRoles('pm') && this.settings.details.verificationInformation)}),
           businessType: new FormControl({value: (this.settings.details.businessType || ""), disabled: !this.appComponent.checkRoles('pm')}),
-          industrySectors: new FormControl({value: industrySectorVal, disabled: !this.appComponent.checkRoles('pm')}),
-          businessKeywords: new FormControl({value: (this.selectValueOfTextObject(this.settings.details.businessKeywords) || ""), disabled: (!this.appComponent.checkRoles('pm') && Object.keys(this.settings.details.businessKeywords).length == 0)}),
           yearOfReg: new FormControl({value: (this.settings.details.yearOfCompanyRegistration || ""), disabled: (!this.appComponent.checkRoles('pm') && this.settings.details.yearOfCompanyRegistration)}),
           address: AddressSubForm.update(AddressSubForm.generateForm(this._fb), this.settings.details.address)
       });
+    }
+
+    addCompanyName() {
+      this.companyNameArr.push({"text":"","lang":""});
+      this.flagChanged();
+    }
+
+    removeCompanyName(index:number){
+      this.companyNameArr.splice(index,1);
+      if (this.companyNameArr.length == 0)
+        this.companyNameArr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
+      this.flagChanged();
+    }
+
+    addBrandName() {
+      this.brandNameArr.push({"text":"","lang":""});
+      this.flagChanged();
+    }
+
+    removeBrandName(index:number){
+      this.brandNameArr.splice(index,1);
+      if (this.brandNameArr.length == 0)
+        this.brandNameArr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
+      this.flagChanged();
+    }
+
+    addIndustrySectors() {
+      this.industrySectorsArr.push({"text":"","lang":""});
+      this.flagChanged();
+    }
+
+    removeIndustrySectors(index:number){
+      this.industrySectorsArr.splice(index,1);
+      if (this.industrySectorsArr.length == 0)
+        this.industrySectorsArr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
+      this.flagChanged();
+    }
+
+    addBusinessKeywords() {
+      this.businessKeywordsArr.push({"text":"","lang":""});
+      this.flagChanged();
+    }
+
+    removeBusinessKeywords(index:number){
+      this.businessKeywordsArr.splice(index,1);
+      if (this.businessKeywordsArr.length == 0)
+        this.businessKeywordsArr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
+      this.flagChanged();
+    }
+
+    flagChanged() {
+      this.inputChanged = true;
+    }
+
+    isRequiredEmpty() {
+      let empty = false;
+      if (Object.keys(createTextObjectFromArray(this.companyNameArr)).length == 0)
+        empty = true;
+      if (Object.keys(createTextObjectFromArray(this.industrySectorsArr)).length == 0)
+        empty = true;
+      return empty;
     }
 
     deleteCompany(): void {
@@ -81,16 +144,17 @@ export class CompanyDataSettingsComponent implements OnInit {
 
     save(model: FormGroup) {
       this.saveCallStatus.submit();
-      var sectorString = model.getRawValue()['industrySectors'];
-      if (Array.isArray(sectorString))
-        sectorString = sectorString.join("\n");
-      this.settings.details.legalName =  createTextObject(model.getRawValue()['name'],"en");
-      this.settings.details.brandName = createTextObject(model.getRawValue()['brandName'],"en");
+      if (this.industrySectorsArr.length == 1 && Array.isArray(this.industrySectorsArr[0].text)) {
+        this.industrySectorsArr[0].text = this.industrySectorsArr[0].text.join("\n");
+        this.industrySectorsArr[0].lang = DEFAULT_LANGUAGE();
+      }
+      this.settings.details.legalName = createTextObjectFromArray(this.companyNameArr);
+      this.settings.details.brandName = createTextObjectFromArray(this.brandNameArr);
       this.settings.details.vatNumber =  model.getRawValue()['vatNumber'];
       this.settings.details.verificationInformation =  model.getRawValue()['verificationInformation'];
       this.settings.details.businessType =  model.getRawValue()['businessType'];
-      this.settings.details.industrySectors =  createTextObject(sectorString,"en");
-      this.settings.details.businessKeywords =  createTextObject(model.getRawValue()['businessKeywords'],"en");
+      this.settings.details.industrySectors = createTextObjectFromArray(this.industrySectorsArr);
+      this.settings.details.businessKeywords = createTextObjectFromArray(this.businessKeywordsArr);
       this.settings.details.yearOfCompanyRegistration =  model.getRawValue()['yearOfReg'];
       this.settings.details.address =  model.getRawValue()['address'];
       let compId = this.settings.companyID;
@@ -101,6 +165,13 @@ export class CompanyDataSettingsComponent implements OnInit {
                   console.log(`Saved Company Settings for company ${compId}. Response: ${response}`);
               }
               this.saveCallStatus.callback("Successfully saved", true);
+              this.inputChanged = false;
+              if (this.industrySectorsArr.length == 1 && this.isSectorArray(this.industrySectorsArr[0].text)) {
+                this.industrySectorsArr[0].text = this.getSectorArray(this.industrySectorsArr[0].text);
+                this.forceActText = false;
+              }
+              else
+                this.forceActText = true;
               this.dataForm.markAsPristine();
               this.onSaveEvent.emit();
           })
@@ -129,7 +200,7 @@ export class CompanyDataSettingsComponent implements OnInit {
     }
 
     switchInput() {
-      this.dataForm.controls['industrySectors'].setValue("");
+      this.industrySectorsArr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
       this.forceActText = !this.forceActText;
     }
 
@@ -144,6 +215,8 @@ export class CompanyDataSettingsComponent implements OnInit {
         body += "\n\n";
         body += "Company Name:\n";
         body += this.selectValueOfTextObject(this.settings.details.legalName) + "\n\n";
+        body += "Brand Name:\n";
+        body += this.selectValueOfTextObject(this.settings.details.brandName) + "\n\n";
         body += "VAT Number:\n";
         body += this.settings.details.vatNumber + "\n\n";
         body += "Verification Info:\n";
