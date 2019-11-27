@@ -195,25 +195,25 @@
                     <div class="row">
                         <!-- Filters -->
                         <div class="col-2">
-                            <facet [title]="'Product / Service'" [dataType]="'string'"
+                            <facet [title]="'Product / Service' | translate" [dataType]="'string'"
                                 [stringValues]="filterSet && filterSet.relatedProducts"
                                 [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.relatedProducts"
                                 [loading]="areFiltersLoading()"
                                 (triggerCriteriaChanged)="onFilterChange()">
                             </facet>
-                            <facet [title]="'Category'" [dataType]="'string'"
+                            <facet [title]="'Category' | translate" [dataType]="'string'"
                                 [stringValues]="filterSet && filterSet.relatedProductCategories"
                                 [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.relatedProductCategories"
                                 [loading]="areFiltersLoading()"
                                 (triggerCriteriaChanged)="onFilterChange()">
                             </facet>
-                            <facet [title]="'Trading Partner'" [dataType]="'string'"
+                            <facet [title]="'Trading Partner' | translate" [dataType]="'string'"
                                 [stringValues]="filterSet && filterSet.tradingPartnerNames"
                                 [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.tradingPartnerNames"
                                 [loading]="areFiltersLoading()"
                                 (triggerCriteriaChanged)="onFilterChange()">
                             </facet>
-                            <facet [title]="'Status'" [dataType]="'string'"
+                            <facet [title]="'Status' | translate" [dataType]="'string'"
                                    [stringValues]="filterSet && filterSet.status"
                                    [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.status"
                                    [loading]="areFiltersLoading()"
