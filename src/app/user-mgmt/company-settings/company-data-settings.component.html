@@ -55,22 +55,22 @@
       <ng-container *ngFor="let brandNameEntry of brandNameArr; let i = index; trackBy:trackFn">
         <div class="row mb-1">
           <div class="col-8">
-            <input type="text" class="form-control" [(ngModel)]="brandNameArr[i].text" [ngModelOptions]="{standalone: true}" (input)="flagChanged()" maxlength="255" [disabled]="saveCallStatus.isLoading() || (!appComponent.checkRoles('pm') && Object.keys(settings.details.brandName).length == 0)">
+            <input type="text" class="form-control" [(ngModel)]="brandNameArr[i].text" [ngModelOptions]="{standalone: true}" (input)="flagChanged()" maxlength="255" [disabled]="saveCallStatus.isLoading() || (!appComponent.checkRoles('pm') && isEmptyObject(settings.details.brandName))">
           </div>
           <div class="col-2">
-            <select class="form-control" [(ngModel)]="brandNameArr[i].lang" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" [disabled]="saveCallStatus.isLoading() || (!appComponent.checkRoles('pm') && Object.keys(settings.details.brandName).length == 0)">
+            <select class="form-control" [(ngModel)]="brandNameArr[i].lang" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" [disabled]="saveCallStatus.isLoading() || (!appComponent.checkRoles('pm') && isEmptyObject(settings.details.brandName))">
                 <option *ngFor='let language of languages' [value]="language">{{language}}</option>
             </select>
           </div>
           <div class="col-2">
-            <button class="btn btn-danger w-100" type="button" (click)="removeBrandName(i)" [disabled]="saveCallStatus.isLoading() || (!appComponent.checkRoles('pm') && Object.keys(settings.details.brandName).length == 0)"><span [innerHTML]="'Delete' | translate"></span></button>
+            <button class="btn btn-danger w-100" type="button" (click)="removeBrandName(i)" [disabled]="saveCallStatus.isLoading() || (!appComponent.checkRoles('pm') && isEmptyObject(settings.details.brandName))"><span [innerHTML]="'Delete' | translate"></span></button>
           </div>
         </div>
       </ng-container>
       <div class="row mt-2 mb-1">
         <div class="col-10"></div>
         <div class="col-2">
-          <button class="btn btn-secondary w-100" type="button" (click)="addBrandName()" [disabled]="saveCallStatus.isLoading() || (!appComponent.checkRoles('pm') && Object.keys(settings.details.brandName).length == 0)">
+          <button class="btn btn-secondary w-100" type="button" (click)="addBrandName()" [disabled]="saveCallStatus.isLoading() || (!appComponent.checkRoles('pm') && isEmptyObject(settings.details.brandName))">
             <span [innerHTML]="'Add' | translate"></span>
           </button>
         </div>
@@ -165,22 +165,22 @@
       <ng-container *ngFor="let businessKeywordsEntry of businessKeywordsArr; let i = index; trackBy:trackFn">
         <div class="row mb-1">
           <div class="col-8">
-            <textarea rows="3" class="form-control" [(ngModel)]="businessKeywordsArr[i].text" [ngModelOptions]="{standalone: true}" (input)="flagChanged()" placeholder="Separate entries using new lines" maxlength="255" [disabled]="saveCallStatus.isLoading() || (!appComponent.checkRoles('pm') && Object.keys(settings.details.businessKeywords).length == 0)"></textarea>
+            <textarea rows="3" class="form-control" [(ngModel)]="businessKeywordsArr[i].text" [ngModelOptions]="{standalone: true}" (input)="flagChanged()" placeholder="Separate entries using new lines" maxlength="255" [disabled]="saveCallStatus.isLoading() || (!appComponent.checkRoles('pm') && isEmptyObject(settings.details.businessKeywords))"></textarea>
           </div>
           <div class="col-2">
-            <select class="form-control" [(ngModel)]="businessKeywordsArr[i].lang" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" [disabled]="saveCallStatus.isLoading() || (!appComponent.checkRoles('pm') && Object.keys(settings.details.businessKeywords).length == 0)">
+            <select class="form-control" [(ngModel)]="businessKeywordsArr[i].lang" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" [disabled]="saveCallStatus.isLoading() || (!appComponent.checkRoles('pm') && isEmptyObject(settings.details.businessKeywords))">
                 <option *ngFor='let language of languages' [value]="language">{{language}}</option>
             </select>
           </div>
           <div class="col-2">
-            <button class="btn btn-danger w-100" type="button" (click)="removeBusinessKeywords(i)" [disabled]="saveCallStatus.isLoading() || (!appComponent.checkRoles('pm') && Object.keys(settings.details.businessKeywords).length == 0)"><span [innerHTML]="'Delete' | translate"></span></button>
+            <button class="btn btn-danger w-100" type="button" (click)="removeBusinessKeywords(i)" [disabled]="saveCallStatus.isLoading() || (!appComponent.checkRoles('pm') && isEmptyObject(settings.details.businessKeywords))"><span [innerHTML]="'Delete' | translate"></span></button>
           </div>
         </div>
       </ng-container>
       <div class="row mt-2 mb-1">
         <div class="col-10"></div>
         <div class="col-2">
-          <button class="btn btn-secondary w-100" type="button" (click)="addBusinessKeywords()" [disabled]="saveCallStatus.isLoading() || (!appComponent.checkRoles('pm') && Object.keys(settings.details.businessKeywords).length == 0)">
+          <button class="btn btn-secondary w-100" type="button" (click)="addBusinessKeywords()" [disabled]="saveCallStatus.isLoading() || (!appComponent.checkRoles('pm') && isEmptyObject(settings.details.businessKeywords))">
             <span [innerHTML]="'Add' | translate"></span>
           </button>
         </div>

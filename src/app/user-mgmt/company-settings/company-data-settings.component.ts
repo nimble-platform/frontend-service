@@ -65,6 +65,14 @@ export class CompanyDataSettingsComponent implements OnInit {
       });
     }
 
+    trackFn(index,item) {
+      return index;
+    }
+
+    isEmptyObject(obj) {
+      return (Object.keys(obj).length == 0);
+    }
+
     addCompanyName() {
       this.companyNameArr.push({"text":"","lang":""});
       this.flagChanged();

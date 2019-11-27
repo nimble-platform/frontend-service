@@ -67,6 +67,10 @@ export class CompanyRegistrationComponent implements OnInit {
         this.businessKeywordsArr = getArrayOfTextObject({});
     }
 
+    trackFn(index,item) {
+      return index;
+    }
+
     addCompanyName() {
       this.companyNameArr.push({"text":"","lang":""});
     }
