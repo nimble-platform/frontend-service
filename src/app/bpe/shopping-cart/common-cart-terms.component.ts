@@ -89,7 +89,8 @@ export class CommonCartTermsComponent implements OnInit {
      */
 
     onApplyTerms(): void {
-        if (confirm('Are you sure that you want to apply terms to all products?\nExisting terms will be overwritten.')) {
+        if (confirm('Common terms will be applied to the products for which \'Reset changes\' checkbox is checked and existing terms will be overwritten.\n' +
+            'Are you sure that you want to apply terms ?')) {
             let commonTerms:CommonTerms = new CommonTerms(this.deliveryPeriod,
                 this.warrantyPeriod,
                 this.incoTerm,
