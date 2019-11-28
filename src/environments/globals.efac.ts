@@ -10,6 +10,7 @@ export const debug = false;
 export const base_path = "https://efactory-nimble.salzburgresearch.at";
 export const ub_base = "https://efactory-nimble.salzburgresearch.at/ub-search";
 export const idpURL = "https://efactory-nimble.salzburgresearch.at:8080/auth/realms/master";
+export const collab_path = "http://nimble.eu-de.containers.appdomain.cloud/collaborations";
 export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client";
 export const frontendURL = base_path + "/frontend/";
 
@@ -26,6 +27,7 @@ export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}/logstash`;
 export const kibana_endpoint = `${base_path}/kibana/app/kibana`;
 export const delegate_endpoint = `${base_path}:9265`;
+export const collaboration_endpoint = `${collab_path}`;
 
 
 // BIBA endpoints
@@ -45,9 +47,10 @@ export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 
 // TnT Endpoints
 
-export const tntEndpoint = `${bpe_endpoint}/t-t/epc-details`;
-export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
-export const tntMasterDataEndpoint = 'http://nimble-dev.ikap.biba.uni-bremen.de:8117';
+export const tntEndpoint = `${base_path}/tracking`;
+export const tntMasterDataEndpoint = `${base_path}/tracking/masterData/id/`;
+export const tntAnalysisEndpoint = `${base_path}/tracking-analysis/`;
+export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 
 
 // Platform Configuration
@@ -67,17 +70,27 @@ export const config = {
       "ontologyPrefix": "http://www.aidimme.es/FurnitureSectorOntology.owl#"
     }
   },
+  "collaborationEnabled": false,
   "dataChannelsEnabled" : false,
+  "defaultBusinessProcessIds": [
+  ],
   "defaultSearchIndex": "Name",
   "delegationEnabled": false,
   "frameContractTabEnabled":true,
   "imprint": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Platform Owner</u><br/><b>AIDIMME - Technological Institute of Metalworking, Furniture, Wood, Packaging and Related sectors</b><br/>Technological Park, Benjamín Franklin Street 13<br/>46980 Paterna (Valencia), Spain<br/>Phone: +34.961.366.070<br/>E-Mail: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>CIF: G46261590</td><td class='w-50 p-0 pl-3'><u>Platform Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)</td></tr></table>",
   "kibanaConfig": {
+    "companyDashboards": [],
+    "companyGraphs": [],
     "dashboards": []
   },
   "kibanaEnabled": false,
+  "languageSettings": {
+    "available": ["en", "es", "de", "tr", "it", "sv"],
+    "fallback": "en"
+  },
   "loggingEnabled": false,
-  "logoPath": "./assets/logo_fmp.png",
+  "logoPath": "./assets/logo_efac.png",
+  "federationLogoPath": "./assets/logo_mvp_efactory.png",
   "logoRequired": true,
   "phoneNumberRequired": true,
   "vatEnabled": false,
@@ -202,6 +215,7 @@ export const config = {
     "es":"Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
   },
   "showLoginFederation": true,
+  "unshippedOrdersTabEnabled":true,
   "federationClientID": "efact-test-client",
   "federationIDP": "EFS",
 };

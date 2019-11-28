@@ -10,6 +10,7 @@ export const debug = false;
 export const base_path = "http://nimble-dev.ikap.biba.uni-bremen.de";
 export const ub_base = "http://nimble-dev.ikap.biba.uni-bremen.de:10096";
 export const idpURL = "http://nimble-dev.ikap.biba.uni-bremen.de:8080/auth/realms/master";
+export const collab_path = "http://nimble.eu-de.containers.appdomain.cloud/collaborations";
 export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client";
 export const frontendURL = base_path + "/frontend/";
 
@@ -26,6 +27,7 @@ export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}/logstash`;
 export const kibana_endpoint = `${base_path}/kibana/app/kibana`;
 export const delegate_endpoint = `${base_path}:9265`;
+export const collaboration_endpoint = `${collab_path}`;
 
 
 // BIBA endpoints
@@ -46,8 +48,9 @@ export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 // TnT Endpoints
 
 export const tntEndpoint = `${base_path}/tracking`;
-export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
 export const tntMasterDataEndpoint = `${base_path}/tracking/masterData/id/`;
+export const tntAnalysisEndpoint = `${base_path}/tracking-analysis/`;
+export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 
 
 // Platform Configuration
@@ -67,18 +70,28 @@ export const config = {
       "ontologyPrefix": "http://www.aidimme.es/FurnitureSectorOntology.owl#"
     }
   },
+  "collaborationEnabled": false,
   "dataChannelsEnabled" : true,
+  "defaultBusinessProcessIds": [
+  ],
   "defaultSearchIndex": "Name",
   "delegationEnabled": false,
   "frameContractTabEnabled":true,
   "imprint": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Platform Owner</u><br/><b>Lindbäcks Bygg Aktiebolag</b><br/>Hammarvägen 21<br/>94336 Öjebyn<br/>Sweden<br/></td><td class='w-50 p-0 pl-3'><u>Platform Provider</u><br/><b>Universität Bremen</b><br/>Bibliothekstraße 1<br/>28359 Bremen, Germany<br/>Phone: +49 421 218-1<br/>Internet: <a href='https://www.uni-bremen.de' target='_blank'>www.uni-bremen.de</a><br/>Die Universität Bremen ist eine Körperschaft des Öffentlichen Rechts. Sie wird durch den Rektor Prof. Dr.-Ing. Bernd Scholz-Reiter gesetzlich vertreten.\n" +
       "Zuständige Aufsichtsbehörde ist die Senatorin für Wissenschaft, Gesundheit und Verbraucherschutz, Rembertiring 8 – 12, 28195 Bremen.<br/>DE 811 245 070 (gemäß § 27 a UStG)<br/></td></tr></table>",
   "kibanaConfig": {
+    "companyDashboards": [],
+    "companyGraphs": [],
     "dashboards": []
   },
   "kibanaEnabled": false,
+  "languageSettings": {
+    "available": ["en", "sv"],
+    "fallback": "en"
+  },
   "loggingEnabled": false,
   "logoPath": "./assets/logo_mvp.png",
+  "federationLogoPath": "./assets/logo_mvp_efactory.png",
   "logoRequired": false,
   "phoneNumberRequired": false,
   "vatEnabled": true,
@@ -89,7 +102,7 @@ export const config = {
       "src":"./assets/eula.pdf"
     }
   ],
-  "showChat": false,
+  "showChat": true,
   "showCompanyMembers": false,
   "showExplorative": true,
   "showLCPA": true,
@@ -98,7 +111,7 @@ export const config = {
   "showTrade": true,
   "showVerification": true,
   "standardCurrency": "SEK",
-  "standardTaxonomy": "All",
+  "standardTaxonomy": "FurnitureOntology",
   "supportedActivitySectors": {
   	"": [],
   	"Logistics Provider": [],
@@ -148,6 +161,7 @@ export const config = {
     "en":"Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]"
   },
   "showLoginFederation": false,
+  "unshippedOrdersTabEnabled":true,
   "federationClientID": "sample-client",
   "federationIDP": "sampleIDP"
 };

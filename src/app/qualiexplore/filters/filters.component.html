@@ -11,8 +11,8 @@
     <div class="col-lg-4" *ngFor="let filter of filters">
       
       <h4>
-        <i class="fas fa-box" *ngIf="filter['name'] === 'Product'"></i>
-        <i class="fas fa-bullseye" *ngIf="filter['name']==='Goal'"></i>
+        <i class="fas fa-check" *ngIf="filter['name'] === 'Quality'"></i>
+        <i class="fas fa-bullseye" *ngIf="filter['name']==='Goals'"></i>
         <i class="fas fa-info" *ngIf="filter['name'] === 'Sources'"></i>
         <!-- <i class="fas fa-exchange-alt" *ngIf="filter['name'] === 'Information channel'"></i> -->
         {{filter['name']}}

@@ -17,10 +17,10 @@
                         <input *ngIf="tradingTerm.value.valueQualifier == 'STRING'" type="text" class="form-control" value="{{tradingTerms.get(tradingTerm.id).value.value[0].value}}"  (keyup)="updateParameter(i,tradingTerm.id,$event.target.value)">
                         <input *ngIf="tradingTerm.value.valueQualifier == 'NUMBER'" type="number" class="form-control" value="{{tradingTerms.get(tradingTerm.id).value.valueDecimal[0]}}"  (change)="updateParameter(i,tradingTerm.id,$event.target.value)" (keyup)="updateParameter(i,tradingTerm.id,$event.target.value)">
                         <select *ngIf="tradingTerm.value.valueQualifier == 'CODE' && tradingTerm.value.valueCode[0].listID == 'INCOTERMS_LIST'" class="form-control custom-select" value="{{tradingTerms.get(tradingTerm.id).value.valueCode[0].value}}" (change)="updateParameter(i,tradingTerm.id,$event.target.value)">
-                            <option *ngFor="let option of INCOTERMS" [value]="option">{{option}}</option>
+                            <option *ngFor="let option of availableIncoTerms" [value]="option">{{option}}</option>
                         </select>
                         <select *ngIf="tradingTerm.value.valueQualifier == 'CODE' && tradingTerm.value.valueCode[0].listID == 'PAYMENT_MEANS_LIST'" class="form-control custom-select" value="{{tradingTerms.get(tradingTerm.id).value.valueCode[0].value}}" (change)="updateParameter(i,tradingTerm.id,$event.target.value)">
-                            <option *ngFor="let option of PAYMENT_TERMS" [value]="option">{{option}}</option>
+                            <option *ngFor="let option of availablePaymentTerms" [value]="option">{{option}}</option>
                         </select>
                         <select *ngIf="tradingTerm.value.valueQualifier == 'CODE' && tradingTerm.value.valueCode[0].listID == 'COUNTRY_LIST'" class="form-control custom-select" value="{{tradingTerms.get(tradingTerm.id).value.valueCode[0].value}}" (change)="updateParameter(i,tradingTerm.id,$event.target.value)">
                             <option *ngFor="let option of COUNTRY_NAMES" [value]="option">{{option}}</option>

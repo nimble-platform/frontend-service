@@ -16,8 +16,9 @@ import {copy} from '../../../common/utils';
 })
 export class ClauseComponent implements OnInit {
     @Input() clause: Clause = null;
-    // whether the item is deleted or not
-    @Input() isCatalogueLineDeleted:boolean = false ;
+    // whether the items are deleted or not
+    @Input() areCatalogueLinesDeleted:boolean[];
+    @Input() selectedLineIndex:number;
     clauseDocument = null;
     itemInformationRequest: ItemInformationRequest;
     rfq: RequestForQuotation;
@@ -62,10 +63,8 @@ export class ClauseComponent implements OnInit {
                             // otherwise, use the default T&Cs
                             else {
                                 this.bpeService.getTermsAndConditions(
-                                    null,
                                     UBLModelUtils.getPartyId(this.rfq.buyerCustomerParty.party),
                                     UBLModelUtils.getPartyId(this.rfq.sellerSupplierParty.party),
-                                    null,
                                     this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms,
                                     this.bpDataService.getCompanySettings().negotiationSettings.paymentTerms[0]
                                 ).then(defaultTermsAndConditions => {

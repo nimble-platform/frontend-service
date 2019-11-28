@@ -19,12 +19,18 @@ export class PlatformAnalyticsComponent implements OnInit {
     comp_count = -1;
     bp_count = -1;
     trade_count = -1;
+    green = 0;
+    yellow = 0;
+    red = 0;
     green_perc = 0;
     yellow_perc = 0;
     red_perc = 0;
     green_perc_str = "0%";
     yellow_perc_str = "0%";
     red_perc_str = "0%";
+    trade_green = 0;
+    trade_yellow = 0;
+    trade_red = 0;
     trade_green_perc = 0;
     trade_yellow_perc = 0;
     trade_red_perc = 0;
@@ -47,6 +53,34 @@ export class PlatformAnalyticsComponent implements OnInit {
 	config = myGlobals.config;
   	dashboards = [];
 	selectedTab;
+
+	// collab time
+	collab_time = 0;
+	collab_time_sell = 0;
+	collab_time_buy = 0;
+	avg_res_time = 0;
+
+	// options
+	showXAxis = true;
+	showYAxis = true;
+	gradient = false;
+	showLegend = false;
+	showXAxisLabel = false;
+	xAxisLabel = 'Month';
+	showGridLines = true;
+	showYAxisLabel = true;
+	yAxisLabel = 'Average Response Time(s)';
+	showChart = false;
+	colorScheme = {
+	  domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
+	};
+	// line, area
+	autoScale = true;
+	multi = [];
+
+	months = ["Jan", "Feb", "March", "April", "May", "June", "July","Aug","Sep","Oct","Nov","Dec"];
+
+
 
 	public secureSrc = ""  ;
 
@@ -76,10 +110,12 @@ export class PlatformAnalyticsComponent implements OnInit {
         this.analyticsService
             .getPlatAnalytics()
             .then(res => {
-                this.callStatus.callback("Successfully loaded platform analytics", true);
                 this.user_count = res.identity.totalUsers;
                 this.comp_count = res.identity.totalCompanies;
                 this.bp_count = Math.round(res.businessProcessCount.state.approved + res.businessProcessCount.state.waiting + res.businessProcessCount.state.denied);
+                this.green = res.businessProcessCount.state.approved;
+                this.yellow = res.businessProcessCount.state.waiting;
+                this.red = res.businessProcessCount.state.denied;
                 this.green_perc = Math.round((res.businessProcessCount.state.approved * 100) / this.bp_count);
                 this.green_perc_str = this.green_perc + "%";
                 this.yellow_perc = Math.round((res.businessProcessCount.state.waiting * 100) / this.bp_count);
@@ -87,12 +123,56 @@ export class PlatformAnalyticsComponent implements OnInit {
                 this.red_perc = 100 - this.green_perc - this.yellow_perc;
                 this.red_perc_str = this.red_perc + "%";
                 this.trade_count = Math.round(res.tradingVolume.approved + res.tradingVolume.waiting + res.tradingVolume.denied);
+                this.trade_green = Math.round(res.tradingVolume.approved);
+                this.trade_yellow = Math.round(res.tradingVolume.waiting);
+                this.trade_red = Math.round(res.tradingVolume.denied);
                 this.trade_green_perc = Math.round((res.tradingVolume.approved * 100) / this.trade_count);
                 this.trade_green_perc_str = this.trade_green_perc + "%";
                 this.trade_yellow_perc = Math.round((res.tradingVolume.waiting * 100) / this.trade_count);
                 this.trade_yellow_perc_str = this.trade_yellow_perc + "%";
                 this.trade_red_perc = 100 - this.trade_green_perc - this.trade_yellow_perc;
-                this.trade_red_perc_str = this.trade_red_perc + "%";
+				this.trade_red_perc_str = this.trade_red_perc + "%";
+				
+				this.analyticsService.getPlatCollabAnalytics()
+				.then(res => {
+					this.callStatus.callback("Successfully loaded platform analytics", true);
+					//collab time
+					this.collab_time = Math.round(res.collaborationTime.averageCollabTime * 10) /10 ;
+					this.collab_time_buy = Math.round(res.collaborationTime.averageCollabTimePurchases * 10) /10;
+					this.collab_time_sell = Math.round(res.collaborationTime.averageCollabTimeSales * 10) /10;
+
+					this.avg_res_time = Math.round(res.responseTime.averageTime * 10) /10;
+					var map1 = res.responseTime.averageTimeForMonths;
+					var i = 0 ;
+					var obj = [];
+	
+	
+					for(var y = 0 ; y < 12 ; y++){
+						if(map1[y] != undefined){
+							obj.push({
+								"value" : map1[y],
+								"name" : this.months[y]
+							})
+						}
+					}
+	
+					if(obj.length == 6){
+						var dataGr =
+							{
+							  "name": "Time series",
+							  "series":obj
+							};
+	
+						this.multi.push(dataGr);
+						this.showChart = true;
+	
+					}
+
+
+				}).catch(error => {
+					this.callStatus.error("Error while loading platform analytics", error);
+				});
+
             })
             .catch(error => {
                 this.callStatus.error("Error while loading platform analytics", error);

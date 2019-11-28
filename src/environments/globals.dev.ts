@@ -10,6 +10,7 @@ export const debug = false;
 export const base_path = "http://localhost";
 export const ub_base = "http://localhost:8090";
 export const idpURL = "http://localhost:8080/auth/realms/master";
+export const collab_path = "http://localhost:8081/collaboration_service";
 export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client";
 export const frontendURL = base_path + ":9092";
 
@@ -26,6 +27,7 @@ export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}/logstash`;
 export const kibana_endpoint = `${base_path}/kibana/app/kibana`;
 export const delegate_endpoint = `${base_path}:9265`;
+export const collaboration_endpoint = `${collab_path}`;
 
 
 // BIBA endpoints
@@ -45,9 +47,10 @@ export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 
 // TnT Endpoints
 
-export const tntEndpoint = `${bpe_endpoint}/t-t/epc-details`;
-export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
-export const tntMasterDataEndpoint = 'http://nimble-dev.ikap.biba.uni-bremen.de:8117';
+export const tntEndpoint = `${base_path}/tracking`;
+export const tntMasterDataEndpoint = `${base_path}/tracking/masterData/id/`;
+export const tntAnalysisEndpoint = `${base_path}/tracking-analysis/`;
+export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 
 
 // Platform Configuration
@@ -67,12 +70,17 @@ export const config = {
       "ontologyPrefix": "http://www.aidimme.es/FurnitureSectorOntology.owl#"
     }
   },
+  "collaborationEnabled": false,
   "dataChannelsEnabled" : true,
+  "defaultBusinessProcessIds": [
+  ],
   "defaultSearchIndex": "Name",
   "delegationEnabled": false,
   "frameContractTabEnabled":true,
   "imprint": "<u>Platform Owner & Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)",
   "kibanaConfig": {
+    "companyDashboards": [],
+    "companyGraphs": [],
     "dashboards": [
         {
             "title": "User Logins & Registrations",
@@ -87,8 +95,13 @@ export const config = {
     ]
   },
   "kibanaEnabled": true,
+  "languageSettings": {
+    "available": ["en", "es", "de", "tr", "it", "sv"],
+    "fallback": "en"
+  },
   "loggingEnabled": true,
   "logoPath": "./assets/logo_mvp.png",
+  "federationLogoPath": "./assets/logo_mvp_efactory.png",
   "logoRequired": false,
   "phoneNumberRequired": false,
   "vatEnabled": true,
@@ -159,6 +172,7 @@ export const config = {
     "es":"Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
   },
   "showLoginFederation": false,
+  "unshippedOrdersTabEnabled":true,
   "federationClientID": "sample-client",
   "federationIDP": "sampleIDP"
 };

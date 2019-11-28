@@ -32,7 +32,7 @@ export class ItemPriceWrapper {
         const qty = this.price.baseQuantity
         const baseQuantity = qty.value || 1;
 
-        if(!amount.value || !qty.value) {
+        if(!amount.value || amount.value == 0 || !qty.value) {
             return "On demand";
         }
 
@@ -56,7 +56,7 @@ export class ItemPriceWrapper {
     
     hasPrice(): boolean {
         // != here gives "not null or undefined", which is the behaviour we want.
-        return this.price.priceAmount.value != null && !isNaN(this.price.priceAmount.value) && !!this.price.priceAmount.value;
+        return this.price.priceAmount.value != null && !isNaN(this.price.priceAmount.value) && this.price.priceAmount.value != 0;
     }
 
     /**

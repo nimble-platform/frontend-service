@@ -12,7 +12,8 @@ import { UserService } from "../user.service";
 import { AppComponent } from "../../app.component";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import {TranslateService} from '@ngx-translate/core';
-import { createTextObject, selectValueOfTextObject } from "../../common/utils";
+import { createTextObject, selectValueOfTextObject, getArrayOfTextObject, createTextObjectFromArray } from "../../common/utils";
+import { DEFAULT_LANGUAGE, LANGUAGES } from "../../catalogue/model/constants";
 
 @Component({
     selector: "company-description-settings",
@@ -22,9 +23,12 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
 
     @Input() settings: CompanySettings;
     descriptionForm: FormGroup;
+    companyStatementArr: any;
     socialMediaList = [""];
     externalResources = [""];
     compEvents:CompanyEvent[] = [];
+    languages = LANGUAGES;
+    inputChanged = false;
     socialMediaListChanged = false;
     externalResourcesChanged = false;
     compEventsChanged = false;
@@ -49,9 +53,9 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
 
     ngOnInit() {
       this.descriptionForm = this._fb.group({
-          companyStatement: selectValueOfTextObject(this.settings.description.companyStatement),
           website: this.settings.description.website
       });
+      this.companyStatementArr = getArrayOfTextObject(this.settings.description.companyStatement);
       this.externalResources = this.settings.description.externalResources;
       if (this.externalResources.length == 0)
         this.externalResources = [""];
@@ -60,6 +64,18 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
         this.socialMediaList = [""];
       this.compEvents = this.settings.description.events;
       this.sortCompEvent();
+    }
+
+    addCompanyStatement() {
+      this.companyStatementArr.push({"text":"","lang":""});
+      this.flagChanged();
+    }
+
+    removeCompanyStatement(index:number){
+      this.companyStatementArr.splice(index,1);
+      if (this.companyStatementArr.length == 0)
+        this.companyStatementArr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
+      this.flagChanged();
     }
 
     addSocialMediaEntry() {
@@ -201,9 +217,13 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
       }
     }
 
+    flagChanged() {
+      this.inputChanged = true;
+    }
+
     onSave(model: FormGroup) {
         this.saveCallStatus.submit();
-        this.settings.description.companyStatement =  createTextObject(model.getRawValue()['companyStatement'],"en");
+        this.settings.description.companyStatement = createTextObjectFromArray(this.companyStatementArr);
         this.settings.description.website = model.getRawValue()['website'];
         this.settings.description.socialMediaList = this.socialMediaList;
         this.settings.description.externalResources = this.externalResources;
@@ -216,6 +236,7 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
                     console.log(`Saved Company Settings for company ${compId}. Response: ${response}`);
                 }
                 this.saveCallStatus.callback("Successfully saved", true);
+                this.inputChanged = false;
                 this.socialMediaListChanged = false;
                 this.externalResourcesChanged = false;
                 this.compEventsChanged = false;

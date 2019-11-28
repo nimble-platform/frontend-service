@@ -1,4 +1,4 @@
-<ng-container *ngIf="!isLoading() && bpDataService.getCatalogueLine()">
+<ng-container *ngIf="!isLoading() && bpDataService.getCatalogueLines()">
     <ng-container *ngIf="negotiationProcessList.length > 1 && negotiationDocumentsCallStatus.fb_callback">
         <!-- slider -->
         <input #processHistorySlider
@@ -30,14 +30,14 @@
                 <negotiation-response [rfq]="negotiationDocuments[i].request"
                                       [quotation]="negotiationDocuments[i].response"
                                       [lastOfferQuotation]="negotiationDocuments[i-1]?.response"
-                                      [frameContractQuotation]="frameContractQuotation"
-                                      [frameContract]="frameContract"
-                                      [frameContractNegotiation]="isFrameContractBeingNegotiatedInThisNegotiation"
+                                      [frameContractQuotations]="frameContractQuotations"
+                                      [frameContracts]="frameContracts"
+                                      [frameContractNegotiations]="isFrameContractBeingNegotiatedInThisNegotiation"
                                       [defaultTermsAndConditions]="defaultTermsAndConditions"
-                                      [primaryTermsSource]="getPrimaryTermsSource(negotiationDocuments[i-1]?.response)"
+                                      [primaryTermsSources]="getPrimaryTermsSource(negotiationDocuments[i-1]?.response)"
                                       [readonly]="true"
-                                      [formerProcess]="true"
-                                      [isCatalogueLineDeleted]="isCatalogueLineDeleted">
+                                      [areCatalogueLinesDeleted]="areCatalogueLinesDeleted"
+                                      [selectedLineIndex]="selectedLineIndex">
                 </negotiation-response>
             </div>
         </ng-container>
@@ -49,22 +49,27 @@
         <ng-container *ngIf="lastOfferCalStatus.isComplete() && frameContractAndTermsCallStatus.isComplete()">
             <div [hidden]="!(sliderIndex == negotiationProcessList.length-1 && i == negotiationProcessList.length-1)">
                 <negotiation-request *ngIf="!bpDataService.quotation && bpDataService.bpActivityEvent.userRole === 'buyer'"
-                                     [frameContract]="frameContract"
-                                     [frameContractQuotation]="frameContractQuotation"
-                                     [frameContractNegotiation]="isFrameContractBeingNegotiatedInThisNegotiation"
+                                     [rfq]="rfq"
+                                     [frameContracts]="frameContracts"
+                                     [frameContractQuotations]="frameContractQuotations"
+                                     [frameContractNegotiations]="isFrameContractBeingNegotiatedInThisNegotiation"
                                      [lastOfferQuotation]="lastOfferQuotation"
                                      [defaultTermsAndConditions]="defaultTermsAndConditions"
-                                     [manufacturersTermsSource]="getPrimaryTermsSource(lastOfferQuotation)">
+                                     [manufacturersTermsSources]="getPrimaryTermsSource(lastOfferQuotation)"
+                                     [selectedLineIndex]="selectedLineIndex"
+                                     [bpActivityEvent]="bpDataService.bpActivityEvent"
+                                     [catalogueLines]="bpDataService.getCatalogueLines()"
+                                     [sellerSettings]="bpDataService.getCompanySettings()">
                 </negotiation-request>
                 <negotiation-response *ngIf="bpDataService.quotation"
                                       [lastOfferQuotation]="lastOfferQuotation"
-                                      [frameContractQuotation]="frameContractQuotation"
-                                      [frameContract]="frameContract"
-                                      [frameContractNegotiation]="isFrameContractBeingNegotiatedInThisNegotiation"
+                                      [frameContractQuotations]="frameContractQuotations"
+                                      [frameContracts]="frameContracts"
+                                      [frameContractNegotiations]="isFrameContractBeingNegotiatedInThisNegotiation"
                                       [defaultTermsAndConditions]="defaultTermsAndConditions"
-                                      [primaryTermsSource]="getPrimaryTermsSource(lastOfferQuotation)"
-                                      [formerProcess]="formerProcess"
-                                      [isCatalogueLineDeleted]="isCatalogueLineDeleted">
+                                      [primaryTermsSources]="getPrimaryTermsSource(lastOfferQuotation)"
+                                      [areCatalogueLinesDeleted]="areCatalogueLinesDeleted"
+                                      [selectedLineIndex]="selectedLineIndex">
                 </negotiation-response>
             </div>
         </ng-container>

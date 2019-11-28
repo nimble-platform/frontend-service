@@ -10,8 +10,9 @@ import {FacetComponent} from "./facet-component";
 import { CatalogueModule } from "../catalogue/catalogue.module";
 import { BPEModule } from "../bpe/bpe.module";
 import { AnalyticsModule } from "../analytics/analytics.module";
-import { ThreadEventComponent } from "../bpe/bp-summary/thread-event.component";
 import {FrameContractTabComponent} from "./frame-contract-tab.component";
+import {UnshippedOrdersTabComponent} from './unshipped-orders-tab.component';
+import {CollaborationModule} from '../catalogue/collaboration/collaboration.module';
 
 @NgModule({
 	imports: [
@@ -23,13 +24,15 @@ import {FrameContractTabComponent} from "./frame-contract-tab.component";
 		DashboardRoutingModule,
 		CatalogueModule,
 		AnalyticsModule,
+		CollaborationModule,
 		BPEModule,
 		NgbModule.forRoot()
 	],
 	declarations: [
 		DashboardThreadedComponent,
 		FacetComponent,
-		FrameContractTabComponent
+		FrameContractTabComponent,
+		UnshippedOrdersTabComponent
 	],
 	exports: [
 		DashboardThreadedComponent,

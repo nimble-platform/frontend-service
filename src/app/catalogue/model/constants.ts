@@ -1,5 +1,5 @@
 import { Option } from "../../common/options-input.component";
-import { AppComponent } from "../../app.component";
+import * as myGlobals from '../../globals';
 
 export const INCOTERMS: string[] = [
     "",
@@ -113,24 +113,10 @@ export const DISCOUNT_TARGETS = {
 
 export const DISCOUNT_UNITS = CURRENCIES.concat(['%']);
 
-export const LANGUAGES:Array<string>  = ["en", "es", "de", "tr", "it"];
+export const LANGUAGES:Array<string>  = myGlobals.config.languageSettings.available;
 
 export const DEFAULT_LANGUAGE = function () {
-    /*
-    let languageId = navigator.language.indexOf('-') == -1 ? navigator.language : navigator.language.substring(0,navigator.language.indexOf('-'));
-    if(LANGUAGES.indexOf(languageId) == -1){
-        return "en";
-    }
-    */
-    let languageId = "en";
-    let languageCookie = document.cookie.match('(^|[^;]+)\\s*language\\s*=\\s*([^;]+)');
-    if (languageCookie) {
-      languageId = languageCookie.pop();
-      if(LANGUAGES.indexOf(languageId) == -1){
-        languageId = "en";
-      }
-    }
-    return languageId;
+    return document.getElementsByTagName('html')[0].getAttribute('lang');
 };
 
-export const FALLBACK_LANGUAGE:string = "en";
+export const FALLBACK_LANGUAGE:string = myGlobals.config.languageSettings.fallback;

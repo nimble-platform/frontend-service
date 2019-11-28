@@ -3,7 +3,7 @@
     <div class="col-md-6">
         <div>
             <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
-                
+
                 <form (ngSubmit)="searchFavouriteSearch_first()"  novalidate>
                     <input  class="form-control col-12" type="text" [(ngModel)]="searchText_first" #q="ngModel" [ngModelOptions]="{standalone: true}" [ngbTypeahead]="searchFavourite_first" placeholder="Search ...">
                 </form>
@@ -12,11 +12,11 @@
                                     <i class="fa fa-search"></i>
                             </button>
                     </div>
-             
+
 
             </div>
 
-            <div class="jumbotron" *ngIf="itemTypeResponse_first && hasFavourite_first == false" class="col-md-10"> 
+            <div class="jumbotron" *ngIf="itemTypeResponse_first && hasFavourite_first == false" class="col-md-10">
                 <h5><span [innerHTML]="'Search & Compare.' | translate"></span></h5>
             </div>
 
@@ -32,17 +32,17 @@
                                 </div>
                                 <div class="col-10 d-flex justify-content-between">
                                     <div class="col-7">
-                                        <p style="word-break: break-all;word-wrap: break-word;">
+                                        <p class="all-break">
                                             <strong>{{ getMultilingualLabel(catLine[product_name]) }}
                                                 <a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.catalogueId, id: catLine.manufactuerItemId}" (click)="onOpenCatalogueLine($event)" target="_blank">
                                                     <i class="fas fa-external-link-alt btn-light"></i>
                                                 </a>
                                             </strong>
                                         </p>
-                                        <p  *ngIf="catLine[product_description] != null"  style="word-break: break-all;word-wrap: break-word;">{{getMultilingualLabel(catLine[product_description])}}</p>
-                                        <!-- <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" style="word-break: break-all;word-wrap: break-word;">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p> -->
-                                            <p *ngIf="catLine[product_price] && !checkEmpty(catLine[product_price])" style="word-break: break-all;word-wrap: break-word;">{{roundToTwoDecimals(catLine[product_price][getCurrency(catLine[product_price])])}} {{getCurrency(catLine[product_price])}}</p>
-                                            <p *ngIf="!catLine[product_price] || checkEmpty(catLine[product_price])" style="word-break: break-all;word-wrap: break-word;"><span [innerHTML]="'Upon request' | translate"></span></p>
+                                        <p  *ngIf="catLine[product_description] != null">{{getMultilingualLabel(catLine[product_description])}}</p>
+                                        <!-- <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" class="all-break">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p> -->
+                                            <p *ngIf="catLine[product_price] && !checkEmpty(catLine[product_price])" class="all-break">{{roundToTwoDecimals(catLine[product_price][getCurrency(catLine[product_price])])}} {{getCurrency(catLine[product_price])}}</p>
+                                            <p *ngIf="!catLine[product_price] || checkEmpty(catLine[product_price])" class="all-break"><span [innerHTML]="'Upon request' | translate"></span></p>
                                     </div>
                                     <div class="col-3">
                                                     <div class="float-right">
@@ -90,10 +90,10 @@
                 </div>
             </div>
 
-            <div class="jumbotron" *ngIf="itemTypeResponse && hasFavourite == false" class="col-md-10"> 
+            <div class="jumbotron" *ngIf="itemTypeResponse && hasFavourite == false" class="col-md-10">
                 <h5><span [innerHTML]="'Search & Compare.' | translate"></span></h5>
             </div>
-            
+
             <div *ngIf="itemTypeResponse && hasFavourite == true">
                 <div *ngFor="let catLine of catalogueLinesArray; let i = index" class="space-before">
                     <div *ngIf="i == 0" class="card pointer">
@@ -106,17 +106,17 @@
                                 </div>
                                 <div class="col-10 d-flex justify-content-between">
                                     <div class="col-7">
-                                        <p style="word-break: break-all;word-wrap: break-word;">
+                                        <p class="all-break">
                                             <strong>{{ getMultilingualLabel(catLine[product_name]) }}
                                                 <a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.catalogueId, id: catLine.manufactuerItemId}" (click)="onOpenCatalogueLine($event)" target="_blank">
                                                     <i class="fas fa-external-link-alt btn-light"></i>
                                                 </a>
                                             </strong>
                                         </p>
-                                        <p  *ngIf="catLine[product_description] != null"  style="word-break: break-all;word-wrap: break-word;">{{getMultilingualLabel(catLine[product_description])}}</p>
-                                        <!-- <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" style="word-break: break-all;word-wrap: break-word;">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p> -->
-                                            <p *ngIf="catLine[product_price] && !checkEmpty(catLine[product_price])" style="word-break: break-all;word-wrap: break-word;">{{roundToTwoDecimals(catLine[product_price][getCurrency(catLine[product_price])])}} {{getCurrency(catLine[product_price])}}</p>
-                                            <p *ngIf="!catLine[product_price] || checkEmpty(catLine[product_price])" style="word-break: break-all;word-wrap: break-word;"><span [innerHTML]="'Upon request' | translate"></span></p>
+                                        <p  *ngIf="catLine[product_description] != null">{{getMultilingualLabel(catLine[product_description])}}</p>
+                                        <!-- <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" class="all-break">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p> -->
+                                            <p *ngIf="catLine[product_price] && !checkEmpty(catLine[product_price])" class="all-break">{{roundToTwoDecimals(catLine[product_price][getCurrency(catLine[product_price])])}} {{getCurrency(catLine[product_price])}}</p>
+                                            <p *ngIf="!catLine[product_price] || checkEmpty(catLine[product_price])" class="all-break"><span [innerHTML]="'Upon request' | translate"></span></p>
                                     </div>
                                     <div class="col-3">
                                         <div>

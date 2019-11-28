@@ -18,6 +18,7 @@ import {DashboardProcessInstanceDetails} from './model/dashboard-process-instanc
 import {DigitalAgreement} from "../catalogue/model/publish/digital-agreement";
 import {CollaborationGroup} from "./model/collaboration-group";
 import {DocumentReference} from '../catalogue/model/publish/document-reference';
+import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 
 @Injectable()
 export class BPEService {
@@ -50,6 +51,7 @@ export class BPEService {
             document.additionalDocumentReference.push(documentRef);
         }
 
+		UBLModelUtils.removeHjidFieldsFromObject(document);
         return this.http
             .post(url, JSON.stringify(document), {headers: headers})
             .toPromise()
@@ -154,6 +156,15 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
+	getFulfilmentStatistics(orderId: string): Promise<any> {
+		const url = `${this.url}/statistics/fulfilment?orderId=${orderId}`;
+		return this.http
+			.get(url, {headers: this.getAuthorizedHeaders()})
+			.toPromise()
+			.then(res => res.json())
+			.catch(this.handleError);
+	}
+
 	getProcessInstanceGroupFilters(partyId:string, collaborationRole: CollaborationRole, archived: boolean, products: string[],
 		categories: string[], partners: string[],status: string[],isProject:boolean): Promise<ProcessInstanceGroupFilter> {
 		const headers = this.getAuthorizedHeaders();
@@ -215,6 +226,26 @@ export class BPEService {
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
+	}
+
+	paymentDone(orderId: string): Promise<any> {
+		let headers = this.getAuthorizedHeaders();
+		const url = `${this.url}/paymentDone/${orderId}`;
+		return this.http
+			.post(url, null, {headers: headers})
+			.toPromise()
+			.then(res => res.text())
+			.catch(this.handleError);
+	}
+
+	isPaymentDone(orderId: string): Promise<any> {
+		let headers = this.getAuthorizedHeaders();
+		const url = `${this.url}/paymentDone/${orderId}`;
+		return this.http
+			.get(url,  {headers: headers})
+			.toPromise()
+			.then(res => res.text())
+			.catch(this.handleError);
 	}
 
 	getDashboardProcessInstanceDetails(processInstanceId:string): Promise<DashboardProcessInstanceDetails>{
@@ -312,21 +343,12 @@ export class BPEService {
         });
     }
 
-	getTermsAndConditions(orderId: string,buyerPartyId, sellerPartyId, rfqId:string, incoterms:string, tradingTerm:string): Promise<Clause[]>{
+	getTermsAndConditions(buyerPartyId, sellerPartyId, incoterms:string, tradingTerm:string): Promise<Clause[]>{
 		const token = 'Bearer '+this.cookieService.get("bearer_token");
 		const headers = new Headers({'Authorization': token});
 		this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
 
-		let url;
-		if(orderId){
-			url = `${this.url}/contracts/terms-and-conditions?orderId=${orderId}&sellerPartyId=${sellerPartyId}&incoterms=${incoterms == null ? "" :incoterms}`;
-		}
-		else if(rfqId){
-			url = `${this.url}/contracts/terms-and-conditions?rfqId=${rfqId}&sellerPartyId=${sellerPartyId}&incoterms=${incoterms == null ? "" :incoterms}`;
-		}
-		else{
-            url = `${this.url}/contracts/terms-and-conditions?sellerPartyId=${sellerPartyId}&incoterms=${incoterms == null ? "" :incoterms}`;
-        }
+		let url = `${this.url}/contracts/terms-and-conditions?sellerPartyId=${sellerPartyId}&incoterms=${incoterms == null ? "" :incoterms}`;
         // add parameters
         if(buyerPartyId){
             url += `&buyerPartyId=${buyerPartyId}`;
@@ -400,8 +422,17 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getFrameContract(sellerId: string, buyerId: string, productId: string): Promise<DigitalAgreement> {
-		const url = `${this.url}/contract/digital-agreement?sellerId=${sellerId}&buyerId=${buyerId}&productId=${productId}`;
+	getFrameContract(sellerId: string, buyerId: string, productIds: string[]): Promise<DigitalAgreement> {
+		let productIdsParam = "";
+		let size = productIds.length;
+		for (let i = 0; i < size; i++) {
+			productIdsParam += productIds[i];
+
+			if (i != size - 1) {
+				productIdsParam += ",";
+			}
+		}
+		const url = `${this.url}/contract/digital-agreement?sellerId=${sellerId}&buyerId=${buyerId}&productIds=${productIds}`;
 		return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
@@ -425,6 +456,15 @@ export class BPEService {
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
+	}
+
+	deleteFrameContract(hjid: number): Promise<DigitalAgreement[]> {
+		const url = `${this.url}/contract/digital-agreement/${hjid}`;
+		return this.http
+			.delete(url, {headers: this.getAuthorizedHeaders()})
+			.toPromise()
+			.then(res => res.text())
+			.catch(this.handleError);
 	}
 
 	checkAllCollaborationsFinished(partyId:string){
@@ -513,6 +553,15 @@ export class BPEService {
 			};
 			xhr.send();
 		});
+	}
+
+	public getUnshippedOrderIds(partyId: string): Promise<string[]> {
+		const url = `${this.url}/documents/unshipped-order-ids?partyId=${partyId}`;
+		return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
 	}
 
 	private getAuthorizedHeaders(): Headers {

@@ -1,0 +1,180 @@
+<call-status [callStatus]="initCallStatus"></call-status>
+
+<ng-container *ngIf="isReady()">
+    <div class="row title-row">
+        <div class="col-6"><h4><span [innerHTML]="'Order Details' | translate"></span></h4></div>
+        <div class="col-6"><h4><span [innerHTML]="'Delivery Details' | translate"></span></h4></div>
+    </div>
+
+    <div class="row content-row">
+        <div class="col-6">
+            <div>
+                <text-input presentationMode="view" label="Warranty"
+                            [text]="getWarrantyPeriodText()" labelClass="col-4" valueClass="col-8">
+                </text-input>
+            </div>
+            <div>
+                <text-input presentationMode="view" label="Incoterms"
+                            [text]="getIncoterm()" labelClass="col-4" valueClass="col-8">
+                </text-input>
+            </div>
+            <div>
+                <text-input presentationMode="view" label="Quantity"
+                            [text]="getQuantityText()" labelClass="col-4" valueClass="col-8">
+                </text-input>
+            </div>
+            <div>
+                <text-input presentationMode="view" label="Net Price"
+                            [text]="priceWrapper.totalPriceString" labelClass="col-4" valueClass="col-8">
+                </text-input>
+            </div>
+            <div *ngIf="config.vatEnabled">
+                <text-input presentationMode="view" label="VAT"
+                            [text]="priceWrapper.vatTotalString" labelClass="col-4" valueClass="col-8">
+                </text-input>
+            </div>
+            <div *ngIf="config.vatEnabled">
+                <text-input presentationMode="view" label="Gross Total"
+                            [text]="priceWrapper.grossTotalString" labelClass="col-4" valueClass="col-8">
+                </text-input>
+            </div>
+            <div *ngIf="config.dataChannelsEnabled" class="space-after">
+                <div class = "row">
+                    <div class="col-4">
+                        <strong><span [innerHTML]="'Data Monitoring Service' | translate"></span>:</strong>
+                    </div>
+                    <div class="col-8">
+                        <span *ngIf="!fetchDataMonitoringStatus.isDisplayed()">{{ dataMonitoringDemanded ? "Yes" : "No" }}</span>
+                        <call-status [callStatus]="fetchDataMonitoringStatus"></call-status>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <text-input presentationMode="view" label="Payment Means"
+                            [text]="getPaymentMeans()" labelClass="col-4" valueClass="col-8">
+                </text-input>
+            </div>
+            <div>
+                <text-input presentationMode="view" label="Payment Terms"
+                            [text]="paymentTermsWrapper.paymentTerm" labelClass="col-4" valueClass="col-8">
+                </text-input>
+            </div>
+        </div>
+        <div class="col-6">
+            <div *ngIf="!areDeliveryDatesAvailable">
+                <text-input presentationMode="view" label="Delivery Period"
+                            [text]="getDeliveryPeriodText()" labelClass="col-4" valueClass="col-8">
+                </text-input>
+            </div>
+            <div>
+                <text-input presentationMode="view" label="Street Name"
+                            [text]="address.streetName" labelClass="col-4" valueClass="col-8">
+                </text-input>
+            </div>
+            <div>
+                <text-input presentationMode="view" label="Building Number"
+                            [text]="address.buildingNumber" labelClass="col-4" valueClass="col-8">
+                </text-input>
+            </div>
+            <div>
+                <text-input presentationMode="view" label="City / Town"
+                            [text]="address.cityName" labelClass="col-4" valueClass="col-8">
+                </text-input>
+            </div>
+            <div>
+                <text-input presentationMode="view" label="State / Province"
+                            [text]="address.region" labelClass="col-4" valueClass="col-8">
+                </text-input>
+            </div>
+            <div>
+                <text-input presentationMode="view" label="Postal Code"
+                            [text]="address.postalZone" labelClass="col-4" valueClass="col-8">
+                </text-input>
+            </div>
+            <div>
+                <text-input presentationMode="view" label="Country"
+                            [text]="address.country.name.value" labelClass="col-4" valueClass="col-8">
+                </text-input>
+            </div>
+            <div *ngIf="areDeliveryDatesAvailable">
+                <div *ngFor="let delivery of getDelivery();let i=index" class="row">
+                    <div class="col-4">
+                        <strong class="font-weight-500"><span [innerHTML]="'Delivery Date' | translate"></span>:</strong>
+                    </div>
+                    <div class="col-4">
+                        <date-input [disabled]="true" [(date)]="delivery.requestedDeliveryPeriod.endDate">
+                        </date-input>
+                    </div>
+                    <div class="col-4">
+                        <div class="row">
+                            <div class="col-4">
+                                <strong class="font-weight-500"><span [innerHTML]="'Quantity' | translate"></span>:</strong>
+                            </div>
+                            <div class="col-8 quantity-input">
+                                {{delivery.shipment.goodsItem[0].quantity.value}} {{delivery.shipment.goodsItem[0].quantity.unitCode}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4 mt-4 ml-1">
+        <div class="btn btn-outline-primary" [ngClass]="{'active':selectedPanel == 'TERMS_AND_CONDITIONS'}" (click)="selectedPanel = 'TERMS_AND_CONDITIONS'"><span [innerHTML]="'Terms and Conditions' | translate"></span></div>
+        <div *ngIf="orderContract" class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'PREVIOUS_STEPS'}" (click)="selectedPanel = 'PREVIOUS_STEPS'"><span [innerHTML]="'Previous Steps' | translate"></span></div>
+    </div>
+
+    <!-- Contract Preview -->
+    <ng-container *ngIf="isReady()">
+        <!--<div>-->
+        <contract *ngIf="selectedPanel == 'PREVIOUS_STEPS'" [contract]="orderContract" [collapsable]="false"
+                  [selectedLineIndex]="selectedLineIndex"
+                  [areCatalogueLinesDeleted]="populateAreCatalogueLinesDeletedArray()"></contract>
+        <!--</div>-->
+        <div *ngIf="selectedPanel == 'TERMS_AND_CONDITIONS'">
+            <ul class="nav nav-tabs space-after space-before">
+                <li class="nav-item">
+                    <a href id="CUSTOM_TERMS" class="nav-link"
+                       [ngClass]="{ active: selectedTCTab === 'CUSTOM_TERMS'}"
+                       (click)="onTCTabSelect($event,'CUSTOM_TERMS')">
+                        <span [innerHTML]="'Custom Terms' | translate"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href id="CLAUSES" class="nav-link"
+                       [ngClass]="{ active: selectedTCTab === 'CLAUSES'}"
+                       (click)="onTCTabSelect($event,'CLAUSES')">
+                        <span [innerHTML]="'Clauses' | translate"></span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Custom trading terms -->
+            <ng-container *ngIf="selectedTCTab == 'CUSTOM_TERMS'">
+                <ng-container *ngFor="let tradingTerm of lastQuotation?.quotationLine[lineIndex].lineItem.tradingTerms">
+                    <div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row">
+                        <div class="col-2">
+                            <strong class="font-weight-500">{{tradingTerm.id}}:</strong>
+                            <span *ngIf="tradingTerm.description.length > 0" [title]="tradingTerm.description[0].value">&#9432;</span>
+                        </div>
+                        <multi-type-input [multiTypeValue]="tradingTerm.value"
+                                          [presentationMode]="'view'">
+                        </multi-type-input>
+                    </div>
+                </ng-container>
+            </ng-container>
+
+            <!-- Clauses -->
+            <terms-and-conditions *ngIf="selectedTCTab == 'CLAUSES'"
+                                  [selectedIncoterm]="order.orderLine[0].lineItem.deliveryTerms.incoterms"
+                                  [selectedTradingTerm]="order.orderLine[lineIndex].lineItem.paymentTerms.tradingTerms"
+                                  [sellerPartyId]="getPartyId(sellerParty)"
+                                  [readOnly]="true"
+                                  [enableComparisonWithOtherTerms]="false"
+                                  [documentType]="'order'"
+                                  [termsAndConditions]="getTermAndConditionClauses()">
+            </terms-and-conditions>
+        </div>
+    </ng-container>
+</ng-container>

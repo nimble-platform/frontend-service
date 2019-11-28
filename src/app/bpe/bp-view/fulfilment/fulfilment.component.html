@@ -1,5 +1,28 @@
-<ng-container *ngIf="line">
-    <dispatch-advice *ngIf="!showReceiptAdvice()">
+<!--Show fulfilment statistics-->
+<div *ngIf="!isLoading()" class="row justify-content-center">
+    <div class="card col-7">
+        <div class="card-body text-center">
+            <h4 class="card-title"><b>{{blueTotalDispatched[_selectedOrderLineIndex]}}</b></h4>
+            <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Dispatched Quantity' | translate"></span></h6>
+            <p class="card-text" style="font-size:32px"><i class="fa fa-truck"></i></p>
+        </div>
+    </div>
+    <div class="col-8">
+        <div class="progress space-before">
+            <div class="progress-bar bg-success" role="progressbar" [ngStyle]="{'width':green_perc_str[_selectedOrderLineIndex]}" [attr.aria-valuenow]="green_perc[_selectedOrderLineIndex]" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress-bar bg-warning" role="progressbar" [ngStyle]="{'width':yellow_perc_str[_selectedOrderLineIndex]}" [attr.aria-valuenow]="yellow_perc[_selectedOrderLineIndex]" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress-bar bg-danger" role="progressbar" [ngStyle]="{'width':red_perc_str[_selectedOrderLineIndex]}" [attr.aria-valuenow]="red_perc[_selectedOrderLineIndex]" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <div class="space-before text-center">
+            <span class="badge badge-pill badge-success">{{greenTotalAccepted[_selectedOrderLineIndex]}} Accepted ({{green_perc_str[_selectedOrderLineIndex]}})</span>
+            <span class="badge badge-pill badge-warning">{{yellowTotalWaiting[_selectedOrderLineIndex]}} Waiting ({{yellow_perc_str[_selectedOrderLineIndex]}})</span>
+            <span class="badge badge-pill badge-danger">{{redTotalRejected[_selectedOrderLineIndex]}} Rejected ({{red_perc_str[_selectedOrderLineIndex]}})</span>
+        </div>
+    </div>
+</div>
+<hr class="mb-3">
+<ng-container *ngIf="line && !isLoading()">
+    <dispatch-advice *ngIf="!showReceiptAdvice()" [waitingQuantityValues]="yellowTotalWaiting" [orderLineItemHjids]="orderLineItemHjids">
     </dispatch-advice>
     <receipt-advice *ngIf="showReceiptAdvice()">
     </receipt-advice>

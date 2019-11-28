@@ -10,6 +10,7 @@ export class TnTService {
     // Version 1.0 for Backend..
     private tntEndpoint = myGlobals.tntEndpoint;
     private tntMasterDataEndpoint = myGlobals.tntMasterDataEndpoint;
+    private iotBlockchainEndpoint = myGlobals.tntIoTBlockchainEndpoint;
     private basePath = myGlobals.base_path;
     constructor(private http: Http,
                 private cookieService: CookieService) {}
@@ -69,6 +70,17 @@ export class TnTService {
         // params.append('jsonEventArray', code);
         let reqOptions = new RequestOptions({headers: header});
         return this.http.post(`${this.tntEndpoint}/verifyEventsInBlockChain`, code, reqOptions)
+            .toPromise()
+            .then(resp => resp.json());
+    }
+
+    // IoT Sensor Data + Blockchain Service
+
+    verifyIOTBC(input: object): Promise<any> {
+        // console.log(duration);
+        let verifyQuery = `?productID=${input['productID']}&from=${input['from']}&to=${input['to']}`;
+        return this.http.get(
+            `${this.iotBlockchainEndpoint}${verifyQuery}`)
             .toPromise()
             .then(resp => resp.json());
     }

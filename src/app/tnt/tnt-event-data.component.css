@@ -1,0 +1,83 @@
+/* The actual timeline (the vertical ruler) */
+/* .scroll-container {
+  display: flex;
+  height: 110vh;
+} */
+.timeline {
+  position: relative;
+  max-width: 500px;
+  margin: 0;
+  /* overflow-x: hidden;
+  overflow-y: scroll; */
+}
+
+/* The actual timeline (the vertical ruler) */
+.timeline::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  background-color: black;
+  top: 0;
+  bottom: 0;
+  left: 10%;
+  /* margin-left: -3px; */
+}
+
+/* Container around content */
+.tl-container {
+  padding: 10px 40px;
+  position: relative;
+  background-color: inherit;
+  width: 70%;
+}
+
+/* The circles on the timeline */
+.tl-container::after {
+  content: '';
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  right: -15px;
+  background-color: white;
+  border: 4px solid #FF9F55;
+  top: 15px;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+/* Place the container to the right */
+.right {
+  left: 10%;
+}
+
+/* Add arrows to the right container (pointing left) */
+.right::before {
+  content: " ";
+  height: 0;
+  position: absolute;
+  top: 22px;
+  width: 0;
+  z-index: 1;
+  left: 30px;
+  border: medium solid black;
+  border-width: 10px 10px 10px 0;
+  border-color: transparent black transparent transparent;
+}
+
+/* Fix the circle for containers on the right side */
+.right::after {
+  left: -10px;
+}
+
+/* The actual content */
+.tl-content {
+  padding: 20px 30px;
+  background-color: white;
+  border: medium solid black;
+  position: relative;
+  border-radius: 6px;
+}
+
+.selected {
+  background-color: lightgrey;
+}

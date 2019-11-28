@@ -5,6 +5,8 @@ import { CookieService } from "ng2-cookies";
 import * as myGlobals from "../globals";
 import { CallStatus } from "../common/call-status";
 import {TranslateService} from '@ngx-translate/core';
+import {UserService} from '../user-mgmt/user.service';
+
 
 @Component({
     selector: "company-rating",
@@ -23,9 +25,20 @@ export class CompanyRatingComponent implements OnInit {
     ratingSeller = 0;
     ratingFulfillment = 0;
 
+
+    negotiationQuality = false;
+    orderQuality = false;
+    responsetime= false;
+    prodListingAccu = false;
+    conformToOtherAggre = false;
+    deliveryPackage = false;
+    sellerNegoSettings = null;
+
+
     constructor(private cookieService: CookieService,
                 private bpeService: BPEService,
                 private translate: TranslateService,
+                private userService: UserService,
                 public route: ActivatedRoute) {
     }
 
@@ -49,8 +62,39 @@ export class CompanyRatingComponent implements OnInit {
       }
     }
 
-    getRatings(id) {
+    async getRatings(id) {
+
+      const sellerNegotiationSettings = await this.userService.getCompanyNegotiationSettingsForParty(id);
+      this.sellerNegoSettings = sellerNegotiationSettings;
+
+
+      if( this.sellerNegoSettings != null && this.sellerNegoSettings.company.processID.length !=0){
+
+        if(this.sellerNegoSettings.company.processID.indexOf('Fulfilment') != -1){
+            this.deliveryPackage = true;
+        }
+
+        if(this.sellerNegoSettings.company.processID.indexOf('Ppap') != -1 || this.sellerNegoSettings.company.processID.indexOf('Item_Information_Request') != -1){
+            this.prodListingAccu = true;
+            this.conformToOtherAggre = true;
+            this.ratingFulfillment = 0
+        }
+
+        if(this.sellerNegoSettings.company.processID.indexOf('Negotiation') != -1){
+            this.negotiationQuality = true;
+            this.ratingSeller = 0;
+            this.responsetime = true;
+        }
+
+        if(this.sellerNegoSettings.company.processID.indexOf('Order') != -1 || this.sellerNegoSettings.company.processID.indexOf('Transport_Execution_Plan') != -1){
+            this.orderQuality = true;
+            this.ratingSeller = 0;
+        }
+
+      }
+
       this.initCallStatus.submit();
+
       this.bpeService.getRatingsSummary(id).then(ratings => {
         if (myGlobals.debug) {
           console.log("Fetched ratings: " + JSON.stringify(ratings));

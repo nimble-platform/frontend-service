@@ -67,6 +67,7 @@ export class DashboardThreadedComponent implements OnInit{
 
     public config = myGlobals.config;
 
+    private translations:any;
 
     constructor(
         private cookieService: CookieService,
@@ -81,6 +82,9 @@ export class DashboardThreadedComponent implements OnInit{
 
 
     ngOnInit() {
+        this.appComponent.translate.get(['Activities on','No Archived Orders','Back','Show Archived']).subscribe((res: any) => {
+            this.translations = res;
+        });
         this.computeUserFromCookies();
         this.getTabCounters();
         this.route.queryParams.subscribe(params => this.updateStateFromQueryParameters(params));
@@ -278,9 +282,9 @@ export class DashboardThreadedComponent implements OnInit{
 
     getToggleArchivedButtonText(): string {
         if(!this.isToggleArchivedButtonEnabled()) {
-            return "No Archived Orders"
+            return this.translations["No Archived Orders"];
         }
-        return this.query.archived ? "Back" : "Show Archived"
+        return this.query.archived ? this.translations["Back"] : this.translations["Show Archived"];
     }
 
     /*
@@ -365,7 +369,6 @@ export class DashboardThreadedComponent implements OnInit{
             case TABS.COMPARE:
             case TABS.PROJECTS:
             case TABS.PERFORMANCE:
-            case TABS.FRAME_CONTRACTS:
             case TABS.SALES:
                 this.queryOrdersIfNeeded();
                 return;
@@ -392,7 +395,9 @@ export class DashboardThreadedComponent implements OnInit{
                 upped == TABS.COMPARE ||
                 upped == TABS.PROJECTS ||
                 upped == TABS.PERFORMANCE ||
-                upped == TABS.FRAME_CONTRACTS) {
+                upped == TABS.FRAME_CONTRACTS ||
+                upped == TABS.UNSHIPPED_ORDERS ||
+                upped == TABS.COLLABORATION) {
                 return upped;
             }
         }
@@ -402,6 +407,8 @@ export class DashboardThreadedComponent implements OnInit{
           return TABS.SALES;
         if (this.appComponent.checkRoles('catalogue'))
           return TABS.CATALOGUE;
+        if (this.config.collaborationEnabled && this.appComponent.checkRoles('collaboration'))
+          return TABS.COLLABORATION;
         if (this.appComponent.checkRoles('favourite'))
           return TABS.FAVOURITE;
         if (this.appComponent.checkRoles('compare'))
@@ -505,7 +512,7 @@ export class DashboardThreadedComponent implements OnInit{
     }
 
     private getDefaultCollaborationNames(collaborationGroup:CollaborationGroup):string{
-        let defaultName = "Activities on ";
+        let defaultName = this.translations["Activities on"]+" ";
         for(let i = 0 ; i < collaborationGroup.associatedProcessInstanceGroups.length ; i++){
             if(i == collaborationGroup.associatedProcessInstanceGroups.length-1){
                 defaultName += collaborationGroup.associatedProcessInstanceGroups[i].name;

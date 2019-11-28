@@ -1,297 +1,151 @@
-<call-status [callStatus]="initCallStatus"></call-status>
+<div *ngIf="isReady()">
+    <order-item *ngFor="let priceWrapper of priceWrappers;let i=index" [lineIndex]="i" [buyerParty]="buyerParty" [sellerParty]="sellerParty" [priceWrapper]="priceWrapper" [hidden]="selectedLineIndex != i"
+                [selectedLineIndex]="selectedLineIndex"></order-item>
 
-<ng-container *ngIf="isReady()">
-    <div class="row title-row">
-        <div class="col-6"><h4><span [innerHTML]="'Order Details' | translate"></span></h4></div>
-        <div class="col-6"><h4><span [innerHTML]="'Delivery Details' | translate"></span></h4></div>
+    <div class="ml-2">
+        <div class="row mb-4 mt-4">
+            <div *ngIf="isEpcTabShown()" class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'TRACK_AND_TRACE'}" (click)="selectedPanel = 'TRACK_AND_TRACE'"><span [innerHTML]="'Track and Trace' | translate"></span></div>
+            <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'NOTES_AND_FILES'}" (click)="selectedPanel = 'NOTES_AND_FILES'"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>
+            <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'PURCHASE_ORDER'}" (click)="selectedPanel = 'PURCHASE_ORDER'"><span [innerHTML]="'Purchase Order' | translate"></span></div>
+        </div>
     </div>
 
-    <div class="row content-row">
-        <div class="col-6">
-            <div>
-                <text-input presentationMode="view" label="Warranty"
-                            [text]="getWarrantyPeriodText()" labelClass="col-4" valueClass="col-8">
-                </text-input>
-            </div>
-            <div>
-                <text-input presentationMode="view" label="Incoterms"
-                            [text]="getIncoterm()" labelClass="col-4" valueClass="col-8">
-                </text-input>
-            </div>
-            <div>
-                <text-input presentationMode="view" label="Quantity"
-                            [text]="getQuantityText()" labelClass="col-4" valueClass="col-8">
-                </text-input>
-            </div>
-            <div>
-                <text-input presentationMode="view" label="Net Price"
-                            [text]="priceWrapper.totalPriceString" labelClass="col-4" valueClass="col-8">
-                </text-input>
-            </div>
-            <div *ngIf="config.vatEnabled">
-                <text-input presentationMode="view" label="VAT"
-                            [text]="priceWrapper.vatTotalString" labelClass="col-4" valueClass="col-8">
-                </text-input>
-            </div>
-            <div *ngIf="config.vatEnabled">
-                <text-input presentationMode="view" label="Gross Total"
-                            [text]="priceWrapper.grossTotalString" labelClass="col-4" valueClass="col-8">
-                </text-input>
-            </div>
-            <div *ngIf="config.dataChannelsEnabled" class="space-after">
-                <div class = "row">
-                    <div class="col-4">
-                        <strong><span [innerHTML]="'Data Monitoring Service' | translate"></span>:</strong>
-                    </div>
-                    <div class="col-8">
-                        <span *ngIf="!fetchDataMonitoringStatus.isDisplayed()">{{ dataMonitoringDemanded ? "Yes" : "No" }}</span>
-                        <call-status [callStatus]="fetchDataMonitoringStatus"></call-status>
+    <!-- EPC Codes -->
+    <ng-container *ngIf="selectedPanel == 'TRACK_AND_TRACE'">
+        <ul class="nav nav-tabs space-after">
+            <li class="nav-item">
+                <a href id="EPC_CODES" class="nav-link"
+                   [ngClass]="{ active: selectedTrackAndTraceTab === 'EPC_CODES'}"
+                   (click)="onTTTabSelect($event,'EPC_CODES')">
+                    <span [innerHTML]="'EPC Codes' | translate"></span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href id="PRODUCTION_PROCESS_TEMPLATE" class="nav-link"
+                   [ngClass]="{ active: selectedTrackAndTraceTab === 'PRODUCTION_PROCESS_TEMPLATE'}"
+                   (click)="onTTTabSelect($event,'PRODUCTION_PROCESS_TEMPLATE')">
+                    <span [innerHTML]="'Production Process Template' | translate"></span>
+                </a>
+            </li>
+        </ul>
+
+        <ng-container *ngIf="selectedTrackAndTraceTab === 'EPC_CODES'">
+            <call-status [callStatus]="initEpcCodesCallStatus"></call-status>
+
+            <div *ngIf="epcCodes" class="row">
+
+                <!--List of codes -->
+                <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
+                    <div class="row mb-1" *ngFor="let code of epcCodes.codes; let i = index; trackBy:trackByFn">
+                        <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
+                            <input type="text" class="form-control" [(ngModel)]="epcCodes.codes[i]" [disabled]="isBuyer()">
+                        </div>
+                        <div class="col-3" *ngIf="isSeller()">
+                            <button class="btn btn-danger w-100" (click)="onDeleteEpcCode(i)"><span [innerHTML]="'Delete' | translate"></span></button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div>
-                <text-input presentationMode="view" label="Payment Means"
-                            [text]="getPaymentMeans()" labelClass="col-4" valueClass="col-8">
-                </text-input>
-            </div>
-            <div>
-                <text-input presentationMode="view" label="Payment Terms"
-                            [text]="paymentTermsWrapper.paymentTerm" labelClass="col-4" valueClass="col-8">
-                </text-input>
-            </div>
-        </div>
-        <div class="col-6">
-            <div>
-                <text-input presentationMode="view" label="Delivery Period"
-                            [text]="getDeliveryPeriodText()" labelClass="col-4" valueClass="col-8">
-                </text-input>
-            </div>
-            <div>
-                <text-input presentationMode="view" label="Street Name"
-                            [text]="address.streetName" labelClass="col-4" valueClass="col-8">
-                </text-input>
-            </div>
-            <div>
-                <text-input presentationMode="view" label="Building Number"
-                            [text]="address.buildingNumber" labelClass="col-4" valueClass="col-8">
-                </text-input>
-            </div>
-            <div>
-                <text-input presentationMode="view" label="City / Town"
-                            [text]="address.cityName" labelClass="col-4" valueClass="col-8">
-                </text-input>
-            </div>
-            <div>
-                <text-input presentationMode="view" label="State / Province"
-                            [text]="address.region" labelClass="col-4" valueClass="col-8">
-                </text-input>
-            </div>
-            <div>
-                <text-input presentationMode="view" label="Postal Code"
-                            [text]="address.postalZone" labelClass="col-4" valueClass="col-8">
-                </text-input>
-            </div>
-            <div>
-                <text-input presentationMode="view" label="Country"
-                            [text]="address.country.name.value" labelClass="col-4" valueClass="col-8">
-                </text-input>
-            </div>
-        </div>
-    </div>
 
-    <div class="row mb-4 mt-4">
-        <div class="btn btn-outline-primary" [ngClass]="{'active':selectedPanel == 'TERMS_AND_CONDITIONS'}" (click)="selectedPanel = 'TERMS_AND_CONDITIONS'"><span [innerHTML]="'Terms and Conditions' | translate"></span></div>
-        <div *ngIf="isEpcTabShown()" class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'TRACK_AND_TRACE'}" (click)="selectedPanel = 'TRACK_AND_TRACE'"><span [innerHTML]="'Track and Trace' | translate"></span></div>
-        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'NOTES_AND_FILES'}" (click)="selectedPanel = 'NOTES_AND_FILES'"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>
-        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'PURCHASE_ORDER'}" (click)="selectedPanel = 'PURCHASE_ORDER'"><span [innerHTML]="'Purchase Order' | translate"></span></div>
-        <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'PREVIOUS_STEPS'}" (click)="selectedPanel = 'PREVIOUS_STEPS'"><span [innerHTML]="'Previous Steps' | translate"></span></div>
-    </div>
+                <div *ngIf="isSeller()" class="col-1"></div>
+
+                <div *ngIf="isSeller()" class="col-2">
+
+                    <!-- Add code -->
+                    <div class="row">
+                        <div class="col-12">
+                            <button class="btn btn-success w-100" (click)="onAddEpcCode()"><span [innerHTML]="'Add' | translate"></span></button>
+                        </div>
+                    </div>
+
+                    <!-- Save -->
+                    <div class="row">
+                        <div class="col-12">
+                            <button class="btn btn-primary w-100 save-epc-btn" [disabled]="!areEpcCodesDirty() || !isThereAValidEPCCode()"
+                                    (click)="onSaveEpcCodes()"><span [innerHTML]="'Save' | translate"></span></button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-end">
+                  <span class="align-self-center">
+                      <call-status [callStatus]="saveEpcCodesCallStatus"></call-status>
+                  </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </ng-container>
+
+        <div *ngIf="selectedTrackAndTraceTab === 'PRODUCTION_PROCESS_TEMPLATE'">
+            <div class="d-flex">
+                <div class="col-3 mr-2">
+                    <file-input [binaryObjects]="productionTemplateFile"
+                                (onSelectFile)="onTTFileSelected($event)"
+                                (onClearFile)="onTTFileRemoved()"
+                                [presentationMode]="isSeller() ? 'edit' : 'view'">
+                    </file-input>
+                </div>
+                <div *ngIf="isSeller()">
+                    <button class="btn btn-primary" (click)="onUpdateOrderResponse()"><span [innerHTML]="'Save' | translate"></span></button>
+                </div>
+            </div>
+            <call-status [large]="true" [callStatus]="updateOrderResponseCallStatus"></call-status>
+        </div>
+    </ng-container>
 
     <!-- Notes -->
     <ng-container *ngIf="selectedPanel == 'NOTES_AND_FILES'">
         <div class="row content-row" *ngIf="isReady()">
             <div class="col-6">
                 <note-file-view [notes]="order.note"
-                           [label]="'Customer\'s Note'"
-                           [documents]="order.additionalDocumentReference"
-                           [firstCol]="'col-4'"
-                           [lastCol]="'col-8'"
-                           [readonly]="isReadOnly() || isSeller()"></note-file-view>
+                                [label]="'Customer\'s Note'"
+                                [documents]="order.additionalDocumentReference"
+                                [firstCol]="'col-4'"
+                                [lastCol]="'col-8'"
+                                [readonly]="isReadOnly() || isSeller()"></note-file-view>
             </div>
             <div class="col-6">
                 <note-file-view *ngIf="orderResponse"
-                           [notes]="orderResponse.note"
-                           [documents]="orderResponse.additionalDocumentReference"
-                           [label]="'Supplier\'s Note'"
-                           [firstCol]="'col-4'"
-                           [lastCol]="'col-8'"
-                           [readonly]="isReadOnly()"></note-file-view>
+                                [notes]="orderResponse.note"
+                                [documents]="orderResponse.additionalDocumentReference"
+                                [label]="'Supplier\'s Note'"
+                                [firstCol]="'col-4'"
+                                [lastCol]="'col-8'"
+                                [readonly]="isReadOnly()"></note-file-view>
             </div>
         </div>
     </ng-container>
 
-    <!-- Contract Preview -->
-    <ng-container *ngIf="isReady()">
-        <!--<div>-->
-        <contract *ngIf="selectedPanel == 'PREVIOUS_STEPS'" [contract]="getOrderContract()" [collapsable]="false" [isCatalogueLineDeleted]="processMetadata != null && processMetadata.isProductDeleted"></contract>
-        <!--</div>-->
-        <div *ngIf="selectedPanel == 'TERMS_AND_CONDITIONS'">
-            <ul class="nav nav-tabs space-after space-before">
-                <li class="nav-item">
-                    <a href id="CUSTOM_TERMS" class="nav-link"
-                       [ngClass]="{ active: selectedTCTab === 'CUSTOM_TERMS'}"
-                       (click)="onTCTabSelect($event,'CUSTOM_TERMS')">
-                       <span [innerHTML]="'Custom Terms' | translate"></span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href id="CLAUSES" class="nav-link"
-                       [ngClass]="{ active: selectedTCTab === 'CLAUSES'}"
-                       (click)="onTCTabSelect($event,'CLAUSES')">
-                       <span [innerHTML]="'Clauses' | translate"></span>
-                    </a>
-                </li>
-            </ul>
+    <!--Purchase Order-->
+    <table class="table table-striped" *ngIf="selectedPanel == 'PURCHASE_ORDER'">
+        <tr>
+            <th><span>Ordered Product</span></th>
+            <th><span [innerHTML]="'Product Id' | translate">Product Id</span></th>
+            <th><span [innerHTML]="'Quantity' | translate">Quantity</span></th>
+            <th><span [innerHTML]="'Net Price' | translate">Net Price</span></th>
+            <th *ngIf="config.vatEnabled" [innerHTML]="'VAT' | translate"><span>VAT</span></th>
+            <th *ngIf="config.vatEnabled" [innerHTML]="'Gross Total' | translate"><span>Gross Total</span></th>
+        </tr>
+        <tr *ngFor="let priceWrapper of priceWrappers;let i=index">
+            <th scope="row"><span>{{priceWrapper.item.name[0].value }}</span></th>
+            <td><span>{{priceWrapper.item.manufacturersItemIdentification.id}}</span></td>
+            <td><span>{{quantityToString(order.orderLine[i].lineItem.quantity)}}</span></td>
+            <td><span>{{priceWrapper.totalPriceString}}</span></td>
+            <td *ngIf="config.vatEnabled"><span>{{priceWrapper.vatTotalString}}</span></td>
+            <td *ngIf="config.vatEnabled"><span>{{priceWrapper.grossTotalString}}</span></td>
+        </tr>
+        <tr>
+            <th scope="row"><span>Total </span></th>
+            <td><span></span></td>
+            <td><span></span></td>
+            <td><span>{{getTotalPriceString()}}</span></td>
+            <td *ngIf="config.vatEnabled"><span>{{getVatTotalString()}}</span></td>
+            <td *ngIf="config.vatEnabled"><span>{{getGrossTotalString()}}</span></td>
+        </tr>
+    </table>
 
-            <!-- Custom trading terms -->
-            <ng-container *ngIf="selectedTCTab == 'CUSTOM_TERMS'">
-                <ng-container *ngFor="let tradingTerm of lastQuotation?.tradingTerms">
-                    <div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row">
-                        <div class="col-2">
-                            <strong class="font-weight-500">{{tradingTerm.id}}:</strong>
-                            <span *ngIf="tradingTerm.description.length > 0" [title]="tradingTerm.description[0].value">&#9432;</span>
-                        </div>
-                        <multi-type-input [multiTypeValue]="tradingTerm.value"
-                                          [presentationMode]="'view'">
-                        </multi-type-input>
-                    </div>
-                </ng-container>
-            </ng-container>
-
-            <!-- Clauses -->
-            <terms-and-conditions *ngIf="selectedTCTab == 'CLAUSES'"
-                                    [buyerPartyId]="getPartyId(buyerParty)"
-                                  [selectedIncoterm]="order.orderLine[0].lineItem.deliveryTerms.incoterms"
-                                  [selectedTradingTerm]="order.paymentTerms.tradingTerms"
-                                  [sellerPartyId]="getPartyId(sellerParty)"
-                                  [readOnly]="true"
-                                  [enableComparisonWithOtherTerms]="false"
-                                  [documentType]="'order'"
-                                  [termsAndConditions]="getTermAndConditionClauses()">
-            </terms-and-conditions>
-        </div>
-        <ng-container *ngIf="selectedPanel == 'PURCHASE_ORDER'">
-            <div class="row">
-                <div class="col-3"><strong><span [innerHTML]="'Product Id' | translate"></span>:</strong></div>
-                <div class="col-9">{{order.orderLine[0].lineItem.item.manufacturersItemIdentification.id}}</div>
-            </div>
-            <div class="row">
-                <div class="col-3"><strong><span [innerHTML]="'Quantity' | translate"></span>:</strong></div>
-                <div class="col-9">{{getQuantityText()}}</div>
-            </div>
-            <div class="row">
-                <div class="col-3"><strong><span [innerHTML]="'Net Price' | translate"></span>:</strong></div>
-                <div class="col-9">{{priceWrapper.totalPriceString}}</div>
-            </div>
-            <div class="row" *ngIf="config.vatEnabled">
-                <div class="col-3"><strong><span [innerHTML]="'VAT' | translate"></span>:</strong></div>
-                <div class="col-9">{{priceWrapper.vatTotalString}}</div>
-            </div>
-            <div class="row" *ngIf="config.vatEnabled">
-                <div class="col-3"><strong><span [innerHTML]="'Gross Total' | translate"></span>:</strong></div>
-                <div class="col-9">{{priceWrapper.grossTotalString}}</div>
-            </div>
-        </ng-container>
-    </ng-container>
-</ng-container>
-
-
-<!-- EPC Codes -->
-<ng-container *ngIf="selectedPanel == 'TRACK_AND_TRACE'">
-    <ul class="nav nav-tabs space-after">
-        <li class="nav-item">
-            <a href id="EPC_CODES" class="nav-link"
-               [ngClass]="{ active: selectedTrackAndTraceTab === 'EPC_CODES'}"
-               (click)="onTTTabSelect($event,'EPC_CODES')">
-               <span [innerHTML]="'EPC Codes' | translate"></span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href id="PRODUCTION_PROCESS_TEMPLATE" class="nav-link"
-               [ngClass]="{ active: selectedTrackAndTraceTab === 'PRODUCTION_PROCESS_TEMPLATE'}"
-               (click)="onTTTabSelect($event,'PRODUCTION_PROCESS_TEMPLATE')">
-               <span [innerHTML]="'Production Process Template' | translate"></span>
-            </a>
-        </li>
-    </ul>
-
-    <ng-container *ngIf="selectedTrackAndTraceTab === 'EPC_CODES'">
-        <call-status [callStatus]="initEpcCodesCallStatus"></call-status>
-
-        <div *ngIf="epcCodes" class="row">
-
-          <!--List of codes -->
-          <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
-              <div class="row mb-1" *ngFor="let code of epcCodes.codes; let i = index; trackBy:trackByFn">
-                <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
-                    <input type="text" class="form-control" [(ngModel)]="epcCodes.codes[i]" [disabled]="isBuyer()">
-                </div>
-                <div class="col-3" *ngIf="isSeller()">
-                    <button class="btn btn-danger w-100" (click)="onDeleteEpcCode(i)"><span [innerHTML]="'Delete' | translate"></span></button>
-                </div>
-              </div>
-          </div>
-
-          <div *ngIf="isSeller()" class="col-1"></div>
-
-          <div *ngIf="isSeller()" class="col-2">
-
-            <!-- Add code -->
-            <div class="row">
-                <div class="col-12">
-                    <button class="btn btn-success w-100" (click)="onAddEpcCode()"><span [innerHTML]="'Add' | translate"></span></button>
-                </div>
-            </div>
-
-            <!-- Save -->
-            <div class="row">
-                <div class="col-12">
-                    <button class="btn btn-primary w-100 save-epc-btn" [disabled]="!areEpcCodesDirty() || !isThereAValidEPCCode()"
-                        (click)="onSaveEpcCodes()"><span [innerHTML]="'Save' | translate"></span></button>
-                </div>
-            </div>
-
-            <div class="row">
-              <div class="col-12 d-flex justify-content-end">
-                  <span class="align-self-center">
-                      <call-status [callStatus]="saveEpcCodesCallStatus"></call-status>
-                  </span>
-              </div>
-            </div>
-
-          </div>
-        </div>
-    </ng-container>
-
-    <div *ngIf="selectedTrackAndTraceTab === 'PRODUCTION_PROCESS_TEMPLATE'">
-        <div class="d-flex">
-            <div class="col-3 mr-2">
-                <file-input [binaryObjects]="productionTemplateFile"
-                            (onSelectFile)="onTTFileSelected($event)"
-                            (onClearFile)="onTTFileRemoved()"
-                            [presentationMode]="isSeller() ? 'edit' : 'view'">
-                </file-input>
-            </div>
-            <div *ngIf="isSeller()">
-                <button class="btn btn-primary" (click)="onUpdateOrderResponse()"><span [innerHTML]="'Save' | translate"></span></button>
-            </div>
-        </div>
-        <call-status [large]="true" [callStatus]="updateOrderResponseCallStatus"></call-status>
-    </div>
-</ng-container>
-
-<!-- Actions -->
-<ng-container *ngIf="!formerProcess">
+    <!-- Actions -->
     <ng-container *ngIf="isBuyer() && isReady()">
 
         <hr class="actions-hr">
@@ -323,10 +177,15 @@
         </div>
 
         <div class="row actions-row" *ngIf="isReadOnly() && isOrderCompleted()">
-            <div class="col-7 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
+            <div class="col-5 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
             <div class="col-2">
                 <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
                     <span [innerHTML]="'Back' | translate"></span>
+                </button>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-primary action" [disabled]="isPaymentButtonDisabled()" (click)="onPaymentDone()">
+                    <span [innerHTML]="'Payment Done' | translate"></span>
                 </button>
             </div>
             <div class="col-3">
@@ -349,19 +208,19 @@
                 </button>
             </div>
             <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading() || processMetadata.isProductDeleted" (click)="onRespondToOrder(false)">
+                <button class="btn btn-secondary action" [disabled]="isLoading() || isThereADeletedProduct()" (click)="onRespondToOrder(false)">
                     <span [innerHTML]="'Reject' | translate"></span>
                 </button>
             </div>
             <div class="col-2">
-                <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.isProductDeleted" (click)="onRespondToOrder(true)">
+                <button class="btn btn-primary action" [disabled]="isLoading() || isThereADeletedProduct()" (click)="onRespondToOrder(true)">
                     <span [innerHTML]="'Accept' | translate"></span>
                 </button>
             </div>
         </div>
 
         <div class="row actions-row" *ngIf="isOrderCompleted()">
-            <div class="{{companyWorkflowMap.get('Fulfilment') ? 'col-3' : 'col-8'}} call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
+            <div class="{{companyWorkflowMap.get('Fulfilment') ? 'col-1' : 'col-6'}} call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
             <div class="col-2">
                 <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
                     <span [innerHTML]="'Back' | translate"></span>
@@ -372,16 +231,22 @@
                     <span [innerHTML]="'Download Contract' | translate"></span>
                 </button>
             </div>
+            <div class="col-2">
+                <button class="btn btn-primary action" [disabled]="isPaymentButtonDisabled()" (click)="onPaymentDone()">
+                    <span [innerHTML]="'Payment Received' | translate"></span>
+                </button>
+            </div>
             <div class="col-3" *ngIf="companyWorkflowMap.get('Fulfilment')">
-                <button class="btn btn-primary action" [disabled]="isLoading() || isOrderRejected() || processMetadata.isProductDeleted" (click)="onSearchTransportService()">
+                <button class="btn btn-primary action" [disabled]="isDispatchDisabled()" (click)="onSearchTransportService()">
                     <span [innerHTML]="'Search for Transport Service Provider' | translate"></span>
                 </button>
             </div>
             <div class="col-2" *ngIf="companyWorkflowMap.get('Fulfilment')">
-                <button class="btn btn-primary action" [disabled]="isLoading() || isOrderRejected() || processMetadata.isProductDeleted" (click)="onDispatchOrder()">
+                <button class="btn btn-primary action" [disabled]="isDispatchDisabled()" (click)="onDispatchOrder()">
                     <span [innerHTML]="'Dispatch Order' | translate"></span>
                 </button>
             </div>
         </div>
     </ng-container>
-</ng-container>
+
+</div>

@@ -27,7 +27,6 @@ export class TransportExecutionPlanComponent implements OnInit {
     request: TransportExecutionPlanRequest;
     response: TransportExecutionPlan;
     userRole: BpUserRole;
-    formerProcess: boolean;
     productOrder?: Order;
     updatingProcess: boolean = false;
 
@@ -37,8 +36,7 @@ export class TransportExecutionPlanComponent implements OnInit {
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
 
-    itemName:string;
-
+    selectPreferredValue=selectPreferredValue
     constructor(private bpDataService: BPDataService,
                 private searchContextService: SearchContextService,
                 private cookieService: CookieService,
@@ -54,15 +52,15 @@ export class TransportExecutionPlanComponent implements OnInit {
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
-        this.formerProcess = this.bpDataService.bpActivityEvent.formerProcess;
 
         if(!this.bpDataService.transportExecutionPlanRequest) {
             if(this.searchContextService.getAssociatedProcessMetadata() != null) {
-                this.bpDataService.initTransportExecutionPlanRequestWithOrder().then(response => {
-                    this.init();
-                });
+                // this.bpDataService.initTransportExecutionPlanRequestWithOrder().then(response => {
+                //     this.init();
+                // });
+                console.log("STILL NAVIGATING TO TEP REQUEST FOLLOWING SEARCH");
             } else {
-                this.bpDataService.initTransportExecutionPlanRequest();
+                this.bpDataService.initTransportExecutionPlanRequestWithQuotation();
                 this.init();
             }
         }
@@ -73,7 +71,6 @@ export class TransportExecutionPlanComponent implements OnInit {
 
     init(){
         this.request = this.bpDataService.transportExecutionPlanRequest;
-        this.itemName = selectPreferredValue(this.request.consignment[0].consolidatedShipment[0].goodsItem[0].item.name)
         this.response = this.bpDataService.transportExecutionPlan;
         this.productOrder = this.bpDataService.productOrder;
         this.userRole = this.bpDataService.bpActivityEvent.userRole;
@@ -124,10 +121,6 @@ export class TransportExecutionPlanComponent implements OnInit {
     onSendRequest(): void {
         this.callStatus.submit();
         const transportationExecutionPlanRequest: TransportExecutionPlanRequest = copy(this.bpDataService.transportExecutionPlanRequest);
-
-        // final check on the transportationExecutionPlanRequest
-        transportationExecutionPlanRequest.mainTransportationService = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
-        UBLModelUtils.removeHjidFieldsFromObject(transportationExecutionPlanRequest);
 
         // first initialize the seller and buyer parties.
         // once they are fetched continue with starting the ordering process
@@ -189,6 +182,35 @@ export class TransportExecutionPlanComponent implements OnInit {
     }
 
     onDispatchAdvice() {
+        this.bpDataService.setCopyDocuments(false, false, false,false);
         this.bpDataService.proceedNextBpStep("seller", "Fulfilment");
+    }
+
+    isThereADeletedProduct():boolean{
+        for(let isProductDeleted of this.processMetadata.areProductsDeleted){
+            if(isProductDeleted){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    populateAreCatalogueLinesDeletedArray():boolean[]{
+        let areCatalogueLinesDeleted:boolean[] = [];
+        if(this.processMetadata){
+            for(let isProductDeleted of this.processMetadata.areProductsDeleted){
+                if(isProductDeleted){
+                    areCatalogueLinesDeleted.push(true);
+                }
+                else {
+                    areCatalogueLinesDeleted.push(false);
+                }
+            }
+        }
+        else {
+            areCatalogueLinesDeleted.push(false);
+        }
+
+        return areCatalogueLinesDeleted;
     }
 }

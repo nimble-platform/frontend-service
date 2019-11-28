@@ -45,10 +45,16 @@
                     <a href id="PROJECTS" *ngIf="config.projectsEnabled && this.appComponent.checkRoles('projects')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.PROJECTS}" (click)="onChangeTab($event,'PROJECTS')"><span [innerHTML]="'Projects' | translate"></span></a>
                 </li>
                 <li class="nav-item">
-                    <a href id="FRAME_CONTRACTS" *ngIf="config.frameContractTabEnabled && this.appComponent.checkRoles('purchases')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.FRAME_CONTRACTS}" (click)="onChangeTab($event,'FRAME_CONTRACTS')"><span [innerHTML]="'Frame Contracts' | translate"></span></a>
+                    <a href id="FRAME_CONTRACTS" *ngIf="config.frameContractTabEnabled && this.appComponent.checkRoles('sales') || this.appComponent.checkRoles('purchases')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.FRAME_CONTRACTS}" (click)="onChangeTab($event,'FRAME_CONTRACTS')"><span [innerHTML]="'Frame Contracts' | translate"></span></a>
+                </li>
+                <li class="nav-item">
+                    <a href id="UNSHIPPED_ORDERS" *ngIf="config.unshippedOrdersTabEnabled && (this.appComponent.checkRoles('sales') || this.appComponent.checkRoles('purchases'))" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.UNSHIPPED_ORDERS}" (click)="onChangeTab($event,'UNSHIPPED_ORDERS')"><span [innerHTML]="'Unshipped Orders' | translate"></span></a>
                 </li>
                 <li class="nav-item">
                     <a href id="CATALOGUE" *ngIf="this.appComponent.checkRoles('catalogue')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.CATALOGUE}" (click)="onChangeTab($event,'CATALOGUE')"><span [innerHTML]="'Catalogue' | translate"></span></a>
+                </li>
+                <li class="nav-item">
+                    <a href id="COLLABORATION" *ngIf="config.collaborationEnabled && this.appComponent.checkRoles('collaboration')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.COLLABORATION}" (click)="onChangeTab($event,'COLLABORATION')"><span [innerHTML]="'Collaboration' | translate"></span></a>
                 </li>
                 <li class="nav-item">
                     <a href id="FAVOURITE" *ngIf="this.appComponent.checkRoles('favourite')" [ngClass]="{'nav-link': true, active: queryParameters.tab === TABS.FAVOURITE}" (click)="onChangeTab($event,'FAVOURITE')"><span [innerHTML]="'Favourite' | translate"></span></a>
@@ -189,25 +195,25 @@
                     <div class="row">
                         <!-- Filters -->
                         <div class="col-2">
-                            <facet [title]="'Product / Service'" [dataType]="'string'"
+                            <facet [title]="'Product / Service' | translate" [dataType]="'string'"
                                 [stringValues]="filterSet && filterSet.relatedProducts"
                                 [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.relatedProducts"
                                 [loading]="areFiltersLoading()"
                                 (triggerCriteriaChanged)="onFilterChange()">
                             </facet>
-                            <facet [title]="'Category'" [dataType]="'string'"
+                            <facet [title]="'Category' | translate" [dataType]="'string'"
                                 [stringValues]="filterSet && filterSet.relatedProductCategories"
                                 [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.relatedProductCategories"
                                 [loading]="areFiltersLoading()"
                                 (triggerCriteriaChanged)="onFilterChange()">
                             </facet>
-                            <facet [title]="'Trading Partner'" [dataType]="'string'"
+                            <facet [title]="'Trading Partner' | translate" [dataType]="'string'"
                                 [stringValues]="filterSet && filterSet.tradingPartnerNames"
                                 [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.tradingPartnerNames"
                                 [loading]="areFiltersLoading()"
                                 (triggerCriteriaChanged)="onFilterChange()">
                             </facet>
-                            <facet [title]="'Status'" [dataType]="'string'"
+                            <facet [title]="'Status' | translate" [dataType]="'string'"
                                    [stringValues]="filterSet && filterSet.status"
                                    [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.status"
                                    [loading]="areFiltersLoading()"
@@ -349,6 +355,13 @@
     <div *ngIf="queryParameters.tab === TABS.CATALOGUE" class="row">
         <div class="col-12">
             <catalogue-view></catalogue-view>
+        </div>
+    </div>
+
+    <!-- Collaboration tab -->
+    <div *ngIf="queryParameters.tab === TABS.COLLABORATION" class="row">
+        <div class="col-12">
+            <collaboration-view></collaboration-view>
         </div>
     </div>
 
@@ -527,6 +540,9 @@
     <!-- Frame contracts tab -->
     <frame-contract-tab *ngIf="queryParameters.tab === TABS.FRAME_CONTRACTS">
     </frame-contract-tab>
+
+    <unshipped-orders-tab *ngIf="queryParameters.tab === TABS.UNSHIPPED_ORDERS">
+    </unshipped-orders-tab>
 
     <!-- Performance tab -->
      <div *ngIf="queryParameters.tab === TABS.PERFORMANCE" class="row">

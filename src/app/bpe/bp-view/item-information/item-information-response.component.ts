@@ -34,7 +34,6 @@ export class ItemInformationResponseComponent implements OnInit {
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
-    isFormerStep: boolean;
     isLogisticsService:boolean = false;
     isTransportService:boolean = false;
 
@@ -51,7 +50,6 @@ export class ItemInformationResponseComponent implements OnInit {
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
-        this.isFormerStep = this.bpDataService.bpActivityEvent.formerProcess;
 
         if (!this.request) {
             this.request = this.bpDataService.itemInformationRequest;
@@ -81,8 +79,6 @@ export class ItemInformationResponseComponent implements OnInit {
 
     onSendResponse(): void {
         this.callStatus.submit();
-
-        //this.callStatus.submit();
         this.bpeService.startProcessWithDocument(this.bpDataService.itemInformationResponse).then(() => {
             this.callStatus.callback("Information Response sent", true);
             var tab = "PURCHASES";
@@ -102,18 +98,19 @@ export class ItemInformationResponseComponent implements OnInit {
         if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().tradeDetails.ppapCompatibilityLevel) {
             this.navigateToBusinessProcess("Negotiation");
         } else {
-            this.navigateToBusinessProcess("Ppap");
+            if (this.bpDataService.getCompanyWorkflowMap(null).get('Ppap')) {
+                this.navigateToBusinessProcess('Ppap');
+            } else {
+                this.navigateToBusinessProcess('Negotiation');
+            }
         }
     }
 
     private navigateToBusinessProcess(targetProcess: ProcessType): void {
-        this.bpDataService.resetBpData();
+        // this.bpDataService.resetBpData();
+        this.request = null;
+        this.response = null;
         this.bpDataService.proceedNextBpStep("buyer", targetProcess);
-
-        if(targetProcess === "Item_Information_Request") {
-            this.bpDataService.resetBpData();
-            this.bpDataService.initItemInformationRequest();
-        }
     }
 
     onSelectItemSpecificationFile(binaryObject: BinaryObject): void {
@@ -148,15 +145,6 @@ export class ItemInformationResponseComponent implements OnInit {
         return this.isResponseSent() ? "view" : "edit";
     }
 
-    getResponseFile(): BinaryObject | null {
-        const docs = this.getResponseDocuments();
-        return docs.length > 0 ? docs[0].attachment.embeddedDocumentBinaryObject : null;
-    }
-
-    hasResponseFile(): boolean {
-        return this.getResponseDocuments().length > 0;
-    }
-
     getResponseDocuments(): DocumentReference[] {
         return this.response.item[0].itemSpecificationDocumentReference;
     }
@@ -165,20 +153,20 @@ export class ItemInformationResponseComponent implements OnInit {
         return this.bpDataService.bpActivityEvent.userRole === "buyer";
     }
 
-    getRequestFile(): BinaryObject | null {
-        const docs = this.getRequestDocuments();
-        return docs.length > 0 ? docs[0].attachment.embeddedDocumentBinaryObject : null;
-    }
-
-    hasRequestFile(): boolean {
-        return this.getRequestDocuments().length > 0;
-    }
-
     getRequestDocuments(): DocumentReference[] {
         return this.request.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference;
     }
 
     isLoading(): boolean {
         return this.callStatus.fb_submitted;
+    }
+
+    isNextStepDisabled(): boolean {
+        // next steps do not make sense for logistics services like warehouse management, so next step is disable for them
+        return this.isRepeatRequestDisabled() || (this.isLogisticsService && !this.isTransportService) || this.bpDataService.isFinalProcessInTheWorkflow('Item_Information_Request');
+    }
+
+    isRepeatRequestDisabled(): boolean {
+        return this.isLoading() || this.readonly || this.processMetadata.areProductsDeleted[0] || this.processMetadata.isCollaborationFinished;
     }
 }

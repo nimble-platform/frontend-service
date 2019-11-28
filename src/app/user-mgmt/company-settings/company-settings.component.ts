@@ -79,6 +79,8 @@ export class CompanySettingsComponent implements OnInit {
       if (myGlobals.debug) {
           console.log("Fetched settings: " + JSON.stringify(settings));
       }
+      this.initCallStatus.callback("Settings successfully fetched", true);
+      this.initCallStatus.submit();
       this.userService.getProfileCompleteness(settings.companyID).then(completeness => {
           this.profile_completeness = 0;
           this.profile_completeness_str = "0%";
@@ -105,7 +107,6 @@ export class CompanySettingsComponent implements OnInit {
         this.ppapLevel = 0;
       this.certificates.sort((a, b) => a.name.localeCompare(b.name));
       this.certificates.sort((a, b) => a.type.localeCompare(b.type));
-      this.initCallStatus.callback("Settings successfully fetched", true);
     }
 
     onSelectTab(event: any, id: any) {

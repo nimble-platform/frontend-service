@@ -1,18 +1,13 @@
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
-import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
 import { Quotation } from "../../../catalogue/model/publish/quotation";
 import { Amount } from "../../../catalogue/model/publish/amount";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { PaymentTermsWrapper } from "../payment-terms-wrapper";
-import {copy, durationToString} from "../../../common/utils";
+import { durationToString} from "../../../common/utils";
 import { PriceWrapper } from "../../../common/price-wrapper";
-import { Address } from "../../../catalogue/model/publish/address";
-import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
 import {TradingTerm} from "../../../catalogue/model/publish/trading-term";
 import {MultiTypeValue} from "../../../catalogue/model/publish/multi-type-value";
-import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
-import {Clause} from "../../../catalogue/model/publish/clause";
-import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
+import {Delivery} from '../../../catalogue/model/publish/delivery';
 
 const FRAME_CONTRACT_TERM_ID = "FRAME_CONTRACT_DURATION";
 
@@ -22,28 +17,33 @@ export class QuotationWrapper {
     priceWrapper: PriceWrapper;
 
     constructor(public quotation: Quotation,
-                private catalogueLine: CatalogueLine) {
-        this.paymentTermsWrapper = new PaymentTermsWrapper(quotation.paymentTerms);
+                private catalogueLine: CatalogueLine,
+                public quotationLineIndex:number=0) {
+        this.paymentTermsWrapper = new PaymentTermsWrapper(quotation.quotationLine[quotationLineIndex].lineItem.paymentTerms);
         this.priceWrapper = new PriceWrapper(
-            quotation.quotationLine[0].lineItem.price,
+            quotation.quotationLine[this.quotationLineIndex].lineItem.price,
             catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
-            quotation.quotationLine[0].lineItem.quantity);
+            quotation.quotationLine[this.quotationLineIndex].lineItem.quantity);
     }
 
     public get priceAmount(): Amount {
-        return this.quotation.quotationLine[0].lineItem.price.priceAmount;
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.price.priceAmount;
     }
 
     public get orderedQuantity(): Quantity {
-        return this.quotation.quotationLine[0].lineItem.quantity;
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.quantity;
     }
 
     public set orderedQuantity(quantity: Quantity) {
-        this.quotation.quotationLine[0].lineItem.quantity = quantity;
+        this.quotation.quotationLine[this.quotationLineIndex].lineItem.quantity = quantity;
     }
 
     public get deliveryPeriod(): Quantity {
-        return this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
+    }
+
+    public get delivery(): Delivery[] {
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.delivery;
     }
 
     public get deliveryPeriodString(): string {
@@ -51,7 +51,7 @@ export class QuotationWrapper {
     }
 
     public get warranty(): Quantity {
-        return this.quotation.quotationLine[0].lineItem.warrantyValidityPeriod.durationMeasure;
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.warrantyValidityPeriod.durationMeasure;
     }
 
     public get warrantyString(): string {
@@ -59,27 +59,27 @@ export class QuotationWrapper {
     }
 
     public get incoterms(): string {
-        return this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms;
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.deliveryTerms.incoterms;
     }
 
     public get incotermsString(): string {
-        return this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms || "None";
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.deliveryTerms.incoterms || "None";
     }
 
     public set incoterms(incoterms: string) {
-        this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms = incoterms;
+        this.quotation.quotationLine[this.quotationLineIndex].lineItem.deliveryTerms.incoterms = incoterms;
     }
 
     public get paymentMeans(): string {
-        return this.quotation.paymentMeans.paymentMeansCode.value;
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.paymentMeans.paymentMeansCode.value;
     }
 
     public set paymentMeans(paymentMeans: string) {
-        this.quotation.paymentMeans.paymentMeansCode.value = paymentMeans;
+        this.quotation.quotationLine[this.quotationLineIndex].lineItem.paymentMeans.paymentMeansCode.value = paymentMeans;
     }
 
     public get frameContractDuration(): Quantity {
-        let tradingTerm: TradingTerm = this.quotation.tradingTerms.find(tradingTerm => tradingTerm.id == FRAME_CONTRACT_TERM_ID);
+        let tradingTerm: TradingTerm = this.quotation.quotationLine[this.quotationLineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == FRAME_CONTRACT_TERM_ID);
         if(tradingTerm != null) {
             return tradingTerm.value.valueQuantity[0];
         }
@@ -95,29 +95,29 @@ export class QuotationWrapper {
     }
 
     public set frameContractDuration(duration: Quantity) {
-        let tradingTerm: TradingTerm = this.quotation.tradingTerms.find(tradingTerm => tradingTerm.id == FRAME_CONTRACT_TERM_ID);
+        let tradingTerm: TradingTerm = this.quotation.quotationLine[this.quotationLineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == FRAME_CONTRACT_TERM_ID);
         if(tradingTerm == null) {
             tradingTerm = new TradingTerm(FRAME_CONTRACT_TERM_ID, null, null, new MultiTypeValue());
             tradingTerm.value.valueQuantity.push(duration)
-            this.quotation.tradingTerms.push(tradingTerm);
+            this.quotation.quotationLine[this.quotationLineIndex].lineItem.tradingTerms.push(tradingTerm);
         } else {
             tradingTerm.value.valueQuantity[0] = duration;
         }
     }
 
     public get dataMonitoringPromised(): boolean {
-        return this.quotation.dataMonitoringPromised;
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.dataMonitoringRequested;
     }
 
     public get dataMonitoringPromisedString(): string {
-        return this.quotation.dataMonitoringPromised ? 'Confirmed' : 'Not Confirmed';
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.dataMonitoringRequested ? 'Confirmed' : 'Not Confirmed';
     }
 
     public getTradingTerm(termName: string): TradingTerm {
-        return this.quotation.tradingTerms.find(tradingTerm => tradingTerm.id == termName);
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == termName);
     }
 
     public get tradingTerms(): TradingTerm[] {
-        return this.quotation.tradingTerms.filter(tradingTerm => tradingTerm.id != FRAME_CONTRACT_TERM_ID).map(tradingTerm => tradingTerm);
+        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.tradingTerms.filter(tradingTerm => tradingTerm.id != FRAME_CONTRACT_TERM_ID).map(tradingTerm => tradingTerm);
     }
 }

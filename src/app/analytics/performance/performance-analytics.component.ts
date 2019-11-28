@@ -7,7 +7,7 @@ import * as myGlobals from '../../globals';
 import {selectNameFromLabelObject} from '../../common/utils';
 import { CookieService } from "ng2-cookies";
 import {TranslateService} from '@ngx-translate/core';
-
+import { DomSanitizer } from "@angular/platform-browser";
 
 @Component({
     selector: "performance-analytics",
@@ -58,45 +58,54 @@ export class PerformanceAnalyticsComponent implements OnInit {
 	yellowTotWaitingBuyer = 0;
 	redTotDenideBuyer = 0;
 	totBuyer = 0;
-	
+
 	// average trade
     trade_count = -1;
+    trade_green = 0;
+    trade_yellow = 0;
+    trade_red = 0;
 	trade_green_perc = 0;
     trade_yellow_perc = 0;
     trade_red_perc = 0;
     trade_green_perc_str = "0%";
     trade_yellow_perc_str = "0%";
 	trade_red_perc_str = "0%";
-	
+
 	// average trade seller
     trade_count_sell = -1;
+    trade_green_sell = 0;
+    trade_yellow_sell = 0;
+    trade_red_sell = 0;
 	trade_green_perc_sell = 0;
     trade_yellow_perc_sell = 0;
     trade_red_perc_sell = 0;
     trade_green_perc_str_sell = "0%";
     trade_yellow_perc_str_sell = "0%";
 	trade_red_perc_str_sell = "0%";
-	
+
 	// average trade buyer
     trade_count_buy = -1;
+    trade_green_buy = 0;
+    trade_yellow_buy = 0;
+    trade_red_buy = 0;
 	trade_green_perc_buy = 0;
     trade_yellow_perc_buy = 0;
     trade_red_perc_buy = 0;
     trade_green_perc_str_buy = "0%";
     trade_yellow_perc_str_buy = "0%";
 	trade_red_perc_str_buy = "0%";
-	
+
 	// collab time
 	collab_time = 0;
 	collab_time_sell = 0;
 	collab_time_buy = 0;
-	
+
 	avg_res_time = 0;
 
 	single: any[];
-  
+
 	view: any[] = [700, 400];
-  
+
 	// options
 	showXAxis = true;
 	showYAxis = true;
@@ -127,12 +136,15 @@ export class PerformanceAnalyticsComponent implements OnInit {
     product_cat_mix = myGlobals.product_cat_mix;
 	getMultilingualLabel = selectNameFromLabelObject;
 	config = myGlobals.config;
+	dashboards = [];
+	graphsa = [];
 
     constructor(private analyticsService: AnalyticsService,
 		private simpleSearchService: SimpleSearchService,
 		private cookieService: CookieService,
 		private categoryService: CategoryService,
 		private translate: TranslateService,
+		private sanitizer: DomSanitizer
         ) {
     	}
 
@@ -163,9 +175,9 @@ export class PerformanceAnalyticsComponent implements OnInit {
 				this.redTotDenideSeller = res.businessProcessCount.role.seller.denied;
 				this.yellowTotWaitingSeller = res.businessProcessCount.role.seller.waiting;
 				this.totSeller = res.businessProcessCount.role.seller.tot;
-				this.green_percSeller = Math.round((res.businessProcessCount.role.seller.approved * 100) / this.bp_count);
+				this.green_percSeller = Math.round((res.businessProcessCount.role.seller.approved * 100) / this.totSeller);
                 this.green_perc_strSeller = this.green_percSeller + "%";
-                this.yellow_percSeller = Math.round((res.businessProcessCount.role.seller.waiting * 100) / this.bp_count);
+                this.yellow_percSeller = Math.round((res.businessProcessCount.role.seller.waiting * 100) / this.totSeller);
                 this.yellow_perc_strSeller = this.yellow_percSeller + "%";
                 this.red_percSeller = 100 - this.green_percSeller - this.yellow_percSeller;
 				this.red_perc_strSeller = this.red_percSeller + "%";
@@ -175,18 +187,40 @@ export class PerformanceAnalyticsComponent implements OnInit {
 				this.redTotDenideBuyer = res.businessProcessCount.role.buyer.denied;
 				this.yellowTotWaitingBuyer = res.businessProcessCount.role.buyer.waiting;
 				this.totBuyer = res.businessProcessCount.role.buyer.tot;
-				this.green_percBuyer = Math.round((res.businessProcessCount.role.buyer.approved * 100) / this.bp_count);
+				this.green_percBuyer = Math.round((res.businessProcessCount.role.buyer.approved * 100) / this.totBuyer);
                 this.green_perc_strBuyer = this.green_percBuyer + "%";
-                this.yellow_percBuyer = Math.round((res.businessProcessCount.role.buyer.waiting * 100) / this.bp_count);
+                this.yellow_percBuyer = Math.round((res.businessProcessCount.role.buyer.waiting * 100) / this.totBuyer);
                 this.yellow_perc_strBuyer = this.yellow_percBuyer + "%";
                 this.red_percBuyer = 100 - this.green_percBuyer - this.yellow_percBuyer;
 				this.red_perc_strBuyer = this.red_percBuyer + "%";
             })
             .catch(error => {
                 this.callStatus.error("Error while loading platform analytics", error);
-            });
+			});
+
+			if (this.config.kibanaEnabled) {
+				let tmpDashboards = this.config.kibanaConfig.companyDashboards;
+				for (let i=0; i<tmpDashboards.length; i++) {
+				  let tmpUrl=tmpDashboards[i].url;
+				  tmpUrl=tmpUrl.replace(/'41915'/g,"'"+compId+"'");
+				  let full_url = myGlobals.kibana_endpoint +tmpUrl;
+				  tmpDashboards[i]["safeUrl"] = this.sanitizer.bypassSecurityTrustResourceUrl(full_url);
+				}
+				this.dashboards = tmpDashboards;
+
+				let tmpGraphs = this.config.kibanaConfig.companyGraphs;
+				for (let i=0; i<tmpGraphs.length; i++) {
+					let tmpUrl=tmpGraphs[i].url;
+					tmpUrl=tmpUrl.replace(/'41915'/g,"'"+compId+"'");
+					let full_url = myGlobals.kibana_endpoint +tmpUrl;
+					tmpGraphs[i]["safeUrl"] = this.sanitizer.bypassSecurityTrustResourceUrl(full_url);
+				  }
+				  this.graphsa = tmpGraphs;
+			  }
+
+
 		});
-        
+
     }
 
     isLoading(): boolean {
@@ -341,31 +375,43 @@ export class PerformanceAnalyticsComponent implements OnInit {
             .getCollabAnalytics(this.comp_id)
             .then(res => {
 				this.callStatusCollab.callback("Successfully loaded collab analytics", true);
-                this.trade_count = Math.round(res.tradingVolume.approved + res.tradingVolume.waiting + res.tradingVolume.denied);
-                this.trade_green_perc = Math.round((res.tradingVolume.approved * 100) / this.trade_count);
-                this.trade_green_perc_str = this.trade_green_perc + "%";
-                this.trade_yellow_perc = Math.round((res.tradingVolume.waiting * 100) / this.trade_count);
-                this.trade_yellow_perc_str = this.trade_yellow_perc + "%";
-                this.trade_red_perc = 100 - this.trade_green_perc - this.trade_yellow_perc;
-                this.trade_red_perc_str = this.trade_red_perc + "%";
-				
 				// average trade seller
+        		this.trade_green_sell = Math.round(res.tradingVolumesales.approved);
+        		this.trade_yellow_sell = Math.round(res.tradingVolumesales.waiting);
+        		this.trade_red_sell = Math.round(res.tradingVolumesales.denied);
 				this.trade_count_sell = Math.round(res.tradingVolumesales.approved + res.tradingVolumesales.waiting + res.tradingVolumesales.denied);
 				this.trade_green_perc_sell = Math.round((res.tradingVolumesales.approved * 100) / this.trade_count_sell);
-				this.trade_green_perc_str_sell = this.trade_green_perc_sell + "%";				
+				this.trade_green_perc_str_sell = this.trade_green_perc_sell + "%";
 				this.trade_yellow_perc_sell = Math.round((res.tradingVolumesales.waiting * 100) / this.trade_count_sell);
 				this.trade_yellow_perc_str_sell = this.trade_yellow_perc_sell + "%";
-				this.trade_red_perc_sell = this.trade_green_perc_sell - this.trade_yellow_perc_sell;
+				this.trade_red_perc_sell = 100-this.trade_green_perc_sell - this.trade_yellow_perc_sell;
 				this.trade_red_perc_str_sell = this.trade_red_perc_sell + "%";
-				
+
 				// average trade buyer
+        		this.trade_green_buy = Math.round(res.tradingVolumespurchase.approved);
+        		this.trade_yellow_buy = Math.round(res.tradingVolumespurchase.waiting);
+        		this.trade_red_buy = Math.round(res.tradingVolumespurchase.denied);
 				this.trade_count_buy = Math.round(res.tradingVolumespurchase.approved + res.tradingVolumespurchase.waiting + res.tradingVolumespurchase.denied);
 				this.trade_green_perc_buy = Math.round((res.tradingVolumespurchase.approved * 100) / this.trade_count_buy);
-				this.trade_green_perc_str_buy = this.trade_green_perc_buy + "%";	
+				this.trade_green_perc_str_buy = this.trade_green_perc_buy + "%";
 				this.trade_yellow_perc_buy = Math.round((res.tradingVolumespurchase.waiting * 100) / this.trade_count_buy);
-				this.trade_yellow_perc_str_buy = this.trade_yellow_perc_buy + "%";	
-				this.trade_red_perc_buy = this.trade_green_perc_buy - this.trade_yellow_perc_buy;
+				this.trade_yellow_perc_str_buy = this.trade_yellow_perc_buy + "%";
+				this.trade_red_perc_buy = 100-this.trade_green_perc_buy - this.trade_yellow_perc_buy;
 				this.trade_red_perc_str_buy = this.trade_red_perc_buy + "%";
+
+				let totalTradingVolumeApproved = res.tradingVolumesales.approved + res.tradingVolumespurchase.approved;
+				let totalTradingVolumeWaiting = res.tradingVolumesales.waiting + res.tradingVolumespurchase.waiting;
+				let totalTradingVolumeDenied = res.tradingVolumesales.denied + res.tradingVolumesales.denied;
+				this.trade_green = Math.round(totalTradingVolumeApproved);
+				this.trade_yellow = Math.round(totalTradingVolumeWaiting);
+				this.trade_red = Math.round(totalTradingVolumeDenied);
+				this.trade_count = Math.round(totalTradingVolumeApproved + totalTradingVolumeWaiting + totalTradingVolumeDenied);
+				this.trade_green_perc = Math.round((totalTradingVolumeApproved * 100) / this.trade_count);
+				this.trade_green_perc_str = this.trade_green_perc + "%";
+				this.trade_yellow_perc = Math.round((totalTradingVolumeWaiting * 100) / this.trade_count);
+				this.trade_yellow_perc_str = this.trade_yellow_perc + "%";
+				this.trade_red_perc = 100 - this.trade_green_perc - this.trade_yellow_perc;
+				this.trade_red_perc_str = this.trade_red_perc + "%";
 
 				//collab time
 				this.collab_time = Math.round(res.collaborationTime.averageCollabTime * 10) /10 ;
@@ -373,12 +419,12 @@ export class PerformanceAnalyticsComponent implements OnInit {
 				this.collab_time_sell = Math.round(res.collaborationTime.averageCollabTimeSales * 10) /10;
 
 				this.avg_res_time = Math.round(res.responseTime.averageTime * 10) /10;
-				
+
 				var map1 = res.responseTime.averageTimeForMonths;
 				var i = 0 ;
 				var obj = [];
-				
-				
+
+
 				for(var y = 0 ; y < 12 ; y++){
 					if(map1[y] != undefined){
 						obj.push({
@@ -389,7 +435,7 @@ export class PerformanceAnalyticsComponent implements OnInit {
 				}
 
 				if(obj.length == 6){
-					var dataGr = 
+					var dataGr =
 						{
 						  "name": "Time series",
 						  "series":obj

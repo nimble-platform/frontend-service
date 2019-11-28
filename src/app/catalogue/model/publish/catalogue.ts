@@ -6,12 +6,12 @@ import {Party} from "./party";
 import {CatalogueLine} from "./catalogue-line";
 
 export class Catalogue {
-    constructor(public id: string,
-                public uuid: string,
-                public providerParty: Party,
-                public issueDate: string,
-                public issueTime: string, // TODO server side handles date/time separately
-                public catalogueLine: CatalogueLine[]
+    constructor(public id: string = null,
+                public uuid: string = null,
+                public providerParty: Party = null,
+                public issueDate: string = null,
+                public issueTime: string = null, // TODO server side handles date/time separately
+                public catalogueLine: CatalogueLine[] = null
                 ) {
     }
 }

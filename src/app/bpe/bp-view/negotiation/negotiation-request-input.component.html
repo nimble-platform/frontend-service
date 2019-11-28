@@ -5,6 +5,7 @@
         <!--<input type="checkbox" class="form-check-input" [(ngModel)]="cbModel" [id]="id"-->
             <!--[disabled]="disabled || cbDisabled">-->
         <label class="form-check-label" [for]="id"><strong class="font-weight-500">{{label}}:</strong></label>
+        <span *ngIf="!!description" title="{{description}}">&#9432;</span>
     </div>
 
     <!-- Text -->

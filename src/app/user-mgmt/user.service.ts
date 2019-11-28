@@ -142,6 +142,29 @@ export class UserService {
             .catch(this.handleError);
     }
 
+    getParties(partyIds:string[]):Promise<Party[]> {
+        let url = `${this.url}/parties/`;
+        let size = partyIds.length;
+        for(let i = 0; i < size ;i++){
+            url += partyIds[i];
+            if(i != size-1){
+                url += ",";
+            }
+        }
+        const headers_token = new Headers({'Content-Type': 'application/json'});
+        return this.http
+            .get(url, {headers: headers_token, withCredentials: true})
+            .toPromise()
+            .then(res => {
+                let parties:Party[] = res.json();
+                for (let party of parties) {
+                    UBLModelUtils.removeHjidFieldsFromObject(party);
+                }
+                return Promise.resolve(parties);
+            })
+            .catch(this.handleError);
+    }
+
     getPerson(personId:string):Promise<Person> {
         const url = `${this.url}/person/${personId}`;
         const token = 'Bearer '+this.cookieService.get("bearer_token");
