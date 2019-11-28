@@ -57,10 +57,16 @@
                                         <span [innerHTML]="'Remove' | translate"></span>
                                 </button>
 
+                                <button class="btn btn-primary col space-after" (click)="onAddToCart(catLine,i); $event.stopPropagation();" [disabled]="getShoppingCartStatus(i).isLoading()">
+                                    <span class="fas fa-shopping-cart mr-1"></span>
+                                    <span [innerHTML]="'Add to Cart' | translate"></span>
+                                </button>
+
                                 <a  href="#" role="button" class="btn btn-primary col" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.catalogueId, id: catLine.manufactuerItemId}">
                                     <span [innerHTML]="'Negotiate' | translate"></span>
                                 </a>
                                 <call-status [callStatus]="getDeleteStatus(i)"></call-status>
+                                <call-status [callStatus]="getShoppingCartStatus(i)"></call-status>
                             </div>
                         </div>
                     </div>

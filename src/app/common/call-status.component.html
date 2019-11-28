@@ -6,8 +6,8 @@
 	 [ngClass]="{'alert' : large} ">
 	<div class="align-self-center" role="alert">
 		{{callStatus.fb_message}}
-		<!-- when you click this button, it resets the call status and 'false' statement at the end prevents the further actions-->
-		<button type="button" class="close pl-1" aria-label="Close" (click)="callStatus.reset();false">
+		<!-- when you click this button, it resets the call status and '$event.stopPropagation()' statement at the end prevents the further actions-->
+		<button type="button" class="close pl-1" aria-label="Close" (click)="callStatus.reset();$event.stopPropagation();">
 			<span aria-hidden="true">&times;
 			</span>
 		</button>
