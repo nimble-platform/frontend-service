@@ -455,7 +455,7 @@ export class ShoppingCartComponent implements OnInit {
         callStatus.submit();
         // get seller id
         let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
-        this.shoppingCartDataService.removeItemFromCart(cartLine.hjid).then(cartCatalogue => {
+        this.shoppingCartDataService.removeItemsFromCart([cartLine.hjid]).then(cartCatalogue => {
             this.shoppingCart = cartCatalogue;
             // get rfq for the seller
             let rfq: RequestForQuotation = this.rfqs.get(sellerId);
@@ -602,9 +602,11 @@ export class ShoppingCartComponent implements OnInit {
             });
             Promise.all(promises).then(response => {
                 // started the negotiation for all products successfully,so remove them from the shopping cart
-                for(let cartLine of this.shoppingCart.catalogueLine){
-                    this.onRemoveFromCart(cartLine);
+                let hjids:number[] = [];
+                for (let cartLine of this.shoppingCart.catalogueLine) {
+                    hjids.push(cartLine.hjid);
                 }
+                this.shoppingCartDataService.removeItemsFromCart(hjids);
                 this.startBpCallStatus.callback(null, true);
                 this.router.navigate(['dashboard'], {queryParams: {tab: 'PURCHASES'}});
             }).catch(error => {
