@@ -510,113 +510,118 @@ export class ShoppingCartComponent implements OnInit {
     }
 
     onSingleLineNegotiation(cartLine: CatalogueLine): void {
-        let callStatus: CallStatus = this.deleteCallStatuses.get(cartLine.hjid);
-        callStatus.submit();
-        let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
-        // reset BP data
-        this.bpDataService.resetBpData();
+        if (confirm('Are you sure that you want to send this request now ?')){
+            let callStatus: CallStatus = this.deleteCallStatuses.get(cartLine.hjid);
+            callStatus.submit();
+            let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
+            // reset BP data
+            this.bpDataService.resetBpData();
 
-        // final check on the rfq
-        const rfq: RequestForQuotation = copy(this.rfqs.get(sellerId));
-        // in the final rfq, there should be a single rfq line relating to selected catalogue line
-        // find this rfq line and remove the rest
-        let index = this.negotiationModelWrappers.get(cartLine.hjid).lineIndex;
-        rfq.requestForQuotationLine = [rfq.requestForQuotationLine[index]];
-        // replace properties of rfq line with the selected ones
-        rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty = this.modifiedCatalogueLines.get(cartLine.hjid).goodsItem.item.additionalItemProperty;
+            // final check on the rfq
+            const rfq: RequestForQuotation = copy(this.rfqs.get(sellerId));
+            // in the final rfq, there should be a single rfq line relating to selected catalogue line
+            // find this rfq line and remove the rest
+            let index = this.negotiationModelWrappers.get(cartLine.hjid).lineIndex;
+            rfq.requestForQuotationLine = [rfq.requestForQuotationLine[index]];
+            // replace properties of rfq line with the selected ones
+            rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty = this.modifiedCatalogueLines.get(cartLine.hjid).goodsItem.item.additionalItemProperty;
 
-        callStatus.submit();
-        Promise.all([
-            this.userService.getParty(this.cookieService.get('company_id')),
-            this.userService.getParty(sellerId),
+            callStatus.submit();
+            Promise.all([
+                this.userService.getParty(this.cookieService.get('company_id')),
+                this.userService.getParty(sellerId),
 
-        ]).then(([buyerPartyResp, sellerPartyResp]) => {
-            rfq.buyerCustomerParty = new CustomerParty(buyerPartyResp);
-            rfq.sellerSupplierParty = new SupplierParty(sellerPartyResp);
+            ]).then(([buyerPartyResp, sellerPartyResp]) => {
+                rfq.buyerCustomerParty = new CustomerParty(buyerPartyResp);
+                rfq.sellerSupplierParty = new SupplierParty(sellerPartyResp);
 
-            // start a request for quotation or order created using the rfq we have
-            let document:RequestForQuotation | Order = this.areNegotiationConditionsSatisfied(cartLine) ? rfq: this.createOrderWithRfq(rfq,[cartLine.hjid]);
+                // start a request for quotation or order created using the rfq we have
+                let document:RequestForQuotation | Order = this.areNegotiationConditionsSatisfied(cartLine) ? rfq: this.createOrderWithRfq(rfq,[cartLine.hjid]);
 
-            return this.bpeService.startProcessWithDocument(document);
-        }).then(() => {
-            // started the negotiation for the product successfully,so remove it from the shopping cart
-            this.onRemoveFromCart(cartLine);
-            callStatus.callback(null, true);
-            this.router.navigate(['dashboard'], {queryParams: {tab: 'PURCHASES'}});
+                return this.bpeService.startProcessWithDocument(document);
+            }).then(() => {
+                // started the negotiation for the product successfully,so remove it from the shopping cart
+                this.onRemoveFromCart(cartLine);
+                callStatus.callback(null, true);
+                this.router.navigate(['dashboard'], {queryParams: {tab: 'PURCHASES'}});
 
-        }).catch(error => {
-            callStatus.error('Failed to start process', error);
-        });
+            }).catch(error => {
+                callStatus.error('Failed to start process', error);
+            });
+        }
     }
 
     // starts Negotiation/Order for the products included in the shopping basket
     onMultipleLineNegotiation():void{
-        // identifier of the buyer company
-        let companyId = this.cookieService.get('company_id');
-        // this array contains the identifiers of buyer and seller companies
-        let partyIds = Array.from(this.sellersSettings.keys()).concat(companyId);
+        if(confirm('Are you sure that you want to send requests for all products now ?')){
+            // identifier of the buyer company
+            let companyId = this.cookieService.get('company_id');
+            // this array contains the identifiers of buyer and seller companies
+            let partyIds = Array.from(this.sellersSettings.keys()).concat(companyId);
 
-        this.startBpCallStatus.submit();
-        // reset BP data
-        this.bpDataService.resetBpData();
+            this.startBpCallStatus.submit();
+            // reset BP data
+            this.bpDataService.resetBpData();
 
-        // get parties
-        this.userService.getParties(partyIds).then(parties => {
-            // create party id-party map
-            let partyMap:Map<string,Party> = this.createPartyMap(parties);
-            let promises: Promise<any>[] = [];
-            // for each rfq, start a Negotiation or Order
-            this.rfqs.forEach(rfq => {
-                let copyRfq = copy(rfq);
-                let sellerId: string = null;
-                // if negotiation conditions are satisfied for at least one product included in the rfq, create a Request For Quotation
-                // otherwise, create an Order
-                let areNegotiationConditionsSatisfiedForAtLeastOneProduct:boolean = false;
-                // we need line hjids to retrieve correct NegotiationModelWrapper which is necessary to calculate the price for Order
-                let lineHjids:number[] = [];
-                // replace properties of rfq lines with the selected ones
-                for(let copyRfqLine of copyRfq.requestForQuotationLine){
-                    let catalogueLine = this.getCatalogueLine(copyRfqLine);
+            // get parties
+            this.userService.getParties(partyIds).then(parties => {
+                // create party id-party map
+                let partyMap:Map<string,Party> = this.createPartyMap(parties);
+                let promises: Promise<any>[] = [];
+                // for each rfq, start a Negotiation or Order
+                this.rfqs.forEach(rfq => {
+                    let copyRfq = copy(rfq);
+                    let sellerId: string = null;
+                    // if negotiation conditions are satisfied for at least one product included in the rfq, create a Request For Quotation
+                    // otherwise, create an Order
+                    let areNegotiationConditionsSatisfiedForAtLeastOneProduct:boolean = false;
+                    // we need line hjids to retrieve correct NegotiationModelWrapper which is necessary to calculate the price for Order
+                    let lineHjids:number[] = [];
+                    // replace properties of rfq lines with the selected ones
+                    for(let copyRfqLine of copyRfq.requestForQuotationLine){
+                        let catalogueLine = this.getCatalogueLine(copyRfqLine);
 
-                    // set seller id
-                    if(!sellerId){
-                        sellerId = UBLModelUtils.getLinePartyId(catalogueLine);
-                    }
-                    // push line hjid to the list
-                    lineHjids.push(catalogueLine.hjid);
-                    // replace item properties
-                    copyRfqLine.lineItem.item.additionalItemProperty = this.modifiedCatalogueLines.get(catalogueLine.hjid).goodsItem.item.additionalItemProperty;
+                        // set seller id
+                        if(!sellerId){
+                            sellerId = UBLModelUtils.getLinePartyId(catalogueLine);
+                        }
+                        // push line hjid to the list
+                        lineHjids.push(catalogueLine.hjid);
+                        // replace item properties
+                        copyRfqLine.lineItem.item.additionalItemProperty = this.modifiedCatalogueLines.get(catalogueLine.hjid).goodsItem.item.additionalItemProperty;
 
-                    if(!areNegotiationConditionsSatisfiedForAtLeastOneProduct){
-                        let areNegotiationConditionsSatisfied = this.areNegotiationConditionsSatisfied(catalogueLine);
-                        if(areNegotiationConditionsSatisfied){
-                            areNegotiationConditionsSatisfiedForAtLeastOneProduct = true;
+                        if(!areNegotiationConditionsSatisfiedForAtLeastOneProduct){
+                            let areNegotiationConditionsSatisfied = this.areNegotiationConditionsSatisfied(catalogueLine);
+                            if(areNegotiationConditionsSatisfied){
+                                areNegotiationConditionsSatisfiedForAtLeastOneProduct = true;
+                            }
                         }
                     }
-                }
-                // set buyer and seller parties
-                copyRfq.buyerCustomerParty = new CustomerParty(partyMap.get(companyId));
-                copyRfq.sellerSupplierParty = new SupplierParty(partyMap.get(sellerId));
+                    // set buyer and seller parties
+                    copyRfq.buyerCustomerParty = new CustomerParty(partyMap.get(companyId));
+                    copyRfq.sellerSupplierParty = new SupplierParty(partyMap.get(sellerId));
 
-                // start a request for quotation or order created using the rfq we have
-                let document:RequestForQuotation | Order = areNegotiationConditionsSatisfiedForAtLeastOneProduct ? copyRfq: this.createOrderWithRfq(copyRfq,lineHjids);
-                promises.push(this.bpeService.startProcessWithDocument(document));
-            });
-            Promise.all(promises).then(response => {
-                // started the negotiation for all products successfully,so remove them from the shopping cart
-                let hjids:number[] = [];
-                for (let cartLine of this.shoppingCart.catalogueLine) {
-                    hjids.push(cartLine.hjid);
-                }
-                this.shoppingCartDataService.removeItemsFromCart(hjids);
-                this.startBpCallStatus.callback(null, true);
-                this.router.navigate(['dashboard'], {queryParams: {tab: 'PURCHASES'}});
+                    // start a request for quotation or order created using the rfq we have
+                    let document:RequestForQuotation | Order = areNegotiationConditionsSatisfiedForAtLeastOneProduct ? copyRfq: this.createOrderWithRfq(copyRfq,lineHjids);
+                    promises.push(this.bpeService.startProcessWithDocument(document));
+                });
+                Promise.all(promises).then(response => {
+                    // started the negotiation for all products successfully,so remove them from the shopping cart
+                    let hjids:number[] = [];
+                    for (let cartLine of this.shoppingCart.catalogueLine) {
+                        hjids.push(cartLine.hjid);
+                    }
+                    this.shoppingCartDataService.removeItemsFromCart(hjids);
+                    this.startBpCallStatus.callback(null, true);
+                    this.router.navigate(['dashboard'], {queryParams: {tab: 'PURCHASES'}});
+                }).catch(error => {
+                    this.startBpCallStatus.error('Failed to start processes', error);
+                });
             }).catch(error => {
-                this.startBpCallStatus.error('Failed to start processes', error);
-            });
-        }).catch(error => {
-            this.startBpCallStatus.error('Failed to get details of seller parties', error);
-        })
+                this.startBpCallStatus.error('Failed to get details of seller parties', error);
+            })
+        }
+
     }
 
     /**
