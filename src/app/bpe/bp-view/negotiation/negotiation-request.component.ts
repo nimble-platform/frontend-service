@@ -61,6 +61,8 @@ export class NegotiationRequestComponent implements OnInit {
     @Input() frameContractNegotiations: boolean[];
     @Input() lastOfferQuotation: Quotation;
     @Input() defaultTermsAndConditions: Clause[];
+    // whether the process details are viewed for all products in the negotiation
+    @Input() areProcessDetailsViewedForAllProducts:boolean;
 
     sellerId:string = null;
     buyerId:string = null;
@@ -195,6 +197,10 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     onUpdateRequest(): void {
+        if(!this.areProcessDetailsViewedForAllProducts){
+            alert("Please, make sure that you view the negotiation details of all products before sending your request!");
+            return;
+        }
         this.callStatus.submit();
 
         const rfq: RequestForQuotation = this.rfq;

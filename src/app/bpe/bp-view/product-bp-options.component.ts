@@ -64,6 +64,8 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     productsExpanded: boolean[];
     serviceExpanded: boolean = false;
+    // whether the process details are viewed for the product or not
+    viewedProcessDetails:boolean[];
     public config = myGlobals.config;
 
     private identityEndpoint = myGlobals.user_mgmt_endpoint;
@@ -225,7 +227,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                         this.lines = referencedLines;
                         this.productWithSelectedProperties = this.correspondingOrderOfTransportProcess.orderLine[0].lineItem.item;
 
-                        this.setProductsExpandedArray(false);
+                        this.setProductsExpandedAndViewedProcessDetailsArrays(false);
                         return this.userService.getSettingsForProduct(referencedLines[0]);
 
                     } else {
@@ -246,7 +248,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                     }
                     this.stepsDisplayMode = this.getStepsDisplayMode();
 
-                    this.setProductsExpandedArray(false);
+                    this.setProductsExpandedAndViewedProcessDetailsArrays(false);
                     this.callStatus.callback("Retrieved product details", true);
                 })
                 .catch(error => {
@@ -294,14 +296,31 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     onToggleServiceExpanded() {
         this.serviceExpanded = !this.serviceExpanded;
-        this.setProductsExpandedArray(false);
+        this.setProductsExpandedAndViewedProcessDetailsArrays(false);
     }
 
-    setProductsExpandedArray(value:boolean){
+    setProductsExpandedAndViewedProcessDetailsArrays(value:boolean){
         this.productsExpanded = [];
+        this.viewedProcessDetails = [];
         for(let line of this.lines){
             this.productsExpanded.push(value);
+            this.viewedProcessDetails.push(value);
         }
+        // initially, we show the process details of first product
+        this.viewedProcessDetails[0] = true;
+    }
+
+    areProcessDetailsViewedForAllProducts(){
+        for(let viewedProcessDetails of this.viewedProcessDetails){
+            if(!viewedProcessDetails){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    getTitleForToolTip(){
+        return "You viewed the"+ this.currentStep.toLowerCase() +" details for this product";
     }
 
     private isOrderDone(): boolean {

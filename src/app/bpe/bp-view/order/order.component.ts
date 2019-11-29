@@ -42,6 +42,8 @@ import {Item} from '../../../catalogue/model/publish/item';
 export class OrderComponent implements OnInit {
 
     @Input() selectedLineIndex:number;
+    // whether the process details are viewed for all products in the negotiation
+    @Input() areProcessDetailsViewedForAllProducts:boolean;
     order: Order;
     address: Address
     orderResponse: OrderResponseSimple;
@@ -234,6 +236,10 @@ export class OrderComponent implements OnInit {
     }
 
     onOrderUpdate() {
+        if(!this.areProcessDetailsViewedForAllProducts){
+            alert("Please, make sure that you view the order details of all products before sending your request!");
+            return;
+        }
         this.submitCallStatus.submit();
         const order = copy(this.bpDataService.order);
 
@@ -252,6 +258,10 @@ export class OrderComponent implements OnInit {
     }
 
     onRespondToOrder(accepted: boolean): void {
+        if(!this.areProcessDetailsViewedForAllProducts){
+            alert("Please, make sure that you view the order details of all products before sending your response!");
+            return;
+        }
         this.submitCallStatus.submit();
         this.bpDataService.orderResponse.acceptedIndicator = accepted;
 

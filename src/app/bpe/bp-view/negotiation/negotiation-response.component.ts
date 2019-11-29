@@ -39,6 +39,8 @@ export class NegotiationResponseComponent implements OnInit {
     @Input() defaultTermsAndConditions: Clause[];
     @Input() primaryTermsSources: ('product_defaults' | 'frame_contract' | 'last_offer')[];
     @Input() readonly: boolean = false;
+    // whether the process details are viewed for all products in the negotiation
+    @Input() areProcessDetailsViewedForAllProducts:boolean;
     // whether the item is deleted or not
     // if the item is deleted, then we will not show Product Defaults section since we do not have those information
     @Input() areCatalogueLinesDeleted:boolean[] ;
@@ -119,6 +121,10 @@ export class NegotiationResponseComponent implements OnInit {
         return this.areCatalogueLinesDeleted[this.lines.indexOf(catalogueLine)];
     }
     onRespondToQuotation(accepted: boolean) {
+        if(!this.areProcessDetailsViewedForAllProducts){
+            alert("Please, make sure that you view the negotiation details of all products before sending your response!");
+            return;
+        }
         this.callStatus.submit();
 
         for(let wrapper of this.wrappers){
@@ -154,11 +160,19 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     onRequestNewQuotation() {
+        if(!this.areProcessDetailsViewedForAllProducts){
+            alert("Please, make sure that you view the negotiation details of all products before creating a new one!");
+            return;
+        }
         this.bpDataService.setCopyDocuments(true, true, false,false);
         this.bpDataService.proceedNextBpStep("buyer", "Negotiation");
     }
 
     onAcceptAndOrder() {
+        if(!this.areProcessDetailsViewedForAllProducts){
+            alert("Please, make sure that you view the negotiation details of all products before accepting the quotation!");
+            return;
+        }
         this.bpDataService.setCopyDocuments(true, true, false,false);
         this.bpDataService.proceedNextBpStep("buyer", "Order");
     }
