@@ -49,6 +49,8 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     @Input() areCatalogueLinesDeleted:boolean[];
     // the product for which the users negotiate
     @Input() selectedLineIndex:number;
+    // whether the process details are viewed for all products in the negotiation
+    @Input() areProcessDetailsViewedForAllProducts:boolean;
 
     constructor(public bpDataService: BPDataService,
                 private bpeService: BPEService,

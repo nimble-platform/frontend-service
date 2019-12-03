@@ -24,12 +24,12 @@
         <div class="btn btn-primary" (click)="onRemoveFromCartButtonClicked()">
             <span [innerHTML]="'Remove from Cart' | translate"></span>
         </div>
-        <div *ngIf="isNegotiatingAnyTerm" class="btn btn-primary" (click)="onNegotiateAndOrderButtonClicked()">
+        <button *ngIf="isNegotiatingAnyTerm" class="btn btn-primary" [disabled]="isNegotiateOrderButtonDisabled" (click)="onNegotiateAndOrderButtonClicked()">
             <span [innerHTML]="'Negotiate' | translate"></span>
-        </div>
-        <div *ngIf="!isNegotiatingAnyTerm" class="btn btn-primary" (click)="onNegotiateAndOrderButtonClicked()">
+        </button>
+        <button *ngIf="!isNegotiatingAnyTerm" class="btn btn-primary" [disabled]="isNegotiateOrderButtonDisabled" (click)="onNegotiateAndOrderButtonClicked()">
             <span [innerHTML]="'Order' | translate"></span>
-        </div>
+        </button>
     </div>
 </div>
 <div class="row">

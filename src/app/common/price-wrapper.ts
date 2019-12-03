@@ -56,7 +56,7 @@ export class PriceWrapper {
         const qty = this.price.baseQuantity
         const baseQuantity = qty.value || 1;
 
-        if(!amount.value || !this.isOrderedQuantityValid()) {
+        if(!amount.value || amount.value == 0 || !this.isOrderedQuantityValid()) {
             return "On demand";
         }
 

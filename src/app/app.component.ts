@@ -49,7 +49,7 @@ export class AppComponent implements OnInit {
     public minimalView = false;
     public chatVisible = false;
     public chatURL = this.sanitizer.bypassSecurityTrustResourceUrl(myGlobals.rocketChatEndpoint);
-    public language = "en";
+    public language = FALLBACK_LANGUAGE;
     private availableLanguages = LANGUAGES.sort();
 
     enableLogisticServicePublishing = true;
@@ -91,14 +91,16 @@ export class AppComponent implements OnInit {
 
         if (cookieService.get("language")) {
           this.language = cookieService.get("language");
+          document.getElementsByTagName('html')[0].setAttribute('lang',this.language);
         }
         else {
           let langTmp = translate.getBrowserLang();
           if(LANGUAGES.indexOf(langTmp) == -1){
-              langTmp = "en";
+              langTmp = FALLBACK_LANGUAGE;
           }
           this.language = langTmp;
           cookieService.set("language",this.language);
+          document.getElementsByTagName('html')[0].setAttribute('lang',this.language);
         }
         translate.setDefaultLang(FALLBACK_LANGUAGE);
         translate.use(DEFAULT_LANGUAGE());
@@ -541,6 +543,10 @@ export class AppComponent implements OnInit {
                 break;
             case "legal":
                 if (legal)
+                    this.allowed = true;
+                break;
+            case "collaboration":
+                if (all_rights || publish)
                     this.allowed = true;
                 break;
             default:

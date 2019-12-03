@@ -59,7 +59,8 @@
                                      [selectedLineIndex]="selectedLineIndex"
                                      [bpActivityEvent]="bpDataService.bpActivityEvent"
                                      [catalogueLines]="bpDataService.getCatalogueLines()"
-                                     [sellerSettings]="bpDataService.getCompanySettings()">
+                                     [sellerSettings]="bpDataService.getCompanySettings()"
+                                     [areProcessDetailsViewedForAllProducts]="areProcessDetailsViewedForAllProducts">
                 </negotiation-request>
                 <negotiation-response *ngIf="bpDataService.quotation"
                                       [lastOfferQuotation]="lastOfferQuotation"
@@ -69,7 +70,8 @@
                                       [defaultTermsAndConditions]="defaultTermsAndConditions"
                                       [primaryTermsSources]="getPrimaryTermsSource(lastOfferQuotation)"
                                       [areCatalogueLinesDeleted]="areCatalogueLinesDeleted"
-                                      [selectedLineIndex]="selectedLineIndex">
+                                      [selectedLineIndex]="selectedLineIndex"
+                                      [areProcessDetailsViewedForAllProducts]="areProcessDetailsViewedForAllProducts">
                 </negotiation-response>
             </div>
         </ng-container>

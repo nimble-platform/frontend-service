@@ -36,6 +36,7 @@ import {DocumentService} from "./bpe/bp-view/document-service";
 import {LogisticPublishingService} from './catalogue/publish/logistic-publishing.service';
 import {FrameContractTransitionService} from "./bpe/bp-view/contract/frame-contract-transition.service";
 import {ShoppingCartDataService} from './bpe/shopping-cart/shopping-cart-data-service';
+import {CollaborationService} from './catalogue/collaboration/collaboration.service';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -87,7 +88,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         AnalyticsService,
         EpcService,
         DocumentService,
-        ShoppingCartDataService
+        ShoppingCartDataService,
+        CollaborationService
     ],
     bootstrap: [
         AppComponent

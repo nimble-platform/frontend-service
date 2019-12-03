@@ -18,7 +18,7 @@
         </div>
         <call-status [large]="true" [callStatus]="startBpCallStatus"></call-status>
     </div>
-    <common-cart-terms *ngIf="showCommonTerms"
+    <common-cart-terms *ngIf="showCommonTerms && shoppingCart?.catalogueLine.length > 0"
                        [buyerCompanySettings]="buyerCompanySettings"
                        [doesBuyerCompanyHasItsOwnTerms]="doesBuyerCompanyHasItsOwnTerms"
                        (onApplyTermsEvent)="onApplyTerms($event)">
@@ -30,7 +30,8 @@
             <div class="btn btn-primary btn-outline-primary" (click)="collapsedStatusesOfCartItems.set(cartLine.hjid, !collapsedStatusesOfCartItems.get(cartLine.hjid))">
                 {{getProductName(cartLine.goodsItem.item.name)}}
             </div>
-            <call-status class="ml-auto" [callStatus]="deleteCallStatuses.get(cartLine.hjid)"></call-status>
+            <i *ngIf="!collapsedStatusesOfCartItems.get(cartLine.hjid) && !deleteCallStatuses.get(cartLine.hjid).isLoading()" class="far fa-trash-alt fa-2x ml-auto clickable" (click)="onRemoveFromCart(cartLine)"></i>
+            <call-status *ngIf="deleteCallStatuses.get(cartLine.hjid).isLoading()" class="ml-auto" [callStatus]="deleteCallStatuses.get(cartLine.hjid)"></call-status>
         </div>
         <div [hidden]="!collapsedStatusesOfCartItems.get(cartLine.hjid)" class="space-before">
             <product-details-overview [wrapper]="productWrappers.get(cartLine.hjid)"
@@ -39,7 +40,8 @@
                                       [inShoppingBasket]="true"
                                       [isNegotiatingAnyTerm]="areNegotiationConditionsSatisfied(cartLine)"
                                       (onCartItemDeleted)="onRemoveFromCart($event)"
-                                      (onNegotiate)="onSingleLineNegotiation($event)">
+                                      (onNegotiate)="onSingleLineNegotiation($event)"
+                                      [isNegotiateOrderButtonDisabled]="deleteCallStatuses.get(cartLine.hjid).fb_submitted">
             </product-details-overview>
             <product-details-tabs [wrapper]="productWrappers.get(cartLine.hjid)"
                                   [settings]="sellersSettings.get(getPartyId(cartLine.goodsItem.item.manufacturerParty))">

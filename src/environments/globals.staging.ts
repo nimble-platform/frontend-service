@@ -10,6 +10,7 @@ export const debug = false;
 export const base_path = "http://nimble-staging.salzburgresearch.at";
 export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
 export const idpURL = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master";
+export const collab_path = "http://nimble.eu-de.containers.appdomain.cloud/collaborations";
 export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client";
 export const frontendURL = base_path + "/frontend/";
 
@@ -26,6 +27,7 @@ export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}/logstash`;
 export const kibana_endpoint = `${base_path}/kibana/app/kibana`;
 export const delegate_endpoint = `${base_path}:9265`;
+export const collaboration_endpoint = `${collab_path}`;
 
 
 // BIBA endpoints
@@ -45,9 +47,10 @@ export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 
 // TnT Endpoints
 
-export const tntEndpoint = `${bpe_endpoint}/t-t/epc-details`;
-export const tntMasterDataEndpoint = 'http://nimble-dev.ikap.biba.uni-bremen.de:8117';
-export const tntAnalysisEndpoint = `${base_path}/tnt/simpleTrackingAnalysis`;
+export const tntEndpoint = 'http://nimble-dev.ikap.biba.uni-bremen.de/tracking';
+export const tntMasterDataEndpoint = 'http://nimble-dev.ikap.biba.uni-bremen.de/tracking/masterData/id/';
+export const tntAnalysisEndpoint = 'http://nimble-dev.ikap.biba.uni-bremen.de/tracking-analysis/';
+export const tntIoTBlockchainEndpoint = 'http://nimble-dev.ikap.biba.uni-bremen.de/iot-bc-api/api/verify';
 
 
 // Platform Configuration
@@ -67,6 +70,7 @@ export const config = {
       "ontologyPrefix": "http://www.aidimme.es/FurnitureSectorOntology.owl#"
     }
   },
+  "collaborationEnabled": false,
   "dataChannelsEnabled" : true,
   "defaultBusinessProcessIds": [
   ],
@@ -117,6 +121,10 @@ export const config = {
     ]
   },
   "kibanaEnabled": true,
+  "languageSettings": {
+    "available": ["en", "es", "de", "tr", "it", "sv"],
+    "fallback": "en"
+  },
   "loggingEnabled": true,
   "logoPath": "./assets/logo_mvp.png",
   "federationLogoPath": "./assets/logo_mvp_efactory.png",

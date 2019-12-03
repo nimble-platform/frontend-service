@@ -35,6 +35,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
     @Input() readonly: boolean;
     @Input() showAddToCartButton: boolean;
     @Input() inShoppingBasket: boolean;
+    @Input() isNegotiateOrderButtonDisabled:boolean = false;
     // flag to adjust the name of the negotiate or order button,
     // true means the there are some negotiated terms and a negotiation process should be started. otherwise an order process is started
     @Input() isNegotiatingAnyTerm: boolean;
@@ -176,7 +177,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
 
         this.shoppingCartCallStatus.submit();
         this.shoppingCartDataService.addItemToCart(this.wrapper.line.hjid).then(() => {
-            this.shoppingCartCallStatus.callback(null, true);
+            this.shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
         }).catch((err) => {
             this.shoppingCartCallStatus.error('Failed to add product to cart', err);
         });

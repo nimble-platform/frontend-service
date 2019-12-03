@@ -41,7 +41,6 @@ export class CompanyDetailsComponent implements OnInit {
 
     ngOnInit() {
   		if(!this.details) {
-  			this.initCallStatus.submit();
   			this.route.queryParams.subscribe(params => {
           const viewMode = params['viewMode'];
           const id = params['id'];
@@ -72,6 +71,7 @@ export class CompanyDetailsComponent implements OnInit {
             }
 
             this.party.partyId = id;
+            this.initCallStatus.submit();
   					this.userService.getSettingsForParty(id).then(details => {
   						if (myGlobals.debug) {
   							console.log("Fetched details: " + JSON.stringify(details));

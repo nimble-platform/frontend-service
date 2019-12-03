@@ -1,6 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [14.0.0] - 2019-11-28
+### Added
+- Shopping car functionality
+- Ability to associate products with properties of existing products
+- Unshipped Order tab in dashboard
+- Collaboration tab for textile UC in dashboard
+- IoT-Blockchain API
+- Multilinguality support for company settings
+- User roles added to profile page
+
+### Changed
+- Improved transition between BPs
+- Improved track-and-trace and QualiExplore functionality
+- Extended and fixed analytics
+- Extended and updated translations
+- Moved language configurations to environment files
+
 ## [13.0.0] - 2019-10-01
 ### Added
 - Frontend internationalization, language selection and translation to Spanish (ongoing)

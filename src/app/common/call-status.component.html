@@ -4,7 +4,14 @@
 <div *ngIf="callStatus.fb_callback && !callStatus.fb_autoCloseOnCallBack" #successBox
 	 class="d-flex alert-success p-2 rounded"
 	 [ngClass]="{'alert' : large} ">
-	<div class="align-self-center" role="alert">{{callStatus.fb_message}}</div>
+	<div class="align-self-center" role="alert">
+		{{callStatus.fb_message}}
+		<!-- when you click this button, it resets the call status and '$event.stopPropagation()' statement at the end prevents the further actions-->
+		<button type="button" class="close pl-1" aria-label="Close" (click)="callStatus.reset();$event.stopPropagation();">
+			<span aria-hidden="true">&times;
+			</span>
+		</button>
+	</div>
 </div>
 <ng-container *ngIf="!callStatus.isAllSuccessful()">
 	<div *ngFor="let err of callStatus.aggregatedErrors; let i = index" #errorBox

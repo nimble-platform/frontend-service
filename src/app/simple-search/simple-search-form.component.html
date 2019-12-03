@@ -3,14 +3,14 @@
 	<div [hidden]="!searchTopic" class="form-group row">
 		<div class="col-12">
 				<div class="input-group">
-					<input *ngIf="searchTopic=='prod'" type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" pattern=".{1,}" placeholder="Product / Service">
-					<input *ngIf="searchTopic=='comp'" type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getCompSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" pattern=".{1,}" placeholder="Company">
+					<input *ngIf="searchTopic=='prod'" type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" pattern=".{1,}" [placeholder]="'Product / Service' | translate">
+					<input *ngIf="searchTopic=='comp'" type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getCompSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" pattern=".{1,}" [placeholder]="'Company' | translate">
 					<div *ngIf="searchTopic=='prod'" ngbDropdown class="d-inline-block input-group-append">
 						<button *ngIf="searchTopic=='prod'" class="btn btn-outline-secondary" type="button" id="searchIndex" ngbDropdownToggle>
-							{{searchIndex}}
+							<span [innerHTML]="searchIndex | translate"></span>
 						</button>
 						<div ngbDropdownMenu aria-labelledby="searchIndex">
-							<a *ngFor="let searchIndexName of searchIndexes" class="dropdown-item" (click)="changeSearchIndex(searchIndexName)">{{searchIndexName}}</a>
+							<a *ngFor="let searchIndexName of searchIndexes" class="dropdown-item" (click)="changeSearchIndex(searchIndexName)"><span [innerHTML]="searchIndexName | translate"></span></a>
 						</div>
 					</div>
 					<div class="input-group-append">
@@ -22,7 +22,7 @@
 				<div *ngIf="config.delegationEnabled" class="form-check mt-3">
 					<input class="form-check-input" type="checkbox" [(ngModel)]="delegatedSearch" id="delSearch" [ngModelOptions]="{standalone: true}">
 					<label class="form-check-label" for="delSearch">
-						Delegated Search
+						<span [innerHTML]="'Delegated Search' | translate"></span>
 					</label>
 				</div>
 		</div>
@@ -36,13 +36,13 @@
 			<div class="card col mr-3 ml-3 pl-0 pr-0 pointer" (click)="setSearchTopic('prod')">
 				<div class="card-body p-2 text-center">
 					<p class="card-text" style="font-size:32px"><i class="fas fa-store"></i></p>
-					<h6 class="card-title mb-0 clickable">Product / Service</h6>
+					<h6 class="card-title mb-0 clickable"><span [innerHTML]="'Product / Service' | translate"></span></h6>
 				</div>
 			</div>
 			<div class="card col mr-3 ml-3 pl-0 pr-0 pointer" (click)="setSearchTopic('comp')">
 				<div class="card-body p-2 text-center">
 					<p class="card-text" style="font-size:32px"><i class="fas fa-building"></i></p>
-					<h6 class="card-title mb-0 clickable">Company</h6>
+					<h6 class="card-title mb-0 clickable"><span [innerHTML]="'Company' | translate"></span></h6>
 				</div>
 			</div>
 		</div>
@@ -50,7 +50,7 @@
 			<div class="col form-check mt-3">
 				<input class="form-check-input" type="checkbox" [(ngModel)]="delegatedSearch" id="delSearchF" [ngModelOptions]="{standalone: true}">
 				<label class="form-check-label" for="delSearchF">
-					Delegated Search
+					<span [innerHTML]="'Delegated Search' | translate"></span>
 				</label>
 			</div>
 		</div>
@@ -59,7 +59,7 @@
 	<div *ngIf="false" [hidden]="searchDone">
 		<div class="card border-primary-nimble">
 			<div class="card-header text-white bg-primary-nimble">
-				Categories
+				<span [innerHTML]="'Categories' | translate"></span>
 			</div>
 			<div class="card-body">
 				<call-status [callStatus]="categoriesCallStatus" [large]="true"></call-status>
@@ -119,10 +119,10 @@
 
 			<div class="row">
 				<div *ngIf="size==0" class="col-12">
-					<span>No search results</span>
+					<span [innerHTML]="'No search results' | translate"></span>
 				</div>
 				<div *ngIf="size>0" class="col-4">
-					<span>Showing results</span> {{ start }} - {{ end }} <span>of</span> {{ size }}
+					<span [innerHTML]="'Showing results' | translate"></span> {{ start }} - {{ end }} <span [innerHTML]="'of' | translate"></span> {{ size }}
 				</div>
 
 				<!-- Search headers -->
@@ -133,7 +133,7 @@
 					</div>
 					<!-- Display options -->
 					<div class="form-group row">
-				    <label class="col-sm-2 col-form-label">Per page:</label>
+				    <label class="col-sm-2 col-form-label"><span [innerHTML]="'Per page' | translate"></span>:</label>
 				    <div class="col-sm-2">
 				      <select class="form-control" (change)="setRows($event.target.value)">
 								<option value="9" [selected]="rows==9">9</option>
@@ -142,22 +142,22 @@
 								<option value="24" [selected]="rows==24">24</option>
 							</select>
 				    </div>
-						<label class="col-sm-2 col-form-label">Style:</label>
+						<label class="col-sm-2 col-form-label"><span [innerHTML]="'Style' | translate"></span>:</label>
 				    <div class="col-sm-2">
 				      <select class="form-control" (change)="setDisplay($event.target.value)">
-								<option value="list" [selected]="display=='list'">List</option>
-								<option value="panel" [selected]="display=='panel'">Panel</option>
+								<option value="list" [selected]="display=='list'"><span [innerHTML]="'List' | translate"></span></option>
+								<option value="panel" [selected]="display=='panel'"><span [innerHTML]="'Panel' | translate"></span></option>
 							</select>
 				    </div>
-						<label class="col-sm-2 col-form-label">Sorting:</label>
+						<label class="col-sm-2 col-form-label"><span [innerHTML]="'Sorting' | translate"></span>:</label>
 				    <div class="col-sm-2">
 				      <select class="form-control" (change)="setSort($event.target.value)">
-								<option value="score desc" [selected]="sort=='score desc'">Relevance</option>
-								<option *ngIf="searchTopic=='prod'" [value]="getCurrencySort('asc')" [selected]="sort==getCurrencySort('asc')">Price: Asc.</option>
-								<option *ngIf="searchTopic=='prod'" [value]="getCurrencySort('desc')" [selected]="sort==getCurrencySort('desc')">Price: Des.</option>
-								<option *ngIf="searchTopic=='comp'" value="legalName asc" [selected]="sort=='legalName asc'">A to Z</option>
-								<option *ngIf="searchTopic=='comp'" value="trustRating desc" [selected]="sort=='trustRating desc'">Rating</option>
-								<option *ngIf="searchTopic=='comp'" value="trustScore desc" [selected]="sort=='trustScore desc'">Trust</option>
+								<option value="score desc" [selected]="sort=='score desc'"><span [innerHTML]="'Relevance' | translate"></span></option>
+								<option *ngIf="searchTopic=='prod'" [value]="getCurrencySort('asc')" [selected]="sort==getCurrencySort('asc')"><span [innerHTML]="'Price: Asc.' | translate"></span></option>
+								<option *ngIf="searchTopic=='prod'" [value]="getCurrencySort('desc')" [selected]="sort==getCurrencySort('desc')"><span [innerHTML]="'Price: Desc.' | translate"></span></option>
+								<option *ngIf="searchTopic=='comp'" value="legalName asc" [selected]="sort=='legalName asc'"><span [innerHTML]="'A to Z' | translate"></span></option>
+								<option *ngIf="searchTopic=='comp'" value="trustRating desc" [selected]="sort=='trustRating desc'"><span [innerHTML]="'Rating' | translate"></span></option>
+								<option *ngIf="searchTopic=='comp'" value="trustScore desc" [selected]="sort=='trustScore desc'"><span [innerHTML]="'Trust' | translate"></span></option>
 							</select>
 				    </div>
 				  </div>
@@ -177,8 +177,8 @@
 
 					<div class="row mb-3">
 						<div class="col-12">
-							<button *ngIf="searchTopic=='prod'" class="btn btn-secondary" [disabled]="cat==''" (click)="setCat('','')">Reset category</button>
-							<button class="btn btn-secondary" [ngClass]="{'ml-2':searchTopic=='prod'}" [disabled]="!facetQuery || (facetQuery && facetQuery.length==0)" (click)="resetFilter()">Reset filter</button>
+							<button *ngIf="searchTopic=='prod'" class="btn btn-secondary" [disabled]="cat==''" (click)="setCat('','')"><span [innerHTML]="'Reset category' | translate"></span></button>
+							<button class="btn btn-secondary" [ngClass]="{'ml-2':searchTopic=='prod'}" [disabled]="!facetQuery || (facetQuery && facetQuery.length==0)" (click)="resetFilter()"><span [innerHTML]="'Reset filter' | translate"></span></button>
 						</div>
 					</div>
 
@@ -186,13 +186,13 @@
 
 						<!-- category facet panel -->
 						<div class="pointer" (click)="showCatSection=!showCatSection">
-							<h5><span>Categories</span> <span *ngIf="!showCatSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCatSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+							<h5><span [innerHTML]="'Categories' | translate"></span> <span *ngIf="!showCatSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCatSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
 						</div>
 
 						<div *ngIf="showCatSection">
 							<div class="card border-primary-nimble mb-3">
 								<div class="card-header text-white bg-primary-nimble">
-									Category
+									<span [innerHTML]="'Category' | translate"></span>
 								</div>
 								<div class="card-body">
 									<div *ngIf="cat_loading">
@@ -231,7 +231,7 @@
 						<div *ngIf="checkProdCatCount()>0">
 
 							<div class="pointer" (click)="showProdSection=!showProdSection">
-								<h5><span>Product / Service Filters</span> <span *ngIf="!showProdSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showProdSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+								<h5><span [innerHTML]="'Product / Service' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showProdSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showProdSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
 							</div>
 
 							<div *ngIf="showProdSection">
@@ -258,8 +258,8 @@
 									        </select>
 												</div>
 										</div>
-										<button class="btn btn-primary" (click)="setPriceFilter()" [disabled]="!checkPriceFilter()">Apply</button>
-										<button class="btn btn-secondary ml-2" (click)="resetPriceFilter()" [hidden]="!checkPriceFacet()">Reset</button>
+										<button class="btn btn-primary" (click)="setPriceFilter()" [disabled]="!checkPriceFilter()"><span [innerHTML]="'Apply' | translate"></span></button>
+										<button class="btn btn-secondary ml-2" (click)="resetPriceFilter()" [hidden]="!checkPriceFacet()"><span [innerHTML]="'Reset' | translate"></span></button>
 									</div>
 								</div>
 								<div *ngFor="let facet of facetObj">
@@ -278,7 +278,7 @@
 											</div>
 											<div *ngIf="facet.options.length>maxFacets">
 												<hr>
-												<span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded">Show more</span><span *ngIf="facet.expanded">Show less</span></span>
+												<span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded"><span [innerHTML]="'Show more' | translate"></span></span><span *ngIf="facet.expanded"><span [innerHTML]="'Show less' | translate"></span></span></span>
 											</div>
 										</div>
 									</div>
@@ -292,7 +292,7 @@
 						<div *ngIf="checkCompCatCount()>0">
 
 							<div class="pointer" (click)="showCompSection=!showCompSection">
-								<h5><span>Product / Service Vendor Filters</span> <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+								<h5><span [innerHTML]="'Product / Service' | translate"></span> <span [innerHTML]="'Vendor' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
 							</div>
 
 							<div *ngIf="showCompSection">
@@ -312,7 +312,7 @@
 											</div>
 											<div *ngIf="facet.options.length>maxFacets">
 												<hr>
-												<span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded">Show more</span><span *ngIf="facet.expanded">Show less</span></span>
+												<span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded"><span [innerHTML]="'Show more' | translate"></span></span><span *ngIf="facet.expanded"><span [innerHTML]="'Show less' | translate"></span></span></span>
 											</div>
 										</div>
 									</div>
@@ -326,13 +326,13 @@
 						<div *ngIf="checkCompCatCount()>0">
 
 							<div class="pointer" (click)="showTrustSection=!showTrustSection">
-								<h5><span>Rating / Trust Filters</span> <span *ngIf="!showTrustSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showTrustSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+								<h5><span [innerHTML]="'Rating / Trust' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showTrustSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showTrustSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
 							</div>
 
 							<div *ngIf="showTrustSection">
 								<div class="card mb-3">
 									<div class="card-header">
-										Rating / Trust
+										<span [innerHTML]="'Rating / Trust' | translate"></span>
 									</div>
 									<div class="card-body">
 										<div class="mb-2">
@@ -387,8 +387,8 @@
 												</ngb-rating>
 											</div>
 										</div>
-										<button class="btn btn-primary" (click)="setTrustFilter()" [disabled]="!checkTrustFilter()">Apply</button>
-										<button class="btn btn-secondary ml-2" (click)="resetTrustFilter()" [hidden]="!checkTrustFacet()">Reset</button>
+										<button class="btn btn-primary" (click)="setTrustFilter()" [disabled]="!checkTrustFilter()"><span [innerHTML]="'Apply' | translate"></span></button>
+										<button class="btn btn-secondary ml-2" (click)="resetTrustFilter()" [hidden]="!checkTrustFacet()"><span [innerHTML]="'Reset' | translate"></span></button>
 									</div>
 								</div>
 
@@ -401,7 +401,7 @@
 						<div *ngIf="checkOtherCatCount()>0">
 
 							<div class="pointer" (click)="showOtherSection=!showOtherSection">
-								<h5><span>Other Filters</span> <span *ngIf="!showOtherSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showOtherSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+								<h5><span [innerHTML]="'Other' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showOtherSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showOtherSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
 							</div>
 
 							<div *ngIf="showOtherSection">
@@ -421,7 +421,7 @@
 											</div>
 											<div *ngIf="facet.options.length>maxFacets">
 												<hr>
-												<span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded">Show more</span><span *ngIf="facet.expanded">Show less</span></span>
+												<span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded"><span [innerHTML]="'Show more' | translate"></span></span><span *ngIf="facet.expanded"><span [innerHTML]="'Show less' | translate"></span></span></span>
 											</div>
 										</div>
 									</div>
@@ -437,7 +437,7 @@
 						<div *ngIf="checkCompMainCatCount()>0">
 
 							<div class="pointer" (click)="showCompSection=!showCompSection">
-								<h5><span>Company Filters</span> <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+								<h5><span [innerHTML]="'Company' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
 							</div>
 
 							<div *ngIf="showCompSection">
@@ -457,7 +457,7 @@
 											</div>
 											<div *ngIf="facet.options.length>maxFacets">
 												<hr>
-												<span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded">Show more</span><span *ngIf="facet.expanded">Show less</span></span>
+												<span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded"><span [innerHTML]="'Show more' | translate"></span></span><span *ngIf="facet.expanded"><span [innerHTML]="'Show less' | translate"></span></span></span>
 											</div>
 										</div>
 									</div>
@@ -471,13 +471,13 @@
 						<div *ngIf="checkCompTrustCatCount()>0">
 
 							<div class="pointer" (click)="showTrustSection=!showTrustSection">
-								<h5><span>Rating / Trust Filters</span> <span *ngIf="!showTrustSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showTrustSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+								<h5><span [innerHTML]="'Rating / Trust' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showTrustSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showTrustSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
 							</div>
 
 							<div *ngIf="showTrustSection">
 								<div class="card mb-3">
 									<div class="card-header">
-										Rating / Trust
+										<span [innerHTML]="'Rating / Trust' | translate"></span>
 									</div>
 									<div class="card-body">
 										<div class="mb-2">
@@ -532,8 +532,8 @@
 												</ngb-rating>
 											</div>
 										</div>
-										<button class="btn btn-primary" (click)="setCompTrustFilter()" [disabled]="!checkTrustFilter()">Apply</button>
-										<button class="btn btn-secondary ml-2" (click)="resetCompTrustFilter()" [hidden]="!checkCompTrustFacet()">Reset</button>
+										<button class="btn btn-primary" (click)="setCompTrustFilter()" [disabled]="!checkTrustFilter()"><span [innerHTML]="'Apply' | translate"></span></button>
+										<button class="btn btn-secondary ml-2" (click)="resetCompTrustFilter()" [hidden]="!checkCompTrustFacet()"><span [innerHTML]="'Reset' | translate"></span></button>
 									</div>
 								</div>
 
@@ -574,7 +574,7 @@
 										</div>
 										<div [ngClass]="{'col-2 border-right':display=='list','col-12 border-bottom pt-1 pb-2':display=='panel'}">
 											<span class="badge badge-primary-nimble" *ngIf="result[product_price] && !checkEmpty(result[product_price])">{{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}</span>
-											<span class="badge badge-warning" *ngIf="!result[product_price] || checkEmpty(result[product_price])">Upon request</span><br/>
+											<span class="badge badge-warning" *ngIf="!result[product_price] || checkEmpty(result[product_price])"><span [innerHTML]="'Upon request' | translate"></span></span><br/>
 											<ng-container *ngIf="shoppingCartDataService.cartFetched()">
 												<span *ngIf="!shoppingCartCallStatus.fb_submitted" class="badge badge-primary pointer mt-1" (click)="onAddToCart(result, $event)">
 													<span class="fas fa-shopping-cart mr-1"></span>
@@ -626,7 +626,7 @@
 											</div>
 										</div>
 										<div *ngIf="!result[product_vendor]" [ngClass]="{'col-2':display=='list','col-12':display=='panel'}">
-											Unknown
+											<span [innerHTML]="'Unknown' | translate"></span>
 										</div>
 									</div>
 								</div>

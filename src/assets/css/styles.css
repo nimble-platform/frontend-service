@@ -6,7 +6,7 @@ html, body {
     background-image: url('../bg_global.jpg');
     background-size: 100%;
     background-repeat: no-repeat;
-    font-family: 'Montserrat', sans-serif;
+    font-family: Verdana, Geneva, sans-serif;
     min-height: 100vh;
 }
 

@@ -375,17 +375,6 @@ export class PerformanceAnalyticsComponent implements OnInit {
             .getCollabAnalytics(this.comp_id)
             .then(res => {
 				this.callStatusCollab.callback("Successfully loaded collab analytics", true);
-                this.trade_green = Math.round(res.tradingVolume.approved);
-                this.trade_yellow = Math.round(res.tradingVolume.waiting);
-                this.trade_red = Math.round(res.tradingVolume.denied);
-                this.trade_count = Math.round(res.tradingVolume.approved + res.tradingVolume.waiting + res.tradingVolume.denied);
-                this.trade_green_perc = Math.round((res.tradingVolume.approved * 100) / this.trade_count);
-                this.trade_green_perc_str = this.trade_green_perc + "%";
-                this.trade_yellow_perc = Math.round((res.tradingVolume.waiting * 100) / this.trade_count);
-                this.trade_yellow_perc_str = this.trade_yellow_perc + "%";
-                this.trade_red_perc = 100 - this.trade_green_perc - this.trade_yellow_perc;
-                this.trade_red_perc_str = this.trade_red_perc + "%";
-
 				// average trade seller
         		this.trade_green_sell = Math.round(res.tradingVolumesales.approved);
         		this.trade_yellow_sell = Math.round(res.tradingVolumesales.waiting);
@@ -409,6 +398,20 @@ export class PerformanceAnalyticsComponent implements OnInit {
 				this.trade_yellow_perc_str_buy = this.trade_yellow_perc_buy + "%";
 				this.trade_red_perc_buy = 100-this.trade_green_perc_buy - this.trade_yellow_perc_buy;
 				this.trade_red_perc_str_buy = this.trade_red_perc_buy + "%";
+
+				let totalTradingVolumeApproved = res.tradingVolumesales.approved + res.tradingVolumespurchase.approved;
+				let totalTradingVolumeWaiting = res.tradingVolumesales.waiting + res.tradingVolumespurchase.waiting;
+				let totalTradingVolumeDenied = res.tradingVolumesales.denied + res.tradingVolumesales.denied;
+				this.trade_green = Math.round(totalTradingVolumeApproved);
+				this.trade_yellow = Math.round(totalTradingVolumeWaiting);
+				this.trade_red = Math.round(totalTradingVolumeDenied);
+				this.trade_count = Math.round(totalTradingVolumeApproved + totalTradingVolumeWaiting + totalTradingVolumeDenied);
+				this.trade_green_perc = Math.round((totalTradingVolumeApproved * 100) / this.trade_count);
+				this.trade_green_perc_str = this.trade_green_perc + "%";
+				this.trade_yellow_perc = Math.round((totalTradingVolumeWaiting * 100) / this.trade_count);
+				this.trade_yellow_perc_str = this.trade_yellow_perc + "%";
+				this.trade_red_perc = 100 - this.trade_green_perc - this.trade_yellow_perc;
+				this.trade_red_perc_str = this.trade_red_perc + "%";
 
 				//collab time
 				this.collab_time = Math.round(res.collaborationTime.averageCollabTime * 10) /10 ;

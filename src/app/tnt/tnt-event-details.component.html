@@ -1,0 +1,106 @@
+<div class="jumbotron" *ngIf="!gateInformation.length && !bizLocationInformation.length">
+    <div class="row">
+        <div class="col-md-12 align-center">
+            <i class="fas fa-chart-area fa-5x"></i>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 align-center">
+            <h4><span [innerHTML]="'Event & IoT Information' | translate"></span></h4>
+            <p class="text-secondary">
+                    <span [innerHTML]="'tnt-iot-info' | translate"></span>
+            </p>
+        </div>
+    </div>
+</div>
+
+<ngb-tabset *ngIf="gateInformation.length && bizLocationInformation.length">
+    <ngb-tab>
+        <ng-template ngbTabTitle><span [innerHTML]="'Event Information' | translate"></span></ng-template>
+        <ng-template ngbTabContent>
+            
+            <ngb-alert type="success" [dismissible]="false" *ngIf="bcEventVerified">
+                    <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'This Data is Verified by BlockChain' | translate"></span>  <i class="fas fa-project-diagram pl-1"></i>
+            </ngb-alert>
+            <table class="table table-bordered mt-2">
+                <thead>
+                    <th scope="col"><span [innerHTML]="'Attributes' | translate"></span></th>
+                    <th scope="col"><span [innerHTML]="'Read Point Information' | translate"></span></th>
+                    <th scope="col"><span [innerHTML]="'Business Location Information' | translate"></span></th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row"><span [innerHTML]="'Site' | translate"></span></th>
+                        <td>{{ gateInformation[gateInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:site'] }}</td>
+                        <td>{{ bizLocationInformation[bizLocationInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:site'] }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><span [innerHTML]="'Country' | translate"></span></th>
+                        <td>{{ gateInformation[gateInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:countryCode'] }}</td>
+                        <td>{{ bizLocationInformation[bizLocationInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:countryCode'] }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><span [innerHTML]="'Name' | translate"></span></th>
+                        <td>{{ gateInformation[gateInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:name'] }}</td>
+                        <td>{{ bizLocationInformation[bizLocationInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:name'] }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><span [innerHTML]="'City' | translate"></span></th>
+                        <td>{{ gateInformation[gateInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:city'] }}</td>
+                        <td>{{ bizLocationInformation[bizLocationInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:city'] }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><span [innerHTML]="'Address' | translate"></span></th>
+                        <td>{{ gateInformation[gateInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:streetAddressOne'] }}</td>
+                        <td>{{ bizLocationInformation[bizLocationInformation.length - 1]['attributes']['urn:epcglobal:cbv:mda:streetAddressOne'] }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><span [innerHTML]="'ID' | translate"></span></th>
+                        <td><code> {{ gateInformation[gateInformation.length - 1]['id'] }} </code></td>
+                        <td><code>{{ bizLocationInformation[bizLocationInformation.length - 1]['id'] }}</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </ng-template>
+    </ngb-tab>
+    <ngb-tab>
+        <ng-template ngbTabTitle><span [innerHTML]="'IoT Information' | translate"></span> </ng-template>
+        <ng-template ngbTabContent>
+            <ngb-alert type="success" [dismissible]="false" *ngIf="bcIoTDataVerified">
+                    <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'This Data is Verified by BlockChain' | translate"></span>  <i class="fas fa-project-diagram pl-1"></i>
+            </ngb-alert>
+            <div class="row mt-2" *ngIf="dashboardQuery.length">
+                <iframe [src]="dashboardQuery | safe" width="650" height="400" frameborder="0"></iframe>
+            </div>
+            <div class="row mt-1" *ngIf="events.length > 1">
+                    <ngb-alert type="info" [dismissible]="false">
+                        <h5><span [innerHTML]="'Overview' | translate"></span></h5>
+                        <p>
+                         <span [innerHTML]="'Previous Event' | translate"></span>: {{events[1]['eventTime'] | date:'medium': 'UTC'}} <i class="fas fa-arrow-right"></i> <span [innerHTML]="'Current Event' | translate"></span> {{events[0]['eventTime'] | date: 'medium': 'UTC'}}
+                        </p>
+                        <p>
+                            <i class="fas fa-info-circle"></i> <span [innerHTML]="'iot-dashboard-info-1' | translate"></span>
+                        </p>
+                        <p>
+                            <i class="fas fa-info-circle"></i> <span [innerHTML]="'iot-dashboard-info-2' | translate"></span>
+                        </p>
+                    </ngb-alert>
+            </div>
+            <div class="jumbotron mt-1" *ngIf="events.length === 1">
+                <div class="row">
+                    <div class="col-md-12 align-center">
+                        <i class="fas fa-info fa-5x"></i>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 align-center">
+                        <h4><span [innerHTML]="'No IoT Sensor Information Available' | translate"></span></h4>
+                        <p class="text-secondary">
+                                <span [innerHTML]="'no-iot-data-info' | translate"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </ngb-tab>
+</ngb-tabset>

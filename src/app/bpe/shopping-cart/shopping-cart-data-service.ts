@@ -43,14 +43,25 @@ export class ShoppingCartDataService {
             });
     }
 
-    public removeItemFromCart(cartLineHjid: number): Promise<Catalogue> {
-        let url = `${this.url}/shopping-cart?productId=${cartLineHjid}`;
+    public removeItemsFromCart(cartLineHjids: number[]): Promise<Catalogue> {
+        let url = `${this.url}/shopping-cart?productIds=`;
+        // append catalogue line hjids to the url
+        let size = cartLineHjids.length;
+        for (let i = 0; i < size; i++) {
+            url += cartLineHjids[i];
+
+            if (i != size - 1) {
+                url += ",";
+            }
+        }
         return this.http
             .delete(url, {headers: getAuthorizedHeaders(this.cookieService)})
             .toPromise()
             .then(res => {
-                let indexToRemove = this.cartCatalogue.catalogueLine.findIndex(line => line.hjid === cartLineHjid);
-                this.cartCatalogue.catalogueLine.splice(indexToRemove, 1);
+                for (let cartLineHjid of cartLineHjids) {
+                    let indexToRemove = this.cartCatalogue.catalogueLine.findIndex(line => line.hjid === cartLineHjid);
+                    this.cartCatalogue.catalogueLine.splice(indexToRemove, 1);
+                }
                 return Promise.resolve(this.cartCatalogue);
             })
             .catch(error => {
