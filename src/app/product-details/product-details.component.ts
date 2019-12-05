@@ -32,6 +32,7 @@ import {BPEService} from "../bpe/bpe.service";
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 import {QuotationWrapper} from "../bpe/bp-view/negotiation/quotation-wrapper";
 import {SearchContextService} from '../simple-search/search-context.service';
+import {UnshippedOrdersTransitionService} from '../bpe/unshipped-order-transition-service';
 
 @Component({
     selector: 'product-details',
@@ -90,6 +91,7 @@ export class ProductDetailsComponent implements OnInit {
                 private route: ActivatedRoute,
                 private cookieService: CookieService,
                 private searchContextService:SearchContextService,
+                private unShippedOrdersTransitionService: UnshippedOrdersTransitionService,
                 private translate: TranslateService,
                 public appComponent: AppComponent) {
 
@@ -191,6 +193,9 @@ export class ProductDetailsComponent implements OnInit {
         });
     }
 
+    ngOnDestroy() {
+        this.unShippedOrdersTransitionService.clearUnShippedOrderIds();
+    }
     /*
      * Event Handlers
      */
@@ -212,6 +217,7 @@ export class ProductDetailsComponent implements OnInit {
         // for an existing order , that is, this.isSearchContextValid is true
         let precedingOrderId = this.isSearchContextValid ? this.searchContextService.getPrecedingOrderId() : null;
         let activityVariablesOfAssociatedOrder = this.isSearchContextValid && this.searchContextService.getAssociatedProcessMetadata() ? this.searchContextService.getAssociatedProcessMetadata().activityVariables :null;
+        let unShippedOrderIds = this.unShippedOrdersTransitionService.getUnShippedOrderIds();
         this.bpDataService.startBp(
             new BpActivityEvent(
                 'buyer',
@@ -228,7 +234,8 @@ export class ProductDetailsComponent implements OnInit {
                 null,
                 [termsSource],
                 precedingOrderId,
-                activityVariablesOfAssociatedOrder));
+                activityVariablesOfAssociatedOrder,
+                unShippedOrderIds));
     }
 
     onOrderQuantityChange(value: number): void {

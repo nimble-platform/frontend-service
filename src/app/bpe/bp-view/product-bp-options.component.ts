@@ -183,6 +183,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             this.bpDataService.precedingProcessId = bpActivityEvent.previousProcessInstanceId;
             this.bpDataService.precedingDocumentId = bpActivityEvent.previousDocumentId;
             this.bpDataService.precedingOrderId = bpActivityEvent.precedingOrderId;
+            this.bpDataService.unShippedOrderIds = bpActivityEvent.unShippedOrderIds;
 
             if (this.id !== ids || this.catalogueId !== catalogueIds) {
                 this.id = ids;

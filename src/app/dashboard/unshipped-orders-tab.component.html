@@ -1,13 +1,5 @@
 <call-status [callStatus]="orderIdsCallStatus"></call-status>
 <ng-container *ngIf="allOrderIds.length > 0">
-    <div class="flex-row mb-4 mt-4">
-        <div class="col-12">
-            <div class="btn btn-outline-primary align-self-start mr-2 active">
-                <span [innerHTML]="'Associated products' | translate"></span>
-            </div>
-        </div>
-    </div>
-
     <!-- associated products panel -->
     <ng-container>
         <call-status [callStatus]="allOrdersCallStatus"></call-status>
@@ -19,7 +11,7 @@
                 <div class="col-3">
                     <span [innerHTML]="'Product' | translate"></span>
                 </div>
-                <div class="col-2">
+                <div class="col-2 no-padding">
                     <span [innerHTML]="'Quantity' | translate"></span>
                 </div>
             </div>
@@ -34,11 +26,31 @@
                 <div class="col-3">
                     <span class="clickable" (click)="onProductDetailsClicked(pa.catalogueLine.goodsItem.item,pa.quantity)">{{selectLangLabelFromTextArray(pa.catalogueLine.goodsItem.item.name)}}</span>
                 </div>
-                <div class="col-2">
+                <div class="col-1 no-padding">
                     {{quantityToString(pa.quantity)}}
                 </div>
-                <div class="col-2">
-                    <div class="btn btn-primary" (click)="onProductDetailsClicked(pa.catalogueLine.goodsItem.item,pa.quantity)"><span [innerHTML]="'Negotiate & Order' | translate"></span></div>
+                <div *ngIf="pa.processInstanceId == null" class="col-3" style="text-align: center">
+                    <div class="btn btn-primary" (click)="onProductDetailsClicked(pa.catalogueLine.goodsItem.item,pa.quantity,pa.salesOrders)"><span [innerHTML]="'Negotiate & Order' | translate"></span></div>
+                </div>
+                <div *ngIf="pa.processInstanceId != null" class="col-3">
+                    <div *ngIf="pa.status === 'CANCELLED'">
+                        <div class="py-1 alert-dark" style="text-align: center">
+                            <strong><span [innerHTML]="'Cancelled' | translate"></span></strong>
+                            <button type="button" class="close" aria-label="Close" (click)="pa.processInstanceId=null">
+                                <span aria-hidden="true">&times;
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                    <div *ngIf="pa.status === 'DONE'">
+                        <div class="py-1 clickable alert-success" style="text-align: center" (click)="onProcessDetailsClicked(pa.processInstanceId)">{{pa.statusText}}</div>
+                    </div>
+                    <div *ngIf="pa.status === 'WAITING'">
+                        <div class="py-1 clickable alert-warning" style="text-align: center" (click)="onProcessDetailsClicked(pa.processInstanceId)">{{pa.statusText}}</div>
+                    </div>
+                    <div *ngIf="pa.status === 'ACTION_REQUIRED'" >
+                        <div class="py-1 clickable alert-danger" style="text-align: center" (click)="onProcessDetailsClicked(pa.processInstanceId)">{{pa.statusText}}</div>
+                    </div>
                 </div>
                 <div class="col-2">
                     <div class="btn btn-primary" (click)="showSalesOrders[i]=!showSalesOrders[i]"><span [innerHTML]="'View Sales Orders' | translate"></span></div>
@@ -61,7 +73,7 @@
                     </div>
                 </div>
                 <!-- Unshipped orders table data rows -->
-                <div class="data-row" *ngFor="let order of pa.salesOrders">
+                <div class="data-row" *ngFor="let order of pa.salesOrders;let k=index">
                     <ng-container>
                         <div class="col-4">
                             <span class="clickable" (click)="onOrderDetailsClicked(order.id)">{{order.id}}</span>
@@ -70,10 +82,10 @@
                             {{partyNames.get(order.buyerCustomerParty.party.partyIdentification[0].id)}}
                         </div>
                         <div class="col-3">
-                            <span class="clickable" (click)="onProductDetailsClicked(order.orderLine[0].lineItem.item,order.orderLine[0].lineItem.quantity)">{{selectLangLabelFromTextArray(order.orderLine[0].lineItem.item.name)}}</span>
+                            <span class="clickable" (click)="onProductDetailsClicked(order.orderLine[pa.salesOrdersFirstIndexes[k]].lineItem.item)">{{selectLangLabelFromTextArray(order.orderLine[pa.salesOrdersFirstIndexes[k]].lineItem.item.name)}}</span>
                         </div>
                         <div class="col-2">
-                            {{quantityToString(order.orderLine[0].lineItem.quantity)}}
+                            {{getOrderedQuantity(pa.catalogueLine.hjid,order)}}
                         </div>
                     </ng-container>
                 </div>

@@ -107,6 +107,7 @@ export class BPDataService{
     precedingProcessId: string;
     precedingDocumentId: string;
     precedingOrderId: string;
+    unShippedOrderIds: string[];
 
     constructor(private searchContextService: SearchContextService,
                 private precedingBPDataService: PrecedingBPDataService,
@@ -311,7 +312,8 @@ export class BPDataService{
             this.bpActivityEvent.previousDocumentId,
             termsSources,
             this.bpActivityEvent.precedingOrderId,
-            this.bpActivityEvent.activityVariablesOfAssociatedOrder);
+            this.bpActivityEvent.activityVariablesOfAssociatedOrder,
+            this.bpActivityEvent.unShippedOrderIds);
         this.bpActivityEvent = bpStartEvent;
         // this event is listened by the product-bp-options.component where the displayed process view is adjusted
         this.bpActivityEventBehaviorSubject.next(bpStartEvent);
@@ -555,6 +557,7 @@ export class BPDataService{
 
         this.precedingDocumentId = null;
         this.precedingOrderId = null;
+        this.unShippedOrderIds = null;
     }
 
     // checks whether the given process is the final step in the workflow or not

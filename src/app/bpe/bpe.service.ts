@@ -49,6 +49,17 @@ export class BPEService {
             document.additionalDocumentReference.push(documentRef);
         }
 
+		// create DocumentReferences for the unshipped orders
+		if(this.bpDataService.unShippedOrderIds){
+			for(let unShippedOrderId of this.bpDataService.unShippedOrderIds){
+				let documentRef:DocumentReference = new DocumentReference();
+				documentRef.id = unShippedOrderId;
+				documentRef.documentType = "unShippedOrder";
+
+				document.additionalDocumentReference.push(documentRef);
+			}
+		}
+
 		UBLModelUtils.removeHjidFieldsFromObject(document);
         return this.http
             .post(url, JSON.stringify(document), {headers: headers})
@@ -564,8 +575,8 @@ export class BPEService {
 		});
 	}
 
-	public getUnshippedOrderIds(partyId: string): Promise<string[]> {
-		const url = `${this.url}/documents/unshipped-order-ids?partyId=${partyId}`;
+	public getExpectedOrders(partyId: string): Promise<string[]> {
+		const url = `${this.url}/documents/expected-orders?partyId=${partyId}`;
 		return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
