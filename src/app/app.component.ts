@@ -150,7 +150,7 @@ export class AppComponent implements OnInit {
         let hint = "&scope=openid&response_type=code&kc_idp_hint=" + myGlobals.config.federationIDP;
 
         if (catalogueId != null && id != null) {
-            redirectURI = "#/product-details?catalogueId=" + catalogueId + "&id=" + id;
+            redirectURI = redirectURI + "#/product-details?catalogueId=" + catalogueId + "&id=" + id;
         }
 
         return identityURL + clientID + redirectURI + hint;
