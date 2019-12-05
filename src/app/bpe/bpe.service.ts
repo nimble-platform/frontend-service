@@ -13,7 +13,6 @@ import { CollaborationRole } from "./model/collaboration-role";
 import { Order } from '../catalogue/model/publish/order';
 import { EvidenceSupplied } from '../catalogue/model/publish/evidence-supplied';
 import { Comment } from '../catalogue/model/publish/comment';
-import {SearchContextService} from '../simple-search/search-context.service';
 import {DashboardProcessInstanceDetails} from './model/dashboard-process-instance-details';
 import {DigitalAgreement} from "../catalogue/model/publish/digital-agreement";
 import {CollaborationGroup} from "./model/collaboration-group";
@@ -28,7 +27,6 @@ export class BPEService {
 
 	constructor(private http: Http,
 				private bpDataService:BPDataService,
-                private searchContextService: SearchContextService,
 				private cookieService: CookieService) { }
 
     startProcessWithDocument(document:any):Promise<ProcessInstance> {
@@ -43,13 +41,24 @@ export class BPEService {
             document.additionalDocumentReference.push(documentRef);
         }
         // create a DocumentReference for the previous order
-        if(this.searchContextService.getPrecedingOrderId()){
+        if(this.bpDataService.precedingOrderId){
             let documentRef:DocumentReference = new DocumentReference();
-            documentRef.id = this.searchContextService.getPrecedingOrderId();
+            documentRef.id = this.bpDataService.precedingOrderId;
             documentRef.documentType = "previousOrder";
 
             document.additionalDocumentReference.push(documentRef);
         }
+
+		// create DocumentReferences for the unshipped orders
+		if(this.bpDataService.unShippedOrderIds){
+			for(let unShippedOrderId of this.bpDataService.unShippedOrderIds){
+				let documentRef:DocumentReference = new DocumentReference();
+				documentRef.id = unShippedOrderId;
+				documentRef.documentType = "unShippedOrder";
+
+				document.additionalDocumentReference.push(documentRef);
+			}
+		}
 
 		UBLModelUtils.removeHjidFieldsFromObject(document);
         return this.http
@@ -422,6 +431,17 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
+	getProcessInstanceIdForDocument(documentId: string): Promise<any> {
+		const token = 'Bearer '+this.cookieService.get("bearer_token");
+		const headers = new Headers({'Accept': 'text/plain','Authorization': token});
+		let url: string = `${this.url}/processInstance/document/${documentId}`;
+		return this.http
+            .get(url, {headers: headers})
+            .toPromise()
+            .then(res => res.text())
+            .catch(this.handleError);
+	}
+
 	getFrameContract(sellerId: string, buyerId: string, productIds: string[]): Promise<DigitalAgreement> {
 		let productIdsParam = "";
 		let size = productIds.length;
@@ -555,8 +575,8 @@ export class BPEService {
 		});
 	}
 
-	public getUnshippedOrderIds(partyId: string): Promise<string[]> {
-		const url = `${this.url}/documents/unshipped-order-ids?partyId=${partyId}`;
+	public getExpectedOrders(partyId: string): Promise<string[]> {
+		const url = `${this.url}/documents/expected-orders?partyId=${partyId}`;
 		return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()

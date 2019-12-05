@@ -187,8 +187,7 @@ export class ThreadSummaryComponent implements OnInit {
                 catalogueLineIds,
                 this.titleEvent.processInstanceId,
                 ActivityVariableParser.getPrecedingDocumentId(this.titleEvent.activityVariables),
-                termsSources),
-            true);
+                termsSources));
     }
 
     private fetchEvents(): void {
@@ -336,7 +335,6 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     navigateToSearchDetails(item:Item) {
-        this.searchContextService.clearSearchContext();
         this.router.navigate(['/product-details'],
             {
                 queryParams: {
