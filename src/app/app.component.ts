@@ -150,7 +150,8 @@ export class AppComponent implements OnInit {
         let hint = "&scope=openid&response_type=code&kc_idp_hint=" + myGlobals.config.federationIDP;
 
         if (catalogueId != null && id != null) {
-            redirectURI = redirectURI + "#/product-details?catalogueId=" + catalogueId + "&id=" + id;
+            let endpoint = encodeURI("?catalogueId=" + catalogueId + "&id=" + id);
+            redirectURI = redirectURI + endpoint;
         }
 
         return identityURL + clientID + redirectURI + hint;
@@ -175,10 +176,11 @@ export class AppComponent implements OnInit {
         }
 
         if (code != null) {
+            let redirectURL = window.location.href.split("&code");
             const url = myGlobals.user_mgmt_endpoint + `/federation/login`;
             this.submitCallStatus.submit();
             return this.http
-                .post(url, JSON.stringify({'code': code}), {headers: new Headers({'Content-Type': 'application/json'})})
+                .post(url, JSON.stringify({'code': code, 'redirect_URL': redirectURL[0]}), {headers: new Headers({'Content-Type': 'application/json'})})
                 .toPromise()
                 .then(res => {
                     this.submitCallStatus.callback("Login Successful!");
@@ -190,8 +192,6 @@ export class AppComponent implements OnInit {
                         this.checkLogin("/product-details?catalogueId=" + catalogueId + "&id=" + id);
                     } else
                         this.checkLogin("/dashboard");
-
-
                 }).catch((e) => {
                     this.submitCallStatus.error("Login failed", e);
                 })
