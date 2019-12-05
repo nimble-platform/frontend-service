@@ -31,6 +31,8 @@ import {DocumentService} from "../bpe/bp-view/document-service";
 import {BPEService} from "../bpe/bpe.service";
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 import {QuotationWrapper} from "../bpe/bp-view/negotiation/quotation-wrapper";
+import {SearchContextService} from '../simple-search/search-context.service';
+import {UnshippedOrdersTransitionService} from '../bpe/unshipped-order-transition-service';
 
 @Component({
     selector: 'product-details',
@@ -47,6 +49,7 @@ export class ProductDetailsComponent implements OnInit {
 
     id: string;
     catalogueId: string;
+    isSearchContextValid:boolean;
     favouriteItemIds: string[] = [];
 
     // options: BpWorkflowOptions = new BpWorkflowOptions();
@@ -87,6 +90,8 @@ export class ProductDetailsComponent implements OnInit {
                 private userService: UserService,
                 private route: ActivatedRoute,
                 private cookieService: CookieService,
+                private searchContextService:SearchContextService,
+                private unShippedOrdersTransitionService: UnshippedOrdersTransitionService,
                 private translate: TranslateService,
                 public appComponent: AppComponent) {
 
@@ -96,6 +101,7 @@ export class ProductDetailsComponent implements OnInit {
 		this.route.queryParams.subscribe(params => {
 			let id = params['id'];
             let catalogueId = params['catalogueId'];
+            let isSearchContextValid = params['contextValid'];
             this.tabToOpen = params['tabToOpen'];
             let orderQuantity: string = params['orderQuantity'];
             if (orderQuantity) {
@@ -105,7 +111,7 @@ export class ProductDetailsComponent implements OnInit {
             if(id !== this.id || catalogueId !== this.catalogueId) {
                 this.id = id;
                 this.catalogueId = catalogueId;
-
+                this.isSearchContextValid = isSearchContextValid;
                 this.getProductStatus.submit();
                 this.initCheckGetFrameContractStatus.submit();
                 this.initCheckGetProductStatus.submit();
@@ -187,6 +193,9 @@ export class ProductDetailsComponent implements OnInit {
         });
     }
 
+    ngOnDestroy() {
+        this.unShippedOrdersTransitionService.clearUnShippedOrderIds();
+    }
     /*
      * Event Handlers
      */
@@ -204,6 +213,11 @@ export class ProductDetailsComponent implements OnInit {
     }
 
     private navigateToBusinessProcess(targetProcess: ProcessType, termsSource: 'product_defaults' | 'frame_contract' = 'product_defaults'): void {
+        // precedingOrderId and activityVariablesOfAssociatedOrder have some values only when the user is navigated to the search for searching a transport service provider
+        // for an existing order , that is, this.isSearchContextValid is true
+        let precedingOrderId = this.isSearchContextValid ? this.searchContextService.getPrecedingOrderId() : null;
+        let activityVariablesOfAssociatedOrder = this.isSearchContextValid && this.searchContextService.getAssociatedProcessMetadata() ? this.searchContextService.getAssociatedProcessMetadata().activityVariables :null;
+        let unShippedOrderIds = this.unShippedOrdersTransitionService.getUnShippedOrderIds();
         this.bpDataService.startBp(
             new BpActivityEvent(
                 'buyer',
@@ -214,8 +228,14 @@ export class ProductDetailsComponent implements OnInit {
                 [this.itemWithSelectedProperties],
                 new Quantity(this.orderQuantity, this.getQuantityUnit()),
                 true, // this is a new process
-                [this.catalogueId], [this.id], null, null, [termsSource]),
-            false);
+                [this.catalogueId],
+                [this.id],
+                null,
+                null,
+                [termsSource],
+                precedingOrderId,
+                activityVariablesOfAssociatedOrder,
+                unShippedOrderIds));
     }
 
     onOrderQuantityChange(value: number): void {

@@ -106,6 +106,8 @@ export class BPDataService{
 
     precedingProcessId: string;
     precedingDocumentId: string;
+    precedingOrderId: string;
+    unShippedOrderIds: string[];
 
     constructor(private searchContextService: SearchContextService,
                 private precedingBPDataService: PrecedingBPDataService,
@@ -243,8 +245,8 @@ export class BPDataService{
      For dashboard, business process history contains process document metadatas since they are already started/completed.
      However, in the product-details page, we start a new business process, this is why we check for new process processMetadata.
      */
-    async startBp(bpActivityEvent: BpActivityEvent, clearSearchContext:boolean){
-        this.resetBpData(clearSearchContext);
+    async startBp(bpActivityEvent: BpActivityEvent){
+        this.resetBpData();
 
         this.bpActivityEvent = bpActivityEvent;
         // if the event is not created for a new process, processMetadata contains the process metadata for the continued process
@@ -265,6 +267,14 @@ export class BPDataService{
         this.router.navigate([`bpe/bpe-exec/${processInstanceId}`]).then(() => {
             this.bpActivityEventBehaviorSubject.next(this.bpActivityEvent);
         });
+    }
+
+    // used to view details of the process with given id
+    // in this case, since this.bpActivityEvent might have the details of a different process, we need to clear it
+    public viewProcessDetails(processInstanceId:string){
+        // clear bpActivityEvent
+        this.bpActivityEvent = null;
+        this.router.navigate([`bpe/bpe-exec/${processInstanceId}`]);
     }
 
     /*
@@ -300,7 +310,10 @@ export class BPDataService{
             this.bpActivityEvent.catalogueLineIds,
             this.bpActivityEvent.previousProcessInstanceId,
             this.bpActivityEvent.previousDocumentId,
-            termsSources);
+            termsSources,
+            this.bpActivityEvent.precedingOrderId,
+            this.bpActivityEvent.activityVariablesOfAssociatedOrder,
+            this.bpActivityEvent.unShippedOrderIds);
         this.bpActivityEvent = bpStartEvent;
         // this event is listened by the product-bp-options.component where the displayed process view is adjusted
         this.bpActivityEventBehaviorSubject.next(bpStartEvent);
@@ -528,7 +541,7 @@ export class BPDataService{
         this.transportExecutionPlanRequest = UBLModelUtils.createTEPlanRequestWithQuotationCopy(this.copyQuotation);
     }
 
-    resetBpData(clearSearchContext:boolean=true):void {
+    resetBpData():void {
         this.requestForQuotation = null;
         this.quotation = null;
         this.order = null;
@@ -543,9 +556,8 @@ export class BPDataService{
         this.itemInformationResponse = null;
 
         this.precedingDocumentId = null;
-        if(clearSearchContext){
-            this.searchContextService.clearSearchContext();
-        }
+        this.precedingOrderId = null;
+        this.unShippedOrderIds = null;
     }
 
     // checks whether the given process is the final step in the workflow or not

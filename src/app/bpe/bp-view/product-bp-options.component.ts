@@ -182,6 +182,8 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             const catalogueIds = bpActivityEvent.catalogueIds;
             this.bpDataService.precedingProcessId = bpActivityEvent.previousProcessInstanceId;
             this.bpDataService.precedingDocumentId = bpActivityEvent.previousDocumentId;
+            this.bpDataService.precedingOrderId = bpActivityEvent.precedingOrderId;
+            this.bpDataService.unShippedOrderIds = bpActivityEvent.unShippedOrderIds;
 
             if (this.id !== ids || this.catalogueId !== catalogueIds) {
                 this.id = ids;
@@ -191,7 +193,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 const userId = this.cookieService.get("user_id");
                 Promise.all([
                     this.getCatalogueLines(catalogueIds, ids, bpActivityEvent.processMetadata),
-                    this.getOrderForTransportService(),
+                    this.getOrderForTransportService(bpActivityEvent.activityVariablesOfAssociatedOrder),
                     this.userService.getSettingsForUser(userId)
 
                 ]).then(([lines, order, currentUserSettings]) => {
@@ -333,14 +335,14 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             && this.processMetadata.processStatus === "Completed";
     }
 
-    private getOrderForTransportService(): Promise<Order | null> {
+    private getOrderForTransportService(activityVariablesOfAssociatedOrder:any): Promise<Order | null> {
         if(this.bpDataService.bpActivityEvent.userRole === "seller") {
             return Promise.resolve(null);
         }
-        // search context has some value only when the user is navigated to the search for searching a transport service provider
+        // activityVariablesOfAssociatedOrder has some value only when the user is navigated to the search for searching a transport service provider
         // for an existing order
-        if(this.searchContextService.getAssociatedProcessMetadata()) {
-            return this.documentService.getInitialDocument(this.searchContextService.getAssociatedProcessMetadata().activityVariables);
+        if(activityVariablesOfAssociatedOrder) {
+            return this.documentService.getInitialDocument(activityVariablesOfAssociatedOrder);
         }
         if(this.processMetadata) {
             const processId = this.processMetadata.processInstanceId;
