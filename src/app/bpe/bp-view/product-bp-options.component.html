@@ -23,7 +23,10 @@
                     </ng-template>
 
                     <button class="btn btn-outline-dark inline" (click)="open(content,line.goodsItem.item.name[0].value)" *ngIf="config.showChat"><span [innerHTML]="'Start chat' | translate"></span></button>
-                    <i *ngIf="(currentStep == 'Negotiation' || currentStep == 'Order') && viewedProcessDetails[i]" class="far fa-eye" [title]="getTitleForToolTip()" ></i>
+                    <span *ngIf="(currentStep == 'Negotiation' || currentStep == 'Order')">
+                        <i *ngIf="viewedProcessDetails[i]" class="fas fa-check small-icon" [title]="getTitleForCheckIcon()"></i>
+                        <i *ngIf="!viewedProcessDetails[i]" class="fas fa-times small-icon" [title]="getTitleForTimesIcon()"></i>
+                    </span>
                 </h2>
             </ng-container>
         </div>

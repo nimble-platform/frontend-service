@@ -321,8 +321,12 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         return true;
     }
 
-    getTitleForToolTip(){
-        return "You viewed the"+ this.currentStep.toLowerCase() +" details for this product";
+    getTitleForCheckIcon(){
+        return "You have viewed the "+ this.currentStep.toLowerCase() +" details for this product";
+    }
+
+    getTitleForTimesIcon(){
+        return "You have not viewed the "+ this.currentStep.toLowerCase() +" details for this product";
     }
 
     private isOrderDone(): boolean {
