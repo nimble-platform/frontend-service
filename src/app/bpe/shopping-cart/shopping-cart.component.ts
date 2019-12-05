@@ -414,34 +414,31 @@ export class ShoppingCartComponent implements OnInit {
     onApplyTerms(commonTerms:CommonTerms): void {
         if(commonTerms){
             for(let negotiationRequestItem of this.negotiationRequestItemComponents.toArray()){
-                // only apply the common terms if the 'Reset changes' is checked for the product
-                if(negotiationRequestItem.resetUpdatesChecked){
-                    let negotiationModelWrapper = negotiationRequestItem.wrapper;
-                    negotiationModelWrapper.rfqIncoterms = commonTerms.incoTerm;
-                    negotiationModelWrapper.rfqPaymentMeans = commonTerms.paymentMean;
-                    negotiationModelWrapper.rfqPaymentTerms.paymentTerm = commonTerms.paymentTerm;
-                    negotiationModelWrapper.rfqWarranty = copy(commonTerms.warrantyPeriod);
-                    negotiationModelWrapper.rfqDeliveryAddress = copy(commonTerms.deliveryAddress);
-                    negotiationModelWrapper.rfqDataMonitoringRequested = commonTerms.dataMonitoringRequested;
-                    negotiationModelWrapper.rfqTradingTerms = copy(commonTerms.tradingTerms);
+                let negotiationModelWrapper = negotiationRequestItem.wrapper;
+                negotiationModelWrapper.rfqIncoterms = commonTerms.incoTerm;
+                negotiationModelWrapper.rfqPaymentMeans = commonTerms.paymentMean;
+                negotiationModelWrapper.rfqPaymentTerms.paymentTerm = commonTerms.paymentTerm;
+                negotiationModelWrapper.rfqWarranty = copy(commonTerms.warrantyPeriod);
+                negotiationModelWrapper.rfqDeliveryAddress = copy(commonTerms.deliveryAddress);
+                negotiationModelWrapper.rfqDataMonitoringRequested = commonTerms.dataMonitoringRequested;
+                negotiationModelWrapper.rfqTradingTerms = copy(commonTerms.tradingTerms);
 
-                    if(!negotiationRequestItem.isDeliveryDateSectionOpen){
-                        negotiationModelWrapper.rfqDeliveryPeriod = copy(commonTerms.deliveryPeriod);
-                    }
-
-                    if(commonTerms.clauses.length > 0){
-                        // if T&Cs are the default ones of the platform, we need to keep the first clause and replace the rest,
-                        // otherwise it's ok to replace all of them.
-                        if(commonTerms.areDefaultTermsAndConditions){
-                            negotiationModelWrapper.rfq.requestForQuotationLine[negotiationModelWrapper.lineIndex].lineItem.clause = [negotiationModelWrapper.rfq.requestForQuotationLine[negotiationModelWrapper.lineIndex].lineItem.clause[0]].concat(copy(commonTerms.clauses));
-                        }
-                        else{
-                            negotiationModelWrapper.rfq.requestForQuotationLine[negotiationModelWrapper.lineIndex].lineItem.clause = copy(commonTerms.clauses);
-                        }
-                    }
-
-                    negotiationRequestItem.onFrameContractDurationChanged(copy(commonTerms.frameContractDuration))
+                if(!negotiationRequestItem.isDeliveryDateSectionOpen){
+                    negotiationModelWrapper.rfqDeliveryPeriod = copy(commonTerms.deliveryPeriod);
                 }
+
+                if(commonTerms.clauses.length > 0){
+                    // if T&Cs are the default ones of the platform, we need to keep the first clause and replace the rest,
+                    // otherwise it's ok to replace all of them.
+                    if(commonTerms.areDefaultTermsAndConditions){
+                        negotiationModelWrapper.rfq.requestForQuotationLine[negotiationModelWrapper.lineIndex].lineItem.clause = [negotiationModelWrapper.rfq.requestForQuotationLine[negotiationModelWrapper.lineIndex].lineItem.clause[0]].concat(copy(commonTerms.clauses));
+                    }
+                    else{
+                        negotiationModelWrapper.rfq.requestForQuotationLine[negotiationModelWrapper.lineIndex].lineItem.clause = copy(commonTerms.clauses);
+                    }
+                }
+
+                negotiationRequestItem.onFrameContractDurationChanged(copy(commonTerms.frameContractDuration))
             }
         }
     }

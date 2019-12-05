@@ -14,7 +14,8 @@ import {UserService} from '../user-mgmt/user.service';
 
 @Component({
     selector: 'frame-contract-tab',
-    templateUrl: './frame-contract-tab.component.html'
+    templateUrl: './frame-contract-tab.component.html',
+    styleUrls: ["./frame-contract-tab.component.css"]
 })
 export class FrameContractTabComponent implements OnInit {
     frameContracts: DigitalAgreement[] = [];
