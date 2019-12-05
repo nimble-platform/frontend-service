@@ -143,11 +143,15 @@ export class AppComponent implements OnInit {
         // this.submitCallStatus.callback("Login Successful");
     }
 
-    generateFederationURL() {
+    generateFederationURL(catalogueId, id) {
         let identityURL = myGlobals.idpURL + "/protocol/openid-connect/auth";
         let clientID = "?client_id=" + myGlobals.config.federationClientID;
         let redirectURI = "&redirect_uri=" + myGlobals.frontendURL;
         let hint = "&scope=openid&response_type=code&kc_idp_hint=" + myGlobals.config.federationIDP;
+
+        if (catalogueId != null && id != null) {
+            redirectURI = "#/product-details?catalogueId=" + catalogueId + "&id=" + id;
+        }
 
         return identityURL + clientID + redirectURI + hint;
     }
@@ -163,9 +167,11 @@ export class AppComponent implements OnInit {
 
         let code = this.getQueryParameter('code');
         let federatedLogin = this.getQueryParameter('federatedLogin');
+        let catalogueId = this.getQueryParameter('catalogueId');
+        let id = this.getQueryParameter('id');
 
         if (federatedLogin != undefined && federatedLogin == "efs") {
-            window.location.href = this.generateFederationURL();
+            window.location.href = this.generateFederationURL(catalogueId, id);
         }
 
         if (code != null) {
@@ -180,8 +186,12 @@ export class AppComponent implements OnInit {
                     this.setCookiesForFederatedLogin();
                     if (!this.response.companyID && myGlobals.config.companyRegistrationRequired)
                         this.checkLogin("/user-mgmt/company-registration");
-                    else
+                    else if (catalogueId != null && id != null) {
+                        this.checkLogin("/product-details?catalogueId=" + catalogueId + "&id=" + id);
+                    } else
                         this.checkLogin("/dashboard");
+
+
                 }).catch((e) => {
                     this.submitCallStatus.error("Login failed", e);
                 })
