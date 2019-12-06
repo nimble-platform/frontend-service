@@ -1,0 +1,42 @@
+<ng-template #modal let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h5 class="modal-title" id="modal-basic-title">Shopping Cart Summary</h5>
+        <button type="button" class="close" aria-label="Close" (click)="d('cross')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <table class="table table-striped">
+                <tr>
+                    <th><span>Ordered Product</span></th>
+                    <th><span [innerHTML]="'Product Id' | translate">Product Id</span></th>
+                    <th><span [innerHTML]="'Quantity' | translate">Quantity</span></th>
+                    <th><span [innerHTML]="'Net Price' | translate">Net Price</span></th>
+                    <th *ngIf="config.vatEnabled" [innerHTML]="'VAT' | translate"><span>VAT</span></th>
+                    <th *ngIf="config.vatEnabled" [innerHTML]="'Gross Total' | translate"><span>Gross Total</span></th>
+                </tr>
+                <tr *ngFor="let negotiationModelWrapper of negotiationModelWrappers">
+                    <th scope="row"><span>{{negotiationModelWrapper.catalogueLine.goodsItem.item.name[0].value }}</span></th>
+                    <td><span>{{negotiationModelWrapper.catalogueLine.goodsItem.item.manufacturersItemIdentification.id}}</span></td>
+                    <td><span>{{quantityToString(negotiationModelWrapper.rfq.requestForQuotationLine[negotiationModelWrapper.lineIndex].lineItem.quantity)}}</span></td>
+                    <td><span>{{negotiationModelWrapper.rfqTotalPriceString}}</span></td>
+                    <td *ngIf="config.vatEnabled"><span>{{negotiationModelWrapper.rfqVatTotalString}}</span></td>
+                    <td *ngIf="config.vatEnabled"><span>{{negotiationModelWrapper.rfqGrossTotalString}}</span></td>
+                </tr>
+                <tr>
+                    <th scope="row"><span>Total </span></th>
+                    <td><span></span></td>
+                    <td><span></span></td>
+                    <td><span>{{getTotalPriceString()}}</span></td>
+                    <td *ngIf="config.vatEnabled"><span>{{getVatTotalString()}}</span></td>
+                    <td *ngIf="config.vatEnabled"><span>{{getGrossTotalString()}}</span></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="d('cancel')"><span [innerHTML]="'Cancel' | translate"></span></button>
+        <button type="button" class="btn btn-primary" (click)="onNegotiation(c)"><span [innerHTML]="'Negotiate / Order All' | translate"></span></button>
+    </div>
+</ng-template>
