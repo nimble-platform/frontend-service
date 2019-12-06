@@ -477,7 +477,8 @@ export class ShoppingCartComponent implements OnInit {
                 for(let i = 0 ; i < sizeOfCartLines ;i++){
                     this.negotiationModelWrappers.get(cartLineHjids[i]).lineIndex = i;
                 }
-
+                // remove line from negotiationModelWrappers as well
+                this.negotiationModelWrappers.delete(cartLine.hjid);
             }
 
             callStatus.callback(null, true);
