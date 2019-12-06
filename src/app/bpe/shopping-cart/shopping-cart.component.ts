@@ -1,6 +1,6 @@
 import {Catalogue} from '../../catalogue/model/publish/catalogue';
 import {Router} from '@angular/router';
-import {Component, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {Component, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {ShoppingCartDataService} from './shopping-cart-data-service';
 import {copy, selectDescription, selectName, selectPreferredValues} from '../../common/utils';
 import {ItemPriceWrapper} from '../../common/item-price-wrapper';
@@ -29,6 +29,7 @@ import {Order} from '../../catalogue/model/publish/order';
 import {Party} from '../../catalogue/model/publish/party';
 import {TradingPreferences} from '../../catalogue/model/publish/trading-preferences';
 import {CommonTerms} from '../../common/common-terms';
+import {ShoppingCartSummaryModalComponent} from './shopping-cart-summary-modal.component';
 /**
  * Created by suat on 11-Oct-19.
  */
@@ -76,6 +77,9 @@ export class ShoppingCartComponent implements OnInit {
     getProductName = selectPreferredValues;
     getPartyId = UBLModelUtils.getPartyId;
     getLinePartyId = UBLModelUtils.getLinePartyId;
+
+    @ViewChild(ShoppingCartSummaryModalComponent)
+    private shoppingCartSummaryModal: ShoppingCartSummaryModalComponent;
 
     @ViewChildren(NegotiationRequestItemComponent) negotiationRequestItemComponents: QueryList<NegotiationRequestItemComponent>;
 
@@ -549,6 +553,10 @@ export class ShoppingCartComponent implements OnInit {
         }
     }
 
+    openShoppingCartSummary(){
+        this.shoppingCartSummaryModal.open();
+    }
+
     // starts Negotiation/Order for the products included in the shopping basket
     onMultipleLineNegotiation():void{
         if(confirm('Are you sure that you want to send requests for all products now ?')){
@@ -674,5 +682,9 @@ export class ShoppingCartComponent implements OnInit {
                 return catalogueLine;
             }
         }
+    }
+
+    getNegotiationModelWrappers(){
+        return Array.from(this.negotiationModelWrappers.values());
     }
 }

@@ -1,0 +1,4 @@
+::ng-deep .large-modal .modal-dialog {
+    max-width: 80% !important;
+    width: 80% !important;
+}
