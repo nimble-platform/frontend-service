@@ -176,7 +176,15 @@ export class AppComponent implements OnInit {
         }
 
         if (code != null) {
-            let redirectURL = window.location.href.split("&code");
+
+            let redirectURL = window.location.href.split("code=");
+            if(redirectURL.length != 1){
+                let lastChar = redirectURL[0].charAt(redirectURL[0].length - 1);
+                if (lastChar == '?' || lastChar == '&') {
+                    redirectURL[0] = redirectURL[0].substring(0, redirectURL[0].length - 1);
+                }
+            }
+
             const url = myGlobals.user_mgmt_endpoint + `/federation/login`;
             this.submitCallStatus.submit();
             return this.http
