@@ -157,6 +157,10 @@ export class AppComponent implements OnInit {
         return identityURL + clientID + redirectURI + hint;
     }
 
+    generateProductURL(catalogueId, id) {
+        return myGlobals.frontendURL + "#/product-details?catalogueId=" + catalogueId + "&id=" + id;
+    }
+
     ngOnInit() {
         // the user could not publish logistic services if the standard taxonomy is 'eClass'
         if(this.config.standardTaxonomy == "eClass"){
@@ -203,12 +207,13 @@ export class AppComponent implements OnInit {
                         }
                     }
 
-                    if (!this.response.companyID && myGlobals.config.companyRegistrationRequired)
+                    if (catalogueId != null && id != null) {
+                        window.location.href = this.generateProductURL(catalogueId, id);
+                    } else if (!this.response.companyID && myGlobals.config.companyRegistrationRequired){
                         this.checkLogin("/user-mgmt/company-registration");
-                    else if (catalogueId != null && id != null) {
-                        this.checkLogin("/product-details?catalogueId=" + catalogueId + "&id=" + id);
                     } else
                         this.checkLogin("/dashboard");
+
                 }).catch((e) => {
                     this.submitCallStatus.error("Login failed", e);
                 })
