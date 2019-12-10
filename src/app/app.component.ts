@@ -150,11 +150,15 @@ export class AppComponent implements OnInit {
         let hint = "&scope=openid&response_type=code&kc_idp_hint=" + myGlobals.config.federationIDP;
 
         if (catalogueId != null && id != null) {
-            let endpoint = encodeURI("?catalogueId=" + catalogueId + "&id=" + id);
+            let endpoint = encodeURI("?catalogueId=" + catalogueId + "_" + id);
             redirectURI = redirectURI + endpoint;
         }
 
         return identityURL + clientID + redirectURI + hint;
+    }
+
+    generateProductURL(catalogueId, id) {
+        return myGlobals.frontendURL + "#/product-details?catalogueId=" + catalogueId + "&id=" + id;
     }
 
     ngOnInit() {
@@ -176,7 +180,15 @@ export class AppComponent implements OnInit {
         }
 
         if (code != null) {
-            let redirectURL = window.location.href.split("&code");
+
+            let redirectURL = window.location.href.split("code=");
+            if(redirectURL.length != 1){
+                let lastChar = redirectURL[0].charAt(redirectURL[0].length - 1);
+                if (lastChar == '?' || lastChar == '&') {
+                    redirectURL[0] = redirectURL[0].substring(0, redirectURL[0].length - 1);
+                }
+            }
+
             const url = myGlobals.user_mgmt_endpoint + `/federation/login`;
             this.submitCallStatus.submit();
             return this.http
@@ -186,12 +198,22 @@ export class AppComponent implements OnInit {
                     this.submitCallStatus.callback("Login Successful!");
                     this.response = res.json();
                     this.setCookiesForFederatedLogin();
-                    if (!this.response.companyID && myGlobals.config.companyRegistrationRequired)
+
+                    if (catalogueId != null) {
+                        let productDetails = catalogueId.split("_");
+                        if (productDetails.length == 2) {
+                            catalogueId = productDetails[0];
+                            id = productDetails[1];
+                        }
+                    }
+
+                    if (catalogueId != null && id != null) {
+                        window.location.href = this.generateProductURL(catalogueId, id);
+                    } else if (!this.response.companyID && myGlobals.config.companyRegistrationRequired){
                         this.checkLogin("/user-mgmt/company-registration");
-                    else if (catalogueId != null && id != null) {
-                        this.checkLogin("/product-details?catalogueId=" + catalogueId + "&id=" + id);
                     } else
                         this.checkLogin("/dashboard");
+
                 }).catch((e) => {
                     this.submitCallStatus.error("Login failed", e);
                 })
