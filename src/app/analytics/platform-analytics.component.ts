@@ -137,11 +137,11 @@ export class PlatformAnalyticsComponent implements OnInit {
 				.then(res => {
 					this.callStatus.callback("Successfully loaded platform analytics", true);
 					//collab time
-					this.collab_time = Math.round(res.collaborationTime.averageCollabTime * 10) /10 ;
-					this.collab_time_buy = Math.round(res.collaborationTime.averageCollabTimePurchases * 10) /10;
-					this.collab_time_sell = Math.round(res.collaborationTime.averageCollabTimeSales * 10) /10;
+					this.collab_time = Math.round(res.collaborationTime.averageCollabTime * 10 * 24) /10 ;
+					this.collab_time_buy = Math.round(res.collaborationTime.averageCollabTimePurchases * 10 * 24) /10;
+					this.collab_time_sell = Math.round(res.collaborationTime.averageCollabTimeSales * 10 * 24) /10;
 
-					this.avg_res_time = Math.round(res.responseTime.averageTime * 10) /10;
+					this.avg_res_time = Math.round(res.responseTime.averageTime * 10 * 24) /10;
 					var map1 = res.responseTime.averageTimeForMonths;
 					var i = 0 ;
 					var obj = [];

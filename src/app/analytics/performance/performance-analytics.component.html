@@ -219,7 +219,7 @@
           <div class="row justify-content-center">
               <div class="card col-9" style="height: 170px;">
                   <div class="card-body text-center">
-                    <h4 *ngIf="collab_time>=0" class="card-title"><b>{{collab_time}} Days</b></h4>
+                    <h4 *ngIf="collab_time>=0" class="card-title"><b>{{collab_time}} H</b></h4>
                     <h4 *ngIf="collab_time<0" class="card-title"><b>???</b></h4>
                     <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average collaboration time' | translate"></span></h6>
                     <p class="card-text" style="font-size:32px"><i class="fa fa-clock"></i></p>
@@ -231,7 +231,7 @@
             <div class="row justify-content-center">
                 <div class="card col-9" style="height: 170px;">
                     <div class="card-body text-center">
-                      <h4 *ngIf="collab_time_buy>=0" class="card-title"><b>{{collab_time_buy}} Days</b></h4>
+                      <h4 *ngIf="collab_time_buy>=0" class="card-title"><b>{{collab_time_buy}} H</b></h4>
                       <h4 *ngIf="collab_time_buy<0" class="card-title"><b>???</b></h4>
                       <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average collaboration time in purchases' | translate"></span></h6>
                       <p class="card-text" style="font-size:32px"><i class="fa fa-clock"></i></p>
@@ -243,7 +243,7 @@
           <div class="row justify-content-center">
               <div class="card col-9" style="height: 170px;">
                   <div class="card-body text-center">
-                    <h4 *ngIf="collab_time_sell>=0" class="card-title"><b>{{collab_time_sell}} Days</b></h4>
+                    <h4 *ngIf="collab_time_sell>=0" class="card-title"><b>{{collab_time_sell}} H</b></h4>
                     <h4 *ngIf="collab_time_sell<0" class="card-title"><b>???</b></h4>
                     <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average collaboration time in sales' | translate"></span></h6>
                     <p class="card-text" style="font-size:32px"><i class="fa fa-clock"></i></p>
@@ -259,7 +259,7 @@
           <div class="row justify-content-center">
               <div class="card col-9" style="height: 170px;">
                   <div class="card-body text-center">
-                    <h4 *ngIf="avg_res_time>=0" class="card-title"><b>{{avg_res_time}} Days</b></h4>
+                    <h4 *ngIf="avg_res_time>=0" class="card-title"><b>{{avg_res_time}} H</b></h4>
                     <h4 *ngIf="avg_res_time<0" class="card-title"><b>???</b></h4>
                     <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average response time (Request Information)' | translate"></span></h6>
                     <p class="card-text" style="font-size:32px"><i class="fa fa-clock"></i></p>
