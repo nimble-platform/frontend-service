@@ -12,7 +12,7 @@ import {
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from './globals';
 import * as moment from "moment";
-import {DEFAULT_LANGUAGE,LANGUAGES, FALLBACK_LANGUAGE} from './catalogue/model/constants';
+import {DEFAULT_LANGUAGE,LANGUAGES, FALLBACK_LANGUAGE, FEDERATION} from './catalogue/model/constants';
 import {TranslateService} from '@ngx-translate/core';
 
 import 'zone.js';
@@ -51,6 +51,8 @@ export class AppComponent implements OnInit {
     public chatURL = this.sanitizer.bypassSecurityTrustResourceUrl(myGlobals.rocketChatEndpoint);
     public language = FALLBACK_LANGUAGE;
     private availableLanguages = LANGUAGES.sort();
+    private federationStr = FEDERATION();
+    public federation = (this.federationStr == "ON");
 
     enableLogisticServicePublishing = true;
 
@@ -88,7 +90,18 @@ export class AppComponent implements OnInit {
                 this.checkState(event.url);
             }
         });
-
+        if (cookieService.get("federation")) {
+          let fS = cookieService.get("federation");
+          this.federation = (fS == "ON");
+          this.federationStr = fS;
+          document.getElementsByTagName('html')[0].setAttribute('data-fed',this.federationStr);
+        }
+        else {
+          this.federation = false;
+          this.federationStr = "OFF";
+          cookieService.set("federation",this.federationStr);
+          document.getElementsByTagName('html')[0].setAttribute('data-fed',this.federationStr);
+        }
         if (cookieService.get("language")) {
           this.language = cookieService.get("language");
           document.getElementsByTagName('html')[0].setAttribute('lang',this.language);
@@ -231,7 +244,22 @@ export class AppComponent implements OnInit {
     setLang(lang:string) {
       if (lang != this.language) {
         this.loading = true;
+        document.getElementsByTagName('html')[0].setAttribute('lang',this.language);
         this.cookieService.set("language",lang);
+        location.reload();
+      }
+    }
+
+    setFed(fed:boolean) {
+      if (fed != this.federation) {
+        this.loading = true;
+        this.federation = fed;
+        if (this.federation)
+          this.federationStr = "ON";
+        else
+          this.federationStr = "OFF";
+        document.getElementsByTagName('html')[0].setAttribute('data-fed',this.federationStr);
+        this.cookieService.set("federation",this.federationStr);
         location.reload();
       }
     }
@@ -559,6 +587,10 @@ export class AppComponent implements OnInit {
                 break;
             case "comp":
                 if (all_rights)
+                    this.allowed = true;
+                break;
+            case "view_comp":
+                if (this.companyID && !initial)
                     this.allowed = true;
                 break;
             case "comp-settings":

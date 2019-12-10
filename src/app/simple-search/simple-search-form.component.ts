@@ -122,7 +122,6 @@ export class SimpleSearchFormComponent implements OnInit {
 
     partyNamesList: any;
 
-    delegatedSearch: boolean = false;
     pageRef = ''; // page where the user is navigated from. empty string ('') means the search is opened directly
 
     productsSelectedForPublish: any[] = []; // keeps the products in the Solr format
@@ -204,10 +203,6 @@ export class SimpleSearchFormComponent implements OnInit {
             }
             else
                 this.catID = "";
-            if (del && del == "1")
-                this.delegatedSearch = true;
-            else
-                this.delegatedSearch = false;
             if (pageRef) {
                 this.pageRef = pageRef;
             }
@@ -265,7 +260,6 @@ export class SimpleSearchFormComponent implements OnInit {
                 catID: this.catID,
                 sIdx: this.searchIndex,
                 sTop: this.searchTopic,
-                del: this.delegatedSearch ? '1' : '0',
                 pageRef: this.pageRef
             }
         });
@@ -285,7 +279,6 @@ export class SimpleSearchFormComponent implements OnInit {
                 catID: this.catID,
                 sIdx: this.searchIndex,
                 sTop: sTop,
-                del: this.delegatedSearch ? '1' : '0',
                 pageRef: this.pageRef
             }
         });
@@ -305,7 +298,6 @@ export class SimpleSearchFormComponent implements OnInit {
                 catID: this.catID,
                 sIdx: this.searchIndex,
                 sTop: this.searchTopic,
-                del: this.delegatedSearch ? '1' : '0',
                 pageRef: this.pageRef
             }
         });
@@ -325,7 +317,6 @@ export class SimpleSearchFormComponent implements OnInit {
                 catID: this.catID,
                 sIdx: this.searchIndex,
                 sTop: this.searchTopic,
-                del: this.delegatedSearch ? '1' : '0',
                 pageRef: this.pageRef
             }
         });
@@ -345,7 +336,6 @@ export class SimpleSearchFormComponent implements OnInit {
                 catID: this.catID,
                 sIdx: this.searchIndex,
                 sTop: this.searchTopic,
-                del: this.delegatedSearch ? '1' : '0',
                 pageRef: this.pageRef
             }
         });
@@ -377,7 +367,7 @@ export class SimpleSearchFormComponent implements OnInit {
 
     private getCatTree(): void {
         this.categoriesCallStatus.submit();
-        this.simpleSearchService.get("*", [this.product_cat_mix], [""], 1, 1, "score desc", "", "", this.searchIndex, this.delegatedSearch)
+        this.simpleSearchService.get("*", [this.product_cat_mix], [""], 1, 1, "score desc", "", "", this.searchIndex)
         .then(res => {
             // if res.facets are null, it means that there is no product in the index
             if (res.facets == null || Object.keys(res.facets).indexOf(this.product_cat_mix) == -1) {
@@ -606,10 +596,10 @@ export class SimpleSearchFormComponent implements OnInit {
         this.searchIndex = sIdx;
         this.searchTopic = sTop;
         this.searchCallStatus.submit();
-        this.simpleSearchService.getFields(this.delegatedSearch)
+        this.simpleSearchService.getFields()
         .then(res => {
             let fieldLabels: string [] = this.getFieldNames(res);
-            this.simpleSearchService.get(q, Object.keys(fieldLabels), fq, p, rows, sort, cat, catID, this.searchIndex, this.delegatedSearch)
+            this.simpleSearchService.get(q, Object.keys(fieldLabels), fq, p, rows, sort, cat, catID, this.searchIndex)
             .then(res => {
                 if (res.result.length == 0) {
                     this.cat_loading = false;
@@ -702,10 +692,10 @@ export class SimpleSearchFormComponent implements OnInit {
         this.sort = sort;
         this.searchTopic = sTop;
         this.searchCallStatus.submit();
-        this.simpleSearchService.getCompFields(this.delegatedSearch)
+        this.simpleSearchService.getCompFields()
         .then(res => {
             let fieldLabels: string [] = this.getFieldNames(res);
-            this.simpleSearchService.getComp(q, Object.keys(fieldLabels), fq, p, rows, sort, this.delegatedSearch)
+            this.simpleSearchService.getComp(q, Object.keys(fieldLabels), fq, p, rows, sort)
             .then(res => {
                 if (res.result.length == 0) {
                     this.cat_loading = false;
@@ -1433,10 +1423,6 @@ export class SimpleSearchFormComponent implements OnInit {
         for (let i = 0; i < facets.length; i++) {
             facets[i] = facets[i].replace("{LANG}_", (DEFAULT_LANGUAGE() + "_"));
         }
-        /*
-         if (this.delegatedSearch)
-         facets = [this.product_vendor_name];
-         */
         let query = "";
         let length = idList.length;
         while (length--) {
@@ -1446,7 +1432,7 @@ export class SimpleSearchFormComponent implements OnInit {
                 query = query + " OR ";
             }
         }
-        return this.simpleSearchService.getCompanies(query, facets, idList, this.delegatedSearch);
+        return this.simpleSearchService.getCompanies(query, facets, idList);
     }
 
     getProdLink(res: any): string {

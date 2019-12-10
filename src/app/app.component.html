@@ -103,7 +103,7 @@
                 </a>
             </li>
 
-            <li class="nav-item" *ngIf="checkRoles('comp') || (checkRoles('comp_req') && config.showCompanyMembers)"
+            <li class="nav-item" *ngIf="checkRoles('comp') || (checkRoles('view_comp') && config.showCompanyMembers)"
                 routerLinkActive="active">
                 <a class="nav-link" [title]="activeCompanyName?activeCompanyName:''"
                    routerLink="/user-mgmt/company-invitation">
@@ -161,9 +161,21 @@
 
         </ul>
 
+        <ul *ngIf="config.delegationEnabled" class="nav navbar-nav">
+            <li ngbDropdown class="nav-item dropdown">
+                <a class="nav-link pointer" id="dropdownMenuFed" ngbDropdownToggle [title]="'Federation' | translate">
+                    <i class="fas fa-project-diagram"></i> <span *ngIf="federation" [innerHTML]="'ON' | translate"></span><span *ngIf="!federation" [innerHTML]="'OFF' | translate"></span>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuFed" ngbDropdownMenu>
+                    <a class="dropdown-item pointer" [ngClass]="{'active': federation}" (click)="setFed(true)"><span [innerHTML]="'ON' | translate"></span></a>
+                    <a class="dropdown-item pointer" [ngClass]="{'active': !federation}" (click)="setFed(false)"><span [innerHTML]="'OFF' | translate"></span></a>
+                </div>
+            </li>
+        </ul>
+
         <ul class="nav navbar-nav">
             <li ngbDropdown class="nav-item dropdown">
-                <a class="nav-link pointer" id="dropdownMenuLang" ngbDropdownToggle>
+                <a class="nav-link pointer" id="dropdownMenuLang" ngbDropdownToggle >
                     <i class="fas fa-globe"></i> <span>{{language.toUpperCase()}}</span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuLang" ngbDropdownMenu>
