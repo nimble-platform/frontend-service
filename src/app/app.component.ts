@@ -150,7 +150,7 @@ export class AppComponent implements OnInit {
         let hint = "&scope=openid&response_type=code&kc_idp_hint=" + myGlobals.config.federationIDP;
 
         if (catalogueId != null && id != null) {
-            let endpoint = encodeURI("?catalogueId=" + catalogueId + "&id=" + id);
+            let endpoint = encodeURI("?catalogueId=" + catalogueId + "_" + id);
             redirectURI = redirectURI + endpoint;
         }
 
@@ -194,6 +194,15 @@ export class AppComponent implements OnInit {
                     this.submitCallStatus.callback("Login Successful!");
                     this.response = res.json();
                     this.setCookiesForFederatedLogin();
+
+                    if (catalogueId != null) {
+                        let productDetails = catalogueId.split("_");
+                        if (productDetails.length == 2) {
+                            catalogueId = productDetails[0];
+                            id = productDetails[1];
+                        }
+                    }
+
                     if (!this.response.companyID && myGlobals.config.companyRegistrationRequired)
                         this.checkLogin("/user-mgmt/company-registration");
                     else if (catalogueId != null && id != null) {
