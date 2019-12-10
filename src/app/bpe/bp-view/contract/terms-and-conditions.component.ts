@@ -95,15 +95,15 @@ export class TermsAndConditionsComponent implements OnInit {
                 let id = tradingTerm.id;
                 let spanText = "";
                 if(this.isSameWithTheOriginalTradingTerm(tradingTerm.id)){
-                    spanText = "<b><span id='"+this.generateIdForParameter(id)+"'>";
+                    spanText = "<b><span class='"+this.generateClassForParameter(id)+"'>";
 
                 }
                 else{
-                    spanText ="<b><span style='color: red' id='"+this.generateIdForParameter(id)+"'>";
+                    spanText ="<b><span style='color: red' class='"+this.generateClassForParameter(id)+"'>";
                 }
 
                 let defaultValue = this.getDefaultValue(tradingTerm);
-                text = text.replace(tradingTerm.id,spanText+defaultValue+"</span></b>");
+                text = text.replace(new RegExp("\\"+tradingTerm.id,'g'),spanText+defaultValue+"</span></b>");
             }
 
             element.innerHTML = text;
@@ -118,15 +118,15 @@ export class TermsAndConditionsComponent implements OnInit {
                 let id = tradingTerm.id;
                 let spanText = "";
                 if(this.isSameWithTheOriginalTradingTerm(tradingTerm.id)){
-                    spanText = "<b><span id='"+this.generateIdForParameter(id)+"'>";
+                    spanText = "<b><span class='"+this.generateClassForParameter(id)+"'>";
 
                 }
                 else{
-                    spanText = "<b><span style='color: red' id='"+this.generateIdForParameter(id)+"'>";
+                    spanText = "<b><span style='color: red' class='"+this.generateClassForParameter(id)+"'>";
                 }
 
                 let defaultValue = this.getDefaultValue(this.tradingTerms.get(id));
-                text = text.replace(id,spanText+defaultValue+"</span></b>");
+                text = text.replace(new RegExp("\\"+id,'g'),spanText+defaultValue+"</span></b>");
             }
 
             element.innerHTML = text;
@@ -142,9 +142,6 @@ export class TermsAndConditionsComponent implements OnInit {
                 if(tradingTerm.id == id){
                     let defaultValue = this.getDefaultValue(tradingTerm);
 
-                    let element = document.getElementById(this.generateIdForParameter(id));
-                    element.innerText = defaultValue;
-
                     let defaultTradingTerm = this.originalTradingTerms.get(id);
 
                     if (tradingTerm.value.valueQualifier == "STRING") {
@@ -158,7 +155,16 @@ export class TermsAndConditionsComponent implements OnInit {
                         this.tradingTerms.get(id).value.valueCode[0].value = defaultTradingTerm.value.valueCode[0].value;
                     }
 
-                    this.setElementColor(element,id);
+                    let elements = document.getElementsByClassName(this.generateClassForParameter(id));
+                    if(elements && elements.length > 0){
+                        for(let i=0;i < elements.length;i++){
+                            let element:HTMLElement = <HTMLElement>elements[i];
+                            element.innerText = defaultValue;
+
+                            this.setElementColor(element,id);
+                        }
+                    }
+
                     break;
                 }
             }
@@ -168,10 +174,16 @@ export class TermsAndConditionsComponent implements OnInit {
             if (isUnit) {
                 this.tradingTerms.get(id).value.valueQuantity[0].unitCode = value;
 
-                let element = document.getElementById(this.generateIdForParameter(id));
-                element.innerText = this.tradingTerms.get(id).value.valueQuantity[0].value +" "+ value;
+                let elements = document.getElementsByClassName(this.generateClassForParameter(id));
+                if(elements && elements.length > 0){
+                    for(let i = 0; i < elements.length;i++){
+                        let element:HTMLElement = <HTMLElement>elements[i];
+                        element.innerText = this.tradingTerms.get(id).value.valueQuantity[0].value +" "+ value;
 
-                this.setElementColor(element, id);
+                        this.setElementColor(element, id);
+                    }
+                }
+
             } else {
                 let tradingTerm = this.tradingTerms.get(id);
                 if (tradingTerm.value.valueQualifier == "STRING") {
@@ -184,15 +196,22 @@ export class TermsAndConditionsComponent implements OnInit {
                     tradingTerm.value.valueCode[0].value = value;
                 }
 
-                let element = document.getElementById(this.generateIdForParameter(id));
+                let elements = document.getElementsByClassName(this.generateClassForParameter(id));
 
-                if (tradingTerm.value.valueQualifier == "QUANTITY") {
-                    element.innerText = value + " " + tradingTerm.value.valueQuantity[0].unitCode;
-                } else {
-                    element.innerText = value;
+                if(elements && elements.length > 0){
+                    let size = elements.length;
+                    for (let i = 0; i < size;i++) {
+                        let element:HTMLElement = <HTMLElement>elements[i];
+                        if (tradingTerm.value.valueQualifier == "QUANTITY") {
+                            element.innerText = value + " " + tradingTerm.value.valueQuantity[0].unitCode;
+                        } else {
+                            element.innerText = value;
+                        }
+
+                        this.setElementColor(element, id);
+                    }
                 }
 
-                this.setElementColor(element, id);
             }
         }
 
@@ -274,7 +293,7 @@ export class TermsAndConditionsComponent implements OnInit {
         return this.randomComponentId + "-" + this.documentType + "-" + clauseId;
     }
 
-    generateIdForParameter(parameter:string){
+    generateClassForParameter(parameter:string){
         return this.documentType + "-" + parameter;
     }
 
@@ -421,10 +440,14 @@ export class TermsAndConditionsComponent implements OnInit {
             this.tradingTerms.get(tradingTermId).value.valueCode[0].value = value;
         }
         // update the value of parameter in the text
-        let element = document.getElementById(this.generateIdForParameter(tradingTermId));
-        if(element){
-            element.innerText = value;
-            this.setElementColor(element,tradingTermId);
+        let elements = document.getElementsByClassName(this.generateClassForParameter(tradingTermId));
+        if(elements && elements.length > 0){
+            let size = elements.length;
+            for (let i = 0; i < size;i++) {
+                let element:HTMLElement = <HTMLElement>elements[i];
+                element.innerText = value;
+                this.setElementColor(element,tradingTermId);
+            }
         }
     }
 

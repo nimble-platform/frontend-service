@@ -132,7 +132,7 @@ export class CompanyTermsAndConditions implements OnInit {
         for(let tradingTerm of clause.tradingTerms){
             let id = tradingTerm.id;
 
-            text = text.replace(id, "<b><span id='"+clause.id+"-"+id+"'>" + id + "</span></b>");
+            text = text.replace(new RegExp("\\"+id,'g'), "<b><span id='"+clause.id+"-"+id+"'>" + id + "</span></b>");
 
         }
         // update the element's innerHTML
@@ -186,7 +186,7 @@ export class CompanyTermsAndConditions implements OnInit {
         // remove trading term from the clause
         clause.tradingTerms.splice(clause.tradingTerms.indexOf(tradingTerm),1);
         // remove trading term id from the clause content
-        clause.content[0].value = clause.content[0].value.replace(tradingTerm.id,"");
+        clause.content[0].value = clause.content[0].value.replace(new RegExp("\\"+tradingTerm.id,'g'),"");
         // update the content of corresponding section
         this.setSectionText(clause);
     }
