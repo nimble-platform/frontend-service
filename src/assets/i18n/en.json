@@ -765,5 +765,8 @@
 	"Reset": "Reset",
 	"Vendor": "Vendor",
 	"Rating / Trust": "Rating / Trust",
-	"Unknown": "Unknown"
+	"Unknown": "Unknown",
+	"Federation": "Federation",
+	"ON": "ON",
+	"OFF": "OFF"
 }

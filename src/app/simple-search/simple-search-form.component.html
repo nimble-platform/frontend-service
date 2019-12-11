@@ -19,12 +19,6 @@
 						</button>
 					</div>
 				</div>
-				<div *ngIf="config.delegationEnabled" class="form-check mt-3">
-					<input class="form-check-input" type="checkbox" [(ngModel)]="delegatedSearch" id="delSearch" [ngModelOptions]="{standalone: true}">
-					<label class="form-check-label" for="delSearch">
-						<span [innerHTML]="'Delegated Search' | translate"></span>
-					</label>
-				</div>
 		</div>
 	</div>
 
@@ -44,14 +38,6 @@
 					<p class="card-text" style="font-size:32px"><i class="fas fa-building"></i></p>
 					<h6 class="card-title mb-0 clickable"><span [innerHTML]="'Company' | translate"></span></h6>
 				</div>
-			</div>
-		</div>
-		<div *ngIf="config.delegationEnabled" class="row text-center">
-			<div class="col form-check mt-3">
-				<input class="form-check-input" type="checkbox" [(ngModel)]="delegatedSearch" id="delSearchF" [ngModelOptions]="{standalone: true}">
-				<label class="form-check-label" for="delSearchF">
-					<span [innerHTML]="'Delegated Search' | translate"></span>
-				</label>
 			</div>
 		</div>
 	</div>

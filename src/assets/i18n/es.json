@@ -765,5 +765,8 @@
 	"Reset": "Restablecer",
 	"Vendor": "Empresa",
 	"Rating / Trust": "Calificación / Confianza",
-	"Unknown": "Desconocido"
+	"Unknown": "Desconocido",
+	"Federation": "Federación",
+	"ON": "ON",
+	"OFF": "OFF"
 }
