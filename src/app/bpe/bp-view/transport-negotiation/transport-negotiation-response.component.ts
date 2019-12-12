@@ -14,6 +14,7 @@ import {CookieService} from 'ng2-cookies';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
 import {TranslateService} from '@ngx-translate/core';
+import {quantityToString} from '../../../common/utils';
 
 @Component({
     selector: "transport-negotiation-response",
@@ -32,6 +33,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
     @Input() readonly: boolean = false;
 
+    quantityToString = quantityToString;
     selectedTab: string = "OVERVIEW";
     userRole: BpUserRole;
 
