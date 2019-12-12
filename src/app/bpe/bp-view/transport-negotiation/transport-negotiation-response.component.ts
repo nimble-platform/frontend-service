@@ -136,4 +136,40 @@ export class TransportNegotiationResponseComponent implements OnInit {
         this.bpDataService.setCopyDocuments(false, true, false,false);
         this.bpDataService.proceedNextBpStep(this.userRole,'Transport_Execution_Plan');
     }
+
+    // check whether the given term is updated in the response or not
+    public isTermUpdated(part:string):boolean{
+        switch(part) {
+            case "deliveryPeriod":
+                return (this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value == this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value) &&
+                    (this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode == this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode);
+                break;
+            case "specialTerms":
+                return (this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms[0].value == this.quotation.quotationLine[0].lineItem.deliveryTerms.specialTerms[0].value);
+                break;
+            case "startDate":
+                return (this.rfq.delivery.requestedDeliveryPeriod.startDate == this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.startDate);
+                break;
+            case "endDate":
+                return (this.rfq.delivery.requestedDeliveryPeriod.endDate == this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.endDate);
+                break;
+            case "incoterms":
+                return (this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms == this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms);
+                break;
+            case "paymentTerms":
+                return (this.rfqPaymentTerms.paymentTerm == this.quotationPaymentTerms.paymentTerm);
+                break;
+            case "paymentMeans":
+                return (this.rfq.requestForQuotationLine[0].lineItem.paymentMeans.paymentMeansCode.value == this.quotation.quotationLine[0].lineItem.paymentMeans.paymentMeansCode.value);
+                break;
+            case "price":
+                return (this.rfqPrice.itemPrice.value == this.quotationPrice.itemPrice.value) && (this.rfqPrice.itemPrice.currency == this.quotationPrice.itemPrice.currency);
+                break;
+            case "note":
+                return !((this.quotation.note.length == 1 && this.quotation.note[0] != "") || this.quotation.note.length > 1 || this.quotation.additionalDocumentReference.length > 0);
+                break;
+            default:
+                return true;
+        }
+    }
 }

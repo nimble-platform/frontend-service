@@ -55,7 +55,7 @@
     </div>
 
     <!-- Price -->
-    <div class="row space-before">
+    <div class="row space-before" [ngClass]="{'bg-danger text-white':!isTermUpdated('price')}">
         <div class="col-2">
             <input-label label="Price">
             </input-label>
@@ -75,7 +75,7 @@
     </div>
 
     <!-- Payment Means -->
-    <div class="row space-before">
+    <div class="row space-before" [ngClass]="{'bg-danger text-white':!isTermUpdated('paymentMeans')}">
         <div class="col-2">
             <input-label label="Payment Means" description="Expected means of payment">
             </input-label>
@@ -95,7 +95,7 @@
     </div>
 
     <!-- Payment Terms -->
-    <div class="row space-before">
+    <div class="row space-before" [ngClass]="{'bg-danger text-white':!isTermUpdated('paymentTerms')}">
         <div class="col-2">
             <input-label label="Payment Terms" description="Expected terms of payment">
             </input-label>
@@ -115,7 +115,7 @@
     </div>
 
     <!-- Incoterms -->
-    <div class="row space-before">
+    <div class="row space-before" [ngClass]="{'bg-danger text-white':!isTermUpdated('incoterms')}">
         <div class="col-2">
             <input-label label="Incoterms" description="A set of international rules for the interpretation of the most commonly used trade terms">
             </input-label>
@@ -135,7 +135,7 @@
     </div>
 
     <!-- Special Terms -->
-    <div class="row space-before">
+    <div class="row space-before" [ngClass]="{'bg-danger text-white':!isTermUpdated('specialTerms')}">
         <div class="col-2">
             <input-label label="Special Terms" description="A description of any terms or conditions relating to the delivery items.For example,exceeding the delivery period entitles the buyer to terminate the agreement.">
             </input-label>
@@ -156,7 +156,7 @@
     <hr>
 
     <!-- Delivery Period -->
-    <div class="row space-before">
+    <div class="row space-before" [ngClass]="{'bg-danger text-white':!isTermUpdated('deliveryPeriod')}">
         <div class="col-2">
             <input-label label="Delivery Period" definition="The period requested for delivery. It starts after the order confirmation.For example, Quantity: 2, Unit: weeks">
             </input-label>
@@ -176,7 +176,7 @@
     </div>
 
     <!-- Service Start Date -->
-    <div class="row space-before">
+    <div class="row space-before" [ngClass]="{'bg-danger text-white':!isTermUpdated('startDate')}">
         <div class="col-2">
             <input-label label="Pick-Up Date" definition="The period within which the services referred to in the Transport Execution Plan Request must begin.">
             </input-label>
@@ -192,7 +192,7 @@
     </div>
 
     <!-- Service End Date -->
-    <div class="row space-before">
+    <div class="row space-before" [ngClass]="{'bg-danger text-white':!isTermUpdated('endDate')}">
         <div class="col-2">
             <input-label label="Drop-Off Date" definition="The period during which the services referred to in the Transport Execution Plan Request must be completed.">
             </input-label>
@@ -210,7 +210,7 @@
     <hr>
 
     <!--Notes-->
-    <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
+    <h5 [ngClass]="{'bg-danger text-white':!isTermUpdated('note')}"><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
     <note-file-view [notes]="quotation.note"
                [requestNotes]="rfq.note"
                [documents]="quotation.additionalDocumentReference"
