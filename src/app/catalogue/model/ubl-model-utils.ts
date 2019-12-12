@@ -61,6 +61,7 @@ import {Clause} from "./publish/clause";
 import {Contract} from './publish/contract';
 import {Address as UserMgmtAddress} from '../../user-mgmt/model/address';
 import {OrderLineReference} from './publish/order-line-reference';
+import {Catalogue} from './publish/catalogue';
 
 /**
  * Created by suat on 05-Jul-17.
@@ -1008,5 +1009,17 @@ export class UBLModelUtils {
 
         let description: Text[] = [new Text(termDescription, null)];
         return new TradingTerm(termName, description, null, termValue);
+    }
+
+    public static doesCatalogueContainProduct(catalogue:Catalogue,catalogueId:string, productId:string):boolean{
+        if(catalogue == null || catalogue.catalogueLine.length == 0){
+            return false;
+        }
+        for(let catalogueLine of catalogue.catalogueLine){
+            if(catalogueLine.goodsItem.item.catalogueDocumentReference.id == catalogueId && catalogueLine.goodsItem.item.manufacturersItemIdentification.id == productId){
+                return true;
+            }
+        }
+        return false;
     }
 }

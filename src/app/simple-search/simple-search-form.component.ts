@@ -16,6 +16,8 @@ import {Code} from '../catalogue/model/publish/code';
 import {CatalogueService} from "../catalogue/catalogue.service";
 import {PublishService} from "../catalogue/publish-and-aip.service";
 import {ShoppingCartDataService} from '../bpe/shopping-cart/shopping-cart-data-service';
+import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
+import {Catalogue} from '../catalogue/model/publish/catalogue';
 
 @Component({
 	selector: 'simple-search-form',
@@ -75,7 +77,7 @@ export class SimpleSearchFormComponent implements OnInit {
     showOtherSection = false;
 
     categoriesCallStatus: CallStatus = new CallStatus();
-    shoppingCartCallStatus: CallStatus = new CallStatus();
+    shoppingCartCallStatuses: CallStatus[] = [];
     searchCallStatus: CallStatus = new CallStatus();
     searchDone = false;
     callback = false;
@@ -125,9 +127,8 @@ export class SimpleSearchFormComponent implements OnInit {
     pageRef = ''; // page where the user is navigated from. empty string ('') means the search is opened directly
 
     productsSelectedForPublish: any[] = []; // keeps the products in the Solr format
-    // we use the following field to show call status properly
-    // it stores the selected line which will be added to the shopping basket
-    selectedLineForShoppingBasket:any = null;
+    // shopping cart of the user
+    shoppingCartCatalogue:Catalogue = null;
 
     constructor(private simpleSearchService: SimpleSearchService,
                 private searchContextService: SearchContextService,
@@ -242,8 +243,15 @@ export class SimpleSearchFormComponent implements OnInit {
             }
         });
 
+        // populate shoppingCartCallStatuses
+        for(let i = 0; i < this.rows; i++) {
+            this.shoppingCartCallStatuses.push(new CallStatus());
+        }
+
         // initialize the shopping cart
-        this.shoppingCartDataService.getShoppingCart();
+        this.shoppingCartDataService.getShoppingCart().then(catalogue => {
+            this.shoppingCartCatalogue = catalogue;
+        });
     }
 
     get(search: Search): void {
@@ -610,6 +618,7 @@ export class SimpleSearchFormComponent implements OnInit {
                     this.page = p;
                     this.start = this.page * this.rows - this.rows + 1;
                     this.end = this.start + res.result.length - 1;
+                    this.displayShoppingCartMessages();
                 }
                 else {
                     this.simpleSearchService.getUblProperties(Object.keys(fieldLabels)).then(response => {
@@ -654,7 +663,7 @@ export class SimpleSearchFormComponent implements OnInit {
                                     this.page = p;
                                     this.start = this.page * this.rows - this.rows + 1;
                                     this.end = this.start + res.result.length - 1;
-
+                                    this.displayShoppingCartMessages()
                                 }).catch((error) => {
                                     this.searchCallStatus.error("Error while creating Vendor filters in the search.", error);
                                 });
@@ -1489,19 +1498,45 @@ export class SimpleSearchFormComponent implements OnInit {
         this.router.navigate(['catalogue/publish'], {queryParams: {pg: 'single', productType: 'product', searchRef: 'true'}});
     }
 
-    onAddToCart(result: any, event: any): void {
+    onAddToCart(result: any,index:number, event: any): void {
         event.preventDefault();
         // do not add item to the cart if a process is still being added
-        if (this.shoppingCartCallStatus.isLoading()) {
-            return;
+        for(let shoppingCartCallStatus of this.shoppingCartCallStatuses){
+            if(shoppingCartCallStatus.isLoading()){
+                return;
+            }
         }
-        // set the selected line
-        this.selectedLineForShoppingBasket = result;
-        this.shoppingCartCallStatus.submit();
-        this.shoppingCartDataService.addItemToCart(result.uri).then(() => {
-            this.shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
+        // get corresponding call status for product
+        let shoppingCartCallStatus = this.getShoppingCartStatus(index);
+        shoppingCartCallStatus.submit();
+
+        this.shoppingCartDataService.addItemToCart(result.uri).then(catalogue => {
+            // update shoppingCartCatalogue
+            this.shoppingCartCatalogue = catalogue;
+            shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
         }).catch(() => {
-            this.shoppingCartCallStatus.error(null);
+            shoppingCartCallStatus.error(null);
         });
+    }
+
+    getShoppingCartStatus(index: number): CallStatus {
+        return this.shoppingCartCallStatuses[index % this.rows];
+    }
+
+    // display a message for the products included in the shopping cart
+    displayShoppingCartMessages(){
+        // reset all call statuses
+        for(let callStatus of this.shoppingCartCallStatuses){
+            callStatus.reset();
+        }
+
+        let size = this.response.length;
+        for(let i = 0; i < size; i++){
+            let result = this.response[i];
+            if(UBLModelUtils.doesCatalogueContainProduct(this.shoppingCartCatalogue,result.catalogueId,result.manufactuerItemId)){
+                this.getShoppingCartStatus(i).callback("Product is added to shopping cart.", false);
+            }
+        }
+
     }
 }

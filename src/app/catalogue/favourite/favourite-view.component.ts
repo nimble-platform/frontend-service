@@ -23,6 +23,7 @@ import * as myGlobals from '../../globals';
 import { Search } from '../../simple-search/model/search';
 import {TranslateService} from '@ngx-translate/core';
 import {ShoppingCartDataService} from '../../bpe/shopping-cart/shopping-cart-data-service';
+import {UBLModelUtils} from '../model/ubl-model-utils';
 
 @Component({
     selector: 'favourite-view',
@@ -111,14 +112,14 @@ export class FavouriteViewComponent implements OnInit {
 				private translate: TranslateService) {
     }
 
-    ngOnInit() {
-        this.catalogueService.setEditMode(false);
-        this.requestCatalogue();
-        for(let i = 0; i < this.pageSize; i++) {
-            this.deleteStatuses.push(new CallStatus());
-            this.shoppingCartCallStatuses.push(new CallStatus());
-        }
-    }
+	ngOnInit() {
+		this.catalogueService.setEditMode(false);
+		for(let i = 0; i < this.pageSize; i++) {
+			this.deleteStatuses.push(new CallStatus());
+			this.shoppingCartCallStatuses.push(new CallStatus());
+		}
+		this.requestCatalogue();
+	}
 
     selectName (ip: ItemProperty | Item) {
         return selectName(ip);
@@ -493,11 +494,21 @@ export class FavouriteViewComponent implements OnInit {
 		}
         this.catalogueLinesArray = [...this.itemTypeResponse];
 		this.catalogueLinesWRTTypes = this.catalogueLinesArray;
-        let i = 0;
-        for(;i<len;i++){
-            this.catalogueLineView[this.itemTypeResponse[i].localName] = false;
-        }
-    }
+		let i = 0;
+		for(;i<len;i++){
+			this.catalogueLineView[this.itemTypeResponse[i].localName] = false;
+		}
+
+		// display a message for the products included in the shopping cart
+		this.shoppingCartDataService.getShoppingCart().then(catalogue => {
+			let size = this.catalogueLinesArray.length;
+			for(let i = 0; i < size ; i++){
+				if(UBLModelUtils.doesCatalogueContainProduct(catalogue,this.catalogueLinesArray[i].catalogueId,this.catalogueLinesArray[i].manufactuerItemId)){
+					this.getShoppingCartStatus(i).callback("Product is added to shopping cart.", false);
+				}
+			}
+		})
+	}
 
     onOpenCatalogueLine(e: Event) {
         e.stopImmediatePropagation();

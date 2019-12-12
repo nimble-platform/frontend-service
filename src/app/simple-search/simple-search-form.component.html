@@ -535,7 +535,7 @@
 				<div class="col-8 row pr-0">
 
 					<!-- Product results -->
-					<div *ngFor="let result of response" class="pr-0" [ngClass]="{'col-12':display=='list','col-4':display=='panel'}">
+					<div *ngFor="let result of response;let ind=index" class="pr-0" [ngClass]="{'col-12':display=='list','col-4':display=='panel'}">
 						<div *ngIf="result.uri != null && searchTopic=='prod'" class="card pointer mb-3">
 							<a class="text-std" [href]="getProdLink(result)" (click)="onSearchResultClicked($event)">
 							<!--<a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: result.catalogueId, id: result.manufactuerItemId}">-->
@@ -562,11 +562,11 @@
 											<span class="badge badge-primary-nimble" *ngIf="result[product_price] && !checkEmpty(result[product_price])">{{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}</span>
 											<span class="badge badge-warning" *ngIf="!result[product_price] || checkEmpty(result[product_price])"><span [innerHTML]="'Upon request' | translate"></span></span><br/>
 											<ng-container *ngIf="shoppingCartDataService.cartFetched()">
-												<span *ngIf="!shoppingCartCallStatus.fb_submitted" class="badge badge-primary pointer mt-1" (click)="onAddToCart(result, $event)">
+												<span *ngIf="!getShoppingCartStatus(ind).fb_submitted" class="badge badge-primary pointer mt-1" (click)="onAddToCart(result,ind, $event)">
 													<span class="fas fa-shopping-cart mr-1"></span>
 													<span [innerHTML]="'Add to Cart' | translate"></span>
 												</span>
-												<call-status *ngIf="selectedLineForShoppingBasket == result" [callStatus]="shoppingCartCallStatus"></call-status>
+												<call-status [callStatus]="getShoppingCartStatus(ind)"></call-status>
 											</ng-container>
 										</div>
 										<div *ngIf="result[product_vendor]" [ngClass]="{'col-2':display=='list','col-12 pt-2':display=='panel'}">

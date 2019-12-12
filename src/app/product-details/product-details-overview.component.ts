@@ -165,6 +165,12 @@ export class ProductDetailsOverviewComponent implements OnInit{
             .catch(err => {
                 this.productCatalogueNameRetrievalStatus.error('Failed to get product catalogue');
             })
+            // display a message if the product is included in the shopping cart
+            this.shoppingCartDataService.getShoppingCart().then(catalogue => {
+                if(UBLModelUtils.doesCatalogueContainProduct(catalogue,this.catalogueId,this.productId)){
+                    this.shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
+                }
+            })
         });
     }
 
