@@ -454,41 +454,43 @@ export class ShoppingCartComponent implements OnInit {
     // remove the given catalogue line from the shopping cart
     // moreover, update this.rfqs array accordingly
     onRemoveFromCart(cartLine: CatalogueLine): void {
-        let callStatus: CallStatus = this.deleteCallStatuses.get(cartLine.hjid);
-        callStatus.submit();
-        // get seller id
-        let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
-        this.shoppingCartDataService.removeItemsFromCart([cartLine.hjid]).then(cartCatalogue => {
-            this.shoppingCart = cartCatalogue;
-            // get rfq for the seller
-            let rfq: RequestForQuotation = this.rfqs.get(sellerId);
-            // if rfq only contains this line, delete rfq as well
-            if(rfq.requestForQuotationLine.length == 1){
-                this.rfqs.delete(sellerId);
-            }
-            // otherwise, remove the rfq line created for this product
-            else{
-                // get catalogue lines included in this rfq
-                let cartLineHjids:number[] = this.rfqCatalogueLineMap.get(rfq.id);
-                // remove catalogue line from the rfq
-                let index = cartLineHjids.indexOf(cartLine.hjid);
-                rfq.requestForQuotationLine.splice(index,1);
-                // remove catalogue line for rfqCatalogueLineMap map
-                cartLineHjids.splice(index,1);
-                this.rfqCatalogueLineMap.set(rfq.id,cartLineHjids);
-                // when one product is removed from the rfq, indexes in negotiationModelWrappers should be updated
-                let sizeOfCartLines = cartLineHjids.length;
-                for(let i = 0 ; i < sizeOfCartLines ;i++){
-                    this.negotiationModelWrappers.get(cartLineHjids[i]).lineIndex = i;
+        if(confirm('Are you sure that you want to remove this product from the shopping cart?')){
+            let callStatus: CallStatus = this.deleteCallStatuses.get(cartLine.hjid);
+            callStatus.submit();
+            // get seller id
+            let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
+            this.shoppingCartDataService.removeItemsFromCart([cartLine.hjid]).then(cartCatalogue => {
+                this.shoppingCart = cartCatalogue;
+                // get rfq for the seller
+                let rfq: RequestForQuotation = this.rfqs.get(sellerId);
+                // if rfq only contains this line, delete rfq as well
+                if(rfq.requestForQuotationLine.length == 1){
+                    this.rfqs.delete(sellerId);
                 }
-                // remove line from negotiationModelWrappers as well
-                this.negotiationModelWrappers.delete(cartLine.hjid);
-            }
+                // otherwise, remove the rfq line created for this product
+                else{
+                    // get catalogue lines included in this rfq
+                    let cartLineHjids:number[] = this.rfqCatalogueLineMap.get(rfq.id);
+                    // remove catalogue line from the rfq
+                    let index = cartLineHjids.indexOf(cartLine.hjid);
+                    rfq.requestForQuotationLine.splice(index,1);
+                    // remove catalogue line for rfqCatalogueLineMap map
+                    cartLineHjids.splice(index,1);
+                    this.rfqCatalogueLineMap.set(rfq.id,cartLineHjids);
+                    // when one product is removed from the rfq, indexes in negotiationModelWrappers should be updated
+                    let sizeOfCartLines = cartLineHjids.length;
+                    for(let i = 0 ; i < sizeOfCartLines ;i++){
+                        this.negotiationModelWrappers.get(cartLineHjids[i]).lineIndex = i;
+                    }
+                    // remove line from negotiationModelWrappers as well
+                    this.negotiationModelWrappers.delete(cartLine.hjid);
+                }
 
-            callStatus.callback(null, true);
-        }).catch(error => {
-            callStatus.error('Failed to delete product from the shopping cart');
-        })
+                callStatus.callback(null, true);
+            }).catch(error => {
+                callStatus.error('Failed to delete product from the shopping cart');
+            })
+        }
     }
 
     /**
