@@ -19,18 +19,18 @@ export class ShoppingCartDataService {
     constructor(private cookieService: CookieService,
                 private http: Http) {}
 
-    public addItemToCart(productHjid: string | number): Promise<Catalogue> {
+    public addItemToCart(productHjid: string | number,quantity:number = 1): Promise<Catalogue> {
         if (this.cartCatalogue == null) {
             return this.getShoppingCart().then(() => {
-                return this.execAddItemToCart(productHjid);
+                return this.execAddItemToCart(productHjid,quantity);
             });
         } else {
-            return this.execAddItemToCart(productHjid);
+            return this.execAddItemToCart(productHjid,quantity);
         }
     }
 
-    private execAddItemToCart(productHjid: string | number): Promise<Catalogue> {
-        let url = `${this.url}/shopping-cart?productId=${productHjid}`;
+    private execAddItemToCart(productHjid: string | number,quantity:number = 1): Promise<Catalogue> {
+        let url = `${this.url}/shopping-cart?productId=${productHjid}&quantity=${quantity}`;
         return this.http
             .post(url, null, {headers: getAuthorizedHeaders(this.cookieService)})
             .toPromise()
