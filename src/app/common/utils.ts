@@ -541,16 +541,6 @@ export function roundToTwoDecimals(value): any{
     return value;
 }
 
-export function trimRedundantDecimals(value: number): number {
-    let roundedValue: number = 0;
-    let power = -1;
-    do {
-        power++;
-        roundedValue = Math.round(value * Math.pow(10, power)) / Math.pow(10, power);
-    } while(roundedValue == 0);
-    return roundedValue;
-}
-
 export function isNaNNullAware(number: number): boolean {
     if (isNaN(number) || number == null) {
         return true;
