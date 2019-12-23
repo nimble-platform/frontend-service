@@ -13,6 +13,7 @@ import { UserMgmtModule } from "../user-mgmt/user-mgmt.module";
 import {DiscountModalComponent} from './discount-modal.component';
 import {ProductLcpaTabComponent} from "./product-lcpa-tab.component";
 import {LcpaDetailModalComponent} from "./lcpa-detail-modal.component";
+import {PieChartModule} from '@swimlane/ngx-charts';
 
 @NgModule({
 	imports: [
@@ -23,7 +24,8 @@ import {LcpaDetailModalComponent} from "./lcpa-detail-modal.component";
         ReactiveFormsModule,
 		ProductDetailsRoutingModule,
 		UserMgmtModule,
-		NgbModule.forRoot()
+		NgbModule.forRoot(),
+		PieChartModule
 	],
 	declarations: [
 		ProductDetailsComponent,

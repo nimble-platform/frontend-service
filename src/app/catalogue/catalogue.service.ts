@@ -376,6 +376,34 @@ export class CatalogueService {
         });
     }
 
+    downloadBOMTemplate(): Promise<any> {
+        const token = 'Bearer '+this.cookieService.get("bearer_token");
+        const url = this.baseUrl + `/lcpa/bom-template`;
+        return new Promise<any>((resolve, reject) => {
+
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.setRequestHeader('Accept', 'application/octet-stream');
+            xhr.setRequestHeader('Authorization', token);
+            xhr.responseType = 'blob';
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+
+                        var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                        var blob = new Blob([xhr.response], {type: contentType});
+                        let fileName = xhr.getResponseHeader("Content-Disposition").split("=")[1];
+                        resolve({fileName: fileName, content: blob});
+                    } else {
+                        reject(xhr.status);
+                    }
+                }
+            }
+            xhr.send();
+        });
+    }
+
     deleteCatalogueLine(catalogueId:string, lineId:string):Promise<any> {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${lineId}`;

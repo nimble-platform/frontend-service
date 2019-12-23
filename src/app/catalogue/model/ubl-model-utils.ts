@@ -723,9 +723,14 @@ export class UBLModelUtils {
         }
         let lcpaOutput = lcpaDetails.lcpaoutput;
 
-        if(!isNaNNullAware(lcpaOutput.operationCostsPerYear.value) ||
-            !isNaNNullAware(lcpaOutput.lifeCycleCost.value) ||
-            !isNaNNullAware(lcpaOutput.capexOpexRelation.value)) {
+        if(!isNaNNullAware(lcpaOutput.lifeCycleCost.value) ||
+            !isNaNNullAware(lcpaOutput.acidificationPotential.value) ||
+            !isNaNNullAware(lcpaOutput.aerosolFormationPotential.value) ||
+            !isNaNNullAware(lcpaOutput.capex.value) ||
+            !isNaNNullAware(lcpaOutput.cumulativeEnergyDemand.value) ||
+            !isNaNNullAware(lcpaOutput.eutrophicationPotential.value) ||
+            !isNaNNullAware(lcpaOutput.globalWarmingPotential.value) ||
+            !isNaNNullAware(lcpaOutput.opex.value)) {
             return true;
         } else {
             return false;
@@ -749,7 +754,7 @@ export class UBLModelUtils {
         if(quantity == null) {
             return true;
         }
-        if(!quantity.value && !quantity.unitCode) {
+        if(quantity.value == null && !quantity.unitCode) {
             return true;
         }
         return false;
@@ -759,7 +764,7 @@ export class UBLModelUtils {
         if(UBLModelUtils.isEmptyQuantity(quantity)) {
             return true;
         }
-        if(!quantity.value || !quantity.unitCode) {
+        if(quantity.value == null || !quantity.unitCode) {
             return true;
         }
         return false;
@@ -769,7 +774,7 @@ export class UBLModelUtils {
         if(amount == null) {
             return true;
         }
-        if(!amount.value || !amount.currencyID) {
+        if(amount.value == null || !amount.currencyID) {
             return true;
         }
         return false;
