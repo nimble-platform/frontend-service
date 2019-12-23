@@ -1,7 +1,25 @@
-<ng-container *ngIf="lcpaDetails.lcpainput">
-    <div class="col-6">
-        <h5><span>LCPA Inputs</span></h5>
-    </div>
+<!-- Input - Results Tabs-->
+<div class="row mb-3 ml-1">
+    <ul class="nav nav-tabs space-after space-before">
+        <li class="nav-item">
+            <a href class="nav-link"
+               [ngClass]="{ active: selectedTab === 'INPUT'}"
+               (click)="onTabSelect($event,'INPUT')">
+                <span [innerHTML]="'Inputs' | translate"></span>
+            </a>
+        </li>
+        <li class="nav-item" *ngIf="lcpaDetails.lcpaoutput">
+            <a href  class="nav-link"
+               [ngClass]="{ active: selectedTab === 'RESULT'}"
+               (click)="onTabSelect($event,'RESULT')">
+                <span [innerHTML]="'Results' | translate"></span>
+            </a>
+        </li>
+    </ul>
+</div>
+<!--Input Tab-->
+<ng-container *ngIf="selectedTab == 'INPUT' && lcpaDetails.lcpainput">
+    <!-- LCPA Inputs-->
     <div class="d-flex flex-wrap align-items-start fixed-info-container">
         <quantity-input *ngIf="isVisible(lcpaDetails.lcpainput.lifeCycleLength, 'QUANTITY')"
                         [disabled]="isDisabled()"
@@ -20,7 +38,7 @@
                       [labelClass]="'col-6'"
                       [valueClass]="'col-6'"
                       [amount]="lcpaDetails.lcpainput.purchasingPrice"
-                      [amountType]="'currency_quantity'">
+                      [amountType]="'lcpa_input_currency_quantity'">
         </amount-input>
         <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.assemblyCost)"
                       class="col-6"
@@ -29,7 +47,7 @@
                       [labelClass]="'col-6'"
                       [valueClass]="'col-6'"
                       [amount]="lcpaDetails.lcpainput.assemblyCost"
-                      [amountType]="'currency_quantity'">
+                      [amountType]="'lcpa_input_currency_quantity'">
         </amount-input>
         <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.transportCost)"
                       class="col-6"
@@ -38,7 +56,7 @@
                       [labelClass]="'col-6'"
                       [valueClass]="'col-6'"
                       [amount]="lcpaDetails.lcpainput.transportCost"
-                      [amountType]="'currency_quantity'">
+                      [amountType]="'lcpa_input_currency_quantity'">
         </amount-input>
         <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.consumableCost)"
                       class="col-6"
@@ -47,7 +65,7 @@
                       [labelClass]="'col-6'"
                       [valueClass]="'col-6'"
                       [amount]="lcpaDetails.lcpainput.consumableCost"
-                      [amountType]="'currency_quantity'">
+                      [amountType]="'lcpa_input_currency_quantity'">
         </amount-input>
         <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.energyConsumptionCost)"
                       class="col-6"
@@ -56,7 +74,7 @@
                       [labelClass]="'col-6'"
                       [valueClass]="'col-6'"
                       [amount]="lcpaDetails.lcpainput.energyConsumptionCost"
-                      [amountType]="'currency_quantity'">
+                      [amountType]="'lcpa_input_currency_quantity'">
         </amount-input>
         <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.maintenanceCost)"
                       class="col-6"
@@ -65,7 +83,7 @@
                       [labelClass]="'col-6'"
                       [valueClass]="'col-6'"
                       [amount]="lcpaDetails.lcpainput.maintenanceCost"
-                      [amountType]="'currency_quantity'">
+                      [amountType]="'lcpa_input_currency_quantity'">
         </amount-input>
         <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.sparePartCost)"
                       class="col-6"
@@ -74,7 +92,7 @@
                       [labelClass]="'col-6'"
                       [valueClass]="'col-6'"
                       [amount]="lcpaDetails.lcpainput.sparePartCost"
-                      [amountType]="'currency_quantity'">
+                      [amountType]="'lcpa_input_currency_quantity'">
         </amount-input>
         <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.endOfLifeCost)"
                       class="col-6"
@@ -83,9 +101,10 @@
                       [labelClass]="'col-6'"
                       [valueClass]="'col-6'"
                       [amount]="lcpaDetails.lcpainput.endOfLifeCost"
-                      [amountType]="'currency_quantity'">
+                      [amountType]="'lcpa_input_currency_quantity'">
         </amount-input>
     </div>
+    <!-- Additional LCPA Inputs-->
     <ng-container *ngFor="let detail of _catalogueLine.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpainput.additionalLCPAInputDetail; let i = index">
         <div [ngSwitch]="detail.valueQualifier">
             <div *ngIf="i == 0">
@@ -94,7 +113,7 @@
             </div>
 
             <div class="row space-before">
-                <ng-container *ngIf="isVisible(detail.valueQuantity[0])">
+                <ng-container *ngIf="isVisible(detail.valueQuantity[0],'QUANTITY')">
                     <quantity-input *ngSwitchCase="'QUANTITY'"
                                     class="col"
                                     [disabled]="isDisabled()"
@@ -127,38 +146,153 @@
     <!-- Edit Property Value(s) Modal -->
     <lcpa-detail-modal (valueAdded)="onDetailSpecified($event)">
     </lcpa-detail-modal>
+    <!-- Bill of Material Template-->
+    <ng-container *ngIf="presentationMode == 'edit'">
+        <hr>
+        <div class="d-flex align-items-stretch mt-3 mb-4">
+            <label class="col-6"><span [innerHTML]="'Download the Bill of Material template' | translate"></span></label>
+            <div class="col-3 p-0">
+                <call-status [callStatus]="downloadTemplateStatus"></call-status>
+                <button class="btn btn-secondary btn-download-template"
+                        (click)="downloadTemplate()"><span [innerHTML]="'Download template' | translate"></span>
+                </button>
+            </div>
+        </div>
+        <div class="d-flex align-items-stretch mt-3 mb-4 space-before">
+            <div class="col-6">
+                <strong><span [innerHTML]="'For environmental footprint estimation, please upload the bill of material (BOM)' | translate"></span></strong>
+            </div>
+            <div >
+                <file-input [multiple]="false" [presentationMode]="presentationMode" (onSelectFile)="onSelectBOM($event)" [binaryObjects]="getBOM()"
+                            (onClearFile)="onUnSelectBOM($event)">
+                </file-input>
+            </div>
+        </div>
+    </ng-container>
 </ng-container>
+<!--Results Tab-->
+<ng-container *ngIf="selectedTab == 'RESULT' && lcpaDetails.lcpaoutput">
+    <ng-container>
+        <div class="row">
+            <!-- Life cycle costs-->
+            <div class="col-6 border-right">
+                <h3 class="text-center"><u>Life cycle costs</u></h3>
+                <div class="row justify-content-center space-before">
+                    <div class="card col-10">
+                        <div class="card-body text-center">
+                            <h6 class="card-title"> <b><span [innerHTML]="'Life cycle costs' | translate"></span></b></h6>
+                            <h6 class="card-subtitle mb-2 text-muted"> 320 EUR</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center space-before">
+                    <div class="card col-10" style="border: none;background-color: transparent">
+                        <div class="row">
+                            <div class="card col-6" style="border: none;padding-left: 0px;background-clip: content-box">
+                                <div class="card col-12">
+                                    <div class="card-body text-center">
+                                        <h6 class="card-title"><b><span [innerHTML]="'CAPEX' | translate"></span></b></h6>
+                                        <h6 class="card-subtitle mb-2 text-muted">{{lcpaDetails.lcpaoutput.capex.value}} {{lcpaDetails.lcpaoutput.capex.currencyID}}</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card col-6" style="border: none;padding-right: 0px;background-clip: content-box">
+                                <div class="card col-12">
+                                    <div class="card-body text-center">
+                                        <h6 class="card-title"><b><span [innerHTML]="'CAPEX / LCC' | translate"></span></b></h6>
+                                        <h6 class="card-subtitle mb-2 text-muted">{{this.results[0].name}}</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center space-before">
+                    <div class="card col-10" style="border: none;background-color: transparent">
+                        <div class="row">
+                            <div class="card col-6" style="border: none;padding-left: 0px;background-clip: content-box">
+                                <div class="card col-12">
+                                    <div class="card-body text-center">
+                                        <h6 class="card-title"><b><span [innerHTML]="'OPEX' | translate"></span></b></h6>
+                                        <h6 class="card-subtitle mb-2 text-muted">{{lcpaDetails.lcpaoutput.opex.value}} {{lcpaDetails.lcpaoutput.opex.currencyID}}</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card col-6" style="border: none;padding-right: 0px;background-clip: content-box">
+                                <div class="card col-12">
+                                    <div class="card-body text-center">
+                                        <h6 class="card-title"><b><span [innerHTML]="'OPEX / LCC' | translate"></span></b></h6>
+                                        <h6 class="card-subtitle mb-2 text-muted">{{results[1].name}}</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center space-before">
+                    <div class="card col-10">
+                        <div class="row">
+                            <div class="card-body text-center col-12">
+                                <h6 class="card-title"><b>Share of Capex and Opex on LCC</b></h6>
+                                <ngx-charts-pie-chart [doughnut]="true" [results]="results" [labels]="true" [scheme]="scheme" [tooltipDisabled]="true">
 
-<ng-container *ngIf="lcpaDetails.lcpaoutput">
-    <div class="col-6">
-        <h5><span>LCPA Outputs</span></h5>
-    </div>
-    <div class="d-flex flex-wrap align-items-start fixed-info-container">
-        <quantity-input *ngIf="isVisible(lcpaDetails.lcpaoutput.capexOpexRelation, 'QUANTITY')"
-                        [disabled]="true"
-                        class="col-6"
-                        label="Capex Opex Relation"
-                        [labelClass]="'col-6'"
-                        [valueClass]="'col-6'"
-                        [quantity]="lcpaDetails.lcpaoutput.capexOpexRelation">
-        </quantity-input>
-        <amount-input *ngIf="isVisible(lcpaDetails.lcpaoutput.lifeCycleCost)"
-                      class="col-6"
-                      [disabled]="true"
-                      label="Life Cycle Cost"
-                      [labelClass]="'col-6'"
-                      [valueClass]="'col-6'"
-                      [amount]="lcpaDetails.lcpaoutput.lifeCycleCost"
-                      [amountType]="'currency_quantity'">
-        </amount-input>
-        <amount-input *ngIf="isVisible(lcpaDetails.lcpaoutput.operationCostsPerYear)"
-                      class="col-6"
-                      [disabled]="true"
-                      label="Operation Costs Per Year"
-                      [labelClass]="'col-6'"
-                      [valueClass]="'col-6'"
-                      [amount]="lcpaDetails.lcpaoutput.operationCostsPerYear"
-                      [amountType]="'currency_quantity'">
-        </amount-input>
-    </div>
+                                </ngx-charts-pie-chart>
+                                <div class="text-center">
+                                    <span class="legend-capex"></span>
+                                    <span>CAPEX</span>
+                                    <span class="legend-opex"></span>
+                                    <span>OPEX</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- Environmental footprint-->
+            <div class="col-6">
+                <h3 class="text-center"><u>Environmental footprint</u></h3>
+                <div class="row justify-content-center space-before">
+                    <div class="card col-10">
+                        <div class="card-body text-center">
+                            <h6 class="card-title"><b>Global warming potential in {{lcpaDetails.lcpaoutput.globalWarmingPotential.unitCode}}</b></h6>
+                            <h6 class="card-subtitle mb-2 text-muted">{{lcpaDetails.lcpaoutput.globalWarmingPotential.value}}</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center space-before">
+                    <div class="card col-10">
+                        <div class="card-body text-center">
+                            <h6 class="card-title"><b>Cumulative energy demand in {{lcpaDetails.lcpaoutput.cumulativeEnergyDemand.unitCode}}</b></h6>
+                            <h6 class="card-subtitle mb-2 text-muted">{{lcpaDetails.lcpaoutput.cumulativeEnergyDemand.value}}</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center space-before">
+                    <div class="card col-10">
+                        <div class="card-body text-center">
+                            <h6 class="card-title"><b>Aerosol formation potential in {{lcpaDetails.lcpaoutput.aerosolFormationPotential.unitCode}}</b></h6>
+                            <h6 class="card-subtitle mb-2 text-muted">{{lcpaDetails.lcpaoutput.aerosolFormationPotential.value}}</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center space-before">
+                    <div class="card col-10">
+                        <div class="card-body text-center">
+                            <h6 class="card-title"><b>Acidification potential in {{lcpaDetails.lcpaoutput.acidificationPotential.unitCode}}</b></h6>
+                            <h6 class="card-subtitle mb-2 text-muted">{{lcpaDetails.lcpaoutput.acidificationPotential.value}}</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center space-before">
+                    <div class="card col-10">
+                        <div class="card-body text-center">
+                            <h6 class="card-title"><b>Eutrophication potential in {{lcpaDetails.lcpaoutput.eutrophicationPotential.unitCode}}</b></h6>
+                            <h6 class="card-subtitle mb-2 text-muted">{{lcpaDetails.lcpaoutput.eutrophicationPotential.value}}</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
 </ng-container>

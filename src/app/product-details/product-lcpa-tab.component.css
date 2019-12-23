@@ -1,3 +1,21 @@
 .fixed-info-container > amount-input, .fixed-info-container > quantity-input {
     margin-top: 0.5rem;
 }
+
+.border-right {
+    border-right: 1px solid black !important;
+}
+
+.legend-capex{
+    display: inline-block;
+    height: 15px;
+    width: 15px;
+    background-color: blue;
+}
+
+.legend-opex{
+    display: inline-block;
+    height: 15px;
+    width: 15px;
+    background-color: orangered;
+}
