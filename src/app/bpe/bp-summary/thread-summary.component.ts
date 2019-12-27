@@ -283,7 +283,7 @@ export class ThreadSummaryComponent implements OnInit {
 
     private async fetchThreadEvent(processInstanceId: string): Promise<ThreadEventMetadata> {
         // get dashboard process instance details
-        const dashboardProcessInstanceDetails:DashboardProcessInstanceDetails = await this.bpeService.getDashboardProcessInstanceDetails(processInstanceId);
+        const dashboardProcessInstanceDetails:DashboardProcessInstanceDetails = await this.bpeService.getDashboardProcessInstanceDetails(processInstanceId,this.processInstanceGroup.sellerFederationId);
 
         const activityVariables = dashboardProcessInstanceDetails.variableInstance;
         const processType = ActivityVariableParser.getProcessType(activityVariables);
@@ -303,14 +303,19 @@ export class ThreadSummaryComponent implements OnInit {
         // check whether Fulfilment is included or not in seller's workflow
         const isFulfilmentIncludedInWorkflow = !sellerWorkflow || sellerWorkflow.length == 0 || sellerWorkflow.indexOf('Fulfilment') != -1;
 
+        let lastEventPartnerFederationId:string;
+        let sellerFederationId:string;
         if (userRole === "buyer") {
             this.lastEventPartnerID = UBLModelUtils.getPartyId(initialDoc.items[0].manufacturerParty);
+            lastEventPartnerFederationId = initialDoc.items[0].manufacturerParty.federationInstanceID;
         }
         else {
             this.lastEventPartnerID = initialDoc.buyerPartyId;
+            lastEventPartnerFederationId = initialDoc.buyerPartyFederationId;
         }
+        sellerFederationId = initialDoc.sellerPartyFederationId;
 
-        const isRated = await this.bpeService.ratingExists(processInstanceId, this.lastEventPartnerID);
+        const isRated = await this.bpeService.ratingExists(processInstanceId, this.lastEventPartnerID,lastEventPartnerFederationId,sellerFederationId);
 
         const event: ThreadEventMetadata = new ThreadEventMetadata(
             processType,
@@ -539,20 +544,6 @@ export class ThreadSummaryComponent implements OnInit {
         return true;
     }
 
-    deleteGroup(): void {
-        if (confirm("Are you sure that you want to delete this business process thread?")) {
-            this.archiveCallStatus.submit();
-            this.bpeService.deleteProcessInstanceGroup(this.processInstanceGroup.id)
-                .then(() => {
-                    this.archiveCallStatus.callback('Thread deleted permanently');
-                    this.threadStateUpdated.next();
-                })
-                .catch(err => {
-                    this.archiveCallStatus.error('Failed to delete thread permanently', err);
-                });
-        }
-    }
-
     checkDataChannel() {
         let channelId = this.processInstanceGroup.dataChannelId;
         let role = this.processInstanceGroup.collaborationRole;
@@ -586,7 +577,7 @@ export class ThreadSummaryComponent implements OnInit {
     finishCollaboration(){
         if (confirm("Are you sure that you want to finish this collaboration?")) {
             this.archiveCallStatus.submit();
-            this.bpeService.finishCollaboration(this.processInstanceGroup.id)
+            this.bpeService.finishCollaboration(this.processInstanceGroup.id,this.processInstanceGroup.sellerFederationId)
                 .then(() => {
                     this.archiveCallStatus.callback("Finished collaboration successfully");
                     this.threadStateUpdatedNoChange.next();
@@ -600,7 +591,7 @@ export class ThreadSummaryComponent implements OnInit {
     cancelCollaboration(){
         if (confirm("Are you sure that you want to cancel this collaboration?")) {
             this.archiveCallStatus.submit();
-            this.bpeService.cancelCollaboration(this.processInstanceGroup.id)
+            this.bpeService.cancelCollaboration(this.processInstanceGroup.id,this.processInstanceGroup.sellerFederationId)
                 .then(() => {
                     this.archiveCallStatus.callback("Cancelled collaboration successfully");
                     this.threadStateUpdatedNoChange.next();

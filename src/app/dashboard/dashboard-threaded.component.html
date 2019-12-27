@@ -231,7 +231,7 @@
                                             <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name != null || order.name != '')">{{order.name}}</h5>
                                             <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name == null || order.name == '')">{{updatingCollaborationGroupName[i].defaultName}}</h5>
                                             <input *ngIf="updatingCollaborationGroupName[i].status == true" type="text" class="form-control form-control-sm" name="inputCtrl" [(ngModel)]="updatingCollaborationGroupName[i].name" [disabled]=""/>
-                                            <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="updateCollaborationGroupName(order.id,updatingCollaborationGroupName[i].name)" data-toggle="tooltip" data-placement="top" title="Save">
+                                            <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="updateCollaborationGroupName(order.id,order.federationId,updatingCollaborationGroupName[i].name)" data-toggle="tooltip" data-placement="top" title="Save">
                                                 <i class="fa fa-check p-2 pointer" aria-hidden="true"></i>
                                             </div>
                                             <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="changeCollaborationGroupNameStatus(i,false)" data-toggle="tooltip" data-placement="top" title="Cancel">
@@ -275,7 +275,7 @@
                                                                                      <span style="margin-left: 20px;">{{updatingCollaborationGroupName[i].defaultName}}</span>
                                                                             </h5>
                                                                             <input *ngIf="updatingCollaborationGroupName[i].status == true" type="text" class="form-control form-control-sm" name="inputCtrl" [(ngModel)]="updatingCollaborationGroupName[i].name" [disabled]=""/>
-                                                                            <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="updateCollaborationGroupName(order.id,updatingCollaborationGroupName[i].name)" data-toggle="tooltip" data-placement="top" title="Save">
+                                                                            <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="updateCollaborationGroupName(order.id,order.federationId,updatingCollaborationGroupName[i].name)" data-toggle="tooltip" data-placement="top" title="Save">
                                                                                 <i class="fa fa-check p-2 pointer" aria-hidden="true"></i>
                                                                             </div>
                                                                             <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="changeCollaborationGroupNameStatus(i,false)" data-toggle="tooltip" data-placement="top" title="Cancel">
@@ -312,13 +312,13 @@
                                         <div *ngIf="queryParameters.tab === TABS.PURCHASES && config.projectsEnabled" data-toggle="tooltip" class="inline" (click)="open(negotiationGroup,i,order)" data-placement="top" title="Add to group">
                                             <i class="fa fa-object-group p-1 pointer" aria-hidden="true"></i>
                                         </div>
-                                        <div *ngIf="!order.archived && order.isArchiveable" class="inline" (click)="archiveGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Archive">
+                                        <div *ngIf="!order.archived && order.isArchiveable" class="inline" (click)="archiveGroup(order.id,order.federationId)" data-toggle="tooltip" data-placement="top" title="Archive">
                                             <i class="fa fa-archive p-1 pointer" aria-hidden="true"></i>
                                         </div>
-                                        <div *ngIf="order.archived" class="inline" (click)="restoreGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Restore">
+                                        <div *ngIf="order.archived" class="inline" (click)="restoreGroup(order.id,order.federationId)" data-toggle="tooltip" data-placement="top" title="Restore">
                                             <i class="fa fa-undo p-1 pointer" aria-hidden="true"></i>
                                         </div>
-                                        <div *ngIf="order.archived" class="inline" (click)="deleteGroup(order.id)" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
+                                        <div *ngIf="order.archived" class="inline" (click)="deleteGroup(order.id,order.federationId)" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
                                             <i class="fa fa-trash-alt p-1 pointer" aria-hidden="true"></i>
                                         </div>
                                     </div>
@@ -456,7 +456,7 @@
                                                 <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name != null || order.name != '')">{{order.name}}</h5>
                                                 <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name == null || order.name == '')">{{updatingCollaborationGroupName[i].defaultName}}</h5>
                                                 <input *ngIf="updatingCollaborationGroupName[i].status == true" type="text" class="form-control form-control-sm" name="inputCtrl" [(ngModel)]="updatingCollaborationGroupName[i].name" [disabled]=""/>
-                                                <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="updateCollaborationGroupName(order.id,updatingCollaborationGroupName[i].name)" data-toggle="tooltip" data-placement="top" title="Save">
+                                                <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="updateCollaborationGroupName(order.id,order.federationId,updatingCollaborationGroupName[i].name)" data-toggle="tooltip" data-placement="top" title="Save">
                                                     <i class="fa fa-check p-2 pointer" aria-hidden="true"></i>
                                                 </div>
                                                 <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="changeCollaborationGroupNameStatus(i,false)" data-toggle="tooltip" data-placement="top" title="Cancel">

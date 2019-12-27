@@ -158,7 +158,7 @@ export class DispatchAdviceComponent implements OnInit {
         this.callStatus.submit();
         let dispatchAdvice: DespatchAdvice = this.setShipmentOfAllProducts(copy(this.dispatchAdvice));
 
-        this.bpeService.startProcessWithDocument(dispatchAdvice)
+        this.bpeService.startProcessWithDocument(dispatchAdvice,dispatchAdvice.despatchSupplierParty.party.federationInstanceID)
             .then(res => {
                 this.callStatus.callback("Dispatch Advice sent", true);
                 var tab = "PURCHASES";

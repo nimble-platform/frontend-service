@@ -10,6 +10,7 @@ import {BpUserRole} from "../model/bp-user-role";
 import {ActivityVariableParser} from "./activity-variable-parser";
 import {CookieService} from 'ng2-cookies';
 import {copy} from "../../common/utils";
+import {FEDERATION} from '../../catalogue/model/constants';
 
 @Injectable()
 export class DocumentService {
@@ -17,6 +18,11 @@ export class DocumentService {
     private headers = new Headers({'Content-Type': 'application/json'});
     private url = myGlobals.bpe_endpoint;
     private mapOfDocument = new Map();
+
+    private delegate_url = myGlobals.delegate_endpoint;
+
+    private delegated = (FEDERATION() == "ON");
+
     constructor(private http: Http,
                 private cookieService: CookieService) { }
 
@@ -45,8 +51,11 @@ export class DocumentService {
             .catch(this.handleError);
     }
 
-    updateDocument(documentId: string, documentType: string, document: any): Promise<any> {
-        const url = `${this.url}/document/${documentId}?documentType=${documentType}`;
+    updateDocument(documentId: string, documentType: string, document: any,delegateId:string): Promise<any> {
+        let url = `${this.url}/document/${documentId}?documentType=${documentType}`;
+        if(this.delegated){
+            url = `${this.delegate_url}/document/${documentId}?documentType=${documentType}&delegateId=${delegateId}`;
+        }
         return this.http
             .patch(url, document, {headers: this.getAuthorizedHeaders()})
             .toPromise()

@@ -16,6 +16,7 @@ import {frameContractDurationUnitListId} from "../../../common/constants";
 import {RequestForQuotation} from "../../../catalogue/model/publish/request-for-quotation";
 import {Quantity} from "../../../catalogue/model/publish/quantity";
 import {CatalogueLine} from '../../../catalogue/model/publish/catalogue-line';
+import {FEDERATIONID} from '../../../catalogue/model/constants';
 
 @Component({
     selector: 'negotiation',
@@ -118,11 +119,14 @@ export class NegotiationComponent implements OnInit, OnDestroy {
 
     private async initialDefaultTermsAndConditionsAndFrameContract(): Promise<any> {
         let buyerPartyId;
+        let buyerFederationId;
         if(this.bpDataService.bpActivityEvent.userRole === 'buyer') {
             buyerPartyId = this.cookieService.get("company_id");
+            buyerFederationId = FEDERATIONID();
         } else {
             // for sellers rfq should include buyer supplier party
             buyerPartyId = UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.buyerCustomerParty.party);
+            buyerFederationId = this.bpDataService.requestForQuotation.buyerCustomerParty.party.federationInstanceID;
         }
 
         // retrieve default terms and conditions and frame contract
@@ -154,7 +158,9 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         let frameContracts:any = await this.bpeService.getFrameContract(
             UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLines()[0].goodsItem.item.manufacturerParty),
             buyerPartyId,
-            productIds);
+            productIds,
+            buyerFederationId,
+            this.bpDataService.getCatalogueLines()[0].goodsItem.item.manufacturerParty.federationInstanceID);
 
         this.frameContracts = [];
         for(let rfqLine of this.bpDataService.requestForQuotation.requestForQuotationLine){

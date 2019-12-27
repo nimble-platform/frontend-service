@@ -9,6 +9,8 @@ export class ProcessInstanceGroup {
                 public processInstanceIDs: string[],
                 public archived: boolean = false,
                 public collaborationRole: string = "",
-                public dataChannelId:string) {
+                public dataChannelId:string,
+                public federationID:string,
+                public sellerFederationId:string) {
     }
 }

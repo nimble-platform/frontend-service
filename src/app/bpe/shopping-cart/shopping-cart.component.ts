@@ -30,6 +30,7 @@ import {Party} from '../../catalogue/model/publish/party';
 import {TradingPreferences} from '../../catalogue/model/publish/trading-preferences';
 import {CommonTerms} from '../../common/common-terms';
 import {ShoppingCartSummaryModalComponent} from './shopping-cart-summary-modal.component';
+import {FEDERATIONID} from '../../catalogue/model/constants';
 /**
  * Created by suat on 11-Oct-19.
  */
@@ -274,7 +275,9 @@ export class ShoppingCartComponent implements OnInit {
             frameContractPromises.push(this.bpeService.getFrameContract(
                 UBLModelUtils.getPartyId(cartLine.goodsItem.item.manufacturerParty),
                 this.cookieService.get('company_id'),
-                [cartLine.id]));
+                [cartLine.id],
+                FEDERATIONID(),
+                cartLine.goodsItem.item.manufacturerParty.federationInstanceID));
         }
         this.initCallStatus.aggregatedSubmit();
         Promise.all(frameContractPromises).then(frameContractsForProducts => {
@@ -542,7 +545,7 @@ export class ShoppingCartComponent implements OnInit {
                 // start a request for quotation or order created using the rfq we have
                 let document:RequestForQuotation | Order = this.areNegotiationConditionsSatisfied(cartLine) ? rfq: this.createOrderWithRfq(rfq,[cartLine.hjid]);
 
-                return this.bpeService.startProcessWithDocument(document);
+                return this.bpeService.startProcessWithDocument(document,document.sellerSupplierParty.party.federationInstanceID);
             }).then(() => {
                 // started the negotiation for the product successfully,so remove it from the shopping cart
                 this.onRemoveFromCart(cartLine);
@@ -611,7 +614,7 @@ export class ShoppingCartComponent implements OnInit {
 
                     // start a request for quotation or order created using the rfq we have
                     let document:RequestForQuotation | Order = areNegotiationConditionsSatisfiedForAtLeastOneProduct ? copyRfq: this.createOrderWithRfq(copyRfq,lineHjids);
-                    promises.push(this.bpeService.startProcessWithDocument(document));
+                    promises.push(this.bpeService.startProcessWithDocument(document,document.sellerSupplierParty.party.federationInstanceID));
                 });
                 Promise.all(promises).then(response => {
                     // started the negotiation for all products successfully,so remove them from the shopping cart

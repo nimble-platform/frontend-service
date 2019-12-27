@@ -16,6 +16,7 @@ import {CollaborationGroup} from '../bpe/model/collaboration-group';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as d3 from 'd3';
 import * as moment from "moment";
+import {FederatedCollaborationGroupMetadata} from '../bpe/model/federated-collaboration-group-metadata';
 
 @Component({
     selector: "dashboard-threaded",
@@ -624,8 +625,8 @@ export class DashboardThreadedComponent implements OnInit{
         this.updatingCollaborationGroupName[index].status = status;
     }
 
-    updateCollaborationGroupName(id:string,name:string){
-        this.bpeService.updateCollaborationGroupName(id,name)
+    updateCollaborationGroupName(id:string,federationId:string,name:string){
+        this.bpeService.updateCollaborationGroupName(id,federationId,name)
             .then(() => {
                 this.onViewUpdated(false);
             })
@@ -634,8 +635,8 @@ export class DashboardThreadedComponent implements OnInit{
             });
     }
 
-    archiveGroup(id: string): void {
-        this.bpeService.archiveCollaborationGroup(id)
+    archiveGroup(id: string,federationId:string): void {
+        this.bpeService.archiveCollaborationGroup(id,federationId)
             .then(() => {
                this.onOrderRemovedFromView();
             })
@@ -644,8 +645,8 @@ export class DashboardThreadedComponent implements OnInit{
             });
     }
 
-    restoreGroup(id: string): void {
-        this.bpeService.restoreCollaborationGroup(id)
+    restoreGroup(id: string,federationId:string): void {
+        this.bpeService.restoreCollaborationGroup(id,federationId)
             .then(() => {
                 this.onOrderRemovedFromView();
             })
@@ -654,9 +655,9 @@ export class DashboardThreadedComponent implements OnInit{
             });
     }
 
-    deleteGroup(id: string): void {
+    deleteGroup(id: string,federationId:string): void {
         if (confirm("Are you sure that you want to delete this collaboration group?")) {
-            this.bpeService.deleteCollaborationGroup(id)
+            this.bpeService.deleteCollaborationGroup(id,federationId)
                 .then(() => {
                     this.onOrderRemovedFromView();
                 })
@@ -690,14 +691,14 @@ export class DashboardThreadedComponent implements OnInit{
 
     async mergeNegotations(c:any){
         let selectedNegotation = this.selectedNegotiation.id;
-        let mergeIdList = [];
+        let collaborationGroupsMetadatas:FederatedCollaborationGroupMetadata[] = [];
 
 
         await this.selectedNegotiationLists.forEach(item => {
-            mergeIdList.push(item.id);
+            collaborationGroupsMetadatas.push(new FederatedCollaborationGroupMetadata(item.id,item.federationId));
         })
 
-        this.bpeService.mergeNegotations(selectedNegotation,mergeIdList)
+        this.bpeService.mergeNegotations(selectedNegotation,collaborationGroupsMetadatas,this.selectedNegotiation.federationId)
         .then(() => {
             //location.reload();
             c();

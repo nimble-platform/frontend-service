@@ -65,7 +65,7 @@ export class ThreadEventComponent implements OnInit {
 
     cancelBP(){
         if (confirm("Are you sure that you want to cancel this process?")){
-            this.bpeService.cancelBusinessProcess(this.event.processInstanceId)
+            this.bpeService.cancelBusinessProcess(this.event.processInstanceId,this.processInstanceGroup.sellerFederationId)
                 .then(res => {
                     this.processCancelled.next();
                 })

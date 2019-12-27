@@ -178,7 +178,7 @@ export class PpapDocumentSelectComponent implements OnInit {
             this.userService.getParty(sellerId).then(sellerParty => {
                 this.ppap.sellerSupplierParty = new SupplierParty(sellerParty);
                 this.bpeService
-                    .startProcessWithDocument(this.ppap)
+                    .startProcessWithDocument(this.ppap,sellerParty.federationInstanceID)
                     .then(() => {
                         this.callStatus.callback("Ppap request sent", true);
                         this.router.navigate(["dashboard"]);
