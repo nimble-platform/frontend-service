@@ -26,12 +26,12 @@ export class DocumentService {
     constructor(private http: Http,
                 private cookieService: CookieService) { }
 
-    getCachedDocument(documentID:string): Promise<any> {
+    getCachedDocument(documentID:string,delegateId:string): Promise<any> {
         if (this.mapOfDocument.has(documentID)){
             return Promise.resolve(copy(this.mapOfDocument.get(documentID)));
         }
         else {
-            return this.getDocumentJsonContent(documentID).then(document => {
+            return this.getDocumentJsonContent(documentID,delegateId).then(document => {
                 this.mapOfDocument.set(documentID,document);
                 return copy(document);
             })
@@ -42,8 +42,11 @@ export class DocumentService {
         this.mapOfDocument.set(documentID,document);
     }
 
-    getDocumentJsonContent(documentId:string):Promise<any> {
-        const url = `${this.url}/document/json/${documentId}`;
+    getDocumentJsonContent(documentId:string,delegateId:string):Promise<any> {
+        let url = `${this.url}/document/json/${documentId}`;
+        if(this.delegated){
+            url = `${this.delegate_url}/document/json/${documentId}?delegateId=${delegateId}`;
+        }
         return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
@@ -68,14 +71,14 @@ export class DocumentService {
     }
 
     getItemInformationRequest(itemInformationResponse: ItemInformationResponse): Promise<ItemInformationRequest> {
-        return this.getDocumentJsonContent(itemInformationResponse.itemInformationRequestDocumentReference.id);
+        return this.getDocumentJsonContent(itemInformationResponse.itemInformationRequestDocumentReference.id,itemInformationResponse.sellerSupplierParty.party.federationInstanceID);
     }
 
     getRequestForQuotation(quotation: Quotation): Promise<RequestForQuotation> {
-        return this.getDocumentJsonContent(quotation.requestForQuotationDocumentReference.id);
+        return this.getDocumentJsonContent(quotation.requestForQuotationDocumentReference.id,quotation.sellerSupplierParty.party.federationInstanceID);
     }
 
-    getInitialDocument(processVariables: any[]): any {
+    getInitialDocument(processVariables: any[],delegateId:string): any {
         let id = null;
         for (let variable of processVariables) {
             if (variable.name == "initialDocumentID") {
@@ -83,14 +86,14 @@ export class DocumentService {
             }
         }
         if (id){
-            return this.getCachedDocument(id);
+            return this.getCachedDocument(id,delegateId);
         }
         else {
             return null;
         }
     }
 
-    getResponseDocument(processVariables: any[]): any {
+    getResponseDocument(processVariables: any[],delegateId:string): any {
         let id = null;
         for (let variable of processVariables) {
             if (variable.name == "responseDocumentID") {
@@ -98,7 +101,7 @@ export class DocumentService {
             }
         }
         if (id){
-            return this.getCachedDocument(id);
+            return this.getCachedDocument(id,delegateId);
         }
         else {
             return null;

@@ -148,7 +148,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
     onUpdateRequest(): void {
         this.callStatus.submit();
         let rfq: RequestForQuotation = copy(this.bpDataService.requestForQuotation);
-        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processInstanceId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processInstanceId,this.processMetadata.sellerFederationId)
             .then(() => {
                 this.documentService.updateCachedDocument(rfq.id, rfq);
                 this.callStatus.callback("Terms updated", true);

@@ -183,7 +183,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
             }
             else{
                 // load the quotation associated to the frame contract
-                frameContractQuotationPromises.push(this.documentService.getDocumentJsonContent(frameContract.quotationReference.id));
+                frameContractQuotationPromises.push(this.documentService.getDocumentJsonContent(frameContract.quotationReference.id,this.bpDataService.getCatalogueLines()[0].goodsItem.item.manufacturerParty.federationInstanceID));
             }
         }
 
@@ -245,7 +245,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
             if(!this.bpDataService.bpActivityEvent.newProcess) {
                 checkIndex = 1;
             }
-            responseDocument = this.documentService.getResponseDocument(this.bpDataService.bpActivityEvent.processHistory[checkIndex].activityVariables);
+            responseDocument = this.documentService.getResponseDocument(this.bpDataService.bpActivityEvent.processHistory[checkIndex].activityVariables,this.bpDataService.bpActivityEvent.processHistory[checkIndex].sellerFederationId);
         }
 
         return responseDocument;
@@ -288,8 +288,8 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         let documentPromises: Promise<any>[] = [];
         // the documents for the last step is already available via the BpDataService
         for(let i=0; i < this.negotiationProcessList.length - 1; i++) {
-            documentPromises.push(this.documentService.getInitialDocument(this.negotiationProcessList[i].activityVariables));
-            documentPromises.push(this.documentService.getResponseDocument(this.negotiationProcessList[i].activityVariables));
+            documentPromises.push(this.documentService.getInitialDocument(this.negotiationProcessList[i].activityVariables,this.negotiationProcessList[i].sellerFederationId));
+            documentPromises.push(this.documentService.getResponseDocument(this.negotiationProcessList[i].activityVariables,this.negotiationProcessList[i].sellerFederationId));
         }
 
         Promise.all(documentPromises).then(responseArray => {

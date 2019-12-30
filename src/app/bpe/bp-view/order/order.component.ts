@@ -243,7 +243,7 @@ export class OrderComponent implements OnInit {
         this.submitCallStatus.submit();
         const order = copy(this.bpDataService.order);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(order),"ORDER",this.processMetadata.processInstanceId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(order),"ORDER",this.processMetadata.processInstanceId,this.processMetadata.sellerFederationId)
             .then(() => {
                 this.documentService.updateCachedDocument(order.id,order);
                 this.submitCallStatus.callback("Order updated", true);

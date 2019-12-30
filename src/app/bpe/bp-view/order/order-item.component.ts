@@ -252,7 +252,7 @@ export class OrderItemComponent implements OnInit {
 
         if (docClause) {
             this.fetchDataMonitoringStatus.submit();
-            return this.documentService.getDocumentJsonContent(docClause.clauseDocumentRef.id).then(result => {
+            return this.documentService.getDocumentJsonContent(docClause.clauseDocumentRef.id,this.sellerParty.federationInstanceID).then(result => {
                 this.fetchDataMonitoringStatus.callback("Successfully fetched data monitoring service", true);
                 this.lastQuotation = result as Quotation;
                 return this.lastQuotation.quotationLine[this.lineIndex].lineItem.dataMonitoringRequested;

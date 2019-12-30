@@ -57,7 +57,7 @@ export class PpapDocumentUploadComponent {
             this.processid = params['processInstanceId'];
 
             this.bpeService.getProcessDetailsHistory(this.processid).then(task => {
-                this.documentService.getInitialDocument(task).then(initialDocument => {
+                this.documentService.getInitialDocument(task,this.processMetadata.sellerFederationId).then(initialDocument => {
                     this.ppap = initialDocument as Ppap;
                     let i = 0;
                     this.documents = [];

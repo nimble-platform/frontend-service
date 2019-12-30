@@ -51,6 +51,7 @@ export class ThreadSummaryComponent implements OnInit {
     titleEvent: ThreadEventMetadata; // keeps information about the summary the collaboration
     lastEvent: ThreadEventMetadata; // the last event in the collaboration
     lastEventPartnerID = null;
+    lastEventPartnerFederationId = null;
 
     // History of events
     hasHistory: boolean = false;
@@ -118,13 +119,14 @@ export class ThreadSummaryComponent implements OnInit {
     ngOnInit(): void {
         this.route.params.subscribe(params => {
             this.routeProcessInstanceId = params["processInstanceId"];
-            if(this.routeProcessInstanceId == null) {
+            let sellerFederationId = params["delegateId"];
+            if(this.routeProcessInstanceId == null || sellerFederationId == null) {
                 return;
             }
 
             // get the CollaborationGroup associated to the process instance
             this.collaborationGroupRetrievalCallStatus.submit();
-            this.bpeService.getGroupDetailsForProcessInstance(this.routeProcessInstanceId).then(collaborationGroup => {
+            this.bpeService.getGroupDetailsForProcessInstance(this.routeProcessInstanceId,sellerFederationId).then(collaborationGroup => {
                 // find the process instance group containing the process instance
                 for(let pig of collaborationGroup.associatedProcessInstanceGroups) {
                     for(let pid of pig.processInstanceIDs) {
@@ -187,7 +189,8 @@ export class ThreadSummaryComponent implements OnInit {
                 catalogueLineIds,
                 this.titleEvent.processInstanceId,
                 ActivityVariableParser.getPrecedingDocumentId(this.titleEvent.activityVariables),
-                termsSources));
+                termsSources,
+                this.titleEvent.sellerFederationId));
     }
 
     private fetchEvents(): void {
@@ -303,19 +306,18 @@ export class ThreadSummaryComponent implements OnInit {
         // check whether Fulfilment is included or not in seller's workflow
         const isFulfilmentIncludedInWorkflow = !sellerWorkflow || sellerWorkflow.length == 0 || sellerWorkflow.indexOf('Fulfilment') != -1;
 
-        let lastEventPartnerFederationId:string;
         let sellerFederationId:string;
         if (userRole === "buyer") {
             this.lastEventPartnerID = UBLModelUtils.getPartyId(initialDoc.items[0].manufacturerParty);
-            lastEventPartnerFederationId = initialDoc.items[0].manufacturerParty.federationInstanceID;
+            this.lastEventPartnerFederationId = initialDoc.items[0].manufacturerParty.federationInstanceID;
         }
         else {
             this.lastEventPartnerID = initialDoc.buyerPartyId;
-            lastEventPartnerFederationId = initialDoc.buyerPartyFederationId;
+            this.lastEventPartnerFederationId = initialDoc.buyerPartyFederationId;
         }
         sellerFederationId = initialDoc.sellerPartyFederationId;
 
-        const isRated = await this.bpeService.ratingExists(processInstanceId, this.lastEventPartnerID,lastEventPartnerFederationId,sellerFederationId);
+        const isRated = await this.bpeService.ratingExists(processInstanceId, this.lastEventPartnerID,this.lastEventPartnerFederationId,sellerFederationId);
 
         const event: ThreadEventMetadata = new ThreadEventMetadata(
             processType,
@@ -331,7 +333,8 @@ export class ThreadSummaryComponent implements OnInit {
             userRole === "buyer",
             isRated === "true",
             initialDoc.areProductsDeleted,
-            this.processInstanceGroup.status == "COMPLETED"
+            this.processInstanceGroup.status == "COMPLETED",
+            sellerFederationId
         );
 
         this.fillStatus(event, processInstance["state"], processType, responseDocumentStatus, userRole === "buyer",isFulfilmentIncludedInWorkflow);
@@ -700,7 +703,7 @@ export class ThreadSummaryComponent implements OnInit {
         reviews.push(comm);
         this.saveCallStatusRating.submit();
         this.bpeService
-            .postRatings(this.lastEventPartnerID, this.lastEvent.processInstanceId, ratings, reviews)
+            .postRatings(this.lastEventPartnerID, this.lastEventPartnerFederationId, this.lastEvent.processInstanceId, ratings, reviews,this.lastEvent.sellerFederationId)
             .then(() => {
                 this.saveCallStatusRating.callback("Rating saved", true);
                 close();
@@ -719,7 +722,7 @@ export class ThreadSummaryComponent implements OnInit {
         reviews.push(comm);
         this.saveCallStatusRating.submit();
         this.bpeService
-            .postRatings(this.lastEventPartnerID, this.lastEvent.processInstanceId, ratings, reviews)
+            .postRatings(this.lastEventPartnerID, this.lastEventPartnerFederationId, this.lastEvent.processInstanceId, ratings, reviews,this.lastEvent.sellerFederationId)
             .then(() => {
                 this.saveCallStatusRating.callback("Rating saved", true);
                 close();

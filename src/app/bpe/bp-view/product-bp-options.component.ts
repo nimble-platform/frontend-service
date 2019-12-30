@@ -152,10 +152,11 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         // BpDataService's proceedNextBpStep method.
         this.route.params.subscribe(routeParams => {
             let processInstanceId = routeParams['processInstanceId'];
+            let sellerFederationId = routeParams['delegateId'];
             // Having bpDataService.bpActivityEvent null indicates that the page is (re)loaded directly.
             if (this.bpDataService.bpActivityEvent == null) {
                 if (processInstanceId !== 'new') {
-                    this.router.navigate([`bpe/bpe-sum/${processInstanceId}`], {skipLocationChange: true});
+                    this.router.navigate([`bpe/bpe-sum/${processInstanceId}/${sellerFederationId}`], {skipLocationChange: true});
                 } else {
                     this.router.navigate(['dashboard']);
                 }
@@ -193,7 +194,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 const userId = this.cookieService.get("user_id");
                 Promise.all([
                     this.getCatalogueLines(catalogueIds, ids, bpActivityEvent.processMetadata),
-                    this.getOrderForTransportService(bpActivityEvent.activityVariablesOfAssociatedOrder),
+                    this.getOrderForTransportService(bpActivityEvent.processMetadataOfAssociatedOrder),
                     this.userService.getSettingsForUser(userId)
 
                 ]).then(([lines, order, currentUserSettings]) => {
@@ -205,7 +206,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                     return Promise.all([
                         this.getReferencedCatalogueLines(lines, order),
                         this.userService.getSettingsForProduct(lines[0]),
-                        this.bpDataService.bpActivityEvent.containerGroupId ? this.bpeService.checkCollaborationFinished(this.bpDataService.bpActivityEvent.containerGroupId) : false
+                        this.bpDataService.bpActivityEvent.containerGroupId ? this.bpeService.checkCollaborationFinished(this.bpDataService.bpActivityEvent.containerGroupId,this.bpDataService.bpActivityEvent.processMetadata.sellerFederationId) : false
                     ])
                 })
                 .then(([referencedLines, sellerSettings, isCollaborationFinished]) => {
@@ -335,18 +336,18 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             && this.processMetadata.processStatus === "Completed";
     }
 
-    private getOrderForTransportService(activityVariablesOfAssociatedOrder:any): Promise<Order | null> {
+    private getOrderForTransportService(processMetadataOfAssociatedOrder:ThreadEventMetadata): Promise<Order | null> {
         if(this.bpDataService.bpActivityEvent.userRole === "seller") {
             return Promise.resolve(null);
         }
-        // activityVariablesOfAssociatedOrder has some value only when the user is navigated to the search for searching a transport service provider
+        // processMetadataOfAssociatedOrder has some value only when the user is navigated to the search for searching a transport service provider
         // for an existing order
-        if(activityVariablesOfAssociatedOrder) {
-            return this.documentService.getInitialDocument(activityVariablesOfAssociatedOrder);
+        if(processMetadataOfAssociatedOrder) {
+            return this.documentService.getInitialDocument(processMetadataOfAssociatedOrder.activityVariables,processMetadataOfAssociatedOrder.sellerFederationId);
         }
         if(this.processMetadata) {
             const processId = this.processMetadata.processInstanceId;
-            return this.bpeService.getOriginalOrderForProcess(processId);
+            return this.bpeService.getOriginalOrderForProcess(processId,this.processMetadata.sellerFederationId);
         }
         return Promise.resolve(null);
     }

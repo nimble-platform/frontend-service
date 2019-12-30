@@ -79,13 +79,13 @@ export class FrameContractTabComponent implements OnInit {
     }
 
     navigateToQuotationDetails(frameContract: DigitalAgreement): void {
-        this.router.navigate(['/bpe/frame-contract/' + frameContract.hjid]);
+        this.router.navigate(['/bpe/frame-contract/' + frameContract.hjid + "/" + frameContract.item.manufacturerParty.federationInstanceID]);
     }
 
     deleteFrameContract(frameContract: DigitalAgreement): void {
         if (confirm("Are you sure that you want to delete this frame contract?")){
             this.frameContractsRetrievalCallStatus.submit();
-            this.bpeService.deleteFrameContract(frameContract.hjid).then(response => {
+            this.bpeService.deleteFrameContract(frameContract.hjid,frameContract.item.manufacturerParty.federationInstanceID).then(response => {
                 // remove the deleted frame contract from the list
                 let index = this.frameContracts.findIndex(fc => fc.hjid == frameContract.hjid);
                 this.frameContracts.splice(index,1);

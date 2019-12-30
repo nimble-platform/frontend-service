@@ -111,7 +111,7 @@ export class DispatchAdviceComponent implements OnInit {
                     const processType = ActivityVariableParser.getProcessType(processDetails[1]);
 
                     if(processType == "Transport_Execution_Plan"){
-                        const tep: any = await this.documentService.getInitialDocument(processDetails[1]);
+                        const tep: any = await this.documentService.getInitialDocument(processDetails[1],processInstanceGroup.sellerFederationId);
 
                         if(tep.consignment[0].consolidatedShipment[0].handlingInstructions.length > 0){
                             handlingInst = tep.consignment[0].consolidatedShipment[0].handlingInstructions[0];
@@ -176,7 +176,7 @@ export class DispatchAdviceComponent implements OnInit {
 
         let dispatchAdvice: DespatchAdvice = this.setShipmentOfAllProducts(copy(this.bpDataService.despatchAdvice));
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(dispatchAdvice),"DESPATCHADVICE",this.processMetadata.processInstanceId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(dispatchAdvice),"DESPATCHADVICE",this.processMetadata.processInstanceId,this.processMetadata.sellerFederationId)
             .then(() => {
                 this.documentService.updateCachedDocument(dispatchAdvice.id,dispatchAdvice);
                 this.callStatus.callback("Dispatch Advice updated", true);

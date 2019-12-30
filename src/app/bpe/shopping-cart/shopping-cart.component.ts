@@ -285,7 +285,7 @@ export class ShoppingCartComponent implements OnInit {
             let quotationPromises: Promise<any>[] = [];
             for (let frameContracts of frameContractsForProducts) {
                 if (frameContracts != null) {
-                    quotationPromises.push(this.documentService.getCachedDocument(frameContracts[0].quotationReference.id));
+                    quotationPromises.push(this.documentService.getCachedDocument(frameContracts[0].quotationReference.id,frameContracts[0].item.manufacturerParty.federationInstanceID));
                 }
                 else{
                     quotationPromises.push(Promise.resolve(null));

@@ -15,7 +15,7 @@ import {UserService} from '../user-mgmt/user.service';
 import {Item} from '../catalogue/model/publish/item';
 import {BPDataService} from '../bpe/bp-view/bp-data-service';
 import {ProcessType} from '../bpe/model/process-type';
-import {NEGOTIATION_RESPONSES} from '../catalogue/model/constants';
+import {FEDERATIONID, NEGOTIATION_RESPONSES} from '../catalogue/model/constants';
 import {ThreadEventStatus} from '../catalogue/model/publish/thread-event-status';
 import {UnshippedOrdersTransitionService} from '../bpe/unshipped-order-transition-service';
 
@@ -89,7 +89,7 @@ export class UnshippedOrdersTabComponent implements OnInit {
         let promises: Promise<any>[] = [];
         for (let i = 0; i < this.allOrderIds.length; i++) {
             this.showSalesOrders.push(false);
-            let orderRetrievalPromise: Promise<any> = this.documentService.getCachedDocument(this.allOrderIds[i]);
+            let orderRetrievalPromise: Promise<any> = this.documentService.getCachedDocument(this.allOrderIds[i],FEDERATIONID());
             promises.push(orderRetrievalPromise);
         }
 
@@ -238,7 +238,7 @@ export class UnshippedOrdersTabComponent implements OnInit {
     onOrderDetailsClicked(orderId:string): void {
         this.orderIdsCallStatus.submit();
         this.bpeService.getProcessInstanceIdForDocument(orderId).then(processInstanceId => {
-            this.bpDataService.viewProcessDetails(processInstanceId);
+            this.bpDataService.viewProcessDetails(processInstanceId,FEDERATIONID());
             this.orderIdsCallStatus.callback(null,true);
         }).catch(error => {
             this.orderIdsCallStatus.error("Failed to retrieve process instance id for the order",true)
@@ -246,8 +246,8 @@ export class UnshippedOrdersTabComponent implements OnInit {
 
     }
 
-    onProcessDetailsClicked(processInstanceId:string): void {
-        this.bpDataService.viewProcessDetails(processInstanceId);
+    onProcessDetailsClicked(processInstanceId:string,federationId:string): void {
+        this.bpDataService.viewProcessDetails(processInstanceId,federationId);
     }
 
     public setStatusText(pa:ProductAggregate): void{

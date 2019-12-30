@@ -56,13 +56,13 @@ export class FrameContractDetailsComponent implements OnInit {
             }
 
             if (quotationId == null) {
-                if(params.id) {
+                if(params.id && params.delegateId) {
                     this.frameContractRetrievalCallStatus.submit();
                     let frameContractPromise: Promise<DigitalAgreement>;
                     if (frameContract != null) {
                         frameContractPromise = Promise.resolve(frameContract);
                     } else {
-                        frameContractPromise = this.bpeService.getFrameContractByHjid(params.id);
+                        frameContractPromise = this.bpeService.getFrameContractByHjid(params.id,params.delegateId);
                     }
 
                     frameContractPromise.then(contractRes => {
@@ -77,7 +77,7 @@ export class FrameContractDetailsComponent implements OnInit {
                                 this.frameContractRetrievalCallStatus.error("The product with id "+lineId+" is deleted");
                             }
                         });
-                        let quotationPromise: Promise<any> = this.documentService.getDocumentJsonContent(quotationId);
+                        let quotationPromise: Promise<any> = this.documentService.getDocumentJsonContent(quotationId,params.delegateId);
                         let partyPromise: Promise<any> = this.userService.getParty(partyId);
 
                         Promise.all([

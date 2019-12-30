@@ -54,8 +54,8 @@ export class PpapDocumentDownloadComponent{
 
                 this.bpeService.getProcessDetailsHistory(processid).then(task => {
                     return Promise.all([
-                        this.documentService.getInitialDocument(task),
-                        this.documentService.getResponseDocument(task)
+                        this.documentService.getInitialDocument(task,this.processMetadata.sellerFederationId),
+                        this.documentService.getResponseDocument(task,this.processMetadata.sellerFederationId)
                     ]).then(([initialDocument, responseDocument]) => {
                         this.ppap = initialDocument as Ppap;
                         this.ppapResponse = responseDocument as PpapResponse;

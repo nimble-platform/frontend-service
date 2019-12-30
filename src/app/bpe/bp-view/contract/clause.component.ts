@@ -16,6 +16,7 @@ import {copy} from '../../../common/utils';
 })
 export class ClauseComponent implements OnInit {
     @Input() clause: Clause = null;
+    @Input() sellerFederationId:string = null;
     // whether the items are deleted or not
     @Input() areCatalogueLinesDeleted:boolean[];
     @Input() selectedLineIndex:number;
@@ -38,7 +39,7 @@ export class ClauseComponent implements OnInit {
         if (this.clauseDocument == null) {
             this.clauseDocumentRetrievalStatus.submit();
             let documentClause: DocumentClause = this.clause as DocumentClause;
-            this.documentService.getDocumentJsonContent(documentClause.clauseDocumentRef.id).then(result => {
+            this.documentService.getDocumentJsonContent(documentClause.clauseDocumentRef.id,this.sellerFederationId).then(result => {
                 this.clauseDocument = result;
                 if(documentClause.clauseDocumentRef.documentType === "ITEMINFORMATIONRESPONSE") {
                     // fetch the itm information request as well
