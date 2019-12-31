@@ -195,8 +195,11 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getFulfilmentStatistics(orderId: string): Promise<any> {
-		const url = `${this.url}/statistics/fulfilment?orderId=${orderId}`;
+	getFulfilmentStatistics(orderId: string,delegateId:string): Promise<any> {
+		let url = `${this.url}/statistics/fulfilment?orderId=${orderId}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/statistics/fulfilment?orderId=${orderId}&delegateId=${delegateId}`;
+		}
 		return this.http
 			.get(url, {headers: this.getAuthorizedHeaders()})
 			.toPromise()
@@ -602,6 +605,9 @@ export class BPEService {
 	}
 	exportTransactions(partyId: string, userId: string, direction: string, archived: boolean): Promise<any> {
 		let url = `${this.url}/processInstance/export?partyId=${partyId}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/processInstance/export?partyId=${partyId}`;
+		}
 		if(userId != null) {
 			url += `&userId=${userId}`;
 		}
@@ -619,6 +625,7 @@ export class BPEService {
 			xhr.setRequestHeader('Accept', 'application/zip');
 			xhr.setRequestHeader('Accept', 'text/plain');
 			xhr.setRequestHeader('Authorization', token);
+			xhr.setRequestHeader("federationId",FEDERATIONID());
 			xhr.responseType = 'blob';
 
 			xhr.onreadystatechange = function () {
