@@ -85,7 +85,9 @@ export class CatalogueService {
 
     getCatalogueLinesByHjids(hjids: number[], limit = 0, offset = 0, sortOption = null): Promise<any> {
         let url = this.baseUrl + `/cataloguelines?limit=${limit}&offset=${offset}&ids=${hjids}`;
-
+        if(this.delegated){
+            url = this.delegate_url + `/cataloguelines?limit=${limit}&offset=${offset}&ids=${hjids}`;
+        }
         if (sortOption) {
             url += `&sortOption=${sortOption}`;
         }
