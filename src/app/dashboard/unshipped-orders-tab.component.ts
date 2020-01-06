@@ -103,11 +103,13 @@ export class UnshippedOrdersTabComponent implements OnInit {
                 this.allOrdersCallStatus.error('Failed to retrieve some of the orders.')
             } else {
                 let partyIds = new Set();
+                let federationIds = new Set();
                 for (let order of orders) {
                     this.orders.set(order.id, order);
                     partyIds.add(order.buyerCustomerParty.party.partyIdentification[0].id)
+                    federationIds.add(order.buyerCustomerParty.party.federationInstanceID);
                 }
-                this.userService.getParties(Array.from(partyIds)).then(parties => {
+                this.userService.getParties(Array.from(partyIds),Array.from(federationIds)).then(parties => {
 
                     for(let party of parties){
                        this.partyNames.set(party.partyIdentification[0].id,selectPartyName(party.partyName));
@@ -144,10 +146,12 @@ export class UnshippedOrdersTabComponent implements OnInit {
         this.associatedProductsCallStatus.submit();
         this.catalogueService.getCatalogueLinesByHjids(associatedProductIds).then(products => {
             let partyIds = new Set();
+            let federationIds = new Set();
             for(let product of products){
                 partyIds.add(product.goodsItem.item.manufacturerParty.partyIdentification[0].id);
+                federationIds.add(product.goodsItem.item.manufacturerParty.federationInstanceID);
             }
-            this.userService.getParties(Array.from(partyIds)).then(parties => {
+            this.userService.getParties(Array.from(partyIds),Array.from(federationIds)).then(parties => {
 
                 for(let party of parties){
                     this.partyNames.set(party.partyIdentification[0].id,selectPartyName(party.partyName));

@@ -564,6 +564,14 @@ export class ShoppingCartComponent implements OnInit {
         this.shoppingCartSummaryModal.open();
     }
 
+    getFederationIds(){
+        let fedIds = [];
+        for (let sellersSettingsKey of Array.from(this.sellersSettings.keys())) {
+            fedIds.push(this.sellersSettings.get(sellersSettingsKey).negotiationSettings.company.federationInstanceID)
+        }
+        return fedIds;
+    }
+
     // starts Negotiation/Order for the products included in the shopping basket
     onMultipleLineNegotiation():void{
         if(confirm('Are you sure that you want to send requests for all products now ?')){
@@ -571,13 +579,14 @@ export class ShoppingCartComponent implements OnInit {
             let companyId = this.cookieService.get('company_id');
             // this array contains the identifiers of buyer and seller companies
             let partyIds = Array.from(this.sellersSettings.keys()).concat(companyId);
+            let federationIds = this.getFederationIds();
 
             this.startBpCallStatus.submit();
             // reset BP data
             this.bpDataService.resetBpData();
 
             // get parties
-            this.userService.getParties(partyIds).then(parties => {
+            this.userService.getParties(partyIds,federationIds).then(parties => {
                 // create party id-party map
                 let partyMap:Map<string,Party> = this.createPartyMap(parties);
                 let promises: Promise<any>[] = [];

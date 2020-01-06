@@ -149,8 +149,10 @@ export class UserService {
             .catch(this.handleError);
     }
 
-    getParties(partyIds:string[]):Promise<Party[]> {
-        let url = `${this.url}/parties/`;
+    getParties(partyIds:string[],delegateIds:string[]):Promise<Party[]> {
+        let baseUrl = this.delegated ? this.delegate_url: this.url;
+        let url = `${baseUrl}/parties/`;
+
         let size = partyIds.length;
         for(let i = 0; i < size ;i++){
             url += partyIds[i];
@@ -158,9 +160,19 @@ export class UserService {
                 url += ",";
             }
         }
+        if(this.delegated){
+            url += "?delegateIds="
+            let size = delegateIds.length;
+            for(let i = 0; i < size ;i++){
+                url += delegateIds[i];
+                if(i != size-1){
+                    url += "&delegateIds=";
+                }
+            }
+        }
         const headers_token = new Headers({'Content-Type': 'application/json'});
         return this.http
-            .get(url, {headers: headers_token, withCredentials: true})
+            .get(url, {headers: headers_token})
             .toPromise()
             .then(res => {
                 let parties:Party[] = res.json();

@@ -41,8 +41,9 @@ export class FrameContractTabComponent implements OnInit {
         this.bpeService.getAllFrameContractsForParty(partyId).then(frameContracts => {
             this.frameContracts = frameContracts;
             let correspondingUserIds = this.getCorrespondingPartyIds(frameContracts);
+            let correspondingFederationIds = this.getCorrespondingPartyFederationIds(frameContracts);
             if(correspondingUserIds.length > 0){
-                this.userService.getParties(correspondingUserIds).then(parties => {
+                this.userService.getParties(correspondingUserIds,correspondingFederationIds).then(parties => {
                     for(let party of parties){
                         this.partyNames.set(party.partyIdentification[0].id,selectPartyName(party.partyName));
                     }
@@ -131,6 +132,21 @@ export class FrameContractTabComponent implements OnInit {
         }
 
         return Array.from(correspondingPartyIds);
+    }
+
+    getCorrespondingPartyFederationIds(frameContracts: DigitalAgreement[] ): string[] {
+        let correspondingPartyFederationIds = new Set();
+        let userPartyId = this.cookieService.get("company_id");
+
+        for(let frameContract of frameContracts){
+            for(let party of frameContract.participantParty) {
+                if(party.partyIdentification[0].id != userPartyId) {
+                    correspondingPartyFederationIds.add(party.federationInstanceID);
+                }
+            }
+        }
+
+        return Array.from(correspondingPartyFederationIds);
     }
 
     getCorrespondingPartyName(frameContract: DigitalAgreement ): string {

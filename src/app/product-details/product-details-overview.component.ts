@@ -182,7 +182,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
         }
 
         this.shoppingCartCallStatus.submit();
-        this.shoppingCartDataService.addItemToCart(this.wrapper.line.hjid,this.wrapper.quantity.value).then(() => {
+        this.shoppingCartDataService.addItemToCart(this.wrapper.line.hjid,this.wrapper.quantity.value,this.wrapper.item.manufacturerParty.federationInstanceID).then(() => {
             this.shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
         }).catch((err) => {
             this.shoppingCartCallStatus.error('Failed to add product to cart', err);

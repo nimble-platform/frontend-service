@@ -1506,7 +1506,7 @@ export class SimpleSearchFormComponent implements OnInit {
         let shoppingCartCallStatus = this.getShoppingCartStatus(index);
         shoppingCartCallStatus.submit();
 
-        this.shoppingCartDataService.addItemToCart(result.uri).then(catalogue => {
+        this.shoppingCartDataService.addItemToCart(result.uri,1,result.nimbleInstanceName).then(catalogue => {
             // update shoppingCartCatalogue
             this.shoppingCartCatalogue = catalogue;
             shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
