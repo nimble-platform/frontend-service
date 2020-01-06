@@ -181,6 +181,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
             const ids = bpActivityEvent.catalogueLineIds;
             const catalogueIds = bpActivityEvent.catalogueIds;
+            const sellerFederationId = bpActivityEvent.sellerFederationId;
             this.bpDataService.precedingProcessId = bpActivityEvent.previousProcessInstanceId;
             this.bpDataService.precedingDocumentId = bpActivityEvent.previousDocumentId;
             this.bpDataService.precedingOrderId = bpActivityEvent.precedingOrderId;
@@ -193,7 +194,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 this.callStatus.submit();
                 const userId = this.cookieService.get("user_id");
                 Promise.all([
-                    this.getCatalogueLines(catalogueIds, ids, bpActivityEvent.processMetadata),
+                    this.getCatalogueLines(catalogueIds, ids, bpActivityEvent.processMetadata,sellerFederationId),
                     this.getOrderForTransportService(bpActivityEvent.processMetadataOfAssociatedOrder),
                     this.userService.getSettingsForUser(userId)
 
@@ -430,7 +431,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         }
 
         // create dummy catalogue lines for the deleted products using the corresponding item of the order
-        return this.catalogueService.getLinesForDifferentCatalogues(catalogueUuids,catalogueIds).then(catalogueLines => {
+        return this.catalogueService.getLinesForDifferentCatalogues(catalogueUuids,catalogueIds,order.sellerSupplierParty.party.federationInstanceID).then(catalogueLines => {
             // update catalogueUuids and catalogueIds lists so that they keep only the identifiers for the deleted products
             for(let catalogueLine of catalogueLines){
                 const catalogueId = catalogueLine.goodsItem.item.catalogueDocumentReference.id;
@@ -481,7 +482,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
      * Retrieve catalogue line details via catalogue-service if the product exists.
      * Otherwise, create a simple catalogue line using the item inside the process metadata
      * */
-    private async getCatalogueLines(catalogueUuids:string[], catalogueLineIds:string[], processMetadata:ThreadEventMetadata){
+    private async getCatalogueLines(catalogueUuids:string[], catalogueLineIds:string[], processMetadata:ThreadEventMetadata,sellerFederationId:string){
 
         let catalogueLines:CatalogueLine[] = [];
 
@@ -507,7 +508,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             }
         }
 
-        return this.catalogueService.getLinesForDifferentCatalogues(existingCatalogueUuids,existingCatalogueLineIds).then(existingCatalogueLines => {
+        return this.catalogueService.getLinesForDifferentCatalogues(existingCatalogueUuids,existingCatalogueLineIds,sellerFederationId).then(existingCatalogueLines => {
             return catalogueLines.concat(existingCatalogueLines);
         })
 

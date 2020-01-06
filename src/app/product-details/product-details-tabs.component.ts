@@ -108,7 +108,7 @@ export class ProductDetailsTabsComponent implements OnInit {
             this.selectedTab = this.getFirstTab();
         }
 
-        this.bpeService.getRatingsSummary(this.settings.companyID).then(ratings => {
+        this.bpeService.getRatingsSummary(this.settings.companyID,this.settings.negotiationSettings.company.federationInstanceID).then(ratings => {
             if (ratings.totalNumberOfRatings <= 0) {
                 this.haveRating = false;
                 this.selectedTab = this.getFirstTab();

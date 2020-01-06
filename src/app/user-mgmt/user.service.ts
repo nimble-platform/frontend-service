@@ -14,7 +14,7 @@ import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 import { UserRole } from './model/user-role';
 import { CompanyNegotiationSettings } from './model/company-negotiation-settings';
 import { CatalogueLine } from '../catalogue/model/publish/catalogue-line';
-import { INCOTERMS, PAYMENT_MEANS } from '../catalogue/model/constants';
+import {FEDERATION, FEDERATIONID, INCOTERMS, PAYMENT_MEANS} from '../catalogue/model/constants';
 import { Person } from '../catalogue/model/publish/person';
 import { ResetPasswordCredentials } from './model/reset-password-credentials';
 import {UnitService} from "../common/unit-service";
@@ -26,6 +26,10 @@ export class UserService {
 
     private headers = new Headers({'Content-Type': 'application/json'});
     private url = myGlobals.user_mgmt_endpoint;
+
+    private delegate_url = myGlobals.delegate_endpoint;
+
+    private delegated = (FEDERATION() == "ON");
 
     userParty: Party;
 
@@ -127,12 +131,15 @@ export class UserService {
             .catch(this.handleError);
     }
 
-    getParty(partyId:string):Promise<Party> {
-        const url = `${this.url}/party/${partyId}`;
+    getParty(partyId:string,delegateId:string=FEDERATIONID()):Promise<Party> {
+        let url = `${this.url}/party/${partyId}`;
+        if(this.delegated){
+            url = `${this.delegate_url}/party/${partyId}?delegateId=${delegateId}`;
+        }
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
         return this.http
-            .get(url, {headers: headers_token, withCredentials: true})
+            .get(url, {headers: headers_token})
             .toPromise()
             .then(res => {
                 let party:Party = res.json();
@@ -195,7 +202,7 @@ export class UserService {
     }
 
     getSettingsForProduct(line: CatalogueLine): Promise<CompanySettings> {
-        return this.getSettingsForParty(UBLModelUtils.getPartyId(line.goodsItem.item.manufacturerParty))
+        return this.getSettingsForParty(UBLModelUtils.getPartyId(line.goodsItem.item.manufacturerParty),line.goodsItem.item.manufacturerParty.federationInstanceID)
         .then(settings => {
             return settings;
         })
@@ -205,10 +212,10 @@ export class UserService {
         return this.getUserParty(userId).then(party => this.getSettingsForParty(UBLModelUtils.getPartyId(party)));
     }
 
-    getSettingsForParty(partyId: string): Promise<CompanySettings> {
+    getSettingsForParty(partyId: string,federationId:string=FEDERATIONID()): Promise<CompanySettings> {
         return Promise.all([
-            this.getSettingsPromise(partyId),
-            this.getCompanyNegotiationSettingsForParty(partyId)
+            this.getSettingsPromise(partyId,federationId),
+            this.getCompanyNegotiationSettingsForParty(partyId,federationId)
         ]).then(([settings, negotiationSettings]) => {
             settings.negotiationSettings = negotiationSettings;
             return settings;
@@ -226,12 +233,15 @@ export class UserService {
           .catch(this.handleError)
     }
 
-    private getSettingsPromise(partyId: string): Promise<CompanySettings> {
-        const url = `${this.url}/company-settings/${partyId}`;
+    private getSettingsPromise(partyId: string,delegateId:string): Promise<CompanySettings> {
+        let url = `${this.url}/company-settings/${partyId}`;
+        if(this.delegated){
+            url = `${this.delegate_url}/company-settings/${partyId}?delegateId=${delegateId}`;
+        }
         const token = 'Bearer '+this.cookieService.get("bearer_token");
         const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
         return this.http
-            .get(url, {headers: headers_token, withCredentials: true})
+            .get(url, {headers: headers_token})
             .toPromise()
             .then(response => response.json() as CompanySettings)
             .catch(this.handleError)
@@ -447,20 +457,23 @@ export class UserService {
           .catch(this.handleError)
     }
 
-    getCompanyNegotiationSettingsForUser(userId: string): Promise<CompanyNegotiationSettings> {
-        return this.getUserParty(userId).then(party => this.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party)));
-    }
+    // getCompanyNegotiationSettingsForUser(userId: string): Promise<CompanyNegotiationSettings> {
+    //     return this.getUserParty(userId).then(party => this.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party)));
+    // }
+    //
+    // getCompanyNegotiationSettingsForProduct(line: CatalogueLine): Promise<CompanyNegotiationSettings> {
+    //     return this.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(line.goodsItem.item.manufacturerParty));
+    // }
 
-    getCompanyNegotiationSettingsForProduct(line: CatalogueLine): Promise<CompanyNegotiationSettings> {
-        return this.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(line.goodsItem.item.manufacturerParty));
-    }
-
-    getCompanyNegotiationSettingsForParty(partyId: string): Promise<CompanyNegotiationSettings> {
-        const url = `${this.url}/company-settings/${partyId}/negotiation/`;
+    getCompanyNegotiationSettingsForParty(partyId: string,delegateId:string): Promise<CompanyNegotiationSettings> {
+        let url = `${this.url}/company-settings/${partyId}/negotiation/`;
+        if(this.delegated){
+            url = `${this.delegate_url}/company-settings/${partyId}/negotiation/?delegateId=${delegateId}`;
+        }
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
         return this.http
-            .get(url, { headers: headers_token, withCredentials: true })
+            .get(url, { headers: headers_token })
             .toPromise()
             .then(res => {
                 return this.sanitizeNegotiationSettings(res.json());

@@ -175,7 +175,7 @@ export class PpapDocumentSelectComponent implements OnInit {
         this.userService.getParty(buyerId).then(buyerParty => {
             this.ppap.buyerCustomerParty = new CustomerParty(buyerParty);
 
-            this.userService.getParty(sellerId).then(sellerParty => {
+            this.userService.getParty(sellerId,this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.federationInstanceID).then(sellerParty => {
                 this.ppap.sellerSupplierParty = new SupplierParty(sellerParty);
                 this.bpeService
                     .startProcessWithDocument(this.ppap,sellerParty.federationInstanceID)

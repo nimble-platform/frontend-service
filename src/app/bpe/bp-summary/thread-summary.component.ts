@@ -299,7 +299,7 @@ export class ThreadSummaryComponent implements OnInit {
 
         // get seller's business process workflow
         // we need this information to set status and labels for Order properly
-        const sellerNegotiationSettings = await this.userService.getCompanyNegotiationSettingsForParty(initialDoc.items[0].manufacturerParty.partyIdentification[0].id);
+        const sellerNegotiationSettings = await this.userService.getCompanyNegotiationSettingsForParty(initialDoc.items[0].manufacturerParty.partyIdentification[0].id,initialDoc.items[0].manufacturerParty.federationInstanceID);
         this.sellerNegoSettings = sellerNegotiationSettings;
         const sellerWorkflow = sellerNegotiationSettings.company.processID;
 
@@ -355,7 +355,8 @@ export class ThreadSummaryComponent implements OnInit {
     navigateToCompanyDetails() {
         this.router.navigate(['/user-mgmt/company-details'], {
             queryParams: {
-                id: this.lastEventPartnerID
+                id: this.lastEventPartnerID,
+                delegateId: this.lastEventPartnerFederationId
             }
         });
     }

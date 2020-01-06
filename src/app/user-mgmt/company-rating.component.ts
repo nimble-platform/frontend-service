@@ -6,6 +6,7 @@ import * as myGlobals from "../globals";
 import { CallStatus } from "../common/call-status";
 import {TranslateService} from '@ngx-translate/core';
 import {UserService} from '../user-mgmt/user.service';
+import {FEDERATIONID} from '../catalogue/model/constants';
 
 
 @Component({
@@ -16,6 +17,7 @@ import {UserService} from '../user-mgmt/user.service';
 export class CompanyRatingComponent implements OnInit {
 
 	@Input() id: any = null;
+	@Input() federationId:string = null;
   @Input() hideTitle: boolean = false;
   @Output() ratingStatus = new EventEmitter<boolean>();
 
@@ -46,8 +48,12 @@ export class CompanyRatingComponent implements OnInit {
   		if(!this.id) {
   			this.route.queryParams.subscribe(params => {
   				const idP = params['id'];
+                let federationId = params['delegateId'];
+                if(!federationId){
+                    federationId = FEDERATIONID();
+                }
   				if (idP) {
-  					  this.getRatings(idP);
+  					  this.getRatings(idP,federationId);
   				}
           else {
             const idC = this.cookieService.get("company_id");
@@ -58,13 +64,13 @@ export class CompanyRatingComponent implements OnInit {
   			});
   		}
       else {
-         this.getRatings(this.id);
+         this.getRatings(this.id,this.federationId);
       }
     }
 
-    async getRatings(id) {
+    async getRatings(id,federationId=FEDERATIONID()) {
 
-      const sellerNegotiationSettings = await this.userService.getCompanyNegotiationSettingsForParty(id);
+      const sellerNegotiationSettings = await this.userService.getCompanyNegotiationSettingsForParty(id,federationId);
       this.sellerNegoSettings = sellerNegotiationSettings;
 
 
@@ -95,7 +101,7 @@ export class CompanyRatingComponent implements OnInit {
 
       this.initCallStatus.submit();
 
-      this.bpeService.getRatingsSummary(id).then(ratings => {
+      this.bpeService.getRatingsSummary(id,federationId).then(ratings => {
         if (myGlobals.debug) {
           console.log("Fetched ratings: " + JSON.stringify(ratings));
         }

@@ -94,7 +94,7 @@ export class ItemInformationRequestComponent implements OnInit {
 
         Promise.all([
             this.userService.getParty(buyerId),
-            this.userService.getParty(sellerId)
+            this.userService.getParty(sellerId,this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.federationInstanceID)
         ])
         .then(([buyerParty, sellerParty]) => {
             itemInformationRequest.buyerCustomerParty = new CustomerParty(buyerParty);

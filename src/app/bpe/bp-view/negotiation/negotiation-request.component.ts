@@ -164,7 +164,7 @@ export class NegotiationRequestComponent implements OnInit {
             let buyerParty: Party;
             Promise.all([
                 this.userService.getParty(this.buyerId),
-                this.userService.getParty(this.sellerId),
+                this.userService.getParty(this.sellerId,this.catalogueLines[0].goodsItem.item.manufacturerParty.federationInstanceID),
 
             ]).then(([buyerPartyResp, sellerPartyResp]) => {
                 sellerParty = sellerPartyResp;

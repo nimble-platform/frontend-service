@@ -65,9 +65,11 @@ export class ClauseComponent implements OnInit {
                             else {
                                 this.bpeService.getTermsAndConditions(
                                     UBLModelUtils.getPartyId(this.rfq.buyerCustomerParty.party),
+                                    this.rfq.buyerCustomerParty.party.federationInstanceID,
                                     UBLModelUtils.getPartyId(this.rfq.sellerSupplierParty.party),
                                     this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms,
-                                    this.bpDataService.getCompanySettings().negotiationSettings.paymentTerms[0]
+                                    this.bpDataService.getCompanySettings().negotiationSettings.paymentTerms[0],
+                                    this.rfq.sellerSupplierParty.party.federationInstanceID,
                                 ).then(defaultTermsAndConditions => {
                                     this.defaultTermsAndConditions = defaultTermsAndConditions;
                                     this.clauseDocumentRetrievalStatus.callback("Successfully retrieved request for quotation", true);

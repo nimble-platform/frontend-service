@@ -10,6 +10,7 @@ import { AppComponent } from "../app.component";
 import {selectValueOfTextObject, sanitizeLink} from '../common/utils';
 import {TranslateService} from '@ngx-translate/core';
 import {CredentialsService} from './credentials.service';
+import {FEDERATIONID} from '../catalogue/model/constants';
 
 @Component({
     selector: "company-details",
@@ -44,6 +45,10 @@ export class CompanyDetailsComponent implements OnInit {
   			this.route.queryParams.subscribe(params => {
           const viewMode = params['viewMode'];
           const id = params['id'];
+          let federationId = params['delegateId'];
+          if(!federationId){
+              federationId = FEDERATIONID()
+          }
           if (viewMode && viewMode == 'mgmt') {
             this.managementMode = true;
           }
@@ -71,8 +76,9 @@ export class CompanyDetailsComponent implements OnInit {
             }
 
             this.party.partyId = id;
+            this.party.federationInstanceID = federationId;
             this.initCallStatus.submit();
-  					this.userService.getSettingsForParty(id).then(details => {
+  					this.userService.getSettingsForParty(id,federationId).then(details => {
   						if (myGlobals.debug) {
   							console.log("Fetched details: " + JSON.stringify(details));
   						}

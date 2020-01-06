@@ -60,6 +60,7 @@ export class NegotiationRequestItemComponent implements OnInit {
 
     manufacturersTermsExistence: any = {'product_defaults': true}; // a (term source -> boolean) map indicating the existence of term sources
     sellerId:string = null;
+    sellerFederationId:string;
     buyerId:string = null;
     @Input() deliverytermsOfBuyer: DeliveryTerms[] = null;
 
@@ -123,6 +124,7 @@ export class NegotiationRequestItemComponent implements OnInit {
         }
 
         this.sellerId = UBLModelUtils.getPartyId(this.wrapper.catalogueLine.goodsItem.item.manufacturerParty);
+        this.sellerFederationId = this.wrapper.catalogueLine.goodsItem.item.manufacturerParty.federationInstanceID;
         this.buyerId = this.cookieService.get("company_id");
 
         let frameContractDuration = UBLModelUtils.getFrameContractDurationFromRfqLine(this.rfq.requestForQuotationLine[this.wrapper.lineIndex]);

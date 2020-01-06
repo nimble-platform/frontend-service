@@ -461,22 +461,26 @@
                     <div class="col-5">
                         <terms-and-conditions [hidden]="manufacturersTermsSource != 'product_defaults'"
                                               [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-product-defaults'"
+                                              [sellerFederationId]="sellerFederationId"
                                               [termsAndConditions]="defaultTermsAndConditions"
                                               [originalTermAndConditionClauses]="defaultTermsAndConditions">
                         </terms-and-conditions>
                         <terms-and-conditions *ngIf="wrapper.frameContractQuotation" [hidden]="manufacturersTermsSource != 'frame_contract'"
                                               [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-frame-contract'"
+                                              [sellerFederationId]="sellerFederationId"
                                               [termsAndConditions]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause"
                                               [originalTermAndConditionClauses]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause">
                         </terms-and-conditions>
                         <terms-and-conditions *ngIf="wrapper.lastOfferQuotation" [hidden]="manufacturersTermsSource != 'last_offer'"
                                               [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-last-offer'"
+                                              [sellerFederationId]="sellerFederationId"
                                               [termsAndConditions]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause"
                                               [originalTermAndConditionClauses]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause">
                         </terms-and-conditions>
                     </div>
                     <div class="col-5">
                         <terms-and-conditions [sellerPartyId]="sellerId"
+                                              [sellerFederationId]="sellerFederationId"
                                               [selectedIncoterm]="wrapper.rfqIncoterms"
                                               [selectedTradingTerm]="wrapper.rfqPaymentTerms.paymentTerm"
                                               (onIncotermChanged)="wrapper.rfqIncoterms = $event; onTermsChange(FIXED_NEGOTIATION_TERMS.INCOTERMS);"

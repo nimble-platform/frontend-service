@@ -1447,8 +1447,6 @@ export class SimpleSearchFormComponent implements OnInit {
     getProdLink(res: any): string {
         let link = "";
         if (res && res.catalogueId && res.manufactuerItemId) {
-            if (!res.isFromLocalInstance && res.sourceFrontendServiceUrl && res.sourceFrontendServiceUrl != "")
-                link += res.sourceFrontendServiceUrl;
             // when the seller is navigated to the search to find a transport service for the ordered products, searchContextService is set.
             // however, since we do not clear searchContextService, need to check whether its context is valid or not and pass this info as query param to product-details page
             // to check its validity, we use this.searchContext variable which is not null iff the seller is navigated to the search page to find a transport service provider
@@ -1461,9 +1459,7 @@ export class SimpleSearchFormComponent implements OnInit {
     getCompLink(res: any): string {
         let link = "";
         if (res && res.id) {
-            if (!res.isFromLocalInstance && res.sourceFrontendServiceUrl && res.sourceFrontendServiceUrl != "")
-                link += res.sourceFrontendServiceUrl;
-            link += "#/user-mgmt/company-details?id=" + res.id;
+            link += "#/user-mgmt/company-details?id=" + res.id + "&delegateId="+res.nimbleInstanceName;
         }
         return link;
     }

@@ -14,6 +14,7 @@ import {Text} from '../../catalogue/model/publish/text';
 import {TradingPreferences} from '../../catalogue/model/publish/trading-preferences';
 import {UserService} from '../user.service';
 import {TranslateService} from '@ngx-translate/core';
+import {FEDERATIONID} from '../../catalogue/model/constants';
 
 @Component({
     selector: "company-terms-and-conditions",
@@ -60,7 +61,7 @@ export class CompanyTermsAndConditions implements OnInit {
         Promise.all([
             this.unitService.getCachedUnitList(deliveryPeriodUnitListId),
             this.unitService.getCachedUnitList(warrantyPeriodUnitListId),
-            this.bpeService.getTermsAndConditions(null , this.settings.companyID, null,null),
+            this.bpeService.getTermsAndConditions(null ,FEDERATIONID(), this.settings.companyID, null,null,this.settings.negotiationSettings.company.federationInstanceID),
         ]).then(([ deliveryPeriodUnits, warrantyPeriodUnits,defaultTermsAndConditions]) => {
 
             // populate available incoterms

@@ -133,9 +133,9 @@ export class OrderComponent implements OnInit {
         // preceding process id check is for checking whether there is any preceding process before the order
         if(this.getNonTermAndConditionContract() == null && this.bpDataService.precedingProcessId != null) {
             Promise.all([
-                this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId),
+                this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId,this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID),
                 this.userService.getParty(buyerId),
-                this.userService.getParty(sellerId),
+                this.userService.getParty(sellerId,this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID),
                 this.bpeService.isPaymentDone(this.order.id,this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID)
             ])
                 .then(([contract, buyerParty, sellerParty,isPaymentDone]) => {
@@ -152,7 +152,7 @@ export class OrderComponent implements OnInit {
         } else {
             Promise.all([
                 this.userService.getParty(buyerId),
-                this.userService.getParty(sellerId),
+                this.userService.getParty(sellerId,this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID),
                 this.bpeService.isPaymentDone(this.order.id,this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID)
             ]).then(([buyerParty, sellerParty, isPaymentDone]) => {
                 this.buyerParty = buyerParty;

@@ -3,7 +3,7 @@
  */
 import { Injectable } from "@angular/core";
 import { Headers, Http } from "@angular/http";
-import {catalogue_endpoint, config} from '../globals';
+import {catalogue_endpoint,delegate_endpoint, config} from '../globals';
 import { Catalogue } from "./model/publish/catalogue";
 import { UserService } from "../user-mgmt/user.service";
 import { CatalogueLine } from "./model/publish/catalogue-line";
@@ -14,12 +14,16 @@ import {copy, getAuthorizedHeaders} from "../common/utils";
 import {BinaryObject} from './model/publish/binary-object';
 import {CataloguePaginationResponse} from './model/publish/catalogue-pagination-response';
 import {UBLModelUtils} from './model/ubl-model-utils';
-import {DEFAULT_LANGUAGE} from './model/constants';
+import {DEFAULT_LANGUAGE, FEDERATION} from './model/constants';
 
 @Injectable()
 export class CatalogueService {
     private headers = new Headers({ 'Content-Type': 'application/json', 'Accept': 'application/json' });
     private baseUrl = catalogue_endpoint;
+
+    private delegate_url = delegate_endpoint;
+
+    private delegated = (FEDERATION() == "ON");
 
     catalogueResponse: CataloguePaginationResponse;
     draftCatalogueLine: CatalogueLine;
@@ -118,7 +122,10 @@ export class CatalogueService {
     }
 
     getCatalogueLine(catalogueId:string, lineId:string):Promise<CatalogueLine> {
-        const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${lineId}`;
+        let url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${lineId}`;
+        if(this.delegated){
+            url = this.delegate_url + `/catalogue/${catalogueId}/catalogueline/${lineId}`;
+        }
         return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
@@ -144,10 +151,15 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
-    getLinesForDifferentCatalogues(catalogueIds:string[], lineIds:string[]):Promise<CatalogueLine[]> {
+    getLinesForDifferentCatalogues(catalogueIds:string[], lineIds:string[],delegateId:string):Promise<CatalogueLine[]> {
         let url = this.baseUrl + `/catalogue/cataloguelines`;
         // append catalogue line ids to the url
         let catalogueUuidsParam = "?catalogueUuids=";
+        if(this.delegated){
+            url = this.delegate_url + `/catalogue/cataloguelines?delegateId=${delegateId}`;
+            catalogueUuidsParam = "&catalogueUuids=";
+        }
+
         let lineIdsParam = "&lineIds=";
         let size = lineIds.length;
         for(let i = 0; i < size ;i++){
@@ -455,7 +467,10 @@ export class CatalogueService {
     }
 
     getCatalogueFromUuid(Uuid: string){
-        const url = this.baseUrl + `/catalogue/ubl/${Uuid}`;
+        let url = this.baseUrl + `/catalogue/ubl/${Uuid}`;
+        if(this.delegated){
+            url = this.delegate_url + `/catalogue/ubl/${Uuid}`;
+        }
         return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()

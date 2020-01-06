@@ -68,7 +68,7 @@ export class TransportExecutionPlanComponent implements OnInit {
 
         if(this.request.transportContract == null && this.bpDataService.precedingProcessId != null) {
             this.contractCallStatus.submit();
-            this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId).then(contract => {
+            this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId,this.request.transportServiceProviderParty.federationInstanceID).then(contract => {
                 this.request.transportContract = contract;
                 this.contractCallStatus.callback("Contract constructed", true);
             })
@@ -117,7 +117,7 @@ export class TransportExecutionPlanComponent implements OnInit {
 
         Promise.all([
             this.userService.getParty(buyerId),
-            this.userService.getParty(sellerId)
+            this.userService.getParty(sellerId,this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.federationInstanceID)
         ])
         .then(([buyerParty, sellerParty]) => {
             transportationExecutionPlanRequest.transportUserParty = buyerParty;

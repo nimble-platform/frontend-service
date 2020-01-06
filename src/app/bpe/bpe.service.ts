@@ -140,8 +140,11 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getProcessDetailsHistory(id: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/history/variable-instance?processInstanceIdIn=${id}`;
+	getProcessDetailsHistory(id: string,delegateId:string=FEDERATIONID()): Promise<any> {
+		let url = `${this.url}/rest/engine/default/history/variable-instance?processInstanceIdIn=${id}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/rest/engine/default/history/variable-instance?processInstanceIdIn=${id}&delegateId=${delegateId}`;
+		}
 		return this.http
 		.get(url, {headers: this.headers})
 		.toPromise()
@@ -375,8 +378,11 @@ export class BPEService {
             .catch(this.handleError);
 }
 
-	constructContractForProcess(processInstancesId: string): Promise<Contract> {
-		const url = `${this.url}/contracts?processInstanceId=${processInstancesId}`;
+	constructContractForProcess(processInstancesId: string,delegateId:string): Promise<Contract> {
+		let url = `${this.url}/contracts?processInstanceId=${processInstancesId}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/contracts?processInstanceId=${processInstancesId}&delegateId=${delegateId}`;
+		}
 		return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
@@ -414,12 +420,15 @@ export class BPEService {
         });
     }
 
-	getTermsAndConditions(buyerPartyId, sellerPartyId, incoterms:string, tradingTerm:string): Promise<Clause[]>{
+	getTermsAndConditions(buyerPartyId,buyerFederationId:string, sellerPartyId, incoterms:string, tradingTerm:string,delegateId:string): Promise<Clause[]>{
 		const token = 'Bearer '+this.cookieService.get("bearer_token");
 		const headers = new Headers({'Authorization': token});
 		this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
 
 		let url = `${this.url}/contracts/terms-and-conditions?sellerPartyId=${sellerPartyId}&incoterms=${incoterms == null ? "" :incoterms}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/contracts/terms-and-conditions?sellerPartyId=${sellerPartyId}&incoterms=${incoterms == null ? "" :incoterms}&delegateId=${delegateId}`;
+		}
         // add parameters
         if(buyerPartyId){
             url += `&buyerPartyId=${buyerPartyId}`;
@@ -427,6 +436,8 @@ export class BPEService {
         if(tradingTerm){
 			url += `&tradingTerm=${tradingTerm}`;
 		}
+
+        headers.append("initiatorFederationId",buyerFederationId);
 
 		return this.http
 			.get(url, {headers: headers})
@@ -448,9 +459,13 @@ export class BPEService {
             .catch(() => null);
 	}
 
-	getRatingsSummary(partyId: string): Promise<any> {
-		const headers = this.getAuthorizedHeaders();
-		const url = `${this.url}/ratingsSummary?partyId=${partyId}`;
+	getRatingsSummary(partyId: string,partyFederationId:string): Promise<any> {
+		let headers = this.getAuthorizedHeaders();
+		let url = `${this.url}/ratingsSummary?partyId=${partyId}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/ratingsSummary?partyId=${partyId}`;
+		}
+		headers.append("federationId",partyFederationId);
 		return this.http
             .get(url, {headers: headers})
             .toPromise()

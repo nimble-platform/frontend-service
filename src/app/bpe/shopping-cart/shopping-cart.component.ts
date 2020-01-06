@@ -111,7 +111,7 @@ export class ShoppingCartComponent implements OnInit {
             for (let cartLine of this.shoppingCart.catalogueLine) {
                 let partyId: string = UBLModelUtils.getPartyId(cartLine.goodsItem.item.manufacturerParty);
                 if (!distinctCompanies.has(partyId)) {
-                    settingsPromises.push(this.userService.getSettingsForParty(partyId));
+                    settingsPromises.push(this.userService.getSettingsForParty(partyId,cartLine.goodsItem.item.manufacturerParty.federationInstanceID));
                     distinctCompanies.add(partyId);
                 }
             }
@@ -323,9 +323,11 @@ export class ShoppingCartComponent implements OnInit {
         this.initCallStatus.aggregatedSubmit();
         this.bpeService.getTermsAndConditions(
             this.cookieService.get('company_id'),
+            FEDERATIONID(),
             sellerId,
             firstProduct.goodsItem.deliveryTerms.incoterms,
-            this.sellersSettings.get(sellerId).negotiationSettings.paymentTerms[0]
+            this.sellersSettings.get(sellerId).negotiationSettings.paymentTerms[0],
+            firstProduct.goodsItem.item.manufacturerParty.federationInstanceID
 
         ).then(termsAndConditions => {
             // adapt the terms and conditions for the other products by updating the terms including
@@ -536,7 +538,7 @@ export class ShoppingCartComponent implements OnInit {
             callStatus.submit();
             Promise.all([
                 this.userService.getParty(this.cookieService.get('company_id')),
-                this.userService.getParty(sellerId),
+                this.userService.getParty(sellerId,cartLine.goodsItem.item.manufacturerParty.federationInstanceID),
 
             ]).then(([buyerPartyResp, sellerPartyResp]) => {
                 rfq.buyerCustomerParty = new CustomerParty(buyerPartyResp);

@@ -84,7 +84,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
 
         if(this.wrapper){
             this.getManufacturerPartyNameStatus.submit();
-            this.userService.getParty(this.wrapper.item.manufacturerParty.partyIdentification[0].id).then(party => {
+            this.userService.getParty(this.wrapper.item.manufacturerParty.partyIdentification[0].id,this.wrapper.item.manufacturerParty.federationInstanceID).then(party => {
                 this.manufacturerPartyName = UBLModelUtils.getPartyDisplayName(party);
                 this.getManufacturerPartyNameStatus.callback(null,true);
             }).catch(error => {

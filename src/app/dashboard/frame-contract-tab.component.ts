@@ -73,7 +73,8 @@ export class FrameContractTabComponent implements OnInit {
         this.router.navigate(['/user-mgmt/company-details'],
             {
                 queryParams: {
-                    id: this.getCorrespondingPartyId(frameContract)
+                    id: this.getCorrespondingPartyId(frameContract),
+                    delegateId: this.getCorrespondingPartyFederationId(frameContract)
                 }
             });
     }
@@ -103,6 +104,16 @@ export class FrameContractTabComponent implements OnInit {
         for(let party of frameContract.participantParty) {
             if(party.partyIdentification[0].id != userPartyId) {
                 return UBLModelUtils.getPartyId(party);
+            }
+        }
+    }
+
+    getCorrespondingPartyFederationId(frameContract: DigitalAgreement): string {
+        let userPartyId = this.cookieService.get("company_id");
+
+        for(let party of frameContract.participantParty) {
+            if(party.partyIdentification[0].id != userPartyId) {
+                return party.federationInstanceID;
             }
         }
     }

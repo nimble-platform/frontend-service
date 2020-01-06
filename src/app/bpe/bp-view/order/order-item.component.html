@@ -170,6 +170,7 @@
                                   [selectedIncoterm]="order.orderLine[0].lineItem.deliveryTerms.incoterms"
                                   [selectedTradingTerm]="order.orderLine[lineIndex].lineItem.paymentTerms.tradingTerms"
                                   [sellerPartyId]="getPartyId(sellerParty)"
+                                  [sellerFederationId]="sellerParty.federationInstanceID"
                                   [readOnly]="true"
                                   [enableComparisonWithOtherTerms]="false"
                                   [documentType]="'order'"
