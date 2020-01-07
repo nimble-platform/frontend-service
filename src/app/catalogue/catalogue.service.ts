@@ -426,11 +426,21 @@ export class CatalogueService {
     }
 
     getBinaryObjects(uris:string[]){
-        let condition: string = "";
-        for(let uri of uris) {
-            condition += uri + ","
+        let url = null;
+        if(this.delegated){
+            let encodedUris = [];
+            for (let uri of uris) {
+                encodedUris.push(encodeURIComponent(uri))
+            }
+            url = this.delegate_url + `/binary-contents?uris=${encodedUris}`;
         }
-        const url = this.baseUrl + `/binary-contents?uris=${encodeURIComponent(condition)}`;
+        else{
+            let condition: string = "";
+            for(let uri of uris) {
+                condition += uri + ","
+            }
+            url = this.baseUrl + `/binary-contents?uris=${encodeURIComponent(condition)}`;
+        }
         return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
