@@ -207,7 +207,7 @@ export class SimpleSearchFormComponent implements OnInit {
             if (pageRef) {
                 this.pageRef = pageRef;
             }
-            this.searchContext = searchContext;
+            this.searchContext = searchContext ? true: false;
             if (q && sTop) {
                 if (sTop == "prod")
                     this.getCall(q, fq, p, rows, sort, cat, catID, sIdx, sTop);
