@@ -210,13 +210,13 @@ export class BPEService {
 			.catch(this.handleError);
 	}
 
-	getProcessInstanceGroupFilters(partyId:string, collaborationRole: CollaborationRole, archived: boolean, products: string[],
-		categories: string[], partners: string[],status: string[],isProject:boolean): Promise<ProcessInstanceGroupFilter> {
+	getProcessInstanceGroupFilters(partyId:string,delegateId:string, collaborationRole: CollaborationRole, archived: boolean, products: string[],
+								   categories: string[], partners: string[],status: string[],isProject:boolean): Promise<ProcessInstanceGroupFilter> {
 		let headers = this.getAuthorizedHeaders();
 
 		let url: string = `${this.url}/process-instance-groups/filters?partyId=${partyId}&collaborationRole=${collaborationRole}&archived=${archived}`;
 		if(this.delegated){
-			url = `${this.delegate_url}/process-instance-groups/filters?partyId=${partyId}&collaborationRole=${collaborationRole}&archived=${archived}`;
+			url = `${this.delegate_url}/process-instance-groups/filters?partyId=${partyId}&collaborationRole=${collaborationRole}&archived=${archived}&delegateId=${delegateId}`;
 		}
 		if(products.length > 0) {
 			url += '&relatedProducts=' + this.stringifyArray(products);
@@ -243,11 +243,11 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getCollaborationGroups(partyId:string, collaborationRole: CollaborationRole, page: number, limit: number, archived: boolean, products: string[], categories: string[], partners: string[], status: string[], isProject?:boolean): Promise<CollaborationGroupResponse> {
+	getCollaborationGroups(partyId:string,delegateId:string, collaborationRole: CollaborationRole, page: number, limit: number, archived: boolean, products: string[], categories: string[], partners: string[], status: string[], isProject?:boolean): Promise<CollaborationGroupResponse> {
 		let offset:number = page * limit;
 		let url:string = `${this.url}/collaboration-groups?partyId=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}&archived=${archived}`;
 		if(this.delegated){
-			url = `${this.delegate_url}/collaboration-groups?partyId=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}&archived=${archived}`;
+			url = `${this.delegate_url}/collaboration-groups?partyId=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}&archived=${archived}&delegateId=${delegateId}`;
 		}
 		if(products.length > 0) {
 			url += '&relatedProducts=' + this.stringifyArray(products);

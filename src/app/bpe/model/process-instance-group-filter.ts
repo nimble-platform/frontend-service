@@ -9,6 +9,7 @@ export class ProcessInstanceGroupFilter {
                 public relatedProductCategories: string[] = [],
                 public status: string[] = [],
                 public startDate: string = "",
-                public endDate: string = "") {
+                public endDate: string = "",
+                public instanceNames:string[] = []) {
     }
 }

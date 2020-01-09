@@ -117,7 +117,7 @@
                 <div class="col-12">
                     <!-- Sales -->
                     <ng-container *ngIf="queryParameters.tab === TABS.SALES">
-                        <button class="btn btn-secondary float-left space-before"
+                        <button class="btn btn-secondary space-before"
                                 (click)="onViewUpdated(false)"
                                 [disabled]="filterQueryStatus.isLoading() || queryStatus.isLoading()">
                                 <span [innerHTML]="'Refresh' | translate"></span>
@@ -127,14 +127,26 @@
                             [disabled]="!isToggleArchivedButtonEnabled()">
                             {{getToggleArchivedButtonText()}}
                         </button>
-                        <div style="margin-top: 20vh">
+                        <div class="row" *ngIf="delegated">
+                            <!-- Filters -->
+                            <div class="col-2 space-before" >
+                                <facet [title]="'Instance Name' | translate" [dataType]="'string'"
+                                       [stringValues]="filterSet && filterSet.instanceNames"
+                                       [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.instanceNames"
+                                       [loading]="areFiltersLoading()"
+                                       [disableMultipleSelection]="true"
+                                       (triggerCriteriaChanged)="onFilterChange()">
+                                </facet>
+                            </div>
+                        </div>
+                        <div [style.margin-top]="delegated ? 'none': '20vh'">
                             <h4 class="space-before text-center"><span [innerHTML]="'You do not have any sales yet' | translate"></span></h4>
                             <p class="space-before text-center"><span [innerHTML]="'When a customer enquires about your published products / services, you will see it here' | translate"></span>.</p>
                         </div>
                     </ng-container>
                     <!-- Purchases -->
                     <ng-container *ngIf="queryParameters.tab === TABS.PURCHASES">
-                        <button class="btn btn-secondary float-left space-before"
+                        <button class="btn btn-secondary space-before"
                                 (click)="onViewUpdated(false)"
                                 [disabled]="filterQueryStatus.isLoading() || queryStatus.isLoading()">
                                 <span [innerHTML]="'Refresh' | translate"></span>
@@ -144,7 +156,19 @@
                             [disabled]="!isToggleArchivedButtonEnabled()">
                             {{getToggleArchivedButtonText()}}
                         </button>
-                        <div style="margin-top: 20vh">
+                        <div class="row" *ngIf="delegated">
+                            <!-- Filters -->
+                            <div class="col-2 space-before">
+                                <facet [title]="'Instance Name' | translate" [dataType]="'string'"
+                                       [stringValues]="filterSet && filterSet.instanceNames"
+                                       [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.instanceNames"
+                                       [loading]="areFiltersLoading()"
+                                       [disableMultipleSelection]="true"
+                                       (triggerCriteriaChanged)="onFilterChange()">
+                                </facet>
+                            </div>
+                        </div>
+                        <div [style.margin-top]="delegated ? 'none': '20vh'">
                             <h4 class="space-before text-center"><span [innerHTML]="'You have not bought anything yet' | translate"></span></h4>
                             <p class="space-before text-center">
                                 <a class="btn btn-primary btn-lg" href="#/simple-search" role="button"><span [innerHTML]="'Search for Products / Services' | translate"></span></a>
@@ -195,6 +219,13 @@
                     <div class="row">
                         <!-- Filters -->
                         <div class="col-2">
+                            <facet [title]="'Instance Name' | translate" [dataType]="'string'" *ngIf="delegated"
+                                   [stringValues]="filterSet && filterSet.instanceNames"
+                                   [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.instanceNames"
+                                   [loading]="areFiltersLoading()"
+                                   [disableMultipleSelection]="true"
+                                   (triggerCriteriaChanged)="onFilterChange()">
+                            </facet>
                             <facet [title]="'Product / Service' | translate" [dataType]="'string'"
                                 [stringValues]="filterSet && filterSet.relatedProducts"
                                 [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.relatedProducts"
@@ -247,7 +278,15 @@
 
                                         <ng-template #negotiationGroup let-c="close" let-modal>
                                             <div class="modal-header">
-                                                <h4 class="modal-title" id="modal-basic-title"><span [innerHTML]="'Negotiation Groups' | translate"></span></h4>
+                                                <div *ngIf="delegated">
+                                                    <h4 class="modal-title space-right" id="modal-basic-title" style="display: inline-block"><span [innerHTML]="'Negotiation Groups for' | translate"></span></h4>
+                                                    <select [(ngModel)]="modifiedFilterSet.instanceNames[0]" class="form-control form-control-inline" (change)="onFilterChange()">
+                                                        <option *ngFor="let instanceName of filterSet.instanceNames">{{instanceName}}</option>
+                                                    </select>
+                                                </div>
+                                                <div *ngIf="!delegated">
+                                                    <h4 class="modal-title" id="modal-basic-title"><span [innerHTML]="'Negotiation Groups' | translate"></span></h4>
+                                                </div>
                                                 <button type="button" class="btn btn-danger"
                                                 (click)="mergeNegotations(c); $event.stopPropagation();">
                                                 <span [innerHTML]="'Merge' | translate"></span>
@@ -260,31 +299,31 @@
                                                             <h4 *ngIf="results.orders.length === 0"><span [innerHTML]="'No orders' | translate"></span>.</h4>
                                                             <div *ngFor="let order of results.orders;let i=index" class="bordered space-after">
                                                                 <div>
-                                                                <div class="row w-100 m-0">
-                                                                    <div class="col d-flex collaboration-group-header">
-                                                                        <div class="header-label mr-auto d-flex">
-                                                                            <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name != null && order.name != '')">
-                                                                                    <input  *ngIf="selectedNegotiationIndex != (i+(this.query.page -1)*this.query.pageSize)" type="checkbox" class="form-check-input"
-                                                                                    [checked]="this.selectedNegotiations.indexOf(i+ (this.query.page -1)*this.query.pageSize) > -1" (change)="changeNegotation(i,order); $event.stopPropagation()"
-                                                                                    value="updatingCollaborationGroupName[i].defaultName" style="margin-left: 1px;"> <span style="margin-left: 20px;">{{order.name}} </span>
+                                                                    <div class="row w-100 m-0">
+                                                                        <div class="col d-flex collaboration-group-header">
+                                                                            <div class="header-label mr-auto d-flex">
+                                                                                <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name != null && order.name != '')">
+                                                                                    <input  *ngIf="selectedNegotiation.id != order.id || selectedNegotiation.federationId != order.federationId" type="checkbox" class="form-check-input"
+                                                                                            [checked]="this.selectedNegotiations.indexOf(i+ (this.query.page -1)*this.query.pageSize) > -1" (change)="changeNegotation(i,order); $event.stopPropagation()"
+                                                                                            value="updatingCollaborationGroupName[i].defaultName" style="margin-left: 1px;"> <span style="margin-left: 20px;">{{order.name}} </span>
                                                                                 </h5>
-                                                                            <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name == null || order.name == '')">
-                                                                                    <input  *ngIf="selectedNegotiationIndex != (i+(this.query.page -1)*this.query.pageSize)" type="checkbox" class="form-check-input"
-                                                                                     [checked]="this.selectedNegotiations.indexOf(i+ (this.query.page -1)*this.query.pageSize) > -1" (change)="changeNegotation(i,order); $event.stopPropagation()"
-                                                                                     value="updatingCollaborationGroupName[i].defaultName" style="margin-left: 1px;">
-                                                                                     <span style="margin-left: 20px;">{{updatingCollaborationGroupName[i].defaultName}}</span>
-                                                                            </h5>
-                                                                            <input *ngIf="updatingCollaborationGroupName[i].status == true" type="text" class="form-control form-control-sm" name="inputCtrl" [(ngModel)]="updatingCollaborationGroupName[i].name" [disabled]=""/>
-                                                                            <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="updateCollaborationGroupName(order.id,order.federationId,updatingCollaborationGroupName[i].name)" data-toggle="tooltip" data-placement="top" title="Save">
-                                                                                <i class="fa fa-check p-2 pointer" aria-hidden="true"></i>
-                                                                            </div>
-                                                                            <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="changeCollaborationGroupNameStatus(i,false)" data-toggle="tooltip" data-placement="top" title="Cancel">
-                                                                                <i class="fa fa-times p-2 pointer" aria-hidden="true"></i>
+                                                                                <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name == null || order.name == '')">
+                                                                                    <input  *ngIf="selectedNegotiation.id != order.id || selectedNegotiation.federationId != order.federationId" type="checkbox" class="form-check-input"
+                                                                                            [checked]="this.selectedNegotiations.indexOf(i+ (this.query.page -1)*this.query.pageSize) > -1" (change)="changeNegotation(i,order); $event.stopPropagation()"
+                                                                                            value="updatingCollaborationGroupName[i].defaultName" style="margin-left: 1px;">
+                                                                                    <span style="margin-left: 20px;">{{updatingCollaborationGroupName[i].defaultName}}</span>
+                                                                                </h5>
+                                                                                <input *ngIf="updatingCollaborationGroupName[i].status == true" type="text" class="form-control form-control-sm" name="inputCtrl" [(ngModel)]="updatingCollaborationGroupName[i].name" [disabled]=""/>
+                                                                                <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="updateCollaborationGroupName(order.id,order.federationId,updatingCollaborationGroupName[i].name)" data-toggle="tooltip" data-placement="top" title="Save">
+                                                                                    <i class="fa fa-check p-2 pointer" aria-hidden="true"></i>
+                                                                                </div>
+                                                                                <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="changeCollaborationGroupNameStatus(i,false)" data-toggle="tooltip" data-placement="top" title="Cancel">
+                                                                                    <i class="fa fa-times p-2 pointer" aria-hidden="true"></i>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                                <hr class="collaboration-hr">
+                                                                    <hr class="collaboration-hr">
                                                                     <div *ngFor="let group of order.associatedProcessInstanceGroups;let i=index">
                                                                         <div [ngClass]="i != order.associatedProcessInstanceGroups.length-1 ? 'space-after' : null">
                                                                             <!--If Purchases tab is selected, show groups whose collaboration role is Buyer-->
@@ -387,7 +426,19 @@
                     <div class="col-12">
                         <!-- Purchases -->
                         <ng-container *ngIf="queryParameters.tab === TABS.PROJECTS">
-                            <div style="margin-top: 20vh">
+                            <div class="row" *ngIf="delegated">
+                                <!-- Filters -->
+                                <div class="col-2 space-before">
+                                    <facet [title]="'Instance Name' | translate" [dataType]="'string'"
+                                           [stringValues]="filterSet && filterSet.instanceNames"
+                                           [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.instanceNames"
+                                           [loading]="areFiltersLoading()"
+                                           [disableMultipleSelection]="true"
+                                           (triggerCriteriaChanged)="onFilterChange()">
+                                    </facet>
+                                </div>
+                            </div>
+                            <div [style.margin-top]="delegated ? 'none': '20vh'">
                                 <h4 class="space-before text-center"><span [innerHTML]="'You have not created any projects yet' | translate"></span></h4>
                             </div>
                         </ng-container>
@@ -420,6 +471,13 @@
 
                             <!-- Filters -->
                             <div class="col-2">
+                                <facet [title]="'Instance Name' | translate" [dataType]="'string'" *ngIf="delegated"
+                                       [stringValues]="filterSet && filterSet.instanceNames"
+                                       [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.instanceNames"
+                                       [loading]="areFiltersLoading()"
+                                       [disableMultipleSelection]="true"
+                                       (triggerCriteriaChanged)="onFilterChange()">
+                                </facet>
                                 <facet [title]="'Product / Service'" [dataType]="'string'"
                                     [stringValues]="filterSet && filterSet.relatedProducts"
                                     [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.relatedProducts"
