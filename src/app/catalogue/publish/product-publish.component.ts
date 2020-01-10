@@ -985,7 +985,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private onFailedPublish(err): void {
-        this.publishStatus.error(err);
+        this.publishStatus.error(err._body ? err._body : err);
         this.submitted = false;
         this.error_detc = true;
         if(err.status == 406){
