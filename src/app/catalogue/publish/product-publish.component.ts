@@ -161,6 +161,8 @@ export class ProductPublishComponent implements OnInit {
     dimensionUnits:string[] = [];
     selectedTabSinglePublish: "DETAILS" | "DELIVERY_TRADING" | "PRICE" | "CERTIFICATES" | "LCPA" = "DETAILS";
 
+    invalidCategoryCodes:Code[] = [];
+
     constructor(public categoryService: CategoryService,
                 private catalogueService: CatalogueService,
                 public publishStateService: PublishService,
@@ -683,6 +685,16 @@ export class ProductPublishComponent implements OnInit {
                 }
 
                 if (classificationCodes.length > 0) {
+                    // remove default category
+                    classificationCodes = classificationCodes.filter(function (cat) {
+                        return cat.listID != 'Default';
+                    });
+
+                    // get non-custom categories
+                    classificationCodes = classificationCodes.filter(function (cat) {
+                        return cat.listID != 'Custom';
+                    });
+
                     // temporarily store publishing started variable as it will be used inside the following callback
                     this.productCategoryRetrievalStatus.submit();
                     Observable.fromPromise(this.categoryService.getCategoriesByIds(classificationCodes))
@@ -709,6 +721,11 @@ export class ProductPublishComponent implements OnInit {
 
                             this.recomputeSelectedProperties();
                             this.ngUnsubscribe.complete();
+
+                            // populate invalidCategoryCodes array
+                            let validCategoryUris = categories.map(category => category.categoryUri);
+                            this.invalidCategoryCodes = classificationCodes.filter(classificationCode => validCategoryUris.indexOf(classificationCode.uri) == -1)
+
                             this.productCategoryRetrievalStatus.callback('Retrieved product categories', true);
                         });
                 }
@@ -750,6 +767,18 @@ export class ProductPublishComponent implements OnInit {
         // call this function with dimension unit list to be sure that item will have some dimension
         this.multiValuedDimensions = this.productWrapper.getDimensionMultiValue(true,this.dimensions);
         this.recomputeSelectedProperties();
+    }
+
+    private removeInvalidCategories(){
+        let invalidCategoryIds:string[] = this.invalidCategoryCodes.map(code => code.uri);
+        let invalidCommodityClassifications:CommodityClassification[] = this.catalogueLine.goodsItem.item.commodityClassification.filter(commodityClassification => invalidCategoryIds.indexOf(commodityClassification.itemClassificationCode.uri) != -1);
+
+        for (let invalidCommodityClassification of invalidCommodityClassifications) {
+            let index = this.catalogueLine.goodsItem.item.commodityClassification.indexOf(invalidCommodityClassification);
+            this.catalogueLine.goodsItem.item.commodityClassification.splice(index,1);
+        }
+        // reset invalidCategoryCodes array
+        this.invalidCategoryCodes = [];
     }
 
     private checkSearchReference(): void {

@@ -37,23 +37,7 @@ export class CategoryService {
             return Promise.resolve([]);
         }
 
-        let customCategoryCodes: Code[] = [];
-        let customCategories: Category[] = [];
         let categories:Category[] = [];
-
-        // remove default category
-        codes = codes.filter(function (cat) {
-            return cat.listID != 'Default';
-        });
-
-        customCategoryCodes = codes.filter(function (cat) {
-           return cat.listID == 'Custom';
-        });
-
-        // get non-custom categories
-        codes = codes.filter(function (cat) {
-           return cat.listID != 'Custom';
-        });
 
         if(codes.length > 0){
             let url = this.baseUrl;
