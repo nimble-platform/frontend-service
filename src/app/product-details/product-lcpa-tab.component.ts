@@ -61,12 +61,12 @@ export class ProductLcpaTabComponent {
             let opex_perc = Math.round(this.lcpaDetails.lcpaoutput.opex.value*100/total);
 
             this.results.push({
-                    "name": (100 - opex_perc) + "%", // CAPEX
-                    "value": this.lcpaDetails.lcpaoutput.capex.value
-                });
+                "name": (100 - opex_perc) + "%", // CAPEX
+                "value": Math.abs(this.lcpaDetails.lcpaoutput.capex.value)
+            });
             this.results.push({
                 "name": opex_perc +"%", // OPEX
-                "value": this.lcpaDetails.lcpaoutput.opex.value
+                "value": Math.abs(this.lcpaDetails.lcpaoutput.opex.value)
             })
         }
     }
