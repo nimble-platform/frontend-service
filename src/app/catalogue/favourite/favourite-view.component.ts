@@ -565,7 +565,7 @@ export class FavouriteViewComponent implements OnInit {
 		event.preventDefault();
 
 		status.submit();
-		this.shoppingCartDataService.addItemToCart(catLine.uri).then(() => {
+		this.shoppingCartDataService.addItemToCart(catLine.uri,1,catLine.nimbleInstanceName).then(() => {
 			status.callback("Product is added to shopping cart.", false);
 		}).catch((err) => {
 			status.error('Failed to add product to cart', err);

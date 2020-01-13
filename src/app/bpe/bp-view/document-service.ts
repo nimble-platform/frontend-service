@@ -10,6 +10,7 @@ import {BpUserRole} from "../model/bp-user-role";
 import {ActivityVariableParser} from "./activity-variable-parser";
 import {CookieService} from 'ng2-cookies';
 import {copy} from "../../common/utils";
+import {FEDERATION} from '../../catalogue/model/constants';
 
 @Injectable()
 export class DocumentService {
@@ -17,15 +18,20 @@ export class DocumentService {
     private headers = new Headers({'Content-Type': 'application/json'});
     private url = myGlobals.bpe_endpoint;
     private mapOfDocument = new Map();
+
+    private delegate_url = myGlobals.delegate_endpoint;
+
+    private delegated = (FEDERATION() == "ON");
+
     constructor(private http: Http,
                 private cookieService: CookieService) { }
 
-    getCachedDocument(documentID:string): Promise<any> {
+    getCachedDocument(documentID:string,delegateId:string): Promise<any> {
         if (this.mapOfDocument.has(documentID)){
             return Promise.resolve(copy(this.mapOfDocument.get(documentID)));
         }
         else {
-            return this.getDocumentJsonContent(documentID).then(document => {
+            return this.getDocumentJsonContent(documentID,delegateId).then(document => {
                 this.mapOfDocument.set(documentID,document);
                 return copy(document);
             })
@@ -36,8 +42,11 @@ export class DocumentService {
         this.mapOfDocument.set(documentID,document);
     }
 
-    getDocumentJsonContent(documentId:string):Promise<any> {
-        const url = `${this.url}/document/json/${documentId}`;
+    getDocumentJsonContent(documentId:string,delegateId:string):Promise<any> {
+        let url = `${this.url}/document/json/${documentId}`;
+        if(this.delegated){
+            url = `${this.delegate_url}/document/json/${documentId}?delegateId=${delegateId}`;
+        }
         return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
@@ -45,8 +54,11 @@ export class DocumentService {
             .catch(this.handleError);
     }
 
-    updateDocument(documentId: string, documentType: string, document: any): Promise<any> {
-        const url = `${this.url}/document/${documentId}?documentType=${documentType}`;
+    updateDocument(documentId: string, documentType: string, document: any,delegateId:string): Promise<any> {
+        let url = `${this.url}/document/${documentId}?documentType=${documentType}`;
+        if(this.delegated){
+            url = `${this.delegate_url}/document/${documentId}?documentType=${documentType}&delegateId=${delegateId}`;
+        }
         return this.http
             .patch(url, document, {headers: this.getAuthorizedHeaders()})
             .toPromise()
@@ -59,14 +71,14 @@ export class DocumentService {
     }
 
     getItemInformationRequest(itemInformationResponse: ItemInformationResponse): Promise<ItemInformationRequest> {
-        return this.getDocumentJsonContent(itemInformationResponse.itemInformationRequestDocumentReference.id);
+        return this.getDocumentJsonContent(itemInformationResponse.itemInformationRequestDocumentReference.id,itemInformationResponse.sellerSupplierParty.party.federationInstanceID);
     }
 
     getRequestForQuotation(quotation: Quotation): Promise<RequestForQuotation> {
-        return this.getDocumentJsonContent(quotation.requestForQuotationDocumentReference.id);
+        return this.getDocumentJsonContent(quotation.requestForQuotationDocumentReference.id,quotation.sellerSupplierParty.party.federationInstanceID);
     }
 
-    getInitialDocument(processVariables: any[]): any {
+    getInitialDocument(processVariables: any[],delegateId:string): any {
         let id = null;
         for (let variable of processVariables) {
             if (variable.name == "initialDocumentID") {
@@ -74,14 +86,14 @@ export class DocumentService {
             }
         }
         if (id){
-            return this.getCachedDocument(id);
+            return this.getCachedDocument(id,delegateId);
         }
         else {
             return null;
         }
     }
 
-    getResponseDocument(processVariables: any[]): any {
+    getResponseDocument(processVariables: any[],delegateId:string): any {
         let id = null;
         for (let variable of processVariables) {
             if (variable.name == "responseDocumentID") {
@@ -89,7 +101,7 @@ export class DocumentService {
             }
         }
         if (id){
-            return this.getCachedDocument(id);
+            return this.getCachedDocument(id,delegateId);
         }
         else {
             return null;

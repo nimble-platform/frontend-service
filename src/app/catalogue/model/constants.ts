@@ -120,6 +120,10 @@ export const FEDERATION = function () {
     return fed;
 }
 
+export const FEDERATIONID = function () {
+    return document.getElementsByTagName('html')[0].getAttribute('federationId');;
+}
+
 export const LANGUAGES:Array<string>  = myGlobals.config.languageSettings.available;
 
 export const DEFAULT_LANGUAGE = function () {

@@ -30,6 +30,7 @@ import {Party} from '../../catalogue/model/publish/party';
 import {TradingPreferences} from '../../catalogue/model/publish/trading-preferences';
 import {CommonTerms} from '../../common/common-terms';
 import {ShoppingCartSummaryModalComponent} from './shopping-cart-summary-modal.component';
+import {FEDERATIONID} from '../../catalogue/model/constants';
 /**
  * Created by suat on 11-Oct-19.
  */
@@ -110,7 +111,7 @@ export class ShoppingCartComponent implements OnInit {
             for (let cartLine of this.shoppingCart.catalogueLine) {
                 let partyId: string = UBLModelUtils.getPartyId(cartLine.goodsItem.item.manufacturerParty);
                 if (!distinctCompanies.has(partyId)) {
-                    settingsPromises.push(this.userService.getSettingsForParty(partyId));
+                    settingsPromises.push(this.userService.getSettingsForParty(partyId,cartLine.goodsItem.item.manufacturerParty.federationInstanceID));
                     distinctCompanies.add(partyId);
                 }
             }
@@ -274,7 +275,9 @@ export class ShoppingCartComponent implements OnInit {
             frameContractPromises.push(this.bpeService.getFrameContract(
                 UBLModelUtils.getPartyId(cartLine.goodsItem.item.manufacturerParty),
                 this.cookieService.get('company_id'),
-                [cartLine.id]));
+                [cartLine.id],
+                FEDERATIONID(),
+                cartLine.goodsItem.item.manufacturerParty.federationInstanceID));
         }
         this.initCallStatus.aggregatedSubmit();
         Promise.all(frameContractPromises).then(frameContractsForProducts => {
@@ -282,7 +285,7 @@ export class ShoppingCartComponent implements OnInit {
             let quotationPromises: Promise<any>[] = [];
             for (let frameContracts of frameContractsForProducts) {
                 if (frameContracts != null) {
-                    quotationPromises.push(this.documentService.getCachedDocument(frameContracts[0].quotationReference.id));
+                    quotationPromises.push(this.documentService.getCachedDocument(frameContracts[0].quotationReference.id,frameContracts[0].item.manufacturerParty.federationInstanceID));
                 }
                 else{
                     quotationPromises.push(Promise.resolve(null));
@@ -320,9 +323,11 @@ export class ShoppingCartComponent implements OnInit {
         this.initCallStatus.aggregatedSubmit();
         this.bpeService.getTermsAndConditions(
             this.cookieService.get('company_id'),
+            FEDERATIONID(),
             sellerId,
             firstProduct.goodsItem.deliveryTerms.incoterms,
-            this.sellersSettings.get(sellerId).negotiationSettings.paymentTerms[0]
+            this.sellersSettings.get(sellerId).negotiationSettings.paymentTerms[0],
+            firstProduct.goodsItem.item.manufacturerParty.federationInstanceID
 
         ).then(termsAndConditions => {
             // adapt the terms and conditions for the other products by updating the terms including
@@ -533,7 +538,7 @@ export class ShoppingCartComponent implements OnInit {
             callStatus.submit();
             Promise.all([
                 this.userService.getParty(this.cookieService.get('company_id')),
-                this.userService.getParty(sellerId),
+                this.userService.getParty(sellerId,cartLine.goodsItem.item.manufacturerParty.federationInstanceID),
 
             ]).then(([buyerPartyResp, sellerPartyResp]) => {
                 rfq.buyerCustomerParty = new CustomerParty(buyerPartyResp);
@@ -542,7 +547,7 @@ export class ShoppingCartComponent implements OnInit {
                 // start a request for quotation or order created using the rfq we have
                 let document:RequestForQuotation | Order = this.areNegotiationConditionsSatisfied(cartLine) ? rfq: this.createOrderWithRfq(rfq,[cartLine.hjid]);
 
-                return this.bpeService.startProcessWithDocument(document);
+                return this.bpeService.startProcessWithDocument(document,document.sellerSupplierParty.party.federationInstanceID);
             }).then(() => {
                 // started the negotiation for the product successfully,so remove it from the shopping cart
                 this.onRemoveFromCart(cartLine);
@@ -559,6 +564,14 @@ export class ShoppingCartComponent implements OnInit {
         this.shoppingCartSummaryModal.open();
     }
 
+    getFederationIds(){
+        let fedIds = [];
+        for (let sellersSettingsKey of Array.from(this.sellersSettings.keys())) {
+            fedIds.push(this.sellersSettings.get(sellersSettingsKey).negotiationSettings.company.federationInstanceID)
+        }
+        return fedIds;
+    }
+
     // starts Negotiation/Order for the products included in the shopping basket
     onMultipleLineNegotiation():void{
         if(confirm('Are you sure that you want to send requests for all products now ?')){
@@ -566,13 +579,14 @@ export class ShoppingCartComponent implements OnInit {
             let companyId = this.cookieService.get('company_id');
             // this array contains the identifiers of buyer and seller companies
             let partyIds = Array.from(this.sellersSettings.keys()).concat(companyId);
+            let federationIds = this.getFederationIds();
 
             this.startBpCallStatus.submit();
             // reset BP data
             this.bpDataService.resetBpData();
 
             // get parties
-            this.userService.getParties(partyIds).then(parties => {
+            this.userService.getParties(partyIds,federationIds).then(parties => {
                 // create party id-party map
                 let partyMap:Map<string,Party> = this.createPartyMap(parties);
                 let promises: Promise<any>[] = [];
@@ -611,7 +625,7 @@ export class ShoppingCartComponent implements OnInit {
 
                     // start a request for quotation or order created using the rfq we have
                     let document:RequestForQuotation | Order = areNegotiationConditionsSatisfiedForAtLeastOneProduct ? copyRfq: this.createOrderWithRfq(copyRfq,lineHjids);
-                    promises.push(this.bpeService.startProcessWithDocument(document));
+                    promises.push(this.bpeService.startProcessWithDocument(document,document.sellerSupplierParty.party.federationInstanceID));
                 });
                 Promise.all(promises).then(response => {
                     // started the negotiation for all products successfully,so remove them from the shopping cart

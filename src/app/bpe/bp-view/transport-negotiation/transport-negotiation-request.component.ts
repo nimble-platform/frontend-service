@@ -108,15 +108,18 @@ export class TransportNegotiationRequestComponent implements OnInit {
         let rfq: RequestForQuotation = copy(this.bpDataService.requestForQuotation);
 
         let sellerId: string;
+        let sellerFederationId:string;
 
         // final check on the rfq
         // set the goods items which will be shipped by this transport service
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem = this.viewChild.getSelectedProductsToShip();
         if(this.bpDataService.modifiedCatalogueLines) {
             sellerId = UBLModelUtils.getPartyId(this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty);
+            sellerFederationId = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty.federationInstanceID;
         }
         else {
             sellerId = UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty);
+            sellerFederationId = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.federationInstanceID;
         }
 
         //first initialize the seller and buyer parties.
@@ -125,13 +128,13 @@ export class TransportNegotiationRequestComponent implements OnInit {
 
         Promise.all([
             this.userService.getParty(buyerId),
-            this.userService.getParty(sellerId)
+            this.userService.getParty(sellerId,sellerFederationId)
         ])
         .then(([buyerParty, sellerParty]) => {
             rfq.buyerCustomerParty = new CustomerParty(buyerParty);
             rfq.sellerSupplierParty = new SupplierParty(sellerParty);
 
-            return this.bpeService.startProcessWithDocument(rfq);
+            return this.bpeService.startProcessWithDocument(rfq,sellerParty.federationInstanceID);
         })
         .then(() => {
             this.callStatus.callback("Terms sent", true);
@@ -148,7 +151,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
     onUpdateRequest(): void {
         this.callStatus.submit();
         let rfq: RequestForQuotation = copy(this.bpDataService.requestForQuotation);
-        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processInstanceId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processInstanceId,this.processMetadata.sellerFederationId)
             .then(() => {
                 this.documentService.updateCachedDocument(rfq.id, rfq);
                 this.callStatus.callback("Terms updated", true);

@@ -94,13 +94,13 @@ export class ItemInformationRequestComponent implements OnInit {
 
         Promise.all([
             this.userService.getParty(buyerId),
-            this.userService.getParty(sellerId)
+            this.userService.getParty(sellerId,this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.federationInstanceID)
         ])
         .then(([buyerParty, sellerParty]) => {
             itemInformationRequest.buyerCustomerParty = new CustomerParty(buyerParty);
             itemInformationRequest.sellerSupplierParty = new SupplierParty(sellerParty);
 
-            return this.bpeService.startProcessWithDocument(itemInformationRequest);
+            return this.bpeService.startProcessWithDocument(itemInformationRequest,sellerParty.federationInstanceID);
         })
         .then(() => {
             this.callStatus.callback("Item Information Request sent", true);
@@ -118,7 +118,7 @@ export class ItemInformationRequestComponent implements OnInit {
         this.callStatus.submit();
         const itemInformationRequest: ItemInformationRequest = copy(this.bpDataService.itemInformationRequest);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(itemInformationRequest),"ITEMINFORMATIONREQUEST",this.processMetadata.processInstanceId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(itemInformationRequest),"ITEMINFORMATIONREQUEST",this.processMetadata.processInstanceId,this.processMetadata.sellerFederationId)
             .then(() => {
                 this.documentService.updateCachedDocument(itemInformationRequest.id,itemInformationRequest);
                 this.callStatus.callback("Item Information Request updated", true);

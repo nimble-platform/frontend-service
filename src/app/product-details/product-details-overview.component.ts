@@ -84,7 +84,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
 
         if(this.wrapper){
             this.getManufacturerPartyNameStatus.submit();
-            this.userService.getParty(this.wrapper.item.manufacturerParty.partyIdentification[0].id).then(party => {
+            this.userService.getParty(this.wrapper.item.manufacturerParty.partyIdentification[0].id,this.wrapper.item.manufacturerParty.federationInstanceID).then(party => {
                 this.manufacturerPartyName = UBLModelUtils.getPartyDisplayName(party);
                 this.getManufacturerPartyNameStatus.callback(null,true);
             }).catch(error => {
@@ -182,7 +182,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
         }
 
         this.shoppingCartCallStatus.submit();
-        this.shoppingCartDataService.addItemToCart(this.wrapper.line.hjid,this.wrapper.quantity.value).then(() => {
+        this.shoppingCartDataService.addItemToCart(this.wrapper.line.hjid,this.wrapper.quantity.value,this.wrapper.item.manufacturerParty.federationInstanceID).then(() => {
             this.shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
         }).catch((err) => {
             this.shoppingCartCallStatus.error('Failed to add product to cart', err);

@@ -20,8 +20,9 @@ export class BpActivityEvent{
         public previousProcessInstanceId = null,
         public previousDocumentId = null,
         public termsSources: ('product_defaults' | 'frame_contract')[] = null,
+        public sellerFederationId:string = null,
         public precedingOrderId = null, // identifier of the Order for which the transport service related processes are started
-        public activityVariablesOfAssociatedOrder = null, // activity variables of the associated order
+        public processMetadataOfAssociatedOrder:ThreadEventMetadata = null, // activity variables of the associated order
         public unShippedOrderIds:string[] = null // identifiers of associated unshipped orders
     ){}
 }

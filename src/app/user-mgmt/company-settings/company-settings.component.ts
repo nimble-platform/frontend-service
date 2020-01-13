@@ -7,6 +7,7 @@ import { CompanySettings } from "../model/company-settings";
 import { ActivatedRoute } from "@angular/router";
 import { AppComponent } from "../../app.component";
 import {TranslateService} from '@ngx-translate/core';
+import {FEDERATIONID} from '../../catalogue/model/constants';
 
 type SelectedTab = "COMPANY_DATA"
     | "COMPANY_DESCRIPTION"
@@ -31,6 +32,7 @@ export class CompanySettingsComponent implements OnInit {
     profile_completeness_str: string = "0%";
     config = myGlobals.config;
     companyId = null;
+    federationId = null;
     viewMode = "full";
 
     constructor(private cookieService: CookieService,
@@ -45,12 +47,16 @@ export class CompanySettingsComponent implements OnInit {
         this.initCallStatus.submit();
         this.route.queryParams.subscribe(params => {
           this.companyId = params['id'];
+          this.federationId = params['delegateId'];
+          if(!this.federationId){
+              this.federationId = FEDERATIONID();
+          }
           if (params['viewMode'])
             this.viewMode = params['viewMode'];
           else
             this.viewMode = "full";
           if (this.companyId && this.appComponent.checkRoles("pm"))
-            this.getCompanySettings(this.companyId);
+            this.getCompanySettings(this.companyId,this.federationId);
         });
         const userId = this.cookieService.get("user_id");
         if (!this.companyId) {
@@ -62,12 +68,12 @@ export class CompanySettingsComponent implements OnInit {
           });
         }
         else {
-          this.getCompanySettings(this.companyId);
+          this.getCompanySettings(this.companyId,this.federationId);
         }
     }
 
-    getCompanySettings(id) {
-      this.userService.getSettingsForParty(id).then(settings => {
+    getCompanySettings(id,federationId) {
+      this.userService.getSettingsForParty(id,federationId).then(settings => {
           this.processSettings(settings);
       })
       .catch(error => {

@@ -57,7 +57,7 @@ export class PpapDocumentUploadComponent {
             this.processid = params['processInstanceId'];
 
             this.bpeService.getProcessDetailsHistory(this.processid).then(task => {
-                this.documentService.getInitialDocument(task).then(initialDocument => {
+                this.documentService.getInitialDocument(task,this.processMetadata.sellerFederationId).then(initialDocument => {
                     this.ppap = initialDocument as Ppap;
                     let i = 0;
                     this.documents = [];
@@ -133,7 +133,7 @@ export class PpapDocumentUploadComponent {
         this.ppapResponse.additionalDocumentReference = this.additionalDocumentsToSend;
 
         //this.callStatus.submit();
-        this.bpeService.startProcessWithDocument(this.ppapResponse).then(res => {
+        this.bpeService.startProcessWithDocument(this.ppapResponse,this.ppapResponse.sellerSupplierParty.party.federationInstanceID).then(res => {
             this.callStatus.callback("Ppap Response placed", true);
             var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")

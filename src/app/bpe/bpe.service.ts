@@ -18,20 +18,28 @@ import {DigitalAgreement} from "../catalogue/model/publish/digital-agreement";
 import {CollaborationGroup} from "./model/collaboration-group";
 import {DocumentReference} from '../catalogue/model/publish/document-reference';
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
+import {FEDERATION, FEDERATIONID} from '../catalogue/model/constants';
+import {FederatedCollaborationGroupMetadata} from './model/federated-collaboration-group-metadata';
 
 @Injectable()
 export class BPEService {
 
 	private headers = new Headers({'Content-Type': 'application/json'});
 	private url = myGlobals.bpe_endpoint;
+	private delegate_url = myGlobals.delegate_endpoint;
+
+	private delegated = (FEDERATION() == "ON");
 
 	constructor(private http: Http,
 				private bpDataService:BPDataService,
 				private cookieService: CookieService) { }
 
-    startProcessWithDocument(document:any):Promise<ProcessInstance> {
+    startProcessWithDocument(document:any,delegateId:string):Promise<ProcessInstance> {
         const headers = this.getAuthorizedHeaders();
         let url = `${this.url}/process-document`;
+        if(this.delegated){
+			url = `${this.delegate_url}/process-document?delegateId=${delegateId}`;
+		}
 
         // create a DocumentReference for the previous document
         if(this.bpDataService.precedingDocumentId){
@@ -72,9 +80,12 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	cancelBusinessProcess(id: string): Promise<any> {
+	cancelBusinessProcess(id: string,delegateId:string): Promise<any> {
 	    let headers = this.getAuthorizedHeaders();
-		const url = `${this.url}/processInstance/${id}/cancel`;
+		let url = `${this.url}/processInstance/${id}/cancel`;
+		if(this.delegated){
+			url = `${this.delegate_url}/processInstance/${id}/cancel?delegateId=${delegateId}`;
+		}
 		return this.http
 		.post(url, null, {headers: headers})
 		.toPromise()
@@ -82,9 +93,12 @@ export class BPEService {
 		.catch(this.handleError);
 	}
 
-    cancelCollaboration(groupId: string): Promise<any> {
+    cancelCollaboration(groupId: string,delegateId:string): Promise<any> {
         let headers = this.getAuthorizedHeaders();
-        const url = `${this.url}/process-instance-groups/${groupId}/cancel`;
+        let url = `${this.url}/process-instance-groups/${groupId}/cancel`;
+        if(this.delegated){
+			url = `${this.delegate_url}/process-instance-groups/${groupId}/cancel?delegateId=${delegateId}`;
+		}
         return this.http
             .post(url, null, {headers: headers})
             .toPromise()
@@ -92,9 +106,12 @@ export class BPEService {
             .catch(this.handleError);
     }
 
-    finishCollaboration(groupId: string): Promise<any> {
+    finishCollaboration(groupId: string,delegateId:string): Promise<any> {
         let headers = this.getAuthorizedHeaders();
-        const url = `${this.url}/process-instance-groups/${groupId}/finish`;
+        let url = `${this.url}/process-instance-groups/${groupId}/finish`;
+        if(this.delegated){
+			url = `${this.delegate_url}/process-instance-groups/${groupId}/finish?delegateId=${delegateId}`;
+		}
         return this.http
             .post(url, null, {headers: headers})
             .toPromise()
@@ -102,8 +119,11 @@ export class BPEService {
             .catch(this.handleError);
     }
 
-    updateBusinessProcess(content: string, processID: string, processInstanceID: string): Promise<any> {
-        const url = `${this.url}/processInstance?processID=${processID}&processInstanceID=${processInstanceID}&creatorUserID=${this.cookieService.get("user_id")}`;
+    updateBusinessProcess(content: string, processID: string, processInstanceID: string,delegateId:string): Promise<any> {
+        let url = `${this.url}/processInstance?processID=${processID}&processInstanceID=${processInstanceID}&creatorUserID=${this.cookieService.get("user_id")}`;
+        if(this.delegated){
+			url = `${this.delegate_url}/processInstance?processID=${processID}&processInstanceID=${processInstanceID}&creatorUserID=${this.cookieService.get("user_id")}&delegateId=${delegateId}`;
+		}
         return this.http
             .patch(url, content,{headers: this.getAuthorizedHeaders()})
             .toPromise()
@@ -120,8 +140,11 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getProcessDetailsHistory(id: string): Promise<any> {
-		const url = `${this.url}/rest/engine/default/history/variable-instance?processInstanceIdIn=${id}`;
+	getProcessDetailsHistory(id: string,delegateId:string=FEDERATIONID()): Promise<any> {
+		let url = `${this.url}/rest/engine/default/history/variable-instance?processInstanceIdIn=${id}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/rest/engine/default/history/variable-instance?processInstanceIdIn=${id}&delegateId=${delegateId}`;
+		}
 		return this.http
 		.get(url, {headers: this.headers})
 		.toPromise()
@@ -139,18 +162,28 @@ export class BPEService {
 	}
 
 	getActionRequiredBuyer(partyId: string): Promise<any> {
-		const url = `${this.url}/statistics/total-number/business-process/action-required?archived=false&role=buyer&partyId=${partyId}`;
+		let url = `${this.url}/statistics/total-number/business-process/action-required?archived=false&role=buyer&partyId=${partyId}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/statistics/total-number/business-process/action-required?archived=false&role=buyer&partyId=${partyId}`;
+		}
+		let headers = this.getAuthorizedHeaders();
+		headers.append("federationId",FEDERATIONID());
 		return this.http
-            .get(url, {headers: this.getAuthorizedHeaders()})
+            .get(url, {headers: headers})
             .toPromise()
             .then(res => res.text())
             .catch(this.handleError);
 	}
 
 	getActionRequiredSeller(partyId: string): Promise<any> {
-		const url = `${this.url}/statistics/total-number/business-process/action-required?archived=false&role=seller&partyId=${partyId}`;
+		let url = `${this.url}/statistics/total-number/business-process/action-required?archived=false&role=seller&partyId=${partyId}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/statistics/total-number/business-process/action-required?archived=false&role=seller&partyId=${partyId}`;
+		}
+		let headers = this.getAuthorizedHeaders();
+		headers.append("federationId",FEDERATIONID());
 		return this.http
-            .get(url, {headers: this.getAuthorizedHeaders()})
+            .get(url, {headers: headers})
             .toPromise()
             .then(res => res.text())
             .catch(this.handleError);
@@ -165,8 +198,11 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getFulfilmentStatistics(orderId: string): Promise<any> {
-		const url = `${this.url}/statistics/fulfilment?orderId=${orderId}`;
+	getFulfilmentStatistics(orderId: string,delegateId:string): Promise<any> {
+		let url = `${this.url}/statistics/fulfilment?orderId=${orderId}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/statistics/fulfilment?orderId=${orderId}&delegateId=${delegateId}`;
+		}
 		return this.http
 			.get(url, {headers: this.getAuthorizedHeaders()})
 			.toPromise()
@@ -174,11 +210,14 @@ export class BPEService {
 			.catch(this.handleError);
 	}
 
-	getProcessInstanceGroupFilters(partyId:string, collaborationRole: CollaborationRole, archived: boolean, products: string[],
-		categories: string[], partners: string[],status: string[],isProject:boolean): Promise<ProcessInstanceGroupFilter> {
-		const headers = this.getAuthorizedHeaders();
+	getProcessInstanceGroupFilters(partyId:string,delegateId:string, collaborationRole: CollaborationRole, archived: boolean, products: string[],
+								   categories: string[], partners: string[],status: string[],isProject:boolean): Promise<ProcessInstanceGroupFilter> {
+		let headers = this.getAuthorizedHeaders();
 
 		let url: string = `${this.url}/process-instance-groups/filters?partyId=${partyId}&collaborationRole=${collaborationRole}&archived=${archived}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/process-instance-groups/filters?partyId=${partyId}&collaborationRole=${collaborationRole}&archived=${archived}&delegateId=${delegateId}`;
+		}
 		if(products.length > 0) {
 			url += '&relatedProducts=' + this.stringifyArray(products);
 		}
@@ -194,6 +233,9 @@ export class BPEService {
 		if(isProject){
 		    url += '&isProject='+isProject;
 		}
+
+		headers.append("federationId",FEDERATIONID())
+
 		return this.http
             .get(url, {headers: headers})
             .toPromise()
@@ -201,9 +243,12 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getCollaborationGroups(partyId:string, collaborationRole: CollaborationRole, page: number, limit: number, archived: boolean, products: string[], categories: string[], partners: string[], status: string[], isProject?:boolean): Promise<CollaborationGroupResponse> {
+	getCollaborationGroups(partyId:string,delegateId:string, collaborationRole: CollaborationRole, page: number, limit: number, archived: boolean, products: string[], categories: string[], partners: string[], status: string[], isProject?:boolean): Promise<CollaborationGroupResponse> {
 		let offset:number = page * limit;
 		let url:string = `${this.url}/collaboration-groups?partyId=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}&archived=${archived}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/collaboration-groups?partyId=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}&archived=${archived}&delegateId=${delegateId}`;
+		}
 		if(products.length > 0) {
 			url += '&relatedProducts=' + this.stringifyArray(products);
 		}
@@ -221,25 +266,34 @@ export class BPEService {
 		    url += '&isProject='+isProject;
 		}
 
-		return this.http
-            .get(url, {headers: this.getAuthorizedHeaders()})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
-	}
-
-	getGroupDetailsForProcessInstance(processInstanceId: string): Promise<CollaborationGroup> {
-		let url:string = `${this.url}/processInstance/${processInstanceId}/collaboration-group`;
-		return this.http
-            .get(url, {headers: this.getAuthorizedHeaders()})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
-	}
-
-	paymentDone(orderId: string): Promise<any> {
 		let headers = this.getAuthorizedHeaders();
-		const url = `${this.url}/paymentDone/${orderId}`;
+		headers.append("federationId",FEDERATIONID())
+
+		return this.http
+            .get(url, {headers: headers})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
+	getGroupDetailsForProcessInstance(processInstanceId: string,delegateId:string): Promise<CollaborationGroup> {
+		let url:string = `${this.url}/processInstance/${processInstanceId}/collaboration-group`;
+		if(this.delegated){
+			url = `${this.delegate_url}/processInstance/${processInstanceId}/collaboration-group?delegateId=${delegateId}`;
+		}
+		return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+	}
+
+	paymentDone(orderId: string,delegateId:string): Promise<any> {
+		let headers = this.getAuthorizedHeaders();
+		let url = `${this.url}/paymentDone/${orderId}?delegateId=${delegateId}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/paymentDone/${orderId}?delegateId=${delegateId}`;
+		}
 		return this.http
 			.post(url, null, {headers: headers})
 			.toPromise()
@@ -247,9 +301,12 @@ export class BPEService {
 			.catch(this.handleError);
 	}
 
-	isPaymentDone(orderId: string): Promise<any> {
+	isPaymentDone(orderId: string,delegateId:string): Promise<any> {
 		let headers = this.getAuthorizedHeaders();
-		const url = `${this.url}/paymentDone/${orderId}`;
+		let url = `${this.url}/paymentDone/${orderId}?delegateId=${delegateId}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/paymentDone/${orderId}?delegateId=${delegateId}`;
+		}
 		return this.http
 			.get(url,  {headers: headers})
 			.toPromise()
@@ -257,8 +314,11 @@ export class BPEService {
 			.catch(this.handleError);
 	}
 
-	getDashboardProcessInstanceDetails(processInstanceId:string): Promise<DashboardProcessInstanceDetails>{
-        let url:string = `${this.url}/processInstance/${processInstanceId}/details`;
+	getDashboardProcessInstanceDetails(processInstanceId:string,delegateId:string): Promise<DashboardProcessInstanceDetails>{
+        let url:string = `${this.url}/processInstance/${processInstanceId}/details?delegateId=${delegateId}`;
+        if(this.delegated){
+			url = `${this.delegate_url}/processInstance/${processInstanceId}/details?delegateId=${delegateId}`;
+		}
         return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
@@ -266,19 +326,12 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	deleteProcessInstanceGroup(groupId: string) {
+	updateCollaborationGroupName(groupId:string,delegateId:string,groupName:string){
         const token = 'Bearer '+this.cookieService.get("bearer_token");
-		const url = `${this.url}/process-instance-groups/${groupId}`;
-		return this.http
-            .delete(url,{headers:new Headers({"Authorization":token})})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
-	}
-
-	updateCollaborationGroupName(groupId:string,groupName:string){
-        const token = 'Bearer '+this.cookieService.get("bearer_token");
-        const url = `${this.url}/collaboration-groups/${groupId}?groupName=${groupName}`;
+        let url = `${this.url}/collaboration-groups/${groupId}?groupName=${groupName}`;
+        if(this.delegated){
+			url = `${this.delegate_url}/collaboration-groups/${groupId}?groupName=${groupName}&delegateId=${delegateId}`;
+		}
         return this.http
             .patch(url,null,{headers:new Headers({"Authorization":token})})
             .toPromise()
@@ -286,9 +339,12 @@ export class BPEService {
             .catch(this.handleError);
     }
 
-    deleteCollaborationGroup(groupId: string) {
+    deleteCollaborationGroup(groupId: string,delegateId:string) {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
-        const url = `${this.url}/collaboration-groups/${groupId}`;
+		let url = `${this.url}/collaboration-groups/${groupId}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/collaboration-groups/${groupId}?delegateId=${delegateId}`;
+		}
         return this.http
             .delete(url,{headers:new Headers({"Authorization":token})})
             .toPromise()
@@ -296,9 +352,12 @@ export class BPEService {
             .catch(this.handleError);
     }
 
-	archiveCollaborationGroup(groupId: string){
+	archiveCollaborationGroup(groupId: string,delegateId:string){
         const token = 'Bearer '+this.cookieService.get("bearer_token");
-        const url = `${this.url}/collaboration-groups/${groupId}/archive`;
+        let url = `${this.url}/collaboration-groups/${groupId}/archive`;
+        if(this.delegated){
+			url = `${this.delegate_url}/collaboration-groups/${groupId}/archive?delegateId=${delegateId}`;
+		}
         return this.http
             .post(url, null,{headers:new Headers({"Authorization":token})})
             .toPromise()
@@ -306,9 +365,12 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-    restoreCollaborationGroup(groupId: string) {
+    restoreCollaborationGroup(groupId: string,delegateId:string) {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
-	    const url = `${this.url}/collaboration-groups/${groupId}/restore`;
+	    let url = `${this.url}/collaboration-groups/${groupId}/restore`;
+		if(this.delegated){
+			url = `${this.delegate_url}/collaboration-groups/${groupId}/restore?delegateId=${delegateId}`;
+		}
         return this.http
             .post(url, null,{headers:new Headers({"Authorization":token})})
             .toPromise()
@@ -316,8 +378,11 @@ export class BPEService {
             .catch(this.handleError);
 }
 
-	constructContractForProcess(processInstancesId: string): Promise<Contract> {
-		const url = `${this.url}/contracts?processInstanceId=${processInstancesId}`;
+	constructContractForProcess(processInstancesId: string,delegateId:string): Promise<Contract> {
+		let url = `${this.url}/contracts?processInstanceId=${processInstancesId}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/contracts?processInstanceId=${processInstancesId}&delegateId=${delegateId}`;
+		}
 		return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
@@ -325,9 +390,12 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	downloadContractBundle(id: string): Promise<any> {
+	downloadContractBundle(id: string,delegateId:string): Promise<any> {
         const token = 'Bearer '+this.cookieService.get("bearer_token");
-		const url = `${this.url}/contracts/create-bundle?orderId=${id}`;
+		let url = `${this.url}/contracts/create-bundle?orderId=${id}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/contracts/create-bundle?orderId=${id}&delegateId=${delegateId}`;
+		}
         return new Promise<any>((resolve, reject) => {
             let xhr = new XMLHttpRequest();
 
@@ -352,12 +420,15 @@ export class BPEService {
         });
     }
 
-	getTermsAndConditions(buyerPartyId, sellerPartyId, incoterms:string, tradingTerm:string): Promise<Clause[]>{
+	getTermsAndConditions(buyerPartyId,buyerFederationId:string, sellerPartyId, incoterms:string, tradingTerm:string,delegateId:string): Promise<Clause[]>{
 		const token = 'Bearer '+this.cookieService.get("bearer_token");
 		const headers = new Headers({'Authorization': token});
 		this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
 
 		let url = `${this.url}/contracts/terms-and-conditions?sellerPartyId=${sellerPartyId}&incoterms=${incoterms == null ? "" :incoterms}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/contracts/terms-and-conditions?sellerPartyId=${sellerPartyId}&incoterms=${incoterms == null ? "" :incoterms}&delegateId=${delegateId}`;
+		}
         // add parameters
         if(buyerPartyId){
             url += `&buyerPartyId=${buyerPartyId}`;
@@ -366,6 +437,8 @@ export class BPEService {
 			url += `&tradingTerm=${tradingTerm}`;
 		}
 
+        headers.append("initiatorFederationId",buyerFederationId);
+
 		return this.http
 			.get(url, {headers: headers})
 			.toPromise()
@@ -373,9 +446,12 @@ export class BPEService {
 			.catch(this.handleError);
 	}
 
-	getOriginalOrderForProcess(processId: string): Promise<Order | null> {
+	getOriginalOrderForProcess(processId: string,delegateId:string): Promise<Order | null> {
 		const headers = this.getAuthorizedHeaders();
-		const url = `${this.url}/process-instance-groups/order-document?processInstanceId=${processId}`;
+		let url = `${this.url}/process-instance-groups/order-document?processInstanceId=${processId}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/process-instance-groups/order-document?processInstanceId=${processId}&delegateId=${delegateId}`;
+		}
 		return this.http
             .get(url, { headers })
             .toPromise()
@@ -383,19 +459,13 @@ export class BPEService {
             .catch(() => null);
 	}
 
-	getRatings(partyId: string): Promise<any> {
-		const headers = this.getAuthorizedHeaders();
-		const url = `${this.url}/ratingsAndReviews?partyId=${partyId}`;
-		return this.http
-            .get(url, {headers: headers})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
-	}
-
-	getRatingsSummary(partyId: string): Promise<any> {
-		const headers = this.getAuthorizedHeaders();
-		const url = `${this.url}/ratingsSummary?partyId=${partyId}`;
+	getRatingsSummary(partyId: string,partyFederationId:string): Promise<any> {
+		let headers = this.getAuthorizedHeaders();
+		let url = `${this.url}/ratingsSummary?partyId=${partyId}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/ratingsSummary?partyId=${partyId}`;
+		}
+		headers.append("federationId",partyFederationId);
 		return this.http
             .get(url, {headers: headers})
             .toPromise()
@@ -410,9 +480,13 @@ export class BPEService {
             });
     }
 
-	postRatings(partyId: string, processInstanceId: string, ratings: EvidenceSupplied[], reviews: Comment[]): Promise<any> {
-		const headers = this.getAuthorizedHeaders();
-		const url = `${this.url}/ratingsAndReviews?partyId=${partyId}&processInstanceID=${processInstanceId}&ratings=${encodeURIComponent(JSON.stringify(ratings))}&reviews=${encodeURIComponent(JSON.stringify(reviews))}`;
+	postRatings(partyId: string, partyFederationId:string, processInstanceId: string, ratings: EvidenceSupplied[], reviews: Comment[],delegateId:string): Promise<any> {
+		let headers = this.getAuthorizedHeaders();
+		let url = `${this.url}/ratingsAndReviews?partyId=${partyId}&processInstanceID=${processInstanceId}&ratings=${encodeURIComponent(JSON.stringify(ratings))}&reviews=${encodeURIComponent(JSON.stringify(reviews))}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/ratingsAndReviews?partyId=${partyId}&processInstanceID=${processInstanceId}&ratings=${encodeURIComponent(JSON.stringify(ratings))}&reviews=${encodeURIComponent(JSON.stringify(reviews))}&delegateId=${delegateId}`;
+		}
+		headers.append("federationId",partyFederationId)
 		return this.http
             .post(url, null, {headers: headers})
             .toPromise()
@@ -420,10 +494,13 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	ratingExists(processInstanceId: string, partyId: string): Promise<any> {
+	ratingExists(processInstanceId: string, partyId: string, federationId:string,delegateId:string): Promise<any> {
 		const token = 'Bearer '+this.cookieService.get("bearer_token");
-		const headers = new Headers({'Accept': 'text/plain','Authorization': token});
+		const headers = new Headers({'Accept': 'text/plain','Authorization': token,"federationId":federationId});
 		let url: string = `${this.url}/processInstance/${processInstanceId}/isRated?partyId=${partyId}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/processInstance/${processInstanceId}/isRated?partyId=${partyId}&delegateId=${delegateId}`;
+		}
 		return this.http
             .get(url, {headers: headers})
             .toPromise()
@@ -442,7 +519,7 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	getFrameContract(sellerId: string, buyerId: string, productIds: string[]): Promise<DigitalAgreement> {
+	getFrameContract(sellerId: string, buyerId: string, productIds: string[],initiatorFederationId:string,responderFederationId:string): Promise<DigitalAgreement> {
 		let productIdsParam = "";
 		let size = productIds.length;
 		for (let i = 0; i < size; i++) {
@@ -452,16 +529,25 @@ export class BPEService {
 				productIdsParam += ",";
 			}
 		}
-		const url = `${this.url}/contract/digital-agreement?sellerId=${sellerId}&buyerId=${buyerId}&productIds=${productIds}`;
+		let url = `${this.url}/contract/digital-agreement?sellerId=${sellerId}&buyerId=${buyerId}&productIds=${productIds}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/contract/digital-agreement?sellerId=${sellerId}&buyerId=${buyerId}&productIds=${productIds}&delegateId=${responderFederationId}`;
+		}
+		let headers = this.getAuthorizedHeaders();
+		headers.append("initiatorFederationId",initiatorFederationId);
+		headers.append("responderFederationId",responderFederationId);
 		return this.http
-            .get(url, {headers: this.getAuthorizedHeaders()})
+            .get(url, {headers: headers})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
 	}
 
-	getFrameContractByHjid(hjid: number): Promise<DigitalAgreement> {
-		const url = `${this.url}/contract/digital-agreement/${hjid}`;
+	getFrameContractByHjid(hjid: number,delegateId:string): Promise<DigitalAgreement> {
+		let url = `${this.url}/contract/digital-agreement/${hjid}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/contract/digital-agreement/${hjid}?delegateId=${delegateId}`;
+		}
 		return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
@@ -470,16 +556,24 @@ export class BPEService {
 	}
 
 	getAllFrameContractsForParty(partyId: string): Promise<DigitalAgreement[]> {
-		const url = `${this.url}/contract/digital-agreement/all?partyId=${partyId}`;
+		let url = `${this.url}/contract/digital-agreement/all?partyId=${partyId}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/contract/digital-agreement/all?partyId=${partyId}`;
+		}
+		let headers = this.getAuthorizedHeaders();
+		headers.append("federationId",FEDERATIONID());
 		return this.http
-            .get(url, {headers: this.getAuthorizedHeaders()})
+            .get(url, {headers: headers})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
 	}
 
-	deleteFrameContract(hjid: number): Promise<DigitalAgreement[]> {
-		const url = `${this.url}/contract/digital-agreement/${hjid}`;
+	deleteFrameContract(hjid: number,delegateId:string): Promise<DigitalAgreement[]> {
+		let url = `${this.url}/contract/digital-agreement/${hjid}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/contract/digital-agreement/${hjid}?delegateId=${delegateId}`;
+		}
 		return this.http
 			.delete(url, {headers: this.getAuthorizedHeaders()})
 			.toPromise()
@@ -487,17 +581,25 @@ export class BPEService {
 			.catch(this.handleError);
 	}
 
-	checkAllCollaborationsFinished(partyId:string){
-        const url = `${this.url}/collaboration-groups/all-finished?partyId=${partyId}`;
+	checkAllCollaborationsFinished(partyId:string,federationId:string){
+        let url = `${this.url}/collaboration-groups/all-finished?partyId=${partyId}`;
+        if(this.delegated){
+			url = `${this.delegate_url}/collaboration-groups/all-finished?partyId=${partyId}`;
+		}
+        let headers = this.getAuthorizedHeaders();
+        headers.append("federationId",federationId);
         return this.http
-            .get(url, {headers: this.getAuthorizedHeaders()})
+            .get(url, {headers: headers})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
 	}
 
-    checkCollaborationFinished(groupId:string):Promise<any>{
-        const url = `${this.url}/process-instance-groups/${groupId}/finished`;
+    checkCollaborationFinished(groupId:string,delegateId:string):Promise<any>{
+        let url = `${this.url}/process-instance-groups/${groupId}/finished`;
+        if(this.delegated){
+			url = `${this.delegate_url}/process-instance-groups/${groupId}/finished?delegateId=${delegateId}`;
+		}
         return this.http
             .get(url, {headers: this.getAuthorizedHeaders()})
             .toPromise()
@@ -505,30 +607,22 @@ export class BPEService {
             .catch(this.handleError);
     }
 
-	mergeNegotations(baseId:string , mergeIds) {
-		let url = `${this.url}/collaboration-groups/merge`;
-		// append catalogue merge ids to the url
-		url += "?bcid=" + baseId;
-		let size = mergeIds.length;
-		for (let i = 0; i < size; i++) {
-			if (i == 0) {
-				url += "&cgids=";
-			}
-
-			url += mergeIds[i];
-
-			if (i != size - 1) {
-				url += ",";
-			}
+	mergeNegotations(baseId:string , collaborationGroupMetadata:FederatedCollaborationGroupMetadata[], delegateId:string) {
+		let url = `${this.url}/collaboration-groups/merge?bcid=${baseId}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/collaboration-groups/merge?bcid=${baseId}&delegateId=${delegateId}`;
 		}
 		return this.http
-            .get(url, {headers: this.getAuthorizedHeaders()})
+            .post(url, collaborationGroupMetadata, {headers: this.getAuthorizedHeaders()})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
 	}
 	exportTransactions(partyId: string, userId: string, direction: string, archived: boolean): Promise<any> {
 		let url = `${this.url}/processInstance/export?partyId=${partyId}`;
+		if(this.delegated){
+			url = `${this.delegate_url}/processInstance/export?partyId=${partyId}`;
+		}
 		if(userId != null) {
 			url += `&userId=${userId}`;
 		}
@@ -546,6 +640,7 @@ export class BPEService {
 			xhr.setRequestHeader('Accept', 'application/zip');
 			xhr.setRequestHeader('Accept', 'text/plain');
 			xhr.setRequestHeader('Authorization', token);
+			xhr.setRequestHeader("federationId",FEDERATIONID());
 			xhr.responseType = 'blob';
 
 			xhr.onreadystatechange = function () {
@@ -577,8 +672,10 @@ export class BPEService {
 
 	public getExpectedOrders(partyId: string): Promise<string[]> {
 		const url = `${this.url}/documents/expected-orders?partyId=${partyId}`;
+		let headers = this.getAuthorizedHeaders()
+		headers.append("federationId",FEDERATIONID())
 		return this.http
-            .get(url, {headers: this.getAuthorizedHeaders()})
+            .get(url, {headers: headers})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);

@@ -128,7 +128,7 @@
     <!-- Contract Preview -->
     <ng-container *ngIf="isReady()">
         <!--<div>-->
-        <contract *ngIf="selectedPanel == 'PREVIOUS_STEPS'" [contract]="orderContract" [collapsable]="false"
+        <contract *ngIf="selectedPanel == 'PREVIOUS_STEPS'" [contract]="orderContract" [collapsable]="false" [sellerFederationId]="sellerParty.federationInstanceID"
                   [selectedLineIndex]="selectedLineIndex"
                   [areCatalogueLinesDeleted]="populateAreCatalogueLinesDeletedArray()"></contract>
         <!--</div>-->
@@ -170,6 +170,7 @@
                                   [selectedIncoterm]="order.orderLine[0].lineItem.deliveryTerms.incoterms"
                                   [selectedTradingTerm]="order.orderLine[lineIndex].lineItem.paymentTerms.tradingTerms"
                                   [sellerPartyId]="getPartyId(sellerParty)"
+                                  [sellerFederationId]="sellerParty.federationInstanceID"
                                   [readOnly]="true"
                                   [enableComparisonWithOtherTerms]="false"
                                   [documentType]="'order'"

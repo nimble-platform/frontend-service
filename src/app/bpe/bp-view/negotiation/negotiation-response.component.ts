@@ -147,7 +147,7 @@ export class NegotiationResponseComponent implements OnInit {
 
         //this.callStatus.submit();
 
-        this.bpeService.startProcessWithDocument(this.quotation).then(() => {
+        this.bpeService.startProcessWithDocument(this.quotation,this.quotation.sellerSupplierParty.party.federationInstanceID).then(() => {
             this.callStatus.callback("Quotation sent", true);
             var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")

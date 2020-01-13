@@ -474,7 +474,9 @@ export class SimpleSearchService {
 
 	getFavouriteSearch(query: string, facets: string[],page?: number,sortType?:string): Promise<any> {
     query = query;
-		const url = this.url + `/item/search`;
+		let url = this.url + `/item/search`;
+		if (this.delegated)
+			url = this.delegate_url + `/item/search`;
 		let searchObject:any = {};
 		searchObject.rows = 10;
 		searchObject.start = page-1;

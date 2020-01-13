@@ -52,10 +52,10 @@ export class PpapDocumentDownloadComponent{
             this.route.params.subscribe(params => {
                 const processid = params['processInstanceId'];
 
-                this.bpeService.getProcessDetailsHistory(processid).then(task => {
+                this.bpeService.getProcessDetailsHistory(processid,this.processMetadata.sellerFederationId).then(task => {
                     return Promise.all([
-                        this.documentService.getInitialDocument(task),
-                        this.documentService.getResponseDocument(task)
+                        this.documentService.getInitialDocument(task,this.processMetadata.sellerFederationId),
+                        this.documentService.getResponseDocument(task,this.processMetadata.sellerFederationId)
                     ]).then(([initialDocument, responseDocument]) => {
                         this.ppap = initialDocument as Ppap;
                         this.ppapResponse = responseDocument as PpapResponse;

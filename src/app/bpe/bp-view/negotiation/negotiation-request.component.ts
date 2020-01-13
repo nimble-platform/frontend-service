@@ -164,7 +164,7 @@ export class NegotiationRequestComponent implements OnInit {
             let buyerParty: Party;
             Promise.all([
                 this.userService.getParty(this.buyerId),
-                this.userService.getParty(this.sellerId),
+                this.userService.getParty(this.sellerId,this.catalogueLines[0].goodsItem.item.manufacturerParty.federationInstanceID),
 
             ]).then(([buyerPartyResp, sellerPartyResp]) => {
                 sellerParty = sellerPartyResp;
@@ -172,7 +172,7 @@ export class NegotiationRequestComponent implements OnInit {
                 rfq.buyerCustomerParty = new CustomerParty(buyerParty);
                 rfq.sellerSupplierParty = new SupplierParty(sellerParty);
 
-                return this.bpeService.startProcessWithDocument(rfq);
+                return this.bpeService.startProcessWithDocument(rfq,sellerParty.federationInstanceID);
 
             }).then(() => {
                 this.callStatus.callback("Terms sent", true);
@@ -204,7 +204,7 @@ export class NegotiationRequestComponent implements OnInit {
         this.callStatus.submit();
 
         const rfq: RequestForQuotation = this.rfq;
-        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processInstanceId).then(() => {
+        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processInstanceId,this.processMetadata.sellerFederationId).then(() => {
             this.documentService.updateCachedDocument(rfq.id,rfq);
             this.callStatus.callback("Terms updated", true);
             var tab = "PURCHASES";

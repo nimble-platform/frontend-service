@@ -104,7 +104,7 @@ export class LogisticServicePublishComponent implements OnInit {
             return Promise.all([
                 Promise.resolve(party),
                 this.catalogueService.getCatalogueResponse(userId),
-                this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party)),
+                this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party),party.federationInstanceID),
                 eClassCategoryUris ? this.categoryService.getCategoriesForIds(new Array(eClassCategoryUris.length).fill("eClass"),eClassCategoryUris): Promise.resolve(null),
                 furnitureOntologyCategoryUris ? this.categoryService.getCategoriesForIds(new Array(furnitureOntologyCategoryUris.length).fill("FurnitureOntology"),furnitureOntologyCategoryUris): Promise.resolve(null)
             ]).then(([party, catalogueResponse, settings,eClassLogisticCategories,furnitureOntologyLogisticCategories]) => {

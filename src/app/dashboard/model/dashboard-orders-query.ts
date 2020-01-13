@@ -9,6 +9,7 @@ export class DashboardOrdersQuery {
         public categories: string[] = [],
         public partners: string[] = [],
         public status: string[] = [],
+        public instanceName:string = null,
         public pageSize: number = PAGE_SIZE
     ) {}
 }

@@ -540,7 +540,7 @@
 							<a class="text-std" [href]="getProdLink(result)" (click)="onSearchResultClicked($event)">
 							<!--<a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: result.catalogueId, id: result.manufactuerItemId}">-->
 								<div class="card-body">
-									<div *ngIf="!result.isFromLocalInstance && result.nimbleInstanceName && result.sourceFrontendServiceUrl && result.nimbleInstanceName != '' && result.sourceFrontendServiceUrl != ''" [title]="result.nimbleInstanceName" class="badge badge-pill badge-secondary p-2" style="position:absolute;right:-0.7rem;top:-0.7rem">
+									<div *ngIf="!result.isFromLocalInstance && result.nimbleInstanceName && result.nimbleInstanceName != ''" [title]="result.nimbleInstanceName" class="badge badge-pill badge-secondary p-2" style="position:absolute;right:-0.7rem;top:-0.7rem">
 										<i class="fa fa-database pr-1"></i> <span>{{result.nimbleInstanceName}}</span>
 									</div>
 									<div class="row">
@@ -624,7 +624,7 @@
 							<a class="text-std" [href]="getCompLink(result)">
 							<!--<a class="text-std" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: result.id}">-->
 								<div class="card-body">
-									<div *ngIf="!result.isFromLocalInstance && result.nimbleInstanceName && result.sourceFrontendServiceUrl && result.nimbleInstanceName != '' && result.sourceFrontendServiceUrl != ''" [title]="result.nimbleInstanceName" class="badge badge-pill badge-secondary p-2" style="position:absolute;right:-0.7rem;top:-0.7rem;">
+									<div *ngIf="!result.isFromLocalInstance && result.nimbleInstanceName && result.nimbleInstanceName != ''" [title]="result.nimbleInstanceName" class="badge badge-pill badge-secondary p-2" style="position:absolute;right:-0.7rem;top:-0.7rem;">
 										<i class="fa fa-database pr-1"></i> <span>{{result.nimbleInstanceName}}</span>
 									</div>
 									<div class="row">

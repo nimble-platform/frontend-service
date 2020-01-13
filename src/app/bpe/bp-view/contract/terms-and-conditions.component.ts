@@ -18,6 +18,7 @@ export class TermsAndConditionsComponent implements OnInit {
 
     // Inputs
     @Input() sellerPartyId:string;
+    @Input() sellerFederationId:string;
     @Input() readOnly:boolean = false;
     @Input() enableComparisonWithOtherTerms: boolean = true; // if true, original and current terms are compared and differences are highlighted
     @Input() documentType:string; // "order", "rfq", "quotation";
@@ -65,7 +66,7 @@ export class TermsAndConditionsComponent implements OnInit {
         if(this.enableComparisonWithOtherTerms && this.sellerPartyId != null) {
             this.callStatus.submit();
             Promise.all([
-                this.userService.getSettingsForParty(this.sellerPartyId),
+                this.userService.getSettingsForParty(this.sellerPartyId,this.sellerFederationId),
                 this.unitService.getCachedUnitList(deliveryPeriodUnitListId),
                 this.unitService.getCachedUnitList(warrantyPeriodUnitListId)
 

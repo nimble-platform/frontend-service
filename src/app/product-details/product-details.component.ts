@@ -23,7 +23,7 @@ import {Quantity} from '../catalogue/model/publish/quantity';
 import {DiscountModalComponent} from './discount-modal.component';
 import {BpActivityEvent} from '../catalogue/model/publish/bp-start-event';
 import { CookieService } from 'ng2-cookies';
-import {FAVOURITE_LINEITEM_PUT_OPTIONS} from '../catalogue/model/constants';
+import {FAVOURITE_LINEITEM_PUT_OPTIONS, FEDERATIONID} from '../catalogue/model/constants';
 import * as myGlobals from '../globals';
 import {DiscountPriceWrapper} from "../common/discount-price-wrapper";
 import {DigitalAgreement} from "../catalogue/model/publish/digital-agreement";
@@ -126,9 +126,11 @@ export class ProductDetailsComponent implements OnInit {
                         // check frame contract for the current line
                         this.bpeService.getFrameContract(UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty),
                             this.cookieService.get("company_id"),
-                            [this.line.id]).then(contracts => {
+                            [this.line.id],
+                            FEDERATIONID(),
+                            this.line.goodsItem.item.manufacturerParty.federationInstanceID).then(contracts => {
                             // contract exists, get the corresponding quotation including the terms
-                            this.documentService.getDocumentJsonContent(contracts[0].quotationReference.id).then(document => {
+                            this.documentService.getDocumentJsonContent(contracts[0].quotationReference.id,this.line.goodsItem.item.manufacturerParty.federationInstanceID).then(document => {
                                 this.frameContract = contracts[0];
                                 this.frameContractQuotationWrapper = new QuotationWrapper(document, this.line, UBLModelUtils.getFrameContractQuotationLineIndexForProduct(document.quotationLine,catalogueId,id));
                                 // quotation ordered quantity contains the actual ordered quantity in that business process,
@@ -216,7 +218,7 @@ export class ProductDetailsComponent implements OnInit {
         // precedingOrderId and activityVariablesOfAssociatedOrder have some values only when the user is navigated to the search for searching a transport service provider
         // for an existing order , that is, this.isSearchContextValid is true
         let precedingOrderId = this.isSearchContextValid ? this.searchContextService.getPrecedingOrderId() : null;
-        let activityVariablesOfAssociatedOrder = this.isSearchContextValid && this.searchContextService.getAssociatedProcessMetadata() ? this.searchContextService.getAssociatedProcessMetadata().activityVariables :null;
+        let processMetadataOfAssociatedOrder = this.isSearchContextValid ? this.searchContextService.getAssociatedProcessMetadata() :null;
         let unShippedOrderIds = this.unShippedOrdersTransitionService.getUnShippedOrderIds();
         this.bpDataService.startBp(
             new BpActivityEvent(
@@ -233,8 +235,9 @@ export class ProductDetailsComponent implements OnInit {
                 null,
                 null,
                 [termsSource],
+                this.item.manufacturerParty.federationInstanceID,
                 precedingOrderId,
-                activityVariablesOfAssociatedOrder,
+                processMetadataOfAssociatedOrder,
                 unShippedOrderIds));
     }
 

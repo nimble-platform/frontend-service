@@ -133,10 +133,10 @@ export class OrderComponent implements OnInit {
         // preceding process id check is for checking whether there is any preceding process before the order
         if(this.getNonTermAndConditionContract() == null && this.bpDataService.precedingProcessId != null) {
             Promise.all([
-                this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId),
+                this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId,this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID),
                 this.userService.getParty(buyerId),
-                this.userService.getParty(sellerId),
-                this.bpeService.isPaymentDone(this.order.id)
+                this.userService.getParty(sellerId,this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID),
+                this.bpeService.isPaymentDone(this.order.id,this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID)
             ])
                 .then(([contract, buyerParty, sellerParty,isPaymentDone]) => {
                     this.buyerParty = buyerParty;
@@ -152,8 +152,8 @@ export class OrderComponent implements OnInit {
         } else {
             Promise.all([
                 this.userService.getParty(buyerId),
-                this.userService.getParty(sellerId),
-                this.bpeService.isPaymentDone(this.order.id)
+                this.userService.getParty(sellerId,this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID),
+                this.bpeService.isPaymentDone(this.order.id,this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID)
             ]).then(([buyerParty, sellerParty, isPaymentDone]) => {
                 this.buyerParty = buyerParty;
                 this.sellerParty = sellerParty;
@@ -223,7 +223,7 @@ export class OrderComponent implements OnInit {
         order.buyerCustomerParty = new CustomerParty(this.buyerParty);
         order.sellerSupplierParty = new SupplierParty(this.sellerParty);
 
-        this.bpeService.startProcessWithDocument(order)
+        this.bpeService.startProcessWithDocument(order,this.sellerParty.federationInstanceID)
             .then(res => {
                 this.submitCallStatus.callback("Order placed", true);
                 var tab = "PURCHASES";
@@ -243,7 +243,7 @@ export class OrderComponent implements OnInit {
         this.submitCallStatus.submit();
         const order = copy(this.bpDataService.order);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(order),"ORDER",this.processMetadata.processInstanceId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(order),"ORDER",this.processMetadata.processInstanceId,this.processMetadata.sellerFederationId)
             .then(() => {
                 this.documentService.updateCachedDocument(order.id,order);
                 this.submitCallStatus.callback("Order updated", true);
@@ -266,7 +266,7 @@ export class OrderComponent implements OnInit {
         this.bpDataService.orderResponse.acceptedIndicator = accepted;
 
         //this.submitCallStatus.submit();
-        this.bpeService.startProcessWithDocument(this.bpDataService.orderResponse)
+        this.bpeService.startProcessWithDocument(this.bpDataService.orderResponse,this.bpDataService.orderResponse.sellerSupplierParty.party.federationInstanceID)
             .then(res => {
                 this.submitCallStatus.callback("Order Response placed", true);
                 var tab = "PURCHASES";
@@ -280,7 +280,7 @@ export class OrderComponent implements OnInit {
 
     onDownloadContact() {
         this.submitCallStatus.submit();
-        this.bpeService.downloadContractBundle(this.order.id)
+        this.bpeService.downloadContractBundle(this.order.id,this.order.sellerSupplierParty.party.federationInstanceID)
             .then(result => {
                 const link = document.createElement('a');
                 link.id = 'downloadLink';
@@ -300,7 +300,7 @@ export class OrderComponent implements OnInit {
 
     onPaymentDone(){
         this.submitCallStatus.submit();
-        this.bpeService.paymentDone(this.order.id).then(response => {
+        this.bpeService.paymentDone(this.order.id,this.sellerParty.federationInstanceID).then(response => {
             this.isPaymentDone = true;
             this.submitCallStatus.callback(null,true);
         }).catch(error => {
@@ -372,7 +372,7 @@ export class OrderComponent implements OnInit {
     onUpdateOrderResponse(): void {
         this.updateOrderResponseCallStatus.submit();
 
-        this.documentService.updateDocument(this.orderResponse.id, 'ORDERRESPONSESIMPLE', JSON.stringify(this.orderResponse))
+        this.documentService.updateDocument(this.orderResponse.id, 'ORDERRESPONSESIMPLE', JSON.stringify(this.orderResponse),this.orderResponse.sellerSupplierParty.party.federationInstanceID)
             .then(() => {
                 this.updateOrderResponseCallStatus.callback("Production template file added to the order response", true);
             })

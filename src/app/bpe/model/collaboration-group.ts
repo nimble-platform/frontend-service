@@ -6,6 +6,7 @@ export class CollaborationGroup {
                 public name: string = "",
                 public archived: boolean = false,
                 public isArchiveable: boolean = false,
-                public associatedProcessInstanceGroups: ProcessInstanceGroup[]) {
+                public associatedProcessInstanceGroups: ProcessInstanceGroup[],
+                public federationId:string = null) {
     }
 }

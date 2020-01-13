@@ -175,10 +175,10 @@ export class PpapDocumentSelectComponent implements OnInit {
         this.userService.getParty(buyerId).then(buyerParty => {
             this.ppap.buyerCustomerParty = new CustomerParty(buyerParty);
 
-            this.userService.getParty(sellerId).then(sellerParty => {
+            this.userService.getParty(sellerId,this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.federationInstanceID).then(sellerParty => {
                 this.ppap.sellerSupplierParty = new SupplierParty(sellerParty);
                 this.bpeService
-                    .startProcessWithDocument(this.ppap)
+                    .startProcessWithDocument(this.ppap,sellerParty.federationInstanceID)
                     .then(() => {
                         this.callStatus.callback("Ppap request sent", true);
                         this.router.navigate(["dashboard"]);
@@ -205,7 +205,7 @@ export class PpapDocumentSelectComponent implements OnInit {
         ppap.additionalDocumentReference = this.additionalDocuments;
         ppap.documentType = this.DOCUMENTS.filter((_, i) => this.selectedDocuments[i]).map(doc => doc.name);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(ppap),"PPAPREQUEST",this.processMetadata.processInstanceId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(ppap),"PPAPREQUEST",this.processMetadata.processInstanceId,this.processMetadata.sellerFederationId)
             .then(() => {
                 this.documentService.updateCachedDocument(ppap.id,ppap);
                 this.callStatus.callback("Ppap request updated", true);

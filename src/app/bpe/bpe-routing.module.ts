@@ -14,9 +14,9 @@ const routes: Routes = [
     {path: 'bpe-design/create', component: BPDetailComponent},
     {path: 'bpe-design', component: BPsComponent},
     {path: 'bpe-design/configure/:processID', component: BPConfigureComponent},
-    {path: 'bpe-exec/:processInstanceId', component: ProductBpOptionsComponent},
-    {path: 'bpe-sum/:processInstanceId', component: ThreadSummaryComponent},
-    {path: 'frame-contract/:id', component: FrameContractDetailsComponent},
+    {path: 'bpe-exec/:processInstanceId/:delegateId', component: ProductBpOptionsComponent},
+    {path: 'bpe-sum/:processInstanceId/:delegateId', component: ThreadSummaryComponent},
+    {path: 'frame-contract/:id/:delegateId', component: FrameContractDetailsComponent},
     {path: 'shopping-cart', component: ShoppingCartComponent}
 ];
 
