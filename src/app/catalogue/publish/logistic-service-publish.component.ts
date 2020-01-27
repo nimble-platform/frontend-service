@@ -417,22 +417,18 @@ export class LogisticServicePublishComponent implements OnInit {
             let isValid = false;
             // if at least of the logistics services has a valid name, then set 'isValid' to true.
             this.logisticCatalogueLines.forEach(catalogueLine => {
-                if(this.itemHasName(catalogueLine.goodsItem.item)){
+                if(this.isItemValid(catalogueLine.goodsItem.item)){
                     isValid = true;
                 }
             });
             return isValid;
         }
-        return this.isValidCatalogueLine();
+        return this.isItemValid(this.catalogueLine.goodsItem.item);
     }
 
-    isValidCatalogueLine(): boolean {
-        // must have a name
-        return this.itemHasName(this.catalogueLine.goodsItem.item);
-    }
-
-    private itemHasName(item:Item):boolean{
-        return item.name[0] && item.name[0].value !== "";
+    isItemValid(item:Item){
+        // must have a name and id
+        return item.name[0] && item.name[0].value !== "" && item.manufacturersItemIdentification.id && item.manufacturersItemIdentification.id !== "";
     }
 
     // Removes empty properties from catalogueLines about to be sent
@@ -521,28 +517,28 @@ export class LogisticServicePublishComponent implements OnInit {
             let catalogueLines:CatalogueLine[] = [];
             let cataloguePublishModes:string[] = [];
             // get valid catalogue lines and their publish modes
-            if(this.logisticCatalogueLines.has("ROADTRANSPORT") && this.itemHasName(this.logisticCatalogueLines.get("ROADTRANSPORT").goodsItem.item)){
+            if(this.logisticCatalogueLines.has("ROADTRANSPORT") && this.isItemValid(this.logisticCatalogueLines.get("ROADTRANSPORT").goodsItem.item)){
                 this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines.get("ROADTRANSPORT"));
                 // be sure that its transportation service details is not null
                 this.logisticCatalogueLines.get("ROADTRANSPORT").goodsItem.item.transportationServiceDetails = new TransportationService();
                 catalogueLines.push(this.logisticCatalogueLines.get("ROADTRANSPORT"));
                 cataloguePublishModes.push(this.logisticPublishMode.get("ROADTRANSPORT"));
             }
-            if(this.logisticCatalogueLines.has("MARITIMETRANSPORT") && this.itemHasName(this.logisticCatalogueLines.get("MARITIMETRANSPORT").goodsItem.item)){
+            if(this.logisticCatalogueLines.has("MARITIMETRANSPORT") && this.isItemValid(this.logisticCatalogueLines.get("MARITIMETRANSPORT").goodsItem.item)){
                 this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines.get("MARITIMETRANSPORT"));
                 // be sure that its transportation service details is not null
                 this.logisticCatalogueLines.get("MARITIMETRANSPORT").goodsItem.item.transportationServiceDetails = new TransportationService();
                 catalogueLines.push(this.logisticCatalogueLines.get("MARITIMETRANSPORT"));
                 cataloguePublishModes.push(this.logisticPublishMode.get("MARITIMETRANSPORT"));
             }
-            if(this.logisticCatalogueLines.has("AIRTRANSPORT") && this.itemHasName(this.logisticCatalogueLines.get("AIRTRANSPORT").goodsItem.item)){
+            if(this.logisticCatalogueLines.has("AIRTRANSPORT") && this.isItemValid(this.logisticCatalogueLines.get("AIRTRANSPORT").goodsItem.item)){
                 this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines.get("AIRTRANSPORT"));
                 // be sure that its transportation service details is not null
                 this.logisticCatalogueLines.get("AIRTRANSPORT").goodsItem.item.transportationServiceDetails = new TransportationService();
                 catalogueLines.push(this.logisticCatalogueLines.get("AIRTRANSPORT"));
                 cataloguePublishModes.push(this.logisticPublishMode.get("AIRTRANSPORT"));
             }
-            if(this.logisticCatalogueLines.has("RAILTRANSPORT") && this.itemHasName(this.logisticCatalogueLines.get("RAILTRANSPORT").goodsItem.item)){
+            if(this.logisticCatalogueLines.has("RAILTRANSPORT") && this.isItemValid(this.logisticCatalogueLines.get("RAILTRANSPORT").goodsItem.item)){
                 this.copyMissingAdditionalItemPropertiesAndAddresses(this.logisticCatalogueLines.get("RAILTRANSPORT"));
                 // be sure that its transportation service details is not null
                 this.logisticCatalogueLines.get("RAILTRANSPORT").goodsItem.item.transportationServiceDetails = new TransportationService();
@@ -550,7 +546,7 @@ export class LogisticServicePublishComponent implements OnInit {
                 cataloguePublishModes.push(this.logisticPublishMode.get("RAILTRANSPORT"));
             }
             this.logisticCatalogueLines.forEach((catalogueLine, key) => {
-                if(key != "ROADTRANSPORT" && key != "MARITIMETRANSPORT" && key != "AIRTRANSPORT" && key != "RAILTRANSPORT" && this.itemHasName(catalogueLine.goodsItem.item)){
+                if(key != "ROADTRANSPORT" && key != "MARITIMETRANSPORT" && key != "AIRTRANSPORT" && key != "RAILTRANSPORT" && this.isItemValid(catalogueLine.goodsItem.item)){
                     catalogueLines.push(catalogueLine);
                     cataloguePublishModes.push(this.logisticPublishMode.get(key));
                 }
@@ -653,7 +649,7 @@ export class LogisticServicePublishComponent implements OnInit {
     }
 
     private onFailedPublish(err): void {
-        this.publishStatus.error(err);
+        this.publishStatus.error(err._body ? err._body : err);
         this.submitted = false;
         this.error_detc = true;
         if(err.status == 406){

@@ -398,12 +398,9 @@ export class ProductPublishComponent implements OnInit {
     }
 
     isValidCatalogueLine(): boolean {
+        let item = this.catalogueLine.goodsItem.item;
         // must have a name
-        return this.itemHasName(this.catalogueLine.goodsItem.item);
-    }
-
-    private itemHasName(item:Item):boolean{
-        return item.name[0] && item.name[0].value !== "";
+        return item.name[0] && item.name[0].value !== "" && item.manufacturersItemIdentification.id && item.manufacturersItemIdentification.id !== "";
     }
 
     addItemNameDescription() {
