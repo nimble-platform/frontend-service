@@ -21,12 +21,6 @@ import { ProductPriceTabComponent } from "./publish/product-price-tab.component"
 import { ProductCertificatesTabComponent } from "./publish/product-certificates-tab.component";
 import { UserMgmtModule } from "../user-mgmt/user-mgmt.module";
 import {NoteFileViewComponent} from './ubl-model-view/note-file-view.component';
-import {PriceOptionCountPipe} from "./publish/price-option/price-option-count.pipe";
-import {PriceOptionPipe} from "./publish/price-option/price-option.pipe";
-import {QuantityPriceOptionComponent} from "./publish/price-option/quantity-price-option.component";
-import {ItemPropertyPriceOptionComponent} from "./publish/price-option/item-property-price-option.component";
-import {DiscountTargetComponent} from "./publish/price-option/discount-target.component";
-import {PriceOptionViewComponent} from './publish/price-option/price-option-view.component';
 import {BulkPublishComponent} from "./publish/bulk-publish.component";
 import {OptionsPanelComponent} from './publish/options-panel.component';
 import {OriginDestinationViewComponent} from './publish/origin-destination-view-component';
@@ -63,12 +57,6 @@ import {DeleteExportCatalogueModalComponent} from "./ubl-model-view/catalogue/de
         CatalogueLinePanelComponent,
         ProductCertificatesTabComponent,
         NoteFileViewComponent,
-        PriceOptionCountPipe,
-        PriceOptionPipe,
-        QuantityPriceOptionComponent,
-        ItemPropertyPriceOptionComponent,
-        DiscountTargetComponent,
-        PriceOptionViewComponent,
         FavouriteViewComponent,
         CompareViewComponent
     ],
@@ -76,11 +64,7 @@ import {DeleteExportCatalogueModalComponent} from "./ubl-model-view/catalogue/de
         CategorySearchComponent,
         CatalogueViewComponent,
         CatalogueLinePanelComponent,
-        QuantityPriceOptionComponent,
-        ItemPropertyPriceOptionComponent,
-        DiscountTargetComponent,
         NoteFileViewComponent,
-        PriceOptionViewComponent,
         FavouriteViewComponent,
         CompareViewComponent
     ],

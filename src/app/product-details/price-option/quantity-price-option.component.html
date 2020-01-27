@@ -3,7 +3,8 @@
                     [label]="'Minimum Order Quantity'"
                     [labelClass]="'col-5'"
                     [valueClass]="'col-7'"
+                    [presentationMode]="readonly ? 'view': 'edit'"
                     [quantity]="priceOption.itemLocationQuantity.minimumQuantity">
     </quantity-input>
 </div>
-<discount-target [priceOption]="priceOption" [discountUnits]="discountUnits"></discount-target>
+<discount-target [priceOption]="priceOption" [discountUnits]="discountUnits" [readonly]="readonly"></discount-target>

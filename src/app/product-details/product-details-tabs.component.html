@@ -126,6 +126,10 @@
                 <div *ngIf="wrapper.getFreeSample() != ''" class="p-1">
                     <strong><span [innerHTML]="'Free Sample:' | translate"></span></strong> {{ wrapper.getFreeSample() }}
                 </div>
+                <h3 *ngIf="wrapper.getPricePerItem() != '' || wrapper.getFreeSample() != ''" class="p-1"><span [innerHTML]="'Discounts/Charges' | translate"></span></h3>
+                <div class="p-1">
+                    <discount-details [catalogueLine]="wrapper.line" [companyNegotiationSettings]="settings.negotiationSettings" [readonly]="true"></discount-details>
+                </div>
             </div>
     </div>
 

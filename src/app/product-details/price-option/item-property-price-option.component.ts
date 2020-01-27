@@ -1,11 +1,11 @@
 import {Component, Input} from "@angular/core";
-import {PriceOption} from "../../model/publish/price-option";
-import {copy, getPropertyValuesAsStrings, selectPreferredValues} from '../../../common/utils';
-import {ItemProperty} from "../../model/publish/item-property";
-import {UBLModelUtils} from "../../model/ubl-model-utils";
-import {CatalogueLine} from "../../model/publish/catalogue-line";
-import {Quantity} from "../../model/publish/quantity";
-import {Text} from '../../model/publish/text';
+import {PriceOption} from "../../catalogue/model/publish/price-option";
+import {copy, getPropertyValuesAsStrings, selectPreferredValues} from '../../common/utils';
+import {ItemProperty} from "../../catalogue/model/publish/item-property";
+import {UBLModelUtils} from "../../catalogue/model/ubl-model-utils";
+import {CatalogueLine} from "../../catalogue/model/publish/catalogue-line";
+import {Quantity} from "../../catalogue/model/publish/quantity";
+import {Text} from '../../catalogue/model/publish/text';
 import {TranslateService} from '@ngx-translate/core';
 
 /**
@@ -20,6 +20,7 @@ export class ItemPropertyPriceOptionComponent {
 
     @Input() catalogueLine: CatalogueLine;
     @Input() priceOption: PriceOption;
+    @Input() readonly:boolean = false;
     @Input() index: number;
     @Input() discountUnits;
 
@@ -28,6 +29,7 @@ constructor(
     ) {}
 
     getItemPropertyName = selectPreferredValues;
+    getPropertyValuesAsStrings=getPropertyValuesAsStrings;
 
     selectProperty(itemPropertyId: string): void {
         // ignore if the property is already selected

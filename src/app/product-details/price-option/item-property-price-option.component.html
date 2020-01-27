@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row" *ngIf="!readonly">
     <div class="col-6">
         <div class="row">
             <div class="col-5">
@@ -32,7 +32,7 @@
             </div>
         </div>
 
-        <div class="col-9 object-list align-items-center">
+        <div *ngIf="!readonly" class="col-9 object-list align-items-center">
             <div *ngFor="let value of getOriginalValuesOfProperty(itemProperty)"
                  class="bordered value-pill" title="{{ value }}"
                  (click)="selectPropertyValue(value, itemProperty)">
@@ -52,6 +52,16 @@
                 <button class="btn btn-danger btn-sm" (click)="removeOption(i)"><span [innerHTML]="'Remove' | translate"></span></button>
             </div>
         </div>
+        <div *ngIf="readonly" class="col-9 object-list align-items-center">
+            <div *ngFor="let value of getPropertyValuesAsStrings(itemProperty)"
+                 class="bordered value-pill" title="{{ value }}">
+                <div class="d-flex align-items-center">
+                    <div class="mr-2">
+                        <label>{{ value }}</label>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-<discount-target [priceOption]="priceOption" [discountUnits]="discountUnits"></discount-target>
+<discount-target [priceOption]="priceOption" [discountUnits]="discountUnits" [readonly]="readonly"></discount-target>
