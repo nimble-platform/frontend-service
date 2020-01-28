@@ -304,7 +304,7 @@ export class NegotiationResponseComponent implements OnInit {
         }
 
 
-        return false;
+        return this.areNotesAndFilesAttachedToQuotation();
     }
 
     private isFrameContractDurationValid(): boolean {
@@ -352,5 +352,9 @@ export class NegotiationResponseComponent implements OnInit {
         this.showNotesAndAdditionalFiles = false;
         this.showPurchaseOrder = false;
         return ret;
+    }
+
+    areNotesAndFilesAttachedToQuotation(){
+        return (this.quotation.note.length == 1 && this.quotation.note[0] != "") || this.quotation.note.length > 1 || this.quotation.additionalDocumentReference.length > 0;
     }
 }
