@@ -308,6 +308,7 @@ export class TermsAndConditionsComponent implements OnInit {
 
         let id = "$incoterms_id";
         this.updateTermNegotiating(id, this._selectedIncoterm);
+        this.onClauseUpdated.emit(true);
     }
 
     get selectedTradingTerm():string{
@@ -318,6 +319,7 @@ export class TermsAndConditionsComponent implements OnInit {
     set selectedTradingTerm(tradingTerm:string){
         this._selectedTradingTerm = tradingTerm;
         this.updateTermNegotiating("$payment_id", tradingTerm);
+        this.onClauseUpdated.emit(true);
     }
 
     @Input()
