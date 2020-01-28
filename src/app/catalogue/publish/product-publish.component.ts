@@ -659,10 +659,10 @@ export class ProductPublishComponent implements OnInit {
 
         if (this.publishMode == 'edit' || this.publishMode == 'copy') {
             if (this.publishMode == 'copy') {
-              let newId = UBLModelUtils.generateUUID();
-              this.catalogueService.draftCatalogueLine.id = newId;
-              this.catalogueService.draftCatalogueLine.goodsItem.id = newId;
-              this.catalogueService.draftCatalogueLine.goodsItem.item.manufacturersItemIdentification.id = newId;
+                // clear the ids
+              this.catalogueService.draftCatalogueLine.id = null;
+              this.catalogueService.draftCatalogueLine.goodsItem.id = null;
+              this.catalogueService.draftCatalogueLine.goodsItem.item.manufacturersItemIdentification.id = null;
               this.catalogueService.draftCatalogueLine = removeHjids(this.catalogueService.draftCatalogueLine);
             }
             this.catalogueLine = this.catalogueService.draftCatalogueLine;

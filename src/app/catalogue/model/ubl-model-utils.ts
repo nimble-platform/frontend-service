@@ -127,7 +127,7 @@ export class UBLModelUtils {
 
         // create item
         const uuid:string = this.generateUUID();
-        const item = new Item([], [], [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, [], [], this.createDimensions(dimensionUnits), null);
+        const item = new Item([], [], [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(null), docRef, [], [], this.createDimensions(dimensionUnits), null);
 
         // create goods item
         const goodsItem = new GoodsItem(uuid, null, item, this.createPackage(),
