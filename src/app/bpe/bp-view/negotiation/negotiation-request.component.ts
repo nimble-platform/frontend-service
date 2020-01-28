@@ -233,7 +233,7 @@ export class NegotiationRequestComponent implements OnInit {
                 }
             }
         }
-        return false;
+        return this.areNotesAndFilesUpdated();
     }
 
     isLoading(): boolean {
@@ -393,6 +393,10 @@ export class NegotiationRequestComponent implements OnInit {
         this.showNotesAndAdditionalFiles = false;
         this.showPurchaseOrder = false;
         return ret;
+    }
+
+    areNotesAndFilesUpdated():boolean{
+        return (this.rfq.note.length == 1 && this.rfq.note[0] != "") || this.rfq.note.length > 1 || this.rfq.additionalDocumentReference.length > 0;
     }
 
 }
