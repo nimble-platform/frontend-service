@@ -6,7 +6,7 @@ import {CallStatus} from "../../common/call-status";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {PublishService} from "../publish-and-aip.service";
 import {CategoryService} from "../category/category.service";
-import { isTransportService } from "../../common/utils";
+import {isSearchResultLogisticsService, isTransportService} from '../../common/utils';
 import { BPDataService } from "../../bpe/bp-view/bp-data-service";
 import { UserService } from "../../user-mgmt/user.service";
 import { CompanySettings } from "../../user-mgmt/model/company-settings";
@@ -98,6 +98,7 @@ export class FavouriteViewComponent implements OnInit {
 
 	manufacturerIdCountMap : any;
 
+	isSearchResultLogisticsService=isSearchResultLogisticsService;
 
     constructor(private cookieService: CookieService,
                 private publishService: PublishService,

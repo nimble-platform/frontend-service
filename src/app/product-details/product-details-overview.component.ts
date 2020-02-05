@@ -3,7 +3,13 @@ import { ProductWrapper } from "../common/product-wrapper";
 import { CommodityClassification } from "../catalogue/model/publish/commodity-classification";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import {
-    getPropertyKey, getPropertyValues, getPropertyValuesAsStrings, selectName, selectNameFromLabelObject, selectPreferredValue,
+    getPropertyKey,
+    getPropertyValues,
+    getPropertyValuesAsStrings,
+    isLogisticsService,
+    selectName,
+    selectNameFromLabelObject,
+    selectPreferredValue,
 } from '../common/utils';
 import {Item} from '../catalogue/model/publish/item';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
@@ -90,6 +96,9 @@ export class ProductDetailsOverviewComponent implements OnInit{
             }).catch(error => {
                 this.getManufacturerPartyNameStatus.error("Failed to get manufacturer party name", error);
             })
+
+            // do not show Add to Cart button for logistics services
+            this.showAddToCartButton = this.showAddToCartButton && !isLogisticsService(this.wrapper.line);
         }
         /*
             Cache FurnitureOntology categories. Then, use cached categories to get correct category label according

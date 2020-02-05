@@ -6,7 +6,7 @@ import * as myGlobals from '../globals';
 import {SearchContextService} from "./search-context.service";
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import {copy, roundToTwoDecimals, selectNameFromLabelObject} from '../common/utils';
+import {copy, isSearchResultLogisticsService, roundToTwoDecimals, selectNameFromLabelObject} from '../common/utils';
 import { CallStatus } from '../common/call-status';
 import { CURRENCIES } from "../catalogue/model/constants";
 import { CategoryService } from '../catalogue/category/category.service';
@@ -130,6 +130,7 @@ export class SimpleSearchFormComponent implements OnInit {
     // shopping cart of the user
     shoppingCartCatalogue:Catalogue = null;
 
+    isSearchResultLogisticsService=isSearchResultLogisticsService;
     constructor(private simpleSearchService: SimpleSearchService,
                 private searchContextService: SearchContextService,
                 private categoryService: CategoryService,

@@ -15,7 +15,13 @@ import {Headers} from "@angular/http";
 import { AbstractControl } from "@angular/forms";
 declare var Countries: any;
 import {PartyName} from '../catalogue/model/publish/party-name';
-import {deliveryPeriodUnitListId, maximumDecimalsForPrice, warrantyPeriodUnitListId} from  './constants'
+import {
+    defaultLogisticsServiceCategoryUri,
+    defaultTransportServiceCategoryUri,
+    deliveryPeriodUnitListId,
+    maximumDecimalsForPrice,
+    warrantyPeriodUnitListId
+} from './constants'
 import {UnitService} from "./unit-service";
 import {CompanyNegotiationSettings} from "../user-mgmt/model/company-negotiation-settings";
 
@@ -661,6 +667,17 @@ export function isLogisticsService(product: CatalogueLine): boolean {
                 }
             }
 
+        }
+    }
+    return false;
+}
+
+export function isSearchResultLogisticsService(result: any): boolean {
+    if(result.classificationUri){
+        for(let classificationUri of result.classificationUri){
+            if(classificationUri == defaultLogisticsServiceCategoryUri || classificationUri == defaultTransportServiceCategoryUri){
+                return true;
+            }
         }
     }
     return false;
