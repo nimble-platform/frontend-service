@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import { Location } from "@angular/common";
 import { Router } from "@angular/router";
 import { CookieService } from "ng2-cookies";
@@ -42,6 +42,9 @@ export class TransportNegotiationRequestComponent implements OnInit {
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
+    // this component is used for both transport and logistics service negotiation
+    // however, we need to know the type of service since some tabs are displayed only for transport services
+    @Input() isTransportService:boolean;
 
     constructor(private bpDataService: BPDataService,
                 private bpeService:BPEService,
@@ -65,6 +68,10 @@ export class TransportNegotiationRequestComponent implements OnInit {
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
         this.rfq = this.bpDataService.requestForQuotation;
+        // for logistics services except transport services, onyl Negotiation tab is available
+        if(!this.isTransportService){
+            this.selectedTab = "NEGOTIATION";
+        }
         this.validateRfq();
         this.rfqPrice = new DiscountPriceWrapper(
             this.rfq.requestForQuotationLine[0].lineItem.price,

@@ -95,7 +95,7 @@ export class ItemInformationResponseComponent implements OnInit {
     }
 
     onNextStep(): void {
-        if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().tradeDetails.ppapCompatibilityLevel) {
+        if(isLogisticsService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().tradeDetails.ppapCompatibilityLevel) {
             this.navigateToBusinessProcess("Negotiation");
         } else {
             if (this.bpDataService.getCompanyWorkflowMap(null).get('Ppap')) {
@@ -162,8 +162,7 @@ export class ItemInformationResponseComponent implements OnInit {
     }
 
     isNextStepDisabled(): boolean {
-        // next steps do not make sense for logistics services like warehouse management, so next step is disable for them
-        return this.isRepeatRequestDisabled() || (this.isLogisticsService && !this.isTransportService) || this.bpDataService.isFinalProcessInTheWorkflow('Item_Information_Request');
+        return this.isRepeatRequestDisabled() || this.bpDataService.isFinalProcessInTheWorkflow('Item_Information_Request');
     }
 
     isRepeatRequestDisabled(): boolean {

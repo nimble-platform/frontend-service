@@ -81,6 +81,9 @@
             <div *ngIf="companyWorkflowMap.get('Item_Information_Request')" [ngClass]="getStepClasses('Item_Information_Request')">
                 <span [attr.data-after]="statusText"><span [innerHTML]="'Request for Information' | translate"></span></span>
             </div>
+            <div *ngIf="companyWorkflowMap.get('Negotiation')" [ngClass]="getStepClasses('Transport_Negotiation')">
+                <span [attr.data-after]="statusText"><span [innerHTML]="'Logistics Service Negotiation' | translate"></span></span>
+            </div>
         </div>
     </div>
 </div>

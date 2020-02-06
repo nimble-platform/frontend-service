@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { BPDataService } from "../bp-data-service";
 import { CallStatus } from "../../../common/call-status";
 import {RequestForQuotation} from '../../../catalogue/model/publish/request-for-quotation';
+import {isTransportService} from '../../../common/utils';
 
 @Component({
     selector: "transport-negotiation",
@@ -10,11 +11,15 @@ import {RequestForQuotation} from '../../../catalogue/model/publish/request-for-
 export class TransportNegotiationComponent implements OnInit {
 
     initCallStatus: CallStatus = new CallStatus();
+    // this component is used for both transport and logistics service negotiation
+    // however, we need to know the type of service since some tabs in the child components are displayed only for transport services
+    isTransportService:boolean;
 
     constructor(public bpDataService: BPDataService) {
     }
 
     ngOnInit() {
+        this.isTransportService = isTransportService(this.bpDataService.getCatalogueLine());
 		if(this.bpDataService.requestForQuotation == null) {
             this.initCallStatus.submit();
             this.initRfq()

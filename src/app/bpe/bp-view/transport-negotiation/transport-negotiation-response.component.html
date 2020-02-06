@@ -1,5 +1,5 @@
 <!-- Tabs -->
-<div class="col-12 pt-4">
+<div class="col-12 pt-4" *ngIf="isTransportService">
     <ul class="nav nav-tabs">
         <li class="nav-item">
             <a href id="OVERVIEW" class="nav-link"
@@ -154,55 +154,57 @@
     </div>
 
 
-    <hr>
+    <div *ngIf="isTransportService">
+        <hr>
 
-    <!-- Delivery Period -->
-    <div class="row space-before" [ngClass]="{'bg-danger text-white':isDeliveryPeriodUpdated()}">
-        <div class="col-2">
-            <input-label label="Delivery Period" definition="The period requested for delivery. It starts after the order confirmation.For example, Quantity: 2, Unit: weeks">
-            </input-label>
-        </div>
-        <div class="col-5">
-            {{quantityToString(rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure)}}
-        </div>
-        <div class="col-5">
-            <div *ngIf="isDisabled()">
-                {{quantityToString(quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure)}}
+        <!-- Delivery Period -->
+        <div class="row space-before" [ngClass]="{'bg-danger text-white':isDeliveryPeriodUpdated()}">
+            <div class="col-2">
+                <input-label label="Delivery Period" definition="The period requested for delivery. It starts after the order confirmation.For example, Quantity: 2, Unit: weeks">
+                </input-label>
             </div>
-            <quantity-input *ngIf="!isDisabled()"
-                [quantity]="quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure"
-                quantityType="time_quantity">
-            </quantity-input>
+            <div class="col-5">
+                {{quantityToString(rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure)}}
+            </div>
+            <div class="col-5">
+                <div *ngIf="isDisabled()">
+                    {{quantityToString(quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure)}}
+                </div>
+                <quantity-input *ngIf="!isDisabled()"
+                                [quantity]="quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure"
+                                quantityType="time_quantity">
+                </quantity-input>
+            </div>
         </div>
-    </div>
 
-    <!-- Service Start Date -->
-    <div class="row space-before" [ngClass]="{'bg-danger text-white':isStartDateUpdated()}">
-        <div class="col-2">
-            <input-label label="Pick-Up Date" definition="The period within which the services referred to in the Transport Execution Plan Request must begin.">
-            </input-label>
+        <!-- Service Start Date -->
+        <div class="row space-before" [ngClass]="{'bg-danger text-white':isStartDateUpdated()}">
+            <div class="col-2">
+                <input-label label="Pick-Up Date" definition="The period within which the services referred to in the Transport Execution Plan Request must begin.">
+                </input-label>
+            </div>
+            <div class="col-5">
+                {{dateToString(rfq.delivery.requestedDeliveryPeriod.startDate)}}
+            </div>
+            <div class="col-5">
+                <date-input [(date)]="quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.startDate" [presentationMode]="isDisabled() ? 'view':'edit'">
+                </date-input>
+            </div>
         </div>
-        <div class="col-5">
-            {{dateToString(rfq.delivery.requestedDeliveryPeriod.startDate)}}
-        </div>
-        <div class="col-5">
-            <date-input [(date)]="quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.startDate" [presentationMode]="isDisabled() ? 'view':'edit'">
-            </date-input>
-        </div>
-    </div>
 
-    <!-- Service End Date -->
-    <div class="row space-before" [ngClass]="{'bg-danger text-white':isEndDateUpdated()}">
-        <div class="col-2">
-            <input-label label="Drop-Off Date" definition="The period during which the services referred to in the Transport Execution Plan Request must be completed.">
-            </input-label>
-        </div>
-        <div class="col-5">
-            {{dateToString(rfq.delivery.requestedDeliveryPeriod.endDate)}}
-        </div>
-        <div class="col-5">
-            <date-input [(date)]="quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.endDate" [presentationMode]="isDisabled() ? 'view':'edit'">
-            </date-input>
+        <!-- Service End Date -->
+        <div class="row space-before" [ngClass]="{'bg-danger text-white':isEndDateUpdated()}">
+            <div class="col-2">
+                <input-label label="Drop-Off Date" definition="The period during which the services referred to in the Transport Execution Plan Request must be completed.">
+                </input-label>
+            </div>
+            <div class="col-5">
+                {{dateToString(rfq.delivery.requestedDeliveryPeriod.endDate)}}
+            </div>
+            <div class="col-5">
+                <date-input [(date)]="quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.endDate" [presentationMode]="isDisabled() ? 'view':'edit'">
+                </date-input>
+            </div>
         </div>
     </div>
 
@@ -262,7 +264,8 @@
             <span [innerHTML]="'Request new Quotation' | translate"></span>
         </button>
     </div>
-    <div *ngIf="!bpDataService.isFinalProcessInTheWorkflow('Negotiation')" class="col-2">
+    <!-- Order step exists only for transport services-->
+    <div *ngIf="!bpDataService.isFinalProcessInTheWorkflow('Negotiation') && isTransportService" class="col-2">
         <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.isCollaborationFinished || quotation.documentStatusCode.name == 'Rejected'" (click)="onAcceptAndOrder()">
             <span [innerHTML]="'Accept & Order' | translate"></span>
         </button>

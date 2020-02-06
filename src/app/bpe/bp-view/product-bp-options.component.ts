@@ -364,7 +364,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             case "Ppap":
                 return "Ppap";
             case "Negotiation":
-                if(this.areTransportServices()) {
+                if(this.areLogisticsServices()) {
                     return "Transport_Negotiation";
                 } else {
                     return "Negotiation";

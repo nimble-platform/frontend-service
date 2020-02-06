@@ -32,6 +32,9 @@ export class TransportNegotiationResponseComponent implements OnInit {
     quotationPaymentTerms: PaymentTermsWrapper;
 
     @Input() readonly: boolean = false;
+    // this component is used for both transport and logistics service negotiation
+    // however, we need to know the type of service since some tabs are displayed only for transport services
+    @Input() isTransportService:boolean;
 
     quantityToString = quantityToString;
     selectedTab: string = "OVERVIEW";
@@ -63,6 +66,10 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
         if(!this.rfq) {
             this.rfq = this.bpDataService.requestForQuotation;
+        }
+        // for logistics services except transport services, onyl Negotiation tab is available
+        if(!this.isTransportService){
+            this.selectedTab = "NEGOTIATION";
         }
         this.rfqPrice = new DiscountPriceWrapper(
             this.rfq.requestForQuotationLine[0].lineItem.price,
