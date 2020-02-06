@@ -226,14 +226,14 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     isRequestNewQuotationDisabled(): boolean {
-        return this.isLoading() || this.isThereADeletedProduct() || this.processMetadata.isCollaborationFinished;
+        return this.isLoading() || this.isThereADeletedProduct() || this.processMetadata.collaborationStatus == "COMPLETED";
     }
 
     isAcceptAndOrderDisabled(): boolean {
         return this.isLoading() ||
             this.isThereADeletedProduct() ||
             !this.isPriceValid() ||
-            this.processMetadata.isCollaborationFinished ||
+            this.processMetadata.collaborationStatus == "COMPLETED" ||
             this.quotation.documentStatusCode.name === 'Rejected' ||
             this.bpDataService.isFinalProcessInTheWorkflow('Negotiation');
     }

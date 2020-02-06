@@ -333,7 +333,7 @@ export class ThreadSummaryComponent implements OnInit {
             userRole === "buyer",
             isRated === "true",
             initialDoc.areProductsDeleted,
-            this.processInstanceGroup.status == "COMPLETED",
+            this.processInstanceGroup.status,
             sellerFederationId
         );
 

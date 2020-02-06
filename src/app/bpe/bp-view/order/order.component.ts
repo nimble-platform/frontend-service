@@ -430,7 +430,7 @@ export class OrderComponent implements OnInit {
     }
 
     isDispatchDisabled(): boolean {
-        return this.isLoading() || this.isOrderRejected() || this.isThereADeletedProduct() || this.processMetadata.isCollaborationFinished;
+        return this.isLoading() || this.isOrderRejected() || this.isThereADeletedProduct() || this.processMetadata.collaborationStatus == "COMPLETED";
     }
 
     areEpcCodesDirty(): boolean {

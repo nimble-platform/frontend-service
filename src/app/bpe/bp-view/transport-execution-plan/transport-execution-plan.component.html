@@ -145,7 +145,7 @@
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div *ngIf="productOrder" class="col-3">
-            <button class="btn btn-primary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.isCollaborationFinished" (click)="onDispatchAdvice()">
+            <button class="btn btn-primary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.collaborationStatus == 'COMPLETED'" (click)="onDispatchAdvice()">
                 <span [innerHTML]="'Dispatch Order' | translate"></span>
             </button>
         </div>

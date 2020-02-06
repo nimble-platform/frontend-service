@@ -260,13 +260,13 @@
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div class="col-3">
-        <button class="btn btn-secondary action" [disabled]="isLoading() || processMetadata.isCollaborationFinished" (click)="onRequestNewQuotation()">
+        <button class="btn btn-secondary action" [disabled]="isLoading() || processMetadata.collaborationStatus == 'COMPLETED'" (click)="onRequestNewQuotation()">
             <span [innerHTML]="'Request new Quotation' | translate"></span>
         </button>
     </div>
     <!-- Order step exists only for transport services-->
     <div *ngIf="!bpDataService.isFinalProcessInTheWorkflow('Negotiation') && isTransportService" class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.isCollaborationFinished || quotation.documentStatusCode.name == 'Rejected'" (click)="onAcceptAndOrder()">
+        <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.collaborationStatus == 'COMPLETED' || quotation.documentStatusCode.name == 'Rejected'" (click)="onAcceptAndOrder()">
             <span [innerHTML]="'Accept & Order' | translate"></span>
         </button>
     </div>

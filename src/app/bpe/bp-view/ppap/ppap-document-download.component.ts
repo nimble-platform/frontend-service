@@ -104,7 +104,7 @@ export class PpapDocumentDownloadComponent{
     }
 
     isNextStepDisabled(): boolean {
-        return this.bpDataService.isFinalProcessInTheWorkflow('Ppap') || this.isCatalogueLineDeleted || this.processMetadata.isCollaborationFinished;
+        return this.bpDataService.isFinalProcessInTheWorkflow('Ppap') || this.isCatalogueLineDeleted || this.processMetadata.collaborationStatus == 'COMPLETED';
     }
 
     isBuyer(): boolean {
