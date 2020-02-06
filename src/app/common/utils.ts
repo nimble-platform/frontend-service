@@ -483,6 +483,15 @@ export function periodToString(period: Period): string {
     return durationToString(period.durationMeasure);
 }
 
+// this method converts the date (YYYY-MM-DD) to MM/DD/YYYY format
+export function dateToString(date:string): string {
+    if(date && date != ""){
+        let dateParts = date.split("-");
+        return dateParts[1]+"/"+dateParts[2]+"/"+dateParts[0];
+    }
+    return "";
+}
+
 const MAX_PRICE = 100000;
 
 const STEPS_FOR_PRICE = 100;

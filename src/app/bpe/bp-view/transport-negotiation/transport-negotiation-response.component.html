@@ -183,13 +183,10 @@
             </input-label>
         </div>
         <div class="col-5">
-            {{rfq.delivery.requestedDeliveryPeriod.startDate}}
+            {{dateToString(rfq.delivery.requestedDeliveryPeriod.startDate)}}
         </div>
         <div class="col-5">
-            <div *ngIf="isDisabled()">
-                {{quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.startDate}}
-            </div>
-            <date-input *ngIf="!isDisabled()" [(date)]="quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.startDate">
+            <date-input [(date)]="quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.startDate" [presentationMode]="isDisabled() ? 'view':'edit'">
             </date-input>
         </div>
     </div>
@@ -201,13 +198,10 @@
             </input-label>
         </div>
         <div class="col-5">
-            {{rfq.delivery.requestedDeliveryPeriod.endDate}}
+            {{dateToString(rfq.delivery.requestedDeliveryPeriod.endDate)}}
         </div>
         <div class="col-5">
-            <div *ngIf="isDisabled()">
-                {{quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.endDate}}
-            </div>
-            <date-input *ngIf="!isDisabled()" [(date)]="quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.endDate">
+            <date-input [(date)]="quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.endDate" [presentationMode]="isDisabled() ? 'view':'edit'">
             </date-input>
         </div>
     </div>

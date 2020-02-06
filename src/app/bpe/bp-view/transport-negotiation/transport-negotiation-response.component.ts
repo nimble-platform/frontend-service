@@ -14,7 +14,7 @@ import {CookieService} from 'ng2-cookies';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
 import {TranslateService} from '@ngx-translate/core';
-import {quantityToString} from '../../../common/utils';
+import {dateToString, quantityToString} from '../../../common/utils';
 
 @Component({
     selector: "transport-negotiation-response",
@@ -46,6 +46,8 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
+
+    dateToString=dateToString;
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
