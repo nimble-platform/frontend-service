@@ -26,7 +26,7 @@
                         </div>
                         <div class="col pl-1">
                           <strong><span [innerHTML]="'Status' | translate"></span>:</strong><br/>
-                          <span *ngIf="processInstanceGroup.status == 'CANCELLED'" class="badge badge-secondary"><span [innerHTML]="'Collaboration cancelled' | translate"></span></span>
+                          <span *ngIf="processInstanceGroup.status == 'CANCELLED'" class="badge badge-secondary"><span [innerHTML]="'Collaboration cancelled' | translate"></span><span>{{getCancellationReason(titleEvent.cancellationReason)}}</span></span>
                           <span *ngIf="processInstanceGroup.status == 'INPROGRESS'" class="badge" [ngClass]="{'badge-secondary':(titleEvent.status=='CANCELLED'),'badge-success':(titleEvent.status=='DONE'),'badge-warning':(titleEvent.status=='WAITING'),'badge-danger':(titleEvent.status=='ACTION_REQUIRED')}">{{titleEvent.statusText}}</span>
                           <span *ngIf="processInstanceGroup.status == 'COMPLETED'" class="badge badge-primary"><span [innerHTML]="'Collaboration finished' | translate"></span></span>
                         </div>
@@ -47,13 +47,13 @@
                               <i class="fa fa-trash-alt p-1 pointer" aria-hidden="true"></i>
                           </div>
                           -->
-                          <div *ngIf="titleEvent && showRateCollaborationButton" class="inline" (click)="rateCollaboration(addSuccessRatingModal,addCancelRatingModal)" data-toggle="tooltip" data-placement="top" [title]="'Rate this collaboration' | translate">
+                          <div *ngIf="titleEvent && showRateCollaborationButton" class="inline" (click)="rateCollaborationSuccess(addSuccessRatingModal)" data-toggle="tooltip" data-placement="top" [title]="'Rate this collaboration' | translate">
                               <i class="fa fa-star p-1 pointer" aria-hidden="true"></i>
                           </div>
                           <div *ngIf="titleEvent && showFinishCollaborationButton" class="inline" (click)="finishCollaboration()" data-toggle="tooltip" data-placement="top" [title]="'Finish the collaboration' | translate">
                               <i class="far fa-check-circle p-1 pointer" aria-hidden="true"></i>
                           </div>
-                          <div *ngIf="titleEvent && showCancelCollaborationButton" class="inline" (click)="cancelCollaboration()" data-toggle="tooltip" data-placement="top" [title]="'Cancel the collaboration' | translate">
+                          <div *ngIf="titleEvent && showCancelCollaborationButton" class="inline" (click)="rateCollaborationCancelled(addCancelRatingModal)" data-toggle="tooltip" data-placement="top" [title]="'Cancel the collaboration' | translate">
                               <i class="fa fa-times p-1 pointer" aria-hidden="true"></i>
                           </div>
                           <div *ngIf="!expanded" class="inline" (click)="expanded = !expanded" data-toggle="tooltip" data-placement="top" [title]="'Show details' | translate">
@@ -336,19 +336,20 @@
               <div class="col-10">
                   <select class="form-control" [(ngModel)]="compComment" name="compCommentCancel">
                     <option></option>
-                    <option><span [innerHTML]="'Slow Response Time' | translate"></span></option>
-                    <option><span [innerHTML]="'Suspicious Company Information' | translate"></span></option>
-                    <option><span [innerHTML]="'Undervalued Offer' | translate"></span></option>
-                    <option><span [innerHTML]="'Rejected Delivery Terms' | translate"></span></option>
-                    <option><span [innerHTML]="'Other' | translate"></span></option>
+                    <!--  We store english labels of cancellation reasons -->
+                    <option value="Slow Response Time"><span [innerHTML]="'Slow Response Time' | translate"></span></option>
+                    <option value="Suspicious Company Information"><span [innerHTML]="'Suspicious Company Information' | translate"></span></option>
+                    <option value="Undervalued Offer"><span [innerHTML]="'Undervalued Offer' | translate"></span></option>
+                    <option value="Rejected Delivery Terms"><span [innerHTML]="'Rejected Delivery Terms' | translate"></span></option>
+                    <option value="Other"><span [innerHTML]="'Other' | translate"></span></option>
                   </select>
               </div>
           </div>
         </div>
         <div class="modal-footer">
             <call-status [callStatus]="saveCallStatusRating"></call-status>
-            <button type="button" class="btn btn-primary save-cert-btn" [disabled]="saveCallStatusRating.isLoading() || checkCompComment()" (click)="onSaveCancelRating(d);">
-                <span [innerHTML]="'Save' | translate"></span>
+            <button type="button" class="btn btn-primary save-cert-btn" [disabled]="saveCallStatusRating.isLoading() || checkCompComment()" (click)="cancelCollaboration(d)">
+                <span [innerHTML]="'Cancel collaboration' | translate"></span>
             </button>
         </div>
     </form>

@@ -93,14 +93,14 @@ export class BPEService {
 		.catch(this.handleError);
 	}
 
-    cancelCollaboration(groupId: string,delegateId:string): Promise<any> {
+    cancelCollaboration(groupId: string,cancellationReason:string,delegateId:string): Promise<any> {
         let headers = this.getAuthorizedHeaders();
         let url = `${this.url}/process-instance-groups/${groupId}/cancel`;
         if(this.delegated){
 			url = `${this.delegate_url}/process-instance-groups/${groupId}/cancel?delegateId=${delegateId}`;
 		}
         return this.http
-            .post(url, null, {headers: headers})
+            .post(url, cancellationReason, {headers: headers})
             .toPromise()
             .then(res => res.text())
             .catch(this.handleError);

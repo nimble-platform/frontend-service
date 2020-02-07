@@ -104,6 +104,8 @@ export class ThreadSummaryComponent implements OnInit {
     config = myGlobals.config;
     selectPreferredValue = selectPreferredValue;
 
+    private translations:any;
+
     constructor(private bpeService: BPEService,
                 private cookieService: CookieService,
                 private dataChannelService: DataChannelService,
@@ -117,6 +119,9 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.translate.get(['Slow Response Time','Suspicious Company Information','Undervalued Offer','Rejected Delivery Terms','Other','Due to','Some reasons']).subscribe((res: any) => {
+            this.translations = res;
+        });
         this.route.params.subscribe(params => {
             this.routeProcessInstanceId = params["processInstanceId"];
             let sellerFederationId = params["delegateId"];
@@ -219,11 +224,9 @@ export class ThreadSummaryComponent implements OnInit {
             this.updateHistory(this.history);
 
             // if the collaboration is not rated yet, set the RateCollaborationButton status
-            if(!this.isCollaborationRated(events) ){
-                // set the status of button to True if the process is cancelled or it is not in progress (completed/finished) (buyer side only)
-                if((!isCollaborationInProgress && this.lastEvent.buyer) || this.processInstanceGroup.status == "CANCELLED"){
-                    this.showRateCollaborationButton = true;
-                }
+            // set the status of button to True if the process is not in progress (cancelled/finished) (buyer side only)
+            if(!this.isCollaborationRated(events) && !isCollaborationInProgress && this.lastEvent.buyer){
+                this.showRateCollaborationButton = true;
             }
             this.computeTitleEvent();
             this.checkDataChannel();
@@ -334,12 +337,23 @@ export class ThreadSummaryComponent implements OnInit {
             isRated === "true",
             initialDoc.areProductsDeleted,
             this.processInstanceGroup.status,
-            sellerFederationId
+            sellerFederationId,
+            dashboardProcessInstanceDetails.cancellationReason
         );
 
         this.fillStatus(event, processInstance["state"], processType, responseDocumentStatus, userRole === "buyer",isFulfilmentIncludedInWorkflow);
 
         return event;
+    }
+
+    getCancellationReason(reason:string):string{
+        if(reason){
+            if(reason == "Other"){
+                reason = "Some reasons";
+            }
+            return " "+ this.translations["Due to"] + " "+ this.translations[reason];
+        }
+        return null;
     }
 
     navigateToSearchDetails(item:Item) {
@@ -462,7 +476,6 @@ export class ThreadSummaryComponent implements OnInit {
                 case "Fulfilment":
                     if (buyer) {
                         event.statusText = "Receipt Advice sent";
-                        //this.showRateCollaborationButton = true;
                     } else {
                         event.statusText = "Receipt Advice received";
                     }
@@ -592,27 +605,19 @@ export class ThreadSummaryComponent implements OnInit {
         }
     }
 
-    cancelCollaboration(){
+    cancelCollaboration(close){
         if (confirm("Are you sure that you want to cancel this collaboration?")) {
             this.archiveCallStatus.submit();
-            this.bpeService.cancelCollaboration(this.processInstanceGroup.id,this.processInstanceGroup.sellerFederationId)
+            this.bpeService.cancelCollaboration(this.processInstanceGroup.id,this.compComment,this.processInstanceGroup.sellerFederationId)
                 .then(() => {
                     this.archiveCallStatus.callback("Cancelled collaboration successfully");
+                    close();
                     this.threadStateUpdatedNoChange.next();
                 })
                 .catch(err => {
                     this.archiveCallStatus.error("Failed to cancel collaboration",err);
                 });
         }
-    }
-
-    rateCollaboration(success,cancel) {
-      if(this.processInstanceGroup.status == "CANCELLED") {
-        this.rateCollaborationCancelled(cancel);
-      }
-      else {
-        this.rateCollaborationSuccess(success);
-      }
     }
 
     changeCommunicationRating(){
@@ -701,25 +706,6 @@ export class ThreadSummaryComponent implements OnInit {
           ratings.push(evidence);
         }
         var comm = new Comment(this.compComment,new Code("","","","",""));
-        reviews.push(comm);
-        this.saveCallStatusRating.submit();
-        this.bpeService
-            .postRatings(this.lastEventPartnerID, this.lastEventPartnerFederationId, this.lastEvent.processInstanceId, ratings, reviews,this.lastEvent.sellerFederationId)
-            .then(() => {
-                this.saveCallStatusRating.callback("Rating saved", true);
-                close();
-                this.showRateCollaborationButton = false;
-                this.fetchEvents();
-            })
-            .catch(error => {
-                this.saveCallStatusRating.error("Error while saving rating", error);
-            });
-    }
-
-    onSaveCancelRating(close: any) {
-        let ratings: EvidenceSupplied[] = [];
-        let reviews: Comment[] = [];
-        var comm = new Comment("",new Code(this.compComment,"","","",""));
         reviews.push(comm);
         this.saveCallStatusRating.submit();
         this.bpeService

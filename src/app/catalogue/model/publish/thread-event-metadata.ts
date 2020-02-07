@@ -20,6 +20,7 @@ export class ThreadEventMetadata {
         public areProductsDeleted : boolean[],
         public collaborationStatus: string,
         public sellerFederationId:string,
+        public cancellationReason:string,
         public isBeingUpdated: boolean = false, // It's true only while the process instance is being updated.
         public status?: ThreadEventStatus,
         public statusText?: string,
