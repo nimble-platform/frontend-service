@@ -560,6 +560,10 @@ export class OrderComponent implements OnInit {
     }
 
     isPaymentButtonDisabled():boolean{
-        return this.isLoading() || this.isOrderRejected() || this.isPaymentDone;
+        return this.isLoading() || this.isOrderRejected() || this.isPaymentDone || this.processMetadata.collaborationStatus == 'CANCELLED';
+    }
+
+    showOrderResponseNotes(){
+        return this.isOrderCompleted || (this.orderResponse && this.processMetadata.collaborationStatus != 'CANCELLED');
     }
 }

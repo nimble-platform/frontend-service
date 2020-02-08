@@ -398,7 +398,12 @@ export class ThreadSummaryComponent implements OnInit {
                 switch(processType) {
                     case "Fulfilment":
                         event.statusText = "Action Required!";
-                        event.actionText = "Send Receipt Advice";
+                        if(event.status == 'CANCELLED'){
+                            event.actionText = 'View Request';
+                        }
+                        else{
+                            event.actionText = "Send Receipt Advice";
+                        }
                         break;
                     case "Order":
                         event.statusText = "Waiting for Order Response";
@@ -429,23 +434,48 @@ export class ThreadSummaryComponent implements OnInit {
                         break;
                     case "Order":
                         event.statusText = "Action Required!";
-                        event.actionText = "Send Order Response";
+                        if(event.status == 'CANCELLED'){
+                            event.actionText = 'View Request';
+                        }
+                        else{
+                            event.actionText = "Send Order Response";
+                        }
                         break;
                     case "Negotiation":
                         event.statusText = "Action Required!";
-                        event.actionText = "Send Quotation";
+                        if(event.status == 'CANCELLED'){
+                            event.actionText = 'View Request';
+                        }
+                        else{
+                            event.actionText = "Send Quotation";
+                        }
                         break;
                     case "Ppap":
                         event.statusText = "Action Required!";
-                        event.actionText = "Send Ppap Response";
+                        if(event.status == 'CANCELLED'){
+                            event.actionText = 'View Request';
+                        }
+                        else{
+                            event.actionText = "Send Ppap Response";
+                        }
                         break;
                     case "Transport_Execution_Plan":
                         event.statusText = "Action Required!";
-                        event.actionText = "Send Transport Execution Plan";
+                        if(event.status == 'CANCELLED'){
+                            event.actionText = 'View Request';
+                        }
+                        else{
+                            event.actionText = 'Send Transport Execution Plan';
+                        }
                         break;
                     case "Item_Information_Request":
                         event.statusText = "Action Required!";
-                        event.actionText = 'Send Information Response';
+                        if(event.status == 'CANCELLED'){
+                            event.actionText = 'View Request';
+                        }
+                        else{
+                            event.actionText = 'Send Information Response';
+                        }
                 }
             }
             // messages if the responder party responded already

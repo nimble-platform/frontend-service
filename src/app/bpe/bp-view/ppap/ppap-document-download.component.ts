@@ -110,4 +110,8 @@ export class PpapDocumentDownloadComponent{
     isBuyer(): boolean {
         return this.bpDataService.bpActivityEvent.userRole === "buyer";
     }
+
+    showNextStepButton(){
+        return !this.bpDataService.isFinalProcessInTheWorkflow('Ppap') && this.processMetadata.collaborationStatus != "CANCELLED";
+    }
 }

@@ -47,7 +47,9 @@ export class FulfilmentComponent implements OnInit {
     }
 
     showReceiptAdvice(): boolean {
-        return this.bpDataService.bpActivityEvent.userRole === "buyer" || !!this.bpDataService.receiptAdvice;
+        let isResponseSent = this.bpDataService.bpActivityEvent.processMetadata && this.bpDataService.bpActivityEvent.processMetadata.processStatus == 'Completed';
+        let isCollaborationCancelled = this.bpDataService.bpActivityEvent.processMetadata && this.bpDataService.bpActivityEvent.processMetadata.collaborationStatus == "CANCELLED";
+        return isResponseSent || (!!this.bpDataService.receiptAdvice && !isCollaborationCancelled);
     }
 
     private initializeFulfilmentStatisticsSection(): void{

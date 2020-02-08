@@ -43,4 +43,10 @@ export class TransportNegotiationComponent implements OnInit {
     isLoading(): boolean {
         return this.initCallStatus.fb_submitted;
     }
+
+    showNegotiationResponse(){
+        let isCollaborationCancelled = this.bpDataService.bpActivityEvent.processMetadata && this.bpDataService.bpActivityEvent.processMetadata.collaborationStatus == 'CANCELLED';
+        let isResponseSent = this.bpDataService.bpActivityEvent.processMetadata && this.bpDataService.bpActivityEvent.processMetadata.processStatus == 'Completed';
+        return isResponseSent || (this.bpDataService.quotation && !isCollaborationCancelled);
+    }
 }

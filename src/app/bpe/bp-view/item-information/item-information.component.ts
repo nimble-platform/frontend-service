@@ -21,6 +21,9 @@ export class ItemInformationComponent implements OnInit {
     }
 
     shouldShowResponse(): boolean {
-        return !!this.bpDataService.itemInformationResponse || this.bpDataService.bpActivityEvent.userRole === "seller";
+        let isResponseSent = this.bpDataService.bpActivityEvent.processMetadata && this.bpDataService.bpActivityEvent.processMetadata.processStatus == 'Completed';
+        let collaborationCancelled = this.bpDataService.bpActivityEvent.processMetadata && this.bpDataService.bpActivityEvent.processMetadata.collaborationStatus == 'CANCELLED';
+
+        return isResponseSent || (!!this.bpDataService.itemInformationResponse && !collaborationCancelled);
     }
 }

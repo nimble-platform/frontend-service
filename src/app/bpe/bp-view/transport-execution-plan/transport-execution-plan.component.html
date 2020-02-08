@@ -157,12 +157,12 @@
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading() || isThereADeletedProduct()" (click)="onSendResponse(false)">
+            <button class="btn btn-secondary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.collaborationStatus == 'CANCELLED'" (click)="onSendResponse(false)">
                 <span [innerHTML]="'Reject' | translate"></span>
             </button>
         </div>
         <div class="col-2">
-            <button class="btn btn-primary action" [disabled]="isLoading() || isThereADeletedProduct()" (click)="onSendResponse(true)">
+            <button class="btn btn-primary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.collaborationStatus == 'CANCELLED'" (click)="onSendResponse(true)">
                 <span [innerHTML]="'Accept' | translate"></span>
             </button>
         </div>

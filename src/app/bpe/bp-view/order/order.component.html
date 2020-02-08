@@ -46,9 +46,9 @@
                     </div>
                 </div>
 
-                <div *ngIf="isSeller()" class="col-1"></div>
+                <div *ngIf="isSeller() && processMetadata.collaborationStatus != 'CANCELLED'" class="col-1"></div>
 
-                <div *ngIf="isSeller()" class="col-2">
+                <div *ngIf="isSeller() && processMetadata.collaborationStatus != 'CANCELLED'" class="col-2">
 
                     <!-- Add code -->
                     <div class="row">
@@ -83,7 +83,7 @@
                     <file-input [binaryObjects]="productionTemplateFile"
                                 (onSelectFile)="onTTFileSelected($event)"
                                 (onClearFile)="onTTFileRemoved()"
-                                [presentationMode]="isSeller() ? 'edit' : 'view'">
+                                [presentationMode]="isSeller() && processMetadata.collaborationStatus != 'CANCELLED' ? 'edit' : 'view'">
                     </file-input>
                 </div>
                 <div *ngIf="isSeller()">
@@ -106,7 +106,7 @@
                                 [readonly]="isReadOnly() || isSeller()"></note-file-view>
             </div>
             <div class="col-6">
-                <note-file-view *ngIf="orderResponse"
+                <note-file-view *ngIf="showOrderResponseNotes()"
                                 [notes]="orderResponse.note"
                                 [documents]="orderResponse.additionalDocumentReference"
                                 [label]="'Supplier\'s Note'"
@@ -208,12 +208,12 @@
                 </button>
             </div>
             <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading() || isThereADeletedProduct()" (click)="onRespondToOrder(false)">
+                <button class="btn btn-secondary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.collaborationStatus == 'CANCELLED'" (click)="onRespondToOrder(false)">
                     <span [innerHTML]="'Reject' | translate"></span>
                 </button>
             </div>
             <div class="col-2">
-                <button class="btn btn-primary action" [disabled]="isLoading() || isThereADeletedProduct()" (click)="onRespondToOrder(true)">
+                <button class="btn btn-primary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.collaborationStatus == 'CANCELLED'" (click)="onRespondToOrder(true)">
                     <span [innerHTML]="'Accept' | translate"></span>
                 </button>
             </div>

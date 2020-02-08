@@ -226,7 +226,7 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     isRequestNewQuotationDisabled(): boolean {
-        return this.isLoading() || this.isThereADeletedProduct() || this.processMetadata.collaborationStatus == "COMPLETED";
+        return this.isLoading() || this.isThereADeletedProduct() || this.processMetadata.collaborationStatus == "COMPLETED" || this.processMetadata.collaborationStatus == "CANCELLED";
     }
 
     isAcceptAndOrderDisabled(): boolean {

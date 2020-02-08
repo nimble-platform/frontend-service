@@ -438,4 +438,10 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         }
         return false;
     }
+
+    showNegotiationResponse(){
+        let isCollaborationCancelled = this.bpDataService.bpActivityEvent.processMetadata && this.bpDataService.bpActivityEvent.processMetadata.collaborationStatus == 'CANCELLED';
+        let isResponseSent = this.bpDataService.bpActivityEvent.processMetadata && this.bpDataService.bpActivityEvent.processMetadata.processStatus == 'Completed';
+        return isResponseSent || (this.bpDataService.quotation && !isCollaborationCancelled);
+    }
 }

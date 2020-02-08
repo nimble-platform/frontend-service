@@ -102,6 +102,6 @@ export class ReceiptAdviceComponent implements OnInit {
     }
 
     isDispatchOrderDisabled(): boolean {
-        return this.isLoading() || this.isThereADeletedProduct() || this.processMetadata.collaborationStatus == "COMPLETED";
+        return this.isLoading() || this.isThereADeletedProduct() || this.processMetadata.collaborationStatus == "COMPLETED" || this.processMetadata.collaborationStatus == "CANCELLED";
     }
 }
