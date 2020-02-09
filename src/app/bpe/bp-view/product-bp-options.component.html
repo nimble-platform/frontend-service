@@ -81,7 +81,7 @@
     </negotiation>
     <transport-negotiation *ngIf="currentStep === 'Transport_Negotiation'">
     </transport-negotiation>
-    <order *ngIf="currentStep === 'Order' || currentStep === 'Order_Confirmed'" [selectedLineIndex]="selectedLineIndex"
+    <order *ngIf="currentStep === 'Order' || currentStep === 'Order_Processed'" [selectedLineIndex]="selectedLineIndex"
            [areProcessDetailsViewedForAllProducts]="areProcessDetailsViewedForAllProducts()">
     </order>
     <transport-execution-plan *ngIf="currentStep === 'Transport_Order' || currentStep === 'Transport_Order_Confirmed'">

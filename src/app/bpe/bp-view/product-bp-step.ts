@@ -3,7 +3,7 @@ export type ProductBpStep =
     | "Ppap"
     | "Negotiation"
     | "Order" 
-    | "Order_Confirmed"
+    | "Order_Processed"
     | "Transport_Information_Request"
     | "Transport_Negotiation"
     | "Transport_Order"

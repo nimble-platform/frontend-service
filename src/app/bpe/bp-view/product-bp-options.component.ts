@@ -377,7 +377,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 if(this.areTransportServices()) {
                     return this.isOrderDone() ? "Transport_Order_Confirmed" : "Transport_Order";
                 } else {
-                    return this.isOrderDone() ? "Order_Confirmed" : "Order";
+                    return this.isOrderDone() ? "Order_Processed" : "Order";
                 }
         }
     }
