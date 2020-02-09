@@ -27,9 +27,19 @@ export class CustomTermModalComponent {
 
 
     open() {
+        this.reset();
         this.modalService.open(this.modal).result.then(() => {
             this.onAddCustomTerm();
         });
+    }
+
+    reset(){
+        this.termName = "";
+        this.termDescription = "";
+        this.selectedDataType = 'TEXT';
+        this.stringValue= "";
+        this.numberValue = null;
+        this.quantityValue = new Quantity();
     }
 
     onAddCustomTerm(): void {
