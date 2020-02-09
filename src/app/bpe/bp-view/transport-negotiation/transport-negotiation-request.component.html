@@ -112,12 +112,12 @@
         <button class="btn btn-secondary action" [disabled]="isDisabled()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div class="col-3" *ngIf="!updatingProcess">
-        <button class="btn btn-primary action" [disabled]="isDisabled() || viewChild.getSelectedProductsToShip().length == 0" (click)="onSendRequest()">
+        <button class="btn btn-primary action" [disabled]="isDisabled() || viewChild.getSelectedProductsToShip().length == 0 || !isTransportServiceDetailsValid()" (click)="onSendRequest()">
             <span [innerHTML]="'Send Request' | translate"></span>
         </button>
     </div>
     <div class="col-3" *ngIf="updatingProcess">
-        <button class="btn btn-primary action" [disabled]="viewChild.getSelectedProductsToShip().length == 0" (click)="onUpdateRequest()">
+        <button class="btn btn-primary action" [disabled]="viewChild.getSelectedProductsToShip().length == 0 || !isTransportServiceDetailsValid()" (click)="onUpdateRequest()">
             <span [innerHTML]="'Update Request' | translate"></span>
         </button>
     </div>

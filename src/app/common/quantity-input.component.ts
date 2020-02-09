@@ -33,6 +33,7 @@ export class QuantityInputComponent implements OnInit {
     @Input() disableQuantityUnit: boolean = false;
     @Input() step: number = 1;
     @Input() large: string = "false";
+    @Input() required:boolean = false;
     innerFormClass = "form-control-sm";
 
     constructor(private unitService: UnitService) {

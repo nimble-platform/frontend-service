@@ -109,6 +109,23 @@ export class TransportNegotiationRequestComponent implements OnInit {
         this.location.back();
     }
 
+    // check whether the required fields for transport service details are filled or not
+    isTransportServiceDetailsValid(){
+        let shipment = this.rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment;
+        let goodsItemToBeShipped = this.viewChild.getSelectedProductsToShip();
+
+        for (let goodsItem of goodsItemToBeShipped) {
+            if(UBLModelUtils.isEmptyOrIncompleteQuantity(goodsItem.quantity)){
+                return false;
+            }
+        }
+        return !UBLModelUtils.isEmptyOrIncompleteQuantity(shipment.transportHandlingUnit[0].measurementDimension[1].measure) &&
+            !UBLModelUtils.isEmptyOrIncompleteQuantity(shipment.transportHandlingUnit[0].measurementDimension[0].measure) &&
+            (shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name != null && shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name != "") &&
+            !UBLModelUtils.isEmptyOrIncompleteQuantity(shipment.consignment[0].grossWeightMeasure) &&
+            !UBLModelUtils.isEmptyOrIncompleteQuantity(shipment.consignment[0].grossVolumeMeasure);
+    }
+
     onSendRequest(): void {
         // send request for quotation
         this.callStatus.submit();
