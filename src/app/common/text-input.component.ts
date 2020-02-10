@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
 import {LANGUAGES} from '../catalogue/model/constants';
 import {TranslateService} from '@ngx-translate/core';
+import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 
 @Component({
     selector: "text-input",
@@ -29,6 +30,7 @@ export class TextInputComponent implements OnInit {
     private languageIdValue: string;
     @Input() languageIdClass:String = "";
     @Input() valueTextClass: string = "";
+    @Input() textGeneratorClass:string = "";
     @Output() textChange = new EventEmitter<string>();
     @Output() languageIdChange = new EventEmitter<string>();
     @Output() addTextInput = new EventEmitter();
@@ -85,5 +87,9 @@ export class TextInputComponent implements OnInit {
 
     onDeleteTextInput(){
         this.deleteTextInput.emit();
+    }
+
+    generateText(){
+       this.text = UBLModelUtils.generateUUID();
     }
 }

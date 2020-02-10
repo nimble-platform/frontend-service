@@ -14,6 +14,7 @@ import {CookieService} from 'ng2-cookies';
 import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
 import {TranslateService} from '@ngx-translate/core';
+import {dateToString, quantityToString} from '../../../common/utils';
 
 @Component({
     selector: "transport-negotiation-response",
@@ -31,7 +32,11 @@ export class TransportNegotiationResponseComponent implements OnInit {
     quotationPaymentTerms: PaymentTermsWrapper;
 
     @Input() readonly: boolean = false;
+    // this component is used for both transport and logistics service negotiation
+    // however, we need to know the type of service since some tabs are displayed only for transport services
+    @Input() isTransportService:boolean;
 
+    quantityToString = quantityToString;
     selectedTab: string = "OVERVIEW";
     userRole: BpUserRole;
 
@@ -44,6 +49,8 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
+
+    dateToString=dateToString;
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
@@ -59,6 +66,10 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
         if(!this.rfq) {
             this.rfq = this.bpDataService.requestForQuotation;
+        }
+        // for logistics services except transport services, onyl Negotiation tab is available
+        if(!this.isTransportService){
+            this.selectedTab = "NEGOTIATION";
         }
         this.rfqPrice = new DiscountPriceWrapper(
             this.rfq.requestForQuotationLine[0].lineItem.price,
@@ -114,7 +125,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
         }
 
         //this.callStatus.submit();
-        this.bpeService.startProcessWithDocument(this.quotation)
+        this.bpeService.startProcessWithDocument(this.quotation,this.quotation.sellerSupplierParty.party.federationInstanceID)
             .then(res => {
                 this.callStatus.callback("Quotation sent", true);
                 var tab = "PURCHASES";
@@ -135,5 +146,49 @@ export class TransportNegotiationResponseComponent implements OnInit {
     onAcceptAndOrder() {
         this.bpDataService.setCopyDocuments(false, true, false,false);
         this.bpDataService.proceedNextBpStep(this.userRole,'Transport_Execution_Plan');
+    }
+
+    // methods to check whether the term is updated in the negotiation response or not
+
+    hasUpdatedTerms():boolean{
+        return this.isDeliveryPeriodUpdated() || this.isSpecialTermsUpdated() || this.isStartDateUpdated() || this.isEndDateUpdated() || this.isIncotermsUpdated() || this.isPaymentTermsUpdated() ||
+            this.isPaymentMeansUpdated() || this.isPriceUpdated() || this.isNoteUpdated();
+    }
+
+    isDeliveryPeriodUpdated(){
+        return (this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value != this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value) ||
+            (this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode != this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode);
+    }
+
+    isSpecialTermsUpdated(){
+        return (this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms[0].value != this.quotation.quotationLine[0].lineItem.deliveryTerms.specialTerms[0].value);
+    }
+
+    isStartDateUpdated(){
+        return (this.rfq.delivery.requestedDeliveryPeriod.startDate != this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.startDate);
+    }
+
+    isEndDateUpdated(){
+        return (this.rfq.delivery.requestedDeliveryPeriod.endDate != this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.endDate);
+    }
+
+    isIncotermsUpdated(){
+        return (this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms != this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms);
+    }
+
+    isPaymentTermsUpdated(){
+        return (this.rfqPaymentTerms.paymentTerm != this.quotationPaymentTerms.paymentTerm);
+    }
+
+    isPaymentMeansUpdated(){
+        return (this.rfq.requestForQuotationLine[0].lineItem.paymentMeans.paymentMeansCode.value != this.quotation.quotationLine[0].lineItem.paymentMeans.paymentMeansCode.value);
+    }
+
+    isPriceUpdated(){
+        return (this.rfqPrice.itemPrice.value != this.quotationPrice.itemPrice.value) || (this.rfqPrice.itemPrice.currency != this.quotationPrice.itemPrice.currency);
+    }
+
+    isNoteUpdated(){
+        return ((this.quotation.note.length == 1 && this.quotation.note[0] != "") || this.quotation.note.length > 1 || this.quotation.additionalDocumentReference.length > 0);
     }
 }

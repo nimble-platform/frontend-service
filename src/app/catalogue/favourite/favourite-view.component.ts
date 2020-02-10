@@ -6,7 +6,7 @@ import {CallStatus} from "../../common/call-status";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {PublishService} from "../publish-and-aip.service";
 import {CategoryService} from "../category/category.service";
-import { isTransportService } from "../../common/utils";
+import {isSearchResultLogisticsService, isTransportService} from '../../common/utils';
 import { BPDataService } from "../../bpe/bp-view/bp-data-service";
 import { UserService } from "../../user-mgmt/user.service";
 import { CompanySettings } from "../../user-mgmt/model/company-settings";
@@ -22,6 +22,8 @@ import { filter } from "rxjs/operator/filter";
 import * as myGlobals from '../../globals';
 import { Search } from '../../simple-search/model/search';
 import {TranslateService} from '@ngx-translate/core';
+import {ShoppingCartDataService} from '../../bpe/shopping-cart/shopping-cart-data-service';
+import {UBLModelUtils} from '../model/ubl-model-utils';
 
 @Component({
     selector: 'favourite-view',
@@ -60,6 +62,7 @@ export class FavouriteViewComponent implements OnInit {
     getCatalogueStatus = new CallStatus();
     callStatus = new CallStatus();
     deleteStatuses: CallStatus[] = [];
+	shoppingCartCallStatuses: CallStatus[] = [];
     imageMap: any = {};
 	facetObj: any;
 	temp: any;
@@ -95,6 +98,7 @@ export class FavouriteViewComponent implements OnInit {
 
 	manufacturerIdCountMap : any;
 
+	isSearchResultLogisticsService=isSearchResultLogisticsService;
 
     constructor(private cookieService: CookieService,
                 private publishService: PublishService,
@@ -103,18 +107,20 @@ export class FavouriteViewComponent implements OnInit {
                 private categoryService: CategoryService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
+				private shoppingCartDataService: ShoppingCartDataService,
                 private route: ActivatedRoute,
 				private router: Router,
 				private translate: TranslateService) {
     }
 
-    ngOnInit() {
-        this.catalogueService.setEditMode(false);
-        this.requestCatalogue();
-        for(let i = 0; i < this.pageSize; i++) {
-            this.deleteStatuses.push(new CallStatus());
-        }
-    }
+	ngOnInit() {
+		this.catalogueService.setEditMode(false);
+		for(let i = 0; i < this.pageSize; i++) {
+			this.deleteStatuses.push(new CallStatus());
+			this.shoppingCartCallStatuses.push(new CallStatus());
+		}
+		this.requestCatalogue();
+	}
 
     selectName (ip: ItemProperty | Item) {
         return selectName(ip);
@@ -489,11 +495,21 @@ export class FavouriteViewComponent implements OnInit {
 		}
         this.catalogueLinesArray = [...this.itemTypeResponse];
 		this.catalogueLinesWRTTypes = this.catalogueLinesArray;
-        let i = 0;
-        for(;i<len;i++){
-            this.catalogueLineView[this.itemTypeResponse[i].localName] = false;
-        }
-    }
+		let i = 0;
+		for(;i<len;i++){
+			this.catalogueLineView[this.itemTypeResponse[i].localName] = false;
+		}
+
+		// display a message for the products included in the shopping cart
+		this.shoppingCartDataService.getShoppingCart().then(catalogue => {
+			let size = this.catalogueLinesArray.length;
+			for(let i = 0; i < size ; i++){
+				if(UBLModelUtils.doesCatalogueContainProduct(catalogue,this.catalogueLinesArray[i].catalogueId,this.catalogueLinesArray[i].manufactuerItemId)){
+					this.getShoppingCartStatus(i).callback("Product is added to shopping cart.", false);
+				}
+			}
+		})
+	}
 
     onOpenCatalogueLine(e: Event) {
         e.stopImmediatePropagation();
@@ -519,6 +535,10 @@ export class FavouriteViewComponent implements OnInit {
         return this.deleteStatuses[index % this.pageSize];
     }
 
+	getShoppingCartStatus(index: number): CallStatus {
+		return this.shoppingCartCallStatuses[index % this.pageSize];
+	}
+
     onRegisteredCompaniesPageChange(newPage): void {
         if (newPage) {
            this.requestCatalogue();
@@ -540,4 +560,16 @@ export class FavouriteViewComponent implements OnInit {
 
 		});
     }
+
+	onAddToCart(catLine:any,index:number): void {
+    	let status = this.getShoppingCartStatus(index);
+		event.preventDefault();
+
+		status.submit();
+		this.shoppingCartDataService.addItemToCart(catLine.uri,1,catLine.nimbleInstanceName).then(() => {
+			status.callback("Product is added to shopping cart.", false);
+		}).catch((err) => {
+			status.error('Failed to add product to cart', err);
+		});
+	}
 }

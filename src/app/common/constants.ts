@@ -13,3 +13,7 @@ export const chatUsername: string = "rocket_chat_username";
 export const chatRCToken: string = "rc_token";
 export const chatRCID: string = "rc_uid";
 export const chatRCConnect: string = "connect.sid";
+
+// default category uris for logistics and transport services
+export const defaultLogisticsServiceCategoryUri = "nimble:category:LogisticsService";
+export const defaultTransportServiceCategoryUri = "nimble:category:TransportService";

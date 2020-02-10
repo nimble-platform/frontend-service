@@ -12,7 +12,7 @@ import {
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from './globals';
 import * as moment from "moment";
-import {DEFAULT_LANGUAGE,LANGUAGES, FALLBACK_LANGUAGE} from './catalogue/model/constants';
+import {DEFAULT_LANGUAGE,LANGUAGES, FALLBACK_LANGUAGE, FEDERATION} from './catalogue/model/constants';
 import {TranslateService} from '@ngx-translate/core';
 
 import 'zone.js';
@@ -51,6 +51,8 @@ export class AppComponent implements OnInit {
     public chatURL = this.sanitizer.bypassSecurityTrustResourceUrl(myGlobals.rocketChatEndpoint);
     public language = FALLBACK_LANGUAGE;
     private availableLanguages = LANGUAGES.sort();
+    private federationStr = FEDERATION();
+    public federation = (this.federationStr == "ON");
 
     enableLogisticServicePublishing = true;
 
@@ -88,7 +90,18 @@ export class AppComponent implements OnInit {
                 this.checkState(event.url);
             }
         });
-
+        if (cookieService.get("federation")) {
+          let fS = cookieService.get("federation");
+          this.federation = (fS == "ON");
+          this.federationStr = fS;
+          document.getElementsByTagName('html')[0].setAttribute('data-fed',this.federationStr);
+        }
+        else {
+          this.federation = false;
+          this.federationStr = "OFF";
+          cookieService.set("federation",this.federationStr);
+          document.getElementsByTagName('html')[0].setAttribute('data-fed',this.federationStr);
+        }
         if (cookieService.get("language")) {
           this.language = cookieService.get("language");
           document.getElementsByTagName('html')[0].setAttribute('lang',this.language);
@@ -104,6 +117,14 @@ export class AppComponent implements OnInit {
         }
         translate.setDefaultLang(FALLBACK_LANGUAGE);
         translate.use(DEFAULT_LANGUAGE());
+        // get federation id of the instance
+        let delegateUrl = myGlobals.delegate_endpoint + "/eureka/app-name";
+        this.http.get(delegateUrl).toPromise().then(response => {
+            let federationId = response.text();
+            document.getElementsByTagName('html')[0].setAttribute("federationId",federationId);
+        }).catch(error => {
+            console.error("Failed to retrieve federation id")
+        })
         if (this.debug)
           console.log("Initialized platform with language: "+DEFAULT_LANGUAGE());
     }
@@ -143,13 +164,22 @@ export class AppComponent implements OnInit {
         // this.submitCallStatus.callback("Login Successful");
     }
 
-    generateFederationURL() {
+    generateFederationURL(catalogueId, id) {
         let identityURL = myGlobals.idpURL + "/protocol/openid-connect/auth";
         let clientID = "?client_id=" + myGlobals.config.federationClientID;
         let redirectURI = "&redirect_uri=" + myGlobals.frontendURL;
         let hint = "&scope=openid&response_type=code&kc_idp_hint=" + myGlobals.config.federationIDP;
 
+        if (catalogueId != null && id != null) {
+            let endpoint = encodeURI("?catalogueId=" + catalogueId + "_" + id);
+            redirectURI = redirectURI + endpoint;
+        }
+
         return identityURL + clientID + redirectURI + hint;
+    }
+
+    generateProductURL(catalogueId, id) {
+        return myGlobals.frontendURL + "#/product-details?catalogueId=" + catalogueId + "&id=" + id;
     }
 
     ngOnInit() {
@@ -163,25 +193,48 @@ export class AppComponent implements OnInit {
 
         let code = this.getQueryParameter('code');
         let federatedLogin = this.getQueryParameter('federatedLogin');
+        let catalogueId = this.getQueryParameter('catalogueId');
+        let id = this.getQueryParameter('id');
 
         if (federatedLogin != undefined && federatedLogin == "efs") {
-            window.location.href = this.generateFederationURL();
+            window.location.href = this.generateFederationURL(catalogueId, id);
         }
 
         if (code != null) {
+
+            let redirectURL = window.location.href.split("code=");
+            if(redirectURL.length != 1){
+                let lastChar = redirectURL[0].charAt(redirectURL[0].length - 1);
+                if (lastChar == '?' || lastChar == '&') {
+                    redirectURL[0] = redirectURL[0].substring(0, redirectURL[0].length - 1);
+                }
+            }
+
             const url = myGlobals.user_mgmt_endpoint + `/federation/login`;
             this.submitCallStatus.submit();
             return this.http
-                .post(url, JSON.stringify({'code': code}), {headers: new Headers({'Content-Type': 'application/json'})})
+                .post(url, JSON.stringify({'code': code, 'redirect_URL': redirectURL[0]}), {headers: new Headers({'Content-Type': 'application/json'})})
                 .toPromise()
                 .then(res => {
                     this.submitCallStatus.callback("Login Successful!");
                     this.response = res.json();
                     this.setCookiesForFederatedLogin();
-                    if (!this.response.companyID && myGlobals.config.companyRegistrationRequired)
+
+                    if (catalogueId != null) {
+                        let productDetails = catalogueId.split("_");
+                        if (productDetails.length == 2) {
+                            catalogueId = productDetails[0];
+                            id = productDetails[1];
+                        }
+                    }
+
+                    if (catalogueId != null && id != null) {
+                        window.location.href = this.generateProductURL(catalogueId, id);
+                    } else if (!this.response.companyID && myGlobals.config.companyRegistrationRequired){
                         this.checkLogin("/user-mgmt/company-registration");
-                    else
+                    } else
                         this.checkLogin("/dashboard");
+
                 }).catch((e) => {
                     this.submitCallStatus.error("Login failed", e);
                 })
@@ -199,7 +252,22 @@ export class AppComponent implements OnInit {
     setLang(lang:string) {
       if (lang != this.language) {
         this.loading = true;
+        document.getElementsByTagName('html')[0].setAttribute('lang',this.language);
         this.cookieService.set("language",lang);
+        location.reload();
+      }
+    }
+
+    setFed(fed:boolean) {
+      if (fed != this.federation) {
+        this.loading = true;
+        this.federation = fed;
+        if (this.federation)
+          this.federationStr = "ON";
+        else
+          this.federationStr = "OFF";
+        document.getElementsByTagName('html')[0].setAttribute('data-fed',this.federationStr);
+        this.cookieService.set("federation",this.federationStr);
         location.reload();
       }
     }
@@ -527,6 +595,10 @@ export class AppComponent implements OnInit {
                 break;
             case "comp":
                 if (all_rights)
+                    this.allowed = true;
+                break;
+            case "view_comp":
+                if (this.companyID && !initial)
                     this.allowed = true;
                 break;
             case "comp-settings":

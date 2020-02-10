@@ -6,7 +6,7 @@ import {CallStatus} from '../../../common/call-status';
 import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
 import {CookieService} from 'ng2-cookies';
 import {NegotiationModelWrapper} from './negotiation-model-wrapper';
-import {copy, durationToString, trimRedundantDecimals, validateNumberInput} from '../../../common/utils';
+import {copy, durationToString, roundToTwoDecimals, validateNumberInput} from '../../../common/utils';
 import {PeriodRange} from '../../../user-mgmt/model/period-range';
 import {Option} from '../../../common/options-input.component';
 import {addressToString} from '../../../user-mgmt/utils';
@@ -60,6 +60,7 @@ export class NegotiationRequestItemComponent implements OnInit {
 
     manufacturersTermsExistence: any = {'product_defaults': true}; // a (term source -> boolean) map indicating the existence of term sources
     sellerId:string = null;
+    sellerFederationId:string;
     buyerId:string = null;
     @Input() deliverytermsOfBuyer: DeliveryTerms[] = null;
 
@@ -123,6 +124,7 @@ export class NegotiationRequestItemComponent implements OnInit {
         }
 
         this.sellerId = UBLModelUtils.getPartyId(this.wrapper.catalogueLine.goodsItem.item.manufacturerParty);
+        this.sellerFederationId = this.wrapper.catalogueLine.goodsItem.item.manufacturerParty.federationInstanceID;
         this.buyerId = this.cookieService.get("company_id");
 
         let frameContractDuration = UBLModelUtils.getFrameContractDurationFromRfqLine(this.rfq.requestForQuotationLine[this.wrapper.lineIndex]);
@@ -257,7 +259,7 @@ export class NegotiationRequestItemComponent implements OnInit {
                 this.wrapper.rfqPaymentMeans = quotationWrapper.paymentMeans;
             }
             if(this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PRICE]) {
-                this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = trimRedundantDecimals(quotationWrapper.priceWrapper.pricePerItem);
+                this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = roundToTwoDecimals(quotationWrapper.priceWrapper.pricePerItem);
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = quotationWrapper.priceWrapper.currency;
             }
 
@@ -290,7 +292,7 @@ export class NegotiationRequestItemComponent implements OnInit {
             }
             if(this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PRICE]) {
                 this.onPriceConditionsChange();
-                this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = trimRedundantDecimals(this.wrapper.lineDiscountPriceWrapper.pricePerItem);
+                this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = roundToTwoDecimals(this.wrapper.lineDiscountPriceWrapper.pricePerItem);
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = this.wrapper.lineDiscountPriceWrapper.itemPrice.currency;
             }
             // if(!this.rfq.negotiationOptions.termsAndConditions || ignoreNegotiationOptions) {

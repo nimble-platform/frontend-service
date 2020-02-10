@@ -61,6 +61,8 @@ export class NegotiationRequestComponent implements OnInit {
     @Input() frameContractNegotiations: boolean[];
     @Input() lastOfferQuotation: Quotation;
     @Input() defaultTermsAndConditions: Clause[];
+    // whether the process details are viewed for all products in the negotiation
+    @Input() areProcessDetailsViewedForAllProducts:boolean;
 
     sellerId:string = null;
     buyerId:string = null;
@@ -162,7 +164,7 @@ export class NegotiationRequestComponent implements OnInit {
             let buyerParty: Party;
             Promise.all([
                 this.userService.getParty(this.buyerId),
-                this.userService.getParty(this.sellerId),
+                this.userService.getParty(this.sellerId,this.catalogueLines[0].goodsItem.item.manufacturerParty.federationInstanceID),
 
             ]).then(([buyerPartyResp, sellerPartyResp]) => {
                 sellerParty = sellerPartyResp;
@@ -170,7 +172,7 @@ export class NegotiationRequestComponent implements OnInit {
                 rfq.buyerCustomerParty = new CustomerParty(buyerParty);
                 rfq.sellerSupplierParty = new SupplierParty(sellerParty);
 
-                return this.bpeService.startProcessWithDocument(rfq);
+                return this.bpeService.startProcessWithDocument(rfq,sellerParty.federationInstanceID);
 
             }).then(() => {
                 this.callStatus.callback("Terms sent", true);
@@ -195,10 +197,14 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     onUpdateRequest(): void {
+        if(!this.areProcessDetailsViewedForAllProducts){
+            alert("Please, make sure that you view the negotiation details of all products before sending your request!");
+            return;
+        }
         this.callStatus.submit();
 
         const rfq: RequestForQuotation = this.rfq;
-        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processInstanceId).then(() => {
+        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processInstanceId,this.processMetadata.sellerFederationId).then(() => {
             this.documentService.updateCachedDocument(rfq.id,rfq);
             this.callStatus.callback("Terms updated", true);
             var tab = "PURCHASES";
@@ -227,7 +233,7 @@ export class NegotiationRequestComponent implements OnInit {
                 }
             }
         }
-        return false;
+        return this.areNotesAndFilesUpdated();
     }
 
     isLoading(): boolean {
@@ -387,6 +393,10 @@ export class NegotiationRequestComponent implements OnInit {
         this.showNotesAndAdditionalFiles = false;
         this.showPurchaseOrder = false;
         return ret;
+    }
+
+    areNotesAndFilesUpdated():boolean{
+        return (this.rfq.note.length == 1 && this.rfq.note[0] != "") || this.rfq.note.length > 1 || this.rfq.additionalDocumentReference.length > 0;
     }
 
 }

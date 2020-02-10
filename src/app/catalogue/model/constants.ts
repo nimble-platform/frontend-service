@@ -113,6 +113,17 @@ export const DISCOUNT_TARGETS = {
 
 export const DISCOUNT_UNITS = CURRENCIES.concat(['%']);
 
+export const FEDERATION = function () {
+    let fed = document.getElementsByTagName('html')[0].getAttribute('data-fed');
+    if (!myGlobals.config.delegationEnabled || !fed)
+      fed = "OFF";
+    return fed;
+}
+
+export const FEDERATIONID = function () {
+    return document.getElementsByTagName('html')[0].getAttribute('federationId');;
+}
+
 export const LANGUAGES:Array<string>  = myGlobals.config.languageSettings.available;
 
 export const DEFAULT_LANGUAGE = function () {

@@ -4,7 +4,6 @@ import { Location } from "@angular/common";
 import { Router, ActivatedRoute } from "@angular/router";
 import { BPDataService } from "../bp-data-service";
 import { CallStatus } from "../../../common/call-status";
-import { SearchContextService } from "../../../simple-search/search-context.service";
 import { TransportExecutionPlanRequest } from "../../../catalogue/model/publish/transport-execution-plan-request";
 import { BPEService } from "../../bpe.service";
 import { UserService } from "../../../user-mgmt/user.service";
@@ -38,7 +37,6 @@ export class TransportExecutionPlanComponent implements OnInit {
 
     selectPreferredValue=selectPreferredValue
     constructor(private bpDataService: BPDataService,
-                private searchContextService: SearchContextService,
                 private cookieService: CookieService,
                 private userService: UserService,
                 private bpeService: BPEService,
@@ -54,19 +52,9 @@ export class TransportExecutionPlanComponent implements OnInit {
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
         if(!this.bpDataService.transportExecutionPlanRequest) {
-            if(this.searchContextService.getAssociatedProcessMetadata() != null) {
-                // this.bpDataService.initTransportExecutionPlanRequestWithOrder().then(response => {
-                //     this.init();
-                // });
-                console.log("STILL NAVIGATING TO TEP REQUEST FOLLOWING SEARCH");
-            } else {
-                this.bpDataService.initTransportExecutionPlanRequestWithQuotation();
-                this.init();
-            }
+            this.bpDataService.initTransportExecutionPlanRequestWithQuotation();
         }
-        else {
-            this.init();
-        }
+        this.init();
     }
 
     init(){
@@ -80,7 +68,7 @@ export class TransportExecutionPlanComponent implements OnInit {
 
         if(this.request.transportContract == null && this.bpDataService.precedingProcessId != null) {
             this.contractCallStatus.submit();
-            this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId).then(contract => {
+            this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId,this.request.transportServiceProviderParty.federationInstanceID).then(contract => {
                 this.request.transportContract = contract;
                 this.contractCallStatus.callback("Contract constructed", true);
             })
@@ -129,13 +117,13 @@ export class TransportExecutionPlanComponent implements OnInit {
 
         Promise.all([
             this.userService.getParty(buyerId),
-            this.userService.getParty(sellerId)
+            this.userService.getParty(sellerId,this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.federationInstanceID)
         ])
         .then(([buyerParty, sellerParty]) => {
             transportationExecutionPlanRequest.transportUserParty = buyerParty;
             transportationExecutionPlanRequest.transportServiceProviderParty = sellerParty;
 
-            return this.bpeService.startProcessWithDocument(transportationExecutionPlanRequest);
+            return this.bpeService.startProcessWithDocument(transportationExecutionPlanRequest,sellerParty.federationInstanceID);
         })
         .then(() => {
             this.callStatus.callback("Transport Execution Plan sent", true);
@@ -153,7 +141,7 @@ export class TransportExecutionPlanComponent implements OnInit {
         this.callStatus.submit();
         const transportationExecutionPlanRequest: TransportExecutionPlanRequest = copy(this.bpDataService.transportExecutionPlanRequest);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(transportationExecutionPlanRequest),"TRANSPORTEXECUTIONPLANREQUEST",this.processMetadata.processInstanceId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(transportationExecutionPlanRequest),"TRANSPORTEXECUTIONPLANREQUEST",this.processMetadata.processInstanceId,this.processMetadata.sellerFederationId)
             .then(() => {
                 this.documentService.updateCachedDocument(transportationExecutionPlanRequest.id,transportationExecutionPlanRequest);
                 this.callStatus.callback("Item Information Request updated", true);
@@ -172,7 +160,7 @@ export class TransportExecutionPlanComponent implements OnInit {
         this.response.documentStatusCode.name = accepted ? "Accepted" : "Rejected";
 
         //this.callStatus.submit();
-        this.bpeService.startProcessWithDocument(this.bpDataService.transportExecutionPlan)
+        this.bpeService.startProcessWithDocument(this.bpDataService.transportExecutionPlan,this.bpDataService.transportExecutionPlan.transportServiceProviderParty.federationInstanceID)
             .then(res => {
                 this.callStatus.callback("Transport Execution Plan sent", true);
                 this.router.navigate(["dashboard"]);

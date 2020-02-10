@@ -19,20 +19,24 @@ export class ShoppingCartDataService {
     constructor(private cookieService: CookieService,
                 private http: Http) {}
 
-    public addItemToCart(productHjid: string | number): Promise<Catalogue> {
+    public addItemToCart(productHjid: string | number,quantity:number = 1,delegateId:string): Promise<Catalogue> {
         if (this.cartCatalogue == null) {
             return this.getShoppingCart().then(() => {
-                return this.execAddItemToCart(productHjid);
+                return this.execAddItemToCart(productHjid,quantity,delegateId);
             });
         } else {
-            return this.execAddItemToCart(productHjid);
+            return this.execAddItemToCart(productHjid,quantity,delegateId);
         }
     }
 
-    private execAddItemToCart(productHjid: string | number): Promise<Catalogue> {
-        let url = `${this.url}/shopping-cart?productId=${productHjid}`;
+    private execAddItemToCart(productHjid: string | number,quantity:number = 1,delegateId:string): Promise<Catalogue> {
+        let url = `${this.url}/shopping-cart?productId=${productHjid}&quantity=${quantity}`;
+        let headers = getAuthorizedHeaders(this.cookieService);
+        if(delegateId != null){
+            headers.append("federationId",delegateId);
+        }
         return this.http
-            .post(url, null, {headers: getAuthorizedHeaders(this.cookieService)})
+            .post(url, null, {headers: headers})
             .toPromise()
             .then(res => {
                 this.cartCatalogue = res.json();
@@ -43,14 +47,25 @@ export class ShoppingCartDataService {
             });
     }
 
-    public removeItemFromCart(cartLineHjid: number): Promise<Catalogue> {
-        let url = `${this.url}/shopping-cart?productId=${cartLineHjid}`;
+    public removeItemsFromCart(cartLineHjids: number[]): Promise<Catalogue> {
+        let url = `${this.url}/shopping-cart?productIds=`;
+        // append catalogue line hjids to the url
+        let size = cartLineHjids.length;
+        for (let i = 0; i < size; i++) {
+            url += cartLineHjids[i];
+
+            if (i != size - 1) {
+                url += ",";
+            }
+        }
         return this.http
             .delete(url, {headers: getAuthorizedHeaders(this.cookieService)})
             .toPromise()
             .then(res => {
-                let indexToRemove = this.cartCatalogue.catalogueLine.findIndex(line => line.hjid === cartLineHjid);
-                this.cartCatalogue.catalogueLine.splice(indexToRemove, 1);
+                for (let cartLineHjid of cartLineHjids) {
+                    let indexToRemove = this.cartCatalogue.catalogueLine.findIndex(line => line.hjid === cartLineHjid);
+                    this.cartCatalogue.catalogueLine.splice(indexToRemove, 1);
+                }
                 return Promise.resolve(this.cartCatalogue);
             })
             .catch(error => {

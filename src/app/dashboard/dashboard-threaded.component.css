@@ -57,3 +57,9 @@
 .thread-entry-heading {
     border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
 }
+
+.form-control-inline {
+    width: auto;
+    min-width: 0;
+    display: inline;
+}

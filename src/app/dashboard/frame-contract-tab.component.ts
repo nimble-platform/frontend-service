@@ -14,7 +14,8 @@ import {UserService} from '../user-mgmt/user.service';
 
 @Component({
     selector: 'frame-contract-tab',
-    templateUrl: './frame-contract-tab.component.html'
+    templateUrl: './frame-contract-tab.component.html',
+    styleUrls: ["./frame-contract-tab.component.css"]
 })
 export class FrameContractTabComponent implements OnInit {
     frameContracts: DigitalAgreement[] = [];
@@ -40,8 +41,9 @@ export class FrameContractTabComponent implements OnInit {
         this.bpeService.getAllFrameContractsForParty(partyId).then(frameContracts => {
             this.frameContracts = frameContracts;
             let correspondingUserIds = this.getCorrespondingPartyIds(frameContracts);
+            let correspondingFederationIds = this.getCorrespondingPartyFederationIds(frameContracts);
             if(correspondingUserIds.length > 0){
-                this.userService.getParties(correspondingUserIds).then(parties => {
+                this.userService.getParties(correspondingUserIds,correspondingFederationIds).then(parties => {
                     for(let party of parties){
                         this.partyNames.set(party.partyIdentification[0].id,selectPartyName(party.partyName));
                     }
@@ -72,19 +74,20 @@ export class FrameContractTabComponent implements OnInit {
         this.router.navigate(['/user-mgmt/company-details'],
             {
                 queryParams: {
-                    id: this.getCorrespondingPartyId(frameContract)
+                    id: this.getCorrespondingPartyId(frameContract),
+                    delegateId: this.getCorrespondingPartyFederationId(frameContract)
                 }
             });
     }
 
     navigateToQuotationDetails(frameContract: DigitalAgreement): void {
-        this.router.navigate(['/bpe/frame-contract/' + frameContract.hjid]);
+        this.router.navigate(['/bpe/frame-contract/' + frameContract.hjid + "/" + frameContract.item.manufacturerParty.federationInstanceID]);
     }
 
     deleteFrameContract(frameContract: DigitalAgreement): void {
         if (confirm("Are you sure that you want to delete this frame contract?")){
             this.frameContractsRetrievalCallStatus.submit();
-            this.bpeService.deleteFrameContract(frameContract.hjid).then(response => {
+            this.bpeService.deleteFrameContract(frameContract.hjid,frameContract.item.manufacturerParty.federationInstanceID).then(response => {
                 // remove the deleted frame contract from the list
                 let index = this.frameContracts.findIndex(fc => fc.hjid == frameContract.hjid);
                 this.frameContracts.splice(index,1);
@@ -106,6 +109,16 @@ export class FrameContractTabComponent implements OnInit {
         }
     }
 
+    getCorrespondingPartyFederationId(frameContract: DigitalAgreement): string {
+        let userPartyId = this.cookieService.get("company_id");
+
+        for(let party of frameContract.participantParty) {
+            if(party.partyIdentification[0].id != userPartyId) {
+                return party.federationInstanceID;
+            }
+        }
+    }
+
     getCorrespondingPartyIds(frameContracts: DigitalAgreement[] ): string[] {
         let correspondingPartyIds = new Set();
         let userPartyId = this.cookieService.get("company_id");
@@ -119,6 +132,21 @@ export class FrameContractTabComponent implements OnInit {
         }
 
         return Array.from(correspondingPartyIds);
+    }
+
+    getCorrespondingPartyFederationIds(frameContracts: DigitalAgreement[] ): string[] {
+        let correspondingPartyFederationIds = new Set();
+        let userPartyId = this.cookieService.get("company_id");
+
+        for(let frameContract of frameContracts){
+            for(let party of frameContract.participantParty) {
+                if(party.partyIdentification[0].id != userPartyId) {
+                    correspondingPartyFederationIds.add(party.federationInstanceID);
+                }
+            }
+        }
+
+        return Array.from(correspondingPartyFederationIds);
     }
 
     getCorrespondingPartyName(frameContract: DigitalAgreement ): string {

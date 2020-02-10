@@ -6,7 +6,7 @@ import * as myGlobals from '../globals';
 import {SearchContextService} from "./search-context.service";
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import {copy, roundToTwoDecimals, selectNameFromLabelObject} from '../common/utils';
+import {copy, isSearchResultLogisticsService, roundToTwoDecimals, selectNameFromLabelObject} from '../common/utils';
 import { CallStatus } from '../common/call-status';
 import { CURRENCIES } from "../catalogue/model/constants";
 import { CategoryService } from '../catalogue/category/category.service';
@@ -16,6 +16,8 @@ import {Code} from '../catalogue/model/publish/code';
 import {CatalogueService} from "../catalogue/catalogue.service";
 import {PublishService} from "../catalogue/publish-and-aip.service";
 import {ShoppingCartDataService} from '../bpe/shopping-cart/shopping-cart-data-service';
+import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
+import {Catalogue} from '../catalogue/model/publish/catalogue';
 
 @Component({
 	selector: 'simple-search-form',
@@ -75,7 +77,7 @@ export class SimpleSearchFormComponent implements OnInit {
     showOtherSection = false;
 
     categoriesCallStatus: CallStatus = new CallStatus();
-    shoppingCartCallStatus: CallStatus = new CallStatus();
+    shoppingCartCallStatuses: CallStatus[] = [];
     searchCallStatus: CallStatus = new CallStatus();
     searchDone = false;
     callback = false;
@@ -122,14 +124,13 @@ export class SimpleSearchFormComponent implements OnInit {
 
     partyNamesList: any;
 
-    delegatedSearch: boolean = false;
     pageRef = ''; // page where the user is navigated from. empty string ('') means the search is opened directly
 
     productsSelectedForPublish: any[] = []; // keeps the products in the Solr format
-    // we use the following field to show call status properly
-    // it stores the selected line which will be added to the shopping basket
-    selectedLineForShoppingBasket:any = null;
+    // shopping cart of the user
+    shoppingCartCatalogue:Catalogue = null;
 
+    isSearchResultLogisticsService=isSearchResultLogisticsService;
     constructor(private simpleSearchService: SimpleSearchService,
                 private searchContextService: SearchContextService,
                 private categoryService: CategoryService,
@@ -204,18 +205,10 @@ export class SimpleSearchFormComponent implements OnInit {
             }
             else
                 this.catID = "";
-            if (del && del == "1")
-                this.delegatedSearch = true;
-            else
-                this.delegatedSearch = false;
             if (pageRef) {
                 this.pageRef = pageRef;
             }
-            if (searchContext == null) {
-                this.searchContextService.clearSearchContext();
-            } else {
-                this.searchContext = searchContext;
-            }
+            this.searchContext = searchContext ? true: false;
             if (q && sTop) {
                 if (sTop == "prod")
                     this.getCall(q, fq, p, rows, sort, cat, catID, sIdx, sTop);
@@ -251,8 +244,15 @@ export class SimpleSearchFormComponent implements OnInit {
             }
         });
 
+        // populate shoppingCartCallStatuses
+        for(let i = 0; i < this.rows; i++) {
+            this.shoppingCartCallStatuses.push(new CallStatus());
+        }
+
         // initialize the shopping cart
-        this.shoppingCartDataService.getShoppingCart();
+        this.shoppingCartDataService.getShoppingCart().then(catalogue => {
+            this.shoppingCartCatalogue = catalogue;
+        });
     }
 
     get(search: Search): void {
@@ -269,7 +269,6 @@ export class SimpleSearchFormComponent implements OnInit {
                 catID: this.catID,
                 sIdx: this.searchIndex,
                 sTop: this.searchTopic,
-                del: this.delegatedSearch ? '1' : '0',
                 pageRef: this.pageRef
             }
         });
@@ -289,7 +288,6 @@ export class SimpleSearchFormComponent implements OnInit {
                 catID: this.catID,
                 sIdx: this.searchIndex,
                 sTop: sTop,
-                del: this.delegatedSearch ? '1' : '0',
                 pageRef: this.pageRef
             }
         });
@@ -309,7 +307,6 @@ export class SimpleSearchFormComponent implements OnInit {
                 catID: this.catID,
                 sIdx: this.searchIndex,
                 sTop: this.searchTopic,
-                del: this.delegatedSearch ? '1' : '0',
                 pageRef: this.pageRef
             }
         });
@@ -329,7 +326,6 @@ export class SimpleSearchFormComponent implements OnInit {
                 catID: this.catID,
                 sIdx: this.searchIndex,
                 sTop: this.searchTopic,
-                del: this.delegatedSearch ? '1' : '0',
                 pageRef: this.pageRef
             }
         });
@@ -349,7 +345,6 @@ export class SimpleSearchFormComponent implements OnInit {
                 catID: this.catID,
                 sIdx: this.searchIndex,
                 sTop: this.searchTopic,
-                del: this.delegatedSearch ? '1' : '0',
                 pageRef: this.pageRef
             }
         });
@@ -381,7 +376,7 @@ export class SimpleSearchFormComponent implements OnInit {
 
     private getCatTree(): void {
         this.categoriesCallStatus.submit();
-        this.simpleSearchService.get("*", [this.product_cat_mix], [""], 1, 1, "score desc", "", "", this.searchIndex, this.delegatedSearch)
+        this.simpleSearchService.get("*", [this.product_cat_mix], [""], 1, 1, "score desc", "", "", this.searchIndex)
         .then(res => {
             // if res.facets are null, it means that there is no product in the index
             if (res.facets == null || Object.keys(res.facets).indexOf(this.product_cat_mix) == -1) {
@@ -610,10 +605,10 @@ export class SimpleSearchFormComponent implements OnInit {
         this.searchIndex = sIdx;
         this.searchTopic = sTop;
         this.searchCallStatus.submit();
-        this.simpleSearchService.getFields(this.delegatedSearch)
+        this.simpleSearchService.getFields()
         .then(res => {
             let fieldLabels: string [] = this.getFieldNames(res);
-            this.simpleSearchService.get(q, Object.keys(fieldLabels), fq, p, rows, sort, cat, catID, this.searchIndex, this.delegatedSearch)
+            this.simpleSearchService.get(q, Object.keys(fieldLabels), fq, p, rows, sort, cat, catID, this.searchIndex)
             .then(res => {
                 if (res.result.length == 0) {
                     this.cat_loading = false;
@@ -624,6 +619,7 @@ export class SimpleSearchFormComponent implements OnInit {
                     this.page = p;
                     this.start = this.page * this.rows - this.rows + 1;
                     this.end = this.start + res.result.length - 1;
+                    this.displayShoppingCartMessages();
                 }
                 else {
                     this.simpleSearchService.getUblProperties(Object.keys(fieldLabels)).then(response => {
@@ -668,7 +664,7 @@ export class SimpleSearchFormComponent implements OnInit {
                                     this.page = p;
                                     this.start = this.page * this.rows - this.rows + 1;
                                     this.end = this.start + res.result.length - 1;
-
+                                    this.displayShoppingCartMessages()
                                 }).catch((error) => {
                                     this.searchCallStatus.error("Error while creating Vendor filters in the search.", error);
                                 });
@@ -706,10 +702,10 @@ export class SimpleSearchFormComponent implements OnInit {
         this.sort = sort;
         this.searchTopic = sTop;
         this.searchCallStatus.submit();
-        this.simpleSearchService.getCompFields(this.delegatedSearch)
+        this.simpleSearchService.getCompFields()
         .then(res => {
             let fieldLabels: string [] = this.getFieldNames(res);
-            this.simpleSearchService.getComp(q, Object.keys(fieldLabels), fq, p, rows, sort, this.delegatedSearch)
+            this.simpleSearchService.getComp(q, Object.keys(fieldLabels), fq, p, rows, sort)
             .then(res => {
                 if (res.result.length == 0) {
                     this.cat_loading = false;
@@ -1437,10 +1433,6 @@ export class SimpleSearchFormComponent implements OnInit {
         for (let i = 0; i < facets.length; i++) {
             facets[i] = facets[i].replace("{LANG}_", (DEFAULT_LANGUAGE() + "_"));
         }
-        /*
-         if (this.delegatedSearch)
-         facets = [this.product_vendor_name];
-         */
         let query = "";
         let length = idList.length;
         while (length--) {
@@ -1450,15 +1442,17 @@ export class SimpleSearchFormComponent implements OnInit {
                 query = query + " OR ";
             }
         }
-        return this.simpleSearchService.getCompanies(query, facets, idList, this.delegatedSearch);
+        return this.simpleSearchService.getCompanies(query, facets, idList);
     }
 
     getProdLink(res: any): string {
         let link = "";
         if (res && res.catalogueId && res.manufactuerItemId) {
-            if (!res.isFromLocalInstance && res.sourceFrontendServiceUrl && res.sourceFrontendServiceUrl != "")
-                link += res.sourceFrontendServiceUrl;
-            link += "#/product-details?catalogueId=" + res.catalogueId + "&id=" + res.manufactuerItemId;
+            // when the seller is navigated to the search to find a transport service for the ordered products, searchContextService is set.
+            // however, since we do not clear searchContextService, need to check whether its context is valid or not and pass this info as query param to product-details page
+            // to check its validity, we use this.searchContext variable which is not null iff the seller is navigated to the search page to find a transport service provider
+            let isSearchContextValid = this.searchContext && this.searchContext == "orderbp";
+            link += "#/product-details?catalogueId=" + res.catalogueId + "&id=" + res.manufactuerItemId + "&contextValid=" + isSearchContextValid;
         }
         return link;
     }
@@ -1466,9 +1460,7 @@ export class SimpleSearchFormComponent implements OnInit {
     getCompLink(res: any): string {
         let link = "";
         if (res && res.id) {
-            if (!res.isFromLocalInstance && res.sourceFrontendServiceUrl && res.sourceFrontendServiceUrl != "")
-                link += res.sourceFrontendServiceUrl;
-            link += "#/user-mgmt/company-details?id=" + res.id;
+            link += "#/user-mgmt/company-details?id=" + res.id + "&delegateId="+res.nimbleInstanceName;
         }
         return link;
     }
@@ -1503,19 +1495,45 @@ export class SimpleSearchFormComponent implements OnInit {
         this.router.navigate(['catalogue/publish'], {queryParams: {pg: 'single', productType: 'product', searchRef: 'true'}});
     }
 
-    onAddToCart(result: any, event: any): void {
+    onAddToCart(result: any,index:number, event: any): void {
         event.preventDefault();
         // do not add item to the cart if a process is still being added
-        if (this.shoppingCartCallStatus.isLoading()) {
-            return;
+        for(let shoppingCartCallStatus of this.shoppingCartCallStatuses){
+            if(shoppingCartCallStatus.isLoading()){
+                return;
+            }
         }
-        // set the selected line
-        this.selectedLineForShoppingBasket = result;
-        this.shoppingCartCallStatus.submit();
-        this.shoppingCartDataService.addItemToCart(result.uri).then(() => {
-            this.shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
+        // get corresponding call status for product
+        let shoppingCartCallStatus = this.getShoppingCartStatus(index);
+        shoppingCartCallStatus.submit();
+
+        this.shoppingCartDataService.addItemToCart(result.uri,1,result.nimbleInstanceName).then(catalogue => {
+            // update shoppingCartCatalogue
+            this.shoppingCartCatalogue = catalogue;
+            shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
         }).catch(() => {
-            this.shoppingCartCallStatus.error(null);
+            shoppingCartCallStatus.error(null);
         });
+    }
+
+    getShoppingCartStatus(index: number): CallStatus {
+        return this.shoppingCartCallStatuses[index % this.rows];
+    }
+
+    // display a message for the products included in the shopping cart
+    displayShoppingCartMessages(){
+        // reset all call statuses
+        for(let callStatus of this.shoppingCartCallStatuses){
+            callStatus.reset();
+        }
+
+        let size = this.response.length;
+        for(let i = 0; i < size; i++){
+            let result = this.response[i];
+            if(UBLModelUtils.doesCatalogueContainProduct(this.shoppingCartCatalogue,result.catalogueId,result.manufactuerItemId)){
+                this.getShoppingCartStatus(i).callback("Product is added to shopping cart.", false);
+            }
+        }
+
     }
 }

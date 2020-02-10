@@ -21,6 +21,9 @@
         <option *ngFor='let language of languages' [value]="language">{{language}}</option>
     </select>
 
+<!--    Button to generate random text values-->
+    <button class="btn btn-outline-primary {{textGeneratorClass}}" *ngIf="textGeneratorClass != '' && !disabled" (click)="generateText()"><i class="fas fa-undo"></i></button>
+
     <div class="d-flex align-items-end justify-content-end {{flexClass}}">
         <button *ngIf="addButtonStyle != ''" class="btn {{addButtonStyle}}"  type="button" (click)="onAddTextInput()"><span [innerHTML]="'Add' | translate"></span></button>
         <button *ngIf="deleteButtonStyle != ''" class="btn {{deleteButtonStyle}} "   type="button" (click)="onDeleteTextInput()" ><span [innerHTML]="'Delete' | translate"></span></button>

@@ -16,6 +16,7 @@ import {frameContractDurationUnitListId} from "../../../common/constants";
 import {RequestForQuotation} from "../../../catalogue/model/publish/request-for-quotation";
 import {Quantity} from "../../../catalogue/model/publish/quantity";
 import {CatalogueLine} from '../../../catalogue/model/publish/catalogue-line';
+import {FEDERATIONID} from '../../../catalogue/model/constants';
 
 @Component({
     selector: 'negotiation',
@@ -49,6 +50,8 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     @Input() areCatalogueLinesDeleted:boolean[];
     // the product for which the users negotiate
     @Input() selectedLineIndex:number;
+    // whether the process details are viewed for all products in the negotiation
+    @Input() areProcessDetailsViewedForAllProducts:boolean;
 
     constructor(public bpDataService: BPDataService,
                 private bpeService: BPEService,
@@ -116,11 +119,14 @@ export class NegotiationComponent implements OnInit, OnDestroy {
 
     private async initialDefaultTermsAndConditionsAndFrameContract(): Promise<any> {
         let buyerPartyId;
+        let buyerFederationId;
         if(this.bpDataService.bpActivityEvent.userRole === 'buyer') {
             buyerPartyId = this.cookieService.get("company_id");
+            buyerFederationId = FEDERATIONID();
         } else {
             // for sellers rfq should include buyer supplier party
             buyerPartyId = UBLModelUtils.getPartyId(this.bpDataService.requestForQuotation.buyerCustomerParty.party);
+            buyerFederationId = this.bpDataService.requestForQuotation.buyerCustomerParty.party.federationInstanceID;
         }
 
         // retrieve default terms and conditions and frame contract
@@ -137,9 +143,11 @@ export class NegotiationComponent implements OnInit, OnDestroy {
                 ? this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms.termOrCondition // if the seller company has T&Cs, use them
                 : this.bpeService.getTermsAndConditions( // otherwise, use the default T&Cs
                     buyerPartyId,
+                    buyerFederationId,
                     UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLines()[0].goodsItem.item.manufacturerParty),
                     catalogueLine.goodsItem.deliveryTerms.incoterms,
-                    this.bpDataService.getCompanySettings().negotiationSettings.paymentTerms[0]
+                    this.bpDataService.getCompanySettings().negotiationSettings.paymentTerms[0],
+                    this.bpDataService.getCatalogueLines()[0].goodsItem.item.manufacturerParty.federationInstanceID
                 ));
         }
 
@@ -152,7 +160,9 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         let frameContracts:any = await this.bpeService.getFrameContract(
             UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLines()[0].goodsItem.item.manufacturerParty),
             buyerPartyId,
-            productIds);
+            productIds,
+            buyerFederationId,
+            this.bpDataService.getCatalogueLines()[0].goodsItem.item.manufacturerParty.federationInstanceID);
 
         this.frameContracts = [];
         for(let rfqLine of this.bpDataService.requestForQuotation.requestForQuotationLine){
@@ -175,7 +185,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
             }
             else{
                 // load the quotation associated to the frame contract
-                frameContractQuotationPromises.push(this.documentService.getDocumentJsonContent(frameContract.quotationReference.id));
+                frameContractQuotationPromises.push(this.documentService.getDocumentJsonContent(frameContract.quotationReference.id,this.bpDataService.getCatalogueLines()[0].goodsItem.item.manufacturerParty.federationInstanceID));
             }
         }
 
@@ -237,7 +247,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
             if(!this.bpDataService.bpActivityEvent.newProcess) {
                 checkIndex = 1;
             }
-            responseDocument = this.documentService.getResponseDocument(this.bpDataService.bpActivityEvent.processHistory[checkIndex].activityVariables);
+            responseDocument = this.documentService.getResponseDocument(this.bpDataService.bpActivityEvent.processHistory[checkIndex].activityVariables,this.bpDataService.bpActivityEvent.processHistory[checkIndex].sellerFederationId);
         }
 
         return responseDocument;
@@ -280,8 +290,8 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         let documentPromises: Promise<any>[] = [];
         // the documents for the last step is already available via the BpDataService
         for(let i=0; i < this.negotiationProcessList.length - 1; i++) {
-            documentPromises.push(this.documentService.getInitialDocument(this.negotiationProcessList[i].activityVariables));
-            documentPromises.push(this.documentService.getResponseDocument(this.negotiationProcessList[i].activityVariables));
+            documentPromises.push(this.documentService.getInitialDocument(this.negotiationProcessList[i].activityVariables,this.negotiationProcessList[i].sellerFederationId));
+            documentPromises.push(this.documentService.getResponseDocument(this.negotiationProcessList[i].activityVariables,this.negotiationProcessList[i].sellerFederationId));
         }
 
         Promise.all(documentPromises).then(responseArray => {
@@ -427,5 +437,11 @@ export class NegotiationComponent implements OnInit, OnDestroy {
             return true;
         }
         return false;
+    }
+
+    showNegotiationResponse(){
+        let isCollaborationCancelled = this.bpDataService.bpActivityEvent.processMetadata && this.bpDataService.bpActivityEvent.processMetadata.collaborationStatus == 'CANCELLED';
+        let isResponseSent = this.bpDataService.bpActivityEvent.processMetadata && this.bpDataService.bpActivityEvent.processMetadata.processStatus == 'Completed';
+        return isResponseSent || (this.bpDataService.quotation && !isCollaborationCancelled);
     }
 }

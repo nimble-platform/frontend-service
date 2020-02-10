@@ -61,6 +61,7 @@ import {Clause} from "./publish/clause";
 import {Contract} from './publish/contract';
 import {Address as UserMgmtAddress} from '../../user-mgmt/model/address';
 import {OrderLineReference} from './publish/order-line-reference';
+import {Catalogue} from './publish/catalogue';
 
 /**
  * Created by suat on 05-Jul-17.
@@ -126,7 +127,7 @@ export class UBLModelUtils {
 
         // create item
         const uuid:string = this.generateUUID();
-        const item = new Item([], [], [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(uuid), docRef, [], [], this.createDimensions(dimensionUnits), null);
+        const item = new Item([], [], [], [], additionalItemProperties, providerParty, this.createItemIdentificationWithId(null), docRef, [], [], this.createDimensions(dimensionUnits), null);
 
         // create goods item
         const goodsItem = new GoodsItem(uuid, null, item, this.createPackage(),
@@ -722,9 +723,14 @@ export class UBLModelUtils {
         }
         let lcpaOutput = lcpaDetails.lcpaoutput;
 
-        if(!isNaNNullAware(lcpaOutput.operationCostsPerYear.value) ||
-            !isNaNNullAware(lcpaOutput.lifeCycleCost.value) ||
-            !isNaNNullAware(lcpaOutput.capexOpexRelation.value)) {
+        if(!isNaNNullAware(lcpaOutput.lifeCycleCost.value) ||
+            !isNaNNullAware(lcpaOutput.acidificationPotential.value) ||
+            !isNaNNullAware(lcpaOutput.aerosolFormationPotential.value) ||
+            !isNaNNullAware(lcpaOutput.capex.value) ||
+            !isNaNNullAware(lcpaOutput.cumulativeEnergyDemand.value) ||
+            !isNaNNullAware(lcpaOutput.eutrophicationPotential.value) ||
+            !isNaNNullAware(lcpaOutput.globalWarmingPotential.value) ||
+            !isNaNNullAware(lcpaOutput.opex.value)) {
             return true;
         } else {
             return false;
@@ -748,7 +754,7 @@ export class UBLModelUtils {
         if(quantity == null) {
             return true;
         }
-        if(!quantity.value && !quantity.unitCode) {
+        if(quantity.value == null && !quantity.unitCode) {
             return true;
         }
         return false;
@@ -758,7 +764,7 @@ export class UBLModelUtils {
         if(UBLModelUtils.isEmptyQuantity(quantity)) {
             return true;
         }
-        if(!quantity.value || !quantity.unitCode) {
+        if(quantity.value == null || !quantity.unitCode) {
             return true;
         }
         return false;
@@ -768,7 +774,7 @@ export class UBLModelUtils {
         if(amount == null) {
             return true;
         }
-        if(!amount.value || !amount.currencyID) {
+        if(amount.value == null || !amount.currencyID) {
             return true;
         }
         return false;
@@ -1008,5 +1014,17 @@ export class UBLModelUtils {
 
         let description: Text[] = [new Text(termDescription, null)];
         return new TradingTerm(termName, description, null, termValue);
+    }
+
+    public static doesCatalogueContainProduct(catalogue:Catalogue,catalogueId:string, productId:string):boolean{
+        if(catalogue == null || catalogue.catalogueLine.length == 0){
+            return false;
+        }
+        for(let catalogueLine of catalogue.catalogueLine){
+            if(catalogueLine.goodsItem.item.catalogueDocumentReference.id == catalogueId && catalogueLine.goodsItem.item.manufacturersItemIdentification.id == productId){
+                return true;
+            }
+        }
+        return false;
     }
 }

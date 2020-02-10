@@ -70,8 +70,7 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
             ids.push(process.id);
         }
         this.process_ids = new SelectedTerms(this.negotiationSettings.company.processID, ids);
-
-        this.bpeService.checkAllCollaborationsFinished(this.settings.companyID).then(finished => {
+        this.bpeService.checkAllCollaborationsFinished(this.settings.companyID,this.settings.negotiationSettings.company.federationInstanceID).then(finished => {
             this.isAllCollaborationsFinished = finished;
             // no need to show alert
             if(finished){

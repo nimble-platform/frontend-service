@@ -79,7 +79,7 @@ export class ItemInformationResponseComponent implements OnInit {
 
     onSendResponse(): void {
         this.callStatus.submit();
-        this.bpeService.startProcessWithDocument(this.bpDataService.itemInformationResponse).then(() => {
+        this.bpeService.startProcessWithDocument(this.bpDataService.itemInformationResponse,this.bpDataService.itemInformationResponse.sellerSupplierParty.party.federationInstanceID).then(() => {
             this.callStatus.callback("Information Response sent", true);
             var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")
@@ -95,7 +95,7 @@ export class ItemInformationResponseComponent implements OnInit {
     }
 
     onNextStep(): void {
-        if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().tradeDetails.ppapCompatibilityLevel) {
+        if(isLogisticsService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().tradeDetails.ppapCompatibilityLevel) {
             this.navigateToBusinessProcess("Negotiation");
         } else {
             if (this.bpDataService.getCompanyWorkflowMap(null).get('Ppap')) {
@@ -162,11 +162,10 @@ export class ItemInformationResponseComponent implements OnInit {
     }
 
     isNextStepDisabled(): boolean {
-        // next steps do not make sense for logistics services like warehouse management, so next step is disable for them
-        return this.isRepeatRequestDisabled() || (this.isLogisticsService && !this.isTransportService) || this.bpDataService.isFinalProcessInTheWorkflow('Item_Information_Request');
+        return this.isRepeatRequestDisabled() || this.bpDataService.isFinalProcessInTheWorkflow('Item_Information_Request');
     }
 
     isRepeatRequestDisabled(): boolean {
-        return this.isLoading() || this.readonly || this.processMetadata.areProductsDeleted[0] || this.processMetadata.isCollaborationFinished;
+        return this.isLoading() || this.readonly || this.processMetadata.areProductsDeleted[0] || this.processMetadata.collaborationStatus == "COMPLETED" || this.processMetadata.collaborationStatus == "CANCELLED";
     }
 }

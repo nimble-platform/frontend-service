@@ -106,6 +106,8 @@ export class BPDataService{
 
     precedingProcessId: string;
     precedingDocumentId: string;
+    precedingOrderId: string;
+    unShippedOrderIds: string[];
 
     constructor(private searchContextService: SearchContextService,
                 private precedingBPDataService: PrecedingBPDataService,
@@ -153,10 +155,10 @@ export class BPDataService{
         let activityVariables = processMetadata.activityVariables;
         let processType = processMetadata.processType;
         if(processType == 'Negotiation') {
-            this.requestForQuotation = await this.documentService.getInitialDocument(activityVariables);
+            this.requestForQuotation = await this.documentService.getInitialDocument(activityVariables,processMetadata.sellerFederationId);
             this.initFetchedRfq();
 
-            let quotationVariable = await this.documentService.getResponseDocument(activityVariables);
+            let quotationVariable = await this.documentService.getResponseDocument(activityVariables,processMetadata.sellerFederationId);
             if(quotationVariable == null) {
                 // initialize the quotation only if the user is in seller role
                 if(this.bpActivityEvent.userRole == 'seller') {
@@ -169,9 +171,9 @@ export class BPDataService{
             }
 
         } else if(processType == 'Order') {
-            this.order = await this.documentService.getInitialDocument(activityVariables);
+            this.order = await this.documentService.getInitialDocument(activityVariables,processMetadata.sellerFederationId);
 
-            let orderResponseVariable = await this.documentService.getResponseDocument(activityVariables);
+            let orderResponseVariable = await this.documentService.getResponseDocument(activityVariables,processMetadata.sellerFederationId);
             if(orderResponseVariable == null) {
                 // initialize the order response only if the user is in seller role
                 if(this.bpActivityEvent.userRole == 'seller') {
@@ -184,9 +186,9 @@ export class BPDataService{
 
 
         } else if(processType == 'Ppap'){
-            this.ppap = await this.documentService.getInitialDocument(activityVariables);
+            this.ppap = await this.documentService.getInitialDocument(activityVariables,processMetadata.sellerFederationId);
 
-            let ppapResponseVariable = await this.documentService.getResponseDocument(activityVariables);
+            let ppapResponseVariable = await this.documentService.getResponseDocument(activityVariables,processMetadata.sellerFederationId);
             if(ppapResponseVariable == null) {
                 if (this.bpActivityEvent.userRole == 'seller') {
                     this.ppapResponse = UBLModelUtils.createPpapResponseWithPpapCopy(this.ppap, true);
@@ -197,9 +199,9 @@ export class BPDataService{
             }
 
         } else if(processType == 'Fulfilment') {
-            this.despatchAdvice = await this.documentService.getInitialDocument(activityVariables);
+            this.despatchAdvice = await this.documentService.getInitialDocument(activityVariables,processMetadata.sellerFederationId);
 
-            let receiptAdviceVariable = await this.documentService.getResponseDocument(activityVariables);
+            let receiptAdviceVariable = await this.documentService.getResponseDocument(activityVariables,processMetadata.sellerFederationId);
             if(receiptAdviceVariable == null) {
                 // initialize the quotation only if the user is in seller role
                 if(this.bpActivityEvent.userRole == 'buyer') {
@@ -211,9 +213,9 @@ export class BPDataService{
             }
 
         } else if(processType == 'Transport_Execution_Plan') {
-            this.transportExecutionPlanRequest = await this.documentService.getInitialDocument(activityVariables);
+            this.transportExecutionPlanRequest = await this.documentService.getInitialDocument(activityVariables,processMetadata.sellerFederationId);
 
-            let transportExecutionPlanVariable = await this.documentService.getResponseDocument(activityVariables);
+            let transportExecutionPlanVariable = await this.documentService.getResponseDocument(activityVariables,processMetadata.sellerFederationId);
             if(transportExecutionPlanVariable == null) {
                 if(this.bpActivityEvent.userRole == 'seller') {
                     this.transportExecutionPlan = UBLModelUtils.createTEPlanWithTERequestCopy(this.transportExecutionPlanRequest);
@@ -224,9 +226,9 @@ export class BPDataService{
             }
 
         } else if(processType == 'Item_Information_Request') {
-            this.itemInformationRequest = await this.documentService.getInitialDocument(activityVariables);
+            this.itemInformationRequest = await this.documentService.getInitialDocument(activityVariables,processMetadata.sellerFederationId);
 
-            let itemInformationResponseVariable = await this.documentService.getResponseDocument(activityVariables);
+            let itemInformationResponseVariable = await this.documentService.getResponseDocument(activityVariables,processMetadata.sellerFederationId);
             if(itemInformationResponseVariable == null) {
                 if(this.bpActivityEvent.userRole == 'seller') {
                     this.itemInformationResponse = UBLModelUtils.createIIResponseWithIIRequestCopy(this.itemInformationRequest);
@@ -243,8 +245,8 @@ export class BPDataService{
      For dashboard, business process history contains process document metadatas since they are already started/completed.
      However, in the product-details page, we start a new business process, this is why we check for new process processMetadata.
      */
-    async startBp(bpActivityEvent: BpActivityEvent, clearSearchContext:boolean){
-        this.resetBpData(clearSearchContext);
+    async startBp(bpActivityEvent: BpActivityEvent){
+        this.resetBpData();
 
         this.bpActivityEvent = bpActivityEvent;
         // if the event is not created for a new process, processMetadata contains the process metadata for the continued process
@@ -262,9 +264,17 @@ export class BPDataService{
             processInstanceId = this.bpActivityEvent.processMetadata.processInstanceId;
         }
 
-        this.router.navigate([`bpe/bpe-exec/${processInstanceId}`]).then(() => {
+        this.router.navigate([`bpe/bpe-exec/${processInstanceId}/${this.bpActivityEvent.sellerFederationId}`]).then(() => {
             this.bpActivityEventBehaviorSubject.next(this.bpActivityEvent);
         });
+    }
+
+    // used to view details of the process with given id
+    // in this case, since this.bpActivityEvent might have the details of a different process, we need to clear it
+    public viewProcessDetails(processInstanceId:string,delegateId:string){
+        // clear bpActivityEvent
+        this.bpActivityEvent = null;
+        this.router.navigate([`bpe/bpe-exec/${processInstanceId}/${delegateId}`]);
     }
 
     /*
@@ -300,7 +310,11 @@ export class BPDataService{
             this.bpActivityEvent.catalogueLineIds,
             this.bpActivityEvent.previousProcessInstanceId,
             this.bpActivityEvent.previousDocumentId,
-            termsSources);
+            termsSources,
+            this.bpActivityEvent.sellerFederationId,
+            this.bpActivityEvent.precedingOrderId,
+            this.bpActivityEvent.processMetadataOfAssociatedOrder,
+            this.bpActivityEvent.unShippedOrderIds);
         this.bpActivityEvent = bpStartEvent;
         // this event is listened by the product-bp-options.component where the displayed process view is adjusted
         this.bpActivityEventBehaviorSubject.next(bpStartEvent);
@@ -528,7 +542,7 @@ export class BPDataService{
         this.transportExecutionPlanRequest = UBLModelUtils.createTEPlanRequestWithQuotationCopy(this.copyQuotation);
     }
 
-    resetBpData(clearSearchContext:boolean=true):void {
+    resetBpData():void {
         this.requestForQuotation = null;
         this.quotation = null;
         this.order = null;
@@ -543,9 +557,8 @@ export class BPDataService{
         this.itemInformationResponse = null;
 
         this.precedingDocumentId = null;
-        if(clearSearchContext){
-            this.searchContextService.clearSearchContext();
-        }
+        this.precedingOrderId = null;
+        this.unShippedOrderIds = null;
     }
 
     // checks whether the given process is the final step in the workflow or not

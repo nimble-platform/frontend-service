@@ -6,9 +6,12 @@
                 <input-label [label]="'Incoterm'"></input-label>
             </div>
             <div class="col-7">
-                <select class="form-control form-control-sm" [(ngModel)]="priceOption.incoterms[0]">
+                <select *ngIf="!readonly" class="form-control form-control-sm" [(ngModel)]="priceOption.incoterms[0]">
                     <option *ngFor="let option of incoterms" [value]="option">{{option}}</option>
                 </select>
+                <label *ngIf="readonly">
+                    {{priceOption.incoterms[0]}}
+                </label>
             </div>
         </div>
     </div>
@@ -22,9 +25,12 @@
                 <input-label [label]="'Payment Mean'"></input-label>
             </div>
             <div class="col-7">
-                <select class="form-control form-control-sm" [(ngModel)]="priceOption.paymentMeans[0].paymentMeansCode.value">
+                <select *ngIf="!readonly" class="form-control form-control-sm" [(ngModel)]="priceOption.paymentMeans[0].paymentMeansCode.value">
                     <option *ngFor="let option of paymentMeans" [value]="option">{{option}}</option>
                 </select>
+                <label *ngIf="readonly">
+                    {{priceOption.paymentMeans[0].paymentMeansCode.value}}
+                </label>
             </div>
         </div>
     </div>
@@ -36,7 +42,7 @@
         <div class="col-2">
             <input-label [label]="'Delivery Location'"></input-label>
         </div>
-        <address-input class="col-10" [address]="priceOption.itemLocationQuantity.applicableTerritoryAddress[0]"></address-input>
+        <address-input class="col-10" [address]="priceOption.itemLocationQuantity.applicableTerritoryAddress[0]" [disabled]="readonly"></address-input>
     </div>
 </div>
 
@@ -48,9 +54,10 @@
                         [labelClass]="'col-5'"
                         [valueClass]="'col-7'"
                         [quantity]="priceOption.estimatedDeliveryPeriod.durationMeasure"
+                        [presentationMode]="readonly ? 'view': 'edit'"
                         [quantityUnits]="deliveryPeriodUnits">
         </quantity-input>
     </div>
 </div>
 
-<discount-target [priceOption]="priceOption" [discountUnits]="discountUnits"></discount-target>
+<discount-target [priceOption]="priceOption" [discountUnits]="discountUnits" [readonly]="readonly"></discount-target>

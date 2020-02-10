@@ -3,7 +3,13 @@ import { ProductWrapper } from "../common/product-wrapper";
 import { CommodityClassification } from "../catalogue/model/publish/commodity-classification";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
 import {
-    getPropertyKey, getPropertyValues, getPropertyValuesAsStrings, selectName, selectNameFromLabelObject, selectPreferredValue,
+    getPropertyKey,
+    getPropertyValues,
+    getPropertyValuesAsStrings,
+    isLogisticsService,
+    selectName,
+    selectNameFromLabelObject,
+    selectPreferredValue,
 } from '../common/utils';
 import {Item} from '../catalogue/model/publish/item';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
@@ -84,12 +90,15 @@ export class ProductDetailsOverviewComponent implements OnInit{
 
         if(this.wrapper){
             this.getManufacturerPartyNameStatus.submit();
-            this.userService.getParty(this.wrapper.item.manufacturerParty.partyIdentification[0].id).then(party => {
+            this.userService.getParty(this.wrapper.item.manufacturerParty.partyIdentification[0].id,this.wrapper.item.manufacturerParty.federationInstanceID).then(party => {
                 this.manufacturerPartyName = UBLModelUtils.getPartyDisplayName(party);
                 this.getManufacturerPartyNameStatus.callback(null,true);
             }).catch(error => {
                 this.getManufacturerPartyNameStatus.error("Failed to get manufacturer party name", error);
             })
+
+            // do not show Add to Cart button for logistics services
+            this.showAddToCartButton = this.showAddToCartButton && !isLogisticsService(this.wrapper.line);
         }
         /*
             Cache FurnitureOntology categories. Then, use cached categories to get correct category label according
@@ -165,6 +174,12 @@ export class ProductDetailsOverviewComponent implements OnInit{
             .catch(err => {
                 this.productCatalogueNameRetrievalStatus.error('Failed to get product catalogue');
             })
+            // display a message if the product is included in the shopping cart
+            this.shoppingCartDataService.getShoppingCart().then(catalogue => {
+                if(UBLModelUtils.doesCatalogueContainProduct(catalogue,this.catalogueId,this.productId)){
+                    this.shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
+                }
+            })
         });
     }
 
@@ -176,7 +191,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
         }
 
         this.shoppingCartCallStatus.submit();
-        this.shoppingCartDataService.addItemToCart(this.wrapper.line.hjid).then(() => {
+        this.shoppingCartDataService.addItemToCart(this.wrapper.line.hjid,this.wrapper.quantity.value,this.wrapper.item.manufacturerParty.federationInstanceID).then(() => {
             this.shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
         }).catch((err) => {
             this.shoppingCartCallStatus.error('Failed to add product to cart', err);

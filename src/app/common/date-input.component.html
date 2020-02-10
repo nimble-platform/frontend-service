@@ -9,6 +9,6 @@
     </div>
 
     <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">
-        <p class="{{valueDateClass}}">{{ date }}</p>
+        <p class="{{valueDateClass}}">{{ dateToString(date) }}</p>
     </div>
 </div>

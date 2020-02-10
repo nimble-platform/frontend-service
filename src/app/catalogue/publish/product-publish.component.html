@@ -35,16 +35,28 @@
         <strong class="mr-2" *ngIf="isProductCategoriesLoading()"><span [innerHTML]="'Fetching Categories' | translate"></span> </strong>
         <call-status [callStatus]="productCategoryRetrievalStatus"></call-status>
     </div>
-    <div class="col-10 object-list">
-        <div *ngFor="let selectedCategory of selectedCategories"
-             class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
-            <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
-            <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
-        </div>
-        <button class="btn btn-outline-primary btn-add-category"
-                (click)="onAddCategory()" [disabled]="isLoading()">
+    <div class="col-10 ">
+        <div class="object-list">
+            <div *ngFor="let selectedCategory of selectedCategories"
+                 class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
+                <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
+                <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
+            </div>
+            <button class="btn btn-outline-primary btn-add-category"
+                    (click)="onAddCategory()" [disabled]="isLoading()">
                 <span [innerHTML]="'Add Category' | translate"></span>
-        </button>
+            </button>
+        </div>
+        <!-- Invalid categories-->
+        <div *ngIf="invalidCategoryCodes.length > 0" class="alert-danger">
+            <strong><span [innerHTML]="'Following categories are not valid any more:' | translate"></span></strong>
+            <ul>
+                <strong><li *ngFor="let invalidCategoryCode of invalidCategoryCodes">{{invalidCategoryCode.name}}</li></strong>
+            </ul>
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-outline-primary justify-content-end space-right" (click)="removeInvalidCategories()"><span [innerHTML]="'Remove them from the product' | translate"></span></button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -95,7 +107,7 @@
                         <a href id="LCPA" class="nav-link"
                            [ngClass]="{ active: selectedTabSinglePublish === 'LCPA'}"
                            (click)="onSelectTabSinglePublish($event,'LCPA')">
-                           <span [innerHTML]="'LCPA Details' | translate"></span>
+                           <span [innerHTML]="'LCPA' | translate"></span>
                         </a>
                     </li>
                 </ul>
@@ -272,7 +284,7 @@
 
     <!-- Actions -->
     <div class="row actions-row pr-0">
-        <div class="col-4 call-status-col"><call-status [callStatus]="publishStatus"></call-status></div>
+        <div class="col-4"><call-status [callStatus]="publishStatus"></call-status></div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
                 <span [innerHTML]="'Cancel' | translate"></span>

@@ -5,6 +5,10 @@
     </div>
 </div>
 
+<!--Shopping cart summary-->
+<shopping-cart-summary-modal [negotiationModelWrappers]="getNegotiationModelWrappers()" (onMultipleLineNegotiation)="onMultipleLineNegotiation()">
+</shopping-cart-summary-modal>
+
 <ng-container *ngIf="initCallStatus.isAllSuccessful()">
     <div class="d-flex justify-content-end mb-2">
         <div class="btn btn-secondary" (click)="showCommonTerms = !showCommonTerms">
@@ -12,7 +16,7 @@
             <span [innerHTML]="'Show Common Cart Terms' | translate"></span>
         </div>
         <div>
-            <button class="btn btn-primary ml-2" [disabled]="startBpCallStatus.fb_submitted" (click)="onMultipleLineNegotiation()">
+            <button class="btn btn-primary ml-2" [disabled]="startBpCallStatus.fb_submitted" (click)="openShoppingCartSummary()">
                 <span [innerHTML]="'Negotiate / Order All' | translate"></span>
             </button>
         </div>
@@ -30,7 +34,8 @@
             <div class="btn btn-primary btn-outline-primary" (click)="collapsedStatusesOfCartItems.set(cartLine.hjid, !collapsedStatusesOfCartItems.get(cartLine.hjid))">
                 {{getProductName(cartLine.goodsItem.item.name)}}
             </div>
-            <call-status class="ml-auto" [callStatus]="deleteCallStatuses.get(cartLine.hjid)"></call-status>
+            <i *ngIf="!collapsedStatusesOfCartItems.get(cartLine.hjid) && !deleteCallStatuses.get(cartLine.hjid).isLoading()" class="far fa-trash-alt fa-2x ml-auto clickable" (click)="onRemoveFromCart(cartLine)" title="Remove from Cart"></i>
+            <call-status *ngIf="deleteCallStatuses.get(cartLine.hjid).isLoading()" class="ml-auto" [callStatus]="deleteCallStatuses.get(cartLine.hjid)"></call-status>
         </div>
         <div [hidden]="!collapsedStatusesOfCartItems.get(cartLine.hjid)" class="space-before">
             <product-details-overview [wrapper]="productWrappers.get(cartLine.hjid)"

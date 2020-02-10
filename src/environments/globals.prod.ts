@@ -57,6 +57,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 
 export const config = {
   "platformName": "MVP",
+  "envName": "prod",
   "companyRegistrationRequired": false,
   "categoryFilter": {
     "eClass": {

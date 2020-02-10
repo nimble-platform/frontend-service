@@ -10,8 +10,8 @@
 
             <!-- Quantity -->
             <quantity-input label="Quantity" definition="The quantity to transport."
-                            [quantity]="shipment.goodsItem[0].quantity" [disabled]="disabled"
-                            labelClass="col-2" valueClass="col-10">
+                            [quantity]="goodsItems[0].quantity" [disabled]="disabled"
+                            labelClass="col-2" valueClass="col-10" [required]="true">
             </quantity-input>
         </div>
 
@@ -26,7 +26,7 @@
                 </div>
                 <div class="col-9">
                     <quantity-input [disabled]="disabled" [disableQuantityUnit]="true"
-                                    [quantity]="goodsItem.quantity" valueClass="col-12">
+                                    [quantity]="goodsItem.quantity" valueClass="col-12" [required]="true">
                     </quantity-input>
                 </div>
             </div>
@@ -35,13 +35,13 @@
         <!-- Gross Volume -->
         <quantity-input label="Gross Volume" definition="The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L"
             [quantity]="shipment.consignment[0].grossVolumeMeasure" [disabled]="disabled" rowClass="space-before" 
-            quantityType="volume_quantity" labelClass="col-2" valueClass="col-10">
+            quantityType="volume_quantity" labelClass="col-2" valueClass="col-10" [required]="true">
         </quantity-input>
 
         <!-- Gross Weight -->
         <quantity-input label="Gross Weight" definition="The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg"
             [quantity]="shipment.consignment[0].grossWeightMeasure" [disabled]="disabled" 
-            quantityType="weight_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10">
+            quantityType="weight_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
         </quantity-input>
 
 
@@ -51,19 +51,19 @@
         <!-- Transport Handling Unit -->
         <text-input label="Transport Handling Unit" description="The transport handling unit used" [rows]="1"
             [(text)]="shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name" [disabled]="disabled" 
-            rowClass="space-before" labelClass="col-2" valueClass="col-10">
+            rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
         </text-input>
 
         <!-- Dimension 1 -->
         <quantity-input [label]="shipment.transportHandlingUnit[0].measurementDimension[0].attributeID"
             [quantity]="shipment.transportHandlingUnit[0].measurementDimension[0].measure" [disabled]="disabled" 
-            quantityType="length_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10">
+            quantityType="length_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
         </quantity-input>
 
         <!-- Dimension 2 -->
         <quantity-input [label]="shipment.transportHandlingUnit[0].measurementDimension[1].attributeID"
             [quantity]="shipment.transportHandlingUnit[0].measurementDimension[1].measure" [disabled]="disabled" 
-            quantityType="length_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10">
+            quantityType="length_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
         </quantity-input>
 
     </div>

@@ -57,6 +57,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 
 export const config = {
   "platformName": "FMP",
+  "envName": "aidimme",
   "companyRegistrationRequired": true,
   "categoryFilter": {
     "eClass": {
@@ -86,6 +87,10 @@ export const config = {
     "dashboards": []
   },
   "kibanaEnabled": false,
+  "languageSettings": {
+    "available": ["en", "es", "de", "tr", "it", "sv"],
+    "fallback": "en"
+  },
   "loggingEnabled": false,
   "logoPath": "./assets/logo_fmp.png",
   "federationLogoPath": "./assets/logo_mvp_efactory.png",

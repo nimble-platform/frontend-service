@@ -56,13 +56,13 @@ export class FrameContractDetailsComponent implements OnInit {
             }
 
             if (quotationId == null) {
-                if(params.id) {
+                if(params.id && params.delegateId) {
                     this.frameContractRetrievalCallStatus.submit();
                     let frameContractPromise: Promise<DigitalAgreement>;
                     if (frameContract != null) {
                         frameContractPromise = Promise.resolve(frameContract);
                     } else {
-                        frameContractPromise = this.bpeService.getFrameContractByHjid(params.id);
+                        frameContractPromise = this.bpeService.getFrameContractByHjid(params.id,params.delegateId);
                     }
 
                     frameContractPromise.then(contractRes => {
@@ -71,14 +71,15 @@ export class FrameContractDetailsComponent implements OnInit {
                         let catalogueId: string = contractRes.item.catalogueDocumentReference.id;
                         let lineId: string = contractRes.item.manufacturersItemIdentification.id;
                         let partyId: string = this.getCorrespondingPartyId();
+                        let instanceId:string = this.getCorrespondingPartyFederationId();
 
                         let catalogueLinePromise: Promise<any> = this.catalogueService.getCatalogueLine(catalogueId, lineId).catch(error => {
                             if(error.status == 404){
                                 this.frameContractRetrievalCallStatus.error("The product with id "+lineId+" is deleted");
                             }
                         });
-                        let quotationPromise: Promise<any> = this.documentService.getDocumentJsonContent(quotationId);
-                        let partyPromise: Promise<any> = this.userService.getParty(partyId);
+                        let quotationPromise: Promise<any> = this.documentService.getDocumentJsonContent(quotationId,params.delegateId);
+                        let partyPromise: Promise<any> = this.userService.getParty(partyId,instanceId);
 
                         Promise.all([
                             catalogueLinePromise,
@@ -119,7 +120,8 @@ export class FrameContractDetailsComponent implements OnInit {
         this.router.navigate(['/user-mgmt/company-details'],
             {
                 queryParams: {
-                    id: this.getCorrespondingPartyId()
+                    id: this.getCorrespondingPartyId(),
+                    delegateId: this.getCorrespondingPartyFederationId()
                 }
             });
     }
@@ -130,6 +132,16 @@ export class FrameContractDetailsComponent implements OnInit {
         for(let party of this.frameContract.participantParty) {
             if(party.partyIdentification[0].id != userPartyId) {
                 return UBLModelUtils.getPartyId(party);
+            }
+        }
+    }
+
+    getCorrespondingPartyFederationId(): string {
+        let userPartyId = this.cookieService.get("company_id");
+
+        for(let party of this.frameContract.participantParty) {
+            if(party.partyIdentification[0].id != userPartyId) {
+                return party.federationInstanceID;
             }
         }
     }

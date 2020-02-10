@@ -40,7 +40,8 @@ export class PpapComponent implements OnInit {
                 if (this.bpDataService.ppapResponse && this.bpDataService.ppapResponse.requestedDocument) {
                     this.screen = "download";
                 } else {
-                    this.screen = "upload";
+                    let isCollaborationCancelled = this.bpDataService.bpActivityEvent.processMetadata && this.bpDataService.bpActivityEvent.processMetadata.collaborationStatus == "CANCELLED";
+                    this.screen = isCollaborationCancelled ? "select" : "upload";
                 }
             } else {
                 // buyer

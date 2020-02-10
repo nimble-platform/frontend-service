@@ -14,6 +14,7 @@ import {Text} from '../../catalogue/model/publish/text';
 import {TradingPreferences} from '../../catalogue/model/publish/trading-preferences';
 import {UserService} from '../user.service';
 import {TranslateService} from '@ngx-translate/core';
+import {FEDERATIONID} from '../../catalogue/model/constants';
 
 @Component({
     selector: "company-terms-and-conditions",
@@ -60,7 +61,7 @@ export class CompanyTermsAndConditions implements OnInit {
         Promise.all([
             this.unitService.getCachedUnitList(deliveryPeriodUnitListId),
             this.unitService.getCachedUnitList(warrantyPeriodUnitListId),
-            this.bpeService.getTermsAndConditions(null , this.settings.companyID, null,null),
+            this.bpeService.getTermsAndConditions(null ,FEDERATIONID(), this.settings.companyID, null,null,this.settings.negotiationSettings.company.federationInstanceID),
         ]).then(([ deliveryPeriodUnits, warrantyPeriodUnits,defaultTermsAndConditions]) => {
 
             // populate available incoterms
@@ -132,7 +133,7 @@ export class CompanyTermsAndConditions implements OnInit {
         for(let tradingTerm of clause.tradingTerms){
             let id = tradingTerm.id;
 
-            text = text.replace(id, "<b><span id='"+clause.id+"-"+id+"'>" + id + "</span></b>");
+            text = text.replace(new RegExp("\\"+id,'g'), "<b><span id='"+clause.id+"-"+id+"'>" + id + "</span></b>");
 
         }
         // update the element's innerHTML
@@ -186,7 +187,7 @@ export class CompanyTermsAndConditions implements OnInit {
         // remove trading term from the clause
         clause.tradingTerms.splice(clause.tradingTerms.indexOf(tradingTerm),1);
         // remove trading term id from the clause content
-        clause.content[0].value = clause.content[0].value.replace(tradingTerm.id,"");
+        clause.content[0].value = clause.content[0].value.replace(new RegExp("\\"+tradingTerm.id,'g'),"");
         // update the content of corresponding section
         this.setSectionText(clause);
     }

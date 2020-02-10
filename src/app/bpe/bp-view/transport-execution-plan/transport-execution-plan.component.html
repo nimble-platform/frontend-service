@@ -112,7 +112,7 @@
         <call-status [callStatus]="contractCallStatus"></call-status>
         <!-- having a non-null processMetadata indicates that the product is not still deleted. -->
         <!-- Otherwise, it would not have been possible to proceed with the next business process step -->
-        <contract *ngIf="request.transportContract"
+        <contract *ngIf="request.transportContract" [sellerFederationId]="request.transportServiceProviderParty.federationInstanceID"
                   [contract]="request.transportContract"
                   [showQuotation]="true"
                   [areCatalogueLinesDeleted]="populateAreCatalogueLinesDeletedArray()">
@@ -145,7 +145,7 @@
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div *ngIf="productOrder" class="col-3">
-            <button class="btn btn-primary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.isCollaborationFinished" (click)="onDispatchAdvice()">
+            <button class="btn btn-primary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.collaborationStatus == 'COMPLETED'" (click)="onDispatchAdvice()">
                 <span [innerHTML]="'Dispatch Order' | translate"></span>
             </button>
         </div>
@@ -157,12 +157,12 @@
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading() || isThereADeletedProduct()" (click)="onSendResponse(false)">
+            <button class="btn btn-secondary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.collaborationStatus == 'CANCELLED'" (click)="onSendResponse(false)">
                 <span [innerHTML]="'Reject' | translate"></span>
             </button>
         </div>
         <div class="col-2">
-            <button class="btn btn-primary action" [disabled]="isLoading() || isThereADeletedProduct()" (click)="onSendResponse(true)">
+            <button class="btn btn-primary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.collaborationStatus == 'CANCELLED'" (click)="onSendResponse(true)">
                 <span [innerHTML]="'Accept' | translate"></span>
             </button>
         </div>

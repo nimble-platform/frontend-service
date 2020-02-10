@@ -233,7 +233,7 @@ export class OrderItemComponent implements OnInit {
      */
 
     private isDataMonitoringDemanded(): Promise<boolean> {
-        let docClause: DocumentClause = null;
+        let quotationClause: DocumentClause = null;
 
         let contract = this.getNonTermAndConditionContract();
 
@@ -242,17 +242,18 @@ export class OrderItemComponent implements OnInit {
             for (let clause of contract.clause) {
                 let clauseCopy = JSON.parse(JSON.stringify(clause));
                 if (clauseCopy.clauseDocumentRef) {
-                    docClause = clause as DocumentClause;
-                    if(docClause.clauseDocumentRef.documentType === "QUOTATION") {
+                    let documentClause = clause as DocumentClause;
+                    if(documentClause.clauseDocumentRef.documentType === "QUOTATION") {
+                        quotationClause = documentClause;
                         break;
                     }
                 }
             }
         }
 
-        if (docClause) {
+        if (quotationClause) {
             this.fetchDataMonitoringStatus.submit();
-            return this.documentService.getDocumentJsonContent(docClause.clauseDocumentRef.id).then(result => {
+            return this.documentService.getDocumentJsonContent(quotationClause.clauseDocumentRef.id,this.sellerParty.federationInstanceID).then(result => {
                 this.fetchDataMonitoringStatus.callback("Successfully fetched data monitoring service", true);
                 this.lastQuotation = result as Quotation;
                 return this.lastQuotation.quotationLine[this.lineIndex].lineItem.dataMonitoringRequested;

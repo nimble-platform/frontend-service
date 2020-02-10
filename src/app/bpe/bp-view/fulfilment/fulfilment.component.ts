@@ -47,24 +47,30 @@ export class FulfilmentComponent implements OnInit {
     }
 
     showReceiptAdvice(): boolean {
-        return this.bpDataService.bpActivityEvent.userRole === "buyer" || !!this.bpDataService.receiptAdvice;
+        let isResponseSent = this.bpDataService.bpActivityEvent.processMetadata && this.bpDataService.bpActivityEvent.processMetadata.processStatus == 'Completed';
+        let isCollaborationCancelled = this.bpDataService.bpActivityEvent.processMetadata && this.bpDataService.bpActivityEvent.processMetadata.collaborationStatus == "CANCELLED";
+        return isResponseSent || (!!this.bpDataService.receiptAdvice && !isCollaborationCancelled);
     }
 
     private initializeFulfilmentStatisticsSection(): void{
         let orderId;
+        let sellerFederationId;
         if(this.bpDataService.despatchAdvice){
             orderId = this.bpDataService.despatchAdvice.orderReference[0].documentReference.id;
+            sellerFederationId = this.bpDataService.despatchAdvice.despatchSupplierParty.party.federationInstanceID;
         }
         // starting a new Despatch Advice following a Transport Execution Plan
         else if(this.bpDataService.productOrder){
             orderId = this.bpDataService.productOrder.id;
+            sellerFederationId = this.bpDataService.productOrder.sellerSupplierParty.party.federationInstanceID;
         }
         // starting a new Despatch Advice following an Order
         else if(this.bpDataService.copyOrder){
             orderId = this.bpDataService.copyOrder.id;
+            sellerFederationId = this.bpDataService.copyOrder.sellerSupplierParty.party.federationInstanceID;
         }
         this.fulfilmentStatisticsCallStatus.submit();
-        this.bpeService.getFulfilmentStatistics(orderId).then(result => {
+        this.bpeService.getFulfilmentStatistics(orderId,sellerFederationId).then(result => {
             this.orderLineItemHjids = [];
             for(let statistics of result){
                 this.orderLineItemHjids.push(statistics.lineItemHjid.toString());

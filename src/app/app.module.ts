@@ -37,6 +37,7 @@ import {LogisticPublishingService} from './catalogue/publish/logistic-publishing
 import {FrameContractTransitionService} from "./bpe/bp-view/contract/frame-contract-transition.service";
 import {ShoppingCartDataService} from './bpe/shopping-cart/shopping-cart-data-service';
 import {CollaborationService} from './catalogue/collaboration/collaboration.service';
+import {UnshippedOrdersTransitionService} from './bpe/unshipped-order-transition-service';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -77,11 +78,12 @@ export function HttpLoaderFactory(http: HttpClient) {
         CategoryService,
         LogisticPublishingService,
         PublishService,
-		ExplorativeSearchService,
-		SimpleSearchService,
-		SearchContextService,
-		UserService,
-		CredentialsService,
+        ExplorativeSearchService,
+        SimpleSearchService,
+        SearchContextService,
+        UnshippedOrdersTransitionService,
+        UserService,
+        CredentialsService,
         UnitService,
         PrecedingBPDataService,
         TnTService,

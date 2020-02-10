@@ -15,7 +15,13 @@ import {Headers} from "@angular/http";
 import { AbstractControl } from "@angular/forms";
 declare var Countries: any;
 import {PartyName} from '../catalogue/model/publish/party-name';
-import {deliveryPeriodUnitListId, maximumDecimalsForPrice, warrantyPeriodUnitListId} from  './constants'
+import {
+    defaultLogisticsServiceCategoryUri,
+    defaultTransportServiceCategoryUri,
+    deliveryPeriodUnitListId,
+    maximumDecimalsForPrice,
+    warrantyPeriodUnitListId
+} from './constants'
 import {UnitService} from "./unit-service";
 import {CompanyNegotiationSettings} from "../user-mgmt/model/company-negotiation-settings";
 
@@ -477,6 +483,15 @@ export function periodToString(period: Period): string {
     return durationToString(period.durationMeasure);
 }
 
+// this method converts the date (YYYY-MM-DD) to MM/DD/YYYY format
+export function dateToString(date:string): string {
+    if(date && date != ""){
+        let dateParts = date.split("-");
+        return dateParts[1]+"/"+dateParts[2]+"/"+dateParts[0];
+    }
+    return "";
+}
+
 const MAX_PRICE = 100000;
 
 const STEPS_FOR_PRICE = 100;
@@ -539,16 +554,6 @@ export function roundToTwoDecimals(value): any{
         return roundedValue.toFixed(power);
     }
     return value;
-}
-
-export function trimRedundantDecimals(value: number): number {
-    let roundedValue: number = 0;
-    let power = -1;
-    do {
-        power++;
-        roundedValue = Math.round(value * Math.pow(10, power)) / Math.pow(10, power);
-    } while(roundedValue == 0);
-    return roundedValue;
 }
 
 export function isNaNNullAware(number: number): boolean {
@@ -671,6 +676,17 @@ export function isLogisticsService(product: CatalogueLine): boolean {
                 }
             }
 
+        }
+    }
+    return false;
+}
+
+export function isSearchResultLogisticsService(result: any): boolean {
+    if(result.classificationUri){
+        for(let classificationUri of result.classificationUri){
+            if(classificationUri == defaultLogisticsServiceCategoryUri || classificationUri == defaultTransportServiceCategoryUri){
+                return true;
+            }
         }
     }
     return false;

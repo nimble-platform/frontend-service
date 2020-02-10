@@ -16,6 +16,8 @@ import {CollaborationGroup} from '../bpe/model/collaboration-group';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as d3 from 'd3';
 import * as moment from "moment";
+import {FederatedCollaborationGroupMetadata} from '../bpe/model/federated-collaboration-group-metadata';
+import {FEDERATION, FEDERATIONID} from '../catalogue/model/constants';
 
 @Component({
     selector: "dashboard-threaded",
@@ -54,6 +56,8 @@ export class DashboardThreadedComponent implements OnInit{
     expanded = false;
     finalArray = [];
     finalXAsxisArray = [];
+
+    delegated=(FEDERATION() == "ON");
     private data: any = [
         // {times: [{"color":"green", "label":"Weeee", "starting_time": 1355752800000, "ending_time": 1355759900000}, {"color":"blue", "label":"Weeee", "starting_time": 1355767900000, "ending_time": 1355774400000}]},
       ];
@@ -87,7 +91,9 @@ export class DashboardThreadedComponent implements OnInit{
         });
         this.computeUserFromCookies();
         this.getTabCounters();
-        this.route.queryParams.subscribe(params => this.updateStateFromQueryParameters(params));
+        this.route.queryParams.subscribe(params => {
+            this.updateStateFromQueryParameters(params)
+        });
     }
 
     async clickexpand(data){
@@ -188,7 +194,8 @@ export class DashboardThreadedComponent implements OnInit{
             cat: "",
             sts: "",
             prt: "",
-         })
+            ins: null
+        })
     }
 
     onCloseWelcomeTab(event: any): void {
@@ -228,7 +235,8 @@ export class DashboardThreadedComponent implements OnInit{
             cat: this.toString(this.modifiedFilterSet.relatedProductCategories),
             sts: this.toString(this.modifiedFilterSet.status),
             prt: this.getSelectedPartners(this.modifiedFilterSet),
-         })
+            ins: this.toString(this.modifiedFilterSet.instanceNames)
+        })
     }
 
     onOrderRemovedFromView(): void {
@@ -360,7 +368,8 @@ export class DashboardThreadedComponent implements OnInit{
             params["prd"],                                          // products
             params["cat"],                                          // categories
             params["prt"],                                          // partners
-            params["sts"]                                           // status
+            params["sts"],                                          // status
+            params["ins"]                                           // instance name
         )
 
         switch(this.queryParameters.tab) {
@@ -470,27 +479,27 @@ export class DashboardThreadedComponent implements OnInit{
         if(query.archived) {
             // only one query needed
             return this.bpeService
-            .getCollaborationGroups(this.cookieService.get("company_id"),
-                query.collaborationRole, query.page - 1, query.pageSize, query.archived,
-                query.products, query.categories, query.partners,query.status)
-            .then(response => {
-                this.results = new DashboardOrdersQueryResults(
-                    response.collaborationGroups,
-                    response.collaborationGroups.length > 0,
-                    response.size
-                )
-                this.createUpdatingCollaborationGroupNameArray()
-            });
+                .getCollaborationGroups(this.cookieService.get("company_id"),
+                    query.instanceName,query.collaborationRole, query.page - 1, query.pageSize, query.archived,
+                    query.products, query.categories, query.partners,query.status)
+                .then(response => {
+                    this.results = new DashboardOrdersQueryResults(
+                        response.collaborationGroups,
+                        response.collaborationGroups.length > 0,
+                        response.size
+                    )
+                    this.createUpdatingCollaborationGroupNameArray()
+                });
         } else {
             // Needs to query for archived orders to know if the "Show Archived" button should be enabled
             return Promise.all([
                 // regular query
-                this.bpeService.getCollaborationGroups(this.cookieService.get("company_id"),
+                this.bpeService.getCollaborationGroups(this.cookieService.get("company_id"), query.instanceName,
                     query.collaborationRole, query.page - 1, query.pageSize, query.archived,
                     query.products, query.categories, query.partners,query.status,this.isProject
                 ),
                 // query for archived orders
-                this.bpeService.getCollaborationGroups(this.cookieService.get("company_id"),
+                this.bpeService.getCollaborationGroups(this.cookieService.get("company_id"), query.instanceName,
                     query.collaborationRole, 0, 1, true, [], [], [],[]
                 ),
             ]).then(([response, archived]) => {
@@ -537,42 +546,49 @@ export class DashboardThreadedComponent implements OnInit{
         }
 
         this.bpeService
-        .getProcessInstanceGroupFilters(this.cookieService.get("company_id"), query.collaborationRole, query.archived, query.products, query.categories, query.partners, query.status,this.isProject)
-        .then(response => {
-            // populate the modified filter set with the passed parameters that are also included in the results
-            // so that the selected criteria would have a checkbox along with
-            this.modifiedFilterSet = new ProcessInstanceGroupFilter();
-            // products
-            if (query.products.length > 0) {
-                for (let product of response.relatedProducts) {
-                    this.modifiedFilterSet.relatedProducts.push(product);
+            .getProcessInstanceGroupFilters(this.cookieService.get("company_id"),query.instanceName, query.collaborationRole, query.archived, query.products, query.categories, query.partners, query.status,this.isProject)
+            .then(response => {
+                // populate the modified filter set with the passed parameters that are also included in the results
+                // so that the selected criteria would have a checkbox along with
+                this.modifiedFilterSet = new ProcessInstanceGroupFilter();
+                // products
+                if (query.products.length > 0) {
+                    for (let product of response.relatedProducts) {
+                        this.modifiedFilterSet.relatedProducts.push(product);
+                    }
                 }
-            }
-            // status
-            if (query.status.length > 0 ){
-                for(let status of response.status){
-                    this.modifiedFilterSet.status.push(status);
+                // status
+                if (query.status.length > 0 ){
+                    for(let status of response.status){
+                        this.modifiedFilterSet.status.push(status);
+                    }
                 }
-            }
-            // categories
-            if (query.categories.length > 0) {
-                for (let product of response.relatedProductCategories) {
-                    this.modifiedFilterSet.relatedProductCategories.push(product);
+                // categories
+                if (query.categories.length > 0) {
+                    for (let product of response.relatedProductCategories) {
+                        this.modifiedFilterSet.relatedProductCategories.push(product);
+                    }
                 }
-            }
-            // partners
-            if (query.partners.length > 0) {
-                for (let i = 0; i < response.tradingPartnerIDs.length; i++) {
-                    this.modifiedFilterSet.tradingPartnerIDs.push(response.tradingPartnerIDs[i]);
-                    this.modifiedFilterSet.tradingPartnerNames.push(response.tradingPartnerNames[i]);
+                // partners
+                if (query.partners.length > 0) {
+                    for (let i = 0; i < response.tradingPartnerIDs.length; i++) {
+                        this.modifiedFilterSet.tradingPartnerIDs.push(response.tradingPartnerIDs[i]);
+                        this.modifiedFilterSet.tradingPartnerNames.push(response.tradingPartnerNames[i]);
+                    }
                 }
-            }
-            this.filterSet = response;
-            this.filterQueryStatus.callback("Successfully fetched filters", true);
-        })
-        .catch(error => {
-            this.filterQueryStatus.error("Failed to get filters", error);
-        });
+                // instance names
+                if(query.instanceName){
+                    this.modifiedFilterSet.instanceNames.push(query.instanceName);
+                }
+                else {
+                    this.modifiedFilterSet.instanceNames.push(FEDERATIONID());
+                }
+                this.filterSet = response;
+                this.filterQueryStatus.callback("Successfully fetched filters", true);
+            })
+            .catch(error => {
+                this.filterQueryStatus.error("Failed to get filters", error);
+            });
     }
 
     areFiltersLoading(): boolean {
@@ -596,7 +612,7 @@ export class DashboardThreadedComponent implements OnInit{
         }
         // Do not recompute the filters on filter changes.
         return this.query.archived !== query.archived
-            || this.query.collaborationRole !== query.collaborationRole;
+            || this.query.collaborationRole !== query.collaborationRole || this.query.instanceName !== query.instanceName;
     }
 
     private computeOrderQueryFromQueryParams(): DashboardOrdersQuery {
@@ -608,6 +624,7 @@ export class DashboardThreadedComponent implements OnInit{
             this.parseArray(this.queryParameters.cat),
             this.parseArray(this.queryParameters.prt),
             this.parseArray(this.queryParameters.sts),
+            this.queryParameters.ins,
             PAGE_SIZE,
         )
     }
@@ -624,8 +641,8 @@ export class DashboardThreadedComponent implements OnInit{
         this.updatingCollaborationGroupName[index].status = status;
     }
 
-    updateCollaborationGroupName(id:string,name:string){
-        this.bpeService.updateCollaborationGroupName(id,name)
+    updateCollaborationGroupName(id:string,federationId:string,name:string){
+        this.bpeService.updateCollaborationGroupName(id,federationId,name)
             .then(() => {
                 this.onViewUpdated(false);
             })
@@ -634,8 +651,8 @@ export class DashboardThreadedComponent implements OnInit{
             });
     }
 
-    archiveGroup(id: string): void {
-        this.bpeService.archiveCollaborationGroup(id)
+    archiveGroup(id: string,federationId:string): void {
+        this.bpeService.archiveCollaborationGroup(id,federationId)
             .then(() => {
                this.onOrderRemovedFromView();
             })
@@ -644,8 +661,8 @@ export class DashboardThreadedComponent implements OnInit{
             });
     }
 
-    restoreGroup(id: string): void {
-        this.bpeService.restoreCollaborationGroup(id)
+    restoreGroup(id: string,federationId:string): void {
+        this.bpeService.restoreCollaborationGroup(id,federationId)
             .then(() => {
                 this.onOrderRemovedFromView();
             })
@@ -654,9 +671,9 @@ export class DashboardThreadedComponent implements OnInit{
             });
     }
 
-    deleteGroup(id: string): void {
+    deleteGroup(id: string,federationId:string): void {
         if (confirm("Are you sure that you want to delete this collaboration group?")) {
-            this.bpeService.deleteCollaborationGroup(id)
+            this.bpeService.deleteCollaborationGroup(id,federationId)
                 .then(() => {
                     this.onOrderRemovedFromView();
                 })
@@ -671,8 +688,10 @@ export class DashboardThreadedComponent implements OnInit{
         this.selectedNegotiationIndex = index + (this.query.page -1)*this.query.pageSize;
         this.modalService.open(content, {backdropClass: 'light-blue-backdrop'}).result.then((result) => {
             this.selectedNegotiations = [];
+            this.selectedNegotiationLists = [];
         }, (reason) => {
             this.selectedNegotiations = [];
+            this.selectedNegotiationLists = [];
         });
     }
 
@@ -690,21 +709,21 @@ export class DashboardThreadedComponent implements OnInit{
 
     async mergeNegotations(c:any){
         let selectedNegotation = this.selectedNegotiation.id;
-        let mergeIdList = [];
+        let collaborationGroupsMetadatas:FederatedCollaborationGroupMetadata[] = [];
 
 
         await this.selectedNegotiationLists.forEach(item => {
-            mergeIdList.push(item.id);
+            collaborationGroupsMetadatas.push(new FederatedCollaborationGroupMetadata(item.id,item.federationId));
         })
 
-        this.bpeService.mergeNegotations(selectedNegotation,mergeIdList)
-        .then(() => {
-            //location.reload();
-            c();
-            this.onViewUpdated(true);
-        })
-        .catch(err => {
-        });
+        this.bpeService.mergeNegotations(selectedNegotation,collaborationGroupsMetadatas,this.selectedNegotiation.federationId)
+            .then(() => {
+                //location.reload();
+                c();
+                this.onViewUpdated(false);
+            })
+            .catch(err => {
+            });
     }
 
 }

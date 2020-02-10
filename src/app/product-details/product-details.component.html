@@ -217,7 +217,8 @@
         <!-- Order Workflow For Logistics -->
         <div *ngIf="isLogistics === true" class="p-3 border border-dark border-bottom-0">
 
-            <h2 class="py-1">{{companyWorkflowMap.get('Order') ? 'Negotiate & Order' : 'Negotiate'}}</h2>
+            <!-- Order step exists only for transport services-->
+            <h2 class="py-1">{{companyWorkflowMap.get('Transport_Execution_Plan') && isTransportService ? 'Negotiate & Order' : 'Negotiate'}}</h2>
 
             <!-- Payment Terms -->
             <div class="order-group">
@@ -248,9 +249,9 @@
             </div>
 
             <!-- Action Button -->
-            <button *ngIf="isTransportService && companyWorkflowMap.get('Negotiation')" class="btn btn-primary pt-2 w-100"
+            <button *ngIf="companyWorkflowMap.get('Negotiation')" class="btn btn-primary pt-2 w-100"
                 (click)="onNegotiate(termsSelectBoxValue)" [disabled]="!this.appComponent.checkRoles('bp') || orderQuantity <= 0">
-                {{companyWorkflowMap.get('Transport_Execution_Plan') ? 'Negotiate & Order' : 'Negotiate' }}
+                {{companyWorkflowMap.get('Transport_Execution_Plan') && isTransportService ? 'Negotiate & Order' : 'Negotiate' }}
             </button>
 
         </div>

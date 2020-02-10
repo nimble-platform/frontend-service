@@ -14,8 +14,8 @@
             <div *ngIf="companyWorkflowMap.get('Order')" [ngClass]="getStepClasses('Order')">
                 <span [attr.data-after]="statusText"><span [innerHTML]="'Order Preview' | translate"></span></span>
             </div>
-            <div *ngIf="companyWorkflowMap.get('Order')" [ngClass]="getStepClasses('Order_Confirmed')">
-                <span [attr.data-after]="statusText"><span [innerHTML]="'Order Confirmed' | translate"></span></span>
+            <div *ngIf="companyWorkflowMap.get('Order')" [ngClass]="getStepClasses('Order_Processed')">
+                <span [attr.data-after]="statusText"><span [innerHTML]="'Order Processed' | translate"></span></span>
             </div>
             <div *ngIf="companyWorkflowMap.get('Fulfilment')" [ngClass]="getStepClasses('Fulfilment')">
                 <span [attr.data-after]="statusText"><span [innerHTML]="'Order Dispatched' | translate"></span></span>
@@ -51,8 +51,8 @@
                 <span [attr.data-after]="statusText"><span [innerHTML]="'Order Started' | translate"></span></span>
             </div>
             <!-- Removed to have 6 steps, let's see if we keep it like this... -->
-            <!-- <div [ngClass]="getStepClasses('Order_Confirmed')">
-                <span>Order Confirmed</span>
+            <!-- <div [ngClass]="getStepClasses('Order_Processed')">
+                <span>Order Processed</span>
             </div> -->
             <div *ngIf="companyWorkflowMap.get('Item_Information_Request')" [ngClass]="getStepClasses('Transport_Information_Request')">
                 <span [attr.data-after]="statusText"><span [innerHTML]="'Transport Service Information Request' | translate"></span></span>
@@ -80,6 +80,9 @@
         <div class="steps">
             <div *ngIf="companyWorkflowMap.get('Item_Information_Request')" [ngClass]="getStepClasses('Item_Information_Request')">
                 <span [attr.data-after]="statusText"><span [innerHTML]="'Request for Information' | translate"></span></span>
+            </div>
+            <div *ngIf="companyWorkflowMap.get('Negotiation')" [ngClass]="getStepClasses('Transport_Negotiation')">
+                <span [attr.data-after]="statusText"><span [innerHTML]="'Logistics Service Negotiation' | translate"></span></span>
             </div>
         </div>
     </div>

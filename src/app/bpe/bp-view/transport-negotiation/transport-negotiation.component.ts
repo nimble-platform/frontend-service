@@ -1,8 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { BPDataService } from "../bp-data-service";
 import { CallStatus } from "../../../common/call-status";
-import { SearchContextService } from "../../../simple-search/search-context.service";
 import {RequestForQuotation} from '../../../catalogue/model/publish/request-for-quotation';
+import {isTransportService} from '../../../common/utils';
 
 @Component({
     selector: "transport-negotiation",
@@ -11,12 +11,15 @@ import {RequestForQuotation} from '../../../catalogue/model/publish/request-for-
 export class TransportNegotiationComponent implements OnInit {
 
     initCallStatus: CallStatus = new CallStatus();
+    // this component is used for both transport and logistics service negotiation
+    // however, we need to know the type of service since some tabs in the child components are displayed only for transport services
+    isTransportService:boolean;
 
-    constructor(public bpDataService: BPDataService,
-                private searchContextService: SearchContextService) {
+    constructor(public bpDataService: BPDataService) {
     }
 
     ngOnInit() {
+        this.isTransportService = isTransportService(this.bpDataService.getCatalogueLine());
 		if(this.bpDataService.requestForQuotation == null) {
             this.initCallStatus.submit();
             this.initRfq()
@@ -30,9 +33,7 @@ export class TransportNegotiationComponent implements OnInit {
     }
 
     async initRfq(): Promise<RequestForQuotation> {
-        if(this.searchContextService.getAssociatedProcessMetadata()) {
-            return await this.bpDataService.initRfqForTransportationWithThreadMetadata(this.searchContextService.getAssociatedProcessMetadata());
-        } else if(this.bpDataService.productOrder) {
+        if(this.bpDataService.productOrder){
             this.bpDataService.initRfqForTransportationWithOrder(this.bpDataService.productOrder);
             return Promise.resolve(this.bpDataService.requestForQuotation);
         }
@@ -41,5 +42,11 @@ export class TransportNegotiationComponent implements OnInit {
 
     isLoading(): boolean {
         return this.initCallStatus.fb_submitted;
+    }
+
+    showNegotiationResponse(){
+        let isCollaborationCancelled = this.bpDataService.bpActivityEvent.processMetadata && this.bpDataService.bpActivityEvent.processMetadata.collaborationStatus == 'CANCELLED';
+        let isResponseSent = this.bpDataService.bpActivityEvent.processMetadata && this.bpDataService.bpActivityEvent.processMetadata.processStatus == 'Completed';
+        return isResponseSent || (this.bpDataService.quotation && !isCollaborationCancelled);
     }
 }

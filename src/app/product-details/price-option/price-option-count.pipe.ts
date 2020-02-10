@@ -1,5 +1,5 @@
 import {Pipe, PipeTransform} from "@angular/core";
-import {PriceOption} from "../../model/publish/price-option";
+import {PriceOption} from "../../catalogue/model/publish/price-option";
 /**
  * Created by suat on 28-Aug-18.
  */

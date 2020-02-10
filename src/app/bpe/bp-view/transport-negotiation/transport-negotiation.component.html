@@ -1,7 +1,7 @@
 <ng-container *ngIf="!isLoading() && bpDataService.getCatalogueLines()">
-    <transport-negotiation-request *ngIf="!bpDataService.quotation && bpDataService.bpActivityEvent.userRole === 'buyer'">
+    <transport-negotiation-request *ngIf="!showNegotiationResponse()" [isTransportService]="isTransportService">
     </transport-negotiation-request>
-    <transport-negotiation-response *ngIf="bpDataService.quotation">
+    <transport-negotiation-response *ngIf="showNegotiationResponse()" [isTransportService]="isTransportService">
     </transport-negotiation-response>
 </ng-container>
 

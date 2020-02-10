@@ -64,6 +64,8 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     productsExpanded: boolean[];
     serviceExpanded: boolean = false;
+    // whether the process details are viewed for the product or not
+    viewedProcessDetails:boolean[];
     public config = myGlobals.config;
 
     private identityEndpoint = myGlobals.user_mgmt_endpoint;
@@ -150,10 +152,11 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         // BpDataService's proceedNextBpStep method.
         this.route.params.subscribe(routeParams => {
             let processInstanceId = routeParams['processInstanceId'];
+            let sellerFederationId = routeParams['delegateId'];
             // Having bpDataService.bpActivityEvent null indicates that the page is (re)loaded directly.
             if (this.bpDataService.bpActivityEvent == null) {
                 if (processInstanceId !== 'new') {
-                    this.router.navigate([`bpe/bpe-sum/${processInstanceId}`], {skipLocationChange: true});
+                    this.router.navigate([`bpe/bpe-sum/${processInstanceId}/${sellerFederationId}`], {skipLocationChange: true});
                 } else {
                     this.router.navigate(['dashboard']);
                 }
@@ -178,8 +181,11 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
             const ids = bpActivityEvent.catalogueLineIds;
             const catalogueIds = bpActivityEvent.catalogueIds;
+            const sellerFederationId = bpActivityEvent.sellerFederationId;
             this.bpDataService.precedingProcessId = bpActivityEvent.previousProcessInstanceId;
             this.bpDataService.precedingDocumentId = bpActivityEvent.previousDocumentId;
+            this.bpDataService.precedingOrderId = bpActivityEvent.precedingOrderId;
+            this.bpDataService.unShippedOrderIds = bpActivityEvent.unShippedOrderIds;
 
             if (this.id !== ids || this.catalogueId !== catalogueIds) {
                 this.id = ids;
@@ -188,8 +194,8 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 this.callStatus.submit();
                 const userId = this.cookieService.get("user_id");
                 Promise.all([
-                    this.getCatalogueLines(catalogueIds, ids, bpActivityEvent.processMetadata),
-                    this.getOrderForTransportService(),
+                    this.getCatalogueLines(catalogueIds, ids, bpActivityEvent.processMetadata,sellerFederationId),
+                    this.getOrderForTransportService(bpActivityEvent.processMetadataOfAssociatedOrder),
                     this.userService.getSettingsForUser(userId)
 
                 ]).then(([lines, order, currentUserSettings]) => {
@@ -201,7 +207,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                     return Promise.all([
                         this.getReferencedCatalogueLines(lines, order),
                         this.userService.getSettingsForProduct(lines[0]),
-                        this.bpDataService.bpActivityEvent.containerGroupId ? this.bpeService.checkCollaborationFinished(this.bpDataService.bpActivityEvent.containerGroupId) : false
+                        this.bpDataService.bpActivityEvent.containerGroupId ? this.bpeService.checkCollaborationFinished(this.bpDataService.bpActivityEvent.containerGroupId,this.bpDataService.bpActivityEvent.processMetadata.sellerFederationId) : false
                     ])
                 })
                 .then(([referencedLines, sellerSettings, isCollaborationFinished]) => {
@@ -225,7 +231,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                         this.lines = referencedLines;
                         this.productWithSelectedProperties = this.correspondingOrderOfTransportProcess.orderLine[0].lineItem.item;
 
-                        this.setProductsExpandedArray(false);
+                        this.setProductsExpandedAndViewedProcessDetailsArrays(false);
                         return this.userService.getSettingsForProduct(referencedLines[0]);
 
                     } else {
@@ -246,7 +252,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                     }
                     this.stepsDisplayMode = this.getStepsDisplayMode();
 
-                    this.setProductsExpandedArray(false);
+                    this.setProductsExpandedAndViewedProcessDetailsArrays(false);
                     this.callStatus.callback("Retrieved product details", true);
                 })
                 .catch(error => {
@@ -294,14 +300,35 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
     onToggleServiceExpanded() {
         this.serviceExpanded = !this.serviceExpanded;
-        this.setProductsExpandedArray(false);
+        this.setProductsExpandedAndViewedProcessDetailsArrays(false);
     }
 
-    setProductsExpandedArray(value:boolean){
+    setProductsExpandedAndViewedProcessDetailsArrays(value:boolean){
         this.productsExpanded = [];
+        this.viewedProcessDetails = [];
         for(let line of this.lines){
             this.productsExpanded.push(value);
+            this.viewedProcessDetails.push(value);
         }
+        // initially, we show the process details of first product
+        this.viewedProcessDetails[0] = true;
+    }
+
+    areProcessDetailsViewedForAllProducts(){
+        for(let viewedProcessDetails of this.viewedProcessDetails){
+            if(!viewedProcessDetails){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    getTitleForCheckIcon(){
+        return "You have viewed the "+ this.currentStep.toLowerCase() +" details for this product";
+    }
+
+    getTitleForTimesIcon(){
+        return "You have not viewed the "+ this.currentStep.toLowerCase() +" details for this product";
     }
 
     private isOrderDone(): boolean {
@@ -310,18 +337,18 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             && this.processMetadata.processStatus === "Completed";
     }
 
-    private getOrderForTransportService(): Promise<Order | null> {
+    private getOrderForTransportService(processMetadataOfAssociatedOrder:ThreadEventMetadata): Promise<Order | null> {
         if(this.bpDataService.bpActivityEvent.userRole === "seller") {
             return Promise.resolve(null);
         }
-        // search context has some value only when the user is navigated to the search for searching a transport service provider
+        // processMetadataOfAssociatedOrder has some value only when the user is navigated to the search for searching a transport service provider
         // for an existing order
-        if(this.searchContextService.getAssociatedProcessMetadata()) {
-            return this.documentService.getInitialDocument(this.searchContextService.getAssociatedProcessMetadata().activityVariables);
+        if(processMetadataOfAssociatedOrder) {
+            return this.documentService.getInitialDocument(processMetadataOfAssociatedOrder.activityVariables,processMetadataOfAssociatedOrder.sellerFederationId);
         }
         if(this.processMetadata) {
             const processId = this.processMetadata.processInstanceId;
-            return this.bpeService.getOriginalOrderForProcess(processId);
+            return this.bpeService.getOriginalOrderForProcess(processId,this.processMetadata.sellerFederationId);
         }
         return Promise.resolve(null);
     }
@@ -337,7 +364,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             case "Ppap":
                 return "Ppap";
             case "Negotiation":
-                if(this.areTransportServices()) {
+                if(this.areLogisticsServices()) {
                     return "Transport_Negotiation";
                 } else {
                     return "Negotiation";
@@ -350,7 +377,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 if(this.areTransportServices()) {
                     return this.isOrderDone() ? "Transport_Order_Confirmed" : "Transport_Order";
                 } else {
-                    return this.isOrderDone() ? "Order_Confirmed" : "Order";
+                    return this.isOrderDone() ? "Order_Processed" : "Order";
                 }
         }
     }
@@ -404,7 +431,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         }
 
         // create dummy catalogue lines for the deleted products using the corresponding item of the order
-        return this.catalogueService.getLinesForDifferentCatalogues(catalogueUuids,catalogueIds).then(catalogueLines => {
+        return this.catalogueService.getLinesForDifferentCatalogues(catalogueUuids,catalogueIds,order.sellerSupplierParty.party.federationInstanceID).then(catalogueLines => {
             // update catalogueUuids and catalogueIds lists so that they keep only the identifiers for the deleted products
             for(let catalogueLine of catalogueLines){
                 const catalogueId = catalogueLine.goodsItem.item.catalogueDocumentReference.id;
@@ -455,7 +482,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
      * Retrieve catalogue line details via catalogue-service if the product exists.
      * Otherwise, create a simple catalogue line using the item inside the process metadata
      * */
-    private async getCatalogueLines(catalogueUuids:string[], catalogueLineIds:string[], processMetadata:ThreadEventMetadata){
+    private async getCatalogueLines(catalogueUuids:string[], catalogueLineIds:string[], processMetadata:ThreadEventMetadata,sellerFederationId:string){
 
         let catalogueLines:CatalogueLine[] = [];
 
@@ -481,7 +508,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             }
         }
 
-        return this.catalogueService.getLinesForDifferentCatalogues(existingCatalogueUuids,existingCatalogueLineIds).then(existingCatalogueLines => {
+        return this.catalogueService.getLinesForDifferentCatalogues(existingCatalogueUuids,existingCatalogueLineIds,sellerFederationId).then(existingCatalogueLines => {
             return catalogueLines.concat(existingCatalogueLines);
         })
 

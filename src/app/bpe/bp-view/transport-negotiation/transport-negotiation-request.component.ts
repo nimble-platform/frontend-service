@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import { Location } from "@angular/common";
 import { Router } from "@angular/router";
 import { CookieService } from "ng2-cookies";
@@ -42,6 +42,9 @@ export class TransportNegotiationRequestComponent implements OnInit {
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
+    // this component is used for both transport and logistics service negotiation
+    // however, we need to know the type of service since some tabs are displayed only for transport services
+    @Input() isTransportService:boolean;
 
     constructor(private bpDataService: BPDataService,
                 private bpeService:BPEService,
@@ -65,6 +68,10 @@ export class TransportNegotiationRequestComponent implements OnInit {
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
         this.rfq = this.bpDataService.requestForQuotation;
+        // for logistics services except transport services, onyl Negotiation tab is available
+        if(!this.isTransportService){
+            this.selectedTab = "NEGOTIATION";
+        }
         this.validateRfq();
         this.rfqPrice = new DiscountPriceWrapper(
             this.rfq.requestForQuotationLine[0].lineItem.price,
@@ -102,21 +109,41 @@ export class TransportNegotiationRequestComponent implements OnInit {
         this.location.back();
     }
 
+    // check whether the required fields for transport service details are filled or not
+    isTransportServiceDetailsValid(){
+        let shipment = this.rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment;
+        let goodsItemToBeShipped = this.viewChild.getSelectedProductsToShip();
+
+        for (let goodsItem of goodsItemToBeShipped) {
+            if(UBLModelUtils.isEmptyOrIncompleteQuantity(goodsItem.quantity)){
+                return false;
+            }
+        }
+        return !UBLModelUtils.isEmptyOrIncompleteQuantity(shipment.transportHandlingUnit[0].measurementDimension[1].measure) &&
+            !UBLModelUtils.isEmptyOrIncompleteQuantity(shipment.transportHandlingUnit[0].measurementDimension[0].measure) &&
+            (shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name != null && shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name != "") &&
+            !UBLModelUtils.isEmptyOrIncompleteQuantity(shipment.consignment[0].grossWeightMeasure) &&
+            !UBLModelUtils.isEmptyOrIncompleteQuantity(shipment.consignment[0].grossVolumeMeasure);
+    }
+
     onSendRequest(): void {
         // send request for quotation
         this.callStatus.submit();
         let rfq: RequestForQuotation = copy(this.bpDataService.requestForQuotation);
 
         let sellerId: string;
+        let sellerFederationId:string;
 
         // final check on the rfq
         // set the goods items which will be shipped by this transport service
         rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem = this.viewChild.getSelectedProductsToShip();
         if(this.bpDataService.modifiedCatalogueLines) {
             sellerId = UBLModelUtils.getPartyId(this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty);
+            sellerFederationId = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty.federationInstanceID;
         }
         else {
             sellerId = UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty);
+            sellerFederationId = this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.federationInstanceID;
         }
 
         //first initialize the seller and buyer parties.
@@ -125,13 +152,13 @@ export class TransportNegotiationRequestComponent implements OnInit {
 
         Promise.all([
             this.userService.getParty(buyerId),
-            this.userService.getParty(sellerId)
+            this.userService.getParty(sellerId,sellerFederationId)
         ])
         .then(([buyerParty, sellerParty]) => {
             rfq.buyerCustomerParty = new CustomerParty(buyerParty);
             rfq.sellerSupplierParty = new SupplierParty(sellerParty);
 
-            return this.bpeService.startProcessWithDocument(rfq);
+            return this.bpeService.startProcessWithDocument(rfq,sellerParty.federationInstanceID);
         })
         .then(() => {
             this.callStatus.callback("Terms sent", true);
@@ -148,7 +175,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
     onUpdateRequest(): void {
         this.callStatus.submit();
         let rfq: RequestForQuotation = copy(this.bpDataService.requestForQuotation);
-        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processInstanceId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processInstanceId,this.processMetadata.sellerFederationId)
             .then(() => {
                 this.documentService.updateCachedDocument(rfq.id, rfq);
                 this.callStatus.callback("Terms updated", true);

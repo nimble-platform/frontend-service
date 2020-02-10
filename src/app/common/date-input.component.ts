@@ -1,4 +1,5 @@
 import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
+import {dateToString} from './utils';
 
 @Component({
     selector: "date-input",
@@ -22,6 +23,7 @@ export class DateInputComponent implements OnInit {
     
     private dateValue: string;
     @Output() dateChange = new EventEmitter<string>();
+    dateToString=dateToString;
 
     constructor() {
 

@@ -63,7 +63,7 @@ export class ReceiptAdviceComponent implements OnInit {
         this.callStatus.submit();
 
         //this.callStatus.submit();
-        this.bpeService.startProcessWithDocument(this.bpDataService.receiptAdvice)
+        this.bpeService.startProcessWithDocument(this.bpDataService.receiptAdvice,this.bpDataService.receiptAdvice.despatchSupplierParty.party.federationInstanceID)
             .then(res => {
                 this.callStatus.callback("Receipt Advice sent", true);
                 var tab = "PURCHASES";
@@ -102,6 +102,6 @@ export class ReceiptAdviceComponent implements OnInit {
     }
 
     isDispatchOrderDisabled(): boolean {
-        return this.isLoading() || this.isThereADeletedProduct() || this.processMetadata.isCollaborationFinished;
+        return this.isLoading() || this.isThereADeletedProduct() || this.processMetadata.collaborationStatus == "COMPLETED" || this.processMetadata.collaborationStatus == "CANCELLED";
     }
 }

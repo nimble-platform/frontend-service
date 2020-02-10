@@ -161,6 +161,8 @@ export class ProductPublishComponent implements OnInit {
     dimensionUnits:string[] = [];
     selectedTabSinglePublish: "DETAILS" | "DELIVERY_TRADING" | "PRICE" | "CERTIFICATES" | "LCPA" = "DETAILS";
 
+    invalidCategoryCodes:Code[] = [];
+
     constructor(public categoryService: CategoryService,
                 private catalogueService: CatalogueService,
                 public publishStateService: PublishService,
@@ -203,7 +205,7 @@ export class ProductPublishComponent implements OnInit {
                 return Promise.all([
                     Promise.resolve(party),
                     this.catalogueService.getCatalogueResponse(userId),
-                    this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party)),
+                    this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party),party.federationInstanceID),
                     this.unitService.getCachedUnitList("dimensions"),
                     this.unitService.getCachedUnitList("length_quantity")
                 ])
@@ -396,12 +398,9 @@ export class ProductPublishComponent implements OnInit {
     }
 
     isValidCatalogueLine(): boolean {
+        let item = this.catalogueLine.goodsItem.item;
         // must have a name
-        return this.itemHasName(this.catalogueLine.goodsItem.item);
-    }
-
-    private itemHasName(item:Item):boolean{
-        return item.name[0] && item.name[0].value !== "";
+        return item.name[0] && item.name[0].value !== "" && item.manufacturersItemIdentification.id && item.manufacturersItemIdentification.id !== "";
     }
 
     addItemNameDescription() {
@@ -660,10 +659,10 @@ export class ProductPublishComponent implements OnInit {
 
         if (this.publishMode == 'edit' || this.publishMode == 'copy') {
             if (this.publishMode == 'copy') {
-              let newId = UBLModelUtils.generateUUID();
-              this.catalogueService.draftCatalogueLine.id = newId;
-              this.catalogueService.draftCatalogueLine.goodsItem.id = newId;
-              this.catalogueService.draftCatalogueLine.goodsItem.item.manufacturersItemIdentification.id = newId;
+                // clear the ids
+              this.catalogueService.draftCatalogueLine.id = null;
+              this.catalogueService.draftCatalogueLine.goodsItem.id = null;
+              this.catalogueService.draftCatalogueLine.goodsItem.item.manufacturersItemIdentification.id = null;
               this.catalogueService.draftCatalogueLine = removeHjids(this.catalogueService.draftCatalogueLine);
             }
             this.catalogueLine = this.catalogueService.draftCatalogueLine;
@@ -683,6 +682,16 @@ export class ProductPublishComponent implements OnInit {
                 }
 
                 if (classificationCodes.length > 0) {
+                    // remove default category
+                    classificationCodes = classificationCodes.filter(function (cat) {
+                        return cat.listID != 'Default';
+                    });
+
+                    // get non-custom categories
+                    classificationCodes = classificationCodes.filter(function (cat) {
+                        return cat.listID != 'Custom';
+                    });
+
                     // temporarily store publishing started variable as it will be used inside the following callback
                     this.productCategoryRetrievalStatus.submit();
                     Observable.fromPromise(this.categoryService.getCategoriesByIds(classificationCodes))
@@ -709,6 +718,11 @@ export class ProductPublishComponent implements OnInit {
 
                             this.recomputeSelectedProperties();
                             this.ngUnsubscribe.complete();
+
+                            // populate invalidCategoryCodes array
+                            let validCategoryUris = categories.map(category => category.categoryUri);
+                            this.invalidCategoryCodes = classificationCodes.filter(classificationCode => validCategoryUris.indexOf(classificationCode.uri) == -1)
+
                             this.productCategoryRetrievalStatus.callback('Retrieved product categories', true);
                         });
                 }
@@ -750,6 +764,18 @@ export class ProductPublishComponent implements OnInit {
         // call this function with dimension unit list to be sure that item will have some dimension
         this.multiValuedDimensions = this.productWrapper.getDimensionMultiValue(true,this.dimensions);
         this.recomputeSelectedProperties();
+    }
+
+    private removeInvalidCategories(){
+        let invalidCategoryIds:string[] = this.invalidCategoryCodes.map(code => code.uri);
+        let invalidCommodityClassifications:CommodityClassification[] = this.catalogueLine.goodsItem.item.commodityClassification.filter(commodityClassification => invalidCategoryIds.indexOf(commodityClassification.itemClassificationCode.uri) != -1);
+
+        for (let invalidCommodityClassification of invalidCommodityClassifications) {
+            let index = this.catalogueLine.goodsItem.item.commodityClassification.indexOf(invalidCommodityClassification);
+            this.catalogueLine.goodsItem.item.commodityClassification.splice(index,1);
+        }
+        // reset invalidCategoryCodes array
+        this.invalidCategoryCodes = [];
     }
 
     private checkSearchReference(): void {
@@ -985,7 +1011,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private onFailedPublish(err): void {
-        this.publishStatus.error(err);
+        this.publishStatus.error(err._body ? err._body : err);
         this.submitted = false;
         this.error_detc = true;
         if(err.status == 406){

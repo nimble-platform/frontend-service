@@ -1,7 +1,7 @@
 import {Component, Input} from '@angular/core';
-import {PriceOption} from '../../model/publish/price-option';
-import {CatalogueLine} from '../../model/publish/catalogue-line';
-import { PRICE_OPTIONS } from '../../model/constants';
+import {PriceOption} from '../../catalogue/model/publish/price-option';
+import {CatalogueLine} from '../../catalogue/model/publish/catalogue-line';
+import { PRICE_OPTIONS } from '../../catalogue/model/constants';
 
 @Component({
     selector: "price-option-view",
@@ -16,6 +16,7 @@ export class PriceOptionViewComponent {
     @Input() deliveryPeriodUnits: string[] = [];
 
     @Input() discountUnits;
+    @Input() readonly:boolean = false;
 
     priceOptions = PRICE_OPTIONS;
 }

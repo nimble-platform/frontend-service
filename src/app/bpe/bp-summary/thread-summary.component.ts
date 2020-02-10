@@ -51,6 +51,7 @@ export class ThreadSummaryComponent implements OnInit {
     titleEvent: ThreadEventMetadata; // keeps information about the summary the collaboration
     lastEvent: ThreadEventMetadata; // the last event in the collaboration
     lastEventPartnerID = null;
+    lastEventPartnerFederationId = null;
 
     // History of events
     hasHistory: boolean = false;
@@ -103,6 +104,8 @@ export class ThreadSummaryComponent implements OnInit {
     config = myGlobals.config;
     selectPreferredValue = selectPreferredValue;
 
+    private translations:any;
+
     constructor(private bpeService: BPEService,
                 private cookieService: CookieService,
                 private dataChannelService: DataChannelService,
@@ -116,15 +119,19 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.translate.get(['Slow Response Time','Suspicious Company Information','Undervalued Offer','Rejected Delivery Terms','Other','Due to','Some reasons']).subscribe((res: any) => {
+            this.translations = res;
+        });
         this.route.params.subscribe(params => {
             this.routeProcessInstanceId = params["processInstanceId"];
-            if(this.routeProcessInstanceId == null) {
+            let sellerFederationId = params["delegateId"];
+            if(this.routeProcessInstanceId == null || sellerFederationId == null) {
                 return;
             }
 
             // get the CollaborationGroup associated to the process instance
             this.collaborationGroupRetrievalCallStatus.submit();
-            this.bpeService.getGroupDetailsForProcessInstance(this.routeProcessInstanceId).then(collaborationGroup => {
+            this.bpeService.getGroupDetailsForProcessInstance(this.routeProcessInstanceId,sellerFederationId).then(collaborationGroup => {
                 // find the process instance group containing the process instance
                 for(let pig of collaborationGroup.associatedProcessInstanceGroups) {
                     for(let pid of pig.processInstanceIDs) {
@@ -187,8 +194,8 @@ export class ThreadSummaryComponent implements OnInit {
                 catalogueLineIds,
                 this.titleEvent.processInstanceId,
                 ActivityVariableParser.getPrecedingDocumentId(this.titleEvent.activityVariables),
-                termsSources),
-            true);
+                termsSources,
+                this.titleEvent.sellerFederationId));
     }
 
     private fetchEvents(): void {
@@ -217,11 +224,9 @@ export class ThreadSummaryComponent implements OnInit {
             this.updateHistory(this.history);
 
             // if the collaboration is not rated yet, set the RateCollaborationButton status
-            if(!this.isCollaborationRated(events) ){
-                // set the status of button to True if the process is cancelled or it is not in progress (completed/finished) (buyer side only)
-                if((!isCollaborationInProgress && this.lastEvent.buyer) || this.processInstanceGroup.status == "CANCELLED"){
-                    this.showRateCollaborationButton = true;
-                }
+            // set the status of button to True if the process is not in progress (cancelled/finished) (buyer side only)
+            if(!this.isCollaborationRated(events) && !isCollaborationInProgress && this.lastEvent.buyer){
+                this.showRateCollaborationButton = true;
             }
             this.computeTitleEvent();
             this.checkDataChannel();
@@ -284,7 +289,7 @@ export class ThreadSummaryComponent implements OnInit {
 
     private async fetchThreadEvent(processInstanceId: string): Promise<ThreadEventMetadata> {
         // get dashboard process instance details
-        const dashboardProcessInstanceDetails:DashboardProcessInstanceDetails = await this.bpeService.getDashboardProcessInstanceDetails(processInstanceId);
+        const dashboardProcessInstanceDetails:DashboardProcessInstanceDetails = await this.bpeService.getDashboardProcessInstanceDetails(processInstanceId,this.processInstanceGroup.sellerFederationId);
 
         const activityVariables = dashboardProcessInstanceDetails.variableInstance;
         const processType = ActivityVariableParser.getProcessType(activityVariables);
@@ -297,21 +302,25 @@ export class ThreadSummaryComponent implements OnInit {
 
         // get seller's business process workflow
         // we need this information to set status and labels for Order properly
-        const sellerNegotiationSettings = await this.userService.getCompanyNegotiationSettingsForParty(initialDoc.items[0].manufacturerParty.partyIdentification[0].id);
+        const sellerNegotiationSettings = await this.userService.getCompanyNegotiationSettingsForParty(initialDoc.items[0].manufacturerParty.partyIdentification[0].id,initialDoc.items[0].manufacturerParty.federationInstanceID);
         this.sellerNegoSettings = sellerNegotiationSettings;
         const sellerWorkflow = sellerNegotiationSettings.company.processID;
 
         // check whether Fulfilment is included or not in seller's workflow
         const isFulfilmentIncludedInWorkflow = !sellerWorkflow || sellerWorkflow.length == 0 || sellerWorkflow.indexOf('Fulfilment') != -1;
 
+        let sellerFederationId:string;
         if (userRole === "buyer") {
             this.lastEventPartnerID = UBLModelUtils.getPartyId(initialDoc.items[0].manufacturerParty);
+            this.lastEventPartnerFederationId = initialDoc.items[0].manufacturerParty.federationInstanceID;
         }
         else {
             this.lastEventPartnerID = initialDoc.buyerPartyId;
+            this.lastEventPartnerFederationId = initialDoc.buyerPartyFederationId;
         }
+        sellerFederationId = initialDoc.sellerPartyFederationId;
 
-        const isRated = await this.bpeService.ratingExists(processInstanceId, this.lastEventPartnerID);
+        const isRated = await this.bpeService.ratingExists(processInstanceId, this.lastEventPartnerID,this.lastEventPartnerFederationId,sellerFederationId);
 
         const event: ThreadEventMetadata = new ThreadEventMetadata(
             processType,
@@ -327,7 +336,9 @@ export class ThreadSummaryComponent implements OnInit {
             userRole === "buyer",
             isRated === "true",
             initialDoc.areProductsDeleted,
-            this.processInstanceGroup.status == "COMPLETED"
+            this.processInstanceGroup.status,
+            sellerFederationId,
+            dashboardProcessInstanceDetails.cancellationReason
         );
 
         this.fillStatus(event, processInstance["state"], processType, responseDocumentStatus, userRole === "buyer",isFulfilmentIncludedInWorkflow);
@@ -335,8 +346,17 @@ export class ThreadSummaryComponent implements OnInit {
         return event;
     }
 
+    getCancellationReason(reason:string):string{
+        if(reason){
+            if(reason == "Other"){
+                reason = "Some reasons";
+            }
+            return " "+ this.translations["Due to"] + " "+ this.translations[reason];
+        }
+        return null;
+    }
+
     navigateToSearchDetails(item:Item) {
-        this.searchContextService.clearSearchContext();
         this.router.navigate(['/product-details'],
             {
                 queryParams: {
@@ -349,7 +369,8 @@ export class ThreadSummaryComponent implements OnInit {
     navigateToCompanyDetails() {
         this.router.navigate(['/user-mgmt/company-details'], {
             queryParams: {
-                id: this.lastEventPartnerID
+                id: this.lastEventPartnerID,
+                delegateId: this.lastEventPartnerFederationId
             }
         });
     }
@@ -377,7 +398,12 @@ export class ThreadSummaryComponent implements OnInit {
                 switch(processType) {
                     case "Fulfilment":
                         event.statusText = "Action Required!";
-                        event.actionText = "Send Receipt Advice";
+                        if(event.status == 'CANCELLED'){
+                            event.actionText = 'View Request';
+                        }
+                        else{
+                            event.actionText = "Send Receipt Advice";
+                        }
                         break;
                     case "Order":
                         event.statusText = "Waiting for Order Response";
@@ -408,23 +434,48 @@ export class ThreadSummaryComponent implements OnInit {
                         break;
                     case "Order":
                         event.statusText = "Action Required!";
-                        event.actionText = "Send Order Response";
+                        if(event.status == 'CANCELLED'){
+                            event.actionText = 'View Request';
+                        }
+                        else{
+                            event.actionText = "Send Order Response";
+                        }
                         break;
                     case "Negotiation":
                         event.statusText = "Action Required!";
-                        event.actionText = "Send Quotation";
+                        if(event.status == 'CANCELLED'){
+                            event.actionText = 'View Request';
+                        }
+                        else{
+                            event.actionText = "Send Quotation";
+                        }
                         break;
                     case "Ppap":
                         event.statusText = "Action Required!";
-                        event.actionText = "Send Ppap Response";
+                        if(event.status == 'CANCELLED'){
+                            event.actionText = 'View Request';
+                        }
+                        else{
+                            event.actionText = "Send Ppap Response";
+                        }
                         break;
                     case "Transport_Execution_Plan":
                         event.statusText = "Action Required!";
-                        event.actionText = "Send Transport Execution Plan";
+                        if(event.status == 'CANCELLED'){
+                            event.actionText = 'View Request';
+                        }
+                        else{
+                            event.actionText = 'Send Transport Execution Plan';
+                        }
                         break;
                     case "Item_Information_Request":
                         event.statusText = "Action Required!";
-                        event.actionText = 'Send Information Response';
+                        if(event.status == 'CANCELLED'){
+                            event.actionText = 'View Request';
+                        }
+                        else{
+                            event.actionText = 'Send Information Response';
+                        }
                 }
             }
             // messages if the responder party responded already
@@ -455,7 +506,6 @@ export class ThreadSummaryComponent implements OnInit {
                 case "Fulfilment":
                     if (buyer) {
                         event.statusText = "Receipt Advice sent";
-                        //this.showRateCollaborationButton = true;
                     } else {
                         event.statusText = "Receipt Advice received";
                     }
@@ -541,20 +591,6 @@ export class ThreadSummaryComponent implements OnInit {
         return true;
     }
 
-    deleteGroup(): void {
-        if (confirm("Are you sure that you want to delete this business process thread?")) {
-            this.archiveCallStatus.submit();
-            this.bpeService.deleteProcessInstanceGroup(this.processInstanceGroup.id)
-                .then(() => {
-                    this.archiveCallStatus.callback('Thread deleted permanently');
-                    this.threadStateUpdated.next();
-                })
-                .catch(err => {
-                    this.archiveCallStatus.error('Failed to delete thread permanently', err);
-                });
-        }
-    }
-
     checkDataChannel() {
         let channelId = this.processInstanceGroup.dataChannelId;
         let role = this.processInstanceGroup.collaborationRole;
@@ -588,7 +624,7 @@ export class ThreadSummaryComponent implements OnInit {
     finishCollaboration(){
         if (confirm("Are you sure that you want to finish this collaboration?")) {
             this.archiveCallStatus.submit();
-            this.bpeService.finishCollaboration(this.processInstanceGroup.id)
+            this.bpeService.finishCollaboration(this.processInstanceGroup.id,this.processInstanceGroup.sellerFederationId)
                 .then(() => {
                     this.archiveCallStatus.callback("Finished collaboration successfully");
                     this.threadStateUpdatedNoChange.next();
@@ -599,27 +635,19 @@ export class ThreadSummaryComponent implements OnInit {
         }
     }
 
-    cancelCollaboration(){
+    cancelCollaboration(close){
         if (confirm("Are you sure that you want to cancel this collaboration?")) {
             this.archiveCallStatus.submit();
-            this.bpeService.cancelCollaboration(this.processInstanceGroup.id)
+            this.bpeService.cancelCollaboration(this.processInstanceGroup.id,this.compComment,this.processInstanceGroup.sellerFederationId)
                 .then(() => {
                     this.archiveCallStatus.callback("Cancelled collaboration successfully");
+                    close();
                     this.threadStateUpdatedNoChange.next();
                 })
                 .catch(err => {
                     this.archiveCallStatus.error("Failed to cancel collaboration",err);
                 });
         }
-    }
-
-    rateCollaboration(success,cancel) {
-      if(this.processInstanceGroup.status == "CANCELLED") {
-        this.rateCollaborationCancelled(cancel);
-      }
-      else {
-        this.rateCollaborationSuccess(success);
-      }
     }
 
     changeCommunicationRating(){
@@ -711,26 +739,7 @@ export class ThreadSummaryComponent implements OnInit {
         reviews.push(comm);
         this.saveCallStatusRating.submit();
         this.bpeService
-            .postRatings(this.lastEventPartnerID, this.lastEvent.processInstanceId, ratings, reviews)
-            .then(() => {
-                this.saveCallStatusRating.callback("Rating saved", true);
-                close();
-                this.showRateCollaborationButton = false;
-                this.fetchEvents();
-            })
-            .catch(error => {
-                this.saveCallStatusRating.error("Error while saving rating", error);
-            });
-    }
-
-    onSaveCancelRating(close: any) {
-        let ratings: EvidenceSupplied[] = [];
-        let reviews: Comment[] = [];
-        var comm = new Comment("",new Code(this.compComment,"","","",""));
-        reviews.push(comm);
-        this.saveCallStatusRating.submit();
-        this.bpeService
-            .postRatings(this.lastEventPartnerID, this.lastEvent.processInstanceId, ratings, reviews)
+            .postRatings(this.lastEventPartnerID, this.lastEventPartnerFederationId, this.lastEvent.processInstanceId, ratings, reviews,this.lastEvent.sellerFederationId)
             .then(() => {
                 this.saveCallStatusRating.callback("Rating saved", true);
                 close();

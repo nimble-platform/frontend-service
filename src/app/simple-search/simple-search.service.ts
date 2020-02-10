@@ -4,7 +4,7 @@ import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import { map } from 'rxjs/operators';
 import {CookieService} from "ng2-cookies";
-import { DEFAULT_LANGUAGE, LANGUAGES } from '../catalogue/model/constants';
+import { DEFAULT_LANGUAGE, LANGUAGES, FEDERATION } from '../catalogue/model/constants';
 import {class_label} from "../globals";
 
 
@@ -16,6 +16,8 @@ export class SimpleSearchService {
     private delegate_url = myGlobals.delegate_endpoint;
     private facetMin = myGlobals.facet_min;
     private facetCount = myGlobals.facet_count;
+
+    private delegated = (FEDERATION() == "ON");
 
 	product_name = myGlobals.product_name;
 	product_vendor_id = myGlobals.product_vendor+"."+myGlobals.product_vendor_id;
@@ -51,9 +53,9 @@ export class SimpleSearchService {
             .catch(this.handleError);
     }
 
-    getFields(delegated?:boolean): Promise<any> {
+    getFields(): Promise<any> {
 		let url = this.url + `/item/fields`;
-    if (delegated)
+    if (this.delegated)
       url = this.delegate_url + `/item/fields`;
 		// const url = `${this.url}/select?q=*:*&rows=0&wt=csv`;
 		return this.http
@@ -63,9 +65,9 @@ export class SimpleSearchService {
 		.catch(this.handleError);
 	}
 
-  getCompFields(delegated?: boolean): Promise<any> {
+  getCompFields(): Promise<any> {
   let url = this.url + `/party/fields`;
-  if (delegated)
+  if (this.delegated)
     url = this.delegate_url + `/party/fields`;
   // const url = `${this.url}/select?q=*:*&rows=0&wt=csv`;
   return this.http
@@ -75,7 +77,7 @@ export class SimpleSearchService {
   .catch(this.handleError);
 }
 
-	get(query: string, facets: string[], facetQueries: string[], page: number, rows: number, sort: string, cat: string, catID: string, search_index: string, delegated?: boolean): Promise<any> {
+	get(query: string, facets: string[], facetQueries: string[], page: number, rows: number, sort: string, cat: string, catID: string, search_index: string): Promise<any> {
 		let queryRes;
 		let searchObject: any = {};
 		if (search_index == "Category") {
@@ -93,7 +95,7 @@ export class SimpleSearchService {
 		}
 		query = queryRes.queryStr;
 		let url = this.url + `/item/search`;
-    if (delegated)
+    if (this.delegated)
       url = this.delegate_url + `/item/search`;
 		searchObject.rows = rows;
 		searchObject.start = page - 1;
@@ -130,12 +132,12 @@ export class SimpleSearchService {
 			.catch(this.handleError);
 	}
 
-  getComp(query: string, facets: string[], facetQueries: string[], page: number, rows: number, sort: string, delegated?: boolean): Promise<any> {
+  getComp(query: string, facets: string[], facetQueries: string[], page: number, rows: number, sort: string): Promise<any> {
 		let queryRes;
     queryRes = this.buildQueryString(query, myGlobals.query_settings_comp, true, false);
 		query = queryRes.queryStr;
 		let url = this.url + `/party/search`;
-    if (delegated)
+    if (this.delegated)
       url = this.delegate_url + `/party/search`;
 		let searchObject: any = {};
 		searchObject.rows = rows;
@@ -435,11 +437,11 @@ export class SimpleSearchService {
 		return Promise.reject(error.message || error);
 	}
 
-	getCompanies(query: string, facets: string[], facetQueries: string[], delegated?: boolean): Promise<any> {
+	getCompanies(query: string, facets: string[], facetQueries: string[]): Promise<any> {
 		query = query.replace(/[!'()]/g, '');
 		// var start = page*10-10;
 		let url = this.url + `/party/search`;
-    if (delegated)
+    if (this.delegated)
       url = this.delegate_url + `/party/search`;
 
 		let searchObject:any = {};
@@ -472,7 +474,9 @@ export class SimpleSearchService {
 
 	getFavouriteSearch(query: string, facets: string[],page?: number,sortType?:string): Promise<any> {
     query = query;
-		const url = this.url + `/item/search`;
+		let url = this.url + `/item/search`;
+		if (this.delegated)
+			url = this.delegate_url + `/item/search`;
 		let searchObject:any = {};
 		searchObject.rows = 10;
 		searchObject.start = page-1;

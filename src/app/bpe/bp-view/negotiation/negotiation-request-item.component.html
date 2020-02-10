@@ -401,7 +401,7 @@
         </div>
 
         <!-- Terms and conditions -->
-        <div *ngIf="showTermsAndConditions" class="ml-2">
+        <div [hidden]="!showTermsAndConditions"  class="ml-2">
             <ul *ngIf="!isReadOnly() || getNonFrameContractTermNumber() > 0" class="nav nav-tabs space-after space-before">
                 <li class="nav-item">
                     <a href id="CUSTOM_TERMS" class="nav-link"
@@ -455,44 +455,46 @@
                 </div>
             </ng-container>
 
-            <ng-container *ngIf="selectedTCTab == 'CLAUSES'">
-                <div class="row content-row mt-2">
-                    <div class="col-2"></div>
-                    <div class="col-5">
-                        <terms-and-conditions [hidden]="manufacturersTermsSource != 'product_defaults'"
-                                              [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-product-defaults'"
-                                              [termsAndConditions]="defaultTermsAndConditions"
-                                              [originalTermAndConditionClauses]="defaultTermsAndConditions">
-                        </terms-and-conditions>
-                        <terms-and-conditions *ngIf="wrapper.frameContractQuotation" [hidden]="manufacturersTermsSource != 'frame_contract'"
-                                              [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-frame-contract'"
-                                              [termsAndConditions]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause"
-                                              [originalTermAndConditionClauses]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause">
-                        </terms-and-conditions>
-                        <terms-and-conditions *ngIf="wrapper.lastOfferQuotation" [hidden]="manufacturersTermsSource != 'last_offer'"
-                                              [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-last-offer'"
-                                              [termsAndConditions]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause"
-                                              [originalTermAndConditionClauses]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause">
-                        </terms-and-conditions>
-                    </div>
-                    <div class="col-5">
-                        <terms-and-conditions [sellerPartyId]="sellerId"
-                                              [selectedIncoterm]="wrapper.rfqIncoterms"
-                                              [selectedTradingTerm]="wrapper.rfqPaymentTerms.paymentTerm"
-                                              (onIncotermChanged)="wrapper.rfqIncoterms = $event; onTermsChange(FIXED_NEGOTIATION_TERMS.INCOTERMS);"
-                                              (onPaymentMeansChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event; onTermsChange(FIXED_NEGOTIATION_TERMS.PAYMENT_MEANS);"
-                                              (onClauseUpdated)="onClauseUpdate($event,wrapper);"
-                                              [originalTermAndConditionClauses]=
-                                                      "manufacturersTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause :
+            <div class="row content-row mt-2" [hidden]="selectedTCTab != 'CLAUSES'">
+                <div class="col-2"></div>
+                <div class="col-5">
+                    <terms-and-conditions [hidden]="manufacturersTermsSource != 'product_defaults'"
+                                          [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-product-defaults'"
+                                          [sellerFederationId]="sellerFederationId"
+                                          [termsAndConditions]="defaultTermsAndConditions"
+                                          [originalTermAndConditionClauses]="defaultTermsAndConditions">
+                    </terms-and-conditions>
+                    <terms-and-conditions *ngIf="wrapper.frameContractQuotation" [hidden]="manufacturersTermsSource != 'frame_contract'"
+                                          [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-frame-contract'"
+                                          [sellerFederationId]="sellerFederationId"
+                                          [termsAndConditions]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause"
+                                          [originalTermAndConditionClauses]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause">
+                    </terms-and-conditions>
+                    <terms-and-conditions *ngIf="wrapper.lastOfferQuotation" [hidden]="manufacturersTermsSource != 'last_offer'"
+                                          [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-last-offer'"
+                                          [sellerFederationId]="sellerFederationId"
+                                          [termsAndConditions]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause"
+                                          [originalTermAndConditionClauses]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause">
+                    </terms-and-conditions>
+                </div>
+                <div class="col-5">
+                    <terms-and-conditions [sellerPartyId]="sellerId"
+                                          [sellerFederationId]="sellerFederationId"
+                                          [selectedIncoterm]="wrapper.rfqIncoterms"
+                                          [selectedTradingTerm]="wrapper.rfqPaymentTerms.paymentTerm"
+                                          (onIncotermChanged)="wrapper.rfqIncoterms = $event; onTermsChange(FIXED_NEGOTIATION_TERMS.INCOTERMS);"
+                                          (onPaymentMeansChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event; onTermsChange(FIXED_NEGOTIATION_TERMS.PAYMENT_MEANS);"
+                                          (onClauseUpdated)="onClauseUpdate($event,wrapper);"
+                                          [originalTermAndConditionClauses]=
+                                                  "manufacturersTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause :
                                               (manufacturersTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause :
                                               defaultTermsAndConditions)"
-                                              [termsAndConditions]="wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.clause"
-                                              [readOnly]="isLoading() || isReadOnly()"
-                                              [documentType]="'rfq'">
-                        </terms-and-conditions>
-                    </div>
+                                          [termsAndConditions]="wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.clause"
+                                          [readOnly]="isLoading() || isReadOnly()"
+                                          [documentType]="'rfq'">
+                    </terms-and-conditions>
                 </div>
-            </ng-container>
+            </div>
         </div>
 
     </div>

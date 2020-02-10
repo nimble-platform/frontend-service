@@ -39,6 +39,8 @@ export class NegotiationResponseComponent implements OnInit {
     @Input() defaultTermsAndConditions: Clause[];
     @Input() primaryTermsSources: ('product_defaults' | 'frame_contract' | 'last_offer')[];
     @Input() readonly: boolean = false;
+    // whether the process details are viewed for all products in the negotiation
+    @Input() areProcessDetailsViewedForAllProducts:boolean;
     // whether the item is deleted or not
     // if the item is deleted, then we will not show Product Defaults section since we do not have those information
     @Input() areCatalogueLinesDeleted:boolean[] ;
@@ -119,6 +121,10 @@ export class NegotiationResponseComponent implements OnInit {
         return this.areCatalogueLinesDeleted[this.lines.indexOf(catalogueLine)];
     }
     onRespondToQuotation(accepted: boolean) {
+        if(!this.areProcessDetailsViewedForAllProducts){
+            alert("Please, make sure that you view the negotiation details of all products before sending your response!");
+            return;
+        }
         this.callStatus.submit();
 
         for(let wrapper of this.wrappers){
@@ -141,7 +147,7 @@ export class NegotiationResponseComponent implements OnInit {
 
         //this.callStatus.submit();
 
-        this.bpeService.startProcessWithDocument(this.quotation).then(() => {
+        this.bpeService.startProcessWithDocument(this.quotation,this.quotation.sellerSupplierParty.party.federationInstanceID).then(() => {
             this.callStatus.callback("Quotation sent", true);
             var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")
@@ -154,11 +160,19 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     onRequestNewQuotation() {
+        if(!this.areProcessDetailsViewedForAllProducts){
+            alert("Please, make sure that you view the negotiation details of all products before creating a new one!");
+            return;
+        }
         this.bpDataService.setCopyDocuments(true, true, false,false);
         this.bpDataService.proceedNextBpStep("buyer", "Negotiation");
     }
 
     onAcceptAndOrder() {
+        if(!this.areProcessDetailsViewedForAllProducts){
+            alert("Please, make sure that you view the negotiation details of all products before accepting the quotation!");
+            return;
+        }
         this.bpDataService.setCopyDocuments(true, true, false,false);
         this.bpDataService.proceedNextBpStep("buyer", "Order");
     }
@@ -212,14 +226,14 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     isRequestNewQuotationDisabled(): boolean {
-        return this.isLoading() || this.isThereADeletedProduct() || this.processMetadata.isCollaborationFinished;
+        return this.isLoading() || this.isThereADeletedProduct() || this.processMetadata.collaborationStatus == "COMPLETED" || this.processMetadata.collaborationStatus == "CANCELLED";
     }
 
     isAcceptAndOrderDisabled(): boolean {
         return this.isLoading() ||
             this.isThereADeletedProduct() ||
             !this.isPriceValid() ||
-            this.processMetadata.isCollaborationFinished ||
+            this.processMetadata.collaborationStatus == "COMPLETED" ||
             this.quotation.documentStatusCode.name === 'Rejected' ||
             this.bpDataService.isFinalProcessInTheWorkflow('Negotiation');
     }
@@ -290,7 +304,7 @@ export class NegotiationResponseComponent implements OnInit {
         }
 
 
-        return false;
+        return this.areNotesAndFilesAttachedToQuotation();
     }
 
     private isFrameContractDurationValid(): boolean {
@@ -338,5 +352,9 @@ export class NegotiationResponseComponent implements OnInit {
         this.showNotesAndAdditionalFiles = false;
         this.showPurchaseOrder = false;
         return ret;
+    }
+
+    areNotesAndFilesAttachedToQuotation(){
+        return (this.quotation.note.length == 1 && this.quotation.note[0] != "") || this.quotation.note.length > 1 || this.quotation.additionalDocumentReference.length > 0;
     }
 }

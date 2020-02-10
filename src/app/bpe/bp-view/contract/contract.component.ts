@@ -9,6 +9,7 @@ import {TranslateService} from '@ngx-translate/core';
 })
 export class ContractComponent {
     @Input() contract: Contract = null;
+    @Input() sellerFederationId:string = null;
     @Input() showQuotation: boolean = false;
     @Input() collapsable: boolean = true;
     // whether the item is deleted or not
