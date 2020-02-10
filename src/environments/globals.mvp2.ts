@@ -56,6 +56,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 // Platform Configuration
 
 export const config = {
+    "federationInstanceId":"MVP-2",
   "platformName": "MVP-2",
   "envName": "mvp2",
   "companyRegistrationRequired": false,

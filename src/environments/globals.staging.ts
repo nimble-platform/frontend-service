@@ -56,6 +56,7 @@ export const tntIoTBlockchainEndpoint = 'http://nimble-dev.ikap.biba.uni-bremen.
 // Platform Configuration
 
 export const config = {
+    "federationInstanceId":"STAGING",
   "platformName": "MVP Staging",
   "envName": "staging",
   "companyRegistrationRequired": false,

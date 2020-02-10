@@ -56,6 +56,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 // Platform Configuration
 
 export const config = {
+    "federationInstanceId":"K8S-2",
   "platformName": "K8S-2",
   "envName": "k8s-srfg",
   "companyRegistrationRequired": false,

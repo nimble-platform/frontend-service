@@ -117,14 +117,6 @@ export class AppComponent implements OnInit {
         }
         translate.setDefaultLang(FALLBACK_LANGUAGE);
         translate.use(DEFAULT_LANGUAGE());
-        // get federation id of the instance
-        let delegateUrl = myGlobals.delegate_endpoint + "/eureka/app-name";
-        this.http.get(delegateUrl).toPromise().then(response => {
-            let federationId = response.text();
-            document.getElementsByTagName('html')[0].setAttribute("federationId",federationId);
-        }).catch(error => {
-            console.error("Failed to retrieve federation id")
-        })
         if (this.debug)
           console.log("Initialized platform with language: "+DEFAULT_LANGUAGE());
     }

@@ -121,7 +121,7 @@ export const FEDERATION = function () {
 }
 
 export const FEDERATIONID = function () {
-    return document.getElementsByTagName('html')[0].getAttribute('federationId');;
+    return myGlobals.config.federationInstanceId;
 }
 
 export const LANGUAGES:Array<string>  = myGlobals.config.languageSettings.available;
