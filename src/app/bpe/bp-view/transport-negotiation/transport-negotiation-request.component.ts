@@ -111,6 +111,10 @@ export class TransportNegotiationRequestComponent implements OnInit {
 
     // check whether the required fields for transport service details are filled or not
     isTransportServiceDetailsValid(){
+        // no need to check transport service details for logistics services which are not transport services
+        if(!this.isTransportService){
+            return true;
+        }
         let shipment = this.rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment;
         let goodsItemToBeShipped = this.viewChild.getSelectedProductsToShip();
 
