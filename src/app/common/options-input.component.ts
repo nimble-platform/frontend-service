@@ -78,6 +78,9 @@ export class OptionsInputComponent implements OnInit {
         if(option){
             return typeof option === "string" ? option : option.value;
         }
+        if(option == ""){
+            return ""
+        }
     }
 
     getName(option: Option | string): string {

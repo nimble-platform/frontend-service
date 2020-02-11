@@ -192,4 +192,29 @@ export class TransportNegotiationRequestComponent implements OnInit {
                 this.callStatus.error("Failed to update Terms", error);
             });
     }
+
+    isTermUpdated(term:string):boolean{
+        switch (term) {
+            case "price":
+                return (this.rfqPrice.itemPrice.value != null && this.rfqPrice.itemPrice.value != 0) || this.rfqPrice.itemPrice.currency != this.CURRENCIES[0];
+            case "payment-means":
+                return this.PAYMENT_MEANS[0] != this.rfq.requestForQuotationLine[0].lineItem.paymentMeans.paymentMeansCode.value;
+            case "payment-terms":
+                return this.rfqPaymentTerms.getDefaultPaymentTerms() != this.rfqPaymentTerms.paymentTerm;
+            case "incoterms":
+                return this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms != null && this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms != "";
+            case "special-terms":
+                return this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms[0].value != null && this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms[0].value != "";
+            case "delivery-period":
+                return this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode != "day(s)" || this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value != null;
+            case "pick-up":
+                return this.rfq.delivery.requestedDeliveryPeriod.startDate != null && this.rfq.delivery.requestedDeliveryPeriod.startDate != "";
+            case "drop-off":
+                return this.rfq.delivery.requestedDeliveryPeriod.endDate != null && this.rfq.delivery.requestedDeliveryPeriod.endDate != "";
+            case "notes":
+                return ((this.rfq.note.length == 1 && this.rfq.note[0] != "") || this.rfq.note.length > 1 || this.rfq.additionalDocumentReference.length > 0);
+            default:
+                return true;
+        }
+    }
 }

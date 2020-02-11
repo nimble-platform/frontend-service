@@ -368,8 +368,6 @@ export class BPDataService{
                 line.requiredItemLocationQuantity.applicableTaxCategory[0].percent);
             if (linePriceWrapper.itemPrice.hasPrice()) {
                 rfqLine.lineItem.price = line.requiredItemLocationQuantity.price;
-            } else {
-                rfqLine.lineItem.price.priceAmount.value = 1;
             }
             rfqLine.lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
             rfqLine.lineItem.warrantyValidityPeriod = line.warrantyValidityPeriod;
