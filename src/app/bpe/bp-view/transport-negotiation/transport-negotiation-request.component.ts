@@ -26,7 +26,6 @@ import {TransportServiceDetailsComponent} from './transport-service-details.comp
 })
 export class TransportNegotiationRequestComponent implements OnInit {
 
-    @ViewChild(TransportServiceDetailsComponent) viewChild: TransportServiceDetailsComponent;
     rfq: RequestForQuotation;
     selectedTab: string = "OVERVIEW";
     rfqPrice: DiscountPriceWrapper;
@@ -120,18 +119,16 @@ export class TransportNegotiationRequestComponent implements OnInit {
             return true;
         }
         let shipment = this.rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment;
-        let goodsItemToBeShipped = this.viewChild.getSelectedProductsToShip();
 
-        for (let goodsItem of goodsItemToBeShipped) {
-            if(UBLModelUtils.isEmptyOrIncompleteQuantity(goodsItem.quantity)){
+        for (let goodsItem of shipment.goodsItem) {
+            if(UBLModelUtils.isEmptyOrIncompleteQuantity(goodsItem.quantity) || goodsItem.item.name[0].value == "" || goodsItem.item.name[0].value == null
+                || UBLModelUtils.isEmptyOrIncompleteQuantity(goodsItem.grossVolumeMeasure) || UBLModelUtils.isEmptyOrIncompleteQuantity(goodsItem.grossWeightMeasure)){
                 return false;
             }
         }
         return !UBLModelUtils.isEmptyOrIncompleteQuantity(shipment.transportHandlingUnit[0].measurementDimension[1].measure) &&
             !UBLModelUtils.isEmptyOrIncompleteQuantity(shipment.transportHandlingUnit[0].measurementDimension[0].measure) &&
-            (shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name != null && shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name != "") &&
-            !UBLModelUtils.isEmptyOrIncompleteQuantity(shipment.consignment[0].grossWeightMeasure) &&
-            !UBLModelUtils.isEmptyOrIncompleteQuantity(shipment.consignment[0].grossVolumeMeasure);
+            (shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name != null && shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name != "");
     }
 
     onSendRequest(): void {
@@ -143,8 +140,6 @@ export class TransportNegotiationRequestComponent implements OnInit {
         let sellerFederationId:string;
 
         // final check on the rfq
-        // set the goods items which will be shipped by this transport service
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem = this.viewChild.getSelectedProductsToShip();
         if(this.bpDataService.modifiedCatalogueLines) {
             sellerId = UBLModelUtils.getPartyId(this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty);
             sellerFederationId = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty.federationInstanceID;

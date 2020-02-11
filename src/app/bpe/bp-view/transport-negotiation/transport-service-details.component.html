@@ -1,53 +1,65 @@
 <div class="row space-before">
     <div class="col-12">
-        <h4><span [innerHTML]="'Transport Service Details' | translate"></span></h4>
 
-        <div *ngIf="goodsItems.length == 1">
-            <!-- Goods Item -->
-            <text-input presentationMode="view" label="Goods Item" definition="The goods item included in this shipment"
-                        [(text)]="itemName" [disabled]="disabled" labelClass="col-2" valueClass="col-10" rowClass="space-before">
-            </text-input>
+        <div>
+            <h4>Shipped Products</h4>
+            <div *ngFor="let goodsItem of goodsItems;let i=index">
 
-            <!-- Quantity -->
-            <quantity-input label="Quantity" definition="The quantity to transport."
-                            [quantity]="goodsItems[0].quantity" [disabled]="disabled"
-                            labelClass="col-2" valueClass="col-10" [required]="true">
+                <text-input label="Goods Item" definition="The goods item included in this shipment"
+                    [rows]="1"
+                    [(text)]="goodsItem.item.name[0].value" [disabled]="disabled" labelClass="col-2" valueClass="col-10" rowClass="space-before" [required]="true">
+                </text-input>
+
+                <!-- Quantity -->
+                <quantity-input label="Quantity" definition="The quantity to transport."
+                                [quantity]="goodsItem.quantity" [disabled]="disabled" rowClass="space-before"
+                                labelClass="col-2" valueClass="col-10" [required]="true">
+                </quantity-input>
+
+                <!-- Gross Volume -->
+                <quantity-input label="Gross Volume" definition="The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L"
+                                [quantity]="goodsItem.grossVolumeMeasure" [disabled]="disabled" rowClass="space-before" (onQuantityValueChange)="onGrossVolumeAndWeightUpdated('volume')" (onQuantityUnitChange)="onGrossVolumeAndWeightUnitUpdated('volume',$event)"
+                                quantityType="volume_quantity" labelClass="col-2" valueClass="col-10" [required]="true">
+                </quantity-input>
+
+                <!-- Gross Weight -->
+                <quantity-input label="Gross Weight" definition="The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg"
+                                [quantity]="goodsItem.grossWeightMeasure" [disabled]="disabled" (onQuantityValueChange)="onGrossVolumeAndWeightUpdated('weight')" (onQuantityUnitChange)="onGrossVolumeAndWeightUnitUpdated('weight',$event)"
+                                quantityType="weight_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
+                </quantity-input>
+
+                <div class="d-flex justify-content-end space-before" *ngIf="goodsItems.length > 1 && !disabled">
+                    <button [ngClass]="'btn btn-danger small-button'">
+                        <span [innerHTML]="'Delete' | translate" (click)="deleteGoodsItem(i)"></span>
+                    </button>
+                </div>
+
+                <hr>
+            </div>
+            <div class="d-flex justify-content-end space-before" *ngIf="!disabled && !disableAddProductButton">
+                <button [ngClass]="'btn btn-primary btn-outline-primary small-button'">
+                    <span [innerHTML]="'Add Product' | translate" (click)="addGoodsItemToBeShipped()"></span>
+                </button>
+            </div>
+
+            <!-- Gross Volume -->
+            <quantity-input label="Total Gross Volume" definition="The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L"
+                            [quantity]="shipment.consignment[0].grossVolumeMeasure" [disabled]="true" rowClass="space-before"
+                            quantityType="volume_quantity" labelClass="col-2" valueClass="col-10" [required]="true">
+            </quantity-input>
+
+            <!-- Gross Weight -->
+            <quantity-input label="Total Gross Weight" definition="The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg"
+                            [quantity]="shipment.consignment[0].grossWeightMeasure" [disabled]="true"
+                            quantityType="weight_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
             </quantity-input>
         </div>
-
-        <div *ngIf="goodsItems.length > 1">
-            <h4>Shipped Products</h4>
-            <div class="row" *ngFor="let goodsItem of goodsItems;let i=index">
-                <div class="col-1" style="text-align: center">
-                    <input type="checkbox" [disabled]="disabled"  [(ngModel)]="selectedProducts[i]" [defaultChecked]="true">
-                </div>
-                <div class="col-2">
-                    {{selectPreferredValue(goodsItem.item.name)}}
-                </div>
-                <div class="col-9">
-                    <quantity-input [disabled]="disabled" [disableQuantityUnit]="true"
-                                    [quantity]="goodsItem.quantity" valueClass="col-12" [required]="true">
-                    </quantity-input>
-                </div>
-            </div>
-        </div>
-
-        <!-- Gross Volume -->
-        <quantity-input label="Gross Volume" definition="The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L"
-            [quantity]="shipment.consignment[0].grossVolumeMeasure" [disabled]="disabled" rowClass="space-before" 
-            quantityType="volume_quantity" labelClass="col-2" valueClass="col-10" [required]="true">
-        </quantity-input>
-
-        <!-- Gross Weight -->
-        <quantity-input label="Gross Weight" definition="The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg"
-            [quantity]="shipment.consignment[0].grossWeightMeasure" [disabled]="disabled" 
-            quantityType="weight_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
-        </quantity-input>
 
 
         <hr>
 
 
+        <h4>Transport Handling</h4>
         <!-- Transport Handling Unit -->
         <text-input label="Transport Handling Unit" description="The transport handling unit used" [rows]="1"
             [(text)]="shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name" [disabled]="disabled" 

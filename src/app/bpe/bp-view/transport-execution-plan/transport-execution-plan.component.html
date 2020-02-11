@@ -4,31 +4,43 @@
         <div class="col-12">
             <h3><span [innerHTML]="'Consolidated Shipment' | translate"></span></h3>
 
-            <div class="row" *ngFor="let goodsItem of request.consignment[0].consolidatedShipment[0].goodsItem">
+            <div *ngFor="let goodsItem of request.consignment[0].consolidatedShipment[0].goodsItem">
+
                 <!-- Goods Item -->
-                <div class="col-3">
-                    <input-label [label]="'Goods Item'" [definition]="'The goods item included in this shipment'">
-                    </input-label>
-                </div>
-                <span class="col-3">{{selectPreferredValue(goodsItem.item.name)}}</span>
+                <text-input label="Goods Item" definition="The goods item included in this shipment"
+                            [rows]="1" [presentationMode]="'view'"
+                            [(text)]="goodsItem.item.name[0].value" [disabled]="true" labelClass="col-2" valueClass="col-10" rowClass="space-before" [required]="true">
+                </text-input>
 
                 <!-- Quantity -->
-                <div class="col-6">
-                    <quantity-input label="Quantity" definition="The quantity to transport." [disabled]="true"
-                                    [quantity]="goodsItem.quantity"
-                                    labelClass="col-3" valueClass="col-9" presentationMode="view">
-                    </quantity-input>
-                </div>
+                <quantity-input label="Quantity" definition="The quantity to transport."
+                                [quantity]="goodsItem.quantity" [disabled]="true" [presentationMode]="'view'" rowClass="space-before"
+                                labelClass="col-2" valueClass="col-10" [required]="true">
+                </quantity-input>
+
+                <!-- Gross Volume -->
+                <quantity-input label="Gross Volume" definition="The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L"
+                                [quantity]="goodsItem.grossVolumeMeasure" quantityType="volume_quantity"
+                                rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
+                </quantity-input>
+
+                <!-- Gross Weight -->
+                <quantity-input label="Gross Weight" definition="The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg"
+                                [quantity]="goodsItem.grossWeightMeasure" quantityType="weight_quantity" rowClass="space-before"
+                                labelClass="col-2" valueClass="col-10" presentationMode="view">
+                </quantity-input>
+
+                <hr>
             </div>
 
             <!-- Gross Volume -->
-            <quantity-input label="Gross Volume" definition="The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L"
+            <quantity-input label="Total Gross Volume" definition="The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L"
                             [quantity]="request.consignment[0].grossVolumeMeasure" quantityType="volume_quantity"
                             rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
             </quantity-input>
 
             <!-- Gross Weight -->
-            <quantity-input label="Gross Weight" definition="The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg"
+            <quantity-input label="Total Gross Weight" definition="The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg"
                             [quantity]="request.consignment[0].grossWeightMeasure" quantityType="weight_quantity" rowClass="space-before"
                             labelClass="col-2" valueClass="col-10" presentationMode="view">
             </quantity-input>
@@ -40,9 +52,6 @@
             </text-input>
         </div>
     </div>
-
-
-    <hr>
 
     <!-- Dates -->
     <div class="row">

@@ -14,6 +14,8 @@ export class GoodsItem {
         public item: Item = UBLModelUtils.createItem(),
         public containingPackage: Package = new Package(),
         public deliveryTerms: DeliveryTerms = new DeliveryTerms(),
-        public sequenceNumberID:string = null
+        public sequenceNumberID:string = null,
+        public grossWeightMeasure:Quantity = new Quantity(),
+        public grossVolumeMeasure:Quantity = new Quantity()
     ) {  }
 }

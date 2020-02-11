@@ -28,6 +28,7 @@ export class QuantityInputComponent implements OnInit {
 
     @Input() quantity: Quantity;
     @Output() onQuantityValueChange = new EventEmitter<number>();
+    @Output() onQuantityUnitChange = new EventEmitter<string>();
     @Input() quantityUnits?: string[];
     @Input() quantityType?: string;
     @Input() disableQuantityUnit: boolean = false;
@@ -70,6 +71,10 @@ export class QuantityInputComponent implements OnInit {
 
     onQuantityValueChanged(value: number) {
         this.onQuantityValueChange.emit(value);
+    }
+
+    onQuantityUnitChanged(unit: string) {
+        this.onQuantityUnitChange.emit(unit);
     }
 
     quantityToString(): string {

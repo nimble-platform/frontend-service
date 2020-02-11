@@ -10,11 +10,11 @@
                        [ngModel]="quantity.value" (ngModelChange)="quantity.value = $event; onQuantityValueChanged($event)" [disabled]="disabled" [placeholder]="placeholder" [required]="required">
             </div>
             <div *ngIf="!quantityUnits" class="{{unitSizeClass}} col-quantity-unit">
-                <input type="text" class="form-control" [ngClass]="innerFormClass" [(ngModel)]="quantity.unitCode"
+                <input type="text" class="form-control" [ngClass]="innerFormClass" [(ngModel)]="quantity.unitCode" (ngModelChange)="onQuantityUnitChanged($event)"
                     [disabled]="disabled || disableQuantityUnit" [placeholder]="unitPlaceholder" [required]="required">
             </div>
             <div *ngIf="quantityUnits" class="{{unitSizeClass}} col-quantity-unit">
-                <select class="form-control" [ngClass]="innerFormClass" [(ngModel)]="quantity.unitCode" [disabled]="disabled || disableQuantityUnit" [required]="required">
+                <select class="form-control" [ngClass]="innerFormClass" [(ngModel)]="quantity.unitCode" [disabled]="disabled || disableQuantityUnit" [required]="required" (ngModelChange)="onQuantityUnitChanged($event)">
                     <option *ngFor="let option of quantityUnits" [value]="option">{{option}}</option>
                 </select>
             </div>
