@@ -277,6 +277,9 @@ export class NegotiationResponseComponent implements OnInit {
             if(UBLModelUtils.areTermsAndConditionListsDifferent(wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.clause, wrapper.newQuotation.quotationLine[wrapper.lineIndex].lineItem.clause)) {
                 return true;
             }
+            if(!UBLModelUtils.areQuantitiesEqual(wrapper.rfqQuantity,wrapper.newQuotationWrapper.orderedQuantity)){
+                return true;
+            }
             // compare delivery date-quantity pairs of rfq with that of quotation
             // the length of deliveries are not equal, so terms are updated
             if(wrapper.rfqDelivery.length != wrapper.newQuotationWrapper.delivery.length){

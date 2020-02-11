@@ -223,6 +223,10 @@ export class NegotiationModelWrapper {
         this.rfq.requestForQuotationLine[this.lineIndex].lineItem.warrantyValidityPeriod.durationMeasure = quantity;
     }
 
+    public get rfqQuantity(): Quantity {
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.quantity;
+    }
+
     public get rfqWarrantyString(): string {
         return durationToString(this.rfqWarranty);
     }

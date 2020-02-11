@@ -116,6 +116,11 @@
         </div>
     </ng-container>
     <div class="col-3">{{rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value}} {{rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.unitCode}}</div>
+    <div class="col-3" *ngIf="isSellerTermsVisible()">
+        <span class="order-qty-input">
+            <quantity-input [disableQuantityUnit]="true" [quantity]="wrapper.newQuotationWrapper.orderedQuantity" [step]="1" [presentationMode]="getPresentationMode()"></quantity-input>
+        </span>
+    </div>
 </div>
 
 <!-- Net Price -->
