@@ -45,6 +45,8 @@ export class TransportNegotiationRequestComponent implements OnInit {
     // this component is used for both transport and logistics service negotiation
     // however, we need to know the type of service since some tabs are displayed only for transport services
     @Input() isTransportService:boolean;
+    // save the default delivery period unit so that we can understand whether the delivery period is updated by the buyer or not
+    defaultDeliveryPeriodUnit:string = null;
 
     constructor(private bpDataService: BPDataService,
                 private bpeService:BPEService,
@@ -82,6 +84,8 @@ export class TransportNegotiationRequestComponent implements OnInit {
         if(this.processMetadata && this.processMetadata.isBeingUpdated){
             this.updatingProcess = true;
         }
+        // set the default delivery period unit
+        this.defaultDeliveryPeriodUnit = this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode;
     }
 
     // be sure that rfq has all necessary fields to start a bp
@@ -206,7 +210,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
             case "special-terms":
                 return this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms[0].value != null && this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms[0].value != "";
             case "delivery-period":
-                return this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode != "day(s)" || this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value != null;
+                return this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode != this.defaultDeliveryPeriodUnit || this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value != null;
             case "pick-up":
                 return this.rfq.delivery.requestedDeliveryPeriod.startDate != null && this.rfq.delivery.requestedDeliveryPeriod.startDate != "";
             case "drop-off":
