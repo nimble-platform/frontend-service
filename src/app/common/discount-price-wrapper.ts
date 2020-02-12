@@ -181,7 +181,7 @@ export class DiscountPriceWrapper {
                 priceOption.estimatedDeliveryPeriod.durationMeasure.value <= this.deliveryPeriod.value) {
 
                 let dpDiscount = this.calculateDiscountAmount(priceOption, totalPrice);
-                if (dpDiscount > totalMinimumOrderQuantityDiscount) {
+                if (dpDiscount > totalDeliveryPeriodDiscount) {
                     totalDeliveryPeriodDiscount = dpDiscount;
                     deliveryPeriodPriceOption = priceOption;
                 }
