@@ -189,6 +189,7 @@ export class NegotiationRequestComponent implements OnInit {
             // set the item price, otherwise we will lose item price information
             for(let wrapper of this.wrappers){
                 this.rfq.requestForQuotationLine[0].lineItem.price.priceAmount.value = wrapper.rfqDiscountPriceWrapper.totalPrice/wrapper.rfqDiscountPriceWrapper.orderedQuantity.value;
+                this.rfq.requestForQuotationLine[0].lineItem.price.baseQuantity = copy(wrapper.rfqDiscountPriceWrapper.orderedQuantity);
             }
             // just go to order page
             this.bpDataService.setCopyDocuments(true, false, false,false);
