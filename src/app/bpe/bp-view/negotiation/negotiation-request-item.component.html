@@ -24,7 +24,7 @@
                     </button>
                     <button *ngIf="manufacturersTermsSource == 'last_offer'"
                             class="btn btn-outline-secondary"
-                            (click)="onLoadCounterOfferTerms('product_defaults')"><span [innerHTML]="'Use terms of last offer' | translate"></span>
+                            (click)="onLoadCounterOfferTerms('last_offer')"><span [innerHTML]="'Use terms of last offer' | translate"></span>
                     </button>
                     <ng-container>
                         <input class="ml-2" type="checkbox" [(ngModel)]="resetUpdatesChecked"><label class="ml-2"><span [innerHTML]="'Reset changes' | translate"></span></label>
