@@ -260,7 +260,11 @@ export class ProductDetailsComponent implements OnInit {
         this.priceWrapper.additionalItemProperties = this.itemWithSelectedProperties.additionalItemProperty;
 
         if(event == 'product_defaults') {
-            this.priceWrapper.itemPrice.value = this.priceWrapper.discountedPricePerItem;
+            // if no order quantity is specified, do not update the item price
+            // otherwise, we lose the price information
+            if(this.orderQuantity){
+                this.priceWrapper.itemPrice.value = this.priceWrapper.discountedPricePerItem;
+            }
         }
     }
 
