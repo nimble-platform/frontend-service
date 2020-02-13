@@ -23,6 +23,7 @@ import {CustomTermModalComponent} from './custom-term-modal.component';
 import {TranslateService} from '@ngx-translate/core';
 import {DeliveryTerms} from '../../../user-mgmt/model/delivery-terms';
 import {Delivery} from '../../../catalogue/model/publish/delivery';
+import {QuotationWrapper} from './quotation-wrapper';
 
 enum FIXED_NEGOTIATION_TERMS {
     DELIVERY_PERIOD = 'deliveryPeriod',
@@ -237,9 +238,13 @@ export class NegotiationRequestItemComponent implements OnInit {
         this.enableDirtyUpdate = false;
 
         if(termSource == 'frame_contract' || termSource == 'last_offer') {
-            let quotationWrapper = this.wrapper.frameContractQuotationWrapper;
-            let index = this.wrapper.frameContractQuotationWrapper.quotationLineIndex;
-            if(termSource == 'last_offer') {
+            let quotationWrapper:QuotationWrapper;
+            let index;
+            if(termSource == 'frame_contract'){
+                quotationWrapper = this.wrapper.frameContractQuotationWrapper;
+                index = this.wrapper.frameContractQuotationWrapper.quotationLineIndex;
+            }
+            else{
                 quotationWrapper = this.wrapper.lastOfferQuotationWrapper;
                 index = this.wrapper.lineIndex;
             }
@@ -423,11 +428,15 @@ export class NegotiationRequestItemComponent implements OnInit {
         let isDeliveryDateAdded:boolean = this.areDeliveryDatesAvailable(this.wrapper.rfqDelivery);
 
         if(this.counterOfferTermsSource == 'last_offer' || this.counterOfferTermsSource == 'frame_contract') {
-            let quotationWrapper = this.wrapper.frameContractQuotationWrapper;
-            let index = this.wrapper.frameContractQuotationWrapper.quotationLineIndex;
+            let quotationWrapper;
+            let index;
             if(this.counterOfferTermsSource == 'last_offer') {
                 quotationWrapper = this.wrapper.lastOfferQuotationWrapper;
                 index = this.wrapper.lineIndex;
+            }
+            else{
+                quotationWrapper = this.wrapper.frameContractQuotationWrapper;
+                index = this.wrapper.frameContractQuotationWrapper.quotationLineIndex;
             }
 
             priceDiffers = this.wrapper.rfqPricePerItemString != quotationWrapper.priceWrapper.itemPrice.pricePerItemString;
