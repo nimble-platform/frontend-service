@@ -550,7 +550,7 @@ export class ShoppingCartComponent implements OnInit {
                 return this.bpeService.startProcessWithDocument(document,document.sellerSupplierParty.party.federationInstanceID);
             }).then(() => {
                 // started the negotiation for the product successfully,so remove it from the shopping cart
-                this.onRemoveFromCart(cartLine);
+                this.shoppingCartDataService.removeItemsFromCart([cartLine.hjid]);
                 callStatus.callback(null, true);
                 this.router.navigate(['dashboard'], {queryParams: {tab: 'PURCHASES'}});
 
