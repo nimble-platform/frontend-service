@@ -244,7 +244,7 @@ export class DiscountPriceWrapper {
                 if (checkRegion && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].region.toLocaleLowerCase() != this.deliveryLocation.region.toLocaleLowerCase()) {
                     continue;
                 }
-                if (checkCountryName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value.toLocaleLowerCase() != this.deliveryLocation.country.name.value.toLocaleLowerCase()) {
+                if (checkCountryName && this.deliveryLocation.country.name.value != null && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value.toLocaleLowerCase() != this.deliveryLocation.country.name.value.toLocaleLowerCase()) {
                     continue;
                 }
                 // the delivery location satisfies all conditions
