@@ -135,6 +135,14 @@ export class NegotiationModelWrapper {
         return this.catalogueLine.goodsItem.deliveryTerms.incoterms;
     }
 
+    public get lineIncotermsString(): string {
+        let incoterms = this.catalogueLine.goodsItem.deliveryTerms.incoterms;
+        if(incoterms == null || incoterms == ""){
+            return "None";
+        }
+        return incoterms;
+    }
+
     public get linePaymentTerms(): string {
         return this.sellerSettings.paymentTerms[0];
     }
@@ -240,7 +248,11 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqIncotermsString(): string {
-        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.incoterms || 'None';
+        let incoterms = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.incoterms;
+        if(incoterms == null || incoterms == ""){
+            return "None";
+        }
+        return incoterms;
     }
 
     public get rfqPaymentTermsToString(): string {
@@ -345,11 +357,11 @@ export class NegotiationModelWrapper {
                 break;
             case "incoTerms":
                 if (termsSource == "product_defaults")
-                    return (this.rfqIncoterms == this.lineIncoterms);
+                    return (this.rfqIncotermsString == this.lineIncotermsString);
                 else if (termsSource == "frame_contract")
-                    return (this.rfqIncoterms == this.frameContractQuotationWrapper.incoterms);
+                    return (this.rfqIncotermsString == this.frameContractQuotationWrapper.incotermsString);
                 else if (termsSource == "last_offer")
-                    return (this.rfqIncoterms == this.lastOfferQuotationWrapper.incoterms);
+                    return (this.rfqIncotermsString == this.lastOfferQuotationWrapper.incotermsString);
                 break;
             case "paymentTerms":
                 if (termsSource == "product_defaults")

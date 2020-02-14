@@ -256,7 +256,7 @@ export class NegotiationResponseComponent implements OnInit {
             if(!UBLModelUtils.areQuantitiesEqual(wrapper.rfqDeliveryPeriod, wrapper.newQuotationWrapper.deliveryPeriod)) {
                 return true;
             }
-            if(wrapper.rfqIncoterms !== wrapper.newQuotationWrapper.incoterms) {
+            if(wrapper.rfqIncotermsString !== wrapper.newQuotationWrapper.incotermsString) {
                 return true;
             }
             if(wrapper.rfqPaymentMeans !== wrapper.newQuotationWrapper.paymentMeans) {
