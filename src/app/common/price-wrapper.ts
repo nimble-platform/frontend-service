@@ -60,10 +60,7 @@ export class PriceWrapper {
             return "On demand";
         }
 
-        if(baseQuantity === 1) {
-            return `${roundToTwoDecimals(amount.value)} ${currencyToString(amount.currencyID)} per ${qty.unitCode}`
-        }
-        return `${roundToTwoDecimals(amount.value)} ${currencyToString(amount.currencyID)} for ${baseQuantity} ${qty.unitCode}`
+        return `${roundToTwoDecimals(this.pricePerItem)} ${currencyToString(this.price.priceAmount.currencyID)} per ${qty.unitCode}`;
     }
 
     get vatTotal(): number {
