@@ -125,9 +125,14 @@ export class CompanyRatingComponent implements OnInit {
       this.ratings.listingAccuracy /= this.ratings.totalNumberOfRatings;
       this.ratings.conformanceToContractualTerms /= this.ratings.totalNumberOfRatings;
       this.ratings.deliveryAndPackaging /= this.ratings.totalNumberOfRatings;
+      debugger
       this.ratingSeller = (this.ratings.qualityOfNegotiationProcess + this.ratings.qualityOfOrderingProcess + this.ratings.responseTimeRating) / 3;
       this.ratingFulfillment = (this.ratings.listingAccuracy + this.ratings.conformanceToContractualTerms) / 2;
-      this.ratingOverall = (this.ratingSeller + this.ratingFulfillment + this.ratings.deliveryAndPackaging) / 3;
+      if(this.ratings.deliveryAndPackagin > 0){
+        this.ratingOverall = (this.ratingSeller + this.ratingFulfillment + this.ratings.deliveryAndPackaging) / 3;
+      }else{
+        this.ratingOverall = (this.ratingSeller + this.ratingFulfillment) / 2;
+      }
     }
 
 }
