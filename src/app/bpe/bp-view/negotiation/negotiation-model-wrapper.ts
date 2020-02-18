@@ -188,7 +188,11 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqVatTotalString(): string {
-        return `${roundToTwoDecimals(this.rfqVatTotal)} ${this.rfqDiscountPriceWrapper.itemPrice.currency}`
+        let rfqVatTotal = this.rfqVatTotal;
+        if(rfqVatTotal == 0){
+            return "On demand";
+        }
+        return `${roundToTwoDecimals(rfqVatTotal)} ${this.rfqDiscountPriceWrapper.itemPrice.currency}`
     }
 
     public get rfqGrossTotal(): number {
@@ -204,6 +208,10 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqGrossTotalString(): string {
+        let rfqGrossTotal = this.rfqGrossTotal;
+        if(rfqGrossTotal == 0){
+            return "On demand";
+        }
         return `${roundToTwoDecimals(this.rfqGrossTotal)} ${this.rfqDiscountPriceWrapper.itemPrice.currency}`
     }
 

@@ -98,7 +98,7 @@ export class DiscountPriceWrapper {
 
     get totalPriceString(): string {
         if(!this.itemPrice.hasPrice()) {
-            return "Not specified";
+            return "On demand";
         }
         return `${roundToTwoDecimals(this.totalPrice)} ${this.currency}`;
     }
@@ -116,7 +116,11 @@ export class DiscountPriceWrapper {
     }
 
     get grossTotalString(): string {
-        return `${roundToTwoDecimals(this.grossTotal)} ${this.currency}`;
+        let grossTotal = this.grossTotal;
+        if(grossTotal == 0){
+            return "On demand";
+        }
+        return `${roundToTwoDecimals(grossTotal)} ${this.currency}`;
     }
 
     get currency(): string {

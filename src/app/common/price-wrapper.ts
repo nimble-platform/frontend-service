@@ -42,7 +42,7 @@ export class PriceWrapper {
 
     get totalPriceString(): string {
         if(!this.itemPrice.hasPrice()) {
-            return "Not specified";
+            return "On demand";
         }
         return `${roundToTwoDecimals(this.totalPrice)} ${this.currency}`;
     }
@@ -68,7 +68,11 @@ export class PriceWrapper {
     }
 
     get vatTotalString(): string {
-        return `${roundToTwoDecimals(this.vatTotal)} ${this.currency}`
+        let vatTotal = this.vatTotal;
+        if(vatTotal == 0){
+            return "On demand";
+        }
+        return `${roundToTwoDecimals(vatTotal)} ${this.currency}`
     }
 
     get grossTotal(): number {
@@ -76,7 +80,11 @@ export class PriceWrapper {
     }
 
     get grossTotalString(): string {
-        return `${roundToTwoDecimals(this.grossTotal)} ${this.currency}`;
+        let grossTotal = this.grossTotal;
+        if(grossTotal == 0){
+            return "On demand";
+        }
+        return `${roundToTwoDecimals(grossTotal)} ${this.currency}`;
     }
 
     get currency(): string {
