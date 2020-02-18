@@ -224,4 +224,8 @@ export class NegotiationResponseItemComponent implements OnInit {
         let index = this.wrapper.newQuotationWrapper.delivery.length-1;
         this.wrapper.newQuotationWrapper.delivery.splice(index,1);
     }
+
+    highlightDeliveryDetailsTab(){
+        return !this.wrapper.checkEqualForRequest(this.primaryTermsSource, 'deliveryPeriod') || this.isDeliveryDateSectionOpen || !UBLModelUtils.isAddressEmpty(this.wrapper.rfqDeliveryAddress) || !this.wrapper.checkEqualForResponse('deliveryPeriod')
+    }
 }

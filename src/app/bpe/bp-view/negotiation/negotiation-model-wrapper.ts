@@ -337,7 +337,8 @@ export class NegotiationModelWrapper {
         this.rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address = address;
     }
 
-    public checkEqual(termsSource: 'product_defaults' | 'frame_contract' | 'last_offer', part): boolean {
+    // compares the default terms of product and the terms specified in the request
+    public checkEqualForRequest(termsSource: 'product_defaults' | 'frame_contract' | 'last_offer', part): boolean {
         switch(part) {
             case "deliveryPeriod":
                 if (termsSource == "product_defaults")
@@ -395,6 +396,40 @@ export class NegotiationModelWrapper {
                 else if (termsSource == "last_offer")
                     return (this.rfqPricePerItemString == this.lastOfferQuotationWrapper.priceWrapper.pricePerItemString);
                 break;
+            case "dataMonitoring":
+                if (termsSource == "product_defaults")
+                    return !this.rfqDataMonitoringRequested;
+                else if (termsSource == "frame_contract")
+                    return (this.rfqDataMonitoringRequested == this.frameContractQuotationWrapper.dataMonitoringPromised);
+                else if (termsSource == "last_offer")
+                    return (this.rfqDataMonitoringRequested == this.lastOfferQuotationWrapper.dataMonitoringPromised);
+                break;
+            default:
+                return true;
+        }
+    }
+
+    // compares the terms specified in the request and the ones in the response
+    public checkEqualForResponse(part): boolean {
+        switch(part) {
+            case "deliveryPeriod":
+                return (this.rfqDeliveryPeriodString == this.newQuotationWrapper.deliveryPeriodString);
+            case "warranty":
+                return (this.rfqWarrantyString == this.newQuotationWrapper.warrantyString);
+            case "incoTerms":
+                return (this.rfqIncotermsString == this.newQuotationWrapper.incotermsString);
+            case "paymentTerms":
+                return (this.rfqPaymentTerms.paymentTerm == this.newQuotationWrapper.paymentTermsWrapper.paymentTerm);
+            case "paymentMeans":
+                return (this.rfqPaymentMeans == this.newQuotationWrapper.paymentMeans);
+            case "price":
+                return (this.rfqPricePerItemString == this.newQuotationWrapper.priceWrapper.pricePerItemString);
+            case "dataMonitoring":
+                return this.rfqDataMonitoringRequested == this.newQuotationWrapper.dataMonitoringPromised;
+            case "frameContract":
+                return UBLModelUtils.areQuantitiesEqual(this.rfqFrameContractDuration,this.newQuotationWrapper.frameContractDuration);
+            case "quantity":
+                return UBLModelUtils.areQuantitiesEqual(this.rfqQuantity,this.newQuotationWrapper.orderedQuantity);
             default:
                 return true;
         }

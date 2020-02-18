@@ -40,7 +40,7 @@
     <div class="{{showCounterOfferTerms ? 'col-12' : 'col-7'}}">
         <!-- Warranty -->
         <div class="row content-row"
-             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'warranty')}">
+             [ngClass]="{'bg-danger text-white':!wrapper.checkEqualForRequest(manufacturersTermsSource, 'warranty')}">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500"><span [innerHTML]="'Warranty' | translate"></span>:</strong>
             </div>
@@ -76,7 +76,7 @@
 
         <!-- Incoterms -->
         <div class="row content-row"
-             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'incoTerms')}">
+             [ngClass]="{'bg-danger text-white':!wrapper.checkEqualForRequest(manufacturersTermsSource, 'incoTerms')}">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500"><span [innerHTML]="'Incoterms' | translate"></span>:</strong>
             </div>
@@ -106,7 +106,7 @@
 
         <!-- Payment Terms -->
         <div class="row content-row"
-             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'paymentTerms')}">
+             [ngClass]="{'bg-danger text-white':!wrapper.checkEqualForRequest(manufacturersTermsSource, 'paymentTerms')}">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500"><span [innerHTML]="'Payment Terms' | translate"></span>:</strong>
             </div>
@@ -135,7 +135,7 @@
 
         <!-- Payment Means -->
         <div class="row content-row"
-             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'paymentMeans')}">
+             [ngClass]="{'bg-danger text-white':!wrapper.checkEqualForRequest(manufacturersTermsSource, 'paymentMeans')}">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500"><span [innerHTML]="'Payment Means' | translate"></span>:</strong>
             </div>
@@ -164,7 +164,7 @@
 
         <!-- Price -->
         <div class="row content-row"
-             [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'price')}">
+             [ngClass]="{'bg-danger text-white':!wrapper.checkEqualForRequest(manufacturersTermsSource, 'price')}">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Price:</strong>
             </div>
@@ -238,11 +238,12 @@
 <div class="row mb-2">
     <div class="col-12">
         <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'btn-outline-primary':!(clausesDiffer || custTermsDiffer),'btn-danger':(clausesDiffer || custTermsDiffer),'active':showTermsAndConditions}" (click)="showTermsAndConditions=showTab(showTermsAndConditions)"><span [innerHTML]="'Terms and Conditions' | translate"></span></div>
-        <div *ngIf="config.dataChannelsEnabled" class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showDataMonitoring}" (click)="showDataMonitoring=showTab(showDataMonitoring)"><span [innerHTML]="'Data Monitoring' | translate"></span></div>
+        <div *ngIf="config.dataChannelsEnabled" class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'btn-outline-primary':wrapper.checkEqualForRequest(manufacturersTermsSource, 'dataMonitoring'),'btn-danger':!wrapper.checkEqualForRequest(manufacturersTermsSource, 'dataMonitoring'),'active':showDataMonitoring}" (click)="showDataMonitoring=showTab(showDataMonitoring)"><span [innerHTML]="'Data Monitoring' | translate"></span></div>
         <ng-container *ngIf="isFrameContractVisible()">
-            <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showFrameContractDetails}" (click)="showFrameContractDetails=showTab(showFrameContractDetails)"><span [innerHTML]="'Frame Contract' | translate"></span></div>
+            <div class="btn {{wrapper.rfqFrameContractDuration == null ?'btn-outline-primary' : 'btn-danger'}} align-self-start ml-2" [ngClass]="{'active':showFrameContractDetails}" (click)="showFrameContractDetails=showTab(showFrameContractDetails)"><span [innerHTML]="'Frame Contract' | translate"></span></div>
         </ng-container>
-        <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'btn-outline-primary':wrapper.checkEqual(manufacturersTermsSource, 'deliveryPeriod') && !areDeliveryDatesAvailable(wrapper.rfqDelivery),'bg-danger':!wrapper.checkEqual(manufacturersTermsSource, 'deliveryPeriod') || areDeliveryDatesAvailable(wrapper.rfqDelivery),'active':showDeliveryDetails}" (click)="showDeliveryDetails=showTab(showDeliveryDetails)"><span [innerHTML]="'Delivery Details' | translate"></span></div>
+        <div class="btn btn-outline-primary align-self-start ml-2 {{highlightDeliveryDetailsTab() ? 'bg-danger':'btn-outline-primary'}}"
+             [ngClass]="{'active':showDeliveryDetails}" (click)="showDeliveryDetails=showTab(showDeliveryDetails)"><span [innerHTML]="'Delivery Details' | translate"></span></div>
     </div>
 </div>
 
@@ -330,7 +331,7 @@
                 <div class="col-12">
                     <!-- Delivery Period -->
                     <div *ngIf="!isDeliveryDateSectionOpen" class="row content-row"
-                         [ngClass]="{'bg-danger text-white':!wrapper.checkEqual(manufacturersTermsSource, 'deliveryPeriod')}">
+                         [ngClass]="{'bg-danger text-white':!wrapper.checkEqualForRequest(manufacturersTermsSource, 'deliveryPeriod')}">
                         <div class="col-2">
                             <strong class="font-weight-500"><span [innerHTML]="'Delivery Period' | translate"></span>:</strong>
                         </div>

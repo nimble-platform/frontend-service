@@ -2,7 +2,7 @@
                            [frameContractQuotation]="frameContractQuotations ? frameContractQuotations[i]:null" [lastOfferQuotation]="lastOfferQuotation" [rfq]="rfq" [isCatalogueLineDeleted]="isCatalogueLineDeleted(wrapper.catalogueLine)" [primaryTermsSource]="primaryTermsSources ? primaryTermsSources[i]:null"
                            [quotation]="quotation" [readonly]="readonly" [hidden]="selectedLineIndex != wrapper.lineIndex"></negotiation-response-item>
 
-<div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showNotesAndAdditionalFiles}" (click)="showNotesAndAdditionalFiles=showTab(showNotesAndAdditionalFiles)"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>
+<div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showNotesAndAdditionalFiles,'bg-danger text-white':highlightNotesAndFilesSection()}" (click)="showNotesAndAdditionalFiles=showTab(showNotesAndAdditionalFiles)"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>
 
 <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showPurchaseOrder}" (click)="showPurchaseOrder = showTab(showPurchaseOrder)"><span [innerHTML]="'Purchase Order' | translate" ></span></div>
 

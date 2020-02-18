@@ -357,7 +357,15 @@ export class NegotiationResponseComponent implements OnInit {
         return ret;
     }
 
+    areNotesAndFilesAttachedToRFQ(){
+        return (this.rfq.note.length == 1 && this.rfq.note[0] != "") || this.rfq.note.length > 1 || this.rfq.additionalDocumentReference.length > 0;
+    }
+
     areNotesAndFilesAttachedToQuotation(){
         return (this.quotation.note.length == 1 && this.quotation.note[0] != "") || this.quotation.note.length > 1 || this.quotation.additionalDocumentReference.length > 0;
+    }
+
+    highlightNotesAndFilesSection(){
+        return this.areNotesAndFilesAttachedToRFQ() || this.areNotesAndFilesAttachedToQuotation();
     }
 }

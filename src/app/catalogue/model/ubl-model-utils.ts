@@ -901,6 +901,10 @@ export class UBLModelUtils {
         return false;
     }
 
+    public static isAddressEmpty(address:Address):boolean {
+        return !(address && (this.isNotEmptyString(address.streetName) || this.isNotEmptyString(address.buildingNumber) || this.isNotEmptyString(address.postalZone) || this.isNotEmptyString(address.region) || this.isNotEmptyString(address.cityName) || this.isNotEmptyCountry(address.country)));
+    }
+
     public static getFrameContractDurationFromRfqLine(rfqLine: RequestForQuotationLine): Quantity {
         let tradingTerm: TradingTerm = rfqLine.lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
         if(tradingTerm != null) {
@@ -1026,5 +1030,13 @@ export class UBLModelUtils {
             }
         }
         return false;
+    }
+
+    private static isNotEmptyString (string) {
+        return string != null && string !== ''
+    }
+
+    private static isNotEmptyCountry (country:Country) {
+        return country && country.name && this.isNotEmptyString(country.name.value);
     }
 }

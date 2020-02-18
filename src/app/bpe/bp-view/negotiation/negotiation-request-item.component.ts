@@ -663,4 +663,8 @@ export class NegotiationRequestItemComponent implements OnInit {
     public getFrameContractDuration(){
         return this.frameContractDuration;
     }
+
+    highlightDeliveryDetailsTab(){
+        return !this.wrapper.checkEqualForRequest(this.manufacturersTermsSource, 'deliveryPeriod') || this.areDeliveryDatesAvailable(this.wrapper.rfqDelivery) || !UBLModelUtils.isAddressEmpty(this.wrapper.rfqDeliveryAddress);
+    }
 }
