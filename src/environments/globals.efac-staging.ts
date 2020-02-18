@@ -270,6 +270,7 @@ export const product_vendor_rating = "trustRating";
 export const product_vendor_rating_seller = "trustSellerCommunication";
 export const product_vendor_rating_fulfillment = "trustFullfillmentOfTerms";
 export const product_vendor_rating_delivery = "trustDeliveryPackaging";
+export const product_vendor_evaluation = "trustNumberOfEvaluations";
 export const product_vendor_trust = "trustScore";
 export const product_name = "label";
 export const class_label = "classification.allLabels";

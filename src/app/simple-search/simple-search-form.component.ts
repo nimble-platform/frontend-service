@@ -35,6 +35,7 @@ export class SimpleSearchFormComponent implements OnInit {
     product_vendor_rating_seller = myGlobals.product_vendor_rating_seller;
     product_vendor_rating_fulfillment = myGlobals.product_vendor_rating_fulfillment;
     product_vendor_rating_delivery = myGlobals.product_vendor_rating_delivery;
+    product_vendor_evaluation = myGlobals.product_vendor_evaluation;
     product_vendor_trust = myGlobals.product_vendor_trust;
     product_name = myGlobals.product_name;
     product_description = myGlobals.product_description;
