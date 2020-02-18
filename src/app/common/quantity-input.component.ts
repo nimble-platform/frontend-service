@@ -1,7 +1,9 @@
 import {Component, OnInit, Input, Output, EventEmitter} from "@angular/core";
 import { Quantity } from "../catalogue/model/publish/quantity";
 import { UnitService } from "./unit-service";
-import { quantityToString } from "./utils";
+import {isCustomProperty, quantityToString} from './utils';
+import {PublishingPropertyService} from '../catalogue/publish/publishing-property.service';
+import {ItemProperty} from '../catalogue/model/publish/item-property';
 
 @Component({
     selector: "quantity-input",
@@ -37,7 +39,10 @@ export class QuantityInputComponent implements OnInit {
     @Input() required:boolean = false;
     innerFormClass = "form-control-sm";
 
-    constructor(private unitService: UnitService) {
+    @Input() property:ItemProperty = null;
+
+    constructor(private unitService: UnitService,
+                public publishingPropertyService:PublishingPropertyService) {
 
     }
 
@@ -51,7 +56,13 @@ export class QuantityInputComponent implements OnInit {
         else
           this.innerFormClass = "form-control-sm";
 
-        if(this.quantityType) {
+        if(this.property && !isCustomProperty(this.property)){
+            this.publishingPropertyService.getCachedProperty(this.property.id).then(indexedProperty => {
+                if(indexedProperty.codeList && indexedProperty.codeList.length > 0){
+                    this.quantityUnits = indexedProperty.codeList;
+                }
+            });
+        } else if(this.quantityType) {
             this.quantityUnits = ["Loading..."];
             this.unitService.getCachedUnitList(this.quantityType)
             .then(units => {

@@ -33,7 +33,7 @@ import { TnTService } from './tnt/tnt.service';
 import { AnalyticsService } from './analytics/analytics.service';
 import { EpcService } from './bpe/bp-view/epc-service';
 import {DocumentService} from "./bpe/bp-view/document-service";
-import {LogisticPublishingService} from './catalogue/publish/logistic-publishing.service';
+import {PublishingPropertyService} from './catalogue/publish/publishing-property.service';
 import {FrameContractTransitionService} from "./bpe/bp-view/contract/frame-contract-transition.service";
 import {ShoppingCartDataService} from './bpe/shopping-cart/shopping-cart-data-service';
 import {CollaborationService} from './catalogue/collaboration/collaboration.service';
@@ -76,7 +76,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         FrameContractTransitionService,
 		CatalogueService,
         CategoryService,
-        LogisticPublishingService,
+        PublishingPropertyService,
         PublishService,
         ExplorativeSearchService,
         SimpleSearchService,
