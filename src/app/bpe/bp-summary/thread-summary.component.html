@@ -130,7 +130,8 @@
             <!-- Toggle history -->
             <div class="row" *ngIf="lastEvent && hasHistory">
                 <div class="col align-items-center clickable" (click)="toggleHistory()">
-                    {{ historyExpanded ? "Hide" : "Show" }} previous step(s)
+                    <span *ngIf="historyExpanded" [innerHTML]="'Hide previous step(s)' | translate"></span>
+                    <span *ngIf="!historyExpanded" [innerHTML]="'Show previous step(s)' | translate"></span>
                 </div>
             </div>
         </div>

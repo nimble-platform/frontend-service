@@ -34,7 +34,7 @@
             <div class="btn btn-primary btn-outline-primary" (click)="collapsedStatusesOfCartItems.set(cartLine.hjid, !collapsedStatusesOfCartItems.get(cartLine.hjid))">
                 {{getProductName(cartLine.goodsItem.item.name)}}
             </div>
-            <i *ngIf="!collapsedStatusesOfCartItems.get(cartLine.hjid) && !deleteCallStatuses.get(cartLine.hjid).isLoading()" class="far fa-trash-alt fa-2x ml-auto clickable" (click)="onRemoveFromCart(cartLine)" title="Remove from Cart"></i>
+            <i *ngIf="!collapsedStatusesOfCartItems.get(cartLine.hjid) && !deleteCallStatuses.get(cartLine.hjid).isLoading()" class="far fa-trash-alt fa-2x ml-auto clickable" (click)="onRemoveFromCart(cartLine)" [title]="'Remove from Cart' | translate"></i>
             <call-status *ngIf="deleteCallStatuses.get(cartLine.hjid).isLoading()" class="ml-auto" [callStatus]="deleteCallStatuses.get(cartLine.hjid)"></call-status>
         </div>
         <div [hidden]="!collapsedStatusesOfCartItems.get(cartLine.hjid)" class="space-before">

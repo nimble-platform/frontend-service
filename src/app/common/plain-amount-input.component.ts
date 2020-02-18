@@ -17,9 +17,9 @@ export class PlainAmountInputComponent implements OnInit {
     @Input() labelMainClass: string = "";
     @Input() rowClass: string = "";
     @Input() valueClass: string; // set based on label
-    @Input() placeholder: string = "Enter a value...";
+    @Input() placeholder: string = "...";
     @Input() valueTextClass: string = "";
-    
+
     private amountValue: number;
     @Output() amountChange = new EventEmitter<number>();
     @Input() amountUnit?: string;

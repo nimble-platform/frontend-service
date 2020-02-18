@@ -22,7 +22,7 @@ export class FileInputComponent implements OnInit {
     @Input() labelMainClass: string = "";
     @Input() rowClass: string = "";
     @Input() valueClass: string; // set based on label
-    @Input() placeholder: string = "Choose a file...";
+    @Input() placeholder: string = "...";
     @Input() small: boolean = false;
 
     @Input() accept: string = "*/*";

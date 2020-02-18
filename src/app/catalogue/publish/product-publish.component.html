@@ -292,12 +292,14 @@
         </div>
         <div class="col-3">
             <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine() || !areInputNumbersValid()" (click)="onPublish(false)">
-                {{ publishStateService.publishMode === "edit" ? "Save & Continue" : "Publish & Continue"  }}
+                <span *ngIf="publishStateService.publishMode === 'edit'" [innerHTML]="'Save & Continue' | translate"></span>
+                <span *ngIf="publishStateService.publishMode !== 'edit'" [innerHTML]="'Publish & Continue' | translate"></span>
             </button>
         </div>
         <div class="col-3">
             <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine() || !areInputNumbersValid()" (click)="onPublish(true)">
-                {{ publishStateService.publishMode === "edit" ? "Save & Exit" : "Publish & Exit"  }}
+                <span *ngIf="publishStateService.publishMode === 'edit'" [innerHTML]="'Save & Exit' | translate"></span>
+                <span *ngIf="publishStateService.publishMode !== 'edit'" [innerHTML]="'Publish & Exit' | translate"></span>
             </button>
         </div>
     </div>

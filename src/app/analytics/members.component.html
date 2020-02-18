@@ -1,12 +1,12 @@
 <div class="row">
   <div class="col-8">
     <h4><span [innerHTML]="'Platform Members' | translate"></span>
-        <span *ngIf="registeredCompaniesPage">(Total {{ registeredCompaniesPage.totalElements }})</span>
+        <span *ngIf="registeredCompaniesPage">(<span [innerHTML]="'Total' | translate"></span> {{ registeredCompaniesPage.totalElements }})</span>
     </h4>
   </div>
   <div class="col-4">
     <div class="input-group">
-        <label class="col-form-label col-form-label-sm space-right"><strong>Sort by:</strong>
+        <label class="col-form-label col-form-label-sm space-right"><strong><span [innerHTML]="'Sort by:' | translate"></span></strong>
         </label>
         <select class="form-control form-control-sm custom-select" [(ngModel)]="sortOptionForVerifiedCompanies"
                 (change)="sortRegisteredCompanyList()" [disabled]="registeredCompaniesCallStatus.isLoading()">
@@ -20,7 +20,7 @@
 	<div class="form-group row">
 		<div class="col-12">
 				<div class="input-group">
-					<input type="text" class="form-control" id="searchTerm" [(ngModel)]="filter" [disabled]="registeredCompaniesCallStatus.isLoading()" name="searchTerm" #q="ngModel" placeholder="Company Name">
+					<input type="text" class="form-control" id="searchTerm" [(ngModel)]="filter" [disabled]="registeredCompaniesCallStatus.isLoading()" name="searchTerm" #q="ngModel" [placeholder]="'Company Name' | translate">
 					<div class="input-group-append">
 						<button type="submit" [disabled]="registeredCompaniesCallStatus.isLoading()" class="btn btn-outline-secondary">
 							<i class="fa fa-search"></i>

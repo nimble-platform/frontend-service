@@ -6,7 +6,7 @@
 		<div class="form-group row">
 			<label for="email" class="col-2 col-form-label"><span [innerHTML]="'E-Mail' | translate"></span></label>
 			<div class="col-10">
-				<input type="email" class="form-control" id="email" required [(ngModel)]="invEmail" name="email" #email="ngModel" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9]{2,25}$" placeholder="e.g. user@domain.com">
+				<input type="email" class="form-control" id="email" required [(ngModel)]="invEmail" name="email" #email="ngModel" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9]{2,25}$" [placeholder]="'e.g. user@domain.com' | translate">
 			 </div>
 		</div>
 
