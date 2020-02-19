@@ -23,7 +23,7 @@
         <div *ngSwitchCase="'last_offer'" class="col-3">{{ wrapper.lastOfferQuotationWrapper.warrantyString}}</div>
     </ng-container>
     <div class="col-3">{{ wrapper.rfqWarrantyString }}</div>
-    <div class="col-3 {{wrapper.checkEqualForResponse('warranty') ? 'bg-white':'bg-danger'}}">
+    <div class="col-3 {{wrapper.checkEqualForResponse('warranty') ? 'bg-white text-dark':'bg-danger'}}">
         <quantity-input *ngIf="isSellerTermsVisible()"
                         [presentationMode]="getPresentationMode()"
                         [disabled]="isDisabled()" [quantity]="wrapper.newQuotationWrapper.warranty" quantityType="warranty_period">
@@ -39,7 +39,7 @@
         <div *ngSwitchCase="'last_offer'" class="col-3">{{ wrapper.lastOfferQuotationWrapper.incotermsString}}</div>
     </ng-container>
     <div class="col-3">{{ wrapper.rfqIncoterms }}</div>
-    <div class="col-3 {{wrapper.checkEqualForResponse('incoTerms') ? 'bg-white':'bg-danger'}}">
+    <div class="col-3 {{wrapper.checkEqualForResponse('incoTerms') ? 'bg-white text-dark':'bg-danger'}}">
         <options-input *ngIf="isSellerTermsVisible()"
                        [presentationMode]="getPresentationMode()"
                        [disabled]="isDisabled()" [options]="wrapper.sellerSettings.incoterms" [(selected)]="wrapper.newQuotationWrapper.incoterms">
@@ -55,7 +55,7 @@
         <div *ngSwitchCase="'last_offer'" class="col-3">{{ wrapper.lastOfferQuotationWrapper.paymentTermsWrapper.paymentTerm}}</div>
     </ng-container>
     <div class="col-3">{{ wrapper.rfqPaymentTerms.paymentTerm }}</div>
-    <div class="col-3 {{wrapper.checkEqualForResponse('paymentTerms') ? 'bg-white':'bg-danger'}}">
+    <div class="col-3 {{wrapper.checkEqualForResponse('paymentTerms') ? 'bg-white text-dark':'bg-danger'}}">
         <options-input *ngIf="isSellerTermsVisible()"
                        [presentationMode]="getPresentationMode()"
                        [disabled]="isDisabled()" [options]="wrapper.sellerSettings.paymentTerms"
@@ -72,7 +72,7 @@
         <div *ngSwitchCase="'last_offer'" class="col-3">{{ wrapper.lastOfferQuotationWrapper.paymentMeans}}</div>
     </ng-container>
     <div class="col-3">{{ wrapper.rfqPaymentMeans }}</div>
-    <div class="col-3 {{wrapper.checkEqualForResponse('paymentMeans') ? 'bg-white':'bg-danger'}}">
+    <div class="col-3 {{wrapper.checkEqualForResponse('paymentMeans') ? 'bg-white text-dark':'bg-danger'}}">
         <options-input *ngIf="isSellerTermsVisible()"
                        [presentationMode]="getPresentationMode()"
                        [disabled]="isDisabled()" [options]="wrapper.sellerSettings.paymentMeans" [(selected)]="wrapper.newQuotationWrapper.paymentMeans">
@@ -92,7 +92,7 @@
 
     <!-- Manufacturer's response -->
     <ng-container *ngIf="wrapper.rfqDataMonitoringRequested">
-        <div class="col-3 {{wrapper.checkEqualForResponse('dataMonitoring') ? 'bg-white':'bg-danger'}}" *ngIf="!isReadOnly()">
+        <div class="col-3 {{wrapper.checkEqualForResponse('dataMonitoring') ? 'bg-white text-dark':'bg-danger'}}" *ngIf="!isReadOnly()">
             <input type="checkbox" [(ngModel)]="quotation.quotationLine[wrapper.lineIndex].lineItem.dataMonitoringRequested"
                    [disabled]="isDisabled()">
             <label><span [innerHTML]="'Provide data monitoring service' | translate"></span></label>
@@ -116,7 +116,7 @@
         </div>
     </ng-container>
     <div class="col-3">{{rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value}} {{rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.unitCode}}</div>
-    <div class="col-3 {{wrapper.checkEqualForResponse('quantity') ? 'bg-white':'bg-danger'}}" *ngIf="isSellerTermsVisible()">
+    <div class="col-3 {{wrapper.checkEqualForResponse('quantity') ? 'bg-white text-dark':'bg-danger'}}" *ngIf="isSellerTermsVisible()">
         <span class="order-qty-input">
             <quantity-input [disableQuantityUnit]="true" [quantity]="wrapper.newQuotationWrapper.orderedQuantity" [step]="1" [presentationMode]="getPresentationMode()" (onQuantityValueChange)="onQuotationPriceUpdated()"></quantity-input>
         </span>
@@ -148,7 +148,7 @@
     </div>
     <!-- Seller's response -->
     <!--<div class="col-3" [ngClass]="wrapper.quotationDiscountPriceWrapper.appliedDiscounts.length > 0 ? 'd-flex' : null">-->
-    <div class="col-3 {{wrapper.checkEqualForResponse('price') ? 'bg-white':'bg-danger'}}">
+    <div class="col-3 {{wrapper.checkEqualForResponse('price') ? 'bg-white text-dark':'bg-danger'}}">
         <ng-container *ngIf="getPresentationMode() == 'edit'">
             <quantity-input [presentationMode]="'edit'" [disabled]="isDisabled()"
                             [quantity]="quotationTotalPrice" [quantityUnits]="CURRENCIES"
@@ -416,7 +416,7 @@
                             <div *ngSwitchCase="'last_offer'" class="col-3">{{ wrapper.lastOfferQuotationWrapper.deliveryPeriodString}}</div>
                         </ng-container>
                         <div class="col-3">{{ wrapper.rfqDeliveryPeriodString }}</div>
-                        <div class="col-3 {{wrapper.checkEqualForResponse('deliveryPeriod') ? 'bg-white':'bg-danger'}}">
+                        <div class="col-3 {{wrapper.checkEqualForResponse('deliveryPeriod') ? 'bg-white text-dark':'bg-danger'}}">
                             <!-- don't show any term if the customer offer was rejected -->
                             <quantity-input *ngIf="isSellerTermsVisible()"
                                             [presentationMode]="getPresentationMode()"
