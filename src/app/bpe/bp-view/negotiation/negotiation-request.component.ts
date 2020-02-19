@@ -86,6 +86,8 @@ export class NegotiationRequestComponent implements OnInit {
 
     config = myGlobals.config;
 
+    areNotesOrFilesAttachedToDocument = UBLModelUtils.areNotesOrFilesAttachedToDocument;
+
     constructor(private bpDataService: BPDataService,
                 private bpeService:BPEService,
                 private userService:UserService,
@@ -237,7 +239,7 @@ export class NegotiationRequestComponent implements OnInit {
                 }
             }
         }
-        return this.areNotesAndFilesUpdated();
+        return this.areNotesOrFilesAttachedToDocument(this.rfq);
     }
 
     isLoading(): boolean {
@@ -406,10 +408,6 @@ export class NegotiationRequestComponent implements OnInit {
         this.showNotesAndAdditionalFiles = false;
         this.showPurchaseOrder = false;
         return ret;
-    }
-
-    areNotesAndFilesUpdated():boolean{
-        return (this.rfq.note.length == 1 && this.rfq.note[0] != "") || this.rfq.note.length > 1 || this.rfq.additionalDocumentReference.length > 0;
     }
 
 }

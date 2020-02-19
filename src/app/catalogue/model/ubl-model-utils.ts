@@ -1039,4 +1039,11 @@ export class UBLModelUtils {
     private static isNotEmptyCountry (country:Country) {
         return country && country.name && this.isNotEmptyString(country.name.value);
     }
+
+    public static areNotesOrFilesAttachedToDocument(document:RequestForQuotation | Quotation){
+        // consider the documents which has a embedded binary objects
+        // the others are just references to previous documents
+        let files = document.additionalDocumentReference.filter(doc => doc.attachment != null).map(doc => doc.attachment.embeddedDocumentBinaryObject);
+        return (document.note.length == 1 && document.note[0] != "") || document.note.length > 1 || files.length > 0;
+    }
 }
