@@ -29,7 +29,8 @@
 
 <!-- Address Tab -->
 <ng-container *ngIf="selectedTab === 'ADDRESS'">
-    <transport-negotiation-address [lineItem]="rfq.requestForQuotationLine[0].lineItem" [disabled]="isDisabled()">
+    <transport-negotiation-address [lineItem]="rfq.requestForQuotationLine[0].lineItem" [disabled]="isDisabled()"
+                                   [deliveryTerms]="deliverytermsOfBuyer">
     </transport-negotiation-address>
 </ng-container>
 

@@ -1,4 +1,5 @@
-<options-input [label]="'Use Existing Address' | translate"
+<options-input *ngIf="!disabled"
+               [label]="'Use Existing Address' | translate"
                [(selected)]="selectedAddress"
                [options]="addressOptions"
                rowClass="mb-1"
