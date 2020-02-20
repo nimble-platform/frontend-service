@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [15.0.0] - 2020-02-10
+### Added
+- Federated business process, catalogue and identity services
+- Deep link functionality for eFactory product search
+
+### Changed
+- Improvements on LCPA, unshipped orders and frame contract tab visualization
+- Fixed bugs on T&Cs generator and shopping cart
+- Moved federation switch to a global level
+- Displayed the cancellation reason in the collaboration view
+- Allowed users to see the details of cancelled processes
+
 ## [14.0.0] - 2019-11-28
 ### Added
 - Shopping car functionality
