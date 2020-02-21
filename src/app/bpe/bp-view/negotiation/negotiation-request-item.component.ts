@@ -320,7 +320,11 @@ export class NegotiationRequestItemComponent implements OnInit {
         this.wrapper.lineDiscountPriceWrapper.deliveryPeriod = this.wrapper.rfqDeliveryPeriod;
         this.wrapper.lineDiscountPriceWrapper.deliveryLocation = this.wrapper.rfqDeliveryAddress;
         // get the price per item including the discount
-        this.wrapper.lineDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.discountedPricePerItem;
+        // if no quantity is specified, do not update the item price
+        // otherwise, we lose the price information
+        if(this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.quantity.value){
+            this.wrapper.lineDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.discountedPricePerItem;
+        }
 
         // update the rfq price only if the price is not being negotiated and the default product terms are presented
         // it does not make sense to update price based on the discounts when the terms of frame contract or last offer terms are presented
