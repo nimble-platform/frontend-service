@@ -12,6 +12,9 @@ import {Party} from "../model/publish/party";
 import {TranslateService} from '@ngx-translate/core';
 import { getISObyCountry } from "../../common/utils";
 import * as myGlobals from '../../globals';
+import {EmptyFormBase} from '../../common/validation/empty-form-base';
+
+const PRODUCT_PRICE_FORM_CONTROL_NAME = 'productPrice';
 
 @Component({
     selector: "product-price-tab",
@@ -19,7 +22,7 @@ import * as myGlobals from '../../globals';
     styleUrls: ["./product-price-tab.component.css"],
     providers: [PriceOptionCountPipe, PriceOptionPipe],
 })
-export class ProductPriceTabComponent implements OnInit {
+export class ProductPriceTabComponent extends EmptyFormBase implements OnInit {
 
     @Input() catalogueLine: CatalogueLine;
     @Input() companyNegotiationSettings:CompanyNegotiationSettings;
@@ -38,6 +41,7 @@ export class ProductPriceTabComponent implements OnInit {
                 private userService: UserService,
                 private cookieService: CookieService,
                 private translate: TranslateService) {
+        super();
     }
 
     ngOnInit() {
@@ -70,6 +74,8 @@ export class ProductPriceTabComponent implements OnInit {
                 this.catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent = 0;
             }
         }
+
+        this.addViewFormToParentForm(PRODUCT_PRICE_FORM_CONTROL_NAME);
     }
 
     updateDiscountUnits(){

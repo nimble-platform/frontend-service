@@ -250,7 +250,10 @@
         <!-- Price Tab -->
         <div class="row space-before" [hidden]="selectedTabSinglePublish != 'PRICE'">
             <div class="col-12">
-                <product-price-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()" [companyNegotiationSettings]="companyNegotiationSettings">
+                <product-price-tab [catalogueLine]="catalogueLine"
+                                   [disabled]="isLoading()"
+                                   [companyNegotiationSettings]="companyNegotiationSettings"
+                                   [parentForm]="publishForm">
                 </product-price-tab>
             </div>
         </div>
@@ -291,12 +294,12 @@
             </button>
         </div>
         <div class="col-3">
-            <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine() || !areInputNumbersValid()" (click)="onPublish(false)">
+            <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine() || !areInputNumbersValid() || !publishForm.valid" (click)="onPublish(false)">
                 {{ publishStateService.publishMode === "edit" ? "Save & Continue" : "Publish & Continue"  }}
             </button>
         </div>
         <div class="col-3">
-            <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine() || !areInputNumbersValid()" (click)="onPublish(true)">
+            <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine() || !areInputNumbersValid() || !publishForm.valid" (click)="onPublish(true)">
                 {{ publishStateService.publishMode === "edit" ? "Save & Exit" : "Publish & Exit"  }}
             </button>
         </div>

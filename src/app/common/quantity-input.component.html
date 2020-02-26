@@ -3,11 +3,19 @@
         <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
         </input-label>
     </div>
-    <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible">
+    <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible && quantityValueFormControl">
         <div class="row">
             <div class="{{valueSizeClass}} col-quantity-value">
-                <input type="number" class="form-control" [ngClass]="innerFormClass" [step]="step"
-                       [ngModel]="quantity.value" (ngModelChange)="quantity.value = $event; onQuantityValueChanged($event)" [disabled]="disabled" [placeholder]="placeholder" [required]="required">
+                <input type="number" class="form-control"
+                       [ngClass]="innerFormClass"
+                       [step]="step"
+                       [ngModel]="quantity.value"
+                       (ngModelChange)="quantity.value = $event; onQuantityValueChanged($event)"
+                       [disabled]="disabled"
+                       [placeholder]="placeholder"
+                       [required]="required"
+                       [formControl]="quantityValueFormControl"
+                       [ngbTooltip]="getValidationErrorMessage(quantityValueFormControl)" [placement]="'right'"  title="">
             </div>
             <div *ngIf="!quantityUnits" class="{{unitSizeClass}} col-quantity-unit">
                 <input type="text" class="form-control" [ngClass]="innerFormClass" [(ngModel)]="quantity.unitCode" (ngModelChange)="onQuantityUnitChanged($event)"
@@ -25,3 +33,7 @@
         <span [class]="valueTextClass">{{ quantityToString() }}</span>
     </div>
 </div>
+
+<!--<ng-template #popContent>-->
+<!--    <div class="alert-danger" Some error-->
+<!--</ng-template>-->

@@ -1,14 +1,21 @@
-import {Component, OnInit, Input, Output, EventEmitter} from "@angular/core";
-import { Quantity } from "../catalogue/model/publish/quantity";
-import { UnitService } from "./unit-service";
-import { quantityToString } from "./utils";
+import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
+import {Quantity} from "../catalogue/model/publish/quantity";
+import {UnitService} from "./unit-service";
+import {quantityToString} from "./utils";
+import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {ChildFormBase} from './validation/child-form-base';
+import {ValidatorFn} from '@angular/forms/src/directives/validators';
+import {stepValidator, VALIDATION_ERROR_MULTIPLE, ValidationService} from './validation/validators';
+
+const QUANTITY_INPUT_FORM_CONTROL_NAME = 'quantityInput';
+const NUMBER_VALUE_FORM_CONTROL = 'numberValue';
 
 @Component({
     selector: "quantity-input",
     templateUrl: "./quantity-input.component.html",
     styleUrls: ["./quantity-input.component.css"],
 })
-export class QuantityInputComponent implements OnInit {
+export class QuantityInputComponent extends ChildFormBase implements OnInit {
 
     @Input() visible: boolean = true;
     @Input() disabled: boolean = false;
@@ -32,13 +39,30 @@ export class QuantityInputComponent implements OnInit {
     @Input() quantityUnits?: string[];
     @Input() quantityType?: string;
     @Input() disableQuantityUnit: boolean = false;
-    @Input() step: number = 1;
     @Input() large: string = "false";
     @Input() required:boolean = false;
     innerFormClass = "form-control-sm";
+    quantityValueFormControl: FormControl;
 
-    constructor(private unitService: UnitService) {
+    // step logic
+    _step = 1;
+    @Input() set step(step: number) {
+        this._step = step;
 
+        // when step is changed the form control of the number input should also change
+        // however, if the quantity is not set yet, skip it as the form control depends on the quantity
+        if (this.quantity) {
+            this.initNumberInputFormControl();
+        }
+    }
+    get step(): number {
+        return this._step;
+    }
+    // end of step logic
+
+    constructor(private unitService: UnitService,
+                private validationService: ValidationService) {
+        super();
     }
 
     ngOnInit() {
@@ -61,6 +85,10 @@ export class QuantityInputComponent implements OnInit {
         } else if(this.quantityUnits != null && this.quantityUnits.length > 0) {
             this.initQuantityUnit();
         }
+
+        // initialize form controls
+        // this.initNumberInputFormControl();
+        this.addViewFormToParentForm(QUANTITY_INPUT_FORM_CONTROL_NAME);
     }
 
     private initQuantityUnit(): void {
@@ -69,6 +97,9 @@ export class QuantityInputComponent implements OnInit {
         }
     }
 
+    /**
+     * template-related methods handlers
+     */
     onQuantityValueChanged(value: number) {
         this.onQuantityValueChange.emit(value);
     }
@@ -79,5 +110,25 @@ export class QuantityInputComponent implements OnInit {
 
     quantityToString(): string {
         return quantityToString(this.quantity);
+    }
+
+    getValidationErrorMessage(formControl: AbstractControl): string {
+        return this.validationService.getValidationErrorMessage(formControl);
+    }
+
+    /**
+     * private inner methods
+     */
+    initializeForm(): void {
+        this.initNumberInputFormControl();
+    }
+
+    private initNumberInputFormControl(): void {
+        let validators: ValidatorFn[] = [stepValidator(this.step), Validators.min(1)];
+        this.quantityValueFormControl = new FormControl(this.quantity.value, validators);
+        if (this.formGroup.contains(NUMBER_VALUE_FORM_CONTROL)) {
+            this.formGroup.removeControl(NUMBER_VALUE_FORM_CONTROL);
+        }
+        this.formGroup.addControl(NUMBER_VALUE_FORM_CONTROL, this.quantityValueFormControl);
     }
 }

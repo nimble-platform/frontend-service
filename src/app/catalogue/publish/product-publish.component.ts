@@ -109,6 +109,8 @@ export class ProductPublishComponent implements OnInit {
     // Flag indicating that the source page is the search page.
     // This is passed true when the user has searched products associated to a property
     searchRef = false;
+    // form model to be provided as root model to the inner components used in publishing
+    publishForm: FormGroup = new FormGroup({});
 
     @ViewChild(EditPropertyModalComponent)
     private editPropertyModal: EditPropertyModalComponent;
@@ -129,8 +131,6 @@ export class ProductPublishComponent implements OnInit {
 
     // placeholder for the custom property
     private newProperty: ItemProperty = UBLModelUtils.createAdditionalItemProperty(null, null);
-    // form model to be provided as root model to the inner components used in publishing
-    publishForm: FormGroup = new FormGroup({});
 
     submitted = false;
     callback = false;

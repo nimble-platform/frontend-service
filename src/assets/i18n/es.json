@@ -777,5 +777,7 @@
     "Unknown": "Desconocido",
     "Federation": "Federation",
 	"ON": "Encender",
-	"OFF": "Apagar"
+	"OFF": "Apagar",
+	"validation_error_multiple": "Spanish tranlastion: The input should be multiples of {{step}}. Closest values are: {{minClosest}} and {{maxClosest}}",
+	"validation_error_min": "Spanish translation: The input should be larger than {{min}}"
 }

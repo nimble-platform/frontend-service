@@ -24,9 +24,11 @@
             <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.ORDERED_QUANTITY.typeID)">
                 <div class="row price-option-row">
                     <quantity-price-option class="col-11"
+                                           [catalogueLine]="catalogueLine"
                                            [priceOption]="priceOption.option"
                                            [discountUnits]="discountUnits"
-                                           [readonly]="readonly">
+                                           [readonly]="readonly"
+                                           [parentForm]="formGroup">
                     </quantity-price-option>
                     <div class="col-1" *ngIf="!readonly">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
