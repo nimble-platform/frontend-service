@@ -1,8 +1,8 @@
 <div class=" mt-2 row d-flex align-items-center" *ngIf="!readonly">
     <div class="col-6">
-        <amount-input [label]="'Discount Amount'"
+        <amount-input [label]="'Discount/Charge Amount'"
                       [labelClass]="'col-5'"
-                      [placeholder]="'Discount amount'"
+                      [placeholder]="'Discount/Charge amount'"
                       [amountCurrencies]="discountUnits"
                       [amount]="amount"
                       [valueClass]="'col-7'">
@@ -33,10 +33,10 @@
     <div class="col-6">
         <div class="row">
             <div class="col-5">
-                Discount Amount:
+                {{amount.value >= 0 ? 'Discount Amount': 'Charge Amount'}}
             </div>
             <div class="col-7" >
-                {{amountToString(amount)}} {{amount.currencyID !== '%' ? "on "+selectedDiscountTarget :""}}
+                {{amountToString()}} {{amount.currencyID !== '%' ? "on "+selectedDiscountTarget :""}}
                 <span class="definition"
                       title="The discount/charge is applied on the total price for the total price option. Otherwise, per unit indicates the base quantity of the order. For example, if the order quantity is 10 units then the discount/charge is applied to each unit'; if the order quantity is 10 tons then the discount/charge is applied to each ton">&#9432;</span>
             </div>

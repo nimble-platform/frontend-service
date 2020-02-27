@@ -20,10 +20,10 @@ export class AmountInputComponent implements OnInit {
     @Input() labelMainClass: string = "";
     @Input() rowClass: string = "";
     @Input() valueClass: string; // set based on label
-    @Input() placeholder: string = "Enter value here...";
+    @Input() placeholder: string = "...";
     @Input() unitPlaceholder: string = "Unit";
     @Input() valueTextClass: string = "";
-    
+
     @Input() amount: Amount;
     @Input() amountCurrencies?: string[];
     @Input() amountType?: string;
@@ -39,7 +39,7 @@ export class AmountInputComponent implements OnInit {
         }
 
         if (this.amountType) {
-            this.amountCurrencies = ["Loading..."];
+            this.amountCurrencies = ["..."];
             this.unitService.getCachedUnitList(this.amountType)
                 .then(units => {
                     this.amountCurrencies = units;

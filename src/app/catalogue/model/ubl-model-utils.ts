@@ -328,7 +328,6 @@ export class UBLModelUtils {
 
         rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = copyOrder.orderLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
         rfq.requestForQuotationLine[0].lineItem.deliveryTerms.deliveryLocation.address = copyOrder.orderLine[0].lineItem.deliveryTerms.deliveryLocation.address;
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.originAddress = copyOrder.orderLine[0].lineItem.item.manufacturerParty.postalAddress;
         rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails = copyLine.goodsItem.item.transportationServiceDetails;
         let size = copyOrder.orderLine.length;
         for(let i = 0; i < size ; i++){
@@ -901,6 +900,10 @@ export class UBLModelUtils {
         return false;
     }
 
+    public static isAddressEmpty(address:Address):boolean {
+        return !(address && (this.isNotEmptyString(address.streetName) || this.isNotEmptyString(address.buildingNumber) || this.isNotEmptyString(address.postalZone) || this.isNotEmptyString(address.region) || this.isNotEmptyString(address.cityName) || this.isNotEmptyCountry(address.country)));
+    }
+
     public static getFrameContractDurationFromRfqLine(rfqLine: RequestForQuotationLine): Quantity {
         let tradingTerm: TradingTerm = rfqLine.lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
         if(tradingTerm != null) {
@@ -1026,5 +1029,20 @@ export class UBLModelUtils {
             }
         }
         return false;
+    }
+
+    private static isNotEmptyString (string) {
+        return string != null && string !== ''
+    }
+
+    private static isNotEmptyCountry (country:Country) {
+        return country && country.name && this.isNotEmptyString(country.name.value);
+    }
+
+    public static areNotesOrFilesAttachedToDocument(document:RequestForQuotation | Quotation){
+        // consider the documents which has a embedded binary objects
+        // the others are just references to previous documents
+        let files = document.additionalDocumentReference.filter(doc => doc.attachment != null).map(doc => doc.attachment.embeddedDocumentBinaryObject);
+        return (document.note.length == 1 && document.note[0] != "") || document.note.length > 1 || files.length > 0;
     }
 }

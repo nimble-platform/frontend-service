@@ -22,7 +22,7 @@ import {TransportationService} from '../model/publish/transportation-service';
 import {Catalogue} from '../model/publish/catalogue';
 import * as myGlobals from '../../globals';
 import {Category} from '../model/category/category';
-import {LogisticPublishingService} from './logistic-publishing.service';
+import {PublishingPropertyService} from './publishing-property.service';
 import {TranslateService} from '@ngx-translate/core';
 
 @Component({
@@ -40,7 +40,7 @@ export class LogisticServicePublishComponent implements OnInit {
                 private router: Router,
                 private location: Location,
                 private cookieService: CookieService,
-                private logisticPublishingService:LogisticPublishingService,
+                private logisticPublishingService:PublishingPropertyService,
                 private translate: TranslateService) {
     }
 

@@ -3,7 +3,7 @@ import {Component, Input, OnInit} from "@angular/core";
 import {PriceOption} from "../../catalogue/model/publish/price-option";
 import {AllowanceCharge} from "../../catalogue/model/publish/allowance-charge";
 import {Amount} from "../../catalogue/model/publish/amount";
-import {amountToString} from '../../common/utils';
+import {amountToString, copy} from '../../common/utils';
 /**
  * Created by suat on 05-Sep-18.
  */
@@ -16,8 +16,6 @@ export class DiscountTargetComponent implements OnInit {
     @Input() priceOption: PriceOption;
     @Input() discountUnits;
     @Input() readonly:boolean = false;
-
-    amountToString=amountToString;
 
     selectedDiscountTarget: string = DISCOUNT_TARGETS.TOTAL_PRICE;
     amount: Amount;
@@ -55,5 +53,12 @@ export class DiscountTargetComponent implements OnInit {
                 this.amount = allowanceCharge.amount;
             }
         }
+    }
+
+    amountToString(){
+        // we display positive numbers for discount and charge when they are readonly.
+        let amount = copy(this.amount);
+        amount.value = Math.abs(this.amount.value);
+        return amountToString(amount);
     }
 }

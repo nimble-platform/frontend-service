@@ -39,11 +39,11 @@ export class MultiAddressInputComponent {
         let ret = [];
         if (deliveryTerms.length === 0 || !deliveryTerms[0].deliveryAddress || !deliveryTerms[0].deliveryAddress.streetName) {
             ret = [
-                { name: 'No', value: '' }
+                { name: '-', value: '' }
             ];
         } else {
             ret = [
-                { name: 'No', value: '' }
+                { name: '-', value: '' }
             ].concat(deliveryTerms.map((term, i) => {
                 return { name: addressToString(term.deliveryAddress), value: String(i) };
             }));

@@ -17,10 +17,10 @@ export class DateInputComponent implements OnInit {
     @Input() labelMainClass: string = "";
     @Input() rowClass: string = "";
     @Input() valueClass: string; // set based on label
-    @Input() placeholder: string = "Enter a value...";
-    
+    @Input() placeholder: string = "...";
+
     @Input() valueDateClass: string = "";
-    
+
     private dateValue: string;
     @Output() dateChange = new EventEmitter<string>();
     dateToString=dateToString;

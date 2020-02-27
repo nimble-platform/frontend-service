@@ -439,7 +439,14 @@ export class TermsAndConditionsComponent implements OnInit {
 
     private updateTermNegotiating(tradingTermId:string,value:string){
         // update the value of parameter in tradingTerms map
-        if(this.tradingTerms){
+        if(this.tradingTerms && this.tradingTerms.has(tradingTermId)){
+            // handling of empty string
+            if(value == "" && this.originalTradingTerms && this.originalTradingTerms.has(tradingTermId)){
+                let defaultTradingTerm = this.originalTradingTerms.get(tradingTermId);
+                if (tradingTermId == "$incoterms_id") {
+                    value = defaultTradingTerm.value.valueCode[0].value
+                }
+            }
             this.tradingTerms.get(tradingTermId).value.valueCode[0].value = value;
         }
         // update the value of parameter in the text

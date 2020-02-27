@@ -13,15 +13,15 @@
 
                 <div ngbDropdown class="d-inline-block input-group-prepend">
                     <button class="btn btn-outline-dark" type="button" id="allCategories" [disabled]="getCategoryDetailsStatus.isDisplayed()" ngbDropdownToggle>
-                        {{taxonomyId.replace("FurnitureOntology", "Furniture Sector")}} Categories
+                        {{taxonomyId.replace("FurnitureOntology", "Furniture Sector")}} <span [innerHTML]="'Categories' | translate"></span>
                     </button>
                     <div ngbDropdownMenu aria-labelledby="allCategories">
-                        <a *ngFor="let taxonomyID of taxonomyIDs" class="dropdown-item" (click)="changeTaxonomyId(taxonomyID)">{{taxonomyID.replace("FurnitureOntology", "Furniture Sector")}} Categories</a>
+                        <a *ngFor="let taxonomyID of taxonomyIDs" class="dropdown-item" (click)="changeTaxonomyId(taxonomyID)">{{taxonomyID.replace("FurnitureOntology", "Furniture Sector")}} <span [innerHTML]="'Categories' | translate"></span></a>
                     </div>
                 </div>
 
                 <!-- End TODO: All Categories Search -->
-                <input type="text" class="form-control" name="inputCtrl" [(ngModel)]="categoryKeyword" [ngbTypeahead]="getSuggestions" [focusFirst]=false placeholder="Search Category..."/>
+                <input type="text" class="form-control" name="inputCtrl" [(ngModel)]="categoryKeyword" [ngbTypeahead]="getSuggestions" [focusFirst]=false [placeholder]="'Search Category...' | translate"/>
                 <div class="input-group-append">
                     <button type="submit" class="btn btn-primary" [disabled]="!categorySearch.form.valid || getCategoryDetailsStatus.isDisplayed()">
                         <i class="fa fa-search pr-1"></i> <span><span [innerHTML]="'Search Categories' | translate"></span></span>
@@ -204,7 +204,7 @@
             <!-- Title + buttons -->
             <div *ngIf="selectedCategoryWithDetails" class="d-flex flex-row fixed p-2" [ngClass]="{'fixed-header': selectedCategoryWithDetails}">
                 <h4 class="font-weight-bold" *ngIf="!selectedCategoryWithDetails"><span [innerHTML]="'Details' | translate"></span></h4>
-                <h4 class="font-weight-bold pr-2 mr-auto" *ngIf="selectedCategoryWithDetails">Details for {{selectPreferredName(selectedCategoryWithDetails)}}</h4>
+                <h4 class="font-weight-bold pr-2 mr-auto" *ngIf="selectedCategoryWithDetails"><span [innerHTML]="'Details for' | translate"></span> {{selectPreferredName(selectedCategoryWithDetails)}}</h4>
                 <div *ngIf="selectedCategoryWithDetails">
                     <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) === -1"
                             class="btn btn-outline-primary float-right" (click)="addCategoryToSelected(selectedCategoryWithDetails)">
@@ -217,10 +217,10 @@
                     <br/>
 
                     <div class="float-right mt-1">
-                      <span *ngIf="!findPrefCat(selectedCategoryWithDetails)" class="star star-b pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="addCategoryToFavorites(selectedCategoryWithDetails)" title="Add To Favorite">
+                      <span *ngIf="!findPrefCat(selectedCategoryWithDetails)" class="star star-b pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="addCategoryToFavorites(selectedCategoryWithDetails)" [title]="'Add To Favorite' | translate">
                         <span class="half" style="width:0%">&#9733;</span>&#9733;
                       </span>
-                      <span *ngIf="findPrefCat(selectedCategoryWithDetails)" class="star star-b full pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="removeCategoryFromFavorites(selectedCategoryWithDetails)" title="Remove From Favorite">
+                      <span *ngIf="findPrefCat(selectedCategoryWithDetails)" class="star star-b full pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="removeCategoryFromFavorites(selectedCategoryWithDetails)" [title]="'Remove From Favorite' | translate">
                         <span class="half" style="width:100%">&#9733;</span>&#9733;
                       </span>
                     </div>

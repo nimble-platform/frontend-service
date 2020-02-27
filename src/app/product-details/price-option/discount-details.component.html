@@ -5,7 +5,10 @@
     </div>
     <div class="col-2">
         <select class="form-control form-control-sm" #priceOptionSelect>
-            <option *ngFor="let option of object.keys(priceOptions)" [value]="option">{{priceOptions[option].text}}</option>
+            <ng-container *ngFor="let option of object.keys(priceOptions)">
+                <!-- do not show product property as a price option if the product does not have any property -->
+                <option *ngIf="option != 'PRODUCT_PROPERTY' || catalogueLine.goodsItem.item.additionalItemProperty.length > 0" [value]="option">{{priceOptions[option].text}}</option>
+            </ng-container>
         </select>
     </div>
     <button class="btn btn-outline-primary btn-sm" (click)="addPriceOption(priceOptions[priceOptionSelect.value].typeID)">
@@ -18,7 +21,7 @@
     <div class="card space-after">
         <div class="card-header">
             <strong><span [innerHTML]="'Price options on ordered quantities' | translate"></span></strong>
-            <span title="'Specified quantities are the minimum amounts required for the indicated discount to be applicable'">&#9432;</span>
+            <span [title]="'Specified quantities are the minimum amounts required for the indicated discount to be applicable' | translate">&#9432;</span>
         </div>
         <div class="card-body">
             <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.ORDERED_QUANTITY.typeID)">
@@ -48,7 +51,7 @@
     <div class="card space-after">
         <div class="card-header">
             <strong><span [innerHTML]="'Product / Service property based price options' | translate"></span></strong>
-            <span title="'Different prices could be specified based on different values of product / service properties'">&#9432;</span>
+            <span [title]="'Different prices could be specified based on different values of product / service properties' | translate">&#9432;</span>
         </div>
         <div class="card-body">
             <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.PRODUCT_PROPERTY.typeID); let i = index;">
@@ -78,7 +81,7 @@
     <div class="card space-after">
         <div class="card-header">
             <strong><span [innerHTML]="'Incoterms based price options' | translate"></span></strong>
-            <span title="'Different prices could be specified based on different values of incoterm'">&#9432;</span>
+            <span [title]="'Different prices could be specified based on different values of incoterm' | translate">&#9432;</span>
         </div>
         <div class="card-body">
             <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.INCOTERM.typeID); let i = index;">
@@ -108,7 +111,7 @@
     <div class="card space-after">
         <div class="card-header">
             <strong><span [innerHTML]="'Payment means based price options' | translate"></span></strong>
-            <span title="'Different prices could be specified based on different values of payment means'">&#9432;</span>
+            <span [title]="'Different prices could be specified based on different values of payment means' | translate">&#9432;</span>
         </div>
         <div class="card-body">
             <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.PAYMENT_MEAN.typeID); let i = index;">
@@ -138,7 +141,7 @@
     <div class="card space-after">
         <div class="card-header">
             <strong><span [innerHTML]="'Delivery location based price options' | translate"></span></strong>
-            <span title="'Different prices could be specified based on different values of delivery location'">&#9432;</span>
+            <span [title]="'Different prices could be specified based on different values of delivery location' | translate">&#9432;</span>
         </div>
         <div class="card-body">
             <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.DELIVERY_LOCATION.typeID); let i = index;">
@@ -167,7 +170,7 @@
     <div class="card space-after">
         <div class="card-header">
             <strong><span [innerHTML]="'Delivery period based price options' | translate"></span></strong>
-            <span title="'Different prices could be specified based on different values of delivery period'">&#9432;</span>
+            <span [title]="'Different prices could be specified based on different values of delivery period' | translate">&#9432;</span>
         </div>
         <div class="card-body">
             <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.DELIVERY_PERIOD.typeID); let i = index;">

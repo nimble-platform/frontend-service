@@ -1,11 +1,13 @@
 import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 import {Quantity} from "../catalogue/model/publish/quantity";
 import {UnitService} from "./unit-service";
-import {quantityToString} from "./utils";
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {isCustomProperty, quantityToString} from "./utils";
+import {AbstractControl, FormControl, Validators} from '@angular/forms';
 import {ChildFormBase} from './validation/child-form-base';
 import {ValidatorFn} from '@angular/forms/src/directives/validators';
-import {stepValidator, VALIDATION_ERROR_MULTIPLE, ValidationService} from './validation/validators';
+import {stepValidator, ValidationService} from './validation/validators';
+import {ItemProperty} from '../catalogue/model/publish/item-property';
+import {PublishingPropertyService} from '../catalogue/publish/publishing-property.service';
 
 const QUANTITY_INPUT_FORM_CONTROL_NAME = 'quantityInput';
 const NUMBER_VALUE_FORM_CONTROL = 'numberValue';
@@ -29,7 +31,7 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
     @Input() valueClass: string; // set based on label
     @Input() valueSizeClass: string = "col-7";
     @Input() unitSizeClass: string = "col-5";
-    @Input() placeholder: string = "Enter value here...";
+    @Input() placeholder: string = "...";
     @Input() unitPlaceholder: string = "Unit";
     @Input() valueTextClass: string = "";
 
@@ -43,6 +45,8 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
     @Input() required:boolean = false;
     innerFormClass = "form-control-sm";
     quantityValueFormControl: FormControl;
+
+    @Input() property:ItemProperty = null;
 
     // step logic
     _step = 1;
@@ -61,6 +65,7 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
     // end of step logic
 
     constructor(private unitService: UnitService,
+                private publishingPropertyService: PublishingPropertyService,
                 private validationService: ValidationService) {
         super();
     }
@@ -75,7 +80,13 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
         else
           this.innerFormClass = "form-control-sm";
 
-        if(this.quantityType) {
+        if(this.property && !isCustomProperty(this.property)){
+            this.publishingPropertyService.getCachedProperty(this.property.id).then(indexedProperty => {
+                if(indexedProperty.codeList && indexedProperty.codeList.length > 0){
+                    this.quantityUnits = indexedProperty.codeList;
+                }
+            });
+        } else if(this.quantityType) {
             this.quantityUnits = ["Loading..."];
             this.unitService.getCachedUnitList(this.quantityType)
             .then(units => {

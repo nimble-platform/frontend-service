@@ -22,7 +22,7 @@ export class TextInputComponent implements OnInit {
     @Input() rowClass: string = "";
     @Input() flexClass: string = "";
     @Input() valueClass: string; // set based on label
-    @Input() placeholder: string = "Enter a value...";
+    @Input() placeholder: string = "...";
     @Input() addButtonStyle:string = "";
     @Input() deleteButtonStyle:string = "";
 

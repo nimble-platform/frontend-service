@@ -178,7 +178,7 @@
                                         </select>
                                     </td>
                                     <td *ngIf="prop.valueQualifier === 'QUANTITY'" style="vertical-align:middle" class="pb-0">
-                                      <quantity-input [quantity]="prop.valueQuantity[i]" rowClass="quantity-input" large="true" [step]="0.01">
+                                      <quantity-input [property]="prop" [quantity]="prop.valueQuantity[i]" rowClass="quantity-input" large="true" [step]="0.01">
                                       </quantity-input>
                                     </td>
                                     <td *ngIf="prop.valueQualifier === 'BOOLEAN'" style="vertical-align:middle;line-height:2.375rem;" class="pb-0">
@@ -295,12 +295,14 @@
         </div>
         <div class="col-3">
             <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine() || !areInputNumbersValid() || !publishForm.valid" (click)="onPublish(false)">
-                {{ publishStateService.publishMode === "edit" ? "Save & Continue" : "Publish & Continue"  }}
+                <span *ngIf="publishStateService.publishMode === 'edit'" [innerHTML]="'Save & Continue' | translate"></span>
+                <span *ngIf="publishStateService.publishMode !== 'edit'" [innerHTML]="'Publish & Continue' | translate"></span>
             </button>
         </div>
         <div class="col-3">
             <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine() || !areInputNumbersValid() || !publishForm.valid" (click)="onPublish(true)">
-                {{ publishStateService.publishMode === "edit" ? "Save & Exit" : "Publish & Exit"  }}
+                <span *ngIf="publishStateService.publishMode === 'edit'" [innerHTML]="'Save & Exit' | translate"></span>
+                <span *ngIf="publishStateService.publishMode !== 'edit'" [innerHTML]="'Publish & Exit' | translate"></span>
             </button>
         </div>
     </div>

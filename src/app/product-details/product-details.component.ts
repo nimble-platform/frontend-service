@@ -269,7 +269,7 @@ export class ProductDetailsComponent implements OnInit {
         // the order quantity check is put as the price wrapper sets price to 0 when the quantity is 0
         // TODO: we should have proper form validations (for quantity inputs) where the price wrapper is used and
         //  should not consider validity of order quantity inside the price wrapper
-        if (event === 'product_defaults' && this.orderQuantity > 0) {
+        if (event === 'product_defaults' && this.orderQuantity) {
             this.priceWrapper.itemPrice.value = this.priceWrapper.discountedPricePerItem;
         }
     }
