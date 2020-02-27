@@ -4,14 +4,18 @@ import {PriceOption} from "../../catalogue/model/publish/price-option";
 import {AllowanceCharge} from "../../catalogue/model/publish/allowance-charge";
 import {Amount} from "../../catalogue/model/publish/amount";
 import {amountToString, copy} from '../../common/utils';
+import {EmptyFormBase} from '../../common/validation/empty-form-base';
 /**
  * Created by suat on 05-Sep-18.
  */
+
+const DISCOUNT_TARGET_FORM_CONTROL_NAME = 'discountTarget';
+
 @Component({
     selector: "discount-target",
     templateUrl: "./discount-target.component.html"
 })
-export class DiscountTargetComponent implements OnInit {
+export class DiscountTargetComponent extends EmptyFormBase implements OnInit {
 
     @Input() priceOption: PriceOption;
     @Input() discountUnits;
@@ -36,6 +40,9 @@ export class DiscountTargetComponent implements OnInit {
         } else {
             this.amount = this.priceOption.itemLocationQuantity.allowanceCharge[0].amount;
         }
+
+        // initialize form controls
+        this.addViewFormToParentForm(DISCOUNT_TARGET_FORM_CONTROL_NAME);
     }
 
     changeDiscountTarget(discountTarget: string, allowanceCharge: AllowanceCharge): void {

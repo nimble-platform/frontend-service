@@ -6,7 +6,13 @@
                     [presentationMode]="readonly ? 'view': 'edit'"
                     [quantity]="priceOption.itemLocationQuantity.minimumQuantity"
                     [step]="catalogueLine.requiredItemLocationQuantity.price.baseQuantity.value"
-                    [parentForm]="formGroup">
+                    [required]="true"
+                    [parentForm]="formGroup"
+                    [disableQuantityUnit]="true">
     </quantity-input>
 </div>
-<discount-target [priceOption]="priceOption" [discountUnits]="discountUnits" [readonly]="readonly"></discount-target>
+<discount-target [priceOption]="priceOption"
+                 [discountUnits]="discountUnits"
+                 [readonly]="readonly"
+                 [parentForm]="formGroup">
+</discount-target>

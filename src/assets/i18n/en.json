@@ -832,6 +832,6 @@
 	"Save & Exit": "Save & Exit",
 	"Publish & Exit": "Publish & Exit",
 	"validation_error_multiple": "The input should be a multiple of {{step}}. Closest values are: {{minClosest}} and {{maxClosest}}",
-	"validation_error_min": "The input should be larger than {{min}}",
+	"validation_error_min": "The input should be equal to or larger than {{min}}",
 	"validation_error_required": "This input is required"
 }
