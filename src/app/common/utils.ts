@@ -24,6 +24,7 @@ import {
 } from './constants'
 import {UnitService} from "./unit-service";
 import {CompanyNegotiationSettings} from "../user-mgmt/model/company-negotiation-settings";
+import {isNumber} from '@ng-bootstrap/ng-bootstrap/util/util';
 
 const UI_NAMES: any = {
     STRING: "TEXT"
@@ -566,6 +567,10 @@ export function roundToTwoDecimals(value): any{
         return roundedValue.toFixed(power);
     }
     return value;
+}
+
+export function roundToTwoDecimalsNumber(value: number): number {
+    return Number(value.toFixed(2));
 }
 
 export function isNaNNullAware(number: number): boolean {

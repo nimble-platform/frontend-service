@@ -15,7 +15,7 @@
                        [placeholder]="placeholder"
                        [required]="required"
                        [formControl]="quantityValueFormControl"
-                       [ngbTooltip]="getValidationErrorMessage(quantityValueFormControl)" [placement]="'right'"  title="">
+                       [ngbTooltip]="getValidationErrorMessage(quantityValueFormControl)" [placement]="'auto'"  title="">
             </div>
             <div *ngIf="!quantityUnits" class="{{unitSizeClass}} col-quantity-unit">
                 <input type="text" class="form-control" [ngClass]="innerFormClass" [(ngModel)]="quantity.unitCode" (ngModelChange)="onQuantityUnitChanged($event)"

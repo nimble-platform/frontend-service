@@ -42,15 +42,18 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
     @Input() quantityType?: string;
     @Input() disableQuantityUnit: boolean = false;
     @Input() large: string = "false";
-    @Input() required:boolean = false;
-    innerFormClass = "form-control-sm";
-    quantityValueFormControl: FormControl;
+    innerFormClass = 'form-control-sm';
+
+    // form validation inputs
+    @Input() required = false;
+    @Input() minimum: number;
 
     @Input() property:ItemProperty = null;
 
     // step logic
     _step = 1;
     @Input() set step(step: number) {
+        step = step || 1;
         this._step = step;
 
         // when step is changed the form control of the number input should also change
@@ -63,6 +66,9 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
         return this._step;
     }
     // end of step logic
+    // end of form validation inputs
+
+    quantityValueFormControl: FormControl;
 
     constructor(private unitService: UnitService,
                 private publishingPropertyService: PublishingPropertyService,
@@ -98,7 +104,6 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
         }
 
         // initialize form controls
-        // this.initNumberInputFormControl();
         this.addViewFormToParentForm(QUANTITY_INPUT_FORM_CONTROL_NAME);
     }
 
@@ -135,7 +140,17 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
     }
 
     private initNumberInputFormControl(): void {
-        let validators: ValidatorFn[] = [stepValidator(this.step), Validators.min(1)];
+        let validators: ValidatorFn[] = [stepValidator(this.step)];
+        if (this.minimum) {
+            validators.push(Validators.min(this.minimum));
+        }
+        if (this.required) {
+            if (!this.minimum) {
+                validators.push(Validators.min(1));
+            }
+        }
+        // required validator is already on the template
+
         this.quantityValueFormControl = new FormControl(this.quantity.value, validators);
         if (this.formGroup.contains(NUMBER_VALUE_FORM_CONTROL)) {
             this.formGroup.removeControl(NUMBER_VALUE_FORM_CONTROL);
