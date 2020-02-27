@@ -778,6 +778,7 @@
 	"Federation": "Federation",
 	"ON": "ON",
 	"OFF": "OFF",
-	"validation_error_multiple": "The input should be multiples of {{step}}. Closest values are: {{minClosest}} and {{maxClosest}}",
-	"validation_error_min": "The input should be larger than {{min}}"
+	"validation_error_multiple": "The input should be a multiple of {{step}}. Closest values are: {{minClosest}} and {{maxClosest}}",
+	"validation_error_min": "The input should be larger than {{min}}",
+	"validation_error_required": "This input is required"
 }

@@ -11,7 +11,7 @@ import { Item } from "../catalogue/model/publish/item";
 import {
     copy,
     getMaximumQuantityForPrice,
-    getStepForPrice,
+    getStepRangeForPrice,
     isTransportService,
     selectPreferredValue,
     isLogisticsService, validateNumberInput
@@ -33,6 +33,10 @@ import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 import {QuotationWrapper} from "../bpe/bp-view/negotiation/quotation-wrapper";
 import {SearchContextService} from '../simple-search/search-context.service';
 import {UnshippedOrdersTransitionService} from '../bpe/unshipped-order-transition-service';
+import {Price} from '../catalogue/model/publish/price';
+import {AbstractControl, FormControl, Validators} from '@angular/forms';
+import {ValidatorFn} from '@angular/forms/src/directives/validators';
+import {stepValidator, ValidationService} from '../common/validation/validators';
 
 @Component({
     selector: 'product-details',
@@ -78,7 +82,7 @@ export class ProductDetailsComponent implements OnInit {
 
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
-
+    quantityValueFormControl: FormControl;
     config = myGlobals.config;
     selectPreferredValue = selectPreferredValue;
     onOrderQuantityKeyPressed = validateNumberInput;
@@ -92,6 +96,7 @@ export class ProductDetailsComponent implements OnInit {
                 private cookieService: CookieService,
                 private searchContextService:SearchContextService,
                 private unShippedOrdersTransitionService: UnshippedOrdersTransitionService,
+                private validationService: ValidationService,
                 private translate: TranslateService,
                 public appComponent: AppComponent) {
 
@@ -122,6 +127,7 @@ export class ProductDetailsComponent implements OnInit {
                         this.itemWithSelectedProperties = copy(this.item);
                         this.isLogistics = isLogisticsService(this.line);
                         this.isTransportService = isTransportService(this.line);
+                        this.orderQuantity = this.getMinimumOrderQuantity();
 
                         // check frame contract for the current line
                         this.bpeService.getFrameContract(UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty),
@@ -166,6 +172,7 @@ export class ProductDetailsComponent implements OnInit {
                         // get the business workflow of seller company
                         this.companyWorkflowMap = this.bpDataService.getCompanyWorkflowMap(settings.negotiationSettings.company.processID);
 
+                        this.initQuantityFormControl();
                         // the quantity change event handler is called here to update the price in case a specific quantity is provided as a query parameter
                         this.onOrderQuantityChange(this.orderQuantity);
 
@@ -259,7 +266,10 @@ export class ProductDetailsComponent implements OnInit {
         this.termsSelectBoxValue = event;
         this.priceWrapper.additionalItemProperties = this.itemWithSelectedProperties.additionalItemProperty;
 
-        if(event == 'product_defaults') {
+        // the order quantity check is put as the price wrapper sets price to 0 when the quantity is 0
+        // TODO: we should have proper form validations (for quantity inputs) where the price wrapper is used and
+        //  should not consider validity of order quantity inside the price wrapper
+        if (event === 'product_defaults' && this.orderQuantity > 0) {
             this.priceWrapper.itemPrice.value = this.priceWrapper.discountedPricePerItem;
         }
     }
@@ -280,8 +290,8 @@ export class ProductDetailsComponent implements OnInit {
         return getMaximumQuantityForPrice(this.priceWrapper.price);
     }
 
-    getSteps(): number {
-        return getStepForPrice(this.priceWrapper.price);
+    getStepRange(): number {
+        return getStepRangeForPrice(this.priceWrapper.price);
     }
 
     getQuantityUnit(): string {
@@ -291,8 +301,22 @@ export class ProductDetailsComponent implements OnInit {
         return this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode || "";
     }
 
+    getMinimumOrderQuantity(): number {
+        let price: Price = this.line.requiredItemLocationQuantity.price;
+        if (price) {
+            if (this.line.requiredItemLocationQuantity.price.baseQuantity.value) {
+                return this.line.requiredItemLocationQuantity.price.baseQuantity.value;
+            }
+        }
+        return 1;
+    }
+
     isPpapAvailable(): boolean {
         return this.settings && !!this.settings.tradeDetails.ppapCompatibilityLevel;
+    }
+
+    getValidationErrorMessage(formControl: AbstractControl): string {
+        return this.validationService.getValidationErrorMessage(formControl);
     }
 
     private openDiscountModal(): void{
@@ -372,5 +396,15 @@ export class ProductDetailsComponent implements OnInit {
 
         // retrieve the associated products
         return this.catalogueService.getCatalogueLinesByHjids(associatedProductIds);
+    }
+
+    initQuantityFormControl(): void {
+        let stepRange = 1;
+        if (this.hasPrice()) {
+            stepRange = this.priceWrapper.price.baseQuantity.value;
+        }
+
+        let validators: ValidatorFn[] = [stepValidator(stepRange), Validators.min(stepRange), Validators.required];
+        this.quantityValueFormControl = new FormControl(this.orderQuantity, validators);
     }
 }

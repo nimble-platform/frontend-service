@@ -75,7 +75,6 @@ export class DiscountPriceWrapper {
 
     get discountedPricePerItemString(): string {
         const qty = this.orderedQuantity;
-
         if(!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
             return "On demand";
         }
