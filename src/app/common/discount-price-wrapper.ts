@@ -1,6 +1,6 @@
 import { Price } from "../catalogue/model/publish/price";
 import { Quantity } from "../catalogue/model/publish/quantity";
-import {copy, currencyToString, roundToTwoDecimals} from "./utils";
+import {copy, currencyToString, roundToTwoDecimals, roundToTwoDecimalsNumber} from "./utils";
 import { ItemPriceWrapper } from "./item-price-wrapper";
 import {PriceOption} from '../catalogue/model/publish/price-option';
 import {PRICE_OPTIONS} from '../catalogue/model/constants';
@@ -51,7 +51,7 @@ export class DiscountPriceWrapper {
             return 0;
         }
 
-        return this.itemPrice.pricePerItem;
+        return roundToTwoDecimalsNumber(this.itemPrice.pricePerItem);
     }
 
     get pricePerItemString(): string {
@@ -70,7 +70,7 @@ export class DiscountPriceWrapper {
         }
 
         let discountedTotalPrice: number = this.getDiscountedTotalPrice();
-        return discountedTotalPrice / this.orderedQuantity.value;
+        return roundToTwoDecimalsNumber(discountedTotalPrice / this.orderedQuantity.value);
     }
 
     get discountedPricePerItemString(): string {
