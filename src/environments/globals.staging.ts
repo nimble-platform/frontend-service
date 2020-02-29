@@ -141,6 +141,7 @@ export const config = {
     }
   ],
   "showChat": true,
+  "showAgent": false,
   "showCompanyMembers": false,
   "showExplorative": true,
   "showLCPA": true,

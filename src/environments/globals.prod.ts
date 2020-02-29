@@ -104,6 +104,7 @@ export const config = {
     }
   ],
   "showChat": false,
+  "showAgent": false,
   "showCompanyMembers": false,
   "showExplorative": true,
   "showLCPA": true,
