@@ -1,0 +1,557 @@
+<div class="row">
+    <div class="col-12">
+        <p class="nimble-title"><span [innerHTML]="'Agent Settings' | translate"></span></p>
+    </div>
+</div>
+
+<!--<call-status [callStatus]="callStatus" [large]="true"></call-status>-->
+
+<div>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a href id="COMPANY_DESCRIPTION" class="nav-link" [ngClass]="{ active: selectedTab === 'BUYING_AGENT'}" (click)="onSelectTab($event,'BUYING_AGENT')">
+                <span [innerHTML]="'Buying Agent' | translate"></span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href id="COMPANY_DATA" class="nav-link" [ngClass]="{ active: selectedTab === 'SELLING_AGENT'}" (click)="onSelectTab($event,'SELLING_AGENT')">
+                <span [innerHTML]="'Selling Agent' | translate"></span>
+            </a>
+        </li>
+    </ul>
+</div>
+
+<div *ngIf="!showTransactions">
+    <!-- Company Data, hidden to avoid reloading  -->
+    <div [hidden]="selectedTab !== 'SELLING_AGENT'">
+        <div class="col-12 space-before">
+
+            <div class="col-12">
+                <div class="d-flex justify-content-end">
+                    <!--<call-status [callStatus]="exportCallStatus"></call-status>-->
+                    <button class="btn btn-primary align-self-start float-right ml-2"
+                            (click)="createSellingAgent();openModal(tooltip)">
+                        <span [innerHTML]="'Create Agent' | translate"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12" *ngIf="agentList.length > 0">
+            <h3 class="space-before"><span [innerHTML]="'Agents List' | translate"></span></h3>
+
+            <div class="space-before">
+                <table class="table table-striped table-bordered">
+                    <tr>
+                        <th><span [innerHTML]="'Agent Name' | translate"></span></th>
+                        <th><span [innerHTML]="'No of Contracts' | translate"></span></th>
+                        <th><span [innerHTML]="'Is Active' | translate"></span></th>
+                        <th><span [innerHTML]="'Last Activity In' | translate"></span></th>
+                        <th><span [innerHTML]="'Options' | translate"></span></th>
+                    </tr>
+                    <tr [hidden]="!membersFetched || agentList.length > 0">
+                        <td colspan="4"><span [innerHTML]="'No data' | translate"></span></td>
+                    </tr>
+                    <tr *ngFor="let inv of agentList">
+                        <td>{{inv.agentName}}</td>
+                        <td>
+                            {{inv.noOfTransactions}}
+                        </td>
+                        <td>
+                            <span *ngIf="inv.isActive" class="badge badge-success"><span [innerHTML]="'Active' | translate"></span></span>
+                            <span *ngIf="!inv.isActive" class="badge badge-warning"><span [innerHTML]="'In Active' | translate"></span></span>
+                        </td>
+                        <td>
+                            {{inv.lastActive}}
+                        </td>
+                        <td>
+                            <button class="btn btn-success btn-sm" (click)="showTransactionsView(inv.name)"><span [innerHTML]="'View Orders' | translate"></span></button>
+                            <button class="btn btn-primary btn-sm" (click)="editSellingAgent(inv.id)"><span [innerHTML]="'Edit' | translate"></span></button>
+                            <button class="btn btn-danger btn-sm" (click)="deleteSellingAgent(inv.id)"><span [innerHTML]="'Delete' | translate"></span></button>
+                            <span *ngIf="inv.isActive">
+                                <button class="btn btn-danger btn-sm ml-2" (click)="deactivateSA(inv.id)"><span [innerHTML]="'Deactivate' | translate"></span></button>
+                            </span>
+                            <span *ngIf="!inv.isActive">
+                                <button class="btn btn-danger btn-sm ml-2" (click)="activateSA(inv.id)"><span [innerHTML]="'Activate' | translate"></span></button>
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-12" *ngIf="showEmptyPageSA">
+            <h4 class="space-before text-center"><span [innerHTML]="'You have not created any agents yet' | translate"></span></h4>
+        </div>
+    </div>
+    <!-- Company Description, hidden to avoid reloading  -->
+    <div [hidden]="selectedTab !== 'BUYING_AGENT'">
+        <div class="col-12 space-before">
+
+            <div class="col-12">
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-primary align-self-start float-right ml-2"
+                            (click)="createSellingAgent();openModal(tooltip1)">
+                        <span [innerHTML]="'Create Agent' | translate"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12" *ngIf="buyingAgentList.length > 0">
+            <h3 class="space-before"><span [innerHTML]="'Agents List' | translate"></span></h3>
+
+            <div class="space-before">
+                <table class="table table-striped table-bordered">
+                    <tr>
+                        <th><span [innerHTML]="'Agent Name' | translate"></span></th>
+                        <th><span [innerHTML]="'No of Contracts' | translate"></span></th>
+                        <th><span [innerHTML]="'Is Active' | translate"></span></th>
+                        <th><span [innerHTML]="'Last Activity In' | translate"></span></th>
+                        <th><span [innerHTML]="'Options' | translate"></span></th>
+                    </tr>
+                    <tr [hidden]="!membersFetched || buyingAgentList.length > 0">
+                        <td colspan="4"><span [innerHTML]="'No data' | translate"></span></td>
+                    </tr>
+                    <tr *ngFor="let inv of agentList">
+                        <td>{{inv.name}}</td>
+                        <td>
+                            {{inv.transaction}}
+                        </td>
+                        <td>
+                            <span *ngIf="inv.isActive" class="badge badge-success"><span [innerHTML]="'Active' | translate"></span></span>
+                            <span *ngIf="!inv.isActive" class="badge badge-warning"><span [innerHTML]="'In Active' | translate"></span></span>
+                        </td>
+                        <td>
+                            {{inv.lastActive}}
+                        </td>
+                        <td>
+                            <button class="btn btn-success btn-sm" (click)="showTransactionsView(inv.id)"><span [innerHTML]="'View Orders' | translate"></span></button>
+                            <button class="btn btn-primary btn-sm" (click)="editBuyingAgent(inv.id)"><span [innerHTML]="'Edit' | translate"></span></button>
+                            <button class="btn btn-danger btn-sm" (click)="deleteBuyingAgent(inv.id)"><span [innerHTML]="'Delete' | translate"></span></button>
+                            <span *ngIf="inv.isActive">
+                                <button class="btn btn-danger btn-sm ml-2" (click)="deactivateBA(inv.id)"><span [innerHTML]="'Deactivate' | translate"></span></button>
+                            </span>
+                            <span *ngIf="!inv.isActive">
+                                <button class="btn btn-danger btn-sm ml-2" (click)="activateBA(inv.id)"><span [innerHTML]="'Activate' | translate"></span></button>
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-12" *ngIf="showEmptyPageBA">
+            <h4 class="space-before text-center"><span [innerHTML]="'You have not created any agents yet' | translate"></span></h4>
+        </div>
+    </div>
+</div>
+
+<ng-template #tooltip let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title"><span [innerHTML]="'Selling Agent' | translate"></span></h4>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal('')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div *ngIf="showCreateSellingAgent">
+            <!--<h5><span [innerHTML]="'Create Selling Agent' | translate"></span></h5>-->
+            <form [formGroup]="sellingAgentForm" novalidate (ngSubmit)="submitSellingAgent(dataForm)">
+
+                <!--Maximum_contract_value_SELL-->
+                <div class="form-group row space-before">
+                    <label class="col-4 col-form-label">
+                        <strong><span [innerHTML]="'Agent Name:' | translate"></span></strong>
+                    </label>
+                    <div class="col-8">
+                        <input type="text" class="form-control" formControlName="agentName" required maxlength="255">
+                    </div>
+                </div>
+
+                <!--Maximum_contract_value_SELL-->
+                <div class="form-group row space-before">
+                    <label class="col-4 col-form-label">
+                        <strong><span [innerHTML]="'Max contract value:' | translate"></span></strong>
+                    </label>
+                    <div class="col-5">
+                        <input type="number" class="form-control" formControlName="maxContractAmount" required maxlength="255">
+                    </div>
+
+                    <div class="col-3">
+                        <select
+                                formControlName="maxContractAmountUnit"
+                                id="maxContractAmountUnit-type"
+                                name="type"
+                                class="form-control custom-select">
+                            <option value="" class="selected">Currency</option>
+                            <option value="euro">euro</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!--Minimum_contract_fulfillment_time-->
+                <div class="form-group row space-before">
+                    <label class="col-4 col-form-label">
+                        <strong><span [innerHTML]="'Min contract fulfillment time:' | translate"></span></strong>
+                    </label>
+                    <div class="col-5">
+                        <input type="number" class="form-control" formControlName="minFulfillmentTime" required maxlength="255">
+                    </div>
+                    <div class="col-3">
+                        <select
+                                formControlName="minFulfillmentTimeUnit"
+                                id="minFulfillmentTimeUnit-type"
+                                name="type"
+                                class="form-control custom-select">
+                            <option value="" class="selected">Time Unit</option>
+                            <option value="hour">hours(s)</option>
+                            <option value="day">days(s)</option>
+                            <option value="week">weeks(s)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!--Maximum_contract_fulfillment_time-->
+                <div class="form-group row space-before">
+                    <label class="col-4 col-form-label">
+                        <strong><span [innerHTML]="'Maximum contract fulfillment time:' | translate"></span></strong>
+                    </label>
+                    <div class="col-5">
+                        <input type="text" class="form-control" formControlName="maxFulfillmentTime" required maxlength="255">
+                    </div>
+                    <div class="col-3">
+                        <select
+                                formControlName="maxFulfillmentTimeUnit"
+                                id="maxFulfillmentTime-type"
+                                name="type"
+                                class="form-control custom-select">
+                            <option value="" class="selected">Time Unit</option>
+                            <option value="hour">hours(s)</option>
+                            <option value="day">days(s)</option>
+                            <option value="week">weeks(s)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!--Maximum_no_of_contracts_per_day-->
+                <div class="form-group row space-before">
+                    <label class="col-4 col-form-label">
+                        <strong><span [innerHTML]="'Maximum no of contracts per day:' | translate"></span></strong>
+                    </label>
+                    <div class="col-8">
+                        <input type="number" class="form-control" formControlName="maxNoContractPerDay" required maxlength="255">
+                    </div>
+                </div>
+
+
+                <!--Maximum_volume_of_agent_contracts_per_hour/day/week/month-->
+                <div class="form-group row space-before">
+                    <label class="col-4 col-form-label">
+                        <strong><span [innerHTML]="'Maximum volume of agent contracts per:' | translate"></span></strong>
+                    </label>
+                    <div class="col-5">
+                        <input type="text" class="form-control" formControlName="maxVolume" required maxlength="255">
+                    </div>
+                    <div class="col-3">
+                        <select
+                                formControlName="maxVolumeUnit"
+                                id="maxVolumeUnit-type"
+                                name="type"
+                                class="form-control custom-select">
+                            <option value="" class="selected">Time Unit</option>
+                            <option value="hour">hour</option>
+                            <option value="day">day</option>
+                            <option value="week">week</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!--Maximum_number_of_one_to_one_requests_per_<time_unit>-->
+                <div class="form-group row space-before">
+                    <label class="col-4 col-form-label">
+                        <strong><span [innerHTML]="'Maximum number of 1:1 requests per:' | translate"></span></strong>
+                    </label>
+                    <div class="col-5">
+                        <input type="number" class="form-control" formControlName="maxNoOneToOne" required maxlength="255">
+                    </div>
+                    <div class="col-3">
+                        <select
+                                formControlName="maxNoOneToOneUnit"
+                                id="maxNoOneToOneUnit-type"
+                                name="type"
+                                class="form-control custom-select">
+                            <option value="" class="selected">Time Unit</option>
+                            <option value="hour">hour</option>
+                            <option value="day">day</option>
+                            <option value="week">week</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!--Maximum_no_of_contracts_per_day-->
+                <div class="form-group row space-before">
+                    <label class="col-4 col-form-label">
+                        <strong><span [innerHTML]="'Manufacturer Item Id:' | translate"></span></strong>
+                    </label>
+                    <div class="col-8">
+                        <input type="number" class="form-control" formControlName="productNames" required maxlength="255">
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="d-flex justify-content-end actions-row">
+                    <div class="col-2">
+                        <button class="btn btn-primary action float-right" type="submit"><span [innerHTML]="'Submit' | translate"></span></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #tooltip1 let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title"><span [innerHTML]="'Buying Agent' | translate"></span></h4>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal('')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div *ngIf="showCreateSellingAgent">
+            <!--<h5><span [innerHTML]="'Create Selling Agent' | translate"></span></h5>-->
+            <form [formGroup]="buyingAgentForm" novalidate (ngSubmit)="submitBuyingAgent(dataForm)">
+
+                <!--Maximum_contract_value_SELL-->
+                <div class="form-group row space-before">
+                    <label class="col-4 col-form-label">
+                        <strong><span [innerHTML]="'Agent Name:' | translate"></span></strong>
+                    </label>
+                    <div class="col-8">
+                        <input type="text" class="form-control" formControlName="agentName" required maxlength="255">
+                    </div>
+                </div>
+
+                <!--Maximum_contract_value_SELL-->
+                <div class="form-group row space-before">
+                    <label class="col-4 col-form-label">
+                        <strong><span [innerHTML]="'Max contract value:' | translate"></span></strong>
+                    </label>
+                    <div class="col-5">
+                        <input type="number" class="form-control" formControlName="maxContractAmount" required maxlength="255">
+                    </div>
+
+                    <div class="col-3">
+                        <select
+                                formControlName="maxContractAmountUnit"
+                                id="maxContractAmountUnit-type"
+                                name="type"
+                                class="form-control custom-select">
+                            <option value="" class="selected">Currency</option>
+                            <option value="euro">euro</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!--Minimum_contract_fulfillment_time-->
+                <div class="form-group row space-before">
+                    <label class="col-4 col-form-label">
+                        <strong><span [innerHTML]="'Min contract fulfillment time:' | translate"></span></strong>
+                    </label>
+                    <div class="col-5">
+                        <input type="number" class="form-control" formControlName="minFulfillmentTime" required maxlength="255">
+                    </div>
+                    <div class="col-3">
+                        <select
+                                formControlName="minFulfillmentTimeUnit"
+                                id="minFulfillmentTimeUnit-type"
+                                name="type"
+                                class="form-control custom-select">
+                            <option value="" class="selected">Time Unit</option>
+                            <option value="hour">hours(s)</option>
+                            <option value="day">days(s)</option>
+                            <option value="week">weeks(s)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!--Maximum_contract_fulfillment_time-->
+                <div class="form-group row space-before">
+                    <label class="col-4 col-form-label">
+                        <strong><span [innerHTML]="'Maximum contract fulfillment time:' | translate"></span></strong>
+                    </label>
+                    <div class="col-5">
+                        <input type="text" class="form-control" formControlName="maxFulfillmentTime" required maxlength="255">
+                    </div>
+                    <div class="col-3">
+                        <select
+                                formControlName="maxFulfillmentTimeUnit"
+                                id="maxFulfillmentTime-type"
+                                name="type"
+                                class="form-control custom-select">
+                            <option value="" class="selected">Time Unit</option>
+                            <option value="hour">hours(s)</option>
+                            <option value="day">days(s)</option>
+                            <option value="week">weeks(s)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!--Maximum_no_of_contracts_per_day-->
+                <div class="form-group row space-before">
+                    <label class="col-4 col-form-label">
+                        <strong><span [innerHTML]="'Maximum no of contracts per day:' | translate"></span></strong>
+                    </label>
+                    <div class="col-8">
+                        <input type="number" class="form-control" formControlName="maxNoContractPerDay" required maxlength="255">
+                    </div>
+                </div>
+
+
+                <!--Maximum_volume_of_agent_contracts_per_hour/day/week/month-->
+                <div class="form-group row space-before">
+                    <label class="col-4 col-form-label">
+                        <strong><span [innerHTML]="'Maximum volume of agent contracts per:' | translate"></span></strong>
+                    </label>
+                    <div class="col-5">
+                        <input type="text" class="form-control" formControlName="maxVolume" required maxlength="255">
+                    </div>
+                    <div class="col-3">
+                        <select
+                                formControlName="maxVolumeUnit"
+                                id="maxVolumeUnit-type"
+                                name="type"
+                                class="form-control custom-select">
+                            <option value="" class="selected">Time Unit</option>
+                            <option value="hour">hour</option>
+                            <option value="day">day</option>
+                            <option value="week">week</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!--Maximum_number_of_one_to_one_requests_per_<time_unit>-->
+                <div class="form-group row space-before">
+                    <label class="col-4 col-form-label">
+                        <strong><span [innerHTML]="'Maximum number of 1:1 requests per:' | translate"></span></strong>
+                    </label>
+                    <div class="col-5">
+                        <input type="number" class="form-control" formControlName="maxNoOneToOne" required maxlength="255">
+                    </div>
+                    <div class="col-3">
+                        <select
+                                formControlName="maxNoOneToOneUnit"
+                                id="maxNoOneToOneUnit-type"
+                                name="type"
+                                class="form-control custom-select">
+                            <option value="" class="selected">Time Unit</option>
+                            <option value="hour">hour</option>
+                            <option value="day">day</option>
+                            <option value="week">week</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!--Maximum_no_of_contracts_per_day-->
+                <div class="form-group row space-before">
+                    <label class="col-4 col-form-label">
+                        <strong><span [innerHTML]="'Preferred product IDs:' | translate"></span></strong>
+                    </label>
+                    <div class="col-8">
+                        <input type="number" class="form-control" formControlName="productNames" required maxlength="255">
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="d-flex justify-content-end actions-row">
+                    <div class="col-2">
+                        <button class="btn btn-primary action float-right" type="submit"><span [innerHTML]="'Submit' | translate"></span></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+<div *ngIf="showTransactions" class="col-12 space-after space-before">
+    <button class="btn btn-primary align-self-start float-right ml-2"
+            (click)="viewAgentList()">
+        <span [innerHTML]="'Back' | translate"></span>
+    </button>
+    <button class="btn btn-dark align-self-start float-right ml-2"
+            (click)="viewAgentList()">
+        <span [innerHTML]="'Show Archived' | translate"></span>
+    </button>
+</div>
+
+<div *ngIf="showTransactions">
+    <div class="col-12 mx-auto space-before space-after ">
+        <span><h3>Orders of: {{selectedAgent}} </h3>(Total: 23, Archived: 19)</span>
+        <!--<div class="d-flex justify-content-end">-->
+            <!--<call-status [callStatus]="exportCallStatus"></call-status>-->
+
+        <!--</div>-->
+    </div>
+    <div class="space-before space-after"></div>
+    <div class="row">
+        <div class="col-12 mx-auto" *ngFor="let order of orders;let i=index">
+            <!-- Title bar -->
+            <div class="row">
+
+                <div class="col-12 pagination justify-content-center">
+                    <div class="col-12">
+                        <div class="bordered space-after">
+                            <div>
+                                <div class="row w-100 m-0">
+                                    <div class="col d-flex collaboration-group-header">
+                                        <div class="header-label mr-auto d-flex">
+                                            Product/Service: <span class="clickable">{{order.productName}}</span>
+                                        </div>
+                                        <!--<div class="clickable float-right ml-2">View Request</div>-->
+                                    </div>
+                                </div>
+                                <hr class="collaboration-hr">
+                                <div>
+                                    <div class="space-after">
+                                        <!--If Purchases tab is selected, show groups whose collaboration role is Buyer-->
+                                        <div class="row thread-entry m-0">
+                                            <div class="col-12 d-flex thread-entry-header">
+                                                <div class="col pl-2">
+                                                    <strong><span [innerHTML]="'Trading Partner' | translate"></span>:</strong><br/>
+                                                    <span class="clickable">{{order.companyName}}</span>
+                                                </div>
+                                                <div class="col pl-1">
+                                                    <strong><span [innerHTML]="'Date' | translate"></span>:</strong><br/>
+                                                    <span>{{order.date}}</span>
+                                                </div>
+                                                <div class="col pl-1">
+                                                    <strong><span [innerHTML]="'Units' | translate"></span>:</strong><br/>
+                                                    <span>{{order.units}}</span>
+                                                </div>
+                                                <div class="col pl-1">
+                                                    <strong><span [innerHTML]="'Amount' | translate"></span>:</strong><br/>
+                                                    <span>{{order.price}} EUR</span>
+                                                </div>
+                                                <div class="col pl-1">
+                                                    <strong><span [innerHTML]="'Status' | translate"></span>:</strong><br/>
+                                                    <!--<span>{{order.status}}</span>-->
+                                                    <span *ngIf="order.status == 'CANCELLED'" class="badge badge-secondary"><span [innerHTML]="'Collaboration cancelled' | translate"></span></span>
+                                                    <span *ngIf="order.status == 'INPROGRESS'" class="badge badge-secondary" >In progress</span>
+                                                    <span *ngIf="order.status == 'COMPLETED'" class="badge badge-primary"><span [innerHTML]="'Collaboration finished' | translate"></span></span>
+                                                </div>
+                                                <div class="col pl-1">
+                                                    <strong><span [innerHTML]="'Actions' | translate"></span>:</strong><br/>
+                                                    <span class="clickable">View Order Details</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

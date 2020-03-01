@@ -25,6 +25,7 @@ import { ExplorativeSearchService } from './explorative-search/explorative-searc
 import { SimpleSearchService } from './simple-search/simple-search.service';
 import { SearchContextService } from './simple-search/search-context.service';
 import { UserService } from './user-mgmt/user.service';
+import { AgentService } from './user-mgmt/agent.service';
 import { CredentialsService } from './user-mgmt/credentials.service';
 import { DataChannelService } from "./data-channel/data-channel.service";
 import { UnitService } from './common/unit-service';
@@ -91,7 +92,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         EpcService,
         DocumentService,
         ShoppingCartDataService,
-        CollaborationService
+        CollaborationService,
+        AgentService
     ],
     bootstrap: [
         AppComponent

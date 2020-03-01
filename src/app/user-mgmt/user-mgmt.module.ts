@@ -26,6 +26,7 @@ import { CompanyCategoriesSettingsComponent } from './company-settings/company-c
 import { CompanyDetailsComponent } from './company-details.component';
 import { CompanyRatingComponent } from './company-rating.component';
 import { UserProfileComponent } from './user-profile.component';
+import { AgentsComponent } from './agents.component';
 import { CompanyTermsAndConditions } from './company-settings/company-terms-and-conditions';
 import { EditTradingTermModalComponent } from './company-settings/edit-trading-term-modal.component';
 
@@ -37,7 +38,7 @@ import { EditTradingTermModalComponent } from './company-settings/edit-trading-t
 		ReactiveFormsModule,
 		HttpModule,
 		UserMgmtRoutingModule,
-		NgbModule.forRoot()
+		NgbModule.forRoot(),
 	],
 	declarations: [
 		LoginComponent,
@@ -61,7 +62,8 @@ import { EditTradingTermModalComponent } from './company-settings/edit-trading-t
 		CompanyDetailsComponent,
 		CompanyRatingComponent,
 		UserProfileComponent,
-		ForgotPasswordComponent
+		ForgotPasswordComponent,
+		AgentsComponent
 	],
 	exports: [
 		LoginComponent,
@@ -76,7 +78,8 @@ import { EditTradingTermModalComponent } from './company-settings/edit-trading-t
 		CompanyDetailsComponent,
 		CompanyRatingComponent,
 		UserProfileComponent,
-		ForgotPasswordComponent
+		ForgotPasswordComponent,
+		AgentsComponent
 	],
 	providers: [
 	]

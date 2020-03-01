@@ -53,6 +53,7 @@
     "ngx-treeview": "~6.0",
     "rxjs": "~6.4",
     "rxjs-compat": "~6.4",
+    "sweetalert2": "^9.7.2",
     "underscore": "~1.9",
     "zone.js": "~0.8"
   },
