@@ -9,6 +9,8 @@ import {UnitService} from "../common/unit-service";
 @Injectable()
 export class AgentService {
 
+    SELLING_AGENT = 'SELLING_AGENT';
+    BUYING_AGENT = 'BUYING_AGENT';
     private url = myGlobals.agent_mgmt_endpoint + "/api/v1/agents";
     token = 'Bearer ' + this.cookieService.get("bearer_token");
     basic_header = new Headers({'Content-Type': 'application/json', 'Authorization': this.token});
@@ -96,6 +98,20 @@ export class AgentService {
         const url = `${this.url}/deactivateBuyingAgent`;
         return this.http
             .post(url, JSON.stringify(sellingAgentData), {headers: this.basic_header})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    deleteAgent(agentID, agentType): Promise<any> {
+        let url = '';
+        if (agentType === this.BUYING_AGENT) {
+            url = `${this.url}/deleteBuyingAgent`;
+        }else if (agentType === this.SELLING_AGENT) {
+            url = `${this.url}/deleteSellingAgent`;
+        }
+        return this.http
+            .post(url, JSON.stringify({id: agentID, agentType: agentType}), {headers: this.basic_header})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);

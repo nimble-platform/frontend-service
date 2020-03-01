@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import {Component, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import { UserService } from './user.service';
 import { CookieService } from 'ng2-cookies';
 import { CallStatus } from '../common/call-status';
@@ -8,6 +8,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {AgentService} from "./agent.service";
 import Swal from 'sweetalert2';
+import * as _ from 'underscore';
 
 type SelectedTab = "SELLING_AGENT"
     | "BUYING_AGENT";
@@ -35,6 +36,12 @@ export class AgentsComponent implements OnInit {
     results = {count: 3, pageSize: 10,};
     showTransactions = false;
     selectedAgent = '';
+
+    saErr = false;
+    baErr = false;
+
+    SELLING_AGENT = 'SELLING_AGENT';
+    BUYING_AGENT = 'BUYING_AGENT';
 
     constructor(private userService: UserService,
                 private agentService: AgentService,
@@ -86,7 +93,38 @@ export class AgentsComponent implements OnInit {
         }));
 
         this.orders = [
-
+            {
+                productName: 'Comfort Rocking Chair',
+                units: 54,
+                price: 2800,
+                companyName: 'Agenor Furniture',
+                date: '12/11/2019',
+                status: 'INPROGRESS'
+            },
+            {
+                productName: 'Designer Rocking Chair',
+                units: 30,
+                price: 1350,
+                companyName: 'AIDIMME',
+                date: '07/11/2019',
+                status: 'INPROGRESS'
+            },
+            {
+                productName: 'Comfort Rocking Chair',
+                units: 50,
+                price: 2820,
+                companyName: 'Agenor Furniture',
+                date: '05/10/2019',
+                status: 'INPROGRESS'
+            },
+            {
+                productName: 'Thana rocking chair',
+                units: 60,
+                price: 3141,
+                companyName: 'Congo Furn S.L.',
+                date: '2/09/2019',
+                status: 'CANCELLED'
+            },
         ];
 
         this.getAllSellingAgents();
@@ -101,38 +139,49 @@ export class AgentsComponent implements OnInit {
         return this.buyingAgentForm.controls;
     }
 
+    @ViewChild('buyingAgentModal') buyingAgentModal : TemplateRef<any>; // Note: TemplateRef
+    @ViewChild('sellingAgentModal') sellingAgentModal : TemplateRef<any>; // Note: TemplateRef
+
     editSellingAgent(id) {
-        this.sellingAgentForm.get("agentName").setValue("");
-        this.sellingAgentForm.get("maxContractAmount").setValue("");
-        this.sellingAgentForm.get("maxContractAmountUnit").setValue("");
-        this.sellingAgentForm.get("minFulfillmentTime").setValue("");
-        this.sellingAgentForm.get("minFulfillmentTimeUnit").setValue("");
-        this.sellingAgentForm.get("maxFulfillmentTime").setValue("");
-        this.sellingAgentForm.get("maxFulfillmentTimeUnit").setValue("");
-        this.sellingAgentForm.get("maxVolume").setValue("");
-        this.sellingAgentForm.get("maxVolumeUnit").setValue("");
-        this.sellingAgentForm.get("maxNoOneToOne").setValue("");
-        this.sellingAgentForm.get("maxNoOneToOneUnit").setValue("");
-        this.sellingAgentForm.get("productNames").setValue("");
-        this.sellingAgentForm.get("maxNoContractPerDay").setValue("");
+        let agent = this.getSellingAgent(id);
+        this.sellingAgentForm.get("agentName").setValue(agent.agentName);
+        this.sellingAgentForm.get("maxContractAmount").setValue(Number(agent.maxContractAmount.value));
+        this.sellingAgentForm.get("maxContractAmountUnit").setValue(agent.maxContractAmount.unit);
+        this.sellingAgentForm.get("minFulfillmentTime").setValue(Number(agent.minFulfillmentTime.value));
+        this.sellingAgentForm.get("minFulfillmentTimeUnit").setValue(agent.minFulfillmentTime.unit);
+        this.sellingAgentForm.get("maxFulfillmentTime").setValue(Number(agent.maxFulfillmentTime.value));
+        this.sellingAgentForm.get("maxFulfillmentTimeUnit").setValue(agent.maxFulfillmentTime.unit);
+        this.sellingAgentForm.get("maxVolume").setValue(Number(agent.maxVolume.value));
+        this.sellingAgentForm.get("maxVolumeUnit").setValue(agent.maxVolume.unit);
+        this.sellingAgentForm.get("maxNoOneToOne").setValue(Number(agent.maxNoOneToOne.value));
+        this.sellingAgentForm.get("maxNoOneToOneUnit").setValue(agent.maxNoOneToOne.unit);
+        this.sellingAgentForm.get("productNames").setValue(agent.productNames);
+        this.sellingAgentForm.get("maxNoContractPerDay").setValue(Number(agent.maxNoContractPerDay));
         // show the create form
+        this.showCreateSellingAgent = true;
+        this.modalService.open(this.sellingAgentModal);
     }
 
+
+
     editBuyingAgent(id) {
-        this.buyingAgentForm.get("agentName").setValue("");
-        this.buyingAgentForm.get("maxContractAmount").setValue("");
-        this.buyingAgentForm.get("maxContractAmountUnit").setValue("");
-        this.buyingAgentForm.get("minFulfillmentTime").setValue("");
-        this.buyingAgentForm.get("minFulfillmentTimeUnit").setValue("");
-        this.buyingAgentForm.get("maxFulfillmentTime").setValue("");
-        this.buyingAgentForm.get("maxFulfillmentTimeUnit").setValue("");
-        this.buyingAgentForm.get("maxVolume").setValue("");
-        this.buyingAgentForm.get("maxVolumeUnit").setValue("");
-        this.buyingAgentForm.get("maxNoOneToOne").setValue("");
-        this.buyingAgentForm.get("maxNoOneToOneUnit").setValue("");
-        this.buyingAgentForm.get("productNames").setValue("");
-        this.buyingAgentForm.get("maxNoContractPerDay").setValue("");
+        let agent = this.getBuyingAgent(id);
+        this.buyingAgentForm.get("agentName").setValue(agent.agentName);
+        this.buyingAgentForm.get("maxContractAmount").setValue(Number(agent.maxContractAmount.value));
+        this.buyingAgentForm.get("maxContractAmountUnit").setValue(agent.maxContractAmount.unit);
+        this.buyingAgentForm.get("minFulfillmentTime").setValue(Number(agent.minFulfillmentTim.value));
+        this.buyingAgentForm.get("minFulfillmentTimeUnit").setValue(agent.minFulfillmentTime.unit);
+        this.buyingAgentForm.get("maxFulfillmentTime").setValue(Number(agent.maxFulfillmentTime.value));
+        this.buyingAgentForm.get("maxFulfillmentTimeUnit").setValue(agent.maxFulfillmentTime.unit);
+        this.buyingAgentForm.get("maxVolume").setValue(Number(agent.maxVolume.value));
+        this.buyingAgentForm.get("maxVolumeUnit").setValue(agent.maxVolume.unit);
+        this.buyingAgentForm.get("maxNoOneToOne").setValue(Number(agent.maxNoOneToOne.value));
+        this.buyingAgentForm.get("maxNoOneToOneUnit").setValue(agent.maxNoOneToOne.unit);
+        this.buyingAgentForm.get("productNames").setValue(agent.productNames);
+        this.buyingAgentForm.get("maxNoContractPerDay").setValue(agent.maxNoContractPerDay);
         // show the create form
+        this.showCreateBuyingAgent = true;
+        this.modalService.open(this.buyingAgentModal);
     }
 
     getAllSellingAgents(){
@@ -143,7 +192,8 @@ export class AgentsComponent implements OnInit {
             }
 
         }).catch(err => {
-            console.log('Error when retrieving selling agents')
+            this.showEmptyPageSA = true;
+            this.saErr = true;
         });
     }
 
@@ -154,7 +204,8 @@ export class AgentsComponent implements OnInit {
                 this.showEmptyPageBA = true;
             }
         }).catch(err => {
-            console.log('Error when retrieving selling agents')
+            this.showEmptyPageBA = true;
+            this.baErr = true;
         });
     }
 
@@ -187,7 +238,9 @@ export class AgentsComponent implements OnInit {
         };
 
         this.agentService.createBuyingAgent(buyingAgentData).then((res) => {
-            this.showCreateSellingAgent = false;
+            this.showCreateBuyingAgent = false;
+            this.getAllBuyingAgents();
+            this.closeModal();
             Swal.fire({
                 title: 'Success!',
                 showConfirmButton: false,
@@ -235,6 +288,8 @@ export class AgentsComponent implements OnInit {
         };
         this.agentService.createSellingAgent(sellingAgentData).then((res) => {
             this.showCreateSellingAgent = false;
+            this.getAllSellingAgents();
+            this.closeModal();
             Swal.fire({
                 title: 'Success!',
                 showConfirmButton: false,
@@ -250,7 +305,7 @@ export class AgentsComponent implements OnInit {
                 text: 'Failed to create the selling agent!',
                 icon: 'error',
             });
-        })
+        });
     }
 
     onSelectTab(event: any, id: any) {
@@ -258,23 +313,23 @@ export class AgentsComponent implements OnInit {
         this.selectedTab = id;
     }
 
-    save(model: FormGroup) {
-
-    }
-
     createSellingAgent(){
         this.showCreateSellingAgent = true;
+        // TODO remove after testing
+        this.editSellingAgent('123');
     }
 
     createBuyingAgent(){
         this.showCreateBuyingAgent = true;
+        // TODO remove after testing
+        this.editBuyingAgent('123');
     }
 
     openModal(content) {
         this.modalService.open(content);
     }
 
-    closeModal(id: string) {
+    closeModal() {
         this.modalService.dismissAll();
     }
 
@@ -311,4 +366,85 @@ export class AgentsComponent implements OnInit {
     deactivateSA(id) {
         this.agentService.deactivateSellingAgent({agentID: id});
     }
+
+    deleteAgent(id, agentType) {
+        this.agentService.deleteAgent(id, agentType).then((data) => {
+            if (agentType === this.SELLING_AGENT) {
+                this.getAllSellingAgents();
+            } else {
+                this.getAllBuyingAgents();
+            }
+            Swal.fire({
+                title: 'Success!',
+                showConfirmButton: false,
+                timer: 2000,
+                text: 'Agent deleted successfuly!',
+                icon: 'success',
+            });
+        }).catch((err) => {
+            Swal.fire({
+                title: 'Failed!',
+                showConfirmButton: false,
+                timer: 2000,
+                text: 'Failed to delete the agent!',
+                icon: 'error',
+            });
+        })
+    }
+
+    getSellingAgent(id) {
+
+        let agent = _.find(this.agentList, function (agent) {
+            return agent.id == id;
+        });
+
+        // TODO remove after testing
+        if (agent === undefined) {
+            agent = {
+                agentName: this.rand(5, null) + ' agent',
+                maxContractAmount: {value: this.getRandomInt(30000), unit: 'euro'},
+                minFulfillmentTime: {value: this.getRandomInt(10), unit: 'hour'},
+                maxFulfillmentTime: {value: this.getRandomInt(20), unit: 'day'},
+                maxVolume: {value: this.getRandomInt(50000), unit: 'day'},
+                maxNoOneToOne: {value: this.getRandomInt(5), unit: 'week'},
+                productNames: 'ff1c8a90-6248-494d-8d12-4292c7b40185',
+                maxNoContractPerDay: this.getRandomInt(5)
+            };
+
+        }
+        return agent;
+    }
+
+    getBuyingAgent(id) {
+
+        let agent = _.find(this.buyingAgentList, function (agent) {
+            return agent.id == id;
+        });
+
+        // TODO remove after testing
+        if (agent === undefined) {
+            agent = {
+                agentName: this.rand(5, null) + ' agent',
+                maxContractAmount: {value: this.getRandomInt(30000), unit: 'euro'},
+                minFulfillmentTime: {value: this.getRandomInt(10), unit: 'hour'},
+                maxFulfillmentTime: {value: this.getRandomInt(20), unit: 'day'},
+                maxVolume: {value: this.getRandomInt(50000), unit: 'day'},
+                maxNoOneToOne: {value: this.getRandomInt(5), unit: 'week'},
+                productNames: 'ff1c8a90-6248-494d-8d12-4292c7b40185',
+                maxNoContractPerDay: this.getRandomInt(5)
+            };
+        }
+
+        return agent;
+    }
+
+    rand(length, current) {
+        current = current ? current : '';
+        return length ? this.rand(--length, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz".charAt(Math.floor(Math.random() * 60)) + current) : current;
+    }
+
+    getRandomInt(max) {
+        return Math.floor(Math.random() * Math.floor(max));
+    }
+
 }
