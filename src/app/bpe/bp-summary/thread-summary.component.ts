@@ -119,7 +119,7 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.translate.get(['Slow Response Time','Suspicious Company Information','Undervalued Offer','Rejected Delivery Terms','Other','Due to','Some reasons']).subscribe((res: any) => {
+        this.translate.get(['Slow Response Time','Suspicious Company Information','Undervalued Offer','Rejected Delivery Terms','Other','Due to','Some reasons','Collaboration finished','on','Collaboration cancelled']).subscribe((res: any) => {
             this.translations = res;
         });
         this.route.params.subscribe(params => {
@@ -338,7 +338,10 @@ export class ThreadSummaryComponent implements OnInit {
             initialDoc.areProductsDeleted,
             this.processInstanceGroup.status,
             sellerFederationId,
-            dashboardProcessInstanceDetails.cancellationReason
+            dashboardProcessInstanceDetails.cancellationReason,
+            moment(new Date(dashboardProcessInstanceDetails.requestDate), 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss"),
+            dashboardProcessInstanceDetails.responseDate ? moment(new Date(dashboardProcessInstanceDetails.responseDate), 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss") : null,
+            dashboardProcessInstanceDetails.completionDate
         );
 
         this.fillStatus(event, processInstance["state"], processType, responseDocumentStatus, userRole === "buyer",isFulfilmentIncludedInWorkflow);
@@ -346,14 +349,25 @@ export class ThreadSummaryComponent implements OnInit {
         return event;
     }
 
-    getCancellationReason(reason:string):string{
+    getCollaborationCancelledStatus(reason:string,date:string):string{
+        let status = this.translations["Collaboration cancelled"];
         if(reason){
             if(reason == "Other"){
                 reason = "Some reasons";
             }
-            return " "+ this.translations["Due to"] + " "+ this.translations[reason];
+            status += " "+ this.translations["Due to"] + " "+ this.translations[reason];
         }
-        return null;
+        if(date){
+            status += " " + this.translations["on"] + " " + date;
+        }
+        return status;
+    }
+
+    getCollaborationFinishedStatus(date:string):string{
+        if(date){
+            return this.translations["Collaboration finished"] + " " + this.translations["on"] + " " + date;
+        }
+        return this.translations["Collaboration finished"];
     }
 
     navigateToSearchDetails(item:Item) {

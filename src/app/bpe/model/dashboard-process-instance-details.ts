@@ -10,6 +10,9 @@ export class DashboardProcessInstanceDetails {
                 public responseMetadata:object,
                 public requestCreatorUser:Person,
                 public responseCreatorUser:Person,
-                public cancellationReason:string) {
+                public cancellationReason:string,
+                public requestDate:string,
+                public responseDate:string,
+                public completionDate:string) {
     }
 }

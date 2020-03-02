@@ -120,6 +120,7 @@ export const config = {
     }
   ],
   "showChat": false,
+  "showAgent": false,
   "showCompanyMembers": true,
   "showExplorative": false,
   "showLCPA": false,

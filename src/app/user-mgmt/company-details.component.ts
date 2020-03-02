@@ -11,6 +11,10 @@ import {selectValueOfTextObject, sanitizeLink} from '../common/utils';
 import {TranslateService} from '@ngx-translate/core';
 import {CredentialsService} from './credentials.service';
 import {FEDERATIONID} from '../catalogue/model/constants';
+import {AgentService} from "./agent.service";
+
+type SelectedTab = "SELLING_AGENT"
+    | "BUYING_AGENT";
 
 @Component({
     selector: "company-details",
@@ -20,7 +24,7 @@ export class CompanyDetailsComponent implements OnInit {
 
 	@Input() details: CompanySettings = null;
 	@Input() hideTitle: boolean = false;
-  @Input() platformManagerMode: boolean = true;
+    @Input() platformManagerMode: boolean = true;
     managementMode: boolean = false;
     imgEndpoint = myGlobals.user_mgmt_endpoint+"/company-settings/image/";
     initCallStatus: CallStatus = new CallStatus();
@@ -28,10 +32,18 @@ export class CompanyDetailsComponent implements OnInit {
     party : any = {};
     selectValueOfTextObject = selectValueOfTextObject;
     getLink = sanitizeLink;
-	  config = myGlobals.config;
+	config = myGlobals.config;
     debug = myGlobals.debug;
+    agentList = [];
+    buyingAgentList = [];
+    selectedTab: SelectedTab = "BUYING_AGENT";
+
+    showAgents = this.config.showAgent
+    showEmptyPageSA = false;
+    showEmptyPageBA = false;
 
     constructor(private cookieService: CookieService,
+                private agentService: AgentService,
                 private userService: UserService,
                 public appComponent: AppComponent,
                 private translate: TranslateService,
@@ -94,6 +106,9 @@ export class CompanyDetailsComponent implements OnInit {
       else {
         this.party.partyId = this.details.companyID;
       }
+
+        this.getAllSellingAgents(this.party.partyId);
+        this.getAllBuyingAgents(this.party.partyId);
     }
 
     validateVAT() {
@@ -136,6 +151,37 @@ export class CompanyDetailsComponent implements OnInit {
           sTop: "prod"
         }
   		});
+    }
+
+    getAllSellingAgents(id){
+        this.agentService.getAllSellingAgents(id).then((data) => {
+            this.agentList = data;
+            if(data.length == 0){
+                this.showEmptyPageSA = true;
+            }
+        }).catch(err => {
+            console.log('Error when retrieving selling agents')
+        });
+    }
+
+    getAllBuyingAgents(id){
+        this.agentService.getAllBuyingAgents(id).then((data) => {
+            this.buyingAgentList = data;
+            if(data.length == 0){
+                this.showEmptyPageBA = true;
+            }
+        }).catch(err => {
+            console.log('Error when retrieving selling agents')
+        });
+    }
+
+    deactivateAllAgents() {
+
+    }
+
+    onSelectTab(event: any, id: any) {
+        event.preventDefault();
+        this.selectedTab = id;
     }
 
 }
