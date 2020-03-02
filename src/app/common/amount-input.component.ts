@@ -42,7 +42,7 @@ export class AmountInputComponent extends ChildFormBase implements OnInit {
 
     constructor(private unitService: UnitService,
                 private validationService: ValidationService) {
-        super();
+        super(AMOUNT_INPUT_FORM_CONTROL_NAME);
     }
 
     ngOnInit() {
@@ -64,7 +64,7 @@ export class AmountInputComponent extends ChildFormBase implements OnInit {
         }
 
         // initialize form controls
-        this.addViewFormToParentForm(AMOUNT_INPUT_FORM_CONTROL_NAME);
+        this.initViewFormAndAddToParentForm();
     }
 
     private initAmountCurrency(): void {

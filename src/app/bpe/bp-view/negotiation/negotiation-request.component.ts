@@ -32,6 +32,7 @@ import {Item} from '../../../catalogue/model/publish/item';
 import {NegotiationRequestItemComponent} from './negotiation-request-item.component';
 import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {CompanySettings} from '../../../user-mgmt/model/company-settings';
+import {FormGroup} from '@angular/forms';
 
 @Component({
     selector: "negotiation-request",
@@ -77,6 +78,7 @@ export class NegotiationRequestComponent implements OnInit {
     @Input() bpActivityEvent: BpActivityEvent;
     @Input() manufacturersTermsSources: ('product_defaults' | 'frame_contract' | 'last_offer')[];
     counterOfferTermsSources: ('product_defaults' | 'frame_contract' | 'last_offer')[] = [];
+    negotiationRequestForm: FormGroup = new FormGroup({});
     callStatus: CallStatus = new CallStatus();
 
     /**
@@ -253,6 +255,7 @@ export class NegotiationRequestComponent implements OnInit {
     isFormValid(): boolean {
         let formValid = /*!this.rfq.negotiationOptions.frameContractDuration ||*/ this.isFrameContractValid();
         formValid = formValid && this.isDeliveryPeriodValid() && this.isWarrantyPeriodValid() && this.areDeliveryDatesValid();
+        formValid = formValid && this.negotiationRequestForm.valid;
         return formValid;
     }
 

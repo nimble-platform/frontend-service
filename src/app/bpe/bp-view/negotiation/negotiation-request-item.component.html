@@ -211,7 +211,11 @@
                 <div class="row">
                     <strong class="font-weight-500 col-5"><span [innerHTML]="'Quantity' | translate"></span>:</strong>
                     <div class="col-4 quantity-input">
-                        <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [ngModel]="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value" (ngModelChange)="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value = $event; onOrderQuantityChange()"
+                        <input type="number"
+                               (keypress)="onOrderQuantityKeyPressed($event)"
+                               [formControl]="orderQuantityFormControl"
+                               [ngModel]="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value"
+                               (ngModelChange)="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value = $event; onOrderQuantityChange()"
                                class="form-control form-control-sm"
                                [disabled]="isLoading() || isReadOnly()"/>
                     </div>
@@ -226,9 +230,15 @@
                 <strong class="font-weight-500"><span [innerHTML]="'Quantity' | translate"></span>:</strong>
             </div>
             <div class="col-4 quantity-input">
-                <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [ngModel]="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value" (ngModelChange)="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value = $event; onOrderQuantityChange()"
+                <input type="number"
+                       (keypress)="onOrderQuantityKeyPressed($event)"
+                       [step]="wrapper.lineDiscountPriceWrapper.price.baseQuantity.value || 1"
+                       [formControl]="orderQuantityFormControl"
+                       [ngModel]="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value"
+                       (ngModelChange)="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value = $event; onOrderQuantityChange()"
                        class="form-control form-control-sm"
-                       [disabled]="isLoading() || isReadOnly()"/>
+                       [disabled]="isLoading() || isReadOnly()"
+                       [ngbTooltip]="getValidationErrorMessage(orderQuantityFormControl)" [placement]="'auto'"  title=""/>
             </div>
             <span class="col-3" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() }}</span>
         </div>

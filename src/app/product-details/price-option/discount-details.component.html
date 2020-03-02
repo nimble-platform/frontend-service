@@ -24,14 +24,15 @@
             <span [title]="'Specified quantities are the minimum amounts required for the indicated discount to be applicable' | translate">&#9432;</span>
         </div>
         <div class="card-body">
-            <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.ORDERED_QUANTITY.typeID)">
+            <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.ORDERED_QUANTITY.typeID); let i = index">
                 <div class="row price-option-row">
                     <quantity-price-option class="col-11"
                                            [catalogueLine]="catalogueLine"
                                            [priceOption]="priceOption.option"
                                            [discountUnits]="discountUnits"
                                            [readonly]="readonly"
-                                           [parentForm]="formGroup">
+                                           [parentForm]="formGroup"
+                                           [componentIndex]="i">
                     </quantity-price-option>
                     <div class="col-1" *ngIf="!readonly">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">

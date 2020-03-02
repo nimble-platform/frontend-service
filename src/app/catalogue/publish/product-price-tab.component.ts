@@ -41,7 +41,7 @@ export class ProductPriceTabComponent extends EmptyFormBase implements OnInit {
                 private userService: UserService,
                 private cookieService: CookieService,
                 private translate: TranslateService) {
-        super();
+        super(PRODUCT_PRICE_FORM_CONTROL_NAME);
     }
 
     ngOnInit() {
@@ -75,7 +75,7 @@ export class ProductPriceTabComponent extends EmptyFormBase implements OnInit {
             }
         }
 
-        this.addViewFormToParentForm(PRODUCT_PRICE_FORM_CONTROL_NAME);
+        this.initViewFormAndAddToParentForm();
     }
 
     updateDiscountUnits(){

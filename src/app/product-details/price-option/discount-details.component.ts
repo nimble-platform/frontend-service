@@ -28,9 +28,13 @@ export class DiscountDetailsComponent extends EmptyFormBase implements OnInit {
 
     object = Object;
 
+    constructor() {
+        super(DISCOUNT_DETAILS_FORM_CONTROL_NAME);
+    }
+
     ngOnInit() {
         this.updateDiscountUnits();
-        this.addViewFormToParentForm(DISCOUNT_DETAILS_FORM_CONTROL_NAME);
+        this.initViewFormAndAddToParentForm();
     }
 
     addPriceOption(priceOptionType: any): void {

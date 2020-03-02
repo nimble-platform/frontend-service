@@ -24,6 +24,10 @@ import {TranslateService} from '@ngx-translate/core';
 import {DeliveryTerms} from '../../../user-mgmt/model/delivery-terms';
 import {Delivery} from '../../../catalogue/model/publish/delivery';
 import {QuotationWrapper} from './quotation-wrapper';
+import {AbstractControl, FormControl, Validators} from '@angular/forms';
+import {ChildFormBase} from '../../../common/validation/child-form-base';
+import {ValidatorFn} from '@angular/forms/src/directives/validators';
+import {stepValidator, ValidationService} from '../../../common/validation/validators';
 
 enum FIXED_NEGOTIATION_TERMS {
     DELIVERY_PERIOD = 'deliveryPeriod',
@@ -35,12 +39,15 @@ enum FIXED_NEGOTIATION_TERMS {
     FRAME_CONTRACT_DURATION = 'frameContractDuration'
 }
 
+const ORDER_QUANTITY_NUMBER_FORM_CONTROL = 'orderQuantity';
+const NEGOTIATION_REQUEST_ITEM = 'negotiation-request-item';
+
 @Component({
     selector: "negotiation-request-item",
     templateUrl: "./negotiation-request-item.component.html",
     styleUrls: ["./negotiation-request-item.component.css"]
 })
-export class NegotiationRequestItemComponent implements OnInit {
+export class NegotiationRequestItemComponent extends ChildFormBase implements OnInit {
 
     /**
      * View data fields
@@ -64,6 +71,9 @@ export class NegotiationRequestItemComponent implements OnInit {
     sellerFederationId:string;
     buyerId:string = null;
     @Input() deliverytermsOfBuyer: DeliveryTerms[] = null;
+
+    // form controls
+    orderQuantityFormControl: FormControl;
 
     /**
      * View control fields
@@ -108,10 +118,11 @@ export class NegotiationRequestItemComponent implements OnInit {
     config = myGlobals.config;
 
     constructor(private bpDataService: BPDataService,
+                private validationService: ValidationService,
                 private unitService: UnitService,
                 private cookieService: CookieService,
                 private translate: TranslateService) {
-
+        super(NEGOTIATION_REQUEST_ITEM);
     }
 
     ngOnInit() {
@@ -177,6 +188,9 @@ export class NegotiationRequestItemComponent implements OnInit {
         if(this.isReadOnly() && this.getNonFrameContractTermNumber() == 0) {
             this.selectedTCTab = 'CLAUSES';
         }
+
+        // add the form control to the parent form
+        this.initViewFormAndAddToParentForm();
     }
 
     private initializeDirtyTerms() {
@@ -200,6 +214,10 @@ export class NegotiationRequestItemComponent implements OnInit {
             this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PRICE] = quotationWrapper.priceWrapper.pricePerItem !== this.wrapper.rfqDiscountPriceWrapper.discountedPricePerItem;
             this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.WARRANTY_PERIOD] = quotationWrapper.warrantyString !== this.wrapper.rfqWarrantyString;
         }
+    }
+
+    ngOnDestroy(): void {
+        this.removeViewFormFromParentForm();
     }
 
     /*
@@ -576,19 +594,6 @@ export class NegotiationRequestItemComponent implements OnInit {
         return this.manufacturersTermsExistence.frame_contract == true || this.manufacturersTermsExistence.last_offer == true;
     }
 
-    // getTermAndConditions(): Clause[] {
-    //     //     if(this.manufacturersTermsSource == 'product_defaults') {
-    //     //         console.log("pd");
-    //     //         return this.wrappers.initialImmutableRfq.termOrCondition;
-    //     //     } else if(this.manufacturersTermsSource == 'frame_contract') {
-    //     //         console.log("fc");
-    //     //         return this.wrappers.frameContractQuotation.termOrCondition;
-    //     //     } else {
-    //     //         console.log("lo");
-    //     //         return this.wrappers.lastOfferQuotation.termOrCondition;
-    //     //     }
-    //     // }
-
     getNonFrameContractTermNumber(): number {
         let termCount: number = 0;
         for(let tradingTerm of this.wrapper.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.tradingTerms) {
@@ -605,6 +610,10 @@ export class NegotiationRequestItemComponent implements OnInit {
             this.custTermsDiffer = true;
         }
         return termsEqual;
+    }
+
+    getValidationErrorMessage(formControl: AbstractControl): string {
+        return this.validationService.getValidationErrorMessage(formControl);
     }
 
     /**
@@ -670,5 +679,24 @@ export class NegotiationRequestItemComponent implements OnInit {
 
     highlightDeliveryDetailsTab(){
         return !this.wrapper.checkEqualForRequest(this.manufacturersTermsSource, 'deliveryPeriod') || this.areDeliveryDatesAvailable(this.wrapper.rfqDelivery) || !UBLModelUtils.isAddressEmpty(this.wrapper.rfqDeliveryAddress);
+    }
+
+    initializeForm(): void {
+        // we check this as the wrapper is still not initialized when this method is called from component index's setter
+        if (!this.wrapper) {
+            return;
+        }
+        this.initOrderQuantityFormControl();
+    }
+
+    private initOrderQuantityFormControl(): void {
+        let step: number = this.wrapper.lineDiscountPriceWrapper.price.baseQuantity.value || 1;
+        let validators: ValidatorFn[] = [stepValidator(step), Validators.required, Validators.min(step)];
+
+        this.orderQuantityFormControl = new FormControl(this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.quantity.value, validators);
+        if (this.formGroup.contains(ORDER_QUANTITY_NUMBER_FORM_CONTROL)) {
+            this.formGroup.removeControl(ORDER_QUANTITY_NUMBER_FORM_CONTROL);
+        }
+        this.formGroup.addControl(ORDER_QUANTITY_NUMBER_FORM_CONTROL, this.orderQuantityFormControl);
     }
 }

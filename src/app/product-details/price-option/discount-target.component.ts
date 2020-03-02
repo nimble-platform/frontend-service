@@ -27,6 +27,10 @@ export class DiscountTargetComponent extends EmptyFormBase implements OnInit {
     discountTargets = DISCOUNT_TARGETS;
     object = Object;
 
+    constructor() {
+        super(DISCOUNT_TARGET_FORM_CONTROL_NAME);
+    }
+
     ngOnInit() {
         // if the discount target is already set, we should set the selected discount target properly
         if(this.priceOption.itemLocationQuantity.allowanceCharge[0].perUnitAmount == null) {
@@ -42,7 +46,7 @@ export class DiscountTargetComponent extends EmptyFormBase implements OnInit {
         }
 
         // initialize form controls
-        this.addViewFormToParentForm(DISCOUNT_TARGET_FORM_CONTROL_NAME);
+        this.initViewFormAndAddToParentForm();
     }
 
     changeDiscountTarget(discountTarget: string, allowanceCharge: AllowanceCharge): void {

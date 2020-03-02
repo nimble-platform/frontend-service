@@ -146,6 +146,7 @@
                            (ngModelChange)="onOrderQuantityChange($event)"
                            class="form-control form-control-sm w-75 px-1"
                            [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()"
+                           [step]="priceWrapper.itemPrice.price.baseQuantity.value || 1"
                            [ngbTooltip]="getValidationErrorMessage(quantityValueFormControl)" [placement]="'auto'"  title=""/>
                     <span *ngIf="getQuantityUnit() !== ''" class="ml-2">{{ getQuantityUnit() }}</span>
                 </span>

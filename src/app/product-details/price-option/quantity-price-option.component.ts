@@ -19,10 +19,18 @@ export class QuantityPriceOptionComponent extends EmptyFormBase implements OnIni
     @Input() readonly:boolean = false;
     discountStep: number;
 
+    constructor() {
+        super(QUANTITY_PRICE_OPTION_FORM_CONTROL_NAME);
+    }
+
     ngOnInit() {
         this.discountStep = this.catalogueLine.requiredItemLocationQuantity.price.baseQuantity.value;
 
         // initialize form controls
-        this.addViewFormToParentForm(QUANTITY_PRICE_OPTION_FORM_CONTROL_NAME);
+        this.initViewFormAndAddToParentForm();
+    }
+
+    ngOnDestroy(): void {
+        this.removeViewFormFromParentForm();
     }
 }

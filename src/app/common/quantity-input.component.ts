@@ -73,7 +73,7 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
     constructor(private unitService: UnitService,
                 private publishingPropertyService: PublishingPropertyService,
                 private validationService: ValidationService) {
-        super();
+        super(QUANTITY_INPUT_FORM_CONTROL_NAME);
     }
 
     ngOnInit() {
@@ -104,7 +104,7 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
         }
 
         // initialize form controls
-        this.addViewFormToParentForm(QUANTITY_INPUT_FORM_CONTROL_NAME);
+        this.initViewFormAndAddToParentForm();
     }
 
     private initQuantityUnit(): void {
