@@ -21,6 +21,9 @@ export class ThreadEventMetadata {
         public collaborationStatus: string,
         public sellerFederationId:string,
         public cancellationReason:string,
+        public requestDate:string,
+        public responseDate:string,
+        public completionDate:string,
         public isBeingUpdated: boolean = false, // It's true only while the process instance is being updated.
         public status?: ThreadEventStatus,
         public statusText?: string,

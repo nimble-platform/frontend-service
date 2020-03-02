@@ -25,10 +25,10 @@
                           <span class="clickable" (click)="navigateToCompanyDetails()">{{titleEvent.tradingPartner}}</span>
                         </div>
                         <div class="col pl-1">
-                          <strong><span [innerHTML]="'Status' | translate"></span>:</strong><br/>
-                          <span *ngIf="processInstanceGroup.status == 'CANCELLED'" class="badge badge-secondary"><span [innerHTML]="'Collaboration cancelled' | translate"></span><span>{{getCancellationReason(titleEvent.cancellationReason)}}</span></span>
-                          <span *ngIf="processInstanceGroup.status == 'INPROGRESS'" class="badge" [ngClass]="{'badge-secondary':(titleEvent.status=='CANCELLED'),'badge-success':(titleEvent.status=='DONE'),'badge-warning':(titleEvent.status=='WAITING'),'badge-danger':(titleEvent.status=='ACTION_REQUIRED')}">{{titleEvent.statusText}}</span>
-                          <span *ngIf="processInstanceGroup.status == 'COMPLETED'" class="badge badge-primary"><span [innerHTML]="'Collaboration finished' | translate"></span></span>
+                            <strong><span [innerHTML]="'Status' | translate"></span>:</strong><br/>
+                            <span *ngIf="processInstanceGroup.status == 'CANCELLED'" class="badge badge-secondary">{{getCollaborationCancelledStatus(titleEvent.cancellationReason,titleEvent.completionDate)}}</span>
+                            <span *ngIf="processInstanceGroup.status == 'INPROGRESS'" class="badge" [ngClass]="{'badge-secondary':(titleEvent.status=='CANCELLED'),'badge-success':(titleEvent.status=='DONE'),'badge-warning':(titleEvent.status=='WAITING'),'badge-danger':(titleEvent.status=='ACTION_REQUIRED')}">{{titleEvent.statusText}}</span>
+                            <span *ngIf="processInstanceGroup.status == 'COMPLETED'" class="badge badge-primary"><span>{{getCollaborationFinishedStatus(titleEvent.completionDate)}}</span></span>
                         </div>
                         <div class="col pl-1">
                           <strong><span [innerHTML]="'Actions' | translate"></span>:</strong><br/>
@@ -95,10 +95,11 @@
             <!-- Titles for the rows -->
             <div class="row thread-entry-heading">
                 <!--<div class="col-2"><strong>Customer</strong></div>-->
-                <div class="col-3"><strong><span [innerHTML]="'Type' | translate"></span></strong></div>
-                <div class="col-3"><strong><span [innerHTML]="'Date' | translate"></span></strong></div>
-                <div class="col-3"><strong><span [innerHTML]="'Correspondent' | translate"></span></strong></div>
-                <div class="col-3"><strong><span [innerHTML]="'Status' | translate"></span></strong></div>
+                <div class="col-2"><strong><span [innerHTML]="'Type' | translate"></span></strong></div>
+                <div class="col-3"><strong><span [innerHTML]="'Request Date' | translate"></span></strong></div>
+                <div class="col-3"><strong><span [innerHTML]="'Response Date' | translate"></span></strong></div>
+                <div class="col-2"><strong><span [innerHTML]="'Correspondent' | translate"></span></strong></div>
+                <div class="col-2"><strong><span [innerHTML]="'Status' | translate"></span></strong></div>
             </div>
 
             <!-- Most recent event -->
