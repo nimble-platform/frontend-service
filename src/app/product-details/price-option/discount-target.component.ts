@@ -9,8 +9,6 @@ import {EmptyFormBase} from '../../common/validation/empty-form-base';
  * Created by suat on 05-Sep-18.
  */
 
-const DISCOUNT_TARGET_FORM_CONTROL_NAME = 'discountTarget';
-
 @Component({
     selector: "discount-target",
     templateUrl: "./discount-target.component.html"
@@ -28,7 +26,7 @@ export class DiscountTargetComponent extends EmptyFormBase implements OnInit {
     object = Object;
 
     constructor() {
-        super(DISCOUNT_TARGET_FORM_CONTROL_NAME);
+        super();
     }
 
     ngOnInit() {

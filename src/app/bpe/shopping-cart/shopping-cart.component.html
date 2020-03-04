@@ -16,11 +16,13 @@
             <span [innerHTML]="'Show Common Cart Terms' | translate"></span>
         </div>
         <div>
-            <button class="btn btn-primary ml-2"
+            <span [ngbTooltip]="validationService.extractErrorMessage(shoppingCartForm)" [placement]="'auto'"  title="">
+                <button class="btn btn-primary ml-2"
                     [disabled]="startBpCallStatus.fb_submitted || !shoppingCartForm.valid"
                     (click)="openShoppingCartSummary()">
-                <span [innerHTML]="'Negotiate / Order All' | translate"></span>
-            </button>
+                    <span [innerHTML]="'Negotiate / Order All' | translate"></span>
+                </button>
+            </span>
         </div>
         <call-status [large]="true" [callStatus]="startBpCallStatus"></call-status>
     </div>
@@ -47,7 +49,8 @@
                                       [isNegotiatingAnyTerm]="areNegotiationConditionsSatisfied(cartLine)"
                                       (onCartItemDeleted)="onRemoveFromCart($event)"
                                       (onNegotiate)="onSingleLineNegotiation($event)"
-                                      [isNegotiateOrderButtonDisabled]="deleteCallStatuses.get(cartLine.hjid).fb_submitted || !shoppingCartForm.controls['negotiation-request-item' + i]?.valid">
+                                      [shoppingCartItemForm]="shoppingCartForm.controls['shopping_cart_item' + i]"
+                                      [isNegotiateOrderButtonDisabled]="deleteCallStatuses.get(cartLine.hjid).fb_submitted">
             </product-details-overview>
             <product-details-tabs [wrapper]="productWrappers.get(cartLine.hjid)"
                                   [settings]="sellersSettings.get(getPartyId(cartLine.goodsItem.item.manufacturerParty))">
@@ -64,7 +67,8 @@
                                       [wrapper]="negotiationModelWrappers.get(cartLine.hjid)"
                                       [hidden]="false"
                                       [parentForm]="shoppingCartForm"
-                                      [componentIndex]="i">
+                                      [componentIndex]="i"
+                                      [formFieldName]="'shopping_cart_item'">
             </negotiation-request-item>
         </div>
     </div>

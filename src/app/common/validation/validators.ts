@@ -1,12 +1,14 @@
-import {AbstractControl, ValidatorFn} from '@angular/forms';
+import {AbstractControl, FormControl, FormGroup, ValidatorFn} from '@angular/forms';
 import {Injectable} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
+import {Address} from '../../catalogue/model/publish/address';
 
 // validator constants
 export const VALIDATION_ERROR_MULTIPLE = 'multiple';
 export const VALIDATION_ERROR_MIN = 'min';
 export const VALIDATION_REQUIRED = 'required';
-export const VALIDATION_ERROR_PREFIX = 'validation_error_'
+export const VALIDATION_ERROR_PREFIX = 'validation_error_';
+export const FORM_FIELD_PREFIX = 'form_field_';
 
 export function stepValidator(step: number): ValidatorFn {
     return (control: AbstractControl): { [key: string]: string} | null => {
@@ -16,6 +18,20 @@ export function stepValidator(step: number): ValidatorFn {
             let error: any = {};
             error[errorKey] = {'step': step, 'minClosest': minClosest, 'maxClosest': (minClosest + step)};
             return error
+        }
+        return null;
+    };
+}
+
+export function addressValidator(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: string} | null => {
+        let address: Address = control.value;
+
+        if (address.buildingNumber === '') {
+            let errorKey: string = VALIDATION_ERROR_MULTIPLE;
+            let error: any = {};
+            error[errorKey] = {'invalidAddress': 'invalidBuildingNumber'};
+            return error;
         }
         return null;
     };
@@ -50,6 +66,37 @@ export class ValidationService {
             }
         }
         return errorMessage;
+    }
+
+    /**
+     * recursively search the erroneous field inside the form controls
+     */
+    extractErrorMessage(form: FormGroup, fieldPath = ''): string {
+        let errorPath: string = this.findPath(form, fieldPath);
+        if (errorPath) {
+            return this.translateService.instant('validation_provide_valid_input') + '\n' + errorPath;
+        }
+        return '';
+    }
+
+    private findPath(form: FormGroup, fieldPath = ''): string {
+        if (!form.valid) {
+            for (let fieldName of Object.keys(form.controls)) {
+                let control: AbstractControl = form.controls[fieldName];
+                if (!control.valid) {
+                    // first remove the non alpha characters and translate
+                    let labelKey: string = FORM_FIELD_PREFIX + fieldName.replace(/[^a-z_]/gi, '').toLowerCase();
+                    let fieldLabel: string = this.translateService.instant(labelKey);
+                    let newPath: string = fieldPath + ' / ' + fieldLabel;
+                    if (control instanceof FormControl) {
+                        return newPath;
+                    } else {
+                        return this.findPath(<FormGroup>control, newPath);
+                    }
+                }
+            }
+        }
+        return '';
     }
 }
 

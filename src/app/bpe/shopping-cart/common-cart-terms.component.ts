@@ -12,6 +12,8 @@ import {NegotiationModelWrapper} from '../bp-view/negotiation/negotiation-model-
 import {CompanySettings} from '../../user-mgmt/model/company-settings';
 import {CustomTermModalComponent} from '../bp-view/negotiation/custom-term-modal.component';
 import {CommonTerms} from '../../common/common-terms';
+import {ChildFormBase} from '../../common/validation/child-form-base';
+import {ValidationService} from '../../common/validation/validators';
 /**
  * Created by suat on 31-Oct-19.
  */
@@ -56,7 +58,9 @@ export class CommonCartTermsComponent implements OnInit {
     @ViewChild(CustomTermModalComponent)
     private customTermModal: CustomTermModalComponent;
 
-    constructor(private unitService: UnitService) {}
+    constructor(private unitService: UnitService,
+                private validationService: ValidationService) {
+    }
 
     ngOnInit() {
         this.initCallStatus.submit();

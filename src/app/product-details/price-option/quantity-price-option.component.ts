@@ -6,8 +6,6 @@ import {EmptyFormBase} from '../../common/validation/empty-form-base';
  * Created by suat on 28-Aug-18.
  */
 
-const QUANTITY_PRICE_OPTION_FORM_CONTROL_NAME = 'quantityPriceOptionControl';
-
 @Component({
     selector: "quantity-price-option",
     templateUrl: "./quantity-price-option.component.html"
@@ -20,7 +18,7 @@ export class QuantityPriceOptionComponent extends EmptyFormBase implements OnIni
     discountStep: number;
 
     constructor() {
-        super(QUANTITY_PRICE_OPTION_FORM_CONTROL_NAME);
+        super();
     }
 
     ngOnInit() {

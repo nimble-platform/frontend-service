@@ -831,7 +831,18 @@
 	"Publish & Continue": "Publish & Continue",
 	"Save & Exit": "Save & Exit",
 	"Publish & Exit": "Publish & Exit",
-	"validation_error_multiple": "The input should be a multiple of {{step}}. Closest values are: {{minClosest}} and {{maxClosest}}",
-	"validation_error_min": "The input should be equal to or larger than {{min}}",
-	"validation_error_required": "This input is required"
+	"validation_error_multiple": "The field should be a multiple of {{step}}. Closest values are: {{minClosest}} and {{maxClosest}}",
+	"validation_error_min": "The field should be equal to or larger than {{min}}",
+	"validation_error_required": "This field is required",
+	"validation_provide_valid_input": "Please provide a valid input for the specified fields:",
+	"form_field_shopping_cart_item": "Shopping cart item",
+	"form_field_order_quantity": "Order quantity",
+	"form_field_delivery_address": "Delivery address",
+	"form_field_street_name": "Street name",
+	"form_field_building_number": "Building number",
+	"form_field_city_name": "City",
+	"form_field_postal_code": "Postal code",
+	"form_field_country_name": "Country",
+	"form_field_text": "Text",
+	"form_field_negotiated_item": "Negotiated product"
 }

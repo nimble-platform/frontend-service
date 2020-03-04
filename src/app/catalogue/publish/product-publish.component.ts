@@ -111,6 +111,8 @@ export class ProductPublishComponent implements OnInit {
     searchRef = false;
     // form model to be provided as root model to the inner components used in publishing
     publishForm: FormGroup = new FormGroup({});
+    valid = true;
+    erroneousPaths: string[];
 
     @ViewChild(EditPropertyModalComponent)
     private editPropertyModal: EditPropertyModalComponent;

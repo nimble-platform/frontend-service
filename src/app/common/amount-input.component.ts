@@ -7,7 +7,6 @@ import {ValidatorFn} from '@angular/forms/src/directives/validators';
 import {stepValidator, ValidationService} from './validation/validators';
 import {AbstractControl, FormControl, Validators} from '@angular/forms';
 
-const AMOUNT_INPUT_FORM_CONTROL_NAME = 'amountInput';
 const NUMBER_VALUE_FORM_CONTROL = 'numberValue';
 
 @Component({
@@ -42,7 +41,7 @@ export class AmountInputComponent extends ChildFormBase implements OnInit {
 
     constructor(private unitService: UnitService,
                 private validationService: ValidationService) {
-        super(AMOUNT_INPUT_FORM_CONTROL_NAME);
+        super();
     }
 
     ngOnInit() {

@@ -11,7 +11,8 @@
                           [wrapper]="wrapper"
                           [hidden]="selectedLineIndex != wrapper.lineIndex"
                           [componentIndex]="i"
-                          [parentForm]="negotiationRequestForm">
+                          [parentForm]="negotiationRequestForm"
+                          [formFieldName]="'negotiated_item'">
 </negotiation-request-item>
 <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showNotesAndAdditionalFiles,'bg-danger text-white':areNotesOrFilesAttachedToDocument(rfq)}" (click)="showNotesAndAdditionalFiles= showTab(showNotesAndAdditionalFiles)"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>
 <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showPurchaseOrder}" (click)="showPurchaseOrder = showTab(showPurchaseOrder)"><span [innerHTML]="'Purchase Order' | translate" ></span></div>
@@ -71,10 +72,12 @@
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div class="col-3"   *ngIf="!(processMetadata && processMetadata.isBeingUpdated)">
-        <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onSendRequest()">
-            <span *ngIf="!doesManufacturerOfferHasPrice() || isNegotiatingAnyTerm() || bpDataService.isFinalProcessInTheWorkflow('Negotiation')" [innerHTML]="'Send Request' | translate"></span>
-            <span *ngIf="!(!doesManufacturerOfferHasPrice() || isNegotiatingAnyTerm() || bpDataService.isFinalProcessInTheWorkflow('Negotiation'))" [innerHTML]="'Continue With Manufacturer\'s Terms' | translate"></span>
-        </button>
+        <span [ngbTooltip]="validationService.extractErrorMessage(negotiationRequestForm)" [placement]="'auto'"  title="">
+            <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onSendRequest()">
+                <span *ngIf="!doesManufacturerOfferHasPrice() || isNegotiatingAnyTerm() || bpDataService.isFinalProcessInTheWorkflow('Negotiation')" [innerHTML]="'Send Request' | translate"></span>
+                <span *ngIf="!(!doesManufacturerOfferHasPrice() || isNegotiatingAnyTerm() || bpDataService.isFinalProcessInTheWorkflow('Negotiation'))" [innerHTML]="'Continue With Manufacturer\'s Terms' | translate"></span>
+            </button>
+        </span>
     </div>
     <div class="col-3" *ngIf="processMetadata && processMetadata.isBeingUpdated">
         <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onUpdateRequest()">

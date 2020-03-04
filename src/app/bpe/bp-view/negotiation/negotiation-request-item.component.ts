@@ -24,10 +24,11 @@ import {TranslateService} from '@ngx-translate/core';
 import {DeliveryTerms} from '../../../user-mgmt/model/delivery-terms';
 import {Delivery} from '../../../catalogue/model/publish/delivery';
 import {QuotationWrapper} from './quotation-wrapper';
-import {AbstractControl, FormControl, Validators} from '@angular/forms';
+import {AbstractControl, Form, FormControl, Validators} from '@angular/forms';
 import {ChildFormBase} from '../../../common/validation/child-form-base';
 import {ValidatorFn} from '@angular/forms/src/directives/validators';
-import {stepValidator, ValidationService} from '../../../common/validation/validators';
+import {addressValidator, stepValidator, ValidationService} from '../../../common/validation/validators';
+import {Address} from '../../../catalogue/model/publish/address';
 
 enum FIXED_NEGOTIATION_TERMS {
     DELIVERY_PERIOD = 'deliveryPeriod',
@@ -39,8 +40,7 @@ enum FIXED_NEGOTIATION_TERMS {
     FRAME_CONTRACT_DURATION = 'frameContractDuration'
 }
 
-const ORDER_QUANTITY_NUMBER_FORM_CONTROL = 'orderQuantity';
-const NEGOTIATION_REQUEST_ITEM = 'negotiation-request-item';
+const ORDER_QUANTITY_NUMBER_FORM_CONTROL = 'order_quantity';
 
 @Component({
     selector: "negotiation-request-item",
@@ -122,7 +122,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
                 private unitService: UnitService,
                 private cookieService: CookieService,
                 private translate: TranslateService) {
-        super(NEGOTIATION_REQUEST_ITEM);
+        super();
     }
 
     ngOnInit() {

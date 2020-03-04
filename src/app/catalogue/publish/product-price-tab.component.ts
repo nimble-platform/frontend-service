@@ -14,8 +14,6 @@ import { getISObyCountry } from "../../common/utils";
 import * as myGlobals from '../../globals';
 import {EmptyFormBase} from '../../common/validation/empty-form-base';
 
-const PRODUCT_PRICE_FORM_CONTROL_NAME = 'productPrice';
-
 @Component({
     selector: "product-price-tab",
     templateUrl: "./product-price-tab.component.html",
@@ -41,7 +39,7 @@ export class ProductPriceTabComponent extends EmptyFormBase implements OnInit {
                 private userService: UserService,
                 private cookieService: CookieService,
                 private translate: TranslateService) {
-        super(PRODUCT_PRICE_FORM_CONTROL_NAME);
+        super();
     }
 
     ngOnInit() {

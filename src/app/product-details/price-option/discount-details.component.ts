@@ -7,10 +7,7 @@ import {PaymentMeans} from '../../catalogue/model/publish/payment-means';
 import {Address} from '../../catalogue/model/publish/address';
 import {Period} from '../../catalogue/model/publish/period';
 import {CompanyNegotiationSettings} from '../../user-mgmt/model/company-negotiation-settings';
-import {ChildFormBase} from '../../common/validation/child-form-base';
 import {EmptyFormBase} from '../../common/validation/empty-form-base';
-
-const DISCOUNT_DETAILS_FORM_CONTROL_NAME = 'discountDetails';
 
 @Component({
     selector: "discount-details",
@@ -29,7 +26,7 @@ export class DiscountDetailsComponent extends EmptyFormBase implements OnInit {
     object = Object;
 
     constructor() {
-        super(DISCOUNT_DETAILS_FORM_CONTROL_NAME);
+        super();
     }
 
     ngOnInit() {

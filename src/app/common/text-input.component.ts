@@ -2,13 +2,18 @@ import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
 import {LANGUAGES} from '../catalogue/model/constants';
 import {TranslateService} from '@ngx-translate/core';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
+import {ChildFormBase} from './validation/child-form-base';
+import {AbstractControl, FormControl, Validators} from '@angular/forms';
+import {ValidatorFn} from '@angular/forms/src/directives/validators';
+import {ValidationService} from './validation/validators';
 
+const TEXT_INPUT_FORM_CONTROL = 'text';
 @Component({
     selector: "text-input",
     templateUrl: "./text-input.component.html",
     styleUrls: ["./text-input.component.css"],
 })
-export class TextInputComponent implements OnInit {
+export class TextInputComponent extends ChildFormBase implements OnInit {
 
     @Input() visible: boolean = true;
     @Input() disabled: boolean = false;
@@ -38,15 +43,20 @@ export class TextInputComponent implements OnInit {
     @Input() rows: number = 3;
     @Input() maxLength: string = "255";
 
+    textInputFormControl: FormControl;
+
     languages = LANGUAGES;
 
-    constructor( private translate: TranslateService) {
+    constructor(private validationService: ValidationService,
+                private translate: TranslateService) {
+        super();
     }
 
     ngOnInit() {
         if(!this.valueClass) {
             this.valueClass = this.label ? "col-9" : "col-12";
         }
+        this.initViewFormAndAddToParentForm();
     }
 
     @Input()
@@ -91,5 +101,19 @@ export class TextInputComponent implements OnInit {
 
     generateText(){
        this.text = UBLModelUtils.generateUUID();
+    }
+
+    initializeForm(): void {
+        let validators: ValidatorFn[] = [Validators.maxLength(Number(this.maxLength))];
+        if (this.required) {
+            validators.push(Validators.required);
+        }
+
+        this.textInputFormControl = new FormControl(this.text, validators);
+        this.formGroup.addControl(TEXT_INPUT_FORM_CONTROL, this.textInputFormControl);
+    }
+
+    getValidationErrorMessage(formControl: AbstractControl): string {
+        return this.validationService.getValidationErrorMessage(formControl);
     }
 }

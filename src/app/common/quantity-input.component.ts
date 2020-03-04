@@ -9,7 +9,6 @@ import {stepValidator, ValidationService} from './validation/validators';
 import {ItemProperty} from '../catalogue/model/publish/item-property';
 import {PublishingPropertyService} from '../catalogue/publish/publishing-property.service';
 
-const QUANTITY_INPUT_FORM_CONTROL_NAME = 'quantityInput';
 const NUMBER_VALUE_FORM_CONTROL = 'numberValue';
 
 @Component({
@@ -73,7 +72,7 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
     constructor(private unitService: UnitService,
                 private publishingPropertyService: PublishingPropertyService,
                 private validationService: ValidationService) {
-        super(QUANTITY_INPUT_FORM_CONTROL_NAME);
+        super();
     }
 
     ngOnInit() {

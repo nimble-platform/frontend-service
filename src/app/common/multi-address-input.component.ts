@@ -4,14 +4,17 @@ import {addressToString} from '../user-mgmt/utils';
 import {DeliveryTerms} from '../user-mgmt/model/delivery-terms';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {Option} from './options-input.component';
-
+import {EmptyFormBase} from './validation/empty-form-base';
+import {AbstractControl, FormControl} from '@angular/forms';
+import {addressValidator, ValidationService} from './validation/validators';
+import {ChildFormBase} from './validation/child-form-base';
 
 @Component({
     selector: 'multi-address-input',
     templateUrl: './multi-address-input.component.html'
 })
 
-export class MultiAddressInputComponent {
+export class MultiAddressInputComponent extends EmptyFormBase implements OnInit {
 
     @Input() address: Address;
     @Input() disabled: boolean;
@@ -19,7 +22,13 @@ export class MultiAddressInputComponent {
 
     selectedAddressValue = '';
 
-    constructor() { }
+    constructor() {
+        super();
+    }
+
+    ngOnInit(): void {
+        // this.initViewFormAndAddToParentForm();
+    }
 
     get selectedAddress(): string {
         return this.selectedAddressValue;
@@ -35,6 +44,9 @@ export class MultiAddressInputComponent {
     }
 
     get addressOptions(): Option[] {
+        if (!this.deliveryTerms) {
+            return [];
+        }
         const deliveryTerms = this.deliveryTerms;
         let ret = [];
         if (deliveryTerms.length === 0 || !deliveryTerms[0].deliveryAddress || !deliveryTerms[0].deliveryAddress.streetName) {
