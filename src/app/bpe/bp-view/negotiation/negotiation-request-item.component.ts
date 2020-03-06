@@ -27,8 +27,7 @@ import {QuotationWrapper} from './quotation-wrapper';
 import {AbstractControl, Form, FormControl, Validators} from '@angular/forms';
 import {ChildFormBase} from '../../../common/validation/child-form-base';
 import {ValidatorFn} from '@angular/forms/src/directives/validators';
-import {addressValidator, stepValidator, ValidationService} from '../../../common/validation/validators';
-import {Address} from '../../../catalogue/model/publish/address';
+import {stepValidator, ValidationService} from '../../../common/validation/validators';
 
 enum FIXED_NEGOTIATION_TERMS {
     DELIVERY_PERIOD = 'deliveryPeriod',
@@ -40,7 +39,7 @@ enum FIXED_NEGOTIATION_TERMS {
     FRAME_CONTRACT_DURATION = 'frameContractDuration'
 }
 
-const ORDER_QUANTITY_NUMBER_FORM_CONTROL = 'order_quantity';
+const ORDER_QUANTITY_NUMBER_FIELD_NAME = 'order_quantity';
 
 @Component({
     selector: "negotiation-request-item",
@@ -694,9 +693,9 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
         let validators: ValidatorFn[] = [stepValidator(step), Validators.required, Validators.min(step)];
 
         this.orderQuantityFormControl = new FormControl(this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.quantity.value, validators);
-        if (this.formGroup.contains(ORDER_QUANTITY_NUMBER_FORM_CONTROL)) {
-            this.formGroup.removeControl(ORDER_QUANTITY_NUMBER_FORM_CONTROL);
+        if (this.formGroup.contains(ORDER_QUANTITY_NUMBER_FIELD_NAME)) {
+            this.formGroup.removeControl(ORDER_QUANTITY_NUMBER_FIELD_NAME);
         }
-        this.formGroup.addControl(ORDER_QUANTITY_NUMBER_FORM_CONTROL, this.orderQuantityFormControl);
+        this.formGroup.addControl(ORDER_QUANTITY_NUMBER_FIELD_NAME, this.orderQuantityFormControl);
     }
 }

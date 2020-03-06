@@ -58,6 +58,7 @@ import {DocumentReference} from '../model/publish/document-reference';
 import {Attachment} from '../model/publish/attachment';
 import {Address} from '../model/publish/address';
 import {Country} from '../model/publish/country';
+import {ValidationService} from '../../common/validation/validators';
 
 interface SelectedProperties {
     [key: string]: SelectedProperty;
@@ -169,6 +170,7 @@ export class ProductPublishComponent implements OnInit {
                 private catalogueService: CatalogueService,
                 public publishStateService: PublishService,
                 private userService: UserService,
+                private validationService: ValidationService,
                 private route: ActivatedRoute,
                 private router: Router,
                 private location: Location,
@@ -176,6 +178,11 @@ export class ProductPublishComponent implements OnInit {
                 private unitService:UnitService,
                 private modalService: NgbModal,
                 private translate: TranslateService) {
+    }
+
+    printForm() {
+        console.log('product publish form');
+        console.log(this.publishForm);
     }
 
     ngOnInit() {
@@ -397,12 +404,6 @@ export class ProductPublishComponent implements OnInit {
 
     getPropertyType(property: Property): string {
         return sanitizeDataTypeName(property.dataType);
-    }
-
-    isValidCatalogueLine(): boolean {
-        let item = this.catalogueLine.goodsItem.item;
-        // must have a name
-        return item.name[0] && item.name[0].value !== "" && item.manufacturersItemIdentification.id && item.manufacturersItemIdentification.id !== "";
     }
 
     addItemNameDescription() {

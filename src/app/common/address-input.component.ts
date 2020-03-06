@@ -2,7 +2,7 @@ import {Component, OnInit, Input, forwardRef} from '@angular/core';
 import { Address } from "../catalogue/model/publish/address";
 import { PresentationMode } from "../catalogue/model/publish/presentation-mode";
 import {EmptyFormBase} from './validation/empty-form-base';
-const ADDRESS_INPUT_FORM_CONTROL = 'address';
+const ADDRESS_INPUT_FIELD_NAME = 'address';
 @Component({
     selector: "address-input",
     templateUrl: "./address-input.component.html",
@@ -15,7 +15,7 @@ export class AddressInputComponent extends EmptyFormBase implements OnInit {
     @Input() disabled: boolean = false;
 
     constructor() {
-        super(ADDRESS_INPUT_FORM_CONTROL);
+        super(ADDRESS_INPUT_FIELD_NAME);
     }
 
     ngOnInit() {

@@ -8,7 +8,7 @@ import {Address} from '../../catalogue/model/publish/address';
 import {Period} from '../../catalogue/model/publish/period';
 import {CompanyNegotiationSettings} from '../../user-mgmt/model/company-negotiation-settings';
 import {EmptyFormBase} from '../../common/validation/empty-form-base';
-
+const DISCOUNT_DETAILS_INPUT = 'discount_details';
 @Component({
     selector: "discount-details",
     templateUrl: "./discount-details.component.html"
@@ -26,7 +26,7 @@ export class DiscountDetailsComponent extends EmptyFormBase implements OnInit {
     object = Object;
 
     constructor() {
-        super();
+        super(DISCOUNT_DETAILS_INPUT);
     }
 
     ngOnInit() {

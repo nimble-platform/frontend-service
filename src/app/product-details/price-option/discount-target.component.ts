@@ -42,9 +42,6 @@ export class DiscountTargetComponent extends EmptyFormBase implements OnInit {
         } else {
             this.amount = this.priceOption.itemLocationQuantity.allowanceCharge[0].amount;
         }
-
-        // initialize form controls
-        this.initViewFormAndAddToParentForm();
     }
 
     changeDiscountTarget(discountTarget: string, allowanceCharge: AllowanceCharge): void {

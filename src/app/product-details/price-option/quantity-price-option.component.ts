@@ -2,10 +2,10 @@ import {Component, Input, OnInit} from "@angular/core";
 import {PriceOption} from "../../catalogue/model/publish/price-option";
 import {CatalogueLine} from '../../catalogue/model/publish/catalogue-line';
 import {EmptyFormBase} from '../../common/validation/empty-form-base';
+const QUANTITY_PRICE_OPTION = 'quantity_price_option';
 /**
  * Created by suat on 28-Aug-18.
  */
-
 @Component({
     selector: "quantity-price-option",
     templateUrl: "./quantity-price-option.component.html"
@@ -18,7 +18,7 @@ export class QuantityPriceOptionComponent extends EmptyFormBase implements OnIni
     discountStep: number;
 
     constructor() {
-        super();
+        super(QUANTITY_PRICE_OPTION);
     }
 
     ngOnInit() {

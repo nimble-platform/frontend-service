@@ -1,7 +1,7 @@
-import {AbstractControl, FormControl, FormGroup, ValidatorFn} from '@angular/forms';
+import {AbstractControl, FormControl, FormGroup, RequiredValidator, ValidatorFn, Validators} from '@angular/forms';
 import {Injectable} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
-import {Address} from '../../catalogue/model/publish/address';
+import {FIELD_NAME_PRODUCT_PRICE_AMOUNT, FIELD_NAME_PRODUCT_PRICE_BASE_QUANTITY, FIELD_NAME_QUANTITY_VALUE} from '../constants';
 
 // validator constants
 export const VALIDATION_ERROR_MULTIPLE = 'multiple';
@@ -23,18 +23,44 @@ export function stepValidator(step: number): ValidatorFn {
     };
 }
 
-export function addressValidator(): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: string} | null => {
-        let address: Address = control.value;
-
-        if (address.buildingNumber === '') {
-            let errorKey: string = VALIDATION_ERROR_MULTIPLE;
-            let error: any = {};
-            error[errorKey] = {'invalidAddress': 'invalidBuildingNumber'};
-            return error;
+export function priceValidator(formGroup: FormGroup): any {
+    let priceAmountFormControl: AbstractControl = formGroup.controls[FIELD_NAME_PRODUCT_PRICE_AMOUNT];
+    let priceBaseQuantityFormGroup: FormGroup;
+    for (let fieldKey of Object.keys(formGroup.controls)) {
+        if (fieldKey.startsWith(FIELD_NAME_PRODUCT_PRICE_BASE_QUANTITY)) {
+            priceBaseQuantityFormGroup = <FormGroup>formGroup.controls[fieldKey];
+            break;
         }
+    }
+    // base quantity group is not available yet
+    if (priceBaseQuantityFormGroup == null) {
         return null;
-    };
+    }
+    // if the price is set, base quantity should also be set
+    if (priceAmountFormControl.value) {
+        if (!priceBaseQuantityFormGroup.controls[FIELD_NAME_QUANTITY_VALUE].value) {
+            priceBaseQuantityFormGroup.controls[FIELD_NAME_QUANTITY_VALUE].setErrors({'required': true});
+            return {'invalidBaseQuantity': true}
+        } else {
+            deleteError(priceBaseQuantityFormGroup.controls[FIELD_NAME_QUANTITY_VALUE], 'required');
+        }
+    } else {
+        deleteError(priceBaseQuantityFormGroup.controls[FIELD_NAME_QUANTITY_VALUE], 'required');
+
+    }
+    return null;
+}
+
+function deleteError(formControl: AbstractControl, errorToDelete: string): void {
+    let errors: any = formControl.errors;
+    // if errors is not null or empty
+    if (errors && Object.keys(errors).length !== 0) {
+        delete errors[errorToDelete];
+    }
+    if (!errors || Object.keys(errors).length === 0) {
+        errors = null;
+    }
+    formControl.setErrors(errors);
 }
 
 @Injectable()
@@ -96,7 +122,7 @@ export class ValidationService {
                 }
             }
         }
-        return '';
+        return fieldPath;
     }
 }
 

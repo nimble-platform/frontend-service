@@ -80,9 +80,11 @@
         </span>
     </div>
     <div class="col-3" *ngIf="processMetadata && processMetadata.isBeingUpdated">
-        <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onUpdateRequest()">
-            <span [innerHTML]="'Update Request' | translate"></span>
-        </button>
+        <span [ngbTooltip]="getValidationError()" [placement]="'auto'"  title="">
+            <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onUpdateRequest()">
+                <span [innerHTML]="'Update Request' | translate"></span>
+            </button>
+        </span>
     </div>
 </div>
 

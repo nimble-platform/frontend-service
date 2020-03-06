@@ -12,19 +12,27 @@ import {Party} from "../model/publish/party";
 import {TranslateService} from '@ngx-translate/core';
 import { getISObyCountry } from "../../common/utils";
 import * as myGlobals from '../../globals';
-import {EmptyFormBase} from '../../common/validation/empty-form-base';
-
+import {FormControl, Validators} from '@angular/forms';
+import {ChildFormBase} from '../../common/validation/child-form-base';
+import {ValidatorFn} from '@angular/forms/src/directives/validators';
+import {priceValidator} from '../../common/validation/validators';
+import {FIELD_NAME_PRODUCT_PRICE_AMOUNT, FIELD_NAME_PRODUCT_PRICE_BASE_QUANTITY} from '../../common/constants';
+const PRODUCT_PRICE_INPUT = 'product_price';
 @Component({
     selector: "product-price-tab",
     templateUrl: "./product-price-tab.component.html",
     styleUrls: ["./product-price-tab.component.css"],
     providers: [PriceOptionCountPipe, PriceOptionPipe],
 })
-export class ProductPriceTabComponent extends EmptyFormBase implements OnInit {
+export class ProductPriceTabComponent extends ChildFormBase implements OnInit {
 
     @Input() catalogueLine: CatalogueLine;
     @Input() companyNegotiationSettings:CompanyNegotiationSettings;
     @Input() disabled: boolean
+
+    priceAmountFormControl: FormControl;
+    baseQuantityFieldName: string = FIELD_NAME_PRODUCT_PRICE_BASE_QUANTITY;
+    priceAmountStep = 0.01;
 
     // TODO: later, get these from a service?
     CURRENCIES = CURRENCIES;
@@ -39,7 +47,7 @@ export class ProductPriceTabComponent extends EmptyFormBase implements OnInit {
                 private userService: UserService,
                 private cookieService: CookieService,
                 private translate: TranslateService) {
-        super();
+        super(PRODUCT_PRICE_INPUT);
     }
 
     ngOnInit() {
@@ -74,6 +82,16 @@ export class ProductPriceTabComponent extends EmptyFormBase implements OnInit {
         }
 
         this.initViewFormAndAddToParentForm();
+    }
+
+    initializeForm(): void {
+        // set up price amount form control
+        let validators: ValidatorFn[] = [Validators.min(this.priceAmountStep)];
+        this.priceAmountFormControl = new FormControl(this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.value, validators);
+        // add the control to the parent
+        this.addToCurrentForm(FIELD_NAME_PRODUCT_PRICE_AMOUNT, this.priceAmountFormControl);
+        // set the price validator to the price form group
+        this.formGroup.setValidators(priceValidator);
     }
 
     updateDiscountUnits(){

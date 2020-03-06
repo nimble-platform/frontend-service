@@ -7,7 +7,7 @@ import {AbstractControl, FormControl, Validators} from '@angular/forms';
 import {ValidatorFn} from '@angular/forms/src/directives/validators';
 import {ValidationService} from './validation/validators';
 
-const TEXT_INPUT_FORM_CONTROL = 'text';
+const TEXT_INPUT_FIELD_NAME = 'text';
 @Component({
     selector: "text-input",
     templateUrl: "./text-input.component.html",
@@ -57,6 +57,10 @@ export class TextInputComponent extends ChildFormBase implements OnInit {
             this.valueClass = this.label ? "col-9" : "col-12";
         }
         this.initViewFormAndAddToParentForm();
+    }
+
+    ngOnDestroy() {
+        this.removeViewFormFromParentForm();
     }
 
     @Input()
@@ -110,7 +114,7 @@ export class TextInputComponent extends ChildFormBase implements OnInit {
         }
 
         this.textInputFormControl = new FormControl(this.text, validators);
-        this.formGroup.addControl(TEXT_INPUT_FORM_CONTROL, this.textInputFormControl);
+        this.formGroup.addControl(TEXT_INPUT_FIELD_NAME, this.textInputFormControl);
     }
 
     getValidationErrorMessage(formControl: AbstractControl): string {

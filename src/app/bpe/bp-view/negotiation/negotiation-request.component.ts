@@ -354,6 +354,10 @@ export class NegotiationRequestComponent implements OnInit {
         return true;
     }
 
+    getValidationError(): string {
+        return this.validationService.extractErrorMessage(this.negotiationRequestForm);
+    }
+
     /**
      * Internal methods
      */

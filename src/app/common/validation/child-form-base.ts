@@ -1,5 +1,5 @@
 import {Input} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {AbstractControl, FormGroup} from '@angular/forms';
 
 /**
  * Created by suat on 26-Dec-17.
@@ -35,8 +35,8 @@ export abstract class ChildFormBase {
     }
 
     initViewFormAndAddToParentForm(): void {
-        if (this.formFieldName) {
-            this.initializeForm();
+        this.initializeForm();
+        if (this.parentForm) {
             this.addViewFormToParentForm();
         }
     }
@@ -54,7 +54,17 @@ export abstract class ChildFormBase {
         }
     }
 
+    addToCurrentForm(formControlName: string, formControl: AbstractControl): void {
+        if (this.formGroup.contains(formControlName)) {
+            this.formGroup.removeControl(formControlName);
+        }
+        this.formGroup.addControl(formControlName, formControl);
+    }
+
     abstract initializeForm(): void;
+
+    // TODO all child form base implementations should implement ngOnDestroy and remove themselves from the parent form on being destroyed
+    // abstract ngOnDestroy();
 
     private getElementName(): string {
         return this.formFieldName + this.componentIndex;
