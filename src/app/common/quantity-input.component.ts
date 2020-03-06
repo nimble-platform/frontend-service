@@ -8,9 +8,9 @@ import {ValidatorFn} from '@angular/forms/src/directives/validators';
 import {stepValidator, ValidationService} from './validation/validators';
 import {ItemProperty} from '../catalogue/model/publish/item-property';
 import {PublishingPropertyService} from '../catalogue/publish/publishing-property.service';
+import {FIELD_NAME_QUANTITY_VALUE} from './constants';
 
-const QUANTITY_INPUT_FORM_CONTROL_NAME = 'quantityInput';
-const NUMBER_VALUE_FORM_CONTROL = 'numberValue';
+const FIELD_NAME_QUANTITY_UNIT = 'quantity_unit';
 
 @Component({
     selector: "quantity-input",
@@ -48,7 +48,8 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
     @Input() required = false;
     @Input() minimum: number;
 
-    @Input() property:ItemProperty = null;
+    // target property for which this quantity holds value. it is used to get the associated units
+    @Input() parentProperty: ItemProperty = null;
 
     // step logic
     _step = 1;
@@ -69,11 +70,12 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
     // end of form validation inputs
 
     quantityValueFormControl: FormControl;
+    quantityUnitFormControl: FormControl;
 
     constructor(private unitService: UnitService,
                 private publishingPropertyService: PublishingPropertyService,
                 private validationService: ValidationService) {
-        super(QUANTITY_INPUT_FORM_CONTROL_NAME);
+        super();
     }
 
     ngOnInit() {
@@ -86,8 +88,8 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
         else
           this.innerFormClass = "form-control-sm";
 
-        if(this.property && !isCustomProperty(this.property)){
-            this.publishingPropertyService.getCachedProperty(this.property.id).then(indexedProperty => {
+        if(this.parentProperty && !isCustomProperty(this.parentProperty)){
+            this.publishingPropertyService.getCachedProperty(this.parentProperty.id).then(indexedProperty => {
                 if(indexedProperty.codeList && indexedProperty.codeList.length > 0){
                     this.quantityUnits = indexedProperty.codeList;
                 }
@@ -107,6 +109,10 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
         this.initViewFormAndAddToParentForm();
     }
 
+    ngOnDestroy() {
+        this.removeViewFormFromParentForm();
+    }
+
     private initQuantityUnit(): void {
         if(this.quantity.unitCode == null && this.quantityUnits != null){
             this.quantity.unitCode = this.quantityUnits[0];
@@ -114,9 +120,49 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
     }
 
     /**
+     * form initializers
+     */
+
+    initializeForm(): void {
+        this.initNumberInputFormControl();
+        this.initUnitInputFormControl();
+    }
+
+    private initNumberInputFormControl(): void {
+        let validators: ValidatorFn[] = [stepValidator(this.step)];
+        if (this.minimum) {
+            validators.push(Validators.min(this.minimum));
+        }
+        if (this.required) {
+            validators.push(Validators.required);
+            if (!this.minimum) {
+                validators.push(Validators.min(1));
+            }
+        }
+
+        this.quantityValueFormControl = new FormControl(this.quantity.value, validators);
+        this.addToCurrentForm(FIELD_NAME_QUANTITY_VALUE, this.quantityValueFormControl);
+    }
+
+    private initUnitInputFormControl(): void {
+        let validators: ValidatorFn[] = [];
+        if (this.required) {
+            validators.push(Validators.required);
+        } else {
+            if (this.quantity.value) {
+                validators.push(Validators.required);
+            }
+        }
+
+        this.quantityUnitFormControl = new FormControl(this.quantity.unitCode, validators);
+        this.addToCurrentForm(FIELD_NAME_QUANTITY_UNIT, this.quantityUnitFormControl);
+    }
+
+    /**
      * template-related methods handlers
      */
     onQuantityValueChanged(value: number) {
+        // this.updateUnitFormControlOnValueUpdate(value);
         this.onQuantityValueChange.emit(value);
     }
 
@@ -130,31 +176,5 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
 
     getValidationErrorMessage(formControl: AbstractControl): string {
         return this.validationService.getValidationErrorMessage(formControl);
-    }
-
-    /**
-     * private inner methods
-     */
-    initializeForm(): void {
-        this.initNumberInputFormControl();
-    }
-
-    private initNumberInputFormControl(): void {
-        let validators: ValidatorFn[] = [stepValidator(this.step)];
-        if (this.minimum) {
-            validators.push(Validators.min(this.minimum));
-        }
-        if (this.required) {
-            if (!this.minimum) {
-                validators.push(Validators.min(1));
-            }
-        }
-        // required validator is already on the template
-
-        this.quantityValueFormControl = new FormControl(this.quantity.value, validators);
-        if (this.formGroup.contains(NUMBER_VALUE_FORM_CONTROL)) {
-            this.formGroup.removeControl(NUMBER_VALUE_FORM_CONTROL);
-        }
-        this.formGroup.addControl(NUMBER_VALUE_FORM_CONTROL, this.quantityValueFormControl);
     }
 }

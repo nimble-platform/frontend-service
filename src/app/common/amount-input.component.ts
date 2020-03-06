@@ -4,11 +4,10 @@ import {amountToString} from "./utils";
 import {Amount} from "../catalogue/model/publish/amount";
 import {ChildFormBase} from './validation/child-form-base';
 import {ValidatorFn} from '@angular/forms/src/directives/validators';
-import {stepValidator, ValidationService} from './validation/validators';
+import {ValidationService} from './validation/validators';
 import {AbstractControl, FormControl, Validators} from '@angular/forms';
 
-const AMOUNT_INPUT_FORM_CONTROL_NAME = 'amountInput';
-const NUMBER_VALUE_FORM_CONTROL = 'numberValue';
+const NUMBER_VALUE_FIELD_NAME = 'amount_value';
 
 @Component({
     selector: "amount-input",
@@ -42,7 +41,7 @@ export class AmountInputComponent extends ChildFormBase implements OnInit {
 
     constructor(private unitService: UnitService,
                 private validationService: ValidationService) {
-        super(AMOUNT_INPUT_FORM_CONTROL_NAME);
+        super();
     }
 
     ngOnInit() {
@@ -95,13 +94,10 @@ export class AmountInputComponent extends ChildFormBase implements OnInit {
         let validators: ValidatorFn[] = [];
         if (this.required) {
             validators.push(Validators.min(1));
+            validators.push(Validators.required);
         }
-        // required validator is already on the template
 
         this.amountValueFormControl = new FormControl(this.amount.value, validators);
-        if (this.formGroup.contains(NUMBER_VALUE_FORM_CONTROL)) {
-            this.formGroup.removeControl(NUMBER_VALUE_FORM_CONTROL);
-        }
-        this.formGroup.addControl(NUMBER_VALUE_FORM_CONTROL, this.amountValueFormControl);
+        this.addToCurrentForm(NUMBER_VALUE_FIELD_NAME, this.amountValueFormControl);
     }
 }

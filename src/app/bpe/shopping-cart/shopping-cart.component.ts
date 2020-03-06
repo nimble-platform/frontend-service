@@ -31,6 +31,7 @@ import {TradingPreferences} from '../../catalogue/model/publish/trading-preferen
 import {CommonTerms} from '../../common/common-terms';
 import {ShoppingCartSummaryModalComponent} from './shopping-cart-summary-modal.component';
 import {FEDERATIONID} from '../../catalogue/model/constants';
+import {ValidationService} from '../../common/validation/validators';
 import {FormGroup} from '@angular/forms';
 /**
  * Created by suat on 11-Oct-19.
@@ -91,6 +92,7 @@ export class ShoppingCartComponent implements OnInit {
                 private bpeService: BPEService,
                 private documentService: DocumentService,
                 private bpDataService: BPDataService,
+                private validationService: ValidationService,
                 private userService: UserService,
                 private cookieService: CookieService,
                 private router: Router) {}

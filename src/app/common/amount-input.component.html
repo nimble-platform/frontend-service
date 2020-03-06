@@ -12,7 +12,8 @@
                            [placeholder]="placeholder"
                            [required]="required"
                            step="0.01"
-                           [ngbTooltip]="getValidationErrorMessage(amount)" [placement]="'auto'"  title="">
+                           [formControl]="amountValueFormControl"
+                           [ngbTooltip]="getValidationErrorMessage(amountValueFormControl)" [placement]="'auto'"  title="">
                 </div>
                 <div *ngIf="!amountCurrencies" class="col-5 col-amount-currency">
                     <input type="text" class="form-control form-control-sm" [(ngModel)]="amount.currencyID"

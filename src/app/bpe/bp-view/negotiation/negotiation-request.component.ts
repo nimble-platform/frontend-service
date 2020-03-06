@@ -33,6 +33,7 @@ import {NegotiationRequestItemComponent} from './negotiation-request-item.compon
 import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {CompanySettings} from '../../../user-mgmt/model/company-settings';
 import {FormGroup} from '@angular/forms';
+import {ValidationService} from '../../../common/validation/validators';
 
 @Component({
     selector: "negotiation-request",
@@ -94,6 +95,7 @@ export class NegotiationRequestComponent implements OnInit {
                 private bpeService:BPEService,
                 private userService:UserService,
                 private unitService: UnitService,
+                private validationService: ValidationService,
                 private cookieService: CookieService,
                 private location: Location,
                 private documentService: DocumentService,
@@ -350,6 +352,10 @@ export class NegotiationRequestComponent implements OnInit {
         }
 
         return true;
+    }
+
+    getValidationError(): string {
+        return this.validationService.extractErrorMessage(this.negotiationRequestForm);
     }
 
     /**

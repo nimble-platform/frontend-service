@@ -67,7 +67,11 @@
 
 <ng-container *ngIf="publishingGranularity === 'single' && catalogueLine">
     <hr>
-    <name-description-panel [catalogueLine]="catalogueLine" [productIdEditable]="isProductIdEditable()"></name-description-panel>
+    <name-description-panel [catalogueLine]="catalogueLine"
+                            [productIdEditable]="isProductIdEditable()"
+                            [productIdEditable]="isProductIdEditable()"
+                            [parentForm]="publishForm">
+    </name-description-panel>
     <hr>
 
     <!-- Tabs for Product -->
@@ -178,7 +182,7 @@
                                         </select>
                                     </td>
                                     <td *ngIf="prop.valueQualifier === 'QUANTITY'" style="vertical-align:middle" class="pb-0">
-                                      <quantity-input [property]="prop" [quantity]="prop.valueQuantity[i]" rowClass="quantity-input" large="true" [step]="0.01">
+                                      <quantity-input [parentProperty]="prop" [quantity]="prop.valueQuantity[i]" rowClass="quantity-input" large="true" [step]="0.01">
                                       </quantity-input>
                                     </td>
                                     <td *ngIf="prop.valueQualifier === 'BOOLEAN'" style="vertical-align:middle;line-height:2.375rem;" class="pb-0">
@@ -294,16 +298,20 @@
             </button>
         </div>
         <div class="col-3">
-            <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine() || !areInputNumbersValid() || !publishForm.valid" (click)="onPublish(false)">
-                <span *ngIf="publishStateService.publishMode === 'edit'" [innerHTML]="'Save & Continue' | translate"></span>
-                <span *ngIf="publishStateService.publishMode !== 'edit'" [innerHTML]="'Publish & Continue' | translate"></span>
-            </button>
+            <span [ngbTooltip]="validationService.extractErrorMessage(publishForm)" [placement]="'auto'"  title="">
+                <button class="btn btn-primary action" [disabled]="isLoading() || !areInputNumbersValid() || !publishForm.valid" (click)="onPublish(false)">
+                    <span *ngIf="publishStateService.publishMode === 'edit'" [innerHTML]="'Save & Continue' | translate"></span>
+                    <span *ngIf="publishStateService.publishMode !== 'edit'" [innerHTML]="'Publish & Continue' | translate"></span>
+                </button>
+            </span>
         </div>
         <div class="col-3">
-            <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine() || !areInputNumbersValid() || !publishForm.valid" (click)="onPublish(true)">
-                <span *ngIf="publishStateService.publishMode === 'edit'" [innerHTML]="'Save & Exit' | translate"></span>
-                <span *ngIf="publishStateService.publishMode !== 'edit'" [innerHTML]="'Publish & Exit' | translate"></span>
-            </button>
+            <span [ngbTooltip]="validationService.extractErrorMessage(publishForm)" [placement]="'auto'"  title="">
+                <button class="btn btn-primary action" [disabled]="isLoading() || !areInputNumbersValid() || !publishForm.valid" (click)="onPublish(true)">
+                    <span *ngIf="publishStateService.publishMode === 'edit'" [innerHTML]="'Save & Exit' | translate"></span>
+                    <span *ngIf="publishStateService.publishMode !== 'edit'" [innerHTML]="'Publish & Exit' | translate"></span>
+                </button>
+            </span>
         </div>
     </div>
 

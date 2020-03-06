@@ -1,12 +1,14 @@
-import {AbstractControl, ValidatorFn} from '@angular/forms';
+import {AbstractControl, FormControl, FormGroup, RequiredValidator, ValidatorFn, Validators} from '@angular/forms';
 import {Injectable} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
+import {FIELD_NAME_PRODUCT_PRICE_AMOUNT, FIELD_NAME_PRODUCT_PRICE_BASE_QUANTITY, FIELD_NAME_QUANTITY_VALUE} from '../constants';
 
 // validator constants
 export const VALIDATION_ERROR_MULTIPLE = 'multiple';
 export const VALIDATION_ERROR_MIN = 'min';
 export const VALIDATION_REQUIRED = 'required';
-export const VALIDATION_ERROR_PREFIX = 'validation_error_'
+export const VALIDATION_ERROR_PREFIX = 'validation_error_';
+export const FORM_FIELD_PREFIX = 'form_field_';
 
 export function stepValidator(step: number): ValidatorFn {
     return (control: AbstractControl): { [key: string]: string} | null => {
@@ -19,6 +21,46 @@ export function stepValidator(step: number): ValidatorFn {
         }
         return null;
     };
+}
+
+export function priceValidator(formGroup: FormGroup): any {
+    let priceAmountFormControl: AbstractControl = formGroup.controls[FIELD_NAME_PRODUCT_PRICE_AMOUNT];
+    let priceBaseQuantityFormGroup: FormGroup;
+    for (let fieldKey of Object.keys(formGroup.controls)) {
+        if (fieldKey.startsWith(FIELD_NAME_PRODUCT_PRICE_BASE_QUANTITY)) {
+            priceBaseQuantityFormGroup = <FormGroup>formGroup.controls[fieldKey];
+            break;
+        }
+    }
+    // base quantity group is not available yet
+    if (priceBaseQuantityFormGroup == null) {
+        return null;
+    }
+    // if the price is set, base quantity should also be set
+    if (priceAmountFormControl.value) {
+        if (!priceBaseQuantityFormGroup.controls[FIELD_NAME_QUANTITY_VALUE].value) {
+            priceBaseQuantityFormGroup.controls[FIELD_NAME_QUANTITY_VALUE].setErrors({'required': true});
+            return {'invalidBaseQuantity': true}
+        } else {
+            deleteError(priceBaseQuantityFormGroup.controls[FIELD_NAME_QUANTITY_VALUE], 'required');
+        }
+    } else {
+        deleteError(priceBaseQuantityFormGroup.controls[FIELD_NAME_QUANTITY_VALUE], 'required');
+
+    }
+    return null;
+}
+
+function deleteError(formControl: AbstractControl, errorToDelete: string): void {
+    let errors: any = formControl.errors;
+    // if errors is not null or empty
+    if (errors && Object.keys(errors).length !== 0) {
+        delete errors[errorToDelete];
+    }
+    if (!errors || Object.keys(errors).length === 0) {
+        errors = null;
+    }
+    formControl.setErrors(errors);
 }
 
 @Injectable()
@@ -50,6 +92,37 @@ export class ValidationService {
             }
         }
         return errorMessage;
+    }
+
+    /**
+     * recursively search the erroneous field inside the form controls
+     */
+    extractErrorMessage(form: FormGroup, fieldPath = ''): string {
+        let errorPath: string = this.findPath(form, fieldPath);
+        if (errorPath) {
+            return this.translateService.instant('validation_provide_valid_input') + '\n' + errorPath;
+        }
+        return '';
+    }
+
+    private findPath(form: FormGroup, fieldPath = ''): string {
+        if (!form.valid) {
+            for (let fieldName of Object.keys(form.controls)) {
+                let control: AbstractControl = form.controls[fieldName];
+                if (!control.valid) {
+                    // first remove the non alpha characters and translate
+                    let labelKey: string = FORM_FIELD_PREFIX + fieldName.replace(/[^a-z_]/gi, '').toLowerCase();
+                    let fieldLabel: string = this.translateService.instant(labelKey);
+                    let newPath: string = fieldPath + ' / ' + fieldLabel;
+                    if (control instanceof FormControl) {
+                        return newPath;
+                    } else {
+                        return this.findPath(<FormGroup>control, newPath);
+                    }
+                }
+            }
+        }
+        return fieldPath;
     }
 }
 
