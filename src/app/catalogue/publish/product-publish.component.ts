@@ -180,11 +180,6 @@ export class ProductPublishComponent implements OnInit {
                 private translate: TranslateService) {
     }
 
-    printForm() {
-        console.log('product publish form');
-        console.log(this.publishForm);
-    }
-
     ngOnInit() {
         ProductPublishComponent.dialogBox = true;
         this.selectedCategories = this.categoryService.selectedCategories;
