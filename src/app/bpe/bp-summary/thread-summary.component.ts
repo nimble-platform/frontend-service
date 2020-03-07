@@ -268,20 +268,20 @@ export class ThreadSummaryComponent implements OnInit {
         let correspondent = null;
         if (userRole === "buyer") {
             if(processType == "Fulfilment"){
-                correspondent = dashboardProcessInstanceDetails.requestCreatorUser.firstName + " " + dashboardProcessInstanceDetails.requestCreatorUser.familyName;
+                correspondent = dashboardProcessInstanceDetails.requestCreatorUser;
             }
             else if(dashboardProcessInstanceDetails.responseCreatorUser){
-                correspondent = dashboardProcessInstanceDetails.responseCreatorUser.firstName + " " + dashboardProcessInstanceDetails.responseCreatorUser.familyName;
+                correspondent = dashboardProcessInstanceDetails.responseCreatorUser;
             }
         }
         else {
             if(processType == "Fulfilment"){
                 if(dashboardProcessInstanceDetails.responseCreatorUser){
-                    correspondent = dashboardProcessInstanceDetails.responseCreatorUser.firstName + " " + dashboardProcessInstanceDetails.responseCreatorUser.familyName;
+                    correspondent = dashboardProcessInstanceDetails.responseCreatorUser;
                 }
             }
             else {
-                correspondent = dashboardProcessInstanceDetails.requestCreatorUser.firstName + " " + dashboardProcessInstanceDetails.requestCreatorUser.familyName;
+                correspondent = dashboardProcessInstanceDetails.requestCreatorUser;
             }
         }
         return correspondent;
@@ -296,8 +296,8 @@ export class ThreadSummaryComponent implements OnInit {
         const initialDoc: any = dashboardProcessInstanceDetails.requestDocument;
         const responseDocumentStatus: any = dashboardProcessInstanceDetails.responseDocumentStatus;
         const userRole = ActivityVariableParser.getUserRole(processType,initialDoc,this.processInstanceGroup.partyID);
-        const lastActivity = dashboardProcessInstanceDetails.lastActivityInstance;
-        const processInstance = dashboardProcessInstanceDetails.processInstance;
+        const lastActivityStartTime = dashboardProcessInstanceDetails.lastActivityInstanceStartTime;
+        const processInstanceState:any = dashboardProcessInstanceDetails.processInstanceState;
         const correspondent = this.getCorrespondent(dashboardProcessInstanceDetails,userRole,processType);
 
         // get seller's business process workflow
@@ -326,7 +326,7 @@ export class ThreadSummaryComponent implements OnInit {
             processType,
             processType.replace(/[_]/gi, " "),
             processInstanceId,
-            moment(new Date(lastActivity["startTime"]), 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss"),
+            moment(new Date(lastActivityStartTime), 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss"),
             ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"),processType),
             initialDoc.items,
             correspondent,
@@ -344,7 +344,7 @@ export class ThreadSummaryComponent implements OnInit {
             dashboardProcessInstanceDetails.completionDate
         );
 
-        this.fillStatus(event, processInstance["state"], processType, responseDocumentStatus, userRole === "buyer",isFulfilmentIncludedInWorkflow);
+        this.fillStatus(event, processInstanceState, processType, responseDocumentStatus, userRole === "buyer",isFulfilmentIncludedInWorkflow);
 
         return event;
     }
