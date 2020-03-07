@@ -691,11 +691,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     private initOrderQuantityFormControl(): void {
         let step: number = this.wrapper.lineDiscountPriceWrapper.price.baseQuantity.value || 1;
         let validators: ValidatorFn[] = [stepValidator(step), Validators.required, Validators.min(step)];
-
         this.orderQuantityFormControl = new FormControl(this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.quantity.value, validators);
-        if (this.formGroup.contains(ORDER_QUANTITY_NUMBER_FIELD_NAME)) {
-            this.formGroup.removeControl(ORDER_QUANTITY_NUMBER_FIELD_NAME);
-        }
-        this.formGroup.addControl(ORDER_QUANTITY_NUMBER_FIELD_NAME, this.orderQuantityFormControl);
+        this.addToCurrentForm(ORDER_QUANTITY_NUMBER_FIELD_NAME, this.orderQuantityFormControl);
     }
 }

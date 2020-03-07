@@ -2,13 +2,15 @@ import {AbstractControl, FormControl, FormGroup, RequiredValidator, ValidatorFn,
 import {Injectable} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {FIELD_NAME_PRODUCT_PRICE_AMOUNT, FIELD_NAME_PRODUCT_PRICE_BASE_QUANTITY, FIELD_NAME_QUANTITY_VALUE} from '../constants';
+import {PeriodRange} from '../../user-mgmt/model/period-range';
 
 // validator constants
 export const VALIDATION_ERROR_MULTIPLE = 'multiple';
 export const VALIDATION_ERROR_MIN = 'min';
+export const VALIDATION_INVALID_PERIOD = 'invalid_period';
 export const VALIDATION_REQUIRED = 'required';
-export const VALIDATION_ERROR_PREFIX = 'validation_error_';
-export const FORM_FIELD_PREFIX = 'form_field_';
+const VALIDATION_ERROR_PREFIX = 'validation_error_';
+const FORM_FIELD_PREFIX = 'form_field_';
 
 export function stepValidator(step: number): ValidatorFn {
     return (control: AbstractControl): { [key: string]: string} | null => {
@@ -51,6 +53,21 @@ export function priceValidator(formGroup: FormGroup): any {
     return null;
 }
 
+export function periodValidator(selectedUnitFormControl: FormControl, periodUnits, periods: PeriodRange[]): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: string} | null => {
+        let index = periodUnits.indexOf(selectedUnitFormControl.value);
+        let periodRange: PeriodRange = index >= 0 ? periods[index] : null;
+
+        if (periodRange && control.value != null && !(control.value >= periodRange.start && control.value <= periodRange.end)) {
+            let errorKey: string = VALIDATION_INVALID_PERIOD;
+            let error: any = {};
+            error[errorKey] = {'start': periodRange.start, 'end': periodRange.end};
+            return error
+        }
+        return null;
+    };
+}
+
 function deleteError(formControl: AbstractControl, errorToDelete: string): void {
     let errors: any = formControl.errors;
     // if errors is not null or empty
@@ -88,6 +105,12 @@ export class ValidationService {
                 }
                 case VALIDATION_REQUIRED: {
                     return this.translateService.instant(VALIDATION_ERROR_PREFIX + VALIDATION_REQUIRED);
+                }
+                case VALIDATION_INVALID_PERIOD: {
+                    let formData: any = formControl.errors[VALIDATION_INVALID_PERIOD];
+                    errorMessage = this.translateService.instant(VALIDATION_ERROR_PREFIX + VALIDATION_INVALID_PERIOD,
+                        {start: formData.start, end: formData.end});
+                    return errorMessage;
                 }
             }
         }
