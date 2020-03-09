@@ -47,7 +47,7 @@
                               <i class="fa fa-trash-alt p-1 pointer" aria-hidden="true"></i>
                           </div>
                           -->
-                          <div *ngIf="titleEvent && showRateCollaborationButton" class="inline" (click)="rateCollaborationSuccess(addSuccessRatingModal)" data-toggle="tooltip" data-placement="top" [title]="'Rate this collaboration' | translate">
+                          <div *ngIf="titleEvent && showRateCollaborationButton && sellerNegoSettings" class="inline" (click)="rateCollaborationSuccess(addSuccessRatingModal)" data-toggle="tooltip" data-placement="top" [title]="'Rate this collaboration' | translate">
                               <i class="fa fa-star p-1 pointer" aria-hidden="true"></i>
                           </div>
                           <div *ngIf="titleEvent && showFinishCollaborationButton" class="inline" (click)="finishCollaboration()" data-toggle="tooltip" data-placement="top" [title]="'Finish the collaboration' | translate">

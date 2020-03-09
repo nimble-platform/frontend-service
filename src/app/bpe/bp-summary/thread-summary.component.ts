@@ -299,12 +299,11 @@ export class ThreadSummaryComponent implements OnInit {
 
         // get seller's business process workflow
         // we need this information to set status and labels for Order properly
-        const sellerNegotiationSettings = await this.userService.getCompanyNegotiationSettingsForParty(initialDoc.sellerPartyId,initialDoc.sellerPartyFederationId);
-        this.sellerNegoSettings = sellerNegotiationSettings;
-        const sellerWorkflow = sellerNegotiationSettings.company.processID;
-
-        // check whether Fulfilment is included or not in seller's workflow
-        const isFulfilmentIncludedInWorkflow = !sellerWorkflow || sellerWorkflow.length == 0 || sellerWorkflow.indexOf('Fulfilment') != -1;
+        if(this.sellerNegoSettings == null){
+            this.userService.getCompanyNegotiationSettingsForParty(initialDoc.sellerPartyId, initialDoc.sellerPartyFederationId).then(negotiationSettings => {
+                this.sellerNegoSettings = negotiationSettings;
+            });
+        }
 
         let sellerFederationId:string;
         if (userRole === "buyer") {
@@ -341,7 +340,7 @@ export class ThreadSummaryComponent implements OnInit {
             dashboardProcessInstanceDetails.completionDate
         );
 
-        this.fillStatus(event, processInstanceState, processType, responseDocumentStatus, userRole === "buyer",isFulfilmentIncludedInWorkflow);
+        this.fillStatus(event, processInstanceState, processType, responseDocumentStatus, userRole === "buyer");
 
         return event;
     }
@@ -398,9 +397,9 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     private fillStatus(event: ThreadEventMetadata, processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
-                       processType: ProcessType, response: any, buyer: boolean, isFulfilmentIncludedInWorkflow:boolean): void {
+                       processType: ProcessType, response: any, buyer: boolean): void {
 
-        event.status = this.getStatus(processState, processType, response, buyer, isFulfilmentIncludedInWorkflow);
+        event.status = this.getStatus(processState, processType, response, buyer);
 
         // messages if there is no response from the responder party
         if (response == null) {
@@ -551,7 +550,7 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     private getStatus(processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
-                      processType: ProcessType, response: any, buyer: boolean,isFulfilmentIncludedInWorkflow:boolean): ThreadEventStatus {
+                      processType: ProcessType, response: any, buyer: boolean): ThreadEventStatus {
         switch(processState) {
             case "COMPLETED":
                 return "DONE";
@@ -677,7 +676,7 @@ export class ThreadSummaryComponent implements OnInit {
 
     rateCollaborationSuccess(content) {
      
-      if( this.sellerNegoSettings != null && this.sellerNegoSettings.company.processID.length !=0){
+      if(this.sellerNegoSettings.company.processID.length !=0){
         this.compRating = {};
 
         if(this.sellerNegoSettings.company.processID.indexOf('Fulfilment') != -1){
