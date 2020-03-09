@@ -1,4 +1,3 @@
-import { Item } from "./item";
 import { ThreadEventStatus } from "./thread-event-status";
 import { ProcessType } from "../../../bpe/model/process-type";
 
@@ -9,7 +8,6 @@ export class ThreadEventMetadata {
         public presentableProcessType: string,
         public processInstanceId: string,
         public startTime: string,
-        public tradingPartner: string,
         public products: any, // this object holds some information about the products such as catalog and line ids, product names and whether they are transport services or not
         public correspondent: string,
         public processStatus: string,

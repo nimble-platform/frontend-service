@@ -101,6 +101,8 @@ export class ThreadSummaryComponent implements OnInit {
     showRateCollaborationButton = false;
     expanded: boolean = false;
 
+    tradingPartnerName:string = null;
+
     config = myGlobals.config;
     selectPreferredValue = selectPreferredValue;
 
@@ -305,16 +307,21 @@ export class ThreadSummaryComponent implements OnInit {
             });
         }
 
-        let sellerFederationId:string;
-        if (userRole === "buyer") {
-            this.lastEventPartnerID = initialDoc.sellerPartyId;
-            this.lastEventPartnerFederationId = initialDoc.sellerPartyFederationId;
+        if(this.lastEventPartnerID == null){
+            if (userRole === "buyer") {
+                this.lastEventPartnerID = initialDoc.sellerPartyId;
+                this.lastEventPartnerFederationId = initialDoc.sellerPartyFederationId;
+            }
+            else {
+                this.lastEventPartnerID = initialDoc.buyerPartyId;
+                this.lastEventPartnerFederationId = initialDoc.buyerPartyFederationId;
+            }
+
+            this.userService.getParty(this.lastEventPartnerID,this.lastEventPartnerFederationId).then(party => {
+                this.tradingPartnerName = UBLModelUtils.getPartyDisplayNameForPartyName(party.partyName);
+            })
         }
-        else {
-            this.lastEventPartnerID = initialDoc.buyerPartyId;
-            this.lastEventPartnerFederationId = initialDoc.buyerPartyFederationId;
-        }
-        sellerFederationId = initialDoc.sellerPartyFederationId;
+        let sellerFederationId:string = initialDoc.sellerPartyFederationId;
 
         const isRated = await this.bpeService.ratingExists(processInstanceId, this.lastEventPartnerID,this.lastEventPartnerFederationId,sellerFederationId);
 
@@ -323,7 +330,6 @@ export class ThreadSummaryComponent implements OnInit {
             processType.replace(/[_]/gi, " "),
             processInstanceId,
             moment(new Date(lastActivityStartTime), 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss"),
-            ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"),processType),
             initialDoc.items,
             correspondent,
             this.getBPStatus(responseDocumentStatus),
