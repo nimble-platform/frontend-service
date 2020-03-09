@@ -116,12 +116,29 @@ export class ProductDetailsOverviewComponent implements OnInit{
             }
             this.classificationNames = [];
             let manPartyId  =  UBLModelUtils.getPartyId(this.wrapper.goodsItem.item.manufacturerParty);
+            let userId = this.cookieService.get('user_id');
+            let log = {
+                "@timestamp": moment().utc().toISOString(),
+                "level": "INFO",
+                "serviceID": "frontend-service",
+                "userId": userId,
+                "companyId": this.companyId,
+                "active_company": this.activeComp,
+                "manufactured_companyId" : manPartyId,
+                "activity": "product_visit"
+              };
+
+              if (this.debug)
+                console.log("Writing log "+JSON.stringify(log));
+              this.credentialsService.logUrl(log)
+                .then(res => {})
+                .catch(error => {});
+
             this.categoryService.getCategories(categoryUris).then(response => {
                 for(let category of response.result) {
                     this.classificationNames.push(selectNameFromLabelObject(category.label));
                     let LabelName = selectNameFromLabelObject(category.label);
                     if (this.config.loggingEnabled && this.companyId != manPartyId) {
-                      let userId = this.cookieService.get("user_id");
                       let log = {
                         "@timestamp": moment().utc().toISOString(),
                         "level": "INFO",
@@ -131,7 +148,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
                         "active_company": this.activeComp,
                         "manufactured_companyId" : manPartyId,
                         "category" : LabelName,
-                        "activity": "product_visit"
+                        "activity": "category_visits"
                       };
         
                       if (this.debug)
