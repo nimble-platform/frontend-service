@@ -501,6 +501,27 @@ export class BPEService {
             });
     }
 
+		getRatingsDetails(partyId: string,partyFederationId:string): Promise<any> {
+			let headers = this.getAuthorizedHeaders();
+			let url = `${this.url}/ratingsAndReviews?partyId=${partyId}`;
+			if(this.delegated){
+				url = `${this.delegate_url}/ratingsAndReviews?partyId=${partyId}`;
+			}
+			headers.append("federationId",partyFederationId);
+			return this.http
+	            .get(url, {headers: headers})
+	            .toPromise()
+	            .then(res => res.json())
+	            .catch(res => {
+	                if (res.status == 400) {
+	                    // no ratings
+	                    return null;
+	                } else {
+	                    this.handleError(res.getBody());
+	                }
+	            });
+	    }
+
 	postRatings(partyId: string, partyFederationId:string, processInstanceId: string, ratings: EvidenceSupplied[], reviews: Comment[],delegateId:string): Promise<any> {
 		let headers = this.getAuthorizedHeaders();
 		let url = `${this.url}/ratingsAndReviews?partyId=${partyId}&processInstanceID=${processInstanceId}&ratings=${encodeURIComponent(JSON.stringify(ratings))}&reviews=${encodeURIComponent(JSON.stringify(reviews))}`;

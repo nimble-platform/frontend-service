@@ -1461,7 +1461,10 @@ export class SimpleSearchFormComponent implements OnInit {
     getCompLink(res: any): string {
         let link = "";
         if (res && res.id) {
-            link += "#/user-mgmt/company-details?id=" + res.id + "&delegateId="+res.nimbleInstanceName;
+						if (!res.isFromLocalInstance && res.nimbleInstanceName && res.nimbleInstanceName != '')
+            	link += "#/user-mgmt/company-details?id=" + res.id + "&delegateId="+res.nimbleInstanceName;
+						else
+							link += "#/user-mgmt/company-details?id=" + res.id;
         }
         return link;
     }
