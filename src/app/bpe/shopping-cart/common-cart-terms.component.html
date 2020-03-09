@@ -31,32 +31,32 @@
     <div *ngIf="showGeneralTerms" class="row">
         <div class="col-5">
             <div class="mb-1">
-                <negotiation-request-input [label]="'Delivery Period'"
+                <negotiation-request-input [label]="'Delivery Period' | translate"
                                            [quantity]="deliveryPeriod"
                                            [quantityUnits]="deliveryPeriodUnits">
                 </negotiation-request-input>
             </div>
             <div class="mb-1">
-                <negotiation-request-input label="Warranty"
+                <negotiation-request-input [label]="'Warranty' | translate"
                                            [quantity]="warrantyPeriod"
                                            [quantityUnits]="warrantyPeriodUnits">
                 </negotiation-request-input>
             </div>
             <div class="mb-1">
-                <negotiation-request-input label="Incoterms"
+                <negotiation-request-input [label]="'Incoterms' | translate"
                                            [options]="INCOTERMS"
                                            [selected]="incoTerm"
                                            (selectedChange)="incoTerm = $event">
                 </negotiation-request-input>
             </div>
             <div class="mb-1">
-                <negotiation-request-input label="Payment Terms"
+                <negotiation-request-input [label]="'Payment Terms' | translate"
                                            [options]="PAYMENT_TERMS"
                                            [selected]="paymentTerm"
                                            (selectedChange)="paymentTerm = $event">
                 </negotiation-request-input>
             </div>
-            <negotiation-request-input label="Payment Means"
+            <negotiation-request-input [label]="'Payment Means' | translate"
                                        [options]="PAYMENT_MEANS"
                                        [selected]="paymentMean"
                                        (selectedChange)="paymentMean = $event">
@@ -66,8 +66,8 @@
 
     <div *ngIf="showFrameContractDetails" class="row">
         <div class="col-5">
-            <negotiation-request-input [label]="'Frame Contract'"
-                                       [description]="'The period within which the offered conditions will be valid upon confirmation by the seller.'"
+            <negotiation-request-input [label]="'Frame Contract' | translate"
+                                       [description]="'The period within which the offered conditions will be valid upon confirmation by the seller.' | translate"
                                        [quantityUnits]="frameContractDurationUnits"
                                        [quantity]="frameContractDuration">
             </negotiation-request-input>

@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Text} from '../model/publish/text';
 import {ItemProperty} from '../model/publish/item-property';
 import {selectNameFromLabelObject, selectPreferredValue} from '../../common/utils';
-import {LogisticPublishingService} from './logistic-publishing.service';
+import {PublishingPropertyService} from './publishing-property.service';
 import {TranslateService} from '@ngx-translate/core';
 
 @Component({
@@ -12,7 +12,7 @@ import {TranslateService} from '@ngx-translate/core';
 })
 export class OptionsPanelComponent implements OnInit{
 
-    constructor(public logisticPublishingService:LogisticPublishingService,
+    constructor(public publishingPropertyService:PublishingPropertyService,
         private translate: TranslateService) {
     }
 
@@ -31,12 +31,12 @@ export class OptionsPanelComponent implements OnInit{
     ngOnInit(){
 
         if(this.itemProperty){
-            this.logisticPublishingService.getCachedProperty(this.itemProperty.uri).then(indexedProperty => {
+            this.publishingPropertyService.getCachedProperty(this.itemProperty.uri).then(indexedProperty => {
                 // set the title
                 this.title = selectPreferredValue(this.itemProperty.name);
 
                 // retrieve options
-                this.logisticPublishingService.getCachedPropertyCodeList(indexedProperty.codeListId).then(codeListResult => {
+                this.publishingPropertyService.getCachedPropertyCodeList(indexedProperty.codeListId).then(codeListResult => {
                     for(let result of codeListResult.result){
                         let label = selectNameFromLabelObject(result.label);
                         this.options.push(new Text(label));

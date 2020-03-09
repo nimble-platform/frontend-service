@@ -58,6 +58,7 @@ import {DocumentReference} from '../model/publish/document-reference';
 import {Attachment} from '../model/publish/attachment';
 import {Address} from '../model/publish/address';
 import {Country} from '../model/publish/country';
+import {ValidationService} from '../../common/validation/validators';
 
 interface SelectedProperties {
     [key: string]: SelectedProperty;
@@ -109,6 +110,10 @@ export class ProductPublishComponent implements OnInit {
     // Flag indicating that the source page is the search page.
     // This is passed true when the user has searched products associated to a property
     searchRef = false;
+    // form model to be provided as root model to the inner components used in publishing
+    publishForm: FormGroup = new FormGroup({});
+    valid = true;
+    erroneousPaths: string[];
 
     @ViewChild(EditPropertyModalComponent)
     private editPropertyModal: EditPropertyModalComponent;
@@ -129,8 +134,6 @@ export class ProductPublishComponent implements OnInit {
 
     // placeholder for the custom property
     private newProperty: ItemProperty = UBLModelUtils.createAdditionalItemProperty(null, null);
-    // form model to be provided as root model to the inner components used in publishing
-    publishForm: FormGroup = new FormGroup({});
 
     submitted = false;
     callback = false;
@@ -167,6 +170,7 @@ export class ProductPublishComponent implements OnInit {
                 private catalogueService: CatalogueService,
                 public publishStateService: PublishService,
                 private userService: UserService,
+                private validationService: ValidationService,
                 private route: ActivatedRoute,
                 private router: Router,
                 private location: Location,
@@ -395,12 +399,6 @@ export class ProductPublishComponent implements OnInit {
 
     getPropertyType(property: Property): string {
         return sanitizeDataTypeName(property.dataType);
-    }
-
-    isValidCatalogueLine(): boolean {
-        let item = this.catalogueLine.goodsItem.item;
-        // must have a name
-        return item.name[0] && item.name[0].value !== "" && item.manufacturersItemIdentification.id && item.manufacturersItemIdentification.id !== "";
     }
 
     addItemNameDescription() {

@@ -3,7 +3,7 @@
 	<div class="form-group row col-10 mx-auto">
 		<label for="email" class="col-3 col-form-label font-weight-bold"><span [innerHTML]="'E-Mail' | translate"></span></label>
 		<div class="col-9">
-			<input type="email" class="form-control" id="email" [(disabled)]="email_preset" required [(ngModel)]="model.user.email" name="email" #email="ngModel" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9]{2,25}$" placeholder="e.g. user@domain.com">
+			<input type="email" class="form-control" id="email" [(disabled)]="email_preset" required [(ngModel)]="model.user.email" name="email" #email="ngModel" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9]{2,25}$" [placeholder]="'e.g. user@domain.com' | translate">
 			<div *ngIf="!email.valid && email.touched"><small class="text-danger"><span [innerHTML]="'Please enter a valid e-mail address.' | translate"></span></small></div>
 		</div>
 	</div>
@@ -12,7 +12,7 @@
 	<div class="form-group row col-10 mx-auto">
 		<label for="password" class="col-3 col-form-label font-weight-bold"><span [innerHTML]="'Password' | translate"></span></label>
 		<div class="col-9">
-			<input type="password" class="form-control" id="password" required (input)="validatePW()" [(ngModel)]="model.credentials.password" name="password" #password="ngModel" pattern=".{6,}" placeholder="Six or more characters">
+			<input type="password" class="form-control" id="password" required (input)="validatePW()" [(ngModel)]="model.credentials.password" name="password" #password="ngModel" pattern=".{6,}" [placeholder]="'Six or more characters' | translate">
 			<div *ngIf="!password.valid && password.touched"><small class="text-danger"><span [innerHTML]="'Please enter a password with six or more characters.' | translate"></span></small></div>
 		</div>
 	</div>
@@ -21,7 +21,7 @@
 	<div class="form-group row col-10 mx-auto">
 		<label for="password2" class="col-3 col-form-label font-weight-bold"><span [innerHTML]="'Password (repeat)' | translate"></span></label>
 		<div class="col-9">
-			<input type="password" class="form-control" [ngClass]="pw_val_class" id="password2" required (input)="validatePW()" [(ngModel)]="password_validate" name="password2" #password2="ngModel" pattern=".{6,}" placeholder="Six or more characters">
+			<input type="password" class="form-control" [ngClass]="pw_val_class" id="password2" required (input)="validatePW()" [(ngModel)]="password_validate" name="password2" #password2="ngModel" pattern=".{6,}" [placeholder]="'Six or more characters' | translate">
 			<div *ngIf="!password2.valid && password2.touched"><small class="text-danger"><span [innerHTML]="'Passwords dont match.' | translate"></span></small></div>
 		</div>
 	</div>

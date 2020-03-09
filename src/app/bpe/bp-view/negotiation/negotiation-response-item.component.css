@@ -5,6 +5,7 @@
 
 .content-row {
     padding: 0.3rem;
+    background-clip: content-box;
 }
 
 .quantity-input {

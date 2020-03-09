@@ -5,12 +5,26 @@
     </div>
 
     <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible && rows > 1">
-        <textarea class="form-control {{valueTextClass}}" [rows]="rows" [(ngModel)]="text" [disabled]="disabled" [required]="required" [maxlength]="maxLength">
+        <textarea class="form-control {{valueTextClass}}"
+                  [rows]="rows"
+                  [(ngModel)]="text"
+                  [disabled]="disabled"
+                  [required]="required"
+                  [maxlength]="maxLength"
+                  [formControl]="textInputFormControl"
+                  [ngbTooltip]="getValidationErrorMessage(textInputFormControl)" [placement]="'auto'"  title="">
         </textarea>
     </div>
 
     <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible && rows === 1">
-        <input type="text" class="form-control {{valueTextClass}}" [(ngModel)]="text" [disabled]="disabled"  [required]="required" [maxlength]="maxLength">
+        <input type="text"
+               class="form-control {{valueTextClass}}"
+               [(ngModel)]="text"
+               [disabled]="disabled"
+               [required]="required"
+               [maxlength]="maxLength"
+               [formControl]="textInputFormControl"
+               [ngbTooltip]="getValidationErrorMessage(textInputFormControl)" [placement]="'auto'"  title="">
     </div>
 
     <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">

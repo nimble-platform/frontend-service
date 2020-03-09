@@ -20,13 +20,14 @@ import { ActivatedRoute,Router } from "@angular/router";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {TranslateService} from '@ngx-translate/core';
 import {CatalogueLine} from "../catalogue/model/publish/catalogue-line";
-import {Text} from "../catalogue/model/publish/text";
 import * as moment from "moment";
 import { CookieService } from 'ng2-cookies';
 import {CredentialsService} from '../user-mgmt/credentials.service';
 import * as myGlobals from '../globals';
 import {UserService} from '../user-mgmt/user.service';
 import {ShoppingCartDataService} from '../bpe/shopping-cart/shopping-cart-data-service';
+import {ValidationService} from '../common/validation/validators';
+import {FormGroup} from '@angular/forms';
 
 @Component({
     selector: 'product-details-overview',
@@ -42,6 +43,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
     @Input() showAddToCartButton: boolean;
     @Input() inShoppingBasket: boolean;
     @Input() isNegotiateOrderButtonDisabled:boolean = false;
+    @Input() shoppingCartItemForm: FormGroup;
     // flag to adjust the name of the negotiate or order button,
     // true means the there are some negotiated terms and a negotiation process should be started. otherwise an order process is started
     @Input() isNegotiatingAnyTerm: boolean;
@@ -76,6 +78,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
         public categoryService:CategoryService,
         public catalogueService:CatalogueService,
         private shoppingCartDataService: ShoppingCartDataService,
+        private validationService: ValidationService,
         private modalService: NgbModal,
         private route: ActivatedRoute,
         private cookieService: CookieService,

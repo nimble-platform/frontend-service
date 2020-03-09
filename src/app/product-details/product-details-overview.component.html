@@ -24,12 +24,20 @@
         <div class="btn btn-primary" (click)="onRemoveFromCartButtonClicked()">
             <span [innerHTML]="'Remove from Cart' | translate"></span>
         </div>
-        <button *ngIf="isNegotiatingAnyTerm" class="btn btn-primary" [disabled]="isNegotiateOrderButtonDisabled" (click)="onNegotiateAndOrderButtonClicked()">
-            <span [innerHTML]="'Negotiate' | translate"></span>
-        </button>
-        <button *ngIf="!isNegotiatingAnyTerm" class="btn btn-primary" [disabled]="isNegotiateOrderButtonDisabled" (click)="onNegotiateAndOrderButtonClicked()">
-            <span [innerHTML]="'Order' | translate"></span>
-        </button>
+        <span *ngIf="isNegotiatingAnyTerm" [ngbTooltip]="validationService.extractErrorMessage(shoppingCartItemForm)" [placement]="'auto'"  title="">
+            <button class="btn btn-primary"
+                    [disabled]="isNegotiateOrderButtonDisabled || !shoppingCartItemForm.valid"
+                    (click)="onNegotiateAndOrderButtonClicked()">
+                <span [innerHTML]="'Negotiate' | translate"></span>
+            </button>
+        </span>
+        <span *ngIf="!isNegotiatingAnyTerm" [ngbTooltip]="validationService.extractErrorMessage(shoppingCartItemForm)" [placement]="'auto'"  title="">
+            <button class="btn btn-primary"
+                    [disabled]="isNegotiateOrderButtonDisabled || !shoppingCartItemForm.valid"
+                    (click)="onNegotiateAndOrderButtonClicked()">
+                <span [innerHTML]="'Order' | translate"></span>
+            </button>
+        </span>
     </div>
 </div>
 <div class="row">

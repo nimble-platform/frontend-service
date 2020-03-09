@@ -5,7 +5,9 @@
     </div>
     <div class="col-3">
         <input type="number" class="form-control form-control-sm"
-               [(ngModel)]="catalogueLine.requiredItemLocationQuantity.price.priceAmount.value" step="0.01">
+               [(ngModel)]="catalogueLine.requiredItemLocationQuantity.price.priceAmount.value"
+               [step]="priceAmountStep"
+               [formControl]="priceAmountFormControl">
     </div>
     <div class="col-1">
         <select class="form-control form-control-sm"
@@ -17,7 +19,9 @@
     </div>
     <div class="col-5">
         <quantity-input label="per" labelClass="col-1" valueClass="col-11"
-                        [quantity]="catalogueLine.requiredItemLocationQuantity.price.baseQuantity">
+                        [quantity]="catalogueLine.requiredItemLocationQuantity.price.baseQuantity"
+                        [formFieldName]="baseQuantityFieldName"
+                        [parentForm]="formGroup">
         </quantity-input>
     </div>
 </div>
@@ -46,4 +50,7 @@
 <hr>
 
 <!--Discounts/Charges-->
-<discount-details [catalogueLine]="catalogueLine" [companyNegotiationSettings]="companyNegotiationSettings"></discount-details>
+<discount-details [catalogueLine]="catalogueLine"
+                  [companyNegotiationSettings]="companyNegotiationSettings"
+                  [parentForm]="formGroup">
+</discount-details>

@@ -377,23 +377,8 @@ export class BPDataService{
             rfqLine.lineItem.quantity = modifiedLines[i].goodsItem.quantity;
         }
 
-        let userId = this.cookieService.get('user_id');
-        return this.userService.getSettingsForUser(userId).then(settings => {
-            // we can't copy because those are 2 different types of addresses.
-            for (let reqLine of rfq.requestForQuotationLine) {
-                const lineItem = reqLine.lineItem;
-                const address = lineItem.deliveryTerms.deliveryLocation.address;
-                address.country.name = new Text(settings.details.address.country, DEFAULT_LANGUAGE());
-                address.postalZone = settings.details.address.postalCode;
-                address.cityName = settings.details.address.cityName;
-                address.region = settings.details.address.region;
-                address.buildingNumber = settings.details.address.buildingNumber;
-                address.streetName = settings.details.address.streetName;
-            }
-
-            this.requestForQuotation = rfq;
-            return rfq;
-        });
+        this.requestForQuotation = rfq;
+        return Promise.resolve(rfq);
     }
 
     initRfqForTransportationWithOrder(order: Order): void {

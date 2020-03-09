@@ -4,23 +4,26 @@ import {DEFAULT_LANGUAGE} from '../model/constants';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {BinaryObject} from '../model/publish/binary-object';
 import {TranslateService} from '@ngx-translate/core';
-
+import {ChildFormBase} from '../../common/validation/child-form-base';
+import {EmptyFormBase} from '../../common/validation/empty-form-base';
+const BASIC_PRODUCT_DETAILS = 'basic_product_details';
 @Component({
     selector: "name-description-panel",
     templateUrl: "./name-description-panel.component.html",
     styleUrls: ["./name-description-panel.component.css"]
 })
-export class NameDescriptionPanelComponent implements OnInit{
+export class NameDescriptionPanelComponent extends EmptyFormBase implements OnInit{
 
     constructor(private modalService: NgbModal,
         private translate: TranslateService) {
+        super(BASIC_PRODUCT_DETAILS);
     }
 
     @Input() catalogueLine;
     @Input() productIdEditable;
 
     ngOnInit(){
-
+        this.initViewFormAndAddToParentForm();
     }
 
     addItemNameDescription() {
@@ -94,4 +97,9 @@ export class NameDescriptionPanelComponent implements OnInit{
     onLineIdChange(): void {
         this.catalogueLine.id = this.catalogueLine.goodsItem.item.manufacturersItemIdentification.id;
     }
+
+    /**
+     * private methods
+     */
+
 }

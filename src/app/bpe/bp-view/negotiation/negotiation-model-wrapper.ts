@@ -135,6 +135,14 @@ export class NegotiationModelWrapper {
         return this.catalogueLine.goodsItem.deliveryTerms.incoterms;
     }
 
+    public get lineIncotermsString(): string {
+        let incoterms = this.catalogueLine.goodsItem.deliveryTerms.incoterms;
+        if(incoterms == null || incoterms == ""){
+            return "None";
+        }
+        return incoterms;
+    }
+
     public get linePaymentTerms(): string {
         return this.sellerSettings.paymentTerms[0];
     }
@@ -180,7 +188,11 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqVatTotalString(): string {
-        return `${roundToTwoDecimals(this.rfqVatTotal)} ${this.rfqDiscountPriceWrapper.itemPrice.currency}`
+        let rfqVatTotal = this.rfqVatTotal;
+        if(rfqVatTotal == 0){
+            return "On demand";
+        }
+        return `${roundToTwoDecimals(rfqVatTotal)} ${this.rfqDiscountPriceWrapper.itemPrice.currency}`
     }
 
     public get rfqGrossTotal(): number {
@@ -196,6 +208,10 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqGrossTotalString(): string {
+        let rfqGrossTotal = this.rfqGrossTotal;
+        if(rfqGrossTotal == 0){
+            return "On demand";
+        }
         return `${roundToTwoDecimals(this.rfqGrossTotal)} ${this.rfqDiscountPriceWrapper.itemPrice.currency}`
     }
 
@@ -240,7 +256,11 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqIncotermsString(): string {
-        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.incoterms || 'None';
+        let incoterms = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.incoterms;
+        if(incoterms == null || incoterms == ""){
+            return "None";
+        }
+        return incoterms;
     }
 
     public get rfqPaymentTermsToString(): string {
@@ -325,7 +345,8 @@ export class NegotiationModelWrapper {
         this.rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address = address;
     }
 
-    public checkEqual(termsSource: 'product_defaults' | 'frame_contract' | 'last_offer', part): boolean {
+    // compares the default terms of product and the terms specified in the request
+    public checkEqualForRequest(termsSource: 'product_defaults' | 'frame_contract' | 'last_offer', part): boolean {
         switch(part) {
             case "deliveryPeriod":
                 if (termsSource == "product_defaults")
@@ -345,11 +366,11 @@ export class NegotiationModelWrapper {
                 break;
             case "incoTerms":
                 if (termsSource == "product_defaults")
-                    return (this.rfqIncoterms == this.lineIncoterms);
+                    return (this.rfqIncotermsString == this.lineIncotermsString);
                 else if (termsSource == "frame_contract")
-                    return (this.rfqIncoterms == this.frameContractQuotationWrapper.incoterms);
+                    return (this.rfqIncotermsString == this.frameContractQuotationWrapper.incotermsString);
                 else if (termsSource == "last_offer")
-                    return (this.rfqIncoterms == this.lastOfferQuotationWrapper.incoterms);
+                    return (this.rfqIncotermsString == this.lastOfferQuotationWrapper.incotermsString);
                 break;
             case "paymentTerms":
                 if (termsSource == "product_defaults")
@@ -383,6 +404,40 @@ export class NegotiationModelWrapper {
                 else if (termsSource == "last_offer")
                     return (this.rfqPricePerItemString == this.lastOfferQuotationWrapper.priceWrapper.pricePerItemString);
                 break;
+            case "dataMonitoring":
+                if (termsSource == "product_defaults")
+                    return !this.rfqDataMonitoringRequested;
+                else if (termsSource == "frame_contract")
+                    return (this.rfqDataMonitoringRequested == this.frameContractQuotationWrapper.dataMonitoringPromised);
+                else if (termsSource == "last_offer")
+                    return (this.rfqDataMonitoringRequested == this.lastOfferQuotationWrapper.dataMonitoringPromised);
+                break;
+            default:
+                return true;
+        }
+    }
+
+    // compares the terms specified in the request and the ones in the response
+    public checkEqualForResponse(part): boolean {
+        switch(part) {
+            case "deliveryPeriod":
+                return (this.rfqDeliveryPeriodString == this.newQuotationWrapper.deliveryPeriodString);
+            case "warranty":
+                return (this.rfqWarrantyString == this.newQuotationWrapper.warrantyString);
+            case "incoTerms":
+                return (this.rfqIncotermsString == this.newQuotationWrapper.incotermsString);
+            case "paymentTerms":
+                return (this.rfqPaymentTerms.paymentTerm == this.newQuotationWrapper.paymentTermsWrapper.paymentTerm);
+            case "paymentMeans":
+                return (this.rfqPaymentMeans == this.newQuotationWrapper.paymentMeans);
+            case "price":
+                return (this.rfqPricePerItemString == this.newQuotationWrapper.priceWrapper.pricePerItemString);
+            case "dataMonitoring":
+                return this.rfqDataMonitoringRequested == this.newQuotationWrapper.dataMonitoringPromised;
+            case "frameContract":
+                return UBLModelUtils.areQuantitiesEqual(this.rfqFrameContractDuration,this.newQuotationWrapper.frameContractDuration);
+            case "quantity":
+                return UBLModelUtils.areQuantitiesEqual(this.rfqQuantity,this.newQuotationWrapper.orderedQuantity);
             default:
                 return true;
         }

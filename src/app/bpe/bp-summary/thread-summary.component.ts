@@ -119,7 +119,7 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.translate.get(['Slow Response Time','Suspicious Company Information','Undervalued Offer','Rejected Delivery Terms','Other','Due to','Some reasons']).subscribe((res: any) => {
+        this.translate.get(['Slow Response Time','Suspicious Company Information','Undervalued Offer','Rejected Delivery Terms','Other','Due to','Some reasons','Collaboration finished','on','Collaboration cancelled']).subscribe((res: any) => {
             this.translations = res;
         });
         this.route.params.subscribe(params => {
@@ -268,20 +268,20 @@ export class ThreadSummaryComponent implements OnInit {
         let correspondent = null;
         if (userRole === "buyer") {
             if(processType == "Fulfilment"){
-                correspondent = dashboardProcessInstanceDetails.requestCreatorUser.firstName + " " + dashboardProcessInstanceDetails.requestCreatorUser.familyName;
+                correspondent = dashboardProcessInstanceDetails.requestCreatorUser;
             }
             else if(dashboardProcessInstanceDetails.responseCreatorUser){
-                correspondent = dashboardProcessInstanceDetails.responseCreatorUser.firstName + " " + dashboardProcessInstanceDetails.responseCreatorUser.familyName;
+                correspondent = dashboardProcessInstanceDetails.responseCreatorUser;
             }
         }
         else {
             if(processType == "Fulfilment"){
                 if(dashboardProcessInstanceDetails.responseCreatorUser){
-                    correspondent = dashboardProcessInstanceDetails.responseCreatorUser.firstName + " " + dashboardProcessInstanceDetails.responseCreatorUser.familyName;
+                    correspondent = dashboardProcessInstanceDetails.responseCreatorUser;
                 }
             }
             else {
-                correspondent = dashboardProcessInstanceDetails.requestCreatorUser.firstName + " " + dashboardProcessInstanceDetails.requestCreatorUser.familyName;
+                correspondent = dashboardProcessInstanceDetails.requestCreatorUser;
             }
         }
         return correspondent;
@@ -296,8 +296,8 @@ export class ThreadSummaryComponent implements OnInit {
         const initialDoc: any = dashboardProcessInstanceDetails.requestDocument;
         const responseDocumentStatus: any = dashboardProcessInstanceDetails.responseDocumentStatus;
         const userRole = ActivityVariableParser.getUserRole(processType,initialDoc,this.processInstanceGroup.partyID);
-        const lastActivity = dashboardProcessInstanceDetails.lastActivityInstance;
-        const processInstance = dashboardProcessInstanceDetails.processInstance;
+        const lastActivityStartTime = dashboardProcessInstanceDetails.lastActivityInstanceStartTime;
+        const processInstanceState:any = dashboardProcessInstanceDetails.processInstanceState;
         const correspondent = this.getCorrespondent(dashboardProcessInstanceDetails,userRole,processType);
 
         // get seller's business process workflow
@@ -326,7 +326,7 @@ export class ThreadSummaryComponent implements OnInit {
             processType,
             processType.replace(/[_]/gi, " "),
             processInstanceId,
-            moment(new Date(lastActivity["startTime"]), 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss"),
+            moment(new Date(lastActivityStartTime), 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss"),
             ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"),processType),
             initialDoc.items,
             correspondent,
@@ -338,22 +338,36 @@ export class ThreadSummaryComponent implements OnInit {
             initialDoc.areProductsDeleted,
             this.processInstanceGroup.status,
             sellerFederationId,
-            dashboardProcessInstanceDetails.cancellationReason
+            dashboardProcessInstanceDetails.cancellationReason,
+            moment(new Date(dashboardProcessInstanceDetails.requestDate), 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss"),
+            dashboardProcessInstanceDetails.responseDate ? moment(new Date(dashboardProcessInstanceDetails.responseDate), 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss") : null,
+            dashboardProcessInstanceDetails.completionDate
         );
 
-        this.fillStatus(event, processInstance["state"], processType, responseDocumentStatus, userRole === "buyer",isFulfilmentIncludedInWorkflow);
+        this.fillStatus(event, processInstanceState, processType, responseDocumentStatus, userRole === "buyer",isFulfilmentIncludedInWorkflow);
 
         return event;
     }
 
-    getCancellationReason(reason:string):string{
+    getCollaborationCancelledStatus(reason:string,date:string):string{
+        let status = this.translations["Collaboration cancelled"];
         if(reason){
             if(reason == "Other"){
                 reason = "Some reasons";
             }
-            return " "+ this.translations["Due to"] + " "+ this.translations[reason];
+            status += " "+ this.translations["Due to"] + " "+ this.translations[reason];
         }
-        return null;
+        if(date){
+            status += " " + this.translations["on"] + " " + date;
+        }
+        return status;
+    }
+
+    getCollaborationFinishedStatus(date:string):string{
+        if(date){
+            return this.translations["Collaboration finished"] + " " + this.translations["on"] + " " + date;
+        }
+        return this.translations["Collaboration finished"];
     }
 
     navigateToSearchDetails(item:Item) {

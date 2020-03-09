@@ -6,7 +6,12 @@
         <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible">
             <!-- No unit -->
             <div *ngIf="!amountUnit">
-                <input type="number" class="form-control form-control-sm" [(ngModel)]="amount" [disabled]="disabled" [placeholder]="placeholder">
+                <input type="number" class="form-control form-control-sm"
+                       [(ngModel)]="amount"
+                       [formControl]="amountFormControl"
+                       [disabled]="disabled"
+                       [ngbTooltip]="validationService.getValidationErrorMessage(amountFormControl)" [placement]="'auto'"  title=""
+                       [placeholder]="placeholder">
             </div>
 
             <!-- With unit -->

@@ -73,11 +73,32 @@ export class BPEService {
             .post(url, JSON.stringify(document), {headers: headers})
             .toPromise()
             .then(res => {
+            	// Agent service init call
+				if (myGlobals.config.showAgent) {
+					this.notifyAgentService(res, JSON.stringify(document)).catch((err) => {
+						console.log('error when notifying the user')
+					});
+				}
 				if (myGlobals.debug)
 					console.log(res.json());
 				return res.json();
 			})
             .catch(this.handleError);
+	}
+
+	notifyAgentService(processData, orderData) {
+		let url = myGlobals.agent_mgmt_endpoint + "/api/v1/agents/notifyAgent";
+		const headers = this.getAuthorizedHeaders();
+		return this.http
+			.post(url, JSON.stringify(document), {headers: headers})
+			.toPromise()
+			.then(res => {
+				// Agent service init call
+				if (myGlobals.debug)
+					console.log(res.json());
+				return res.json();
+			})
+			.catch(this.handleError);
 	}
 
 	cancelBusinessProcess(id: string,delegateId:string): Promise<any> {

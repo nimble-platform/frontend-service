@@ -39,6 +39,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
     PAYMENT_TERMS: string[] = UBLModelUtils.getDefaultPaymentTermsAsStrings();
     CURRENCIES: string[] = CURRENCIES;
 
+    deliverytermsOfBuyer = null;
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
     // this component is used for both transport and logistics service negotiation
@@ -67,6 +68,10 @@ export class TransportNegotiationRequestComponent implements OnInit {
 
         // get copy of ThreadEventMetadata of the current business process
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
+
+        this.userService.getSettingsForParty(this.cookieService.get("company_id")).then(res => {
+            this.deliverytermsOfBuyer = res.tradeDetails.deliveryTerms;
+        });
 
         this.rfq = this.bpDataService.requestForQuotation;
         // for logistics services except transport services, onyl Negotiation tab is available
