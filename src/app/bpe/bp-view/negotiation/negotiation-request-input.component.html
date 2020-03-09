@@ -24,16 +24,27 @@
 
     <!-- Quantity -->
     <div *ngIf="quantity !== undefined" class="col-4 col-quantity-value">
-        <input type="number" class="form-control form-control-sm" [ngModel]="quantity.value" (ngModelChange)="quantity.value = $event; onQuantityValueChanged()"
-            [ngClass]="formControlClass" [disabled]="disabled" [step]="step">
+        <input type="number" class="form-control form-control-sm"
+               [ngModel]="quantity.value"
+               (ngModelChange)="quantity.value = $event; onQuantityValueChanged()"
+               [ngClass]="formControlClass"
+               [disabled]="disabled"
+               [step]="step"
+               [formControl]="quantityValueFormControl"
+               [ngbTooltip]="validationService.getValidationErrorMessage(quantityValueFormControl)" [placement]="'auto'"  title="">
     </div>
     <div *ngIf="quantity !== undefined && !quantityUnits" class="col-3 col-quantity-unit">
-        <input type="text" class="form-control form-control-sm" [(ngModel)]="quantity.unitCode"
-            [disabled]="disabled || disableQuantityUnit">
+        <input type="text" class="form-control form-control-sm"
+               [(ngModel)]="quantity.unitCode"
+               [disabled]="disabled || disableQuantityUnit"
+               [formControl]="quantityUnitFormControl">
     </div>
     <div *ngIf="quantity !== undefined && quantityUnits" class="col-3 col-quantity-unit">
-        <select class="form-control form-control-sm" [ngModel]="quantity.unitCode" (ngModelChange)="quantity.unitCode = $event; onQuantityValueChanged()"
-            [disabled]="disabled || disableQuantityUnit">
+        <select class="form-control form-control-sm"
+                [ngModel]="quantity.unitCode"
+                (ngModelChange)="quantity.unitCode = $event; onQuantityValueChanged()"
+                [disabled]="disabled || disableQuantityUnit"
+                [formControl]="quantityUnitFormControl">
             <option *ngFor="let option of quantityUnits" [value]="option">{{option}}</option>
         </select>
     </div>

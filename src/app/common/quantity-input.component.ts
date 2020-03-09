@@ -95,7 +95,6 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
                 }
             });
         } else if(this.quantityType) {
-            this.quantityUnits = ["Loading..."];
             this.unitService.getCachedUnitList(this.quantityType)
             .then(units => {
                 this.quantityUnits = units;
@@ -163,6 +162,7 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
      */
     onQuantityValueChanged(value: number) {
         // this.updateUnitFormControlOnValueUpdate(value);
+        this.initUnitInputFormControl();
         this.onQuantityValueChange.emit(value);
     }
 

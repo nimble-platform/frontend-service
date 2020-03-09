@@ -255,9 +255,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     isFormValid(): boolean {
-        let formValid = /*!this.rfq.negotiationOptions.frameContractDuration ||*/ this.isFrameContractValid();
-        formValid = formValid && this.isDeliveryPeriodValid() && this.isWarrantyPeriodValid() && this.areDeliveryDatesValid();
-        formValid = formValid && this.negotiationRequestForm.valid;
+        let formValid =  this.isFrameContractValid() && this.negotiationRequestForm.valid;
         return formValid;
     }
 
@@ -276,7 +274,7 @@ export class NegotiationRequestComponent implements OnInit {
         return true;
     }
 
-    isWarrantyPeriodValid(): boolean {
+    /*isWarrantyPeriodValid(): boolean {
         for(let wrapper of this.wrappers){
             const range = this.getWarrantyPeriodRange(wrapper);
             if(range && !this.isPeriodValid(wrapper.rfqWarranty.value, range)){
@@ -316,7 +314,7 @@ export class NegotiationRequestComponent implements OnInit {
             }
         }
         return true;
-    }
+    }*/
 
     private isPeriodValid(value: number, range: PeriodRange): boolean {
         if(typeof value !== "number") {
