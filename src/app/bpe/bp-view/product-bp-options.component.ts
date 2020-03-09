@@ -110,7 +110,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         };
 
         if (createChannelRequest.initiatingPartyID == createChannelRequest.respondingPartyID && this.processMetadata) {
-            createChannelRequest.initiatingPartyID = this.processMetadata.content.buyerPartyId;
+            createChannelRequest.initiatingPartyID = this.processMetadata.buyerPartyId;
         }
 
         let headers = new Headers({'Content-Type': 'application/json'});
@@ -215,7 +215,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                     this.updateCompanyProcessWorkflowForThisProcess(isCollaborationFinished, sellerSettings);
 
                     // set the product line to be the first fetched line, either service or product.
-                    this.bpDataService.setProductAndCompanyInformation(this.lines, sellerSettings);
+                    this.bpDataService.setProductAndCompanyInformation(this.lines, sellerSettings,this.processType);
                     this.productWithSelectedProperties = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
 
                     // there is an order that references other products -> the line are services and the referencedLines are the original products
@@ -499,7 +499,8 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             if(isProductDeleted){
                 // catalogue line is deleted
                 this.areCatalogueLinesDeleted.push(true);
-                catalogueLines.push(UBLModelUtils.createCatalogueLineWithItemCopy(processMetadata.products[i]));
+                // create a catalogue line using the items included in the corresponding document
+                catalogueLines.push(UBLModelUtils.createCatalogueLineWithItemCopy(this.bpDataService.getItemsWithSelectedPropertiesForProcess(processMetadata.processType,i)));
             }
             else{
                 this.areCatalogueLinesDeleted.push(false);

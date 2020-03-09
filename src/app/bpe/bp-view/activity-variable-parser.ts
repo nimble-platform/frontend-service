@@ -22,9 +22,8 @@ export class ActivityVariableParser {
         }
     }
 
-    static getUserRole(processType:string,initialDocument:any,partyId:string){
-        let buyerId:any = initialDocument.buyerPartyId;
-        let role:BpUserRole = buyerId == partyId ? 'buyer' : 'seller';
+    static getUserRole(processType:string,buyerPartyId:any,partyId:string){
+        let role:BpUserRole = buyerPartyId == partyId ? 'buyer' : 'seller';
         return role;
     }
 

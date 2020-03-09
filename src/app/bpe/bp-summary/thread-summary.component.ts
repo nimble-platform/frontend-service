@@ -171,13 +171,10 @@ export class ThreadSummaryComponent implements OnInit {
     async openBpProcessView() {
         let userRole:BpUserRole = this.titleEvent.buyer ? "buyer": "seller";
 
-        let catalogueIds = [];
-        let catalogueLineIds = [];
         let termsSources = [];
 
-        for(let product of this.titleEvent.products){
-            catalogueIds.push(product.catalogueDocumentReference.id);
-            catalogueLineIds.push(product.manufacturersItemIdentification.id);
+        let numberOfProducts = this.titleEvent.products.catalogIds.length;
+        for(let i=0; i<numberOfProducts;i++){
             termsSources.push(null);
         }
         this.bpDataService.startBp(
@@ -187,11 +184,11 @@ export class ThreadSummaryComponent implements OnInit {
                 this.processInstanceGroup.id,
                 this.titleEvent,
                 [this.titleEvent].concat(this.history),
-                this.titleEvent.products,
+                null,
                 null,
                 false,
-                catalogueIds,
-                catalogueLineIds,
+                this.titleEvent.products.catalogIds,
+                this.titleEvent.products.lineIds,
                 this.titleEvent.processInstanceId,
                 ActivityVariableParser.getPrecedingDocumentId(this.titleEvent.activityVariables),
                 termsSources,
@@ -295,14 +292,14 @@ export class ThreadSummaryComponent implements OnInit {
         const processType = ActivityVariableParser.getProcessType(activityVariables);
         const initialDoc: any = dashboardProcessInstanceDetails.requestDocument;
         const responseDocumentStatus: any = dashboardProcessInstanceDetails.responseDocumentStatus;
-        const userRole = ActivityVariableParser.getUserRole(processType,initialDoc,this.processInstanceGroup.partyID);
+        const userRole = ActivityVariableParser.getUserRole(processType,initialDoc.buyerPartyId,this.processInstanceGroup.partyID);
         const lastActivityStartTime = dashboardProcessInstanceDetails.lastActivityInstanceStartTime;
         const processInstanceState:any = dashboardProcessInstanceDetails.processInstanceState;
         const correspondent = this.getCorrespondent(dashboardProcessInstanceDetails,userRole,processType);
 
         // get seller's business process workflow
         // we need this information to set status and labels for Order properly
-        const sellerNegotiationSettings = await this.userService.getCompanyNegotiationSettingsForParty(initialDoc.items[0].manufacturerParty.partyIdentification[0].id,initialDoc.items[0].manufacturerParty.federationInstanceID);
+        const sellerNegotiationSettings = await this.userService.getCompanyNegotiationSettingsForParty(initialDoc.sellerPartyId,initialDoc.sellerPartyFederationId);
         this.sellerNegoSettings = sellerNegotiationSettings;
         const sellerWorkflow = sellerNegotiationSettings.company.processID;
 
@@ -311,8 +308,8 @@ export class ThreadSummaryComponent implements OnInit {
 
         let sellerFederationId:string;
         if (userRole === "buyer") {
-            this.lastEventPartnerID = UBLModelUtils.getPartyId(initialDoc.items[0].manufacturerParty);
-            this.lastEventPartnerFederationId = initialDoc.items[0].manufacturerParty.federationInstanceID;
+            this.lastEventPartnerID = initialDoc.sellerPartyId;
+            this.lastEventPartnerFederationId = initialDoc.sellerPartyFederationId;
         }
         else {
             this.lastEventPartnerID = initialDoc.buyerPartyId;
@@ -331,7 +328,7 @@ export class ThreadSummaryComponent implements OnInit {
             initialDoc.items,
             correspondent,
             this.getBPStatus(responseDocumentStatus),
-            initialDoc,
+            initialDoc.buyerPartyId,
             activityVariables,
             userRole === "buyer",
             isRated === "true",
@@ -370,12 +367,12 @@ export class ThreadSummaryComponent implements OnInit {
         return this.translations["Collaboration finished"];
     }
 
-    navigateToSearchDetails(item:Item) {
+    navigateToSearchDetails(products:any,index:number) {
         this.router.navigate(['/product-details'],
             {
                 queryParams: {
-                    catalogueId: item.catalogueDocumentReference.id,
-                    id: item.manufacturersItemIdentification.id
+                    catalogueId: products.catalogIds[index],
+                    id: products.lineIds[index]
                 }
             });
     }
@@ -584,11 +581,11 @@ export class ThreadSummaryComponent implements OnInit {
     private computeTitleEvent() {
         this.titleEvent = this.lastEvent;
         // if the event is a transportation service, go through the history and check the last event that is not (if any)
-        if(this.areTransportationServices(this.lastEvent.products)) {
+        if(this.areTransportationServices(this.lastEvent.products.isTransportService)) {
             // history ordered from new to old
             for(let i = this.history.length - 1; i >= 0; i--) {
                 const event = this.history[i]
-                if(!this.areTransportationServices(event.products)) {
+                if(!this.areTransportationServices(event.products.isTransportService)) {
                     // if not a transport, this is relevant, doing it in the for loop makes sure the LAST non-transport event is the relevant one.
                     this.titleEvent = event;
                 }
@@ -596,9 +593,9 @@ export class ThreadSummaryComponent implements OnInit {
         }
     }
 
-    private areTransportationServices(items: Item[]){
-        for(let item of items){
-            if(!item.transportationServiceDetails){
+    private areTransportationServices(areTransportServices:boolean[]){
+        for (let isTransportService of areTransportServices) {
+            if(!isTransportService){
                 return false;
             }
         }

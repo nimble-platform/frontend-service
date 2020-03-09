@@ -10,10 +10,10 @@ export class ThreadEventMetadata {
         public processInstanceId: string,
         public startTime: string,
         public tradingPartner: string,
-        public products: Item[],
+        public products: any, // this object holds some information about the products such as catalog and line ids, product names and whether they are transport services or not
         public correspondent: string,
         public processStatus: string,
-        public content: any,
+        public buyerPartyId: any,
         public activityVariables: any,
         public buyer: boolean,
         public isRated: boolean,
