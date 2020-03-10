@@ -14,7 +14,7 @@ const FORM_FIELD_PREFIX = 'form_field_';
 
 export function stepValidator(step: number): ValidatorFn {
     return (control: AbstractControl): { [key: string]: string} | null => {
-        if (control.value !== undefined && (isNaN(control.value) || control.value % step !== 0)) {
+        if (step >= 1 && control.value !== undefined && (isNaN(control.value) || control.value % step !== 0)) {
             let minClosest: number = Math.floor(control.value / step ) * step;
             let errorKey: string = VALIDATION_ERROR_MULTIPLE;
             let error: any = {};
