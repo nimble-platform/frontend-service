@@ -60,7 +60,7 @@ export const config = {
   "federationInstanceId":"FMP",
   "platformName": "FMP",
   "envName": "fmp",
-  "addCartBehaviour": "single", // or could be multiple. If multiple, a product can be listed in the shopping cart multiple times
+  "addCartBehaviour": "single",
   "companyRegistrationRequired": true,
   "categoryFilter": {
     "eClass": {

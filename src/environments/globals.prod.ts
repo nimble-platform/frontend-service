@@ -60,7 +60,7 @@ export const config = {
     "federationInstanceId":"MVP",
   "platformName": "MVP",
   "envName": "prod",
-  "addCartBehaviour": "single", // or could be multiple. If multiple, a product can be listed in the shopping cart multiple times
+  "addCartBehaviour": "single",
   "companyRegistrationRequired": false,
   "categoryFilter": {
     "eClass": {

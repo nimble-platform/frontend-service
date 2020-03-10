@@ -60,7 +60,7 @@ export const config = {
     "federationInstanceId":"ECO-HOUSE",
   "platformName": "Eco-House",
   "envName": "ecohouse",
-  "addCartBehaviour": "single", // or could be multiple. If multiple, a product can be listed in the shopping cart multiple times
+  "addCartBehaviour": "single",
   "companyRegistrationRequired": false,
   "categoryFilter": {
     "eClass": {
