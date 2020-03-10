@@ -60,6 +60,7 @@ export const config = {
     "federationInstanceId":"K8S",
   "platformName": "K8S",
   "envName": "k8s",
+  "addCartBehaviour": "single", // or could be multiple. If multiple, a product can be listed in the shopping cart multiple times
   "companyRegistrationRequired": false,
   "categoryFilter": {
     "eClass": {

@@ -504,7 +504,7 @@ export class FavouriteViewComponent implements OnInit {
 		this.shoppingCartDataService.getShoppingCart().then(catalogue => {
 			let size = this.catalogueLinesArray.length;
 			for(let i = 0; i < size ; i++){
-				if(UBLModelUtils.doesCatalogueContainProduct(catalogue,this.catalogueLinesArray[i].catalogueId,this.catalogueLinesArray[i].manufactuerItemId)){
+				if(UBLModelUtils.isProductInCart(catalogue,this.catalogueLinesArray[i].catalogueId,this.catalogueLinesArray[i].manufactuerItemId)){
 					this.getShoppingCartStatus(i).callback("Product is added to shopping cart.", false);
 				}
 			}
@@ -537,6 +537,14 @@ export class FavouriteViewComponent implements OnInit {
 
 	getShoppingCartStatus(index: number): CallStatus {
 		return this.shoppingCartCallStatuses[index % this.pageSize];
+	}
+
+	isAddCartDisabled(index: number, line: any): boolean {
+		if (!this.shoppingCartDataService.isProductAddableToCart(line.catalogueId, line.manufactuerItemId) ||
+			this.getShoppingCartStatus(index).isLoading()) {
+			return true;
+		}
+		return false;
 	}
 
     onRegisteredCompaniesPageChange(newPage): void {

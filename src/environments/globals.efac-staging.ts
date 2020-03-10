@@ -60,6 +60,7 @@ export const config = {
   "federationInstanceId":"STAGING",
   "platformName": "eFactory Staging",
   "envName": "efac-staging",
+  "addCartBehaviour": "single", // or could be multiple. If multiple, a product can be listed in the shopping cart multiple times
   "companyRegistrationRequired": true,
   "categoryFilter": {
     "eClass": {

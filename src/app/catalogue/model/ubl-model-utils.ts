@@ -1019,7 +1019,7 @@ export class UBLModelUtils {
         return new TradingTerm(termName, description, null, termValue);
     }
 
-    public static doesCatalogueContainProduct(catalogue:Catalogue,catalogueId:string, productId:string):boolean{
+    public static isProductInCart(catalogue:Catalogue, catalogueId:string, productId:string):boolean{
         if(catalogue == null || catalogue.catalogueLine.length == 0){
             return false;
         }

@@ -131,8 +131,6 @@ export class SimpleSearchFormComponent implements OnInit {
     pageRef = ''; // page where the user is navigated from. empty string ('') means the search is opened directly
 
     productsSelectedForPublish: any[] = []; // keeps the products in the Solr format
-    // shopping cart of the user
-    shoppingCartCatalogue:Catalogue = null;
 
     isSearchResultLogisticsService=isSearchResultLogisticsService;
     constructor(private simpleSearchService: SimpleSearchService,
@@ -252,11 +250,6 @@ export class SimpleSearchFormComponent implements OnInit {
         for(let i = 0; i < this.rows; i++) {
             this.shoppingCartCallStatuses.push(new CallStatus());
         }
-
-        // initialize the shopping cart
-        this.shoppingCartDataService.getShoppingCart().then(catalogue => {
-            this.shoppingCartCatalogue = catalogue;
-        });
     }
 
     get(search: Search): void {
@@ -1515,8 +1508,6 @@ export class SimpleSearchFormComponent implements OnInit {
         shoppingCartCallStatus.submit();
 
         this.shoppingCartDataService.addItemToCart(result.uri,1,result.nimbleInstanceName).then(catalogue => {
-            // update shoppingCartCatalogue
-            this.shoppingCartCatalogue = catalogue;
             shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
         }).catch(() => {
             shoppingCartCallStatus.error(null);
@@ -1529,18 +1520,19 @@ export class SimpleSearchFormComponent implements OnInit {
 
     // display a message for the products included in the shopping cart
     displayShoppingCartMessages(){
-        // reset all call statuses
-        for(let callStatus of this.shoppingCartCallStatuses){
-            callStatus.reset();
-        }
-
-        let size = this.response.length;
-        for(let i = 0; i < size; i++){
-            let result = this.response[i];
-            if(UBLModelUtils.doesCatalogueContainProduct(this.shoppingCartCatalogue,result.catalogueId,result.manufactuerItemId)){
-                this.getShoppingCartStatus(i).callback("Product is added to shopping cart.", false);
+        this.shoppingCartDataService.getShoppingCart().then(shoppingCart => {
+            // reset all call statuses
+            for (let callStatus of this.shoppingCartCallStatuses) {
+                callStatus.reset();
             }
-        }
 
+            let size = this.response.length;
+            for (let i = 0; i < size; i++) {
+                let result = this.response[i];
+                if (UBLModelUtils.isProductInCart(shoppingCart, result.catalogueId, result.manufactuerItemId)) {
+                    this.getShoppingCartStatus(i).callback('Product is added to shopping cart.', false);
+                }
+            }
+        });
     }
 }

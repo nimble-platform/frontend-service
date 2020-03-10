@@ -61,6 +61,7 @@ export const config = {
     "federationInstanceId":"STAGING",
     "platformName": "Local Development",
     "envName": "local",
+    "addCartBehaviour": "single", // or could be multiple. If multiple, a product can be listed in the shopping cart multiple times
     "companyRegistrationRequired": false,
     "categoryFilter": {
         "eClass": {
