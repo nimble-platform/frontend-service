@@ -216,7 +216,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
             case "drop-off":
                 return this.rfq.delivery.requestedDeliveryPeriod.endDate != null && this.rfq.delivery.requestedDeliveryPeriod.endDate != "";
             case "notes":
-                return ((this.rfq.note.length == 1 && this.rfq.note[0] != "") || this.rfq.note.length > 1 || this.rfq.additionalDocumentReference.length > 0);
+                return UBLModelUtils.areNotesOrFilesAttachedToDocument(this.rfq)
             default:
                 return true;
         }
