@@ -22,3 +22,7 @@ export const defaultTransportServiceCategoryUri = "nimble:category:TransportServ
 export const FIELD_NAME_QUANTITY_VALUE = 'quantity_value';
 export const FIELD_NAME_PRODUCT_PRICE_AMOUNT = 'product_price_amount';
 export const FIELD_NAME_PRODUCT_PRICE_BASE_QUANTITY = 'price_base_quantity';
+
+// product search result fields
+export const product_base_quantity = "baseQuantity";
+export const product_base_quantity_unit = "baseQuantityUnit";
