@@ -21,6 +21,7 @@ import {MultiTypeInputComponent} from "./multi-type-input.component";
 import { HttpClient } from "@angular/common/http";
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import {DisableControlDirective} from './disable-control-directive';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -56,7 +57,8 @@ export function HttpLoaderFactory(http: HttpClient) {
 		InputLabelComponent,
 		AmountInputComponent,
 		ExpandableFlexRow,
-		MultiTypeInputComponent
+		MultiTypeInputComponent,
+		DisableControlDirective
 	],
 	exports: [
 		CallStatusComponent,
