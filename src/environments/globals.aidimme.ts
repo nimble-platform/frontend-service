@@ -59,6 +59,7 @@ export const config = {
   "federationInstanceId":"AIDIMME-FMP",
   "platformName": "FMP",
   "envName": "aidimme",
+  "addCartBehaviour": "single", // or could be multiple. If multiple, a product can be listed in the shopping cart multiple times
   "companyRegistrationRequired": true,
   "categoryFilter": {
     "eClass": {
@@ -89,7 +90,7 @@ export const config = {
   },
   "kibanaEnabled": false,
   "languageSettings": {
-    "available": ["en", "es", "de", "tr", "it", "sv"],
+    "available": ["en", "es"],
     "fallback": "en"
   },
   "loggingEnabled": false,
@@ -257,6 +258,7 @@ export const product_filter_trust = ["manufacturer.trustScore","manufacturer.tru
 export const product_filter_mappings = {
   "price": "Price",
   "currency": "Currency",
+  "manufacturer.id": "Vendor ID",
   "manufacturer.businessType": "Business Type",
   "manufacturer.activitySectors": "Activity Sectors",
   "manufacturer.businessKeywords": "Business Keywords",
@@ -265,7 +267,7 @@ export const product_filter_mappings = {
   "businessKeywords": "Business Keywords"
 };
 export const product_nonfilter_full = ["_text_","_version_","id","image","localName","languages","catalogueId","doctype","manufacturerId","manufacturerItemId","manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType","allLabels"];
-export const product_nonfilter_regex = ["lmf.","_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
+export const product_nonfilter_regex = ["lmf.","manufacturer.","_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
 export const product_configurable = [];
 export const product_default = {};
 export const facet_min = 1;

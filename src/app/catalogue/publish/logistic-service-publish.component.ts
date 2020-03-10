@@ -24,6 +24,7 @@ import * as myGlobals from '../../globals';
 import {Category} from '../model/category/category';
 import {PublishingPropertyService} from './publishing-property.service';
 import {TranslateService} from '@ngx-translate/core';
+import { AppComponent } from "../../app.component";
 
 @Component({
     selector: "logistic-service-publish",
@@ -41,7 +42,8 @@ export class LogisticServicePublishComponent implements OnInit {
                 private location: Location,
                 private cookieService: CookieService,
                 private logisticPublishingService:PublishingPropertyService,
-                private translate: TranslateService) {
+                private translate: TranslateService,
+                private appComponent: AppComponent) {
     }
 
     config = myGlobals.config;
@@ -88,7 +90,12 @@ export class LogisticServicePublishComponent implements OnInit {
     showAirTransportService:boolean = false;
     showRailTransportService:boolean = false;
 
+    private translations: any;
+
     ngOnInit() {
+        this.appComponent.translate.get(['Successfully saved. You can now continue.','Successfully saved. You are now getting redirected.']).subscribe((res: any) => {
+            this.translations = res;
+        });
         const userId = this.cookieService.get("user_id");
         this.callStatus.submit();
 
@@ -676,7 +683,7 @@ export class LogisticServicePublishComponent implements OnInit {
 
                         // since every changes is saved,we do not need a dialog box
                         this.dialogBox = false;
-
+                        alert(this.translations["Successfully saved. You are now getting redirected."]);
                         this.router.navigate(['dashboard'], {
                             queryParams: {
                                 tab: "CATALOGUE",
@@ -713,7 +720,7 @@ export class LogisticServicePublishComponent implements OnInit {
                     }
                     this.catalogueService.draftCatalogueLine = this.catalogueLine;
 
-                    this.publishStatus.callback("Successfully Submitted", true);
+                    this.publishStatus.callback(this.translations["Successfully saved. You can now continue."], false);
 
                     this.submitted = false;
                     this.callback = true;

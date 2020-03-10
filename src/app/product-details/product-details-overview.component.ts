@@ -196,7 +196,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
             })
             // display a message if the product is included in the shopping cart
             this.shoppingCartDataService.getShoppingCart().then(catalogue => {
-                if(UBLModelUtils.doesCatalogueContainProduct(catalogue,this.catalogueId,this.productId)){
+                if(UBLModelUtils.isProductInCart(catalogue,this.catalogueId,this.productId)){
                     this.shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
                 }
             })
@@ -205,6 +205,14 @@ export class ProductDetailsOverviewComponent implements OnInit{
 
     onAddToCart(): void {
         event.preventDefault();
+        // check whether the item can be added to the cart
+        let isProductAddable: boolean = this.shoppingCartDataService.isProductAddableToCart(
+            this.wrapper.line.goodsItem.item.catalogueDocumentReference.id,
+            this.wrapper.line.goodsItem.item.manufacturersItemIdentification.id);
+        if (!isProductAddable) {
+            return;
+        }
+
         // do not add item to the cart if a process is still being added
         if (this.shoppingCartCallStatus.isLoading()) {
             return;
@@ -284,6 +292,16 @@ export class ProductDetailsOverviewComponent implements OnInit{
 
     selectName (ip: ItemProperty | Item) {
         return selectName(ip);
+    }
+
+    isAddCartDisabled(): boolean {
+        if (this.shoppingCartCallStatus.fb_callback ||
+            !this.shoppingCartDataService.isProductAddableToCart(
+                this.wrapper.line.goodsItem.item.catalogueDocumentReference.id,
+                this.wrapper.line.goodsItem.item.manufacturersItemIdentification.id)) {
+            return true;
+        }
+        return false;
     }
 
     getClassifications(): CommodityClassification[] {

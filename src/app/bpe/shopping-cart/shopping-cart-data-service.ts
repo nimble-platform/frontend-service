@@ -5,6 +5,7 @@ import {getAuthorizedHeaders} from '../../common/utils';
 import * as myGlobals from '../../globals';
 import {Http} from '@angular/http';
 import {CatalogueLine} from '../../catalogue/model/publish/catalogue-line';
+import {UBLModelUtils} from '../../catalogue/model/ubl-model-utils';
 
 /**
  * Created by suat on 11-Oct-19.
@@ -15,6 +16,7 @@ export class ShoppingCartDataService {
     private cartCatalogue: Catalogue;
 
     private url = myGlobals.bpe_endpoint;
+    private addCardBehaviour: string = myGlobals.config.addCartBehaviour;
 
     constructor(private cookieService: CookieService,
                 private http: Http) {}
@@ -111,6 +113,15 @@ export class ShoppingCartDataService {
             .catch(error => {
                 return this.handleError(error);
             });
+    }
+
+    public isProductAddableToCart(catalogueId: string, productId: string): boolean {
+        // do not add product to the cart if adding behaviour is single
+        let inCart: boolean = UBLModelUtils.isProductInCart(this.cartCatalogue, catalogueId, productId);
+        if (inCart && this.addCardBehaviour === 'single') {
+            return false;
+        }
+        return true;
     }
 
     public resetData(): void {

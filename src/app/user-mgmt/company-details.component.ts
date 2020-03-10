@@ -138,7 +138,8 @@ export class CompanyDetailsComponent implements OnInit {
     }
 
     openSearchPage() {
-      var fq = "manufacturer.legalName:\""+selectValueOfTextObject(this.details.details.legalName)+"\"";
+      //var fq = "manufacturer.legalName:\""+selectValueOfTextObject(this.details.details.legalName)+"\"";
+      var fq = "manufacturer.id:\""+this.details.companyID+"\"";
       this.router.navigate(['/simple-search'], {
   			queryParams: {
   				q: "*",

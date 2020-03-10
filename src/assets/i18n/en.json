@@ -411,6 +411,7 @@
 	"Payment Received": "Payment Received",
 	"Payment Terms": "Payment Terms",
 	"Payment means based price options": "Payment means based price options",
+	"per": "per",
 	"Performance": "Performance",
 	"Phone Number": "Phone Number",
 	"Photos At Work": "Photos At Work",
@@ -863,5 +864,7 @@
 	"form_field_quantity_value": "Quantity value",
 	"form_field_shopping_cart_item": "Shopping cart item",
 	"form_field_street_name": "Street name",
-	"form_field_text": "Text"
+	"form_field_text": "Text",
+	"Successfully saved. You can now continue.": "Successfully saved. You can now continue.",
+	"Successfully saved. You are now getting redirected.": "Successfully saved. You are now getting redirected."
 }

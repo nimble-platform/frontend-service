@@ -27,7 +27,8 @@ import {NEGOTIATION_RESPONSES} from "../../catalogue/model/constants";
 import {DataChannel} from '../../data-channel/model/datachannel';
 import * as myGlobals from "../../globals";
 import {UserService} from '../../user-mgmt/user.service';
-import {TranslateService} from '@ngx-translate/core';
+import { AppComponent } from "../../app.component";
+import { TranslateService } from "@ngx-translate/core";
 
 
 /**
@@ -117,11 +118,12 @@ export class ThreadSummaryComponent implements OnInit {
                 private route: ActivatedRoute,
                 private modalService: NgbModal,
                 private userService: UserService,
+                private appComponent: AppComponent,
                 private translate: TranslateService) {
     }
 
     ngOnInit(): void {
-        this.translate.get(['Slow Response Time','Suspicious Company Information','Undervalued Offer','Rejected Delivery Terms','Other','Due to','Some reasons','Collaboration finished','on','Collaboration cancelled']).subscribe((res: any) => {
+        this.appComponent.translate.get(['Slow Response Time','Suspicious Company Information','Undervalued Offer','Rejected Delivery Terms','Other','Due to','Some reasons','Collaboration finished','on','Collaboration cancelled']).subscribe((res: any) => {
             this.translations = res;
         });
         this.route.params.subscribe(params => {
@@ -658,7 +660,7 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     rateCollaborationSuccess(content) {
-     
+
       if(this.sellerNegoSettings.company.processID.length !=0){
         this.compRating = {};
 
@@ -704,14 +706,14 @@ export class ThreadSummaryComponent implements OnInit {
           this.prodListingAccu = true;
           this.responsetime = true;
           this.conformToOtherAggre = true;
-          
+
           this.ratingSeller = 0;
           this.ratingFulfillment = 0
       }
 
       this.ratingOverall = 0;
-      
-   
+
+
       this.compComment = "";
       this.modalService.open(content);
     }

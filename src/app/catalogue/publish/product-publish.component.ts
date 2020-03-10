@@ -13,7 +13,6 @@ import { Quantity } from "../model/publish/quantity";
 import { CategoryService } from "../category/category.service";
 import { CatalogueService } from "../catalogue.service";
 import { UserService } from "../../user-mgmt/user.service";
-import {TranslateService} from '@ngx-translate/core';
 import { Router, Params, ActivatedRoute } from "@angular/router";
 import { CookieService } from "ng2-cookies";
 import { Category } from "../model/category/category";
@@ -59,6 +58,8 @@ import {Attachment} from '../model/publish/attachment';
 import {Address} from '../model/publish/address';
 import {Country} from '../model/publish/country';
 import {ValidationService} from '../../common/validation/validators';
+import { AppComponent } from "../../app.component";
+import { TranslateService } from "@ngx-translate/core";
 
 interface SelectedProperties {
     [key: string]: SelectedProperty;
@@ -166,6 +167,8 @@ export class ProductPublishComponent implements OnInit {
 
     invalidCategoryCodes:Code[] = [];
 
+    private translations: any;
+
     constructor(public categoryService: CategoryService,
                 private catalogueService: CatalogueService,
                 public publishStateService: PublishService,
@@ -177,10 +180,14 @@ export class ProductPublishComponent implements OnInit {
                 private cookieService: CookieService,
                 private unitService:UnitService,
                 private modalService: NgbModal,
+                private appComponent: AppComponent,
                 private translate: TranslateService) {
     }
 
     ngOnInit() {
+        this.appComponent.translate.get(['Successfully saved. You can now continue.','Successfully saved. You are now getting redirected.']).subscribe((res: any) => {
+            this.translations = res;
+        });
         ProductPublishComponent.dialogBox = true;
         this.selectedCategories = this.categoryService.selectedCategories;
         // TODO: asych calls like below should have proper chain.
@@ -973,7 +980,7 @@ export class ProductPublishComponent implements OnInit {
                         // avoid category duplication
                         this.categoryService.resetSelectedCategories();
                         this.publishStateService.resetData();
-
+                        alert(this.translations["Successfully saved. You are now getting redirected."]);
                         this.router.navigate(['dashboard'], {
                             queryParams: {
                                 tab: "CATALOGUE",
@@ -989,7 +996,7 @@ export class ProductPublishComponent implements OnInit {
                     }
                     this.catalogueService.draftCatalogueLine = this.catalogueLine;
 
-                    this.publishStatus.callback("Successfully Submitted", true);
+                    this.publishStatus.callback(this.translations["Successfully saved. You can now continue."], false);
 
                     this.submitted = false;
                     this.callback = true;

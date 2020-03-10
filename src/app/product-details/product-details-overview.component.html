@@ -15,10 +15,10 @@
     </div>
     <div *ngIf="showAddToCartButton" class="ml-auto">
         <call-status class="d-inline-block mr-1" [callStatus]="shoppingCartCallStatus"></call-status>
-        <div class="btn btn-primary" (click)="onAddToCart()">
+        <button class="btn btn-primary" (click)="onAddToCart()" [disabled]="isAddCartDisabled()">
             <span class="fas fa-shopping-cart mr-1"></span>
             <span [innerHTML]="'Add to Cart' | translate"></span>
-        </div>
+        </button>
     </div>
     <div *ngIf="inShoppingBasket" class="ml-auto">
         <div class="btn btn-primary" (click)="onRemoveFromCartButtonClicked()">
