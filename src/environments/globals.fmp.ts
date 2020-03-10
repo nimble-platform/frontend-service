@@ -27,6 +27,7 @@ export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}/logstash`;
 export const kibana_endpoint = `${base_path}/kibana/app/kibana`;
 export const delegate_endpoint = `${base_path}:9265`;
+export const agent_mgmt_endpoint=`${base_path}/agentService`;
 export const collaboration_endpoint = `${collab_path}`;
 
 
@@ -59,6 +60,7 @@ export const config = {
   "federationInstanceId":"FMP",
   "platformName": "FMP",
   "envName": "fmp",
+  "addCartBehaviour": "single",
   "companyRegistrationRequired": true,
   "categoryFilter": {
     "eClass": {
@@ -100,7 +102,7 @@ export const config = {
   },
   "kibanaEnabled": true,
   "languageSettings": {
-    "available": ["en", "es", "de", "tr", "it", "sv"],
+    "available": ["en", "es"],
     "fallback": "en"
   },
   "loggingEnabled": true,
@@ -121,6 +123,7 @@ export const config = {
     }
   ],
   "showChat": false,
+  "showAgent": false,
   "showCompanyMembers": true,
   "showExplorative": false,
   "showLCPA": false,
@@ -247,6 +250,7 @@ export const product_vendor_rating = "trustRating";
 export const product_vendor_rating_seller = "trustSellerCommunication";
 export const product_vendor_rating_fulfillment = "trustFullfillmentOfTerms";
 export const product_vendor_rating_delivery = "trustDeliveryPackaging";
+export const product_vendor_evaluation = "trustNumberOfEvaluations";
 export const product_vendor_trust = "trustScore";
 export const product_name = "label";
 export const class_label = "classification.allLabels";
@@ -266,6 +270,7 @@ export const product_filter_trust = ["manufacturer.trustScore","manufacturer.tru
 export const product_filter_mappings = {
   "price": "Price",
   "currency": "Currency",
+  "manufacturer.id": "Vendor ID",
   "manufacturer.businessType": "Business Type",
   "manufacturer.activitySectors": "Activity Sectors",
   "manufacturer.businessKeywords": "Business Keywords",
@@ -274,7 +279,7 @@ export const product_filter_mappings = {
   "businessKeywords": "Business Keywords"
 };
 export const product_nonfilter_full = ["_text_","_version_","id","image","localName","languages","catalogueId","doctype","manufacturerId","manufacturerItemId","manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType","allLabels"];
-export const product_nonfilter_regex = ["lmf.","_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
+export const product_nonfilter_regex = ["lmf.","manufacturer.","_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
 export const product_configurable = [];
 export const product_default = {};
 export const facet_min = 1;

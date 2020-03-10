@@ -256,7 +256,7 @@ export class NegotiationResponseComponent implements OnInit {
             if(!UBLModelUtils.areQuantitiesEqual(wrapper.rfqDeliveryPeriod, wrapper.newQuotationWrapper.deliveryPeriod)) {
                 return true;
             }
-            if(wrapper.rfqIncoterms !== wrapper.newQuotationWrapper.incoterms) {
+            if(wrapper.rfqIncotermsString !== wrapper.newQuotationWrapper.incotermsString) {
                 return true;
             }
             if(wrapper.rfqPaymentMeans !== wrapper.newQuotationWrapper.paymentMeans) {
@@ -275,6 +275,9 @@ export class NegotiationResponseComponent implements OnInit {
                 return true;
             }
             if(UBLModelUtils.areTermsAndConditionListsDifferent(wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.clause, wrapper.newQuotation.quotationLine[wrapper.lineIndex].lineItem.clause)) {
+                return true;
+            }
+            if(!UBLModelUtils.areQuantitiesEqual(wrapper.rfqQuantity,wrapper.newQuotationWrapper.orderedQuantity)){
                 return true;
             }
             // compare delivery date-quantity pairs of rfq with that of quotation
@@ -304,7 +307,7 @@ export class NegotiationResponseComponent implements OnInit {
         }
 
 
-        return this.areNotesAndFilesAttachedToQuotation();
+        return UBLModelUtils.areNotesOrFilesAttachedToDocument(this.quotation);
     }
 
     private isFrameContractDurationValid(): boolean {
@@ -326,6 +329,9 @@ export class NegotiationResponseComponent implements OnInit {
         for(let wrapper of this.wrappers){
             totalPrice += wrapper.newQuotationWrapper.priceWrapper.totalPrice;
         }
+        if(totalPrice == 0){
+            return "On demand";
+        }
         return roundToTwoDecimals(totalPrice) + " " + this.wrappers[0].currency;
     }
 
@@ -334,6 +340,9 @@ export class NegotiationResponseComponent implements OnInit {
         for(let wrapper of this.wrappers){
             vatTotal += wrapper.newQuotationWrapper.priceWrapper.vatTotal;
         }
+        if(vatTotal == 0){
+            return "On demand";
+        }
         return roundToTwoDecimals(vatTotal) + " " + this.wrappers[0].currency;
     }
 
@@ -341,6 +350,9 @@ export class NegotiationResponseComponent implements OnInit {
         let grossTotal = 0;
         for(let wrapper of this.wrappers){
             grossTotal += wrapper.newQuotationWrapper.priceWrapper.grossTotal;
+        }
+        if(grossTotal == 0){
+            return "On demand";
         }
         return roundToTwoDecimals(grossTotal) + " " + this.wrappers[0].currency;
     }
@@ -354,7 +366,7 @@ export class NegotiationResponseComponent implements OnInit {
         return ret;
     }
 
-    areNotesAndFilesAttachedToQuotation(){
-        return (this.quotation.note.length == 1 && this.quotation.note[0] != "") || this.quotation.note.length > 1 || this.quotation.additionalDocumentReference.length > 0;
+    highlightNotesAndFilesSection(){
+        return UBLModelUtils.areNotesOrFilesAttachedToDocument(this.rfq) || UBLModelUtils.areNotesOrFilesAttachedToDocument(this.quotation);
     }
 }

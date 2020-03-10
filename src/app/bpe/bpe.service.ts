@@ -73,11 +73,32 @@ export class BPEService {
             .post(url, JSON.stringify(document), {headers: headers})
             .toPromise()
             .then(res => {
+            	// Agent service init call
+				if (myGlobals.config.showAgent) {
+					this.notifyAgentService(res, JSON.stringify(document)).catch((err) => {
+						console.log('error when notifying the user')
+					});
+				}
 				if (myGlobals.debug)
 					console.log(res.json());
 				return res.json();
 			})
             .catch(this.handleError);
+	}
+
+	notifyAgentService(processData, orderData) {
+		let url = myGlobals.agent_mgmt_endpoint + "/api/v1/agents/notifyAgent";
+		const headers = this.getAuthorizedHeaders();
+		return this.http
+			.post(url, JSON.stringify(document), {headers: headers})
+			.toPromise()
+			.then(res => {
+				// Agent service init call
+				if (myGlobals.debug)
+					console.log(res.json());
+				return res.json();
+			})
+			.catch(this.handleError);
 	}
 
 	cancelBusinessProcess(id: string,delegateId:string): Promise<any> {
@@ -479,6 +500,27 @@ export class BPEService {
                 }
             });
     }
+
+		getRatingsDetails(partyId: string,partyFederationId:string): Promise<any> {
+			let headers = this.getAuthorizedHeaders();
+			let url = `${this.url}/ratingsAndReviews?partyId=${partyId}`;
+			if(this.delegated){
+				url = `${this.delegate_url}/ratingsAndReviews?partyId=${partyId}`;
+			}
+			headers.append("federationId",partyFederationId);
+			return this.http
+	            .get(url, {headers: headers})
+	            .toPromise()
+	            .then(res => res.json())
+	            .catch(res => {
+	                if (res.status == 400) {
+	                    // no ratings
+	                    return null;
+	                } else {
+	                    this.handleError(res.getBody());
+	                }
+	            });
+	    }
 
 	postRatings(partyId: string, partyFederationId:string, processInstanceId: string, ratings: EvidenceSupplied[], reviews: Comment[],delegateId:string): Promise<any> {
 		let headers = this.getAuthorizedHeaders();

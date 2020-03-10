@@ -32,6 +32,8 @@ import {Item} from '../../../catalogue/model/publish/item';
 import {NegotiationRequestItemComponent} from './negotiation-request-item.component';
 import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
 import {CompanySettings} from '../../../user-mgmt/model/company-settings';
+import {FormGroup} from '@angular/forms';
+import {ValidationService} from '../../../common/validation/validators';
 
 @Component({
     selector: "negotiation-request",
@@ -77,6 +79,7 @@ export class NegotiationRequestComponent implements OnInit {
     @Input() bpActivityEvent: BpActivityEvent;
     @Input() manufacturersTermsSources: ('product_defaults' | 'frame_contract' | 'last_offer')[];
     counterOfferTermsSources: ('product_defaults' | 'frame_contract' | 'last_offer')[] = [];
+    negotiationRequestForm: FormGroup = new FormGroup({});
     callStatus: CallStatus = new CallStatus();
 
     /**
@@ -86,10 +89,13 @@ export class NegotiationRequestComponent implements OnInit {
 
     config = myGlobals.config;
 
+    areNotesOrFilesAttachedToDocument = UBLModelUtils.areNotesOrFilesAttachedToDocument;
+
     constructor(private bpDataService: BPDataService,
                 private bpeService:BPEService,
                 private userService:UserService,
                 private unitService: UnitService,
+                private validationService: ValidationService,
                 private cookieService: CookieService,
                 private location: Location,
                 private documentService: DocumentService,
@@ -189,6 +195,10 @@ export class NegotiationRequestComponent implements OnInit {
             // set the item price, otherwise we will lose item price information
             for(let wrapper of this.wrappers){
                 this.rfq.requestForQuotationLine[0].lineItem.price.priceAmount.value = wrapper.rfqDiscountPriceWrapper.totalPrice/wrapper.rfqDiscountPriceWrapper.orderedQuantity.value;
+                // since we set priceAmount.value to total price/ordered quantity, base quantity value should be equal to 1
+                // otherwise, we can not calculate the correct total price later
+                this.rfq.requestForQuotationLine[0].lineItem.price.baseQuantity.value = 1;
+                this.rfq.requestForQuotationLine[0].lineItem.price.baseQuantity.unitCode = wrapper.rfqDiscountPriceWrapper.orderedQuantity.unitCode;
             }
             // just go to order page
             this.bpDataService.setCopyDocuments(true, false, false,false);
@@ -233,7 +243,7 @@ export class NegotiationRequestComponent implements OnInit {
                 }
             }
         }
-        return this.areNotesAndFilesUpdated();
+        return this.areNotesOrFilesAttachedToDocument(this.rfq);
     }
 
     isLoading(): boolean {
@@ -245,8 +255,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     isFormValid(): boolean {
-        let formValid = /*!this.rfq.negotiationOptions.frameContractDuration ||*/ this.isFrameContractValid();
-        formValid = formValid && this.isDeliveryPeriodValid() && this.isWarrantyPeriodValid() && this.areDeliveryDatesValid();
+        let formValid =  this.isFrameContractValid() && this.negotiationRequestForm.valid;
         return formValid;
     }
 
@@ -265,7 +274,7 @@ export class NegotiationRequestComponent implements OnInit {
         return true;
     }
 
-    isWarrantyPeriodValid(): boolean {
+    /*isWarrantyPeriodValid(): boolean {
         for(let wrapper of this.wrappers){
             const range = this.getWarrantyPeriodRange(wrapper);
             if(range && !this.isPeriodValid(wrapper.rfqWarranty.value, range)){
@@ -305,7 +314,7 @@ export class NegotiationRequestComponent implements OnInit {
             }
         }
         return true;
-    }
+    }*/
 
     private isPeriodValid(value: number, range: PeriodRange): boolean {
         if(typeof value !== "number") {
@@ -343,6 +352,10 @@ export class NegotiationRequestComponent implements OnInit {
         return true;
     }
 
+    getValidationError(): string {
+        return this.validationService.extractErrorMessage(this.negotiationRequestForm);
+    }
+
     /**
      * Internal methods
      */
@@ -367,6 +380,9 @@ export class NegotiationRequestComponent implements OnInit {
         for(let wrapper of this.wrappers){
             totalPrice += wrapper.rfqTotal;
         }
+        if(totalPrice == 0){
+            return "On demand";
+        }
         return roundToTwoDecimals(totalPrice) + " " + this.wrappers[0].currency;
     }
 
@@ -375,6 +391,9 @@ export class NegotiationRequestComponent implements OnInit {
         for(let wrapper of this.wrappers){
             vatTotal += wrapper.rfqVatTotal
         }
+        if(vatTotal == 0){
+            return "On demand";
+        }
         return roundToTwoDecimals(vatTotal) + " " + this.wrappers[0].currency;
     }
 
@@ -382,6 +401,9 @@ export class NegotiationRequestComponent implements OnInit {
         let grossTotal = 0;
         for(let wrapper of this.wrappers){
             grossTotal += wrapper.rfqGrossTotal;
+        }
+        if(grossTotal == 0){
+            return "On demand";
         }
         return roundToTwoDecimals(grossTotal) + " " + this.wrappers[0].currency;
     }
@@ -393,10 +415,6 @@ export class NegotiationRequestComponent implements OnInit {
         this.showNotesAndAdditionalFiles = false;
         this.showPurchaseOrder = false;
         return ret;
-    }
-
-    areNotesAndFilesUpdated():boolean{
-        return (this.rfq.note.length == 1 && this.rfq.note[0] != "") || this.rfq.note.length > 1 || this.rfq.additionalDocumentReference.length > 0;
     }
 
 }

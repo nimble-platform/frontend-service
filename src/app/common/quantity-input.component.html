@@ -3,18 +3,39 @@
         <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
         </input-label>
     </div>
-    <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible">
+    <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible && quantityValueFormControl">
         <div class="row">
             <div class="{{valueSizeClass}} col-quantity-value">
-                <input type="number" class="form-control" [ngClass]="innerFormClass" [step]="step"
-                       [ngModel]="quantity.value" (ngModelChange)="quantity.value = $event; onQuantityValueChanged($event)" [disabled]="disabled" [placeholder]="placeholder" [required]="required">
+                <input type="number" class="form-control"
+                       [ngClass]="innerFormClass"
+                       [step]="step"
+                       [ngModel]="quantity.value"
+                       (ngModelChange)="quantity.value = $event; onQuantityValueChanged($event)"
+                       [disableControl]="disabled"
+                       [placeholder]="placeholder"
+                       [required]="required"
+                       [formControl]="quantityValueFormControl"
+                       [ngbTooltip]="getValidationErrorMessage(quantityValueFormControl)" [placement]="'auto'"  title="">
             </div>
             <div *ngIf="!quantityUnits" class="{{unitSizeClass}} col-quantity-unit">
-                <input type="text" class="form-control" [ngClass]="innerFormClass" [(ngModel)]="quantity.unitCode"
-                    [disabled]="disabled || disableQuantityUnit" [placeholder]="unitPlaceholder" [required]="required">
+                <input type="text" class="form-control"
+                       [ngClass]="innerFormClass"
+                       [(ngModel)]="quantity.unitCode"
+                       (ngModelChange)="onQuantityUnitChanged($event)"
+                       [disableControl]="disabled || disableQuantityUnit"
+                       [placeholder]="unitPlaceholder"
+                       [required]="required"
+                       [formControl]="quantityUnitFormControl"
+                       [ngbTooltip]="getValidationErrorMessage(quantityUnitFormControl)" [placement]="'auto'"  title="">
             </div>
             <div *ngIf="quantityUnits" class="{{unitSizeClass}} col-quantity-unit">
-                <select class="form-control" [ngClass]="innerFormClass" [(ngModel)]="quantity.unitCode" [disabled]="disabled || disableQuantityUnit" [required]="required">
+                <select class="form-control"
+                        [ngClass]="innerFormClass"
+                        [(ngModel)]="quantity.unitCode"
+                        [disableControl]="disabled || disableQuantityUnit"
+                        [required]="required"
+                        (ngModelChange)="onQuantityUnitChanged($event)"
+                        [formControl]="quantityUnitFormControl">
                     <option *ngFor="let option of quantityUnits" [value]="option">{{option}}</option>
                 </select>
             </div>
@@ -25,3 +46,7 @@
         <span [class]="valueTextClass">{{ quantityToString() }}</span>
     </div>
 </div>
+
+<!--<ng-template #popContent>-->
+<!--    <div class="alert-danger" Some error-->
+<!--</ng-template>-->

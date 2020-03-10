@@ -31,6 +31,8 @@ import {TradingPreferences} from '../../catalogue/model/publish/trading-preferen
 import {CommonTerms} from '../../common/common-terms';
 import {ShoppingCartSummaryModalComponent} from './shopping-cart-summary-modal.component';
 import {FEDERATIONID} from '../../catalogue/model/constants';
+import {ValidationService} from '../../common/validation/validators';
+import {FormGroup} from '@angular/forms';
 /**
  * Created by suat on 11-Oct-19.
  */
@@ -67,6 +69,7 @@ export class ShoppingCartComponent implements OnInit {
     // value of the map is the list of catalogue line hjids included in the corresponding rfq
     rfqCatalogueLineMap:Map<string,number[]> = new Map<string, number[]>();
 
+    shoppingCartForm: FormGroup = new FormGroup({});
     collapsedStatusesOfCartItems: Map<number, boolean> = new Map<number, boolean>();
     deleteCallStatuses: Map<number, CallStatus> = new Map<number, CallStatus>();
     showCommonTerms = true;
@@ -89,6 +92,7 @@ export class ShoppingCartComponent implements OnInit {
                 private bpeService: BPEService,
                 private documentService: DocumentService,
                 private bpDataService: BPDataService,
+                private validationService: ValidationService,
                 private userService: UserService,
                 private cookieService: CookieService,
                 private router: Router) {}
@@ -476,12 +480,21 @@ export class ShoppingCartComponent implements OnInit {
                 else{
                     // get catalogue lines included in this rfq
                     let cartLineHjids:number[] = this.rfqCatalogueLineMap.get(rfq.id);
+
                     // remove catalogue line from the rfq
                     let index = cartLineHjids.indexOf(cartLine.hjid);
                     rfq.requestForQuotationLine.splice(index,1);
+                    // we should also remove the line from the immutable rfq as it causes line index mismatch
+                    // between the normal rfq and immutable rfq. the immutable rfq is copied in all the negotiation model wrappers
+                    // for the lines of the same company
+                    for (let i = 0 ; i < cartLineHjids.length; i++) {
+                        this.negotiationModelWrappers.get(cartLineHjids[i]).initialImmutableRfq.requestForQuotationLine.splice(index, 1);
+                    }
+
                     // remove catalogue line for rfqCatalogueLineMap map
                     cartLineHjids.splice(index,1);
                     this.rfqCatalogueLineMap.set(rfq.id,cartLineHjids);
+
                     // when one product is removed from the rfq, indexes in negotiationModelWrappers should be updated
                     let sizeOfCartLines = cartLineHjids.length;
                     for(let i = 0 ; i < sizeOfCartLines ;i++){
@@ -491,7 +504,11 @@ export class ShoppingCartComponent implements OnInit {
                     this.negotiationModelWrappers.delete(cartLine.hjid);
                 }
 
-                callStatus.callback(null, true);
+                // update the status in the next iteration as the button status is not updated upon deleting a product from the basket
+                setTimeout(() => {
+                    callStatus.callback(null, true);
+                    this.deleteCallStatuses.delete(cartLine.hjid);
+                })
             }).catch(error => {
                 callStatus.error('Failed to delete product from the shopping cart');
             })
@@ -550,7 +567,7 @@ export class ShoppingCartComponent implements OnInit {
                 return this.bpeService.startProcessWithDocument(document,document.sellerSupplierParty.party.federationInstanceID);
             }).then(() => {
                 // started the negotiation for the product successfully,so remove it from the shopping cart
-                this.onRemoveFromCart(cartLine);
+                this.shoppingCartDataService.removeItemsFromCart([cartLine.hjid]);
                 callStatus.callback(null, true);
                 this.router.navigate(['dashboard'], {queryParams: {tab: 'PURCHASES'}});
 

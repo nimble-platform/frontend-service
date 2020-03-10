@@ -113,8 +113,9 @@ export class NegotiationResponseItemComponent implements OnInit {
         }
     }
 
-    onTotalPriceChanged(totalPrice: number): void {
-        this.wrapper.quotationDiscountPriceWrapper.totalPrice = totalPrice;
+    // quotation price can be updated by directly setting a net total price or modifying quantity
+    onQuotationPriceUpdated(): void {
+        this.wrapper.quotationDiscountPriceWrapper.totalPrice = this.quotationTotalPrice.value;
     }
 
     onTCTabSelect(event:any,id:any): void {
@@ -222,5 +223,9 @@ export class NegotiationResponseItemComponent implements OnInit {
     onDeleteDeliveryDate(){
         let index = this.wrapper.newQuotationWrapper.delivery.length-1;
         this.wrapper.newQuotationWrapper.delivery.splice(index,1);
+    }
+
+    highlightDeliveryDetailsTab(){
+        return !this.wrapper.checkEqualForRequest(this.primaryTermsSource, 'deliveryPeriod') || this.isDeliveryDateSectionOpen || !UBLModelUtils.isAddressEmpty(this.wrapper.rfqDeliveryAddress) || !this.wrapper.checkEqualForResponse('deliveryPeriod')
     }
 }

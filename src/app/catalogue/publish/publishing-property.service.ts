@@ -5,7 +5,7 @@ import {CookieService} from 'ng2-cookies';
 import * as myGlobals from '../../globals';
 
 @Injectable()
-export class LogisticPublishingService {
+export class PublishingPropertyService {
 
     private headers = new Headers({'Content-Type': 'application/json'});
     private baseUrl = myGlobals.catalogue_endpoint;

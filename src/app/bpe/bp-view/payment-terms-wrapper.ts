@@ -28,4 +28,8 @@ export class PaymentTermsWrapper {
 
         this.paymentTerms.tradingTerms = [].concat(this.paymentTerms.tradingTerms);
     }
+
+    getDefaultPaymentTerms(){
+        return this.PAYMENT_TERMS[0];
+    }
 }

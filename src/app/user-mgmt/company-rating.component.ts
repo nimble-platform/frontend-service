@@ -23,6 +23,7 @@ export class CompanyRatingComponent implements OnInit {
 
     initCallStatus: CallStatus = new CallStatus();
     ratings: any = null;
+    ratingDetails: any = null;
     ratingOverall = 0;
     ratingSeller = 0;
     ratingFulfillment = 0;
@@ -70,6 +71,9 @@ export class CompanyRatingComponent implements OnInit {
 
     async getRatings(id,federationId=FEDERATIONID()) {
 
+      if (federationId == "undefined" || federationId == "null")
+        federationId = FEDERATIONID();
+
       const sellerNegotiationSettings = await this.userService.getCompanyNegotiationSettingsForParty(id,federationId);
       this.sellerNegoSettings = sellerNegotiationSettings;
 
@@ -108,6 +112,15 @@ export class CompanyRatingComponent implements OnInit {
         this.ratings = ratings;
         if (this.ratings && this.ratings.totalNumberOfRatings > 0) {
           this.calcRatings();
+          this.bpeService.getRatingsDetails(id,federationId).then(ratingDetails => {
+            if (myGlobals.debug) {
+              console.log("Fetched rating details: " + JSON.stringify(ratingDetails));
+            }
+            this.ratingDetails = ratingDetails;
+          })
+          .catch(error => {
+            this.initCallStatus.error("Error while fetching company rating details", error);
+          });
         }else{
           this.ratingStatus.emit(true);
         }
@@ -127,7 +140,11 @@ export class CompanyRatingComponent implements OnInit {
       this.ratings.deliveryAndPackaging /= this.ratings.totalNumberOfRatings;
       this.ratingSeller = (this.ratings.qualityOfNegotiationProcess + this.ratings.qualityOfOrderingProcess + this.ratings.responseTimeRating) / 3;
       this.ratingFulfillment = (this.ratings.listingAccuracy + this.ratings.conformanceToContractualTerms) / 2;
-      this.ratingOverall = (this.ratingSeller + this.ratingFulfillment + this.ratings.deliveryAndPackaging) / 3;
+      if(this.ratings.deliveryAndPackaging > 0){
+        this.ratingOverall = (this.ratingSeller + this.ratingFulfillment + this.ratings.deliveryAndPackaging) / 3;
+      }else{
+        this.ratingOverall = (this.ratingSeller + this.ratingFulfillment) / 2;
+      }
     }
 
 }

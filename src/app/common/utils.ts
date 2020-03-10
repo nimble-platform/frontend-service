@@ -24,6 +24,7 @@ import {
 } from './constants'
 import {UnitService} from "./unit-service";
 import {CompanyNegotiationSettings} from "../user-mgmt/model/company-negotiation-settings";
+import {isNumber} from '@ng-bootstrap/ng-bootstrap/util/util';
 
 const UI_NAMES: any = {
     STRING: "TEXT"
@@ -501,12 +502,24 @@ export function getMaximumQuantityForPrice(price: Price): number {
         return 100;
     }
 
-    let result = MAX_PRICE / price.priceAmount.value;
-    return roundFirstDigit(result) * getMagnitude(result);
+    let result = Math.round(Math.ceil(MAX_PRICE / price.priceAmount.value) * price.baseQuantity.value);
+    // return roundFirstDigit(result) * getMagnitude(result)
+    return result;
 }
 
-export function getStepForPrice(price: Price): number {
-    return getMaximumQuantityForPrice(price) / STEPS_FOR_PRICE;
+export function getStepRangeForPrice(price: Price): number {
+    if (!price || !price.priceAmount.value) {
+        return 1;
+    }
+
+    let priceBasedStep: number = getMaximumQuantityForPrice(price) / STEPS_FOR_PRICE;
+    let step: number;
+    if (priceBasedStep < price.baseQuantity.value) {
+        step = price.baseQuantity.value;
+    } else {
+        step = Math.floor(priceBasedStep / price.baseQuantity.value) * price.baseQuantity.value;
+    }
+    return step;
 }
 
 function getMagnitude(value: number): number {
@@ -554,6 +567,10 @@ export function roundToTwoDecimals(value): any{
         return roundedValue.toFixed(power);
     }
     return value;
+}
+
+export function roundToTwoDecimalsNumber(value: number): number {
+    return Number(value.toFixed(2));
 }
 
 export function isNaNNullAware(number: number): boolean {

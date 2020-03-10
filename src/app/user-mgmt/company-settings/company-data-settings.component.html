@@ -122,7 +122,7 @@
     <div class="col-10">
       <input *ngIf="dataForm.getRawValue()['businessType'] == ''" type="text" class="form-control" [formControl]="dataForm.controls['industrySectors']" placeholder="Select Business Type" required readonly maxlength="255">
       <ng-container *ngIf="config.supportedActivitySectors[dataForm.getRawValue()['businessType']] && config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length>0 && !forceActText">
-        <select class="form-control" [(ngModel)]="industrySectorsArr[0].text" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" multiple required>
+        <select class="form-control" [(ngModel)]="industrySectorsArr[0].text" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" multiple required [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('pm')">
           <option *ngFor="let sector of config.supportedActivitySectors[dataForm.getRawValue()['businessType']]" [value]="sector">{{sector}}</option>
         </select>
       </ng-container>
@@ -165,22 +165,22 @@
       <ng-container *ngFor="let businessKeywordsEntry of businessKeywordsArr; let i = index; trackBy:trackFn">
         <div class="row mb-1">
           <div class="col-8">
-            <textarea rows="3" class="form-control" [(ngModel)]="businessKeywordsArr[i].text" [ngModelOptions]="{standalone: true}" (input)="flagChanged()" placeholder="Separate entries using new lines" maxlength="255" [disabled]="saveCallStatus.isLoading() || (!appComponent.checkRoles('pm') && isEmptyObject(settings.details.businessKeywords))"></textarea>
+            <textarea rows="3" class="form-control" [(ngModel)]="businessKeywordsArr[i].text" [ngModelOptions]="{standalone: true}" (input)="flagChanged()" placeholder="Separate entries using new lines" maxlength="255" [disabled]="saveCallStatus.isLoading()"></textarea>
           </div>
           <div class="col-2">
-            <select class="form-control" [(ngModel)]="businessKeywordsArr[i].lang" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" [disabled]="saveCallStatus.isLoading() || (!appComponent.checkRoles('pm') && isEmptyObject(settings.details.businessKeywords))">
+            <select class="form-control" [(ngModel)]="businessKeywordsArr[i].lang" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" [disabled]="saveCallStatus.isLoading()">
                 <option *ngFor='let language of languages' [value]="language">{{language}}</option>
             </select>
           </div>
           <div class="col-2">
-            <button class="btn btn-danger w-100" type="button" (click)="removeBusinessKeywords(i)" [disabled]="saveCallStatus.isLoading() || (!appComponent.checkRoles('pm') && isEmptyObject(settings.details.businessKeywords))"><span [innerHTML]="'Delete' | translate"></span></button>
+            <button class="btn btn-danger w-100" type="button" (click)="removeBusinessKeywords(i)" [disabled]="saveCallStatus.isLoading()"><span [innerHTML]="'Delete' | translate"></span></button>
           </div>
         </div>
       </ng-container>
       <div class="row mt-2 mb-1">
         <div class="col-10"></div>
         <div class="col-2">
-          <button class="btn btn-secondary w-100" type="button" (click)="addBusinessKeywords()" [disabled]="saveCallStatus.isLoading() || (!appComponent.checkRoles('pm') && isEmptyObject(settings.details.businessKeywords))">
+          <button class="btn btn-secondary w-100" type="button" (click)="addBusinessKeywords()" [disabled]="saveCallStatus.isLoading()">
             <span [innerHTML]="'Add' | translate"></span>
           </button>
         </div>
@@ -194,7 +194,7 @@
 			<strong><span [innerHTML]="'Year of Foundation:' | translate"></span></strong>
 		</label>
 		<div class="col-10">
-			<input type="number" class="form-control" [formControl]="dataForm.controls['yearOfReg']">
+			<input type="number" class="form-control" [formControl]="dataForm.controls['yearOfReg']" [disabled]="saveCallStatus.isLoading()">
 		</div>
 	</div>
 

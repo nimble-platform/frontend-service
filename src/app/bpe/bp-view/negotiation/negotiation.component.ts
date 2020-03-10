@@ -17,6 +17,7 @@ import {RequestForQuotation} from "../../../catalogue/model/publish/request-for-
 import {Quantity} from "../../../catalogue/model/publish/quantity";
 import {CatalogueLine} from '../../../catalogue/model/publish/catalogue-line';
 import {FEDERATIONID} from '../../../catalogue/model/constants';
+import {copy} from '../../../common/utils';
 
 @Component({
     selector: 'negotiation',
@@ -229,9 +230,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         let responseDocument: Promise<any> = this.getLastOfferQuotationPromise();
         this.lastOfferQuotation = await responseDocument;
         if(this.lastOfferQuotation != null) {
-            for(let primaryTermsSource of this.primaryTermsSource){
-                primaryTermsSource = 'last_offer';
-            }
+            this.primaryTermsSource = Array(this.primaryTermsSource.length).fill('last_offer');
         }
 
         this.lastOfferCalStatus.callback(null, true);
@@ -322,7 +321,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
 
 
     getPrimaryTermsSource(lastOfferQuotation): ('product_defaults' | 'frame_contract' | 'last_offer')[] {
-        let termsSources = this.primaryTermsSource;
+        let termsSources = copy(this.primaryTermsSource);
         let size = termsSources.length;
         for(let i = 0; i < size;i++){
             if(termsSources[i] == null) {

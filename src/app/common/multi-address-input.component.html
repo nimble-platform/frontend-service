@@ -1,4 +1,5 @@
-<options-input label="Use Existing Address"
+<options-input *ngIf="!disabled"
+               [label]="'Use Existing Address' | translate"
                [(selected)]="selectedAddress"
                [options]="addressOptions"
                rowClass="mb-1"
@@ -6,5 +7,7 @@
                valueClass="col-10">
 </options-input>
 <address-input [address]="address"
-               [disabled]="isDisabled()">
+               [disabled]="isDisabled()"
+               [parentForm]="parentForm"
+               [formFieldName]="formFieldName">
 </address-input>

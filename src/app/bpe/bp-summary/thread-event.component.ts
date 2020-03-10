@@ -36,13 +36,10 @@ export class ThreadEventComponent implements OnInit {
         this.event.isBeingUpdated = updateProcess;
         let userRole:BpUserRole = this.event.buyer ? "buyer": "seller";
 
-        let catalogueIds = [];
-        let catalogueLineIds = [];
         let termsSources = [];
 
-        for(let product of this.event.products){
-            catalogueIds.push(product.catalogueDocumentReference.id);
-            catalogueLineIds.push(product.manufacturersItemIdentification.id);
+        let numberOfProducts = this.event.products.catalogIds.length;
+        for(let i=0; i<numberOfProducts;i++){
             termsSources.push(null);
         }
 
@@ -53,11 +50,11 @@ export class ThreadEventComponent implements OnInit {
                 this.processInstanceGroup.id,
                 this.event,
                 this.history,
-                this.event.products,
+                null,
                 null,
                 false,
-                catalogueIds,
-                catalogueLineIds,
+                this.event.products.catalogIds,
+                this.event.products.lineIds,
                 this.event.processInstanceId,
                 ActivityVariableParser.getPrecedingDocumentId(this.event.activityVariables),
                 termsSources,

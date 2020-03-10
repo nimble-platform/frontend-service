@@ -20,13 +20,14 @@ import { ActivatedRoute,Router } from "@angular/router";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {TranslateService} from '@ngx-translate/core';
 import {CatalogueLine} from "../catalogue/model/publish/catalogue-line";
-import {Text} from "../catalogue/model/publish/text";
 import * as moment from "moment";
 import { CookieService } from 'ng2-cookies';
 import {CredentialsService} from '../user-mgmt/credentials.service';
 import * as myGlobals from '../globals';
 import {UserService} from '../user-mgmt/user.service';
 import {ShoppingCartDataService} from '../bpe/shopping-cart/shopping-cart-data-service';
+import {ValidationService} from '../common/validation/validators';
+import {FormGroup} from '@angular/forms';
 
 @Component({
     selector: 'product-details-overview',
@@ -42,6 +43,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
     @Input() showAddToCartButton: boolean;
     @Input() inShoppingBasket: boolean;
     @Input() isNegotiateOrderButtonDisabled:boolean = false;
+    @Input() shoppingCartItemForm: FormGroup;
     // flag to adjust the name of the negotiate or order button,
     // true means the there are some negotiated terms and a negotiation process should be started. otherwise an order process is started
     @Input() isNegotiatingAnyTerm: boolean;
@@ -76,6 +78,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
         public categoryService:CategoryService,
         public catalogueService:CatalogueService,
         private shoppingCartDataService: ShoppingCartDataService,
+        private validationService: ValidationService,
         private modalService: NgbModal,
         private route: ActivatedRoute,
         private cookieService: CookieService,
@@ -113,12 +116,29 @@ export class ProductDetailsOverviewComponent implements OnInit{
             }
             this.classificationNames = [];
             let manPartyId  =  UBLModelUtils.getPartyId(this.wrapper.goodsItem.item.manufacturerParty);
+            let userId = this.cookieService.get('user_id');
+            let log = {
+                "@timestamp": moment().utc().toISOString(),
+                "level": "INFO",
+                "serviceID": "frontend-service",
+                "userId": userId,
+                "companyId": this.companyId,
+                "active_company": this.activeComp,
+                "manufactured_companyId" : manPartyId,
+                "activity": "product_visit"
+              };
+
+              if (this.debug)
+                console.log("Writing log "+JSON.stringify(log));
+              this.credentialsService.logUrl(log)
+                .then(res => {})
+                .catch(error => {});
+
             this.categoryService.getCategories(categoryUris).then(response => {
                 for(let category of response.result) {
                     this.classificationNames.push(selectNameFromLabelObject(category.label));
                     let LabelName = selectNameFromLabelObject(category.label);
                     if (this.config.loggingEnabled && this.companyId != manPartyId) {
-                      let userId = this.cookieService.get("user_id");
                       let log = {
                         "@timestamp": moment().utc().toISOString(),
                         "level": "INFO",
@@ -128,7 +148,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
                         "active_company": this.activeComp,
                         "manufactured_companyId" : manPartyId,
                         "category" : LabelName,
-                        "activity": "product_visit"
+                        "activity": "category_visits"
                       };
         
                       if (this.debug)
@@ -176,7 +196,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
             })
             // display a message if the product is included in the shopping cart
             this.shoppingCartDataService.getShoppingCart().then(catalogue => {
-                if(UBLModelUtils.doesCatalogueContainProduct(catalogue,this.catalogueId,this.productId)){
+                if(UBLModelUtils.isProductInCart(catalogue,this.catalogueId,this.productId)){
                     this.shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
                 }
             })
@@ -185,6 +205,14 @@ export class ProductDetailsOverviewComponent implements OnInit{
 
     onAddToCart(): void {
         event.preventDefault();
+        // check whether the item can be added to the cart
+        let isProductAddable: boolean = this.shoppingCartDataService.isProductAddableToCart(
+            this.wrapper.line.goodsItem.item.catalogueDocumentReference.id,
+            this.wrapper.line.goodsItem.item.manufacturersItemIdentification.id);
+        if (!isProductAddable) {
+            return;
+        }
+
         // do not add item to the cart if a process is still being added
         if (this.shoppingCartCallStatus.isLoading()) {
             return;
@@ -264,6 +292,16 @@ export class ProductDetailsOverviewComponent implements OnInit{
 
     selectName (ip: ItemProperty | Item) {
         return selectName(ip);
+    }
+
+    isAddCartDisabled(): boolean {
+        if (this.shoppingCartCallStatus.fb_callback ||
+            !this.shoppingCartDataService.isProductAddableToCart(
+                this.wrapper.line.goodsItem.item.catalogueDocumentReference.id,
+                this.wrapper.line.goodsItem.item.manufacturersItemIdentification.id)) {
+            return true;
+        }
+        return false;
     }
 
     getClassifications(): CommodityClassification[] {

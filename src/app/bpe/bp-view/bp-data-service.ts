@@ -117,7 +117,7 @@ export class BPDataService{
                 private router: Router) {
     }
 
-    setProductAndCompanyInformation(catalogueLines: CatalogueLine[], sellerSettings: CompanySettings): void {
+    setProductAndCompanyInformation(catalogueLines: CatalogueLine[], sellerSettings: CompanySettings,processType:ProcessType): void {
         this.catalogueLines = [];
         this.relatedProducts = [];
         this.relatedProductCategories = [];
@@ -135,8 +135,28 @@ export class BPDataService{
 
         // select the first values from the product properties
         this.modifiedCatalogueLines = copy(this.catalogueLines);
-        this.modifiedCatalogueLines[0].goodsItem.item = copy(this.bpActivityEvent.itemsWithSelectedProperties[0]);
+        // set the item of modifiedCatalogueLines
+        // if the item is included in bpActivityEvent (i.e, starting a process through search details page), use it, otherwise get the item from corresponding process document
+        this.modifiedCatalogueLines[0].goodsItem.item = copy(this.bpActivityEvent.itemsWithSelectedProperties ?this.bpActivityEvent.itemsWithSelectedProperties[0] :this.getItemsWithSelectedPropertiesForProcess(processType));
         this.modifiedCatalogueLines[0].goodsItem.quantity = this.bpActivityEvent.itemQuantity ? this.bpActivityEvent.itemQuantity: new Quantity(1,this.modifiedCatalogueLines[0].requiredItemLocationQuantity.price.baseQuantity.unitCode);
+    }
+
+    // returns the item having product details with selected properties for the given process type
+    public getItemsWithSelectedPropertiesForProcess(processType:ProcessType, index:number = 0){
+        switch (processType) {
+            case 'Fulfilment':
+                return this.despatchAdvice.despatchLine[index].item;
+            case 'Order':
+                return this.order.orderLine[index].lineItem.item;
+            case 'Negotiation':
+                return this.requestForQuotation.requestForQuotationLine[index].lineItem.item;
+            case 'Item_Information_Request':
+                return this.itemInformationRequest.itemInformationRequestLine[0].salesItem[0].item;
+            case 'Ppap':
+                return this.ppap.lineItem.item;
+            case 'Transport_Execution_Plan':
+                return this.transportExecutionPlanRequest.mainTransportationService;
+        }
     }
 
     getCatalogueLines(): CatalogueLine[] {
@@ -301,7 +321,7 @@ export class BPDataService{
             this.bpActivityEvent.containerGroupId,
             null,
             this.bpActivityEvent.processHistory,
-            this.bpActivityEvent.itemsWithSelectedProperties, // continue with the item having the same configurations
+            null,
             this.bpActivityEvent.itemQuantity,
             true, // new process is true
             // we get the following values from the previous bp activity event
@@ -368,8 +388,6 @@ export class BPDataService{
                 line.requiredItemLocationQuantity.applicableTaxCategory[0].percent);
             if (linePriceWrapper.itemPrice.hasPrice()) {
                 rfqLine.lineItem.price = line.requiredItemLocationQuantity.price;
-            } else {
-                rfqLine.lineItem.price.priceAmount.value = 1;
             }
             rfqLine.lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure = line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
             rfqLine.lineItem.warrantyValidityPeriod = line.warrantyValidityPeriod;
@@ -379,23 +397,8 @@ export class BPDataService{
             rfqLine.lineItem.quantity = modifiedLines[i].goodsItem.quantity;
         }
 
-        let userId = this.cookieService.get('user_id');
-        return this.userService.getSettingsForUser(userId).then(settings => {
-            // we can't copy because those are 2 different types of addresses.
-            for (let reqLine of rfq.requestForQuotationLine) {
-                const lineItem = reqLine.lineItem;
-                const address = lineItem.deliveryTerms.deliveryLocation.address;
-                address.country.name = new Text(settings.details.address.country, DEFAULT_LANGUAGE());
-                address.postalZone = settings.details.address.postalCode;
-                address.cityName = settings.details.address.cityName;
-                address.region = settings.details.address.region;
-                address.buildingNumber = settings.details.address.buildingNumber;
-                address.streetName = settings.details.address.streetName;
-            }
-
-            this.requestForQuotation = rfq;
-            return rfq;
-        });
+        this.requestForQuotation = rfq;
+        return Promise.resolve(rfq);
     }
 
     initRfqForTransportationWithOrder(order: Order): void {

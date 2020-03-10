@@ -141,9 +141,12 @@
 								<option value="score desc" [selected]="sort=='score desc'"><span [innerHTML]="'Relevance' | translate"></span></option>
 								<option *ngIf="searchTopic=='prod'" [value]="getCurrencySort('asc')" [selected]="sort==getCurrencySort('asc')"><span [innerHTML]="'Price: Asc.' | translate"></span></option>
 								<option *ngIf="searchTopic=='prod'" [value]="getCurrencySort('desc')" [selected]="sort==getCurrencySort('desc')"><span [innerHTML]="'Price: Desc.' | translate"></span></option>
-								<option *ngIf="searchTopic=='comp'" value="legalName asc" [selected]="sort=='legalName asc'"><span [innerHTML]="'A to Z' | translate"></span></option>
+								<option *ngIf="searchTopic=='prod'" value="{LANG}_label asc" [selected]="sort=='{LANG}_label asc'"><span [innerHTML]="'A -> Z' | translate"></span></option>
+								<option *ngIf="searchTopic=='prod'" value="{LANG}_label desc" [selected]="sort=='{LANG}_label desc'"><span [innerHTML]="'Z -> A' | translate"></span></option>
 								<option *ngIf="searchTopic=='comp'" value="trustRating desc" [selected]="sort=='trustRating desc'"><span [innerHTML]="'Rating' | translate"></span></option>
 								<option *ngIf="searchTopic=='comp'" value="trustScore desc" [selected]="sort=='trustScore desc'"><span [innerHTML]="'Trust' | translate"></span></option>
+								<option *ngIf="searchTopic=='comp'" value="{LANG}_brandName asc" [selected]="sort=='{LANG}_brandName asc'"><span [innerHTML]="'A -> Z' | translate"></span></option>
+								<option *ngIf="searchTopic=='comp'" value="{LANG}_brandName desc" [selected]="sort=='{LANG}_brandName desc'"><span [innerHTML]="'Z -> A' | translate"></span></option>
 							</select>
 				    </div>
 				  </div>
@@ -558,14 +561,31 @@
 												<span *ngIf="result.description" [title]="getMultilingualLabel(result[product_description])"><small>{{getMultilingualLabel(result[product_description])}}</small></span>
 											</div>
 										</div>
+										<!-- Price -->
 										<div [ngClass]="{'col-2 border-right':display=='list','col-12 border-bottom pt-1 pb-2':display=='panel'}">
-											<span class="badge badge-primary-nimble" *ngIf="result[product_price] && !checkEmpty(result[product_price])">{{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}</span>
+											<!-- Price is available -->
+											<ng-container *ngIf="result[product_price] && !checkEmpty(result[product_price])">
+												<span class="badge badge-primary-nimble">
+													<ng-container *ngIf="result[product_base_quantity] > 1">
+														<span >{{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}</span>
+														<span [innerHTML]="'per' | translate"></span>
+														<span >{{result[product_base_quantity]}} {{result[product_base_quantity_unit]}}</span>
+													</ng-container>
+													<span *ngIf="!result[product_base_quantity] || result[product_base_quantity] === 1">
+														{{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}
+													</span>
+												</span>
+											</ng-container>
+											<!-- Price is not available -->
 											<span class="badge badge-warning" *ngIf="!result[product_price] || checkEmpty(result[product_price])"><span [innerHTML]="'Upon request' | translate"></span></span><br/>
+											<!-- Shopping cart buttons -->
 											<ng-container *ngIf="shoppingCartDataService.cartFetched() && !isSearchResultLogisticsService(result)">
-												<span *ngIf="!getShoppingCartStatus(ind).fb_submitted" class="badge badge-primary pointer mt-1" (click)="onAddToCart(result,ind, $event)">
+												<button *ngIf="!getShoppingCartStatus(ind).fb_submitted"
+													  class="badge {{getShoppingCartStatus(ind).fb_callback ? 'badge-secondary disabled' : 'badge-primary pointer'}} mt-1"
+													  (click)="onAddToCart(result,ind, $event)">
 													<span class="fas fa-shopping-cart mr-1"></span>
 													<span [innerHTML]="'Add to Cart' | translate"></span>
-												</span>
+												</button>
 												<call-status [callStatus]="getShoppingCartStatus(ind)"></call-status>
 											</ng-container>
 										</div>
@@ -574,7 +594,7 @@
 												<span *ngIf="result[product_vendor][product_vendor_brand_name]" [title]="result[product_vendor][product_vendor_name]">{{ getMultilingualLabel(result[product_vendor][product_vendor_brand_name]) }}</span>
 												<span *ngIf="!result[product_vendor][product_vendor_brand_name]" [title]="result[product_vendor][product_vendor_name]">{{ result[product_vendor][product_vendor_name] }}</span>
 											</div>
-											<div *ngIf="!checkNaN(result[product_vendor][product_vendor_rating])" [title]="getName(product_vendor_rating,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating],1)+'/5\n\n'+getName(product_vendor_rating_seller,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating_seller],1)+'/5\n\n'+getName(product_vendor_rating_fulfillment,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating_fulfillment],1)+'/5\n\n'+getName(product_vendor_rating_delivery,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating_delivery],1)+'/5'">
+											<div *ngIf="!checkNaN(result[product_vendor][product_vendor_rating])" [title]="getName(product_vendor_rating,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating],1)+'/5\n\n'+getName(product_vendor_rating_seller,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating_seller],1)+'/5\n\n'+getName(product_vendor_rating_fulfillment,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating_fulfillment],1)+'/5\n\n'+getName(product_vendor_rating_delivery,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating_delivery],1)+'/5\n\n' + 'Total No OF Trust Evaluations' +':\n'+calcRating(result[product_vendor][product_vendor_evaluation],1)+''">
 												<ngb-rating [rate]="calcRating(result[product_vendor][product_vendor_rating],1)" [readonly]="true" max="5">
 													<ng-template let-fill="fill">
 													  <span class="star" [class.full]="fill === 100">

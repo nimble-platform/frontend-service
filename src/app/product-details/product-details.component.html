@@ -120,40 +120,49 @@
             </div>
 
             <!-- Price & Quantity -->
-                <div class="order-group">
-                    <label class="order-label">
-                        <span [innerHTML]="'Price' | translate"></span>
-                    </label>
-                    <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
-                        {{ getPricePerItem() }}
-                    </span>
-                    <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
-                        {{ frameContractQuotationWrapper.priceWrapper.pricePerItemString}}
-                    </span>
-                </div>
+            <div class="order-group">
+                <label class="order-label">
+                    <span [innerHTML]="'Price' | translate"></span>
+                </label>
+                <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
+                    {{ getPricePerItem() }}
+                </span>
+                <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
+                    {{ frameContractQuotationWrapper.priceWrapper.pricePerItemString}}
+                </span>
+            </div>
 
-                <hr>
+            <hr>
 
-                <div class="inline-order-group">
-                    <label class="order-label">
-                        <span [innerHTML]="'Quantity:' | translate"></span>
-                    </label>
-                    <span class="order-qty-input">
-                        <input type="number" min="1" step="1" (keypress)="onOrderQuantityKeyPressed($event)"
-                               [ngModel]="orderQuantity" (ngModelChange)="onOrderQuantityChange($event)"
-                               class="form-control form-control-sm w-75 px-1"
-                               [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()"/>
-                        <span *ngIf="getQuantityUnit() !== ''" class="ml-2">{{ getQuantityUnit() }}</span>
-                    </span>
-                </div>
-                <div class="inline-order-group">
-                    <span class="order-qty-range">
-                        <input type="range" [ngModel]="orderQuantity" (ngModelChange)="onOrderQuantityChange($event)"
-                               class="form-control-range"
-                               [min]="getSteps()" [max]="getMaximumQuantity()" [step]="getSteps()"
-                               [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()"/>
-                    </span>
-                </div>
+            <div class="inline-order-group">
+                <label class="order-label">
+                    <span [innerHTML]="'Quantity:' | translate"></span>
+                </label>
+                <span class="order-qty-input">
+                    <input type="number"
+                           (keypress)="onOrderQuantityKeyPressed($event)"
+                           [formControl]="quantityValueFormControl"
+                           [ngModel]="orderQuantity"
+                           (ngModelChange)="onOrderQuantityChange($event)"
+                           class="form-control form-control-sm w-75 px-1"
+                           [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()"
+                           [step]="priceWrapper.itemPrice.price.baseQuantity.value || 1"
+                           [ngbTooltip]="getValidationErrorMessage(quantityValueFormControl)" [placement]="'auto'"  title=""/>
+                    <span *ngIf="getQuantityUnit() !== ''" class="ml-2">{{ getQuantityUnit() }}</span>
+                </span>
+            </div>
+            <div class="inline-order-group">
+                <span class="order-qty-range">
+                    <input type="range"
+                           [ngModel]="orderQuantity"
+                           (ngModelChange)="onOrderQuantityChange($event)"
+                           class="form-control-range"
+                           [min]="getStepRange()"
+                           [max]="getMaximumQuantity()"
+                           [step]="getStepRange()"
+                           [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()"/>
+                </span>
+            </div>
 
             <ng-container *ngIf="getPricePerItem() !== 'On demand'">
                 <div *ngIf="config.vatEnabled" class="order-group mt-2">
@@ -208,8 +217,10 @@
             </ng-container>
 
             <!-- Action Button -->
-            <button *ngIf="companyWorkflowMap.get('Negotiation')" class="btn btn-primary pt-2 w-100"
-                    (click)="onNegotiate(termsSelectBoxValue)" [disabled]="!this.appComponent.checkRoles('bp') || orderQuantity <= 0">
+            <button *ngIf="companyWorkflowMap.get('Negotiation')"
+                    class="btn btn-primary pt-2 w-100"
+                    (click)="onNegotiate(termsSelectBoxValue)"
+                    [disabled]="!this.appComponent.checkRoles('bp') || !quantityValueFormControl.valid">
                 {{companyWorkflowMap.get('Order') ? 'Negotiate & Order' : 'Negotiate'}}
             </button>
         </div>

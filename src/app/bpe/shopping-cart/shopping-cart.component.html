@@ -16,9 +16,13 @@
             <span [innerHTML]="'Show Common Cart Terms' | translate"></span>
         </div>
         <div>
-            <button class="btn btn-primary ml-2" [disabled]="startBpCallStatus.fb_submitted" (click)="openShoppingCartSummary()">
-                <span [innerHTML]="'Negotiate / Order All' | translate"></span>
-            </button>
+            <span [ngbTooltip]="validationService.extractErrorMessage(shoppingCartForm)" [placement]="'auto'"  title="">
+                <button class="btn btn-primary ml-2"
+                    [disabled]="startBpCallStatus.fb_submitted || !shoppingCartForm.valid"
+                    (click)="openShoppingCartSummary()">
+                    <span [innerHTML]="'Negotiate / Order All' | translate"></span>
+                </button>
+            </span>
         </div>
         <call-status [large]="true" [callStatus]="startBpCallStatus"></call-status>
     </div>
@@ -34,7 +38,7 @@
             <div class="btn btn-primary btn-outline-primary" (click)="collapsedStatusesOfCartItems.set(cartLine.hjid, !collapsedStatusesOfCartItems.get(cartLine.hjid))">
                 {{getProductName(cartLine.goodsItem.item.name)}}
             </div>
-            <i *ngIf="!collapsedStatusesOfCartItems.get(cartLine.hjid) && !deleteCallStatuses.get(cartLine.hjid).isLoading()" class="far fa-trash-alt fa-2x ml-auto clickable" (click)="onRemoveFromCart(cartLine)" title="Remove from Cart"></i>
+            <i *ngIf="!collapsedStatusesOfCartItems.get(cartLine.hjid) && !deleteCallStatuses.get(cartLine.hjid).isLoading()" class="far fa-trash-alt fa-2x ml-auto clickable" (click)="onRemoveFromCart(cartLine)" [title]="'Remove from Cart' | translate"></i>
             <call-status *ngIf="deleteCallStatuses.get(cartLine.hjid).isLoading()" class="ml-auto" [callStatus]="deleteCallStatuses.get(cartLine.hjid)"></call-status>
         </div>
         <div [hidden]="!collapsedStatusesOfCartItems.get(cartLine.hjid)" class="space-before">
@@ -45,6 +49,7 @@
                                       [isNegotiatingAnyTerm]="areNegotiationConditionsSatisfied(cartLine)"
                                       (onCartItemDeleted)="onRemoveFromCart($event)"
                                       (onNegotiate)="onSingleLineNegotiation($event)"
+                                      [shoppingCartItemForm]="shoppingCartForm.controls['shopping_cart_item' + i]"
                                       [isNegotiateOrderButtonDisabled]="deleteCallStatuses.get(cartLine.hjid).fb_submitted">
             </product-details-overview>
             <product-details-tabs [wrapper]="productWrappers.get(cartLine.hjid)"
@@ -60,7 +65,10 @@
                                                                     : platformTermsAndConditions.get(cartLine.hjid)"
                                       [deliverytermsOfBuyer]="buyerCompanySettings.tradeDetails.deliveryTerms"
                                       [wrapper]="negotiationModelWrappers.get(cartLine.hjid)"
-                                      [hidden]="false">
+                                      [hidden]="false"
+                                      [parentForm]="shoppingCartForm"
+                                      [componentIndex]="i"
+                                      [formFieldName]="'shopping_cart_item'">
             </negotiation-request-item>
         </div>
     </div>

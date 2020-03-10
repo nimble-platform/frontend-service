@@ -26,7 +26,6 @@ import {TransportServiceDetailsComponent} from './transport-service-details.comp
 })
 export class TransportNegotiationRequestComponent implements OnInit {
 
-    @ViewChild(TransportServiceDetailsComponent) viewChild: TransportServiceDetailsComponent;
     rfq: RequestForQuotation;
     selectedTab: string = "OVERVIEW";
     rfqPrice: DiscountPriceWrapper;
@@ -40,11 +39,14 @@ export class TransportNegotiationRequestComponent implements OnInit {
     PAYMENT_TERMS: string[] = UBLModelUtils.getDefaultPaymentTermsAsStrings();
     CURRENCIES: string[] = CURRENCIES;
 
+    deliverytermsOfBuyer = null;
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
     // this component is used for both transport and logistics service negotiation
     // however, we need to know the type of service since some tabs are displayed only for transport services
     @Input() isTransportService:boolean;
+    // save the default delivery period unit so that we can understand whether the delivery period is updated by the buyer or not
+    defaultDeliveryPeriodUnit:string = null;
 
     constructor(private bpDataService: BPDataService,
                 private bpeService:BPEService,
@@ -67,6 +69,10 @@ export class TransportNegotiationRequestComponent implements OnInit {
         // get copy of ThreadEventMetadata of the current business process
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
+        this.userService.getSettingsForParty(this.cookieService.get("company_id")).then(res => {
+            this.deliverytermsOfBuyer = res.tradeDetails.deliveryTerms;
+        });
+
         this.rfq = this.bpDataService.requestForQuotation;
         // for logistics services except transport services, onyl Negotiation tab is available
         if(!this.isTransportService){
@@ -82,6 +88,8 @@ export class TransportNegotiationRequestComponent implements OnInit {
         if(this.processMetadata && this.processMetadata.isBeingUpdated){
             this.updatingProcess = true;
         }
+        // set the default delivery period unit
+        this.defaultDeliveryPeriodUnit = this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode;
     }
 
     // be sure that rfq has all necessary fields to start a bp
@@ -111,19 +119,21 @@ export class TransportNegotiationRequestComponent implements OnInit {
 
     // check whether the required fields for transport service details are filled or not
     isTransportServiceDetailsValid(){
+        // no need to check transport service details for logistics services which are not transport services
+        if(!this.isTransportService){
+            return true;
+        }
         let shipment = this.rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment;
-        let goodsItemToBeShipped = this.viewChild.getSelectedProductsToShip();
 
-        for (let goodsItem of goodsItemToBeShipped) {
-            if(UBLModelUtils.isEmptyOrIncompleteQuantity(goodsItem.quantity)){
+        for (let goodsItem of shipment.goodsItem) {
+            if(UBLModelUtils.isEmptyOrIncompleteQuantity(goodsItem.quantity) || goodsItem.item.name[0].value == "" || goodsItem.item.name[0].value == null
+                || UBLModelUtils.isEmptyOrIncompleteQuantity(goodsItem.grossVolumeMeasure) || UBLModelUtils.isEmptyOrIncompleteQuantity(goodsItem.grossWeightMeasure)){
                 return false;
             }
         }
         return !UBLModelUtils.isEmptyOrIncompleteQuantity(shipment.transportHandlingUnit[0].measurementDimension[1].measure) &&
             !UBLModelUtils.isEmptyOrIncompleteQuantity(shipment.transportHandlingUnit[0].measurementDimension[0].measure) &&
-            (shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name != null && shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name != "") &&
-            !UBLModelUtils.isEmptyOrIncompleteQuantity(shipment.consignment[0].grossWeightMeasure) &&
-            !UBLModelUtils.isEmptyOrIncompleteQuantity(shipment.consignment[0].grossVolumeMeasure);
+            (shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name != null && shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name != "");
     }
 
     onSendRequest(): void {
@@ -135,8 +145,6 @@ export class TransportNegotiationRequestComponent implements OnInit {
         let sellerFederationId:string;
 
         // final check on the rfq
-        // set the goods items which will be shipped by this transport service
-        rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment.goodsItem = this.viewChild.getSelectedProductsToShip();
         if(this.bpDataService.modifiedCatalogueLines) {
             sellerId = UBLModelUtils.getPartyId(this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty);
             sellerFederationId = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty.federationInstanceID;
@@ -187,5 +195,30 @@ export class TransportNegotiationRequestComponent implements OnInit {
             .catch(error => {
                 this.callStatus.error("Failed to update Terms", error);
             });
+    }
+
+    isTermUpdated(term:string):boolean{
+        switch (term) {
+            case "price":
+                return (this.rfqPrice.itemPrice.value != null && this.rfqPrice.itemPrice.value != 0) || this.rfqPrice.itemPrice.currency != this.CURRENCIES[0];
+            case "payment-means":
+                return this.PAYMENT_MEANS[0] != this.rfq.requestForQuotationLine[0].lineItem.paymentMeans.paymentMeansCode.value;
+            case "payment-terms":
+                return this.rfqPaymentTerms.getDefaultPaymentTerms() != this.rfqPaymentTerms.paymentTerm;
+            case "incoterms":
+                return this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms != null && this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms != "";
+            case "special-terms":
+                return this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms[0].value != null && this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms[0].value != "";
+            case "delivery-period":
+                return this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode != this.defaultDeliveryPeriodUnit || this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value != null;
+            case "pick-up":
+                return this.rfq.delivery.requestedDeliveryPeriod.startDate != null && this.rfq.delivery.requestedDeliveryPeriod.startDate != "";
+            case "drop-off":
+                return this.rfq.delivery.requestedDeliveryPeriod.endDate != null && this.rfq.delivery.requestedDeliveryPeriod.endDate != "";
+            case "notes":
+                return UBLModelUtils.areNotesOrFilesAttachedToDocument(this.rfq)
+            default:
+                return true;
+        }
     }
 }

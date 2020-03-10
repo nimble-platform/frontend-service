@@ -1,6 +1,6 @@
 import { Price } from "../catalogue/model/publish/price";
 import { Quantity } from "../catalogue/model/publish/quantity";
-import {copy, currencyToString, roundToTwoDecimals} from "./utils";
+import {copy, currencyToString, roundToTwoDecimals, roundToTwoDecimalsNumber} from "./utils";
 import { ItemPriceWrapper } from "./item-price-wrapper";
 import {PriceOption} from '../catalogue/model/publish/price-option';
 import {PRICE_OPTIONS} from '../catalogue/model/constants';
@@ -51,7 +51,7 @@ export class DiscountPriceWrapper {
             return 0;
         }
 
-        return this.itemPrice.pricePerItem;
+        return roundToTwoDecimalsNumber(this.itemPrice.pricePerItem);
     }
 
     get pricePerItemString(): string {
@@ -70,12 +70,11 @@ export class DiscountPriceWrapper {
         }
 
         let discountedTotalPrice: number = this.getDiscountedTotalPrice();
-        return discountedTotalPrice / this.orderedQuantity.value;
+        return roundToTwoDecimalsNumber(discountedTotalPrice / this.orderedQuantity.value);
     }
 
     get discountedPricePerItemString(): string {
         const qty = this.orderedQuantity;
-
         if(!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
             return "On demand";
         }
@@ -98,7 +97,7 @@ export class DiscountPriceWrapper {
 
     get totalPriceString(): string {
         if(!this.itemPrice.hasPrice()) {
-            return "Not specified";
+            return "On demand";
         }
         return `${roundToTwoDecimals(this.totalPrice)} ${this.currency}`;
     }
@@ -116,7 +115,11 @@ export class DiscountPriceWrapper {
     }
 
     get grossTotalString(): string {
-        return `${roundToTwoDecimals(this.grossTotal)} ${this.currency}`;
+        let grossTotal = this.grossTotal;
+        if(grossTotal == 0){
+            return "On demand";
+        }
+        return `${roundToTwoDecimals(grossTotal)} ${this.currency}`;
     }
 
     get currency(): string {
@@ -141,10 +144,17 @@ export class DiscountPriceWrapper {
         let totalPrice = this.orderedQuantity.value * this.originalPricePerItem;
 
         let totalDiscount:number = 0;
-        let totalMinimumOrderQuantityDiscount = 0;
-        let minimumOrderQuantityPriceOption:PriceOption = null;
-        let totalDeliveryPeriodDiscount = 0;
-        let deliveryPeriodPriceOption:PriceOption = null;
+        // for Minimum Order Quantity and Delivery Period price options, we find the ones offering the maximum discounts
+        let maximumMinimumOrderQuantityDiscount = 0;
+        let minimumOrderQuantityPriceOptionForDiscount:PriceOption = null;
+        let maximumDeliveryPeriodDiscount = 0;
+        let deliveryPeriodPriceOptionForDiscount:PriceOption = null;
+        // for Minimum Order Quantity and Delivery Period price options, we find the ones offering the maximum charges
+        // (the most negative one since charges are represented by negative values)
+        let minimumMinimumOrderQuantityCharge = 0;
+        let minimumOrderQuantityPriceOptionForCharge:PriceOption = null;
+        let minimumDeliveryPeriodCharge = 0;
+        let deliveryPeriodPriceOptionForCharge:PriceOption = null;
 
         // reset appliedDiscounts
         this.appliedDiscounts = [];
@@ -170,9 +180,15 @@ export class DiscountPriceWrapper {
             else if (priceOption.typeID == PRICE_OPTIONS.ORDERED_QUANTITY.typeID && priceOption.itemLocationQuantity.minimumQuantity.unitCode == this.orderedQuantity.unitCode
                 && this.orderedQuantity.value >= priceOption.itemLocationQuantity.minimumQuantity.value) {
                 let qDiscount = this.calculateDiscountAmount(priceOption, totalPrice);
-                if (qDiscount > totalMinimumOrderQuantityDiscount) {
-                    totalMinimumOrderQuantityDiscount = qDiscount;
-                    minimumOrderQuantityPriceOption = priceOption;
+                // discount
+                if(qDiscount > 0 && qDiscount > maximumMinimumOrderQuantityDiscount){
+                    maximumMinimumOrderQuantityDiscount = qDiscount;
+                    minimumOrderQuantityPriceOptionForDiscount = priceOption;
+                }
+                // charge
+                else if (qDiscount < minimumMinimumOrderQuantityCharge) {
+                    minimumMinimumOrderQuantityCharge = qDiscount;
+                    minimumOrderQuantityPriceOptionForCharge = priceOption;
                 }
             }
             // check for delivery period
@@ -181,9 +197,15 @@ export class DiscountPriceWrapper {
                 priceOption.estimatedDeliveryPeriod.durationMeasure.value <= this.deliveryPeriod.value) {
 
                 let dpDiscount = this.calculateDiscountAmount(priceOption, totalPrice);
-                if (dpDiscount > totalMinimumOrderQuantityDiscount) {
-                    totalDeliveryPeriodDiscount = dpDiscount;
-                    deliveryPeriodPriceOption = priceOption;
+                // discount
+                if(dpDiscount > 0 && dpDiscount > maximumDeliveryPeriodDiscount){
+                    maximumDeliveryPeriodDiscount = dpDiscount;
+                    deliveryPeriodPriceOptionForDiscount = priceOption;
+                }
+                // charge
+                else if (dpDiscount < minimumDeliveryPeriodCharge) {
+                    minimumDeliveryPeriodCharge = dpDiscount;
+                    deliveryPeriodPriceOptionForCharge = priceOption;
                 }
             }
             // check for additional item properties
@@ -225,7 +247,7 @@ export class DiscountPriceWrapper {
                 if (checkRegion && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].region.toLocaleLowerCase() != this.deliveryLocation.region.toLocaleLowerCase()) {
                     continue;
                 }
-                if (checkCountryName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value.toLocaleLowerCase() != this.deliveryLocation.country.name.value.toLocaleLowerCase()) {
+                if (checkCountryName && this.deliveryLocation.country.name.value != null && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value.toLocaleLowerCase() != this.deliveryLocation.country.name.value.toLocaleLowerCase()) {
                     continue;
                 }
                 // the delivery location satisfies all conditions
@@ -237,16 +259,26 @@ export class DiscountPriceWrapper {
         }
 
         // add the individual discounts
-        totalDiscount += totalMinimumOrderQuantityDiscount;
-        totalDiscount += totalDeliveryPeriodDiscount;
+        totalDiscount += maximumMinimumOrderQuantityDiscount;
+        totalDiscount += maximumDeliveryPeriodDiscount;
+        totalDiscount += minimumMinimumOrderQuantityCharge;
+        totalDiscount += minimumDeliveryPeriodCharge;
 
-        if(minimumOrderQuantityPriceOption != null){
-            minimumOrderQuantityPriceOption.discount = totalMinimumOrderQuantityDiscount;
-            this.appliedDiscounts.push(minimumOrderQuantityPriceOption);
+        if(minimumOrderQuantityPriceOptionForDiscount != null){
+            minimumOrderQuantityPriceOptionForDiscount.discount = maximumMinimumOrderQuantityDiscount;
+            this.appliedDiscounts.push(minimumOrderQuantityPriceOptionForDiscount);
         }
-        if(deliveryPeriodPriceOption != null){
-            deliveryPeriodPriceOption.discount = totalDeliveryPeriodDiscount;
-            this.appliedDiscounts.push(deliveryPeriodPriceOption);
+        if(deliveryPeriodPriceOptionForDiscount != null){
+            deliveryPeriodPriceOptionForDiscount.discount = maximumDeliveryPeriodDiscount;
+            this.appliedDiscounts.push(deliveryPeriodPriceOptionForDiscount);
+        }
+        if(minimumOrderQuantityPriceOptionForCharge != null){
+            minimumOrderQuantityPriceOptionForCharge.discount = minimumMinimumOrderQuantityCharge;
+            this.appliedDiscounts.push(minimumOrderQuantityPriceOptionForCharge);
+        }
+        if(deliveryPeriodPriceOptionForCharge != null){
+            deliveryPeriodPriceOptionForCharge.discount = minimumDeliveryPeriodCharge;
+            this.appliedDiscounts.push(deliveryPeriodPriceOptionForCharge);
         }
 
         return totalPrice - totalDiscount;

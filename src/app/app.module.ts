@@ -25,6 +25,7 @@ import { ExplorativeSearchService } from './explorative-search/explorative-searc
 import { SimpleSearchService } from './simple-search/simple-search.service';
 import { SearchContextService } from './simple-search/search-context.service';
 import { UserService } from './user-mgmt/user.service';
+import { AgentService } from './user-mgmt/agent.service';
 import { CredentialsService } from './user-mgmt/credentials.service';
 import { DataChannelService } from "./data-channel/data-channel.service";
 import { UnitService } from './common/unit-service';
@@ -33,11 +34,12 @@ import { TnTService } from './tnt/tnt.service';
 import { AnalyticsService } from './analytics/analytics.service';
 import { EpcService } from './bpe/bp-view/epc-service';
 import {DocumentService} from "./bpe/bp-view/document-service";
-import {LogisticPublishingService} from './catalogue/publish/logistic-publishing.service';
+import {PublishingPropertyService} from './catalogue/publish/publishing-property.service';
 import {FrameContractTransitionService} from "./bpe/bp-view/contract/frame-contract-transition.service";
 import {ShoppingCartDataService} from './bpe/shopping-cart/shopping-cart-data-service';
 import {CollaborationService} from './catalogue/collaboration/collaboration.service';
 import {UnshippedOrdersTransitionService} from './bpe/unshipped-order-transition-service';
+import {ValidationService} from './common/validation/validators';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -76,7 +78,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         FrameContractTransitionService,
 		CatalogueService,
         CategoryService,
-        LogisticPublishingService,
+        PublishingPropertyService,
         PublishService,
         ExplorativeSearchService,
         SimpleSearchService,
@@ -91,7 +93,9 @@ export function HttpLoaderFactory(http: HttpClient) {
         EpcService,
         DocumentService,
         ShoppingCartDataService,
-        CollaborationService
+        CollaborationService,
+        ValidationService,
+        AgentService
     ],
     bootstrap: [
         AppComponent

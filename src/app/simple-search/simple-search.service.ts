@@ -91,6 +91,7 @@ export class SimpleSearchService {
 		} else {
 			queryRes = this.buildQueryString(query, myGlobals.query_settings, true, false);
 			searchObject.sort = [];
+      sort = sort.replace("{LANG}",DEFAULT_LANGUAGE());
 			searchObject.sort.push(sort);
 		}
 		query = queryRes.queryStr;
@@ -132,7 +133,7 @@ export class SimpleSearchService {
 			.catch(this.handleError);
 	}
 
-  getComp(query: string, facets: string[], facetQueries: string[], page: number, rows: number, sort: string): Promise<any> {
+  getComp(query: string, facets: string[], facetQueries: string[], page: number, rows: number, sort: string, unverified?: boolean): Promise<any> {
 		let queryRes;
     queryRes = this.buildQueryString(query, myGlobals.query_settings_comp, true, false);
 		query = queryRes.queryStr;
@@ -144,6 +145,7 @@ export class SimpleSearchService {
 		searchObject.start = page - 1;
 		searchObject.q = query;
     searchObject.sort = [];
+    sort = sort.replace("{LANG}",DEFAULT_LANGUAGE());
     searchObject.sort.push(sort);
 		for (let facet of facets) {
 			if (facet.length === 0 || !facet.trim()) {
@@ -163,6 +165,15 @@ export class SimpleSearchService {
 			}
 			searchObject.fq.push(facetQuery);
 		}
+    if (searchObject.fq == null) {
+      searchObject.fq = [];
+    }
+    if (unverified) {
+      searchObject.fq.push("verified:false");
+    }
+    else {
+      searchObject.fq.push("verified:true");
+    }
 		return this.http
 			.post(url, searchObject, {headers: new Headers({'Content-Type': 'application/json','Authorization':'Bearer ' +this.cookieService.get("bearer_token")})})
 			.toPromise()

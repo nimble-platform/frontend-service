@@ -60,6 +60,7 @@ export class CategorySearchComponent implements OnInit {
     selectedCategoriesWRTLevels = [];
     propertyNames: string[] = ["code", "taxonomyId", "level", "definition", "note", "remark"];
     taxonomyId: string = myGlobals.config.standardTaxonomy;
+    standardTaxonomy: string = myGlobals.config.standardTaxonomy;
     categoryFilter = myGlobals.config.categoryFilter;
     taxonomyIDs: string[];
     prefCats: string[] = [];
@@ -91,6 +92,8 @@ export class CategorySearchComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        if (this.standardTaxonomy == "All")
+          this.standardTaxonomy = "eClass";
         this.route.queryParams.subscribe((params: Params) => {
             // current page regs considered: menu, publish, null
             this.pageRef = params["pageRef"];
@@ -148,7 +151,7 @@ export class CategorySearchComponent implements OnInit {
             for(let i = 0; i < taxonomyIDs.length;i++){
                 this.taxonomyIDs.push(taxonomyIDs[i]);
             }
-            this.getRootCategories(this.taxonomyId == "All" ? "eClass" : this.taxonomyId);
+            this.getRootCategories(this.taxonomyId == "All" ? this.standardTaxonomy : this.taxonomyId);
         })
     }
 
@@ -349,7 +352,7 @@ export class CategorySearchComponent implements OnInit {
     displayRootCategories(taxonomyId: string): void {
         this.treeView = true;
         this.taxonomyId = taxonomyId;
-        this.getRootCategories(this.taxonomyId == "All" ? "eClass" : this.taxonomyId);
+        this.getRootCategories(this.taxonomyId == "All" ? this.standardTaxonomy : this.taxonomyId);
     }
 
     private getCategories(): void {
@@ -529,7 +532,7 @@ export class CategorySearchComponent implements OnInit {
               this.getCategories();
           }
           if(this.selectedTab == "TREE"){
-              this.getRootCategories(this.taxonomyId == "All" ? "eClass" : this.taxonomyId);
+              this.getRootCategories(this.taxonomyId == "All" ? this.standardTaxonomy : this.taxonomyId);
           }
         }
     }

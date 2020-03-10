@@ -63,7 +63,11 @@ export class QuotationWrapper {
     }
 
     public get incotermsString(): string {
-        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.deliveryTerms.incoterms || "None";
+        let incoterms = this.quotation.quotationLine[this.quotationLineIndex].lineItem.deliveryTerms.incoterms;
+        if(incoterms == null || incoterms == ""){
+            return "None";
+        }
+        return incoterms;
     }
 
     public set incoterms(incoterms: string) {

@@ -27,7 +27,8 @@ import {NEGOTIATION_RESPONSES} from "../../catalogue/model/constants";
 import {DataChannel} from '../../data-channel/model/datachannel';
 import * as myGlobals from "../../globals";
 import {UserService} from '../../user-mgmt/user.service';
-import {TranslateService} from '@ngx-translate/core';
+import { AppComponent } from "../../app.component";
+import { TranslateService } from "@ngx-translate/core";
 
 
 /**
@@ -101,6 +102,8 @@ export class ThreadSummaryComponent implements OnInit {
     showRateCollaborationButton = false;
     expanded: boolean = false;
 
+    tradingPartnerName:string = null;
+
     config = myGlobals.config;
     selectPreferredValue = selectPreferredValue;
 
@@ -115,11 +118,12 @@ export class ThreadSummaryComponent implements OnInit {
                 private route: ActivatedRoute,
                 private modalService: NgbModal,
                 private userService: UserService,
+                private appComponent: AppComponent,
                 private translate: TranslateService) {
     }
 
     ngOnInit(): void {
-        this.translate.get(['Slow Response Time','Suspicious Company Information','Undervalued Offer','Rejected Delivery Terms','Other','Due to','Some reasons']).subscribe((res: any) => {
+        this.appComponent.translate.get(['Slow Response Time','Suspicious Company Information','Undervalued Offer','Rejected Delivery Terms','Other','Due to','Some reasons','Collaboration finished','on','Collaboration cancelled']).subscribe((res: any) => {
             this.translations = res;
         });
         this.route.params.subscribe(params => {
@@ -171,13 +175,10 @@ export class ThreadSummaryComponent implements OnInit {
     async openBpProcessView() {
         let userRole:BpUserRole = this.titleEvent.buyer ? "buyer": "seller";
 
-        let catalogueIds = [];
-        let catalogueLineIds = [];
         let termsSources = [];
 
-        for(let product of this.titleEvent.products){
-            catalogueIds.push(product.catalogueDocumentReference.id);
-            catalogueLineIds.push(product.manufacturersItemIdentification.id);
+        let numberOfProducts = this.titleEvent.products.catalogIds.length;
+        for(let i=0; i<numberOfProducts;i++){
             termsSources.push(null);
         }
         this.bpDataService.startBp(
@@ -187,11 +188,11 @@ export class ThreadSummaryComponent implements OnInit {
                 this.processInstanceGroup.id,
                 this.titleEvent,
                 [this.titleEvent].concat(this.history),
-                this.titleEvent.products,
+                null,
                 null,
                 false,
-                catalogueIds,
-                catalogueLineIds,
+                this.titleEvent.products.catalogIds,
+                this.titleEvent.products.lineIds,
                 this.titleEvent.processInstanceId,
                 ActivityVariableParser.getPrecedingDocumentId(this.titleEvent.activityVariables),
                 termsSources,
@@ -228,7 +229,8 @@ export class ThreadSummaryComponent implements OnInit {
             if(!this.isCollaborationRated(events) && !isCollaborationInProgress && this.lastEvent.buyer){
                 this.showRateCollaborationButton = true;
             }
-            this.computeTitleEvent();
+            // set title event
+            this.titleEvent = this.lastEvent;
             this.checkDataChannel();
 
             // update the former step field of events after sorting and other population
@@ -268,20 +270,20 @@ export class ThreadSummaryComponent implements OnInit {
         let correspondent = null;
         if (userRole === "buyer") {
             if(processType == "Fulfilment"){
-                correspondent = dashboardProcessInstanceDetails.requestCreatorUser.firstName + " " + dashboardProcessInstanceDetails.requestCreatorUser.familyName;
+                correspondent = dashboardProcessInstanceDetails.requestCreatorUser;
             }
             else if(dashboardProcessInstanceDetails.responseCreatorUser){
-                correspondent = dashboardProcessInstanceDetails.responseCreatorUser.firstName + " " + dashboardProcessInstanceDetails.responseCreatorUser.familyName;
+                correspondent = dashboardProcessInstanceDetails.responseCreatorUser;
             }
         }
         else {
             if(processType == "Fulfilment"){
                 if(dashboardProcessInstanceDetails.responseCreatorUser){
-                    correspondent = dashboardProcessInstanceDetails.responseCreatorUser.firstName + " " + dashboardProcessInstanceDetails.responseCreatorUser.familyName;
+                    correspondent = dashboardProcessInstanceDetails.responseCreatorUser;
                 }
             }
             else {
-                correspondent = dashboardProcessInstanceDetails.requestCreatorUser.firstName + " " + dashboardProcessInstanceDetails.requestCreatorUser.familyName;
+                correspondent = dashboardProcessInstanceDetails.requestCreatorUser;
             }
         }
         return correspondent;
@@ -295,30 +297,34 @@ export class ThreadSummaryComponent implements OnInit {
         const processType = ActivityVariableParser.getProcessType(activityVariables);
         const initialDoc: any = dashboardProcessInstanceDetails.requestDocument;
         const responseDocumentStatus: any = dashboardProcessInstanceDetails.responseDocumentStatus;
-        const userRole = ActivityVariableParser.getUserRole(processType,initialDoc,this.processInstanceGroup.partyID);
-        const lastActivity = dashboardProcessInstanceDetails.lastActivityInstance;
-        const processInstance = dashboardProcessInstanceDetails.processInstance;
+        const userRole = ActivityVariableParser.getUserRole(processType,initialDoc.buyerPartyId,this.processInstanceGroup.partyID);
+        const lastActivityStartTime = dashboardProcessInstanceDetails.lastActivityInstanceStartTime;
+        const processInstanceState:any = dashboardProcessInstanceDetails.processInstanceState;
         const correspondent = this.getCorrespondent(dashboardProcessInstanceDetails,userRole,processType);
 
         // get seller's business process workflow
         // we need this information to set status and labels for Order properly
-        const sellerNegotiationSettings = await this.userService.getCompanyNegotiationSettingsForParty(initialDoc.items[0].manufacturerParty.partyIdentification[0].id,initialDoc.items[0].manufacturerParty.federationInstanceID);
-        this.sellerNegoSettings = sellerNegotiationSettings;
-        const sellerWorkflow = sellerNegotiationSettings.company.processID;
-
-        // check whether Fulfilment is included or not in seller's workflow
-        const isFulfilmentIncludedInWorkflow = !sellerWorkflow || sellerWorkflow.length == 0 || sellerWorkflow.indexOf('Fulfilment') != -1;
-
-        let sellerFederationId:string;
-        if (userRole === "buyer") {
-            this.lastEventPartnerID = UBLModelUtils.getPartyId(initialDoc.items[0].manufacturerParty);
-            this.lastEventPartnerFederationId = initialDoc.items[0].manufacturerParty.federationInstanceID;
+        if(this.sellerNegoSettings == null){
+            this.userService.getCompanyNegotiationSettingsForParty(initialDoc.sellerPartyId, initialDoc.sellerPartyFederationId).then(negotiationSettings => {
+                this.sellerNegoSettings = negotiationSettings;
+            });
         }
-        else {
-            this.lastEventPartnerID = initialDoc.buyerPartyId;
-            this.lastEventPartnerFederationId = initialDoc.buyerPartyFederationId;
+
+        if(this.lastEventPartnerID == null){
+            if (userRole === "buyer") {
+                this.lastEventPartnerID = initialDoc.sellerPartyId;
+                this.lastEventPartnerFederationId = initialDoc.sellerPartyFederationId;
+            }
+            else {
+                this.lastEventPartnerID = initialDoc.buyerPartyId;
+                this.lastEventPartnerFederationId = initialDoc.buyerPartyFederationId;
+            }
+
+            this.userService.getParty(this.lastEventPartnerID,this.lastEventPartnerFederationId).then(party => {
+                this.tradingPartnerName = UBLModelUtils.getPartyDisplayNameForPartyName(party.partyName);
+            })
         }
-        sellerFederationId = initialDoc.sellerPartyFederationId;
+        let sellerFederationId:string = initialDoc.sellerPartyFederationId;
 
         const isRated = await this.bpeService.ratingExists(processInstanceId, this.lastEventPartnerID,this.lastEventPartnerFederationId,sellerFederationId);
 
@@ -326,42 +332,55 @@ export class ThreadSummaryComponent implements OnInit {
             processType,
             processType.replace(/[_]/gi, " "),
             processInstanceId,
-            moment(new Date(lastActivity["startTime"]), 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss"),
-            ActivityVariableParser.getTradingPartnerName(initialDoc, this.cookieService.get("company_id"),processType),
+            moment(new Date(lastActivityStartTime), 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss"),
             initialDoc.items,
             correspondent,
             this.getBPStatus(responseDocumentStatus),
-            initialDoc,
+            initialDoc.buyerPartyId,
             activityVariables,
             userRole === "buyer",
             isRated === "true",
             initialDoc.areProductsDeleted,
             this.processInstanceGroup.status,
             sellerFederationId,
-            dashboardProcessInstanceDetails.cancellationReason
+            dashboardProcessInstanceDetails.cancellationReason,
+            moment(new Date(dashboardProcessInstanceDetails.requestDate), 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss"),
+            dashboardProcessInstanceDetails.responseDate ? moment(new Date(dashboardProcessInstanceDetails.responseDate), 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss") : null,
+            dashboardProcessInstanceDetails.completionDate
         );
 
-        this.fillStatus(event, processInstance["state"], processType, responseDocumentStatus, userRole === "buyer",isFulfilmentIncludedInWorkflow);
+        this.fillStatus(event, processInstanceState, processType, responseDocumentStatus, userRole === "buyer");
 
         return event;
     }
 
-    getCancellationReason(reason:string):string{
+    getCollaborationCancelledStatus(reason:string,date:string):string{
+        let status = this.translations["Collaboration cancelled"];
         if(reason){
             if(reason == "Other"){
                 reason = "Some reasons";
             }
-            return " "+ this.translations["Due to"] + " "+ this.translations[reason];
+            status += " "+ this.translations["Due to"] + " "+ this.translations[reason];
         }
-        return null;
+        if(date){
+            status += " " + this.translations["on"] + " " + date;
+        }
+        return status;
     }
 
-    navigateToSearchDetails(item:Item) {
+    getCollaborationFinishedStatus(date:string):string{
+        if(date){
+            return this.translations["Collaboration finished"] + " " + this.translations["on"] + " " + date;
+        }
+        return this.translations["Collaboration finished"];
+    }
+
+    navigateToSearchDetails(products:any,index:number) {
         this.router.navigate(['/product-details'],
             {
                 queryParams: {
-                    catalogueId: item.catalogueDocumentReference.id,
-                    id: item.manufacturersItemIdentification.id
+                    catalogueId: products.catalogIds[index],
+                    id: products.lineIds[index]
                 }
             });
     }
@@ -387,9 +406,9 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     private fillStatus(event: ThreadEventMetadata, processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
-                       processType: ProcessType, response: any, buyer: boolean, isFulfilmentIncludedInWorkflow:boolean): void {
+                       processType: ProcessType, response: any, buyer: boolean): void {
 
-        event.status = this.getStatus(processState, processType, response, buyer, isFulfilmentIncludedInWorkflow);
+        event.status = this.getStatus(processState, processType, response, buyer);
 
         // messages if there is no response from the responder party
         if (response == null) {
@@ -540,7 +559,7 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     private getStatus(processState: "EXTERNALLY_TERMINATED" | "COMPLETED" | "ACTIVE",
-                      processType: ProcessType, response: any, buyer: boolean,isFulfilmentIncludedInWorkflow:boolean): ThreadEventStatus {
+                      processType: ProcessType, response: any, buyer: boolean): ThreadEventStatus {
         switch(processState) {
             case "COMPLETED":
                 return "DONE";
@@ -565,30 +584,6 @@ export class ThreadSummaryComponent implements OnInit {
             bpStatus = "Completed";
         }
         return bpStatus;
-    }
-
-    private computeTitleEvent() {
-        this.titleEvent = this.lastEvent;
-        // if the event is a transportation service, go through the history and check the last event that is not (if any)
-        if(this.areTransportationServices(this.lastEvent.products)) {
-            // history ordered from new to old
-            for(let i = this.history.length - 1; i >= 0; i--) {
-                const event = this.history[i]
-                if(!this.areTransportationServices(event.products)) {
-                    // if not a transport, this is relevant, doing it in the for loop makes sure the LAST non-transport event is the relevant one.
-                    this.titleEvent = event;
-                }
-            }
-        }
-    }
-
-    private areTransportationServices(items: Item[]){
-        for(let item of items){
-            if(!item.transportationServiceDetails){
-                return false;
-            }
-        }
-        return true;
     }
 
     checkDataChannel() {
@@ -665,8 +660,8 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     rateCollaborationSuccess(content) {
-     
-      if( this.sellerNegoSettings != null && this.sellerNegoSettings.company.processID.length !=0){
+
+      if(this.sellerNegoSettings.company.processID.length !=0){
         this.compRating = {};
 
         if(this.sellerNegoSettings.company.processID.indexOf('Fulfilment') != -1){
@@ -711,14 +706,14 @@ export class ThreadSummaryComponent implements OnInit {
           this.prodListingAccu = true;
           this.responsetime = true;
           this.conformToOtherAggre = true;
-          
+
           this.ratingSeller = 0;
           this.ratingFulfillment = 0
       }
 
       this.ratingOverall = 0;
-      
-   
+
+
       this.compComment = "";
       this.modalService.open(content);
     }

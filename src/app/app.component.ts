@@ -53,6 +53,7 @@ export class AppComponent implements OnInit {
     private availableLanguages = LANGUAGES.sort();
     private federationStr = FEDERATION();
     public federation = (this.federationStr == "ON");
+    public showAgents = this.config.showAgent;
 
     enableLogisticServicePublishing = true;
 
