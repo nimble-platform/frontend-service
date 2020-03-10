@@ -28,6 +28,7 @@ import {DataChannel} from '../../data-channel/model/datachannel';
 import * as myGlobals from "../../globals";
 import {UserService} from '../../user-mgmt/user.service';
 import { AppComponent } from "../../app.component";
+import { TranslateService } from "@ngx-translate/core";
 
 
 /**
@@ -117,7 +118,8 @@ export class ThreadSummaryComponent implements OnInit {
                 private route: ActivatedRoute,
                 private modalService: NgbModal,
                 private userService: UserService,
-                private appComponent: AppComponent) {
+                private appComponent: AppComponent,
+                private translate: TranslateService) {
     }
 
     ngOnInit(): void {

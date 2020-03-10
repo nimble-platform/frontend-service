@@ -59,6 +59,7 @@ import {Address} from '../model/publish/address';
 import {Country} from '../model/publish/country';
 import {ValidationService} from '../../common/validation/validators';
 import { AppComponent } from "../../app.component";
+import { TranslateService } from "@ngx-translate/core";
 
 interface SelectedProperties {
     [key: string]: SelectedProperty;
@@ -179,7 +180,8 @@ export class ProductPublishComponent implements OnInit {
                 private cookieService: CookieService,
                 private unitService:UnitService,
                 private modalService: NgbModal,
-                private appComponent: AppComponent) {
+                private appComponent: AppComponent,
+                private translate: TranslateService) {
     }
 
     ngOnInit() {
