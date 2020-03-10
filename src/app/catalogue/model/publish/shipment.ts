@@ -5,6 +5,7 @@ import {TransportHandlingUnit} from "./transport-handling-unit";
 import {Quantity} from "./quantity";
 import {Consignment} from "./consignment";
 import {Text} from "./text";
+import {DocumentReference} from './document-reference';
 
 export class Shipment {
     constructor(
@@ -15,6 +16,8 @@ export class Shipment {
         public shipmentStage: ShipmentStage[] = [],
         public transportHandlingUnit: TransportHandlingUnit[] = [new TransportHandlingUnit()],
         public originAddress: Address = new Address(),
+        public specialInstructions: string[] = [''],
+        public additionalDocumentReference:DocumentReference[] = []
     ) {  }
 
     selectHandlingInstructions(languageID: string): string {

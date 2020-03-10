@@ -15,7 +15,10 @@ import {Text} from '../../../catalogue/model/publish/text';
 export class TransportServiceDetailsComponent implements OnInit {
 
     @Input() rfq: RequestForQuotation;
+    @Input() quotationShipment:Shipment = null;
     @Input() disabled: boolean;
+    // TODO: need a better way to handle notes and files section in Transport service details
+    @Input() disableQuotationNotesSection:boolean;
 
     lineItem: LineItem;
     shipment: Shipment;
@@ -78,5 +81,12 @@ export class TransportServiceDetailsComponent implements OnInit {
             this.goodsItems.forEach(goodsItem => goodsItem.grossWeightMeasure.unitCode=unit);
             this.shipment.consignment[0].grossWeightMeasure.unitCode = unit;
         }
+    }
+
+    isNoteSectionDisabled(){
+        if(this.disableQuotationNotesSection != undefined){
+            return this.disableQuotationNotesSection;
+        }
+        return this.disabled;
     }
 }

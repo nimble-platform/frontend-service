@@ -78,5 +78,16 @@
             quantityType="length_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
         </quantity-input>
 
+        <!--Notes-->
+        <h5 class="space-before"><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
+        <note-file-view [notes]="quotationShipment ? quotationShipment.specialInstructions : shipment.specialInstructions"
+                        [requestNotes]="shipment.specialInstructions"
+                        [documents]="quotationShipment ? quotationShipment.additionalDocumentReference : shipment.additionalDocumentReference"
+                        [requestDocuments]="shipment.additionalDocumentReference"
+                        [label]="'Notes'"
+                        [firstCol]="'col-2'"
+                        [thirdCol]="quotationShipment ? 'col-5': null"
+                        [lastCol]="quotationShipment ? 'col-5': 'col-10'"
+                        [readonly]="isNoteSectionDisabled()"></note-file-view>
     </div>
 </div>

@@ -419,6 +419,10 @@ export class UBLModelUtils {
                 quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.startDate = rfq.delivery.requestedDeliveryPeriod.startDate;
                 quotationLine.lineItem.delivery[0].requestedDeliveryPeriod.endDate = rfq.delivery.requestedDeliveryPeriod.endDate;
             }
+            // need to clear following fields for transport negotiation
+            quotationLine.lineItem.delivery[0].shipment.additionalDocumentReference = [];
+            quotationLine.lineItem.delivery[0].shipment.specialInstructions = [''];
+
             quotationLines.push(quotationLine);
         }
 

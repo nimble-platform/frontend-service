@@ -28,7 +28,7 @@
 
 <!-- Transport Service Details -->
 <ng-container *ngIf="selectedTab === 'OVERVIEW'">
-    <transport-service-details [rfq]="rfq" [disabled]="true">
+    <transport-service-details [rfq]="rfq" [quotationShipment]="quotation.quotationLine[0].lineItem.delivery[0].shipment" [disabled]="true" [disableQuotationNotesSection]="isDisabled()">
     </transport-service-details>
 </ng-container>
 
