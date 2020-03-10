@@ -227,7 +227,8 @@ export class ThreadSummaryComponent implements OnInit {
             if(!this.isCollaborationRated(events) && !isCollaborationInProgress && this.lastEvent.buyer){
                 this.showRateCollaborationButton = true;
             }
-            this.computeTitleEvent();
+            // set title event
+            this.titleEvent = this.lastEvent;
             this.checkDataChannel();
 
             // update the former step field of events after sorting and other population
@@ -581,30 +582,6 @@ export class ThreadSummaryComponent implements OnInit {
             bpStatus = "Completed";
         }
         return bpStatus;
-    }
-
-    private computeTitleEvent() {
-        this.titleEvent = this.lastEvent;
-        // if the event is a transportation service, go through the history and check the last event that is not (if any)
-        if(this.areTransportationServices(this.lastEvent.products.isTransportService)) {
-            // history ordered from new to old
-            for(let i = this.history.length - 1; i >= 0; i--) {
-                const event = this.history[i]
-                if(!this.areTransportationServices(event.products.isTransportService)) {
-                    // if not a transport, this is relevant, doing it in the for loop makes sure the LAST non-transport event is the relevant one.
-                    this.titleEvent = event;
-                }
-            }
-        }
-    }
-
-    private areTransportationServices(areTransportServices:boolean[]){
-        for (let isTransportService of areTransportServices) {
-            if(!isTransportService){
-                return false;
-            }
-        }
-        return true;
     }
 
     checkDataChannel() {
