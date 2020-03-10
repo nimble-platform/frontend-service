@@ -12,12 +12,10 @@ import { CURRENCIES } from "../catalogue/model/constants";
 import { CategoryService } from '../catalogue/category/category.service';
 import { Category } from '../catalogue/model/category/category';
 import { DEFAULT_LANGUAGE} from '../catalogue/model/constants';
-import {Code} from '../catalogue/model/publish/code';
 import {CatalogueService} from "../catalogue/catalogue.service";
 import {PublishService} from "../catalogue/publish-and-aip.service";
 import {ShoppingCartDataService} from '../bpe/shopping-cart/shopping-cart-data-service';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
-import {Catalogue} from '../catalogue/model/publish/catalogue';
 import {product_base_quantity, product_base_quantity_unit} from '../common/constants';
 
 @Component({
@@ -1497,6 +1495,12 @@ export class SimpleSearchFormComponent implements OnInit {
 
     onAddToCart(result: any,index:number, event: any): void {
         event.preventDefault();
+        // check whether the item can be added to the cart
+        let isProductAddable: boolean = this.shoppingCartDataService.isProductAddableToCart(result.catalogueId, result.manufactuerItemId);
+        if (!isProductAddable) {
+            return;
+        }
+
         // do not add item to the cart if a process is still being added
         for(let shoppingCartCallStatus of this.shoppingCartCallStatuses){
             if(shoppingCartCallStatus.isLoading()){
