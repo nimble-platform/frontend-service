@@ -16,13 +16,13 @@
                     <div class="row w-100 m-0">
                         <div class="col pl-2">
                           <strong><span [innerHTML]="'Product / Service' | translate"></span>:</strong><br/>
-                          <span *ngFor="let product of titleEvent.products;let i=index" >
-                              <span class="clickable" (click)="navigateToSearchDetails(product)">{{selectPreferredValue(product.name)}}</span> {{i != titleEvent.products.length-1 ? " / ":""}}
+                          <span *ngFor="let catalogId of titleEvent.products.catalogIds;let i=index" >
+                              <span class="clickable" (click)="navigateToSearchDetails(titleEvent.products,i)">{{selectPreferredValue(titleEvent.products.productNames[i])}}</span> {{i != titleEvent.products.catalogIds.length-1 ? " / ":""}}
                           </span>
                         </div>
                         <div class="col pl-1">
                           <strong><span [innerHTML]="'Trading Partner' | translate"></span>:</strong><br/>
-                          <span class="clickable" (click)="navigateToCompanyDetails()">{{titleEvent.tradingPartner}}</span>
+                          <span class="clickable" (click)="navigateToCompanyDetails()">{{tradingPartnerName}}</span>
                         </div>
                         <div class="col pl-1">
                             <strong><span [innerHTML]="'Status' | translate"></span>:</strong><br/>
@@ -47,7 +47,7 @@
                               <i class="fa fa-trash-alt p-1 pointer" aria-hidden="true"></i>
                           </div>
                           -->
-                          <div *ngIf="titleEvent && showRateCollaborationButton" class="inline" (click)="rateCollaborationSuccess(addSuccessRatingModal)" data-toggle="tooltip" data-placement="top" [title]="'Rate this collaboration' | translate">
+                          <div *ngIf="titleEvent && showRateCollaborationButton && sellerNegoSettings" class="inline" (click)="rateCollaborationSuccess(addSuccessRatingModal)" data-toggle="tooltip" data-placement="top" [title]="'Rate this collaboration' | translate">
                               <i class="fa fa-star p-1 pointer" aria-hidden="true"></i>
                           </div>
                           <div *ngIf="titleEvent && showFinishCollaborationButton" class="inline" (click)="finishCollaboration()" data-toggle="tooltip" data-placement="top" [title]="'Finish the collaboration' | translate">

@@ -27,7 +27,7 @@ export class FileInputComponent implements OnInit {
 
     @Input() accept: string = "*/*";
     @Input() multiple: boolean = false;
-    @Input() maxSize: number = 1;
+    @Input() maxSize: number = 5;
 
     @Output() onSelectFile: EventEmitter<BinaryObject> = new EventEmitter();
     @Output() onClearFile: EventEmitter<BinaryObject> = new EventEmitter();
