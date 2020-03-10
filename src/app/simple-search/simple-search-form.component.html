@@ -558,9 +558,24 @@
 												<span *ngIf="result.description" [title]="getMultilingualLabel(result[product_description])"><small>{{getMultilingualLabel(result[product_description])}}</small></span>
 											</div>
 										</div>
+										<!-- Price -->
 										<div [ngClass]="{'col-2 border-right':display=='list','col-12 border-bottom pt-1 pb-2':display=='panel'}">
-											<span class="badge badge-primary-nimble" *ngIf="result[product_price] && !checkEmpty(result[product_price])">{{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}</span>
+											<!-- Price is available -->
+											<ng-container *ngIf="result[product_price] && !checkEmpty(result[product_price])">
+												<span class="badge badge-primary-nimble">
+													<ng-container *ngIf="result[product_base_quantity] > 1">
+														<span >{{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}</span>
+														<span [innerHTML]="'per' | translate"></span>
+														<span >{{result[product_base_quantity]}} {{result[product_base_quantity_unit]}}</span>
+													</ng-container>
+													<span *ngIf="!result[product_base_quantity] || result[product_base_quantity] === 1">
+														{{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}
+													</span>
+												</span>
+											</ng-container>
+											<!-- Price is not available -->
 											<span class="badge badge-warning" *ngIf="!result[product_price] || checkEmpty(result[product_price])"><span [innerHTML]="'Upon request' | translate"></span></span><br/>
+											<!-- Shopping cart buttons -->
 											<ng-container *ngIf="shoppingCartDataService.cartFetched() && !isSearchResultLogisticsService(result)">
 												<span *ngIf="!getShoppingCartStatus(ind).fb_submitted" class="badge badge-primary pointer mt-1" (click)="onAddToCart(result,ind, $event)">
 													<span class="fas fa-shopping-cart mr-1"></span>

@@ -18,6 +18,7 @@ import {PublishService} from "../catalogue/publish-and-aip.service";
 import {ShoppingCartDataService} from '../bpe/shopping-cart/shopping-cart-data-service';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {Catalogue} from '../catalogue/model/publish/catalogue';
+import {product_base_quantity, product_base_quantity_unit} from '../common/constants';
 
 @Component({
 	selector: 'simple-search-form',
@@ -41,6 +42,8 @@ export class SimpleSearchFormComponent implements OnInit {
     product_description = myGlobals.product_description;
     product_img = myGlobals.product_img;
     product_vendor_img = myGlobals.product_vendor_img;
+    product_base_quantity = product_base_quantity;
+    product_base_quantity_unit = product_base_quantity_unit;
     product_price = myGlobals.product_price;
     product_currency = myGlobals.product_currency;
     product_filter_prod = myGlobals.product_filter_prod;
