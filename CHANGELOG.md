@@ -1,6 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [16.0.0] - 2020-03-10
+### Added
+- Rating comments now visible on the UI
+- Additional sorting options in product and company search
+- "Verified" flag for company search
+- Relevant dates and information for BP status changes
+
+### Changed
+- Improved rating presentation and fixed calculation problems
+- Additions to transport service details
+- Configuration whether or not to allow adding products to the shopping cart multiple times
+- More prominent success messages when publishing products
+- Reworked step validation
+- Display standardTaxonomy tree during publishing when "All" is selected instead of eClass
+- Extended validation during publishing and BPs
+- Improved highlighting of changes in BPs
+
 ## [15.0.0] - 2020-02-10
 ### Added
 - Federated business process, catalogue and identity services
