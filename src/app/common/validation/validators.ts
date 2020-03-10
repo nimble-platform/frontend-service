@@ -8,6 +8,7 @@ import {PeriodRange} from '../../user-mgmt/model/period-range';
 export const VALIDATION_ERROR_MULTIPLE = 'multiple';
 export const VALIDATION_ERROR_MIN = 'min';
 export const VALIDATION_INVALID_PERIOD = 'invalid_period';
+export const VALIDATION_INVALID_SPACE = 'invalid_space';
 export const VALIDATION_REQUIRED = 'required';
 const VALIDATION_ERROR_PREFIX = 'validation_error_';
 const FORM_FIELD_PREFIX = 'form_field_';
@@ -68,6 +69,18 @@ export function periodValidator(selectedUnitFormControl: FormControl, periodUnit
     };
 }
 
+export function spaceValidator(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: boolean } | null => {
+        let value: string = control.value;
+        if (!value || value.trim() === '') {
+            return {'required': true};
+        } else if (value.length !== value.trim().length) {
+            return {'invalid_space': true};
+        }
+        return null;
+    };
+}
+
 function deleteError(formControl: AbstractControl, errorToDelete: string): void {
     let errors: any = formControl.errors;
     // if errors is not null or empty
@@ -111,6 +124,9 @@ export class ValidationService {
                     errorMessage = this.translateService.instant(VALIDATION_ERROR_PREFIX + VALIDATION_INVALID_PERIOD,
                         {start: formData.start, end: formData.end});
                     return errorMessage;
+                }
+                case VALIDATION_INVALID_SPACE: {
+                    return this.translateService.instant(VALIDATION_ERROR_PREFIX + VALIDATION_INVALID_SPACE);
                 }
             }
         }
