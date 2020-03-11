@@ -2,17 +2,17 @@
 
 // Development variables
 
-export const debug = false;
+export const debug = true;
 
 
 // Base path variables
 
 export const base_path = "http://nimble-staging.salzburgresearch.at";
-export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
-export const idpURL = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master";
-export const collab_path = "http://nimble.eu-de.containers.appdomain.cloud/collaborations";
-export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client";
-export const frontendURL = base_path + "/frontend/";
+export const ub_base = "http://nimble-staging.salzburgresearch.at/search"; // Ignore
+export const idpURL = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master"; // Keycloak
+export const collab_path = "http://nimble.eu-de.containers.appdomain.cloud/collaborations"; // Ignore
+export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client"; // Keycloak PW reset
+export const frontendURL = base_path + "/frontend/"; // Frontend endpoint
 
 
 // Service endpoints
@@ -22,13 +22,13 @@ export const catalogue_endpoint=`${base_path}/catalog`;
 export const bpe_endpoint=`${base_path}/business-process`;
 export const data_channel_endpoint=`${base_path}/data-channel`;
 export const data_aggregation_endpoint=`${base_path}/data-aggregation`;
-export const trust_service_endpoint=`http://localhost:8082`;
+export const trust_service_endpoint=`${base_path}:8082`;
 export const indexing_service_endpoint=`${base_path}/index`;
 export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}/logstash`;
 export const kibana_endpoint = `${base_path}/kibana/app/kibana`;
 export const delegate_endpoint = `${base_path}:9265`;
-export const agent_mgmt_endpoint=`http://localhost:8383`;
+export const agent_mgmt_endpoint=`${base_path}:8383`;
 export const collaboration_endpoint = `${collab_path}`;
 
 
@@ -57,10 +57,21 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 
 // Platform Configuration
 
+/*
+TODO Mathias:
+- kibanaConfig anpassen nachdem ELK-Stack aufgesetzt wurde
+- requiredAgreements anpassen
+- supportedCertificates prüfen
+- supportedRoles anpassen nachdem Keycloak konfiguriert wurde
+- checkRoles in app.component.ts anpassen nachdem Keycloak konfiguriert wurde
+- Jenkins-Einstellungen prüfen (Jenkinsfile)
+- funding-disclaimer in assets/i18n/en.json auf den entsprechenden Text für i-Assets nach COIN-Regelungen ändern
+- Evtl. supportMailContent für "de" ergänzen
+*/
 export const config = {
-    "federationInstanceId":"STAGING",
-    "platformName": "Local Development",
-    "envName": "local",
+    "federationInstanceId":"IASSET-STAGING",
+    "platformName": "i-Asset Staging",
+    "envName": "iasset-staging",
     "addCartBehaviour": "single",
     "companyRegistrationRequired": false,
     "categoryFilter": {
@@ -68,20 +79,18 @@ export const config = {
             "hiddenCategories": [],
             "logisticsCategory": "14000000",
             "ontologyPrefix": "http://www.nimble-project.org/resource/eclass#"
-        },
-        "FurnitureOntology": {
-            "hiddenCategories": ["Catalogue","Company","ContactPerson","Guarantee","Price","Process","Standard","Style","Technique"],
-            "logisticsCategory": "LogisticsService",
-            "ontologyPrefix": "http://www.aidimme.es/FurnitureSectorOntology.owl#"
         }
     },
     "collaborationEnabled": false,
     "dataChannelsEnabled" : true,
     "defaultBusinessProcessIds": [
+      "Item_Information_Request",
+      "Negotiation",
+      "Order"
     ],
-    "defaultSearchIndex": "Name",
-    "delegationEnabled": true,
-    "frameContractTabEnabled":true,
+    "defaultSearchIndex": "Category",
+    "delegationEnabled": false,
+    "frameContractTabEnabled":false,
     "imprint": "<u>Platform Owner & Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)",
     "kibanaConfig": {
         "companyDashboards" : [
@@ -129,43 +138,43 @@ export const config = {
     },
     "kibanaEnabled": true,
     "languageSettings": {
-        "available": ["en", "es", "de", "tr", "it", "sv"],
+        "available": ["en", "de"],
         "fallback": "en"
     },
     "loggingEnabled": true,
-    "logoPath": "./assets/logo_mvp.png",
+    "logoPath": "./assets/logo_iasset_white.png",
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": false,
     "phoneNumberRequired": false,
     "vatEnabled": true,
-    "projectsEnabled": true,
+    "projectsEnabled": false,
     "requiredAgreements": [
         {
             "title":"End-User License Agreement (EULA)",
             "src":"./assets/eula.pdf"
         }
     ],
-    "showChat": true,
-    "showAgent": true,
-    "showCompanyMembers": false,
-    "showExplorative": true,
-    "showLCPA": true,
-    "showPPAP": true,
-    "showTrack": true,
-    "showTrade": true,
-    "showVerification": true,
+    "showChat": false,
+    "showAgent": false,
+    "showCompanyMembers": true,
+    "showExplorative": false,
+    "showLCPA": false,
+    "showPPAP": false,
+    "showTrack": false,
+    "showTrade": false,
+    "showVerification": false,
     "standardCurrency": "EUR",
     "standardTaxonomy": "All",
     "supportedActivitySectors": {
         "": [],
-        "Logistics Provider": [],
+        "Maintainer": [],
         "Manufacturer": [],
         "Service Provider": [],
         "Other": []
     },
     "supportedBusinessTypes": [
         "",
-        "Logistics Provider",
+        "Maintainer",
         "Manufacturer",
         "Service Provider",
         "Other"
@@ -200,13 +209,12 @@ export const config = {
         "purchaser",
         "sales_officer"
     ],
-    "supportMail": "nimble-support@salzburgresearch.at",
+    "supportMail": "mathias.schmoigl@salzburgresearch.at",
     "supportMailContent": {
-        "en":"Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]",
-        "es":"Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
+        "en":"Dear i-Asset support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]"
     },
-    "showLoginFederation": true,
-    "unshippedOrdersTabEnabled":true,
+    "showLoginFederation": false,
+    "unshippedOrdersTabEnabled":false,
     "federationClientID": "efact-test-client",
     "federationIDP": "EFS"
 };
