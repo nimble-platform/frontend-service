@@ -93,7 +93,7 @@ export class SimpleSearchFormComponent implements OnInit {
     sort = "score desc";
     cat = "";
     catID = "";
-    cat_level = -2;
+    cat_level = -1;
     cat_levels = [];
     cat_other = [];
     cat_other_count = 0;
@@ -103,7 +103,7 @@ export class SimpleSearchFormComponent implements OnInit {
     model = new Search('');
     objToSubmit = new Search('');
     facetObj: any;
-    facetQuery: any;
+    facetQuery: any[];
     temp: any;
     response: any;
     imageMap: any = {}; // keeps the images if exists for the search results
@@ -369,29 +369,15 @@ export class SimpleSearchFormComponent implements OnInit {
             )
         );
 
-    private getCatTree(): void {
-        this.categoriesCallStatus.submit();
-        this.simpleSearchService.get("*", [this.product_cat_mix], [""], 1, 1, "score desc", "", "", this.searchIndex)
-        .then(res => {
-            // if res.facets are null, it means that there is no product in the index
-            if (res.facets == null || Object.keys(res.facets).indexOf(this.product_cat_mix) == -1) {
-                this.categoriesCallStatus.callback("Categories loaded.", true);
-            } else {
-                // before starting to build category tree, we have to get categories to retrieve their names
-                this.buildCatTree(res.facets[this.product_cat_mix].entry);
-                //this.categoriesCallStatus.callback("Categories loaded.", true);
-            }
-        })
-        .catch(error => {
-            this.categoriesCallStatus.error("Error while loading category tree.", error);
-        });
-    }
-
     private async buildCatTree(categoryCounts: any[]) {
         var taxonomy = "eClass";
         if (this.config.standardTaxonomy.localeCompare("All") != 0 && this.config.standardTaxonomy.localeCompare("eClass") != 0) {
             taxonomy = this.config.standardTaxonomy;
         }
+
+        // taxonomy prefix corresponds to the base url of the taxonomy that exists before each relevant category
+        // e.g. assuming category url: http://www.aidimme.es/FurnitureSectorOntology.owl#MDFBoard
+        // taxonomy prefix would be: http://www.aidimme.es/FurnitureSectorOntology.owl#
         var taxonomyPrefix = "";
         if (this.config.categoryFilter[taxonomy] && this.config.categoryFilter[taxonomy].ontologyPrefix)
             taxonomyPrefix = this.config.categoryFilter[taxonomy].ontologyPrefix;
@@ -402,158 +388,118 @@ export class SimpleSearchFormComponent implements OnInit {
             categoryUris.push(categoryCount.label);
         }
         this.cat_loading = true;
+        // here, all the information about the categories are fetched from the indexing service
         var indexCategories = await this.categoryService.getCategories(categoryUris);
-        let categoryDisplayInfo: any = this.getCategoryDisplayInfo(indexCategories);
-        let split_idx: any = -1;
-        let name: any = "";
+        // extract only the required information in UI from the complete category information
+        let categoryDisplayInfo: any = this.getCategoryDisplayInfo(indexCategories, categoryCounts);
+        // set the level of the selected category, if any
+        this.cat_level = this.getCatLevel(this.catID, indexCategories.result);
+        this.cat_levels = [];
         if (taxonomyPrefix != "") {
             // ToDo: Remove manual distinction after search update
-            // ================================================================================
             if (taxonomy == "eClass") {
-                this.cat_levels = [[], [], [], []];
-                for (let categoryCount of categoryCounts) {
-                    let facet_inner = categoryCount.label;
-                    var count = categoryCount.count;
-                    if (facet_inner.startsWith(taxonomyPrefix)) {
-                        var eclass_idx = categoryDisplayInfo[facet_inner].code;
-                        if (eclass_idx % 1000000 == 0) {
-                            this.cat_levels[0].push({
-                                "name": facet_inner,
-                                "id": facet_inner,
-                                "count": count,
-                                "preferredName": selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)
-                            });
+                for (let categoryUri of Object.keys(categoryDisplayInfo)) {
+                    let count = categoryDisplayInfo[categoryUri].count;
+                    if (categoryUri.startsWith(taxonomyPrefix)) {
+                        let eclass_idx = categoryDisplayInfo[categoryUri].code;
+                        let catLevel = 3;
+                        if (eclass_idx % 1000000 === 0) {
+                            catLevel = 0;
+                        } else if (eclass_idx % 10000 === 0) {
+                            catLevel = 1;
+                        } else if (eclass_idx % 100 === 0) {
+                            catLevel = 2;
                         }
-                        else if (eclass_idx % 10000 == 0) {
-                            this.cat_levels[1].push({
-                                "name": facet_inner,
-                                "id": facet_inner,
-                                "count": count,
-                                "preferredName": selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)
-                            });
-                        }
-                        else if (eclass_idx % 100 == 0) {
-                            this.cat_levels[2].push({
-                                "name": facet_inner,
-                                "id": facet_inner,
-                                "count": count,
-                                "preferredName": selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)
-                            });
-                        }
-                        else {
-                            this.cat_levels[3].push({
-                                "name": facet_inner,
-                                "id": facet_inner,
-                                "count": count,
-                                "preferredName": selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)
-                            });
-                        }
-                    }
-                }
-                this.sortCatLevels();
-            }
-            // ================================================================================
-            // if (this.cat == "") {
-            else if (this.cat == "") {
-                this.cat_levels = [];
-                var lvl = [];
 
-                for (let categoryCount of categoryCounts) {
-                    var count = categoryCount.count;
-                    var ontology = categoryCount.label;
-                    if (categoryDisplayInfo[ontology] != null && ontology.indexOf(taxonomyPrefix) != -1) {
-                        split_idx = ontology.lastIndexOf("#");
-                        name = ontology.substr(split_idx + 1);
-                        if (categoryDisplayInfo[ontology].isRoot && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1) {
-                            if (ontology.startsWith(taxonomyPrefix)) {
-                                lvl.push({
-                                    "name": ontology,
-                                    "id": ontology,
-                                    "count": count,
-                                    "preferredName": selectNameFromLabelObject(categoryDisplayInfo[ontology].label)
-                                });
-                            } else {
-                                lvl.push({"name": ontology, "id": ontology, "count": count, "preferredName": ontology});
+                        if ((this.cat_level + 1) >= catLevel || (this.cat === '' && catLevel === 0)) {
+                            if (this.cat_levels[catLevel] == null) {
+                                this.cat_levels[catLevel] = [];
                             }
+                            this.cat_levels[catLevel].push({
+                                'name': categoryUri,
+                                'id': categoryUri,
+                                'count': count,
+                                'preferredName': selectNameFromLabelObject(categoryDisplayInfo[categoryUri].label)
+                            });
                         }
                     }
                 }
-                this.cat_levels.push(lvl);
-                this.sortCatLevels();
+            } else {
+                // this.cat === '' indicates that there is no category selected for filtering the results
+                this.constructCategoryTree(indexCategories.result, categoryDisplayInfo, taxonomy, taxonomyPrefix, this.cat_levels, this.cat === '');
             }
-            else {
-                var catLevels = [];
-                this.constructCategoryTree(indexCategories.result, catLevels);
-                this.cat_levels = [];
-                for (var i = 0; i < catLevels.length; i++) {
-                    var lvl = [];
-                    var constructedLevel: string[] = catLevels[i];
-                    for (let uri of constructedLevel) {
-                        let categoryCount = categoryCounts.find(cat => cat.label == uri);
-                        if (categoryCount != null) {
-                            var count = categoryCount.count;
-                            var ontology = categoryCount.label;
 
-                            if (categoryDisplayInfo[uri] != null && uri.indexOf(taxonomyPrefix) != -1) {
-                                split_idx = uri.lastIndexOf("#");
-                                name = uri.substr(split_idx + 1);
-                                if (this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1) {
-                                    if (ontology.startsWith(taxonomyPrefix)) {
-                                        lvl.push({
-                                            "name": uri,
-                                            "id": uri,
-                                            "count": count,
-                                            "preferredName": selectNameFromLabelObject(categoryDisplayInfo[uri].label)
-                                        });
-                                    } else {
-                                        lvl.push({"name": uri, "id": uri, "count": count, "preferredName": name});
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    this.cat_levels.push(lvl);
-                }
-                this.sortCatLevels();
-            }
+            this.sortCatLevels();
+            this.populateOtherEntries();
         }
         this.cat_loading = false;
         this.categoriesCallStatus.callback("Categories loaded.", true);
     }
 
-    private constructCategoryTree(indexCategories: any[], levels: string[][]) {
-
-        if (levels.length == 0) {
+    private constructCategoryTree(indexCategories: any[],
+                                  categoryDisplayInfo: any,
+                                  taxonomy: string,
+                                  taxonomyPrefix: string,
+                                  levels: any,
+                                  onlyRootLevel = false,
+                                  catLevel = 0) {
+        if (levels.length === 0) {
             // get root categories
             let rootCategories: any[] = [];
             for (let category of indexCategories) {
-                if (category.allParents == null) {
-                    rootCategories.push(category.uri);
+                if (category.allParents == null && this.isCategoryDisplayable(category.uri, categoryDisplayInfo, taxonomy, taxonomyPrefix)) {
+                    rootCategories.push({
+                        'name': category.uri,
+                        'id': category.uri,
+                        'count': categoryDisplayInfo[category.uri].count,
+                        'preferredName': selectNameFromLabelObject(categoryDisplayInfo[category.uri].label)
+                    });
                 }
             }
             levels.push(rootCategories);
-            this.constructCategoryTree(indexCategories, levels);
+            this.constructCategoryTree(indexCategories, categoryDisplayInfo, taxonomy, taxonomyPrefix, levels);
 
-        } else {
-            let parentCategoryUris: string[] = levels[levels.length - 1];
-            let level: string[] = []; // contains all children of all the parent categories of an upper level
-            for (let parentCategoryUri of parentCategoryUris) {
-                let parentIndexCategory = indexCategories.find(indexCategory => indexCategory.uri == parentCategoryUri);
+        } else if (!onlyRootLevel) {
+            let parentCategories: any[] = levels[levels.length - 1];
+            let level: any[] = []; // contains all children of all the parent categories of an upper level
+            for (let parentCategory of parentCategories) {
+                let parentIndexCategory = indexCategories.find(indexCategory => indexCategory.uri === parentCategory.id);
                 let children: string[] = parentIndexCategory.children;
                 if (children != null) {
                     for (let childCategoryUri of children) {
-                        let childCategory = indexCategories.find(indexCategory => indexCategory.uri == childCategoryUri);
-                        if (childCategory != null) {
-                            level.push(childCategoryUri);
+                        if (this.isCategoryDisplayable(childCategoryUri, categoryDisplayInfo, taxonomy, taxonomyPrefix)) {
+                            level.push({
+                                'name': childCategoryUri,
+                                'id': childCategoryUri,
+                                'count': categoryDisplayInfo[childCategoryUri].count,
+                                'preferredName': selectNameFromLabelObject(categoryDisplayInfo[childCategoryUri].label)
+                            });
                         }
                     }
                 }
             }
             if (level.length > 0) {
                 levels.push(level);
-                this.constructCategoryTree(indexCategories, levels);
+                // e.g. this.cat_level = 0 means that a root category has been selected. So, we should allow one more deeper level in recursion
+                if (this.cat_level >= catLevel) {
+                    this.constructCategoryTree(indexCategories, categoryDisplayInfo, taxonomy, taxonomyPrefix, levels, onlyRootLevel, ++catLevel);
+                }
             }
         }
+    }
+
+    /**
+     * Decides whether a category could be displayed in the category taxonomy filter. Checks:
+     * 1) whether the resultant category has appropriate labels
+     * 2) whether the category belongs to the active taxonomy
+     * 3) is not configured as hidden
+     */
+    private isCategoryDisplayable(categoryUri: string, categoryDisplayInfo: any, taxonomy: string, taxonomyPrefix: string): boolean {
+        let idSplitIndex = categoryUri.lastIndexOf('#');
+        let categoryName = categoryUri.substr(idSplitIndex + 1);
+        return categoryDisplayInfo[categoryUri] != null &&
+            categoryUri.indexOf(taxonomyPrefix) !== -1 &&
+            this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(categoryName) === -1;
     }
 
     private sortCatLevels() {
@@ -567,22 +513,75 @@ export class SimpleSearchFormComponent implements OnInit {
                 return b.count - a.count;
             });
         }
-        this.cat_level = this.getCatLevel(this.cat);
     }
 
-    private getCatLevel(name: string): number {
-        var level = -2;
-        if (name != "")
-            level = -1;
-        for (var j = 0; j < this.cat_levels.length; j++) {
-            for (var i = 0; i < this.cat_levels[j].length; i++) {
-                var comp = this.cat_levels[j][i].name;
-                if (comp.localeCompare(name) == 0) {
-                    level = j;
-                }
-            }
+    private getCatLevel(categoryUri: string, indexCategories: any): number {
+        if (categoryUri) {
+            let category: any = indexCategories.find(indexCategory => indexCategory.uri === categoryUri);
+            return category.allParents != null ? category.allParents.length : 0;
+        } else {
+            return -1;
         }
-        return level;
+    }
+
+    /**
+     * When the count sum of the child categories do not sum up to count to the parent category, we add an additional entry
+     * under the selected category.
+     * For instance:
+     * Automative technology (4)
+     *  Aircraft (1)
+     *  Bicycle (1)
+     *
+     * In this case, we add an additional entry as follows:
+     * Automative technology (4)
+     *  Aircraft (1)
+     *  Bicycle (1)
+     *  Other automative technology (2)
+     *
+     * This method adds this additional entry
+     */
+    private populateOtherEntries(): void {
+        // a category should have been selected
+        // and the cat_levels should non be empty. It can be empty when categories from different taxonomies are used for filtering
+        if (this.cat_level === -1 || this.cat_levels.length === 0) {
+            return;
+        }
+
+        // the selected category should not reside at the deepest level
+        if (this.cat_level < (this.cat_levels.length - 1)) {
+            let childLevelCount = 0;
+            for (let levelEntry of this.cat_levels[this.cat_level + 1]) {
+                childLevelCount += levelEntry.count;
+            }
+            let currentLevelCount: number = this.cat_levels[this.cat_level][0].count;
+
+            let difference: number = currentLevelCount - childLevelCount;
+            if (difference > 0) {
+                this.cat_levels[this.cat_levels.length - 1].push({
+                    'name': 'Other',
+                    'id': this.catID,
+                    'count': (currentLevelCount - childLevelCount),
+                    'preferredName': 'Other ' + this.cat_levels[this.cat_level][0].preferredName.toLowerCase(),
+                    'other': true
+                });
+            }
+            return;
+        }
+
+        // if the 'Others' entry is already selected, there should be an excluding facet query.
+        // therefore, we add that entry once again
+        if (this.excludingCategoryFacetQueryExists()) {
+            // the innermost level should include only the parent category for which the 'other' results are presented.
+            // we add an additional level including the other entry
+            this.cat_levels.push([]);
+            this.cat_levels[this.cat_level + 1].push({
+                'name': 'Other',
+                'id': this.catID,
+                'count': this.cat_levels[this.cat_level][0].count,
+                'preferredName': 'Other ' + this.cat_levels[this.cat_level][0].preferredName.toLowerCase(),
+                'other': true
+            });
+        }
     }
 
     private getCall(q: string, fq: any, p: number, rows: number, sort: string, cat: string, catID: string, sIdx: string, sTop: string) {
@@ -983,10 +982,10 @@ export class SimpleSearchFormComponent implements OnInit {
         }
     }
 
-    callCat(name: string, id: string) {
+    callCat(categoryName: string, id: string) {
         this.model.q = "*";
         this.objToSubmit = copy(this.model);
-        this.cat = name;
+        this.cat = categoryName;
         this.catID = id;
         this.get(this.objToSubmit);
     }
@@ -1142,9 +1141,9 @@ export class SimpleSearchFormComponent implements OnInit {
         this.get(this.objToSubmit);
     }
 
-    checkProdCat(name: string) {
+    checkProdCat(categoryName: string) {
         var found = false;
-        if (this.product_filter_prod.indexOf(name) != -1) {
+        if (this.product_filter_prod.indexOf(categoryName) != -1) {
             found = true;
         }
         return found;
@@ -1162,9 +1161,9 @@ export class SimpleSearchFormComponent implements OnInit {
         return count;
     }
 
-    checkCompCat(name: string) {
+    checkCompCat(categoryName: string) {
         var found = false;
-        if (this.product_filter_comp.indexOf(name) != -1) {
+        if (this.product_filter_comp.indexOf(categoryName) != -1) {
             found = true;
         }
         return found;
@@ -1263,6 +1262,14 @@ export class SimpleSearchFormComponent implements OnInit {
         return count;
     }
 
+    isFacetSelectable(fieldQuery: string): boolean {
+        // eliminate the field queries that are used to filter results when the 'Others' entry is selected in the category panel
+        if (fieldQuery.startsWith(`-${this.product_cat_mix}`)) {
+            return false;
+        }
+        return true;
+    }
+
     clearFacet(outer: string, prefix?: string) {
         if (prefix)
             outer = prefix + "." + outer;
@@ -1334,9 +1341,61 @@ export class SimpleSearchFormComponent implements OnInit {
         this.facetQuery.push(fq);
     }
 
-    setCat(name: string, id: string) {
+    excludingCategoryFacetQueryExists(): boolean {
+        for (let facetQuery of this.facetQuery) {
+            if ((<string>facetQuery).indexOf(`-${this.product_cat_mix}`) !== -1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Sets the category name and category id and initiate a new search request.
+     * @param name category name
+     * @param id category id
+     * @param excludeCategoriesAtCurrentLevel indicates that user has selected the "Other" entry in the category hierarchy.
+     * This requires that the search must be performed with the parent category by excluding all the children
+     */
+    setCat(name: string, id: string, excludeCategoriesAtCurrentLevel = false) {
         this.cat = name;
         this.catID = id;
+
+        if (!excludeCategoriesAtCurrentLevel) {
+            // remove the category related filters
+            let newFacetQueryList: any[] = []
+            for (let facetQuery of this.facetQuery) {
+                if ((<string>facetQuery).indexOf(`-${this.product_cat_mix}`) === -1) {
+                    newFacetQueryList.push(facetQuery);
+                }
+            }
+            this.facetQuery = newFacetQueryList;
+
+        } else {
+            // others entry clicked and selected
+            if (id !== '') {
+                // child categories of the selected are excluded via the field query
+                // cat level is still associated with the previously selected category i.e. the parent category.
+                // look at child level, so +1
+                let catLevel: number = this.cat_level + 1;
+                // do not add the "Other" entry to the filter query
+                for (let i = 0; i < this.cat_levels[catLevel].length - 1; i++) {
+                    this.facetQuery.push(`-${this.product_cat_mix}:"${this.cat_levels[catLevel][i].id}"`);
+                }
+
+                // others entry clicked and deselected
+            } else {
+                // remove the category related filters
+                let newFacetQueryList: any[] = []
+                for (let facetQuery of this.facetQuery) {
+                    if ((<string>facetQuery).indexOf(`-${this.product_cat_mix}`) === -1) {
+                        newFacetQueryList.push(facetQuery);
+                    }
+                }
+                this.facetQuery = newFacetQueryList;
+            }
+        }
+
         this.get(this.objToSubmit);
     }
 
@@ -1377,13 +1436,17 @@ export class SimpleSearchFormComponent implements OnInit {
         return (currentFirstLower + "_price " + order);
     }
 
-    getCategoryDisplayInfo(categories: any): any {
+    getCategoryDisplayInfo(indexCategories: any, categoryCounts: any): any {
         let labelMap = {};
-        for (let category of categories.result) {
+        for (let category of indexCategories.result) {
             labelMap[category.uri] = {};
             labelMap[category.uri].label = category.label;
             labelMap[category.uri].code = category.code;
             labelMap[category.uri].isRoot = category.allParents == null ? true : false;
+            let searchCategory: any = categoryCounts.find(categoryCount => category.uri === categoryCount.label);
+            if (searchCategory) {
+                labelMap[category.uri].count = searchCategory.count;
+            }
         }
         return labelMap;
     }
