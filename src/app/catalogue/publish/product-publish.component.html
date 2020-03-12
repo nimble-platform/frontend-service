@@ -242,11 +242,11 @@
                 <div *ngIf="!hasSelectedProperties()" class="space-before">
                     <span [innerHTML]="'No selected properties.' | translate"></span>
                     <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)">
-                        <span [innerHTML]="'Select properties from product / service categories.' | translate"></span>
+                        <span [innerHTML]="'Select properties from Asset / Data-Service categories.' | translate"></span>
                     </a>
                 </div>
                 <div *ngIf="hasSelectedProperties()" class="space-before">
-                    <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)"><span [innerHTML]="'Add more properties from product / service categories.' | translate"></span></a>
+                    <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)"><span [innerHTML]="'Add more properties from Asset / Data-Service categories.' | translate"></span></a>
                 </div>
             </div>
         </div>
@@ -360,7 +360,7 @@
                     </div>
                     <div class="col-12">
                         <span [innerHTML]="'No property matching your search?' | translate"></span><br>
-                        <a href class="btn-link" (click)="onAddCategory($event, d)"><span [innerHTML]="'Add more categories to this product / service' | translate"></span></a>
+                        <a href class="btn-link" (click)="onAddCategory($event, d)"><span [innerHTML]="'Add more categories to this Asset / Data-Service' | translate"></span></a>
                         <span [innerHTML]="'or' | translate"></span>
                         <a href class="btn-link" (click)="onAddCustomProperty($event, d)"><span [innerHTML]="'Create a custom property' | translate"></span></a>.
                     </div>
@@ -368,7 +368,7 @@
                 <div *ngIf="selectedCategories.length === 0" class="row">
                     <div class="col-12">
                         <span [innerHTML]="'No categories to pick properties from.' | translate"></span> <br>
-                        <a href class="btn-link" (click)="onAddCategory($event, d)"><span [innerHTML]="'Add more categories to this product / service' | translate"></span></a>
+                        <a href class="btn-link" (click)="onAddCategory($event, d)"><span [innerHTML]="'Add more categories to this Asset / Data-Service' | translate"></span></a>
                         <span [innerHTML]="'or' | translate"></span>
                         <a href class="btn-link" (click)="onAddCustomProperty($event, d)"><span [innerHTML]="'Create a custom property' | translate"></span></a>.
                     </div>

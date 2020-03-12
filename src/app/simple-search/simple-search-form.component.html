@@ -3,7 +3,7 @@
 	<div [hidden]="!searchTopic" class="form-group row">
 		<div class="col-12">
 				<div class="input-group">
-					<input *ngIf="searchTopic=='prod'" type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" pattern=".{1,}" [placeholder]="'Product / Service' | translate">
+					<input *ngIf="searchTopic=='prod'" type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" pattern=".{1,}" [placeholder]="'Asset / Data-Service' | translate">
 					<input *ngIf="searchTopic=='comp'" type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getCompSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" pattern=".{1,}" [placeholder]="'Company' | translate">
 					<div *ngIf="searchTopic=='prod'" ngbDropdown class="d-inline-block input-group-append">
 						<button *ngIf="searchTopic=='prod'" class="btn btn-outline-secondary" type="button" id="searchIndex" ngbDropdownToggle>
@@ -30,7 +30,7 @@
 			<div class="card col mr-3 ml-3 pl-0 pr-0 pointer" (click)="setSearchTopic('prod')">
 				<div class="card-body p-2 text-center">
 					<p class="card-text" style="font-size:32px"><i class="fas fa-store"></i></p>
-					<h6 class="card-title mb-0 clickable"><span [innerHTML]="'Product / Service' | translate"></span></h6>
+					<h6 class="card-title mb-0 clickable"><span [innerHTML]="'Asset / Data-Service' | translate"></span></h6>
 				</div>
 			</div>
 			<div class="card col mr-3 ml-3 pl-0 pr-0 pointer" (click)="setSearchTopic('comp')">
@@ -220,7 +220,7 @@
 						<div *ngIf="checkProdCatCount()>0">
 
 							<div class="pointer" (click)="showProdSection=!showProdSection">
-								<h5><span [innerHTML]="'Product / Service' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showProdSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showProdSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+								<h5><span [innerHTML]="'Asset / Data-Service' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showProdSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showProdSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
 							</div>
 
 							<div *ngIf="showProdSection">
@@ -281,7 +281,7 @@
 						<div *ngIf="checkCompCatCount()>0">
 
 							<div class="pointer" (click)="showCompSection=!showCompSection">
-								<h5><span [innerHTML]="'Product / Service' | translate"></span> <span [innerHTML]="'Vendor' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+								<h5><span [innerHTML]="'Asset / Data-Service' | translate"></span> <span [innerHTML]="'Vendor' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
 							</div>
 
 							<div *ngIf="showCompSection">

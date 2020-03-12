@@ -39,16 +39,16 @@
             </li>
             <li ngbDropdown class="nav-item dropdown" *ngIf="checkRoles('catalogue')" routerLinkActive="active">
                 <a class="nav-link pointer" id="dropdownMenuPublish" ngbDropdownToggle>
-                    <i class="fa fa-arrow-up"></i> <span [innerHTML]="'Publish' | translate"></span>
+                    <i class="fa fa-arrow-up"></i> <span [innerHTML]="'Register' | translate"></span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuPublish" ngbDropdownMenu>
                     <a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']"
                        [queryParams]="{pageRef: 'menu', productType: 'product'}" routerLinkActive="active">
-                        <i class="fa fa-shopping-cart dd-icon"></i> <span [innerHTML]="'Product / Service' | translate"></span>
+                        <i class="fa fa-shopping-cart dd-icon"></i> <span [innerHTML]="'Asset' | translate"></span>
                     </a>
                     <a *ngIf="enableLogisticServicePublishing" class="dropdown-item" [routerLink]="['/catalogue/publish-logistic']"
                        [queryParams]="{pageRef: 'single', productType: 'transportation'}" routerLinkActive="active">
-                        <i class="fa fa-truck dd-icon"></i> <span [innerHTML]="'Logistics Service' | translate"></span>
+                        <i class="fa fa-truck dd-icon"></i> <span [innerHTML]="'Data-Service' | translate"></span>
                     </a>
                 </div>
             </li>
@@ -289,7 +289,7 @@
 </div>
 
 <div *ngIf="!minimalView" id="footer">
-    <img src="../assets/images/eu_flag.png" alt=""> <span [innerHTML]="'funding-disclaimer' | translate"></span>
+    <img src="../assets/images/at_flag.png" alt=""> <span [innerHTML]="'funding-disclaimer' | translate"></span>
     <div *ngIf="versions.length > 0">
         <small>
 			<span *ngFor="let version of versions; let i = index" [attr.data-index]="i">

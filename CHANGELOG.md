@@ -50,7 +50,7 @@ All notable changes to this project will be documented in this file.
 ## [13.0.0] - 2019-10-01
 ### Added
 - Frontend internationalization, language selection and translation to Spanish (ongoing)
-- Product / service comparison
+- Asset / Data-Service comparison
 - Finish collaboration functionality
 - Delete user / company capabilities
 - Added flag to hide VAT tax information
@@ -217,7 +217,7 @@ All notable changes to this project will be documented in this file.
 - Platform management functionality (platform analytics and security dashboard)
 
 ### Changed
-- Improved product / service / catalogue publishing
+- Improved Asset / Data-Service / catalogue publishing
 - Extended and improved business processes
 
 ## [2.0.0] - 2018-03-16
@@ -237,7 +237,7 @@ All notable changes to this project will be documented in this file.
 ## [1.0.0] - 2017-12-15
 ### Added
 - Basic user and company registration
-- Basic product / service / catalogue publishing
+- Basic Asset / Data-Service / catalogue publishing
 - Basic search functionality
 - Basic negotiation, ordering and fulfillment processes
 

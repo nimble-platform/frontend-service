@@ -1,5 +1,5 @@
 <div class="d-flex align-items-stretch mt-3 mb-4">
-    <label class="col-9"><span [innerHTML]="'1. Download the product / service category template' | translate"></span></label>
+    <label class="col-9"><span [innerHTML]="'1. Download the Asset / Data-Service category template' | translate"></span></label>
     <!--<select [(ngModel)]="templateLanguage" class="form-control col-1" type="text" style="margin-right: 1px">-->
     <!--<option *ngFor='let language of languages' [value]="language" [selected]="templateLanguage === language">{{language}}</option>-->
     <!--</select>-->
@@ -19,7 +19,7 @@
 <div class="d-flex mb-4">
     <label class="col-9"><span [innerHTML]="'2. Select upload mode.' | translate"></span>
         <ul>
-            <li><span [innerHTML]="'Append mode: Already published products / services are updated if newer versions are provided in the template, new products / services are
+            <li><span [innerHTML]="'Append mode: Already published Assets / Data-Services are updated if newer versions are provided in the template, new Assets / Data-Services are
                 appended to the current catalogue.' | translate"></span>
             </li>
             <li><span [innerHTML]="'Replace mode: All previously published items having the same categories specified in the template are deleted; and only the new ones are added to the catalogue.' | translate"></span></li>
@@ -32,7 +32,7 @@
     </select>
 </div>
 <div class="d-flex mb-4">
-    <label class="col-9"><span [innerHTML]="'3. Upload the template after filling it with your product / service information' | translate"></span>
+    <label class="col-9"><span [innerHTML]="'3. Upload the template after filling it with your Asset / Data-Service information' | translate"></span>
     </label>
     <input #template type="file" (change)="uploadTemplate($event, uploadModeSelect.value)"
            multiple="true"

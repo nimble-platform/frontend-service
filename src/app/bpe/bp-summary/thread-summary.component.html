@@ -15,7 +15,7 @@
                 <div *ngIf="titleEvent" class="header-label mr-auto d-flex w-100">
                     <div class="row w-100 m-0">
                         <div class="col pl-2">
-                          <strong><span [innerHTML]="'Product / Service' | translate"></span>:</strong><br/>
+                          <strong><span [innerHTML]="'Asset / Data-Service' | translate"></span>:</strong><br/>
                           <span *ngFor="let catalogId of titleEvent.products.catalogIds;let i=index" >
                               <span class="clickable" (click)="navigateToSearchDetails(titleEvent.products,i)">{{selectPreferredValue(titleEvent.products.productNames[i])}}</span> {{i != titleEvent.products.catalogIds.length-1 ? " / ":""}}
                           </span>

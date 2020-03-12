@@ -2,9 +2,9 @@
     <p class="pb-3 nimble-title"><span [innerHTML]="'Publish Logistics Service' | translate"></span></p>
 </div>
 <div *ngIf="!isLogistics">
-    <p class="pb-3 nimble-title"><span [innerHTML]="'Publish Product / Service' | translate"></span></p>
+    <p class="pb-3 nimble-title"><span [innerHTML]="'Register Asset' | translate"></span></p>
 </div>
-<p><span [innerHTML]="'All published products / services must belong to at least one category, which will describe the product / service and help customers find your offering.' | translate"></span></p>
+<p><span [innerHTML]="'All published Assets / Data-Services must belong to at least one category, which will describe the Asset / Data-Service and help customers find your offering.' | translate"></span></p>
 <div class="form-group row d-flex">
     <div class="col-12 inline">
         <form #categorySearch="ngForm" (ngSubmit)="onSearchCategory()" novalidate>
@@ -287,7 +287,7 @@
 <!-- Actions: no permission -->
 <div *ngIf="!this.appComponent.checkRoles('catalogue')" class="form-group row">
     <div class="col-12 d-flex align-items-center">
-        <p class="mt-1 mb-0 mr-3"><span [innerHTML]="'You do not have permission to publish any products / services to your company catalogue.' | translate"></span></p>
+        <p class="mt-1 mb-0 mr-3"><span [innerHTML]="'You do not have permission to publish any Assets / Data-Services to your company catalogue.' | translate"></span></p>
     </div>
 </div>
 

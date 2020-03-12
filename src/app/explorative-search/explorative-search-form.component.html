@@ -8,7 +8,7 @@
           		<label for="expSearch" class="col-2 col-form-label"><span [innerHTML]="'Search' | translate"></span></label>
           		<div class="col-10">
           			<div class="input-group">
-          			  <input type="text" class="form-control" id="expSearch" required [(ngModel)]="model.q" name="expSearch" #q="ngModel" pattern=".{1,}" [placeholder]="'Product / Service / Company' | translate">
+          			  <input type="text" class="form-control" id="expSearch" required [(ngModel)]="model.q" name="expSearch" #q="ngModel" pattern=".{1,}" [placeholder]="'Asset / Data-Service / Company' | translate">
           			  <div class="input-group-append">
                             <select [(ngModel)]="language"
                                     [ngModelOptions]="{standalone: true}"
