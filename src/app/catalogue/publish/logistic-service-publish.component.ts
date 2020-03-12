@@ -25,6 +25,7 @@ import {Category} from '../model/category/category';
 import {PublishingPropertyService} from './publishing-property.service';
 import {TranslateService} from '@ngx-translate/core';
 import { AppComponent } from "../../app.component";
+import {Subject} from 'rxjs';
 
 @Component({
     selector: "logistic-service-publish",
@@ -90,10 +91,11 @@ export class LogisticServicePublishComponent implements OnInit {
     showAirTransportService:boolean = false;
     showRailTransportService:boolean = false;
 
+    ngUnsubscribe: Subject<void> = new Subject<void>();
     private translations: any;
 
     ngOnInit() {
-        this.appComponent.translate.get(['Successfully saved. You can now continue.','Successfully saved. You are now getting redirected.']).subscribe((res: any) => {
+        this.appComponent.translate.get(['Successfully saved. You can now continue.','Successfully saved. You are now getting redirected.']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
             this.translations = res;
         });
         const userId = this.cookieService.get("user_id");
@@ -133,6 +135,11 @@ export class LogisticServicePublishComponent implements OnInit {
                 this.publishingGranularity = 'single';
             }
         });
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     getCategoryUrisForTaxonomyId(taxonomyId:string){
