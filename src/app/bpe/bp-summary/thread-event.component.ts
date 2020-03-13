@@ -8,6 +8,7 @@ import {BpActivityEvent} from '../../catalogue/model/publish/bp-start-event';
 import {BpUserRole} from '../model/bp-user-role';
 import {TranslateService} from '@ngx-translate/core';
 import {ActivityVariableParser} from '../bp-view/activity-variable-parser';
+import {UserService} from '../../user-mgmt/user.service';
 
 @Component({
     selector: "thread-event",
@@ -22,13 +23,28 @@ export class ThreadEventComponent implements OnInit {
     @Input() history: ThreadEventMetadata[] = [];
     @Output() processCancelled = new EventEmitter();
 
+    correspondent:string = null;
+
     constructor(private bpDataService: BPDataService,
                 private bpeService: BPEService,
+                private userService: UserService,
                 private translate: TranslateService) {
     }
 
     ngOnInit() {
-
+        // get the correspondent if it's available
+        if(this.event.correspondentUserId){
+            this.userService
+                .getPerson(this.event.correspondentUserId)
+                .then(party => {
+                    if(party && party.firstName && party.familyName){
+                        this.correspondent = party.firstName + " " + party.familyName;
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
     }
 
     async openBpProcessView(updateProcess:boolean) {
