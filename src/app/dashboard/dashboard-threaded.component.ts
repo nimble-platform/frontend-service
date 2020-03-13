@@ -18,6 +18,7 @@ import * as d3 from 'd3';
 import * as moment from "moment";
 import {FederatedCollaborationGroupMetadata} from '../bpe/model/federated-collaboration-group-metadata';
 import {FEDERATION, FEDERATIONID} from '../catalogue/model/constants';
+import {Subject} from 'rxjs';
 
 @Component({
     selector: "dashboard-threaded",
@@ -57,6 +58,7 @@ export class DashboardThreadedComponent implements OnInit{
     finalArray = [];
     finalXAsxisArray = [];
 
+    ngUnsubscribe: Subject<void> = new Subject<void>();
     delegated=(FEDERATION() == "ON");
     private data: any = [
         // {times: [{"color":"green", "label":"Weeee", "starting_time": 1355752800000, "ending_time": 1355759900000}, {"color":"blue", "label":"Weeee", "starting_time": 1355767900000, "ending_time": 1355774400000}]},
@@ -86,7 +88,7 @@ export class DashboardThreadedComponent implements OnInit{
 
 
     ngOnInit() {
-        this.appComponent.translate.get(['Activities on','No Archived Orders','Back','Show Archived']).subscribe((res: any) => {
+        this.appComponent.translate.get(['Activities on','No Archived Orders','Back','Show Archived']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
             this.translations = res;
         });
         this.computeUserFromCookies();
@@ -94,6 +96,11 @@ export class DashboardThreadedComponent implements OnInit{
         this.route.queryParams.subscribe(params => {
             this.updateStateFromQueryParameters(params)
         });
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     async clickexpand(data){

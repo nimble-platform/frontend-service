@@ -29,6 +29,7 @@ import * as myGlobals from "../../globals";
 import {UserService} from '../../user-mgmt/user.service';
 import { AppComponent } from "../../app.component";
 import { TranslateService } from "@ngx-translate/core";
+import {Subject} from 'rxjs';
 
 
 /**
@@ -107,6 +108,7 @@ export class ThreadSummaryComponent implements OnInit {
     config = myGlobals.config;
     selectPreferredValue = selectPreferredValue;
 
+    ngUnsubscribe: Subject<void> = new Subject<void>();
     private translations:any;
 
     constructor(private bpeService: BPEService,
@@ -123,7 +125,7 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.appComponent.translate.get(['Slow Response Time','Suspicious Company Information','Undervalued Offer','Rejected Delivery Terms','Other','Due to','Some reasons','Collaboration finished','on','Collaboration cancelled']).subscribe((res: any) => {
+        this.appComponent.translate.get(['Slow Response Time','Suspicious Company Information','Undervalued Offer','Rejected Delivery Terms','Other','Due to','Some reasons','Collaboration finished','on','Collaboration cancelled']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
             this.translations = res;
         });
         this.route.params.subscribe(params => {
@@ -157,6 +159,11 @@ export class ThreadSummaryComponent implements OnInit {
         if(this.processInstanceGroup != null) {
             this.init();
         }
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     private init() {
