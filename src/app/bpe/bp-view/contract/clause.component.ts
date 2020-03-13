@@ -39,7 +39,7 @@ export class ClauseComponent implements OnInit {
         if (this.clauseDocument == null) {
             this.clauseDocumentRetrievalStatus.submit();
             let documentClause: DocumentClause = this.clause as DocumentClause;
-            this.documentService.getDocumentJsonContent(documentClause.clauseDocumentRef.id,this.sellerFederationId).then(result => {
+            this.documentService.getCachedDocument(documentClause.clauseDocumentRef.id,this.sellerFederationId).then(result => {
                 this.clauseDocument = result;
                 if(documentClause.clauseDocumentRef.documentType === "ITEMINFORMATIONRESPONSE") {
                     // fetch the itm information request as well

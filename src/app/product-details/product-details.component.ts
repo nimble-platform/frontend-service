@@ -136,7 +136,7 @@ export class ProductDetailsComponent implements OnInit {
                             FEDERATIONID(),
                             this.line.goodsItem.item.manufacturerParty.federationInstanceID).then(contracts => {
                             // contract exists, get the corresponding quotation including the terms
-                            this.documentService.getDocumentJsonContent(contracts[0].quotationReference.id,this.line.goodsItem.item.manufacturerParty.federationInstanceID).then(document => {
+                            this.documentService.getCachedDocument(contracts[0].quotationReference.id,this.line.goodsItem.item.manufacturerParty.federationInstanceID).then(document => {
                                 this.frameContract = contracts[0];
                                 this.frameContractQuotationWrapper = new QuotationWrapper(document, this.line, UBLModelUtils.getFrameContractQuotationLineIndexForProduct(document.quotationLine,catalogueId,id));
                                 // quotation ordered quantity contains the actual ordered quantity in that business process,

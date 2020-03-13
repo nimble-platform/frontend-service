@@ -42,7 +42,7 @@ export class DocumentService {
         this.mapOfDocument.set(documentID,document);
     }
 
-    getDocumentJsonContent(documentId:string,delegateId:string):Promise<any> {
+    private getDocumentJsonContent(documentId:string,delegateId:string):Promise<any> {
         let url = `${this.url}/document/json/${documentId}`;
         if(this.delegated){
             url = `${this.delegate_url}/document/json/${documentId}?delegateId=${delegateId}`;
@@ -71,11 +71,11 @@ export class DocumentService {
     }
 
     getItemInformationRequest(itemInformationResponse: ItemInformationResponse): Promise<ItemInformationRequest> {
-        return this.getDocumentJsonContent(itemInformationResponse.itemInformationRequestDocumentReference.id,itemInformationResponse.sellerSupplierParty.party.federationInstanceID);
+        return this.getCachedDocument(itemInformationResponse.itemInformationRequestDocumentReference.id,itemInformationResponse.sellerSupplierParty.party.federationInstanceID);
     }
 
     getRequestForQuotation(quotation: Quotation): Promise<RequestForQuotation> {
-        return this.getDocumentJsonContent(quotation.requestForQuotationDocumentReference.id,quotation.sellerSupplierParty.party.federationInstanceID);
+        return this.getCachedDocument(quotation.requestForQuotationDocumentReference.id,quotation.sellerSupplierParty.party.federationInstanceID);
     }
 
     getInitialDocument(processVariables: any[],delegateId:string): any {

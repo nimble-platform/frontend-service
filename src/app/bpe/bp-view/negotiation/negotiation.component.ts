@@ -186,7 +186,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
             }
             else{
                 // load the quotation associated to the frame contract
-                frameContractQuotationPromises.push(this.documentService.getDocumentJsonContent(frameContract.quotationReference.id,this.bpDataService.getCatalogueLines()[0].goodsItem.item.manufacturerParty.federationInstanceID));
+                frameContractQuotationPromises.push(this.documentService.getCachedDocument(frameContract.quotationReference.id,this.bpDataService.getCatalogueLines()[0].goodsItem.item.manufacturerParty.federationInstanceID));
             }
         }
 
