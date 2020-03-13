@@ -20,6 +20,7 @@ import { ResetPasswordCredentials } from './model/reset-password-credentials';
 import {UnitService} from "../common/unit-service";
 import {deliveryPeriodUnitListId, warrantyPeriodUnitListId} from "../common/constants";
 import {Certificate} from "../catalogue/model/publish/certificate";
+import {copy} from '../common/utils';
 
 @Injectable()
 export class UserService {
@@ -32,6 +33,9 @@ export class UserService {
     private delegated = (FEDERATION() == "ON");
 
     userParty: Party;
+
+    // used to cache user info
+    private mapOfUsers = new Map();
 
     constructor(
         private unitService: UnitService,
@@ -185,14 +189,22 @@ export class UserService {
     }
 
     getPerson(personId:string):Promise<Person> {
-        const url = `${this.url}/person/${personId}`;
-        const token = 'Bearer '+this.cookieService.get("bearer_token");
-        const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
-        return this.http
-            .get(url, {headers: headers_token, withCredentials: true})
-            .toPromise()
-            .then(res => res.json())
-            .catch(this.handleError);
+        if(this.mapOfUsers.has(personId)){
+            return Promise.resolve(copy(this.mapOfUsers.get(personId)));
+        } else{
+            const url = `${this.url}/person/${personId}`;
+            const token = 'Bearer '+this.cookieService.get("bearer_token");
+            const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
+            return this.http
+                .get(url, {headers: headers_token, withCredentials: true})
+                .toPromise()
+                .then(res => {
+                    let user = res.json();
+                    this.mapOfUsers.set(personId,user);
+                    return copy(user);
+                })
+                .catch(this.handleError);
+        }
     }
 
     getUserParty(userId: string): Promise<Party> {
