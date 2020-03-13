@@ -1512,7 +1512,7 @@ export class SimpleSearchFormComponent implements OnInit {
         shoppingCartCallStatus.submit();
 
         this.shoppingCartDataService.addItemToCart(result.uri,1,result.nimbleInstanceName).then(catalogue => {
-            shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
+            shoppingCartCallStatus.callback("Service is added to Subscriptions.", false);
         }).catch(() => {
             shoppingCartCallStatus.error(null);
         });
@@ -1522,7 +1522,7 @@ export class SimpleSearchFormComponent implements OnInit {
         return this.shoppingCartCallStatuses[index % this.rows];
     }
 
-    // display a message for the products included in the shopping cart
+    // display a message for the Service included in the Subscriptions
     displayShoppingCartMessages(){
         this.shoppingCartDataService.getShoppingCart().then(shoppingCart => {
             // reset all call statuses
@@ -1534,7 +1534,7 @@ export class SimpleSearchFormComponent implements OnInit {
             for (let i = 0; i < size; i++) {
                 let result = this.response[i];
                 if (UBLModelUtils.isProductInCart(shoppingCart, result.catalogueId, result.manufactuerItemId)) {
-                    this.getShoppingCartStatus(i).callback('Product is added to shopping cart.', false);
+                    this.getShoppingCartStatus(i).callback('Service is added to Subscriptions.', false);
                 }
             }
         });

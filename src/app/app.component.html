@@ -37,6 +37,13 @@
                     <i class="fa fa-list-ul"></i> <span [innerHTML]="'Dashboard' | translate"></span>
                 </a>
             </li>
+
+            <li class="nav-item" *ngIf="!config.showExplorative && checkRoles('comp_req')" routerLinkActive="active">
+                <a class="nav-link" routerLink="/simple-search">
+                    <i class="fa fa-search"></i> <span [innerHTML]="'Search' | translate"></span>
+                </a>
+            </li>
+
             <li ngbDropdown class="nav-item dropdown" *ngIf="checkRoles('catalogue')" routerLinkActive="active">
                 <a class="nav-link pointer" id="dropdownMenuPublish" ngbDropdownToggle>
                     <i class="fa fa-arrow-up"></i> <span [innerHTML]="'Register' | translate"></span>
@@ -44,7 +51,7 @@
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuPublish" ngbDropdownMenu>
                     <a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']"
                        [queryParams]="{pageRef: 'menu', productType: 'product'}" routerLinkActive="active">
-                        <i class="fa fa-shopping-cart dd-icon"></i> <span [innerHTML]="'Asset' | translate"></span>
+                        <i class="fa fa-arrow-up dd-icon"></i> <span [innerHTML]="'Asset' | translate"></span>
                     </a>
                     <a *ngIf="enableLogisticServicePublishing" class="dropdown-item" [routerLink]="['/catalogue/publish-logistic']"
                        [queryParams]="{pageRef: 'single', productType: 'transportation'}" routerLinkActive="active">
@@ -53,9 +60,9 @@
                 </div>
             </li>
 
-            <li class="nav-item" *ngIf="!config.showExplorative && checkRoles('comp_req')" routerLinkActive="active">
-                <a class="nav-link" routerLink="/simple-search">
-                    <i class="fa fa-search"></i> <span [innerHTML]="'Search' | translate"></span>
+            <li class="nav-item" *ngIf="checkRoles('purchases')" routerLinkActive="active">
+                <a class="nav-link" routerLink="/bpe/shopping-cart" routerLinkActive="active">
+                    <i class="fa fa-shopping-cart"></i> <span [innerHTML]="'Subscriptions' | translate"></span>
                 </a>
             </li>
 
@@ -150,12 +157,6 @@
                 -->
                 <a class="nav-link pointer" (click)="toggleChat()">
                     <i class="fa fa-comments"></i> <span [innerHTML]="'Chat' | translate"></span>
-                </a>
-            </li>
-
-            <li class="nav-item" *ngIf="checkRoles('purchases')" routerLinkActive="active">
-                <a class="nav-link" routerLink="/bpe/shopping-cart" routerLinkActive="active">
-                    <i class="fas fa-shopping-cart"></i> <span [innerHTML]="'Shopping Cart' | translate"></span>
                 </a>
             </li>
 

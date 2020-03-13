@@ -194,10 +194,10 @@ export class ProductDetailsOverviewComponent implements OnInit{
             .catch(err => {
                 this.productCatalogueNameRetrievalStatus.error('Failed to get product catalogue');
             })
-            // display a message if the product is included in the shopping cart
+            // display a message if the product is included in the Subscriptions
             this.shoppingCartDataService.getShoppingCart().then(catalogue => {
                 if(UBLModelUtils.isProductInCart(catalogue,this.catalogueId,this.productId)){
-                    this.shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
+                    this.shoppingCartCallStatus.callback("Service is added to Subscriptions.", false);
                 }
             })
         });
@@ -220,7 +220,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
 
         this.shoppingCartCallStatus.submit();
         this.shoppingCartDataService.addItemToCart(this.wrapper.line.hjid,this.wrapper.quantity.value,this.wrapper.item.manufacturerParty.federationInstanceID).then(() => {
-            this.shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
+            this.shoppingCartCallStatus.callback("Service is added to Subscriptions.", false);
         }).catch((err) => {
             this.shoppingCartCallStatus.error('Failed to add product to cart', err);
         });

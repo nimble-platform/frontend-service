@@ -1,11 +1,11 @@
 <!-- title -->
 <div class="row">
     <div class="col-3">
-        <p class="nimble-title"><span [innerHTML]="'Shopping Cart' | translate"></span></p>
+        <p class="nimble-title"><span [innerHTML]="'Subscriptions' | translate"></span></p>
     </div>
 </div>
 
-<!--Shopping cart summary-->
+<!--Subscription summary-->
 <shopping-cart-summary-modal [negotiationModelWrappers]="getNegotiationModelWrappers()" (onMultipleLineNegotiation)="onMultipleLineNegotiation()">
 </shopping-cart-summary-modal>
 
@@ -76,7 +76,7 @@
 
 <!-- no item in the cart -->
 <div class="jumbotron" *ngIf="initCallStatus.isAllComplete() && (shoppingCart == null || shoppingCart.catalogueLine.length == 0)">
-    <h3><span [innerHTML]="'No products in the shopping cart.' | translate"></span></h3>
+    <h3><span [innerHTML]="'No Services in the Subscriptions.' | translate"></span></h3>
     <h5 class="mt-3">
         <span (click)="onNavigateToTheSearchPage()" class="pointer"><span [innerHTML]="'Search for Products' | translate"></span></span>
         <i class="fa fa-search pointer" (click)="onNavigateToTheSearchPage()"></i>

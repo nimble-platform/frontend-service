@@ -58,7 +58,7 @@ export class ShoppingCartComponent implements OnInit {
     buyerCompanySettings: CompanySettings;
     // whether the buyer company has its own T&Cs
     doesBuyerCompanyHasItsOwnTerms:boolean = true;
-    // rfqs created for the products in the shopping cart
+    // rfqs created for the products in the Subscriptions
     // a dedicated rfq is created for each seller in the cart
     // key of the map below keeps the seller id
     rfqs: Map<string, RequestForQuotation> = new Map<string, RequestForQuotation>();
@@ -460,10 +460,10 @@ export class ShoppingCartComponent implements OnInit {
         this.router.navigate(['simple-search']);
     }
 
-    // remove the given catalogue line from the shopping cart
+    // remove the given catalogue line from the Subscriptions
     // moreover, update this.rfqs array accordingly
     onRemoveFromCart(cartLine: CatalogueLine): void {
-        if(confirm('Are you sure that you want to remove this product from the shopping cart?')){
+        if(confirm('Are you sure that you want to remove this Service from the Subscriptions?')){
             let callStatus: CallStatus = this.deleteCallStatuses.get(cartLine.hjid);
             callStatus.submit();
             // get seller id
@@ -510,7 +510,7 @@ export class ShoppingCartComponent implements OnInit {
                     this.deleteCallStatuses.delete(cartLine.hjid);
                 })
             }).catch(error => {
-                callStatus.error('Failed to delete product from the shopping cart');
+                callStatus.error('Failed to delete Service from the Subscriptions');
             })
         }
     }
@@ -566,7 +566,7 @@ export class ShoppingCartComponent implements OnInit {
 
                 return this.bpeService.startProcessWithDocument(document,document.sellerSupplierParty.party.federationInstanceID);
             }).then(() => {
-                // started the negotiation for the product successfully,so remove it from the shopping cart
+                // started the negotiation for the Service successfully,so remove it from the Subscriptions
                 this.shoppingCartDataService.removeItemsFromCart([cartLine.hjid]);
                 callStatus.callback(null, true);
                 this.router.navigate(['dashboard'], {queryParams: {tab: 'PURCHASES'}});
@@ -645,7 +645,7 @@ export class ShoppingCartComponent implements OnInit {
                     promises.push(this.bpeService.startProcessWithDocument(document,document.sellerSupplierParty.party.federationInstanceID));
                 });
                 Promise.all(promises).then(response => {
-                    // started the negotiation for all products successfully,so remove them from the shopping cart
+                    // started the negotiation for all Services successfully,so remove them from the Subscriptions
                     let hjids:number[] = [];
                     for (let cartLine of this.shoppingCart.catalogueLine) {
                         hjids.push(cartLine.hjid);
