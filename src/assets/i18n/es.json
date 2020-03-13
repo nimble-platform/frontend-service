@@ -833,6 +833,7 @@
     "Save & Exit": "Guardar y Salir",
 	"Publish & Exit": "Publicar y Salir",
 	"validation_error_invalid_period": "Período no válido. El valor debe estar entre {{start}} y {{end}}",
+	"validation_error_invalid_space": "Preceding or trailing space character",
 	"validation_error_min": "El campo debe ser igual o mayor que {{min}}",
 	"validation_error_multiple": "El campo debe ser un múltiplo de {{step}}. Los valores más cercanos son: {{minClosest}} y {{maxClosest}}",
 	"validation_error_required": "Este campo es requerido",

@@ -5,7 +5,7 @@ import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {ChildFormBase} from './validation/child-form-base';
 import {AbstractControl, FormControl, Validators} from '@angular/forms';
 import {ValidatorFn} from '@angular/forms/src/directives/validators';
-import {ValidationService} from './validation/validators';
+import {spaceValidator, ValidationService} from './validation/validators';
 
 const TEXT_INPUT_FIELD_NAME = 'text';
 @Component({
@@ -18,6 +18,7 @@ export class TextInputComponent extends ChildFormBase implements OnInit {
     @Input() visible: boolean = true;
     @Input() disabled: boolean = false;
     @Input() required: boolean = false;
+    @Input() forbiddenPrecedingTrailingSpace = false;
     @Input() presentationMode: "edit" | "view" = "edit";
 
     @Input() label: string;
@@ -111,6 +112,9 @@ export class TextInputComponent extends ChildFormBase implements OnInit {
         let validators: ValidatorFn[] = [Validators.maxLength(Number(this.maxLength))];
         if (this.required) {
             validators.push(Validators.required);
+        }
+        if (this.forbiddenPrecedingTrailingSpace) {
+            validators.push(spaceValidator());
         }
 
         this.textInputFormControl = new FormControl(this.text, validators);
