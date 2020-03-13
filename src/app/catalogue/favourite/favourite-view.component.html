@@ -60,8 +60,8 @@
                                 <button *ngIf="!isSearchResultLogisticsService(catLine)" class="btn btn-primary col space-after"
                                         (click)="onAddToCart(catLine,i); $event.stopPropagation();"
                                         [disabled]="isAddCartDisabled(i, catLine)">
-                                    <span class="fas fa-shopping-cart mr-1"></span>
-                                    <span [innerHTML]="'Add to Cart' | translate"></span>
+                                    <span class="fas fa-arrow-down mr-1"></span>
+                                    <span [innerHTML]="'Subscribe' | translate"></span>
                                 </button>
 
                                 <a  href="#" role="button" class="btn btn-primary col" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.catalogueId, id: catLine.manufactuerItemId}">

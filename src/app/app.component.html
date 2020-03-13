@@ -51,18 +51,18 @@
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuPublish" ngbDropdownMenu>
                     <a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']"
                        [queryParams]="{pageRef: 'menu', productType: 'product'}" routerLinkActive="active">
-                        <i class="fa fa-arrow-up dd-icon"></i> <span [innerHTML]="'Asset' | translate"></span>
+                        <i class="fa fa-hdd dd-icon"></i> <span [innerHTML]="'Asset' | translate"></span>
                     </a>
                     <a *ngIf="enableLogisticServicePublishing" class="dropdown-item" [routerLink]="['/catalogue/publish-logistic']"
                        [queryParams]="{pageRef: 'single', productType: 'transportation'}" routerLinkActive="active">
-                        <i class="fa fa-truck dd-icon"></i> <span [innerHTML]="'Data-Service' | translate"></span>
+                        <i class="fa fa-database dd-icon"></i> <span [innerHTML]="'Data-Service' | translate"></span>
                     </a>
                 </div>
             </li>
 
             <li class="nav-item" *ngIf="checkRoles('purchases')" routerLinkActive="active">
                 <a class="nav-link" routerLink="/bpe/shopping-cart" routerLinkActive="active">
-                    <i class="fa fa-shopping-cart"></i> <span [innerHTML]="'Subscriptions' | translate"></span>
+                    <i class="fa fa-arrow-down"></i> <span [innerHTML]="'Subscriptions' | translate"></span>
                 </a>
             </li>
 

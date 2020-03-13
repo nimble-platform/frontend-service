@@ -100,7 +100,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
                 this.getManufacturerPartyNameStatus.error("Failed to get manufacturer party name", error);
             })
 
-            // do not show Add to Cart button for logistics services
+            // do not show Subscribe button for logistics services
             this.showAddToCartButton = this.showAddToCartButton && !isLogisticsService(this.wrapper.line);
         }
         /*

@@ -16,8 +16,8 @@
     <div *ngIf="showAddToCartButton" class="ml-auto">
         <call-status class="d-inline-block mr-1" [callStatus]="shoppingCartCallStatus"></call-status>
         <button class="btn btn-primary" (click)="onAddToCart()" [disabled]="isAddCartDisabled()">
-            <span class="fas fa-shopping-cart mr-1"></span>
-            <span [innerHTML]="'Add to Cart' | translate"></span>
+            <span class="fas fa-arrow-down mr-1"></span>
+            <span [innerHTML]="'Subscribe' | translate"></span>
         </button>
     </div>
     <div *ngIf="inShoppingBasket" class="ml-auto">
