@@ -17,6 +17,7 @@ import {PublishService} from "../catalogue/publish-and-aip.service";
 import {ShoppingCartDataService} from '../bpe/shopping-cart/shopping-cart-data-service';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {product_base_quantity, product_base_quantity_unit} from '../common/constants';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
 	selector: 'simple-search-form',
@@ -137,6 +138,7 @@ export class SimpleSearchFormComponent implements OnInit {
                 private catalogueService: CatalogueService,
                 private publishService: PublishService,
                 private shoppingCartDataService: ShoppingCartDataService,
+                private translateService: TranslateService,
                 public route: ActivatedRoute,
                 public router: Router) {
     }
@@ -426,7 +428,7 @@ export class SimpleSearchFormComponent implements OnInit {
                 }
             } else {
                 // this.cat === '' indicates that there is no category selected for filtering the results
-                this.constructCategoryTree(indexCategories.result, categoryDisplayInfo, taxonomy, taxonomyPrefix, this.cat_levels, this.cat === '');
+                this.constructCategoryTree(indexCategories.result, categoryDisplayInfo, taxonomy, taxonomyPrefix);
             }
 
             this.sortCatLevels();
@@ -439,11 +441,8 @@ export class SimpleSearchFormComponent implements OnInit {
     private constructCategoryTree(indexCategories: any[],
                                   categoryDisplayInfo: any,
                                   taxonomy: string,
-                                  taxonomyPrefix: string,
-                                  levels: any,
-                                  onlyRootLevel = false,
-                                  catLevel = 0) {
-        if (levels.length === 0) {
+                                  taxonomyPrefix: string) {
+        if (this.cat_level === -1) {
             // get root categories
             let rootCategories: any[] = [];
             for (let category of indexCategories) {
@@ -456,34 +455,38 @@ export class SimpleSearchFormComponent implements OnInit {
                     });
                 }
             }
-            levels.push(rootCategories);
-            this.constructCategoryTree(indexCategories, categoryDisplayInfo, taxonomy, taxonomyPrefix, levels);
+            this.cat_levels.push(rootCategories);
 
-        } else if (!onlyRootLevel) {
-            let parentCategories: any[] = levels[levels.length - 1];
-            let level: any[] = []; // contains all children of all the parent categories of an upper level
-            for (let parentCategory of parentCategories) {
-                let parentIndexCategory = indexCategories.find(indexCategory => indexCategory.uri === parentCategory.id);
-                let children: string[] = parentIndexCategory.children;
-                if (children != null) {
-                    for (let childCategoryUri of children) {
-                        if (this.isCategoryDisplayable(childCategoryUri, categoryDisplayInfo, taxonomy, taxonomyPrefix)) {
-                            level.push({
-                                'name': childCategoryUri,
-                                'id': childCategoryUri,
-                                'count': categoryDisplayInfo[childCategoryUri].count,
-                                'preferredName': selectNameFromLabelObject(categoryDisplayInfo[childCategoryUri].label)
-                            });
-                        }
-                    }
+        } else {
+            let selectedIndexCategory: any = indexCategories.find(indexCategory => indexCategory.uri === this.catID);
+            for (let indexCategory of indexCategories) {
+                // check whether the category belongs to the active taxonomy and not hidden
+                if (!this.isCategoryDisplayable(indexCategory.uri, categoryDisplayInfo, taxonomy, taxonomyPrefix)) {
+                    continue;
                 }
-            }
-            if (level.length > 0) {
-                levels.push(level);
-                // e.g. this.cat_level = 0 means that a root category has been selected. So, we should allow one more deeper level in recursion
-                if (this.cat_level >= catLevel) {
-                    this.constructCategoryTree(indexCategories, categoryDisplayInfo, taxonomy, taxonomyPrefix, levels, onlyRootLevel, ++catLevel);
+
+                let parentsAndChildren: string[] =
+                    ((selectedIndexCategory.allChildren != null || selectedIndexCategory.allChildren !== []) ? selectedIndexCategory.allChildren : [])
+                    .concat((selectedIndexCategory.allParents != null || selectedIndexCategory.allParents !== []) ? selectedIndexCategory.allParents : []);
+                let catLevel = indexCategory.allParents != null ? indexCategory.allParents.length : 0;
+                if (indexCategory.uri !== selectedIndexCategory.uri && // include the taxonomy itself no matter what
+                    // do not include the category if it is not include in the hierarchy of the selected category
+                    // or it is located on a two or more levels deeper in the hierarchy
+                    parentsAndChildren.findIndex(uri => uri === indexCategory.uri) === -1 || (catLevel - this.cat_level > 1)) {
+                    continue;
                 }
+
+                if (this.cat_levels[catLevel] == null) {
+                    this.cat_levels[catLevel] = [];
+                }
+
+                let categoryUri: string = indexCategory.uri;
+                this.cat_levels[catLevel].push({
+                    'name': categoryUri,
+                    'id': categoryUri,
+                    'count': categoryDisplayInfo[categoryUri].count,
+                    'preferredName': selectNameFromLabelObject(categoryDisplayInfo[categoryUri].label)
+                });
             }
         }
     }
@@ -561,7 +564,7 @@ export class SimpleSearchFormComponent implements OnInit {
                     'name': 'Other',
                     'id': this.catID,
                     'count': (currentLevelCount - childLevelCount),
-                    'preferredName': 'Other ' + this.cat_levels[this.cat_level][0].preferredName.toLowerCase(),
+                    'preferredName': this.translateService.instant('Other') + ' ' + this.cat_levels[this.cat_level][0].preferredName.toLowerCase(),
                     'other': true
                 });
             }
@@ -578,7 +581,7 @@ export class SimpleSearchFormComponent implements OnInit {
                 'name': 'Other',
                 'id': this.catID,
                 'count': this.cat_levels[this.cat_level][0].count,
-                'preferredName': 'Other ' + this.cat_levels[this.cat_level][0].preferredName.toLowerCase(),
+                'preferredName': this.translateService.instant('Other') + ' ' + this.cat_levels[this.cat_level][0].preferredName.toLowerCase(),
                 'other': true
             });
         }
