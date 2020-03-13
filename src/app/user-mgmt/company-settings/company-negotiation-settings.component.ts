@@ -69,6 +69,10 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
         for(let process of PROCESSES){
             ids.push(process.id);
         }
+
+        if (this.negotiationSettings.company.processID == null || this.negotiationSettings.company.processID.length === 0) {
+            this.negotiationSettings.company.processID.push(...ids)
+        }
         this.process_ids = new SelectedTerms(this.negotiationSettings.company.processID, ids);
         this.bpeService.checkAllCollaborationsFinished(this.settings.companyID,this.settings.negotiationSettings.company.federationInstanceID).then(finished => {
             this.isAllCollaborationsFinished = finished;
@@ -116,6 +120,10 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
         return !deepEquals(this.negotiationSettings, this.originalSettings);
     }
 
+    atLeastOneProcessSelected(): boolean {
+        return this.process_ids.selectedTerms.length > 0;
+    }
+
     isDisabled(): boolean {
         return this.presentationMode === "view";
     }
@@ -137,7 +145,20 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
         return this.isDisabled();
     }
 
+    getSaveButtonError(): string {
+        if (!this.atLeastOneProcessSelected()) {
+            console.log('in settings error');
+            return this.translate.instant('At least one process should be selected');
+        }
+        return '';
+    }
+
+    isSaveButtonDisabled(): boolean {
+        return this.isLoading() || !this.isDirty() || !this.atLeastOneProcessSelected() || this.isDisabled();
+    }
+
     // called when process id checkbox is changed
+    // TODO this logic should be mandated by the backend i.e. there must be a structured way of defining relationship between business process types
     onProcessIdToggle(processId:string){
         this.process_ids.toggle(processId);
         // make sure that when Order or Transport_Execution_Plan is selected, Negotiation is selected as well
