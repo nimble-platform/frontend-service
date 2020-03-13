@@ -83,7 +83,7 @@
         <ng-template ngbTabTitle><span [innerHTML]="'IoT Information' | translate"></span> </ng-template>
         <ng-template ngbTabContent>
             <ngb-alert type="success" [dismissible]="false" *ngIf="bcIoTDataVerified">
-                    <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'This Data is Verified by BlockChain' | translate"></span>  <i class="fas fa-project-diagram pl-1"></i>
+                    <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'These Data are Registered in BlockChain' | translate"></span>  <i class="fas fa-project-diagram pl-1"></i>
             </ngb-alert>
             <div class="row mt-2" *ngIf="dashboardQuery.length">
                 <iframe [src]="dashboardQuery | safe" width="650" height="400" frameborder="0"></iframe>
