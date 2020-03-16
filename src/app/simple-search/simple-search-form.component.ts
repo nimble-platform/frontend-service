@@ -4,7 +4,7 @@ import { SimpleSearchService } from './simple-search.service';
 import { Router, ActivatedRoute} from "@angular/router";
 import * as myGlobals from '../globals';
 import {SearchContextService} from "./search-context.service";
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import {copy, isSearchResultLogisticsService, roundToTwoDecimals, selectNameFromLabelObject} from '../common/utils';
 import { CallStatus } from '../common/call-status';
@@ -18,6 +18,7 @@ import {ShoppingCartDataService} from '../bpe/shopping-cart/shopping-cart-data-s
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {product_base_quantity, product_base_quantity_unit} from '../common/constants';
 import {TranslateService} from '@ngx-translate/core';
+import { AppComponent } from '../app.component';
 
 @Component({
 	selector: 'simple-search-form',
@@ -132,6 +133,10 @@ export class SimpleSearchFormComponent implements OnInit {
     productsSelectedForPublish: any[] = []; // keeps the products in the Solr format
 
     isSearchResultLogisticsService=isSearchResultLogisticsService;
+
+		ngUnsubscribe: Subject<void> = new Subject<void>();
+		private translations:any;
+
     constructor(private simpleSearchService: SimpleSearchService,
                 private searchContextService: SearchContextService,
                 private categoryService: CategoryService,
@@ -139,11 +144,15 @@ export class SimpleSearchFormComponent implements OnInit {
                 private publishService: PublishService,
                 private shoppingCartDataService: ShoppingCartDataService,
                 private translateService: TranslateService,
+								private appComponent: AppComponent,
                 public route: ActivatedRoute,
                 public router: Router) {
     }
 
     ngOnInit(): void {
+				this.appComponent.translate.get(['Other']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
+						this.translations = res;
+				});
         this.route.queryParams.subscribe(params => {
             let q = params['q'];
             let fq = params['fq'];
@@ -564,7 +573,7 @@ export class SimpleSearchFormComponent implements OnInit {
                     'name': 'Other',
                     'id': this.catID,
                     'count': (currentLevelCount - childLevelCount),
-                    'preferredName': this.translateService.instant('Other') + ' ' + this.cat_levels[this.cat_level][0].preferredName.toLowerCase(),
+                    'preferredName': this.translations['Other'] + ' ' + this.cat_levels[this.cat_level][0].preferredName.toLowerCase(),
                     'other': true
                 });
             }
@@ -581,7 +590,7 @@ export class SimpleSearchFormComponent implements OnInit {
                 'name': 'Other',
                 'id': this.catID,
                 'count': this.cat_levels[this.cat_level][0].count,
-                'preferredName': this.translateService.instant('Other') + ' ' + this.cat_levels[this.cat_level][0].preferredName.toLowerCase(),
+                'preferredName': this.translations['Other'] + ' ' + this.cat_levels[this.cat_level][0].preferredName.toLowerCase(),
                 'other': true
             });
         }

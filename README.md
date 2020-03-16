@@ -129,9 +129,18 @@ In order to translate HTML properties (e.g. titles, placeholders, ...) use the f
 
 In order to translate dynamic values or anything coming from TypeScript files use the following annotation:
 ```shell
-translate.get('Some text').subscribe((res: string) => {
+this.appComponent.translate.get(['Some text']).subscribe((res: string) => {
     console.log(res);
 });
+```
+The results is a JSON object with the provided keys and the translations as values which can then be referenced, e.g.
+```shell
+translation = res['Some text'];
+```
+Make sure the AppComponent is imported and declared for every component that requires translation of dynamic values in the TypeScript files:
+```shell
+import {AppComponent} from '../app.component';
+constructor(private appComponent: AppComponent){}
 ```
 
  ---
