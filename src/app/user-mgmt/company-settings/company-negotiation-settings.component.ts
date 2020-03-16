@@ -147,7 +147,6 @@ export class CompanyNegotiationSettingsComponent implements OnInit {
 
     getSaveButtonError(): string {
         if (!this.atLeastOneProcessSelected()) {
-            console.log('in settings error');
             return this.translate.instant('At least one process should be selected');
         }
         return '';

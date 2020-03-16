@@ -1,0 +1,11 @@
+.collaboration-group-header{
+    padding-right: 1.5rem;
+    padding-left: 0px;
+    background: rgba(0,0,0,0);
+}
+
+.form-control-inline {
+    width: auto;
+    min-width: 0;
+    display: inline;
+}
