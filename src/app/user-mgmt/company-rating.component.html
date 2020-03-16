@@ -170,12 +170,19 @@
         </div>
         <hr>
         <div>
-          <label><strong><span [innerHTML]="'Comment' | translate"></span></strong></label><br/>
-          <div *ngFor="let detail of ratingDetails">
-            <div *ngIf="detail && detail.reviews && detail.reviews.length > 0 && detail.reviews[0].comment && detail.reviews[0].comment != ''" class="mb-3">
-              {{detail.reviews[0].comment}}
-            </div>
+          <h4><p><span [innerHTML]="'Rating Comments' | translate"></span></p></h4>
+          <div *ngIf="comments.length==0">
+            <span [innerHTML]="'No Comments' | translate"></span>
           </div>
+          <table *ngIf="comments.length>0" class="table table-striped table-bordered mb-1 mt-0" style="table-layout: fixed; width: 100%;">
+            <colgroup>
+                <col style="width: 150%;">
+            </colgroup>
+            <tr><th><span [innerHTML]="'Comment' | translate"></span></th></tr>
+            <tr *ngFor="let comment of comments">
+                <td>{{comment}}</td>
+            </tr>
+          </table>
         </div>
     </div>
   </div>

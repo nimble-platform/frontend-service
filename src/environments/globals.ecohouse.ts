@@ -94,7 +94,7 @@ export const config = {
     "fallback": "en"
   },
   "loggingEnabled": false,
-  "logoPath": "./assets/logo_mvp.png",
+  "logoPath": "./assets/eco_house_logo.png",
   "federationLogoPath": "./assets/logo_mvp_efactory.png",
   "logoRequired": false,
   "phoneNumberRequired": false,

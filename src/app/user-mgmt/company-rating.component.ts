@@ -24,6 +24,7 @@ export class CompanyRatingComponent implements OnInit {
     initCallStatus: CallStatus = new CallStatus();
     ratings: any = null;
     ratingDetails: any = null;
+    comments: any = [];
     ratingOverall = 0;
     ratingSeller = 0;
     ratingFulfillment = 0;
@@ -102,21 +103,35 @@ export class CompanyRatingComponent implements OnInit {
         }
 
       }
+      else {
+        this.negotiationQuality = true;
+        this.orderQuality = true;
+        this.responsetime= true;
+        this.prodListingAccu = true;
+        this.conformToOtherAggre = true;
+        this.deliveryPackage = true;
+        this.ratingSeller = 0;
+        this.ratingFulfillment = 0
+      }
 
       this.initCallStatus.submit();
 
       this.bpeService.getRatingsSummary(id,federationId).then(ratings => {
+        this.initCallStatus.callback("Ratings successfully fetched", true);
         if (myGlobals.debug) {
           console.log("Fetched ratings: " + JSON.stringify(ratings));
         }
         this.ratings = ratings;
         if (this.ratings && this.ratings.totalNumberOfRatings > 0) {
           this.calcRatings();
+          this.initCallStatus.submit();
           this.bpeService.getRatingsDetails(id,federationId).then(ratingDetails => {
+            this.initCallStatus.callback("Rating details successfully fetched", true);
             if (myGlobals.debug) {
               console.log("Fetched rating details: " + JSON.stringify(ratingDetails));
             }
             this.ratingDetails = ratingDetails;
+            this.calcComments();
           })
           .catch(error => {
             this.initCallStatus.error("Error while fetching company rating details", error);
@@ -124,7 +139,6 @@ export class CompanyRatingComponent implements OnInit {
         }else{
           this.ratingStatus.emit(true);
         }
-        this.initCallStatus.callback("Ratings successfully fetched", true);
       })
       .catch(error => {
         this.initCallStatus.error("Error while fetching company ratings", error);
@@ -144,7 +158,17 @@ export class CompanyRatingComponent implements OnInit {
         this.ratingOverall = (this.ratingSeller + this.ratingFulfillment + this.ratings.deliveryAndPackaging) / 3;
       }else{
         this.ratingOverall = (this.ratingSeller + this.ratingFulfillment) / 2;
+        this.deliveryPackage = false;
       }
+    }
+
+    calcComments() {
+      for (var i=0; i<this.ratingDetails.length; i++) {
+        var detail = this.ratingDetails[i];
+        if (detail && detail.reviews && detail.reviews.length > 0 && detail.reviews[0].comment && detail.reviews[0].comment != '')
+          this.comments.push(detail.reviews[0].comment);
+      }
+      this.comments.sort();
     }
 
 }

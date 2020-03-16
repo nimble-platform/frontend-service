@@ -2,7 +2,7 @@
     <div class="col-2"><p>{{event.presentableProcessType}}</p></div>
     <div class="col-3"><p>{{event.requestDate}}</p></div>
     <div class="col-3"><p>{{event.responseDate ? event.responseDate: "-"}}</p></div>
-    <div class="col-2"><p>{{event.correspondent}}</p></div>
+    <div class="col-2"><p>{{correspondent}}</p></div>
     <div *ngIf="event.status === 'CANCELLED'" class="col-2 alert-dark">
         <div class="pt-2"><strong><span [innerHTML]="'Cancelled' | translate"></span></strong></div>
         <button class="btn btn-secondary" (click)="openBpProcessView(false)">{{event.actionText}}</button>
