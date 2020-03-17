@@ -211,7 +211,7 @@
                                                                         <thread-summary *ngIf="queryParameters.tab == TABS.SALES || (queryParameters.tab == TABS.PURCHASES && group.collaborationRole == 'BUYER')"
                                                                                         [processInstanceGroup]="group" [collaborationGroupId]="order.id"
                                                                                         (threadStateUpdated)="onOrderRemovedFromView()"
-                                                                                        (threadStateUpdatedNoChange)="onViewUpdated(false)">
+                                                                                        (threadStateUpdatedNoChange)="onViewUpdated(true)">
                                                                         </thread-summary>
                                                                     </div>
                                                                 </div>
@@ -273,7 +273,7 @@
                                                 [processInstanceGroup]="group"
                                                 [collaborationGroupId]="order.id"
                                                 (threadStateUpdated)="onOrderRemovedFromView()"
-                                                (threadStateUpdatedNoChange)="onViewUpdated(false)">
+                                                (threadStateUpdatedNoChange)="onViewUpdated(true)">
                                 </thread-summary>
                             </div>
                         </div>

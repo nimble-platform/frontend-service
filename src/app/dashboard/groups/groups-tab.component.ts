@@ -409,15 +409,12 @@ export class GroupsTabComponent {
     private executeOrdersQuery(query: DashboardOrdersQuery): void {
         this.results = new DashboardOrdersQueryResults();
         this.queryStatus.submit();
-        console.log('in submit');
         this.getOrdersQuery(query)
             .then(() => {
                 this.queryStatus.callback('Successfully fetched orders', true);
-                console.log('in then');
             })
             .catch(error => {
                 this.queryStatus.error('Error while fetching orders.', error);
-                console.log('in error');
             });
     }
 
