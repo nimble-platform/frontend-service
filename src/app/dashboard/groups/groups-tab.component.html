@@ -140,7 +140,7 @@
                                     <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name != null || order.name != '')">{{order.name}}</h5>
                                     <h5 *ngIf="updatingCollaborationGroupName[i].status == false && (order.name == null || order.name == '')">{{updatingCollaborationGroupName[i].defaultName}}</h5>
                                     <input *ngIf="updatingCollaborationGroupName[i].status == true" type="text" class="form-control form-control-sm" name="inputCtrl" [(ngModel)]="updatingCollaborationGroupName[i].name" [disabled]=""/>
-                                    <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="updateCollaborationGroupName(order.id,order.federationId,updatingCollaborationGroupName[i].name)" data-toggle="tooltip" data-placement="top" [title]="'Save' | translate">
+                                    <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="updateCollaborationGroupName(i, order.id,order.federationId,updatingCollaborationGroupName[i].name)" data-toggle="tooltip" data-placement="top" [title]="'Save' | translate">
                                         <i class="fa fa-check p-2 pointer" aria-hidden="true"></i>
                                     </div>
                                     <div *ngIf="updatingCollaborationGroupName[i].status == true" (click)="changeCollaborationGroupNameStatus(i,false)" data-toggle="tooltip" data-placement="top" [title]="'Cancel' | translate">

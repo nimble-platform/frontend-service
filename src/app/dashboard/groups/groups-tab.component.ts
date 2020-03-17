@@ -85,7 +85,6 @@ export class GroupsTabComponent {
      */
 
     onViewUpdated(reset?: boolean): void {
-        this.filterSet = null;
         this.updateStateFromQueryParameters(this.queryParameters, reset);
         this.onViewUpdatedEvent.emit();
     }
@@ -130,9 +129,11 @@ export class GroupsTabComponent {
             });
     }
 
-    updateCollaborationGroupName(id: string, federationId: string, name: string) {
+    updateCollaborationGroupName(cgIndex: number, id: string, federationId: string, name: string) {
         this.bpeService.updateCollaborationGroupName(id, federationId, name)
             .then(() => {
+                this.results.orders[cgIndex].name = name;
+                this.changeCollaborationGroupNameStatus(cgIndex, false);
                 this.onViewUpdated(false);
             })
             .catch(err => {
@@ -225,9 +226,8 @@ export class GroupsTabComponent {
         if (this.results.resultCount === 1 && this.query.page > 1) {
             this.updateQueryParameters({ pg: this.queryParameters.pg - 1 });
         } else {
-            this.updateStateFromQueryParameters(this.queryParameters, true);
+            this.onViewUpdated(true);
         }
-        this.onViewUpdatedEvent.emit();
     }
 
     onExpandTimeline(collaborationGroup: CollaborationGroup): void {
@@ -304,11 +304,8 @@ export class GroupsTabComponent {
     private queryOrdersIfNeeded(forceUpdate = false) {
         const query = this.computeOrderQueryFromQueryParams();
 
-        if (forceUpdate || this.isOrdersFiltersQueryNeeded(query)) {
+        if (forceUpdate || this.isReexecutionNeeded(query)) {
             this.executeOrdersFiltersQuery(query);
-        }
-
-        if (forceUpdate || this.isOrdersQueryNeeded(query)) {
             this.executeOrdersQuery(query);
         }
 
@@ -329,20 +326,15 @@ export class GroupsTabComponent {
         )
     }
 
-    private isOrdersFiltersQueryNeeded(query: DashboardOrdersQuery): boolean {
-        // filterSet may be set to null to request a recompute of the filter sets.
-        if (!this.filterSet) {
-            return true;
-        }
+    private isReexecutionNeeded(query: DashboardOrdersQuery): boolean {
         if (this.queryParameters.tab === 'PROJECTS' && this.isProject === false) {
             return true;
 
         } else if (this.queryParameters.tab !== 'PROJECTS' && this.isProject === true) {
             return true;
         }
-        // Do not recompute the filters on filter changes.
-        return this.query.archived !== query.archived
-            || this.query.collaborationRole !== query.collaborationRole || this.query.instanceName !== query.instanceName;
+
+        return !deepEquals(this.query, query);
     }
 
     private executeOrdersFiltersQuery(query: DashboardOrdersQuery): void {
