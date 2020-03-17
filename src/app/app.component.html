@@ -51,7 +51,7 @@
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuPublish" ngbDropdownMenu>
                     <a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']"
                        [queryParams]="{pageRef: 'menu', productType: 'product'}" routerLinkActive="active">
-                        <i class="fa fa-hdd dd-icon"></i> <span [innerHTML]="'Asset' | translate"></span>
+                        <i class="fa fa-cog dd-icon"></i> <span [innerHTML]="'Asset' | translate"></span>
                     </a>
                     <a *ngIf="enableLogisticServicePublishing" class="dropdown-item" [routerLink]="['/catalogue/publish-logistic']"
                        [queryParams]="{pageRef: 'single', productType: 'transportation'}" routerLinkActive="active">
@@ -254,13 +254,11 @@
 
 <div id="loading-bg" *ngIf="loading">
     <div id="sk-loading-icon">
-        <div class="sk-folding-cube">
-            <div class="sk-cube1 sk-cube"></div>
-            <div class="sk-cube2 sk-cube"></div>
-            <div class="sk-cube4 sk-cube"></div>
-            <div class="sk-cube3 sk-cube"></div>
-        </div>
+        <i id="gear1" class="fa fa-5x fa-cog spin"></i>
+        <i id="gear2" class="fa fa-5x fa-cog spin-back"></i>
+        <i id="gear3" class="fa fa-5x fa-cog spin"></i>
     </div>
+    <div id="loading-text"><p>Loading iAsset</p></div>
 </div>
 
 <ng-template #support let-d="dismiss">
