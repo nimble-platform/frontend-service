@@ -29,6 +29,7 @@ import * as myGlobals from "../../globals";
 import {UserService} from '../../user-mgmt/user.service';
 import { AppComponent } from "../../app.component";
 import { TranslateService } from "@ngx-translate/core";
+import {Subject} from 'rxjs';
 
 
 /**
@@ -107,6 +108,7 @@ export class ThreadSummaryComponent implements OnInit {
     config = myGlobals.config;
     selectPreferredValue = selectPreferredValue;
 
+    ngUnsubscribe: Subject<void> = new Subject<void>();
     private translations:any;
 
     constructor(private bpeService: BPEService,
@@ -123,7 +125,7 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.appComponent.translate.get(['Slow Response Time','Suspicious Company Information','Undervalued Offer','Rejected Delivery Terms','Other','Due to','Some reasons','Collaboration finished','on','Collaboration cancelled']).subscribe((res: any) => {
+        this.appComponent.translate.get(['Slow Response Time','Suspicious Company Information','Undervalued Offer','Rejected Delivery Terms','Other','Due to','Some reasons','Collaboration finished','on','Collaboration cancelled']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
             this.translations = res;
         });
         this.route.params.subscribe(params => {
@@ -157,6 +159,11 @@ export class ThreadSummaryComponent implements OnInit {
         if(this.processInstanceGroup != null) {
             this.init();
         }
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     private init() {
@@ -262,31 +269,31 @@ export class ThreadSummaryComponent implements OnInit {
 
     /*
         For all processes except Fulfilment,
-            * for the buyer,correspondent is the one who sends the response
-            * for the seller, correspondent is the one who sends the request
+            * for the buyer,correspondentUserId is the one who sends the response
+            * for the seller, correspondentUserId is the one who sends the request
         For Fulfilment, this is vice versa.
      */
-    private getCorrespondent(dashboardProcessInstanceDetails:DashboardProcessInstanceDetails, userRole:string,processType:ProcessType):string{
-        let correspondent = null;
+    private getCorrespondentUserId(dashboardProcessInstanceDetails:DashboardProcessInstanceDetails, userRole:string,processType:ProcessType):string{
+        let correspondentUserId = null;
         if (userRole === "buyer") {
             if(processType == "Fulfilment"){
-                correspondent = dashboardProcessInstanceDetails.requestCreatorUser;
+                correspondentUserId = dashboardProcessInstanceDetails.requestCreatorUserId;
             }
-            else if(dashboardProcessInstanceDetails.responseCreatorUser){
-                correspondent = dashboardProcessInstanceDetails.responseCreatorUser;
+            else if(dashboardProcessInstanceDetails.responseCreatorUserId){
+                correspondentUserId = dashboardProcessInstanceDetails.responseCreatorUserId;
             }
         }
         else {
             if(processType == "Fulfilment"){
-                if(dashboardProcessInstanceDetails.responseCreatorUser){
-                    correspondent = dashboardProcessInstanceDetails.responseCreatorUser;
+                if(dashboardProcessInstanceDetails.responseCreatorUserId){
+                    correspondentUserId = dashboardProcessInstanceDetails.responseCreatorUserId;
                 }
             }
             else {
-                correspondent = dashboardProcessInstanceDetails.requestCreatorUser;
+                correspondentUserId = dashboardProcessInstanceDetails.requestCreatorUserId;
             }
         }
-        return correspondent;
+        return correspondentUserId;
     }
 
     private async fetchThreadEvent(processInstanceId: string): Promise<ThreadEventMetadata> {
@@ -300,7 +307,6 @@ export class ThreadSummaryComponent implements OnInit {
         const userRole = ActivityVariableParser.getUserRole(processType,initialDoc.buyerPartyId,this.processInstanceGroup.partyID);
         const lastActivityStartTime = dashboardProcessInstanceDetails.lastActivityInstanceStartTime;
         const processInstanceState:any = dashboardProcessInstanceDetails.processInstanceState;
-        const correspondent = this.getCorrespondent(dashboardProcessInstanceDetails,userRole,processType);
 
         // get seller's business process workflow
         // we need this information to set status and labels for Order properly
@@ -334,7 +340,7 @@ export class ThreadSummaryComponent implements OnInit {
             processInstanceId,
             moment(new Date(lastActivityStartTime), 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss"),
             initialDoc.items,
-            correspondent,
+            this.getCorrespondentUserId(dashboardProcessInstanceDetails,userRole,processType),
             this.getBPStatus(responseDocumentStatus),
             initialDoc.buyerPartyId,
             activityVariables,

@@ -152,7 +152,7 @@
 				  </div>
 					<div *ngIf="ublProperties">
 						<span *ngFor="let fq of facetQuery">
-							<span class="badge badge-secondary mr-1 mb-2 pointer" (click)="clearFacetQuery(fq)">
+							<span *ngIf="isFacetSelectable(fq)" class="badge badge-secondary mr-1 mb-2 pointer" (click)="clearFacetQuery(fq)">
 								{{getFacetQueryName(fq)}}: {{getFacetQueryValue(fq)}}
 							</span>
 						</span>
@@ -189,26 +189,29 @@
 									</div>
 									<div *ngIf="!cat_loading">
 										<div *ngFor="let c of cat_levels; let i = index">
-											<div *ngIf="cat_level==-2&&i==0">
+											<!-- if there is not a selected category, render only the root level-->
+											<!-- it a category is selected, render the one more finer level than the level of selected category -->
+											<ng-container *ngIf="(cat_level === -1 && i === 0) || (cat_level !== -1 && cat_level >= (i - 1))">
 												<div *ngFor="let lvl of c">
-													<div *ngIf="cat==lvl.name">
-														<span class="clickable" (click)="setCat('','')" [title]="lvl.preferredName"><b>{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></b></span> ({{ lvl.count }})
+													<!-- selected category -->
+													<div *ngIf="catID == lvl.id">
+														<!-- bolded entry, rendered when there is no excluding category facets -->
+														<!-- or for the deepest level entry when the Others entry is selected -->
+														<!-- cat_level here corresponds to the level of parent category -->
+														<ng-container *ngIf="(!excludingCategoryFacetQueryExists() && cat_level == i) || (excludingCategoryFacetQueryExists() && cat_level < i)">
+															<span class="clickable" (click)="setCat('','', lvl.other)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName"><b>{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></b></span> ({{ lvl.count }})
+														</ng-container>
+														<!-- the parent cateory having the same id with the child 'Others' entry -->
+														<ng-container *ngIf="(!excludingCategoryFacetQueryExists() && i > cat_level) || (excludingCategoryFacetQueryExists() && i === cat_level)">
+															<span class="clickable" (click)="setCat(lvl.preferredName,lvl.id, lvl.other)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></span> ({{ lvl.count }})
+														</ng-container>
 													</div>
-													<div *ngIf="cat!=lvl.name&&cat_level!=i">
-														<span class="clickable" (click)="setCat(lvl.name,lvl.id)" [title]="lvl.preferredName">{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></span> ({{ lvl.count }})
+													<!-- other categories in the hierarchy -->
+													<div *ngIf="catID!=lvl.id&&cat_level!=i">
+														<span class="clickable" (click)="setCat(lvl.name, lvl.id, lvl.other)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></span> ({{ lvl.count }})
 													</div>
 												</div>
-											</div>
-											<div *ngIf="cat_level>=(i-1)">
-												<div *ngFor="let lvl of c">
-													<div *ngIf="cat==lvl.name">
-														<span class="clickable" (click)="setCat('','')" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName"><b>{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></b></span> ({{ lvl.count }})
-													</div>
-													<div *ngIf="cat!=lvl.name&&cat_level!=i">
-														<span class="clickable" (click)="setCat(lvl.name,lvl.id)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></span> ({{ lvl.count }})
-													</div>
-												</div>
-											</div>
+											</ng-container>
 										</div>
 									</div>
 								</div>
@@ -219,11 +222,11 @@
 
 						<div *ngIf="checkProdCatCount()>0">
 
-							<div class="pointer" (click)="showProdSection=!showProdSection">
+							<div class="pointer" (click)="showProductSection=!showProductSection">
 								<h5><span [innerHTML]="'Product / Service' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showProdSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showProdSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
 							</div>
 
-							<div *ngIf="showProdSection">
+							<div *ngIf="showProductSection">
 								<div class="card mb-3">
 									<div class="card-header">
 										{{ getName(product_price) }}

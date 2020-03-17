@@ -1,0 +1,17 @@
+<!-- Titles for the rows -->
+<div class="row" style="margin-left: 39px;width: 1000px;border-bottom: 4px solid rgb(190, 113, 128);">
+    <div *ngFor="let item of finalArray; let i=index" [ngClass]="'cls' + collaborationGroup.id">
+        <div class="row">
+            <div class="col-md-12" style="width: 700px;">
+                <!-- <div [style.width.px]="item.duration"  [style.marginLeft.px]= "item.offset" style="background:blue">item.label </div> -->
+                <div [style.width.px]="item.duration" [style.marginLeft.px]="item.offset"
+                     style="white-space: nowrap;border-bottom: 3px solid rgb(255, 75, 102);"><b>{{item.label}} <span> <i>-{{item.endDate}}</i></span></b>
+                </div>
+            </div>
+        </div>
+        <br/>
+    </div>
+</div>
+<span *ngFor="let xaxis of finalXAsxisArray; let i=index" style="margin-left: 39px;position: absolute;">
+    <span [style.marginLeft.px]="xaxis.offset">{{xaxis.endDate}}</span>
+</span>

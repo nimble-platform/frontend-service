@@ -185,7 +185,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.appComponent.translate.get(['Successfully saved. You can now continue.','Successfully saved. You are now getting redirected.']).subscribe((res: any) => {
+        this.appComponent.translate.get(['Successfully saved. You can now continue.','Successfully saved. You are now getting redirected.']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
             this.translations = res;
         });
         ProductPublishComponent.dialogBox = true;
@@ -236,7 +236,8 @@ export class ProductPublishComponent implements OnInit {
     }
 
     ngOnDestroy() {
-        this.ngUnsubscribe.next()
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     selectPreferredName(cp: Category | Property) {
@@ -722,7 +723,6 @@ export class ProductPublishComponent implements OnInit {
                             }
 
                             this.recomputeSelectedProperties();
-                            this.ngUnsubscribe.complete();
 
                             // populate invalidCategoryCodes array
                             let validCategoryUris = categories.map(category => category.categoryUri);

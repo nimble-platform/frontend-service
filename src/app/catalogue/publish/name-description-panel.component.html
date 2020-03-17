@@ -23,6 +23,7 @@
                         (textChange)="onLineIdChange()"
                         [disabled]="!productIdEditable"
                         [required]="true"
+                        [forbiddenPrecedingTrailingSpace]="true"
                         [formFieldName]="'product_id'"
                         [parentForm]="formGroup">
             </text-input>

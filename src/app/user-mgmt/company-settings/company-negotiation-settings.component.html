@@ -249,6 +249,10 @@
 <div class="row actions-row space-before">
     <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
     <div class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading() || !isDirty()" (click)="onSave()"><span [innerHTML]="'Save' | translate"></span></button>
+        <span [ngbTooltip]="getSaveButtonError()" [placement]="'auto'"  title="">
+            <button class="btn btn-primary action" [disabled]="isSaveButtonDisabled()" (click)="onSave()"
+                    ><span [innerHTML]="'Save' | translate"></span>
+            </button>
+        </span>
     </div>
 </div>

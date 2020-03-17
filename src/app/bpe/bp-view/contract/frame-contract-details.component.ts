@@ -78,7 +78,7 @@ export class FrameContractDetailsComponent implements OnInit {
                                 this.frameContractRetrievalCallStatus.error("The product with id "+lineId+" is deleted");
                             }
                         });
-                        let quotationPromise: Promise<any> = this.documentService.getDocumentJsonContent(quotationId,params.delegateId);
+                        let quotationPromise: Promise<any> = this.documentService.getCachedDocument(quotationId,params.delegateId);
                         let partyPromise: Promise<any> = this.userService.getParty(partyId,instanceId);
 
                         Promise.all([
