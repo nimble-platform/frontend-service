@@ -32,7 +32,7 @@ export class TnTService {
     constructor(private http: Http,
                 private cookieService: CookieService) {}
 
-    getMetaData(epcCode: string): Promise<any> {
+    async getMetaData(epcCode: string): Promise<any> {
         const token = 'Bearer ' + this.cookieService.get('bearer_token');
         let header = new Headers();
         header.append('Content-Type', 'application/json');
@@ -41,42 +41,44 @@ export class TnTService {
         // params.append('epc', epcCode);
         // let reqOptions = new RequestOptions({headers: header, params: params});
         let reqOptions = new RequestOptions({headers: header});
-        return this.http.get(`${this.tntEndpoint}/simpleTracking/${epcCode}`, reqOptions)
-            .toPromise()
-            .then(resp => resp.json());
+        const resp = await this.http.get(`${this.tntEndpoint}/simpleTracking/${epcCode}`, reqOptions)
+            .toPromise();
+        return resp.json();
     }
 
-    getTrackingInfo(code: string) {
+    async getTrackingInfo(code: string): Promise<any> {
         const token = 'Bearer ' + this.cookieService.get('bearer_token');
         let header = new Headers();
         header.append('Content-Type', 'application/json');
         header.append('Authorization', token);
         let reqOptions = new RequestOptions({headers: header});
-        return this.http.get(`${this.tntMasterDataEndpoint}${code}`, reqOptions)
-            .map(resp => resp.json());
+        const resp = await this.http.get(`${this.tntMasterDataEndpoint}${code}`, reqOptions)
+            .toPromise();
+        return resp.json()
+
     }
 
-    getGateInfo(code: string): Promise<any> {
+    async getGateInfo(code: string): Promise<any> {
         const token = 'Bearer ' + this.cookieService.get('bearer_token');
         let header = new Headers();
         header.append('Content-Type', 'application/json');
         header.append('Authorization', token);
         let reqOptions = new RequestOptions({headers: header});
-        return this.http.get(`${this.tntMasterDataEndpoint}${code}`, reqOptions)
-            .toPromise()
-            .then(resp => resp.json());
+        const resp = await this.http.get(`${this.tntMasterDataEndpoint}${code}`, reqOptions)
+            .toPromise();
+        return resp.json();
     }
 
-    getSubSiteTypeInfo(url: string, code: string): Promise<any> {
+    async getSubSiteTypeInfo(url: string, code: string): Promise<any> {
         let header = new Headers();
         header.append('Content-Type', 'application/json');
         let params = new URLSearchParams();
         params.append('type', 'urn:epcglobal:epcis:vtype:SubSiteType');
         params.append('id', code);
         let reqOptions = new RequestOptions({headers: header, params: params});
-        return this.http.get(`${url}`, reqOptions)
-            .toPromise()
-            .then(resp => resp.json());
+        const resp = await this.http.get(`${url}`, reqOptions)
+            .toPromise();
+        return resp.json();
     }
 
     async verifyOnBC(code: any): Promise<string> {
@@ -93,12 +95,11 @@ export class TnTService {
 
     // IoT Sensor Data + Blockchain Service
 
-    verifyIOTBC(input: object): Promise<any> {
+    async verifyIOTBC(input: object): Promise<any> {
         // console.log(duration);
         let verifyQuery = `?productID=${input['productID']}&from=${input['from']}&to=${input['to']}`;
-        return this.http.get(
-            `${this.iotBlockchainEndpoint}${verifyQuery}`)
-            .toPromise()
-            .then(resp => resp.json());
+        const resp = await this.http.get(`${this.iotBlockchainEndpoint}${verifyQuery}`)
+            .toPromise();
+        return resp.json();
     }
 }
