@@ -35,7 +35,7 @@ export class TnTFormComponent {
     debug = myGlobals.debug;
     error_detc = false;
     falsecode = '';
-    verified: string;
+    verified: boolean;
 
     constructor(private tntBackend: TnTService, private translate: TranslateService) {
     }
@@ -64,6 +64,7 @@ export class TnTFormComponent {
         this.falsecode = '';
         this.bpInfo = [];
         this.trackingInfo = [];
+        this.verified = false;
     }
 
     getTableInfo(code: string, data: any) {
@@ -89,10 +90,7 @@ export class TnTFormComponent {
                 if (this.debug) {
                     console.log(res);
                 }
-                this.verified = res;
-                this.trackingInfo.forEach(event => {
-                    event['verified'] = this.verified
-                });
+                this.verified = (res === 'true');
             })
             .catch(err => {
                 this.falsecode = err._body;
