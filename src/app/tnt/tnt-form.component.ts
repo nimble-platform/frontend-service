@@ -35,7 +35,7 @@ export class TnTFormComponent {
     debug = myGlobals.debug;
     error_detc = false;
     falsecode = '';
-    verified: boolean;
+    verified: string;
 
     constructor(private tntBackend: TnTService, private translate: TranslateService) {
     }
@@ -54,7 +54,6 @@ export class TnTFormComponent {
             })
             .catch(error => {
                 if (error.status === 404) {
-                    // console.log(error);
                     this.falsecode = error._body;
                 }
                 this.error_detc = true;
@@ -67,8 +66,8 @@ export class TnTFormComponent {
         this.trackingInfo = [];
     }
 
-    getTableInfo(code, data) {
-                this.trackingInfo = data.map(el => {
+    getTableInfo(code: string, data: any) {
+                this.trackingInfo = data.map((el: any) => {
                     let _out = {
                         'epc': code,
                         'eventTime': el.eventTime.$date,
