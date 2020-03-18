@@ -79,16 +79,16 @@ export class TnTService {
             .then(resp => resp.json());
     }
 
-    verifyOnBC(code: any): Promise<boolean> {
+    async verifyOnBC(code: any): Promise<string> {
         let token = 'Bearer' + this.cookieService.get('bearer_token');
         let header = new Headers();
         header.append('Authorization', token);
         // let params = new URLSearchParams();
         // params.append('jsonEventArray', code);
         let reqOptions = new RequestOptions({headers: header});
-        return this.http.post(`${this.tntEndpoint}/verifyEventsInBlockChain`, code, reqOptions)
-            .toPromise()
-            .then(resp => resp.json());
+        const resp = await this.http.post(`${this.tntEndpoint}/verifyEventsInBlockChain`, code, reqOptions)
+            .toPromise();
+        return resp.text();
     }
 
     // IoT Sensor Data + Blockchain Service
