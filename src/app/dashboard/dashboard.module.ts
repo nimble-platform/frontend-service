@@ -13,8 +13,9 @@ import { AnalyticsModule } from "../analytics/analytics.module";
 import {FrameContractTabComponent} from "./frame-contract-tab.component";
 import {UnshippedOrdersTabComponent} from './unshipped-orders-tab.component';
 import {CollaborationModule} from '../catalogue/collaboration/collaboration.module';
-import {GroupsTabComponent} from './groups/groups-tab.component';
+import {CollaborationGroupsTabComponent} from './groups/collaboration-groups-tab.component';
 import {ProjectTimeline} from './groups/project-timeline.component';
+import {ProcessInstanceGroupsTabComponent} from './groups/process-instance-groups-tab.component';
 
 @NgModule({
 	imports: [
@@ -32,7 +33,8 @@ import {ProjectTimeline} from './groups/project-timeline.component';
 	],
 	declarations: [
 		DashboardThreadedComponent,
-		GroupsTabComponent,
+		CollaborationGroupsTabComponent,
+		ProcessInstanceGroupsTabComponent,
 		ProjectTimeline,
 		FacetComponent,
 		FrameContractTabComponent,

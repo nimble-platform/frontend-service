@@ -1,13 +1,13 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {DashboardQueryParameters} from '../model/dashboard-query-parameters';
-import {DashboardOrdersQueryResults} from '../model/dashboard-orders-query-results';
+import {CollaborationGroupResults} from '../model/collaboration-group-results';
 import {CallStatus} from '../../common/call-status';
 import {ProcessInstanceGroupFilter} from '../../bpe/model/process-instance-group-filter';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {BPEService} from '../../bpe/bpe.service';
 import {CookieService} from 'ng2-cookies';
-import {DashboardOrdersQuery} from '../model/dashboard-orders-query';
+import {DashboardQuery} from '../model/dashboard-query';
 import {FEDERATION, FEDERATIONID} from '../../catalogue/model/constants';
 import {PAGE_SIZE, TABS} from '../constants';
 import {FederatedCollaborationGroupMetadata} from '../../bpe/model/federated-collaboration-group-metadata';
@@ -17,12 +17,13 @@ import {CollaborationGroup} from '../../bpe/model/collaboration-group';
 import {DashboardUser} from '../model/dashboard-user';
 import {deepEquals} from '../../common/utils';
 import {AppComponent} from '../../app.component';
+import {ProcessInstanceGroupResults} from '../model/process-instance-group-results';
 @Component({
-    selector: 'groups-tab',
-    templateUrl: './groups-tab.component.html',
-    styleUrls: ['./groups-tab.component.css']
+    selector: 'collaboration-groups-tab',
+    templateUrl: './collaboration-groups-tab.component.html',
+    styleUrls: ['./collaboration-groups-tab.component.css']
 })
-export class GroupsTabComponent {
+export class CollaborationGroupsTabComponent {
     _selectedTab: string;
     @Input()
     set selectedTab(value: string) {
@@ -36,11 +37,16 @@ export class GroupsTabComponent {
 
     user: DashboardUser;
     queryParameters: DashboardQueryParameters = new DashboardQueryParameters();
-    query: DashboardOrdersQuery = new DashboardOrdersQuery();
-    querypopup: DashboardOrdersQuery = new DashboardOrdersQuery();
+    query: DashboardQuery = new DashboardQuery();
+    // used for binding to the pagination entities. dedicated variables are needed to be able to identify the change in the
+    // selected page and old page
+    cgQueryPage = 1;
+    pigQueryPage = 1;
+    querypopup: DashboardQuery = new DashboardQuery();
     filterSet: ProcessInstanceGroupFilter;
     modifiedFilterSet: ProcessInstanceGroupFilter = new ProcessInstanceGroupFilter();
-    results: DashboardOrdersQueryResults = new DashboardOrdersQueryResults();
+    collaborationGroupResults: CollaborationGroupResults;
+    processInstanceGroupResults: ProcessInstanceGroupResults;
     isProject = false;
     delegated = (FEDERATION() === 'ON');
     // this contains status-name-defaultName information of collaboration groups
@@ -59,6 +65,7 @@ export class GroupsTabComponent {
     filterQueryStatus: CallStatus = new CallStatus();
     exportCallStatus: CallStatus = new CallStatus();
 
+    facetQueryParameterNames: string[] = ['', '', '', ''];
     TABS = TABS;
     config = myGlobals.config;
 
@@ -85,7 +92,6 @@ export class GroupsTabComponent {
      */
 
     onViewUpdated(reset?: boolean): void {
-        this.filterSet = null;
         this.updateStateFromQueryParameters(this.queryParameters, reset);
         this.onViewUpdatedEvent.emit();
     }
@@ -95,17 +101,22 @@ export class GroupsTabComponent {
     }
 
     onFilterChange(): void {
+        // check which page number to use for the pagination
+        // if there is no selected facet now, we should use the collaboration group page,
+        // otherwise the one keeping the process instance page
+        let page: number = this.isAnyFacetSelected(this.modifiedFilterSet) ? this.pigQueryPage : this.cgQueryPage;
         this.updateQueryParameters({
             prd: this.toString(this.modifiedFilterSet.relatedProducts),
             cat: this.toString(this.modifiedFilterSet.relatedProductCategories),
             sts: this.toString(this.modifiedFilterSet.status),
             prt: this.getSelectedPartners(this.modifiedFilterSet),
-            ins: this.toString(this.modifiedFilterSet.instanceNames)
-        })
+            ins: this.toString(this.modifiedFilterSet.instanceNames),
+            pg: page
+        });
     }
 
     onPageChange(): void {
-        this.updateQueryParameters({ pg: this.query.page });
+        this.updateQueryParameters({ pg: this.isFacetFilterActive() ? this.pigQueryPage : this.cgQueryPage });
     }
 
     onExportClicked() {
@@ -130,9 +141,11 @@ export class GroupsTabComponent {
             });
     }
 
-    updateCollaborationGroupName(id: string, federationId: string, name: string) {
+    updateCollaborationGroupName(cgIndex: number, id: string, federationId: string, name: string) {
         this.bpeService.updateCollaborationGroupName(id, federationId, name)
             .then(() => {
+                (this.collaborationGroupResults as CollaborationGroupResults).collaborationGroups[cgIndex].name = name;
+                this.changeCollaborationGroupNameStatus(cgIndex, false);
                 this.onViewUpdated(false);
             })
             .catch(err => {
@@ -143,7 +156,7 @@ export class GroupsTabComponent {
     changeCollaborationGroupNameStatus(index: number, status: boolean) {
         // if status is true,then we will change the name of the group.
         if (status) {
-            this.updatingCollaborationGroupName[index].name = this.results.orders[index].name;
+            this.updatingCollaborationGroupName[index].name = (this.collaborationGroupResults as CollaborationGroupResults).collaborationGroups[index].name;
         }
         this.updatingCollaborationGroupName[index].status = status;
     }
@@ -222,12 +235,11 @@ export class GroupsTabComponent {
 
     onOrderRemovedFromView(): void {
         this.filterSet = null;
-        if (this.results.resultCount === 1 && this.query.page > 1) {
+        if (this.collaborationGroupResults.resultCount === 1 && this.query.page > 1) {
             this.updateQueryParameters({ pg: this.queryParameters.pg - 1 });
         } else {
-            this.updateStateFromQueryParameters(this.queryParameters, true);
+            this.onViewUpdated(true);
         }
-        this.onViewUpdatedEvent.emit();
     }
 
     onExpandTimeline(collaborationGroup: CollaborationGroup): void {
@@ -242,12 +254,23 @@ export class GroupsTabComponent {
      * selectors for the template
      */
 
+    noDataConditionsMet(): boolean {
+        return ((!this.isFacetFilterActive() && this.collaborationGroupResults && this.collaborationGroupResults.resultCount === 0) ||
+            (this.isFacetFilterActive() && this.processInstanceGroupResults && this.processInstanceGroupResults.resultCount === 0)) &&
+            !this.areOrdersLoading()
+    }
+
+    resultsAvailable(): boolean {
+        return (!this.isFacetFilterActive() && this.collaborationGroupResults && this.collaborationGroupResults.resultCount > 0) ||
+            (this.isFacetFilterActive() && this.processInstanceGroupResults && this.processInstanceGroupResults.resultCount > 0);
+    }
+
     areOrdersLoading(): boolean {
         return this.queryStatus.fb_submitted;
     }
 
     isToggleArchivedButtonEnabled(): boolean {
-        return this.query.archived || this.results.hasArchivedOrders
+        return this.query.archived || this.collaborationGroupResults.hasArchivedGroups
     }
 
     getToggleArchivedButtonText(): string {
@@ -261,12 +284,9 @@ export class GroupsTabComponent {
         return this.filterQueryStatus.fb_submitted;
     }
 
-    // isFacetFilterActive(): boolean {
-    //     if (!this.queryParameters.prd || !this.queryParameters.cat || this.queryParameters.prt || this.queryParameters.sts) {
-    //         return true;
-    //     }
-    //     return false;
-    // }
+    isFacetFilterActive(): boolean {
+        return this.includesSelectedFacet(this.queryParameters);
+    }
 
     /**
      * internal logic
@@ -304,19 +324,21 @@ export class GroupsTabComponent {
     private queryOrdersIfNeeded(forceUpdate = false) {
         const query = this.computeOrderQueryFromQueryParams();
 
-        if (forceUpdate || this.isOrdersFiltersQueryNeeded(query)) {
+        if (forceUpdate || this.isReexecutionNeeded(query)) {
             this.executeOrdersFiltersQuery(query);
-        }
 
-        if (forceUpdate || this.isOrdersQueryNeeded(query)) {
-            this.executeOrdersQuery(query);
+            if (!this.isFacetFilterActive()) {
+                this.executeCollaborationGroupQuery(query);
+            } else {
+                this.executeProcessInstanceGroupQuery(query);
+            }
         }
 
         this.query = query
     }
 
-    private computeOrderQueryFromQueryParams(): DashboardOrdersQuery {
-        return new DashboardOrdersQuery(
+    private computeOrderQueryFromQueryParams(): DashboardQuery {
+        return new DashboardQuery(
             this.queryParameters.arch,
             this.queryParameters.tab === TABS.PURCHASES || this.queryParameters.tab === TABS.PROJECTS ? 'BUYER' : 'SELLER',
             this.queryParameters.pg,
@@ -329,23 +351,18 @@ export class GroupsTabComponent {
         )
     }
 
-    private isOrdersFiltersQueryNeeded(query: DashboardOrdersQuery): boolean {
-        // filterSet may be set to null to request a recompute of the filter sets.
-        if (!this.filterSet) {
-            return true;
-        }
+    private isReexecutionNeeded(query: DashboardQuery): boolean {
         if (this.queryParameters.tab === 'PROJECTS' && this.isProject === false) {
             return true;
 
         } else if (this.queryParameters.tab !== 'PROJECTS' && this.isProject === true) {
             return true;
         }
-        // Do not recompute the filters on filter changes.
-        return this.query.archived !== query.archived
-            || this.query.collaborationRole !== query.collaborationRole || this.query.instanceName !== query.instanceName;
+
+        return !deepEquals(this.query, query);
     }
 
-    private executeOrdersFiltersQuery(query: DashboardOrdersQuery): void {
+    private executeOrdersFiltersQuery(query: DashboardQuery): void {
         this.filterQueryStatus.submit();
         if (this.queryParameters.tab === 'PROJECTS') {
             this.isProject = true;
@@ -399,28 +416,31 @@ export class GroupsTabComponent {
             });
     }
 
-    private isOrdersQueryNeeded(query: DashboardOrdersQuery): boolean {
-        if (!deepEquals(this.query, query)) {
-            return true;
-        }
-        return false;
-    }
-
-    private executeOrdersQuery(query: DashboardOrdersQuery): void {
-        this.results = new DashboardOrdersQueryResults();
+    private executeCollaborationGroupQuery(query: DashboardQuery): void {
+        this.collaborationGroupResults = new CollaborationGroupResults();
         this.queryStatus.submit();
-        this.getOrdersQuery(query)
+        this.getCollaborationGroupsQuery(query)
             .then(() => {
-                this.queryStatus.callback('Successfully fetched orders', true);
+                this.queryStatus.callback('Successfully fetched collaboration groups', true);
             })
             .catch(error => {
-                this.queryStatus.error('Error while fetching orders.', error);
+                this.queryStatus.error('Error while fetching collaboration groups.', error);
             });
     }
 
-    private getOrdersQuery(query: DashboardOrdersQuery): Promise<void> {
+    private executeProcessInstanceGroupQuery(query: DashboardQuery): void {
+        this.collaborationGroupResults = new CollaborationGroupResults();
+        this.queryStatus.submit();
+        this.getProcessInstanceGroupsQuery(query)
+            .then(() => {
+                this.queryStatus.callback('Successfully fetched process instance groups', true);
+            })
+            .catch(error => {
+                this.queryStatus.error('Error while fetching process instance groups.', error);
+            });
+    }
 
-
+    private getCollaborationGroupsQuery(query: DashboardQuery): Promise<void> {
         if (this.queryParameters.tab === 'PROJECTS') {
             this.isProject = true;
         } else {
@@ -434,7 +454,7 @@ export class GroupsTabComponent {
                     query.instanceName, query.collaborationRole, query.page - 1, query.pageSize, query.archived,
                     query.products, query.categories, query.partners, query.status)
                 .then(response => {
-                    this.results = new DashboardOrdersQueryResults(
+                    this.collaborationGroupResults = new CollaborationGroupResults(
                         response.collaborationGroups,
                         response.collaborationGroups.length > 0,
                         response.size
@@ -455,7 +475,7 @@ export class GroupsTabComponent {
                     query.collaborationRole, 0, 1, true, [], [], [], []
                 ),
             ]).then(([response, archived]) => {
-                this.results = new DashboardOrdersQueryResults(
+                this.collaborationGroupResults = new CollaborationGroupResults(
                     response.collaborationGroups,
                     archived.collaborationGroups.length > 0,
                     response.size
@@ -465,9 +485,49 @@ export class GroupsTabComponent {
         }
     }
 
+    private getProcessInstanceGroupsQuery(query: DashboardQuery): Promise<void> {
+        if (query.archived) {
+            // only one query needed
+            return this.bpeService
+                .getProcessInstanceGroups(this.cookieService.get('company_id'),
+                    query.instanceName, query.collaborationRole, query.page - 1, query.pageSize, query.archived,
+                    query.products, query.categories, query.partners, query.status)
+                .then(response => {
+                    this.processInstanceGroupResults = new ProcessInstanceGroupResults(
+                        response.groups,
+                        response.collaborationGroupIds,
+                        response.groups.length > 0,
+                        response.size
+                    );
+                    this.createUpdatingCollaborationGroupNameArray()
+                });
+        } else {
+            // Needs to query for archived orders to know if the "Show Archived" button should be enabled
+            // TODO no need make the following calls synchronous
+            return Promise.all([
+                // regular query
+                this.bpeService.getProcessInstanceGroups(this.cookieService.get('company_id'), query.instanceName,
+                    query.collaborationRole, query.page - 1, query.pageSize, query.archived,
+                    query.products, query.categories, query.partners, query.status
+                ),
+                // query for archived orders
+                this.bpeService.getProcessInstanceGroups(this.cookieService.get('company_id'), query.instanceName,
+                    query.collaborationRole, 0, 1, true, [], [], [], []
+                ),
+            ]).then(([response, archived]) => {
+                this.processInstanceGroupResults = new ProcessInstanceGroupResults(
+                    response.groups,
+                    response.collaborationGroupIds,
+                    archived.groups.length > 0,
+                    response.size
+                );
+            });
+        }
+    }
+
     private createUpdatingCollaborationGroupNameArray() {
         this.updatingCollaborationGroupName = [];
-        for (let order of this.results.orders) {
+        for (let order of (this.collaborationGroupResults as CollaborationGroupResults).collaborationGroups) {
             this.updatingCollaborationGroupName.push({status: false, name: order.name, defaultName: this.getDefaultCollaborationNames(order)})
         }
     }
@@ -527,6 +587,21 @@ export class GroupsTabComponent {
         } catch (e) {
             return 1;
         }
+    }
+
+    includesSelectedFacet(queryParameters: DashboardQueryParameters): boolean {
+        if (queryParameters.prd || queryParameters.cat || queryParameters.prt || queryParameters.sts) {
+            return true;
+        }
+        return false;
+    }
+
+    isAnyFacetSelected(facetFilter: ProcessInstanceGroupFilter): boolean {
+        if (facetFilter.relatedProductCategories.length > 0 || facetFilter.relatedProducts.length > 0 ||
+            facetFilter.tradingPartnerIDs.length > 0 || facetFilter.status.length > 0) {
+            return true;
+        }
+        return false;
     }
 
     private parseArray(param: string): string[] {
