@@ -25,10 +25,13 @@ export class FactorsService {
 
     constructor(private http: Http) {}
 
-    getFactors() {
-        return this.http.get(this._factorsUrl)
-            .toPromise()
-            .then(response => response.json())
-            .catch(err => console.log(err));
+    async getFactors() {
+        try {
+            const response = await this.http.get(this._factorsUrl)
+                .toPromise();
+            return response.json();
+        } catch (err) {
+            return console.log(err);
+        }
     }
 }
