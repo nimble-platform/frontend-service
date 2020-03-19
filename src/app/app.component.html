@@ -253,12 +253,8 @@
 </div> -->
 
 <div id="loading-bg" *ngIf="loading">
-    <div id="sk-loading-icon">
-        <i id="gear1" class="fa fa-5x fa-cog spin"></i>
-        <i id="gear2" class="fa fa-5x fa-cog spin-back"></i>
-        <i id="gear3" class="fa fa-5x fa-cog spin"></i>
-    </div>
-    <div id="loading-text"><p>Loading iAsset</p></div>
+    <loader-nimble *ngIf="project === 0"></loader-nimble>
+    <loader-iasset *ngIf="project === 1"></loader-iasset>
 </div>
 
 <ng-template #support let-d="dismiss">

@@ -31,6 +31,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 export class AppComponent implements OnInit {
 
+    public project: Project.Type = Project.Type.Nimble;
+
     public loading = false;
     public isLoggedIn = false;
     public isCollapsed = true;
@@ -620,4 +622,14 @@ export class AppComponent implements OnInit {
         return this.allowed;
     }
 
+}
+
+export namespace Project
+{
+    /**
+    * enum to identify project
+    * (Nimble = 0, IAsset = 1, Other = 2)
+    * if this architecture is reused, add your project name here
+    */
+    export enum Type {Nimble, IAsset, Other}
 }

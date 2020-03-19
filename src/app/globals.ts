@@ -19,11 +19,11 @@ export const frontendURL = base_path + "/frontend/"; // Frontend endpoint
 
 export const user_mgmt_endpoint=`${base_path}/identity`;
 export const catalogue_endpoint=`${base_path}/catalog`;
-export const bpe_endpoint=`${base_path}/business-process`;
+export const bpe_endpoint=`${base_path}/business-process`; // TODO: Mathias: maybe not needed?
 export const data_channel_endpoint=`${base_path}/data-channel`;
 export const data_aggregation_endpoint=`${base_path}/data-aggregation`;
 export const trust_service_endpoint=`${base_path}:8082`;
-export const indexing_service_endpoint=`${base_path}/index`;
+export const indexing_service_endpoint=`${base_path}/index`; // TODO: Mathias: maybe not needed?
 export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}/logstash`;
 export const kibana_endpoint = `${base_path}/kibana/app/kibana`;

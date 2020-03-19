@@ -41,6 +41,9 @@ import {CollaborationService} from './catalogue/collaboration/collaboration.serv
 import {UnshippedOrdersTransitionService} from './bpe/unshipped-order-transition-service';
 import {ValidationService} from './common/validation/validators';
 
+import {LoaderIAsset} from './animated-loader/loader_iasset';
+import {LoaderNimble} from './animated-loader/loader_nimble';
+
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -67,7 +70,9 @@ export function HttpLoaderFactory(http: HttpClient) {
         })
     ],
     declarations: [
-        AppComponent
+        AppComponent,
+        LoaderIAsset,
+        LoaderNimble
 	],
     providers: [
 		CookieService,
