@@ -304,7 +304,7 @@ export class ThreadSummaryComponent implements OnInit {
         const processType = ActivityVariableParser.getProcessType(activityVariables);
         const initialDoc: any = dashboardProcessInstanceDetails.requestDocument;
         const responseDocumentStatus: any = dashboardProcessInstanceDetails.responseDocumentStatus;
-        const userRole = ActivityVariableParser.getUserRole(processType,initialDoc.buyerPartyId,this.processInstanceGroup.partyID);
+        const userRole = ActivityVariableParser.getUserRole(initialDoc.buyerPartyId,initialDoc.buyerPartyFederationId,this.processInstanceGroup.partyID,this.processInstanceGroup.federationID);
         const lastActivityStartTime = dashboardProcessInstanceDetails.lastActivityInstanceStartTime;
         const processInstanceState:any = dashboardProcessInstanceDetails.processInstanceState;
 
