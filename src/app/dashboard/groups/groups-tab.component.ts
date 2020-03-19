@@ -23,11 +23,22 @@ import {AppComponent} from '../../app.component';
     styleUrls: ['./groups-tab.component.css']
 })
 export class GroupsTabComponent {
+    _instance: string;
+    @Input()
+    set instance(value: string) {
+        this._instance = value;
+    }
+    get instance(): string {
+        return this._instance;
+    }
     _selectedTab: string;
     @Input()
     set selectedTab(value: string) {
         this._selectedTab = value;
-        this.updateQueryParameters({ tab: value });
+        if (this._instance)
+          this.updateQueryParameters({ tab: value, ins: this._instance });
+        else
+          this.updateQueryParameters({ tab: value });
     }
     get selectedTab(): string {
         return this._selectedTab;
@@ -76,6 +87,8 @@ export class GroupsTabComponent {
 
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
+            if (params['ins'])
+              this._instance = params['ins'];
             this.updateStateFromQueryParameters(params)
         });
     }
