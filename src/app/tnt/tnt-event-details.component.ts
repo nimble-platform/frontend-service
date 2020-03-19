@@ -34,7 +34,9 @@ import moment = require('moment');
 export class TnTEventDetailsComponent implements OnChanges {
     @Input('eventsToDisplay') events: TrackInfo[];
     debug = myGlobals.debug;
-    bcIoTDataVerified: boolean;
+    bcIoTDataHashExists: boolean;
+    bcIoTDataIntegrityValidated: boolean;
+    bcIoTHash: string;
     bcEventVerified: boolean;
     falsecode = '';
     gateInformation = [];
@@ -49,16 +51,15 @@ export class TnTEventDetailsComponent implements OnChanges {
         if (!this.events.length) {
             return;
         }
-
-        // Get Event Information irrespective if last event
-        this.bcEventVerified = this.events[0].verified;
         this.getGateInfo();
         this.getBizLocInfo();
 
         if (this.events.length > 1) {
             // Display IoT information only if there was a previous event
             // Avoid calling this information on the last event
-            this.bcIoTDataVerified = false;
+            this.bcIoTDataHashExists = false;
+            this.bcIoTDataIntegrityValidated = false;
+            this.bcIoTHash = '';
             this.displaySensorDashboard();
             this.callIoTBCApi();
         } else {
@@ -130,7 +131,9 @@ export class TnTEventDetailsComponent implements OnChanges {
             if (this.debug) {
                 console.log(resp);
             }
-            this.bcIoTDataVerified = resp['validated'];
+            this.bcIoTDataHashExists = resp['exists'];
+            this.bcIoTDataIntegrityValidated = resp['validated'];
+            this.bcIoTHash = resp['hash'];
         }).catch(err => {
             console.log(err);
         })

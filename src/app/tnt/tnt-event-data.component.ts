@@ -28,6 +28,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 export class TnTEventDataComponent implements OnChanges {
     @Input('incomingTrackingInfo') incomingTrackingInfo: TrackInfo[];
+    @Input('bcEventVerified') bcEventVerified: boolean;
     collectionSize = 0;
     page = 1;
     pageSize = 5;
