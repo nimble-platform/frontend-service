@@ -273,17 +273,22 @@ export class ThreadSummaryComponent implements OnInit {
             * for the seller, correspondentUserId is the one who sends the request
         For Fulfilment, this is vice versa.
      */
-    private getCorrespondentUserId(dashboardProcessInstanceDetails:DashboardProcessInstanceDetails, userRole:string,processType:ProcessType):string{
-        let correspondentUserId = null;
+    private getCorrespondentUserId(dashboardProcessInstanceDetails:DashboardProcessInstanceDetails, userRole:string,processType:ProcessType):string[]{
+        let requestDocument:any = dashboardProcessInstanceDetails.requestDocument;
+
+        let coorespondentUserIdFederationId = null;
         if (userRole === "buyer") {
+            let correspondentUserId = null;
             if(processType == "Fulfilment"){
                 correspondentUserId = dashboardProcessInstanceDetails.requestCreatorUserId;
             }
             else if(dashboardProcessInstanceDetails.responseCreatorUserId){
                 correspondentUserId = dashboardProcessInstanceDetails.responseCreatorUserId;
             }
+            coorespondentUserIdFederationId = [correspondentUserId,requestDocument.buyerPartyFederationId];
         }
         else {
+            let correspondentUserId = null;
             if(processType == "Fulfilment"){
                 if(dashboardProcessInstanceDetails.responseCreatorUserId){
                     correspondentUserId = dashboardProcessInstanceDetails.responseCreatorUserId;
@@ -292,8 +297,9 @@ export class ThreadSummaryComponent implements OnInit {
             else {
                 correspondentUserId = dashboardProcessInstanceDetails.requestCreatorUserId;
             }
+            coorespondentUserIdFederationId = [correspondentUserId,requestDocument.sellerPartyFederationId];
         }
-        return correspondentUserId;
+        return coorespondentUserIdFederationId;
     }
 
     private async fetchThreadEvent(processInstanceId: string): Promise<ThreadEventMetadata> {
