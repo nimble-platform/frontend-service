@@ -14,7 +14,7 @@ import {CookieService} from "ng2-cookies";
 export class CategoryService {
     private baseUrl = myGlobals.catalogue_endpoint;
     private indexingBaseUrl = myGlobals.indexing_service_endpoint;
-
+    private serviceCategories: string[];
     selectedCategories: Category[] = [];
 
     constructor(private http: Http,
@@ -183,6 +183,29 @@ export class CategoryService {
                 return res.json();
             })
             .catch(this.handleError);
+    }
+
+    async getServiceCategoriesForAvailableTaxonomies(): Promise<string[]> {
+        if (this.serviceCategories != null) {
+            return Promise.resolve(this.serviceCategories);
+        }
+
+        let availableTaxonomies: string[] = await this.getAvailableTaxonomies();
+        let rootServiceCategoryPromises: Promise<void>[] = [];
+        let result: string[] = [];
+        for (let taxonomyId of availableTaxonomies) {
+            let url = `${this.baseUrl}/taxonomies/${taxonomyId}/service-categories`;
+            rootServiceCategoryPromises.push(this.http
+                .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
+                .toPromise()
+                .then(res => {
+                    result.push(...res.json());
+                }));
+        }
+        return Promise.all([...rootServiceCategoryPromises]).then(() => {
+            this.serviceCategories = result;
+            return this.serviceCategories;
+        })
     }
 
     resetSelectedCategories():void {
