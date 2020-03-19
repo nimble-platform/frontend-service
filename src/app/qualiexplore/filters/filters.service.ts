@@ -26,10 +26,13 @@ export class FiltersService {
 
     constructor(private http: Http) {}
 
-      getQuestions() {
-        return this.http.get(this._filtersUrl)
-            .toPromise()
-            .then(response => response.json())
-            .catch(err => {console.log(err)});
+      async getQuestions() {
+        try {
+          const response = await this.http.get(this._filtersUrl)
+            .toPromise();
+          return response.json();
+        } catch (err) {
+          console.log(err);
+        }
     }
 }

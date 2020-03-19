@@ -54,7 +54,6 @@ export class TnTFormComponent {
             })
             .catch(error => {
                 if (error.status === 404) {
-                    // console.log(error);
                     this.falsecode = error._body;
                 }
                 this.error_detc = true;
@@ -65,10 +64,11 @@ export class TnTFormComponent {
         this.falsecode = '';
         this.bpInfo = [];
         this.trackingInfo = [];
+        this.verified = false;
     }
 
-    getTableInfo(code, data) {
-                this.trackingInfo = data.map(el => {
+    getTableInfo(code: string, data: any) {
+                this.trackingInfo = data.map((el: any) => {
                     let _out = {
                         'epc': code,
                         'eventTime': el.eventTime.$date,
@@ -90,10 +90,7 @@ export class TnTFormComponent {
                 if (this.debug) {
                     console.log(res);
                 }
-                this.verified = res;
-                this.trackingInfo.forEach(event => {
-                    event['verified'] = this.verified
-                });
+                this.verified = (res === 'true');
             })
             .catch(err => {
                 this.falsecode = err._body;

@@ -35,9 +35,6 @@
         <ng-template ngbTabTitle><span [innerHTML]="'Event Information' | translate"></span></ng-template>
         <ng-template ngbTabContent>
             
-            <ngb-alert type="success" [dismissible]="false" *ngIf="bcEventVerified">
-                    <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'This Data is Verified by BlockChain' | translate"></span>  <i class="fas fa-project-diagram pl-1"></i>
-            </ngb-alert>
             <table class="table table-bordered mt-2">
                 <thead>
                     <th scope="col"><span [innerHTML]="'Attributes' | translate"></span></th>
@@ -82,8 +79,14 @@
     <ngb-tab>
         <ng-template ngbTabTitle><span [innerHTML]="'IoT Information' | translate"></span> </ng-template>
         <ng-template ngbTabContent>
-            <ngb-alert type="success" [dismissible]="false" *ngIf="bcIoTDataVerified">
-                    <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'These Data are Registered in BlockChain' | translate"></span>  <i class="fas fa-project-diagram pl-1"></i>
+            <ngb-alert type="success" [dismissible]="false" *ngIf="bcIoTDataHashExists">
+                    <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'These Data are Registered in BlockChain' | translate"></span> <i class="fas fa-project-diagram pl-1"></i>
+                    <p *ngIf="bcIoTHash">
+                        Hash: <span class="text-weight-lighter">{{bcIoTHash}}</span>
+                    </p>
+            </ngb-alert>
+            <ngb-alert type="success" [dismissible]="false" *ngIf="bcIoTDataIntegrityValidated">
+                <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'The Data Integrity with Original Data Source and BlockChain Verified' | translate"></span>  <i class="fas fa-project-diagram pl-1"></i>
             </ngb-alert>
             <div class="row mt-2" *ngIf="dashboardQuery.length">
                 <iframe [src]="dashboardQuery | safe" width="650" height="400" frameborder="0"></iframe>
