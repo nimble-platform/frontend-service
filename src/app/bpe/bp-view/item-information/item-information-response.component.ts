@@ -84,7 +84,7 @@ export class ItemInformationResponseComponent implements OnInit {
             var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")
               tab = "SALES";
-            this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
+            this.router.navigate(['dashboard'], {queryParams: {tab: tab,ins: this.bpDataService.itemInformationResponse.sellerSupplierParty.party.federationInstanceID}});
         }).catch(error => {
             this.callStatus.error("Failed to send Information Response", error);
         });
