@@ -81,10 +81,10 @@
         </button>
     </div>
     <div class="col-2">
-        <button *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading() || areAllDocumentsAvailable()" (click)="onSendRequest()">
+        <button *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading() || areAllDocumentsAvailable()" (click)="onSendRequest()" singleClick>
             <span [innerHTML]="'Send Request' | translate"></span>
         </button>
-        <button *ngIf="processMetadata && processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading() || areAllDocumentsAvailable()" (click)="onUpdateRequest()">
+        <button *ngIf="processMetadata && processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading() || areAllDocumentsAvailable()" (click)="onUpdateRequest()" singleClick>
             <span [innerHTML]="'Update Request' | translate"></span>
         </button>
     </div>

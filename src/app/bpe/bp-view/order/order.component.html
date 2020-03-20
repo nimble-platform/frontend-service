@@ -158,10 +158,10 @@
                 </button>
             </div>
             <div class="col-2">
-                <button *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading()" (click)="onOrder()">
+                <button *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading()" (click)="onOrder()" singleClick>
                     <span [innerHTML]="'Order' | translate"></span>
                 </button>
-                <button *ngIf="processMetadata && processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading()" (click)="onOrderUpdate()">
+                <button *ngIf="processMetadata && processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading()" (click)="onOrderUpdate()" singleClick>
                     <span [innerHTML]="'Update Order' | translate"></span>
                 </button>
             </div>
@@ -208,12 +208,12 @@
                 </button>
             </div>
             <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.collaborationStatus == 'CANCELLED'" (click)="onRespondToOrder(false)">
+                <button class="btn btn-secondary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.collaborationStatus == 'CANCELLED'" (click)="onRespondToOrder(false)" singleClick>
                     <span [innerHTML]="'Reject' | translate"></span>
                 </button>
             </div>
             <div class="col-2">
-                <button class="btn btn-primary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.collaborationStatus == 'CANCELLED'" (click)="onRespondToOrder(true)">
+                <button class="btn btn-primary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.collaborationStatus == 'CANCELLED'" (click)="onRespondToOrder(true)" singleClick>
                     <span [innerHTML]="'Accept' | translate"></span>
                 </button>
             </div>

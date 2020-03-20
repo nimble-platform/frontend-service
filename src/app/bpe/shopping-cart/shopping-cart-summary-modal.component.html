@@ -37,6 +37,6 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="d('cancel')"><span [innerHTML]="'Cancel' | translate"></span></button>
-        <button type="button" class="btn btn-primary" (click)="onNegotiation(c)"><span [innerHTML]="'Negotiate / Order All' | translate"></span></button>
+        <button type="button" class="btn btn-primary" (click)="onNegotiation(c)" singleClick><span [innerHTML]="'Negotiate / Order All' | translate"></span></button>
     </div>
 </ng-template>

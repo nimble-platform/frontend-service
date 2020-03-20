@@ -48,10 +48,11 @@
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
         </div>
         <div *ngIf="!isReadOnly()" class="col-2">
-            <button *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading() || isReadOnly() || (dispatchAdvice.despatchLine.length > 1 && !isAtLeastOneProductSelected())" (click)="onSendDispatchAdvice()">
+            <button *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading() || isReadOnly() || (dispatchAdvice.despatchLine.length > 1 && !isAtLeastOneProductSelected())" (click)="onSendDispatchAdvice()"
+                    singleClick>
                 <span [innerHTML]="'Send Advice' | translate"></span>
             </button>
-            <button *ngIf="processMetadata && processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading() || isReadOnly() || (dispatchAdvice.despatchLine.length > 1 && !isAtLeastOneProductSelected())" (click)="onUpdateDispatchAdvice()">
+            <button *ngIf="processMetadata && processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading() || isReadOnly() || (dispatchAdvice.despatchLine.length > 1 && !isAtLeastOneProductSelected())" (click)="onUpdateDispatchAdvice()" singleClick>
                 <span [innerHTML]="'Update Advice' | translate"></span>
 
             </button>

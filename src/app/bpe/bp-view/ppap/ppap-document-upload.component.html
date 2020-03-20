@@ -36,7 +36,7 @@
         </div>
         <div class="col-2">
             <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.areProductsDeleted[0]"
-                    (click)="responseToPpapRequest(true)">
+                    (click)="responseToPpapRequest(true)" singleClick>
                     <span [innerHTML]="'Send Response' | translate"></span>
             </button>
         </div>

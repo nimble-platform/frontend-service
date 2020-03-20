@@ -138,10 +138,10 @@
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div class="col-3">
-            <button *ngIf="!updatingProcess" class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()">
+            <button *ngIf="!updatingProcess" class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()" singleClick>
                 <span [innerHTML]="'Send Execution Plan Terms' | translate"></span>
             </button>
-            <button *ngIf="updatingProcess"class="btn btn-primary action" [disabled]="isLoading()" (click)="onUpdateRequest()">
+            <button *ngIf="updatingProcess"class="btn btn-primary action" [disabled]="isLoading()" (click)="onUpdateRequest()" singleClick>
                 <span [innerHTML]="'Update Execution Plan Terms' | translate"></span>
             </button>
         </div>
@@ -166,12 +166,12 @@
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.collaborationStatus == 'CANCELLED'" (click)="onSendResponse(false)">
+            <button class="btn btn-secondary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.collaborationStatus == 'CANCELLED'" (click)="onSendResponse(false)" singleClick>
                 <span [innerHTML]="'Reject' | translate"></span>
             </button>
         </div>
         <div class="col-2">
-            <button class="btn btn-primary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.collaborationStatus == 'CANCELLED'" (click)="onSendResponse(true)">
+            <button class="btn btn-primary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.collaborationStatus == 'CANCELLED'" (click)="onSendResponse(true)" singleClick>
                 <span [innerHTML]="'Accept' | translate"></span>
             </button>
         </div>

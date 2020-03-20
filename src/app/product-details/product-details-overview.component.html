@@ -27,14 +27,14 @@
         <span *ngIf="isNegotiatingAnyTerm" [ngbTooltip]="validationService.extractErrorMessage(shoppingCartItemForm)" [placement]="'auto'"  title="">
             <button class="btn btn-primary"
                     [disabled]="isNegotiateOrderButtonDisabled || !shoppingCartItemForm.valid"
-                    (click)="onNegotiateAndOrderButtonClicked()">
+                    (click)="onNegotiateAndOrderButtonClicked()" singleClick>
                 <span [innerHTML]="'Negotiate' | translate"></span>
             </button>
         </span>
         <span *ngIf="!isNegotiatingAnyTerm" [ngbTooltip]="validationService.extractErrorMessage(shoppingCartItemForm)" [placement]="'auto'"  title="">
             <button class="btn btn-primary"
                     [disabled]="isNegotiateOrderButtonDisabled || !shoppingCartItemForm.valid"
-                    (click)="onNegotiateAndOrderButtonClicked()">
+                    (click)="onNegotiateAndOrderButtonClicked()" singleClick>
                 <span [innerHTML]="'Order' | translate"></span>
             </button>
         </span>

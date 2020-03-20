@@ -113,12 +113,12 @@
         <button class="btn btn-secondary action" [disabled]="isDisabled()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div class="col-3" *ngIf="!updatingProcess">
-        <button class="btn btn-primary action" [disabled]="isDisabled() ||  !isTransportServiceDetailsValid()" (click)="onSendRequest()">
+        <button class="btn btn-primary action" [disabled]="isDisabled() ||  !isTransportServiceDetailsValid()" (click)="onSendRequest()" singleClick>
             <span [innerHTML]="'Send Request' | translate"></span>
         </button>
     </div>
     <div class="col-3" *ngIf="updatingProcess">
-        <button class="btn btn-primary action" [disabled]="!isTransportServiceDetailsValid()" (click)="onUpdateRequest()">
+        <button class="btn btn-primary action" [disabled]="!isTransportServiceDetailsValid()" (click)="onUpdateRequest()" singleClick>
             <span [innerHTML]="'Update Request' | translate"></span>
         </button>
     </div>
