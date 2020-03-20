@@ -138,7 +138,7 @@ export class PpapDocumentUploadComponent {
             var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")
               tab = "SALES";
-            this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
+            this.router.navigate(['dashboard'], {queryParams: {tab: tab, ins: this.ppapResponse.sellerSupplierParty.party.federationInstanceID}});
         }).catch(error => {
             this.submitted = false;
             error => this.callStatus.error("Failed to send Ppap Response", error)

@@ -35,7 +35,9 @@ export class UserService {
     userParty: Party;
 
     // used to cache user info
-    private mapOfUsers = new Map();
+    // key of the outer map is federation id
+    // key of the inner map is user id
+    private mapOfUsers:Map<string,Map<string,Person>> = new Map();
 
     constructor(
         private unitService: UnitService,
@@ -188,19 +190,27 @@ export class UserService {
             .catch(this.handleError);
     }
 
-    getPerson(personId:string):Promise<Person> {
-        if(this.mapOfUsers.has(personId)){
-            return Promise.resolve(copy(this.mapOfUsers.get(personId)));
+    getPerson(personId:string,delegateId:string=FEDERATIONID()):Promise<Person> {
+        if(this.mapOfUsers.has(delegateId) && this.mapOfUsers.get(delegateId).has(personId)){
+            return Promise.resolve(copy(this.mapOfUsers.get(delegateId).get(personId)));
         } else{
-            const url = `${this.url}/person/${personId}`;
+            let url = `${this.url}/person/${personId}`;
+            if(this.delegated){
+                url = `${this.delegate_url}/person/${personId}?delegateId=${delegateId}`;
+            }
             const token = 'Bearer '+this.cookieService.get("bearer_token");
             const headers_token = new Headers({'Content-Type': 'application/json', 'Authorization': token});
             return this.http
-                .get(url, {headers: headers_token, withCredentials: true})
+                .get(url, {headers: headers_token})
                 .toPromise()
                 .then(res => {
                     let user = res.json();
-                    this.mapOfUsers.set(personId,user);
+                    if(this.mapOfUsers.has(delegateId)){
+                        this.mapOfUsers.get(delegateId).set(personId,user);
+                    }
+                    else{
+                        this.mapOfUsers.set(delegateId,new Map([[personId,user]]));
+                    }
                     return copy(user);
                 })
                 .catch(this.handleError);

@@ -9,7 +9,7 @@ export class ThreadEventMetadata {
         public processInstanceId: string,
         public startTime: string,
         public products: any, // this object holds some information about the products such as catalog and line ids, product names and whether they are transport services or not
-        public correspondentUserId: string,
+        public correspondentUserIdFederationId: string[], // array consisting of two entries, one is user id, the other is its federation id
         public processStatus: string,
         public buyerPartyId: any,
         public activityVariables: any,

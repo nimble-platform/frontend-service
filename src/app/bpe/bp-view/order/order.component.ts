@@ -229,7 +229,7 @@ export class OrderComponent implements OnInit {
                 var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
-                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab, ins: this.sellerParty.federationInstanceID}});
             }).catch(error => {
                 this.submitCallStatus.error("Failed to send Order", error);
             });
@@ -272,7 +272,7 @@ export class OrderComponent implements OnInit {
                 var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                   tab = "SALES";
-                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab,ins: this.bpDataService.orderResponse.sellerSupplierParty.party.federationInstanceID}});
             }).catch(error => {
                 this.submitCallStatus.error("Failed to send Order Response", error);
             });

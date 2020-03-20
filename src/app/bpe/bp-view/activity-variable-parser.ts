@@ -13,8 +13,8 @@ export class ActivityVariableParser {
         return processVariables["processInstanceId"]
     }
 
-    static getUserRole(processType:string,buyerPartyId:any,partyId:string){
-        let role:BpUserRole = buyerPartyId == partyId ? 'buyer' : 'seller';
+    static getUserRole(buyerPartyId:any,buyerFederationId:string,partyId:string,federationId:string){
+        let role:BpUserRole = buyerPartyId == partyId && buyerFederationId == federationId ? 'buyer' : 'seller';
         return role;
     }
 
