@@ -18,7 +18,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import * as myGlobals from '../globals';
-import 'rxjs/add/operator/map';
 import {CookieService} from 'ng2-cookies';
 
 @Injectable()

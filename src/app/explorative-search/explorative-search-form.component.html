@@ -29,7 +29,6 @@
                             <select [(ngModel)]="language"
                                     [ngModelOptions]="{standalone: true}"
                                     class="custom-select" style="border-radius:0;">
-                                <option value="" disabled selected>--language--</option>
                                 <option *ngFor="let eachLang of availableLanguages['languages']"
                                         [ngValue]="eachLang">
                                     {{eachLang}}
