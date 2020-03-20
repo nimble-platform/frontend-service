@@ -130,7 +130,7 @@ export class TransportExecutionPlanComponent implements OnInit {
             var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")
               tab = "SALES";
-            this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
+            this.router.navigate(['dashboard'], {queryParams: {tab: tab,ins: transportationExecutionPlanRequest.transportServiceProviderParty.federationInstanceID}});
         })
         .catch(error => {
             this.callStatus.error("Failed to send Transport Execution Plan", error);
@@ -163,7 +163,7 @@ export class TransportExecutionPlanComponent implements OnInit {
         this.bpeService.startProcessWithDocument(this.bpDataService.transportExecutionPlan,this.bpDataService.transportExecutionPlan.transportServiceProviderParty.federationInstanceID)
             .then(res => {
                 this.callStatus.callback("Transport Execution Plan sent", true);
-                this.router.navigate(["dashboard"]);
+                this.router.navigate(["dashboard"],{queryParams: {ins: this.bpDataService.transportExecutionPlan.transportServiceProviderParty.federationInstanceID}});
             }).catch(error => {
                 this.callStatus.error("Failed to send Transport Execution Plan", error);
             });

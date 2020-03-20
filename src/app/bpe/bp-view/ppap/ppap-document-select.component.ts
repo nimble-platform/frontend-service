@@ -181,7 +181,7 @@ export class PpapDocumentSelectComponent implements OnInit {
                     .startProcessWithDocument(this.ppap,sellerParty.federationInstanceID)
                     .then(() => {
                         this.callStatus.callback("Ppap request sent", true);
-                        this.router.navigate(["dashboard"]);
+                        this.router.navigate(["dashboard"],{queryParams: {ins: sellerParty.federationInstanceID}});
                     })
                     .catch(error => {
                         this.callStatus.error("Failed to send Ppap request", error);

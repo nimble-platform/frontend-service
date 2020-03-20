@@ -33,9 +33,9 @@ export class ThreadEventComponent implements OnInit {
 
     ngOnInit() {
         // get the correspondent if it's available
-        if(this.event.correspondentUserId){
+        if(this.event.correspondentUserIdFederationId){
             this.userService
-                .getPerson(this.event.correspondentUserId)
+                .getPerson(this.event.correspondentUserIdFederationId[0],this.event.correspondentUserIdFederationId[1])
                 .then(party => {
                     if(party && party.firstName && party.familyName){
                         this.correspondent = party.firstName + " " + party.familyName;

@@ -552,6 +552,8 @@ export class ShoppingCartComponent implements OnInit {
             // replace properties of rfq line with the selected ones
             rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty = this.modifiedCatalogueLines.get(cartLine.hjid).goodsItem.item.additionalItemProperty;
 
+            // start a request for quotation or order created using the rfq we have
+            let document:RequestForQuotation | Order;
             callStatus.submit();
             Promise.all([
                 this.userService.getParty(this.cookieService.get('company_id')),
@@ -561,15 +563,14 @@ export class ShoppingCartComponent implements OnInit {
                 rfq.buyerCustomerParty = new CustomerParty(buyerPartyResp);
                 rfq.sellerSupplierParty = new SupplierParty(sellerPartyResp);
 
-                // start a request for quotation or order created using the rfq we have
-                let document:RequestForQuotation | Order = this.areNegotiationConditionsSatisfied(cartLine) ? rfq: this.createOrderWithRfq(rfq,[cartLine.hjid]);
+                document = this.areNegotiationConditionsSatisfied(cartLine) ? rfq: this.createOrderWithRfq(rfq,[cartLine.hjid]);
 
                 return this.bpeService.startProcessWithDocument(document,document.sellerSupplierParty.party.federationInstanceID);
             }).then(() => {
                 // started the negotiation for the product successfully,so remove it from the shopping cart
                 this.shoppingCartDataService.removeItemsFromCart([cartLine.hjid]);
                 callStatus.callback(null, true);
-                this.router.navigate(['dashboard'], {queryParams: {tab: 'PURCHASES'}});
+                this.router.navigate(['dashboard'], {queryParams: {tab: 'PURCHASES',ins: document.sellerSupplierParty.party.federationInstanceID}});
 
             }).catch(error => {
                 callStatus.error('Failed to start process', error);

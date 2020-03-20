@@ -85,7 +85,6 @@ export class SimpleSearchFormComponent implements OnInit {
     searchCallStatus: CallStatus = new CallStatus();
     searchDone = false;
     callback = false;
-    showOther = false;
     size = 0;
     page = 1;
     rows = 12;
@@ -97,10 +96,7 @@ export class SimpleSearchFormComponent implements OnInit {
     catID = "";
     cat_level = -1;
     cat_levels = [];
-    cat_other = [];
-    cat_other_count = 0;
     cat_loading = true;
-    suggestions = [];
     searchContext = null;
     model = new Search('');
     objToSubmit = new Search('');
@@ -111,11 +107,7 @@ export class SimpleSearchFormComponent implements OnInit {
     imageMap: any = {}; // keeps the images if exists for the search results
     // check whether 'p' query parameter exists or not
     noP = true;
-
     maxFacets = 5;
-
-    //manufacturer.legalName : {id,count}
-    //manufacturerIdCountMap : { [indx : string], string};
     manufacturerIdCountMap: any;
 
     imgEndpoint = myGlobals.user_mgmt_endpoint + "/company-settings/image/";
@@ -125,8 +117,8 @@ export class SimpleSearchFormComponent implements OnInit {
     getMultilingualLabel = selectNameFromLabelObject;
     // used to get labels of the ubl properties
     ublProperties = null;
-
-    partyNamesList: any;
+    // service root category uris for the taxonomies. They are used to disable add cart button for services.
+    serviceRootCategories: string[];
 
     pageRef = ''; // page where the user is navigated from. empty string ('') means the search is opened directly
 
@@ -134,8 +126,8 @@ export class SimpleSearchFormComponent implements OnInit {
 
     isSearchResultLogisticsService=isSearchResultLogisticsService;
 
-		ngUnsubscribe: Subject<void> = new Subject<void>();
-		private translations:any;
+    ngUnsubscribe: Subject<void> = new Subject<void>();
+    private translations:any;
 
     constructor(private simpleSearchService: SimpleSearchService,
                 private searchContextService: SearchContextService,
@@ -150,9 +142,12 @@ export class SimpleSearchFormComponent implements OnInit {
     }
 
     ngOnInit(): void {
-				this.appComponent.translate.get(['Other']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
-						this.translations = res;
-				});
+        this.appComponent.translate.get(['Other']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
+            this.translations = res;
+        });
+
+        this.fetchServiceRootCategories();
+
         this.route.queryParams.subscribe(params => {
             let q = params['q'];
             let fq = params['fq'];
@@ -1566,6 +1561,27 @@ export class SimpleSearchFormComponent implements OnInit {
             return {hjid: product.uri, label: product.label};
         });
         this.router.navigate(['catalogue/publish'], {queryParams: {pg: 'single', productType: 'product', searchRef: 'true'}});
+    }
+
+    fetchServiceRootCategories(): void {
+        this.categoryService.getServiceCategoriesForAvailableTaxonomies().then(result => {
+            this.serviceRootCategories = result;
+        })
+    }
+
+    isShoppingCartButtonVisible(productResult: any): boolean {
+        if (this.serviceRootCategories == null || !this.shoppingCartDataService.cartFetched()) {
+            return false;
+        }
+
+        let productCategories: string[] = productResult.classificationUri;
+        for (let productCategory of productCategories) {
+            if (this.serviceRootCategories.findIndex(serviceCategory => serviceCategory === productCategory) !== -1) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     onAddToCart(result: any,index:number, event: any): void {

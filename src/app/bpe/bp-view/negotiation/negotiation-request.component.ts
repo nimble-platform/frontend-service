@@ -185,7 +185,7 @@ export class NegotiationRequestComponent implements OnInit {
                 var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                     tab = "SALES";
-                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
+                this.router.navigate(['dashboard'], {queryParams: {tab: tab,ins: sellerParty.federationInstanceID}});
 
             }).catch(error => {
                 this.callStatus.error("Failed to send Terms", error);

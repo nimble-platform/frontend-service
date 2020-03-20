@@ -8,7 +8,7 @@ import { TABS } from "./constants";
 import { DashboardUser } from "./model/dashboard-user";
 import * as myGlobals from '../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FEDERATION} from '../catalogue/model/constants';
+import {FEDERATION, FEDERATIONID} from '../catalogue/model/constants';
 import {Subject} from 'rxjs';
 
 @Component({
@@ -20,6 +20,7 @@ export class DashboardThreadedComponent implements OnInit{
 
     user: DashboardUser;
     selectedTab: string;
+    instance: string;
 
     buyerCounter = 0;
     sellerCounter = 0;
@@ -44,6 +45,10 @@ export class DashboardThreadedComponent implements OnInit{
         this.computeUserFromCookies();
         this.getTabCounters();
         this.route.queryParams.subscribe(params => {
+            if (params['ins'])
+              this.instance = params['ins'];
+            else
+              this.instance = FEDERATIONID();
             this.selectedTab = this.sanitizeTab(params['tab']);
         });
     }
