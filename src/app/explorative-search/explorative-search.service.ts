@@ -24,11 +24,9 @@
 
 import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions } from '@angular/http';
-
-import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
-// import {Observable} from 'rxjs/Observable';
-// import {SearchItem} from './model/SearchItem';
+
+import { CookieService } from 'ng2-cookies';
 
 @Injectable()
 export class ExplorativeSearchService {
@@ -46,40 +44,55 @@ export class ExplorativeSearchService {
     private sqpOrangeConcept = myGlobals.sqpOrangeConcept;
 
     private userLang: string;
-    private headers = new Headers();
 
 
-    constructor(private http: Http) { }
+    constructor(private http: Http,
+                private cookieService: CookieService) { }
 
     getLanguageSupport(): Promise<any> {
-        return this.http.get(this.langUrl)
+        const token = 'Bearer ' + this.cookieService.get('bearer_token');
+        let header = new Headers();
+        header.append('Content-Type', 'application/json');
+        header.append('Authorization', token);
+        let reqOptions = new RequestOptions({headers: header});
+        return this.http.get(this.langUrl, reqOptions)
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
     }
-    // This is where the HTTP GET service is performed
-    // for keyword search from user
+
+
+
+    /**
+     * This is where the HTTP GET service is performed for keyword search from user
+     * @param term the keyword to be searched as string
+     * @param lang language as string
+     * @param user_id
+     */
     searchData(term: string, lang: string, user_id: string): Promise<any> {
         this.userLang = lang;
         // console.log('Search term for language: ' + lang + ' and used backend url ' + this.url);
+        const token = 'Bearer ' + this.cookieService.get('bearer_token');
+        let header = new Headers();
+        header.append('Content-Type', 'application/json');
+        header.append('Authorization', token);
+        let reqOptions = new RequestOptions({headers: header});
         let input = {'keyword': term, 'language': this.userLang, 'userID': user_id};
-        return this.http.get(`${this.url}?inputAsJson=${JSON.stringify(input)}`)
+        return this.http.get(`${this.url}?inputAsJson=${JSON.stringify(input)}`, reqOptions)
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
     }
 
-    /*getLogicalView(term: Object): Promise<any> {
-        console.log('getlogicalview', term['language']);
-        return this.http.get(`${this.logicalUrl}?inputAsJson=${JSON.stringify(term)}`)
-            .toPromise()
-            .then(res => res.json())
-            .catch(err => console.log(err));
-    }*/
+
     getLogicalView(term: Object): Promise<any> {
         // console.log('From Service(logicalView', JSON.stringify(term));
-        this.headers.append('Content-Type', 'application/json; charset=UTF-8');
-        return this.http.post(this.logicalUrl, term, new RequestOptions({ headers: this.headers }))
+        const token = 'Bearer ' + this.cookieService.get('bearer_token');
+        let header = new Headers();
+        header.append('Content-Type', 'application/json');
+        header.append('Authorization', token);
+        let reqOptions = new RequestOptions({headers: header});
+        return this.http.post(this.logicalUrl, term, reqOptions)
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -87,7 +100,12 @@ export class ExplorativeSearchService {
 
     getPropertyValues(term: Object): Promise<any> {
         // console.log('propvalue', term['language']);
-        return this.http.get(`${this.propEndPoint}?inputAsJson=${JSON.stringify(term)}`)
+        const token = 'Bearer ' + this.cookieService.get('bearer_token');
+        let header = new Headers();
+        header.append('Content-Type', 'application/json');
+        header.append('Authorization', token);
+        let reqOptions = new RequestOptions({headers: header});
+        return this.http.get(`${this.propEndPoint}?inputAsJson=${JSON.stringify(term)}`, reqOptions)
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -95,7 +113,12 @@ export class ExplorativeSearchService {
 
     getTableValues(term: Object): Promise<any> {
         // console.log('gettableview', term['language']);
-        return this.http.get(`${this.sparqlEndPoint}?inputAsJson=${JSON.stringify(term)}`)
+        const token = 'Bearer ' + this.cookieService.get('bearer_token');
+        let header = new Headers();
+        header.append('Content-Type', 'application/json');
+        header.append('Authorization', token);
+        let reqOptions = new RequestOptions({headers: header});
+        return this.http.get(`${this.sparqlEndPoint}?inputAsJson=${JSON.stringify(term)}`, reqOptions)
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -103,7 +126,12 @@ export class ExplorativeSearchService {
 
     getOptionalSelect(term: Object): Promise<any> {
         // console.log('getoptselect', term['language']);
-        return this.http.get(`${this.sparqlOptionEndPoint}?inputAsJson=${JSON.stringify(term)}`)
+        const token = 'Bearer ' + this.cookieService.get('bearer_token');
+        let header = new Headers();
+        header.append('Content-Type', 'application/json');
+        header.append('Authorization', token);
+        let reqOptions = new RequestOptions({headers: header});
+        return this.http.get(`${this.sparqlOptionEndPoint}?inputAsJson=${JSON.stringify(term)}`, reqOptions)
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -114,34 +142,59 @@ export class ExplorativeSearchService {
     //
 
     getSQPButton(term: Object): Promise<any> {
-        return this.http.get(`${this.sqpButtonEndPoint}?inputAsJson=${JSON.stringify(term)}`)
+        const token = 'Bearer ' + this.cookieService.get('bearer_token');
+        let header = new Headers();
+        header.append('Content-Type', 'application/json');
+        header.append('Authorization', token);
+        let reqOptions = new RequestOptions({headers: header});
+        return this.http.get(`${this.sqpButtonEndPoint}?inputAsJson=${JSON.stringify(term)}`, reqOptions)
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
     }
 
     searchForProperty(term: Object): Promise<any> {
-        return this.http.get(`${this.obsPropertySQP}?inputAsJson=${JSON.stringify(term)}`)
+        const token = 'Bearer ' + this.cookieService.get('bearer_token');
+        let header = new Headers();
+        header.append('Content-Type', 'application/json');
+        header.append('Authorization', token);
+        let reqOptions = new RequestOptions({headers: header});
+        return this.http.get(`${this.obsPropertySQP}?inputAsJson=${JSON.stringify(term)}`, reqOptions)
             .toPromise()
             .then(res => res.json().outputForPropertiesFromConcept);
     }
 
     searchForPropertyValues(term: Object): Promise<any> {
-        return this.http.get(`${this.obsPropertyValuesSQP}?inputAsJson=${JSON.stringify(term)}`)
+        const token = 'Bearer ' + this.cookieService.get('bearer_token');
+        let header = new Headers();
+        header.append('Content-Type', 'application/json');
+        header.append('Authorization', token);
+        let reqOptions = new RequestOptions({headers: header});
+        return this.http.get(`${this.obsPropertyValuesSQP}?inputAsJson=${JSON.stringify(term)}`, reqOptions)
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
     }
 
     getReferencesFromConcept(term: Object): Promise<any> {
-        return this.http.get(`${this.referenceFromConcept}?inputAsJson=${JSON.stringify(term)}`)
+        const token = 'Bearer ' + this.cookieService.get('bearer_token');
+        let header = new Headers();
+        header.append('Content-Type', 'application/json');
+        header.append('Authorization', token);
+        let reqOptions = new RequestOptions({headers: header});
+        return this.http.get(`${this.referenceFromConcept}?inputAsJson=${JSON.stringify(term)}`, reqOptions)
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
     }
 
     getPropertyValuesFromOrangeGroup(term: Object): Promise<any> {
-        return this.http.get(`${this.sqpOrangeConcept}?inputAsJson=${JSON.stringify(term)}`)
+        const token = 'Bearer ' + this.cookieService.get('bearer_token');
+        let header = new Headers();
+        header.append('Content-Type', 'application/json');
+        header.append('Authorization', token);
+        let reqOptions = new RequestOptions({headers: header});
+        return this.http.get(`${this.sqpOrangeConcept}?inputAsJson=${JSON.stringify(term)}`, reqOptions)
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
