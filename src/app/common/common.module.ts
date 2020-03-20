@@ -22,6 +22,7 @@ import { HttpClient } from "@angular/common/http";
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import {DisableControlDirective} from './disable-control-directive';
+import {SingleClickDirective} from './single-click.directive';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -58,7 +59,8 @@ export function HttpLoaderFactory(http: HttpClient) {
 		AmountInputComponent,
 		ExpandableFlexRow,
 		MultiTypeInputComponent,
-		DisableControlDirective
+		DisableControlDirective,
+		SingleClickDirective
 	],
 	exports: [
 		CallStatusComponent,
@@ -75,7 +77,8 @@ export function HttpLoaderFactory(http: HttpClient) {
 		AmountInputComponent,
 		ExpandableFlexRow,
 		MultiTypeInputComponent,
-    TranslateModule
+		TranslateModule,
+		SingleClickDirective
 	],
 	providers: [
 	]

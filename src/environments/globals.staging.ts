@@ -26,7 +26,7 @@ export const indexing_service_endpoint=`${base_path}/index`;
 export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}/logstash`;
 export const kibana_endpoint = `${base_path}/kibana/app/kibana`;
-export const delegate_endpoint = `${base_path}:9265`;
+export const delegate_endpoint = `${base_path}/delegate`;
 export const agent_mgmt_endpoint=`${base_path}/agentService`;
 export const collaboration_endpoint = `${collab_path}`;
 

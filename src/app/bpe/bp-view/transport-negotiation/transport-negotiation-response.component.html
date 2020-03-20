@@ -233,15 +233,15 @@
         <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRespondToQuotation(false)">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRespondToQuotation(false)" singleClick>
             <span [innerHTML]="'Reject Offer' | translate"></span>
         </button>
     </div>
     <div class="col-2">
-        <button *ngIf="!hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToQuotation(true)">
+        <button *ngIf="!hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToQuotation(true)" singleClick>
             <span [innerHTML]="'Accept Offer' | translate"></span>
         </button>
-        <button *ngIf="hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToQuotation(true)">
+        <button *ngIf="hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToQuotation(true)" singleClick>
             <span [innerHTML]="'Submit Response' | translate"></span>
         </button>
     </div>

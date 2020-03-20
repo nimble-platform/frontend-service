@@ -64,7 +64,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
     public loading_query = false;
     cbInput = true;
     langInput = true;
-    language = 'ENGLISH'; // default search in english
+    language = 'en'; // default search in english
     availableLanguages = {};
     // Use the stored data which might further
     // data visualization

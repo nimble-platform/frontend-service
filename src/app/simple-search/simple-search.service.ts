@@ -189,6 +189,8 @@ export class SimpleSearchService {
 		};
 		let queryRes = this.buildQueryString(query, querySettings, true, true);
 		let url = this.url + `/item/search`;
+    if (this.delegated)
+      url = this.delegate_url + `/item/search`;
 		if (search_index == "Category") {
 			url = this.url + `/class/search`;
 		}
@@ -198,6 +200,10 @@ export class SimpleSearchService {
 		searchObject.facet = {};
 		searchObject.facet.field = [];
 		searchObject.facet.limit = -1;
+    searchObject.facet.minCount = 1;
+    searchObject.rows = 2147483647;
+		searchObject.start = 0;
+    searchObject.sort = ["score desc"];
 
 		for (let i = 0; i < queryRes.queryFields.length; i++) {
 			searchObject.facet.field.push(queryRes.queryFields[i]);
@@ -219,12 +225,18 @@ export class SimpleSearchService {
 		};
 		let queryRes = this.buildQueryString(query, querySettings, true, true);
 		let url = this.url + `/party/search`;
+    if (this.delegated)
+      url = this.delegate_url + `/party/search`;
 		let searchObject: any = {};
 		searchObject.rows = 0;
 		searchObject.q = queryRes.queryStr;
 		searchObject.facet = {};
 		searchObject.facet.field = [];
 		searchObject.facet.limit = -1;
+    searchObject.facet.minCount = 1;
+    searchObject.rows = 2147483647;
+		searchObject.start = 0;
+    searchObject.sort = ["score desc"];
 
 		for (let i = 0; i < queryRes.queryFields.length; i++) {
 			searchObject.facet.field.push(queryRes.queryFields[i]);

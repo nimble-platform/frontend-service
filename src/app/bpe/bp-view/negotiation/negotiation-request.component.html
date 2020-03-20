@@ -73,7 +73,7 @@
     </div>
     <div class="col-3"   *ngIf="!(processMetadata && processMetadata.isBeingUpdated)">
         <span [ngbTooltip]="validationService.extractErrorMessage(negotiationRequestForm)" [placement]="'auto'"  title="">
-            <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onSendRequest()">
+            <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onSendRequest()" singleClick>
                 <span *ngIf="!doesManufacturerOfferHasPrice() || isNegotiatingAnyTerm() || bpDataService.isFinalProcessInTheWorkflow('Negotiation')" [innerHTML]="'Send Request' | translate"></span>
                 <span *ngIf="!(!doesManufacturerOfferHasPrice() || isNegotiatingAnyTerm() || bpDataService.isFinalProcessInTheWorkflow('Negotiation'))" [innerHTML]="'Continue With Manufacturer\'s Terms' | translate"></span>
             </button>
@@ -81,7 +81,7 @@
     </div>
     <div class="col-3" *ngIf="processMetadata && processMetadata.isBeingUpdated">
         <span [ngbTooltip]="getValidationError()" [placement]="'auto'"  title="">
-            <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onUpdateRequest()">
+            <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onUpdateRequest()" singleClick>
                 <span [innerHTML]="'Update Request' | translate"></span>
             </button>
         </span>

@@ -42,7 +42,7 @@
         <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div *ngIf="!isResponseSent()" class="col-2">
-        <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.areProductsDeleted[0]" (click)="onSendResponse()">
+        <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.areProductsDeleted[0]" (click)="onSendResponse()" singleClick>
             <span [innerHTML]="'Send Response' | translate"></span>
         </button>
     </div>
