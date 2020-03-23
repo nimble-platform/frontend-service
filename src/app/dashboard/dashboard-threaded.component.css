@@ -1,27 +1,3 @@
-.thread-column-header {
-    background: rgba(0,0,0,.05);
-    border: 1px solid rgb(236, 238, 239);
-    padding: .75rem;
-    font-weight: bold;
-}
-
-.inherit-side-margins {
-    margin-left: inherit;
-    margin-right: inherit;
-}
-
-.facet {
-    margin-bottom: .75rem;
-}
-
-.facet > div:nth-of-type(n+1) {
-    cursor: pointer;
-}
-
-.facet .card-header {
-    padding: .25rem .5rem;
-}
-
 .welcome-tab a {
     padding-right: 0.5rem;
 }
@@ -33,33 +9,3 @@
   margin-right: 15px;
 }
 */
-
-.collaboration-hr {
-    margin-top: 0px;
-    margin-bottom: 0.5rem;
-}
-
-.collaboration-group-header{
-    /*
-    margin-left:15px;
-    margin-right: 15px;
-    */
-    padding-right: 1.5rem;
-    padding-left: 0px;
-    background: rgba(0,0,0,0);
-}
-
-.light-blue-backdrop {
-    background-color: #000000;
-    opacity: 0.85;
-}
-
-.thread-entry-heading {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
-}
-
-.form-control-inline {
-    width: auto;
-    min-width: 0;
-    display: inline;
-}

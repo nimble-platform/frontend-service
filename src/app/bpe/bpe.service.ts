@@ -4,7 +4,7 @@ import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import {ProcessInstance} from "./model/process-instance";
 import {BPDataService} from "./bp-view/bp-data-service";
-import {CollaborationGroupResponse} from "./model/process-instance-group-response";
+import {ProcessInstanceGroupResponse} from './model/process-instance-group-response';
 import {ProcessInstanceGroupFilter} from "./model/process-instance-group-filter";
 import {CookieService} from "ng2-cookies";
 import {Contract} from "../catalogue/model/publish/contract";
@@ -20,6 +20,7 @@ import {DocumentReference} from '../catalogue/model/publish/document-reference';
 import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
 import {FEDERATION, FEDERATIONID} from '../catalogue/model/constants';
 import {FederatedCollaborationGroupMetadata} from './model/federated-collaboration-group-metadata';
+import {CollaborationGroupResponse} from './model/collaboration-group-response';
 
 @Injectable()
 export class BPEService {
@@ -235,24 +236,10 @@ export class BPEService {
 								   categories: string[], partners: string[],status: string[],isProject:boolean): Promise<ProcessInstanceGroupFilter> {
 		let headers = this.getAuthorizedHeaders();
 
-		let url: string = `${this.url}/process-instance-groups/filters?partyId=${partyId}&collaborationRole=${collaborationRole}&archived=${archived}`;
-		if(this.delegated){
-			url = `${this.delegate_url}/process-instance-groups/filters?partyId=${partyId}&collaborationRole=${collaborationRole}&archived=${archived}&delegateId=${delegateId}`;
-		}
-		if(products.length > 0) {
-			url += '&relatedProducts=' + this.stringifyArray(products);
-		}
-		if(categories.length > 0) {
-			url += '&relatedProductCategories=' + this.stringifyArray(categories);
-		}
-		if(partners.length > 0) {
-			url += '&tradingPartnerIDs=' + this.stringifyArray(partners);
-		}
-		if(status.length > 0){
-			url += '&status='+this.stringifyArray(status);
-		}
-		if(isProject){
-		    url += '&isProject='+isProject;
+		let urlPart: string = this.constructQuery(partyId, collaborationRole, 0, 0, archived, products, categories, partners, status, isProject);
+		let url = `${this.url}/process-instance-groups/filters${urlPart}`;
+		if (this.delegated) {
+			url = `${this.delegate_url}/process-instance-groups/filters${urlPart}&delegateId=${delegateId}`;
 		}
 
 		headers.append("federationId",FEDERATIONID())
@@ -265,26 +252,10 @@ export class BPEService {
 	}
 
 	getCollaborationGroups(partyId:string,delegateId:string, collaborationRole: CollaborationRole, page: number, limit: number, archived: boolean, products: string[], categories: string[], partners: string[], status: string[], isProject?:boolean): Promise<CollaborationGroupResponse> {
-		let offset:number = page * limit;
-		let url:string = `${this.url}/collaboration-groups?partyId=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}&archived=${archived}`;
-		if(this.delegated){
-			url = `${this.delegate_url}/collaboration-groups?partyId=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}&archived=${archived}&delegateId=${delegateId}`;
-		}
-		if(products.length > 0) {
-			url += '&relatedProducts=' + this.stringifyArray(products);
-		}
-		if(categories.length > 0) {
-			url += '&relatedProductCategories=' + this.stringifyArray(categories);
-		}
-		if(partners.length > 0) {
-			url += '&tradingPartnerIDs=' + this.stringifyArray(partners);
-		}
-		if(status.length > 0){
-		    url += '&status='+this.stringifyArray(status);
-		}
-
-		if(isProject){
-		    url += '&isProject='+isProject;
+		let urlPart: string = this.constructQuery(partyId, collaborationRole, page, limit, archived, products, categories, partners, status, isProject);
+		let url = `${this.url}/collaboration-groups${urlPart}`;
+		if (this.delegated) {
+			url = `${this.delegate_url}/collaboration-groups${urlPart}&delegateId=${delegateId}`;
 		}
 
 		let headers = this.getAuthorizedHeaders();
@@ -295,6 +266,45 @@ export class BPEService {
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
+	}
+
+	getProcessInstanceGroups(partyId:string, delegateId:string, collaborationRole: CollaborationRole, page: number, limit: number, archived: boolean, products: string[], categories: string[], partners: string[], status: string[]): Promise<ProcessInstanceGroupResponse> {
+		let urlPart: string = this.constructQuery(partyId, collaborationRole, page, limit, archived, products, categories, partners, status, false);
+		let url = `${this.url}/process-instance-groups${urlPart}`;
+		if (this.delegated) {
+			url = `${this.delegate_url}/process-instance-groups${urlPart}&delegateId=${delegateId}`;
+		}
+
+		let headers = this.getAuthorizedHeaders();
+		headers.append('federationId', FEDERATIONID())
+
+		return this.http
+			.get(url, {headers: headers})
+			.toPromise()
+			.then(res => res.json())
+			.catch(this.handleError);
+	}
+
+	private constructQuery(partyId: string, collaborationRole: CollaborationRole, page: number, limit: number, archived: boolean,
+						   products: string[], categories: string[], partners: string[], status: string[], isProject: boolean): string {
+		let offset: number = page * limit;
+		let baseUrl = `?partyId=${partyId}&collaborationRole=${collaborationRole}&offset=${offset}&limit=${limit}&archived=${archived}`;
+		if (products.length > 0) {
+			baseUrl += '&relatedProducts=' + this.stringifyArray(products);
+		}
+		if (categories.length > 0) {
+			baseUrl += '&relatedProductCategories=' + this.stringifyArray(categories);
+		}
+		if (partners.length > 0) {
+			baseUrl += '&tradingPartnerIDs=' + this.stringifyArray(partners);
+		}
+		if (status.length > 0) {
+			baseUrl += '&status=' + this.stringifyArray(status);
+		}
+		if (isProject ) {
+			baseUrl += '&isProject=' + isProject;
+		}
+		return baseUrl;
 	}
 
 	getGroupDetailsForProcessInstance(processInstanceId: string,delegateId:string): Promise<CollaborationGroup> {

@@ -1,0 +1,31 @@
+.collaboration-group-header{
+    padding-right: 1.5rem;
+    padding-left: 0px;
+    background: rgba(0,0,0,0);
+}
+
+.form-control-inline {
+    width: auto;
+    min-width: 0;
+    display: inline;
+}
+
+.collaboration-hr {
+    margin-top: 0px;
+    margin-bottom: 0.5rem;
+}
+
+.collaboration-group-header{
+    /*
+    margin-left:15px;
+    margin-right: 15px;
+    */
+    padding-right: 1.5rem;
+    padding-left: 0px;
+    background: rgba(0,0,0,0);
+}
+
+.light-blue-backdrop {
+    background-color: #000000;
+    opacity: 0.85;
+}

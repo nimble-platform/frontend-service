@@ -111,7 +111,11 @@
 
     <!-- Sales and Purchase tabs -->
     <div *ngIf="selectedTab === TABS.SALES || selectedTab === TABS.PURCHASES || selectedTab === TABS.PROJECTS">
-        <groups-tab class="row" (onViewUpdatedEvent)="getTabCounters()" [instance]="instance" [selectedTab]="selectedTab"></groups-tab>
+        <collaboration-groups-tab class="row"
+                                  (onViewUpdatedEvent)="getTabCounters()"
+                                  [instance]="instance"
+                                  [selectedTab]="selectedTab">
+        </collaboration-groups-tab>
     </div>
 
     <!-- Catalogue tab -->

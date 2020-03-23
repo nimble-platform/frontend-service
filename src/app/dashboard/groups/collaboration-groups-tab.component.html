@@ -1,6 +1,7 @@
 <div class="col-12">
+    <!-- top part -->
     <!-- No data -->
-    <div class="row" *ngIf="results.resultCount === 0 && !areOrdersLoading()">
+    <div class="row" *ngIf="noDataConditionsMet()">
         <div class="col-12">
             <!-- refresh and archive buttons are not available for projects-->
             <ng-container *ngIf="queryParameters.tab !== TABS.PROJECTS">
@@ -56,7 +57,7 @@
     </div>
 
     <!-- Data -->
-    <div class="row" *ngIf="results.resultCount > 0">
+    <div class="row" *ngIf="resultsAvailable()">
         <div class="col-12">
             <div class="row space-before">
                 <div class="col-4">
@@ -71,8 +72,13 @@
                 </div>
                 <!-- Pagination Info -->
                 <div class="col-4 pagination justify-content-center">
-                    <ngb-pagination [collectionSize]="results.resultCount" [pageSize]="query.pageSize" [(page)]="query.page"
-                                    [maxSize]="query.pageSize" [boundaryLinks]="true" (pageChange)="onPageChange()">
+                    <ngb-pagination *ngIf="!isFacetFilterActive()"
+                                    [collectionSize]="collaborationGroupResults.resultCount" [pageSize]="query.pageSize" [(page)]="cgQueryPage"
+                                    [maxSize]="query.pageSize" [boundaryLinks]="true" [rotate]="true" (pageChange)="onPageChange()">
+                    </ngb-pagination>
+                    <ngb-pagination *ngIf="isFacetFilterActive()"
+                                    [collectionSize]="processInstanceGroupResults.resultCount" [pageSize]="query.pageSize" [(page)]="pigQueryPage"
+                                    [maxSize]="query.pageSize" [boundaryLinks]="true" [rotate]="true" (pageChange)="onPageChange()">
                     </ngb-pagination>
                 </div>
                 <!-- Show Archived Button, which is not available for projects -->
@@ -131,9 +137,10 @@
                 </div>
 
                 <!-- Results -->
-                <div *ngIf="results.orders" class="col-10">
-                    <h4 *ngIf="results.orders.length === 0"><span [innerHTML]="'No orders' | translate"></span>.</h4>
-                    <div *ngFor="let order of results.orders;let i=index" class="bordered space-after">
+                <!-- Collaboration groups -->
+                <div *ngIf="!isFacetFilterActive() && collaborationGroupResults.collaborationGroups" class="col-10">
+                    <h4 *ngIf="collaborationGroupResults.collaborationGroups.length === 0"><span [innerHTML]="'No orders' | translate"></span>.</h4>
+                    <div *ngFor="let order of collaborationGroupResults.collaborationGroups;let i=index" class="bordered space-after">
                         <div class="row w-100 m-0">
                             <div class="col d-flex collaboration-group-header">
                                 <div class="header-label mr-auto d-flex">
@@ -176,9 +183,9 @@
                                         <div class="modal-body">
                                             <div class="row">
                                                 <div class="col-12 pagination justify-content-center">
-                                                    <div *ngIf="results.orders" class="col-10">
-                                                        <h4 *ngIf="results.orders.length === 0"><span [innerHTML]="'No orders' | translate"></span>.</h4>
-                                                        <div *ngFor="let order of results.orders;let i=index" class="bordered space-after">
+                                                    <div *ngIf="collaborationGroupResults.collaborationGroups" class="col-10">
+                                                        <h4 *ngIf="collaborationGroupResults.collaborationGroups.length === 0"><span [innerHTML]="'No orders' | translate"></span>.</h4>
+                                                        <div *ngFor="let order of collaborationGroupResults.collaborationGroups;let i=index" class="bordered space-after">
                                                             <div>
                                                                 <div class="row w-100 m-0">
                                                                     <div class="col d-flex collaboration-group-header">
@@ -223,7 +230,7 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-12 pagination justify-content-center">
-                                                    <ngb-pagination [collectionSize]="results.resultCount" [pageSize]="query.pageSize" [(page)]="query.page"
+                                                    <ngb-pagination [collectionSize]="collaborationGroupResults.resultCount" [pageSize]="query.pageSize" [(page)]="query.page"
                                                                     [maxSize]="query.pageSize" [boundaryLinks]="true" (pageChange)="onPageChange()">
                                                     </ngb-pagination>
                                                 </div>
@@ -279,12 +286,29 @@
                         </div>
                     </div>
                 </div>
+                <div *ngIf="isFacetFilterActive() && processInstanceGroupResults?.resultCount > 0" class="col-10">
+                    <div *ngFor="let group of processInstanceGroupResults.processInstanceGroups;let i=index">
+                        <div class="space-after">
+                            <!--If Purchases tab is selected, show groups whose collaboration role is Buyer-->
+                            <thread-summary [processInstanceGroup]="group"
+                                            [collaborationGroupId]="processInstanceGroupResults.collaborationGroupIds[i]"
+                                            (threadStateUpdated)="onOrderRemovedFromView()"
+                                            (threadStateUpdatedNoChange)="onViewUpdated(true)">
+                            </thread-summary>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Pagination Info -->
             <div class="row ">
                 <div class="col pagination justify-content-center">
-                    <ngb-pagination [collectionSize]="results.resultCount" [pageSize]="query.pageSize" [(page)]="query.page"
+                    <ngb-pagination *ngIf="!isFacetFilterActive()"
+                                    [collectionSize]="collaborationGroupResults.resultCount" [pageSize]="query.pageSize" [(page)]="cgQueryPage"
+                                    [maxSize]="query.pageSize" [boundaryLinks]="true" (pageChange)="onPageChange()">
+                    </ngb-pagination>
+                    <ngb-pagination *ngIf="isFacetFilterActive()"
+                                    [collectionSize]="processInstanceGroupResults.resultCount" [pageSize]="query.pageSize" [(page)]="pigQueryPage"
                                     [maxSize]="query.pageSize" [boundaryLinks]="true" (pageChange)="onPageChange()">
                     </ngb-pagination>
                 </div>

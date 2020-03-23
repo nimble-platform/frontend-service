@@ -1,6 +1,6 @@
 import { PAGE_SIZE } from "../constants";
 
-export class DashboardOrdersQuery {
+export class DashboardQuery {
     constructor(
         public archived: boolean = false,
         public collaborationRole: "BUYER" | "SELLER" = "BUYER",
