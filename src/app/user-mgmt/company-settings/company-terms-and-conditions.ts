@@ -219,8 +219,9 @@ export class CompanyTermsAndConditions implements OnInit {
     }
 
     onRemoveClause(clause:Clause){
+        let index = this.termsAndConditions.findIndex(selectedClause => selectedClause.id == clause.id);
         // remove clause
-        this.termsAndConditions.splice(this.termsAndConditions.indexOf(clause),1);
+        this.termsAndConditions.splice(index,1);
         // update the showSection map
         this.showSection.delete(clause.id);
 
@@ -286,5 +287,15 @@ export class CompanyTermsAndConditions implements OnInit {
         for(let index = 0; index < size; index++){
             termsAndConditions[index].id = index + 1 + "_" + termsAndConditions[index].id;
         }
+    }
+
+    // check whether the given clause is selected or not
+    isClauseSelected(clauseId:string){
+        for(let clause of this.termsAndConditions){
+            if(clause.id == clauseId){
+                return true;
+            }
+        }
+        return false;
     }
 }
