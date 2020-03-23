@@ -344,7 +344,7 @@ export class ThreadSummaryComponent implements OnInit {
             processType,
             processType.replace(/[_]/gi, " "),
             processInstanceId,
-            moment(new Date(lastActivityStartTime), 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss"),
+            moment(new Date(lastActivityStartTime), 'YYYY-MM-DD HH:mm:ss.SSSZ').format("YYYY-MM-DD HH:mm:ss"),
             initialDoc.items,
             this.getCorrespondentUserId(dashboardProcessInstanceDetails,userRole,processType),
             this.getBPStatus(responseDocumentStatus),
