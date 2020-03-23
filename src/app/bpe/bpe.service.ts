@@ -272,7 +272,7 @@ export class BPEService {
 		let urlPart: string = this.constructQuery(partyId, collaborationRole, page, limit, archived, products, categories, partners, status, false);
 		let url = `${this.url}/process-instance-groups${urlPart}`;
 		if (this.delegated) {
-			url = `${this.delegate_url}/collaboration-groups${urlPart}&delegateId=${delegateId}`;
+			url = `${this.delegate_url}/process-instance-groups${urlPart}&delegateId=${delegateId}`;
 		}
 
 		let headers = this.getAuthorizedHeaders();
