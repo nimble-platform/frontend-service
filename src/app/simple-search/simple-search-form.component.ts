@@ -130,7 +130,7 @@ export class SimpleSearchFormComponent implements OnInit {
                 private categoryService: CategoryService,
                 private catalogueService: CatalogueService,
                 private publishService: PublishService,
-                private shoppingCartDataService: ShoppingCartDataService,
+                public shoppingCartDataService: ShoppingCartDataService,
                 private translateService: TranslateService,
 								private appComponent: AppComponent,
                 public route: ActivatedRoute,

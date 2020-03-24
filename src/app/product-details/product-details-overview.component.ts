@@ -80,7 +80,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
         private translate: TranslateService,
         public categoryService:CategoryService,
         public catalogueService:CatalogueService,
-        private shoppingCartDataService: ShoppingCartDataService,
+        public shoppingCartDataService: ShoppingCartDataService,
         private validationService: ValidationService,
         private modalService: NgbModal,
         private route: ActivatedRoute,

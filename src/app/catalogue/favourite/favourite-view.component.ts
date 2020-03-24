@@ -104,7 +104,7 @@ export class FavouriteViewComponent implements OnInit {
                 private categoryService: CategoryService,
                 private bpDataService: BPDataService,
                 private userService: UserService,
-				private shoppingCartDataService: ShoppingCartDataService,
+				public shoppingCartDataService: ShoppingCartDataService,
                 private route: ActivatedRoute,
 				private router: Router,
 				private translate: TranslateService) {
