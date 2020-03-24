@@ -580,7 +580,14 @@ export class UserService {
         return this.http
         .put(url, uuid, {headers: headers_token, withCredentials: true})
         .toPromise()
-        .then(() => {})
+        .then(() => {
+            // we need to remove user from the cache since this service updates the user info
+            let userId = this.cookieService.get("user_id");
+            let delegateId = FEDERATIONID();
+            if(this.mapOfUsers.has(delegateId) && this.mapOfUsers.get(delegateId).has(userId)){
+                this.mapOfUsers.get(delegateId).delete(userId);
+            }
+        })
         .catch(this.handleError)
     }
 }

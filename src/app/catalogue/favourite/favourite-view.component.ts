@@ -373,6 +373,7 @@ export class FavouriteViewComponent implements OnInit {
 				this.simpleSearchService.getFavouriteSearch(q, Object.keys(fieldLabels),this.page,this.sortOption)
 					.then(res => {
 						if (res.result.length == 0) {
+							this.hasFavourite = false;
 							this.searchFavouriteCallStatus.callback("Search done.", true);
 						}
 						else {
