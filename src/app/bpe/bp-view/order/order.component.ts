@@ -303,6 +303,13 @@ export class OrderComponent implements OnInit {
         this.bpeService.paymentDone(this.order.id,this.sellerParty.federationInstanceID).then(response => {
             this.isPaymentDone = true;
             this.submitCallStatus.callback(null,true);
+            // redirect user to purchase or sales tab according to his role
+            alert(this.translate.instant("Successfully saved. You are now getting redirected."));
+            this.router.navigate(['dashboard'], {
+                queryParams: {
+                    tab: this.processMetadata.buyer ? "PURCHASES" : "SALES",
+                }
+            });
         }).catch(error => {
             this.submitCallStatus.error("Error while processing the payment", error);
         })
