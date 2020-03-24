@@ -204,6 +204,10 @@ export class OrderItemComponent implements OnInit {
         return `${qty.value} ${qty.unitCode}`;
     }
 
+    isDeliveryPeriodSpecified():boolean{
+        return this.getLineItem().delivery[0].requestedDeliveryPeriod.durationMeasure.value != null;
+    }
+
     getDelivery():Delivery[]{
         return this.getLineItem().delivery;
     }

@@ -62,7 +62,7 @@
         </div>
         <div class="col-6">
             <div *ngIf="!areDeliveryDatesAvailable">
-                <text-input presentationMode="view" label="Delivery Period"
+                <text-input presentationMode="view" label="Delivery Period" *ngIf="isDeliveryPeriodSpecified()"
                             [text]="getDeliveryPeriodText()" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
