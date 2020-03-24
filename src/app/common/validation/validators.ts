@@ -148,7 +148,7 @@ export class ValidationService {
         if (!form.valid) {
             for (let fieldName of Object.keys(form.controls)) {
                 let control: AbstractControl = form.controls[fieldName];
-                if (!control.valid) {
+                if (control.invalid) {
                     // first remove the non alpha characters and translate
                     let labelKey: string = FORM_FIELD_PREFIX + fieldName.replace(/[^a-z_]/gi, '').toLowerCase();
                     let fieldLabel: string = this.translateService.instant(labelKey);
