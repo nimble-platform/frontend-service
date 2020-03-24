@@ -73,6 +73,9 @@ export class ProductDetailsOverviewComponent implements OnInit{
 
     zoomedImgURL = "";
 
+    // uris of the categories included in the product
+    categoryUris:string[] = [];
+
     constructor(
         private translate: TranslateService,
         public categoryService:CategoryService,
@@ -109,10 +112,9 @@ export class ProductDetailsOverviewComponent implements OnInit{
          */
         this.getClassificationNamesStatus.submit();
         let classifications = this.getClassifications();
-        let categoryUris: string[] = [];
         if(classifications.length > 0) {
             for (let classification of this.wrapper.item.commodityClassification) {
-                categoryUris.push(classification.itemClassificationCode.uri);
+                this.categoryUris.push(classification.itemClassificationCode.uri);
             }
             this.classificationNames = [];
             let manPartyId  =  UBLModelUtils.getPartyId(this.wrapper.goodsItem.item.manufacturerParty);
@@ -134,7 +136,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
                 .then(res => {})
                 .catch(error => {});
 
-            this.categoryService.getCategories(categoryUris).then(response => {
+            this.categoryService.getCategories(this.categoryUris).then(response => {
                 for(let category of response.result) {
                     this.classificationNames.push(selectNameFromLabelObject(category.label));
                     let LabelName = selectNameFromLabelObject(category.label);

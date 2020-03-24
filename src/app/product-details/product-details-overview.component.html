@@ -13,7 +13,7 @@
             {{catalogueName}}
         </span>
     </div>
-    <div *ngIf="showAddToCartButton" class="ml-auto">
+    <div *ngIf="showAddToCartButton && shoppingCartDataService.isShoppingCartButtonVisible(categoryUris)" class="ml-auto">
         <call-status class="d-inline-block mr-1" [callStatus]="shoppingCartCallStatus"></call-status>
         <button class="btn btn-primary" (click)="onAddToCart()" [disabled]="isAddCartDisabled()">
             <span class="fas fa-shopping-cart mr-1"></span>

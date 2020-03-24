@@ -698,17 +698,6 @@ export function isLogisticsService(product: CatalogueLine): boolean {
     return false;
 }
 
-export function isSearchResultLogisticsService(result: any): boolean {
-    if(result.classificationUri){
-        for(let classificationUri of result.classificationUri){
-            if(classificationUri == defaultLogisticsServiceCategoryUri || classificationUri == defaultTransportServiceCategoryUri){
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
 export function deepEquals(obj1: any, obj2: any): boolean {
 
     if(obj1 == null && obj2 == null)

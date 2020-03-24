@@ -6,7 +6,7 @@ import * as myGlobals from '../globals';
 import {SearchContextService} from "./search-context.service";
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import {copy, isSearchResultLogisticsService, roundToTwoDecimals, selectNameFromLabelObject} from '../common/utils';
+import {copy, roundToTwoDecimals, selectNameFromLabelObject} from '../common/utils';
 import { CallStatus } from '../common/call-status';
 import { CURRENCIES } from "../catalogue/model/constants";
 import { CategoryService } from '../catalogue/category/category.service';
@@ -117,14 +117,10 @@ export class SimpleSearchFormComponent implements OnInit {
     getMultilingualLabel = selectNameFromLabelObject;
     // used to get labels of the ubl properties
     ublProperties = null;
-    // service root category uris for the taxonomies. They are used to disable add cart button for services.
-    serviceRootCategories: string[];
 
     pageRef = ''; // page where the user is navigated from. empty string ('') means the search is opened directly
 
     productsSelectedForPublish: any[] = []; // keeps the products in the Solr format
-
-    isSearchResultLogisticsService=isSearchResultLogisticsService;
 
     ngUnsubscribe: Subject<void> = new Subject<void>();
     private translations:any;
@@ -145,8 +141,6 @@ export class SimpleSearchFormComponent implements OnInit {
         this.appComponent.translate.get(['Other']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
             this.translations = res;
         });
-
-        this.fetchServiceRootCategories();
 
         this.route.queryParams.subscribe(params => {
             let q = params['q'];
@@ -1561,27 +1555,6 @@ export class SimpleSearchFormComponent implements OnInit {
             return {hjid: product.uri, label: product.label};
         });
         this.router.navigate(['catalogue/publish'], {queryParams: {pg: 'single', productType: 'product', searchRef: 'true'}});
-    }
-
-    fetchServiceRootCategories(): void {
-        this.categoryService.getServiceCategoriesForAvailableTaxonomies().then(result => {
-            this.serviceRootCategories = result;
-        })
-    }
-
-    isShoppingCartButtonVisible(productResult: any): boolean {
-        if (this.serviceRootCategories == null || !this.shoppingCartDataService.cartFetched()) {
-            return false;
-        }
-
-        let productCategories: string[] = productResult.classificationUri;
-        for (let productCategory of productCategories) {
-            if (this.serviceRootCategories.findIndex(serviceCategory => serviceCategory === productCategory) !== -1) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     onAddToCart(result: any,index:number, event: any): void {

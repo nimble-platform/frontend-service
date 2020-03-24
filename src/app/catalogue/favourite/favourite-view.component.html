@@ -57,7 +57,7 @@
                                         <span [innerHTML]="'Remove' | translate"></span>
                                 </button>
 
-                                <button *ngIf="!isSearchResultLogisticsService(catLine)" class="btn btn-primary col space-after"
+                                <button *ngIf="shoppingCartDataService.isShoppingCartButtonVisible(catLine.classificationUri)" class="btn btn-primary col space-after"
                                         (click)="onAddToCart(catLine,i); $event.stopPropagation();"
                                         [disabled]="isAddCartDisabled(i, catLine)">
                                     <span class="fas fa-shopping-cart mr-1"></span>

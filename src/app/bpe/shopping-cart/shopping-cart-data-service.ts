@@ -6,6 +6,7 @@ import * as myGlobals from '../../globals';
 import {Http} from '@angular/http';
 import {CatalogueLine} from '../../catalogue/model/publish/catalogue-line';
 import {UBLModelUtils} from '../../catalogue/model/ubl-model-utils';
+import {CategoryService} from '../../catalogue/category/category.service';
 
 /**
  * Created by suat on 11-Oct-19.
@@ -18,8 +19,14 @@ export class ShoppingCartDataService {
     private url = myGlobals.bpe_endpoint;
     private addCardBehaviour: string = myGlobals.config.addCartBehaviour;
 
+    // service root category uris for the taxonomies. They are used to disable add cart button for services.
+    serviceRootCategories: string[];
+
     constructor(private cookieService: CookieService,
-                private http: Http) {}
+                private categoryService: CategoryService,
+                private http: Http) {
+        this.fetchServiceRootCategories();
+    }
 
     public addItemToCart(productHjid: string | number,quantity:number = 1,delegateId:string): Promise<Catalogue> {
         if (this.cartCatalogue == null) {
@@ -121,6 +128,26 @@ export class ShoppingCartDataService {
         if (inCart && this.addCardBehaviour === 'single') {
             return false;
         }
+        return true;
+    }
+
+    fetchServiceRootCategories(): void {
+        this.categoryService.getServiceCategoriesForAvailableTaxonomies().then(result => {
+            this.serviceRootCategories = result;
+        })
+    }
+
+    isShoppingCartButtonVisible(categoryUris:string[]): boolean {
+        if (this.serviceRootCategories == null || !this.cartFetched()) {
+            return false;
+        }
+
+        for (let categoryUri of categoryUris) {
+            if (this.serviceRootCategories.findIndex(serviceCategory => serviceCategory === categoryUri) !== -1) {
+                return false;
+            }
+        }
+
         return true;
     }
 
