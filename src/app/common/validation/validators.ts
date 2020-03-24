@@ -152,7 +152,11 @@ export class ValidationService {
                     // first remove the non alpha characters and translate
                     let labelKey: string = FORM_FIELD_PREFIX + fieldName.replace(/[^a-z_]/gi, '').toLowerCase();
                     let fieldLabel: string = this.translateService.instant(labelKey);
-                    let newPath: string = fieldPath + ' / ' + fieldLabel;
+                    let newPath: string = fieldPath;
+                    if(fieldPath != ''){
+                        newPath += ' >> ';
+                    }
+                    newPath += fieldLabel;
                     if (control instanceof FormControl) {
                         return newPath;
                     } else {
