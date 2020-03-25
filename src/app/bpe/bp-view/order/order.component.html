@@ -38,7 +38,8 @@
                 <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
                     <div class="row mb-1" *ngFor="let code of epcCodes.codes; let i = index; trackBy:trackByFn">
                         <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
-                            <input type="text" class="form-control" [(ngModel)]="epcCodes.codes[i]" [disabled]="isBuyer()">
+                            <input *ngIf="isSeller()" type="text" class="form-control" [(ngModel)]="epcCodes.codes[i]">
+                            <label *ngIf="isBuyer()">{{epcCodes.codes[i]}}</label>
                         </div>
                         <div class="col-3" *ngIf="isSeller()">
                             <button class="btn btn-danger w-100" (click)="onDeleteEpcCode(i)"><span [innerHTML]="'Delete' | translate"></span></button>
