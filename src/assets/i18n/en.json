@@ -746,6 +746,8 @@
 	"Business Location Information": "Business Location Information",
 	"Site": "Site",
 	"IoT Information": "IoT Information",
+	"Invoice": "Invoice",
+	"Invoice Id": "Invoice Id",
 	"Overview": "Overview",
 	"Previous Event": "Previous Event",
 	"Current Event": "Current Event",

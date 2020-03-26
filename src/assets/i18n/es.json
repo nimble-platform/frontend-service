@@ -746,6 +746,8 @@
 	"Business Location Information": "Información sobre Ubicación de la Empresa",
 	"Site": "Web",
 	"IoT Information": "Información IoT",
+	"Invoice": "Factura",
+	"Invoice Id": "ID de Factura",
 	"Overview": "Resumen",
 	"Previous Event": "Evento Anterior",
 	"Current Event": "Evento Actual",

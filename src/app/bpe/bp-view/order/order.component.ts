@@ -30,6 +30,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
 import {CatalogueLine} from '../../../catalogue/model/publish/catalogue-line';
 import {Item} from '../../../catalogue/model/publish/item';
+import {Invoice} from '../../../catalogue/model/publish/invoice';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -55,6 +56,7 @@ export class OrderComponent implements OnInit {
     buyerParty: Party;
     sellerParty: Party;
     isPaymentDone: boolean = false;
+    invoice:Invoice = null;
 
     epcCodes: EpcCodes;
     savedEpcCodes: EpcCodes;
@@ -136,12 +138,14 @@ export class OrderComponent implements OnInit {
                 this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId,this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID),
                 this.userService.getParty(buyerId),
                 this.userService.getParty(sellerId,this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID),
-                this.bpeService.isPaymentDone(this.order.id,this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID)
+                this.bpeService.isPaymentDone(this.order.id,this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID),
+                this.bpeService.getInvoice(this.order.id)
             ])
-                .then(([contract, buyerParty, sellerParty,isPaymentDone]) => {
+                .then(([contract, buyerParty, sellerParty,isPaymentDone,invoice]) => {
                     this.buyerParty = buyerParty;
                     this.sellerParty = sellerParty;
                     this.isPaymentDone = isPaymentDone == "true";
+                    this.invoice = invoice;
                     this.order.contract.push(contract);
                     this.initCallStatus.callback("Initialized", true);
 
@@ -434,6 +438,13 @@ export class OrderComponent implements OnInit {
 
     isEpcTabShown(): boolean {
         return this.isReady() && this.isOrderCompleted() && this.config.showTrack;
+    }
+
+    isInvoiceTabShown(): boolean {
+        if(this.invoice && this.invoice.id != null && this.invoice.originatorDocumentReference != null && this.invoice.originatorDocumentReference.length > 0 && this.invoice.originatorDocumentReference[0].id != null){
+            return true;
+        }
+        return false;
     }
 
     isDispatchDisabled(): boolean {

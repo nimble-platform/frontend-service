@@ -345,6 +345,16 @@ export class BPEService {
 			.catch(this.handleError);
 	}
 
+	getInvoice(orderId: string): Promise<any> {
+		let headers = this.getAuthorizedHeaders();
+		let url = `${this.url}/invoice/${orderId}`;
+		return this.http
+			.get(url,  {headers: headers})
+			.toPromise()
+			.then(res =>res.json())
+			.catch(this.handleError);
+	}
+
 	getDashboardProcessInstanceDetails(processInstanceId:string,delegateId:string): Promise<DashboardProcessInstanceDetails>{
         let url:string = `${this.url}/processInstance/${processInstanceId}/details?delegateId=${delegateId}`;
         if(this.delegated){

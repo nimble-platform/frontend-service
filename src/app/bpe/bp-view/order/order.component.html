@@ -5,6 +5,7 @@
     <div class="ml-2">
         <div class="row mb-4 mt-4">
             <div *ngIf="isEpcTabShown()" class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'TRACK_AND_TRACE'}" (click)="selectedPanel = 'TRACK_AND_TRACE'"><span [innerHTML]="'Track and Trace' | translate"></span></div>
+            <div *ngIf="isInvoiceTabShown()" class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'INVOICE'}" (click)="selectedPanel = 'INVOICE'"><span [innerHTML]="'Invoice' | translate"></span></div>
             <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'NOTES_AND_FILES'}" (click)="selectedPanel = 'NOTES_AND_FILES'"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>
             <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'PURCHASE_ORDER'}" (click)="selectedPanel = 'PURCHASE_ORDER'"><span [innerHTML]="'Purchase Order' | translate"></span></div>
         </div>
@@ -92,6 +93,18 @@
                 </div>
             </div>
             <call-status [large]="true" [callStatus]="updateOrderResponseCallStatus"></call-status>
+        </div>
+    </ng-container>
+
+    <!-- Invoice -->
+    <ng-container *ngIf="selectedPanel == 'INVOICE'">
+        <div class="row">
+            <div class="col-1">
+                <strong class="font-weight-500"><label><span [innerHTML]="'Invoice Id' | translate"></span></label></strong>
+            </div>
+            <div class="col-11">
+                <a href="{{invoice.originatorDocumentReference[0].id}}">{{invoice.id}}</a>
+            </div>
         </div>
     </ng-container>
 
