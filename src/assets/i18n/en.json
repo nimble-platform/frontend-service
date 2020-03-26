@@ -839,6 +839,7 @@
 	"Publish & Exit": "Publish & Exit",
 	"validation_error_invalid_period": "Invalid period. The value must be between {{start}} and {{end}}",
 	"validation_error_invalid_space": "Preceding or trailing space character",
+	"validation_error_max": "The field should be equal to or less than {{max}}",
 	"validation_error_min": "The field should be equal to or larger than {{min}}",
 	"validation_error_multiple": "The field should be a multiple of {{step}}. Closest values are: {{minClosest}} and {{maxClosest}}",
 	"validation_error_required": "This field is required",

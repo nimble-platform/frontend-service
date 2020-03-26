@@ -10,6 +10,7 @@
                        [(ngModel)]="amount"
                        [formControl]="amountFormControl"
                        [disabled]="disabled"
+                       [max]="maxValue"
                        [ngbTooltip]="validationService.getValidationErrorMessage(amountFormControl)" [placement]="'auto'"  title=""
                        [placeholder]="placeholder">
             </div>

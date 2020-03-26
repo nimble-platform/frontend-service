@@ -7,6 +7,7 @@ import {PeriodRange} from '../../user-mgmt/model/period-range';
 // validator constants
 export const VALIDATION_ERROR_MULTIPLE = 'multiple';
 export const VALIDATION_ERROR_MIN = 'min';
+export const VALIDATION_ERROR_MAX = 'max';
 export const VALIDATION_INVALID_PERIOD = 'invalid_period';
 export const VALIDATION_INVALID_SPACE = 'invalid_space';
 export const VALIDATION_REQUIRED = 'required';
@@ -115,6 +116,11 @@ export class ValidationService {
                     let formData: any = formControl.errors[VALIDATION_ERROR_MIN];
                     return this.translateService.instant(VALIDATION_ERROR_PREFIX + VALIDATION_ERROR_MIN,
                         {min: formData.min});
+                }
+                case VALIDATION_ERROR_MAX: {
+                    let formData: any = formControl.errors[VALIDATION_ERROR_MAX];
+                    return this.translateService.instant(VALIDATION_ERROR_PREFIX + VALIDATION_ERROR_MAX,
+                        {max: formData.max});
                 }
                 case VALIDATION_REQUIRED: {
                     return this.translateService.instant(VALIDATION_ERROR_PREFIX + VALIDATION_REQUIRED);

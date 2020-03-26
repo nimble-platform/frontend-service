@@ -694,4 +694,26 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
         this.orderQuantityFormControl = new FormControl(this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.quantity.value, validators);
         this.addToCurrentForm(ORDER_QUANTITY_NUMBER_FIELD_NAME, this.orderQuantityFormControl);
     }
+
+    // calculates the max quantity value for each delivery date
+    getMaxQuantityForDeliveryDates(index:number){
+        let quantity = this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.quantity.value;
+
+        if(index == 0){
+            return quantity;
+        }
+
+        let totalQuantityToBeDelivered:number = 0;
+        for(let i=0; i<index;i++){
+            if(this.wrapper.rfqDelivery[i].shipment.goodsItem[0].quantity.value){
+                totalQuantityToBeDelivered += this.wrapper.rfqDelivery[i].shipment.goodsItem[0].quantity.value;
+            }
+        }
+
+        if(totalQuantityToBeDelivered > quantity){
+            return 0;
+        }
+
+        return quantity-totalQuantityToBeDelivered;
+    }
 }

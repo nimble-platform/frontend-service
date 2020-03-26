@@ -408,6 +408,7 @@
                                                         [disabled]="isLoading() || isReadOnly()"
                                                         [required]="true"
                                                         [parentForm]="formGroup"
+                                                        [maxValue]="getMaxQuantityForDeliveryDates(i)"
                                                         [formFieldName]="'delivery_quantity'"
                                                         [componentIndex]="i">
                                     </plain-amount-input>
