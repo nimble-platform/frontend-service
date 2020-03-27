@@ -220,7 +220,10 @@ export class CompanyRegistrationComponent implements OnInit {
                             this.appComponent.checkLogin("/user-mgmt/company-settings");
                         })
                         .catch(error => {
-                            this.submitCallStatus.error("Error while submitting company", error);
+                            //this.submitCallStatus.error("Error while submitting company", error);
+							this.submitCallStatus.callback("Registration submitted", true);
+							alert("Your registration was successful but an error occurred while uploading your logo.\nYou will now get redirected to your 'Company Settings' page.\nPlease retry uploading your logo in the 'Company Details' tab there later.");
+							this.appComponent.checkLogin("/user-mgmt/company-settings");
                         });
                 } else {
                     this.submitCallStatus.callback("Registration submitted", true);
