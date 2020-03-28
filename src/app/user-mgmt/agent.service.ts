@@ -32,10 +32,28 @@ export class AgentService {
             .catch(this.handleError);
     }
 
-    createBuyingAgent(sellingAgent: any): Promise<any> {
-        const url = `${this.url}/createSellingAgent`;
+    updateSellingAgent(sellingAgent: any): Promise<any> {
+        const url = `${this.url}/updateSellingAgent`;
         return this.http
             .post(url, JSON.stringify(sellingAgent), {headers: this.basic_header})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    createBuyingAgent(buyingAgent: any): Promise<any> {
+        const url = `${this.url}/createBuyingAgent`;
+        return this.http
+            .post(url, JSON.stringify(buyingAgent), {headers: this.basic_header})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    updateBuyingAgent(buyingAgent: any): Promise<any> {
+        const url = `${this.url}/updateBuyingAgent`;
+        return this.http
+            .post(url, JSON.stringify(buyingAgent), {headers: this.basic_header})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -77,7 +95,7 @@ export class AgentService {
     }
 
     deactivateSellingAgent(deactivateSellingAgent): Promise<any> {
-        const url = `${this.url}/activateSellingAgent`;
+        const url = `${this.url}/deactivateSellingAgent`;
         return this.http
             .post(url, JSON.stringify(deactivateSellingAgent), {headers: this.basic_header})
             .toPromise()
@@ -104,12 +122,7 @@ export class AgentService {
     }
 
     deleteAgent(agentID, agentType): Promise<any> {
-        let url = '';
-        if (agentType === this.BUYING_AGENT) {
-            url = `${this.url}/deleteBuyingAgent`;
-        }else if (agentType === this.SELLING_AGENT) {
-            url = `${this.url}/deleteSellingAgent`;
-        }
+        let url = `${this.url}/deleteAgent`;
         return this.http
             .post(url, JSON.stringify({id: agentID, agentType: agentType}), {headers: this.basic_header})
             .toPromise()
