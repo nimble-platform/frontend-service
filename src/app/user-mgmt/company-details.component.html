@@ -231,9 +231,9 @@
                         <th><span [innerHTML]="'Options' | translate"></span></th>
                     </tr>
                     <tr *ngFor="let inv of agentList">
-                        <td>{{inv.name}}</td>
+                        <td>{{inv.agentName}}</td>
                         <td>
-                            {{inv.transaction}}
+                            {{inv.noOfTransactions}}
                         </td>
                         <td>
                             <span *ngIf="inv.isActive" class="badge badge-success"><span [innerHTML]="'Active' | translate"></span></span>
@@ -244,9 +244,7 @@
                         </td>
                         <td>
                             <button class="btn btn-success btn-sm"><span [innerHTML]="'View Orders' | translate"></span></button>
-                            <!--<button class="btn btn-primary btn-sm"><span [innerHTML]="'Edit' | translate"></span></button>-->
-                            <!--<button class="btn btn-danger btn-sm" ><span [innerHTML]="'Delete' | translate"></span></button>-->
-                            <button *ngIf="inv.isActive" class="btn btn-danger btn-sm ml-2"><span [innerHTML]="'Deactivate' | translate"></span></button>
+                            <button *ngIf="inv.isActive" class="btn btn-danger btn-sm ml-2" (click)="deactivateSA(inv.id)"><span [innerHTML]="'Deactivate' | translate"></span></button>
                         </td>
                     </tr>
                 </table>
@@ -283,9 +281,9 @@
                         <th><span [innerHTML]="'Options' | translate"></span></th>
                     </tr>
                     <tr *ngFor="let inv of buyingAgentList">
-                        <td>{{inv.name}}</td>
+                        <td>{{inv.agentName}}</td>
                         <td>
-                            {{inv.transaction}}
+                            {{inv.noOfTransactions}}
                         </td>
                         <td>
                             <span *ngIf="inv.isActive" class="badge badge-success"><span [innerHTML]="'Active' | translate"></span></span>
@@ -296,9 +294,7 @@
                         </td>
                         <td>
                             <button class="btn btn-success btn-sm"><span [innerHTML]="'View Orders' | translate"></span></button>
-                            <!--<button class="btn btn-primary btn-sm"><span [innerHTML]="'Edit' | translate"></span></button>-->
-                            <!--<button class="btn btn-danger btn-sm" ><span [innerHTML]="'Delete' | translate"></span></button>-->
-                            <button *ngIf="inv.isActive" class="btn btn-danger btn-sm ml-2"><span [innerHTML]="'Deactivate' | translate"></span></button>
+                            <button *ngIf="inv.isActive" class="btn btn-danger btn-sm ml-2" (click)="deactivateBA(inv.id)"><span [innerHTML]="'Deactivate' | translate"></span></button>
                         </td>
                     </tr>
                 </table>

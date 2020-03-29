@@ -164,7 +164,7 @@ export class AgentsComponent implements OnInit {
         this.sellingAgentForm.get("maxVolumeUnit").setValue(agent.maxVolume.unit);
         this.sellingAgentForm.get("maxNoOneToOne").setValue(Number(agent.maxNoOneToOne.value));
         this.sellingAgentForm.get("maxNoOneToOneUnit").setValue(agent.maxNoOneToOne.unit);
-        this.sellingAgentForm.get("productNames").setValue(agent.productNames);
+        this.sellingAgentForm.get("productNames").setValue(agent.productNames.join(';'));
         this.sellingAgentForm.get("maxNoContractPerDay").setValue(Number(agent.maxNoContractPerDay));
         // show the create form
         this.showCreateSellingAgent = true;
@@ -294,6 +294,7 @@ export class AgentsComponent implements OnInit {
 
     submitSellingAgent(){
         let sellingAgentData = {
+            id: '',
             companyID: this.cookieService.get("company_id"),
             name: this.f.agentName.value,
             maxContractAmount: {
@@ -320,31 +321,30 @@ export class AgentsComponent implements OnInit {
             maxNoContractPerDay: this.f.maxNoContractPerDay.value,
         };
 
-        let id = this.f.agentName.value;
-        let agentFunc;
-        if (id != null || id.trim() !== '') {
-            agentFunc = this.agentService
+        // If an id is avaiable for the agent update the agent
+        if (this.f.id.value != null && this.f.id.value.trim() != '') {
+            sellingAgentData.id = this.f.id.value;
+            this.agentService.updateSellingAgent(sellingAgentData).then((res) => {
+                this.showCreateBuyingAgent = false;
+                this.getAllSellingAgents();
+                this.showSuccessAlert('Agent has been successfully updated!');
+            }).catch((err) => {
+                this.showFailureAlert('Failed to update the agent!');
+            }).then(() => {
+                this.closeModal();
+            })
+        }else{
+            // create a new agent
+            this.agentService.createBuyingAgent(sellingAgentData).then((res) => {
+                this.showCreateBuyingAgent = false;
+                this.getAllSellingAgents();
+                this.showSuccessAlert('The agent has been created!');
+            }).catch((err) => {
+                this.showFailureAlert('Failed to create the buying agent!');
+            }).then(() => {
+                this.closeModal();
+            })
         }
-        this.agentService.createSellingAgent(sellingAgentData).then((res) => {
-            this.showCreateSellingAgent = false;
-            this.getAllSellingAgents();
-            this.closeModal();
-            Swal.fire({
-                title: 'Success!',
-                showConfirmButton: false,
-                timer: 2000,
-                text: 'The agent has been created!',
-                icon: 'success',
-            });
-        }).catch((err) => {
-            Swal.fire({
-                title: 'Failed!',
-                showConfirmButton: false,
-                timer: 2000,
-                text: 'Failed to create the selling agent!',
-                icon: 'error',
-            });
-        });
     }
 
     onSelectTab(event: any, id: any) {
@@ -391,24 +391,27 @@ export class AgentsComponent implements OnInit {
     }
 
     activateBA(id) {
-        this.agentService.activateBuyingAgent({agentID: id});
-        this.refreshAgents();
-        this.getAllBuyingAgents();
+        this.agentService.activateBuyingAgent({agentID: id}).then(() => {
+            this.getAllBuyingAgents();
+        });
     }
 
     deactivateBA(id) {
-        this.agentService.deactivateBuyingAgent({agentID: id});
-        this.getAllBuyingAgents();
+        this.agentService.deactivateBuyingAgent({agentID: id}).then(() => {
+            this.getAllBuyingAgents();
+        });
     }
 
     activateSA(id) {
-        this.agentService.activateSellingAgent({agentID: id});
-        this.getAllSellingAgents();
+        this.agentService.activateSellingAgent({agentID: id}).then(() => {
+            this.getAllSellingAgents();
+        });
     }
 
     deactivateSA(id) {
-        this.agentService.deactivateSellingAgent({agentID: id});
-        this.getAllSellingAgents();
+        this.agentService.deactivateSellingAgent({agentID: id}).then(() => {
+            this.getAllSellingAgents();
+        });
     }
 
     deleteAgent(id, agentType) {
@@ -451,7 +454,7 @@ export class AgentsComponent implements OnInit {
                 maxFulfillmentTime: {value: this.getRandomInt(20), unit: 'day'},
                 maxVolume: {value: this.getRandomInt(50000), unit: 'day'},
                 maxNoOneToOne: {value: this.getRandomInt(5), unit: 'week'},
-                productNames: 'ff1c8a90-6248-494d-8d12-4292c7b40185',
+                productNames: ['ff1c8a90-6248-494d-8d12-4292c7b40185'],
                 maxNoContractPerDay: this.getRandomInt(5)
             };
 
@@ -474,7 +477,7 @@ export class AgentsComponent implements OnInit {
                 maxFulfillmentTime: {value: this.getRandomInt(20), unit: 'day'},
                 maxVolume: {value: this.getRandomInt(50000), unit: 'day'},
                 maxNoOneToOne: {value: this.getRandomInt(5), unit: 'week'},
-                productNames: 'ff1c8a90-6248-494d-8d12-4292c7b40185',
+                productNames: ['ff1c8a90-6248-494d-8d12-4292c7b40185'],
                 maxNoContractPerDay: this.getRandomInt(5)
             };
         }

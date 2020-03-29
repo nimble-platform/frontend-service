@@ -180,6 +180,19 @@ export class CompanyDetailsComponent implements OnInit {
 
     }
 
+    deactivateBA(id) {
+        this.agentService.deactivateBuyingAgent({agentID: id}).then(() => {
+            this.getAllBuyingAgents(this.party.partyId);
+        });
+    }
+
+
+    deactivateSA(id) {
+        this.agentService.deactivateSellingAgent({agentID: id}).then(() => {
+            this.getAllSellingAgents(this.party.partyId);
+        });
+    }
+
     onSelectTab(event: any, id: any) {
         event.preventDefault();
         this.selectedTab = id;
