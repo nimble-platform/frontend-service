@@ -338,7 +338,9 @@ export class SimpleSearchService {
         "queryFields": []
       };
     }
-    query = query.replace(/[!'()]/g, '');
+    //query = query.replace(/[!'()]/g, '');
+    query = this.escapeLucene(query);
+    query = this.escapeLogic(query);
     query = query.trim();
     let splitQuery = [];
     if (full)
@@ -428,6 +430,19 @@ export class SimpleSearchService {
       "queryArr": queryArr,
       "queryFields": queryFields
     };
+  }
+
+  escapeLogic(value) {
+    value = value.replace(/ AND /g, ' * ');
+    value = value.replace(/ OR /g, ' * ');
+    value = value.replace(/ NOT /g, ' * ');
+    return value;
+  }
+
+  escapeLucene(value) {
+    var specials = ['+', '-', '&', '!', '(', ')', '{', '}', '[', ']', '^', '"', '~', '*', '?', ':', '\\'];
+    var regexp = new RegExp("(\\" + specials.join("|\\") + ")", "g");
+    return value.replace(regexp, "\\$1");
   }
 
 	checkField(field:string): boolean {

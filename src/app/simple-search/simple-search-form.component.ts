@@ -1413,6 +1413,12 @@ export class SimpleSearchFormComponent implements OnInit {
         this.get(this.objToSubmit);
     }
 
+		resetSearch() {
+			this.model.q = '*';
+			this.objToSubmit.q = '*';
+			this.get(this.objToSubmit);
+		}
+
     checkFacet(outer: string, inner: string): boolean {
         var match = false;
         var fq = outer + ":\"" + inner + "\"";

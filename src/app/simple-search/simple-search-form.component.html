@@ -105,7 +105,8 @@
 
 			<div class="row">
 				<div *ngIf="size==0" class="col-12">
-					<span [innerHTML]="'No search results' | translate"></span>
+					<span [innerHTML]="'No search results' | translate"></span><br/>
+					<button class="btn btn-secondary mt-2 mb-2" (click)="resetSearch()"><span [innerHTML]="'Reset Search' | translate"></span></button>
 				</div>
 				<div *ngIf="size>0" class="col-4">
 					<span [innerHTML]="'Showing results' | translate"></span> {{ start }} - {{ end }} <span [innerHTML]="'of' | translate"></span> {{ size }}
