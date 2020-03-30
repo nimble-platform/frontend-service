@@ -262,6 +262,7 @@ export class AgentsComponent implements OnInit {
             // create a new agent
             this.agentService.createBuyingAgent(buyingAgentData).then((res) => {
                 this.showCreateBuyingAgent = false;
+                this.showEmptyPageBA = false;
                 this.getAllBuyingAgents();
                 this.showSuccessAlert('The agent has been created!');
             }).catch((err) => {
@@ -337,6 +338,7 @@ export class AgentsComponent implements OnInit {
             // create a new agent
             this.agentService.createBuyingAgent(sellingAgentData).then((res) => {
                 this.showCreateBuyingAgent = false;
+                this.showEmptyPageSA = false;
                 this.getAllSellingAgents();
                 this.showSuccessAlert('The agent has been created!');
             }).catch((err) => {

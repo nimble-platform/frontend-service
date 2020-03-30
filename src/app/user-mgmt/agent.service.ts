@@ -121,6 +121,19 @@ export class AgentService {
             .catch(this.handleError);
     }
 
+    deactivateAllAgents(id): Promise<any> {
+        let ownerCompanyId = id;
+        if (id === undefined) {
+            ownerCompanyId = this.cookieService.get("company_id");
+        }
+        const url = `${this.url}/deactivateAllAgents/${ownerCompanyId}`;
+        return this.http
+            .post(url, {}, {headers: this.basic_header})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
     deleteAgent(agentID, agentType): Promise<any> {
         let url = `${this.url}/deleteAgent`;
         return this.http

@@ -38,7 +38,7 @@ export class CompanyDetailsComponent implements OnInit {
     buyingAgentList = [];
     selectedTab: SelectedTab = "BUYING_AGENT";
 
-    showAgents = this.config.showAgent
+    showAgents = this.config.showAgent;
     showEmptyPageSA = false;
     showEmptyPageBA = false;
 
@@ -177,7 +177,10 @@ export class CompanyDetailsComponent implements OnInit {
     }
 
     deactivateAllAgents() {
-
+        this.agentService.deactivateAllAgents({id: this.party.partyId}).then(() => {
+            this.getAllSellingAgents(this.party.partyId);
+            this.getAllBuyingAgents(this.party.partyId);
+        });
     }
 
     deactivateBA(id) {
