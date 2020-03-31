@@ -61,37 +61,40 @@
 <hr class="actions-hr">
 
 <!-- Actions -->
-<div *ngIf="!showRequestedPrice()" class="d-flex justify-content-end actions-row">
-    <div class="col-3 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-    <div class="col-4">
-        <div class="price-col"><span [innerHTML]="'Net Price' | translate"></span>: {{ getTotalPriceString()}}</div>
-        <div *ngIf="config.vatEnabled" class="price-col"><span [innerHTML]="'VAT' | translate"></span>: {{ getVatTotalString()}}</div>
-        <div *ngIf="config.vatEnabled" class="price-col"><span [innerHTML]="'Gross Total' | translate"></span>: {{ getGrossTotalString() }}</div>
-    </div>
-    <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
-    </div>
-    <div class="col-3"   *ngIf="!(processMetadata && processMetadata.isBeingUpdated)">
+<!-- Action buttons are only displayed for the last product -->
+<ng-container *ngIf="selectedLineIndex == catalogueLines.length-1">
+    <div *ngIf="!showRequestedPrice()" class="d-flex justify-content-end actions-row">
+        <div class="col-3 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-4">
+            <div class="price-col"><span [innerHTML]="'Net Price' | translate"></span>: {{ getTotalPriceString()}}</div>
+            <div *ngIf="config.vatEnabled" class="price-col"><span [innerHTML]="'VAT' | translate"></span>: {{ getVatTotalString()}}</div>
+            <div *ngIf="config.vatEnabled" class="price-col"><span [innerHTML]="'Gross Total' | translate"></span>: {{ getGrossTotalString() }}</div>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
+        </div>
+        <div class="col-3"   *ngIf="!(processMetadata && processMetadata.isBeingUpdated)">
         <span [ngbTooltip]="validationService.extractErrorMessage(negotiationRequestForm)" [placement]="'auto'"  title="">
             <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onSendRequest()" singleClick>
                 <span *ngIf="!doesManufacturerOfferHasPrice() || isNegotiatingAnyTerm() || bpDataService.isFinalProcessInTheWorkflow('Negotiation')" [innerHTML]="'Send Request' | translate"></span>
                 <span *ngIf="!(!doesManufacturerOfferHasPrice() || isNegotiatingAnyTerm() || bpDataService.isFinalProcessInTheWorkflow('Negotiation'))" [innerHTML]="'Continue With Manufacturer\'s Terms' | translate"></span>
             </button>
         </span>
-    </div>
-    <div class="col-3" *ngIf="processMetadata && processMetadata.isBeingUpdated">
+        </div>
+        <div class="col-3" *ngIf="processMetadata && processMetadata.isBeingUpdated">
         <span [ngbTooltip]="getValidationError()" [placement]="'auto'"  title="">
             <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onUpdateRequest()" singleClick>
                 <span [innerHTML]="'Update Request' | translate"></span>
             </button>
         </span>
+        </div>
     </div>
-</div>
 
-<div *ngIf="showRequestedPrice()" class="row actions-row">
-    <div class="col-6"></div>
-    <div class="col-4 price-col"><span [innerHTML]="'Requested Price' | translate"></span>: {{  getGrossTotalString() }}</div>
-    <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+    <div *ngIf="showRequestedPrice()" class="row actions-row">
+        <div class="col-6"></div>
+        <div class="col-4 price-col"><span [innerHTML]="'Requested Price' | translate"></span>: {{  getGrossTotalString() }}</div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+        </div>
     </div>
-</div>
+</ng-container>

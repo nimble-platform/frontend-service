@@ -1,12 +1,13 @@
 <ng-container *ngIf="wrappers">
-    <div class="row">
-        <div class="col-6">
+    <div>
+        <!-- Products -->
+        <div>
             <!-- Title -->
             <h2 class="nimble-title">
                 <span [innerHTML]="'Order for' | translate"></span>:
             </h2>
             <ng-container *ngFor="let line of lines;let i=index">
-                <h2><div class="btn btn-outline-primary btn-light inline" [ngClass]="{'active':selectedLineIndex == i}" (click)="selectedLineIndex=i;viewedProcessDetails[selectedLineIndex]=true">{{ line.goodsItem.item.name[0].value }}</div>
+                <h2><div class="btn btn-outline-primary btn-light inline" [ngClass]="{'active':selectedLines[i]}" (click)="viewedProcessDetails[i]=true;onToggleSelectedLine(i)">{{ line.goodsItem.item.name[0].value }}</div>
                     <button class="btn btn-outline-dark inline ml-2" (click)="onToggleProductExpanded(i)">
                         <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="productsExpanded[i]"></i>
                         <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!productsExpanded[i]"></i>
@@ -28,65 +29,83 @@
                         <i *ngIf="!viewedProcessDetails[i]" class="fas fa-times small-icon" [title]="getTitleForTimesIcon()"></i>
                     </span>
                 </h2>
+
+                <!-- Product Details Panel -->
+                <product-details-tabs *ngIf="productsExpanded[i]" [wrapper]="wrappers[i]" [showOverview]="true" [isCatalogueLineDeleted]="areCatalogueLinesDeleted[i]"
+                                      [settings]="settings" [itemWithSelectedProps]="productWithSelectedProperties" [readonly]="true">
+                </product-details-tabs>
+
+                <!-- BP Steps -->
+                <product-bp-steps *ngIf="!serviceLines && ((currentStep !== 'Fulfilment' && selectedLines[i]) || (currentStep === 'Fulfilment' && i == lines.length-1))"
+                                  [currentStep]="currentStep" [status]="getStepsStatus()"
+                                  [statusText]="getStepsStatusText()" [displayMode]="stepsDisplayMode">
+                </product-bp-steps>
+
+                <hr class="mb-3">
+
+                <!-- Order Content -->
+                <ppap *ngIf="currentStep === 'Ppap'" [isCatalogueLineDeleted]="areCatalogueLinesDeleted[0]">
+                </ppap>
+                <negotiation *ngIf="currentStep === 'Negotiation' && selectedLines[i]" [areCatalogueLinesDeleted]="areCatalogueLinesDeleted"
+                             [areProcessDetailsViewedForAllProducts]="areProcessDetailsViewedForAllProducts()"
+                             [selectedLineIndex]="i">
+                </negotiation>
+                <order *ngIf="(currentStep === 'Order' || currentStep === 'Order_Processed') && selectedLines[i]" [selectedLineIndex]="i"
+                       [areProcessDetailsViewedForAllProducts]="areProcessDetailsViewedForAllProducts()">
+                </order>
+
+                <!--  For Item_Information_Request,Transport_Negotiation and Transport_Order steps, we could have associated transport services, therefore, we should only display these steps in the product section-->
+                <!--  iff there is no associated transport services.-->
+                <ng-container *ngIf="!serviceLines">
+                    <item-information *ngIf="currentStep === 'Item_Information_Request' || currentStep === 'Transport_Information_Request'">
+                    </item-information>
+                    <transport-negotiation *ngIf="currentStep === 'Transport_Negotiation'">
+                    </transport-negotiation>
+                    <transport-execution-plan *ngIf="currentStep === 'Transport_Order' || currentStep === 'Transport_Order_Confirmed'">
+                    </transport-execution-plan>
+                </ng-container>
             </ng-container>
-        </div>
-        <div *ngIf="serviceLines" class="col-6 title-right">
-            <!-- Transport Service Title -->
-            <h2 class="nimble-title">
-                <span [innerHTML]="'Transport service' | translate"></span>:
-            </h2>
-            <ng-container *ngFor="let serviceLine of serviceLines;let i=index">
-                <h2>{{ serviceLine.goodsItem.item.name[0].value }}
-                    <button class="btn btn-outline-dark inline ml-2" (click)="onToggleServiceExpanded()">
-                        <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="serviceExpanded"></i>
-                        <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!serviceExpanded"></i>
-                        <span class="inline" *ngIf="!serviceExpanded"><small><span [innerHTML]="'Show Details' | translate"></span></small></span>
-                        <span class="inline" *ngIf="serviceExpanded"><small><span [innerHTML]="'Hide Details' | translate"></span></small></span>
-                    </button>
-                </h2>
+            <ng-container *ngIf="serviceLines">
+                <div>
+                    <!-- Transport Service Title -->
+                    <h2 class="nimble-title">
+                        <span [innerHTML]="'Transport service' | translate"></span>:
+                    </h2>
+                    <ng-container *ngFor="let serviceLine of serviceLines;let i=index">
+                        <h2>{{ serviceLine.goodsItem.item.name[0].value }}
+                            <button class="btn btn-outline-dark inline ml-2" (click)="onToggleServiceExpanded()">
+                                <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="serviceExpanded"></i>
+                                <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!serviceExpanded"></i>
+                                <span class="inline" *ngIf="!serviceExpanded"><small><span [innerHTML]="'Show Details' | translate"></span></small></span>
+                                <span class="inline" *ngIf="serviceExpanded"><small><span [innerHTML]="'Hide Details' | translate"></span></small></span>
+                            </button>
+                        </h2>
+                    </ng-container>
+                    <!-- Service Details Panel -->
+                    <ng-container *ngFor="let serviceWrapper of serviceWrappers;let i=index">
+                        <product-details-tabs *ngIf="serviceExpanded" [wrapper]="serviceWrapper" [showOverview]="true" [isCatalogueLineDeleted]="areCatalogueLinesDeleted[i]"
+                                              [settings]="serviceSettings" [itemWithSelectedProps]="serviceWithSelectedProperties" [readonly]="true">
+                        </product-details-tabs>
+                    </ng-container>
+
+                    <!-- BP Steps -->
+                    <product-bp-steps *ngIf="(currentStep !== 'Fulfilment' && selectedLines[i]) || (currentStep === 'Fulfilment' && i == lines.length-1)"
+                                      [currentStep]="currentStep" [status]="getStepsStatus()"
+                                      [statusText]="getStepsStatusText()" [displayMode]="stepsDisplayMode">
+                    </product-bp-steps>
+
+                    <item-information *ngIf="currentStep === 'Item_Information_Request' || currentStep === 'Transport_Information_Request'">
+                    </item-information>
+                    <transport-negotiation *ngIf="currentStep === 'Transport_Negotiation'">
+                    </transport-negotiation>
+                    <transport-execution-plan *ngIf="currentStep === 'Transport_Order' || currentStep === 'Transport_Order_Confirmed'">
+                    </transport-execution-plan>
+                </div>
             </ng-container>
         </div>
     </div>
 
-    <!-- Product Details Panel -->
-    <ng-container *ngFor="let wrapper of wrappers;let i=index">
-        <product-details-tabs *ngIf="productsExpanded[i]" [wrapper]="wrapper" [showOverview]="true" [isCatalogueLineDeleted]="areCatalogueLinesDeleted[i]"
-                              [settings]="settings" [itemWithSelectedProps]="productWithSelectedProperties" [readonly]="true">
-        </product-details-tabs>
-    </ng-container>
-
-
-    <!-- Service Details Panel -->
-    <ng-container *ngFor="let serviceWrapper of serviceWrappers;let i=index">
-        <product-details-tabs *ngIf="serviceExpanded" [wrapper]="serviceWrapper" [showOverview]="true" [isCatalogueLineDeleted]="areCatalogueLinesDeleted[i]"
-                              [settings]="serviceSettings" [itemWithSelectedProps]="serviceWithSelectedProperties" [readonly]="true">
-        </product-details-tabs>
-    </ng-container>
-
-    <!-- BP Steps -->
-    <product-bp-steps [currentStep]="currentStep" [status]="getStepsStatus()"
-        [statusText]="getStepsStatusText()" [displayMode]="stepsDisplayMode">
-    </product-bp-steps>
-
-    <hr class="mb-3">
-    
-    <!-- Order Content -->
-    <item-information *ngIf="currentStep === 'Item_Information_Request' || currentStep === 'Transport_Information_Request'">
-    </item-information>
-    <ppap *ngIf="currentStep === 'Ppap'" [isCatalogueLineDeleted]="areCatalogueLinesDeleted[0]">
-    </ppap>
-    <negotiation *ngIf="currentStep === 'Negotiation'" [areCatalogueLinesDeleted]="areCatalogueLinesDeleted"
-                 [areProcessDetailsViewedForAllProducts]="areProcessDetailsViewedForAllProducts()"
-                 [selectedLineIndex]="selectedLineIndex">
-    </negotiation>
-    <transport-negotiation *ngIf="currentStep === 'Transport_Negotiation'">
-    </transport-negotiation>
-    <order *ngIf="currentStep === 'Order' || currentStep === 'Order_Processed'" [selectedLineIndex]="selectedLineIndex"
-           [areProcessDetailsViewedForAllProducts]="areProcessDetailsViewedForAllProducts()">
-    </order>
-    <transport-execution-plan *ngIf="currentStep === 'Transport_Order' || currentStep === 'Transport_Order_Confirmed'">
-    </transport-execution-plan>
-    <fulfilment *ngIf="currentStep === 'Fulfilment'" [selectedLineIndex]="selectedLineIndex"
+    <fulfilment *ngIf="currentStep === 'Fulfilment'" [selectedLineIndex]="getSelectedLine()"
                 [catalogueLines]="lines">
     </fulfilment>
 </ng-container>

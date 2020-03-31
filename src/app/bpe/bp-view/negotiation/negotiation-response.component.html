@@ -51,46 +51,49 @@
 
 <!-- Actions -->
 <hr class="actions-hr">
-<div class="row actions-row" *ngIf="userRole === 'seller' && !isReadOnly()">
-    <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-    <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
+<!-- Action buttons are only displayed for the last product -->
+<ng-container *ngIf="selectedLineIndex == lines.length-1">
+    <div class="row actions-row" *ngIf="userRole === 'seller' && !isReadOnly()">
+        <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading() || isThereADeletedProduct()" (click)="onRespondToQuotation(false)" singleClick>
+                <span [innerHTML]="'Reject Offer' | translate"></span>
+            </button>
+        </div>
+        <div class="col-2">
+            <button *ngIf="!hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading() || !isFormValid() || isThereADeletedProduct()" (click)="onRespondToQuotation(true)" singleClick>
+                <span [innerHTML]="'Accept Offer' | translate"></span>
+            </button>
+            <button *ngIf="hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading() || !isFormValid() || isThereADeletedProduct()" (click)="onRespondToQuotation(true)" singleClick>
+                <span [innerHTML]="'Submit Response' | translate"></span>
+            </button>
+        </div>
     </div>
-    <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading() || isThereADeletedProduct()" (click)="onRespondToQuotation(false)" singleClick>
-            <span [innerHTML]="'Reject Offer' | translate"></span>
-        </button>
-    </div>
-    <div class="col-2">
-        <button *ngIf="!hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading() || !isFormValid() || isThereADeletedProduct()" (click)="onRespondToQuotation(true)" singleClick>
-            <span [innerHTML]="'Accept Offer' | translate"></span>
-        </button>
-        <button *ngIf="hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading() || !isFormValid() || isThereADeletedProduct()" (click)="onRespondToQuotation(true)" singleClick>
-            <span [innerHTML]="'Submit Response' | translate"></span>
-        </button>
-    </div>
-</div>
 
-<div class="row actions-row" *ngIf="userRole === 'seller' && isReadOnly()">
-    <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-    <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
+    <div class="row actions-row" *ngIf="userRole === 'seller' && isReadOnly()">
+        <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
+        </div>
     </div>
-</div>
 
-<div class="row actions-row" *ngIf="userRole === 'buyer' && !readonly">
-    <div class="col-5 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-    <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
+    <div class="row actions-row" *ngIf="userRole === 'buyer' && !readonly">
+        <div class="col-5 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-2">
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
+        </div>
+        <div class="col-3">
+            <button class="btn btn-secondary action" [disabled]="isRequestNewQuotationDisabled()" (click)="onRequestNewQuotation()">
+                <span [innerHTML]="'Request new Quotation' | translate"></span>
+            </button>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-primary action" [disabled]="isAcceptAndOrderDisabled()" (click)="onAcceptAndOrder()">
+                <span [innerHTML]="'Accept & Order' | translate"></span>
+            </button>
+        </div>
     </div>
-    <div class="col-3">
-        <button class="btn btn-secondary action" [disabled]="isRequestNewQuotationDisabled()" (click)="onRequestNewQuotation()">
-            <span [innerHTML]="'Request new Quotation' | translate"></span>
-        </button>
-    </div>
-    <div class="col-2">
-        <button class="btn btn-primary action" [disabled]="isAcceptAndOrderDisabled()" (click)="onAcceptAndOrder()">
-            <span [innerHTML]="'Accept & Order' | translate"></span>
-        </button>
-    </div>
-</div>
+</ng-container>

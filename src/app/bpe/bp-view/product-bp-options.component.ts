@@ -46,7 +46,8 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     id: string;
     catalogueId: string;
 
-    selectedLineIndex:number = 0;
+    // products which are selected to view process details
+    selectedLines:boolean[];
     lines: CatalogueLine[];
     wrappers: ProductWrapper[];
     // options: BpWorkflowOptions;
@@ -259,6 +260,10 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                     this.callStatus.error("Failed to retrieve product details", error);
                 });
             }
+            // the user continues with the next bp step
+            else{
+                this.setProductsExpandedAndViewedProcessDetailsArrays(false);
+            }
         });
     }
 
@@ -283,35 +288,54 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     }
 
     onToggleProductExpanded(index:number) {
-        let size = this.productsExpanded.length;
-        for(let i = 0; i < size;i++){
-            if(i == index){
-                this.productsExpanded[index] = !this.productsExpanded[index];
-            }
-            else {
-                this.productsExpanded[i] = false;
+        this.productsExpanded[index] = !this.productsExpanded[index];
+    }
+
+    onToggleSelectedLine(index:number){
+        // for fulfilment process, we should allow user to select only one product
+        // since the fulfilment details will be shown for only one product
+        if(this.currentStep === 'Fulfilment'){
+            let size = this.selectedLines.length;
+            for(let i = 0; i < size;i++){
+                if(i == index){
+                    this.selectedLines[index] = !this.selectedLines[index];
+                }
+                else {
+                    this.selectedLines[i] = false;
+                }
             }
         }
+        else if(this.selectedLines.length > 1){
+            this.selectedLines[index] = !this.selectedLines[index];
+        }
+    }
 
-        this.selectedLineIndex = index;
-
-        this.serviceExpanded = false;
+    // in the fulfilment process, we need to know which line is selected to view fulfilment statistics
+    // this method returns the selected line
+    getSelectedLine(){
+        return this.selectedLines.findIndex(value => value);
     }
 
     onToggleServiceExpanded() {
         this.serviceExpanded = !this.serviceExpanded;
-        this.setProductsExpandedAndViewedProcessDetailsArrays(false);
     }
 
     setProductsExpandedAndViewedProcessDetailsArrays(value:boolean){
         this.productsExpanded = [];
+        this.selectedLines = [];
         this.viewedProcessDetails = [];
         for(let line of this.lines){
             this.productsExpanded.push(value);
+            this.selectedLines.push(value);
             this.viewedProcessDetails.push(value);
         }
-        // initially, we show the process details of first product
-        this.viewedProcessDetails[0] = true;
+
+        // if the process has only one product or it's Fulfilment, then
+        // by default, the first product is selected
+        if(this.selectedLines.length == 1 || this.currentStep == 'Fulfilment'){
+            this.selectedLines[0] = true;
+            this.viewedProcessDetails[0] = true;
+        }
     }
 
     areProcessDetailsViewedForAllProducts(){
