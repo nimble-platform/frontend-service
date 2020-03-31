@@ -23,7 +23,10 @@
         <div *ngFor="let process of PROCESSES; let i = index" class="row">
             <input class="col-1" type="checkbox" [disabled]="isProcessIdSelectionDisabled(process.id)"
                    [checked]="process_ids.isSelected(process.id)" (change)="onProcessIdToggle(process.id)" style="margin-top: 5px">
-            <label class="col-11">{{ process.name }}</label>
+            <label class="col-auto">{{ process.name }}</label>
+            <span class="col-1" [title]="process.tooltip">
+              <i class="fa fa-exclamation-circle"></i>
+            </span>
         </div>
     </div>
 </div>

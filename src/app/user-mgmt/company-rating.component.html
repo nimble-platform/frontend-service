@@ -168,8 +168,8 @@
               </ngb-rating>
             </div>
         </div>
-        <hr>
-        <div>
+        <hr *ngIf="isOwnCompany">
+        <div *ngIf="isOwnCompany">
           <h4><p><span [innerHTML]="'Rating Comments' | translate"></span></p></h4>
           <div *ngIf="comments.length==0">
             <span [innerHTML]="'No Comments' | translate"></span>

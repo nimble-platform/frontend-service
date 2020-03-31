@@ -38,6 +38,8 @@ export class CompanyRatingComponent implements OnInit {
     deliveryPackage = false;
     sellerNegoSettings = null;
 
+    isOwnCompany = false;
+
 
     constructor(private cookieService: CookieService,
                 private bpeService: BPEService,
@@ -74,6 +76,11 @@ export class CompanyRatingComponent implements OnInit {
 
       if (federationId == "undefined" || federationId == "null")
         federationId = FEDERATIONID();
+
+      if (id == this.cookieService.get("company_id"))
+        this.isOwnCompany = true;
+      else
+        this.isOwnCompany = false;
 
       const sellerNegotiationSettings = await this.userService.getCompanyNegotiationSettingsForParty(id,federationId);
       this.sellerNegoSettings = sellerNegotiationSettings;
@@ -124,18 +131,20 @@ export class CompanyRatingComponent implements OnInit {
         this.ratings = ratings;
         if (this.ratings && this.ratings.totalNumberOfRatings > 0) {
           this.calcRatings();
-          this.initCallStatus.submit();
-          this.bpeService.getRatingsDetails(id,federationId).then(ratingDetails => {
-            this.initCallStatus.callback("Rating details successfully fetched", true);
-            if (myGlobals.debug) {
-              console.log("Fetched rating details: " + JSON.stringify(ratingDetails));
-            }
-            this.ratingDetails = ratingDetails;
-            this.calcComments();
-          })
-          .catch(error => {
-            this.initCallStatus.error("Error while fetching company rating details", error);
-          });
+          if (this.isOwnCompany) {
+            this.initCallStatus.submit();
+            this.bpeService.getRatingsDetails(id,federationId).then(ratingDetails => {
+              this.initCallStatus.callback("Rating details successfully fetched", true);
+              if (myGlobals.debug) {
+                console.log("Fetched rating details: " + JSON.stringify(ratingDetails));
+              }
+              this.ratingDetails = ratingDetails;
+              this.calcComments();
+            })
+            .catch(error => {
+              this.initCallStatus.error("Error while fetching company rating details", error);
+            });
+          }
         }else{
           this.ratingStatus.emit(true);
         }

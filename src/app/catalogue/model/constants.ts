@@ -57,12 +57,12 @@ export const PROPERTY_TYPES: Option[] = [
 ]
 
 export const PROCESSES = [
-    { id: "Item_Information_Request", name: "Item Information Request" },
-    { id: "Ppap", name: "PPAP" },
-    { id: "Negotiation", name: "Negotiation" },
-    { id: "Order", name: "Order" },
-    { id: "Transport_Execution_Plan", name: "Transport Execution Plan" },
-    { id: "Fulfilment", name: "Fulfilment" },
+    { id: "Item_Information_Request", name: "Item Information Request", tooltip: "Allows buyers to request additional information regarding a product / service" },
+    { id: "Ppap", name: "PPAP", tooltip: "Prodution part approval process (specific sectors only)" },
+    { id: "Negotiation", name: "Negotiation", tooltip: "Allows buyers to negotiate the terms of a product / service" },
+    { id: "Order", name: "Order", tooltip: "Required to allow ordering of products" },
+    { id: "Transport_Execution_Plan", name: "Transport Execution Plan", tooltip: "Covers the logistics-related step of the workflow" },
+    { id: "Fulfilment", name: "Fulfilment", tooltip: "Final step to confirm the success or report on problems" },
 ]
 
 export const TRANSPORT_SERVICE_CATEGORY_NAME = "Transport service"

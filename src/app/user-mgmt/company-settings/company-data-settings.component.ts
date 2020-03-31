@@ -259,6 +259,29 @@ export class CompanyDataSettingsComponent implements OnInit {
         this.modalService.open(content);
     }
 
+    deleteData(content) {
+        this.mailto = "mailto:"+this.config.supportMail;
+        var subject = "NIMBLE Company Deletion Request (UserID: " + this.appComponent.userID + ", Platform: " +
+            this.config.platformName+ ", Timestamp: " + new Date().toISOString() + ")";
+        this.mailto += "?subject=" + encodeURIComponent(subject);
+        var body = "Dear NIMBLE support team,";
+        body += "\n\n\n";
+        body += "I would like to delete my company:";
+        body += "\n\n";
+        body += "Company Name:\n";
+        body += this.selectValueOfTextObject(this.settings.details.legalName) + "\n\n";
+        body += "Company ID:\n";
+        body += this.appComponent.companyID;
+        body += "\n\n\n";
+        body += "Best regards,";
+        body += "\n\n";
+        body += this.appComponent.fullName;
+        body += "\n";
+        body += "(E-Mail: " + this.appComponent.eMail + ", Company: " + this.appComponent.activeCompanyName + ", CompanyID: " + this.appComponent.companyID + ")";
+        this.mailto += "&body=" + encodeURIComponent(body);
+        this.modalService.open(content);
+    }
+
     showVerificationTT(content) {
         const tooltip = "Please provide links to external resources or any other information that prove your connection to the company you want to register as a legal representative.<br/><br/>"
              + "e.g. Company member listing on an official website, signing authority, company registration at external authorities, additional identification numbers, ...";
