@@ -283,10 +283,11 @@ export const query_settings = {
   }
 };
 export const query_settings_comp = {
-  "fields": ["STANDARD","legalName","{LANG}_brandName"],
+  "fields": ["STANDARD","id","legalName","{LANG}_brandName"],
   "boosting": true,
   "boostingFactors": {
     "STANDARD": 4,
+    "id": 4,
     "{LANG}_brandName": 64,
     "legalName": 64
   }

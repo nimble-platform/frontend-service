@@ -2,7 +2,6 @@
 
 <div class="row mb-3">
     <div class="col-12">
-        <!-- Product Tabs -->
         <ul class="nav nav-tabs">
             <ng-container>
                 <li class="nav-item">
@@ -10,10 +9,6 @@
                         [ngClass]="{ active: selectedTab === 'UNVERIFIED'}"
                         (click)="onSelectTab($event,'UNVERIFIED')">
                         <span [innerHTML]="'Unverified Companies' | translate"></span>
-                        <span *ngIf="unverifiedCompaniesPage">
-                            <span [hidden]="unverifiedCompaniesCallStatus.isLoading() || unverifiedCompaniesPage == null"> (Total {{ unverifiedCompaniesPage.totalElements }})</span>
-                        </span>
-
                     </a>
                 </li>
             </ng-container>
@@ -22,195 +17,14 @@
                     [ngClass]="{ active: selectedTab === 'VERIFIED'}"
                     (click)="onSelectTab($event,'VERIFIED')">
                     <span [innerHTML]="'Registered Companies' | translate"></span>
-                    <span *ngIf="registeredCompaniesPage">
-                        <span [hidden]="registeredCompaniesCallStatus.isLoading() || registeredCompaniesPage == null"> (Total {{ registeredCompaniesPage.totalElements }})</span>
-                    </span>
-
                 </a>
             </li>
         </ul>
     </div>
-
-    <!-- Unverified Tab -->
     <div *ngIf="selectedTab === 'UNVERIFIED'" class="p-3 col-12">
-        <div class="row">
-          <div class="col-8">
-            <h4><span [innerHTML]="'Unverified Companies' | translate"></span>
-                <span *ngIf="unverifiedCompaniesPage"><span [hidden]="unverifiedCompaniesCallStatus.isLoading() || unverifiedCompaniesPage == null"> (Total {{ unverifiedCompaniesPage.totalElements }})</span></span>
-            </h4>
-          </div>
-          <div class="col-4">
-            <div class="input-group">
-                <label class="col-form-label col-form-label-sm space-right"><strong>Sort by:</strong>
-                </label>
-                <select  class="form-control form-control-sm custom-select" [(ngModel)]="sortOptionForUnverifiedCompanies"
-                        (change)="sortUnverifiedCompanyList()" [disabled]="unverifiedCompaniesCallStatus.isLoading()">
-                    <option *ngFor="let option of COMPANY_LIST_SORT_OPTIONS" [value]="option.name">{{option.value}}</option>
-                </select>
-            </div>
-          </div>
-        </div>
-        <form (ngSubmit)="filterUnverifiedCompanyPage()" class="space-before" #searchForm="ngForm" novalidate>
-          <div class="form-group row">
-            <div class="col-12">
-                <div class="input-group">
-                  <input type="text" class="form-control" id="searchTerm" [(ngModel)]="unverifiedFilter" [disabled]="unverifiedCompaniesCallStatus.isLoading()" name="searchTerm" #q="ngModel" placeholder="Company Name">
-                  <div class="input-group-append">
-                    <button type="submit" class="btn btn-outline-secondary" [disabled]="unverifiedCompaniesCallStatus.isLoading()">
-                      <i class="fa fa-search"></i>
-                    </button>
-                  </div>
-                </div>
-            </div>
-          </div>
-        </form>
-
-        <call-status [callStatus]="unverifiedCompaniesCallStatus" [large]="true"></call-status>
-
-        <div *ngIf="!unverifiedCompaniesCallStatus.isLoading() && unverifiedCompaniesPage">
-            <table class="table table-striped table-bordered">
-                <tr>
-                    <th><span [innerHTML]="'ID' | translate"></span></th>
-                    <th><span [innerHTML]="'Company Name' | translate">></span></th>
-                    <th><span [innerHTML]="'Address' | translate"></span></th>
-                    <th><span [innerHTML]="'Initial Representative' | translate"></span></th>
-                    <th style="width:22rem !important;"></th>
-                </tr>
-                <ng-container *ngFor="let company of unverifiedCompaniesPage.content">
-                    <tr>
-                        <td>{{ company.hjid }}</td>
-                        <td>{{ getNameOfTheCompany(company.partyName) }}</td>
-                        <td *ngIf="company.postalAddress">
-                          {{ company.postalAddress.streetName }} {{ company.postalAddress.buildingNumber }}<br/>
-                          {{ company.postalAddress.postalZone }} {{ company.postalAddress.cityName }} <span *ngIf="company.postalAddress.region">{{company.postalAddress.region}}</span><br/>
-                          {{ company.postalAddress.country.name.value }}
-                        </td>
-                        <td *ngIf="!company.postalAddress">n/A</td>
-                        <td *ngIf="company.person[0]">
-                          {{ company.person[0].firstName }} {{ company.person[0].familyName }}
-                          <span *ngIf="company.person[0].contact && company.person[0].contact.electronicMail">
-                            <br/><a href="mailto:{{ company.person[0].contact.electronicMail }}"><small style="word-wrap:break-word !important; word-break:break-all !important;">{{ company.person[0].contact.electronicMail }}</small></a>
-                          </span>
-                        </td>
-                        <td *ngIf="!company.person[0]">n/A</td>
-                        <td>
-                            <a class="btn btn-primary" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: company.hjid, viewMode:'mgmt'}">Details</a>
-                            <button class="btn btn-success ml-2" (click)="verifyCompany(company)"
-                            ><span [innerHTML]="'Verify' | translate"></span>
-                            </button>
-                            <button class="btn btn-danger ml-2" (click)="rejectCompany(company)">
-                              <span [innerHTML]="'Reject' | translate"></span>
-                            </button>
-                        </td>
-                    </tr>
-                </ng-container>
-            </table>
-            <div *ngIf="unverifiedCompaniesPage.content.length >= size && orgUnverifiedCompaniesPage.content.length > size">
-              <hr>
-              <span class="clickable" (click)="toggleUnverifiedExpand()"><span *ngIf="!unverifiedExpanded" [innerHTML]="'Show more' | translate"></span><span *ngIf="unverifiedExpanded" [innerHTML]="'Show less' | translate"></span></span>
-            </div>
-            <!--
-            <ngb-pagination class="d-flex justify-content-center"
-                            [collectionSize]="unverifiedCompaniesPage.totalElements"
-                            [pageSize]="unverifiedCompaniesPage.size"
-                            [page]="unverifiedCompaniesPage.number"
-                            [maxSize]="unverifiedCompaniesPage.size"
-                            [boundaryLinks]="false"
-                            (pageChange)="onUnverifiedPageChange($event)">
-            </ngb-pagination>
-            -->
-        </div>
+      <members-info [mgmt_view]=true [unverified]=true [rows]=8></members-info>
     </div>
-
-    <!-- Product Details Tab -->
     <div *ngIf="selectedTab === 'VERIFIED'" class="p-3 col-12">
-        <div class="row">
-          <div class="col-8">
-            <h4><span [innerHTML]="'Registered Companies' | translate"></span>
-                <span *ngIf="registeredCompaniesPage"><span [hidden]="registeredCompaniesCallStatus.isLoading() || registeredCompaniesPage == null"> (Total {{ registeredCompaniesPage.totalElements }})</span></span>
-            </h4>
-          </div>
-          <div class="col-4">
-            <div class="input-group">
-                <label class="col-form-label col-form-label-sm space-right"><strong><span [innerHTML]="'Sort by' | translate"></span>:</strong>
-                </label>
-                <select  class="form-control form-control-sm custom-select" [(ngModel)]="sortOptionForRegisteredCompanies"
-                        (change)="sortRegisteredCompanyList()" [disabled]="registeredCompaniesCallStatus.isLoading()">
-                    <option *ngFor="let option of COMPANY_LIST_SORT_OPTIONS" [value]="option.name">{{option.value}}</option>
-                </select>
-            </div>
-          </div>
-        </div>
-        <form (ngSubmit)="filterVerifiedCompanyPage()" class="space-before" #searchForm="ngForm" novalidate>
-          <div class="form-group row">
-            <div class="col-12">
-                <div class="input-group">
-                  <input type="text" class="form-control" id="searchTerm" [(ngModel)]="verifiedFilter" [disabled]="registeredCompaniesCallStatus.isLoading()" name="searchTerm" #q="ngModel" placeholder="Company Name">
-                  <div class="input-group-append">
-                    <button type="submit" class="btn btn-outline-secondary" [disabled]="registeredCompaniesCallStatus.isLoading()">
-                      <i class="fa fa-search"></i>
-                    </button>
-                  </div>
-                </div>
-            </div>
-          </div>
-        </form>
-
-        <call-status [callStatus]="registeredCompaniesCallStatus" [large]="true"></call-status>
-
-        <div [hidden]="registeredCompaniesCallStatus.isLoading() || registeredCompaniesPage == null">
-            <div *ngIf="registeredCompaniesPage">
-                <table class="table table-striped table-bordered">
-                    <tr>
-                        <th><span [innerHTML]="'ID' | translate"></span></th>
-                        <th><span [innerHTML]="'Company Name' | translate"></span></th>
-                        <th><span [innerHTML]="'Address' | translate"></span></th>
-                        <th><span [innerHTML]="'Legal Representative' | translate"></span></th>
-                        <th style="width:22rem !important;"></th>
-                    </tr>
-                    <ng-container *ngFor="let company of registeredCompaniesPage.content">
-                        <tr>
-                            <td>{{ company.hjid }}</td>
-                            <td>{{ getNameOfTheCompany(company.partyName) }}</td>
-                            <td *ngIf="company.postalAddress">
-                              {{ company.postalAddress.streetName }} {{ company.postalAddress.buildingNumber }}<br/>
-                              {{ company.postalAddress.postalZone }} {{ company.postalAddress.cityName }} <span *ngIf="company.postalAddress.region">{{company.postalAddress.region}}</span><br/>
-                              {{ company.postalAddress.country.name.value }}
-                            </td>
-                            <td *ngIf="!company.postalAddress">n/A</td>
-                            <td *ngIf="company.person[0]">
-                              {{ company.person[0].firstName }} {{ company.person[0].familyName }}
-                              <span *ngIf="company.person[0].contact && company.person[0].contact.electronicMail">
-                                <br/><a href="mailto:{{ company.person[0].contact.electronicMail }}"><small style="word-wrap:break-word !important; word-break:break-all !important;">{{ company.person[0].contact.electronicMail }}</small></a>
-                              </span>
-                            </td>
-                            <td *ngIf="!company.person[0]">n/A</td>
-                            <td>
-                                <a class="btn btn-primary" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: company.hjid, viewMode:'mgmt'}">Details</a>
-                                <a class="btn btn-primary ml-2" role="button" target="_blank" [routerLink]="['/user-mgmt/company-settings']" [queryParams]="{id: company.hjid, viewMode:'data'}">Change Data</a>
-                                <button class="btn btn-danger ml-2" (click)="deleteCompany(company)">
-                                  <span [innerHTML]="'Delete' | translate"></span>
-                                </button>
-                            </td>
-                        </tr>
-                    </ng-container>
-                </table>
-                <div *ngIf="registeredCompaniesPage.content.length >= size && orgCompaniesPage.content.length > size">
-                  <hr>
-                  <span class="clickable" (click)="toggleVerifiedExpand()"><span *ngIf="!verifiedExpanded" [innerHTML]="'Show more' | translate"></span><span *ngIf="verifiedExpanded" [innerHTML]="'Show less' | translate"></span></span>
-                </div>
-                <!--
-                <ngb-pagination class="d-flex justify-content-center"
-                                [collectionSize]="registeredCompaniesPage.totalElements"
-                                [pageSize]="registeredCompaniesPage.size"
-                                [page]="registeredCompaniesPage.number"
-                                [maxSize]="registeredCompaniesPage.size"
-                                [boundaryLinks]="false"
-                                (pageChange)="onRegisteredCompaniesPageChange($event)">
-                </ngb-pagination>
-                -->
-            </div>
-        </div>
+      <members-info [mgmt_view]=true [unverified]=false [rows]=8></members-info>
     </div>
-
 </div>

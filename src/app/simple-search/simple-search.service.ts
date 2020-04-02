@@ -133,12 +133,15 @@ export class SimpleSearchService {
 			.catch(this.handleError);
 	}
 
-  getComp(query: string, facets: string[], facetQueries: string[], page: number, rows: number, sort: string, unverified?: boolean): Promise<any> {
+  getComp(query: string, facets: string[], facetQueries: string[], page: number, rows: number, sort: string, unverified?: boolean, forceLocal?: boolean): Promise<any> {
 		let queryRes;
     queryRes = this.buildQueryString(query, myGlobals.query_settings_comp, true, false);
 		query = queryRes.queryStr;
 		let url = this.url + `/party/search`;
-    if (this.delegated)
+    let local = false;
+    if (forceLocal)
+      local = forceLocal;
+    if (this.delegated && !local)
       url = this.delegate_url + `/party/search`;
 		let searchObject: any = {};
 		searchObject.rows = rows;
@@ -217,7 +220,7 @@ export class SimpleSearchService {
 			);
 	}
 
-  getCompSuggestions(query: string, item_field: string[]) {
+  getCompSuggestions(query: string, item_field: string[], forceLocal?: boolean) {
 		let querySettings = {
 			"fields": item_field,
 			"boosting": false,
@@ -225,7 +228,10 @@ export class SimpleSearchService {
 		};
 		let queryRes = this.buildQueryString(query, querySettings, true, true);
 		let url = this.url + `/party/search`;
-    if (this.delegated)
+    let local = false;
+    if (forceLocal)
+      local = forceLocal;
+    if (this.delegated && !local)
       url = this.delegate_url + `/party/search`;
 		let searchObject: any = {};
 		searchObject.rows = 0;
