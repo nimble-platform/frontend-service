@@ -16,13 +16,17 @@
                     <div class="row w-100 m-0">
                         <div class="col pl-2">
                           <strong><span [innerHTML]="'Product / Service' | translate"></span>:</strong><br/>
-                          <span *ngFor="let catalogId of titleEvent.products.catalogIds;let i=index" >
-                              <span class="clickable" (click)="navigateToSearchDetails(titleEvent.products,i)">{{selectPreferredValue(titleEvent.products.productNames[i])}}</span> {{i != titleEvent.products.catalogIds.length-1 ? " / ":""}}
-                          </span>
+                          <ng-container *ngFor="let catalogId of titleEvent.products.catalogIds;let i=index">
+                              <span [title]="getProductTitle(i)">
+                                <span class="clickable" (click)="navigateToSearchDetails(titleEvent.products,i)"  [ngStyle]="{'pointer-events':titleEvent.areProductsDeleted[i] ? 'none':'auto'}">{{selectPreferredValue(titleEvent.products.productNames[i])}}</span> {{i != titleEvent.products.catalogIds.length-1 ? " / ":""}}
+                              </span>
+                          </ng-container>
                         </div>
                         <div class="col pl-1">
                           <strong><span [innerHTML]="'Trading Partner' | translate"></span>:</strong><br/>
-                          <span class="clickable" (click)="navigateToCompanyDetails()">{{tradingPartnerName}}</span>
+                          <span [title]="getTradingPartnerTitle()">
+                              <span class="clickable" (click)="navigateToCompanyDetails()" [ngStyle]="{'pointer-events':sellerNegoSettings.company.deleted ? 'none':'auto'}">{{tradingPartnerName}}</span>
+                          </span>
                         </div>
                         <div class="col pl-1">
                             <strong><span [innerHTML]="'Status' | translate"></span>:</strong><br/>

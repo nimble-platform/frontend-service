@@ -186,6 +186,35 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
+    areProductsValid(catalogueIds:string[], lineIds:string[],delegateId:string):Promise<any> {
+        let url = this.baseUrl + `/catalogue/cataloguelines/valid`;
+        // append catalogue line ids to the url
+        let catalogueUuidsParam = "?catalogueUuids=";
+        if(this.delegated){
+            url = this.delegate_url + `/catalogue/cataloguelines/valid?delegateId=${delegateId}`;
+            catalogueUuidsParam = "&catalogueUuids=";
+        }
+
+        let lineIdsParam = "&lineIds=";
+        let size = lineIds.length;
+        for(let i = 0; i < size ;i++){
+
+            lineIdsParam += lineIds[i];
+            catalogueUuidsParam += catalogueIds[i];
+
+            if(i != size-1){
+                lineIdsParam += ",";
+                catalogueUuidsParam += ",";
+            }
+        }
+        url += catalogueUuidsParam + lineIdsParam;
+        return this.http
+            .get(url, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
     getCatalogueLines(catalogueId:string, lineIds:string[]):Promise<CatalogueLine[]> {
         let url = this.baseUrl + `/catalogue/${catalogueId}/cataloguelines`;
         // append catalogue line ids to the url

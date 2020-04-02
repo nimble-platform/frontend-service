@@ -30,6 +30,7 @@ import {UserService} from '../../user-mgmt/user.service';
 import { AppComponent } from "../../app.component";
 import { TranslateService } from "@ngx-translate/core";
 import {Subject} from 'rxjs';
+import {CatalogueService} from '../../catalogue/catalogue.service';
 
 
 /**
@@ -66,6 +67,11 @@ export class ThreadSummaryComponent implements OnInit {
     ratingFulfillment = 0;
 
     sellerNegoSettings = null;
+
+    // the status (i.e., the product exists or not) of products included in the thread
+    productsStatus:boolean[] = null;
+
+    productPartyStatusPromise:Promise<any> = null;
 
     // Utilities
     eventCount: number = 0;
@@ -121,6 +127,7 @@ export class ThreadSummaryComponent implements OnInit {
                 private modalService: NgbModal,
                 private userService: UserService,
                 private appComponent: AppComponent,
+                private catalogueService: CatalogueService,
                 private translate: TranslateService) {
     }
 
@@ -210,48 +217,57 @@ export class ThreadSummaryComponent implements OnInit {
         this.fetchCallStatus.submit();
         const ids = this.processInstanceGroup.processInstanceIDs;
         Promise.all(ids.map(id => this.fetchThreadEvent(id))).then(events => {
-            let isCollaborationInProgress = this.processInstanceGroup.status == "INPROGRESS";
-            // if the collaboration is not in progress, the user should not be able to cancel the collaboration
-            if(!isCollaborationInProgress){
-                this.showCancelCollaborationButton = false;
-                this.showFinishCollaborationButton = false;
-            }
-            // check whether there are processes which are not completed
-            for(let event of events){
-                if(event.processStatus != "Completed"){
+            this.productPartyStatusPromise.then(([negotiationSettings, productStatus]) => {
+                // set seller negotiation settings
+                this.sellerNegoSettings = negotiationSettings;
+                // set product status
+                this.productsStatus = productStatus;
+                // set product status of ThreadEventMetadatas
+                this.setProductsStatus(events,this.sellerNegoSettings.company.deleted);
+
+                let isCollaborationInProgress = this.processInstanceGroup.status == "INPROGRESS";
+                // if the collaboration is not in progress, the user should not be able to cancel the collaboration
+                if (!isCollaborationInProgress) {
+                    this.showCancelCollaborationButton = false;
                     this.showFinishCollaborationButton = false;
-                    break;
                 }
-            }
-            events.sort((a,b) => moment(a.startTime).diff(moment(b.startTime)));
-            events = events.reverse();
-            this.completeHistory = events;
-            this.history = events.slice(1, events.length);
-            this.lastEvent = events[0];
-            // Update History in order to remove pending orders
-            this.updateHistory(this.history);
+                // check whether there are processes which are not completed
+                for (let event of events) {
+                    if (event.processStatus != "Completed") {
+                        this.showFinishCollaborationButton = false;
+                        break;
+                    }
+                }
+                events.sort((a, b) => moment(a.startTime).diff(moment(b.startTime)));
+                events = events.reverse();
+                this.completeHistory = events;
+                this.history = events.slice(1, events.length);
+                this.lastEvent = events[0];
+                // Update History in order to remove pending orders
+                this.updateHistory(this.history);
 
-            // if the collaboration is not rated yet, set the RateCollaborationButton status
-            // set the status of button to True if the process is not in progress (cancelled/finished) (buyer side only)
-            if(!this.isCollaborationRated(events) && !isCollaborationInProgress && this.lastEvent.buyer){
-                this.showRateCollaborationButton = true;
-            }
-            // set title event
-            this.titleEvent = this.lastEvent;
-            this.checkDataChannel();
+                // if the collaboration is not rated yet, set the RateCollaborationButton status
+                // set the status of button to True if the process is not in progress (cancelled/finished) (buyer side only)
+                if (!this.isCollaborationRated(events) && !isCollaborationInProgress && this.lastEvent.buyer) {
+                    this.showRateCollaborationButton = true;
+                }
+                // set title event
+                this.titleEvent = this.lastEvent;
+                this.checkDataChannel();
 
-            // update the former step field of events after sorting and other population
-            events[0].formerStep = false;
-            for(let i=1; i<events.length; i++) {
-                events[i].formerStep = true;
-            }
+                // update the former step field of events after sorting and other population
+                events[0].formerStep = false;
+                for (let i = 1; i < events.length; i++) {
+                    events[i].formerStep = true;
+                }
 
-            // if the component has been loaded directly, navigate to the details
-            if(this.routeProcessInstanceId != null) {
-                this.openBpProcessView();
-            }
+                // if the component has been loaded directly, navigate to the details
+                if (this.routeProcessInstanceId != null) {
+                    this.openBpProcessView();
+                }
 
-            this.fetchCallStatus.callback("Successfully fetched events.", true);
+                this.fetchCallStatus.callback("Successfully fetched events.", true);
+            })
         }).catch(error => {
             this.fetchCallStatus.error("Error while fetching thread.", error);
         });
@@ -302,6 +318,17 @@ export class ThreadSummaryComponent implements OnInit {
         return coorespondentUserIdFederationId;
     }
 
+    setProductsStatus(events:ThreadEventMetadata[],isCompanyDeleted:boolean){
+        for(let event of events){
+            let areProductsDeleted:boolean[] = [];
+            for(let productStatus of this.productsStatus){
+                areProductsDeleted.push(!productStatus || isCompanyDeleted);
+            }
+            event.areProductsDeleted = areProductsDeleted;
+        }
+
+    }
+
     private async fetchThreadEvent(processInstanceId: string): Promise<ThreadEventMetadata> {
         // get dashboard process instance details
         const dashboardProcessInstanceDetails:DashboardProcessInstanceDetails = await this.bpeService.getDashboardProcessInstanceDetails(processInstanceId,this.processInstanceGroup.sellerFederationId);
@@ -313,14 +340,6 @@ export class ThreadSummaryComponent implements OnInit {
         const userRole = ActivityVariableParser.getUserRole(initialDoc.buyerPartyId,initialDoc.buyerPartyFederationId,this.processInstanceGroup.partyID,this.processInstanceGroup.federationID);
         const lastActivityStartTime = dashboardProcessInstanceDetails.lastActivityInstanceStartTime;
         const processInstanceState:any = dashboardProcessInstanceDetails.processInstanceState;
-
-        // get seller's business process workflow
-        // we need this information to set status and labels for Order properly
-        if(this.sellerNegoSettings == null){
-            this.userService.getCompanyNegotiationSettingsForParty(initialDoc.sellerPartyId, initialDoc.sellerPartyFederationId).then(negotiationSettings => {
-                this.sellerNegoSettings = negotiationSettings;
-            });
-        }
 
         if(this.lastEventPartnerID == null){
             if (userRole === "buyer") {
@@ -352,7 +371,7 @@ export class ThreadSummaryComponent implements OnInit {
             activityVariables,
             userRole === "buyer",
             isRated === "true",
-            initialDoc.areProductsDeleted,
+            null, // we will fetch this info later
             this.processInstanceGroup.status,
             sellerFederationId,
             dashboardProcessInstanceDetails.cancellationReason,
@@ -363,6 +382,13 @@ export class ThreadSummaryComponent implements OnInit {
 
         this.fillStatus(event, processInstanceState, processType, responseDocumentStatus, userRole === "buyer");
 
+        if(!this.productPartyStatusPromise){
+            // when all threads are fetched, we'll use the responses of this promise to set product status i.e. areProductsDeleted in ThreadEventMetadatas
+            this.productPartyStatusPromise = Promise.all([
+                this.userService.getCompanyNegotiationSettingsForParty(initialDoc.sellerPartyId, initialDoc.sellerPartyFederationId),
+                this.catalogueService.areProductsValid(initialDoc.items.catalogIds,initialDoc.items.lineIds,sellerFederationId)
+            ]);
+        }
         return event;
     }
 
@@ -385,6 +411,21 @@ export class ThreadSummaryComponent implements OnInit {
             return this.translations["Collaboration finished"] + " " + this.translations["on"] + " " + date;
         }
         return this.translations["Collaboration finished"];
+    }
+
+    // getters for span titles
+    getProductTitle(index:number):string {
+        if(!this.titleEvent.areProductsDeleted || this.titleEvent.areProductsDeleted[index] ){
+            return this.translate.instant('The product has been deleted.');
+        }
+        return '';
+    }
+
+    getTradingPartnerTitle():string{
+        if(this.sellerNegoSettings.company.deleted){
+            return this.translate.instant('The company selling this product is not available on the platform anymore');
+        }
+        return '';
     }
 
     navigateToSearchDetails(products:any,index:number) {

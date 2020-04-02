@@ -91,6 +91,10 @@ export class ThreadEventComponent implements OnInit {
 
     // do not allow the user to update the request document if the event has some deleted products
     doesEventHaveDeletedProduct(){
+        // if event.areProductsDeleted is not loaded yet, simply return true
+        if(!this.event.areProductsDeleted){
+            return true;
+        }
         for(let isProductDeleted of this.event.areProductsDeleted){
             if(isProductDeleted){
                 return true;
