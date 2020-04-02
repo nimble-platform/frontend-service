@@ -64,7 +64,7 @@
 
 <div *ngIf="managementMode && appComponent.checkRoles('pm') && !initCallStatus.isLoading() && details.details.vatNumber && details.details.vatNumber != ''" class="row actions-row pr-0">
   <div class="col-10 call-status-col">
-    <call-status [callStatus]="vatCallStatus" [large]="true"></call-status>
+    <call-status [callStatus]="vatCallStatus" [large]="true" [showAllDetails]="true"></call-status>
   </div>
   <div class="col-2">
     <button class="btn btn-primary action" type="button" [disabled]="vatCallStatus.isLoading()" (click)="validateVAT()"><span [innerHTML]="'Check VAT' | translate"></span></button>
@@ -81,6 +81,7 @@
 
 <div *ngIf="managementMode && appComponent.checkRoles('pm') && !initCallStatus.isLoading()" class="row actions-row pr-0">
   <div class="col-12">
+    <hr>
     <company-invitation [partyId]="party.partyId" [platformManagerMode]="platformManagerMode"></company-invitation>
   </div>
 </div>
@@ -186,9 +187,10 @@
   </div>
 </div>
 
-<div *ngIf="showAgents && appComponent.checkRoles('pm')">
+<div *ngIf="config.showAgent && appComponent.checkRoles('pm') && !initCallStatus.isLoading()">
     <div class="row">
         <div class="col-12">
+            <hr>
             <h3 class="space-before"><span [innerHTML]="'Agents List' | translate"></span></h3>
         </div>
         <div class="col-12 space-before">

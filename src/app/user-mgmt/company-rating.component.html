@@ -4,7 +4,7 @@
     </div>
 </div>
 
-<div *ngIf="!ratings" class="row">
+<div *ngIf="!ratings && !initCallStatus.isLoading()" class="row">
     <div class="col-12">
         <span [innerHTML]="'Unrated' | translate"></span>
     </div>
@@ -171,7 +171,7 @@
         <hr *ngIf="isOwnCompany">
         <div *ngIf="isOwnCompany">
           <h4><p><span [innerHTML]="'Rating Comments' | translate"></span></p></h4>
-          <div *ngIf="comments.length==0">
+          <div *ngIf="comments.length==0 && !initCallStatus.isLoading()">
             <span [innerHTML]="'No Comments' | translate"></span>
           </div>
           <table *ngIf="comments.length>0" class="table table-striped table-bordered mb-1 mt-0" style="table-layout: fixed; width: 100%;">

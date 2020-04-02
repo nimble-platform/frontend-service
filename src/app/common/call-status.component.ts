@@ -18,6 +18,8 @@ export class CallStatusComponent implements OnInit {
     @ViewChild('errorBox') errorBox: ElementRef;
     @ViewChild('successBox') successBox: ElementRef;
 
+    // if true opens the detailed error messages by default
+    @Input() showAllDetails:boolean = false;
     @Input() callStatus:CallStatus;
     // if true adds the alert class to the component for top and bottom padding
     @Input() large:boolean;

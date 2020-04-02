@@ -18,14 +18,14 @@
 		 class="alert-danger alert-dismissible p-2 pr-4 rounded position-relative mb-1"
 		 [ngClass]="{'alert' : large} ">
 		<div class="align-self-center" role="alert">
-			<div style="overflow-wrap: break-word;word-wrap: break-word;">
+			<div style="overflow-wrap: break-word;word-wrap: break-word;" class="pointer" (click)="showDetails[i]=!showDetails[i]">
 				{{err[0]}}
-				<span *ngIf="err[1] != ''" class="pointer" (click)="showDetails[i]=!showDetails[i]">
-					<span *ngIf="!showDetails[i]"><i class="fa fa-angle-double-down pl-2 pr-2 mr-3"></i></span>
-					<span *ngIf="showDetails[i]"><i class="fa fa-angle-double-up pl-2 pr-2 mr-3"></i></span>
+				<span *ngIf="err[1] != ''">
+					<span *ngIf="(!showDetails[i] && !showAllDetails) || (showDetails[i] && showAllDetails)"><i class="fa fa-angle-double-down pl-2 pr-2 mr-3"></i></span>
+					<span *ngIf="(showDetails[i] && !showAllDetails) || (!showDetails[i] && showAllDetails)"><i class="fa fa-angle-double-up pl-2 pr-2 mr-3"></i></span>
 				</span>
 			</div>
-			<div *ngIf="showDetails[i]" style="overflow-wrap: break-word;word-wrap: break-word;">
+			<div *ngIf="(showDetails[i] && !showAllDetails) || (!showDetails[i] && showAllDetails)" style="overflow-wrap: break-word;word-wrap: break-word;">
 				<small [innerHTML]="err[1]"></small>
 			</div>
 			<button type="button" class="close pt-1 pl-1" aria-label="Close" (click)="callStatus.reset()">

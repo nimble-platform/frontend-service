@@ -53,13 +53,14 @@ export class AppComponent implements OnInit {
     private availableLanguages = LANGUAGES.sort();
     private federationStr = FEDERATION();
     public federation = (this.federationStr == "ON");
-    public showAgents = this.config.showAgent;
 
     enableLogisticServicePublishing = true;
 
     private accessToken = null;
     response: any;
     submitCallStatus: CallStatus = new CallStatus();
+
+    private translations:any = [];
 
     constructor(
         private http: Http,
@@ -118,12 +119,15 @@ export class AppComponent implements OnInit {
         }
         translate.setDefaultLang(FALLBACK_LANGUAGE);
         translate.use(DEFAULT_LANGUAGE());
+        this.translate.get(['Chat', 'Federation', 'Language', 'ON', 'OFF']).subscribe((res: any) => {
+            this.translations = res;
+        });
         if (this.debug)
           console.log("Initialized platform with language: "+DEFAULT_LANGUAGE());
     }
 
-    toggleChat() {
-      this.chatVisible = !this.chatVisible;
+    toggleChat(val) {
+      this.chatVisible = val;
     }
 
     getQueryParameter(name): any {
@@ -173,6 +177,30 @@ export class AppComponent implements OnInit {
 
     generateProductURL(catalogueId, id) {
         return myGlobals.frontendURL + "#/product-details?catalogueId=" + catalogueId + "&id=" + id;
+    }
+
+    getChatText(): string {
+      let txt = this.translations['Chat'];
+      if (this.chatVisible)
+        txt += ": " + this.translations['ON'];
+      else
+        txt += ": " + this.translations['OFF'];
+      return txt;
+    }
+
+    getFederationText(): string {
+        let txt = this.translations['Federation'];
+        if (this.federation)
+          txt += ": " + this.translations['ON'];
+        else
+          txt += ": " + this.translations['OFF'];
+        return txt;
+    }
+
+    getLangText(): string {
+      let txt = this.translations['Language'];
+      txt += ": " + this.language.toUpperCase();
+      return txt;
     }
 
     ngOnInit() {
@@ -515,6 +543,28 @@ export class AppComponent implements OnInit {
             }
           }
         }
+    }
+
+    private checkAdvMenu(): boolean {
+      let ret = false;
+      if (this.config.showExplorative && this.checkRoles('comp_req'))
+        ret = true;
+      else if (this.config.showTrack && this.checkRoles('track'))
+        ret = true;
+      return ret;
+    }
+
+    private checkCompMenu(): boolean {
+      let ret = false;
+      if (this.checkRoles('comp') || (this.checkRoles('view_comp') && this.config.showCompanyMembers))
+        ret = true;
+      else if (this.checkRoles('comp-settings'))
+        ret = true;
+      else if (this.checkRoles('comp-ratings'))
+        ret = true;
+      else if (this.config.showAgent && this.checkRoles('bp'))
+        ret = true;
+      return ret;
     }
 
     public checkRoles(func) {

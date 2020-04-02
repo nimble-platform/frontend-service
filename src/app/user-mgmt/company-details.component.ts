@@ -38,7 +38,6 @@ export class CompanyDetailsComponent implements OnInit {
     buyingAgentList = [];
     selectedTab: SelectedTab = "BUYING_AGENT";
 
-    showAgents = this.config.showAgent;
     showEmptyPageSA = false;
     showEmptyPageBA = false;
 
