@@ -261,9 +261,13 @@
         <span [innerHTML]="'The deletion of your company data has to be validated and processed by a platform administrator.' | translate"></span><br/><br/>
         <span [innerHTML]="'When you press Open mail template a partially prefilled mail template will open in the mail client of your choice.' | translate"></span><br/><br/>
         <span [innerHTML]="'We will process deletion requests within one business day.' | translate"></span>
+        <div *ngIf="!isAllCollaborationsFinished" class="alert alert-danger mb-0 mt-3" role="alert">
+            <span [innerHTML]="'To be able to request the deletion of your company, all processes should be finished.' | translate"></span>
+        </div>
     </div>
     <div class="modal-footer">
-        <a [href]="mailto" role="button" class="btn btn-primary" (click)="d('')"><span [innerHTML]="'Open mail template' | translate"></span></a>
+        <a *ngIf="isAllCollaborationsFinished" [href]="mailto" role="button" class="btn btn-primary" (click)="d('')"><span [innerHTML]="'Open mail template' | translate"></span></a>
+        <a *ngIf="!isAllCollaborationsFinished" href="#" role="button" class="btn btn-primary disabled"><span [innerHTML]="'Open mail template' | translate"></span></a>
     </div>
 </ng-template>
 

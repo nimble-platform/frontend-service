@@ -11,6 +11,7 @@ import { UserService } from "../user.service";
 import {TranslateService} from '@ngx-translate/core';
 import { Router } from "@angular/router";
 import { LANGUAGES, DEFAULT_LANGUAGE } from "../../catalogue/model/constants";
+import { BPEService } from "../../bpe/bpe.service";
 
 @Component({
     selector: "company-data-settings",
@@ -31,6 +32,7 @@ export class CompanyDataSettingsComponent implements OnInit {
     config = myGlobals.config;
     alertClosed = false;
     forceActText = false;
+    isAllCollaborationsFinished = false;
     saveCallStatus: CallStatus = new CallStatus();
     @Output() onSaveEvent: EventEmitter<void> = new EventEmitter();
 
@@ -41,6 +43,7 @@ export class CompanyDataSettingsComponent implements OnInit {
                 private translate: TranslateService,
                 private modalService: NgbModal,
                 private userService: UserService,
+                private bpeService: BPEService,
                 private router: Router) {
 
     }
@@ -63,6 +66,11 @@ export class CompanyDataSettingsComponent implements OnInit {
           yearOfReg: new FormControl({value: (this.settings.details.yearOfCompanyRegistration || ""), disabled: (!this.appComponent.checkRoles('pm') && this.settings.details.yearOfCompanyRegistration)}),
           address: AddressSubForm.update(AddressSubForm.generateForm(this._fb), this.settings.details.address)
       });
+      if (!this.appComponent.checkRoles('pm')) {
+        this.bpeService.checkAllCollaborationsFinished(this.settings.companyID,this.settings.negotiationSettings.company.federationInstanceID).then(finished => {
+            this.isAllCollaborationsFinished = finished;
+        });
+      }
     }
 
     trackFn(index,item) {
