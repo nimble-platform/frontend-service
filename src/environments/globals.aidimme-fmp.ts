@@ -28,7 +28,7 @@ export const logstash_endpoint = `${base_path}/logstash`;
 export const kibana_endpoint = `${base_path}/kibana/app/kibana`;
 export const delegate_endpoint = `${base_path}:9265`;
 export const collaboration_endpoint = `${collab_path}`;
-
+export const certificate_of_origin_endpoint=`http://161.156.70.125:7695`;
 
 // BIBA endpoints
 

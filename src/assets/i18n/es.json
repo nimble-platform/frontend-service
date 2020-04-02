@@ -219,6 +219,7 @@
 	"End Time": "Hora de Finalización",
 	"Endpoint Address": "Dirección final",
 	"Enter EPC Code": "Ingrese el código EPC",
+	"Enter the identifier of invoice generated for this payment, if any": "Ingrese el identificador de la factura generada para este pago, si corresponde",
 	"Environmental Emission": "Emisión Medioambiental",
 	"Error while fetching thread.": "Error al buscar hilo.",
 	"Estimated Delivery Date": "Fecha Estimada de Entrega",
