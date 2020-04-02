@@ -971,6 +971,8 @@ export class SimpleSearchFormComponent implements OnInit {
     }
 
     onSubmit() {
+				if (this.model.q == "")
+					this.model.q = "*";
         this.objToSubmit = copy(this.model);
         this.page = 1;
         this.get(this.objToSubmit);
