@@ -5,7 +5,7 @@
     <div class="ml-2">
         <div class="row mb-4 mt-4">
             <div *ngIf="isEpcTabShown()" class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'TRACK_AND_TRACE'}" (click)="selectedPanel = 'TRACK_AND_TRACE'"><span [innerHTML]="'Track and Trace' | translate"></span></div>
-            <div *ngIf="isInvoiceTabShown()" class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'INVOICE'}" (click)="selectedPanel = 'INVOICE'"><span [innerHTML]="'Invoice' | translate"></span></div>
+            <div *ngIf="isInvoiceTabShown()" class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'INVOICE'}" (click)="selectedPanel = 'INVOICE';getInvoiceBlockChainInfo()"><span [innerHTML]="'Invoice' | translate"></span></div>
             <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'NOTES_AND_FILES'}" (click)="selectedPanel = 'NOTES_AND_FILES'"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>
             <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'PURCHASE_ORDER'}" (click)="selectedPanel = 'PURCHASE_ORDER'"><span [innerHTML]="'Purchase Order' | translate"></span></div>
         </div>
@@ -98,13 +98,16 @@
 
     <!-- Invoice -->
     <ng-container *ngIf="selectedPanel == 'INVOICE'">
-        <div class="row">
-            <div class="col-1">
-                <strong class="font-weight-500"><label><span [innerHTML]="'Invoice Id' | translate"></span></label></strong>
-            </div>
-            <div class="col-11">
-                <a href="{{invoice.originatorDocumentReference[0].id}}">{{invoice.id}}</a>
-            </div>
+        <call-status [callStatus]="invoiceBlockChainRecordCallStatus"></call-status>
+        <!--  Blockchain information-->
+        <div *ngIf="blockChainRecord">
+            <table class="table table-bordered space-before">
+                <tr *ngFor="let key of objectKeys(this.blockChainRecord[0])">
+                    <th>{{key}}</th>
+                    <td *ngIf="key == 'optionalLink'"><a href="{{blockChainRecord[0][key]}}">{{blockChainRecord[0][key]}}</a></td>
+                    <td *ngIf="key != 'optionalLink'">{{blockChainRecord[0][key]}}</td>
+                </tr>
+            </table>
         </div>
     </ng-container>
 
@@ -245,7 +248,7 @@
                     </button>
                 </div>
                 <div class="col-2">
-                    <button class="btn btn-primary action" [disabled]="isPaymentButtonDisabled()" (click)="onPaymentDone()">
+                    <button class="btn btn-primary action" [disabled]="isPaymentButtonDisabled()" (click)="showInvoiceModal ? openInvoiceModal(addInvoiceModal):onPaymentDone()">
                         <span [innerHTML]="'Payment Received' | translate"></span>
                     </button>
                 </div>
@@ -263,4 +266,20 @@
         </ng-container>
     </ng-container>
 
+    <ng-template #addInvoiceModal let-d="dismiss">
+        <div class="modal-header">
+            <h5 class="modal-title"><span [innerHTML]="'Enter the identifier of invoice generated for this payment, if any' | translate"></span></h5>
+            <button type="button" class="close" aria-label="Close" (click)="d('')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <input type="text" class="form-control" [(ngModel)]="invoiceId">
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary action" [disabled]="isPaymentButtonDisabled()" (click)="onPaymentDone(d)">
+                <span [innerHTML]="'Payment Received' | translate"></span>
+            </button>
+        </div>
+    </ng-template>
 </div>

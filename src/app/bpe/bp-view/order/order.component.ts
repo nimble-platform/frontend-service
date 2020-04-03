@@ -3,7 +3,6 @@ import { Order } from "../../../catalogue/model/publish/order";
 import { CallStatus } from "../../../common/call-status";
 import { BPDataService } from "../bp-data-service";
 import { Location } from "@angular/common";
-import { PaymentTermsWrapper } from "../payment-terms-wrapper";
 import { Router } from "@angular/router";
 import {copy, quantityToString, roundToTwoDecimals} from '../../../common/utils';
 import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
@@ -31,6 +30,7 @@ import {DocumentReference} from "../../../catalogue/model/publish/document-refer
 import {CatalogueLine} from '../../../catalogue/model/publish/catalogue-line';
 import {Item} from '../../../catalogue/model/publish/item';
 import {Invoice} from '../../../catalogue/model/publish/invoice';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 /**
  * Created by suat on 20-Sep-17.
@@ -83,6 +83,14 @@ export class OrderComponent implements OnInit {
 
     quantityToString = quantityToString;
 
+    // invoice related variables
+    showInvoiceModal:boolean = false;
+    invoiceId:string = null;
+    invoiceBlockChainRecordCallStatus: CallStatus = new CallStatus();
+    blockChainRecord:any = null;
+
+    objectKeys=Object.keys;
+
     constructor(public bpDataService: BPDataService,
                 private userService: UserService,
                 private bpeService: BPEService,
@@ -92,6 +100,7 @@ export class OrderComponent implements OnInit {
                 private location: Location,
                 private router: Router,
                 private translate: TranslateService,
+                private modalService: NgbModal,
                 private documentService: DocumentService) {
     }
 
@@ -115,6 +124,8 @@ export class OrderComponent implements OnInit {
         this.userRole = this.bpDataService.bpActivityEvent.userRole;
         this.orderResponse = this.bpDataService.orderResponse;
 
+        // check whether we need to show invoice model after a payment is made
+        this.setShowInvoiceModal();
         this.priceWrappers = [];
         for(let orderLine of this.order.orderLine){
             this.priceWrappers.push(new PriceWrapper(
@@ -176,6 +187,25 @@ export class OrderComponent implements OnInit {
                 this.productionTemplateFile = [productionTemplateFile.attachment.embeddedDocumentBinaryObject]
             }
         }
+    }
+
+    setShowInvoiceModal(){
+        for(let orderLine of this.order.orderLine){
+            for (let itemProperty of orderLine.lineItem.item.additionalItemProperty) {
+                if(itemProperty.valueQualifier == "BOOLEAN"){
+                    for (let text of itemProperty.name) {
+                        if(text.value == "Certificate origin on demand"){
+                            this.showInvoiceModal = true;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    openInvoiceModal(content){
+        this.modalService.open(content);
     }
 
     private getCatalogueLine(item:Item):CatalogueLine{
@@ -302,13 +332,17 @@ export class OrderComponent implements OnInit {
             });
     }
 
-    onPaymentDone(){
+    onPaymentDone(close=null){
         this.submitCallStatus.submit();
-        this.bpeService.paymentDone(this.order.id,this.sellerParty.federationInstanceID).then(response => {
+        this.bpeService.paymentDone(this.order.id,this.invoiceId,this.sellerParty.federationInstanceID).then(response => {
             this.isPaymentDone = true;
             this.submitCallStatus.callback(null,true);
             // redirect user to purchase or sales tab according to his role
             alert(this.translate.instant("Successfully saved. You are now getting redirected."));
+            // close the modal,if exists
+            if(close){
+                close();
+            }
             this.router.navigate(['dashboard'], {
                 queryParams: {
                     tab: this.processMetadata.buyer ? "PURCHASES" : "SALES",
@@ -441,12 +475,21 @@ export class OrderComponent implements OnInit {
     }
 
     isInvoiceTabShown(): boolean {
-        if(this.invoice && this.invoice.id != null && this.invoice.originatorDocumentReference != null && this.invoice.originatorDocumentReference.length > 0 && this.invoice.originatorDocumentReference[0].id != null){
+        if(this.invoice && this.invoice.id != null){
             return true;
         }
         return false;
     }
 
+    getInvoiceBlockChainInfo(){
+        this.invoiceBlockChainRecordCallStatus.submit();
+        this.bpeService.getInvoiceBlockChainInfo(this.invoice.id).then(response => {
+            this.blockChainRecord = response;
+            this.invoiceBlockChainRecordCallStatus.callback("Retrieved blockchain record successfully",true);
+        }).catch(error => {
+            this.invoiceBlockChainRecordCallStatus.error("Failed to retrieve blockchain record for the invoice",error);
+        });
+    }
     isDispatchDisabled(): boolean {
         return this.isLoading() || this.isOrderRejected() || this.isThereADeletedProduct() || this.processMetadata.collaborationStatus == "COMPLETED";
     }

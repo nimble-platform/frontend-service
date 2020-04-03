@@ -27,6 +27,7 @@ export class BPEService {
 
 	private headers = new Headers({'Content-Type': 'application/json'});
 	private url = myGlobals.bpe_endpoint;
+	private certificateOfOriginUrl = myGlobals.certificate_of_origin_endpoint;
 	private delegate_url = myGlobals.delegate_endpoint;
 
 	private delegated = (FEDERATION() == "ON");
@@ -320,11 +321,14 @@ export class BPEService {
             .catch(this.handleError);
 	}
 
-	paymentDone(orderId: string,delegateId:string): Promise<any> {
+	paymentDone(orderId: string,invoiceId:string,delegateId:string): Promise<any> {
 		let headers = this.getAuthorizedHeaders();
-		let url = `${this.url}/paymentDone/${orderId}?delegateId=${delegateId}`;
+		let url = `${this.url}/paymentDone/${orderId}`;
 		if(this.delegated){
 			url = `${this.delegate_url}/paymentDone/${orderId}?delegateId=${delegateId}`;
+		}
+		if(invoiceId){
+			url += (this.delegated ? `&`:`?`) + `invoiceId=${invoiceId}`;
 		}
 		return this.http
 			.post(url, null, {headers: headers})
@@ -349,6 +353,16 @@ export class BPEService {
 	getInvoice(orderId: string): Promise<any> {
 		let headers = this.getAuthorizedHeaders();
 		let url = `${this.url}/invoice/${orderId}`;
+		return this.http
+			.get(url,  {headers: headers})
+			.toPromise()
+			.then(res =>res.json())
+			.catch(this.handleError);
+	}
+
+	getInvoiceBlockChainInfo(invoiceId: string): Promise<any> {
+		let headers = this.getAuthorizedHeaders();
+		let url = `${this.certificateOfOriginUrl}/invoice/${invoiceId}`;
 		return this.http
 			.get(url,  {headers: headers})
 			.toPromise()

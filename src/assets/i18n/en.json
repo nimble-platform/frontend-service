@@ -219,6 +219,7 @@
 	"End Time": "End Time",
 	"Endpoint Address": "Endpoint Address",
 	"Enter EPC Code": "Enter EPC Code",
+	"Enter the identifier of invoice generated for this payment, if any": "Enter the identifier of invoice generated for this payment, if any",
 	"Environmental Emission": "Environmental Emission",
 	"Error while fetching thread.": "Error while fetching thread.",
 	"Estimated Delivery Date": "Estimated Delivery Date",
