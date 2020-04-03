@@ -432,10 +432,16 @@ export class CollaborationGroupsTabComponent {
 
     private executeCollaborationGroupQuery(query: DashboardQuery): void {
         this.collaborationGroupResults = new CollaborationGroupResults();
-        this.queryStatus.submit();
+        // for each query, we create a new CallStatus so that only the latest one is bound to the template.
+        // otherwise, for the multiple queries, we might end up with a CallStatus loading forever since the callback count
+        // may be higher than the call count which is 1.
+        this.queryStatus = new CallStatus();
+        // use the latest CallStatus for the query
+        let queryStatus = this.queryStatus
+        queryStatus.submit();
         this.getCollaborationGroupsQuery(query)
             .then(() => {
-                this.queryStatus.callback('Successfully fetched collaboration groups', true);
+                queryStatus.callback('Successfully fetched collaboration groups', true);
             })
             .catch(error => {
                 this.queryStatus.error('Error while fetching collaboration groups.', error);
@@ -444,10 +450,16 @@ export class CollaborationGroupsTabComponent {
 
     private executeProcessInstanceGroupQuery(query: DashboardQuery): void {
         this.collaborationGroupResults = new CollaborationGroupResults();
-        this.queryStatus.submit();
+        // for each query, we create a new CallStatus so that only the latest one is bound to the template.
+        // otherwise, for the multiple queries, we might end up with a CallStatus loading forever since the callback count
+        // may be higher than the call count which is 1.
+        this.queryStatus = new CallStatus();
+        // use the latest CallStatus for the query
+        let queryStatus = this.queryStatus
+        queryStatus.submit();
         this.getProcessInstanceGroupsQuery(query)
             .then(() => {
-                this.queryStatus.callback('Successfully fetched process instance groups', true);
+                queryStatus.callback('Successfully fetched process instance groups', true);
             })
             .catch(error => {
                 this.queryStatus.error('Error while fetching process instance groups.', error);
