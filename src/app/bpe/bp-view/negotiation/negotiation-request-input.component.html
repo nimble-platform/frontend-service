@@ -26,7 +26,7 @@
     <div *ngIf="quantity !== undefined" class="col-4 col-quantity-value">
         <input type="number" class="form-control form-control-sm"
                [ngModel]="quantity.value"
-               (ngModelChange)="quantity.value = $event; onQuantityValueChanged()"
+               (ngModelChange)="quantity.value = $event; onQuantityChanged()"
                [ngClass]="formControlClass"
                [disabled]="disabled"
                [step]="step"
@@ -42,7 +42,7 @@
     <div *ngIf="quantity !== undefined && quantityUnits" class="col-3 col-quantity-unit">
         <select class="form-control form-control-sm"
                 [ngModel]="quantity.unitCode"
-                (ngModelChange)="quantity.unitCode = $event; onQuantityValueChanged()"
+                (ngModelChange)="quantity.unitCode = $event; onQuantityChanged()"
                 [disabled]="disabled || disableQuantityUnit"
                 [formControl]="quantityUnitFormControl">
             <option *ngFor="let option of quantityUnits" [value]="option">{{option}}</option>

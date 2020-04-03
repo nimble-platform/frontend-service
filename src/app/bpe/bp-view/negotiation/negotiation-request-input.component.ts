@@ -87,8 +87,11 @@ export class NegotiationRequestInputComponent extends ChildFormBase implements O
         this.selectedChange.emit(selected);
     }
 
-    onQuantityValueChanged(): void {
+    onQuantityChanged(): void {
         this.quantityChange.emit(this.quantity);
+        // since PeriodValidator uses both quantity value and unit for the validation,
+        // we need to check the validity of quantity value (i.e., calling PeriodValidator) when the unit is updated as well
+        this.quantityValueFormControl.updateValueAndValidity();
     }
 
     @Input()
