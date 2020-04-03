@@ -474,6 +474,11 @@ export class ShoppingCartComponent implements OnInit {
                 let rfq: RequestForQuotation = this.rfqs.get(sellerId);
                 // if rfq only contains this line, delete rfq as well
                 if(rfq.requestForQuotationLine.length == 1){
+                    // remove the rfq from rfqCatalogueLineMap
+                    this.rfqCatalogueLineMap.delete(rfq.id);
+                    // remove NegotiationModelWrapper of this product
+                    this.negotiationModelWrappers.delete(cartLine.hjid);
+                    // remove rfq
                     this.rfqs.delete(sellerId);
                 }
                 // otherwise, remove the rfq line created for this product
