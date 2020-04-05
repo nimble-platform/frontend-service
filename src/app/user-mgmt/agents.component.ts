@@ -98,41 +98,6 @@ export class AgentsComponent implements OnInit {
             companyList: ['', Validators.required],
         }));
 
-        this.orders = [
-            {
-                productName: 'Comfort Rocking Chair',
-                units: 54,
-                price: 2800,
-                companyName: 'Agenor Furniture',
-                date: '12/11/2019',
-                status: 'INPROGRESS'
-            },
-            {
-                productName: 'Designer Rocking Chair',
-                units: 30,
-                price: 1350,
-                companyName: 'AIDIMME',
-                date: '07/11/2019',
-                status: 'INPROGRESS'
-            },
-            {
-                productName: 'Comfort Rocking Chair',
-                units: 50,
-                price: 2820,
-                companyName: 'Agenor Furniture',
-                date: '05/10/2019',
-                status: 'INPROGRESS'
-            },
-            {
-                productName: 'Thana rocking chair',
-                units: 60,
-                price: 3141,
-                companyName: 'Congo Furn S.L.',
-                date: '2/09/2019',
-                status: 'CANCELLED'
-            },
-        ];
-
         this.refreshAgents();
     }
 
@@ -357,13 +322,13 @@ export class AgentsComponent implements OnInit {
     createSellingAgent(){
         this.showCreateSellingAgent = true;
         // TODO remove after testing
-        this.editSellingAgent('123');
+        // this.editSellingAgent('123');
     }
 
     createBuyingAgent(){
         this.showCreateBuyingAgent = true;
         // TODO remove after testing
-        this.editBuyingAgent('123');
+        // this.editBuyingAgent('123');
     }
 
     openModal(content) {
@@ -374,14 +339,36 @@ export class AgentsComponent implements OnInit {
         this.modalService.dismissAll();
     }
 
-    // Getter method to access formcontrols
-    get currency() {
-        return this.sellingAgentForm.get('currency');
+    showTransactionsView(agentID){
+        this.orders = [];
+        this.agentService.getSAOrders(agentID).then((datas) => {
+            datas.forEach((data) => {
+                data = data['payload'];
+                let dateObj = data['processData']['creationDate'].split('T');
+                let date = dateObj[0];
+                let time = dateObj[1].split('.')[0];
+
+                let dateStr = `${date} (${time})`
+                let saOrder = {
+                    productName: data['orderLine'][0]['lineItem']['item']['name'][0]['value'],
+                    units: data['orderLine'][0]['lineItem']['quantity']['value'],
+                    price: data['anticipatedMonetaryTotal']['payableAmount']['value'],
+                    companyName: data['sellerSupplierParty']['party']['partyName'][0]['name']['value'],
+                    date: dateStr,
+                    status: data['processData']['status'],
+                    processInstanceID: data['processData']['processInstanceID']
+                };
+
+                this.orders.push(saOrder);
+            });
+
+            this.selectedAgent = this.getSellingAgent(agentID)['agentName'];
+            this.showTransactions = true;
+        });
     }
 
-    showTransactionsView(agentName: string){
-        this.showTransactions = true;
-        this.selectedAgent = agentName;
+    navigateToProcess(processInstanceID) {
+        this.router.navigate([`bpe/bpe-exec/${processInstanceID}/STAGING`]);
     }
 
     viewAgentList(){
@@ -471,18 +458,18 @@ export class AgentsComponent implements OnInit {
         });
 
         // TODO remove after testing
-        if (agent === undefined) {
-            agent = {
-                agentName: this.rand(5, null) + ' agent',
-                maxContractAmount: {value: this.getRandomInt(30000), unit: 'euro'},
-                minFulfillmentTime: {value: this.getRandomInt(10), unit: 'hour'},
-                maxFulfillmentTime: {value: this.getRandomInt(20), unit: 'day'},
-                maxVolume: {value: this.getRandomInt(50000), unit: 'day'},
-                maxNoOneToOne: {value: this.getRandomInt(5), unit: 'week'},
-                productNames: ['ff1c8a90-6248-494d-8d12-4292c7b40185'],
-                maxNoContractPerDay: this.getRandomInt(5)
-            };
-        }
+        // if (agent === undefined) {
+        //     agent = {
+        //         agentName: this.rand(5, null) + ' agent',
+        //         maxContractAmount: {value: this.getRandomInt(30000), unit: 'euro'},
+        //         minFulfillmentTime: {value: this.getRandomInt(10), unit: 'hour'},
+        //         maxFulfillmentTime: {value: this.getRandomInt(20), unit: 'day'},
+        //         maxVolume: {value: this.getRandomInt(50000), unit: 'day'},
+        //         maxNoOneToOne: {value: this.getRandomInt(5), unit: 'week'},
+        //         productNames: ['ff1c8a90-6248-494d-8d12-4292c7b40185'],
+        //         maxNoContractPerDay: this.getRandomInt(5)
+        //     };
+        // }
 
         return agent;
     }

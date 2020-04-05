@@ -72,6 +72,15 @@ export class AgentService {
             .catch(this.handleError);
     }
 
+    getSAOrders(agentId?): Promise<any> {
+        const url = `${this.url}/getSAOrders/${agentId}`;
+        return this.http
+            .get(url, {headers: this.basic_header})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
     getAllBuyingAgents(id?): Promise<any> {
         let ownerCompanyId = id;
         if (id === undefined) {

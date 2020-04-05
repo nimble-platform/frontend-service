@@ -45,7 +45,7 @@
                         <th><span [innerHTML]="'Agent Name' | translate"></span></th>
                         <th><span [innerHTML]="'No of Contracts' | translate"></span></th>
                         <th><span [innerHTML]="'Is Active' | translate"></span></th>
-                        <th><span [innerHTML]="'Last Activity In' | translate"></span></th>
+                        <th><span [innerHTML]="'Last Activity On' | translate"></span></th>
                         <th><span [innerHTML]="'Options' | translate"></span></th>
                     </tr>
                     <tr [hidden]="!membersFetched || buyingAgentList.length > 0">
@@ -109,7 +109,7 @@
                         <th><span [innerHTML]="'Agent Name' | translate"></span></th>
                         <th><span [innerHTML]="'No of Contracts' | translate"></span></th>
                         <th><span [innerHTML]="'Is Active' | translate"></span></th>
-                        <th><span [innerHTML]="'Last Activity In' | translate"></span></th>
+                        <th><span [innerHTML]="'Last Activity On' | translate"></span></th>
                         <th><span [innerHTML]="'Options' | translate"></span></th>
                     </tr>
                     <tr [hidden]="!membersFetched || agentList.length > 0">
@@ -128,7 +128,7 @@
                             {{inv.lastActive}}
                         </td>
                         <td>
-                            <button class="btn btn-success btn-sm" (click)="showTransactionsView(inv.name)"><span [innerHTML]="'View Orders' | translate"></span></button>
+                            <button class="btn btn-success btn-sm" (click)="showTransactionsView(inv.id)"><span [innerHTML]="'View Orders' | translate"></span></button>
                             <button class="btn btn-primary btn-sm" (click)="editSellingAgent(inv.id)"><span [innerHTML]="'Edit' | translate"></span></button>
                             <button class="btn btn-danger btn-sm" (click)="deleteAgent(inv.id, SELLING_AGENT)"><span [innerHTML]="'Delete' | translate"></span></button>
                             <span *ngIf="inv.isActive">
@@ -486,15 +486,11 @@
             (click)="viewAgentList()">
         <span [innerHTML]="'Back' | translate"></span>
     </button>
-    <button class="btn btn-dark align-self-start float-right ml-2"
-            (click)="viewAgentList()">
-        <span [innerHTML]="'Show Archived' | translate"></span>
-    </button>
 </div>
 
 <div *ngIf="showTransactions">
     <div class="col-12 mx-auto space-before space-after ">
-        <span><h3>Orders of: {{selectedAgent}} </h3>(Total: 23, Archived: 19)</span>
+        <span><h3>Orders of: {{selectedAgent}} </h3>(Total: {{orders.length}})</span>
         <!--<div class="d-flex justify-content-end">-->
             <!--<call-status [callStatus]="exportCallStatus"></call-status>-->
 
@@ -515,13 +511,11 @@
                                         <div class="header-label mr-auto d-flex">
                                             Product/Service: <span class="clickable">{{order.productName}}</span>
                                         </div>
-                                        <!--<div class="clickable float-right ml-2">View Request</div>-->
                                     </div>
                                 </div>
                                 <hr class="collaboration-hr">
                                 <div>
                                     <div class="space-after">
-                                        <!--If Purchases tab is selected, show groups whose collaboration role is Buyer-->
                                         <div class="row thread-entry m-0">
                                             <div class="col-12 d-flex thread-entry-header">
                                                 <div class="col pl-2">
@@ -543,13 +537,11 @@
                                                 <div class="col pl-1">
                                                     <strong><span [innerHTML]="'Status' | translate"></span>:</strong><br/>
                                                     <!--<span>{{order.status}}</span>-->
-                                                    <span *ngIf="order.status == 'CANCELLED'" class="badge badge-secondary"><span [innerHTML]="'Collaboration cancelled' | translate"></span></span>
-                                                    <span *ngIf="order.status == 'INPROGRESS'" class="badge badge-secondary" >In progress</span>
-                                                    <span *ngIf="order.status == 'COMPLETED'" class="badge badge-primary"><span [innerHTML]="'Collaboration finished' | translate"></span></span>
+                                                    <span class="badge badge-secondary"><span> {{order.status}}</span></span>
                                                 </div>
                                                 <div class="col pl-1">
                                                     <strong><span [innerHTML]="'Actions' | translate"></span>:</strong><br/>
-                                                    <span class="clickable">View Order Details</span>
+                                                    <span class="clickable" (click)="navigateToProcess(order.processInstanceID)">View Order Details</span>
                                                 </div>
                                             </div>
                                         </div>
