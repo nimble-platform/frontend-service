@@ -226,7 +226,7 @@
     </div>
     <div class="modal-body" [innerHTML]="'help-modal-text' | translate"></div>
     <div class="modal-footer">
-        <a href="assets/user_manual.pdf" target="_blank" role="button" class="btn btn-primary" (click)="d('')" [innerHTML]="'Open manual' | translate"></a>
+        <a [href]="config.docLink" target="_blank" role="button" class="btn btn-primary" (click)="d('')" [innerHTML]="'Open manual' | translate"></a>
         <a [href]="mailto" role="button" class="btn btn-primary" (click)="d('')" [innerHTML]="'Contact support' | translate"></a>
     </div>
 </ng-template>
