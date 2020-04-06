@@ -36,6 +36,7 @@ export class AgentsComponent implements OnInit {
     results = {count: 3, pageSize: 10,};
     showTransactions = false;
     selectedAgent = '';
+    isDev= false;
 
     saErr = false;
     baErr = false;
@@ -321,13 +322,17 @@ export class AgentsComponent implements OnInit {
     createSellingAgent(){
         this.showCreateSellingAgent = true;
         // TODO remove after testing
-        this.editSellingAgent('123');
+        if (this.isDev) {
+            this.editSellingAgent('123');
+        }
     }
 
     createBuyingAgent(){
         this.showCreateBuyingAgent = true;
         // TODO remove after testing
-        this.editBuyingAgent('123');
+        if (this.isDev) {
+            this.editBuyingAgent('123');
+        }
     }
 
     openModal(content) {
@@ -434,10 +439,12 @@ export class AgentsComponent implements OnInit {
         });
 
         // TODO remove after testing
-        // if (agent === undefined) {
-        //     agent = this.fillRandomForSA()
-        //
-        // }
+        if (this.isDev) {
+            if (agent === undefined) {
+                    agent = this.fillRandomForSA()
+
+            }
+        }
         return agent;
     }
 
@@ -448,10 +455,11 @@ export class AgentsComponent implements OnInit {
         });
 
         // TODO remove after testing
-        // if (agent === undefined) {
-        //     agent = this.fillRandomForBA()
-        // }
-
+        if (this.isDev) {
+            if (agent === undefined) {
+                agent = this.fillRandomForBA()
+            }
+        }
         return agent;
     }
 
