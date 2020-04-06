@@ -805,6 +805,10 @@ export class SimpleSearchFormComponent implements OnInit {
                 let genName = name;
                 if (genName.indexOf(DEFAULT_LANGUAGE() + "_") != -1)
                     genName = genName.replace(DEFAULT_LANGUAGE() + "_", "");
+								else if (genName.indexOf("{NULL}_") != -1)
+										genName = genName.replace("{NULL}_", "");
+								else if (genName.indexOf(prefix + "_") == 0)
+										genName = genName.replace("_", "");
 
                 let total = 0;
                 let selected = false;
@@ -869,6 +873,10 @@ export class SimpleSearchFormComponent implements OnInit {
                 let genName = facet;
                 if (genName.indexOf(DEFAULT_LANGUAGE() + "_") != -1)
                     genName = genName.replace(DEFAULT_LANGUAGE() + "_", "");
+								else if (genName.indexOf("{NULL}_") != -1)
+										genName = genName.replace("{NULL}_", "");
+								else if (genName.indexOf("_") == 0)
+										genName = genName.replace("_", "");
 
                 this.facetObj.push({
                     "name": facet,
@@ -1303,6 +1311,13 @@ export class SimpleSearchFormComponent implements OnInit {
         var name = facet.split(":")[0];
         if (name.indexOf(DEFAULT_LANGUAGE() + "_") != -1)
             name = name.replace(DEFAULT_LANGUAGE() + "_", "");
+				else if (name.indexOf("{NULL}_") != -1) {
+						name = name.replace("{NULL}_", "");
+				}
+				else if (name.indexOf("_") == 0)
+						name = name.replace("_", "");
+				else if (name.indexOf("._") != -1)
+						name = name.replace("._", ".");
         name = this.getFacetName(name);
         return name;
     }
@@ -1499,6 +1514,7 @@ export class SimpleSearchFormComponent implements OnInit {
         let facets = this.party_facet_field_list.slice();
         for (let i = 0; i < facets.length; i++) {
             facets[i] = facets[i].replace("{LANG}_", (DEFAULT_LANGUAGE() + "_"));
+						facets[i] = facets[i].replace("{NULL}_", "_");
         }
         let query = "";
         let length = idList.length;
