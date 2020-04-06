@@ -10,7 +10,8 @@ import {DespatchLine} from '../../../catalogue/model/publish/despatch-line';
  */
 @Component({
     selector: "fulfilment",
-    templateUrl: "./fulfilment.component.html"
+    templateUrl: "./fulfilment.component.html",
+    styleUrls: ["./fulfilment.component.css"]
 })
 export class FulfilmentComponent implements OnInit {
     
@@ -27,16 +28,11 @@ export class FulfilmentComponent implements OnInit {
 
     }
 
-    green_perc:number[] = [];
-    yellow_perc:number[] = [];
-    red_perc:number[] = [];
-    green_perc_str:string[] = [];
-    yellow_perc_str:string[] = [];
-    red_perc_str:string[] = [];
-    blueTotalDispatched:number[] = [];
-    greenTotalAccepted:number[] = [];
-    yellowTotalWaiting:number[] = [];
-    redTotalRejected:number[] = [];
+    totalDispatched:number[] = [];
+    totalAccepted:number[] = [];
+    totalToBeShipped:number[] = [];
+    totalWaitingResponse:number[] = [];
+    totalRejected:number[] = [];
 
     fulfilmentStatisticsCallStatus: CallStatus = new CallStatus();
 
@@ -74,35 +70,17 @@ export class FulfilmentComponent implements OnInit {
             this.orderLineItemHjids = [];
             for(let statistics of result){
                 this.orderLineItemHjids.push(statistics.lineItemHjid.toString());
-                let blueTotalDispatched = statistics.dispatchedQuantity;
-                let greenTotalAccepted = statistics.dispatchedQuantity - statistics.rejectedQuantity;
-                let redTotalRejected = statistics.rejectedQuantity;
-                let waitingQuantity = statistics.requestedQuantity - greenTotalAccepted;
-                let yellowTotalWaiting = waitingQuantity > 0 ? waitingQuantity: 0;
+                let totalDispatched = statistics.dispatchedQuantity;
+                let totalAccepted = statistics.acceptedQuantity;
+                let totalRejected = statistics.rejectedQuantity;
+                let waitingResponse = totalDispatched-totalAccepted-totalRejected;
+                let toBeShipped = statistics.requestedQuantity - totalAccepted - waitingResponse;
 
-                let total = greenTotalAccepted + redTotalRejected + yellowTotalWaiting;
-
-                let green_perc = Math.round(greenTotalAccepted*100/total);
-                let yellow_perc = Math.round(yellowTotalWaiting*100/total);
-                let red_perc = Math.round(redTotalRejected*100/total);
-
-                let green_perc_str = green_perc+"%";
-                let yellow_perc_str = yellow_perc+"%";
-                let red_perc_str = (100 - green_perc - yellow_perc) +"%";
-
-
-                this.blueTotalDispatched.push(blueTotalDispatched);
-                this.greenTotalAccepted.push(greenTotalAccepted);
-                this.redTotalRejected.push(redTotalRejected);
-                this.yellowTotalWaiting.push(yellowTotalWaiting);
-
-                this.green_perc.push(green_perc);
-                this.yellow_perc.push(yellow_perc);
-                this.red_perc.push(red_perc);
-
-                this.green_perc_str.push(green_perc_str);
-                this.yellow_perc_str.push(yellow_perc_str);
-                this.red_perc_str.push(red_perc_str);
+                this.totalDispatched.push(totalDispatched);
+                this.totalAccepted.push(totalAccepted);
+                this.totalRejected.push(totalRejected);
+                this.totalToBeShipped.push(toBeShipped > 0 ? toBeShipped: 0);
+                this.totalWaitingResponse.push(waitingResponse);
             }
 
             this._selectedOrderLineIndex = this.getOrderLineIndex(0);
