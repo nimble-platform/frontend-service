@@ -2,16 +2,23 @@
 
 // Development variables
 
+// Boolean flag if debug information shall be shown on the console
 export const debug = false;
 
 
 // Base path variables
 
+// Platform base path of backend services
 export const base_path = "http://nimble-staging.salzburgresearch.at";
+// Base path of explorative search endpoints
 export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
+// Base path of Keycloak IDP
 export const idpURL = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master";
+// Base path of collaboration tools endpoints
 export const collab_path = "http://nimble.eu-de.containers.appdomain.cloud/collaborations";
+// Link to Keycloak password reset
 export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client";
+// Path where this UI is hosted
 export const frontendURL = base_path + "/frontend/";
 
 
@@ -32,7 +39,8 @@ export const agent_mgmt_endpoint=`http://159.69.214.42/agents`;
 export const collaboration_endpoint = `${collab_path}`;
 export const certificate_of_origin_endpoint=`http://161.156.70.125:7695`;
 
-// BIBA endpoints
+
+// Explorative Search endpoints
 
 export const languageEndPoint = `${ub_base}/getSupportedLanguages`;
 export const endpoint = `${ub_base}/detectMeaningLanguageSpecific`;
@@ -47,7 +55,7 @@ export const referenceFromConcept = `${ub_base}/getReferencesFromAConcept`;
 export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 
 
-// TnT Endpoints
+// Track & Trace endpoints
 
 export const tntEndpoint = `${base_path}/tracking`;
 export const tntMasterDataEndpoint = `${base_path}/tracking/masterData/id/`;
@@ -56,6 +64,63 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 
 
 // Platform Configuration
+/*
+- federationInstanceId: ID of this instance - should match the backend configuration
+- platformName: Readable name of this instance - to be displayed on the navbar
+- envName: Short name of the current environment
+- addCartBehaviour: If "single" a product can be added to the shopping cart once, if "multiple" it can be added multiple times
+- companyRegistrationRequired: Boolean flag if users need to register (or be assigned to) a company before using any platform feature
+- categoryFilter: Allows configuring the usage of different ontologies. The key is the ontology name, the value is a JSON object with the following entries:
+	* hiddenCategories: An array of top-level category IDs that will be hidden from the UI
+	* logisticsCategory: The ID of the logistics categoryFilter
+	* ontologyPrefix: The prefix of the ontology used to identify it
+- collaborationEnabled: Boolean flag if the collaboration feature is enabled in the dashboard (textile use case)
+- dataChannelsEnabled: Boolean flag if data channels shall be supported
+- defaultBusinessProcessIds: Array of default business processes that shall be enabled for a company upon registration. Applicable values are "Item_Information_Request", "Ppap", "Negotiation", "Order", "Transport_Execution_Plan" and "Fulfilment". An empty array enables all processes
+- defaultSearchIndex: If "Name" the product search query prioritizes the product name, if "Category" it prioritizes the category name
+- delegationEnabled: Boolean flag if the federation feature is available for the instance
+- docLink: Link to the documentation resources
+- frameContractEnabled: Boolean flag is frame contracts are applicable
+- imprint: HTML string of the imprint information to be shown on the according subpage
+- kibanaConfig: Allows configuring the titles and links to the Kibana dashboards. The keys are "companyDashboards" (Basic company information), "companyGraphs" (More complex company information) and "dashboards" (Platform information), this value is an array of JSON objects with the following entries:
+	* title: Title to be displayed on the UI
+	* url: Sub-URL of the Kibana page starting at "#"
+- kibanaEnabled: Boolean flag if Kibana is used on the instance
+- languageSettings: Allows configuring the languages on the instance. The JSON object uses the following structure:
+	* available: Array of ISO language codes available for selection on the platform. Make sure to include an according JSON file for each language in "src/assets/i18n"
+	* fallback: The language to be used in case a translation for the current user selection is unavailble
+- loggingEnabled: Boolean flag if the logstash endpoint shall be used for tracking user activity
+- logoPath: Link to the logo disabled in the navbar
+- federationLogoPath: Link to the logo of the federated login
+- logoRequired: Boolean flag if the submission of a company logo is required upon registration
+- phoneNumberRequired: Boolean flag if the phone number of a user is required upon registration
+- vatEnabled: Boolean flag if VAT rates shall be included in price calculations
+- projectsEnabled: Boolean flag if project management is available on the dashboard
+- requiredAgreements: Array of JSON objects defining the terms a user has to agree to upon registration. Each entry uses the following structure:
+	* title: Title to be displayed on the UI
+	* src: Link to the agreement document
+- showChat: Boolean flag if the chat is available on the instance
+- showAgent: Boolean flag if the agent configuration is available on the instance
+- showCompanyMembers: Boolean flag if all company members shall be eligible to see the list of company members
+- showExplorative: Boolean flag if the explorative search feature is enabled on the instance
+- showLCPA: Boolean flag if LCPA codes shall be linkable to products
+- showPPAP: Boolean flag if information regarding the PPAP process is enabled on the instance
+- showTrack: Boolean flag if the Track & Trace feature is enabled on the instance
+- showTrade: Boolean flag if advanced trade detail information shall be configurable in the company settings
+- showVerification: Boolean flag if additional verification information can be submitted upon registration
+- standardCurrency: Default currency to use on the instance. Applicable values are "EUR", "SEK" and "USD"
+- standardTaxonomy: Default taxonomy to use during product publishing. Applicable values are "All" (search over all defined taxonomies) or any taxonomy name
+- supportedActivitySectors: Allows configuring a pre-defined selection of activity sectors for a company. The key is "" or any of the business types listed in "supportedBusinessTypes" and the value is an array of usable strings. In case of an empty array free text is allowed as input
+- supportedBusinessTypes: An array of pre-defined business types usable during company registration
+- supportedCertificates: An array of pre-defined certificate types usable during document upload
+- supportedRoles: An array of roles supported when inviting new company members. Applicable values are "company_admin", "external_representative", "legal_representative", "monitor", "publisher", "purchaser" and "sales_officer"
+- supportMail: The email address used for sending any support, change or deletion requests
+- supportMailContent: Allows defining the default body of a support mail. Keys are the ISO language codes and values are the strings displayed in the mail body (use \n for linebreaks)
+- showLoginFederation: Boolean flag if the federated login is available on the instance
+- unshippedOrdersTabEnabled: Boolean flag is the unshipped orders shall be shown on the dashboard
+- federationClientID: Keycloak client ID used for the federated login
+- federationIDP: Keycloak IDP used for the federated login
+*/
 
 export const config = {
     "federationInstanceId":"STAGING",
@@ -215,6 +280,8 @@ export const config = {
 
 // Catalogue format variables
 
+// Definition of relevant index fields used for product and party display
+// >>>
 export const product_vendor = "manufacturer";
 export const product_vendor_id = "id";
 export const product_vendor_img = "logoId";
@@ -234,13 +301,18 @@ export const product_price = "price";
 export const product_currency = "currency";
 export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
+export const item_manufacturer_id = "manufacturerId";
+// <<<
+// Grouping of facets into categories (Product / Service, Vendor, Trust / Rating, Other)
+// >>>
 export const product_filter_prod = ["freeOfCharge","certificateType","applicableCountries"];
 export const product_filter_comp = ["manufacturer.legalName","manufacturer.brandName","manufacturer.businessType","manufacturer.activitySectors","manufacturer.businessKeywords","manufacturer.origin","manufacturer.certificateType","manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType"];
 export const party_facet_field_list = ["legalName","{LANG}_brandName","businessType","{LANG}_activitySectors","{LANG}_businessKeywords","{NULL}_origin","{NULL}_certificateType","ppapComplianceLevel","ppapDocumentType"];
 export const party_filter_main = ["businessType","activitySectors","businessKeywords","origin","certificateType","ppapComplianceLevel","ppapDocumentType"];
 export const party_filter_trust = ["trustScore","trustRating","trustSellerCommunication","trustFullfillmentOfTerms","trustDeliveryPackaging","trustNumberOfTransactions"];
-export const item_manufacturer_id = "manufacturerId";
 export const product_filter_trust = ["manufacturer.trustScore","manufacturer.trustRating","manufacturer.trustSellerCommunication","manufacturer.trustFullfillmentOfTerms","manufacturer.trustDeliveryPackaging","manufacturer.trustNumberOfTransactions"];
+// <<<
+// Used to overwrite facet name mappings from the backend services
 export const product_filter_mappings = {
   "price": "Price",
   "currency": "Currency",
@@ -254,12 +326,24 @@ export const product_filter_mappings = {
   "businessKeywords": "Business Keywords",
   "origin": "Vendor Origin"
 };
+// Facets removed from the UI by full name
 export const product_nonfilter_full = ["_text_","_version_","id","image","localName","languages","catalogueId","doctype","manufacturerId","manufacturerItemId","allLabels"];
+// Facets removed from the UI by regex
 export const product_nonfilter_regex = ["lmf.","manufacturer.","_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
+// Facets used for configuration
 export const product_configurable = [];
+// Facets used for default fields
 export const product_default = {};
+// Defines the minimum count of a facet field to appear in the search results
 export const facet_min = 1;
+// Defined the maximum number of fields to be returned for a facet (-1 = unlimited)
 export const facet_count = -1;
+// Query settings for product search
+/*
+- fields: Array of fields to include in query building. Applicable values are any field name (with {LANG}_ as a placeholder for multilingual fields) and "STANDARD" (for any other field)
+- boosting: Boolean flag if boosting shall be applied to the search query according to the "boostingFactors" settings
+- boostingFactors: Allows defining different boosting factors for searching by relevance. Keys are the field names listed in "fields" and values are -1 (for negative boosts) or a multiple of 2
+*/
 export const query_settings = {
     "fields": ["STANDARD","commodityClassficationUri","{LANG}_label","{LANG}_desc"],
     "boosting": true,
@@ -270,6 +354,7 @@ export const query_settings = {
         "{LANG}_desc": -1
     }
 };
+// Query settings for company search
 export const query_settings_comp = {
   "fields": ["STANDARD","id","legalName","{LANG}_brandName"],
   "boosting": true,

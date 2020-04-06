@@ -14,6 +14,7 @@ export const collab_path = "http://localhost:8081/collaboration_service";
 export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client";
 export const frontendURL = base_path + ":9092";
 
+
 // Service endpoints
 
 export const user_mgmt_endpoint=`${base_path}/identity`;
@@ -31,7 +32,8 @@ export const agent_mgmt_endpoint=`http://159.69.214.42/agents`;
 export const collaboration_endpoint = `${collab_path}`;
 export const certificate_of_origin_endpoint=`http://161.156.70.125:7695`;
 
-// BIBA endpoints
+
+// Explorative Search endpoints
 
 export const languageEndPoint = `${ub_base}/getSupportedLanguages`;
 export const endpoint = `${ub_base}/detectMeaningLanguageSpecific`;
@@ -46,7 +48,7 @@ export const referenceFromConcept = `${ub_base}/getReferencesFromAConcept`;
 export const sqpOrangeConcept = `${ub_base}/getPropertyValuesFromOrangeGroup`;
 
 
-// TnT Endpoints
+// Track & Trace endpoints
 
 export const tntEndpoint = `${base_path}/tracking`;
 export const tntMasterDataEndpoint = `${base_path}/tracking/masterData/id/`;
