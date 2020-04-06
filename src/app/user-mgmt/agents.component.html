@@ -51,10 +51,10 @@
                     <tr [hidden]="!membersFetched || buyingAgentList.length > 0">
                         <td colspan="4"><span [innerHTML]="'No data' | translate"></span></td>
                     </tr>
-                    <tr *ngFor="let inv of agentList">
-                        <td>{{inv.name}}</td>
+                    <tr *ngFor="let inv of buyingAgentList">
+                        <td>{{inv.agentName}}</td>
                         <td>
-                            {{inv.transaction}}
+                            {{inv.noOfTransactions}}
                         </td>
                         <td>
                             <span *ngIf="inv.isActive" class="badge badge-success"><span [innerHTML]="'Active' | translate"></span></span>
