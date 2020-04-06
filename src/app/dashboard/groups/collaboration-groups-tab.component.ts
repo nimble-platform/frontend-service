@@ -15,9 +15,10 @@ import * as myGlobals from '../../globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {CollaborationGroup} from '../../bpe/model/collaboration-group';
 import {DashboardUser} from '../model/dashboard-user';
-import {deepEquals} from '../../common/utils';
+import {deepEquals, selectNameFromLabelObject} from '../../common/utils';
 import {AppComponent} from '../../app.component';
 import {ProcessInstanceGroupResults} from '../model/process-instance-group-results';
+import {CategoryService} from '../../catalogue/category/category.service';
 @Component({
     selector: 'collaboration-groups-tab',
     templateUrl: './collaboration-groups-tab.component.html',
@@ -77,6 +78,7 @@ export class CollaborationGroupsTabComponent {
     filterQueryStatus: CallStatus = new CallStatus();
     exportCallStatus: CallStatus = new CallStatus();
 
+    categoryNames:string[] = null;
     facetQueryParameterNames: string[] = ['', '', '', ''];
     TABS = TABS;
     config = myGlobals.config;
@@ -87,6 +89,7 @@ export class CollaborationGroupsTabComponent {
                 private modalService: NgbModal,
                 private router: Router,
                 private route: ActivatedRoute,
+                private categoryService: CategoryService,
                 private appComponent: AppComponent) {}
 
     /**
@@ -378,6 +381,7 @@ export class CollaborationGroupsTabComponent {
 
     private executeOrdersFiltersQuery(query: DashboardQuery): void {
         this.filterQueryStatus.submit();
+        this.categoryNames = null;
         if (this.queryParameters.tab === 'PROJECTS') {
             this.isProject = true;
         } else {
@@ -423,11 +427,27 @@ export class CollaborationGroupsTabComponent {
                     this.modifiedFilterSet.instanceNames.push(FEDERATIONID());
                 }
                 this.filterSet = response;
+                // get category names
+                this.getCategoryNames();
                 this.filterQueryStatus.callback('Successfully fetched filters', true);
             })
             .catch(error => {
                 this.filterQueryStatus.error('Failed to get filters', error);
             });
+    }
+
+    getCategoryNames(){
+        this.categoryService.getCategories(this.filterSet.relatedProductCategories).then(response => {
+            this.categoryNames = [];
+            for (let categoryUri of this.filterSet.relatedProductCategories) {
+                for (let category of response.result) {
+                    if (categoryUri == category.uri) {
+                        this.categoryNames.push(selectNameFromLabelObject(category.label));
+                        break;
+                    }
+                }
+            }
+        });
     }
 
     private executeCollaborationGroupQuery(query: DashboardQuery): void {

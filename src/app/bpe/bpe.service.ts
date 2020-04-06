@@ -295,7 +295,7 @@ export class BPEService {
 			baseUrl += '&relatedProducts=' + this.stringifyArray(products);
 		}
 		if (categories.length > 0) {
-			baseUrl += '&relatedProductCategories=' + this.stringifyArray(categories);
+			baseUrl += '&relatedProductCategories=' + encodeURIComponent(this.stringifyArray(categories));
 		}
 		if (partners.length > 0) {
 			baseUrl += '&tradingPartnerIDs=' + this.stringifyArray(partners);

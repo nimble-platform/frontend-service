@@ -14,6 +14,7 @@ export class FacetComponent {
     @Input() dataType: "string" | "boolean" = "string";
     @Input() booleanValue: boolean = false;
     @Input() stringValues: string[] = [];
+    @Input() stringValuesToBeDisplayed: string[] = null;
     @Input() selectedStringValues: string[] = [];
     @Input() filterActive: boolean = false; // true means user already selected a value for this facet, in this case we check the checkboxes
     @Input() loading: boolean = false

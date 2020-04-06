@@ -37,7 +37,7 @@
                 <input type="checkbox"
                         class="mr-2"
                         [checked]="selectedStringValues.indexOf(value) != -1">
-                <span [title]="value">{{value}}</span>
+                <span [title]="stringValuesToBeDisplayed ? stringValuesToBeDisplayed[i]:value">{{stringValuesToBeDisplayed ? stringValuesToBeDisplayed[i]:value}}</span>
             </div>
           </div>
           <div *ngIf="stringValues.length>maxFacets" class="ml-2 mr-2">

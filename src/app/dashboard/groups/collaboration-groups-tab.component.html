@@ -119,7 +119,8 @@
                     <facet [title]="'Category' | translate" [dataType]="'string'"
                            [stringValues]="filterSet && filterSet.relatedProductCategories"
                            [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.relatedProductCategories"
-                           [loading]="areFiltersLoading()"
+                           [stringValuesToBeDisplayed]="categoryNames"
+                           [loading]="areFiltersLoading() || categoryNames == null"
                            (triggerCriteriaChanged)="onFilterChange()">
                     </facet>
                     <facet [title]="'Trading Partner' | translate" [dataType]="'string'"
