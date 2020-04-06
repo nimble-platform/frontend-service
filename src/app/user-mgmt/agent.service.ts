@@ -11,7 +11,7 @@ export class AgentService {
 
     SELLING_AGENT = 'SELLING_AGENT';
     BUYING_AGENT = 'BUYING_AGENT';
-    private url = myGlobals.agent_mgmt_endpoint + "/api/v1/agents";
+    private url = myGlobals.agent_mgmt_endpoint;
     token = 'Bearer ' + this.cookieService.get("bearer_token");
     basic_header = new Headers({'Content-Type': 'application/json', 'Authorization': this.token});
 
