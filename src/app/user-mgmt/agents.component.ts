@@ -9,7 +9,6 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {AgentService} from "./agent.service";
 import Swal from 'sweetalert2';
 import * as _ from 'underscore';
-import {el} from "@angular/platform-browser/testing/src/browser_util";
 
 type SelectedTab = "SELLING_AGENT"
     | "BUYING_AGENT";
@@ -37,6 +36,7 @@ export class AgentsComponent implements OnInit {
     results = {count: 3, pageSize: 10,};
     showTransactions = false;
     selectedAgent = '';
+    isDev= false;
 
     saErr = false;
     baErr = false;
@@ -98,41 +98,6 @@ export class AgentsComponent implements OnInit {
             companyList: ['', Validators.required],
         }));
 
-        this.orders = [
-            {
-                productName: 'Comfort Rocking Chair',
-                units: 54,
-                price: 2800,
-                companyName: 'Agenor Furniture',
-                date: '12/11/2019',
-                status: 'INPROGRESS'
-            },
-            {
-                productName: 'Designer Rocking Chair',
-                units: 30,
-                price: 1350,
-                companyName: 'AIDIMME',
-                date: '07/11/2019',
-                status: 'INPROGRESS'
-            },
-            {
-                productName: 'Comfort Rocking Chair',
-                units: 50,
-                price: 2820,
-                companyName: 'Agenor Furniture',
-                date: '05/10/2019',
-                status: 'INPROGRESS'
-            },
-            {
-                productName: 'Thana rocking chair',
-                units: 60,
-                price: 3141,
-                companyName: 'Congo Furn S.L.',
-                date: '2/09/2019',
-                status: 'CANCELLED'
-            },
-        ];
-
         this.refreshAgents();
     }
 
@@ -177,7 +142,7 @@ export class AgentsComponent implements OnInit {
         this.buyingAgentForm.get("agentName").setValue(agent.agentName);
         this.buyingAgentForm.get("maxContractAmount").setValue(Number(agent.maxContractAmount.value));
         this.buyingAgentForm.get("maxContractAmountUnit").setValue(agent.maxContractAmount.unit);
-        this.buyingAgentForm.get("minFulfillmentTime").setValue(Number(agent.minFulfillmentTim.value));
+        this.buyingAgentForm.get("minFulfillmentTime").setValue(Number(agent.minFulfillmentTime.value));
         this.buyingAgentForm.get("minFulfillmentTimeUnit").setValue(agent.minFulfillmentTime.unit);
         this.buyingAgentForm.get("maxFulfillmentTime").setValue(Number(agent.maxFulfillmentTime.value));
         this.buyingAgentForm.get("maxFulfillmentTimeUnit").setValue(agent.maxFulfillmentTime.unit);
@@ -185,7 +150,7 @@ export class AgentsComponent implements OnInit {
         this.buyingAgentForm.get("maxVolumeUnit").setValue(agent.maxVolume.unit);
         this.buyingAgentForm.get("maxNoOneToOne").setValue(Number(agent.maxNoOneToOne.value));
         this.buyingAgentForm.get("maxNoOneToOneUnit").setValue(agent.maxNoOneToOne.unit);
-        this.buyingAgentForm.get("productNames").setValue(agent.productNames);
+        this.buyingAgentForm.get("productNames").setValue(agent.productNames.join(';'));
         this.buyingAgentForm.get("maxNoContractPerDay").setValue(agent.maxNoContractPerDay);
         // show the create form
         this.showCreateBuyingAgent = true;
@@ -357,13 +322,17 @@ export class AgentsComponent implements OnInit {
     createSellingAgent(){
         this.showCreateSellingAgent = true;
         // TODO remove after testing
-        this.editSellingAgent('123');
+        if (this.isDev) {
+            this.editSellingAgent('123');
+        }
     }
 
     createBuyingAgent(){
         this.showCreateBuyingAgent = true;
         // TODO remove after testing
-        this.editBuyingAgent('123');
+        if (this.isDev) {
+            this.editBuyingAgent('123');
+        }
     }
 
     openModal(content) {
@@ -374,14 +343,36 @@ export class AgentsComponent implements OnInit {
         this.modalService.dismissAll();
     }
 
-    // Getter method to access formcontrols
-    get currency() {
-        return this.sellingAgentForm.get('currency');
+    showTransactionsView(agentID){
+        this.orders = [];
+        this.agentService.getSAOrders(agentID).then((datas) => {
+            datas.forEach((data) => {
+                data = data['payload'];
+                let dateObj = data['processData']['creationDate'].split('T');
+                let date = dateObj[0];
+                let time = dateObj[1].split('.')[0];
+
+                let dateStr = `${date} (${time})`
+                let saOrder = {
+                    productName: data['orderLine'][0]['lineItem']['item']['name'][0]['value'],
+                    units: data['orderLine'][0]['lineItem']['quantity']['value'],
+                    price: data['anticipatedMonetaryTotal']['payableAmount']['value'],
+                    companyName: data['sellerSupplierParty']['party']['partyName'][0]['name']['value'],
+                    date: dateStr,
+                    status: data['processData']['status'],
+                    processInstanceID: data['processData']['processInstanceID']
+                };
+
+                this.orders.push(saOrder);
+            });
+
+            this.selectedAgent = this.getSellingAgent(agentID)['agentName'];
+            this.showTransactions = true;
+        });
     }
 
-    showTransactionsView(agentName: string){
-        this.showTransactions = true;
-        this.selectedAgent = agentName;
+    navigateToProcess(processInstanceID) {
+        this.router.navigate([`bpe/bpe-exec/${processInstanceID}/STAGING`]);
     }
 
     viewAgentList(){
@@ -448,18 +439,11 @@ export class AgentsComponent implements OnInit {
         });
 
         // TODO remove after testing
-        if (agent === undefined) {
-            agent = {
-                agentName: this.rand(5, null) + ' agent',
-                maxContractAmount: {value: this.getRandomInt(30000), unit: 'euro'},
-                minFulfillmentTime: {value: this.getRandomInt(10), unit: 'hour'},
-                maxFulfillmentTime: {value: this.getRandomInt(20), unit: 'day'},
-                maxVolume: {value: this.getRandomInt(50000), unit: 'day'},
-                maxNoOneToOne: {value: this.getRandomInt(5), unit: 'week'},
-                productNames: ['ff1c8a90-6248-494d-8d12-4292c7b40185'],
-                maxNoContractPerDay: this.getRandomInt(5)
-            };
+        if (this.isDev) {
+            if (agent === undefined) {
+                    agent = this.fillRandomForSA()
 
+            }
         }
         return agent;
     }
@@ -471,19 +455,11 @@ export class AgentsComponent implements OnInit {
         });
 
         // TODO remove after testing
-        if (agent === undefined) {
-            agent = {
-                agentName: this.rand(5, null) + ' agent',
-                maxContractAmount: {value: this.getRandomInt(30000), unit: 'euro'},
-                minFulfillmentTime: {value: this.getRandomInt(10), unit: 'hour'},
-                maxFulfillmentTime: {value: this.getRandomInt(20), unit: 'day'},
-                maxVolume: {value: this.getRandomInt(50000), unit: 'day'},
-                maxNoOneToOne: {value: this.getRandomInt(5), unit: 'week'},
-                productNames: ['ff1c8a90-6248-494d-8d12-4292c7b40185'],
-                maxNoContractPerDay: this.getRandomInt(5)
-            };
+        if (this.isDev) {
+            if (agent === undefined) {
+                agent = this.fillRandomForBA()
+            }
         }
-
         return agent;
     }
 
@@ -494,6 +470,32 @@ export class AgentsComponent implements OnInit {
 
     getRandomInt(max) {
         return Math.floor(Math.random() * Math.floor(max));
+    }
+
+    fillRandomForSA(){
+        return {
+            agentName: this.rand(5, null) + ' agent',
+            maxContractAmount: {value: this.getRandomInt(30000), unit: 'euro'},
+            minFulfillmentTime: {value: this.getRandomInt(10), unit: 'hour'},
+            maxFulfillmentTime: {value: this.getRandomInt(20), unit: 'day'},
+            maxVolume: {value: this.getRandomInt(50000), unit: 'day'},
+            maxNoOneToOne: {value: this.getRandomInt(5), unit: 'week'},
+            productNames: ['ff1c8a90-6248-494d-8d12-4292c7b40185'],
+            maxNoContractPerDay: this.getRandomInt(5)
+        };
+    }
+
+    fillRandomForBA(){
+        return {
+            agentName: this.rand(5, null) + ' agent',
+            maxContractAmount: {value: this.getRandomInt(30000), unit: 'euro'},
+            minFulfillmentTime: {value: this.getRandomInt(10), unit: 'hour'},
+            maxFulfillmentTime: {value: this.getRandomInt(20), unit: 'day'},
+            maxVolume: {value: this.getRandomInt(50000), unit: 'day'},
+            maxNoOneToOne: {value: this.getRandomInt(5), unit: 'week'},
+            productNames: ['ff1c8a90-6248-494d-8d12-4292c7b40185'],
+            maxNoContractPerDay: this.getRandomInt(5)
+        };
     }
 
 }

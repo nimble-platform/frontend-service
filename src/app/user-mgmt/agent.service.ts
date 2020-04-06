@@ -11,7 +11,7 @@ export class AgentService {
 
     SELLING_AGENT = 'SELLING_AGENT';
     BUYING_AGENT = 'BUYING_AGENT';
-    private url = myGlobals.agent_mgmt_endpoint + "/api/v1/agents";
+    private url = myGlobals.agent_mgmt_endpoint;
     token = 'Bearer ' + this.cookieService.get("bearer_token");
     basic_header = new Headers({'Content-Type': 'application/json', 'Authorization': this.token});
 
@@ -65,6 +65,15 @@ export class AgentService {
             ownerCompanyId = this.cookieService.get("company_id");
         }
         const url = `${this.url}/getAllSellingAgents/${ownerCompanyId}`;
+        return this.http
+            .get(url, {headers: this.basic_header})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    getSAOrders(agentId?): Promise<any> {
+        const url = `${this.url}/getSAOrders/${agentId}`;
         return this.http
             .get(url, {headers: this.basic_header})
             .toPromise()

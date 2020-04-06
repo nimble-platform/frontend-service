@@ -503,8 +503,10 @@ export class AppComponent implements OnInit {
                     } catch (e) {
                     }
                 }
-            } else
+            } else {
                 this.roles = [];
+                this.generateDefaultToken();
+            }
 
             // handle active company
             if (this.cookieService.get("company_id") != 'null') {
@@ -521,6 +523,9 @@ export class AppComponent implements OnInit {
             this.eMail = "";
             this.userID = "";
             this.roles = [];
+            if (!this.cookieService.get('bearer_token')) {
+              this.generateDefaultToken();
+            }
         }
         if (path != "") {
           if(!redUrl)
@@ -543,6 +548,43 @@ export class AppComponent implements OnInit {
             }
           }
         }
+    }
+
+    private generateDefaultToken(): void {
+      let default_token = "";
+      let header = {
+        "alg": "RS256",
+        "typ": "JWT"
+      };
+      let payload = {
+        "iss": myGlobals.idpURL,
+        "aud": "nimble_client",
+        "typ": "Bearer",
+        "azp": "nimble_client",
+        "allowed-origins": [],
+        "realm_access": {
+          "roles": [
+            "nimble_user"
+          ]
+        },
+        "resource_access": {
+          "account": {
+            "roles": []
+          }
+        },
+        "preferred_username": "user@domain.com",
+        "email": "user@domain.com"
+      };
+      let verify = {
+        "timestamp": Date.now().toString()
+      };
+      default_token = [this.encodeToken(header),this.encodeToken(payload),this.encodeToken(verify)].join(".");
+      this.cookieService.set("bearer_token", default_token);
+    }
+
+    private encodeToken(str: any): string {
+      let ret = JSON.stringify(str);
+      return btoa(ret);
     }
 
     private checkAdvMenu(): boolean {

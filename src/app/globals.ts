@@ -28,7 +28,7 @@ export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}/logstash`;
 export const kibana_endpoint = `${base_path}/kibana/app/kibana`;
 export const delegate_endpoint = `${base_path}/delegate`;
-export const agent_mgmt_endpoint=`${base_path}/agentService`;
+export const agent_mgmt_endpoint=`http://159.69.214.42/agents`;
 export const collaboration_endpoint = `${collab_path}`;
 export const certificate_of_origin_endpoint=`http://161.156.70.125:7695`;
 
@@ -258,14 +258,14 @@ export const product_default = {};
 export const facet_min = 1;
 export const facet_count = -1;
 export const query_settings = {
-  "fields": ["STANDARD","commodityClassficationUri","{LANG}_label","{LANG}_desc"],
-  "boosting": true,
-  "boostingFactors": {
-    "STANDARD": 4,
-    "commodityClassficationUri": 16,
-    "{LANG}_label": 64,
-    "{LANG}_desc": -1
-  }
+    "fields": ["STANDARD","commodityClassficationUri","{LANG}_label","{LANG}_desc"],
+    "boosting": true,
+    "boostingFactors": {
+        "STANDARD": 4,
+        "commodityClassficationUri": 16,
+        "{LANG}_label": 64,
+        "{LANG}_desc": -1
+    }
 };
 export const query_settings_comp = {
   "fields": ["STANDARD","id","legalName","{LANG}_brandName"],
