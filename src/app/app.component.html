@@ -67,6 +67,9 @@
                     <i class="fa fa-plus-circle"></i> <span [innerHTML]="'Advanced' | translate"></span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuAdv" ngbDropdownMenu>
+                    <a *ngIf="config.legislationSettings.enabled && checkRoles('legislation')" class="dropdown-item" routerLink="/legislation" routerLinkActive="active">
+                        <i class="fa fa-balance-scale dd-icon"></i> <span [innerHTML]="'Legislation' | translate"></span>
+                    </a>
                     <a *ngIf="config.showExplorative && checkRoles('comp_req')" class="dropdown-item" routerLink="/explore-search" routerLinkActive="active">
                         <i class="fa fa-code-branch dd-icon"></i> <span [innerHTML]="'Explorative Search' | translate"></span>
                     </a>

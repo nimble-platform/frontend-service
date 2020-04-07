@@ -589,7 +589,9 @@ export class AppComponent implements OnInit {
 
     private checkAdvMenu(): boolean {
       let ret = false;
-      if (this.config.showExplorative && this.checkRoles('comp_req'))
+      if (this.config.legislationSettings.enabled && this.checkRoles('legislation'))
+        ret = true;
+      else if (this.config.showExplorative && this.checkRoles('comp_req'))
         ret = true;
       else if (this.config.showTrack && this.checkRoles('track'))
         ret = true;
@@ -628,6 +630,7 @@ export class AppComponent implements OnInit {
         const purch = this.roles.indexOf("purchaser") != -1;
         const sales = this.roles.indexOf("sales_officer") != -1;
         const manager = this.roles.indexOf("platform_manager") != -1 || this.debug;
+        const legislation = this.roles.indexOf("query-legislation") != -1;
         const all_rights = admin || external || legal;
         switch (func) {
             case "comp_req":
@@ -704,6 +707,10 @@ export class AppComponent implements OnInit {
                 break;
             case "collaboration":
                 if (all_rights || publish)
+                    this.allowed = true;
+                break;
+            case "legislation":
+                if (legislation)
                     this.allowed = true;
                 break;
             default:

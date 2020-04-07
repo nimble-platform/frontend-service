@@ -185,6 +185,10 @@ textarea {
     background-color: var(--main-color);
 }
 
+.nimble-text {
+    color: var(--main-color) !important;
+}
+
 .nimble-col {
 	border: 2px solid var(--main-color);
 	border-radius: 0.25rem;
@@ -579,4 +583,36 @@ ngb-pagination .page-item.active .page-link {
 .data-row {
     margin-bottom: 0.4rem;
     display: flex;
+}
+
+/* ------------------- */
+
+/* Legislation UI */
+
+.btn-center{
+    text-align: center;
+}
+
+.btn-nimblered {
+	background-color: #b77563;
+	color: #fff;
+}
+
+.collapse-margin {
+    margin: 20px 0px 0px 0px;
+}
+
+.card-padding {
+    padding: 10px;
+}
+
+.hr-section {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0);
+}
+
+.td-pointer {
+    cursor: pointer;
 }

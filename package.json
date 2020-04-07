@@ -53,9 +53,10 @@
     "ngx-treeview": "~6.0",
     "rxjs": "~6.4",
     "rxjs-compat": "~6.4",
-    "sweetalert2": "^9.7.2",
+    "sweetalert2": "~9.7",
     "underscore": "~1.9",
-    "zone.js": "~0.8"
+    "zone.js": "~0.8",
+    "jquery": "~3.3"
   },
   "devDependencies": {
     "@types/angular": "~1.6",
@@ -123,7 +124,8 @@
     "webpack": "~4.29",
     "webpack-cli": "~3.2",
     "webpack-dev-server": "~3.1",
-    "webpack-merge": "~4.2"
+    "webpack-merge": "~4.2",
+    "@types/jquery": "~3.3"
   },
   "repository": {}
 }

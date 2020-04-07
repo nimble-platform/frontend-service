@@ -38,6 +38,7 @@ export const delegate_endpoint = `${base_path}/delegate`;
 export const agent_mgmt_endpoint=`http://159.69.214.42/agents`;
 export const collaboration_endpoint = `${collab_path}`;
 export const certificate_of_origin_endpoint=`http://161.156.70.125:7695`;
+export const legislation_endpoint=`http://77.230.101.223/nimsys`;
 
 
 // Explorative Search endpoints
@@ -120,6 +121,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - unshippedOrdersTabEnabled: Boolean flag is the unshipped orders shall be shown on the dashboard
 - federationClientID: Keycloak client ID used for the federated login
 - federationIDP: Keycloak IDP used for the federated login
+- legislationSettings: Allows to toggle the legislation feature and define its relevant settings (furniture use case)
 */
 
 export const config = {
@@ -274,7 +276,12 @@ export const config = {
     "showLoginFederation": true,
     "unshippedOrdersTabEnabled":true,
     "federationClientID": "efact-test-client",
-    "federationIDP": "EFS"
+    "federationIDP": "EFS",
+	"legislationSettings": {
+		"enabled": true,
+		"authMode": "nimble",
+		"datePlaceholder": "yyyy-mm-dd"
+	}
 };
 
 

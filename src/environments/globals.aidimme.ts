@@ -31,6 +31,7 @@ export const delegate_endpoint = `${base_path}:9265`;
 export const agent_mgmt_endpoint=`http://159.69.214.42/agents`;
 export const collaboration_endpoint = `${collab_path}`;
 export const certificate_of_origin_endpoint=`http://161.156.70.125:7695`;
+export const legislation_endpoint=`http://77.230.101.223/nimsys`;
 
 
 // Explorative Search endpoints
@@ -228,6 +229,11 @@ export const config = {
   "unshippedOrdersTabEnabled":false,
   "federationClientID": "sample-client",
   "federationIDP": "sampleIDP",
+  "legislationSettings": {
+		"enabled": true,
+		"authMode": "nimble",
+		"datePlaceholder": "yyyy-mm-dd"
+	}
 };
 
 
