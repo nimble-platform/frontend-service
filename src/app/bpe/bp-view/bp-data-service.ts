@@ -171,7 +171,7 @@ export class BPDataService{
         return this.sellerSettings;
     }
 
-    private async setProcessDocuments(processMetadata: ThreadEventMetadata) {
+    public async setProcessDocuments(processMetadata: ThreadEventMetadata) {
         let activityVariables = processMetadata.activityVariables;
         let processType = processMetadata.processType;
         if(processType == 'Negotiation') {
@@ -265,14 +265,10 @@ export class BPDataService{
      For dashboard, business process history contains process document metadatas since they are already started/completed.
      However, in the product-details page, we start a new business process, this is why we check for new process processMetadata.
      */
-    async startBp(bpActivityEvent: BpActivityEvent){
+    startBp(bpActivityEvent: BpActivityEvent){
         this.resetBpData();
 
         this.bpActivityEvent = bpActivityEvent;
-        // if the event is not created for a new process, processMetadata contains the process metadata for the continued process
-        if(!bpActivityEvent.newProcess){
-            await this.setProcessDocuments(bpActivityEvent.processMetadata);
-        }
         this.navigateToBpExec();
     }
 
@@ -403,12 +399,6 @@ export class BPDataService{
 
     initRfqForTransportationWithOrder(order: Order): void {
         this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithCopies(order, this.modifiedCatalogueLines[0]);
-    }
-
-    async initRfqForTransportationWithThreadMetadata(thread: ThreadEventMetadata): Promise<RequestForQuotation> {
-        await this.setProcessDocuments(thread);
-        this.initRfqForTransportationWithOrder(this.order);
-        return Promise.resolve(this.requestForQuotation);
     }
 
     private initFetchedRfq(): void {

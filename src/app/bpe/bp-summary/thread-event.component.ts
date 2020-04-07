@@ -47,7 +47,7 @@ export class ThreadEventComponent implements OnInit {
         }
     }
 
-    async openBpProcessView(updateProcess:boolean) {
+    openBpProcessView(updateProcess:boolean) {
         // whether we are updating the process instance or not
         this.event.isBeingUpdated = updateProcess;
         let userRole:BpUserRole = this.event.buyer ? "buyer": "seller";
