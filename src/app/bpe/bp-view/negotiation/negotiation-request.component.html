@@ -14,7 +14,7 @@
                           [parentForm]="negotiationRequestForm"
                           [formFieldName]="'negotiated_item'">
 </negotiation-request-item>
-<div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showNotesAndAdditionalFiles,'bg-danger text-white':areNotesOrFilesAttachedToDocument(rfq)}" (click)="showNotesAndAdditionalFiles= showTab(showNotesAndAdditionalFiles)"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>
+<div class="btn align-self-start ml-2" [ngClass]="{'active':showNotesAndAdditionalFiles,'btn-outline-primary':!areNotesOrFilesAttachedToDocument(rfq),'btn-danger':areNotesOrFilesAttachedToDocument(rfq)}" (click)="showNotesAndAdditionalFiles= showTab(showNotesAndAdditionalFiles)"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>
 <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showPurchaseOrder}" (click)="showPurchaseOrder = showTab(showPurchaseOrder)"><span [innerHTML]="'Purchase Order' | translate" ></span></div>
 
 <!--Notes-->
