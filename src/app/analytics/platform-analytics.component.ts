@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   In collaboration with
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 import { Component, OnInit,ViewChild,ElementRef } from "@angular/core";
 import { AnalyticsService } from "./analytics.service";
 import { CallStatus } from "../common/call-status";
@@ -132,7 +148,7 @@ export class PlatformAnalyticsComponent implements OnInit {
                 this.trade_yellow_perc_str = this.trade_yellow_perc + "%";
                 this.trade_red_perc = 100 - this.trade_green_perc - this.trade_yellow_perc;
 				this.trade_red_perc_str = this.trade_red_perc + "%";
-				
+
 				this.analyticsService.getPlatCollabAnalytics()
 				.then(res => {
 					this.callStatus.callback("Successfully loaded platform analytics", true);
@@ -145,8 +161,8 @@ export class PlatformAnalyticsComponent implements OnInit {
 					var map1 = res.responseTime.averageTimeForMonths;
 					var i = 0 ;
 					var obj = [];
-	
-	
+
+
 					for(var y = 0 ; y < 12 ; y++){
 						if(map1[y] != undefined){
 							obj.push({
@@ -155,17 +171,17 @@ export class PlatformAnalyticsComponent implements OnInit {
 							})
 						}
 					}
-	
+
 					if(obj.length == 6){
 						var dataGr =
 							{
 							  "name": "Time series",
 							  "series":obj
 							};
-	
+
 						this.multi.push(dataGr);
 						this.showChart = true;
-	
+
 					}
 
 

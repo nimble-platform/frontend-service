@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020
+ * DOMINA - Organization and Logistics; Biella; Italy
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 import {Component, OnInit} from "@angular/core";
 import {CookieService} from 'ng2-cookies';
 import {CollaborationService} from "./collaboration.service";
@@ -25,23 +41,23 @@ import { UserService } from "../../user-mgmt/user.service";
 export class CollaborationViewComponent implements OnInit {
 
 	tebugTextP1:string = "";
-	
+
     callStatus = new CallStatus();
 	roundToTwoDecimals = roundToTwoDecimals;
 	selectedCurrency: any = "EUR";
 
 	settings: CompanySettings;
-	
+
 	userToken: string = null;
     userEmail: string = null;
 	projects: ProjectType[] = null;
 	activeProject: string = "";
 	resources: ResourceListType[] = null;
     activeResource: ResourceType = null;
-	
+
 
     isModified: boolean = false;
-		
+
     itemNote:string = "";
 
     constructor(private cookieService: CookieService,
@@ -73,9 +89,9 @@ export class CollaborationViewComponent implements OnInit {
 									this.resources = res.children;
 									this.tebugTextP1 = "";
 								});
-					
 
-					}						
+
+					}
 				});
 	}
 
@@ -99,7 +115,7 @@ export class CollaborationViewComponent implements OnInit {
 					});
 		}
 	}
-	
+
 	onResourceHistoryClick(resH): void {
 		if (resH!=null){
 			this.collaborationService.getResourceItem(this.userToken, this.activeProject, resH.name, resH.version)

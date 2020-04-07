@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 import {Component, Input, OnInit} from '@angular/core';
 import {BPDataService} from "../bp-data-service";
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
@@ -5,16 +21,13 @@ import {CallStatus} from '../../../common/call-status';
 import {BPEService} from '../../bpe.service';
 import {DespatchLine} from '../../../catalogue/model/publish/despatch-line';
 
-/**
- * Created by suat on 20-Sep-17.
- */
 @Component({
     selector: "fulfilment",
     templateUrl: "./fulfilment.component.html",
     styleUrls: ["./fulfilment.component.css"]
 })
 export class FulfilmentComponent implements OnInit {
-    
+
     line: CatalogueLine;
     // hjids of the line items included in the order
     orderLineItemHjids: string[] = null;
