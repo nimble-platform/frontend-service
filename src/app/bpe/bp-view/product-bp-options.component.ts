@@ -52,7 +52,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     lines: CatalogueLine[];
     wrappers: ProductWrapper[];
     // options: BpWorkflowOptions;
-    productWithSelectedProperties: Item;
+    productsWithSelectedProperties: Item[];
     settings: CompanySettings;
 
     // Refers to the previous order document for transport related business processes.
@@ -237,7 +237,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
 
                     // set the product line to be the first fetched line, either service or product.
                     this.bpDataService.setProductAndCompanyInformation(this.lines, sellerSettings,this.processType);
-                    this.productWithSelectedProperties = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
+                    this.productsWithSelectedProperties = this.bpDataService.modifiedCatalogueLines.map(modifiedCatalogueLine => modifiedCatalogueLine.goodsItem.item);
 
                     // there is an order that references other products -> the line are services and the referencedLines are the original products
                     if (referencedLines) {
@@ -250,7 +250,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                         this.serviceWithSelectedProperties = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
 
                         this.lines = referencedLines;
-                        this.productWithSelectedProperties = this.correspondingOrderOfTransportProcess.orderLine[0].lineItem.item;
+                        this.productsWithSelectedProperties = this.correspondingOrderOfTransportProcess.orderLine.map(orderLine => orderLine.lineItem.item);
 
                         this.setProductsExpandedAndViewedProcessDetailsArrays(false);
                         return this.userService.getSettingsForProduct(referencedLines[0]);

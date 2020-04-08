@@ -32,7 +32,7 @@
 
                 <!-- Product Details Panel -->
                 <product-details-tabs *ngIf="productsExpanded[i]" [wrapper]="wrappers[i]" [showOverview]="true" [isCatalogueLineDeleted]="areCatalogueLinesDeleted[i]"
-                                      [settings]="settings" [itemWithSelectedProps]="productWithSelectedProperties" [readonly]="true">
+                                      [settings]="settings" [itemWithSelectedProps]="productsWithSelectedProperties[i]" [readonly]="true">
                 </product-details-tabs>
 
                 <!-- BP Steps -->

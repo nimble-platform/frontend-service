@@ -137,7 +137,9 @@ export class BPDataService{
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         // set the item of modifiedCatalogueLines
         // if the item is included in bpActivityEvent (i.e, starting a process through search details page), use it, otherwise get the item from corresponding process document
-        this.modifiedCatalogueLines[0].goodsItem.item = copy(this.bpActivityEvent.itemsWithSelectedProperties ?this.bpActivityEvent.itemsWithSelectedProperties[0] :this.getItemsWithSelectedPropertiesForProcess(processType));
+        this.modifiedCatalogueLines.forEach((modifiedCatalogueLine, index) => {
+            modifiedCatalogueLine.goodsItem.item = copy(this.bpActivityEvent.itemsWithSelectedProperties ?this.bpActivityEvent.itemsWithSelectedProperties[index] :this.getItemsWithSelectedPropertiesForProcess(processType,index));
+        });
         this.modifiedCatalogueLines[0].goodsItem.quantity = this.bpActivityEvent.itemQuantity ? this.bpActivityEvent.itemQuantity: new Quantity(1,this.modifiedCatalogueLines[0].requiredItemLocationQuantity.price.baseQuantity.unitCode);
     }
 
