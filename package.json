@@ -56,7 +56,7 @@
         "sweetalert2": "~9.7",
         "underscore": "~1.9",
         "zone.js": "~0.8",
-        "jquery": "~3.3"
+        "jquery": "~3.4"
     },
     "devDependencies": {
         "@types/angular": "~1.6",
