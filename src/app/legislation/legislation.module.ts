@@ -30,30 +30,30 @@ import { LegislationDetailsComponent } from './details/legislation-details.compo
 
 @NgModule({
     imports: [
-		CommonModule,
+        CommonModule,
         AppCommonModule,
-		LegislationRoutingModule,
-		HttpClientModule,
-		FormsModule,
-		ReactiveFormsModule,
-		NgbModule.forRoot()
+        LegislationRoutingModule,
+        HttpClientModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgbModule.forRoot()
     ],
     declarations: [
         LegislationComponent,
-		LegislationLoginComponent,
+        LegislationLoginComponent,
         LegislationSearchComponent,
         LegislationDetailsComponent,
-		NgbdSortableHeader
+        NgbdSortableHeader
     ],
     exports: [
         LegislationComponent,
-		LegislationLoginComponent,
+        LegislationLoginComponent,
         LegislationSearchComponent,
         LegislationDetailsComponent,
-		NgbdSortableHeader
+        NgbdSortableHeader
     ],
     providers: [],
     entryComponents: []
 })
 
-export class LegislationModule {}
+export class LegislationModule { }

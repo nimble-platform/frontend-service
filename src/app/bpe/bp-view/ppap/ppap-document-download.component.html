@@ -19,8 +19,7 @@
         <div class="col-12">
             <h4 class="space-after"><span [innerHTML]="'Ppap Response' | translate"></span></h4>
             <div *ngFor="let document of requestedDocuments" class="space-before">
-                <file-input label="{{ document }}" accept="file/*" [multiple]="true"
-                            presentationMode="view" [binaryObjects]="documents[document] || []">
+                <file-input label="{{ document }}" accept="file/*" [multiple]="true" presentationMode="view" [binaryObjects]="documents[document] || []">
                 </file-input>
 
                 <hr>
@@ -30,12 +29,8 @@
 
     <!--Notes-->
     <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
-    <note-file-view [notes]="notesBuyer"
-               [documents]="additionalDocumentsBuyer"
-               [label]="'Request Notes'"></note-file-view>
-    <note-file-view [notes]="notes"
-               [documents]="additionalDocuments"
-               [label]="'Response Notes'"></note-file-view>
+    <note-file-view [notes]="notesBuyer" [documents]="additionalDocumentsBuyer" [label]="'Request Notes'"></note-file-view>
+    <note-file-view [notes]="notes" [documents]="additionalDocuments" [label]="'Response Notes'"></note-file-view>
 
     <hr class="actions-hr">
 

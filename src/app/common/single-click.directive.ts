@@ -12,7 +12,7 @@
    limitations under the License.
  */
 
-import {Directive, HostListener} from '@angular/core';
+import { Directive, HostListener } from '@angular/core';
 
 /**
  * This directive is used to prevent multiple clicks on elements.
@@ -25,16 +25,16 @@ export class SingleClickDirective {
 
     constructor() { }
 
-    @HostListener('click',['$event'])
+    @HostListener('click', ['$event'])
     clickEvent(event) {
         // get the element
         const button = (event.srcElement.disabled === undefined) ? event.srcElement.parentElement : event.srcElement;
         // if it does not have disabled property, set pointerEvents to none,
         // otherwise, set disabled attribute to true
-        if(button.disabled === undefined){
+        if (button.disabled === undefined) {
             button.style.pointerEvents = 'none';
         }
-        else{
+        else {
             button.setAttribute('disabled', true);
         }
     }

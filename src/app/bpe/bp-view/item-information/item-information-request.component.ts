@@ -31,9 +31,9 @@ import { CustomerParty } from "../../../catalogue/model/publish/customer-party";
 import { SupplierParty } from "../../../catalogue/model/publish/supplier-party";
 import { copy, isTransportService } from "../../../common/utils";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
-import {DocumentService} from '../document-service';
-import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
-import {TranslateService} from '@ngx-translate/core';
+import { DocumentService } from '../document-service';
+import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "item-information-request",
@@ -51,13 +51,13 @@ export class ItemInformationRequestComponent implements OnInit {
     processMetadata: ThreadEventMetadata;
 
     constructor(private bpeService: BPEService,
-                private bpDataService: BPDataService,
-                private userService: UserService,
-                private cookieService: CookieService,
-                private location: Location,
-                private translate: TranslateService,
-                private documentService: DocumentService,
-                private router: Router) {
+        private bpDataService: BPDataService,
+        private userService: UserService,
+        private cookieService: CookieService,
+        private location: Location,
+        private translate: TranslateService,
+        private documentService: DocumentService,
+        private router: Router) {
 
     }
 
@@ -90,8 +90,8 @@ export class ItemInformationRequestComponent implements OnInit {
     }
 
     onSkip(): void {
-        if(isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().tradeDetails.ppapCompatibilityLevel) {
-            this.bpDataService.proceedNextBpStep(this.bpDataService.bpActivityEvent.userRole,"Negotiation");
+        if (isTransportService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().tradeDetails.ppapCompatibilityLevel) {
+            this.bpDataService.proceedNextBpStep(this.bpDataService.bpActivityEvent.userRole, "Negotiation");
         } else {
             this.bpDataService.proceedNextBpStep(this.bpDataService.bpActivityEvent.userRole, "Ppap");
         }
@@ -108,38 +108,38 @@ export class ItemInformationRequestComponent implements OnInit {
 
         Promise.all([
             this.userService.getParty(buyerId),
-            this.userService.getParty(sellerId,this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.federationInstanceID)
+            this.userService.getParty(sellerId, this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.federationInstanceID)
         ])
-        .then(([buyerParty, sellerParty]) => {
-            itemInformationRequest.buyerCustomerParty = new CustomerParty(buyerParty);
-            itemInformationRequest.sellerSupplierParty = new SupplierParty(sellerParty);
+            .then(([buyerParty, sellerParty]) => {
+                itemInformationRequest.buyerCustomerParty = new CustomerParty(buyerParty);
+                itemInformationRequest.sellerSupplierParty = new SupplierParty(sellerParty);
 
-            return this.bpeService.startProcessWithDocument(itemInformationRequest,sellerParty.federationInstanceID);
-        })
-        .then(() => {
-            this.callStatus.callback("Item Information Request sent", true);
-            var tab = "PURCHASES";
-            if (this.bpDataService.bpActivityEvent.userRole == "seller")
-              tab = "SALES";
-            this.router.navigate(['dashboard'], {queryParams: {tab: tab,ins: itemInformationRequest.sellerSupplierParty.party.federationInstanceID}});
-        })
-        .catch(error => {
-            this.callStatus.error("Failed to send Item Information Request", error);
-        });
+                return this.bpeService.startProcessWithDocument(itemInformationRequest, sellerParty.federationInstanceID);
+            })
+            .then(() => {
+                this.callStatus.callback("Item Information Request sent", true);
+                var tab = "PURCHASES";
+                if (this.bpDataService.bpActivityEvent.userRole == "seller")
+                    tab = "SALES";
+                this.router.navigate(['dashboard'], { queryParams: { tab: tab, ins: itemInformationRequest.sellerSupplierParty.party.federationInstanceID } });
+            })
+            .catch(error => {
+                this.callStatus.error("Failed to send Item Information Request", error);
+            });
     }
 
     onUpdateRequest(): void {
         this.callStatus.submit();
         const itemInformationRequest: ItemInformationRequest = copy(this.bpDataService.itemInformationRequest);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(itemInformationRequest),"ITEMINFORMATIONREQUEST",this.processMetadata.processInstanceId,this.processMetadata.sellerFederationId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(itemInformationRequest), "ITEMINFORMATIONREQUEST", this.processMetadata.processInstanceId, this.processMetadata.sellerFederationId)
             .then(() => {
-                this.documentService.updateCachedDocument(itemInformationRequest.id,itemInformationRequest);
+                this.documentService.updateCachedDocument(itemInformationRequest.id, itemInformationRequest);
                 this.callStatus.callback("Item Information Request updated", true);
                 var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
-                  tab = "SALES";
-                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
+                    tab = "SALES";
+                this.router.navigate(['dashboard'], { queryParams: { tab: tab } });
             })
             .catch(error => {
                 this.callStatus.error("Failed to update Item Information Request", error);
@@ -158,7 +158,7 @@ export class ItemInformationRequestComponent implements OnInit {
     onUnselectItemSpecificationFile(binaryObject: BinaryObject): void {
         const documents = this.getRequestDocuments();
         const index = documents.findIndex(doc => doc.attachment.embeddedDocumentBinaryObject === binaryObject);
-        if(index >= 0) {
+        if (index >= 0) {
             documents.splice(index, 1);
         }
     }
@@ -188,13 +188,13 @@ export class ItemInformationRequestComponent implements OnInit {
     }
 
     isEmpty(): boolean {
-      var empty = true;
-      if (this.request.note.length > 1 || (this.request.note.length == 1 && this.request.note[0] != ""))
-        empty = false;
-      else if (this.request.additionalDocumentReference.length > 0)
-        empty = false;
-      else if (this.getRequestDocuments().length > 0)
-        empty = false;
-      return empty;
+        var empty = true;
+        if (this.request.note.length > 1 || (this.request.note.length == 1 && this.request.note[0] != ""))
+            empty = false;
+        else if (this.request.additionalDocumentReference.length > 0)
+            empty = false;
+        else if (this.getRequestDocuments().length > 0)
+            empty = false;
+        return empty;
     }
 }

@@ -19,12 +19,12 @@ import { CompanySettings } from "../model/company-settings";
 import { AppComponent } from "../../app.component";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import * as myGlobals from '../../globals';
-import {selectValueOfTextObject, createTextObject, getArrayOfTextObject, createTextObjectFromArray} from '../../common/utils';
+import { selectValueOfTextObject, createTextObject, getArrayOfTextObject, createTextObjectFromArray } from '../../common/utils';
 import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 import { AddressSubForm } from "../subforms/address.component";
 import { CallStatus } from "../../common/call-status";
 import { UserService } from "../user.service";
-import {TranslateService} from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Router } from "@angular/router";
 import { LANGUAGES, DEFAULT_LANGUAGE } from "../../catalogue/model/constants";
 import { BPEService } from "../../bpe/bpe.service";
@@ -55,191 +55,191 @@ export class CompanyDataSettingsComponent implements OnInit {
     selectValueOfTextObject = selectValueOfTextObject;
 
     constructor(public appComponent: AppComponent,
-                private _fb: FormBuilder,
-                private translate: TranslateService,
-                private modalService: NgbModal,
-                private userService: UserService,
-                private bpeService: BPEService,
-                private router: Router) {
+        private _fb: FormBuilder,
+        private translate: TranslateService,
+        private modalService: NgbModal,
+        private userService: UserService,
+        private bpeService: BPEService,
+        private router: Router) {
 
     }
 
     ngOnInit() {
-      this.companyNameArr = getArrayOfTextObject(this.settings.details.legalName);
-      this.brandNameArr = getArrayOfTextObject(this.settings.details.brandName);
-      this.industrySectorsArr = getArrayOfTextObject(this.settings.details.industrySectors);
-      if (this.industrySectorsArr.length == 1 && this.isSectorArray(this.industrySectorsArr[0].text)) {
-        this.industrySectorsArr[0].text = this.getSectorArray(this.industrySectorsArr[0].text);
-        this.forceActText = false;
-      }
-      else
-        this.forceActText = true;
-      this.businessKeywordsArr = getArrayOfTextObject(this.settings.details.businessKeywords);
-      this.dataForm = this._fb.group({
-          vatNumber: new FormControl({value: (this.settings.details.vatNumber || ""), disabled: !this.appComponent.checkRoles('pm')}),
-          verificationInformation: new FormControl({value: (this.settings.details.verificationInformation || ""), disabled: (!this.appComponent.checkRoles('pm') && this.settings.details.verificationInformation)}),
-          businessType: new FormControl({value: (this.settings.details.businessType || ""), disabled: !this.appComponent.checkRoles('pm')}),
-          yearOfReg: new FormControl({value: (this.settings.details.yearOfCompanyRegistration || ""), disabled: (!this.appComponent.checkRoles('pm') && this.settings.details.yearOfCompanyRegistration)}),
-          address: AddressSubForm.update(AddressSubForm.generateForm(this._fb), this.settings.details.address)
-      });
-      if (!this.appComponent.checkRoles('pm')) {
-        this.bpeService.checkAllCollaborationsFinished(this.settings.companyID,this.settings.negotiationSettings.company.federationInstanceID).then(finished => {
-            this.isAllCollaborationsFinished = finished;
+        this.companyNameArr = getArrayOfTextObject(this.settings.details.legalName);
+        this.brandNameArr = getArrayOfTextObject(this.settings.details.brandName);
+        this.industrySectorsArr = getArrayOfTextObject(this.settings.details.industrySectors);
+        if (this.industrySectorsArr.length == 1 && this.isSectorArray(this.industrySectorsArr[0].text)) {
+            this.industrySectorsArr[0].text = this.getSectorArray(this.industrySectorsArr[0].text);
+            this.forceActText = false;
+        }
+        else
+            this.forceActText = true;
+        this.businessKeywordsArr = getArrayOfTextObject(this.settings.details.businessKeywords);
+        this.dataForm = this._fb.group({
+            vatNumber: new FormControl({ value: (this.settings.details.vatNumber || ""), disabled: !this.appComponent.checkRoles('pm') }),
+            verificationInformation: new FormControl({ value: (this.settings.details.verificationInformation || ""), disabled: (!this.appComponent.checkRoles('pm') && this.settings.details.verificationInformation) }),
+            businessType: new FormControl({ value: (this.settings.details.businessType || ""), disabled: !this.appComponent.checkRoles('pm') }),
+            yearOfReg: new FormControl({ value: (this.settings.details.yearOfCompanyRegistration || ""), disabled: (!this.appComponent.checkRoles('pm') && this.settings.details.yearOfCompanyRegistration) }),
+            address: AddressSubForm.update(AddressSubForm.generateForm(this._fb), this.settings.details.address)
         });
-      }
+        if (!this.appComponent.checkRoles('pm')) {
+            this.bpeService.checkAllCollaborationsFinished(this.settings.companyID, this.settings.negotiationSettings.company.federationInstanceID).then(finished => {
+                this.isAllCollaborationsFinished = finished;
+            });
+        }
     }
 
-    trackFn(index,item) {
-      return index;
+    trackFn(index, item) {
+        return index;
     }
 
     isEmptyObject(obj) {
-      return (Object.keys(obj).length == 0);
+        return (Object.keys(obj).length == 0);
     }
 
     addCompanyName() {
-      this.companyNameArr.push({"text":"","lang":""});
-      this.flagChanged();
+        this.companyNameArr.push({ "text": "", "lang": "" });
+        this.flagChanged();
     }
 
-    removeCompanyName(index:number){
-      this.companyNameArr.splice(index,1);
-      if (this.companyNameArr.length == 0)
-        this.companyNameArr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
-      this.flagChanged();
+    removeCompanyName(index: number) {
+        this.companyNameArr.splice(index, 1);
+        if (this.companyNameArr.length == 0)
+            this.companyNameArr = [{ "text": "", "lang": DEFAULT_LANGUAGE() }];
+        this.flagChanged();
     }
 
     addBrandName() {
-      this.brandNameArr.push({"text":"","lang":""});
-      this.flagChanged();
+        this.brandNameArr.push({ "text": "", "lang": "" });
+        this.flagChanged();
     }
 
-    removeBrandName(index:number){
-      this.brandNameArr.splice(index,1);
-      if (this.brandNameArr.length == 0)
-        this.brandNameArr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
-      this.flagChanged();
+    removeBrandName(index: number) {
+        this.brandNameArr.splice(index, 1);
+        if (this.brandNameArr.length == 0)
+            this.brandNameArr = [{ "text": "", "lang": DEFAULT_LANGUAGE() }];
+        this.flagChanged();
     }
 
     addIndustrySectors() {
-      this.industrySectorsArr.push({"text":"","lang":""});
-      this.flagChanged();
+        this.industrySectorsArr.push({ "text": "", "lang": "" });
+        this.flagChanged();
     }
 
-    removeIndustrySectors(index:number){
-      this.industrySectorsArr.splice(index,1);
-      if (this.industrySectorsArr.length == 0)
-        this.industrySectorsArr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
-      this.flagChanged();
+    removeIndustrySectors(index: number) {
+        this.industrySectorsArr.splice(index, 1);
+        if (this.industrySectorsArr.length == 0)
+            this.industrySectorsArr = [{ "text": "", "lang": DEFAULT_LANGUAGE() }];
+        this.flagChanged();
     }
 
     addBusinessKeywords() {
-      this.businessKeywordsArr.push({"text":"","lang":""});
-      this.flagChanged();
+        this.businessKeywordsArr.push({ "text": "", "lang": "" });
+        this.flagChanged();
     }
 
-    removeBusinessKeywords(index:number){
-      this.businessKeywordsArr.splice(index,1);
-      if (this.businessKeywordsArr.length == 0)
-        this.businessKeywordsArr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
-      this.flagChanged();
+    removeBusinessKeywords(index: number) {
+        this.businessKeywordsArr.splice(index, 1);
+        if (this.businessKeywordsArr.length == 0)
+            this.businessKeywordsArr = [{ "text": "", "lang": DEFAULT_LANGUAGE() }];
+        this.flagChanged();
     }
 
     flagChanged() {
-      this.inputChanged = true;
+        this.inputChanged = true;
     }
 
     isRequiredEmpty() {
-      let empty = false;
-      if (Object.keys(createTextObjectFromArray(this.companyNameArr)).length == 0)
-        empty = true;
-      if (Object.keys(createTextObjectFromArray(this.industrySectorsArr)).length == 0)
-        empty = true;
-      return empty;
+        let empty = false;
+        if (Object.keys(createTextObjectFromArray(this.companyNameArr)).length == 0)
+            empty = true;
+        if (Object.keys(createTextObjectFromArray(this.industrySectorsArr)).length == 0)
+            empty = true;
+        return empty;
     }
 
     deleteCompany(): void {
         if (this.settings.companyID) {
-          if (confirm("Are you sure that you want to delete this company?")) {
-            this.saveCallStatus.submit();
-            this.userService.deleteCompany(this.settings.companyID)
-                .then(res => {
-                    this.saveCallStatus.callback("Successfully deleted company");
-                    this.router.navigate(['/user-mgmt/logout']);
-                })
-                .catch(error => {
-                    this.saveCallStatus.error("Error while deleting company", error);
-                });
-          }
+            if (confirm("Are you sure that you want to delete this company?")) {
+                this.saveCallStatus.submit();
+                this.userService.deleteCompany(this.settings.companyID)
+                    .then(res => {
+                        this.saveCallStatus.callback("Successfully deleted company");
+                        this.router.navigate(['/user-mgmt/logout']);
+                    })
+                    .catch(error => {
+                        this.saveCallStatus.error("Error while deleting company", error);
+                    });
+            }
         }
     }
 
     save(model: FormGroup) {
-      this.saveCallStatus.submit();
-      if (this.industrySectorsArr.length == 1 && Array.isArray(this.industrySectorsArr[0].text)) {
-        this.industrySectorsArr[0].text = this.industrySectorsArr[0].text.join("\n");
-        this.industrySectorsArr[0].lang = DEFAULT_LANGUAGE();
-      }
-      this.settings.details.legalName = createTextObjectFromArray(this.companyNameArr);
-      this.settings.details.brandName = createTextObjectFromArray(this.brandNameArr);
-      this.settings.details.vatNumber =  model.getRawValue()['vatNumber'];
-      this.settings.details.verificationInformation =  model.getRawValue()['verificationInformation'];
-      this.settings.details.businessType =  model.getRawValue()['businessType'];
-      this.settings.details.industrySectors = createTextObjectFromArray(this.industrySectorsArr);
-      this.settings.details.businessKeywords = createTextObjectFromArray(this.businessKeywordsArr);
-      this.settings.details.yearOfCompanyRegistration =  model.getRawValue()['yearOfReg'];
-      this.settings.details.address =  model.getRawValue()['address'];
-      let compId = this.settings.companyID;
-      this.userService
-          .putSettingsForParty(this.settings, compId)
-          .then(response => {
-              if (myGlobals.debug) {
-                  console.log(`Saved Company Settings for company ${compId}. Response: ${response}`);
-              }
-              this.saveCallStatus.callback("Successfully saved", true);
-              this.inputChanged = false;
-              if (this.industrySectorsArr.length == 1 && this.isSectorArray(this.industrySectorsArr[0].text)) {
-                this.industrySectorsArr[0].text = this.getSectorArray(this.industrySectorsArr[0].text);
-                this.forceActText = false;
-              }
-              else
-                this.forceActText = true;
-              this.dataForm.markAsPristine();
-              this.onSaveEvent.emit();
-          })
-          .catch(error => {
-              this.saveCallStatus.error("Error while saving company settings", error);
-          });
+        this.saveCallStatus.submit();
+        if (this.industrySectorsArr.length == 1 && Array.isArray(this.industrySectorsArr[0].text)) {
+            this.industrySectorsArr[0].text = this.industrySectorsArr[0].text.join("\n");
+            this.industrySectorsArr[0].lang = DEFAULT_LANGUAGE();
+        }
+        this.settings.details.legalName = createTextObjectFromArray(this.companyNameArr);
+        this.settings.details.brandName = createTextObjectFromArray(this.brandNameArr);
+        this.settings.details.vatNumber = model.getRawValue()['vatNumber'];
+        this.settings.details.verificationInformation = model.getRawValue()['verificationInformation'];
+        this.settings.details.businessType = model.getRawValue()['businessType'];
+        this.settings.details.industrySectors = createTextObjectFromArray(this.industrySectorsArr);
+        this.settings.details.businessKeywords = createTextObjectFromArray(this.businessKeywordsArr);
+        this.settings.details.yearOfCompanyRegistration = model.getRawValue()['yearOfReg'];
+        this.settings.details.address = model.getRawValue()['address'];
+        let compId = this.settings.companyID;
+        this.userService
+            .putSettingsForParty(this.settings, compId)
+            .then(response => {
+                if (myGlobals.debug) {
+                    console.log(`Saved Company Settings for company ${compId}. Response: ${response}`);
+                }
+                this.saveCallStatus.callback("Successfully saved", true);
+                this.inputChanged = false;
+                if (this.industrySectorsArr.length == 1 && this.isSectorArray(this.industrySectorsArr[0].text)) {
+                    this.industrySectorsArr[0].text = this.getSectorArray(this.industrySectorsArr[0].text);
+                    this.forceActText = false;
+                }
+                else
+                    this.forceActText = true;
+                this.dataForm.markAsPristine();
+                this.onSaveEvent.emit();
+            })
+            .catch(error => {
+                this.saveCallStatus.error("Error while saving company settings", error);
+            });
     }
 
     isSectorArray(sectors): boolean {
-      let isArray = true;
-      if (this.config.supportedActivitySectors[this.settings.details.businessType] && this.config.supportedActivitySectors[this.settings.details.businessType].length>0) {
-        let sectorsArr = sectors.split("\n");
-        let availableSectors = this.config.supportedActivitySectors[this.settings.details.businessType];
-        for (let i=0; i<sectorsArr.length; i++) {
-          if (availableSectors.indexOf(sectorsArr[i]) == -1)
-            isArray = false;
+        let isArray = true;
+        if (this.config.supportedActivitySectors[this.settings.details.businessType] && this.config.supportedActivitySectors[this.settings.details.businessType].length > 0) {
+            let sectorsArr = sectors.split("\n");
+            let availableSectors = this.config.supportedActivitySectors[this.settings.details.businessType];
+            for (let i = 0; i < sectorsArr.length; i++) {
+                if (availableSectors.indexOf(sectorsArr[i]) == -1)
+                    isArray = false;
+            }
         }
-      }
-      else
-        isArray = false;
-      return isArray;
+        else
+            isArray = false;
+        return isArray;
     }
 
     getSectorArray(sectors): string[] {
-      return sectors.split("\n");
+        return sectors.split("\n");
     }
 
     switchInput() {
-      this.industrySectorsArr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
-      this.forceActText = !this.forceActText;
+        this.industrySectorsArr = [{ "text": "", "lang": DEFAULT_LANGUAGE() }];
+        this.forceActText = !this.forceActText;
     }
 
     changeData(content) {
-        this.mailto = "mailto:"+this.config.supportMail;
+        this.mailto = "mailto:" + this.config.supportMail;
         var subject = "NIMBLE Company Data Change Request (UserID: " + this.appComponent.userID + ", Platform: " +
-            this.config.platformName+ ", Timestamp: " + new Date().toISOString() + ")";
+            this.config.platformName + ", Timestamp: " + new Date().toISOString() + ")";
         this.mailto += "?subject=" + encodeURIComponent(subject);
         var body = "Dear NIMBLE support team,";
         body += "\n\n\n";
@@ -284,9 +284,9 @@ export class CompanyDataSettingsComponent implements OnInit {
     }
 
     deleteData(content) {
-        this.mailto = "mailto:"+this.config.supportMail;
+        this.mailto = "mailto:" + this.config.supportMail;
         var subject = "NIMBLE Company Deletion Request (UserID: " + this.appComponent.userID + ", Platform: " +
-            this.config.platformName+ ", Timestamp: " + new Date().toISOString() + ")";
+            this.config.platformName + ", Timestamp: " + new Date().toISOString() + ")";
         this.mailto += "?subject=" + encodeURIComponent(subject);
         var body = "Dear NIMBLE support team,";
         body += "\n\n\n";
@@ -308,24 +308,24 @@ export class CompanyDataSettingsComponent implements OnInit {
 
     showVerificationTT(content) {
         const tooltip = "Please provide links to external resources or any other information that prove your connection to the company you want to register as a legal representative.<br/><br/>"
-             + "e.g. Company member listing on an official website, signing authority, company registration at external authorities, additional identification numbers, ...";
+            + "e.g. Company member listing on an official website, signing authority, company registration at external authorities, additional identification numbers, ...";
         this.tooltipHTML = tooltip;
         this.modalService.open(content);
     }
 
     showSectorTT(content) {
-      var tooltip = "";
-  		tooltip += "Hold down the Ctrl key in order to select multiple sectors";
-  		this.tooltipHTML = tooltip;
-  		this.modalService.open(content);
+        var tooltip = "";
+        tooltip += "Hold down the Ctrl key in order to select multiple sectors";
+        this.tooltipHTML = tooltip;
+        this.modalService.open(content);
     }
 
     showKeywordsTT(content) {
-      var tooltip = "";
-  		tooltip += "List some keywords that represent your business. Those will be used to improve the visibility of your company on the platform.<br/><br/>";
-      tooltip += "e.g.: Design, Bathroom Manufacturing, Home Accessories";
-  		this.tooltipHTML = tooltip;
-  		this.modalService.open(content);
+        var tooltip = "";
+        tooltip += "List some keywords that represent your business. Those will be used to improve the visibility of your company on the platform.<br/><br/>";
+        tooltip += "e.g.: Design, Bathroom Manufacturing, Home Accessories";
+        this.tooltipHTML = tooltip;
+        this.modalService.open(content);
     }
 
 }

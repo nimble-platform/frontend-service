@@ -14,14 +14,14 @@
    limitations under the License.
  */
 
-import {Component, Input, OnInit} from "@angular/core";
-import {UnitService} from "./unit-service";
-import {amountToString} from "./utils";
-import {Amount} from "../catalogue/model/publish/amount";
-import {ChildFormBase} from './validation/child-form-base';
-import {ValidatorFn} from '@angular/forms/src/directives/validators';
-import {ValidationService} from './validation/validators';
-import {AbstractControl, FormControl, Validators} from '@angular/forms';
+import { Component, Input, OnInit } from "@angular/core";
+import { UnitService } from "./unit-service";
+import { amountToString } from "./utils";
+import { Amount } from "../catalogue/model/publish/amount";
+import { ChildFormBase } from './validation/child-form-base';
+import { ValidatorFn } from '@angular/forms/src/directives/validators';
+import { ValidationService } from './validation/validators';
+import { AbstractControl, FormControl, Validators } from '@angular/forms';
 
 const NUMBER_VALUE_FIELD_NAME = 'amount_value';
 
@@ -56,7 +56,7 @@ export class AmountInputComponent extends ChildFormBase implements OnInit {
     amountValueFormControl: FormControl;
 
     constructor(private unitService: UnitService,
-                private validationService: ValidationService) {
+        private validationService: ValidationService) {
         super();
     }
 
@@ -83,7 +83,7 @@ export class AmountInputComponent extends ChildFormBase implements OnInit {
     }
 
     private initAmountCurrency(): void {
-        if(this.amount.currencyID == null && this.amountCurrencies != null){
+        if (this.amount.currencyID == null && this.amountCurrencies != null) {
             this.amount.currencyID = this.amountCurrencies[0];
         }
     }

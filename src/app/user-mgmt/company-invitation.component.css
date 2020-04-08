@@ -11,11 +11,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
 .form-check-input {
-	margin-left: 0 !important;
+    margin-left: 0 !important;
 }
 
 .form-check-label {
-	margin-left: 1.25rem !important;
+    margin-left: 1.25rem !important;
 }

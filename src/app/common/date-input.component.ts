@@ -15,10 +15,10 @@
  */
 
 import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
-import {dateToString} from './utils';
-import {ChildFormBase} from './validation/child-form-base';
-import {FormControl, ValidatorFn, Validators} from '@angular/forms';
-import {ValidationService} from './validation/validators';
+import { dateToString } from './utils';
+import { ChildFormBase } from './validation/child-form-base';
+import { FormControl, ValidatorFn, Validators } from '@angular/forms';
+import { ValidationService } from './validation/validators';
 const FIELD_NAME_DATE_VALUE = 'date';
 @Component({
     selector: "date-input",
@@ -43,14 +43,14 @@ export class DateInputComponent extends ChildFormBase implements OnInit {
     private dateValue: string;
     dateFormControl: FormControl;
     @Output() dateChange = new EventEmitter<string>();
-    dateToString=dateToString;
+    dateToString = dateToString;
 
     constructor(public validationService: ValidationService) {
         super();
     }
 
     ngOnInit() {
-        if(!this.valueClass) {
+        if (!this.valueClass) {
             this.valueClass = this.label ? "col-9" : "col-12";
         }
         this.initViewFormAndAddToParentForm();
@@ -62,10 +62,10 @@ export class DateInputComponent extends ChildFormBase implements OnInit {
     }
 
     set date(date: string) {
-        if(date){
+        if (date) {
             let index = date.indexOf("T");
-            if (index != -1){
-                date = date.substring(0,date.indexOf("T"));
+            if (index != -1) {
+                date = date.substring(0, date.indexOf("T"));
             }
         }
         this.dateValue = date;

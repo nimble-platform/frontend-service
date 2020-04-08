@@ -22,8 +22,8 @@ import { Dimension } from "./dimension";
 import { DocumentReference } from "./document-reference";
 import { TransportationService } from "./transportation-service";
 import { TrackAndTraceDetails } from "./track-and-trace-details";
-import {Text} from "./text";
-import {LifeCyclePerformanceAssessmentDetails} from "./life-cycle-performance-assessment-details";
+import { Text } from "./text";
+import { LifeCyclePerformanceAssessmentDetails } from "./life-cycle-performance-assessment-details";
 
 export class Item {
     constructor(
@@ -41,5 +41,5 @@ export class Item {
         public transportationServiceDetails = new TransportationService(),
         public trackAndTraceDetails: TrackAndTraceDetails = new TrackAndTraceDetails(),
         public lifeCyclePerformanceAssessmentDetails: LifeCyclePerformanceAssessmentDetails = new LifeCyclePerformanceAssessmentDetails()
-    ) {}
+    ) { }
 }

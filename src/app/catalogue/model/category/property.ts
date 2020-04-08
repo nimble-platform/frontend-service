@@ -14,11 +14,11 @@
    limitations under the License.
  */
 
-import {Unit} from "./unit";
-import {KeywordSynonym} from "./keyword-synonym";
-import {Value} from "./value";
+import { Unit } from "./unit";
+import { KeywordSynonym } from "./keyword-synonym";
+import { Value } from "./value";
 import { PropertyValueQualifier } from "../publish/property-value-qualifier";
-import {Text} from '../publish/text';
+import { Text } from '../publish/text';
 
 export class Property {
     constructor(
@@ -36,5 +36,5 @@ export class Property {
         public synonyms: KeywordSynonym[],
         public values: Value[],
         public uri: string
-    ) {  }
+    ) { }
 }

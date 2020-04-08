@@ -12,10 +12,10 @@
    limitations under the License.
  */
 
-import {Component, Input, OnInit} from "@angular/core";
-import {PriceOption} from "../../catalogue/model/publish/price-option";
-import {CatalogueLine} from '../../catalogue/model/publish/catalogue-line';
-import {EmptyFormBase} from '../../common/validation/empty-form-base';
+import { Component, Input, OnInit } from "@angular/core";
+import { PriceOption } from "../../catalogue/model/publish/price-option";
+import { CatalogueLine } from '../../catalogue/model/publish/catalogue-line';
+import { EmptyFormBase } from '../../common/validation/empty-form-base';
 const QUANTITY_PRICE_OPTION = 'quantity_price_option';
 
 @Component({
@@ -26,7 +26,7 @@ export class QuantityPriceOptionComponent extends EmptyFormBase implements OnIni
     @Input() catalogueLine: CatalogueLine;
     @Input() priceOption: PriceOption;
     @Input() discountUnits;
-    @Input() readonly:boolean = false;
+    @Input() readonly: boolean = false;
     discountStep: number;
 
     constructor() {

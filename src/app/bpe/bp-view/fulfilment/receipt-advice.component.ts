@@ -23,10 +23,10 @@ import { Router } from "@angular/router";
 import { BpUserRole } from "../../model/bp-user-role";
 import { Location } from "@angular/common";
 import { DespatchAdvice } from "../../../catalogue/model/publish/despatch-advice";
-import {CookieService} from 'ng2-cookies';
-import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
-import {TranslateService} from '@ngx-translate/core';
-import {quantityToString} from '../../../common/utils';
+import { CookieService } from 'ng2-cookies';
+import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
+import { TranslateService } from '@ngx-translate/core';
+import { quantityToString } from '../../../common/utils';
 
 @Component({
     selector: "receipt-advice",
@@ -47,11 +47,11 @@ export class ReceiptAdviceComponent implements OnInit {
     quantityToString = quantityToString;
 
     constructor(private bpeService: BPEService,
-                private bpDataService: BPDataService,
-                private location: Location,
-                private cookieService: CookieService,
-                private translate: TranslateService,
-                private router:Router) {
+        private bpDataService: BPDataService,
+        private location: Location,
+        private cookieService: CookieService,
+        private translate: TranslateService,
+        private router: Router) {
     }
 
     ngOnInit() {
@@ -75,20 +75,20 @@ export class ReceiptAdviceComponent implements OnInit {
         this.callStatus.submit();
 
         //this.callStatus.submit();
-        this.bpeService.startProcessWithDocument(this.bpDataService.receiptAdvice,this.bpDataService.receiptAdvice.despatchSupplierParty.party.federationInstanceID)
+        this.bpeService.startProcessWithDocument(this.bpDataService.receiptAdvice, this.bpDataService.receiptAdvice.despatchSupplierParty.party.federationInstanceID)
             .then(res => {
                 this.callStatus.callback("Receipt Advice sent", true);
                 var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
-                  tab = "SALES";
-                this.router.navigate(['dashboard'], {queryParams: {tab: tab, ins: this.bpDataService.receiptAdvice.despatchSupplierParty.party.federationInstanceID}});
+                    tab = "SALES";
+                this.router.navigate(['dashboard'], { queryParams: { tab: tab, ins: this.bpDataService.receiptAdvice.despatchSupplierParty.party.federationInstanceID } });
             }).catch(error => {
                 this.callStatus.error("Failed to send Receipt Advice", error);
             });
     }
 
-    onDispatchOrder(): void{
-        this.bpDataService.setCopyDocuments(false, false, false,true);
+    onDispatchOrder(): void {
+        this.bpDataService.setCopyDocuments(false, false, false, true);
         this.bpDataService.proceedNextBpStep(this.userRole, "Fulfilment");
     }
 
@@ -104,9 +104,9 @@ export class ReceiptAdviceComponent implements OnInit {
         return this.userRole === "seller" || this.processMetadata.processStatus == "Completed";
     }
 
-    isThereADeletedProduct():boolean{
-        for(let isProductDeleted of this.processMetadata.areProductsDeleted){
-            if(isProductDeleted){
+    isThereADeletedProduct(): boolean {
+        for (let isProductDeleted of this.processMetadata.areProductsDeleted) {
+            if (isProductDeleted) {
                 return true;
             }
         }

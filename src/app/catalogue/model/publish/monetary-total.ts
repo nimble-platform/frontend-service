@@ -12,9 +12,9 @@
    limitations under the License.
  */
 
-import {Amount} from "./amount";
+import { Amount } from "./amount";
 
 export class MonetaryTotal {
     constructor(
-        public payableAmount: Amount = new Amount()) {  }
+        public payableAmount: Amount = new Amount()) { }
 }

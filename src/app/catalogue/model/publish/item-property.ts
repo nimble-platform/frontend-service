@@ -16,7 +16,7 @@ import { BinaryObject } from "./binary-object";
 import { Code } from "./code";
 import { Quantity } from "./quantity";
 import { PropertyValueQualifier } from "./property-value-qualifier";
-import {Text} from "./text";
+import { Text } from "./text";
 
 export class ItemProperty {
     constructor(
@@ -32,5 +32,5 @@ export class ItemProperty {
         public itemClassificationCode: Code,
         public uri: string,
         public associatedCatalogueLineID: number[] // hjids of catalogue lines
-    ) {  }
+    ) { }
 }

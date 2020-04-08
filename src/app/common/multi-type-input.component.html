@@ -14,10 +14,10 @@
 
 <ng-container *ngIf="presentationMode == 'edit'" [ngSwitch]="multiTypeValue.valueQualifier">
     <ng-container *ngSwitchCase="'TEXT'">
-        <input [(ngModel)]="multiTypeValue.value[0].value" class="form-control" type="text" [disabled]="disabled"/>
+        <input [(ngModel)]="multiTypeValue.value[0].value" class="form-control" type="text" [disabled]="disabled" />
     </ng-container>
     <ng-container *ngSwitchCase="'NUMBER'">
-        <input [(ngModel)]="multiTypeValue.valueDecimal[0]" class="form-control" type="number" [disabled]="disabled"/>
+        <input [(ngModel)]="multiTypeValue.valueDecimal[0]" class="form-control" type="number" [disabled]="disabled" />
     </ng-container>
     <ng-container *ngSwitchCase="'QUANTITY'">
         <quantity-input [quantity]="multiTypeValue.valueQuantity[0]" [disabled]="disabled"></quantity-input>

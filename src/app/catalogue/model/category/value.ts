@@ -19,5 +19,5 @@ export class Value {
         public shortName: string,
         public definition: string,
         public dataType: string,
-    ) {  }
+    ) { }
 }

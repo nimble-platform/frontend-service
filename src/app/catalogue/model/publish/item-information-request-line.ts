@@ -12,9 +12,9 @@
    limitations under the License.
  */
 
-import {SalesItem} from "./sales-item";
+import { SalesItem } from "./sales-item";
 export class ItemInformationRequestLine {
     constructor(
-        public salesItem:SalesItem[] = [new SalesItem()]
-    ) {  }
+        public salesItem: SalesItem[] = [new SalesItem()]
+    ) { }
 }

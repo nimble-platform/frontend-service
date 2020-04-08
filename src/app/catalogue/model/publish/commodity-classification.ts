@@ -16,7 +16,7 @@
    limitations under the License.
  */
 
-import {Code} from "./code";
+import { Code } from "./code";
 
 export class CommodityClassification {
     constructor(

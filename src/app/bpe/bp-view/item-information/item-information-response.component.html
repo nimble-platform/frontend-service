@@ -29,8 +29,7 @@
         <strong><label for="customFile"><span [innerHTML]="'Filled technical data sheet(s)' | translate"></span>:</label></strong>
     </div>
     <div class="col-9">
-        <file-input [disabled]="isLoading()" [multiple]="true" [binaryObjects]="responseFiles" [presentationMode]="getPresentationMode()"
-            (onSelectFile)="onSelectItemSpecificationFile($event)" (onClearFile)="onUnselectItemSpecificationFile($event)">
+        <file-input [disabled]="isLoading()" [multiple]="true" [binaryObjects]="responseFiles" [presentationMode]="getPresentationMode()" (onSelectFile)="onSelectItemSpecificationFile($event)" (onClearFile)="onUnselectItemSpecificationFile($event)">
         </file-input>
     </div>
 </div>
@@ -39,23 +38,20 @@
 
 <!--Notes-->
 <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
-<note-file-view [notes]="request.note"
-           [documents]="request.additionalDocumentReference"
-           [label]="'Customer\'s note'"></note-file-view>
+<note-file-view [notes]="request.note" [documents]="request.additionalDocumentReference" [label]="'Customer\'s note'"></note-file-view>
 <hr>
-<note-file-view [notes]="response.note"
-           [documents]="response.additionalDocumentReference"
-           [label]="'Manufacturer\'s note'"
-           [readonly]="isLoading() || isResponseSent()"></note-file-view>
+<note-file-view [notes]="response.note" [documents]="response.additionalDocumentReference" [label]="'Manufacturer\'s note'" [readonly]="isLoading() || isResponseSent()"></note-file-view>
 
 <hr class="actions-hr">
 
 <!-- Actions -->
 <div *ngIf="!isBuyer() && !readonly" class="row actions-row">
     <div class="col-4"></div>
-    <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-4 call-status-col">
+        <call-status [callStatus]="callStatus"></call-status>
+    </div>
     <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div *ngIf="!isResponseSent()" class="col-2">
         <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.areProductsDeleted[0]" (click)="onSendResponse()" singleClick>
@@ -72,7 +68,9 @@
 <!-- Buyer only sees once the response has been sent -->
 <div *ngIf="isBuyer() && !readonly" class="row actions-row">
     <div class="col-2"></div>
-    <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-4 call-status-col">
+        <call-status [callStatus]="callStatus"></call-status>
+    </div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>

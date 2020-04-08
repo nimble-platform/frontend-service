@@ -15,17 +15,17 @@
  */
 
 import 'rxjs/add/operator/switchMap';
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, ParamMap} from '@angular/router';
-import {Location} from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { Location } from '@angular/common';
 
-import {BP} from './model/bp';
-import {BPService} from './bp.service';
-import {ProcessConfiguration} from './model/process-configuration';
-import {TransactionConfiguration} from './model/transaction-configuration';
-import {ExecutionConfiguration} from './model/execution-configuration';
+import { BP } from './model/bp';
+import { BPService } from './bp.service';
+import { ProcessConfiguration } from './model/process-configuration';
+import { TransactionConfiguration } from './model/transaction-configuration';
+import { ExecutionConfiguration } from './model/execution-configuration';
 
-import {ExternalDiagram} from './lib/external-diagram';
+import { ExternalDiagram } from './lib/external-diagram';
 
 declare var jQuery: any;
 
@@ -53,8 +53,8 @@ export class BPConfigureComponent implements OnInit {
     startSelecting: boolean;
 
     constructor(private bpService: BPService,
-                private route: ActivatedRoute,
-                private location: Location) {
+        private route: ActivatedRoute,
+        private location: Location) {
         this.partnerID = 'buyer1387';
         this.partnerRole = '';
         this.configuration = new ProcessConfiguration(this.partnerID, this.partnerRole, '', []);
@@ -121,7 +121,7 @@ export class BPConfigureComponent implements OnInit {
                         if (this.selectedTransactionID !== '') {
                             this.onSelect();
                         }
-                    } );
+                    });
             });
 
             jQuery('.signal').on('click', (event) => {

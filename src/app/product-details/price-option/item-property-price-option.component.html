@@ -18,16 +18,15 @@
             <div class="col-5">
                 <input-label [label]="'Item Property'"></input-label>
                 <!--<div *ngFor="let itemProperty of priceOption.itemProperty; let i = index">-->
-                    <!--<div class="mt-3">-->
-                        <!--<strong>{{itemProperty.name}}: </strong>-->
-                    <!--</div>-->
+                <!--<div class="mt-3">-->
+                <!--<strong>{{itemProperty.name}}: </strong>-->
+                <!--</div>-->
                 <!--</div>-->
             </div>
             <div class="col-7">
                 <select class="form-control form-control-sm" #itemPropertySelect>
                     <ng-container *ngFor="let itemProperty of catalogueLine.goodsItem.item.additionalItemProperty">
-                        <option *ngIf="itemProperty.valueQualifier !== 'BOOLEAN' && itemProperty.valueQualifier !== 'FILE'"
-                                [value]="itemProperty.id">{{getItemPropertyName(itemProperty.name)}}</option>
+                        <option *ngIf="itemProperty.valueQualifier !== 'BOOLEAN' && itemProperty.valueQualifier !== 'FILE'" [value]="itemProperty.id">{{getItemPropertyName(itemProperty.name)}}</option>
                     </ng-container>
                 </select>
             </div>
@@ -47,9 +46,7 @@
         </div>
 
         <div *ngIf="!readonly" class="col-9 object-list align-items-center">
-            <div *ngFor="let value of getOriginalValuesOfProperty(itemProperty)"
-                 class="bordered value-pill" title="{{ value }}"
-                 (click)="selectPropertyValue(value, itemProperty)">
+            <div *ngFor="let value of getOriginalValuesOfProperty(itemProperty)" class="bordered value-pill" title="{{ value }}" (click)="selectPropertyValue(value, itemProperty)">
                 <div class="d-flex align-items-center">
                     <div class="mr-2">
                         <label>{{ value }}</label>
@@ -67,8 +64,7 @@
             </div>
         </div>
         <div *ngIf="readonly" class="col-9 object-list align-items-center">
-            <div *ngFor="let value of getPropertyValuesAsStrings(itemProperty)"
-                 class="bordered value-pill" title="{{ value }}">
+            <div *ngFor="let value of getPropertyValuesAsStrings(itemProperty)" class="bordered value-pill" title="{{ value }}">
                 <div class="d-flex align-items-center">
                     <div class="mr-2">
                         <label>{{ value }}</label>

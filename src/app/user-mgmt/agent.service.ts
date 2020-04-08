@@ -12,13 +12,13 @@
    limitations under the License.
  */
 
-import {Injectable} from '@angular/core';
-import {ResponseContentType, Http, RequestOptions, Headers} from '@angular/http';
-import {CookieService} from 'ng2-cookies';
+import { Injectable } from '@angular/core';
+import { ResponseContentType, Http, RequestOptions, Headers } from '@angular/http';
+import { CookieService } from 'ng2-cookies';
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
-import {Party} from "../catalogue/model/publish/party";
-import {UnitService} from "../common/unit-service";
+import { Party } from "../catalogue/model/publish/party";
+import { UnitService } from "../common/unit-service";
 
 @Injectable()
 export class AgentService {
@@ -27,7 +27,7 @@ export class AgentService {
     BUYING_AGENT = 'BUYING_AGENT';
     private url = myGlobals.agent_mgmt_endpoint;
     token = 'Bearer ' + this.cookieService.get("bearer_token");
-    basic_header = new Headers({'Content-Type': 'application/json', 'Authorization': this.token});
+    basic_header = new Headers({ 'Content-Type': 'application/json', 'Authorization': this.token });
 
 
     constructor(
@@ -40,7 +40,7 @@ export class AgentService {
     createSellingAgent(sellingAgent: any): Promise<any> {
         const url = `${this.url}/createSellingAgent`;
         return this.http
-            .post(url, JSON.stringify(sellingAgent), {headers: this.basic_header})
+            .post(url, JSON.stringify(sellingAgent), { headers: this.basic_header })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -49,7 +49,7 @@ export class AgentService {
     updateSellingAgent(sellingAgent: any): Promise<any> {
         const url = `${this.url}/updateSellingAgent`;
         return this.http
-            .post(url, JSON.stringify(sellingAgent), {headers: this.basic_header})
+            .post(url, JSON.stringify(sellingAgent), { headers: this.basic_header })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -58,7 +58,7 @@ export class AgentService {
     createBuyingAgent(buyingAgent: any): Promise<any> {
         const url = `${this.url}/createBuyingAgent`;
         return this.http
-            .post(url, JSON.stringify(buyingAgent), {headers: this.basic_header})
+            .post(url, JSON.stringify(buyingAgent), { headers: this.basic_header })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -67,7 +67,7 @@ export class AgentService {
     updateBuyingAgent(buyingAgent: any): Promise<any> {
         const url = `${this.url}/updateBuyingAgent`;
         return this.http
-            .post(url, JSON.stringify(buyingAgent), {headers: this.basic_header})
+            .post(url, JSON.stringify(buyingAgent), { headers: this.basic_header })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -80,7 +80,7 @@ export class AgentService {
         }
         const url = `${this.url}/getAllSellingAgents/${ownerCompanyId}`;
         return this.http
-            .get(url, {headers: this.basic_header})
+            .get(url, { headers: this.basic_header })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -89,7 +89,7 @@ export class AgentService {
     getSAOrders(agentId?): Promise<any> {
         const url = `${this.url}/getSAOrders/${agentId}`;
         return this.http
-            .get(url, {headers: this.basic_header})
+            .get(url, { headers: this.basic_header })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -102,7 +102,7 @@ export class AgentService {
         }
         const url = `${this.url}/getAllBuyingAgents/${ownerCompanyId}`;
         return this.http
-            .get(url, {headers: this.basic_header})
+            .get(url, { headers: this.basic_header })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -111,7 +111,7 @@ export class AgentService {
     activateSellingAgent(sellingAgentData): Promise<any> {
         const url = `${this.url}/activateSellingAgent`;
         return this.http
-            .post(url, JSON.stringify(sellingAgentData), {headers: this.basic_header})
+            .post(url, JSON.stringify(sellingAgentData), { headers: this.basic_header })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -120,7 +120,7 @@ export class AgentService {
     deactivateSellingAgent(deactivateSellingAgent): Promise<any> {
         const url = `${this.url}/deactivateSellingAgent`;
         return this.http
-            .post(url, JSON.stringify(deactivateSellingAgent), {headers: this.basic_header})
+            .post(url, JSON.stringify(deactivateSellingAgent), { headers: this.basic_header })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -129,7 +129,7 @@ export class AgentService {
     activateBuyingAgent(sellingAgentData): Promise<any> {
         const url = `${this.url}/activateBuyingAgent`;
         return this.http
-            .post(url, JSON.stringify(sellingAgentData), {headers: this.basic_header})
+            .post(url, JSON.stringify(sellingAgentData), { headers: this.basic_header })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -138,7 +138,7 @@ export class AgentService {
     deactivateBuyingAgent(sellingAgentData): Promise<any> {
         const url = `${this.url}/deactivateBuyingAgent`;
         return this.http
-            .post(url, JSON.stringify(sellingAgentData), {headers: this.basic_header})
+            .post(url, JSON.stringify(sellingAgentData), { headers: this.basic_header })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -151,7 +151,7 @@ export class AgentService {
         }
         const url = `${this.url}/deactivateAllAgents/${ownerCompanyId}`;
         return this.http
-            .post(url, {}, {headers: this.basic_header})
+            .post(url, {}, { headers: this.basic_header })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -160,7 +160,7 @@ export class AgentService {
     deleteAgent(agentID, agentType): Promise<any> {
         let url = `${this.url}/deleteAgent`;
         return this.http
-            .post(url, JSON.stringify({id: agentID, agentType: agentType}), {headers: this.basic_header})
+            .post(url, JSON.stringify({ id: agentID, agentType: agentType }), { headers: this.basic_header })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);

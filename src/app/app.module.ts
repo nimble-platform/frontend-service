@@ -51,16 +51,16 @@ import { PrecedingBPDataService } from "./bpe/bp-view/preceding-bp-data-service"
 import { TnTService } from './tnt/tnt.service';
 import { AnalyticsService } from './analytics/analytics.service';
 import { EpcService } from './bpe/bp-view/epc-service';
-import {DocumentService} from "./bpe/bp-view/document-service";
-import {PublishingPropertyService} from './catalogue/publish/publishing-property.service';
-import {FrameContractTransitionService} from "./bpe/bp-view/contract/frame-contract-transition.service";
-import {ShoppingCartDataService} from './bpe/shopping-cart/shopping-cart-data-service';
-import {CollaborationService} from './catalogue/collaboration/collaboration.service';
-import {UnshippedOrdersTransitionService} from './bpe/unshipped-order-transition-service';
-import {ValidationService} from './common/validation/validators';
+import { DocumentService } from "./bpe/bp-view/document-service";
+import { PublishingPropertyService } from './catalogue/publish/publishing-property.service';
+import { FrameContractTransitionService } from "./bpe/bp-view/contract/frame-contract-transition.service";
+import { ShoppingCartDataService } from './bpe/shopping-cart/shopping-cart-data-service';
+import { CollaborationService } from './catalogue/collaboration/collaboration.service';
+import { UnshippedOrdersTransitionService } from './bpe/unshipped-order-transition-service';
+import { ValidationService } from './common/validation/validators';
 
 export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+    return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
 @NgModule({
@@ -73,28 +73,28 @@ export function HttpLoaderFactory(http: HttpClient) {
         HttpClientModule,
         AppRoutingModule,
         ReactiveFormsModule,
-		    AppCommonModule,
+        AppCommonModule,
         NgbModule.forRoot(),
         TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: HttpLoaderFactory,
-            deps: [HttpClient]
-          },
-          isolate: false
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            },
+            isolate: false
         })
     ],
     declarations: [
         AppComponent
-	],
+    ],
     providers: [
-		CookieService,
-		BPEService,
+        CookieService,
+        BPEService,
         DataChannelService,
-		BPService,
-		BPDataService,
+        BPService,
+        BPDataService,
         FrameContractTransitionService,
-		CatalogueService,
+        CatalogueService,
         CategoryService,
         PublishingPropertyService,
         PublishService,

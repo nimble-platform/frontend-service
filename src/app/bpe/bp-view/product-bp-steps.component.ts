@@ -20,7 +20,7 @@ import { ProductBpStep } from "./product-bp-step";
 import { ProductBpStepsDisplay } from "./product-bp-steps-display";
 import * as myGlobals from '../../globals';
 import { BPDataService } from './bp-data-service';
-import {TranslateService} from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "product-bp-steps",
@@ -40,7 +40,7 @@ export class ProductBpStepsComponent implements OnInit {
 
     config = myGlobals.config;
 
-    constructor(public bpDataService:BPDataService,private translate: TranslateService) {
+    constructor(public bpDataService: BPDataService, private translate: TranslateService) {
     }
 
     ngOnInit() {
@@ -49,7 +49,7 @@ export class ProductBpStepsComponent implements OnInit {
     }
 
     getStepClasses(step: ProductBpStep): any {
-        if(step === this.currentStep) {
+        if (step === this.currentStep) {
             const result: any = {
                 step: true,
                 current: true

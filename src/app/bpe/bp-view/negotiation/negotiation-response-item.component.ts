@@ -12,7 +12,7 @@
    limitations under the License.
  */
 
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Location } from "@angular/common";
 import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
@@ -25,17 +25,17 @@ import { CURRENCIES } from "../../../catalogue/model/constants";
 import { CallStatus } from "../../../common/call-status";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { BpUserRole } from "../../model/bp-user-role";
-import {CookieService} from 'ng2-cookies';
-import {DiscountModalComponent} from '../../../product-details/discount-modal.component';
-import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
-import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
+import { CookieService } from 'ng2-cookies';
+import { DiscountModalComponent } from '../../../product-details/discount-modal.component';
+import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
+import { UBLModelUtils } from '../../../catalogue/model/ubl-model-utils';
 import * as myGlobals from '../../../globals';
-import {DigitalAgreement} from "../../../catalogue/model/publish/digital-agreement";
+import { DigitalAgreement } from "../../../catalogue/model/publish/digital-agreement";
 import * as moment from "moment";
-import {Moment, unitOfTime} from "moment";
-import {Clause} from '../../../catalogue/model/publish/clause';
-import {TranslateService} from '@ngx-translate/core';
-import {Delivery} from '../../../catalogue/model/publish/delivery';
+import { Moment, unitOfTime } from "moment";
+import { Clause } from '../../../catalogue/model/publish/clause';
+import { TranslateService } from '@ngx-translate/core';
+import { Delivery } from '../../../catalogue/model/publish/delivery';
 
 @Component({
     selector: "negotiation-response-item",
@@ -58,7 +58,7 @@ export class NegotiationResponseItemComponent implements OnInit {
     @Input() readonly: boolean = false;
     // whether the item is deleted or not
     // if the item is deleted, then we will not show Product Defaults section since we do not have those information
-    @Input() isCatalogueLineDeleted:boolean = false ;
+    @Input() isCatalogueLineDeleted: boolean = false;
     @Input() wrapper: NegotiationModelWrapper;
     userRole: BpUserRole;
     quotationTotalPrice: Quantity;
@@ -77,31 +77,31 @@ export class NegotiationResponseItemComponent implements OnInit {
     getPartyId = UBLModelUtils.getPartyId;
     showFrameContractDetails: boolean = false;
     showDeliveryDetails: boolean = false;
-    showTermsAndConditions:boolean = false;
+    showTermsAndConditions: boolean = false;
     selectedTCTab: 'CUSTOM_TERMS' | 'CLAUSES' = 'CUSTOM_TERMS';
     selectedDeliveryTab: 'DELIVERY_ADDRESS' | 'DELIVERY_DATE' = 'DELIVERY_ADDRESS';
-    tcChanged:boolean = false;
+    tcChanged: boolean = false;
     // if there are delivery date-quantity pairs instead of delivery period in the request, this field is true.
-    isDeliveryDateSectionOpen:boolean = false;
+    isDeliveryDateSectionOpen: boolean = false;
 
     onClauseUpdate(event): void {
         this.tcChanged = UBLModelUtils.areTermsAndConditionListsDifferent(this.wrapper.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.clause, this.wrapper.newQuotation.quotationLine[this.wrapper.lineIndex].lineItem.clause);
     }
 
     constructor(private bpeService: BPEService,
-                private bpDataService: BPDataService,
-                private location: Location,
-                private cookieService: CookieService,
-                private translate: TranslateService,
-                private router: Router) {
+        private bpDataService: BPDataService,
+        private location: Location,
+        private cookieService: CookieService,
+        private translate: TranslateService,
+        private router: Router) {
     }
 
     ngOnInit() {
-        if(this.primaryTermsSource == null){
-            this.primaryTermsSource =  'product_defaults';
+        if (this.primaryTermsSource == null) {
+            this.primaryTermsSource = 'product_defaults';
         }
 
-        if(UBLModelUtils.areDeliveryDatesAvailable(this.wrapper.rfqDelivery)){
+        if (UBLModelUtils.areDeliveryDatesAvailable(this.wrapper.rfqDelivery)) {
             // open delivery date section
             this.isDeliveryDateSectionOpen = true;
         }
@@ -115,7 +115,7 @@ export class NegotiationResponseItemComponent implements OnInit {
         this.userRole = this.bpDataService.bpActivityEvent.userRole;
 
         // change the selected TC tab if there is no custom trading term
-        if(this.getNonFrameContractTermNumber() == 0) {
+        if (this.getNonFrameContractTermNumber() == 0) {
             this.selectedTCTab = 'CLAUSES';
         }
 
@@ -132,12 +132,12 @@ export class NegotiationResponseItemComponent implements OnInit {
         this.wrapper.quotationDiscountPriceWrapper.totalPrice = this.quotationTotalPrice.value;
     }
 
-    onTCTabSelect(event:any,id:any): void {
+    onTCTabSelect(event: any, id: any): void {
         event.preventDefault();
         this.selectedTCTab = id;
     }
 
-    onDeliveryTabSelect(event:any, id:any): void {
+    onDeliveryTabSelect(event: any, id: any): void {
         event.preventDefault();
         this.selectedDeliveryTab = id;
     }
@@ -181,8 +181,8 @@ export class NegotiationResponseItemComponent implements OnInit {
 
     getNonFrameContractTermNumber(): number {
         let termCount: number = 0;
-        for(let tradingTerm of this.wrapper.newQuotation.quotationLine[this.wrapper.lineIndex].lineItem.tradingTerms) {
-            if(tradingTerm.id != 'FRAME_CONTRACT_DURATION') {
+        for (let tradingTerm of this.wrapper.newQuotation.quotationLine[this.wrapper.lineIndex].lineItem.tradingTerms) {
+            if (tradingTerm.id != 'FRAME_CONTRACT_DURATION') {
                 termCount++;
             }
         }
@@ -191,7 +191,7 @@ export class NegotiationResponseItemComponent implements OnInit {
 
     areTermsEqual(termId: string): boolean {
         let termsEqual: boolean = this.wrapper.checkTermEquivalance(this.primaryTermsSource, termId);
-        if(!termsEqual) {
+        if (!termsEqual) {
             this.tcChanged = true;
         }
         return termsEqual;
@@ -201,11 +201,11 @@ export class NegotiationResponseItemComponent implements OnInit {
      * Internal Methods
      */
 
-    private openDiscountModal(): void{
+    private openDiscountModal(): void {
         this.discountModal.open(this.wrapper.quotationDiscountPriceWrapper);
     }
 
-    showTab(tab:boolean):boolean {
+    showTab(tab: boolean): boolean {
         let ret = true;
         if (tab)
             ret = false;
@@ -223,23 +223,23 @@ export class NegotiationResponseItemComponent implements OnInit {
             case "week(s)": rangeUnit = 'w'; break;
             case "day(s)": rangeUnit = 'd'; break;
         }
-        let m:Moment = moment().add(this.wrapper.newQuotationWrapper.frameContractDuration.value, <unitOfTime.DurationConstructor>rangeUnit);
+        let m: Moment = moment().add(this.wrapper.newQuotationWrapper.frameContractDuration.value, <unitOfTime.DurationConstructor>rangeUnit);
         let date: string = m.format(this.dateFormat);
         return date;
     }
 
-    onAddDeliveryDate(){
-        let delivery:Delivery = new Delivery();
+    onAddDeliveryDate() {
+        let delivery: Delivery = new Delivery();
         delivery.shipment.goodsItem[0].quantity.unitCode = this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.quantity.unitCode;
         this.wrapper.newQuotationWrapper.delivery.push(delivery);
     }
 
-    onDeleteDeliveryDate(){
-        let index = this.wrapper.newQuotationWrapper.delivery.length-1;
-        this.wrapper.newQuotationWrapper.delivery.splice(index,1);
+    onDeleteDeliveryDate() {
+        let index = this.wrapper.newQuotationWrapper.delivery.length - 1;
+        this.wrapper.newQuotationWrapper.delivery.splice(index, 1);
     }
 
-    highlightDeliveryDetailsTab(){
+    highlightDeliveryDetailsTab() {
         return !this.wrapper.checkEqualForRequest(this.primaryTermsSource, 'deliveryPeriod') || this.isDeliveryDateSectionOpen || !UBLModelUtils.isAddressEmpty(this.wrapper.rfqDeliveryAddress) || !this.wrapper.checkEqualForResponse('deliveryPeriod')
     }
 }

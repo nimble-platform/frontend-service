@@ -20,9 +20,7 @@
         </input-label>
     </div>
     <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible">
-        <select #optionsInputSelect class="form-control" [ngClass]="innerFormClass"
-                [(ngModel)]="selected" (change)="onChange($event)"
-                [disabled]="disabled">
+        <select #optionsInputSelect class="form-control" [ngClass]="innerFormClass" [(ngModel)]="selected" (change)="onChange($event)" [disabled]="disabled">
             <option *ngFor="let option of options; let i = index" [value]="getValue(option)" [selected]="selectedIndex == i">{{ getName(option) }}</option>
         </select>
     </div>

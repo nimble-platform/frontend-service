@@ -24,5 +24,5 @@ export class Server {
         public login: string,
         public loginPW: string,
         public description: string
-    ) {  }
+    ) { }
 }

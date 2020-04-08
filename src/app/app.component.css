@@ -11,35 +11,34 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
 #footer {
-	font-size: 0.8rem;
-	text-align: center;
-	padding: 0.5rem;
-	margin-top: 1rem;
-	border-top: 1px solid #aaa;
-	color: #aaa;
+    font-size: 0.8rem;
+    text-align: center;
+    padding: 0.5rem;
+    margin-top: 1rem;
+    border-top: 1px solid #aaa;
+    color: #aaa;
 }
 
 #wrapper {
-	max-width: 1400px;
-	margin: 0 auto;
-	min-height: 80vh;
-	padding-left: 15px;
-	padding-right: 15px;
+    max-width: 1400px;
+    margin: 0 auto;
+    min-height: 80vh;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 #chatWindow {
-	position: fixed;
-	width: 48%;
-	height: 80vh;
+    position: fixed;
+    width: 48%;
+    height: 80vh;
 }
 
 .wrapper-max {
-	max-width: 100% !important;
+    max-width: 100% !important;
 }
 
 .dd-icon {
-	min-width: 1.5rem;
-	text-align: center;
+    min-width: 1.5rem;
+    text-align: center;
 }

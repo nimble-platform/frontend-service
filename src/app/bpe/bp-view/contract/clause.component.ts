@@ -14,17 +14,17 @@
    limitations under the License.
  */
 
-import {Component, Input, OnInit} from "@angular/core";
-import {Clause} from "../../../catalogue/model/publish/clause";
+import { Component, Input, OnInit } from "@angular/core";
+import { Clause } from "../../../catalogue/model/publish/clause";
 import { ItemInformationRequest } from "../../../catalogue/model/publish/item-information-request";
 import { CallStatus } from "../../../common/call-status";
 import { BPEService } from "../../bpe.service";
 import { DocumentClause } from "../../../catalogue/model/publish/document-clause";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
-import {DocumentService} from "../document-service";
-import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
-import {BPDataService} from '../bp-data-service';
-import {copy} from '../../../common/utils';
+import { DocumentService } from "../document-service";
+import { UBLModelUtils } from '../../../catalogue/model/ubl-model-utils';
+import { BPDataService } from '../bp-data-service';
+import { copy } from '../../../common/utils';
 
 @Component({
     selector: 'clause',
@@ -32,10 +32,10 @@ import {copy} from '../../../common/utils';
 })
 export class ClauseComponent implements OnInit {
     @Input() clause: Clause = null;
-    @Input() sellerFederationId:string = null;
+    @Input() sellerFederationId: string = null;
     // whether the items are deleted or not
-    @Input() areCatalogueLinesDeleted:boolean[];
-    @Input() selectedLineIndex:number;
+    @Input() areCatalogueLinesDeleted: boolean[];
+    @Input() selectedLineIndex: number;
     clauseDocument = null;
     itemInformationRequest: ItemInformationRequest;
     rfq: RequestForQuotation;
@@ -44,20 +44,20 @@ export class ClauseComponent implements OnInit {
     expanded: boolean = false;
 
     // default T&C for negotiation
-    defaultTermsAndConditions:Clause[] = null;
+    defaultTermsAndConditions: Clause[] = null;
 
     constructor(private bpeService: BPEService,
-                private bpDataService: BPDataService,
-                private documentService: DocumentService) {
+        private bpDataService: BPDataService,
+        private documentService: DocumentService) {
     }
 
     ngOnInit(): void {
         if (this.clauseDocument == null) {
             this.clauseDocumentRetrievalStatus.submit();
             let documentClause: DocumentClause = this.clause as DocumentClause;
-            this.documentService.getCachedDocument(documentClause.clauseDocumentRef.id,this.sellerFederationId).then(result => {
+            this.documentService.getCachedDocument(documentClause.clauseDocumentRef.id, this.sellerFederationId).then(result => {
                 this.clauseDocument = result;
-                if(documentClause.clauseDocumentRef.documentType === "ITEMINFORMATIONRESPONSE") {
+                if (documentClause.clauseDocumentRef.documentType === "ITEMINFORMATIONRESPONSE") {
                     // fetch the itm information request as well
                     this.documentService.getItemInformationRequest(result)
                         .then(request => {
@@ -67,13 +67,13 @@ export class ClauseComponent implements OnInit {
                         .catch(error => {
                             this.clauseDocumentRetrievalStatus.error("Failed to retrieve item information request", error);
                         })
-                } else if(documentClause.clauseDocumentRef.documentType === "QUOTATION") {
+                } else if (documentClause.clauseDocumentRef.documentType === "QUOTATION") {
                     // fetch the itm information request as well
                     this.documentService.getRequestForQuotation(result)
                         .then(request => {
                             this.rfq = request;
                             // if the seller company has T&Cs, then use them
-                            if(this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms && this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms.termOrCondition.length > 0){
+                            if (this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms && this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms.termOrCondition.length > 0) {
                                 this.defaultTermsAndConditions = copy(this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms.termOrCondition);
                                 this.clauseDocumentRetrievalStatus.callback("Successfully retrieved request for quotation", true);
                             }
@@ -111,7 +111,7 @@ export class ClauseComponent implements OnInit {
     }
 
     getClauseName(): string {
-        if(this.clause instanceof DocumentClause) {
+        if (this.clause instanceof DocumentClause) {
             switch (this.clause.clauseDocumentRef.documentType) {
                 case "PPAPRESPONSE":
                     return "Ppap";

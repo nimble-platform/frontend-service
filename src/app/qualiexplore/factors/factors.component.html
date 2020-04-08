@@ -16,118 +16,112 @@
 
 <ng-template #itemTemplate let-item="item" let-onCollapseExpand="onCollapseExpand" let-onCheckedChange="onCheckedChange">
     <div class="form-inline row-item">
-      <i *ngIf="item.children" (click)="onCollapseExpand()" aria-hidden="true" class="fas mr-3"
-         [class.fa-caret-right]="item.collapsed"
-         [class.fa-caret-down]="!item.collapsed"></i> 
-      <!--checkbox -->
-      <div class="form-check">
-        <!-- <input type="checkbox" class="form-check-input" [(ngModel)]="item.checked" (ngModelChange)="onCheckedChange(); select(item);" [disabled]="item.disabled"
+        <i *ngIf="item.children" (click)="onCollapseExpand()" aria-hidden="true" class="fas mr-3" [class.fa-caret-right]="item.collapsed" [class.fa-caret-down]="!item.collapsed"></i>
+        <!--checkbox -->
+        <div class="form-check">
+            <!-- <input type="checkbox" class="form-check-input" [(ngModel)]="item.checked" (ngModelChange)="onCheckedChange(); select(item);" [disabled]="item.disabled"
                [indeterminate]="item.indeterminate"/> -->
-        <span class="form-check-label" *ngIf="item.value !== null && item.value['highlighted']">
-          <i class="{{item.value['class']}}" aria-hidden="true" title="Highlighted" [ngClass]="{'marked': item.checked}" (ngModelChange)="onCheckedChange()"></i>
-        </span>
-        <!-- <label class="form-check-label" (click)="item.checked = !item.checked; onCheckedChange(); select(item);">
+            <span class="form-check-label" *ngIf="item.value !== null && item.value['highlighted']">
+                <i class="{{item.value['class']}}" aria-hidden="true" title="Highlighted" [ngClass]="{'marked': item.checked}" (ngModelChange)="onCheckedChange()"></i>
+            </span>
+            <!-- <label class="form-check-label" (click)="item.checked = !item.checked; onCheckedChange(); select(item);">
           {{item.text}}
         </label> -->
-        <span class="form-check-label" (click)="select(item);">
-          {{item.text}}
-        </span>
-      </div>
+            <span class="form-check-label" (click)="select(item);">
+                {{item.text}}
+            </span>
+        </div>
     </div>
-  
-  </ng-template>
-  
-  <div class="container mt-lg-5 mb-lg-5">
+
+</ng-template>
+
+<div class="container mt-lg-5 mb-lg-5">
     <h2>
-      <span [innerHTML]="'QualiExplore' | translate"></span>
+        <span [innerHTML]="'QualiExplore' | translate"></span>
     </h2>
     <div class="jumbotron">
-      <h3 class="display-5"><span [innerHTML]="'Step - 2' | translate"></span></h3>
-      <p class="lead"><span [innerHTML]="'quali-desc-2' | translate"></span> <i class="fas fa-flag fa-1x"></i></p>
-      <button type="button" class="btn btn-outline-primary" (click)="collapseSelectedFilters = !collapseSelectedFilters" [attr.aria-expanded]="!collapseSelectedFilters" aria-controls="collapseFilters">
-        <span [innerHTML]="'Selected Filters' | translate"></span> <i class="fas fa-angle-double-down ml-3" *ngIf="collapseSelectedFilters"></i> 
-      </button>
-      <div id="collapseFilters" [ngbCollapse]="collapseSelectedFilters">
-        <ul class="filter-details" *ngFor="let filter of selectedFilterDetails">
-          <li>
-              <i class="fas fa-check" *ngIf="filter['parent'] === 'Quality'"></i>
-              <i class="fas fa-bullseye" *ngIf="filter['parent']==='Goals'"></i>
-              <i class="fas fa-info" *ngIf="filter['parent'] === 'Sources'"></i>
-              {{filter['name']}}
-          </li>
-        </ul>
-      </div>
-      <br>
-      <button class="btn btn-sm btn-outline-secondary mt-lg-2" (click)="backToStep1()"><span [innerHTML]="'Return to Step-1' | translate"></span></button>
+        <h3 class="display-5"><span [innerHTML]="'Step - 2' | translate"></span></h3>
+        <p class="lead"><span [innerHTML]="'quali-desc-2' | translate"></span> <i class="fas fa-flag fa-1x"></i></p>
+        <button type="button" class="btn btn-outline-primary" (click)="collapseSelectedFilters = !collapseSelectedFilters" [attr.aria-expanded]="!collapseSelectedFilters" aria-controls="collapseFilters">
+            <span [innerHTML]="'Selected Filters' | translate"></span> <i class="fas fa-angle-double-down ml-3" *ngIf="collapseSelectedFilters"></i>
+        </button>
+        <div id="collapseFilters" [ngbCollapse]="collapseSelectedFilters">
+            <ul class="filter-details" *ngFor="let filter of selectedFilterDetails">
+                <li>
+                    <i class="fas fa-check" *ngIf="filter['parent'] === 'Quality'"></i>
+                    <i class="fas fa-bullseye" *ngIf="filter['parent']==='Goals'"></i>
+                    <i class="fas fa-info" *ngIf="filter['parent'] === 'Sources'"></i>
+                    {{filter['name']}}
+                </li>
+            </ul>
+        </div>
+        <br>
+        <button class="btn btn-sm btn-outline-secondary mt-lg-2" (click)="backToStep1()"><span [innerHTML]="'Return to Step-1' | translate"></span></button>
     </div>
     <div class="row mt-5">
-      <div class="col-lg-6">
-         <h3><span [innerHTML]="'Discover all Quality Factors' | translate"></span></h3>
-      </div>
-      <div class="col-lg-6">
-        <h3><span [innerHTML]="'Quality Factor Information' | translate"></span></h3>
-      </div>
+        <div class="col-lg-6">
+            <h3><span [innerHTML]="'Discover all Quality Factors' | translate"></span></h3>
+        </div>
+        <div class="col-lg-6">
+            <h3><span [innerHTML]="'Quality Factor Information' | translate"></span></h3>
+        </div>
     </div>
     <div class="row mt-2">
-      <div class="col-lg-6">
-        <div class="shadow p-3 mr-3">
-            <ngx-treeview
-            [config]="config"
-            [items]="items"
-            [itemTemplate]="itemTemplate">
-            </ngx-treeview>
-        </div>
-      </div>
-  
-      <div class="col-lg-6" *ngIf="selectedFactor == undefined">
-        <div class="jumbotron">
-          <i class="fas fa-list-ul fa-3x"></i>
-          <p class="lead"><span [innerHTML]="'quali-grey-1' | translate"></span></p>
-          <p class="lead"><span [innerHTML]="'After reading the provided information' | translate"></span>, click on <em><span [innerHTML]="'Proceed' | translate"></span></em></p>
-        </div>
-      </div>
-      <div class="col-lg-6" *ngIf="selectedFactor !== undefined">
-        <div class="shadow card bg-white rounded">
-          <div class="card-header" *ngIf="!selectedFactor.text.length">
-            <span [innerHTML]="'Factor' | translate"></span>
-          </div>
-          <div class="card-header" *ngIf="selectedFactor.text.length">
-            <b>{{selectedFactor.text}}</b>
-          </div>
-          <div class="card-body">
-            <p *ngIf="selectedFactor.value.description == null">
-              <i class="fas fa-info-circle"></i> <span [innerHTML]="'Expand the property to obtain further information' | translate"></span>
-            </p>
-            <div class="factorDescription" *ngIf="selectedFactor.value.description !== null">
-                  {{selectedFactor.value.description}}
+        <div class="col-lg-6">
+            <div class="shadow p-3 mr-3">
+                <ngx-treeview [config]="config" [items]="items" [itemTemplate]="itemTemplate">
+                </ngx-treeview>
             </div>
-            <div *ngIf="selectedFactor.value.source">
-              <div *ngIf="selectedFactor.value.source.length">
-                <b><span [innerHTML]="'Sources' | translate"></span></b>
-                <ul id="sourceList" *ngFor="let source of selectedFactor.value.source">
-                    <li *ngIf="!isUrl(source)"><a href="https://doi.org/{{source}}" target="_blank" id="sourceList">{{source}} </a>
-                      <i class="fas fa-external-link-alt"></i>
-                    </li>
-                    <li *ngIf="isUrl(source)"><a href="{{source}}" target="_blank" id="sourceList"><span [innerHTML]="'Link To Source' | translate"></span> </a>
-                    <i class="fas fa-external-link-alt"></i>
-                    </li>
-                </ul>
-              </div>
-                <button class="btn btn-md btn-primary float-right" 
-                  (click)="markRead(selectedFactor); proceedButtonDisabled = !proceedButtonDisabled" [disabled]="proceedButtonDisabled"><span [innerHTML]="'Proceed' | translate"></span></button>
-            </div>
-          </div>
         </div>
-        <div class="row mt-5" *ngIf="totalHighlightedFactors">
-          <div class="col-lg-6">
-            <h3><span [innerHTML]="'Progress' | translate"></span></h3>
-            <div class="shadow p-3 mb-5 bg-white rounded">
-              <b>{{totalResolvedFactors}} of {{totalHighlightedFactors}}</b>
-              <ngb-progressbar type="info" [value]="(totalResolvedFactors/totalHighlightedFactors) * 100" height="30px"> 
-              </ngb-progressbar>
+
+        <div class="col-lg-6" *ngIf="selectedFactor == undefined">
+            <div class="jumbotron">
+                <i class="fas fa-list-ul fa-3x"></i>
+                <p class="lead"><span [innerHTML]="'quali-grey-1' | translate"></span></p>
+                <p class="lead"><span [innerHTML]="'After reading the provided information' | translate"></span>, click on <em><span [innerHTML]="'Proceed' | translate"></span></em></p>
             </div>
-          </div>
-      </div>
-      </div>
+        </div>
+        <div class="col-lg-6" *ngIf="selectedFactor !== undefined">
+            <div class="shadow card bg-white rounded">
+                <div class="card-header" *ngIf="!selectedFactor.text.length">
+                    <span [innerHTML]="'Factor' | translate"></span>
+                </div>
+                <div class="card-header" *ngIf="selectedFactor.text.length">
+                    <b>{{selectedFactor.text}}</b>
+                </div>
+                <div class="card-body">
+                    <p *ngIf="selectedFactor.value.description == null">
+                        <i class="fas fa-info-circle"></i> <span [innerHTML]="'Expand the property to obtain further information' | translate"></span>
+                    </p>
+                    <div class="factorDescription" *ngIf="selectedFactor.value.description !== null">
+                        {{selectedFactor.value.description}}
+                    </div>
+                    <div *ngIf="selectedFactor.value.source">
+                        <div *ngIf="selectedFactor.value.source.length">
+                            <b><span [innerHTML]="'Sources' | translate"></span></b>
+                            <ul id="sourceList" *ngFor="let source of selectedFactor.value.source">
+                                <li *ngIf="!isUrl(source)"><a href="https://doi.org/{{source}}" target="_blank" id="sourceList">{{source}} </a>
+                                    <i class="fas fa-external-link-alt"></i>
+                                </li>
+                                <li *ngIf="isUrl(source)"><a href="{{source}}" target="_blank" id="sourceList"><span [innerHTML]="'Link To Source' | translate"></span> </a>
+                                    <i class="fas fa-external-link-alt"></i>
+                                </li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-md btn-primary float-right" (click)="markRead(selectedFactor); proceedButtonDisabled = !proceedButtonDisabled" [disabled]="proceedButtonDisabled"><span [innerHTML]="'Proceed' | translate"></span></button>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-5" *ngIf="totalHighlightedFactors">
+                <div class="col-lg-6">
+                    <h3><span [innerHTML]="'Progress' | translate"></span></h3>
+                    <div class="shadow p-3 mb-5 bg-white rounded">
+                        <b>{{totalResolvedFactors}} of {{totalHighlightedFactors}}</b>
+                        <ngb-progressbar type="info" [value]="(totalResolvedFactors/totalHighlightedFactors) * 100" height="30px">
+                        </ngb-progressbar>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
+</div>

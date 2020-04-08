@@ -17,5 +17,5 @@ export class TrackAndTraceDetails {
         public eventURL: string = null,
         public masterURL: string = null,
         public productionProcessTemplate: string = null,
-    ) {  }
+    ) { }
 }

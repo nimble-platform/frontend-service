@@ -12,16 +12,16 @@
    limitations under the License.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
-import {PriceOption} from '../../catalogue/model/publish/price-option';
-import {CatalogueLine} from '../../catalogue/model/publish/catalogue-line';
+import { Component, Input, OnInit } from '@angular/core';
+import { PriceOption } from '../../catalogue/model/publish/price-option';
+import { CatalogueLine } from '../../catalogue/model/publish/catalogue-line';
 import { PRICE_OPTIONS } from '../../catalogue/model/constants';
-import {Quantity} from '../../catalogue/model/publish/quantity';
-import {PaymentMeans} from '../../catalogue/model/publish/payment-means';
-import {Address} from '../../catalogue/model/publish/address';
-import {Period} from '../../catalogue/model/publish/period';
-import {CompanyNegotiationSettings} from '../../user-mgmt/model/company-negotiation-settings';
-import {EmptyFormBase} from '../../common/validation/empty-form-base';
+import { Quantity } from '../../catalogue/model/publish/quantity';
+import { PaymentMeans } from '../../catalogue/model/publish/payment-means';
+import { Address } from '../../catalogue/model/publish/address';
+import { Period } from '../../catalogue/model/publish/period';
+import { CompanyNegotiationSettings } from '../../user-mgmt/model/company-negotiation-settings';
+import { EmptyFormBase } from '../../common/validation/empty-form-base';
 const DISCOUNT_DETAILS_INPUT = 'discount_details';
 @Component({
     selector: "discount-details",
@@ -30,8 +30,8 @@ const DISCOUNT_DETAILS_INPUT = 'discount_details';
 export class DiscountDetailsComponent extends EmptyFormBase implements OnInit {
 
     @Input() catalogueLine: CatalogueLine;
-    @Input() companyNegotiationSettings:CompanyNegotiationSettings;
-    @Input() readonly:boolean = false;
+    @Input() companyNegotiationSettings: CompanyNegotiationSettings;
+    @Input() readonly: boolean = false;
 
     priceOptions = PRICE_OPTIONS;
 
@@ -56,15 +56,15 @@ export class DiscountDetailsComponent extends EmptyFormBase implements OnInit {
         if (priceOptionType == PRICE_OPTIONS.ORDERED_QUANTITY.typeID) {
             priceOption.itemLocationQuantity.minimumQuantity = new Quantity(this.catalogueLine.requiredItemLocationQuantity.price.baseQuantity.value, this.catalogueLine.requiredItemLocationQuantity.price.baseQuantity.unitCode);
 
-        } else if(priceOptionType == PRICE_OPTIONS.PRODUCT_PROPERTY.typeID) {
+        } else if (priceOptionType == PRICE_OPTIONS.PRODUCT_PROPERTY.typeID) {
             priceOption.additionalItemProperty = [];
-        } else if(priceOptionType == PRICE_OPTIONS.INCOTERM.typeID){
+        } else if (priceOptionType == PRICE_OPTIONS.INCOTERM.typeID) {
             priceOption.incoterms = [];
-        } else if(priceOptionType == PRICE_OPTIONS.PAYMENT_MEAN.typeID){
+        } else if (priceOptionType == PRICE_OPTIONS.PAYMENT_MEAN.typeID) {
             priceOption.paymentMeans = [new PaymentMeans()];
-        } else if(priceOptionType == PRICE_OPTIONS.DELIVERY_LOCATION.typeID){
+        } else if (priceOptionType == PRICE_OPTIONS.DELIVERY_LOCATION.typeID) {
             priceOption.itemLocationQuantity.applicableTerritoryAddress = [new Address()];
-        } else if(priceOptionType == PRICE_OPTIONS.DELIVERY_PERIOD.typeID){
+        } else if (priceOptionType == PRICE_OPTIONS.DELIVERY_PERIOD.typeID) {
             priceOption.estimatedDeliveryPeriod = new Period();
         }
 
@@ -79,8 +79,8 @@ export class DiscountDetailsComponent extends EmptyFormBase implements OnInit {
         this.catalogueLine.priceOption = [].concat(this.catalogueLine.priceOption);
     }
 
-    updateDiscountUnits(){
-        this.discountUnits = [].concat([this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.currencyID,"%"]);
+    updateDiscountUnits() {
+        this.discountUnits = [].concat([this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.currencyID, "%"]);
     }
 
 }

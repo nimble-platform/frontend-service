@@ -20,5 +20,5 @@ export class Address {
         public postalCode: string,
         public region: string,
         public country: string,
-    ) {  }
+    ) { }
 }

@@ -13,14 +13,14 @@
  */
 
 import 'rxjs/add/operator/switchMap';
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, ParamMap, Router} from '@angular/router';
-import {DataChannelService} from "./data-channel.service";
-import {Machine} from "./model/machine";
-import {Sensor} from "./model/sensor";
-import {Server} from "./model/server";
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { DataChannelService } from "./data-channel.service";
+import { Machine } from "./model/machine";
+import { Sensor } from "./model/sensor";
+import { Server } from "./model/server";
 import * as moment from "moment";
-import {TranslateService} from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 class NewServer {
     constructor(
@@ -97,7 +97,7 @@ export class ChannelDetailsComponent implements OnInit {
         private dataChannelService: DataChannelService,
         private translate: TranslateService,
         private router: Router
-    ) {}
+    ) { }
 
     //-------------------------------------------------------------------------------------
     // ngOnInit to update
@@ -123,52 +123,49 @@ export class ChannelDetailsComponent implements OnInit {
                 this.sellerServerType = channelConfig.sellerServersType;
                 this.buyerServerType = channelConfig.buyerServersType;
 
-                if(this.pageNumber == 1)
-                {
-                    this.dataChannelService.getChannelConfigFromNegotiationStep(channelID, channelConfig.negotiationStepcounter-1)
+                if (this.pageNumber == 1) {
+                    this.dataChannelService.getChannelConfigFromNegotiationStep(channelID, channelConfig.negotiationStepcounter - 1)
                         .then(initialChannelConfig => {
 
                             this.initialChannelSensors = initialChannelConfig.associatedSensors;
                             this.initialChannelServers = initialChannelConfig.associatedServers;
-                       })
-                       .catch(() => {
-                           alert("Error while doing getting historic step. Please make sure your local data-channel-service is running!");
-                       });
+                        })
+                        .catch(() => {
+                            alert("Error while doing getting historic step. Please make sure your local data-channel-service is running!");
+                        });
 
-                       this.counterChannelSensors = channelConfig.associatedSensors;
-                       this.counterChannelServers = channelConfig.associatedServers;
+                    this.counterChannelSensors = channelConfig.associatedSensors;
+                    this.counterChannelServers = channelConfig.associatedServers;
                 }
 
-                else if(this.pageNumber == 2)
-                {
-                    this.dataChannelService.getChannelConfigFromNegotiationStep(channelID, channelConfig.negotiationStepcounter-2)
+                else if (this.pageNumber == 2) {
+                    this.dataChannelService.getChannelConfigFromNegotiationStep(channelID, channelConfig.negotiationStepcounter - 2)
                         .then(initialChannelConfig => {
 
                             this.initialChannelSensors = initialChannelConfig.associatedSensors;
                             this.initialChannelServers = initialChannelConfig.associatedServers;
-                       })
-                       .catch(() => {
-                           alert("Error while doing getting historic step. Please make sure your local data-channel-service is running!");
-                       });
+                        })
+                        .catch(() => {
+                            alert("Error while doing getting historic step. Please make sure your local data-channel-service is running!");
+                        });
 
-                    this.dataChannelService.getChannelConfigFromNegotiationStep(channelID, channelConfig.negotiationStepcounter-1)
+                    this.dataChannelService.getChannelConfigFromNegotiationStep(channelID, channelConfig.negotiationStepcounter - 1)
                         .then(counterChannelConfig => {
 
                             this.counterChannelSensors = counterChannelConfig.associatedSensors;
                             this.counterChannelServers = counterChannelConfig.associatedServers;
-                       })
-                       .catch(() => {
-                           alert("Error while doing getting historic step. Please make sure your local data-channel-service is running!");
-                       });
+                        })
+                        .catch(() => {
+                            alert("Error while doing getting historic step. Please make sure your local data-channel-service is running!");
+                        });
                 }
 
-                else if(this.pageNumber == 3)
-                {
-                     this.dataChannelService.getChannelConfigFromNegotiationStep(channelID, channelConfig.negotiationStepcounter-2)
-                         .then(counterChannelConfig => {
+                else if (this.pageNumber == 3) {
+                    this.dataChannelService.getChannelConfigFromNegotiationStep(channelID, channelConfig.negotiationStepcounter - 2)
+                        .then(counterChannelConfig => {
 
-                             this.counterChannelSensors = counterChannelConfig.associatedSensors;
-                             this.counterChannelServers = counterChannelConfig.associatedServers;
+                            this.counterChannelSensors = counterChannelConfig.associatedSensors;
+                            this.counterChannelServers = counterChannelConfig.associatedServers;
                         })
                         .catch(() => {
                             alert("Error while doing getting historic step. Please make sure your local data-channel-service is running!");
@@ -176,20 +173,19 @@ export class ChannelDetailsComponent implements OnInit {
                 }
 
 
-                if(this.pageNumber == 0)
-                {
-                       // get sensors
-                       this.dataChannelService.getAssociatedSensors(channelID)
-                           .then(sensors => {
-                               this.initialChannelSensors = sensors;
-                               this.counterChannelSensors = sensors;
-                           });
-                       // get servers
-                       this.dataChannelService.getAssociatedServers(channelID)
-                           .then(servers => {
-                               this.initialChannelServers = servers;
-                               this.counterChannelServers = servers;
-                           });
+                if (this.pageNumber == 0) {
+                    // get sensors
+                    this.dataChannelService.getAssociatedSensors(channelID)
+                        .then(sensors => {
+                            this.initialChannelSensors = sensors;
+                            this.counterChannelSensors = sensors;
+                        });
+                    // get servers
+                    this.dataChannelService.getAssociatedServers(channelID)
+                        .then(servers => {
+                            this.initialChannelServers = servers;
+                            this.counterChannelServers = servers;
+                        });
                 }
             })
             .catch(() => {
@@ -199,40 +195,38 @@ export class ChannelDetailsComponent implements OnInit {
 
         // get setup internal service boolean
         this.dataChannelService.getInternalService()
-             .then(bInternalService => {
-                 this.hasInternalService = bInternalService;
-             });
+            .then(bInternalService => {
+                this.hasInternalService = bInternalService;
+            });
 
         // get setup filtering service boolean
         this.dataChannelService.getFilteringService()
-             .then(bFilteringService => {
-                 this.hasFilteringService = bFilteringService;
-             });
+            .then(bFilteringService => {
+                this.hasFilteringService = bFilteringService;
+            });
     }
 
     //-------------------------------------------------------------------------------------
     // switch page visualisation left and right
     //-------------------------------------------------------------------------------------
-    getPresentationModeLeft(): string
-    {
-        if(this.pageNumber == 0)
-           return "edit";
+    getPresentationModeLeft(): string {
+        if (this.pageNumber == 0)
+            return "edit";
         else
-           return "view";
+            return "view";
     }
-    getPresentationModeRight(): string
-    {
-        if(this.pageNumber == 1)
-           return "edit";
+    getPresentationModeRight(): string {
+        if (this.pageNumber == 1)
+            return "edit";
         else
-           return "view";
+            return "view";
     }
 
     //-------------------------------------------------------------------------------------
     // handle negotiation steps
     //-------------------------------------------------------------------------------------
     getCurrentNegotiationStep(step: number): any {
-        if(step === this.pageNumber) {
+        if (step === this.pageNumber) {
             const result: any = {
                 step: true,
                 current: true
@@ -247,34 +241,34 @@ export class ChannelDetailsComponent implements OnInit {
     //-------------------------------------------------------------------------------------
     confirmPage(): void {
 
-       this.pageSubmitted = true;
-       const channelId = this.channelConfig["channelID"];
+        this.pageSubmitted = true;
+        const channelId = this.channelConfig["channelID"];
 
-       this.dataChannelService.doNegotiationStep(channelId, this.displayStorageArea,
-                                                 this.sellerMessage, this.buyerMessage,
-                                                 this.sellerServerType, this.buyerServerType)
-           .then(() => {
-               this.router.navigate(["dashboard"]);
-           })
-           .catch(() => {
-               alert("Error while doing a negotiation step. Please make sure your local data-channel-service is running!");
-           });
+        this.dataChannelService.doNegotiationStep(channelId, this.displayStorageArea,
+            this.sellerMessage, this.buyerMessage,
+            this.sellerServerType, this.buyerServerType)
+            .then(() => {
+                this.router.navigate(["dashboard"]);
+            })
+            .catch(() => {
+                alert("Error while doing a negotiation step. Please make sure your local data-channel-service is running!");
+            });
     }
 
     //-------------------------------------------------------------------------------------
     // renegotiate
     //-------------------------------------------------------------------------------------
-    renegotiateTerms(numberOfSteps:number): void {
+    renegotiateTerms(numberOfSteps: number): void {
 
-       this.pageRenegotiated = true;
-       const channelId = this.channelConfig["channelID"];
-       this.dataChannelService.renegotiate(channelId, numberOfSteps)
-           .then(() => {
-               this.router.navigate(["dashboard"]);
-           })
-           .catch(() => {
-               alert("Error while doing a negotiation step. Please make sure your local data-channel-service is running!");
-           });
+        this.pageRenegotiated = true;
+        const channelId = this.channelConfig["channelID"];
+        this.dataChannelService.renegotiate(channelId, numberOfSteps)
+            .then(() => {
+                this.router.navigate(["dashboard"]);
+            })
+            .catch(() => {
+                alert("Error while doing a negotiation step. Please make sure your local data-channel-service is running!");
+            });
     }
 
     //-------------------------------------------------------------------------------------
@@ -313,13 +307,13 @@ export class ChannelDetailsComponent implements OnInit {
     // add a private DB server
     //-------------------------------------------------------------------------------------
     addServer(): void {
-       const server = new Server(this.newServer.priority, this.newServer.name, this.newServer.address,
-                                 this.newServer.duration, this.newServer.ownership,
-                                 this.newServer.login, this.newServer.loginPW, this.newServer.description);
+        const server = new Server(this.newServer.priority, this.newServer.name, this.newServer.address,
+            this.newServer.duration, this.newServer.ownership,
+            this.newServer.login, this.newServer.loginPW, this.newServer.description);
 
-       // add to backend
-       const channelId = this.channelConfig["channelID"];
-       this.dataChannelService.addServersForChannel(channelId, server)
+        // add to backend
+        const channelId = this.channelConfig["channelID"];
+        this.dataChannelService.addServersForChannel(channelId, server)
             .then(addedServer => {
                 this.update();
             })
@@ -332,15 +326,15 @@ export class ChannelDetailsComponent implements OnInit {
     // remove a private DB server
     //-------------------------------------------------------------------------------------
     removeServer(server: Server): void {
-       const channelId = this.channelConfig["channelID"];
+        const channelId = this.channelConfig["channelID"];
 
-       this.dataChannelService.removeServerForChannel(channelId, server)
-           .then( () => {
-               this.update();
-           })
-           .catch( () => {
-               this.update();
-           });
+        this.dataChannelService.removeServerForChannel(channelId, server)
+            .then(() => {
+                this.update();
+            })
+            .catch(() => {
+                this.update();
+            });
     }
 
     //-------------------------------------------------------------------------------------
@@ -348,18 +342,17 @@ export class ChannelDetailsComponent implements OnInit {
     //-------------------------------------------------------------------------------------
     addSensor(): void {
 
-        if(!this.hasFilteringService)
-        {
-           this.newSensor.dataKey = "not installed";
-           this.newSensor.metadata = "not installed";
-           this.newSensor.advancedFiltering = "not installed";
+        if (!this.hasFilteringService) {
+            this.newSensor.dataKey = "not installed";
+            this.newSensor.metadata = "not installed";
+            this.newSensor.advancedFiltering = "not installed";
         }
 
         // create sensor locally
         const machine = new Machine(this.newSensor.machineName, null, null);
         const sensor = new Sensor(this.newSensor.name, this.newSensor.interval, this.newSensor.description,
-                                  this.newSensor.dataKey, this.newSensor.metadata, this.newSensor.advancedFiltering,
-                                  machine);
+            this.newSensor.dataKey, this.newSensor.metadata, this.newSensor.advancedFiltering,
+            machine);
 
         // add to backend
         const channelId = this.channelConfig["channelID"];
@@ -375,14 +368,14 @@ export class ChannelDetailsComponent implements OnInit {
     //-------------------------------------------------------------------------------------
     // remove a sensor
     //-------------------------------------------------------------------------------------
-    removeSensor(sensor: Sensor) : void {
+    removeSensor(sensor: Sensor): void {
         const channelId = this.channelConfig["channelID"];
 
         this.dataChannelService.removeSensor(channelId, sensor)
-            .then( () => {
+            .then(() => {
                 this.update();
             })
-            .catch( () => {
+            .catch(() => {
                 this.update();
             });
     }

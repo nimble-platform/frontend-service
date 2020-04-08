@@ -52,13 +52,13 @@ export const CURRENCIES = [
 ]
 
 export const CATALOGUE_LINE_SORT_OPTIONS = [
-    { name: "PRICE_LOW_TO_HIGH", value: "Price:Low to High"},
-    { name: "PRICE_HIGH_TO_LOW", value: "Price:High to Low"}
+    { name: "PRICE_LOW_TO_HIGH", value: "Price:Low to High" },
+    { name: "PRICE_HIGH_TO_LOW", value: "Price:High to Low" }
 ]
 
 export const FAVOURITE_LINEITEM_PUT_OPTIONS = [
-    { name: "ITEM_PUT", value: 1},
-    { name: "LIST_REMOVE", value: 2}
+    { name: "ITEM_PUT", value: 1 },
+    { name: "LIST_REMOVE", value: 2 }
 ]
 
 export const CUSTOM_PROPERTY_LIST_ID = "Custom";
@@ -114,12 +114,12 @@ export const REGIONS = [
 ]
 
 export const PRICE_OPTIONS = {
-    ORDERED_QUANTITY: {text:'Ordered Quantity',typeID:1},
-    PRODUCT_PROPERTY: {text:'Product Property',typeID:2},
-    DELIVERY_PERIOD: {text:'Delivery Period',typeID:4},
-    INCOTERM: {text:'Incoterm',typeID:8},
-    PAYMENT_MEAN: {text:'Payment Mean',typeID:16},
-    DELIVERY_LOCATION: {text:'Delivery Location',typeID:32}
+    ORDERED_QUANTITY: { text: 'Ordered Quantity', typeID: 1 },
+    PRODUCT_PROPERTY: { text: 'Product Property', typeID: 2 },
+    DELIVERY_PERIOD: { text: 'Delivery Period', typeID: 4 },
+    INCOTERM: { text: 'Incoterm', typeID: 8 },
+    PAYMENT_MEAN: { text: 'Payment Mean', typeID: 16 },
+    DELIVERY_LOCATION: { text: 'Delivery Location', typeID: 32 }
 };
 
 export const DISCOUNT_TARGETS = {
@@ -129,21 +129,21 @@ export const DISCOUNT_TARGETS = {
 
 export const DISCOUNT_UNITS = CURRENCIES.concat(['%']);
 
-export const FEDERATION = function () {
+export const FEDERATION = function() {
     let fed = document.getElementsByTagName('html')[0].getAttribute('data-fed');
     if (!myGlobals.config.delegationEnabled || !fed)
-      fed = "OFF";
+        fed = "OFF";
     return fed;
 }
 
-export const FEDERATIONID = function () {
+export const FEDERATIONID = function() {
     return myGlobals.config.federationInstanceId;
 }
 
-export const LANGUAGES:Array<string>  = myGlobals.config.languageSettings.available;
+export const LANGUAGES: Array<string> = myGlobals.config.languageSettings.available;
 
-export const DEFAULT_LANGUAGE = function () {
+export const DEFAULT_LANGUAGE = function() {
     return document.getElementsByTagName('html')[0].getAttribute('lang');
 };
 
-export const FALLBACK_LANGUAGE:string = myGlobals.config.languageSettings.fallback;
+export const FALLBACK_LANGUAGE: string = myGlobals.config.languageSettings.fallback;

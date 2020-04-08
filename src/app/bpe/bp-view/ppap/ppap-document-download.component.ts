@@ -14,17 +14,17 @@
    limitations under the License.
  */
 
-import {Component, Input} from "@angular/core";
-import {BPDataService} from "../bp-data-service";
-import {BPEService} from "../../bpe.service";
-import {ActivatedRoute} from "@angular/router";
-import {PpapResponse} from "../../../catalogue/model/publish/ppap-response";
-import {Ppap} from "../../../catalogue/model/publish/ppap";
-import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
+import { Component, Input } from "@angular/core";
+import { BPDataService } from "../bp-data-service";
+import { BPEService } from "../../bpe.service";
+import { ActivatedRoute } from "@angular/router";
+import { PpapResponse } from "../../../catalogue/model/publish/ppap-response";
+import { Ppap } from "../../../catalogue/model/publish/ppap";
+import { DocumentReference } from "../../../catalogue/model/publish/document-reference";
 import { Location } from "@angular/common";
 import { BinaryObject } from "../../../catalogue/model/publish/binary-object";
-import {DocumentService} from "../document-service";
-import {TranslateService} from '@ngx-translate/core';
+import { DocumentService } from "../document-service";
+import { TranslateService } from '@ngx-translate/core';
 
 interface UploadedDocuments {
     [doc: string]: BinaryObject[];
@@ -35,30 +35,30 @@ interface UploadedDocuments {
     templateUrl: "./ppap-document-download.component.html",
     styleUrls: ["./ppap-document-download.component.css"]
 })
-export class PpapDocumentDownloadComponent{
+export class PpapDocumentDownloadComponent {
 
     @Input() ppapResponse: PpapResponse;
     @Input() ppap: Ppap;
     // whether the item is deleted or not
-    @Input() isCatalogueLineDeleted:boolean = false ;
+    @Input() isCatalogueLineDeleted: boolean = false;
 
     processMetadata;
-    ppapDocuments : DocumentReference[] = [];
+    ppapDocuments: DocumentReference[] = [];
     notes: string[];
     notesBuyer: string[];
-    additionalDocuments:DocumentReference[];
-    additionalDocumentsBuyer:DocumentReference[];
+    additionalDocuments: DocumentReference[];
+    additionalDocumentsBuyer: DocumentReference[];
     documents: UploadedDocuments = {};
     keys = [];
 
     requestedDocuments = [];
 
     constructor(private bpDataService: BPDataService,
-                private bpeService: BPEService,
-                private route: ActivatedRoute,
-                private location: Location,
-                private translate: TranslateService,
-                private documentService: DocumentService) {
+        private bpeService: BPEService,
+        private route: ActivatedRoute,
+        private location: Location,
+        private translate: TranslateService,
+        private documentService: DocumentService) {
     }
 
     ngOnInit() {
@@ -68,10 +68,10 @@ export class PpapDocumentDownloadComponent{
             this.route.params.subscribe(params => {
                 const processid = params['processInstanceId'];
 
-                this.bpeService.getProcessDetailsHistory(processid,this.processMetadata.sellerFederationId).then(task => {
+                this.bpeService.getProcessDetailsHistory(processid, this.processMetadata.sellerFederationId).then(task => {
                     return Promise.all([
-                        this.documentService.getInitialDocument(task,this.processMetadata.sellerFederationId),
-                        this.documentService.getResponseDocument(task,this.processMetadata.sellerFederationId)
+                        this.documentService.getInitialDocument(task, this.processMetadata.sellerFederationId),
+                        this.documentService.getResponseDocument(task, this.processMetadata.sellerFederationId)
                     ]).then(([initialDocument, responseDocument]) => {
                         this.ppap = initialDocument as Ppap;
                         this.ppapResponse = responseDocument as PpapResponse;
@@ -80,7 +80,7 @@ export class PpapDocumentDownloadComponent{
                 });
             });
         } else {
-            if(!this.ppap) {
+            if (!this.ppap) {
                 throw new Error("ppap must be set if ppapResponse is set.");
             }
             this.initFromPpap();
@@ -127,7 +127,7 @@ export class PpapDocumentDownloadComponent{
         return this.bpDataService.bpActivityEvent.userRole === "buyer";
     }
 
-    showNextStepButton(){
+    showNextStepButton() {
         return !this.bpDataService.isFinalProcessInTheWorkflow('Ppap') && this.processMetadata.collaborationStatus != "CANCELLED";
     }
 }

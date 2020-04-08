@@ -12,8 +12,8 @@
    limitations under the License.
  */
 
-import {Input} from '@angular/core';
-import {AbstractControl, FormGroup} from '@angular/forms';
+import { Input } from '@angular/core';
+import { AbstractControl, FormGroup } from '@angular/forms';
 
 export abstract class ChildFormBase {
     // reference to the parent form to which the form managed by the component extending this base class

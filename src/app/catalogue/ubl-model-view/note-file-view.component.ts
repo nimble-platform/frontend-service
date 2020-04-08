@@ -14,11 +14,11 @@
    limitations under the License.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
-import {Attachment} from '../model/publish/attachment';
-import {DocumentReference} from '../model/publish/document-reference';
-import {TranslateService} from '@ngx-translate/core';
-import {BinaryObject} from '../model/publish/binary-object';
+import { Component, Input, OnInit } from '@angular/core';
+import { Attachment } from '../model/publish/attachment';
+import { DocumentReference } from '../model/publish/document-reference';
+import { TranslateService } from '@ngx-translate/core';
+import { BinaryObject } from '../model/publish/binary-object';
 
 
 
@@ -26,51 +26,51 @@ import {BinaryObject} from '../model/publish/binary-object';
     selector: 'note-file-view',
     templateUrl: './note-file-view.component.html'
 })
-export class NoteFileViewComponent implements OnInit{
+export class NoteFileViewComponent implements OnInit {
 
-    @Input() notes:string[];
-    @Input() requestNotes:string[]; // special case for negotiation response
-    @Input() readonly:boolean = true;
-    @Input() label:string;
+    @Input() notes: string[];
+    @Input() requestNotes: string[]; // special case for negotiation response
+    @Input() readonly: boolean = true;
+    @Input() label: string;
 
-    @Input() firstCol:string = "col-3";
-    @Input() secondCol:string = null; // negotiation request
-    @Input() thirdCol:string = null; // special case for negotiation response
-    @Input() lastCol:string = "col-9";
+    @Input() firstCol: string = "col-3";
+    @Input() secondCol: string = null; // negotiation request
+    @Input() thirdCol: string = null; // special case for negotiation response
+    @Input() lastCol: string = "col-9";
 
     // file related variables
-    @Input() documents:DocumentReference[];
-    @Input() requestDocuments:DocumentReference[]; // special case for negotiation response
+    @Input() documents: DocumentReference[];
+    @Input() requestDocuments: DocumentReference[]; // special case for negotiation response
 
-    files:BinaryObject[];
-    requestFiles:BinaryObject[];
+    files: BinaryObject[];
+    requestFiles: BinaryObject[];
 
     constructor(
         private translate: TranslateService
     ) {
     }
-    ngOnInit(){
-        if(this.documents){
+    ngOnInit() {
+        if (this.documents) {
             this.files = this.documents.filter(doc => doc.attachment != null).map(doc => doc.attachment.embeddedDocumentBinaryObject);
         }
-        if(this.requestDocuments){
+        if (this.requestDocuments) {
             this.requestFiles = this.requestDocuments.filter(doc => doc.attachment != null).map(doc => doc.attachment.embeddedDocumentBinaryObject);
         }
     }
 
-    onRemoveNote(index){
-        this.notes.splice(index,1);
+    onRemoveNote(index) {
+        this.notes.splice(index, 1);
     }
 
-    onAddNote(){
+    onAddNote() {
         this.notes.push("");
     }
 
-    setNote(index,event){
+    setNote(index, event) {
         this.notes[index] = event.target.value;
     }
 
-    onSelectFile(binaryObject: BinaryObject){
+    onSelectFile(binaryObject: BinaryObject) {
         const document: DocumentReference = new DocumentReference();
         const attachment: Attachment = new Attachment();
         attachment.embeddedDocumentBinaryObject = binaryObject;
@@ -78,9 +78,9 @@ export class NoteFileViewComponent implements OnInit{
         this.documents.push(document);
     }
 
-    onUnSelectFile(binaryObject: BinaryObject){
+    onUnSelectFile(binaryObject: BinaryObject) {
         const index = this.documents.findIndex(doc => doc.attachment.embeddedDocumentBinaryObject === binaryObject);
-        if(index >= 0) {
+        if (index >= 0) {
             this.documents.splice(index, 1);
         }
     }

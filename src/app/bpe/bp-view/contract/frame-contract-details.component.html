@@ -33,13 +33,11 @@
     <div class="row mb-3">
         <div class="col-12">
             <div class="btn btn-outline-primary align-self-start" [ngClass]="{'active': shownTab == 'MAIN_TERMS'}" (click)="shownTab = 'MAIN_TERMS'">
-                    <span [innerHTML]="'Main Terms' | translate"></span>
+                <span [innerHTML]="'Main Terms' | translate"></span>
             </div>
-            <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active': shownTab == 'TERMS_AND_CONDITIONS'}"
-                 (click)="shownTab = 'TERMS_AND_CONDITIONS'"><span [innerHTML]="'Terms and Conditions' | translate"></span>
+            <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active': shownTab == 'TERMS_AND_CONDITIONS'}" (click)="shownTab = 'TERMS_AND_CONDITIONS'"><span [innerHTML]="'Terms and Conditions' | translate"></span>
             </div>
-            <div class="btn btn-outline-primary align-self-start" [ngClass]="{'active': shownTab == 'NOTES_AND_ADDITIONAL_FILES'}"
-                 (click)="shownTab = 'NOTES_AND_ADDITIONAL_FILES'"><span [innerHTML]="'Notes and Additional Files' | translate"></span>
+            <div class="btn btn-outline-primary align-self-start" [ngClass]="{'active': shownTab == 'NOTES_AND_ADDITIONAL_FILES'}" (click)="shownTab = 'NOTES_AND_ADDITIONAL_FILES'"><span [innerHTML]="'Notes and Additional Files' | translate"></span>
             </div>
         </div>
     </div>
@@ -76,25 +74,16 @@
         <div class="row space-after">
             <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Net Total Price' | translate"></span>:</strong></div>
             <div class="col-3">
-                {{ quotationWrapper.priceWrapper.totalPriceString }}<br/>
+                {{ quotationWrapper.priceWrapper.totalPriceString }}<br />
                 <small>( {{ quotationWrapper.priceWrapper.pricePerItemString }} )</small>
             </div>
         </div>
     </ng-container>
 
-    <terms-and-conditions *ngIf="shownTab == 'TERMS_AND_CONDITIONS'"
-                          [readOnly]="true"
-                          [enableComparisonWithOtherTerms]="false"
-                          [termsAndConditions]="quotationWrapper.quotation.quotationLine[quotationWrapper.quotationLineIndex].lineItem.clause">
+    <terms-and-conditions *ngIf="shownTab == 'TERMS_AND_CONDITIONS'" [readOnly]="true" [enableComparisonWithOtherTerms]="false" [termsAndConditions]="quotationWrapper.quotation.quotationLine[quotationWrapper.quotationLineIndex].lineItem.clause">
     </terms-and-conditions>
 
-    <note-file-view *ngIf="shownTab == 'NOTES_AND_ADDITIONAL_FILES'"
-                    [notes]="quotationWrapper.quotation.note"
-                    [documents]="quotationWrapper.quotation.additionalDocumentReference"
-                    [label]="'Notes'"
-                    [firstCol]="'col-2'"
-                    [lastCol]="'col-10'"
-                    [readonly]="true">
+    <note-file-view *ngIf="shownTab == 'NOTES_AND_ADDITIONAL_FILES'" [notes]="quotationWrapper.quotation.note" [documents]="quotationWrapper.quotation.additionalDocumentReference" [label]="'Notes'" [firstCol]="'col-2'" [lastCol]="'col-10'" [readonly]="true">
     </note-file-view>
 </ng-container>
 <h4 *ngIf="showNoFrameContractLabel"><span [innerHTML]="'No frame contract available' | translate"></span>.</h4>

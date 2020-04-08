@@ -14,8 +14,8 @@
    limitations under the License.
  */
 
-import {Component, EventEmitter, Input, Output} from "@angular/core";
-import {TranslateService} from '@ngx-translate/core';
+import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "facet",
@@ -31,7 +31,7 @@ export class FacetComponent {
     @Input() selectedStringValues: string[] = [];
     @Input() filterActive: boolean = false; // true means user already selected a value for this facet, in this case we check the checkboxes
     @Input() loading: boolean = false
-    @Input() disableMultipleSelection:boolean = false;
+    @Input() disableMultipleSelection: boolean = false;
 
     @Output() booleanValueChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() triggerCriteriaChanged: EventEmitter<void> = new EventEmitter<void>();
@@ -46,13 +46,13 @@ export class FacetComponent {
 
 
     selectStringValue(value: string): void {
-        if(this.disableMultipleSelection){
-            this.selectedStringValues.splice(0,1);
+        if (this.disableMultipleSelection) {
+            this.selectedStringValues.splice(0, 1);
             this.selectedStringValues.push(value);
             return;
         }
         let index = this.selectedStringValues.indexOf(value);
-        if(index == -1) {
+        if (index == -1) {
             this.selectedStringValues.push(value);
         } else {
             this.selectedStringValues.splice(index, 1);
@@ -60,7 +60,7 @@ export class FacetComponent {
     }
 
     noResults(): boolean {
-        if(this.loading) {
+        if (this.loading) {
             return false;
         }
         return this.dataType === "string" && (!this.stringValues || this.stringValues.length === 0);

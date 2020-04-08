@@ -14,10 +14,10 @@
    limitations under the License.
  */
 
-import {Component, OnInit, Input, forwardRef} from '@angular/core';
+import { Component, OnInit, Input, forwardRef } from '@angular/core';
 import { Address } from "../catalogue/model/publish/address";
 import { PresentationMode } from "../catalogue/model/publish/presentation-mode";
-import {EmptyFormBase} from './validation/empty-form-base';
+import { EmptyFormBase } from './validation/empty-form-base';
 const ADDRESS_INPUT_FIELD_NAME = 'address';
 @Component({
     selector: "address-input",

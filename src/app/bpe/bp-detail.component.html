@@ -14,45 +14,45 @@
    limitations under the License.
  -->
 
-<div  *ngIf="bp">
-    <br/>
-	<h2>{{bp.processName}} Details</h2>
-	<div class="form-group row">
-		<label class="col-2 col-form-label">Process ID: </label>
-    <div class="col-10">
-        <input class="form-control" [(ngModel)]="bp.processID" placeholder="processID" />
+<div *ngIf="bp">
+    <br />
+    <h2>{{bp.processName}} Details</h2>
+    <div class="form-group row">
+        <label class="col-2 col-form-label">Process ID: </label>
+        <div class="col-10">
+            <input class="form-control" [(ngModel)]="bp.processID" placeholder="processID" />
+        </div>
     </div>
-  </div>
-	<div class="form-group row">
-		<label class="col-2 col-form-label">Process Name: </label>
-    <div class="col-10">
-		    <input class="form-control" [(ngModel)]="bp.processName" placeholder="processName" />
+    <div class="form-group row">
+        <label class="col-2 col-form-label">Process Name: </label>
+        <div class="col-10">
+            <input class="form-control" [(ngModel)]="bp.processName" placeholder="processName" />
+        </div>
     </div>
-	</div>
     <div class="form-group row">
         <label class="col-2 col-form-label">Process Type: </label>
         <div class="col-10">
-          <select [(ngModel)]="bp.processType">
-              <option value="CATALOGUE">CATALOGUE</option>
-              <option value="NEGOTIATION">NEGOTIATION</option>
-              <option value="ORDER">ORDER</option>
-              <option value="REMITTANCEADVICE">REMITTANCEADVICE</option>
-              <option value="INVOICE">INVOICE</option>
-              <option value="TRACKING">TRACKING</option>
-              <option value="FULFILLMENT">FULFILLMENT</option>
-              <option value="PRODUCTCONFIGURATION">PRODUCTCONFIGURATION</option>
-              <option value="OTHER">OTHER</option>
-          </select>
+            <select [(ngModel)]="bp.processType">
+                <option value="CATALOGUE">CATALOGUE</option>
+                <option value="NEGOTIATION">NEGOTIATION</option>
+                <option value="ORDER">ORDER</option>
+                <option value="REMITTANCEADVICE">REMITTANCEADVICE</option>
+                <option value="INVOICE">INVOICE</option>
+                <option value="TRACKING">TRACKING</option>
+                <option value="FULFILLMENT">FULFILLMENT</option>
+                <option value="PRODUCTCONFIGURATION">PRODUCTCONFIGURATION</option>
+                <option value="OTHER">OTHER</option>
+            </select>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-2 col-form-label">Process Content: </label>
         <div class="col-10">
-          <textarea rows="10" cols="40" id="editor" placeholder="textContent" [(ngModel)]="bp.textContent"></textarea>
-          <div id="diagram"></div>
+            <textarea rows="10" cols="40" id="editor" placeholder="textContent" [(ngModel)]="bp.textContent"></textarea>
+            <div id="diagram"></div>
         </div>
     </div>
-    <br/>
+    <br />
     <!-- TODO: asagidaki fonksiyonlar create(bp) seklinde cagiriliyordu -->
     <button *ngIf="isCreatePage" (click)="create()">&nbsp; Create &nbsp;</button>
     <button *ngIf="!isCreatePage" (click)="update()">&nbsp; Update &nbsp;</button>

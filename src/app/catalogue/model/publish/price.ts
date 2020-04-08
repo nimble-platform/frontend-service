@@ -12,11 +12,11 @@
    limitations under the License.
  */
 
-import {Amount} from "./amount";
-import {Quantity} from "./quantity";
+import { Amount } from "./amount";
+import { Quantity } from "./quantity";
 
 export class Price {
     constructor(public priceAmount: Amount = new Amount(),
-                public baseQuantity: Quantity = new Quantity()) {
+        public baseQuantity: Quantity = new Quantity()) {
     }
 }

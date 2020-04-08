@@ -11,12 +11,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
-.button-block{
+.button-block {
     display: block;
     margin-bottom: 3px;
 }
 
-.div-padding-left{
+.div-padding-left {
     padding-left: 15px;
 }

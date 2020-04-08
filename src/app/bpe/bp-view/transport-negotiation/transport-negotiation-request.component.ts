@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Location } from "@angular/common";
 import { Router } from "@angular/router";
 import { CookieService } from "ng2-cookies";
@@ -29,12 +29,12 @@ import { UserService } from "../../../user-mgmt/user.service";
 import { CustomerParty } from "../../../catalogue/model/publish/customer-party";
 import { SupplierParty } from "../../../catalogue/model/publish/supplier-party";
 import { BPEService } from "../../bpe.service";
-import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
-import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
-import {Text} from '../../../catalogue/model/publish/text';
-import {TranslateService} from '@ngx-translate/core';
-import {DocumentService} from "../document-service";
-import {TransportServiceDetailsComponent} from './transport-service-details.component';
+import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
+import { DiscountPriceWrapper } from "../../../common/discount-price-wrapper";
+import { Text } from '../../../catalogue/model/publish/text';
+import { TranslateService } from '@ngx-translate/core';
+import { DocumentService } from "../document-service";
+import { TransportServiceDetailsComponent } from './transport-service-details.component';
 
 @Component({
     selector: "transport-negotiation-request",
@@ -60,18 +60,18 @@ export class TransportNegotiationRequestComponent implements OnInit {
     processMetadata: ThreadEventMetadata;
     // this component is used for both transport and logistics service negotiation
     // however, we need to know the type of service since some tabs are displayed only for transport services
-    @Input() isTransportService:boolean;
+    @Input() isTransportService: boolean;
     // save the default delivery period unit so that we can understand whether the delivery period is updated by the buyer or not
-    defaultDeliveryPeriodUnit:string = null;
+    defaultDeliveryPeriodUnit: string = null;
 
     constructor(private bpDataService: BPDataService,
-                private bpeService:BPEService,
-                private documentService: DocumentService,
-                private cookieService: CookieService,
-                private userService:UserService,
-                private location: Location,
-                private translate: TranslateService,
-                private router: Router) {
+        private bpeService: BPEService,
+        private documentService: DocumentService,
+        private cookieService: CookieService,
+        private userService: UserService,
+        private location: Location,
+        private translate: TranslateService,
+        private router: Router) {
     }
 
     ngOnInit() {
@@ -91,7 +91,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
 
         this.rfq = this.bpDataService.requestForQuotation;
         // for logistics services except transport services, onyl Negotiation tab is available
-        if(!this.isTransportService){
+        if (!this.isTransportService) {
             this.selectedTab = "NEGOTIATION";
         }
         this.validateRfq();
@@ -101,7 +101,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
             this.bpDataService.getCatalogueLine().requiredItemLocationQuantity.applicableTaxCategory[0].percent);
         //this.rfqPrice.quotationLinePriceWrapper = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.requestForQuotationLine[0].lineItem.paymentTerms);
-        if(this.processMetadata && this.processMetadata.isBeingUpdated){
+        if (this.processMetadata && this.processMetadata.isBeingUpdated) {
             this.updatingProcess = true;
         }
         // set the default delivery period unit
@@ -109,9 +109,9 @@ export class TransportNegotiationRequestComponent implements OnInit {
     }
 
     // be sure that rfq has all necessary fields to start a bp
-    validateRfq(){
+    validateRfq() {
         // special terms
-        if(this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms == null || this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms.length == 0){
+        if (this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms == null || this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms.length == 0) {
             this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms.push(new Text(""));
         }
     }
@@ -134,16 +134,16 @@ export class TransportNegotiationRequestComponent implements OnInit {
     }
 
     // check whether the required fields for transport service details are filled or not
-    isTransportServiceDetailsValid(){
+    isTransportServiceDetailsValid() {
         // no need to check transport service details for logistics services which are not transport services
-        if(!this.isTransportService){
+        if (!this.isTransportService) {
             return true;
         }
         let shipment = this.rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment;
 
         for (let goodsItem of shipment.goodsItem) {
-            if(UBLModelUtils.isEmptyOrIncompleteQuantity(goodsItem.quantity) || goodsItem.item.name[0].value == "" || goodsItem.item.name[0].value == null
-                || UBLModelUtils.isEmptyOrIncompleteQuantity(goodsItem.grossVolumeMeasure) || UBLModelUtils.isEmptyOrIncompleteQuantity(goodsItem.grossWeightMeasure)){
+            if (UBLModelUtils.isEmptyOrIncompleteQuantity(goodsItem.quantity) || goodsItem.item.name[0].value == "" || goodsItem.item.name[0].value == null
+                || UBLModelUtils.isEmptyOrIncompleteQuantity(goodsItem.grossVolumeMeasure) || UBLModelUtils.isEmptyOrIncompleteQuantity(goodsItem.grossWeightMeasure)) {
                 return false;
             }
         }
@@ -158,10 +158,10 @@ export class TransportNegotiationRequestComponent implements OnInit {
         let rfq: RequestForQuotation = copy(this.bpDataService.requestForQuotation);
 
         let sellerId: string;
-        let sellerFederationId:string;
+        let sellerFederationId: string;
 
         // final check on the rfq
-        if(this.bpDataService.modifiedCatalogueLines) {
+        if (this.bpDataService.modifiedCatalogueLines) {
             sellerId = UBLModelUtils.getPartyId(this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty);
             sellerFederationId = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item.manufacturerParty.federationInstanceID;
         }
@@ -176,44 +176,44 @@ export class TransportNegotiationRequestComponent implements OnInit {
 
         Promise.all([
             this.userService.getParty(buyerId),
-            this.userService.getParty(sellerId,sellerFederationId)
+            this.userService.getParty(sellerId, sellerFederationId)
         ])
-        .then(([buyerParty, sellerParty]) => {
-            rfq.buyerCustomerParty = new CustomerParty(buyerParty);
-            rfq.sellerSupplierParty = new SupplierParty(sellerParty);
+            .then(([buyerParty, sellerParty]) => {
+                rfq.buyerCustomerParty = new CustomerParty(buyerParty);
+                rfq.sellerSupplierParty = new SupplierParty(sellerParty);
 
-            return this.bpeService.startProcessWithDocument(rfq,sellerParty.federationInstanceID);
-        })
-        .then(() => {
-            this.callStatus.callback("Terms sent", true);
-            var tab = "PURCHASES";
-            if (this.bpDataService.bpActivityEvent.userRole == "seller")
-              tab = "SALES";
-            this.router.navigate(['dashboard'], {queryParams: {tab: tab,ins: rfq.sellerSupplierParty.party.federationInstanceID}});
-        })
-        .catch(error => {
-            this.callStatus.error("Failed to send Terms", error);
-        });
+                return this.bpeService.startProcessWithDocument(rfq, sellerParty.federationInstanceID);
+            })
+            .then(() => {
+                this.callStatus.callback("Terms sent", true);
+                var tab = "PURCHASES";
+                if (this.bpDataService.bpActivityEvent.userRole == "seller")
+                    tab = "SALES";
+                this.router.navigate(['dashboard'], { queryParams: { tab: tab, ins: rfq.sellerSupplierParty.party.federationInstanceID } });
+            })
+            .catch(error => {
+                this.callStatus.error("Failed to send Terms", error);
+            });
     }
 
     onUpdateRequest(): void {
         this.callStatus.submit();
         let rfq: RequestForQuotation = copy(this.bpDataService.requestForQuotation);
-        this.bpeService.updateBusinessProcess(JSON.stringify(rfq),"REQUESTFORQUOTATION",this.processMetadata.processInstanceId,this.processMetadata.sellerFederationId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(rfq), "REQUESTFORQUOTATION", this.processMetadata.processInstanceId, this.processMetadata.sellerFederationId)
             .then(() => {
                 this.documentService.updateCachedDocument(rfq.id, rfq);
                 this.callStatus.callback("Terms updated", true);
                 var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
-                  tab = "SALES";
-                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
+                    tab = "SALES";
+                this.router.navigate(['dashboard'], { queryParams: { tab: tab } });
             })
             .catch(error => {
                 this.callStatus.error("Failed to update Terms", error);
             });
     }
 
-    isTermUpdated(term:string):boolean{
+    isTermUpdated(term: string): boolean {
         switch (term) {
             case "price":
                 return (this.rfqPrice.itemPrice.value != null && this.rfqPrice.itemPrice.value != 0) || this.rfqPrice.itemPrice.currency != this.CURRENCIES[0];

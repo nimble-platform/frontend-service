@@ -14,12 +14,12 @@
    limitations under the License.
  */
 
-import {Quantity} from "./quantity";
-import {Amount} from "./amount";
+import { Quantity } from "./quantity";
+import { Amount } from "./amount";
 
 export class AllowanceCharge {
     constructor(
         public amount: Amount = new Amount(),
         public perUnitAmount: Amount = new Amount()
-    ) {  }
+    ) { }
 }

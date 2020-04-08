@@ -23,7 +23,8 @@
                 <span [innerHTML]="'Order for' | translate"></span>:
             </h2>
             <ng-container *ngFor="let line of lines;let i=index">
-                <h2><div class="btn btn-outline-primary btn-light inline" [ngClass]="{'active':selectedLines[i]}" (click)="viewedProcessDetails[i]=true;onToggleSelectedLine(i)">{{ line.goodsItem.item.name[0].value }}</div>
+                <h2>
+                    <div class="btn btn-outline-primary btn-light inline" [ngClass]="{'active':selectedLines[i]}" (click)="viewedProcessDetails[i]=true;onToggleSelectedLine(i)">{{ line.goodsItem.item.name[0].value }}</div>
                     <button class="btn btn-outline-dark inline ml-2" (click)="onToggleProductExpanded(i)">
                         <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="productsExpanded[i]"></i>
                         <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!productsExpanded[i]"></i>
@@ -32,7 +33,7 @@
                     </button>
                     <ng-template #content let-modal>
                         <div class="modal-body">
-                            <iframe width='100%;' height='800px'  [src]="chatURL" frameborder="0"></iframe>
+                            <iframe width='100%;' height='800px' [src]="chatURL" frameborder="0"></iframe>
                         </div>
                         <!--<div class="modal-footer">-->
                         <!--<button type="button" class="btn btn-outline-dark" (click)="modal.dismiss('close')">Save</button>-->
@@ -47,14 +48,11 @@
                 </h2>
 
                 <!-- Product Details Panel -->
-                <product-details-tabs *ngIf="productsExpanded[i]" [wrapper]="wrappers[i]" [showOverview]="true" [isCatalogueLineDeleted]="areCatalogueLinesDeleted[i]"
-                                      [settings]="settings" [itemWithSelectedProps]="productWithSelectedProperties" [readonly]="true">
+                <product-details-tabs *ngIf="productsExpanded[i]" [wrapper]="wrappers[i]" [showOverview]="true" [isCatalogueLineDeleted]="areCatalogueLinesDeleted[i]" [settings]="settings" [itemWithSelectedProps]="productWithSelectedProperties" [readonly]="true">
                 </product-details-tabs>
 
                 <!-- BP Steps -->
-                <product-bp-steps *ngIf="!serviceLines && ((currentStep !== 'Fulfilment' && selectedLines[i]) || (currentStep === 'Fulfilment' && i == lines.length-1))"
-                                  [currentStep]="currentStep" [status]="getStepsStatus()"
-                                  [statusText]="getStepsStatusText()" [displayMode]="stepsDisplayMode">
+                <product-bp-steps *ngIf="!serviceLines && ((currentStep !== 'Fulfilment' && selectedLines[i]) || (currentStep === 'Fulfilment' && i == lines.length-1))" [currentStep]="currentStep" [status]="getStepsStatus()" [statusText]="getStepsStatusText()" [displayMode]="stepsDisplayMode">
                 </product-bp-steps>
 
                 <hr class="mb-3">
@@ -62,12 +60,9 @@
                 <!-- Order Content -->
                 <ppap *ngIf="currentStep === 'Ppap'" [isCatalogueLineDeleted]="areCatalogueLinesDeleted[0]">
                 </ppap>
-                <negotiation *ngIf="currentStep === 'Negotiation' && selectedLines[i]" [areCatalogueLinesDeleted]="areCatalogueLinesDeleted"
-                             [areProcessDetailsViewedForAllProducts]="areProcessDetailsViewedForAllProducts()"
-                             [selectedLineIndex]="i">
+                <negotiation *ngIf="currentStep === 'Negotiation' && selectedLines[i]" [areCatalogueLinesDeleted]="areCatalogueLinesDeleted" [areProcessDetailsViewedForAllProducts]="areProcessDetailsViewedForAllProducts()" [selectedLineIndex]="i">
                 </negotiation>
-                <order *ngIf="(currentStep === 'Order' || currentStep === 'Order_Processed') && selectedLines[i]" [selectedLineIndex]="i"
-                       [areProcessDetailsViewedForAllProducts]="areProcessDetailsViewedForAllProducts()">
+                <order *ngIf="(currentStep === 'Order' || currentStep === 'Order_Processed') && selectedLines[i]" [selectedLineIndex]="i" [areProcessDetailsViewedForAllProducts]="areProcessDetailsViewedForAllProducts()">
                 </order>
 
                 <!--  For Item_Information_Request,Transport_Negotiation and Transport_Order steps, we could have associated transport services, therefore, we should only display these steps in the product section-->
@@ -99,15 +94,12 @@
                     </ng-container>
                     <!-- Service Details Panel -->
                     <ng-container *ngFor="let serviceWrapper of serviceWrappers;let i=index">
-                        <product-details-tabs *ngIf="serviceExpanded" [wrapper]="serviceWrapper" [showOverview]="true" [isCatalogueLineDeleted]="areCatalogueLinesDeleted[i]"
-                                              [settings]="serviceSettings" [itemWithSelectedProps]="serviceWithSelectedProperties" [readonly]="true">
+                        <product-details-tabs *ngIf="serviceExpanded" [wrapper]="serviceWrapper" [showOverview]="true" [isCatalogueLineDeleted]="areCatalogueLinesDeleted[i]" [settings]="serviceSettings" [itemWithSelectedProps]="serviceWithSelectedProperties" [readonly]="true">
                         </product-details-tabs>
                     </ng-container>
 
                     <!-- BP Steps -->
-                    <product-bp-steps *ngIf="(currentStep !== 'Fulfilment' && selectedLines[i]) || (currentStep === 'Fulfilment' && i == lines.length-1)"
-                                      [currentStep]="currentStep" [status]="getStepsStatus()"
-                                      [statusText]="getStepsStatusText()" [displayMode]="stepsDisplayMode">
+                    <product-bp-steps *ngIf="(currentStep !== 'Fulfilment' && selectedLines[i]) || (currentStep === 'Fulfilment' && i == lines.length-1)" [currentStep]="currentStep" [status]="getStepsStatus()" [statusText]="getStepsStatusText()" [displayMode]="stepsDisplayMode">
                     </product-bp-steps>
 
                     <item-information *ngIf="currentStep === 'Item_Information_Request' || currentStep === 'Transport_Information_Request'">
@@ -121,8 +113,7 @@
         </div>
     </div>
 
-    <fulfilment *ngIf="currentStep === 'Fulfilment'" [selectedLineIndex]="getSelectedLine()"
-                [catalogueLines]="lines">
+    <fulfilment *ngIf="currentStep === 'Fulfilment'" [selectedLineIndex]="getSelectedLine()" [catalogueLines]="lines">
     </fulfilment>
 </ng-container>
 

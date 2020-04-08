@@ -27,10 +27,10 @@ import { BinaryObject } from "../../../catalogue/model/publish/binary-object";
 import { Attachment } from "../../../catalogue/model/publish/attachment";
 import { ProcessType } from "../../model/process-type";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
-import {isLogisticsService, isTransportService} from '../../../common/utils';
-import {CookieService} from 'ng2-cookies';
-import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
-import {TranslateService} from '@ngx-translate/core';
+import { isLogisticsService, isTransportService } from '../../../common/utils';
+import { CookieService } from 'ng2-cookies';
+import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "item-information-response",
@@ -50,16 +50,16 @@ export class ItemInformationResponseComponent implements OnInit {
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
-    isLogisticsService:boolean = false;
-    isTransportService:boolean = false;
+    isLogisticsService: boolean = false;
+    isTransportService: boolean = false;
 
     constructor(private bpeService: BPEService,
-                private bpDataService: BPDataService,
-                private location: Location,
-                private router: Router,
-                private cookieService: CookieService,
-                private translate: TranslateService,
-                private route: ActivatedRoute) {
+        private bpDataService: BPDataService,
+        private location: Location,
+        private router: Router,
+        private cookieService: CookieService,
+        private translate: TranslateService,
+        private route: ActivatedRoute) {
 
     }
 
@@ -70,14 +70,14 @@ export class ItemInformationResponseComponent implements OnInit {
         if (!this.request) {
             this.request = this.bpDataService.itemInformationRequest;
         }
-        if(this.request) {
+        if (this.request) {
             const documents = this.request.itemInformationRequestLine[0].salesItem[0].item.itemSpecificationDocumentReference;
             this.requestFiles = documents.map(doc => doc.attachment.embeddedDocumentBinaryObject);
         }
         if (!this.response) {
             this.response = this.bpDataService.itemInformationResponse;
         }
-        if(this.response) {
+        if (this.response) {
             this.responseFiles = this.getResponseDocuments().map(doc => doc.attachment.embeddedDocumentBinaryObject);
         }
 
@@ -95,12 +95,12 @@ export class ItemInformationResponseComponent implements OnInit {
 
     onSendResponse(): void {
         this.callStatus.submit();
-        this.bpeService.startProcessWithDocument(this.bpDataService.itemInformationResponse,this.bpDataService.itemInformationResponse.sellerSupplierParty.party.federationInstanceID).then(() => {
+        this.bpeService.startProcessWithDocument(this.bpDataService.itemInformationResponse, this.bpDataService.itemInformationResponse.sellerSupplierParty.party.federationInstanceID).then(() => {
             this.callStatus.callback("Information Response sent", true);
             var tab = "PURCHASES";
             if (this.bpDataService.bpActivityEvent.userRole == "seller")
-              tab = "SALES";
-            this.router.navigate(['dashboard'], {queryParams: {tab: tab,ins: this.bpDataService.itemInformationResponse.sellerSupplierParty.party.federationInstanceID}});
+                tab = "SALES";
+            this.router.navigate(['dashboard'], { queryParams: { tab: tab, ins: this.bpDataService.itemInformationResponse.sellerSupplierParty.party.federationInstanceID } });
         }).catch(error => {
             this.callStatus.error("Failed to send Information Response", error);
         });
@@ -111,7 +111,7 @@ export class ItemInformationResponseComponent implements OnInit {
     }
 
     onNextStep(): void {
-        if(isLogisticsService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().tradeDetails.ppapCompatibilityLevel) {
+        if (isLogisticsService(this.bpDataService.getCatalogueLine()) || !this.bpDataService.getCompanySettings().tradeDetails.ppapCompatibilityLevel) {
             this.navigateToBusinessProcess("Negotiation");
         } else {
             if (this.bpDataService.getCompanyWorkflowMap(null).get('Ppap')) {
@@ -142,7 +142,7 @@ export class ItemInformationResponseComponent implements OnInit {
             return doc.attachment.embeddedDocumentBinaryObject === binaryObject;
         });
 
-        if(index >= 0) {
+        if (index >= 0) {
             this.response.item[0].itemSpecificationDocumentReference.splice(index, 1);
         }
     }
@@ -153,8 +153,8 @@ export class ItemInformationResponseComponent implements OnInit {
 
     isResponseSent(): boolean {
         return this.readonly ||
-            (   this.processMetadata
-             && this.processMetadata.processStatus === "Completed");
+            (this.processMetadata
+                && this.processMetadata.processStatus === "Completed");
     }
 
     getPresentationMode(): PresentationMode {

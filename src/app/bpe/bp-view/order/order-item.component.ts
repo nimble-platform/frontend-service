@@ -12,7 +12,7 @@
    limitations under the License.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Order } from "../../../catalogue/model/publish/order";
 import { CallStatus } from "../../../common/call-status";
 import { BPDataService } from "../bp-data-service";
@@ -34,14 +34,14 @@ import { Quotation } from "../../../catalogue/model/publish/quotation";
 import { Address } from "../../../catalogue/model/publish/address";
 import { SearchContextService } from "../../../simple-search/search-context.service";
 import { EpcService } from "../epc-service";
-import {DocumentService} from "../document-service";
-import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
+import { DocumentService } from "../document-service";
+import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
 import * as myGlobals from '../../../globals';
-import {Contract} from '../../../catalogue/model/publish/contract';
-import {Clause} from '../../../catalogue/model/publish/clause';
-import {TranslateService} from '@ngx-translate/core';
-import {CatalogueLine} from '../../../catalogue/model/publish/catalogue-line';
-import {Delivery} from '../../../catalogue/model/publish/delivery';
+import { Contract } from '../../../catalogue/model/publish/contract';
+import { Clause } from '../../../catalogue/model/publish/clause';
+import { TranslateService } from '@ngx-translate/core';
+import { CatalogueLine } from '../../../catalogue/model/publish/catalogue-line';
+import { Delivery } from '../../../catalogue/model/publish/delivery';
 
 @Component({
     selector: "order-item",
@@ -50,8 +50,8 @@ import {Delivery} from '../../../catalogue/model/publish/delivery';
 })
 export class OrderItemComponent implements OnInit {
 
-    @Input() selectedLineIndex:number;
-    @Input() lineIndex:number;
+    @Input() selectedLineIndex: number;
+    @Input() lineIndex: number;
     order: Order;
     address: Address
     orderResponse: OrderResponseSimple;
@@ -81,20 +81,20 @@ export class OrderItemComponent implements OnInit {
     // map representing the workflow of seller's company
     companyWorkflowMap = null;
     // whether multiple delivery dates are specified instead of a delivery period in the order
-    areDeliveryDatesAvailable:boolean = false;
+    areDeliveryDatesAvailable: boolean = false;
     // contract consisting of the details of previous steps such as PPAP and Negotiation
-    orderContract:Contract = null;
+    orderContract: Contract = null;
 
     constructor(public bpDataService: BPDataService,
-                private userService: UserService,
-                private bpeService: BPEService,
-                private cookieService: CookieService,
-                private searchContextService: SearchContextService,
-                private epcService: EpcService,
-                private location: Location,
-                private router: Router,
-                private translate: TranslateService,
-                private documentService: DocumentService) {
+        private userService: UserService,
+        private bpeService: BPEService,
+        private cookieService: CookieService,
+        private searchContextService: SearchContextService,
+        private epcService: EpcService,
+        private location: Location,
+        private router: Router,
+        private translate: TranslateService,
+        private documentService: DocumentService) {
     }
 
     ngOnInit(): void {
@@ -112,13 +112,13 @@ export class OrderItemComponent implements OnInit {
 
         this.initCallStatus.submit();
 
-        if(UBLModelUtils.areDeliveryDatesAvailable(this.getDelivery())){
+        if (UBLModelUtils.areDeliveryDatesAvailable(this.getDelivery())) {
             this.areDeliveryDatesAvailable = true;
         }
 
         // null check is for checking whether a new order is initialized
         // preceding process id check is for checking whether there is any preceding process before the order
-        if(this.getNonTermAndConditionContract() == null && this.bpDataService.precedingProcessId != null) {
+        if (this.getNonTermAndConditionContract() == null && this.bpDataService.precedingProcessId != null) {
             Promise.all([
                 this.isDataMonitoringDemanded()
             ])
@@ -127,8 +127,8 @@ export class OrderItemComponent implements OnInit {
                     this.initCallStatus.callback("Initialized", true);
 
                 }).catch(error => {
-                this.initCallStatus.error("Error while initializing", error);
-            });
+                    this.initCallStatus.error("Error while initializing", error);
+                });
 
         } else {
             Promise.all([
@@ -144,11 +144,11 @@ export class OrderItemComponent implements OnInit {
     }
 
     // retrieve the order contract which is not the Term and Condition contract
-    getNonTermAndConditionContract(){
-        if(this.order.contract){
-            for(let contract of this.order.contract){
-                for(let clause of contract.clause){
-                    if(clause.type){
+    getNonTermAndConditionContract() {
+        if (this.order.contract) {
+            for (let contract of this.order.contract) {
+                for (let clause of contract.clause) {
+                    if (clause.type) {
                         return contract;
                     }
                 }
@@ -157,11 +157,11 @@ export class OrderItemComponent implements OnInit {
         return null;
     }
 
-    getTermAndConditionClauses():Clause[]{
-        if(this.order.contract){
-            for(let contract of this.order.contract){
-                for(let clause of contract.clause){
-                    if(!clause.type){
+    getTermAndConditionClauses(): Clause[] {
+        if (this.order.contract) {
+            for (let contract of this.order.contract) {
+                for (let clause of contract.clause) {
+                    if (!clause.type) {
                         return contract.clause;
                     }
                 }
@@ -174,7 +174,7 @@ export class OrderItemComponent implements OnInit {
      * Event Handlers
      */
 
-    onTCTabSelect(event:any,id:any): void {
+    onTCTabSelect(event: any, id: any): void {
         event.preventDefault();
         this.selectedTCTab = id;
     }
@@ -200,7 +200,7 @@ export class OrderItemComponent implements OnInit {
     }
 
     isReadOnly(): boolean {
-        if(this.userRole === "buyer") {
+        if (this.userRole === "buyer") {
             return !!this.processMetadata && !this.processMetadata.isBeingUpdated;
         }
         return this.isOrderCompleted();
@@ -215,17 +215,17 @@ export class OrderItemComponent implements OnInit {
         return `${qty.value} ${qty.unitCode}`;
     }
 
-    isDeliveryPeriodSpecified():boolean{
+    isDeliveryPeriodSpecified(): boolean {
         return this.getLineItem().delivery[0].requestedDeliveryPeriod.durationMeasure.value != null;
     }
 
-    getDelivery():Delivery[]{
+    getDelivery(): Delivery[] {
         return this.getLineItem().delivery;
     }
 
     getWarrantyPeriodText(): string {
         const warranty = this.getLineItem().warrantyValidityPeriod.durationMeasure;
-        if(!warranty || !warranty.unitCode || !warranty.value) {
+        if (!warranty || !warranty.unitCode || !warranty.value) {
             return "None";
         }
         return `${warranty.value} ${warranty.unitCode}`;
@@ -258,7 +258,7 @@ export class OrderItemComponent implements OnInit {
                 let clauseCopy = JSON.parse(JSON.stringify(clause));
                 if (clauseCopy.clauseDocumentRef) {
                     let documentClause = clause as DocumentClause;
-                    if(documentClause.clauseDocumentRef.documentType === "QUOTATION") {
+                    if (documentClause.clauseDocumentRef.documentType === "QUOTATION") {
                         quotationClause = documentClause;
                         break;
                     }
@@ -268,7 +268,7 @@ export class OrderItemComponent implements OnInit {
 
         if (quotationClause) {
             this.fetchDataMonitoringStatus.submit();
-            return this.documentService.getCachedDocument(quotationClause.clauseDocumentRef.id,this.sellerParty.federationInstanceID).then(result => {
+            return this.documentService.getCachedDocument(quotationClause.clauseDocumentRef.id, this.sellerParty.federationInstanceID).then(result => {
                 this.fetchDataMonitoringStatus.callback("Successfully fetched data monitoring service", true);
                 this.lastQuotation = result as Quotation;
                 return this.lastQuotation.quotationLine[this.lineIndex].lineItem.dataMonitoringRequested;
@@ -282,11 +282,11 @@ export class OrderItemComponent implements OnInit {
         return Promise.resolve(false);
     }
 
-    populateAreCatalogueLinesDeletedArray():boolean[]{
-        let areCatalogueLinesDeleted:boolean[] = [];
-        if(this.processMetadata){
-            for(let isProductDeleted of this.processMetadata.areProductsDeleted){
-                if(isProductDeleted){
+    populateAreCatalogueLinesDeletedArray(): boolean[] {
+        let areCatalogueLinesDeleted: boolean[] = [];
+        if (this.processMetadata) {
+            for (let isProductDeleted of this.processMetadata.areProductsDeleted) {
+                if (isProductDeleted) {
                     areCatalogueLinesDeleted.push(true);
                 }
                 else {
@@ -301,12 +301,12 @@ export class OrderItemComponent implements OnInit {
         return areCatalogueLinesDeleted;
     }
 
-    private getOrderContract():Contract{
+    private getOrderContract(): Contract {
         let orderContract = null;
-        if(this.order.contract){
-            for(let contract of this.order.contract){
-                for(let clause of contract.clause){
-                    if(clause.type){
+        if (this.order.contract) {
+            for (let contract of this.order.contract) {
+                for (let clause of contract.clause) {
+                    if (clause.type) {
                         orderContract = contract;
                         break;
                     }

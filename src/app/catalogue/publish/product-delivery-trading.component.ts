@@ -17,8 +17,8 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { INCOTERMS } from "../model/constants";
 import { ProductWrapper } from "../../common/product-wrapper";
-import {Text} from "../model/publish/text";
-import { DEFAULT_LANGUAGE} from '../model/constants';
+import { Text } from "../model/publish/text";
+import { DEFAULT_LANGUAGE } from '../model/constants';
 
 @Component({
     selector: "product-delivery-trading",
@@ -36,8 +36,8 @@ export class ProductDeliveryTradingComponent implements OnInit {
     }
 
     ngOnInit() {
-        if(this.wrapper.line.goodsItem.deliveryTerms.specialTerms == null || this.wrapper.line.goodsItem.deliveryTerms.specialTerms.length == 0){
-            this.wrapper.line.goodsItem.deliveryTerms.specialTerms = [new Text(null,DEFAULT_LANGUAGE())];
+        if (this.wrapper.line.goodsItem.deliveryTerms.specialTerms == null || this.wrapper.line.goodsItem.deliveryTerms.specialTerms.length == 0) {
+            this.wrapper.line.goodsItem.deliveryTerms.specialTerms = [new Text(null, DEFAULT_LANGUAGE())];
         }
     }
 

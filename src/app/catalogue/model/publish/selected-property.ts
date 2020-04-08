@@ -16,7 +16,7 @@
 
 import { Property } from "../category/property";
 import { Category } from "../category/category";
-import {Text} from './text';
+import { Text } from './text';
 
 export interface SelectedProperty {
     properties: Property[];

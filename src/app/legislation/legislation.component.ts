@@ -22,4 +22,4 @@ import { Component } from '@angular/core';
     styleUrls: ['./legislation.component.css']
 })
 
-export class LegislationComponent {}
+export class LegislationComponent { }

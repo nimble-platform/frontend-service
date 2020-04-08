@@ -13,7 +13,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
 .product-details {
     margin-left: 0;
     margin-right: 0;
@@ -71,28 +70,25 @@
     margin-top: 0.9rem;
 }
 
-
 .star {
     position: relative;
     display: inline-block;
     color: #b0c4de;
-      font-size: 130%;
-  }
+    font-size: 130%;
+}
 
 .star-b {
     font-size: 392% !important;
     line-height: 110%;
 }
 
-
 .half {
     position: absolute;
     display: inline-block;
     overflow: hidden;
     color: #1e90ff;
-  }
-
+}
 
 .full {
     color: #1e90ff;
-  }
+}

@@ -17,8 +17,7 @@
 <div *ngIf="collapsable" class="col-12 title">
     <h4>
         <span [innerHTML]="'Previous Steps' | translate"></span>
-        <button class="btn btn-outline-dark" (click)="showClauses =! showClauses"
-                [disabled]="!contract">
+        <button class="btn btn-outline-dark" (click)="showClauses =! showClauses" [disabled]="!contract">
             <i class="fas fa-chevron-up fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="showClauses"></i>
             <i class="fas fa-chevron-down fa-fw fa-lg mt-2" aria-hidden="true" *ngIf="!showClauses"></i>
         </button>
@@ -28,8 +27,7 @@
     <ng-container *ngFor="let clause of contract.clause">
         <!-- show clauses if it's document clause. Check quotation clause specifically -->
         <ng-container *ngIf="clause.clauseDocumentRef && ((showQuotation && clause.clauseDocumentRef.documentType === 'QUOTATION') || true)">
-            <clause [clause]="clause" [areCatalogueLinesDeleted]="areCatalogueLinesDeleted" [sellerFederationId]="sellerFederationId"
-                    [selectedLineIndex]="selectedLineIndex">
+            <clause [clause]="clause" [areCatalogueLinesDeleted]="areCatalogueLinesDeleted" [sellerFederationId]="sellerFederationId" [selectedLineIndex]="selectedLineIndex">
             </clause>
         </ng-container>
     </ng-container>

@@ -36,7 +36,7 @@ export class TnTEventDataComponent implements OnChanges {
     eventsToDescribe: TrackInfo[] = [];
     debug = myGlobals.debug;
 
-    constructor(private translate: TranslateService) {}
+    constructor(private translate: TranslateService) { }
 
     ngOnChanges() {
         if (!this.incomingTrackingInfo.length) {

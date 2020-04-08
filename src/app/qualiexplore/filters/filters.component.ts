@@ -25,7 +25,7 @@ import { TranslateService } from '@ngx-translate/core';
     selector: 'filters',
     templateUrl: './filters.component.html',
     styleUrls: ['./filters.component.css'],
-    providers: [ FiltersService ]
+    providers: [FiltersService]
 })
 
 export class FiltersComponent implements OnInit {
@@ -33,15 +33,15 @@ export class FiltersComponent implements OnInit {
     selections: number[] = [];
     private _selectionsSet: Set<number> = new Set();
     constructor(private service: FiltersService,
-                private router: Router,
-                private translate: TranslateService) {
-                }
+        private router: Router,
+        private translate: TranslateService) {
+    }
 
     ngOnInit() {
         // Get previously selected Filters and Selection Array
         const previousFilterSelections = sessionStorage.getItem('currentFilters');
         const previousSelectionsSet = sessionStorage.getItem('currentSelectionsSet');
-        if ( previousFilterSelections !== null && previousSelectionsSet !== null ) {
+        if (previousFilterSelections !== null && previousSelectionsSet !== null) {
             // if Previously interacted then use those values
             this.filters = JSON.parse(previousFilterSelections);
             this.selections = JSON.parse(previousSelectionsSet);
@@ -79,7 +79,7 @@ export class FiltersComponent implements OnInit {
         // store the current filters to localStorage
         sessionStorage.setItem('currentFilters', JSON.stringify(this.filters));
         sessionStorage.setItem('currentSelectionsSet', JSON.stringify(this.selections));
-        this.router.navigate(['qualiexplore/factors'], {queryParams: {ids: JSON.stringify(this.selections)}});
+        this.router.navigate(['qualiexplore/factors'], { queryParams: { ids: JSON.stringify(this.selections) } });
 
     }
 

@@ -23,8 +23,7 @@
 </h4>
 <ng-container *ngIf="expanded">
     <!-- Item Information Request -->
-    <item-information-response *ngIf="clause.clauseDocumentRef?.documentType === 'ITEMINFORMATIONRESPONSE' && itemInformationRequest"
-            [request]="itemInformationRequest" [response]="clauseDocument" [readonly]="true">
+    <item-information-response *ngIf="clause.clauseDocumentRef?.documentType === 'ITEMINFORMATIONRESPONSE' && itemInformationRequest" [request]="itemInformationRequest" [response]="clauseDocument" [readonly]="true">
     </item-information-response>
 
     <!-- Ppap clause -->
@@ -32,18 +31,14 @@
     </ppap-clause>
 
     <!-- Negotiation -->
-    <negotiation-response *ngIf="clause.clauseDocumentRef?.documentType === 'QUOTATION' && rfq && rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails == null"
-                          [areCatalogueLinesDeleted]="areCatalogueLinesDeleted" [selectedLineIndex]="selectedLineIndex"
-                          [rfq]="rfq" [quotation]="clauseDocument" [readonly]="true" [defaultTermsAndConditions]="defaultTermsAndConditions">
+    <negotiation-response *ngIf="clause.clauseDocumentRef?.documentType === 'QUOTATION' && rfq && rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails == null" [areCatalogueLinesDeleted]="areCatalogueLinesDeleted" [selectedLineIndex]="selectedLineIndex" [rfq]="rfq" [quotation]="clauseDocument" [readonly]="true" [defaultTermsAndConditions]="defaultTermsAndConditions">
     </negotiation-response>
 
     <!-- Negotiation Transport -->
-    <transport-negotiation-response *ngIf="clause.clauseDocumentRef?.documentType === 'QUOTATION' && rfq && rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails != null"
-        [rfq]="rfq" [quotation]="clauseDocument" [readonly]="true">
+    <transport-negotiation-response *ngIf="clause.clauseDocumentRef?.documentType === 'QUOTATION' && rfq && rfq.requestForQuotationLine[0].lineItem.item.transportationServiceDetails != null" [rfq]="rfq" [quotation]="clauseDocument" [readonly]="true">
     </transport-negotiation-response>
 
     <!-- Loading icon -->
-    <call-status [callStatus]="clauseDocumentRetrievalStatus"
-                 [large]="true">
+    <call-status [callStatus]="clauseDocumentRetrievalStatus" [large]="true">
     </call-status>
 </ng-container>

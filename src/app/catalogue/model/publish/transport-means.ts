@@ -12,11 +12,11 @@
    limitations under the License.
  */
 
-import {Code} from "./code";
-import {TransportEquipment} from "./transport-equipment";
+import { Code } from "./code";
+import { TransportEquipment } from "./transport-equipment";
 
 export class TransportMeans {
     constructor(public transportMeansTypeCode: Code = new Code(),
-                public transportEquipment: TransportEquipment[] = [new TransportEquipment()]) {
+        public transportEquipment: TransportEquipment[] = [new TransportEquipment()]) {
     }
 }

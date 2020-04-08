@@ -12,11 +12,11 @@
    limitations under the License.
  */
 
-import {Quantity} from "./quantity";
+import { Quantity } from "./quantity";
 
 export class Dimension {
     constructor(
         public attributeID: string = null,
         public measure: Quantity = new Quantity(),
-    ) {  }
+    ) { }
 }

@@ -16,5 +16,5 @@ export class ResetPasswordCredentials {
     constructor(
         public oldPassword: string,
         public newPassword: string,
-    ) {  }
+    ) { }
 }

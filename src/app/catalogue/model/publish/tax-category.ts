@@ -15,5 +15,5 @@
 export class TaxCategory {
     constructor(
         public percent: number = null
-    ) {  }
+    ) { }
 }

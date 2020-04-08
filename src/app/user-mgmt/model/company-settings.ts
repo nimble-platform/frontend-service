@@ -31,5 +31,5 @@ export class CompanySettings {
         public recentlyUsedProductCategories: string[],
         public tradeDetails: CompanyTradeDetails,
         public negotiationSettings: CompanyNegotiationSettings
-    ) {  }
+    ) { }
 }

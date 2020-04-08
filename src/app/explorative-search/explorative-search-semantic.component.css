@@ -14,38 +14,38 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
 /*Column Highlighting*/
 /*table {*/
-    /*overflow: hidden;*/
+/*overflow: hidden;*/
 /*}*/
-
 /*td, th {*/
-    /*position: relative;*/
+/*position: relative;*/
 /*}*/
 /*!*td:hover::after,*!*/
 /*!*th:hover::after {*!*/
-    /*!*content: "";*!*/
-    /*!*position: absolute;*!*/
-    /*!*background-color: rgba(0,0,0,0.075);*!*/
-    /*!*left: 0;*!*/
-    /*!*top: -5000px;*!*/
-    /*!*height: 10000px;*!*/
-    /*!*width: 100%;*!*/
-    /*!*z-index: -1;*!*/
+/*!*content: "";*!*/
+/*!*position: absolute;*!*/
+/*!*background-color: rgba(0,0,0,0.075);*!*/
+/*!*left: 0;*!*/
+/*!*top: -5000px;*!*/
+/*!*height: 10000px;*!*/
+/*!*width: 100%;*!*/
+/*!*z-index: -1;*!*/
 /*!*}*!*/
-
 /*For Unicode Check mark which is compatible on all browsers*/
-.checkMark:before { content: "\2714" }
+.checkMark:before {
+    content: "\2714"
+}
 
 .disabled-section {
     background-color: #e9ecef;
     color: #A9A9A9;
 }
+
 .fixed {
-    position:sticky;
+    position: sticky;
     z-index: 999;
-    top:0;
+    top: 0;
 }
 
 .fixed-header {

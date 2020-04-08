@@ -31,73 +31,73 @@ import { AddressInputComponent } from './address-input.component';
 import { BooleanInputComponent } from './boolean-input.component';
 import { MultiAddressInputComponent } from './multi-address-input.component';
 import { InputLabelComponent } from './input-label.component';
-import {AmountInputComponent} from "./amount-input.component";
-import {ExpandableFlexRow} from "./expandable-flex-row.component";
-import {MultiTypeInputComponent} from "./multi-type-input.component";
+import { AmountInputComponent } from "./amount-input.component";
+import { ExpandableFlexRow } from "./expandable-flex-row.component";
+import { MultiTypeInputComponent } from "./multi-type-input.component";
 import { HttpClient } from "@angular/common/http";
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import {DisableControlDirective} from './disable-control-directive';
-import {SingleClickDirective} from './single-click.directive';
+import { DisableControlDirective } from './disable-control-directive';
+import { SingleClickDirective } from './single-click.directive';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
 @NgModule({
-	imports: [
-		CommonModule,
-		FormsModule,
-		HttpModule,
-		ReactiveFormsModule,
-		NgbModule.forRoot(),
-		TranslateModule.forChild({
+    imports: [
+        CommonModule,
+        FormsModule,
+        HttpModule,
+        ReactiveFormsModule,
+        NgbModule.forRoot(),
+        TranslateModule.forChild({
             loader: {
-              provide: TranslateLoader,
-              useFactory: HttpLoaderFactory,
-              deps: [HttpClient]
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
             },
             isolate: false
         })
-	],
-	declarations: [
-		CallStatusComponent,
-		TextInputComponent,
-		OptionsInputComponent,
-		QuantityInputComponent,
-		PlainAmountInputComponent,
-		FileInputComponent,
-		DateInputComponent,
-		AddressInputComponent,
-		BooleanInputComponent,
-		MultiAddressInputComponent,
-		InputLabelComponent,
-		AmountInputComponent,
-		ExpandableFlexRow,
-		MultiTypeInputComponent,
-		DisableControlDirective,
-		SingleClickDirective
-	],
-	exports: [
-		CallStatusComponent,
-		TextInputComponent,
-		OptionsInputComponent,
-		QuantityInputComponent,
-		PlainAmountInputComponent,
-		FileInputComponent,
-		DateInputComponent,
-		AddressInputComponent,
-		BooleanInputComponent,
-		MultiAddressInputComponent,
-		InputLabelComponent,
-		AmountInputComponent,
-		ExpandableFlexRow,
-		MultiTypeInputComponent,
-		TranslateModule,
-		SingleClickDirective
-	],
-	providers: [
-	]
+    ],
+    declarations: [
+        CallStatusComponent,
+        TextInputComponent,
+        OptionsInputComponent,
+        QuantityInputComponent,
+        PlainAmountInputComponent,
+        FileInputComponent,
+        DateInputComponent,
+        AddressInputComponent,
+        BooleanInputComponent,
+        MultiAddressInputComponent,
+        InputLabelComponent,
+        AmountInputComponent,
+        ExpandableFlexRow,
+        MultiTypeInputComponent,
+        DisableControlDirective,
+        SingleClickDirective
+    ],
+    exports: [
+        CallStatusComponent,
+        TextInputComponent,
+        OptionsInputComponent,
+        QuantityInputComponent,
+        PlainAmountInputComponent,
+        FileInputComponent,
+        DateInputComponent,
+        AddressInputComponent,
+        BooleanInputComponent,
+        MultiAddressInputComponent,
+        InputLabelComponent,
+        AmountInputComponent,
+        ExpandableFlexRow,
+        MultiTypeInputComponent,
+        TranslateModule,
+        SingleClickDirective
+    ],
+    providers: [
+    ]
 })
 
-export class AppCommonModule {}
+export class AppCommonModule { }

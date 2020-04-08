@@ -22,8 +22,7 @@
                 <h3><span [innerHTML]="'No File Requested' | translate"></span></h3>
             </div>
             <div *ngFor="let document of documents" class="space-before">
-                <file-input label="{{ document }}" accept="file/*" [multiple]="true" [disabled]="isLoading()"
-                            (onSelectFile)="onSelectFile(document, $event)" (onClearFile)="onClearFile(document, $event)">
+                <file-input label="{{ document }}" accept="file/*" [multiple]="true" [disabled]="isLoading()" (onSelectFile)="onSelectFile(document, $event)" (onClearFile)="onClearFile(document, $event)">
                 </file-input>
             </div>
         </div>
@@ -33,27 +32,23 @@
 
     <!--Notes-->
     <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
-    <note-file-view [notes]="notes"
-               [documents]="additionalDocuments"
-               [label]="'Request Notes'"></note-file-view>
-    <note-file-view [notes]="notesToSend"
-               [documents]="additionalDocumentsToSend"
-               [label]="'Response Notes'"
-               [readonly]="isLoading()"></note-file-view>
+    <note-file-view [notes]="notes" [documents]="additionalDocuments" [label]="'Request Notes'"></note-file-view>
+    <note-file-view [notes]="notesToSend" [documents]="additionalDocumentsToSend" [label]="'Response Notes'" [readonly]="isLoading()"></note-file-view>
 
     <hr class="actions-hr">
 
     <!-- Action buttons -->
     <div class="row actions-row">
         <div class="col-4"></div>
-        <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-4 call-status-col">
+            <call-status [callStatus]="callStatus"></call-status>
+        </div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div class="col-2">
-            <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.areProductsDeleted[0]"
-                    (click)="responseToPpapRequest(true)" singleClick>
-                    <span [innerHTML]="'Send Response' | translate"></span>
+            <button class="btn btn-primary action" [disabled]="isLoading() || processMetadata.areProductsDeleted[0]" (click)="responseToPpapRequest(true)" singleClick>
+                <span [innerHTML]="'Send Response' | translate"></span>
             </button>
         </div>
     </div>

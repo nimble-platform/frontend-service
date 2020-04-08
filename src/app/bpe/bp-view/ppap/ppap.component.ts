@@ -14,12 +14,12 @@
    limitations under the License.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CookieService } from "ng2-cookies";
 import { BPDataService } from "../bp-data-service";
 import { ActivatedRoute } from "@angular/router";
 import { BpUserRole } from "../../model/bp-user-role";
-import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
+import { UBLModelUtils } from '../../../catalogue/model/ubl-model-utils';
 
 @Component({
     selector: "ppap",
@@ -31,15 +31,15 @@ export class PpapComponent implements OnInit {
     userRole: BpUserRole;
 
     // whether the item is deleted or not
-    @Input() isCatalogueLineDeleted:boolean = false ;
+    @Input() isCatalogueLineDeleted: boolean = false;
 
     constructor(private bpDataService: BPDataService,
-                private cookieService: CookieService,
-                public route: ActivatedRoute) {
+        private cookieService: CookieService,
+        public route: ActivatedRoute) {
     }
 
     ngOnInit() {
-        if(!this.bpDataService.ppap) {
+        if (!this.bpDataService.ppap) {
             this.bpDataService.initPpap([]);
         }
 
@@ -62,7 +62,7 @@ export class PpapComponent implements OnInit {
             } else {
                 // buyer
                 this.userRole = "buyer";
-                if (!this.bpDataService.ppapResponse ) {
+                if (!this.bpDataService.ppapResponse) {
                     this.screen = "select";
                 } else {
                     this.screen = "download";

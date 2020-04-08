@@ -12,11 +12,11 @@
    limitations under the License.
  */
 
-import {DocumentReference} from './document-reference';
+import { DocumentReference } from './document-reference';
 
 export class Invoice {
     constructor(
         public id: string = null,
-        public originatorDocumentReference:DocumentReference[] = []
-    ) {}
+        public originatorDocumentReference: DocumentReference[] = []
+    ) { }
 }

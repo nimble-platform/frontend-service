@@ -12,41 +12,41 @@
    limitations under the License.
  */
 
-import {Catalogue} from '../../catalogue/model/publish/catalogue';
-import {Router} from '@angular/router';
-import {Component, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
-import {ShoppingCartDataService} from './shopping-cart-data-service';
-import {copy, selectDescription, selectName, selectPreferredValues} from '../../common/utils';
-import {ItemPriceWrapper} from '../../common/item-price-wrapper';
-import {CatalogueLine} from '../../catalogue/model/publish/catalogue-line';
-import {Item} from '../../catalogue/model/publish/item';
-import {CompanySettings} from '../../user-mgmt/model/company-settings';
-import {BPDataService} from '../bp-view/bp-data-service';
-import {UserService} from '../../user-mgmt/user.service';
-import {UBLModelUtils} from '../../catalogue/model/ubl-model-utils';
-import {CallStatus} from '../../common/call-status';
-import {ProductWrapper} from '../../common/product-wrapper';
-import {CatalogueService} from '../../catalogue/catalogue.service';
-import {RequestForQuotation} from '../../catalogue/model/publish/request-for-quotation';
-import {RequestForQuotationLine} from '../../catalogue/model/publish/request-for-quotation-line';
-import {DigitalAgreement} from '../../catalogue/model/publish/digital-agreement';
-import {Quotation} from '../../catalogue/model/publish/quotation';
-import {BPEService} from '../bpe.service';
-import {CookieService} from 'ng2-cookies';
-import {DocumentService} from '../bp-view/document-service';
-import {Clause} from '../../catalogue/model/publish/clause';
-import {NegotiationModelWrapper} from '../bp-view/negotiation/negotiation-model-wrapper';
-import {NegotiationRequestItemComponent} from '../bp-view/negotiation/negotiation-request-item.component';
-import {SupplierParty} from '../../catalogue/model/publish/supplier-party';
-import {CustomerParty} from '../../catalogue/model/publish/customer-party';
-import {Order} from '../../catalogue/model/publish/order';
-import {Party} from '../../catalogue/model/publish/party';
-import {TradingPreferences} from '../../catalogue/model/publish/trading-preferences';
-import {CommonTerms} from '../../common/common-terms';
-import {ShoppingCartSummaryModalComponent} from './shopping-cart-summary-modal.component';
-import {FEDERATIONID} from '../../catalogue/model/constants';
-import {ValidationService} from '../../common/validation/validators';
-import {FormGroup} from '@angular/forms';
+import { Catalogue } from '../../catalogue/model/publish/catalogue';
+import { Router } from '@angular/router';
+import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { ShoppingCartDataService } from './shopping-cart-data-service';
+import { copy, selectDescription, selectName, selectPreferredValues } from '../../common/utils';
+import { ItemPriceWrapper } from '../../common/item-price-wrapper';
+import { CatalogueLine } from '../../catalogue/model/publish/catalogue-line';
+import { Item } from '../../catalogue/model/publish/item';
+import { CompanySettings } from '../../user-mgmt/model/company-settings';
+import { BPDataService } from '../bp-view/bp-data-service';
+import { UserService } from '../../user-mgmt/user.service';
+import { UBLModelUtils } from '../../catalogue/model/ubl-model-utils';
+import { CallStatus } from '../../common/call-status';
+import { ProductWrapper } from '../../common/product-wrapper';
+import { CatalogueService } from '../../catalogue/catalogue.service';
+import { RequestForQuotation } from '../../catalogue/model/publish/request-for-quotation';
+import { RequestForQuotationLine } from '../../catalogue/model/publish/request-for-quotation-line';
+import { DigitalAgreement } from '../../catalogue/model/publish/digital-agreement';
+import { Quotation } from '../../catalogue/model/publish/quotation';
+import { BPEService } from '../bpe.service';
+import { CookieService } from 'ng2-cookies';
+import { DocumentService } from '../bp-view/document-service';
+import { Clause } from '../../catalogue/model/publish/clause';
+import { NegotiationModelWrapper } from '../bp-view/negotiation/negotiation-model-wrapper';
+import { NegotiationRequestItemComponent } from '../bp-view/negotiation/negotiation-request-item.component';
+import { SupplierParty } from '../../catalogue/model/publish/supplier-party';
+import { CustomerParty } from '../../catalogue/model/publish/customer-party';
+import { Order } from '../../catalogue/model/publish/order';
+import { Party } from '../../catalogue/model/publish/party';
+import { TradingPreferences } from '../../catalogue/model/publish/trading-preferences';
+import { CommonTerms } from '../../common/common-terms';
+import { ShoppingCartSummaryModalComponent } from './shopping-cart-summary-modal.component';
+import { FEDERATIONID } from '../../catalogue/model/constants';
+import { ValidationService } from '../../common/validation/validators';
+import { FormGroup } from '@angular/forms';
 
 @Component({
     selector: 'shopping-cart',
@@ -69,7 +69,7 @@ export class ShoppingCartComponent implements OnInit {
     platformTermsAndConditions: Map<number, Clause[]> = new Map<number, Clause[]>();
     buyerCompanySettings: CompanySettings;
     // whether the buyer company has its own T&Cs
-    doesBuyerCompanyHasItsOwnTerms:boolean = true;
+    doesBuyerCompanyHasItsOwnTerms: boolean = true;
     // rfqs created for the products in the shopping cart
     // a dedicated rfq is created for each seller in the cart
     // key of the map below keeps the seller id
@@ -79,7 +79,7 @@ export class ShoppingCartComponent implements OnInit {
     // following map stores the catalogue lines (their hjids) for each rfq
     // key of the map is the identifier of rfq
     // value of the map is the list of catalogue line hjids included in the corresponding rfq
-    rfqCatalogueLineMap:Map<string,number[]> = new Map<string, number[]>();
+    rfqCatalogueLineMap: Map<string, number[]> = new Map<string, number[]>();
 
     shoppingCartForm: FormGroup = new FormGroup({});
     collapsedStatusesOfCartItems: Map<number, boolean> = new Map<number, boolean>();
@@ -100,14 +100,14 @@ export class ShoppingCartComponent implements OnInit {
     @ViewChildren(NegotiationRequestItemComponent) negotiationRequestItemComponents: QueryList<NegotiationRequestItemComponent>;
 
     constructor(private shoppingCartDataService: ShoppingCartDataService,
-                private catalogueService: CatalogueService,
-                private bpeService: BPEService,
-                private documentService: DocumentService,
-                private bpDataService: BPDataService,
-                private validationService: ValidationService,
-                private userService: UserService,
-                private cookieService: CookieService,
-                private router: Router) {}
+        private catalogueService: CatalogueService,
+        private bpeService: BPEService,
+        private documentService: DocumentService,
+        private bpDataService: BPDataService,
+        private validationService: ValidationService,
+        private userService: UserService,
+        private cookieService: CookieService,
+        private router: Router) { }
 
     /*
     init methods
@@ -127,7 +127,7 @@ export class ShoppingCartComponent implements OnInit {
             for (let cartLine of this.shoppingCart.catalogueLine) {
                 let partyId: string = UBLModelUtils.getPartyId(cartLine.goodsItem.item.manufacturerParty);
                 if (!distinctCompanies.has(partyId)) {
-                    settingsPromises.push(this.userService.getSettingsForParty(partyId,cartLine.goodsItem.item.manufacturerParty.federationInstanceID));
+                    settingsPromises.push(this.userService.getSettingsForParty(partyId, cartLine.goodsItem.item.manufacturerParty.federationInstanceID));
                     distinctCompanies.add(partyId);
                 }
             }
@@ -170,7 +170,7 @@ export class ShoppingCartComponent implements OnInit {
                     });
 
                     this.initCallStatus.aggregatedCallBack(null, true, rootPromiseArray.length);
-            });
+                });
 
             // initialize the collapsed statuses, the first product is open
             let lines: CatalogueLine[] = this.shoppingCart.catalogueLine;
@@ -267,19 +267,19 @@ export class ShoppingCartComponent implements OnInit {
             this.rfqs.set(sellerId, rfq);
         }
         // populate rfqCatalogueLineMap
-        let catalogueLineCopies:CatalogueLine[] = copy(this.shoppingCart.catalogueLine);
-        for(let rfq of rfqs){
-            let catalogueLineHjids:number[] = [];
+        let catalogueLineCopies: CatalogueLine[] = copy(this.shoppingCart.catalogueLine);
+        for (let rfq of rfqs) {
+            let catalogueLineHjids: number[] = [];
             let size = rfq.requestForQuotationLine.length;
-            for(let i = 0; i < size; i++){
+            for (let i = 0; i < size; i++) {
                 let rfqLine = rfq.requestForQuotationLine[i];
                 let catalogueLine = catalogueLineCopies.find(catalogueLine => catalogueLine.goodsItem.item.manufacturersItemIdentification.id == rfqLine.lineItem.item.manufacturersItemIdentification.id &&
-                                                                                        catalogueLine.goodsItem.item.catalogueDocumentReference.id == rfqLine.lineItem.item.catalogueDocumentReference.id);
-                catalogueLineCopies.splice(catalogueLineCopies.indexOf(catalogueLine),1);
+                    catalogueLine.goodsItem.item.catalogueDocumentReference.id == rfqLine.lineItem.item.catalogueDocumentReference.id);
+                catalogueLineCopies.splice(catalogueLineCopies.indexOf(catalogueLine), 1);
 
                 catalogueLineHjids.push(catalogueLine.hjid);
             }
-            this.rfqCatalogueLineMap.set(rfq.id,catalogueLineHjids);
+            this.rfqCatalogueLineMap.set(rfq.id, catalogueLineHjids);
         }
     }
 
@@ -301,9 +301,9 @@ export class ShoppingCartComponent implements OnInit {
             let quotationPromises: Promise<any>[] = [];
             for (let frameContracts of frameContractsForProducts) {
                 if (frameContracts != null) {
-                    quotationPromises.push(this.documentService.getCachedDocument(frameContracts[0].quotationReference.id,frameContracts[0].item.manufacturerParty.federationInstanceID));
+                    quotationPromises.push(this.documentService.getCachedDocument(frameContracts[0].quotationReference.id, frameContracts[0].item.manufacturerParty.federationInstanceID));
                 }
-                else{
+                else {
                     quotationPromises.push(Promise.resolve(null));
                 }
             }
@@ -311,11 +311,11 @@ export class ShoppingCartComponent implements OnInit {
             this.initCallStatus.aggregatedSubmit();
             Promise.all(quotationPromises).then(quotations => {
                 let size = quotations.length;
-                for(let i = 0;i<size;i++){
+                for (let i = 0; i < size; i++) {
                     let quotation = quotations[i];
-                    if(quotation){
+                    if (quotation) {
                         // set frame contract
-                        this.frameContracts.set(this.shoppingCart.catalogueLine[i].hjid, [frameContractsForProducts[i][0],quotation ]);
+                        this.frameContracts.set(this.shoppingCart.catalogueLine[i].hjid, [frameContractsForProducts[i][0], quotation]);
                     }
                 }
                 // set product wrappers and negotiation model wrappers
@@ -399,7 +399,7 @@ export class ShoppingCartComponent implements OnInit {
             let productWrapper: ProductWrapper = new ProductWrapper(cartLine, this.sellersSettings.get(sellerId).negotiationSettings);
             this.productWrappers.set(lineHjid, productWrapper);
             // find the index of rfq line relating to this catalogue line
-            let rfq:RequestForQuotation = this.rfqs.get(sellerId);
+            let rfq: RequestForQuotation = this.rfqs.get(sellerId);
             let index = this.rfqCatalogueLineMap.get(rfq.id).indexOf(lineHjid);
             // initialize negotiation model wrapper
             let negotiationModelWrapper = new NegotiationModelWrapper(
@@ -436,9 +436,9 @@ export class ShoppingCartComponent implements OnInit {
         // nothing for now
     }
 
-    onApplyTerms(commonTerms:CommonTerms): void {
-        if(commonTerms){
-            for(let negotiationRequestItem of this.negotiationRequestItemComponents.toArray()){
+    onApplyTerms(commonTerms: CommonTerms): void {
+        if (commonTerms) {
+            for (let negotiationRequestItem of this.negotiationRequestItemComponents.toArray()) {
                 let negotiationModelWrapper = negotiationRequestItem.wrapper;
                 negotiationModelWrapper.rfqIncoterms = commonTerms.incoTerm;
                 negotiationModelWrapper.rfqPaymentMeans = commonTerms.paymentMean;
@@ -448,17 +448,17 @@ export class ShoppingCartComponent implements OnInit {
                 negotiationModelWrapper.rfqDataMonitoringRequested = commonTerms.dataMonitoringRequested;
                 negotiationModelWrapper.rfqTradingTerms = copy(commonTerms.tradingTerms);
 
-                if(!negotiationRequestItem.isDeliveryDateSectionOpen){
+                if (!negotiationRequestItem.isDeliveryDateSectionOpen) {
                     negotiationModelWrapper.rfqDeliveryPeriod = copy(commonTerms.deliveryPeriod);
                 }
 
-                if(commonTerms.clauses.length > 0){
+                if (commonTerms.clauses.length > 0) {
                     // if T&Cs are the default ones of the platform, we need to keep the first clause and replace the rest,
                     // otherwise it's ok to replace all of them.
-                    if(commonTerms.areDefaultTermsAndConditions){
+                    if (commonTerms.areDefaultTermsAndConditions) {
                         negotiationModelWrapper.rfq.requestForQuotationLine[negotiationModelWrapper.lineIndex].lineItem.clause = [negotiationModelWrapper.rfq.requestForQuotationLine[negotiationModelWrapper.lineIndex].lineItem.clause[0]].concat(copy(commonTerms.clauses));
                     }
-                    else{
+                    else {
                         negotiationModelWrapper.rfq.requestForQuotationLine[negotiationModelWrapper.lineIndex].lineItem.clause = copy(commonTerms.clauses);
                     }
                 }
@@ -475,7 +475,7 @@ export class ShoppingCartComponent implements OnInit {
     // remove the given catalogue line from the shopping cart
     // moreover, update this.rfqs array accordingly
     onRemoveFromCart(cartLine: CatalogueLine): void {
-        if(confirm('Are you sure that you want to remove this product from the shopping cart?')){
+        if (confirm('Are you sure that you want to remove this product from the shopping cart?')) {
             let callStatus: CallStatus = this.deleteCallStatuses.get(cartLine.hjid);
             callStatus.submit();
             // get seller id
@@ -485,7 +485,7 @@ export class ShoppingCartComponent implements OnInit {
                 // get rfq for the seller
                 let rfq: RequestForQuotation = this.rfqs.get(sellerId);
                 // if rfq only contains this line, delete rfq as well
-                if(rfq.requestForQuotationLine.length == 1){
+                if (rfq.requestForQuotationLine.length == 1) {
                     // remove the rfq from rfqCatalogueLineMap
                     this.rfqCatalogueLineMap.delete(rfq.id);
                     // remove NegotiationModelWrapper of this product
@@ -494,27 +494,27 @@ export class ShoppingCartComponent implements OnInit {
                     this.rfqs.delete(sellerId);
                 }
                 // otherwise, remove the rfq line created for this product
-                else{
+                else {
                     // get catalogue lines included in this rfq
-                    let cartLineHjids:number[] = this.rfqCatalogueLineMap.get(rfq.id);
+                    let cartLineHjids: number[] = this.rfqCatalogueLineMap.get(rfq.id);
 
                     // remove catalogue line from the rfq
                     let index = cartLineHjids.indexOf(cartLine.hjid);
-                    rfq.requestForQuotationLine.splice(index,1);
+                    rfq.requestForQuotationLine.splice(index, 1);
                     // we should also remove the line from the immutable rfq as it causes line index mismatch
                     // between the normal rfq and immutable rfq. the immutable rfq is copied in all the negotiation model wrappers
                     // for the lines of the same company
-                    for (let i = 0 ; i < cartLineHjids.length; i++) {
+                    for (let i = 0; i < cartLineHjids.length; i++) {
                         this.negotiationModelWrappers.get(cartLineHjids[i]).initialImmutableRfq.requestForQuotationLine.splice(index, 1);
                     }
 
                     // remove catalogue line for rfqCatalogueLineMap map
-                    cartLineHjids.splice(index,1);
-                    this.rfqCatalogueLineMap.set(rfq.id,cartLineHjids);
+                    cartLineHjids.splice(index, 1);
+                    this.rfqCatalogueLineMap.set(rfq.id, cartLineHjids);
 
                     // when one product is removed from the rfq, indexes in negotiationModelWrappers should be updated
                     let sizeOfCartLines = cartLineHjids.length;
-                    for(let i = 0 ; i < sizeOfCartLines ;i++){
+                    for (let i = 0; i < sizeOfCartLines; i++) {
                         this.negotiationModelWrappers.get(cartLineHjids[i]).lineIndex = i;
                     }
                     // remove line from negotiationModelWrappers as well
@@ -544,8 +544,8 @@ export class ShoppingCartComponent implements OnInit {
                 if (component.wrapper.catalogueLine.hjid === cartLine.hjid) {
                     let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
                     return !component.wrapper.lineDiscountPriceWrapper.itemPrice.hasPrice() ||
-                    component.isNegotiatingAnyTerm() ||
-                    this.bpDataService.isFinalProcessInTheWorkflow('Negotiation', this.sellersSettings.get(sellerId));
+                        component.isNegotiatingAnyTerm() ||
+                        this.bpDataService.isFinalProcessInTheWorkflow('Negotiation', this.sellersSettings.get(sellerId));
                 }
             }
         }
@@ -553,7 +553,7 @@ export class ShoppingCartComponent implements OnInit {
     }
 
     onSingleLineNegotiation(cartLine: CatalogueLine): void {
-        if (confirm('Are you sure that you want to send this request now ?')){
+        if (confirm('Are you sure that you want to send this request now ?')) {
             let callStatus: CallStatus = this.deleteCallStatuses.get(cartLine.hjid);
             callStatus.submit();
             let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
@@ -570,24 +570,24 @@ export class ShoppingCartComponent implements OnInit {
             rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty = this.modifiedCatalogueLines.get(cartLine.hjid).goodsItem.item.additionalItemProperty;
 
             // start a request for quotation or order created using the rfq we have
-            let document:RequestForQuotation | Order;
+            let document: RequestForQuotation | Order;
             callStatus.submit();
             Promise.all([
                 this.userService.getParty(this.cookieService.get('company_id')),
-                this.userService.getParty(sellerId,cartLine.goodsItem.item.manufacturerParty.federationInstanceID),
+                this.userService.getParty(sellerId, cartLine.goodsItem.item.manufacturerParty.federationInstanceID),
 
             ]).then(([buyerPartyResp, sellerPartyResp]) => {
                 rfq.buyerCustomerParty = new CustomerParty(buyerPartyResp);
                 rfq.sellerSupplierParty = new SupplierParty(sellerPartyResp);
 
-                document = this.areNegotiationConditionsSatisfied(cartLine) ? rfq: this.createOrderWithRfq(rfq,[cartLine.hjid]);
+                document = this.areNegotiationConditionsSatisfied(cartLine) ? rfq : this.createOrderWithRfq(rfq, [cartLine.hjid]);
 
-                return this.bpeService.startProcessWithDocument(document,document.sellerSupplierParty.party.federationInstanceID);
+                return this.bpeService.startProcessWithDocument(document, document.sellerSupplierParty.party.federationInstanceID);
             }).then(() => {
                 // started the negotiation for the product successfully,so remove it from the shopping cart
                 this.shoppingCartDataService.removeItemsFromCart([cartLine.hjid]);
                 callStatus.callback(null, true);
-                this.router.navigate(['dashboard'], {queryParams: {tab: 'PURCHASES',ins: document.sellerSupplierParty.party.federationInstanceID}});
+                this.router.navigate(['dashboard'], { queryParams: { tab: 'PURCHASES', ins: document.sellerSupplierParty.party.federationInstanceID } });
 
             }).catch(error => {
                 callStatus.error('Failed to start process', error);
@@ -595,11 +595,11 @@ export class ShoppingCartComponent implements OnInit {
         }
     }
 
-    openShoppingCartSummary(){
+    openShoppingCartSummary() {
         this.shoppingCartSummaryModal.open();
     }
 
-    getFederationIds(){
+    getFederationIds() {
         let fedIds = [];
         for (let sellersSettingsKey of Array.from(this.sellersSettings.keys())) {
             fedIds.push(this.sellersSettings.get(sellersSettingsKey).negotiationSettings.company.federationInstanceID)
@@ -608,8 +608,8 @@ export class ShoppingCartComponent implements OnInit {
     }
 
     // starts Negotiation/Order for the products included in the shopping basket
-    onMultipleLineNegotiation():void{
-        if(confirm('Are you sure that you want to send requests for all products now ?')){
+    onMultipleLineNegotiation(): void {
+        if (confirm('Are you sure that you want to send requests for all products now ?')) {
             // identifier of the buyer company
             let companyId = this.cookieService.get('company_id');
             // this array contains the identifiers of buyer and seller companies
@@ -621,9 +621,9 @@ export class ShoppingCartComponent implements OnInit {
             this.bpDataService.resetBpData();
 
             // get parties
-            this.userService.getParties(partyIds,federationIds).then(parties => {
+            this.userService.getParties(partyIds, federationIds).then(parties => {
                 // create party id-party map
-                let partyMap:Map<string,Party> = this.createPartyMap(parties);
+                let partyMap: Map<string, Party> = this.createPartyMap(parties);
                 let promises: Promise<any>[] = [];
                 // for each rfq, start a Negotiation or Order
                 this.rfqs.forEach(rfq => {
@@ -631,15 +631,15 @@ export class ShoppingCartComponent implements OnInit {
                     let sellerId: string = null;
                     // if negotiation conditions are satisfied for at least one product included in the rfq, create a Request For Quotation
                     // otherwise, create an Order
-                    let areNegotiationConditionsSatisfiedForAtLeastOneProduct:boolean = false;
+                    let areNegotiationConditionsSatisfiedForAtLeastOneProduct: boolean = false;
                     // we need line hjids to retrieve correct NegotiationModelWrapper which is necessary to calculate the price for Order
-                    let lineHjids:number[] = [];
+                    let lineHjids: number[] = [];
                     // replace properties of rfq lines with the selected ones
-                    for(let copyRfqLine of copyRfq.requestForQuotationLine){
+                    for (let copyRfqLine of copyRfq.requestForQuotationLine) {
                         let catalogueLine = this.getCatalogueLine(copyRfqLine);
 
                         // set seller id
-                        if(!sellerId){
+                        if (!sellerId) {
                             sellerId = UBLModelUtils.getLinePartyId(catalogueLine);
                         }
                         // push line hjid to the list
@@ -647,9 +647,9 @@ export class ShoppingCartComponent implements OnInit {
                         // replace item properties
                         copyRfqLine.lineItem.item.additionalItemProperty = this.modifiedCatalogueLines.get(catalogueLine.hjid).goodsItem.item.additionalItemProperty;
 
-                        if(!areNegotiationConditionsSatisfiedForAtLeastOneProduct){
+                        if (!areNegotiationConditionsSatisfiedForAtLeastOneProduct) {
                             let areNegotiationConditionsSatisfied = this.areNegotiationConditionsSatisfied(catalogueLine);
-                            if(areNegotiationConditionsSatisfied){
+                            if (areNegotiationConditionsSatisfied) {
                                 areNegotiationConditionsSatisfiedForAtLeastOneProduct = true;
                             }
                         }
@@ -659,18 +659,18 @@ export class ShoppingCartComponent implements OnInit {
                     copyRfq.sellerSupplierParty = new SupplierParty(partyMap.get(sellerId));
 
                     // start a request for quotation or order created using the rfq we have
-                    let document:RequestForQuotation | Order = areNegotiationConditionsSatisfiedForAtLeastOneProduct ? copyRfq: this.createOrderWithRfq(copyRfq,lineHjids);
-                    promises.push(this.bpeService.startProcessWithDocument(document,document.sellerSupplierParty.party.federationInstanceID));
+                    let document: RequestForQuotation | Order = areNegotiationConditionsSatisfiedForAtLeastOneProduct ? copyRfq : this.createOrderWithRfq(copyRfq, lineHjids);
+                    promises.push(this.bpeService.startProcessWithDocument(document, document.sellerSupplierParty.party.federationInstanceID));
                 });
                 Promise.all(promises).then(response => {
                     // started the negotiation for all products successfully,so remove them from the shopping cart
-                    let hjids:number[] = [];
+                    let hjids: number[] = [];
                     for (let cartLine of this.shoppingCart.catalogueLine) {
                         hjids.push(cartLine.hjid);
                     }
                     this.shoppingCartDataService.removeItemsFromCart(hjids);
                     this.startBpCallStatus.callback(null, true);
-                    this.router.navigate(['dashboard'], {queryParams: {tab: 'PURCHASES'}});
+                    this.router.navigate(['dashboard'], { queryParams: { tab: 'PURCHASES' } });
                 }).catch(error => {
                     this.startBpCallStatus.error('Failed to start processes', error);
                 });
@@ -697,13 +697,13 @@ export class ShoppingCartComponent implements OnInit {
         return associatedProductIds;
     }
 
-    private createOrderWithRfq(rfq:RequestForQuotation,catHjids:number[]):Order{
+    private createOrderWithRfq(rfq: RequestForQuotation, catHjids: number[]): Order {
         let order = UBLModelUtils.createOrderWithRfqCopy(rfq);
 
         // final check on the order
-        let totalPrice:number = 0;
-        for(let catHjid of catHjids){
-            let negotiationModelWrapper:NegotiationModelWrapper = this.negotiationModelWrappers.get(catHjid);
+        let totalPrice: number = 0;
+        for (let catHjid of catHjids) {
+            let negotiationModelWrapper: NegotiationModelWrapper = this.negotiationModelWrappers.get(catHjid);
             totalPrice += negotiationModelWrapper.rfqDiscountPriceWrapper.totalPrice;
         }
 
@@ -718,24 +718,24 @@ export class ShoppingCartComponent implements OnInit {
     }
 
     // for the given parties, this method creates party id - party map
-    private createPartyMap(parties:Party[]):Map<string,Party>{
-        let partyMap:Map<string,Party> = new Map<string, Party>();
-        for(let party of parties){
-            partyMap.set(party.partyIdentification[0].id,party);
+    private createPartyMap(parties: Party[]): Map<string, Party> {
+        let partyMap: Map<string, Party> = new Map<string, Party>();
+        for (let party of parties) {
+            partyMap.set(party.partyIdentification[0].id, party);
         }
         return partyMap;
     }
 
-    private getCatalogueLine(rfqLine:RequestForQuotationLine):CatalogueLine{
-        for(let catalogueLine of this.shoppingCart.catalogueLine){
-            if(rfqLine.lineItem.item.manufacturersItemIdentification.id == catalogueLine.goodsItem.item.manufacturersItemIdentification.id &&
-                rfqLine.lineItem.item.catalogueDocumentReference.id == catalogueLine.goodsItem.item.catalogueDocumentReference.id){
+    private getCatalogueLine(rfqLine: RequestForQuotationLine): CatalogueLine {
+        for (let catalogueLine of this.shoppingCart.catalogueLine) {
+            if (rfqLine.lineItem.item.manufacturersItemIdentification.id == catalogueLine.goodsItem.item.manufacturersItemIdentification.id &&
+                rfqLine.lineItem.item.catalogueDocumentReference.id == catalogueLine.goodsItem.item.catalogueDocumentReference.id) {
                 return catalogueLine;
             }
         }
     }
 
-    getNegotiationModelWrappers(){
+    getNegotiationModelWrappers() {
         return Array.from(this.negotiationModelWrappers.values());
     }
 }

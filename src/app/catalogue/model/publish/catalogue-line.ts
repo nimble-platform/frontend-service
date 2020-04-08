@@ -15,14 +15,14 @@
    limitations under the License.
  */
 
-import {GoodsItem} from "./goods-item";
-import {ItemLocationQuantity} from "./item-location-quantity";
-import {Period} from "./period";
-import {PriceOption} from "./price-option";
+import { GoodsItem } from "./goods-item";
+import { ItemLocationQuantity } from "./item-location-quantity";
+import { Period } from "./period";
+import { PriceOption } from "./price-option";
 
 export class CatalogueLine {
     constructor(
-        public id:string,
+        public id: string,
         public hjid: number,
         public orderableUnit: string,
         public freeOfChargeIndicator: boolean = null,
@@ -30,6 +30,6 @@ export class CatalogueLine {
         public warrantyInformation: string[],
         public requiredItemLocationQuantity: ItemLocationQuantity,
         public priceOption: PriceOption[] = null,
-        public goodsItem:GoodsItem
-    ) {  }
+        public goodsItem: GoodsItem
+    ) { }
 }

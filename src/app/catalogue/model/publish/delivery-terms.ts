@@ -12,19 +12,19 @@
    limitations under the License.
  */
 
-import {Amount} from "./amount";
-import {Location} from "./location";
-import {Period} from "./period";
-import {Text} from "./text";
+import { Amount } from "./amount";
+import { Location } from "./location";
+import { Period } from "./period";
+import { Text } from "./text";
 
 export class DeliveryTerms {
     constructor(
         public id: string = null,
-        public estimatedDeliveryPeriod:Period = new Period(),
+        public estimatedDeliveryPeriod: Period = new Period(),
         public specialTerms: Text[] = [],
         public incoterms: string = null,
         public amount: Amount = new Amount(),
-        public deliveryLocation:Location = new Location(),
+        public deliveryLocation: Location = new Location(),
         public hjid: string = null
-    ) {  }
+    ) { }
 }

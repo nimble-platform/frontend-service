@@ -12,11 +12,11 @@
    limitations under the License.
  */
 
-import {Code} from "./code";
-import {Dimension} from "./dimension";
+import { Code } from "./code";
+import { Dimension } from "./dimension";
 
 export class TransportHandlingUnit {
     constructor(public transportHandlingUnitTypeCode: Code = new Code(),
-                public measurementDimension:Dimension[] = []) {
+        public measurementDimension: Dimension[] = []) {
     }
 }

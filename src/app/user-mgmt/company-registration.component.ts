@@ -14,24 +14,24 @@
    limitations under the License.
  */
 
-import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup} from '@angular/forms';
-import {AddressSubForm} from './subforms/address.component';
-import {UserService} from './user.service';
-import {CookieService} from 'ng2-cookies';
-import {CompanyRegistration} from './model/company-registration';
-import {CompanySettings} from './model/company-settings';
-import {CompanyDetails} from './model/company-details';
-import {Router} from '@angular/router';
-import {AppComponent} from '../app.component';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { AddressSubForm } from './subforms/address.component';
+import { UserService } from './user.service';
+import { CookieService } from 'ng2-cookies';
+import { CompanyRegistration } from './model/company-registration';
+import { CompanySettings } from './model/company-settings';
+import { CompanyDetails } from './model/company-details';
+import { Router } from '@angular/router';
+import { AppComponent } from '../app.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from '../globals';
-import {CallStatus} from '../common/call-status';
-import {Address} from './model/address';
-import {TranslateService} from '@ngx-translate/core';
-import {getCountryByISO, getFileExtension, getArrayOfTextObject, createTextObjectFromArray} from '../common/utils';
-import {ALLOWED_EXTENSIONS} from '../common/constants';
-import {createTextObject, selectValueOfTextObject} from '../common/utils';
+import { CallStatus } from '../common/call-status';
+import { Address } from './model/address';
+import { TranslateService } from '@ngx-translate/core';
+import { getCountryByISO, getFileExtension, getArrayOfTextObject, createTextObjectFromArray } from '../common/utils';
+import { ALLOWED_EXTENSIONS } from '../common/constants';
+import { createTextObject, selectValueOfTextObject } from '../common/utils';
 import { LANGUAGES, DEFAULT_LANGUAGE } from '../catalogue/model/constants';
 
 @Component({
@@ -60,12 +60,12 @@ export class CompanyRegistrationComponent implements OnInit {
     languages = LANGUAGES;
 
     constructor(private _fb: FormBuilder,
-                private appComponent: AppComponent,
-                private cookieService: CookieService,
-                private modalService: NgbModal,
-                private router: Router,
-                private translate: TranslateService,
-                private userService: UserService) {
+        private appComponent: AppComponent,
+        private cookieService: CookieService,
+        private modalService: NgbModal,
+        private router: Router,
+        private translate: TranslateService,
+        private userService: UserService) {
     }
 
     ngOnInit() {
@@ -83,48 +83,48 @@ export class CompanyRegistrationComponent implements OnInit {
         this.businessKeywordsArr = getArrayOfTextObject({});
     }
 
-    trackFn(index,item) {
-      return index;
+    trackFn(index, item) {
+        return index;
     }
 
     addCompanyName() {
-      this.companyNameArr.push({"text":"","lang":""});
+        this.companyNameArr.push({ "text": "", "lang": "" });
     }
 
-    removeCompanyName(index:number){
-      this.companyNameArr.splice(index,1);
-      if (this.companyNameArr.length == 0)
-        this.companyNameArr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
+    removeCompanyName(index: number) {
+        this.companyNameArr.splice(index, 1);
+        if (this.companyNameArr.length == 0)
+            this.companyNameArr = [{ "text": "", "lang": DEFAULT_LANGUAGE() }];
     }
 
     addBrandName() {
-      this.brandNameArr.push({"text":"","lang":""});
+        this.brandNameArr.push({ "text": "", "lang": "" });
     }
 
-    removeBrandName(index:number){
-      this.brandNameArr.splice(index,1);
-      if (this.brandNameArr.length == 0)
-        this.brandNameArr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
+    removeBrandName(index: number) {
+        this.brandNameArr.splice(index, 1);
+        if (this.brandNameArr.length == 0)
+            this.brandNameArr = [{ "text": "", "lang": DEFAULT_LANGUAGE() }];
     }
 
     addIndustrySectors() {
-      this.industrySectorsArr.push({"text":"","lang":""});
+        this.industrySectorsArr.push({ "text": "", "lang": "" });
     }
 
-    removeIndustrySectors(index:number){
-      this.industrySectorsArr.splice(index,1);
-      if (this.industrySectorsArr.length == 0)
-        this.industrySectorsArr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
+    removeIndustrySectors(index: number) {
+        this.industrySectorsArr.splice(index, 1);
+        if (this.industrySectorsArr.length == 0)
+            this.industrySectorsArr = [{ "text": "", "lang": DEFAULT_LANGUAGE() }];
     }
 
     addBusinessKeywords() {
-      this.businessKeywordsArr.push({"text":"","lang":""});
+        this.businessKeywordsArr.push({ "text": "", "lang": "" });
     }
 
-    removeBusinessKeywords(index:number){
-      this.businessKeywordsArr.splice(index,1);
-      if (this.businessKeywordsArr.length == 0)
-        this.businessKeywordsArr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
+    removeBusinessKeywords(index: number) {
+        this.businessKeywordsArr.splice(index, 1);
+        if (this.businessKeywordsArr.length == 0)
+            this.businessKeywordsArr = [{ "text": "", "lang": DEFAULT_LANGUAGE() }];
     }
 
     skipVAT() {
@@ -160,7 +160,7 @@ export class CompanyRegistrationComponent implements OnInit {
                         AddressSubForm.update(this.registrationForm.controls['address'] as FormGroup, new Address("", "", "", "", "", getCountryByISO(response.CountryCode)));
                     this.vatValidated = true;
                 } else {
-                    setTimeout(function () {
+                    setTimeout(function() {
                         alert("The VAT is invalid.");
                     }, 50);
                 }
@@ -171,18 +171,18 @@ export class CompanyRegistrationComponent implements OnInit {
     }
 
     isRequiredEmpty() {
-      let empty = false;
-      if (Object.keys(createTextObjectFromArray(this.companyNameArr)).length == 0)
-        empty = true;
-      if (Object.keys(createTextObjectFromArray(this.industrySectorsArr)).length == 0)
-        empty = true;
-      return empty;
+        let empty = false;
+        if (Object.keys(createTextObjectFromArray(this.companyNameArr)).length == 0)
+            empty = true;
+        if (Object.keys(createTextObjectFromArray(this.industrySectorsArr)).length == 0)
+            empty = true;
+        return empty;
     }
 
     save(model: FormGroup) {
         if (this.industrySectorsArr.length == 1 && Array.isArray(this.industrySectorsArr[0].text)) {
-          this.industrySectorsArr[0].text = this.industrySectorsArr[0].text.join("\n");
-          this.industrySectorsArr[0].lang = DEFAULT_LANGUAGE();
+            this.industrySectorsArr[0].text = this.industrySectorsArr[0].text.join("\n");
+            this.industrySectorsArr[0].lang = DEFAULT_LANGUAGE();
         }
         // create company registration DTO
         let userId = this.cookieService.get('user_id');
@@ -237,9 +237,9 @@ export class CompanyRegistrationComponent implements OnInit {
                         })
                         .catch(error => {
                             //this.submitCallStatus.error("Error while submitting company", error);
-							this.submitCallStatus.callback("Registration submitted", true);
-							alert("Your registration was successful but an error occurred while uploading your logo.\nYou will now get redirected to your 'Company Settings' page.\nPlease retry uploading your logo in the 'Company Details' tab there later.");
-							this.appComponent.checkLogin("/user-mgmt/company-settings");
+                            this.submitCallStatus.callback("Registration submitted", true);
+                            alert("Your registration was successful but an error occurred while uploading your logo.\nYou will now get redirected to your 'Company Settings' page.\nPlease retry uploading your logo in the 'Company Details' tab there later.");
+                            this.appComponent.checkLogin("/user-mgmt/company-settings");
                         });
                 } else {
                     this.submitCallStatus.callback("Registration submitted", true);
@@ -255,8 +255,8 @@ export class CompanyRegistrationComponent implements OnInit {
     }
 
     switchInput() {
-      this.industrySectorsArr = [{"text":"","lang":DEFAULT_LANGUAGE()}];
-      this.forceActText = !this.forceActText;
+        this.industrySectorsArr = [{ "text": "", "lang": DEFAULT_LANGUAGE() }];
+        this.forceActText = !this.forceActText;
     }
 
     onSetImageFile(event: any, model: FormGroup) {
@@ -276,7 +276,7 @@ export class CompanyRegistrationComponent implements OnInit {
 
                     if (filesize > 2) {
                         alert("Maximum allowed filesize: 2 MB");
-                    }else if(!isAllowedExtension){
+                    } else if (!isAllowedExtension) {
                         alert("Supported file extensions: " + ALLOWED_EXTENSIONS.join());
                     }
                 }

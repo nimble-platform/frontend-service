@@ -46,7 +46,7 @@
                 </div>
             </div>
         </div>
-        <div *ngIf="productPropertyDiscounts.length > 0" class="space-after" >
+        <div *ngIf="productPropertyDiscounts.length > 0" class="space-after">
             <h5>{{PRICE_OPTIONS.PRODUCT_PROPERTY.text}}</h5>
             <div class="discount-hr"></div>
             <div *ngFor="let option of productPropertyDiscounts" class="row">
@@ -76,7 +76,7 @@
             </div>
         </div>
         <div *ngIf="deliveryPeriodDiscounts.length > 0" class="space-after">
-           <h5>{{PRICE_OPTIONS.DELIVERY_PERIOD.text}}</h5>
+            <h5>{{PRICE_OPTIONS.DELIVERY_PERIOD.text}}</h5>
             <div class="discount-hr"></div>
             <div *ngFor="let option of deliveryPeriodDiscounts" class="row">
                 <div class="col-3">{{option.estimatedDeliveryPeriod.durationMeasure.value}} {{option.estimatedDeliveryPeriod.durationMeasure.unitCode}}</div>

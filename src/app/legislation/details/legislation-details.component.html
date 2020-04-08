@@ -16,70 +16,69 @@
 
 <form class="form-horizontal" [formGroup]="formDetails">
     <p *ngFor="let alert of alerts">
-		<ngb-alert [type]="alert.type" (close)="closeAlert(alert)" [innerHTML]="alert.message"></ngb-alert>
+        <ngb-alert [type]="alert.type" (close)="closeAlert(alert)" [innerHTML]="alert.message"></ngb-alert>
     </p>
 
-	<hr class="hr-section"/>
+    <hr class="hr-section" />
 
     <div id="cardDocumentDetails">
-		<div class="card-block">
-			<h5 class="card-title" [innerHTML]="'Document details' | translate"></h5>
+        <div class="card-block">
+            <h5 class="card-title" [innerHTML]="'Document details' | translate"></h5>
 
-			<div class="form-group row">
-		  		<div class="col-12">
-		  			<div class="alert alert-warning space-before" role="alert"><span [innerHTML]="'Selected document' | translate"></span>: {{selectedDocument.mainAttr.documentId}}</div>
-		  		</div>
-			</div>
-			<div class="form-group row">
-		  		<label for="regulationType" class="col-2 col-form-label" [innerHTML]="'Code' | translate"></label>
-		  		<div class="col-10">
-		  			<input readonly type="text" class="form-control" formControlName="seldoc_code">
-		  		</div>
-			</div>
-			<div class="form-group row">
-		  		<label for="regulationType" class="col-2 col-form-label" [innerHTML]="'Title' | translate"></label>
-		  		<div class="col-10">
-		  			<input readonly type="text" class="form-control" formControlName="seldoc_title" title="{{selectedDocument.mainAttr.title}}">
-		  		</div>
-			</div>
-			<div class="form-group row">
-		  		<label for="regulationType" class="col-2 col-form-label" [innerHTML]="'Description' | translate"></label>
-		  		<div class="col-10">
-					<textarea readonly class="form-control" formControlName="seldoc_description" rows="2">{{selectedDocument.mainAttr.description}}</textarea>
-		  		</div>
-			</div>
-			<div class="form-group row">
-		  		<label for="regulationType" class="col-2 col-form-label" [innerHTML]="'Date Entry' | translate"></label>
-		  		<div class="col-10">
-		  			<input readonly type="text" class="form-control" formControlName="seldoc_dateEntry">
-		  		</div>
-			</div>
+            <div class="form-group row">
+                <div class="col-12">
+                    <div class="alert alert-warning space-before" role="alert"><span [innerHTML]="'Selected document' | translate"></span>: {{selectedDocument.mainAttr.documentId}}</div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="regulationType" class="col-2 col-form-label" [innerHTML]="'Code' | translate"></label>
+                <div class="col-10">
+                    <input readonly type="text" class="form-control" formControlName="seldoc_code">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="regulationType" class="col-2 col-form-label" [innerHTML]="'Title' | translate"></label>
+                <div class="col-10">
+                    <input readonly type="text" class="form-control" formControlName="seldoc_title" title="{{selectedDocument.mainAttr.title}}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="regulationType" class="col-2 col-form-label" [innerHTML]="'Description' | translate"></label>
+                <div class="col-10">
+                    <textarea readonly class="form-control" formControlName="seldoc_description" rows="2">{{selectedDocument.mainAttr.description}}</textarea>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="regulationType" class="col-2 col-form-label" [innerHTML]="'Date Entry' | translate"></label>
+                <div class="col-10">
+                    <input readonly type="text" class="form-control" formControlName="seldoc_dateEntry">
+                </div>
+            </div>
 
-
-			<div id="detailsChunk0" class="d-none">
-				<div class="form-group row">
-			  		<label for="regulationType" class="col-2 col-form-label" [innerHTML]="'Regulation type' | translate"></label>
-			  		<div class="col-10">
-			  			<input readonly type="text" class="form-control" formControlName="seldoc_regulationType">
-			  		</div>
-				</div>
-				<div class="form-group row">
-			  		<label for="regulationNumber" class="col-2 col-form-label" [innerHTML]="'Regulation number' | translate"></label>
-			  		<div class="col-10">
-			  			<input readonly type="text" class="form-control" formControlName="seldoc_regulationNumber">
-			  		</div>
-				</div>
-				<div class="form-group row">
-			  		<label for="technicalCommittee" class="col-2 col-form-label icon" (click)="isCollapsedTc = !isCollapsedTc" [attr.aria-expanded]="!isCollapsedTc" aria-controls="collapseRegulationTypeInfo" [innerHTML]="'Technical Committee' | translate"></label>
-			  		<div class="col-10">
-			  			<input readonly type="text" class="form-control" formControlName="seldoc_technicalCommittee">
-			  		</div>
-				</div>
-				<div class="collapse" id="collapseTechnicalCommittee" [ngbCollapse]="!isCollapsedTc">
-					<div class="table-responsive">
-						<table class="table table-striped">
-					    	<tbody>
-					    		<tr>
+            <div id="detailsChunk0" class="d-none">
+                <div class="form-group row">
+                    <label for="regulationType" class="col-2 col-form-label" [innerHTML]="'Regulation type' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_regulationType">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="regulationNumber" class="col-2 col-form-label" [innerHTML]="'Regulation number' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_regulationNumber">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="technicalCommittee" class="col-2 col-form-label icon" (click)="isCollapsedTc = !isCollapsedTc" [attr.aria-expanded]="!isCollapsedTc" aria-controls="collapseRegulationTypeInfo" [innerHTML]="'Technical Committee' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_technicalCommittee">
+                    </div>
+                </div>
+                <div class="collapse" id="collapseTechnicalCommittee" [ngbCollapse]="!isCollapsedTc">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
                                     <th scope="row">CTN</th>
                                     <td>Comité técnico de normalización</td>
                                 </tr>
@@ -87,102 +86,101 @@
                                     <th scope="row">CEN</th>
                                     <td>European Committee for Standardization</td>
                                 </tr>
-  							</tbody>
-					  	</table>
-					</div>
-				</div>
-				<div class="form-group row">
-			  		<label for="editingDate" class="col-2 col-form-label" [innerHTML]="'Editing Date' | translate"></label>
-			  		<div class="col-10">
-			  			<input readonly type="text" class="form-control" formControlName="seldoc_editingDate">
-			  		</div>
-				</div>
-				<div class="form-group row">
-			  		<label for="numOfPages" class="col-2 col-form-label" [innerHTML]="'Num. of Pages' | translate"></label>
-			  		<div class="col-10">
-			  			<input readonly type="text" class="form-control" formControlName="seldoc_numOfPages">
-			  		</div>
-				</div>
-				<div class="form-group row">
-			  		<label for="language" class="col-2 col-form-label" [innerHTML]="'Language' | translate"></label>
-			  		<div class="col-10">
-			  			<input readonly type="text" class="form-control" formControlName="seldoc_language">
-			  		</div>
-				</div>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="editingDate" class="col-2 col-form-label" [innerHTML]="'Editing Date' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_editingDate">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="numOfPages" class="col-2 col-form-label" [innerHTML]="'Num. of Pages' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_numOfPages">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="language" class="col-2 col-form-label" [innerHTML]="'Language' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_language">
+                    </div>
+                </div>
 
-				<div class="form-group row">
-			  		<label for="identifyEN" class="col-2 col-form-label" [innerHTML]="'Identify EN' | translate"></label>
-			  		<div class="col-10">
-			  			<input readonly type="text" class="form-control" formControlName="seldoc_identifyEN">
-			  		</div>
-				</div>
-			</div>
+                <div class="form-group row">
+                    <label for="identifyEN" class="col-2 col-form-label" [innerHTML]="'Identify EN' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_identifyEN">
+                    </div>
+                </div>
+            </div>
 
+            <div id="detailsChunk1" class="d-none">
+                <div class="form-group row">
+                    <label for="legalAssessment" class="col-2 col-form-label" [innerHTML]="'Legal assessment' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_legalAssessment">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="link" class="col-2 col-form-label" [innerHTML]="'Link' | translate"></label>
+                    <div class="col-10">
+                        <a href="{{selectedDocument.specAttr.link}}" target="_blank">{{selectedDocument.specAttr.link}}</a>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="country" class="col-2 col-form-label" [innerHTML]="'Country' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_country">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="publicationDate" class="col-2 col-form-label" [innerHTML]="'Publication date' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_publicationDate">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="documentOrigin" class="col-2 col-form-label" [innerHTML]="'Origin of document' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_documentOrigin">
+                    </div>
+                </div>
+            </div>
 
-			<div id="detailsChunk1" class="d-none">
-				<div class="form-group row">
-			  		<label for="legalAssessment" class="col-2 col-form-label" [innerHTML]="'Legal assessment' | translate"></label>
-			  		<div class="col-10">
-			  			<input readonly type="text" class="form-control" formControlName="seldoc_legalAssessment">
-			  		</div>
-				</div>
-				<div class="form-group row">
-			  		<label for="link" class="col-2 col-form-label" [innerHTML]="'Link' | translate"></label>
-			  		<div class="col-10">
-						<a href="{{selectedDocument.specAttr.link}}" target="_blank">{{selectedDocument.specAttr.link}}</a>
-			  		</div>
-				</div>
-				<div class="form-group row">
-			  		<label for="country" class="col-2 col-form-label" [innerHTML]="'Country' | translate"></label>
-			  		<div class="col-10">
-			  			<input readonly type="text" class="form-control" formControlName="seldoc_country">
-			  		</div>
-				</div>
-				<div class="form-group row">
-			  		<label for="publicationDate" class="col-2 col-form-label" [innerHTML]="'Publication date' | translate"></label>
-			  		<div class="col-10">
-			  			<input readonly type="text" class="form-control" formControlName="seldoc_publicationDate">
-			  		</div>
-				</div>
-				<div class="form-group row">
-			  		<label for="documentOrigin" class="col-2 col-form-label" [innerHTML]="'Origin of document' | translate"></label>
-			  		<div class="col-10">
-			  			<input readonly type="text" class="form-control" formControlName="seldoc_documentOrigin">
-			  		</div>
-				</div>
-			</div>
+            <div id="detailsChunk3" class="d-none">
+                <div class="form-group row">
+                    <label for="authors" class="col-2 col-form-label" [innerHTML]="'Authors' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_authors">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="dateOfDocument" class="col-2 col-form-label" [innerHTML]="'Date Of Document' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_dateOfDocument">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="country" class="col-2 col-form-label" [innerHTML]="'Country' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_country">
+                    </div>
+                </div>
+            </div>
 
-			<div id="detailsChunk3" class="d-none">
-				<div class="form-group row">
-			  		<label for="authors" class="col-2 col-form-label" [innerHTML]="'Authors' | translate"></label>
-			  		<div class="col-10">
-			  			<input readonly type="text" class="form-control" formControlName="seldoc_authors">
-			  		</div>
-				</div>
-				<div class="form-group row">
-			  		<label for="dateOfDocument" class="col-2 col-form-label" [innerHTML]="'Date Of Document' | translate"></label>
-			  		<div class="col-10">
-			  			<input readonly type="text" class="form-control" formControlName="seldoc_dateOfDocument">
-			  		</div>
-				</div>
-				<div class="form-group row">
-			  		<label for="country" class="col-2 col-form-label" [innerHTML]="'Country' | translate"></label>
-			  		<div class="col-10">
-			  			<input readonly type="text" class="form-control" formControlName="seldoc_country">
-			  		</div>
-				</div>
-			</div>
+            <div class="form-group row">
+                <label for="descriptors" class="col-2 col-form-label" [innerHTML]="'Descriptors' | translate"></label>
+                <div class="col-10">
+                    <input readonly type="text" class="form-control" formControlName="seldoc_descriptors">
+                </div>
+            </div>
 
-			<div class="form-group row">
-		  		<label for="descriptors" class="col-2 col-form-label" [innerHTML]="'Descriptors' | translate"></label>
-		  		<div class="col-10">
-		  			<input readonly type="text" class="form-control" formControlName="seldoc_descriptors">
-		  		</div>
-			</div>
+        </div>
 
-		</div>
-
-		<hr class="hr-section"/>
-	</div>
+        <hr class="hr-section" />
+    </div>
 
 </form>

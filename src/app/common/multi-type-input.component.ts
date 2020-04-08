@@ -13,9 +13,9 @@
  */
 
 import { Component, Input } from "@angular/core";
-import {MultiTypeValue} from "../catalogue/model/publish/multi-type-value";
-import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
-import {quantityToString} from "./utils";
+import { MultiTypeValue } from "../catalogue/model/publish/multi-type-value";
+import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
+import { quantityToString } from "./utils";
 
 @Component({
     selector: "multi-type-input",
@@ -32,7 +32,7 @@ export class MultiTypeInputComponent {
     }
 
     getValueToPresent() {
-        if(this.multiTypeValue) {
+        if (this.multiTypeValue) {
             let type: string = this.multiTypeValue.valueQualifier;
             let value = UBLModelUtils.getFirstFromMultiTypeValueByQualifier(this.multiTypeValue);
             if (value) {

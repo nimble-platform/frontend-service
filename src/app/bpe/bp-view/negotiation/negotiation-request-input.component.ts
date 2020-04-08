@@ -17,12 +17,12 @@
 import { Component, EventEmitter, OnInit, Input, Output, OnChanges } from "@angular/core";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { UnitService } from "../../../common/unit-service";
-import {ChildFormBase} from '../../../common/validation/child-form-base';
-import {FormControl, Validators} from '@angular/forms';
-import {ValidatorFn} from '@angular/forms/src/directives/validators';
-import {periodValidator, stepValidator, ValidationService} from '../../../common/validation/validators';
-import {FIELD_NAME_QUANTITY_VALUE} from '../../../common/constants';
-import {PeriodRange} from '../../../user-mgmt/model/period-range';
+import { ChildFormBase } from '../../../common/validation/child-form-base';
+import { FormControl, Validators } from '@angular/forms';
+import { ValidatorFn } from '@angular/forms/src/directives/validators';
+import { periodValidator, stepValidator, ValidationService } from '../../../common/validation/validators';
+import { FIELD_NAME_QUANTITY_VALUE } from '../../../common/constants';
+import { PeriodRange } from '../../../user-mgmt/model/period-range';
 const FIELD_NAME_NEGOTIATION_REQUEST_QUANTITY_INPUT_VALUE = 'quantity_value';
 const FIELD_NAME_NEGOTIATION_REQUEST_QUANTITY_INPUT_UNIT = 'quantity_unit';
 @Component({
@@ -69,7 +69,7 @@ export class NegotiationRequestInputComponent extends ChildFormBase implements O
     @Input() amountUnit?: string;
 
     constructor(private unitService: UnitService,
-                private validationService: ValidationService) {
+        private validationService: ValidationService) {
         super();
     }
 

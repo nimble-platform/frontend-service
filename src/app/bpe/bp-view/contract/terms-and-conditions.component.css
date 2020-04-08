@@ -11,16 +11,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
-.title{
+.title {
     padding: 0px;
 }
 
-.section{
+.section {
     padding-left: 0px;
 }
 
-.small-button{
+.small-button {
     font-size: 0.815rem;
     white-space: normal;
 }

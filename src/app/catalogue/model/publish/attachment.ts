@@ -12,10 +12,10 @@
    limitations under the License.
  */
 
-import {BinaryObject} from "./binary-object";
+import { BinaryObject } from "./binary-object";
 
 export class Attachment {
     constructor(
         public embeddedDocumentBinaryObject: BinaryObject = null
-    ) {  }
+    ) { }
 }

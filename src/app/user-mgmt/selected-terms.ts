@@ -25,8 +25,8 @@ export class SelectedTerms {
     private selectedMap: any = {};
 
     constructor(public selectedTerms: string[],
-                public allTerms: string[]) {
-        if(selectedTerms.length > 0) {
+        public allTerms: string[]) {
+        if (selectedTerms.length > 0) {
             selectedTerms.forEach(term => {
                 this.selectedMap[term] = true
             })
@@ -49,7 +49,7 @@ export class SelectedTerms {
         // re-add the selected terms. This is done this way to make sure the order of
         // selectedTerms is preserved.
         this.allTerms.forEach(existing => {
-            if(this.isSelected(existing)) {
+            if (this.isSelected(existing)) {
                 this.selectedTerms.push(existing);
             }
         });

@@ -34,7 +34,7 @@ export class PaymentTermsWrapper {
 
     set paymentTerm(paymentTerm: string) {
         const index = this.PAYMENT_TERMS.findIndex(term => term === paymentTerm);
-        if(index < 0) {
+        if (index < 0) {
             return;
         }
 
@@ -45,7 +45,7 @@ export class PaymentTermsWrapper {
         this.paymentTerms.tradingTerms = [].concat(this.paymentTerms.tradingTerms);
     }
 
-    getDefaultPaymentTerms(){
+    getDefaultPaymentTerms() {
         return this.PAYMENT_TERMS[0];
     }
 }

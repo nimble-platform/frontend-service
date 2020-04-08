@@ -12,10 +12,10 @@
    limitations under the License.
  */
 
-import {Clause} from "./clause";
+import { Clause } from "./clause";
 export class Contract {
     constructor(
         public clause: Clause[] = [],
-        public id:String = null
-    ) {  }
+        public id: String = null
+    ) { }
 }

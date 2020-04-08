@@ -27,7 +27,7 @@ export class CallStatus {
         public fb_errordetc = false,
         public fb_autoCloseOnCallBack = false,
         public fb_message = ""
-    ) {    }
+    ) { }
 
     public submit(reset = true) {
         if (reset) {
@@ -56,35 +56,35 @@ export class CallStatus {
         this.errorCount++;
 
         let errorDetails = '';
-        if(error) {
+        if (error) {
             errorDetails = 'Error ' + error.status;
             if (error._body != "") {
-              let errorJSON = {};
-              try {
-                  errorJSON = JSON.parse(error._body);
-                  if (errorJSON["error"] || errorJSON["exception"] || errorJSON["message"]) {
-                      if (errorJSON["error"]) {
-                          errorDetails += "<br/>";
-                          errorDetails += errorJSON["error"];
-                      }
-                      if (errorJSON["message"]) {
-                          errorDetails += "<br/>";
-                          errorDetails += errorJSON["message"];
-                      }
-                      if (errorJSON["exception"]) {
-                          errorDetails += "<br/>";
-                          errorDetails += errorJSON["exception"];
-                      }
-                  }
+                let errorJSON = {};
+                try {
+                    errorJSON = JSON.parse(error._body);
+                    if (errorJSON["error"] || errorJSON["exception"] || errorJSON["message"]) {
+                        if (errorJSON["error"]) {
+                            errorDetails += "<br/>";
+                            errorDetails += errorJSON["error"];
+                        }
+                        if (errorJSON["message"]) {
+                            errorDetails += "<br/>";
+                            errorDetails += errorJSON["message"];
+                        }
+                        if (errorJSON["exception"]) {
+                            errorDetails += "<br/>";
+                            errorDetails += errorJSON["exception"];
+                        }
+                    }
 
-                // the error data is not in the json format, so it's shown as it is
-              } catch (e) {
-                  if(error._body != null) {
-                      errorDetails = error._body;
-                  } else {
-                      errorDetails = error;
-                  }
-              }
+                    // the error data is not in the json format, so it's shown as it is
+                } catch (e) {
+                    if (error._body != null) {
+                        errorDetails = error._body;
+                    } else {
+                        errorDetails = error;
+                    }
+                }
             }
         }
         this.aggregatedErrors.push([msg, errorDetails]);

@@ -17,7 +17,7 @@
 import {
     Component, DoCheck, ElementRef, Input, OnInit, ViewChild
 } from "@angular/core";
-import {CallStatus} from "./call-status";
+import { CallStatus } from "./call-status";
 
 @Component({
     selector: 'call-status',
@@ -32,10 +32,10 @@ export class CallStatusComponent implements OnInit {
     @ViewChild('successBox') successBox: ElementRef;
 
     // if true opens the detailed error messages by default
-    @Input() showAllDetails:boolean = false;
-    @Input() callStatus:CallStatus;
+    @Input() showAllDetails: boolean = false;
+    @Input() callStatus: CallStatus;
     // if true adds the alert class to the component for top and bottom padding
-    @Input() large:boolean;
+    @Input() large: boolean;
     showDetails: boolean[] = [];
 
     ngOnInit(): void {
@@ -50,9 +50,9 @@ export class CallStatusComponent implements OnInit {
         return this.callStatus.callCount === 0 || this.callStatus.isAllComplete();
     }
 
-    handleClick(event){
+    handleClick(event) {
         // if the call is still active, ignore click
-        if(this.callStatus.fb_submitted == true) {
+        if (this.callStatus.fb_submitted == true) {
             return;
         }
 

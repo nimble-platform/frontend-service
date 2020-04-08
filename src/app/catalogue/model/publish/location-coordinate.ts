@@ -12,8 +12,8 @@
    limitations under the License.
  */
 
-import {Code} from "./code";
-import {Quantity} from "./quantity";
+import { Code } from "./code";
+import { Quantity } from "./quantity";
 
 export class LocationCoordinate {
     constructor(
@@ -26,5 +26,5 @@ export class LocationCoordinate {
         public longitudeDirectionCode: Code,
         public altitudeMeasure: Quantity,
         public hjid: string
-    ) {  }
+    ) { }
 }

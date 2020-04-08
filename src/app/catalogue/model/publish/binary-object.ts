@@ -21,6 +21,6 @@ export class BinaryObject {
         public languageID: string,
 
         // for demo
-        public objectMetadata:string,
-    ) {  }
+        public objectMetadata: string,
+    ) { }
 }

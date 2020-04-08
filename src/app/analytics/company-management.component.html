@@ -21,26 +21,22 @@
         <ul class="nav nav-tabs">
             <ng-container>
                 <li class="nav-item">
-                    <a href id="UNVERIFIED" class="nav-link"
-                        [ngClass]="{ active: selectedTab === 'UNVERIFIED'}"
-                        (click)="onSelectTab($event,'UNVERIFIED')">
+                    <a href id="UNVERIFIED" class="nav-link" [ngClass]="{ active: selectedTab === 'UNVERIFIED'}" (click)="onSelectTab($event,'UNVERIFIED')">
                         <span [innerHTML]="'Unverified Companies' | translate"></span>
                     </a>
                 </li>
             </ng-container>
-            <li  class="nav-item">
-                <a href id="VERIFIED" class="nav-link"
-                    [ngClass]="{ active: selectedTab === 'VERIFIED'}"
-                    (click)="onSelectTab($event,'VERIFIED')">
+            <li class="nav-item">
+                <a href id="VERIFIED" class="nav-link" [ngClass]="{ active: selectedTab === 'VERIFIED'}" (click)="onSelectTab($event,'VERIFIED')">
                     <span [innerHTML]="'Registered Companies' | translate"></span>
                 </a>
             </li>
         </ul>
     </div>
     <div *ngIf="selectedTab === 'UNVERIFIED'" class="p-3 col-12">
-      <members-info [mgmt_view]=true [unverified]=true [rows]=8></members-info>
+        <members-info [mgmt_view]=true [unverified]=true [rows]=8></members-info>
     </div>
     <div *ngIf="selectedTab === 'VERIFIED'" class="p-3 col-12">
-      <members-info [mgmt_view]=true [unverified]=false [rows]=8></members-info>
+        <members-info [mgmt_view]=true [unverified]=false [rows]=8></members-info>
     </div>
 </div>

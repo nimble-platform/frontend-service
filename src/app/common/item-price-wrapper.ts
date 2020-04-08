@@ -16,7 +16,7 @@
 
 import { Price } from "../catalogue/model/publish/price";
 import { Quantity } from "../catalogue/model/publish/quantity";
-import {currencyToString, roundToTwoDecimals} from "./utils";
+import { currencyToString, roundToTwoDecimals } from "./utils";
 
 /**
  * Wrapper for the price of a single item (or at least, for the base quantity of this item).
@@ -34,9 +34,9 @@ export class ItemPriceWrapper {
     get pricePerItem(): number {
         const amount = this.price.priceAmount;
         const qty = this.price.baseQuantity
-        const baseQuantity = qty.value || 1;
+        const baseQuantity = qty.value ||  1;
 
-        if(!amount.value || !qty.value) {
+        if (!amount.value || !qty.value) {
             return 0;
         }
 
@@ -46,13 +46,13 @@ export class ItemPriceWrapper {
     get pricePerItemString(): string {
         const amount = this.price.priceAmount;
         const qty = this.price.baseQuantity
-        const baseQuantity = qty.value || 1;
+        const baseQuantity = qty.value ||  1;
 
-        if(!amount.value || amount.value == 0 || !qty.value) {
+        if (!amount.value || amount.value == 0 || !qty.value) {
             return "On demand";
         }
 
-        if(baseQuantity === 1) {
+        if (baseQuantity === 1) {
             return `${roundToTwoDecimals(amount.value)} ${currencyToString(amount.currencyID)} per ${qty.unitCode}`
         }
         return `${roundToTwoDecimals(amount.value)} ${currencyToString(amount.currencyID)} for ${baseQuantity} ${qty.unitCode}`

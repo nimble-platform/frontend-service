@@ -16,7 +16,7 @@
 
 import { Injectable } from "@angular/core";
 import { Headers, Http } from "@angular/http";
-import {CookieService} from "ng2-cookies";
+import { CookieService } from "ng2-cookies";
 import { ProjectListType } from './model/projectlist-type';
 import { ResourceListType } from './model/resourcelist-type';
 import { ResourceType } from './model/resource-type';
@@ -30,14 +30,14 @@ export class CollaborationService {
 
 
     constructor(private http: Http,
-                private userService: UserService,
-                private cookieService: CookieService) {
+        private userService: UserService,
+        private cookieService: CookieService) {
     }
 
 
-    getProjectList(strtoken:string):Promise<ProjectListType> {
+    getProjectList(strtoken: string): Promise<ProjectListType> {
         const url = this.baseUrl + `/projectList`;
-		const params = { token: strtoken };
+        const params = { token: strtoken };
 
         return this.http
             .post(url, params)
@@ -48,9 +48,9 @@ export class CollaborationService {
             .catch(this.handleError);
     }
 
-    openProject(strtoken:string, prjName:string):Promise<string> {
+    openProject(strtoken: string, prjName: string): Promise<string> {
         const url = this.baseUrl + `/startCollaboration`;
-		const params = { token: strtoken, projectName: prjName, url : null };
+        const params = { token: strtoken, projectName: prjName, url: null };
 
         return this.http
             .post(url, params)
@@ -61,9 +61,9 @@ export class CollaborationService {
             .catch(this.handleError);
     }
 
-    getResources(strtoken:string, prjName:string):Promise<ResourceListType> {
+    getResources(strtoken: string, prjName: string): Promise<ResourceListType> {
         const url = this.baseUrl + `/resourceList`;
-		const params = { token: strtoken, projectName: prjName, name : null };
+        const params = { token: strtoken, projectName: prjName, name: null };
 
         return this.http
             .post(url, params)
@@ -74,9 +74,9 @@ export class CollaborationService {
             .catch(this.handleError);
     }
 
-    getResourceItem(strtoken:string, prjName:string, resName:string, version:number):Promise<ResourceType> {
+    getResourceItem(strtoken: string, prjName: string, resName: string, version: number): Promise<ResourceType> {
         const url = this.baseUrl + `/getResource`;
-		const params = { token: strtoken, projectName: prjName, resourceName : resName, resourceVersion: version };
+        const params = { token: strtoken, projectName: prjName, resourceName: resName, resourceVersion: version };
 
         return this.http
             .post(url, params)
@@ -87,9 +87,9 @@ export class CollaborationService {
             .catch(this.handleError);
     }
 
-    getResourceHistory(strtoken:string, prjName:string, resName:string):Promise<ResourceListType> {
+    getResourceHistory(strtoken: string, prjName: string, resName: string): Promise<ResourceListType> {
         const url = this.baseUrl + `/resourceHistory`;
-		const params = { token: strtoken, projectName: prjName, name : resName};
+        const params = { token: strtoken, projectName: prjName, name: resName };
 
         return this.http
             .post(url, params)
@@ -100,9 +100,9 @@ export class CollaborationService {
             .catch(this.handleError);
     }
 
-    saveResourceItem(strtoken:string, res:ResourceType):Promise<string> {
+    saveResourceItem(strtoken: string, res: ResourceType): Promise<string> {
         const url = this.baseUrl + `/saveResource`;
-		const params = { token: strtoken, resource: res};
+        const params = { token: strtoken, resource: res };
 
         return this.http
             .post(url, params)

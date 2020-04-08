@@ -28,7 +28,7 @@
                     <strong><span [innerHTML]="'Term Name' | translate"></span>:</strong>
                 </div>
                 <div class="col-9">
-                    <input [(ngModel)]="termName" class="form-control" type="text"/>
+                    <input [(ngModel)]="termName" class="form-control" type="text" />
                 </div>
             </div>
             <div class="row space-before">
@@ -36,24 +36,18 @@
                     <strong><span [innerHTML]="'Term Description' | translate"></span>:</strong>
                 </div>
                 <div class="col-9">
-                    <input [(ngModel)]="termDescription" class="form-control" type="text"/>
+                    <input [(ngModel)]="termDescription" class="form-control" type="text" />
                 </div>
             </div>
-            <options-input #dataTypeOption label="Data Type"
-                           [presentationMode]="'edit'"
-                           [options]="['TEXT', 'NUMBER', 'QUANTITY']"
-                           [selectedIndex]="0"
-                           (selectedOptionChange)="selectedDataType = $event"
-                           rowClass="space-before"
-                           large="true">
+            <options-input #dataTypeOption label="Data Type" [presentationMode]="'edit'" [options]="['TEXT', 'NUMBER', 'QUANTITY']" [selectedIndex]="0" (selectedOptionChange)="selectedDataType = $event" rowClass="space-before" large="true">
             </options-input>
             <div class="row space-before">
                 <div class="col-3">
                     <strong><span [innerHTML]="'Value' | translate"></span>:</strong>
                 </div>
                 <div class="col-9">
-                    <input *ngIf="selectedDataType == 'TEXT'" [(ngModel)]="stringValue" class="form-control" type="text"/>
-                    <input *ngIf="selectedDataType == 'NUMBER'" [(ngModel)]="numberValue" class="form-control" type="number"/>
+                    <input *ngIf="selectedDataType == 'TEXT'" [(ngModel)]="stringValue" class="form-control" type="text" />
+                    <input *ngIf="selectedDataType == 'NUMBER'" [(ngModel)]="numberValue" class="form-control" type="number" />
                     <quantity-input *ngIf="selectedDataType == 'QUANTITY'" [quantity]="quantityValue"></quantity-input>
                 </div>
             </div>

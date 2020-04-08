@@ -15,6 +15,6 @@
 export class Amount {
     constructor(
         public value: number = null,
-        public currencyID:string = null
-    ) {  }
+        public currencyID: string = null
+    ) { }
 }

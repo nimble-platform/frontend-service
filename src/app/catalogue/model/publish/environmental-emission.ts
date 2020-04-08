@@ -12,12 +12,12 @@
    limitations under the License.
  */
 
-import {Code} from "./code";
-import {Quantity} from "./quantity";
+import { Code } from "./code";
+import { Quantity } from "./quantity";
 
 export class EnvironmentalEmission {
     constructor(
-        public environmentalEmissionTypeCode:Code = new Code(),
-        public valueMeasure:Quantity = new Quantity()
+        public environmentalEmissionTypeCode: Code = new Code(),
+        public valueMeasure: Quantity = new Quantity()
     ) { }
 }

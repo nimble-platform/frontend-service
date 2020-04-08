@@ -13,14 +13,14 @@
  */
 
 import 'rxjs/add/operator/switchMap';
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, ParamMap} from '@angular/router';
-import {Location} from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { Location } from '@angular/common';
 
-import {BP} from './model/bp';
-import {BPService} from './bp.service';
+import { BP } from './model/bp';
+import { BPService } from './bp.service';
 
-import {ExternalDiagram} from './lib/external-diagram';
+import { ExternalDiagram } from './lib/external-diagram';
 
 @Component({
     selector: 'bp-detail',
@@ -32,8 +32,8 @@ export class BPDetailComponent implements OnInit {
     isCreatePage: boolean;
 
     constructor(private bpService: BPService,
-                private route: ActivatedRoute,
-                private location: Location) {
+        private route: ActivatedRoute,
+        private location: Location) {
         this.isCreatePage = this.location.isCurrentPathEqualTo('/bpe/bpe-design/create');
         if (this.isCreatePage) {
             this.bp = new BP('', '', '', '', '', []);

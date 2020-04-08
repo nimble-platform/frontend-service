@@ -14,9 +14,9 @@
    limitations under the License.
  */
 
-import {Injectable} from "@angular/core";
+import { Injectable } from "@angular/core";
 import { PublishMode } from "./model/publish/publish-mode";
-import {ItemProperty} from "./model/publish/item-property";
+import { ItemProperty } from "./model/publish/item-property";
 
 @Injectable()
 export class PublishService {
@@ -35,7 +35,7 @@ export class PublishService {
     }
 
     getCollapsedState(blockName: string): boolean {
-        if(this.propertyBlockCollapsedStates.has(blockName)) {
+        if (this.propertyBlockCollapsedStates.has(blockName)) {
             return this.propertyBlockCollapsedStates.get(blockName);
         } else {
             this.propertyBlockCollapsedStates.set(blockName, true);

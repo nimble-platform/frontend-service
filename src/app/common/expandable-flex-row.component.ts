@@ -22,7 +22,7 @@ export class ExpandableFlexRow {
 
     @Input() content: string[] = [];
     @Input() shrinkElementSize = 2;
-    expanded:boolean = false;
+    expanded: boolean = false;
 
 
 }

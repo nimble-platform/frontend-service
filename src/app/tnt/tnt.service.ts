@@ -18,7 +18,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import * as myGlobals from '../globals';
-import {CookieService} from 'ng2-cookies';
+import { CookieService } from 'ng2-cookies';
 
 @Injectable()
 export class TnTService {
@@ -27,7 +27,7 @@ export class TnTService {
     private iotBlockchainEndpoint = myGlobals.tntIoTBlockchainEndpoint;
 
     constructor(private http: Http,
-                private cookieService: CookieService) {}
+        private cookieService: CookieService) { }
 
     /**
      * getMetaData: Acquire EPCIS Meta Data
@@ -38,7 +38,7 @@ export class TnTService {
         let header = new Headers();
         header.append('Content-Type', 'application/json');
         header.append('Authorization', token);
-        let reqOptions = new RequestOptions({headers: header});
+        let reqOptions = new RequestOptions({ headers: header });
         const resp = await this.http.get(`${this.tntEndpoint}/simpleTracking/${epcCode}`, reqOptions)
             .toPromise();
         return resp.json();
@@ -53,7 +53,7 @@ export class TnTService {
         let header = new Headers();
         header.append('Content-Type', 'application/json');
         header.append('Authorization', token);
-        let reqOptions = new RequestOptions({headers: header});
+        let reqOptions = new RequestOptions({ headers: header });
         const resp = await this.http.get(`${this.tntMasterDataEndpoint}${code}`, reqOptions)
             .toPromise();
         return resp.json()
@@ -69,7 +69,7 @@ export class TnTService {
         let header = new Headers();
         header.append('Content-Type', 'application/json');
         header.append('Authorization', token);
-        let reqOptions = new RequestOptions({headers: header});
+        let reqOptions = new RequestOptions({ headers: header });
         const resp = await this.http.get(`${this.tntMasterDataEndpoint}${code}`, reqOptions)
             .toPromise();
         return resp.json();
@@ -83,7 +83,7 @@ export class TnTService {
         let token = 'Bearer' + this.cookieService.get('bearer_token');
         let header = new Headers();
         header.append('Authorization', token);
-        let reqOptions = new RequestOptions({headers: header});
+        let reqOptions = new RequestOptions({ headers: header });
         const resp = await this.http.post(`${this.tntEndpoint}/verifyEventsInBlockChain`, code, reqOptions)
             .toPromise();
         return resp.text();

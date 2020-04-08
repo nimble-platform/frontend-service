@@ -13,7 +13,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
 .add-image .delete-image {
     cursor: pointer;
     position: absolute;
@@ -36,8 +35,8 @@
 }
 
 div.add-image {
-    width:80px;
-    height:80px;
+    width: 80px;
+    height: 80px;
     padding: 0;
     margin: 0 0.2rem 0 0;
     white-space: normal;
@@ -69,8 +68,8 @@ div.add-image input {
 }
 
 .image-small {
-    width:80px;
-    height:80px;
+    width: 80px;
+    height: 80px;
     overflow: hidden;
     margin: 0;
     text-align: center;
@@ -79,8 +78,8 @@ div.add-image input {
 
 .product-image {
     display: flex;
-    width:300px;
-    height:300px;
+    width: 300px;
+    height: 300px;
     overflow: hidden;
     margin: 0 auto;
     text-align: center;

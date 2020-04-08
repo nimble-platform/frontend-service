@@ -17,5 +17,5 @@ export class CompanySensor {
         public machine: string,
         public sensor: string,
         public format: string
-    ) {  }
+    ) { }
 }

@@ -1,14 +1,18 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 ## [16.0.0] - 2020-03-10
+
 ### Added
+
 - Rating comments now visible on the UI
 - Additional sorting options in product and company search
 - "Verified" flag for company search
 - Relevant dates and information for BP status changes
 
 ### Changed
+
 - Improved rating presentation and fixed calculation problems
 - Additions to transport service details
 - Configuration whether or not to allow adding products to the shopping cart multiple times
@@ -19,11 +23,14 @@ All notable changes to this project will be documented in this file.
 - Improved highlighting of changes in BPs
 
 ## [15.0.0] - 2020-02-10
+
 ### Added
+
 - Federated business process, catalogue and identity services
 - Deep link functionality for eFactory product search
 
 ### Changed
+
 - Improvements on LCPA, unshipped orders and frame contract tab visualization
 - Fixed bugs on T&Cs generator and shopping cart
 - Moved federation switch to a global level
@@ -31,7 +38,9 @@ All notable changes to this project will be documented in this file.
 - Allowed users to see the details of cancelled processes
 
 ## [14.0.0] - 2019-11-28
+
 ### Added
+
 - Shopping car functionality
 - Ability to associate products with properties of existing products
 - Unshipped Order tab in dashboard
@@ -41,6 +50,7 @@ All notable changes to this project will be documented in this file.
 - User roles added to profile page
 
 ### Changed
+
 - Improved transition between BPs
 - Improved track-and-trace and QualiExplore functionality
 - Extended and fixed analytics
@@ -48,7 +58,9 @@ All notable changes to this project will be documented in this file.
 - Moved language configurations to environment files
 
 ## [13.0.0] - 2019-10-01
+
 ### Added
+
 - Frontend internationalization, language selection and translation to Spanish (ongoing)
 - Product / service comparison
 - Finish collaboration functionality
@@ -56,24 +68,30 @@ All notable changes to this project will be documented in this file.
 - Added flag to hide VAT tax information
 
 ### Changed
+
 - Transformed chat window to globally available slide-in
 - Added brand name and other company data to search
 - Extended analytics
 - Switched to new VAT rate and validation service (Cloudmersive)
 
 ## [12.0.0] - 2019-08-16
+
 ### Added
+
 - QualiExplore Front-end component
 - Configurable company-specific BP workflows
 - Edit functionality for existing certificates
 
 ### Changed
+
 - Major refactoring to Angular 7 and Webpack 4
 - Reworked discount display
 - Minor bugfixes regarding Terms & Conditions
 
 ## [11.0.0] - 2019-06-17
+
 ### Added
+
 - Delegated / federated search (staging only)
 - Rocket chat integration (staging only)
 - Platform log analytics
@@ -93,6 +111,7 @@ All notable changes to this project will be documented in this file.
 - Added VAT tax to prices
 
 ### Changed
+
 - Redirect URL in case login is required
 - Extracted default currency and main color to config
 - Styling of properties and values
@@ -102,7 +121,9 @@ All notable changes to this project will be documented in this file.
 - Improvements and fixes on business process workflows
 
 ## [10.0.0] - 2019-05-10
+
 ### Added
+
 - Logistics services UI update
 - Negotiation UI update
 - Catalogue creation and support for multiple catalogues
@@ -114,11 +135,14 @@ All notable changes to this project will be documented in this file.
 - Search boosting 
 
 ### Changed
+
 - Platform member names fixed
 - Disabled product id when the publish mode is edit
 
 ## [9.0.0] - 2019-03-29
+
 ### Added
+
 - Boosting mechanisms for search results
 - UBL dimension fields in product details
 - "State / Province" input for addresses
@@ -131,6 +155,7 @@ All notable changes to this project will be documented in this file.
 - Display of correspondents in business processes
 
 ### Changed
+
 - Improved search filter retrieval and presentation
 - Improved search suggestions
 - Proper join of item and party item on the UI (some fields still missing)
@@ -140,12 +165,15 @@ All notable changes to this project will be documented in this file.
 - Unified price display
 
 ## [8.0.0] - 2019-02-28
+
 ### Added
+
 - Multilinguality features
 - Simplified and unified product publishing page including direct value inputs
 - Switch to new indexing service
 
 ### Changed
+
 - Improved platform information page
 - Adapted to identity-service updates
 - Increased image upload limits to 2 MB
@@ -153,7 +181,9 @@ All notable changes to this project will be documented in this file.
 - Added input switch for "Other" sectors
 
 ## [7.0.0] - 2019-02-04
+
 ### Added
+
 - Default ontology configuration including separate tabs and filters in category search
 - Company rejection and data change capabilities in platform management
 - VAT validation and data retrieval
@@ -162,6 +192,7 @@ All notable changes to this project will be documented in this file.
 - Color code tooltip in dashboard welcome tab
 
 ### Changed
+
 - Full price breakdown during negotiation
 - Return to previously used dashboard tab after completing a business process step
 - Improved category tree navigation including breadcrumbs
@@ -169,7 +200,9 @@ All notable changes to this project will be documented in this file.
 - Automatic re-parsing of malformed website links
 
 ## [6.0.0] - 2018-12-21
+
 ### Added
+
 - Platform configuration options in globals in order to allow for adjusting the UI without changing the code base
 - Collaboration group management in dashboard
 - Company management / verification capabilities in platform management
@@ -177,6 +210,7 @@ All notable changes to this project will be documented in this file.
 - Price / discount configurator in product management
 
 ### Changed
+
 - Minimized dashboard summary
 - Field and file size limitations fixed and indicators added to the UI
 - Labels without values hidden from the view mode
@@ -185,7 +219,9 @@ All notable changes to this project will be documented in this file.
 - Browser compatibility messages added
 
 ## [5.0.0] - 2018-11-02
+
 ### Added
+
 - Company details, ratings and trust/reputation scores for all relevant UI elements
 - Rating/trust filters for text-based search
 - "Action required" indicators for dashboard tabs
@@ -194,34 +230,43 @@ All notable changes to this project will be documented in this file.
 - Trust/Reputation policy configuration in platform management
 
 ### Changed
+
 - Major extension of company registration and settings
 - Fixed status display of business processes on the dashboard
 
 ## [4.0.0] - 2018-09-14
+
 ### Added
+
 - Support of multiple delivery terms (e.g. addresses
 - Definition of default negotiations settings
 - Company-wide certificate management
 - Favourite and recently used categories are now tracked and can be re-used when publishing products
 
 ### Changed
+
 - Fully reworked UI design
 - Clear and extended business process workflow with step-by-step guidance (including data channels and track-and-trace functionality)
 - Major search and search filter improvements (pre-selection of categories, search term suggestions, filter categorization, more self-explanatory labels)
 - Clear distinction between products and logistics services on publishing and executing business processes
 
 ## [3.0.0] - 2018-06-01
+
 ### Added
+
 - Data channels
 - Contract generation
 - Platform management functionality (platform analytics and security dashboard)
 
 ### Changed
+
 - Improved product / service / catalogue publishing
 - Extended and improved business processes
 
 ## [2.0.0] - 2018-03-16
+
 ### Added
+
 - Role management for users
 - End-User License Agreement (EULA)
 - User manuals
@@ -229,17 +274,21 @@ All notable changes to this project will be documented in this file.
 - Product Parts Approval Process (PPAP)
 
 ### Changed
+
 - Improved company members management
 - Extended company registration and settings
 - Improved dashboard functionality (separate tabs for sales/purchases, direct links to business processes, improved sorting)
 - Improved catalogue management (minimized visualization, added search and filter functionality)
 
 ## [1.0.0] - 2017-12-15
+
 ### Added
+
 - Basic user and company registration
 - Basic product / service / catalogue publishing
 - Basic search functionality
 - Basic negotiation, ordering and fulfillment processes
 
- ---
-The project leading to this application has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 723810.
+  * * *
+
+  The project leading to this application has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 723810.

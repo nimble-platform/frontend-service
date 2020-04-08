@@ -12,22 +12,22 @@
    limitations under the License.
  */
 
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import * as myGlobals from '../../globals';
-import {UnitService} from '../../common/unit-service';
-import {Quantity} from '../../catalogue/model/publish/quantity';
-import {deliveryPeriodUnitListId, frameContractDurationUnitListId, warrantyPeriodUnitListId} from '../../common/constants';
-import {INCOTERMS, PAYMENT_MEANS} from '../../catalogue/model/constants';
-import {UBLModelUtils} from '../../catalogue/model/ubl-model-utils';
-import {CallStatus} from '../../common/call-status';
-import {Address} from '../../catalogue/model/publish/address';
-import {TradingTerm} from '../../catalogue/model/publish/trading-term';
-import {NegotiationModelWrapper} from '../bp-view/negotiation/negotiation-model-wrapper';
-import {CompanySettings} from '../../user-mgmt/model/company-settings';
-import {CustomTermModalComponent} from '../bp-view/negotiation/custom-term-modal.component';
-import {CommonTerms} from '../../common/common-terms';
-import {ChildFormBase} from '../../common/validation/child-form-base';
-import {ValidationService} from '../../common/validation/validators';
+import { UnitService } from '../../common/unit-service';
+import { Quantity } from '../../catalogue/model/publish/quantity';
+import { deliveryPeriodUnitListId, frameContractDurationUnitListId, warrantyPeriodUnitListId } from '../../common/constants';
+import { INCOTERMS, PAYMENT_MEANS } from '../../catalogue/model/constants';
+import { UBLModelUtils } from '../../catalogue/model/ubl-model-utils';
+import { CallStatus } from '../../common/call-status';
+import { Address } from '../../catalogue/model/publish/address';
+import { TradingTerm } from '../../catalogue/model/publish/trading-term';
+import { NegotiationModelWrapper } from '../bp-view/negotiation/negotiation-model-wrapper';
+import { CompanySettings } from '../../user-mgmt/model/company-settings';
+import { CustomTermModalComponent } from '../bp-view/negotiation/custom-term-modal.component';
+import { CommonTerms } from '../../common/common-terms';
+import { ChildFormBase } from '../../common/validation/child-form-base';
+import { ValidationService } from '../../common/validation/validators';
 
 @Component({
     selector: 'common-cart-terms',
@@ -44,8 +44,8 @@ export class CommonCartTermsComponent implements OnInit {
     @Input() wrapper: NegotiationModelWrapper;
     @Input() buyerCompanySettings: CompanySettings;
     // whether the buyer company has its own T&Cs
-    @Input() doesBuyerCompanyHasItsOwnTerms:boolean = true;
-    @Output() onApplyTermsEvent:EventEmitter<CommonTerms> = new EventEmitter();
+    @Input() doesBuyerCompanyHasItsOwnTerms: boolean = true;
+    @Output() onApplyTermsEvent: EventEmitter<CommonTerms> = new EventEmitter();
     tradingTerms: TradingTerm[] = [];
     deliveryPeriodUnits: string[];
     deliveryPeriod: Quantity = new Quantity();
@@ -71,14 +71,14 @@ export class CommonCartTermsComponent implements OnInit {
     private customTermModal: CustomTermModalComponent;
 
     constructor(private unitService: UnitService,
-                private validationService: ValidationService) {
+        private validationService: ValidationService) {
     }
 
     ngOnInit() {
         this.initCallStatus.submit();
         Promise.all([this.unitService.getCachedUnitList(frameContractDurationUnitListId),
-            this.unitService.getCachedUnitList(warrantyPeriodUnitListId),
-            this.unitService.getCachedUnitList(deliveryPeriodUnitListId)]).then(([frameContractDurations, warrantyPeriods, deliveryPeriods]) => {
+        this.unitService.getCachedUnitList(warrantyPeriodUnitListId),
+        this.unitService.getCachedUnitList(deliveryPeriodUnitListId)]).then(([frameContractDurations, warrantyPeriods, deliveryPeriods]) => {
 
             this.frameContractDurationUnits = frameContractDurations;
             this.warrantyPeriodUnits = warrantyPeriods;
@@ -90,8 +90,8 @@ export class CommonCartTermsComponent implements OnInit {
 
             // if the buyer company uses the default T&Cs of the platform, we need to remove the first clause
             // since it asks information about the seller which is not a common term
-            if(!this.doesBuyerCompanyHasItsOwnTerms){
-                this.buyerCompanySettings.negotiationSettings.company.salesTerms.termOrCondition.splice(0,1);
+            if (!this.doesBuyerCompanyHasItsOwnTerms) {
+                this.buyerCompanySettings.negotiationSettings.company.salesTerms.termOrCondition.splice(0, 1);
             }
             this.initCallStatus.callback(null, true);
 
@@ -106,7 +106,7 @@ export class CommonCartTermsComponent implements OnInit {
 
     onApplyTerms(): void {
         if (confirm('Are you sure that you want to apply terms to all products?\nExisting terms will be overwritten.')) {
-            let commonTerms:CommonTerms = new CommonTerms(this.deliveryPeriod,
+            let commonTerms: CommonTerms = new CommonTerms(this.deliveryPeriod,
                 this.warrantyPeriod,
                 this.incoTerm,
                 this.paymentTerm,

@@ -19,17 +19,17 @@ import { RequestForQuotation } from "../../../catalogue/model/publish/request-fo
 import { Quotation } from "../../../catalogue/model/publish/quotation";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { PaymentTermsWrapper } from "../payment-terms-wrapper";
-import {copy, durationToString, roundToTwoDecimals} from "../../../common/utils";
+import { copy, durationToString, roundToTwoDecimals } from "../../../common/utils";
 import { Address } from "../../../catalogue/model/publish/address";
 import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
-import {TradingTerm} from "../../../catalogue/model/publish/trading-term";
-import {MultiTypeValue} from "../../../catalogue/model/publish/multi-type-value";
-import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
-import {QuotationWrapper} from "./quotation-wrapper";
-import {Text} from "../../../catalogue/model/publish/text";
-import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
-import {FRAME_CONTRACT_DURATION_TERM_NAME} from '../../../common/constants';
-import {Delivery} from '../../../catalogue/model/publish/delivery';
+import { TradingTerm } from "../../../catalogue/model/publish/trading-term";
+import { MultiTypeValue } from "../../../catalogue/model/publish/multi-type-value";
+import { DiscountPriceWrapper } from "../../../common/discount-price-wrapper";
+import { QuotationWrapper } from "./quotation-wrapper";
+import { Text } from "../../../catalogue/model/publish/text";
+import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
+import { FRAME_CONTRACT_DURATION_TERM_NAME } from '../../../common/constants';
+import { Delivery } from '../../../catalogue/model/publish/delivery';
 
 /**
  * Convenient getters (and some setters) for catalogue line, request for quotations and quotations.
@@ -50,24 +50,24 @@ export class NegotiationModelWrapper {
     initialImmutableCatalogueLine: CatalogueLine; // immutable catalogue line
 
     constructor(public catalogueLine: CatalogueLine,
-                public rfq: RequestForQuotation,
-                public newQuotation: Quotation, // quotation object of the current negotiation step instantiated as a result of the rfq. It's supposed to be provided in the negotiation response phase
-                public frameContractQuotation: Quotation, // quotation object associated to a frame contract, if any
-                public lastOfferQuotation: Quotation, // in second or later steps of negotiation, this parameter keeps the quotation coming from the previous step
-                public sellerSettings: CompanyNegotiationSettings,
-                public lineIndex: number // line index is required in case the same product is included in the rfq multiple times
+        public rfq: RequestForQuotation,
+        public newQuotation: Quotation, // quotation object of the current negotiation step instantiated as a result of the rfq. It's supposed to be provided in the negotiation response phase
+        public frameContractQuotation: Quotation, // quotation object associated to a frame contract, if any
+        public lastOfferQuotation: Quotation, // in second or later steps of negotiation, this parameter keeps the quotation coming from the previous step
+        public sellerSettings: CompanyNegotiationSettings,
+        public lineIndex: number // line index is required in case the same product is included in the rfq multiple times
     ) {
 
         this.initialImmutableRfq = copy(rfq);
         this.rfqPaymentTerms = new PaymentTermsWrapper(rfq.requestForQuotationLine[lineIndex].lineItem.paymentTerms);
 
 
-        if(catalogueLine) {
+        if (catalogueLine) {
             this.initialImmutableCatalogueLine = copy(catalogueLine);
         }
 
         // discount price wrappers
-        if(catalogueLine && rfq) {
+        if (catalogueLine && rfq) {
             // first construct wrappers
             this.lineDiscountPriceWrapper = new DiscountPriceWrapper(
                 catalogueLine.requiredItemLocationQuantity.price,
@@ -96,7 +96,7 @@ export class NegotiationModelWrapper {
                 rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address
             );
 
-            if(newQuotation) {
+            if (newQuotation) {
                 this.quotationDiscountPriceWrapper = new DiscountPriceWrapper(
                     catalogueLine.requiredItemLocationQuantity.price,
                     newQuotation.quotationLine[this.lineIndex].lineItem.price,
@@ -112,17 +112,17 @@ export class NegotiationModelWrapper {
             }
         }
 
-        if(newQuotation) {
+        if (newQuotation) {
             this.newQuotationWrapper = new QuotationWrapper(newQuotation, catalogueLine, this.lineIndex);
         }
 
-        if(frameContractQuotation) {
+        if (frameContractQuotation) {
             // we can not use this.lineIndex to create a QuotationWrapper for frame contract since there may be different products in frame contract quotation
-            let frameContractQuotationLineIndex = UBLModelUtils.getFrameContractQuotationLineIndexForProduct(frameContractQuotation.quotationLine,catalogueLine.goodsItem.item.catalogueDocumentReference.id,catalogueLine.goodsItem.item.manufacturersItemIdentification.id);
+            let frameContractQuotationLineIndex = UBLModelUtils.getFrameContractQuotationLineIndexForProduct(frameContractQuotation.quotationLine, catalogueLine.goodsItem.item.catalogueDocumentReference.id, catalogueLine.goodsItem.item.manufacturersItemIdentification.id);
             this.frameContractQuotationWrapper = new QuotationWrapper(frameContractQuotation, catalogueLine, frameContractQuotationLineIndex);
         }
 
-        if(lastOfferQuotation) {
+        if (lastOfferQuotation) {
             this.lastOfferQuotationWrapper = new QuotationWrapper(lastOfferQuotation, catalogueLine, this.lineIndex);
         }
     }
@@ -153,7 +153,7 @@ export class NegotiationModelWrapper {
 
     public get lineIncotermsString(): string {
         let incoterms = this.catalogueLine.goodsItem.deliveryTerms.incoterms;
-        if(incoterms == null || incoterms == ""){
+        if (incoterms == null || incoterms == "") {
             return "None";
         }
         return incoterms;
@@ -205,7 +205,7 @@ export class NegotiationModelWrapper {
 
     public get rfqVatTotalString(): string {
         let rfqVatTotal = this.rfqVatTotal;
-        if(rfqVatTotal == 0){
+        if (rfqVatTotal == 0) {
             return "On demand";
         }
         return `${roundToTwoDecimals(rfqVatTotal)} ${this.rfqDiscountPriceWrapper.itemPrice.currency}`
@@ -225,7 +225,7 @@ export class NegotiationModelWrapper {
 
     public get rfqGrossTotalString(): string {
         let rfqGrossTotal = this.rfqGrossTotal;
-        if(rfqGrossTotal == 0){
+        if (rfqGrossTotal == 0) {
             return "On demand";
         }
         return `${roundToTwoDecimals(this.rfqGrossTotal)} ${this.rfqDiscountPriceWrapper.itemPrice.currency}`
@@ -273,7 +273,7 @@ export class NegotiationModelWrapper {
 
     public get rfqIncotermsString(): string {
         let incoterms = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.incoterms;
-        if(incoterms == null || incoterms == ""){
+        if (incoterms == null || incoterms == "") {
             return "None";
         }
         return incoterms;
@@ -301,7 +301,7 @@ export class NegotiationModelWrapper {
 
     public get rfqFrameContractDuration(): Quantity {
         let tradingTerm: TradingTerm = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
-        if(tradingTerm != null) {
+        if (tradingTerm != null) {
             return tradingTerm.value.valueQuantity[0];
         }
         return null;
@@ -309,7 +309,7 @@ export class NegotiationModelWrapper {
 
     public set rfqFrameContractDuration(duration: Quantity) {
         let tradingTerm: TradingTerm = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
-        if(tradingTerm == null) {
+        if (tradingTerm == null) {
             tradingTerm = new TradingTerm(FRAME_CONTRACT_DURATION_TERM_NAME, null, null, new MultiTypeValue());
             tradingTerm.value.valueQuantity.push(duration)
             this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.push(tradingTerm);
@@ -324,9 +324,9 @@ export class NegotiationModelWrapper {
     }
 
     // set trading terms except the one representing frame contract duration
-    public set rfqTradingTerms(tradingTerms:TradingTerm[])  {
+    public set rfqTradingTerms(tradingTerms: TradingTerm[]) {
         let frameContractDuration: TradingTerm = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
-        if(frameContractDuration){
+        if (frameContractDuration) {
             tradingTerms.push(frameContractDuration);
         }
         this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms = tradingTerms;
@@ -338,7 +338,7 @@ export class NegotiationModelWrapper {
 
     public addRfqTradingTerm(termName: string, termDescription: string, value, type: string): void {
         let tradingTerm: TradingTerm = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == termName);
-        if(tradingTerm != null) {
+        if (tradingTerm != null) {
             return;
         } else {
             tradingTerm = UBLModelUtils.createTradingTerm(termName, termDescription, value, type);
@@ -348,7 +348,7 @@ export class NegotiationModelWrapper {
 
     public deleteRfqTradingTerm(termName: string): void {
         let indexToRemove = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.findIndex(term => term.id === termName);
-        if(indexToRemove != -1) {
+        if (indexToRemove != -1) {
             this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.splice(indexToRemove, 1);
         }
     }
@@ -357,13 +357,13 @@ export class NegotiationModelWrapper {
         return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address;
     }
 
-    public set rfqDeliveryAddress(address:Address) {
+    public set rfqDeliveryAddress(address: Address) {
         this.rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address = address;
     }
 
     // compares the default terms of product and the terms specified in the request
     public checkEqualForRequest(termsSource: 'product_defaults' | 'frame_contract' | 'last_offer', part): boolean {
-        switch(part) {
+        switch (part) {
             case "deliveryPeriod":
                 if (termsSource == "product_defaults")
                     return (this.rfqDeliveryPeriodString == this.lineDeliveryPeriodString);
@@ -435,7 +435,7 @@ export class NegotiationModelWrapper {
 
     // compares the terms specified in the request and the ones in the response
     public checkEqualForResponse(part): boolean {
-        switch(part) {
+        switch (part) {
             case "deliveryPeriod":
                 return (this.rfqDeliveryPeriodString == this.newQuotationWrapper.deliveryPeriodString);
             case "warranty":
@@ -451,9 +451,9 @@ export class NegotiationModelWrapper {
             case "dataMonitoring":
                 return this.rfqDataMonitoringRequested == this.newQuotationWrapper.dataMonitoringPromised;
             case "frameContract":
-                return UBLModelUtils.areQuantitiesEqual(this.rfqFrameContractDuration,this.newQuotationWrapper.frameContractDuration);
+                return UBLModelUtils.areQuantitiesEqual(this.rfqFrameContractDuration, this.newQuotationWrapper.frameContractDuration);
             case "quantity":
-                return UBLModelUtils.areQuantitiesEqual(this.rfqQuantity,this.newQuotationWrapper.orderedQuantity);
+                return UBLModelUtils.areQuantitiesEqual(this.rfqQuantity, this.newQuotationWrapper.orderedQuantity);
             default:
                 return true;
         }
@@ -468,7 +468,7 @@ export class NegotiationModelWrapper {
 
         if (termsSource == "frame_contract") {
             otherTerm = this.frameContractQuotationWrapper.getTradingTerm(termId);
-        } else if(termsSource == "last_offer") {
+        } else if (termsSource == "last_offer") {
             otherTerm = this.lastOfferQuotationWrapper.getTradingTerm(termId);
         }
         return UBLModelUtils.areTradingTermsEqual(rfqTerm, otherTerm);

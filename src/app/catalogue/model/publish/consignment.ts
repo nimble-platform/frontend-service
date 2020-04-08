@@ -12,12 +12,12 @@
    limitations under the License.
  */
 
-import {Quantity} from "./quantity";
-import {Shipment} from "./shipment";
+import { Quantity } from "./quantity";
+import { Shipment } from "./shipment";
 
 export class Consignment {
     constructor(public grossWeightMeasure: Quantity = new Quantity(),
-                public grossVolumeMeasure: Quantity = new Quantity(),
-                public consolidatedShipment: Shipment[] = []) {
+        public grossVolumeMeasure: Quantity = new Quantity(),
+        public consolidatedShipment: Shipment[] = []) {
     }
 }

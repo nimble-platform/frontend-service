@@ -12,16 +12,16 @@
    limitations under the License.
  */
 
-import {Item} from "./item";
-import {Shipment} from "./shipment";
-import {Quantity} from "./quantity";
-import {OrderLineReference} from './order-line-reference';
+import { Item } from "./item";
+import { Shipment } from "./shipment";
+import { Quantity } from "./quantity";
+import { OrderLineReference } from './order-line-reference';
 
 export class DespatchLine {
     constructor(
-        public deliveredQuantity:Quantity = new Quantity(),
-        public item:Item = null,
-        public shipment:Shipment[] = [],
-        public orderLineReference:OrderLineReference = null
-    ) {  }
+        public deliveredQuantity: Quantity = new Quantity(),
+        public item: Item = null,
+        public shipment: Shipment[] = [],
+        public orderLineReference: OrderLineReference = null
+    ) { }
 }

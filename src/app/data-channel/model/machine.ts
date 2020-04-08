@@ -17,5 +17,5 @@ export class Machine {
         public name: string,
         public description: string,
         public ownerID: string,
-    ) {  }
+    ) { }
 }

@@ -12,9 +12,9 @@
    limitations under the License.
  */
 
-import {Item} from "./item";
+import { Item } from "./item";
 
 export class SalesItem {
-    constructor(public item: Item = new Item(),) {
+    constructor(public item: Item = new Item(), ) {
     }
 }

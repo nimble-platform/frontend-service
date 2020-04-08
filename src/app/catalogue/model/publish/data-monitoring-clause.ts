@@ -12,10 +12,10 @@
    limitations under the License.
  */
 
-import {Clause} from "./clause";
+import { Clause } from "./clause";
 export class DataMonitoringClause extends Clause {
     constructor(
-        public channelID:string = null,
+        public channelID: string = null,
     ) {
         super();
     }

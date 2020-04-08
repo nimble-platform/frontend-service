@@ -12,10 +12,10 @@
    limitations under the License.
  */
 
-import {Pipe, PipeTransform} from "@angular/core";
-import {PriceOption} from "../../catalogue/model/publish/price-option";
+import { Pipe, PipeTransform } from "@angular/core";
+import { PriceOption } from "../../catalogue/model/publish/price-option";
 
-@Pipe({name: 'priceOptionPipe'})
+@Pipe({ name: 'priceOptionPipe' })
 export class PriceOptionPipe implements PipeTransform {
     /**
      * Returns the subset of price options specified by the price option category
@@ -23,10 +23,10 @@ export class PriceOptionPipe implements PipeTransform {
      */
     transform(allPriceOptions: PriceOption[], priceOptionType: number): any[] {
         let priceOptionsWithIndices: any[] = [];
-        for(let i:number = 0; i<allPriceOptions.length;i++){
+        for (let i: number = 0; i < allPriceOptions.length; i++) {
             let option = allPriceOptions[i];
-            if(option.typeID == priceOptionType){
-                priceOptionsWithIndices.push({option: option,index:i});
+            if (option.typeID == priceOptionType) {
+                priceOptionsWithIndices.push({ option: option, index: i });
             }
         }
         return priceOptionsWithIndices;

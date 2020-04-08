@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import {Country} from "./country";
+import { Country } from "./country";
 
 export class Address {
     constructor(
@@ -24,5 +24,5 @@ export class Address {
         public buildingNumber: string = '',
         public streetName: string = '',
         public country: Country = new Country(),
-        ) {  }
+    ) { }
 }

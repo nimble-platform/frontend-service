@@ -14,15 +14,15 @@
    limitations under the License.
  */
 
-import { Component, Input , EventEmitter, Output} from "@angular/core";
+import { Component, Input, EventEmitter, Output } from "@angular/core";
 import { ProductWrapper } from "../common/product-wrapper";
 import { CompanySettings } from "../user-mgmt/model/company-settings";
 import { UserService } from "../user-mgmt/user.service";
-import {CatalogueService} from "../catalogue/catalogue.service";
-import {Certificate} from "../catalogue/model/publish/certificate";
-import {Country} from '../catalogue/model/publish/country';
-import {DEFAULT_LANGUAGE} from "../catalogue/model/constants";
-import {TranslateService} from '@ngx-translate/core';
+import { CatalogueService } from "../catalogue/catalogue.service";
+import { Certificate } from "../catalogue/model/publish/certificate";
+import { Country } from '../catalogue/model/publish/country';
+import { DEFAULT_LANGUAGE } from "../catalogue/model/constants";
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'product-details-certificates',
@@ -35,12 +35,12 @@ export class ProductDetailsCertificatesComponent {
     @Output() certificateStatus = new EventEmitter<boolean>();
 
     constructor(private translate: TranslateService,
-                private userService: UserService,
-                private catalogueService: CatalogueService) {
+        private userService: UserService,
+        private catalogueService: CatalogueService) {
 
     }
     ngOnInit() {
-        if(this.settings.certificates.length == 0 && this.wrapper.line.goodsItem.item.certificate.length == 0){
+        if (this.settings.certificates.length == 0 && this.wrapper.line.goodsItem.item.certificate.length == 0) {
             this.certificateStatus.emit(true);
         }
     }
@@ -50,16 +50,16 @@ export class ProductDetailsCertificatesComponent {
     }
 
     getCertificateCountryNames(countries: Country[]) {
-        let countryNames:string = null;
-        if(countries == null || countries.length == 0) {
+        let countryNames: string = null;
+        if (countries == null || countries.length == 0) {
             return countryNames;
         }
 
-        for(let country of countries) {
-            if (countryNames==null){
+        for (let country of countries) {
+            if (countryNames == null) {
                 countryNames = country.name.value;
             }
-            else{
+            else {
                 countryNames += "," + country.name.value;
             }
         }
@@ -69,8 +69,8 @@ export class ProductDetailsCertificatesComponent {
     downloadProductCertificate(certificate: Certificate) {
         let defaultLanguage = DEFAULT_LANGUAGE();
         let fileUri = certificate.documentReference[0].attachment.embeddedDocumentBinaryObject.uri;
-        for(let certFile of certificate.documentReference) {
-            if(certFile.attachment.embeddedDocumentBinaryObject.languageID == defaultLanguage) {
+        for (let certFile of certificate.documentReference) {
+            if (certFile.attachment.embeddedDocumentBinaryObject.languageID == defaultLanguage) {
                 fileUri = certFile.attachment.embeddedDocumentBinaryObject.uri;
                 break;
             }
@@ -93,7 +93,7 @@ export class ProductDetailsCertificatesComponent {
             window.URL.revokeObjectURL(url);
 
         }).catch(error => {
-            console.error("Failed to download the file",error);
+            console.error("Failed to download the file", error);
         });
     }
 }

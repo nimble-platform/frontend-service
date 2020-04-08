@@ -13,7 +13,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
 .object-list {
     display: flex;
     flex-wrap: wrap;
@@ -48,6 +47,6 @@
     margin: 1rem 0 0 0.25rem;
 }
 
-.well{
+.well {
     padding-top: 0px;
 }

@@ -14,8 +14,7 @@
 
 <div class="d-flex flex-wrap">
     <ng-container *ngFor="let element of content; let i = index">
-        <div *ngIf="expanded || (!expanded && i < shrinkElementSize)"
-             class="bordered my-1 ml-1">
+        <div *ngIf="expanded || (!expanded && i < shrinkElementSize)" class="bordered my-1 ml-1">
             <small class="p-0">{{element}}</small>
         </div>
     </ng-container>

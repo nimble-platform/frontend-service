@@ -12,11 +12,11 @@
    limitations under the License.
  */
 
-import {DEFAULT_LANGUAGE} from '../constants';
+import { DEFAULT_LANGUAGE } from '../constants';
 
 export class Text {
     constructor(
         public value: string = null,
         public languageID: string = DEFAULT_LANGUAGE()
-    ) {  }
+    ) { }
 }

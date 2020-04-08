@@ -21,5 +21,5 @@ export class DeliveryTerms {
         public specialTerms: Object = {}, // languageId-value pairs. For example, {en:"some special terms here"}
         public deliveryAddress: Address,
         public estimatedDeliveryTime: number,
-    ) {  }
+    ) { }
 }

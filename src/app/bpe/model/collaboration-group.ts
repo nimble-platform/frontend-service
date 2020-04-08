@@ -12,15 +12,15 @@
    limitations under the License.
  */
 
-import {ProcessInstanceGroup} from './process-instance-group';
+import { ProcessInstanceGroup } from './process-instance-group';
 
 export class CollaborationGroup {
     constructor(public id: string = "",
-                public status:string,
-                public name: string = "",
-                public archived: boolean = false,
-                public isArchiveable: boolean = false,
-                public associatedProcessInstanceGroups: ProcessInstanceGroup[],
-                public federationId:string = null) {
+        public status: string,
+        public name: string = "",
+        public archived: boolean = false,
+        public isArchiveable: boolean = false,
+        public associatedProcessInstanceGroups: ProcessInstanceGroup[],
+        public federationId: string = null) {
     }
 }

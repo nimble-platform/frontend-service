@@ -12,8 +12,8 @@
    limitations under the License.
  */
 
-import {Quantity} from './quantity';
-import {Amount} from './amount';
+import { Quantity } from './quantity';
+import { Amount } from './amount';
 
 export class LCPAOutput {
     constructor(
@@ -25,5 +25,5 @@ export class LCPAOutput {
         public opex: Amount = new Amount(),
         public lifeCycleCost: Amount = new Amount(),
         public capex: Amount = new Amount()
-    ) {  }
+    ) { }
 }

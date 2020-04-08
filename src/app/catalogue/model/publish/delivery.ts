@@ -12,16 +12,16 @@
    limitations under the License.
  */
 
-import {Period} from "./period";
-import {DeliveryTerms} from "./delivery-terms";
-import {Shipment} from "./shipment";
-import {Address} from "./address";
+import { Period } from "./period";
+import { DeliveryTerms } from "./delivery-terms";
+import { Shipment } from "./shipment";
+import { Address } from "./address";
 
 export class Delivery {
     constructor(
         public requestedDeliveryPeriod: Period = new Period(),
-        public deliveryAddress:Address = new Address(),
+        public deliveryAddress: Address = new Address(),
         public deliveryTerms: DeliveryTerms = new DeliveryTerms(),
         public shipment: Shipment = new Shipment()
-    ) {  }
+    ) { }
 }

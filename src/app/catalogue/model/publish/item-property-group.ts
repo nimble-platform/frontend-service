@@ -15,5 +15,5 @@
 export class ItemPropertyGroup {
     constructor(
         public name: string,
-    ) {  }
+    ) { }
 }

@@ -12,11 +12,11 @@
    limitations under the License.
  */
 
-import {Text} from './text';
-import {createText} from '../../../common/utils';
+import { Text } from './text';
+import { createText } from '../../../common/utils';
 
 export class PartyName {
     constructor(
         public name: Text = createText('')
-    ) {  }
+    ) { }
 }

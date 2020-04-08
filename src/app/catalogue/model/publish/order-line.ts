@@ -12,11 +12,11 @@
    limitations under the License.
  */
 
-import {LineItem} from "./line-item";
+import { LineItem } from "./line-item";
 
 export class OrderLine {
     constructor(
-        public lineItem:LineItem,
-        public hjid:number = null
-    ) {  }
+        public lineItem: LineItem,
+        public hjid: number = null
+    ) { }
 }

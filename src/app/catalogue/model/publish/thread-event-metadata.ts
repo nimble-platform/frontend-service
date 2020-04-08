@@ -31,17 +31,17 @@ export class ThreadEventMetadata {
         public activityVariables: any,
         public buyer: boolean,
         public isRated: boolean,
-        public areProductsDeleted : boolean[],
+        public areProductsDeleted: boolean[],
         public collaborationStatus: string,
-        public sellerFederationId:string,
-        public cancellationReason:string,
-        public requestDate:string,
-        public responseDate:string,
-        public completionDate:string,
+        public sellerFederationId: string,
+        public cancellationReason: string,
+        public requestDate: string,
+        public responseDate: string,
+        public completionDate: string,
         public isBeingUpdated: boolean = false, // It's true only while the process instance is being updated.
         public status?: ThreadEventStatus,
         public statusText?: string,
         public actionText?: string,
         public formerStep?: boolean
-    ) {}
+    ) { }
 }

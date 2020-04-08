@@ -28,31 +28,31 @@ import { BPEModule } from '../bpe/bpe.module';
 
 import { SimpleSearchComponent } from './simple-search.component';
 import { SimpleSearchFormComponent } from './simple-search-form.component';
-import {SearchNavigationGuardService} from './search-navigation-guard.service';
+import { SearchNavigationGuardService } from './search-navigation-guard.service';
 
 @NgModule({
-	imports: [
-		CommonModule,
-		AppCommonModule,
-		FormsModule,
-		ReactiveFormsModule,
-		HttpModule,
-		SimpleSearchRoutingModule,
-		CatalogueModule,
-		BPEModule,
-		NgbModule.forRoot()
-	],
-	declarations: [
-		SimpleSearchComponent,
-		SimpleSearchFormComponent
-	],
-	exports: [
-		SimpleSearchComponent,
-		SimpleSearchFormComponent
-	],
-	providers: [
-		SearchNavigationGuardService
-	]
+    imports: [
+        CommonModule,
+        AppCommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpModule,
+        SimpleSearchRoutingModule,
+        CatalogueModule,
+        BPEModule,
+        NgbModule.forRoot()
+    ],
+    declarations: [
+        SimpleSearchComponent,
+        SimpleSearchFormComponent
+    ],
+    exports: [
+        SimpleSearchComponent,
+        SimpleSearchFormComponent
+    ],
+    providers: [
+        SearchNavigationGuardService
+    ]
 })
 
-export class SimpleSearchModule {}
+export class SimpleSearchModule { }

@@ -14,24 +14,24 @@
    limitations under the License.
  */
 
-import {Component, Input, OnInit} from "@angular/core";
-import {BPEService} from "../../bpe.service";
-import {UserService} from "../../../user-mgmt/user.service";
-import {CookieService} from "ng2-cookies";
-import {BPDataService} from "../bp-data-service";
-import {CustomerParty} from "../../../catalogue/model/publish/customer-party";
-import {SupplierParty} from "../../../catalogue/model/publish/supplier-party";
-import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
-import {Ppap} from "../../../catalogue/model/publish/ppap";
-import {CallStatus} from "../../../common/call-status";
-import {ActivatedRoute, Router} from "@angular/router";
+import { Component, Input, OnInit } from "@angular/core";
+import { BPEService } from "../../bpe.service";
+import { UserService } from "../../../user-mgmt/user.service";
+import { CookieService } from "ng2-cookies";
+import { BPDataService } from "../bp-data-service";
+import { CustomerParty } from "../../../catalogue/model/publish/customer-party";
+import { SupplierParty } from "../../../catalogue/model/publish/supplier-party";
+import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
+import { Ppap } from "../../../catalogue/model/publish/ppap";
+import { CallStatus } from "../../../common/call-status";
+import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from "@angular/common";
 import { copy } from "../../../common/utils";
 import { Certificate } from "../../../user-mgmt/model/certificate";
-import {DocumentService} from '../document-service';
-import {DocumentReference} from '../../../catalogue/model/publish/document-reference';
-import {TranslateService} from '@ngx-translate/core';
-import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
+import { DocumentService } from '../document-service';
+import { DocumentReference } from '../../../catalogue/model/publish/document-reference';
+import { TranslateService } from '@ngx-translate/core';
+import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
 
 type PpapLevels = [boolean, boolean, boolean, boolean, boolean]
 
@@ -56,24 +56,24 @@ export class PpapDocumentSelectComponent implements OnInit {
 
     /** All available Ppap documents and if they should be checked for each level. */
     DOCUMENTS: PpapDocument[] = [
-        { name: "Design Documentation",                         levels: [false,  true,  true,  true,  true] },
-        { name: "Engineering Change Documentation",             levels: [false,  true,  true,  true,  true] },
-        { name: "Customer Engineering Approval",                levels: [false, false,  true, false,  true] },
-        { name: "Design Failure Mode and Effects Analysis",     levels: [false, false,  true, false,  true] },
-        { name: "Process Flow Diagram",                         levels: [false, false,  true, false,  true] },
-        { name: "Process Failure Mode and Effects Analysis",    levels: [false, false,  true, false,  true] },
-        { name: "Control Plan",                                 levels: [false, false,  true, false,  true] },
-        { name: "Measurement System Analysis Studies",          levels: [false, false,  true, false,  true] },
-        { name: "Dimensional Results",                          levels: [false,  true,  true,  true,  true] },
-        { name: "Records of Material / Performance Tests",      levels: [false,  true,  true,  true,  true] },
-        { name: "Initial Process Studies",                      levels: [false, false,  true, false,  true] },
-        { name: "Qualified Laboratory Documentation",           levels: [false,  true,  true,  true,  true] },
-        { name: "Appearance Approval Report",                   levels: [ true,  true,  true,  true,  true] },
-        { name: "Sample Production Parts",                      levels: [false,  true,  true,  true,  true] },
-        { name: "Master Sample",                                levels: [false, false, false,  true,  true] },
-        { name: "Checking Aids",                                levels: [false, false, false,  true,  true] },
-        { name: "Customer Specific Requirements",               levels: [false, false, false,  true, false] },
-        { name: "Part Submission Warrant",                      levels: [ true,  true,  true,  true,  true] }
+        { name: "Design Documentation", levels: [false, true, true, true, true] },
+        { name: "Engineering Change Documentation", levels: [false, true, true, true, true] },
+        { name: "Customer Engineering Approval", levels: [false, false, true, false, true] },
+        { name: "Design Failure Mode and Effects Analysis", levels: [false, false, true, false, true] },
+        { name: "Process Flow Diagram", levels: [false, false, true, false, true] },
+        { name: "Process Failure Mode and Effects Analysis", levels: [false, false, true, false, true] },
+        { name: "Control Plan", levels: [false, false, true, false, true] },
+        { name: "Measurement System Analysis Studies", levels: [false, false, true, false, true] },
+        { name: "Dimensional Results", levels: [false, true, true, true, true] },
+        { name: "Records of Material / Performance Tests", levels: [false, true, true, true, true] },
+        { name: "Initial Process Studies", levels: [false, false, true, false, true] },
+        { name: "Qualified Laboratory Documentation", levels: [false, true, true, true, true] },
+        { name: "Appearance Approval Report", levels: [true, true, true, true, true] },
+        { name: "Sample Production Parts", levels: [false, true, true, true, true] },
+        { name: "Master Sample", levels: [false, false, false, true, true] },
+        { name: "Checking Aids", levels: [false, false, false, true, true] },
+        { name: "Customer Specific Requirements", levels: [false, false, false, true, false] },
+        { name: "Part Submission Warrant", levels: [true, true, true, true, true] }
     ];
 
     /** The currently selected documents. */
@@ -91,14 +91,14 @@ export class PpapDocumentSelectComponent implements OnInit {
     processMetadata: ThreadEventMetadata;
 
     constructor(private bpeService: BPEService,
-                private bpDataService: BPDataService,
-                private userService: UserService,
-                private cookieService: CookieService,
-                private route: ActivatedRoute,
-                private router: Router,
-                private translate: TranslateService,
-                private documentService: DocumentService,
-                private location: Location) {
+        private bpDataService: BPDataService,
+        private userService: UserService,
+        private cookieService: CookieService,
+        private route: ActivatedRoute,
+        private router: Router,
+        private translate: TranslateService,
+        private documentService: DocumentService,
+        private location: Location) {
     }
 
     ngOnInit() {
@@ -116,7 +116,7 @@ export class PpapDocumentSelectComponent implements OnInit {
                 this.additionalDocuments = this.ppap.additionalDocumentReference;
                 this.ppap.documentType.forEach(name => {
                     const index = this.DOCUMENTS.findIndex(doc => doc.name === name);
-                    if(index >= 0) {
+                    if (index >= 0) {
                         this.selectedDocuments[index] = true;
                     }
                 });
@@ -133,10 +133,10 @@ export class PpapDocumentSelectComponent implements OnInit {
     }
 
     areAllDocumentsAvailable(): boolean {
-        for(let i = 0; i < this.selectedDocuments.length; i++) {
-            if(this.selectedDocuments[i]) {
+        for (let i = 0; i < this.selectedDocuments.length; i++) {
+            if (this.selectedDocuments[i]) {
                 const name = this.DOCUMENTS[i].name;
-                if(!this.isDocumentAvailable(name)) {
+                if (!this.isDocumentAvailable(name)) {
                     return false;
                 }
             }
@@ -151,7 +151,7 @@ export class PpapDocumentSelectComponent implements OnInit {
 
     onDownload(name: string): void {
         const certificate = this.getCertificate(name);
-        if(!certificate) {
+        if (!certificate) {
             return;
         }
         this.userService.downloadCert(certificate.id);
@@ -160,8 +160,8 @@ export class PpapDocumentSelectComponent implements OnInit {
     private getCertificate(name: string): Certificate | null {
         const settings = this.bpDataService.getCompanySettings();
 
-        for(const certificate of settings.certificates) {
-            if(certificate.type === name) {
+        for (const certificate of settings.certificates) {
+            if (certificate.type === name) {
                 return certificate;
             }
         }
@@ -191,25 +191,25 @@ export class PpapDocumentSelectComponent implements OnInit {
         this.userService.getParty(buyerId).then(buyerParty => {
             this.ppap.buyerCustomerParty = new CustomerParty(buyerParty);
 
-            this.userService.getParty(sellerId,this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.federationInstanceID).then(sellerParty => {
+            this.userService.getParty(sellerId, this.bpDataService.getCatalogueLine().goodsItem.item.manufacturerParty.federationInstanceID).then(sellerParty => {
                 this.ppap.sellerSupplierParty = new SupplierParty(sellerParty);
                 this.bpeService
-                    .startProcessWithDocument(this.ppap,sellerParty.federationInstanceID)
+                    .startProcessWithDocument(this.ppap, sellerParty.federationInstanceID)
                     .then(() => {
                         this.callStatus.callback("Ppap request sent", true);
-                        this.router.navigate(["dashboard"],{queryParams: {ins: sellerParty.federationInstanceID}});
+                        this.router.navigate(["dashboard"], { queryParams: { ins: sellerParty.federationInstanceID } });
                     })
                     .catch(error => {
                         this.callStatus.error("Failed to send Ppap request", error);
                     });
             })
+                .catch(error => {
+                    this.callStatus.error("Failed to send Ppap request", error);
+                });
+        })
             .catch(error => {
                 this.callStatus.error("Failed to send Ppap request", error);
             });
-        })
-        .catch(error => {
-            this.callStatus.error("Failed to send Ppap request", error);
-        });
     }
 
     onUpdateRequest(): void {
@@ -221,14 +221,14 @@ export class PpapDocumentSelectComponent implements OnInit {
         ppap.additionalDocumentReference = this.additionalDocuments;
         ppap.documentType = this.DOCUMENTS.filter((_, i) => this.selectedDocuments[i]).map(doc => doc.name);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(ppap),"PPAPREQUEST",this.processMetadata.processInstanceId,this.processMetadata.sellerFederationId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(ppap), "PPAPREQUEST", this.processMetadata.processInstanceId, this.processMetadata.sellerFederationId)
             .then(() => {
-                this.documentService.updateCachedDocument(ppap.id,ppap);
+                this.documentService.updateCachedDocument(ppap.id, ppap);
                 this.callStatus.callback("Ppap request updated", true);
                 var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
-                  tab = "SALES";
-                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
+                    tab = "SALES";
+                this.router.navigate(['dashboard'], { queryParams: { tab: tab } });
             })
             .catch(error => {
                 this.callStatus.error("Failed to update Ppap request", error);

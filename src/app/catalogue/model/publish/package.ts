@@ -12,13 +12,13 @@
    limitations under the License.
  */
 
-import {Code} from "./code";
-import {Quantity} from "./quantity";
+import { Code } from "./code";
+import { Quantity } from "./quantity";
 
 export class Package {
     constructor(
         public quantity: Quantity = new Quantity(),
         public packagingTypeCode: Code = new Code(),
         public hjid: string = null
-    ) {  }
+    ) { }
 }

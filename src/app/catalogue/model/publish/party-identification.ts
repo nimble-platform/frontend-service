@@ -14,6 +14,6 @@
 
 export class PartyIdentification {
     constructor(
-        public id:string = null
-    ) {  }
+        public id: string = null
+    ) { }
 }

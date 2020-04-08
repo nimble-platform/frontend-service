@@ -12,23 +12,23 @@
    limitations under the License.
  */
 
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { AppComponent } from "../../app.component";
-import {CompanySettings} from '../model/company-settings';
-import {TradingTerm} from '../../catalogue/model/publish/trading-term';
-import {deliveryPeriodUnitListId, warrantyPeriodUnitListId} from '../../common/constants';
-import {Clause} from '../../catalogue/model/publish/clause';
-import {CallStatus} from '../../common/call-status';
-import {copy, COUNTRY_NAMES} from '../../common/utils';
-import {UnitService} from '../../common/unit-service';
-import {BPEService} from '../../bpe/bpe.service';
-import {EditTradingTermModalComponent} from './edit-trading-term-modal.component';
-import {Text} from '../../catalogue/model/publish/text';
-import {TradingPreferences} from '../../catalogue/model/publish/trading-preferences';
-import {UserService} from '../user.service';
-import {TranslateService} from '@ngx-translate/core';
-import {FEDERATIONID} from '../../catalogue/model/constants';
+import { CompanySettings } from '../model/company-settings';
+import { TradingTerm } from '../../catalogue/model/publish/trading-term';
+import { deliveryPeriodUnitListId, warrantyPeriodUnitListId } from '../../common/constants';
+import { Clause } from '../../catalogue/model/publish/clause';
+import { CallStatus } from '../../common/call-status';
+import { copy, COUNTRY_NAMES } from '../../common/utils';
+import { UnitService } from '../../common/unit-service';
+import { BPEService } from '../../bpe/bpe.service';
+import { EditTradingTermModalComponent } from './edit-trading-term-modal.component';
+import { Text } from '../../catalogue/model/publish/text';
+import { TradingPreferences } from '../../catalogue/model/publish/trading-preferences';
+import { UserService } from '../user.service';
+import { TranslateService } from '@ngx-translate/core';
+import { FEDERATIONID } from '../../catalogue/model/constants';
 
 @Component({
     selector: "company-terms-and-conditions",
@@ -39,8 +39,8 @@ export class CompanyTermsAndConditions implements OnInit {
 
     @Input() settings: CompanySettings = null;
 
-    initPageStatus:CallStatus = new CallStatus();
-    callStatus:CallStatus = new CallStatus();
+    initPageStatus: CallStatus = new CallStatus();
+    callStatus: CallStatus = new CallStatus();
 
     // default terms and conditions which are retrieved from the server
     defaultTermsAndConditions: Clause[] = null;
@@ -49,23 +49,23 @@ export class CompanyTermsAndConditions implements OnInit {
     termsAndConditions: Clause[] = [];
 
     // clause id-boolean map
-    showSection: Map<string,boolean> = new Map<string, boolean>();
+    showSection: Map<string, boolean> = new Map<string, boolean>();
 
     // options
     INCOTERMS: string[] = [];
-    PAYMENT_TERMS:string[] = [];
+    PAYMENT_TERMS: string[] = [];
     COUNTRY_NAMES = COUNTRY_NAMES;
-    UNITS:string[] = [];
+    UNITS: string[] = [];
 
     @ViewChild(EditTradingTermModalComponent)
     private editTradingTermModelComponent: EditTradingTermModalComponent;
 
     constructor(public route: ActivatedRoute,
-                public userService: UserService,
-                public appComponent: AppComponent,
-                public unitService: UnitService,
-                private translate: TranslateService,
-                public bpeService: BPEService) {
+        public userService: UserService,
+        public appComponent: AppComponent,
+        public unitService: UnitService,
+        private translate: TranslateService,
+        public bpeService: BPEService) {
 
     }
 
@@ -75,8 +75,8 @@ export class CompanyTermsAndConditions implements OnInit {
         Promise.all([
             this.unitService.getCachedUnitList(deliveryPeriodUnitListId),
             this.unitService.getCachedUnitList(warrantyPeriodUnitListId),
-            this.bpeService.getTermsAndConditions(null ,FEDERATIONID(), this.settings.companyID, null,null,this.settings.negotiationSettings.company.federationInstanceID),
-        ]).then(([ deliveryPeriodUnits, warrantyPeriodUnits,defaultTermsAndConditions]) => {
+            this.bpeService.getTermsAndConditions(null, FEDERATIONID(), this.settings.companyID, null, null, this.settings.negotiationSettings.company.federationInstanceID),
+        ]).then(([deliveryPeriodUnits, warrantyPeriodUnits, defaultTermsAndConditions]) => {
 
             // populate available incoterms
             this.INCOTERMS = this.settings.negotiationSettings.incoterms;
@@ -86,14 +86,14 @@ export class CompanyTermsAndConditions implements OnInit {
             this.UNITS = deliveryPeriodUnits.concat(warrantyPeriodUnits);
 
             // set the default terms and conditions
-            if(defaultTermsAndConditions){
+            if (defaultTermsAndConditions) {
                 this.defaultTermsAndConditions = defaultTermsAndConditions;
                 // update the clause ids
                 this.removeOrderNumberFromClauseId(this.defaultTermsAndConditions);
             }
 
             // create sales terms if the company does not have any
-            if(!this.settings.negotiationSettings.company.salesTerms){
+            if (!this.settings.negotiationSettings.company.salesTerms) {
                 this.settings.negotiationSettings.company.salesTerms = new TradingPreferences();
             }
 
@@ -101,8 +101,8 @@ export class CompanyTermsAndConditions implements OnInit {
             this.termsAndConditions = copy(this.settings.negotiationSettings.company.salesTerms.termOrCondition);
             // sort terms and conditions
             this.termsAndConditions.sort((clause1, clause2) => {
-                let order1 = Number(clause1.id.substring(0,clause1.id.indexOf("_")));
-                let order2 = Number(clause2.id.substring(0,clause2.id.indexOf("_")));
+                let order1 = Number(clause1.id.substring(0, clause1.id.indexOf("_")));
+                let order2 = Number(clause2.id.substring(0, clause2.id.indexOf("_")));
                 return order1 - order2;
             });
             // update the clause ids
@@ -110,26 +110,26 @@ export class CompanyTermsAndConditions implements OnInit {
 
             this.initPageStatus.callback("Successfully initialized the page", true);
         }).catch(error => {
-            this.initPageStatus.error("Error while initializing the page",error);
+            this.initPageStatus.error("Error while initializing the page", error);
         });
     }
 
     // called when the user selects a clause among the default ones
-    onClauseSelection(clause:Clause, isChecked:boolean){
-        if(isChecked){
+    onClauseSelection(clause: Clause, isChecked: boolean) {
+        if (isChecked) {
             // add clause
             this.termsAndConditions.push(clause);
             // update the showSection map
             this.showSection.set(clause.id, false);
         }
-        else{
+        else {
             // remove clause
             this.onRemoveClause(clause);
         }
     }
 
     // called when the user updated the id of clause
-    onClauseIdUpdated(oldId:string, index:number, newId: string){
+    onClauseIdUpdated(oldId: string, index: number, newId: string) {
         // update the showSection map
         this.showSection.delete(oldId);
         this.showSection.set(newId, true);
@@ -138,36 +138,36 @@ export class CompanyTermsAndConditions implements OnInit {
     }
 
     // used to update clause content on UI
-    setSectionText(clause:Clause){
+    setSectionText(clause: Clause) {
         // get the clause content
         let text = clause.content[0].value;
         // get the element representing the clause content
         let element = document.getElementById(clause.id);
         // replace placeholders with spans
-        for(let tradingTerm of clause.tradingTerms){
+        for (let tradingTerm of clause.tradingTerms) {
             let id = tradingTerm.id;
 
-            text = text.replace(new RegExp("\\"+id,'g'), "<b><span id='"+clause.id+"-"+id+"'>" + id + "</span></b>");
+            text = text.replace(new RegExp("\\" + id, 'g'), "<b><span id='" + clause.id + "-" + id + "'>" + id + "</span></b>");
 
         }
         // update the element's innerHTML
         element.innerHTML = text;
 
         // make every trading term id non-editable
-        for(let tradingTerm of clause.tradingTerms){
+        for (let tradingTerm of clause.tradingTerms) {
             let id = tradingTerm.id;
 
-            element = document.getElementById(clause.id+"-"+id);
+            element = document.getElementById(clause.id + "-" + id);
 
             element.contentEditable = "false";
         }
     }
 
     // this method is called when the user changes the content of clause
-    onContentUpdated(clause:Clause, event:any){
+    onContentUpdated(clause: Clause, event: any) {
         // check whether the parameters are deleted or not
-        for(let tradingTerm of clause.tradingTerms){
-            if(event.target.innerText.indexOf(tradingTerm.id) == -1){
+        for (let tradingTerm of clause.tradingTerms) {
+            if (event.target.innerText.indexOf(tradingTerm.id) == -1) {
                 // since there is a missing trading term, we need to set section text again
                 this.setSectionText(clause);
                 return;
@@ -177,48 +177,48 @@ export class CompanyTermsAndConditions implements OnInit {
     }
 
     // methods used to add/edit/remove trading terms
-    onAddTradingTerm(clause:Clause){
+    onAddTradingTerm(clause: Clause) {
         let element = document.getElementById(clause.id);
-        this.editTradingTermModelComponent.open(clause.tradingTerms,clause,element,this.getExistingTradingTermIds());
+        this.editTradingTermModelComponent.open(clause.tradingTerms, clause, element, this.getExistingTradingTermIds());
     }
 
-    onEditTradingTerm(clause:Clause, tradingTerm:TradingTerm){
+    onEditTradingTerm(clause: Clause, tradingTerm: TradingTerm) {
         let element = document.getElementById(clause.id);
-        this.editTradingTermModelComponent.open(clause.tradingTerms,clause,element,this.getExistingTradingTermIds(), tradingTerm);
+        this.editTradingTermModelComponent.open(clause.tradingTerms, clause, element, this.getExistingTradingTermIds(), tradingTerm);
     }
 
-    getExistingTradingTermIds():string[]{
+    getExistingTradingTermIds(): string[] {
         let tradingTermIds = [];
-        for(let clause of this.termsAndConditions){
-            for(let tradingTerm of clause.tradingTerms){
+        for (let clause of this.termsAndConditions) {
+            for (let tradingTerm of clause.tradingTerms) {
                 tradingTermIds.push(tradingTerm.id);
             }
         }
         return tradingTermIds;
     }
 
-    onRemoveTradingTerm(clause:Clause, tradingTerm:TradingTerm){
+    onRemoveTradingTerm(clause: Clause, tradingTerm: TradingTerm) {
         // remove trading term from the clause
-        clause.tradingTerms.splice(clause.tradingTerms.indexOf(tradingTerm),1);
+        clause.tradingTerms.splice(clause.tradingTerms.indexOf(tradingTerm), 1);
         // remove trading term id from the clause content
-        clause.content[0].value = clause.content[0].value.replace(new RegExp("\\"+tradingTerm.id,'g'),"");
+        clause.content[0].value = clause.content[0].value.replace(new RegExp("\\" + tradingTerm.id, 'g'), "");
         // update the content of corresponding section
         this.setSectionText(clause);
     }
 
     // used to set the value of trading terms whose data type is NUMBER
-    setValueDecimal(tradingTerm:TradingTerm, i: number, event: any) {
+    setValueDecimal(tradingTerm: TradingTerm, i: number, event: any) {
         tradingTerm.value.valueDecimal[i] = event.target.value;
     }
 
     // methods used to add/remove clause
-    onAddClause(){
+    onAddClause() {
         let clause = new Clause();
         // generate an id for the clause
         let id = "Title of clause";
         let idExists = this.showSection.has(id);
         let number = 1;
-        while(idExists){
+        while (idExists) {
             id += number;
             idExists = this.showSection.has(id);
         }
@@ -232,16 +232,16 @@ export class CompanyTermsAndConditions implements OnInit {
         this.showSection.set(clause.id, false);
     }
 
-    onRemoveClause(clause:Clause){
+    onRemoveClause(clause: Clause) {
         let index = this.termsAndConditions.findIndex(selectedClause => selectedClause.id == clause.id);
         // remove clause
-        this.termsAndConditions.splice(index,1);
+        this.termsAndConditions.splice(index, 1);
         // update the showSection map
         this.showSection.delete(clause.id);
 
         // update the value of checkbox
-        let checkbox =  <HTMLInputElement> document.getElementById("default-"+clause.id);
-        if(checkbox){
+        let checkbox = <HTMLInputElement>document.getElementById("default-" + clause.id);
+        if (checkbox) {
             checkbox.checked = false;
         }
     }
@@ -252,7 +252,7 @@ export class CompanyTermsAndConditions implements OnInit {
         // we use these numbers to sort clauses
         let termsAndConditions = copy(this.termsAndConditions);
         // check uniqueness of clauses
-        if(!this.checkUniquenessOfClauses(termsAndConditions)){
+        if (!this.checkUniquenessOfClauses(termsAndConditions)) {
             this.callStatus.error("Each clause should have unique title.");
             return;
         }
@@ -275,11 +275,11 @@ export class CompanyTermsAndConditions implements OnInit {
 
     // each clause should have unique id
     // this method checks the uniqueness of clauses and returns true if each clause has unique id
-    checkUniquenessOfClauses(clauses:Clause[]):boolean{
+    checkUniquenessOfClauses(clauses: Clause[]): boolean {
         // clause id list
         let clauseIds = [];
-        for(let clause of clauses){
-            if(clauseIds.indexOf(clause.id) != -1){
+        for (let clause of clauses) {
+            if (clauseIds.indexOf(clause.id) != -1) {
                 return false;
             }
             clauseIds.push(clause.id);
@@ -289,24 +289,24 @@ export class CompanyTermsAndConditions implements OnInit {
 
     // update the clause id by removing the number at the beginning of id
     // this number represents the order.
-    removeOrderNumberFromClauseId(clauses:Clause[]){
-        for(let clause of clauses){
+    removeOrderNumberFromClauseId(clauses: Clause[]) {
+        for (let clause of clauses) {
             let startIndex = clause.id.indexOf("_");
-            clause.id = clause.id.substring(startIndex+1);
+            clause.id = clause.id.substring(startIndex + 1);
         }
     }
 
-    addOrderNumberForClauses(termsAndConditions:Clause[]){
+    addOrderNumberForClauses(termsAndConditions: Clause[]) {
         let size = termsAndConditions.length;
-        for(let index = 0; index < size; index++){
+        for (let index = 0; index < size; index++) {
             termsAndConditions[index].id = index + 1 + "_" + termsAndConditions[index].id;
         }
     }
 
     // check whether the given clause is selected or not
-    isClauseSelected(clauseId:string){
-        for(let clause of this.termsAndConditions){
-            if(clause.id == clauseId){
+    isClauseSelected(clauseId: string) {
+        for (let clause of this.termsAndConditions) {
+            if (clause.id == clauseId) {
                 return true;
             }
         }

@@ -17,11 +17,11 @@ import { Quotation } from "../../../catalogue/model/publish/quotation";
 import { Amount } from "../../../catalogue/model/publish/amount";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { PaymentTermsWrapper } from "../payment-terms-wrapper";
-import { durationToString} from "../../../common/utils";
+import { durationToString } from "../../../common/utils";
 import { PriceWrapper } from "../../../common/price-wrapper";
-import {TradingTerm} from "../../../catalogue/model/publish/trading-term";
-import {MultiTypeValue} from "../../../catalogue/model/publish/multi-type-value";
-import {Delivery} from '../../../catalogue/model/publish/delivery';
+import { TradingTerm } from "../../../catalogue/model/publish/trading-term";
+import { MultiTypeValue } from "../../../catalogue/model/publish/multi-type-value";
+import { Delivery } from '../../../catalogue/model/publish/delivery';
 
 const FRAME_CONTRACT_TERM_ID = "FRAME_CONTRACT_DURATION";
 
@@ -31,8 +31,8 @@ export class QuotationWrapper {
     priceWrapper: PriceWrapper;
 
     constructor(public quotation: Quotation,
-                private catalogueLine: CatalogueLine,
-                public quotationLineIndex:number=0) {
+        private catalogueLine: CatalogueLine,
+        public quotationLineIndex: number = 0) {
         this.paymentTermsWrapper = new PaymentTermsWrapper(quotation.quotationLine[quotationLineIndex].lineItem.paymentTerms);
         this.priceWrapper = new PriceWrapper(
             quotation.quotationLine[this.quotationLineIndex].lineItem.price,
@@ -78,7 +78,7 @@ export class QuotationWrapper {
 
     public get incotermsString(): string {
         let incoterms = this.quotation.quotationLine[this.quotationLineIndex].lineItem.deliveryTerms.incoterms;
-        if(incoterms == null || incoterms == ""){
+        if (incoterms == null || incoterms == "") {
             return "None";
         }
         return incoterms;
@@ -98,7 +98,7 @@ export class QuotationWrapper {
 
     public get frameContractDuration(): Quantity {
         let tradingTerm: TradingTerm = this.quotation.quotationLine[this.quotationLineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == FRAME_CONTRACT_TERM_ID);
-        if(tradingTerm != null) {
+        if (tradingTerm != null) {
             return tradingTerm.value.valueQuantity[0];
         }
         return null;
@@ -106,7 +106,7 @@ export class QuotationWrapper {
 
     public get rfqFrameContractDurationString(): string {
         let duration: Quantity = this.frameContractDuration;
-        if(duration != null) {
+        if (duration != null) {
             return durationToString(duration);
         }
         return null;
@@ -114,7 +114,7 @@ export class QuotationWrapper {
 
     public set frameContractDuration(duration: Quantity) {
         let tradingTerm: TradingTerm = this.quotation.quotationLine[this.quotationLineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == FRAME_CONTRACT_TERM_ID);
-        if(tradingTerm == null) {
+        if (tradingTerm == null) {
             tradingTerm = new TradingTerm(FRAME_CONTRACT_TERM_ID, null, null, new MultiTypeValue());
             tradingTerm.value.valueQuantity.push(duration)
             this.quotation.quotationLine[this.quotationLineIndex].lineItem.tradingTerms.push(tradingTerm);

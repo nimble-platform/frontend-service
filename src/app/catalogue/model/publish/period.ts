@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import {Quantity} from "./quantity";
+import { Quantity } from "./quantity";
 
 export class Period {
     constructor(
@@ -24,5 +24,5 @@ export class Period {
         public endTime: string = null,
         public durationMeasure: Quantity = new Quantity(null, null, null),
         public hjid: string = null
-    ) {  }
+    ) { }
 }

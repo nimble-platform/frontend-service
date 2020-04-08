@@ -14,11 +14,11 @@
    limitations under the License.
  */
 
-import {ProcessInstanceGroup} from './process-instance-group';
+import { ProcessInstanceGroup } from './process-instance-group';
 
 export class ProcessInstanceGroupResponse {
     constructor(public size: number = 0,
-                public groups: ProcessInstanceGroup[] = [],
-                public collaborationGroupIds: string[] = []) {
+        public groups: ProcessInstanceGroup[] = [],
+        public collaborationGroupIds: string[] = []) {
     }
 }

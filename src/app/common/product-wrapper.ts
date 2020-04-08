@@ -25,10 +25,10 @@ import {
 } from './utils';
 import { PriceWrapper } from "./price-wrapper";
 import { CompanyNegotiationSettings } from "../user-mgmt/model/company-negotiation-settings";
-import {Quantity} from '../catalogue/model/publish/quantity';
+import { Quantity } from '../catalogue/model/publish/quantity';
 import { Dimension } from "../catalogue/model/publish/dimension";
-import {MultiValuedDimension} from '../catalogue/model/publish/multi-valued-dimension';
-import {DiscountPriceWrapper} from "./discount-price-wrapper";
+import { MultiValuedDimension } from '../catalogue/model/publish/multi-valued-dimension';
+import { DiscountPriceWrapper } from "./discount-price-wrapper";
 
 /**
  * Wrapper class for Catalogue line.
@@ -39,8 +39,8 @@ export class ProductWrapper {
     private priceWrapper: DiscountPriceWrapper;
 
     constructor(public line: CatalogueLine,
-                public negotiationSettings: CompanyNegotiationSettings,
-                public quantity: Quantity = new Quantity(1,line.requiredItemLocationQuantity.price.baseQuantity.unitCode)) {
+        public negotiationSettings: CompanyNegotiationSettings,
+        public quantity: Quantity = new Quantity(1, line.requiredItemLocationQuantity.price.baseQuantity.unitCode)) {
         this.priceWrapper = new DiscountPriceWrapper(
             line.requiredItemLocationQuantity.price,
             copy(line.requiredItemLocationQuantity.price),
@@ -69,16 +69,16 @@ export class ProductWrapper {
         return this.getUniquePropertiesWithFilter(() => true);
     }
 
-    getDimensions(includingNullValues:boolean = true): Dimension[] {
-        if(!this.item) {
+    getDimensions(includingNullValues: boolean = true): Dimension[] {
+        if (!this.item) {
             return [];
         }
         const ret = [];
         this.item.dimension.forEach(prop => {
-            if(includingNullValues){
+            if (includingNullValues) {
                 if (prop.attributeID)
                     ret.push(prop);
-            }else{
+            } else {
                 if (prop.attributeID && prop.measure.value)
                     ret.push(prop);
             }
@@ -88,37 +88,37 @@ export class ProductWrapper {
 
     // it creates MultiValuedDimensions using the item's dimensions
     // if the item has no dimensions, then it creates them using the given list of dimension units.
-    getDimensionMultiValue(includeDimensionsWithNullValues:boolean = true, dimensions:string[] = []):MultiValuedDimension[]{
-        let multiValuedDimensions:MultiValuedDimension[] = [];
+    getDimensionMultiValue(includeDimensionsWithNullValues: boolean = true, dimensions: string[] = []): MultiValuedDimension[] {
+        let multiValuedDimensions: MultiValuedDimension[] = [];
         // each item should have dimensions
-        if(this.item.dimension.length == 0 && dimensions.length > 0){
+        if (this.item.dimension.length == 0 && dimensions.length > 0) {
             this.item.dimension = UBLModelUtils.createDimensions(dimensions);
         }
-        for(let dimension of this.item.dimension){
-            if(!includeDimensionsWithNullValues && !dimension.measure.value){
+        for (let dimension of this.item.dimension) {
+            if (!includeDimensionsWithNullValues && !dimension.measure.value) {
                 continue;
             }
-            let found:boolean = false;
-            for(let multiValuedDimension of multiValuedDimensions){
-                if(multiValuedDimension.attributeID == dimension.attributeID){
+            let found: boolean = false;
+            for (let multiValuedDimension of multiValuedDimensions) {
+                if (multiValuedDimension.attributeID == dimension.attributeID) {
                     multiValuedDimension.measure.push(dimension.measure);
                     found = true;
                     break;
                 }
             }
-            if(!found){
-                multiValuedDimensions.push(new MultiValuedDimension(dimension.attributeID,[dimension.measure]));
+            if (!found) {
+                multiValuedDimensions.push(new MultiValuedDimension(dimension.attributeID, [dimension.measure]));
             }
         }
         return multiValuedDimensions;
     }
 
-    addDimension(attributeId:string){
-        let dimension:Dimension = new Dimension(attributeId);
+    addDimension(attributeId: string) {
+        let dimension: Dimension = new Dimension(attributeId);
         this.item.dimension.push(dimension);
     }
 
-    removeDimension(attributeId:string,quantity:Quantity): void {
+    removeDimension(attributeId: string, quantity: Quantity): void {
         let index: number = this.item.dimension.slice().reverse().findIndex(dim => dim.attributeID == attributeId && dim.measure.value == quantity.value);
         let count = this.item.dimension.length - 1;
         let finalIndex = count - index;
@@ -128,7 +128,7 @@ export class ProductWrapper {
     getPackaging(): string {
         const qty = this.goodsItem.containingPackage.quantity;
         const type = this.goodsItem.containingPackage.packagingTypeCode;
-        if(!qty.value || !type.value) {
+        if (!qty.value || !type.value) {
             return "Not specified";
         }
 
@@ -183,7 +183,7 @@ export class ProductWrapper {
         return isTransportService(this.line);
     }
 
-    getAdditionalDocuments(){
+    getAdditionalDocuments() {
         return this.item.itemSpecificationDocumentReference;
     }
 
@@ -192,19 +192,19 @@ export class ProductWrapper {
      */
 
     private getUniquePropertiesWithFilter(filter: Predicate<ItemProperty>): ItemProperty[] {
-        if(!this.item) {
+        if (!this.item) {
             return [];
         }
 
         const duplicates: any = {};
         const result = [];
         this.item.additionalItemProperty.forEach(prop => {
-            if(!filter(prop)) {
+            if (!filter(prop)) {
                 return;
             }
 
             const key = getPropertyKey(prop);
-            if(!duplicates[key] || isCustomProperty(prop)) {
+            if (!duplicates[key] || isCustomProperty(prop)) {
                 result.push(prop);
             }
 

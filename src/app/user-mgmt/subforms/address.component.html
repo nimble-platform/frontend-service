@@ -13,7 +13,7 @@
  -->
 
 <div class="address-form" [formGroup]="addressForm">
-	<!--
+    <!--
 	<div class="form-group row d-none">
 		<span class="col-2 col-form-label">
 			<input type="checkbox" [(ngModel)]="addressForm.disabledFlag" [ngModelOptions]="{standalone:true}">
@@ -23,46 +23,46 @@
 		</div>
 	</div>
 	-->
-	<div class="form-group row">
-		<strong class="col-2 col-form-label"><span [innerHTML]="'Street Name:' | translate"></span>
-			</strong>
-		<div class="col-10">
-			<input type="text" class="form-control" name="streetName" formControlName="streetName" [required]="!disabledFlag && requiredFlag" [readonly]="disabledFlag" placeholder="e.g. Main street">
-		</div>
-	</div>
-	<div class="form-group row">
-		<strong class="col-2 col-form-label"><span [innerHTML]="'Building Number:' | translate"></span>
-			</strong>
-		<div class="col-10">
-			<input type="text" class="form-control" name="buildingNumber" formControlName="buildingNumber" [required]="!disabledFlag && requiredFlag" [readonly]="disabledFlag" placeholder="e.g. 12b">
-		</div>
-	</div>
-	<div class="form-group row">
-		<strong class="col-2 col-form-label"><span [innerHTML]="'City / Town:' | translate"></span>
-			</strong>
-		<div class="col-10">
-			<input type="text" class="form-control" name="cityName" formControlName="cityName" [required]="!disabledFlag && requiredFlag" [readonly]="disabledFlag" placeholder="e.g. Austin">
-		</div>
-	</div>
-	<div class="form-group row">
-		<strong class="col-2 col-form-label"><span [innerHTML]="'State / Province:' | translate"></span>
-			</strong>
-		<div class="col-10">
-			<input type="text" class="form-control" name="region" formControlName="region" [readonly]="disabledFlag" placeholder="e.g. Texas">
-		</div>
-	</div>
-	<div class="form-group row">
-		<strong class="col-2 col-form-label"><span [innerHTML]="'Postal code:' | translate"></span>
-			</strong>
-		<div class="col-10">
-			<input type="text" class="form-control" name="postalCode" formControlName="postalCode" [required]="!disabledFlag && requiredFlag" [readonly]="disabledFlag" placeholder="e.g. 73301">
-		</div>
-	</div>
-	<div class="form-group row">
-		<strong class="col-2 col-form-label"><span [innerHTML]="'Country:' | translate"></span>
-			</strong>
-		<div class="col-10">
-			<input type="text" class="form-control" name="country" formControlName="country" [required]="!disabledFlag && requiredFlag" [readonly]="disabledFlag" [ngbTypeahead]="getSuggestions" placeholder="e.g. United States">
-		</div>
-	</div>
+    <div class="form-group row">
+        <strong class="col-2 col-form-label"><span [innerHTML]="'Street Name:' | translate"></span>
+        </strong>
+        <div class="col-10">
+            <input type="text" class="form-control" name="streetName" formControlName="streetName" [required]="!disabledFlag && requiredFlag" [readonly]="disabledFlag" placeholder="e.g. Main street">
+        </div>
+    </div>
+    <div class="form-group row">
+        <strong class="col-2 col-form-label"><span [innerHTML]="'Building Number:' | translate"></span>
+        </strong>
+        <div class="col-10">
+            <input type="text" class="form-control" name="buildingNumber" formControlName="buildingNumber" [required]="!disabledFlag && requiredFlag" [readonly]="disabledFlag" placeholder="e.g. 12b">
+        </div>
+    </div>
+    <div class="form-group row">
+        <strong class="col-2 col-form-label"><span [innerHTML]="'City / Town:' | translate"></span>
+        </strong>
+        <div class="col-10">
+            <input type="text" class="form-control" name="cityName" formControlName="cityName" [required]="!disabledFlag && requiredFlag" [readonly]="disabledFlag" placeholder="e.g. Austin">
+        </div>
+    </div>
+    <div class="form-group row">
+        <strong class="col-2 col-form-label"><span [innerHTML]="'State / Province:' | translate"></span>
+        </strong>
+        <div class="col-10">
+            <input type="text" class="form-control" name="region" formControlName="region" [readonly]="disabledFlag" placeholder="e.g. Texas">
+        </div>
+    </div>
+    <div class="form-group row">
+        <strong class="col-2 col-form-label"><span [innerHTML]="'Postal code:' | translate"></span>
+        </strong>
+        <div class="col-10">
+            <input type="text" class="form-control" name="postalCode" formControlName="postalCode" [required]="!disabledFlag && requiredFlag" [readonly]="disabledFlag" placeholder="e.g. 73301">
+        </div>
+    </div>
+    <div class="form-group row">
+        <strong class="col-2 col-form-label"><span [innerHTML]="'Country:' | translate"></span>
+        </strong>
+        <div class="col-10">
+            <input type="text" class="form-control" name="country" formControlName="country" [required]="!disabledFlag && requiredFlag" [readonly]="disabledFlag" [ngbTypeahead]="getSuggestions" placeholder="e.g. United States">
+        </div>
+    </div>
 </div>

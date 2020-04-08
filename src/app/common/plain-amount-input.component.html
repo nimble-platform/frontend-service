@@ -15,36 +15,30 @@
  -->
 
 <div class="row {{ rowClass }}" [hidden]="presentationMode === 'view' && visible && !amount">
-        <div *ngIf="label" [class]="labelClass">
-            <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
-            </input-label>
-        </div>
-        <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible">
-            <!-- No unit -->
-            <div *ngIf="!amountUnit">
-                <input type="number" class="form-control form-control-sm"
-                       [(ngModel)]="amount"
-                       [formControl]="amountFormControl"
-                       [disabled]="disabled"
-                       [max]="maxValue"
-                       [ngbTooltip]="validationService.getValidationErrorMessage(amountFormControl)" [placement]="'auto'"  title=""
-                       [placeholder]="placeholder">
-            </div>
-
-            <!-- With unit -->
-            <div *ngIf="amountUnit" class="row">
-                <div class="col-9 col-quantity-value">
-                    <input type="number" class="form-control form-control-sm" [(ngModel)]="amount" [disabled]="disabled" [placeholder]="placeholder">
-                </div>
-                <div class="col-3 col-quantity-unit">
-                    {{ amountUnit }}
-                </div>
-            </div>
+    <div *ngIf="label" [class]="labelClass">
+        <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
+        </input-label>
+    </div>
+    <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible">
+        <!-- No unit -->
+        <div *ngIf="!amountUnit">
+            <input type="number" class="form-control form-control-sm" [(ngModel)]="amount" [formControl]="amountFormControl" [disabled]="disabled" [max]="maxValue" [ngbTooltip]="validationService.getValidationErrorMessage(amountFormControl)" [placement]="'auto'" title="" [placeholder]="placeholder">
         </div>
 
-        <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">
-            <span [class]="valueTextClass">
-                {{ amount }} <span *ngIf="amountUnit">{{ amountUnit }}</span>
-            </span>
+        <!-- With unit -->
+        <div *ngIf="amountUnit" class="row">
+            <div class="col-9 col-quantity-value">
+                <input type="number" class="form-control form-control-sm" [(ngModel)]="amount" [disabled]="disabled" [placeholder]="placeholder">
+            </div>
+            <div class="col-3 col-quantity-unit">
+                {{ amountUnit }}
+            </div>
         </div>
     </div>
+
+    <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">
+        <span [class]="valueTextClass">
+            {{ amount }} <span *ngIf="amountUnit">{{ amountUnit }}</span>
+        </span>
+    </div>
+</div>

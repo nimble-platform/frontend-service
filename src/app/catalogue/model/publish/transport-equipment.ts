@@ -14,14 +14,14 @@
    limitations under the License.
  */
 
-import {Code} from "./code";
-import {TransportMeans} from "./transport-means";
+import { Code } from "./code";
+import { TransportMeans } from "./transport-means";
 
 export class TransportEquipment {
     constructor(
-        public transportEquipmentTypeCode:Code = new Code(),
-        public humidityPercent:number = null,
-        public refrigeratedIndicator:boolean = false,
-        public characteristics:string = null
+        public transportEquipmentTypeCode: Code = new Code(),
+        public humidityPercent: number = null,
+        public refrigeratedIndicator: boolean = false,
+        public characteristics: string = null
     ) { }
 }

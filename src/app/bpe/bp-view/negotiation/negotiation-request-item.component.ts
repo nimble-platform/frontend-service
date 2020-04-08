@@ -12,36 +12,36 @@
    limitations under the License.
  */
 
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {BPDataService} from '../bp-data-service';
-import {CURRENCIES} from '../../../catalogue/model/constants';
-import {RequestForQuotation} from '../../../catalogue/model/publish/request-for-quotation';
-import {CallStatus} from '../../../common/call-status';
-import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
-import {CookieService} from 'ng2-cookies';
-import {NegotiationModelWrapper} from './negotiation-model-wrapper';
-import {copy, durationToString, roundToTwoDecimals, validateNumberInput} from '../../../common/utils';
-import {PeriodRange} from '../../../user-mgmt/model/period-range';
-import {Option} from '../../../common/options-input.component';
-import {addressToString} from '../../../user-mgmt/utils';
-import {DiscountModalComponent} from '../../../product-details/discount-modal.component';
-import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { BPDataService } from '../bp-data-service';
+import { CURRENCIES } from '../../../catalogue/model/constants';
+import { RequestForQuotation } from '../../../catalogue/model/publish/request-for-quotation';
+import { CallStatus } from '../../../common/call-status';
+import { UBLModelUtils } from '../../../catalogue/model/ubl-model-utils';
+import { CookieService } from 'ng2-cookies';
+import { NegotiationModelWrapper } from './negotiation-model-wrapper';
+import { copy, durationToString, roundToTwoDecimals, validateNumberInput } from '../../../common/utils';
+import { PeriodRange } from '../../../user-mgmt/model/period-range';
+import { Option } from '../../../common/options-input.component';
+import { addressToString } from '../../../user-mgmt/utils';
+import { DiscountModalComponent } from '../../../product-details/discount-modal.component';
+import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
 import * as myGlobals from '../../../globals';
-import {DigitalAgreement} from '../../../catalogue/model/publish/digital-agreement';
-import {UnitService} from '../../../common/unit-service';
-import {FRAME_CONTRACT_DURATION_TERM_NAME, frameContractDurationUnitListId} from '../../../common/constants';
-import {Quantity} from '../../../catalogue/model/publish/quantity';
-import {Quotation} from '../../../catalogue/model/publish/quotation';
-import {Clause} from '../../../catalogue/model/publish/clause';
-import {CustomTermModalComponent} from './custom-term-modal.component';
-import {TranslateService} from '@ngx-translate/core';
-import {DeliveryTerms} from '../../../user-mgmt/model/delivery-terms';
-import {Delivery} from '../../../catalogue/model/publish/delivery';
-import {QuotationWrapper} from './quotation-wrapper';
-import {AbstractControl, Form, FormControl, Validators} from '@angular/forms';
-import {ChildFormBase} from '../../../common/validation/child-form-base';
-import {ValidatorFn} from '@angular/forms/src/directives/validators';
-import {stepValidator, ValidationService} from '../../../common/validation/validators';
+import { DigitalAgreement } from '../../../catalogue/model/publish/digital-agreement';
+import { UnitService } from '../../../common/unit-service';
+import { FRAME_CONTRACT_DURATION_TERM_NAME, frameContractDurationUnitListId } from '../../../common/constants';
+import { Quantity } from '../../../catalogue/model/publish/quantity';
+import { Quotation } from '../../../catalogue/model/publish/quotation';
+import { Clause } from '../../../catalogue/model/publish/clause';
+import { CustomTermModalComponent } from './custom-term-modal.component';
+import { TranslateService } from '@ngx-translate/core';
+import { DeliveryTerms } from '../../../user-mgmt/model/delivery-terms';
+import { Delivery } from '../../../catalogue/model/publish/delivery';
+import { QuotationWrapper } from './quotation-wrapper';
+import { AbstractControl, Form, FormControl, Validators } from '@angular/forms';
+import { ChildFormBase } from '../../../common/validation/child-form-base';
+import { ValidatorFn } from '@angular/forms/src/directives/validators';
+import { stepValidator, ValidationService } from '../../../common/validation/validators';
 
 enum FIXED_NEGOTIATION_TERMS {
     DELIVERY_PERIOD = 'deliveryPeriod',
@@ -79,10 +79,10 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     frameContractDuration: Quantity = new Quantity(); // we have a dedicated variable to keep this in order not to create an empty trading term in the rfq
     frameContractDurationUnits: string[];
 
-    manufacturersTermsExistence: any = {'product_defaults': true}; // a (term source -> boolean) map indicating the existence of term sources
-    sellerId:string = null;
-    sellerFederationId:string;
-    buyerId:string = null;
+    manufacturersTermsExistence: any = { 'product_defaults': true }; // a (term source -> boolean) map indicating the existence of term sources
+    sellerId: string = null;
+    sellerFederationId: string;
+    buyerId: string = null;
     @Input() deliverytermsOfBuyer: DeliveryTerms[] = null;
 
     // form controls
@@ -94,12 +94,12 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     @Input() processMetadata: ThreadEventMetadata;
     @Input() manufacturersTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer';
     counterOfferTermsSource: 'product_defaults' | 'frame_contract' | 'last_offer' = this.manufacturersTermsSource;
-    showCounterOfferTerms:boolean = false;
+    showCounterOfferTerms: boolean = false;
     showFrameContractDetails: boolean = false;
     frameContractAvailable: boolean = false;
     showDataMonitoring: boolean = false;
     showDeliveryDetails: boolean = false;
-    showTermsAndConditions:boolean = false;
+    showTermsAndConditions: boolean = false;
     selectedTCTab: 'CUSTOM_TERMS' | 'CLAUSES' = 'CUSTOM_TERMS';
     selectedDeliveryTab: 'DELIVERY_ADDRESS' | 'DELIVERY_DATE' = 'DELIVERY_ADDRESS';
     clausesDiffer: boolean = false;
@@ -108,7 +108,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     callStatus: CallStatus = new CallStatus();
     // the user can set a delivery period or add multiple delivery date-quantity pairs in the negotiation
     // if the user is adding delivery date-quantity pairs to the request, this field is true.
-    isDeliveryDateSectionOpen:boolean = false;
+    isDeliveryDateSectionOpen: boolean = false;
 
     areDeliveryDatesAvailable = UBLModelUtils.areDeliveryDatesAvailable;
 
@@ -131,20 +131,20 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     config = myGlobals.config;
 
     constructor(private bpDataService: BPDataService,
-                private validationService: ValidationService,
-                private unitService: UnitService,
-                private cookieService: CookieService,
-                private translate: TranslateService) {
+        private validationService: ValidationService,
+        private unitService: UnitService,
+        private cookieService: CookieService,
+        private translate: TranslateService) {
         super();
     }
 
     ngOnInit() {
-        if(this.manufacturersTermsSource == null){
+        if (this.manufacturersTermsSource == null) {
             this.manufacturersTermsSource = 'product_defaults';
         }
 
         // check whether we need to show delivery date section or not
-        if(this.areDeliveryDatesAvailable(this.wrapper.rfqDelivery)){
+        if (this.areDeliveryDatesAvailable(this.wrapper.rfqDelivery)) {
             this.isDeliveryDateSectionOpen = true;
         }
 
@@ -154,15 +154,15 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
 
         let frameContractDuration = UBLModelUtils.getFrameContractDurationFromRfqLine(this.rfq.requestForQuotationLine[this.wrapper.lineIndex]);
         // if the rfq frame contract duration is not null, we are rendering the negotiation process in which the frame contract duration is also negotiated
-        if(!UBLModelUtils.isEmptyQuantity(frameContractDuration)) {
+        if (!UBLModelUtils.isEmptyQuantity(frameContractDuration)) {
             this.frameContractDuration = frameContractDuration;
 
-        } else if(this.frameContract) {
+        } else if (this.frameContract) {
             // initialize frame contract variables
             this.frameContractAvailable = true;
             // the frame contract option is visible only if the visible flag is true. this mainly aims to hide the frame contract option when the
             // contract itself is being negotiated
-            if(!this.frameContractNegotiation) {
+            if (!this.frameContractNegotiation) {
                 this.manufacturersTermsExistence.frame_contract = true;
             }
         }
@@ -175,7 +175,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
         // ignore negotiation options is true as they are not calculated yet
         // rfq is provided with values in onLoadCounterOfferTerms. this is done after initializing the wrapper,
         // because onLoadCounterOfferTerms method requires the wrapper
-        if(!this.processMetadata) {
+        if (!this.processMetadata) {
             this.onLoadCounterOfferTerms(this.manufacturersTermsSource);
         }
         this.wrapper.initialImmutableRfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.clause = copy(this.defaultTermsAndConditions);
@@ -188,7 +188,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
         this.onPriceConditionsChange();
 
         // set the flag for showing the counter terms if a new negotiation is being initiated
-        if(this.processMetadata != null) {
+        if (this.processMetadata != null) {
             this.showCounterOfferTerms = true;
         }
 
@@ -198,7 +198,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
         });
 
         // set tc tab based on the existence of custom terms
-        if(this.isReadOnly() && this.getNonFrameContractTermNumber() == 0) {
+        if (this.isReadOnly() && this.getNonFrameContractTermNumber() == 0) {
             this.selectedTCTab = 'CLAUSES';
         }
 
@@ -207,7 +207,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     }
 
     private initializeDirtyTerms() {
-        if(this.manufacturersTermsSource == 'product_defaults') {
+        if (this.manufacturersTermsSource == 'product_defaults') {
             this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.DELIVERY_PERIOD] = this.wrapper.lineDeliveryPeriodString !== this.wrapper.rfqDeliveryPeriodString;
             this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.INCOTERMS] = this.wrapper.lineIncotermsString !== this.wrapper.rfqIncotermsString;
             this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PAYMENT_MEANS] = this.wrapper.linePaymentMeans !== this.wrapper.rfqPaymentMeans;
@@ -217,7 +217,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
 
         } else {
             let quotationWrapper = this.wrapper.frameContractQuotationWrapper;
-            if(this.manufacturersTermsSource == 'last_offer') {
+            if (this.manufacturersTermsSource == 'last_offer') {
                 quotationWrapper = this.wrapper.lastOfferQuotationWrapper;
             }
             this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.DELIVERY_PERIOD] = quotationWrapper.deliveryPeriodString !== this.wrapper.rfqDeliveryPeriodString;
@@ -246,7 +246,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     onOrderQuantityChange(): void {
         // quantity change must be activated in the next iteration of execution
         // otherwise, the update discount method will use the old value of the quantity
-        setTimeout((()=>{
+        setTimeout((() => {
             this.onPriceConditionsChange();
         }), 0);
     }
@@ -254,47 +254,47 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     onManufacturersTermsSourceChange(termSource: 'product_defaults' | 'frame_contract' | 'last_offer'): void {
         this.manufacturersTermsSource = termSource;
         // if the counter offer panel is not shown, then the selection of terms source should update the the rfq
-        if(!this.showCounterOfferTerms) {
+        if (!this.showCounterOfferTerms) {
             this.onLoadCounterOfferTerms(termSource);
         }
     }
 
     onLoadCounterOfferTerms(termSource: 'product_defaults' | 'frame_contract' | 'last_offer'): void {
         // if changes are overwritten, users preferences should be reset
-        if(this.resetUpdatesChecked) {
+        if (this.resetUpdatesChecked) {
             this.dirtyNegotiationFields = {};
         }
 
         // we disable dirty update because we don't want update it when the terms source is changed
         this.enableDirtyUpdate = false;
 
-        if(termSource == 'frame_contract' || termSource == 'last_offer') {
-            let quotationWrapper:QuotationWrapper;
+        if (termSource == 'frame_contract' || termSource == 'last_offer') {
+            let quotationWrapper: QuotationWrapper;
             let index;
-            if(termSource == 'frame_contract'){
+            if (termSource == 'frame_contract') {
                 quotationWrapper = this.wrapper.frameContractQuotationWrapper;
                 index = this.wrapper.frameContractQuotationWrapper.quotationLineIndex;
             }
-            else{
+            else {
                 quotationWrapper = this.wrapper.lastOfferQuotationWrapper;
                 index = this.wrapper.lineIndex;
             }
-            if(this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.DELIVERY_PERIOD]) {
+            if (this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.DELIVERY_PERIOD]) {
                 this.wrapper.rfqDeliveryPeriod = copy(quotationWrapper.deliveryPeriod);
             }
-            if(this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.WARRANTY_PERIOD]) {
+            if (this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.WARRANTY_PERIOD]) {
                 this.wrapper.rfqWarranty = copy(quotationWrapper.warranty);
             }
-            if(this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PAYMENT_TERMS]) {
+            if (this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PAYMENT_TERMS]) {
                 this.wrapper.rfqPaymentTerms.paymentTerm = quotationWrapper.paymentTermsWrapper.paymentTerm;
             }
-            if(this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.INCOTERMS]) {
+            if (this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.INCOTERMS]) {
                 this.wrapper.rfqIncoterms = quotationWrapper.incoterms;
             }
-            if(this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PAYMENT_MEANS]) {
+            if (this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PAYMENT_MEANS]) {
                 this.wrapper.rfqPaymentMeans = quotationWrapper.paymentMeans;
             }
-            if(this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PRICE]) {
+            if (this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PRICE]) {
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = roundToTwoDecimals(quotationWrapper.priceWrapper.pricePerItem);
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = quotationWrapper.priceWrapper.currency;
             }
@@ -310,23 +310,23 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
             this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.tradingTerms = copy(quotationWrapper.tradingTerms);
             this.wrapper.rfqDataMonitoringRequested = quotationWrapper.dataMonitoringPromised;
 
-        } else if(termSource == 'product_defaults') {
-            if(this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.DELIVERY_PERIOD]) {
+        } else if (termSource == 'product_defaults') {
+            if (this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.DELIVERY_PERIOD]) {
                 this.wrapper.rfqDeliveryPeriod = copy(this.wrapper.originalLineDeliveryPeriod);
             }
-            if(this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.WARRANTY_PERIOD]) {
+            if (this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.WARRANTY_PERIOD]) {
                 this.wrapper.rfqWarranty = copy(this.wrapper.originalLineWarranty);
             }
-            if(this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PAYMENT_TERMS]) {
+            if (this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PAYMENT_TERMS]) {
                 this.wrapper.rfqPaymentTerms.paymentTerm = this.wrapper.linePaymentTerms;
             }
-            if(this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.INCOTERMS]) {
+            if (this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.INCOTERMS]) {
                 this.wrapper.rfqIncoterms = this.wrapper.originalLineIncoterms;
             }
-            if(this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PAYMENT_MEANS]) {
+            if (this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PAYMENT_MEANS]) {
                 this.wrapper.rfqPaymentMeans = this.wrapper.linePaymentMeans;
             }
-            if(this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PRICE]) {
+            if (this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PRICE]) {
                 this.onPriceConditionsChange();
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = roundToTwoDecimals(this.wrapper.lineDiscountPriceWrapper.pricePerItem);
                 this.wrapper.rfqDiscountPriceWrapper.itemPrice.currency = this.wrapper.lineDiscountPriceWrapper.itemPrice.currency;
@@ -353,13 +353,13 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
         // get the price per item including the discount
         // if no quantity is specified, do not update the item price
         // otherwise, we lose the price information
-        if(this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.quantity.value){
+        if (this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.quantity.value) {
             this.wrapper.lineDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.discountedPricePerItem;
         }
 
         // update the rfq price only if the price is not being negotiated and the default product terms are presented
         // it does not make sense to update price based on the discounts when the terms of frame contract or last offer terms are presented
-        if(/*!this.rfq.negotiationOptions.price && */!this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PRICE] && this.manufacturersTermsSource == 'product_defaults') {
+        if (/*!this.rfq.negotiationOptions.price && */!this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.PRICE] && this.manufacturersTermsSource == 'product_defaults') {
             this.wrapper.rfqDiscountPriceWrapper.itemPrice.value = this.wrapper.lineDiscountPriceWrapper.discountedPricePerItem;
         }
     }
@@ -374,10 +374,10 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     }
 
     onTermsChange(termId: string, affectsPrice: boolean = true): void {
-        if(this.enableDirtyUpdate) {
+        if (this.enableDirtyUpdate) {
             this.dirtyNegotiationFields[termId] = true;
         }
-        if(affectsPrice) {
+        if (affectsPrice) {
             this.onPriceConditionsChange();
         }
     }
@@ -385,7 +385,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     onFrameContractDurationChanged(quantity: Quantity): void {
         // we need to set frameContractDuration in case of being called by other components
         // we set it if and only if the user is allowed to update it,i.e., frame contract tab is visible
-        if(this.isFrameContractVisible()){
+        if (this.isFrameContractVisible()) {
             this.frameContractDuration = quantity;
             if (!UBLModelUtils.isEmptyOrIncompleteQuantity(quantity)) {
                 this.wrapper.rfqFrameContractDuration = quantity;
@@ -395,12 +395,12 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
         }
     }
 
-    onTCTabSelect(event:any, id:any): void {
+    onTCTabSelect(event: any, id: any): void {
         event.preventDefault();
         this.selectedTCTab = id;
     }
 
-    onDeliveryTabSelect(event:any, id:any): void {
+    onDeliveryTabSelect(event: any, id: any): void {
         event.preventDefault();
         this.selectedDeliveryTab = id;
     }
@@ -408,15 +408,15 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     onDeleteTradingTerm(termName: string): void {
         this.wrapper.deleteRfqTradingTerm(termName);
         let termListsEqual: boolean = this.checkTradingTermListEquivalance();
-        if(termListsEqual) {
+        if (termListsEqual) {
             this.custTermsDiffer = false;
         }
     }
 
-    onAddDeliveryDate(){
+    onAddDeliveryDate() {
         // if delivery date section is open, add a new Delivery to store delivery date-quantity info
-        if(this.isDeliveryDateSectionOpen){
-            let delivery:Delivery = new Delivery();
+        if (this.isDeliveryDateSectionOpen) {
+            let delivery: Delivery = new Delivery();
             delivery.shipment.goodsItem[0].quantity.unitCode = this.getQuantityUnit();
             this.wrapper.rfqDelivery.push(delivery);
         }
@@ -431,13 +431,13 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
         }
     }
 
-    onDeleteDeliveryDate(index:number){
+    onDeleteDeliveryDate(index: number) {
         // if there are more than one delivery date-quantity pairs, remove the one with the given index
-        if(this.wrapper.rfqDelivery.length > 1){
-            this.wrapper.rfqDelivery.splice(index,1);
+        if (this.wrapper.rfqDelivery.length > 1) {
+            this.wrapper.rfqDelivery.splice(index, 1);
         }
         // else, close delivery date section
-        else{
+        else {
             // close the delivery date section
             this.isDeliveryDateSectionOpen = false;
             // clear delivery date-quantity selection for the first delivery
@@ -460,16 +460,16 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
         let customTermsDiffer: boolean;
         let clausesDiffer: boolean;
         let dataDataMonitoringRequestDiffers = false;
-        let isDeliveryDateAdded:boolean = this.areDeliveryDatesAvailable(this.wrapper.rfqDelivery);
+        let isDeliveryDateAdded: boolean = this.areDeliveryDatesAvailable(this.wrapper.rfqDelivery);
 
-        if(this.counterOfferTermsSource == 'last_offer' || this.counterOfferTermsSource == 'frame_contract') {
+        if (this.counterOfferTermsSource == 'last_offer' || this.counterOfferTermsSource == 'frame_contract') {
             let quotationWrapper;
             let index;
-            if(this.counterOfferTermsSource == 'last_offer') {
+            if (this.counterOfferTermsSource == 'last_offer') {
                 quotationWrapper = this.wrapper.lastOfferQuotationWrapper;
                 index = this.wrapper.lineIndex;
             }
-            else{
+            else {
                 quotationWrapper = this.wrapper.frameContractQuotationWrapper;
                 index = this.wrapper.frameContractQuotationWrapper.quotationLineIndex;
             }
@@ -520,7 +520,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     }
 
     getQuantityUnit(): string {
-        if(!this.wrapper.catalogueLine) {
+        if (!this.wrapper.catalogueLine) {
             return "";
         }
         return this.wrapper.catalogueLine.requiredItemLocationQuantity.price.baseQuantity.unitCode || "";
@@ -554,7 +554,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     getDeliveryPeriodText(): string {
         const range = this.getDeliveryPeriodRange();
 
-        if(range) {
+        if (range) {
             const unit = this.wrapper.rfqDeliveryPeriod.unitCode;
             return ` (minimum: ${range.start} ${unit}, maximum: ${range.end} ${unit})`;
         }
@@ -565,7 +565,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     getDeliveryPeriodStyle(): any {
         const result: any = {}
 
-        if(!this.isDeliveryPeriodValid()) {
+        if (!this.isDeliveryPeriodValid()) {
             result["color"] = "red";
         }
 
@@ -580,7 +580,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     getWarrantyPeriodText(): string {
         const range = this.getWarrantyPeriodRange();
 
-        if(range) {
+        if (range) {
             const unit = this.wrapper.rfqWarranty.unitCode;
             return ` (minimum: ${range.start} ${unit}, maximum: ${range.end} ${unit})`;
         }
@@ -591,7 +591,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     getWarrantyPeriodStyle(): any {
         const result: any = {}
 
-        if(!this.isWarrantyPeriodValid()) {
+        if (!this.isWarrantyPeriodValid()) {
             result["color"] = "red";
         }
 
@@ -609,17 +609,17 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
 
     getNonFrameContractTermNumber(): number {
         let termCount: number = 0;
-        for(let tradingTerm of this.wrapper.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.tradingTerms) {
-            if(tradingTerm.id != 'FRAME_CONTRACT_DURATION') {
+        for (let tradingTerm of this.wrapper.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.tradingTerms) {
+            if (tradingTerm.id != 'FRAME_CONTRACT_DURATION') {
                 termCount++;
             }
         }
         return termCount;
     }
 
-    areTermsEqual(termId: string,wrapper:NegotiationModelWrapper): boolean {
+    areTermsEqual(termId: string, wrapper: NegotiationModelWrapper): boolean {
         let termsEqual: boolean = wrapper.checkTermEquivalance(this.manufacturersTermsSource, termId);
-        if(!termsEqual) {
+        if (!termsEqual) {
             this.custTermsDiffer = true;
         }
         return termsEqual;
@@ -650,14 +650,14 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     }
 
     private isPeriodValid(value: number, range: PeriodRange): boolean {
-        if(typeof value !== "number") {
+        if (typeof value !== "number") {
             return true;
         }
 
         return value >= range.start && value <= range.end;
     }
 
-    private openDiscountModal(wrapper:NegotiationModelWrapper): void{
+    private openDiscountModal(wrapper: NegotiationModelWrapper): void {
         this.discountModal.open(wrapper.lineDiscountPriceWrapper);
     }
 
@@ -665,7 +665,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
         this.customTermModal.open();
     }
 
-    showTab(tab:boolean):boolean {
+    showTab(tab: boolean): boolean {
         let ret = true;
         if (tab)
             ret = false;
@@ -678,19 +678,19 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
 
     private checkTradingTermListEquivalance(): boolean {
         let manufacturersTermList;
-        if(this.manufacturersTermsSource == 'frame_contract') {
+        if (this.manufacturersTermsSource == 'frame_contract') {
             manufacturersTermList = this.wrapper.frameContractQuotationWrapper.tradingTerms;
-        } else if(this.manufacturersTermsSource == 'last_offer') {
+        } else if (this.manufacturersTermsSource == 'last_offer') {
             manufacturersTermList = this.wrapper.lastOfferQuotationWrapper.tradingTerms;
         }
         return UBLModelUtils.areTradingTermListsEqual(this.wrapper.rfqTradingTerms, manufacturersTermList);
     }
 
-    public getFrameContractDuration(){
+    public getFrameContractDuration() {
         return this.frameContractDuration;
     }
 
-    highlightDeliveryDetailsTab(){
+    highlightDeliveryDetailsTab() {
         return !this.wrapper.checkEqualForRequest(this.manufacturersTermsSource, 'deliveryPeriod') || this.areDeliveryDatesAvailable(this.wrapper.rfqDelivery) || !UBLModelUtils.isAddressEmpty(this.wrapper.rfqDeliveryAddress);
     }
 
@@ -710,24 +710,24 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     }
 
     // calculates the max quantity value for each delivery date
-    getMaxQuantityForDeliveryDates(index:number){
+    getMaxQuantityForDeliveryDates(index: number) {
         let quantity = this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.quantity.value;
 
-        if(index == 0){
+        if (index == 0) {
             return quantity;
         }
 
-        let totalQuantityToBeDelivered:number = 0;
-        for(let i=0; i<index;i++){
-            if(this.wrapper.rfqDelivery[i].shipment.goodsItem[0].quantity.value){
+        let totalQuantityToBeDelivered: number = 0;
+        for (let i = 0; i < index; i++) {
+            if (this.wrapper.rfqDelivery[i].shipment.goodsItem[0].quantity.value) {
                 totalQuantityToBeDelivered += this.wrapper.rfqDelivery[i].shipment.goodsItem[0].quantity.value;
             }
         }
 
-        if(totalQuantityToBeDelivered > quantity){
+        if (totalQuantityToBeDelivered > quantity) {
             return 0;
         }
 
-        return quantity-totalQuantityToBeDelivered;
+        return quantity - totalQuantityToBeDelivered;
     }
 }

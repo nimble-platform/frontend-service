@@ -17,5 +17,5 @@ export class EpcCodes {
         public orderId: string = null,
         public codes: string[] = null
 
-    ) {  }
+    ) { }
 }

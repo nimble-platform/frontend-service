@@ -16,5 +16,5 @@ export class KeywordSynonym {
     constructor(
         public value: string,
         public explanation: string
-    ) {  }
+    ) { }
 }

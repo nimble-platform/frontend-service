@@ -26,11 +26,11 @@ import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
 import { BpUserRole } from "../../model/bp-user-role";
 import { PaymentTermsWrapper } from "../payment-terms-wrapper";
 import { BPEService } from "../../bpe.service";
-import {CookieService} from 'ng2-cookies';
-import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
-import {DiscountPriceWrapper} from "../../../common/discount-price-wrapper";
-import {TranslateService} from '@ngx-translate/core';
-import {dateToString, quantityToString} from '../../../common/utils';
+import { CookieService } from 'ng2-cookies';
+import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
+import { DiscountPriceWrapper } from "../../../common/discount-price-wrapper";
+import { TranslateService } from '@ngx-translate/core';
+import { dateToString, quantityToString } from '../../../common/utils';
 
 @Component({
     selector: "transport-negotiation-response",
@@ -50,7 +50,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
     @Input() readonly: boolean = false;
     // this component is used for both transport and logistics service negotiation
     // however, we need to know the type of service since some tabs are displayed only for transport services
-    @Input() isTransportService:boolean;
+    @Input() isTransportService: boolean;
 
     quantityToString = quantityToString;
     selectedTab: string = "OVERVIEW";
@@ -66,25 +66,25 @@ export class TransportNegotiationResponseComponent implements OnInit {
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
 
-    dateToString=dateToString;
+    dateToString = dateToString;
 
     constructor(private bpeService: BPEService,
-                private bpDataService: BPDataService,
-                private location: Location,
-                private cookieService: CookieService,
-                private translate: TranslateService,
-                private router: Router) {
+        private bpDataService: BPDataService,
+        private location: Location,
+        private cookieService: CookieService,
+        private translate: TranslateService,
+        private router: Router) {
     }
 
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
 
-        if(!this.rfq) {
+        if (!this.rfq) {
             this.rfq = this.bpDataService.requestForQuotation;
         }
         // for logistics services except transport services, onyl Negotiation tab is available
-        if(!this.isTransportService){
+        if (!this.isTransportService) {
             this.selectedTab = "NEGOTIATION";
         }
         this.rfqPrice = new DiscountPriceWrapper(
@@ -94,7 +94,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
         //this.rfqPrice.quotationLinePriceWrapper = new ItemPriceWrapper(this.rfq.requestForQuotationLine[0].lineItem.price);
         this.rfqPaymentTerms = new PaymentTermsWrapper(this.rfq.requestForQuotationLine[0].lineItem.paymentTerms);
 
-        if(!this.quotation) {
+        if (!this.quotation) {
             this.quotation = this.bpDataService.quotation;
         }
         this.quotationPrice = new DiscountPriceWrapper(
@@ -134,20 +134,20 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
     onRespondToQuotation(accepted: boolean): void {
         this.callStatus.submit();
-        if(accepted) {
+        if (accepted) {
             this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.ACCEPTED;
         } else {
             this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.REJECTED;
         }
 
         //this.callStatus.submit();
-        this.bpeService.startProcessWithDocument(this.quotation,this.quotation.sellerSupplierParty.party.federationInstanceID)
+        this.bpeService.startProcessWithDocument(this.quotation, this.quotation.sellerSupplierParty.party.federationInstanceID)
             .then(res => {
                 this.callStatus.callback("Quotation sent", true);
                 var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                     tab = "SALES";
-                this.router.navigate(['dashboard'], {queryParams: {tab: tab,ins: this.quotation.sellerSupplierParty.party.federationInstanceID}});
+                this.router.navigate(['dashboard'], { queryParams: { tab: tab, ins: this.quotation.sellerSupplierParty.party.federationInstanceID } });
             })
             .catch(error => {
                 this.callStatus.error("Failed to send quotation", error);
@@ -155,56 +155,56 @@ export class TransportNegotiationResponseComponent implements OnInit {
     }
 
     onRequestNewQuotation() {
-        this.bpDataService.setCopyDocuments(true, true, false,false);
+        this.bpDataService.setCopyDocuments(true, true, false, false);
         this.bpDataService.proceedNextBpStep("buyer", "Negotiation");
     }
 
     onAcceptAndOrder() {
-        this.bpDataService.setCopyDocuments(false, true, false,false);
-        this.bpDataService.proceedNextBpStep(this.userRole,'Transport_Execution_Plan');
+        this.bpDataService.setCopyDocuments(false, true, false, false);
+        this.bpDataService.proceedNextBpStep(this.userRole, 'Transport_Execution_Plan');
     }
 
     // methods to check whether the term is updated in the negotiation response or not
 
-    hasUpdatedTerms():boolean{
+    hasUpdatedTerms(): boolean {
         return this.isDeliveryPeriodUpdated() || this.isSpecialTermsUpdated() || this.isStartDateUpdated() || this.isEndDateUpdated() || this.isIncotermsUpdated() || this.isPaymentTermsUpdated() ||
             this.isPaymentMeansUpdated() || this.isPriceUpdated() || this.isNoteUpdated();
     }
 
-    isDeliveryPeriodUpdated(){
+    isDeliveryPeriodUpdated() {
         return (this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value != this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.value) ||
             (this.rfq.requestForQuotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode != this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure.unitCode);
     }
 
-    isSpecialTermsUpdated(){
+    isSpecialTermsUpdated() {
         return (this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.specialTerms[0].value != this.quotation.quotationLine[0].lineItem.deliveryTerms.specialTerms[0].value);
     }
 
-    isStartDateUpdated(){
+    isStartDateUpdated() {
         return (this.rfq.delivery.requestedDeliveryPeriod.startDate != this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.startDate);
     }
 
-    isEndDateUpdated(){
+    isEndDateUpdated() {
         return (this.rfq.delivery.requestedDeliveryPeriod.endDate != this.quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.endDate);
     }
 
-    isIncotermsUpdated(){
+    isIncotermsUpdated() {
         return (this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms != this.quotation.quotationLine[0].lineItem.deliveryTerms.incoterms);
     }
 
-    isPaymentTermsUpdated(){
+    isPaymentTermsUpdated() {
         return (this.rfqPaymentTerms.paymentTerm != this.quotationPaymentTerms.paymentTerm);
     }
 
-    isPaymentMeansUpdated(){
+    isPaymentMeansUpdated() {
         return (this.rfq.requestForQuotationLine[0].lineItem.paymentMeans.paymentMeansCode.value != this.quotation.quotationLine[0].lineItem.paymentMeans.paymentMeansCode.value);
     }
 
-    isPriceUpdated(){
+    isPriceUpdated() {
         return (this.rfqPrice.itemPrice.value != this.quotationPrice.itemPrice.value) || (this.rfqPrice.itemPrice.currency != this.quotationPrice.itemPrice.currency);
     }
 
-    isNoteUpdated(){
+    isNoteUpdated() {
         return ((this.quotation.note.length == 1 && this.quotation.note[0] != "") || this.quotation.note.length > 1 || this.quotation.additionalDocumentReference.length > 0);
     }
 }

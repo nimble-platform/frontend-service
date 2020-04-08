@@ -56,9 +56,8 @@
     </div>
     <div class="col-3">
         <div class="row d-flex flex-wrap">
-            <div class="col-12 d-flex flex-wrap" >
-                <div *ngFor="let country of getSelectedCountries()"
-                     class="bordered my-1 mr-1">
+            <div class="col-12 d-flex flex-wrap">
+                <div *ngFor="let country of getSelectedCountries()" class="bordered my-1 mr-1">
                     <small class="p-0">{{country}}</small>
                     <i class="fa fa-times-circle pl-1" placement="right" (click)="onCountryRemoved(country)"></i>
                 </div>

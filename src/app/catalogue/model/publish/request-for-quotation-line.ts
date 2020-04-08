@@ -14,10 +14,10 @@
    limitations under the License.
  */
 
-import {LineItem} from "./line-item";
+import { LineItem } from "./line-item";
 
 export class RequestForQuotationLine {
     constructor(
-        public lineItem:LineItem
-    ) {  }
+        public lineItem: LineItem
+    ) { }
 }

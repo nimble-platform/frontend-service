@@ -57,4 +57,4 @@ import { HttpClientModule } from '@angular/common/http';
     entryComponents: []
 })
 
-export class QualiExploreModule {}
+export class QualiExploreModule { }

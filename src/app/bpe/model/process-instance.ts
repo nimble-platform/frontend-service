@@ -14,12 +14,12 @@
    limitations under the License.
  */
 
-import {LineItem} from "../../catalogue/model/publish/line-item";
+import { LineItem } from "../../catalogue/model/publish/line-item";
 
 export class ProcessInstance {
     constructor(public processInstanceID: string = "",
-                public processID: string = "",
-                public creationDate: string = "",
-                public status: string = "") {
+        public processID: string = "",
+        public creationDate: string = "",
+        public status: string = "") {
     }
 }

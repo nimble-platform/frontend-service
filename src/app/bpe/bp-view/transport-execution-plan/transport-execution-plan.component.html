@@ -23,48 +23,34 @@
             <div *ngFor="let goodsItem of request.consignment[0].consolidatedShipment[0].goodsItem">
 
                 <!-- Goods Item -->
-                <text-input label="Goods Item" definition="The goods item included in this shipment"
-                            [rows]="1" [presentationMode]="'view'"
-                            [(text)]="goodsItem.item.name[0].value" [disabled]="true" labelClass="col-2" valueClass="col-10" rowClass="space-before" [required]="true">
+                <text-input label="Goods Item" definition="The goods item included in this shipment" [rows]="1" [presentationMode]="'view'" [(text)]="goodsItem.item.name[0].value" [disabled]="true" labelClass="col-2" valueClass="col-10" rowClass="space-before" [required]="true">
                 </text-input>
 
                 <!-- Quantity -->
-                <quantity-input label="Quantity" definition="The quantity to transport."
-                                [quantity]="goodsItem.quantity" [disabled]="true" [presentationMode]="'view'" rowClass="space-before"
-                                labelClass="col-2" valueClass="col-10" [required]="true">
+                <quantity-input label="Quantity" definition="The quantity to transport." [quantity]="goodsItem.quantity" [disabled]="true" [presentationMode]="'view'" rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
                 </quantity-input>
 
                 <!-- Gross Volume -->
-                <quantity-input label="Gross Volume" definition="The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L"
-                                [quantity]="goodsItem.grossVolumeMeasure" quantityType="volume_quantity"
-                                rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
+                <quantity-input label="Gross Volume" definition="The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L" [quantity]="goodsItem.grossVolumeMeasure" quantityType="volume_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
                 </quantity-input>
 
                 <!-- Gross Weight -->
-                <quantity-input label="Gross Weight" definition="The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg"
-                                [quantity]="goodsItem.grossWeightMeasure" quantityType="weight_quantity" rowClass="space-before"
-                                labelClass="col-2" valueClass="col-10" presentationMode="view">
+                <quantity-input label="Gross Weight" definition="The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg" [quantity]="goodsItem.grossWeightMeasure" quantityType="weight_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
                 </quantity-input>
 
                 <hr>
             </div>
 
             <!-- Gross Volume -->
-            <quantity-input label="Total Gross Volume" definition="The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L"
-                            [quantity]="request.consignment[0].grossVolumeMeasure" quantityType="volume_quantity"
-                            rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
+            <quantity-input label="Total Gross Volume" definition="The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L" [quantity]="request.consignment[0].grossVolumeMeasure" quantityType="volume_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
             </quantity-input>
 
             <!-- Gross Weight -->
-            <quantity-input label="Total Gross Weight" definition="The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg"
-                            [quantity]="request.consignment[0].grossWeightMeasure" quantityType="weight_quantity" rowClass="space-before"
-                            labelClass="col-2" valueClass="col-10" presentationMode="view">
+            <quantity-input label="Total Gross Weight" definition="The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg" [quantity]="request.consignment[0].grossWeightMeasure" quantityType="weight_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
             </quantity-input>
 
             <!-- Handling Instructions -->
-            <text-input label="Handling Instructions" definition="The handling required for this shipment"
-                        [(text)]="request.consignment[0].consolidatedShipment[0].handlingInstructions"
-                        rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
+            <text-input label="Handling Instructions" definition="The handling required for this shipment" [(text)]="request.consignment[0].consolidatedShipment[0].handlingInstructions" rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
             </text-input>
         </div>
     </div>
@@ -74,20 +60,16 @@
         <div class="col-12">
             <h3><span [innerHTML]="'Pick-up Dates' | translate"></span></h3>
             <!-- Service Start Date -->
-            <date-input label="Pick-Up Date" definition="The period within which the services referred to in the Transport Execution Plan Request must begin."
-                        [(date)]="request.serviceStartTimePeriod.startDate" rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
+            <date-input label="Pick-Up Date" definition="The period within which the services referred to in the Transport Execution Plan Request must begin." [(date)]="request.serviceStartTimePeriod.startDate" rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
             </date-input>
 
             <!-- Service End Date -->
-            <date-input label="Drop-Off Date" definition="The period during which the services referred to in the Transport Execution Plan Request must be completed."
-                        [(date)]="request.serviceStartTimePeriod.endDate" rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
+            <date-input label="Drop-Off Date" definition="The period during which the services referred to in the Transport Execution Plan Request must be completed." [(date)]="request.serviceStartTimePeriod.endDate" rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
             </date-input>
         </div>
     </div>
 
-
     <hr>
-
 
     <!-- Origin Address -->
     <div class="row">
@@ -98,9 +80,7 @@
         </div>
     </div>
 
-
     <hr>
-
 
     <!-- To Address -->
     <div class="row">
@@ -111,25 +91,12 @@
         </div>
     </div>
 
-
     <hr>
-
 
     <!--Notes-->
     <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
-    <note-file-view [notes]="request.note"
-               [documents]="request.additionalDocumentReference"
-               [firstCol]="'col-2'"
-               [lastCol]="'col-10'"
-               [readonly]="isRequestDisabled()"
-               [label]="'Request Notes'"></note-file-view>
-    <note-file-view *ngIf="response"
-               [documents]="response.additionalDocumentReference"
-               [notes]="response.note"
-               [firstCol]="'col-2'"
-               [lastCol]="'col-10'"
-               [label]="'Response Notes'"
-               [readonly]="isResponseDisabled()"></note-file-view>
+    <note-file-view [notes]="request.note" [documents]="request.additionalDocumentReference" [firstCol]="'col-2'" [lastCol]="'col-10'" [readonly]="isRequestDisabled()" [label]="'Request Notes'"></note-file-view>
+    <note-file-view *ngIf="response" [documents]="response.additionalDocumentReference" [notes]="response.note" [firstCol]="'col-2'" [lastCol]="'col-10'" [label]="'Response Notes'" [readonly]="isResponseDisabled()"></note-file-view>
     <!-- Contract -->
     <ng-container *ngIf="request.transportContract?.clause || contractCallStatus.isDisplayed()">
         <hr>
@@ -137,10 +104,7 @@
         <call-status [callStatus]="contractCallStatus"></call-status>
         <!-- having a non-null processMetadata indicates that the product is not still deleted. -->
         <!-- Otherwise, it would not have been possible to proceed with the next business process step -->
-        <contract *ngIf="request.transportContract" [sellerFederationId]="request.transportServiceProviderParty.federationInstanceID"
-                  [contract]="request.transportContract"
-                  [showQuotation]="true"
-                  [areCatalogueLinesDeleted]="populateAreCatalogueLinesDeletedArray()">
+        <contract *ngIf="request.transportContract" [sellerFederationId]="request.transportServiceProviderParty.federationInstanceID" [contract]="request.transportContract" [showQuotation]="true" [areCatalogueLinesDeleted]="populateAreCatalogueLinesDeletedArray()">
         </contract>
     </ng-container>
 
@@ -149,7 +113,9 @@
     <!-- Actions -->
     <div class="row actions-row" *ngIf="userRole === 'buyer' && !isStarted() && !isFinished()">
         <div class="col-3"></div>
-        <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-4 call-status-col">
+            <call-status [callStatus]="callStatus"></call-status>
+        </div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
@@ -157,7 +123,7 @@
             <button *ngIf="!updatingProcess" class="btn btn-primary action" [disabled]="isLoading()" (click)="onSendRequest()" singleClick>
                 <span [innerHTML]="'Send Execution Plan Terms' | translate"></span>
             </button>
-            <button *ngIf="updatingProcess"class="btn btn-primary action" [disabled]="isLoading()" (click)="onUpdateRequest()" singleClick>
+            <button *ngIf="updatingProcess" class="btn btn-primary action" [disabled]="isLoading()" (click)="onUpdateRequest()" singleClick>
                 <span [innerHTML]="'Update Execution Plan Terms' | translate"></span>
             </button>
         </div>
@@ -165,7 +131,9 @@
 
     <div class="row actions-row" *ngIf="userRole === 'buyer' && isFinished()">
         <div class="{{productOrder ? 'col-3' : 'col-6'}}"></div>
-        <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-4 call-status-col">
+            <call-status [callStatus]="callStatus"></call-status>
+        </div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
@@ -177,7 +145,9 @@
     </div>
 
     <div class="row actions-row" *ngIf="userRole === 'seller' && !isFinished()">
-        <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-6 call-status-col">
+            <call-status [callStatus]="callStatus"></call-status>
+        </div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
@@ -195,7 +165,9 @@
 
     <div class="row actions-row" *ngIf="(userRole === 'buyer' && isStarted()) || (userRole === 'seller' && isFinished())">
         <div class="col-6"></div>
-        <div class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-4 call-status-col">
+            <call-status [callStatus]="callStatus"></call-status>
+        </div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>

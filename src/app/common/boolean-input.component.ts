@@ -13,7 +13,7 @@
  */
 
 import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
-import {TranslateService} from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "boolean-input",
@@ -42,7 +42,7 @@ export class BooleanInputComponent implements OnInit {
     }
 
     ngOnInit() {
-        if(!this.valueClass) {
+        if (!this.valueClass) {
             this.valueClass = this.label ? "col-9" : "col-12";
         }
     }

@@ -42,13 +42,7 @@
         <div class="card-body">
             <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.ORDERED_QUANTITY.typeID); let i = index">
                 <div class="row price-option-row">
-                    <quantity-price-option class="col-11"
-                                           [catalogueLine]="catalogueLine"
-                                           [priceOption]="priceOption.option"
-                                           [discountUnits]="discountUnits"
-                                           [readonly]="readonly"
-                                           [parentForm]="formGroup"
-                                           [componentIndex]="i">
+                    <quantity-price-option class="col-11" [catalogueLine]="catalogueLine" [priceOption]="priceOption.option" [discountUnits]="discountUnits" [readonly]="readonly" [parentForm]="formGroup" [componentIndex]="i">
                     </quantity-price-option>
                     <div class="col-1" *ngIf="!readonly">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
@@ -63,8 +57,7 @@
 </ng-container>
 
 <!-- item property related options -->
-<ng-container
-        *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.PRODUCT_PROPERTY.typeID) > 0 && catalogueLine.goodsItem.item.additionalItemProperty.length > 0">
+<ng-container *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.PRODUCT_PROPERTY.typeID) > 0 && catalogueLine.goodsItem.item.additionalItemProperty.length > 0">
     <div class="card space-after">
         <div class="card-header">
             <strong><span [innerHTML]="'Product / Service property based price options' | translate"></span></strong>
@@ -73,12 +66,7 @@
         <div class="card-body">
             <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.PRODUCT_PROPERTY.typeID); let i = index;">
                 <div class="row price-option-row">
-                    <item-property-price-option class="col-11"
-                                                [catalogueLine]="catalogueLine"
-                                                [priceOption]="priceOption.option"
-                                                [discountUnits]="discountUnits"
-                                                [readonly]="readonly"
-                                                [index]="i">
+                    <item-property-price-option class="col-11" [catalogueLine]="catalogueLine" [priceOption]="priceOption.option" [discountUnits]="discountUnits" [readonly]="readonly" [index]="i">
                     </item-property-price-option>
                     <div class="col-1" *ngIf="!readonly">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
@@ -93,8 +81,7 @@
 </ng-container>
 
 <!-- incoterms related options -->
-<ng-container
-        *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.INCOTERM.typeID) > 0">
+<ng-container *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.INCOTERM.typeID) > 0">
     <div class="card space-after">
         <div class="card-header">
             <strong><span [innerHTML]="'Incoterms based price options' | translate"></span></strong>
@@ -103,12 +90,7 @@
         <div class="card-body">
             <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.INCOTERM.typeID); let i = index;">
                 <div class="row price-option-row">
-                    <price-option-view class="col-11"
-                                       [catalogueLine]="catalogueLine"
-                                       [priceOption]="priceOption.option"
-                                       [discountUnits]="discountUnits"
-                                       [readonly]="readonly"
-                                       [incoterms]="companyNegotiationSettings.incoterms">
+                    <price-option-view class="col-11" [catalogueLine]="catalogueLine" [priceOption]="priceOption.option" [discountUnits]="discountUnits" [readonly]="readonly" [incoterms]="companyNegotiationSettings.incoterms">
                     </price-option-view>
                     <div class="col-1" *ngIf="!readonly">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
@@ -123,8 +105,7 @@
 </ng-container>
 
 <!--payment means related options-->
-<ng-container
-        *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.PAYMENT_MEAN.typeID) > 0">
+<ng-container *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.PAYMENT_MEAN.typeID) > 0">
     <div class="card space-after">
         <div class="card-header">
             <strong><span [innerHTML]="'Payment means based price options' | translate"></span></strong>
@@ -133,12 +114,7 @@
         <div class="card-body">
             <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.PAYMENT_MEAN.typeID); let i = index;">
                 <div class="row price-option-row">
-                    <price-option-view class="col-11"
-                                       [catalogueLine]="catalogueLine"
-                                       [priceOption]="priceOption.option"
-                                       [discountUnits]="discountUnits"
-                                       [readonly]="readonly"
-                                       [paymentMeans]="companyNegotiationSettings.paymentMeans">
+                    <price-option-view class="col-11" [catalogueLine]="catalogueLine" [priceOption]="priceOption.option" [discountUnits]="discountUnits" [readonly]="readonly" [paymentMeans]="companyNegotiationSettings.paymentMeans">
                     </price-option-view>
                     <div class="col-1" *ngIf="!readonly">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
@@ -153,8 +129,7 @@
 </ng-container>
 
 <!--delivery location related options-->
-<ng-container
-        *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.DELIVERY_LOCATION.typeID) > 0">
+<ng-container *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.DELIVERY_LOCATION.typeID) > 0">
     <div class="card space-after">
         <div class="card-header">
             <strong><span [innerHTML]="'Delivery location based price options' | translate"></span></strong>
@@ -163,11 +138,7 @@
         <div class="card-body">
             <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.DELIVERY_LOCATION.typeID); let i = index;">
                 <div class="row price-option-row">
-                    <price-option-view class="col-11"
-                                       [catalogueLine]="catalogueLine"
-                                       [discountUnits]="discountUnits"
-                                       [readonly]="readonly"
-                                       [priceOption]="priceOption.option">
+                    <price-option-view class="col-11" [catalogueLine]="catalogueLine" [discountUnits]="discountUnits" [readonly]="readonly" [priceOption]="priceOption.option">
                     </price-option-view>
                     <div class="col-1" *ngIf="!readonly">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
@@ -182,8 +153,7 @@
 </ng-container>
 
 <!--delivery period related options-->
-<ng-container
-        *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.DELIVERY_PERIOD.typeID) > 0">
+<ng-container *ngIf="(catalogueLine.priceOption | priceOptionCountPipe : priceOptions.DELIVERY_PERIOD.typeID) > 0">
     <div class="card space-after">
         <div class="card-header">
             <strong><span [innerHTML]="'Delivery period based price options' | translate"></span></strong>
@@ -192,12 +162,7 @@
         <div class="card-body">
             <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.DELIVERY_PERIOD.typeID); let i = index;">
                 <div class="row price-option-row">
-                    <price-option-view class="col-11"
-                                       [catalogueLine]="catalogueLine"
-                                       [priceOption]="priceOption.option"
-                                       [discountUnits]="discountUnits"
-                                       [readonly]="readonly"
-                                       [deliveryPeriodUnits]="companyNegotiationSettings.deliveryPeriodUnits">
+                    <price-option-view class="col-11" [catalogueLine]="catalogueLine" [priceOption]="priceOption.option" [discountUnits]="discountUnits" [readonly]="readonly" [deliveryPeriodUnits]="companyNegotiationSettings.deliveryPeriodUnits">
                     </price-option-view>
                     <div class="col-1" *ngIf="!readonly">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">

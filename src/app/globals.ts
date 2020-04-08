@@ -43,21 +43,21 @@ export const frontendURL = base_path + "/frontend/";
 
 // Service endpoints
 
-export const user_mgmt_endpoint=`${base_path}/identity`;
-export const catalogue_endpoint=`${base_path}/catalog`;
-export const bpe_endpoint=`${base_path}/business-process`;
-export const data_channel_endpoint=`${base_path}/data-channel`;
-export const data_aggregation_endpoint=`${base_path}/data-aggregation`;
-export const trust_service_endpoint=`${base_path}/trust`;
-export const indexing_service_endpoint=`${base_path}/index`;
+export const user_mgmt_endpoint = `${base_path}/identity`;
+export const catalogue_endpoint = `${base_path}/catalog`;
+export const bpe_endpoint = `${base_path}/business-process`;
+export const data_channel_endpoint = `${base_path}/data-channel`;
+export const data_aggregation_endpoint = `${base_path}/data-aggregation`;
+export const trust_service_endpoint = `${base_path}/trust`;
+export const indexing_service_endpoint = `${base_path}/index`;
 export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}/logstash`;
 export const kibana_endpoint = `${base_path}/kibana/app/kibana`;
 export const delegate_endpoint = `${base_path}/delegate`;
-export const agent_mgmt_endpoint=`http://159.69.214.42/agents`;
+export const agent_mgmt_endpoint = `http://159.69.214.42/agents`;
 export const collaboration_endpoint = `${collab_path}`;
-export const certificate_of_origin_endpoint=`http://161.156.70.125:7695`;
-export const legislation_endpoint=`http://77.230.101.223/nimsys`;
+export const certificate_of_origin_endpoint = `http://161.156.70.125:7695`;
+export const legislation_endpoint = `http://77.230.101.223/nimsys`;
 
 
 // Explorative Search endpoints
@@ -144,7 +144,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 */
 
 export const config = {
-    "federationInstanceId":"STAGING",
+    "federationInstanceId": "STAGING",
     "platformName": "Local Development",
     "envName": "local",
     "addCartBehaviour": "single",
@@ -156,22 +156,22 @@ export const config = {
             "ontologyPrefix": "http://www.nimble-project.org/resource/eclass#"
         },
         "FurnitureOntology": {
-            "hiddenCategories": ["Catalogue","Company","ContactPerson","Guarantee","Price","Process","Standard","Style","Technique"],
+            "hiddenCategories": ["Catalogue", "Company", "ContactPerson", "Guarantee", "Price", "Process", "Standard", "Style", "Technique"],
             "logisticsCategory": "LogisticsService",
             "ontologyPrefix": "http://www.aidimme.es/FurnitureSectorOntology.owl#"
         }
     },
     "collaborationEnabled": false,
-    "dataChannelsEnabled" : true,
+    "dataChannelsEnabled": true,
     "defaultBusinessProcessIds": [
     ],
     "defaultSearchIndex": "Name",
     "delegationEnabled": true,
     "docLink": "https://www.nimble-project.org/docs/",
-    "frameContractTabEnabled":true,
+    "frameContractTabEnabled": true,
     "imprint": "<u>Platform Owner & Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)",
     "kibanaConfig": {
-        "companyDashboards" : [
+        "companyDashboards": [
             {
                 "title": "Company Visits",
                 "url": "#/dashboard/d1503680-e5bf-11e9-a14e-bde7739ac822?embed=true&_g=(refreshInterval:(pause:!t,value:0),time:(from:now-1y,mode:quick,to:now))&_a=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'7e688530-cd69-11e9-b5e8-e908493e1aa7',key:companyId,negate:!f,params:(query:'41915',type:phrase),type:phrase,value:'41915'),query:(match:(companyId:(query:'41915',type:phrase))))))"
@@ -228,8 +228,8 @@ export const config = {
     "projectsEnabled": true,
     "requiredAgreements": [
         {
-            "title":"End-User License Agreement (EULA)",
-            "src":"./assets/eula.pdf"
+            "title": "End-User License Agreement (EULA)",
+            "src": "./assets/eula.pdf"
         }
     ],
     "showChat": true,
@@ -289,18 +289,18 @@ export const config = {
     ],
     "supportMail": "nimble-support@salzburgresearch.at",
     "supportMailContent": {
-        "en":"Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]",
-        "es":"Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
+        "en": "Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]",
+        "es": "Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
     },
     "showLoginFederation": true,
-    "unshippedOrdersTabEnabled":true,
+    "unshippedOrdersTabEnabled": true,
     "federationClientID": "efact-test-client",
     "federationIDP": "EFS",
-	"legislationSettings": {
-		"enabled": true,
-		"authMode": "nimble",
-		"datePlaceholder": "yyyy-mm-dd"
-	}
+    "legislationSettings": {
+        "enabled": true,
+        "authMode": "nimble",
+        "datePlaceholder": "yyyy-mm-dd"
+    }
 };
 
 
@@ -331,31 +331,31 @@ export const item_manufacturer_id = "manufacturerId";
 // <<<
 // Grouping of facets into categories (Product / Service, Vendor, Trust / Rating, Other)
 // >>>
-export const product_filter_prod = ["freeOfCharge","certificateType","applicableCountries"];
-export const product_filter_comp = ["manufacturer.legalName","manufacturer.brandName","manufacturer.businessType","manufacturer.activitySectors","manufacturer.businessKeywords","manufacturer.origin","manufacturer.certificateType","manufacturer.ppapComplianceLevel","manufacturer.ppapDocumentType"];
-export const party_facet_field_list = ["legalName","{LANG}_brandName","businessType","{LANG}_activitySectors","{LANG}_businessKeywords","{NULL}_origin","{NULL}_certificateType","ppapComplianceLevel","ppapDocumentType"];
-export const party_filter_main = ["businessType","activitySectors","businessKeywords","origin","certificateType","ppapComplianceLevel","ppapDocumentType"];
-export const party_filter_trust = ["trustScore","trustRating","trustSellerCommunication","trustFullfillmentOfTerms","trustDeliveryPackaging","trustNumberOfTransactions"];
-export const product_filter_trust = ["manufacturer.trustScore","manufacturer.trustRating","manufacturer.trustSellerCommunication","manufacturer.trustFullfillmentOfTerms","manufacturer.trustDeliveryPackaging","manufacturer.trustNumberOfTransactions"];
+export const product_filter_prod = ["freeOfCharge", "certificateType", "applicableCountries"];
+export const product_filter_comp = ["manufacturer.legalName", "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin", "manufacturer.certificateType", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType"];
+export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "{NULL}_certificateType", "ppapComplianceLevel", "ppapDocumentType"];
+export const party_filter_main = ["businessType", "activitySectors", "businessKeywords", "origin", "certificateType", "ppapComplianceLevel", "ppapDocumentType"];
+export const party_filter_trust = ["trustScore", "trustRating", "trustSellerCommunication", "trustFullfillmentOfTerms", "trustDeliveryPackaging", "trustNumberOfTransactions"];
+export const product_filter_trust = ["manufacturer.trustScore", "manufacturer.trustRating", "manufacturer.trustSellerCommunication", "manufacturer.trustFullfillmentOfTerms", "manufacturer.trustDeliveryPackaging", "manufacturer.trustNumberOfTransactions"];
 // <<<
 // Used to overwrite facet name mappings from the backend services
 export const product_filter_mappings = {
-  "price": "Price",
-  "currency": "Currency",
-  "manufacturer.id": "Vendor ID",
-  "manufacturer.businessType": "Business Type",
-  "manufacturer.activitySectors": "Activity Sectors",
-  "manufacturer.businessKeywords": "Business Keywords",
-  "manufacturer.origin": "Vendor Origin",
-  "businessType": "Business Type",
-  "activitySectors": "Activity Sectors",
-  "businessKeywords": "Business Keywords",
-  "origin": "Vendor Origin"
+    "price": "Price",
+    "currency": "Currency",
+    "manufacturer.id": "Vendor ID",
+    "manufacturer.businessType": "Business Type",
+    "manufacturer.activitySectors": "Activity Sectors",
+    "manufacturer.businessKeywords": "Business Keywords",
+    "manufacturer.origin": "Vendor Origin",
+    "businessType": "Business Type",
+    "activitySectors": "Activity Sectors",
+    "businessKeywords": "Business Keywords",
+    "origin": "Vendor Origin"
 };
 // Facets removed from the UI by full name
-export const product_nonfilter_full = ["_text_","_version_","id","image","localName","languages","catalogueId","doctype","manufacturerId","manufacturerItemId","allLabels"];
+export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "catalogueId", "doctype", "manufacturerId", "manufacturerItemId", "allLabels"];
 // Facets removed from the UI by regex
-export const product_nonfilter_regex = ["lmf.","manufacturer.","_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
+export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
 // Facets used for configuration
 export const product_configurable = [];
 // Facets used for default fields
@@ -371,7 +371,7 @@ export const facet_count = -1;
 - boostingFactors: Allows defining different boosting factors for searching by relevance. Keys are the field names listed in "fields" and values are -1 (for negative boosts) or a multiple of 2
 */
 export const query_settings = {
-    "fields": ["STANDARD","commodityClassficationUri","{LANG}_label","{LANG}_desc"],
+    "fields": ["STANDARD", "commodityClassficationUri", "{LANG}_label", "{LANG}_desc"],
     "boosting": true,
     "boostingFactors": {
         "STANDARD": 4,
@@ -382,12 +382,12 @@ export const query_settings = {
 };
 // Query settings for company search
 export const query_settings_comp = {
-  "fields": ["STANDARD","id","legalName","{LANG}_brandName"],
-  "boosting": true,
-  "boostingFactors": {
-    "STANDARD": 4,
-    "id": 4,
-    "{LANG}_brandName": 64,
-    "legalName": 64
-  }
+    "fields": ["STANDARD", "id", "legalName", "{LANG}_brandName"],
+    "boosting": true,
+    "boostingFactors": {
+        "STANDARD": 4,
+        "id": 4,
+        "{LANG}_brandName": 64,
+        "legalName": 64
+    }
 };

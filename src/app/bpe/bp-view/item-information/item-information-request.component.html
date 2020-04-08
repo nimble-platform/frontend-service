@@ -19,9 +19,7 @@
         <strong class="font-weight-500"><label for="customFile"><span [innerHTML]="'Requested filled technical data sheet(s)' | translate"></span>:</label></strong>
     </div>
     <div class="col-9">
-        <file-input [disabled]="isLoading() || isRequestSent()" [multiple]="true" [presentationMode]="getPresentationMode()"
-            (onSelectFile)="onSelectItemSpecificationFile($event)" [binaryObjects]="files"
-            (onClearFile)="onUnselectItemSpecificationFile($event)">
+        <file-input [disabled]="isLoading() || isRequestSent()" [multiple]="true" [presentationMode]="getPresentationMode()" (onSelectFile)="onSelectItemSpecificationFile($event)" [binaryObjects]="files" (onClearFile)="onUnselectItemSpecificationFile($event)">
         </file-input>
     </div>
 </div>
@@ -30,20 +28,21 @@
 
 <!--Notes-->
 <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
-<note-file-view [notes]="request.note"
-           [label]="'Notes'"
-           [documents]="request.additionalDocumentReference"
-           [readonly]="isLoading() || isRequestSent()"></note-file-view>
+<note-file-view [notes]="request.note" [label]="'Notes'" [documents]="request.additionalDocumentReference" [readonly]="isLoading() || isRequestSent()"></note-file-view>
 
 <hr class="actions-hr">
 
 <!-- Actions -->
 <div *ngIf="!isRequestSent()" class="row actions-row">
     <div class="{{bpDataService.isFinalProcessInTheWorkflow('Item_Information_Request') ? 'col-4' : 'col-2'}}"></div>
-    <div *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-    <div *ngIf="processMetadata && processMetadata.isBeingUpdated" class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="col-4 call-status-col">
+        <call-status [callStatus]="callStatus"></call-status>
+    </div>
+    <div *ngIf="processMetadata && processMetadata.isBeingUpdated" class="col-6 call-status-col">
+        <call-status [callStatus]="callStatus"></call-status>
+    </div>
     <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div *ngIf="!(processMetadata && processMetadata.isBeingUpdated) && !bpDataService.isFinalProcessInTheWorkflow('Item_Information_Request')" class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onSkip()">

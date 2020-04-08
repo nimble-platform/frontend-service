@@ -15,38 +15,30 @@
  -->
 
 <!-- Warranty -->
-<quantity-input [label]="'Warranty Period' | translate" [disabled]="disabled"
-    [quantityUnits]="wrapper.negotiationSettings.warrantyPeriodUnits" rowClass="space-before"
-    [quantity]="wrapper.line.warrantyValidityPeriod.durationMeasure">
+<quantity-input [label]="'Warranty Period' | translate" [disabled]="disabled" [quantityUnits]="wrapper.negotiationSettings.warrantyPeriodUnits" rowClass="space-before" [quantity]="wrapper.line.warrantyValidityPeriod.durationMeasure">
 </quantity-input>
 
 <hr>
 
 <!-- Incoterms -->
-<options-input [label]="'Incoterms' | translate" [disabled]="disabled" rowClass="space-before"
-    [options]="wrapper.negotiationSettings.incoterms" [(selected)]="wrapper.line.goodsItem.deliveryTerms.incoterms">
+<options-input [label]="'Incoterms' | translate" [disabled]="disabled" rowClass="space-before" [options]="wrapper.negotiationSettings.incoterms" [(selected)]="wrapper.line.goodsItem.deliveryTerms.incoterms">
 </options-input>
 
 <!-- Delivery Period -->
-<quantity-input [label]="'Delivery Period' | translate" [disabled]="disabled"
-    [quantityUnits]="wrapper.negotiationSettings.deliveryPeriodUnits" rowClass="space-before"
-    [quantity]="wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure">
+<quantity-input [label]="'Delivery Period' | translate" [disabled]="disabled" [quantityUnits]="wrapper.negotiationSettings.deliveryPeriodUnits" rowClass="space-before" [quantity]="wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure">
 </quantity-input>
 
-<br/>
+<br />
 <!-- Special Terms -->
-<text-input [label]="'Special Terms' | translate" [disabled]="disabled" rowClass="space-before"
-    [(text)]="wrapper.line.goodsItem.deliveryTerms.specialTerms[0].value">
+<text-input [label]="'Special Terms' | translate" [disabled]="disabled" rowClass="space-before" [(text)]="wrapper.line.goodsItem.deliveryTerms.specialTerms[0].value">
 </text-input>
 
 <hr>
 
 <!-- Packaging Quantity -->
-<quantity-input [label]="'Quantity Per Package' | translate" [disabled]="disabled" rowClass="space-before"
-    [quantity]="wrapper.line.goodsItem.containingPackage.quantity">
+<quantity-input [label]="'Quantity Per Package' | translate" [disabled]="disabled" rowClass="space-before" [quantity]="wrapper.line.goodsItem.containingPackage.quantity">
 </quantity-input>
 
 <!-- Packaging Type -->
-<text-input [label]="'Packaging Type' | translate" [disabled]="disabled" rowClass="space-before" [rows]="1"
-    valueTextClass="form-control-sm" [(text)]="wrapper.line.goodsItem.containingPackage.packagingTypeCode.value">
+<text-input [label]="'Packaging Type' | translate" [disabled]="disabled" rowClass="space-before" [rows]="1" valueTextClass="form-control-sm" [(text)]="wrapper.line.goodsItem.containingPackage.packagingTypeCode.value">
 </text-input>

@@ -14,16 +14,16 @@
    limitations under the License.
  */
 
-import {Component, Input} from "@angular/core";
-import {CallStatus} from "../../common/call-status";
-import {DEFAULT_LANGUAGE} from "../model/constants";
-import {CategoryService} from "../category/category.service";
-import {CatalogueService} from "../catalogue.service";
-import {CookieService} from "ng2-cookies";
-import {Category} from '../model/category/category';
-import {ProductPublishComponent} from './product-publish.component';
-import {Router} from '@angular/router';
-import {TranslateService} from '@ngx-translate/core';
+import { Component, Input } from "@angular/core";
+import { CallStatus } from "../../common/call-status";
+import { DEFAULT_LANGUAGE } from "../model/constants";
+import { CategoryService } from "../category/category.service";
+import { CatalogueService } from "../catalogue.service";
+import { CookieService } from "ng2-cookies";
+import { Category } from '../model/category/category';
+import { ProductPublishComponent } from './product-publish.component';
+import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "bulk-publish",
@@ -31,18 +31,18 @@ import {TranslateService} from '@ngx-translate/core';
     styleUrls: ["./bulk-publish.component.css"]
 })
 export class BulkPublishComponent {
-    @Input() selectCategories:Category[];
+    @Input() selectCategories: Category[];
 
-    publishStatus:CallStatus = new CallStatus();
+    publishStatus: CallStatus = new CallStatus();
     showCategoryWarning: boolean = false;
     uploadPublishStatus: CallStatus[] = [];
     selectedFileList: File[];
 
     constructor(private categoryService: CategoryService,
-                private catalogueService: CatalogueService,
-                private router: Router,
-                private cookieService: CookieService,
-                private translate: TranslateService) {
+        private catalogueService: CatalogueService,
+        private router: Router,
+        private cookieService: CookieService,
+        private translate: TranslateService) {
     }
 
     closeCategoryWarning(): void {
@@ -57,7 +57,7 @@ export class BulkPublishComponent {
 
     downloadTemplate() {
         // first check whether there is at leasta one selected category
-        if(this.selectCategories.length == 0) {
+        if (this.selectCategories.length == 0) {
             this.showCategoryWarning = true;
             return;
         }
@@ -68,18 +68,18 @@ export class BulkPublishComponent {
         var reader = new FileReader();
         this.catalogueService.downloadTemplate(userId, this.categoryService.selectedCategories, DEFAULT_LANGUAGE())
             .then(result => {
-                    var link = document.createElement('a');
-                    link.id = 'downloadLink';
-                    link.href = window.URL.createObjectURL(result.content);
-                    link.download = result.fileName;
+                var link = document.createElement('a');
+                link.id = 'downloadLink';
+                link.href = window.URL.createObjectURL(result.content);
+                link.download = result.fileName;
 
-                    document.body.appendChild(link);
-                    var downloadLink = document.getElementById('downloadLink');
-                    downloadLink.click();
-                    document.body.removeChild(downloadLink);
+                document.body.appendChild(link);
+                var downloadLink = document.getElementById('downloadLink');
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
 
-                    this.publishStatus.callback("Download completed");
-                },
+                this.publishStatus.callback("Download completed");
+            },
                 error => {
                     this.publishStatus.error("Download failed");
                 });
@@ -94,7 +94,7 @@ export class BulkPublishComponent {
             // initialize one call status for each uploaded file
             this.uploadPublishStatus = [];
             this.selectedFileList = [];
-            for(let i=0; i<fileList.length; i++) {
+            for (let i = 0; i < fileList.length; i++) {
                 this.uploadPublishStatus.push(new CallStatus());
                 this.selectedFileList.push(fileList[i]);
             }
@@ -102,16 +102,16 @@ export class BulkPublishComponent {
             let self = this;
             let callbackCount: number = 0;
             let errorCount: number = 0;
-            for(let i=0; i<this.selectedFileList.length; i++) {
+            for (let i = 0; i < this.selectedFileList.length; i++) {
                 this.uploadPublishStatus[i].submit();
-                let file:File = self.selectedFileList[i];
+                let file: File = self.selectedFileList[i];
                 var reader = new FileReader();
-                reader.onload = function (e) {
+                reader.onload = function(e) {
                     catalogueService.uploadTemplate(userId, file, uploadMode).then(res => {
-                            self.uploadPublishStatus[i].callback("Uploaded " + file.name + " successfully");
-                            ProductPublishComponent.dialogBox = false;
-                            self.resetEventWhenUploadCompletes(++callbackCount, self.selectedFileList.length, errorCount, event);
-                        },
+                        self.uploadPublishStatus[i].callback("Uploaded " + file.name + " successfully");
+                        ProductPublishComponent.dialogBox = false;
+                        self.resetEventWhenUploadCompletes(++callbackCount, self.selectedFileList.length, errorCount, event);
+                    },
                         error => {
                             errorCount++;
                             self.uploadPublishStatus[i].error("Failed to upload: " + file.name, error);
@@ -124,9 +124,9 @@ export class BulkPublishComponent {
     }
 
     private resetEventWhenUploadCompletes(currentCount: number, totalCount: number, errorCount: number, event: any): void {
-        if(currentCount == totalCount) {
+        if (currentCount == totalCount) {
             event.target.value = "";
-            if(errorCount == 0) {
+            if (errorCount == 0) {
                 this.navigateToCatalogueTab();
             }
         }
@@ -141,12 +141,12 @@ export class BulkPublishComponent {
             let file: File = fileList[0];
             let self = this;
             var reader = new FileReader();
-            reader.onload = function (e) {
+            reader.onload = function(e) {
                 // reset the target value so that the same file could be chosen more than once
                 event.target.value = "";
                 catalogueService.uploadZipPackage(file).then(res => {
-                        self.publishStatus.callback(res.message);
-                    },
+                    self.publishStatus.callback(res.message);
+                },
                     error => {
                         self.publishStatus.error("Failed to upload the image package.", error);
                     });
@@ -155,7 +155,7 @@ export class BulkPublishComponent {
         }
     }
 
-    public navigateToCatalogueTab():void {
-        this.router.navigate(['dashboard'], {queryParams: {tab: "CATALOGUE"}});
+    public navigateToCatalogueTab(): void {
+        this.router.navigate(['dashboard'], { queryParams: { tab: "CATALOGUE" } });
     }
 }

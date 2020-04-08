@@ -12,10 +12,10 @@
    limitations under the License.
  */
 
-import {LineItem} from "./line-item";
+import { LineItem } from "./line-item";
 
 export class QuotationLine {
     constructor(
-        public lineItem:LineItem
-    ) {  }
+        public lineItem: LineItem
+    ) { }
 }

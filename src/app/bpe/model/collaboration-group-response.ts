@@ -12,10 +12,10 @@
    limitations under the License.
  */
 
-import {CollaborationGroup} from './collaboration-group';
+import { CollaborationGroup } from './collaboration-group';
 
 export class CollaborationGroupResponse {
     constructor(public size: number = 0,
-                public collaborationGroups: CollaborationGroup[] = []) {
+        public collaborationGroups: CollaborationGroup[] = []) {
     }
 }

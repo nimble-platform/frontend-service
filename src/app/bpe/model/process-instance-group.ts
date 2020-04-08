@@ -16,14 +16,14 @@
 
 export class ProcessInstanceGroup {
     constructor(public id: string = "",
-                public status:string,
-                public name:string,
-                public partyID: string = "",
-                public processInstanceIDs: string[],
-                public archived: boolean = false,
-                public collaborationRole: string = "",
-                public dataChannelId:string,
-                public federationID:string,
-                public sellerFederationId:string) {
+        public status: string,
+        public name: string,
+        public partyID: string = "",
+        public processInstanceIDs: string[],
+        public archived: boolean = false,
+        public collaborationRole: string = "",
+        public dataChannelId: string,
+        public federationID: string,
+        public sellerFederationId: string) {
     }
 }

@@ -14,9 +14,9 @@
    limitations under the License.
  */
 
-import { Component, OnInit,Input } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import { CompanyManagementTab } from "./model/company-management-tab";
-import {TranslateService} from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "company-management",
@@ -33,7 +33,7 @@ export class CompanyManagementComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.selectedTab = this.showOverview? "UNVERIFIED" : "VERIFIED";
+        this.selectedTab = this.showOverview ? "UNVERIFIED" : "VERIFIED";
     }
 
     onSelectTab(event: any, id: any): void {

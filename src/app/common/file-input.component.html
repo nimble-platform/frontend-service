@@ -22,8 +22,7 @@
     <div class="{{valueClass}}" *ngIf="visible">
         <div *ngFor="let file of binaryObjects; let i = index" class="file-link-row justify-content-end">
             <!-- in edit mode show only the files annotated with the default language, if available -->
-            <a href *ngIf="presentationMode == 'edit' || !fileExistsWithDefaultLanguage || (presentationMode == 'view' && file.languageID == activeLanguage)"
-               class="btn-link mr-auto" (click)="onDownloadFile(file, $event)">{{ file.fileName }}</a>
+            <a href *ngIf="presentationMode == 'edit' || !fileExistsWithDefaultLanguage || (presentationMode == 'view' && file.languageID == activeLanguage)" class="btn-link mr-auto" (click)="onDownloadFile(file, $event)">{{ file.fileName }}</a>
             <button class="btn btn-danger btn-sm" (click)="onRemoveFile(i)" *ngIf="presentationMode === 'edit'">
                 <span [innerHTML]="'Remove' | translate"></span>
 
@@ -34,8 +33,7 @@
         </div>
         <div class="d-flex">
             <div class="custom-file" *ngIf="isShowingInput()">
-                <input type="file" class="custom-file-input" [accept]="accept"
-                    (change)="onChooseFile($event)" [disabled]="disabled">
+                <input type="file" class="custom-file-input" [accept]="accept" (change)="onChooseFile($event)" [disabled]="disabled">
                 <label class="custom-file-label" [ngClass]="getFileClasses()">
                     {{ placeholder }}
                 </label>

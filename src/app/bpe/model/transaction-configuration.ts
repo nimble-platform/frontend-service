@@ -12,11 +12,11 @@
    limitations under the License.
  */
 
-import {ExecutionConfiguration} from './execution-configuration';
+import { ExecutionConfiguration } from './execution-configuration';
 
 export class TransactionConfiguration {
     constructor(public transactionID: string,
-                public executionConfigurations: ExecutionConfiguration[]) {
+        public executionConfigurations: ExecutionConfiguration[]) {
 
     }
 }

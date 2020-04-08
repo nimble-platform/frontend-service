@@ -16,78 +16,33 @@
 
 <div class="row address-row">
     <div class="col-6">
-            <text-input [label]="'Street Name' | translate"
-                        [(text)]="address.streetName"
-                        [presentationMode]="presentationMode"
-                        [disabled]="disabled"
-                        [required]="true"
-                        [formFieldName]="'street_name'"
-                        [parentForm]="formGroup"
-                        labelClass="col-4"
-                        valueClass="col-8">
+        <text-input [label]="'Street Name' | translate" [(text)]="address.streetName" [presentationMode]="presentationMode" [disabled]="disabled" [required]="true" [formFieldName]="'street_name'" [parentForm]="formGroup" labelClass="col-4" valueClass="col-8">
         </text-input>
     </div>
     <div class="col-6">
-        <text-input [label]="'Building Number' | translate"
-                    [(text)]="address.buildingNumber"
-                    [presentationMode]="presentationMode"
-                    [disabled]="disabled"
-                    [required]="true"
-                    [formFieldName]="'building_number'"
-                    [parentForm]="formGroup"
-                    labelClass="col-4"
-                    valueClass="col-8">
+        <text-input [label]="'Building Number' | translate" [(text)]="address.buildingNumber" [presentationMode]="presentationMode" [disabled]="disabled" [required]="true" [formFieldName]="'building_number'" [parentForm]="formGroup" labelClass="col-4" valueClass="col-8">
         </text-input>
     </div>
 </div>
 
 <div class="row address-row">
     <div class="col-6">
-        <text-input [label]="'City / Town' | translate"
-                    [(text)]="address.cityName"
-                    [presentationMode]="presentationMode"
-                    [disabled]="disabled"
-                    [required]="true"
-                    [formFieldName]="'city_name'"
-                    [parentForm]="formGroup"
-                    labelClass="col-4"
-                    valueClass="col-8">
+        <text-input [label]="'City / Town' | translate" [(text)]="address.cityName" [presentationMode]="presentationMode" [disabled]="disabled" [required]="true" [formFieldName]="'city_name'" [parentForm]="formGroup" labelClass="col-4" valueClass="col-8">
         </text-input>
     </div>
     <div class="col-6">
-        <text-input [label]="'State / Province' | translate"
-                    [(text)]="address.region"
-                    [presentationMode]="presentationMode"
-                    [disabled]="disabled"
-                    labelClass="col-4"
-                    valueClass="col-8">
+        <text-input [label]="'State / Province' | translate" [(text)]="address.region" [presentationMode]="presentationMode" [disabled]="disabled" labelClass="col-4" valueClass="col-8">
         </text-input>
     </div>
 </div>
 
 <div class="row address-row">
     <div class="col-6">
-        <text-input [label]="'Postal Code' | translate"
-                    [(text)]="address.postalZone"
-                    [presentationMode]="presentationMode"
-                    [disabled]="disabled"
-                    [required]="true"
-                    [formFieldName]="'postal_code'"
-                    [parentForm]="formGroup"
-                    labelClass="col-4"
-                    valueClass="col-8">
+        <text-input [label]="'Postal Code' | translate" [(text)]="address.postalZone" [presentationMode]="presentationMode" [disabled]="disabled" [required]="true" [formFieldName]="'postal_code'" [parentForm]="formGroup" labelClass="col-4" valueClass="col-8">
         </text-input>
     </div>
     <div class="col-6">
-        <text-input [label]="'Country' | translate"
-                    [(text)]="address.country.name.value"
-                    [presentationMode]="presentationMode"
-                    [disabled]="disabled"
-                    [required]="true"
-                    [formFieldName]="'country_name'"
-                    [parentForm]="formGroup"
-                    labelClass="col-4"
-                    valueClass="col-8">
+        <text-input [label]="'Country' | translate" [(text)]="address.country.name.value" [presentationMode]="presentationMode" [disabled]="disabled" [required]="true" [formFieldName]="'country_name'" [parentForm]="formGroup" labelClass="col-4" valueClass="col-8">
         </text-input>
     </div>
 </div>

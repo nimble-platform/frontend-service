@@ -28,5 +28,5 @@ export class Unit {
         public nistName: string,
         public iecClassification: string,
         public nameOfDedicatedQuantity: string
-    ) {  }
+    ) { }
 }

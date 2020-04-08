@@ -16,73 +16,73 @@
 
 <div *ngIf="viewMode=='full' || viewMode=='data'">
 
-  <div *ngIf="viewMode=='full'">
+    <div *ngIf="viewMode=='full'">
 
-    <!-- Title -->
-    <div class="row">
-        <div class="col-12">
-            <p class="nimble-title"><span [innerHTML]="'Company Settings' | translate"></span></p>
+        <!-- Title -->
+        <div class="row">
+            <div class="col-12">
+                <p class="nimble-title"><span [innerHTML]="'Company Settings' | translate"></span></p>
+            </div>
         </div>
+
+        <!-- Profile Completess Progress Bar -->
+        <div class="row">
+            <div class="col-2">
+                <strong><span [innerHTML]="'Profile Completeness:' | translate"></span></strong>
+            </div>
+            <div class="col-10">
+                <div class="progress" style="height:1.5rem">
+                    <div class="progress-bar" role="progressbar" [ngStyle]="{'width':profile_completeness_str}" [attr.aria-valuenow]="profile_completeness" aria-valuemin="0" aria-valuemax="1">
+                        <span *ngIf="profile_completeness>0">{{profile_completeness_str}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr />
+
     </div>
 
-    <!-- Profile Completess Progress Bar -->
-    <div class="row">
-      <div class="col-2">
-        <strong><span [innerHTML]="'Profile Completeness:' | translate"></span></strong>
-      </div>
-      <div class="col-10">
-        <div class="progress" style="height:1.5rem">
-          <div class="progress-bar" role="progressbar" [ngStyle]="{'width':profile_completeness_str}" [attr.aria-valuenow]="profile_completeness" aria-valuemin="0" aria-valuemax="1">
-            <span *ngIf="profile_completeness>0">{{profile_completeness_str}}</span>
-          </div>
-        </div>
-      </div>
+    <!-- Tabs -->
+    <div>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a href id="COMPANY_DATA" class="nav-link" [ngClass]="{ active: selectedTab === 'COMPANY_DATA'}" (click)="onSelectTab($event,'COMPANY_DATA')">
+                    <span [innerHTML]="'Company Data' | translate"></span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href id="COMPANY_DESCRIPTION" class="nav-link" [ngClass]="{ active: selectedTab === 'COMPANY_DESCRIPTION'}" (click)="onSelectTab($event,'COMPANY_DESCRIPTION')">
+                    <span [innerHTML]="'Company Details' | translate"></span>
+                </a>
+            </li>
+            <li *ngIf="viewMode=='full'" class="nav-item">
+                <a href id="NEGOTIATION_SETTINGS" class="nav-link" [ngClass]="{ active: selectedTab === 'NEGOTIATION_SETTINGS'}" (click)="onSelectTab($event,'NEGOTIATION_SETTINGS')">
+                    <span [innerHTML]="'Trade Details' | translate"></span>
+                </a>
+            </li>
+            <li *ngIf="viewMode=='full'" class="nav-item">
+                <a href id="TERMS_AND_CONDITIONS" class="nav-link" [ngClass]="{ active: selectedTab === 'TERMS_AND_CONDITIONS'}" (click)="onSelectTab($event,'TERMS_AND_CONDITIONS')">
+                    <span [innerHTML]="'Terms and Conditions' | translate"></span>
+                </a>
+            </li>
+            <li *ngIf="viewMode=='full'" class="nav-item">
+                <a href id="DELIVERY_TERMS" class="nav-link" [ngClass]="{ active: selectedTab === 'DELIVERY_TERMS'}" (click)="onSelectTab($event,'DELIVERY_TERMS')">
+                    <span [innerHTML]="'Delivery Address' | translate"></span>
+                </a>
+            </li>
+            <li *ngIf="viewMode=='full'" class="nav-item">
+                <a href id="CERTIFICATES" class="nav-link" [ngClass]="{ active: selectedTab === 'CERTIFICATES'}" (click)="onSelectTab($event,'CERTIFICATES')">
+                    <span [innerHTML]="'Certificates' | translate"></span>
+                </a>
+            </li>
+            <li *ngIf="viewMode=='full'" class="nav-item">
+                <a href id="CATEGORIES" class="nav-link" [ngClass]="{ active: selectedTab === 'CATEGORIES'}" (click)="onSelectTab($event,'CATEGORIES')">
+                    <span [innerHTML]="'Catalogue Categories' | translate"></span>
+                </a>
+            </li>
+        </ul>
     </div>
-
-    <hr/>
-
-  </div>
-
-  <!-- Tabs -->
-  <div>
-  	<ul class="nav nav-tabs">
-  		<li class="nav-item">
-  			<a href id="COMPANY_DATA" class="nav-link" [ngClass]="{ active: selectedTab === 'COMPANY_DATA'}" (click)="onSelectTab($event,'COMPANY_DATA')">
-				<span [innerHTML]="'Company Data' | translate"></span>
-  			</a>
-  		</li>
-      <li class="nav-item">
-  			<a href id="COMPANY_DESCRIPTION" class="nav-link" [ngClass]="{ active: selectedTab === 'COMPANY_DESCRIPTION'}" (click)="onSelectTab($event,'COMPANY_DESCRIPTION')">
-				<span [innerHTML]="'Company Details' | translate"></span>
-  			</a>
-  		</li>
-  		<li *ngIf="viewMode=='full'" class="nav-item">
-  			<a href id="NEGOTIATION_SETTINGS" class="nav-link" [ngClass]="{ active: selectedTab === 'NEGOTIATION_SETTINGS'}" (click)="onSelectTab($event,'NEGOTIATION_SETTINGS')">
-				<span [innerHTML]="'Trade Details' | translate"></span>
-  			</a>
-  		</li>
-		<li *ngIf="viewMode=='full'" class="nav-item">
-			<a href id="TERMS_AND_CONDITIONS" class="nav-link" [ngClass]="{ active: selectedTab === 'TERMS_AND_CONDITIONS'}" (click)="onSelectTab($event,'TERMS_AND_CONDITIONS')">
-				<span [innerHTML]="'Terms and Conditions' | translate"></span>
-			</a>
-		</li>
-  		<li *ngIf="viewMode=='full'" class="nav-item">
-  			<a href id="DELIVERY_TERMS" class="nav-link" [ngClass]="{ active: selectedTab === 'DELIVERY_TERMS'}" (click)="onSelectTab($event,'DELIVERY_TERMS')">
-				<span [innerHTML]="'Delivery Address' | translate"></span>
-  			</a>
-  		</li>
-  		<li *ngIf="viewMode=='full'" class="nav-item">
-  			<a href id="CERTIFICATES" class="nav-link" [ngClass]="{ active: selectedTab === 'CERTIFICATES'}" (click)="onSelectTab($event,'CERTIFICATES')">
-				<span [innerHTML]="'Certificates' | translate"></span>
-  			</a>
-  		</li>
-  		<li *ngIf="viewMode=='full'" class="nav-item">
-  			<a href id="CATEGORIES" class="nav-link" [ngClass]="{ active: selectedTab === 'CATEGORIES'}" (click)="onSelectTab($event,'CATEGORIES')">
-				<span [innerHTML]="'Catalogue Categories' | translate"></span>
-  			</a>
-  		</li>
-  	</ul>
-  </div>
 
 </div>
 
@@ -90,46 +90,46 @@
 
 <!-- Company Data, hidden to avoid reloading  -->
 <div *ngIf="settings" [hidden]="selectedTab !== 'COMPANY_DATA'">
-	<company-data-settings [settings]="settings" (onSaveEvent)="onSettingsUpdated()">
-	</company-data-settings>
+    <company-data-settings [settings]="settings" (onSaveEvent)="onSettingsUpdated()">
+    </company-data-settings>
 </div>
 
 <!-- Company Description, hidden to avoid reloading  -->
 <div *ngIf="settings" [hidden]="selectedTab !== 'COMPANY_DESCRIPTION'">
-	<company-description-settings [settings]="settings" (onSaveEvent)="onSettingsUpdated()">
-	</company-description-settings>
+    <company-description-settings [settings]="settings" (onSaveEvent)="onSettingsUpdated()">
+    </company-description-settings>
 </div>
 
 <div *ngIf="viewMode=='full'">
 
-  <!-- Negotiation Settings, hidden to avoid reloading -->
-  <div *ngIf="settings" [hidden]="selectedTab !== 'NEGOTIATION_SETTINGS'">
-  	<company-negotiation-settings [settings]="settings">
-  	</company-negotiation-settings>
-  </div>
+    <!-- Negotiation Settings, hidden to avoid reloading -->
+    <div *ngIf="settings" [hidden]="selectedTab !== 'NEGOTIATION_SETTINGS'">
+        <company-negotiation-settings [settings]="settings">
+        </company-negotiation-settings>
+    </div>
 
     <!-- Terms and Conditions, hidden to avoid reloading -->
-  <div *ngIf="settings" [hidden]="selectedTab !== 'TERMS_AND_CONDITIONS'">
-    <company-terms-and-conditions [settings]="settings">
-    </company-terms-and-conditions>
-  </div>
+    <div *ngIf="settings" [hidden]="selectedTab !== 'TERMS_AND_CONDITIONS'">
+        <company-terms-and-conditions [settings]="settings">
+        </company-terms-and-conditions>
+    </div>
 
-  <!-- Delivery Terms, hidden to avoid reloading -->
-  <div *ngIf="settings" [hidden]="selectedTab !== 'DELIVERY_TERMS'">
-  	<company-delivery-terms [settings]="settings" (onSaveEvent)="onSettingsUpdated()">
-  	</company-delivery-terms>
-  </div>
+    <!-- Delivery Terms, hidden to avoid reloading -->
+    <div *ngIf="settings" [hidden]="selectedTab !== 'DELIVERY_TERMS'">
+        <company-delivery-terms [settings]="settings" (onSaveEvent)="onSettingsUpdated()">
+        </company-delivery-terms>
+    </div>
 
-  <!-- Company Certificates, hidden to avoid reloading -->
-  <div *ngIf="settings" [hidden]="selectedTab !== 'CERTIFICATES'">
-  	<company-certificates-settings [settings]="settings" [certificates]="certificates" [ppapLevel]="ppapLevel" (onSaveEvent)="onSettingsUpdated()">
-  	</company-certificates-settings>
-  </div>
+    <!-- Company Certificates, hidden to avoid reloading -->
+    <div *ngIf="settings" [hidden]="selectedTab !== 'CERTIFICATES'">
+        <company-certificates-settings [settings]="settings" [certificates]="certificates" [ppapLevel]="ppapLevel" (onSaveEvent)="onSettingsUpdated()">
+        </company-certificates-settings>
+    </div>
 
-  <!-- Company Favourite Categories, hidden to avoid reloading -->
-  <div *ngIf="settings" [hidden]="selectedTab !== 'CATEGORIES'">
-  	<company-categories-settings [settings]="settings">
-  	</company-categories-settings>
-  </div>
+    <!-- Company Favourite Categories, hidden to avoid reloading -->
+    <div *ngIf="settings" [hidden]="selectedTab !== 'CATEGORIES'">
+        <company-categories-settings [settings]="settings">
+        </company-categories-settings>
+    </div>
 
 </div>

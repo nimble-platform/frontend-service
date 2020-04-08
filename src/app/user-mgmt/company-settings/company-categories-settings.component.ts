@@ -17,7 +17,7 @@ import { CompanySettings } from "../model/company-settings";
 import { CallStatus } from "../../common/call-status";
 import { UserService } from "../user.service";
 import { CookieService } from "ng2-cookies";
-import {TranslateService} from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "company-categories-settings",
@@ -33,8 +33,8 @@ export class CompanyCategoriesSettingsComponent implements OnInit {
     recCategoriesCallStatus: CallStatus[] = [];
 
     constructor(private translate: TranslateService,
-                private cookieService: CookieService,
-                private userService: UserService) {
+        private cookieService: CookieService,
+        private userService: UserService) {
 
     }
 
@@ -56,9 +56,9 @@ export class CompanyCategoriesSettingsComponent implements OnInit {
                 this.prefCats.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
                 this.prefCategoriesCallStatus[i].callback("Succesfully removed category from favorites", true);
             })
-            .catch(error => {
-                this.prefCategoriesCallStatus[i].error("Error while removing category from favourites", error);
-            });
+                .catch(error => {
+                    this.prefCategoriesCallStatus[i].error("Error while removing category from favourites", error);
+                });
         }
     }
 
@@ -71,9 +71,9 @@ export class CompanyCategoriesSettingsComponent implements OnInit {
                 this.recCats.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
                 this.recCategoriesCallStatus[i].callback("Succesfully removed category from recently used", true);
             })
-            .catch(error => {
-                this.recCategoriesCallStatus[i].error("Error while removing category from recently used", error);
-            });
+                .catch(error => {
+                    this.recCategoriesCallStatus[i].error("Error while removing category from recently used", error);
+                });
         }
     }
 

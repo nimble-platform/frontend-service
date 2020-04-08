@@ -11,8 +11,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
-.fixed-info-container > amount-input, .fixed-info-container > quantity-input {
+.fixed-info-container>amount-input, .fixed-info-container>quantity-input {
     margin-top: 0.5rem;
 }
 
@@ -20,14 +19,14 @@
     border-right: 1px solid black !important;
 }
 
-.legend-capex{
+.legend-capex {
     display: inline-block;
     height: 15px;
     width: 15px;
     background-color: blue;
 }
 
-.legend-opex{
+.legend-opex {
     display: inline-block;
     height: 15px;
     width: 15px;

@@ -15,45 +15,45 @@
  -->
 
 <ng-template #modal let-c="close" let-d="dismiss">
-        <div class="modal-header">
-            <h5 class="modal-title" id="modal-basic-title">{{ prettyName }}</h5>
-            <button type="button" class="close" aria-label="Close" (click)="d('cross')">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <div class="container-fluid">
-                <!-- text-input label="Name" [(text)]="prettyName" [presentationMode]="getPropertyPresentationMode()"
+    <div class="modal-header">
+        <h5 class="modal-title" id="modal-basic-title">{{ prettyName }}</h5>
+        <button type="button" class="close" aria-label="Close" (click)="d('cross')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <!-- text-input label="Name" [(text)]="prettyName" [presentationMode]="getPropertyPresentationMode()"
                     [rows]="1" valueTextClass="form-control-sm">
                 </text-input -->
-                <div class="row space-before">
-                    <div class="col-3">
-                        <strong><span [innerHTML]="'Name(s):' | translate"></span></strong>
-                    </div>
-                    <div class="col-9">
-                        <table class="table borderless">
-                            <tbody>
-                                <tr *ngFor="let pname of getNames(); let i = index">
-                                    <td>
-                                        <input [(ngModel)]="pname.value" class="form-control" type="text" name="{{pname.value}}" [disabled]="getPropertyPresentationMode() === 'view'" />
-                                    </td>
-                                    <td>
-                                        <select [(ngModel)]="pname.languageID" class="form-control" type="text" name="{{pname.languageID}}" [disabled]="getPropertyPresentationMode() === 'view'">
-                                            <option *ngFor='let language of languages' [value]="language" [selected]="language === pname.languageID">{{language}}</option>
-                                        </select>
-                                    </td>
-                                    <td class="align-right" *ngIf="i>0">
-                                        <button class="btn btn-danger"  type="button" (click)="deletePropertyName(i)" *ngIf="getPropertyPresentationMode() === 'edit'"><span [innerHTML]="'Delete' | translate"></span></button>
-                                    </td>
-                                </tr>
-                                <tr *ngIf="getPropertyPresentationMode() === 'edit'">
-                                  <td colspan="3">
+            <div class="row space-before">
+                <div class="col-3">
+                    <strong><span [innerHTML]="'Name(s):' | translate"></span></strong>
+                </div>
+                <div class="col-9">
+                    <table class="table borderless">
+                        <tbody>
+                            <tr *ngFor="let pname of getNames(); let i = index">
+                                <td>
+                                    <input [(ngModel)]="pname.value" class="form-control" type="text" name="{{pname.value}}" [disabled]="getPropertyPresentationMode() === 'view'" />
+                                </td>
+                                <td>
+                                    <select [(ngModel)]="pname.languageID" class="form-control" type="text" name="{{pname.languageID}}" [disabled]="getPropertyPresentationMode() === 'view'">
+                                        <option *ngFor='let language of languages' [value]="language" [selected]="language === pname.languageID">{{language}}</option>
+                                    </select>
+                                </td>
+                                <td class="align-right" *ngIf="i>0">
+                                    <button class="btn btn-danger" type="button" (click)="deletePropertyName(i)" *ngIf="getPropertyPresentationMode() === 'edit'"><span [innerHTML]="'Delete' | translate"></span></button>
+                                </td>
+                            </tr>
+                            <tr *ngIf="getPropertyPresentationMode() === 'edit'">
+                                <td colspan="3">
                                     <button class="btn btn-outline-primary add-value-button" (click)="addPropertyName()">
                                         <span [innerHTML]="'Add Name' | translate"></span>
                                     </button>
-                                  </td>
-                                </tr>
-                                <!--
+                                </td>
+                            </tr>
+                            <!--
                                 <tr *ngIf="getPropertyPresentationMode() === 'edit'">
                                     <td>
                                         <input class="form-control" type="text" id="newPname" [(ngModel)]="newPname.value" name="newPname" />
@@ -68,56 +68,50 @@
                                     </td>
                                 </tr>
                                 -->
-                            </tbody>
-                        </table>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
-                <text-input label="Definition" [text]="getDefinition()" presentationMode="view" rowClass="space-before">
-                </text-input>
-                <options-input #dataTypeOption label="Data Type" [presentationMode]="getPropertyPresentationMode()"
-                               [options]="PROPERTY_TYPES" rowClass="space-before" large="true"
-                               [(selected)]="property.valueQualifier"
-                               [selectedIndex]="propertyDataType == 'File' ? 3 : -1"
-                               (selectedChange)="resetValues()"
-                               (selectedOptionChange)="handleOptionChange($event)">
-                </options-input>
-                <div class="row space-before">
-                    <div class="col-3">
-                        <strong><span [innerHTML]="'Value(s):' | translate"></span></strong>
-                    </div>
-                    <!--{{propertyDataType}}-->
-                    <div class="col-9">
-                        <file-input *ngIf="property.valueQualifier === 'FILE'" [binaryObjects]="property.valueBinary"
-                                    [multiple]="true" [maxSize]=1 [languageEnabled]="propertyDataType == 'File'">
-                        </file-input>
-                        <table *ngIf="property.valueQualifier === 'STRING'" class="table borderless mb-0">
-                            <tbody>
-                                <tr *ngFor="let pvalue of getValues(); let i = index" class="ml-2">
-                                    <td class="pr-0">
-                                        <input [(ngModel)]="pvalue.value" class="form-control" type="text" name="{{pvalue.value}}" />
-                                    </td>
-                                    <td class="pr-0" style="padding-left: .75rem;">
-                                        <select [(ngModel)]="pvalue.languageID" class="form-control" type="text" name="{{pvalue.languageID}}">
-                                            <option *ngFor='let language of languages' [value]="language" [selected]="language === pvalue.languageID">{{language}}</option>
-                                        </select>
-                                    </td>
-                                    <td class="pr-0 align-right" style="padding-left: .75rem;" *ngIf="i>0">
-                                        <button class="btn btn-danger"  type="button" (click)="onRemoveValue(i)">&times;</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="3" class="pr-0 pb-0">
-                                        <div class="d-flex flex-row-reverse">
-                                            <button class="btn btn-outline-primary ml-2" (click)="onAddValue()">
-                                                <span [innerHTML]="'Add Value' | translate"></span>
-                                            </button>
-                                            <button class="btn btn-outline-primary" (click)="d(); onAssociateProduct();">
-                                                <span [innerHTML]="'Associate Product' | translate"></span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <!--
+            </div>
+            <text-input label="Definition" [text]="getDefinition()" presentationMode="view" rowClass="space-before">
+            </text-input>
+            <options-input #dataTypeOption label="Data Type" [presentationMode]="getPropertyPresentationMode()" [options]="PROPERTY_TYPES" rowClass="space-before" large="true" [(selected)]="property.valueQualifier" [selectedIndex]="propertyDataType == 'File' ? 3 : -1" (selectedChange)="resetValues()" (selectedOptionChange)="handleOptionChange($event)">
+            </options-input>
+            <div class="row space-before">
+                <div class="col-3">
+                    <strong><span [innerHTML]="'Value(s):' | translate"></span></strong>
+                </div>
+                <!--{{propertyDataType}}-->
+                <div class="col-9">
+                    <file-input *ngIf="property.valueQualifier === 'FILE'" [binaryObjects]="property.valueBinary" [multiple]="true" [maxSize]=1 [languageEnabled]="propertyDataType == 'File'">
+                    </file-input>
+                    <table *ngIf="property.valueQualifier === 'STRING'" class="table borderless mb-0">
+                        <tbody>
+                            <tr *ngFor="let pvalue of getValues(); let i = index" class="ml-2">
+                                <td class="pr-0">
+                                    <input [(ngModel)]="pvalue.value" class="form-control" type="text" name="{{pvalue.value}}" />
+                                </td>
+                                <td class="pr-0" style="padding-left: .75rem;">
+                                    <select [(ngModel)]="pvalue.languageID" class="form-control" type="text" name="{{pvalue.languageID}}">
+                                        <option *ngFor='let language of languages' [value]="language" [selected]="language === pvalue.languageID">{{language}}</option>
+                                    </select>
+                                </td>
+                                <td class="pr-0 align-right" style="padding-left: .75rem;" *ngIf="i>0">
+                                    <button class="btn btn-danger" type="button" (click)="onRemoveValue(i)">&times;</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="pr-0 pb-0">
+                                    <div class="d-flex flex-row-reverse">
+                                        <button class="btn btn-outline-primary ml-2" (click)="onAddValue()">
+                                            <span [innerHTML]="'Add Value' | translate"></span>
+                                        </button>
+                                        <button class="btn btn-outline-primary" (click)="d(); onAssociateProduct();">
+                                            <span [innerHTML]="'Associate Product' | translate"></span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!--
                                 <tr>
                                     <td>
                                         <input class="form-control" type="text" id="newPvalue" [(ngModel)]="newPvalue.value" name="newPvalue" />
@@ -132,48 +126,42 @@
                                     </td>
                                 </tr>
                                 -->
-                            </tbody>
-                        </table>
-                        <ng-container *ngFor="let value of getValues(); let i = index">
-                            <div *ngIf="property.valueQualifier !== 'STRING'" [ngSwitch]="property.valueQualifier" class="row value-container">
-                                <div class="{{ getValues().length<=1 ? 'col-12' : 'col-10' }}">
+                        </tbody>
+                    </table>
+                    <ng-container *ngFor="let value of getValues(); let i = index">
+                        <div *ngIf="property.valueQualifier !== 'STRING'" [ngSwitch]="property.valueQualifier" class="row value-container">
+                            <div class="{{ getValues().length<=1 ? 'col-12' : 'col-10' }}">
 
-                                    <quantity-input *ngSwitchCase="'QUANTITY'" [quantity]="property.valueQuantity[i]"
-                                        rowClass="quantity-input" large="true">
-                                    </quantity-input>
+                                <quantity-input *ngSwitchCase="'QUANTITY'" [quantity]="property.valueQuantity[i]" rowClass="quantity-input" large="true">
+                                </quantity-input>
 
-                                    <!-- Do not use [(ngModel)]="...", as each change removes focus from the element... -->
-                                    <!-- input *ngSwitchCase="'STRING'" type="text"
+                                <!-- Do not use [(ngModel)]="...", as each change removes focus from the element... -->
+                                <!-- input *ngSwitchCase="'STRING'" type="text"
                                         class="form-control form-control-sm value-input"
                                         [ngModel]="property.value[i].value" (change)="setValue(i, $event)"-->
 
-                                    <!-- Do not use [(ngModel)]="...", as each change removes focus from the element... -->
-                                    <ng-container *ngSwitchDefault>
-                                            <input *ngIf="property.valueQualifier !== 'FILE' && property.valueQualifier !== 'BOOLEAN'" type="number"
-                                            class="form-control value-input"
-                                                [ngModel]="property.valueDecimal[i]" (change)="setValueDecimal(i, $event)">
-                                            <input *ngIf="property.valueQualifier !== 'FILE' && property.valueQualifier === 'BOOLEAN'" type="checkbox"
-                                                [checked]="property.value[i].value == 'true'" (change)="setBooleanValue(i, $event)">
-                                    </ng-container>
-                                </div>
-                                <div *ngIf="i > 0 && property.valueQualifier !== 'FILE'" class="col-2 align-right">
-                                    <button class="btn btn-danger btn-remove-value"
-                                        (click)="onRemoveValue(i)">
-                                        &times;
-                                    </button>
-                                </div>
+                                <!-- Do not use [(ngModel)]="...", as each change removes focus from the element... -->
+                                <ng-container *ngSwitchDefault>
+                                    <input *ngIf="property.valueQualifier !== 'FILE' && property.valueQualifier !== 'BOOLEAN'" type="number" class="form-control value-input" [ngModel]="property.valueDecimal[i]" (change)="setValueDecimal(i, $event)">
+                                    <input *ngIf="property.valueQualifier !== 'FILE' && property.valueQualifier === 'BOOLEAN'" type="checkbox" [checked]="property.value[i].value == 'true'" (change)="setBooleanValue(i, $event)">
+                                </ng-container>
                             </div>
-                        </ng-container>
-                        <button class="btn btn-outline-primary add-value-button" (click)="onAddValue()"
-                            *ngIf="property.valueQualifier !== 'BOOLEAN' && property.valueQualifier !== 'FILE' && property.valueQualifier !== 'STRING'">
-                            <span [innerHTML]="'Add Value' | translate"></span>
-                        </button>
-                    </div>
+                            <div *ngIf="i > 0 && property.valueQualifier !== 'FILE'" class="col-2 align-right">
+                                <button class="btn btn-danger btn-remove-value" (click)="onRemoveValue(i)">
+                                    &times;
+                                </button>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <button class="btn btn-outline-primary add-value-button" (click)="onAddValue()" *ngIf="property.valueQualifier !== 'BOOLEAN' && property.valueQualifier !== 'FILE' && property.valueQualifier !== 'STRING'">
+                        <span [innerHTML]="'Add Value' | translate"></span>
+                    </button>
                 </div>
             </div>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="d('cancel')"><span [innerHTML]="'Cancel' | translate"></span></button>
-            <button type="button" class="btn btn-primary" (click)="c('ok')" [disabled]="this.property.name[0].value==''"><span [innerHTML]="'OK' | translate"></span></button>
-        </div>
-    </ng-template>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="d('cancel')"><span [innerHTML]="'Cancel' | translate"></span></button>
+        <button type="button" class="btn btn-primary" (click)="c('ok')" [disabled]="this.property.name[0].value==''"><span [innerHTML]="'OK' | translate"></span></button>
+    </div>
+</ng-template>

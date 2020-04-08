@@ -12,7 +12,7 @@
    limitations under the License.
  */
 
-import {Machine} from "./machine";
+import { Machine } from "./machine";
 
 export class Sensor {
 
@@ -26,5 +26,5 @@ export class Sensor {
         public metadata: string,
         public advancedFiltering: string,
         public machine: Machine
-    ) {  }
+    ) { }
 }

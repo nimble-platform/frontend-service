@@ -62,7 +62,7 @@
                     <div *ngIf="pa.status === 'WAITING'">
                         <div class="py-1 clickable alert-warning" style="text-align: center" (click)="onProcessDetailsClicked(pa.processInstanceId,pa.catalogueLine.goodsItem.item.manufacturerParty.federationInstanceID)">{{pa.statusText}}</div>
                     </div>
-                    <div *ngIf="pa.status === 'ACTION_REQUIRED'" >
+                    <div *ngIf="pa.status === 'ACTION_REQUIRED'">
                         <div class="py-1 clickable alert-danger" style="text-align: center" (click)="onProcessDetailsClicked(pa.processInstanceId,pa.catalogueLine.goodsItem.item.manufacturerParty.federationInstanceID)">{{pa.statusText}}</div>
                     </div>
                 </div>

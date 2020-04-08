@@ -23,5 +23,5 @@ export class CompanyDescription {
         public socialMediaList: string[],
         public events: CompanyEvent[],
         public website: string,
-    ) {  }
+    ) { }
 }

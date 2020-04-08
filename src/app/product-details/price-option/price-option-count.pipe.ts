@@ -12,18 +12,18 @@
    limitations under the License.
  */
 
-import {Pipe, PipeTransform} from "@angular/core";
-import {PriceOption} from "../../catalogue/model/publish/price-option";
+import { Pipe, PipeTransform } from "@angular/core";
+import { PriceOption } from "../../catalogue/model/publish/price-option";
 
-@Pipe({name: 'priceOptionCountPipe'})
+@Pipe({ name: 'priceOptionCountPipe' })
 export class PriceOptionCountPipe implements PipeTransform {
     /**
      * Returns the count of price options specified by the price option category
      */
     transform(priceOptions: PriceOption[], priceOptionType: number): number {
         let count: number = 0;
-        for(let option of priceOptions){
-            if(option.typeID == priceOptionType){
+        for (let option of priceOptions) {
+            if (option.typeID == priceOptionType) {
                 count++;
             }
         }

@@ -12,10 +12,10 @@
    limitations under the License.
  */
 
-import {Code} from "./code";
+import { Code } from "./code";
 
 export class ServiceFrequencyType {
     constructor(
-        public weekDayCode:Code = new Code(),
+        public weekDayCode: Code = new Code(),
     ) { }
 }

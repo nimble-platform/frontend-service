@@ -15,7 +15,7 @@
  */
 
 import { TABS } from "../constants";
-import {FEDERATIONID} from '../../catalogue/model/constants';
+import { FEDERATIONID } from '../../catalogue/model/constants';
 
 /**
  * The query parameters exactly as they appear in the dashboard's URL.
@@ -30,5 +30,5 @@ export class DashboardQueryParameters {
         public prt: string = "",
         public sts: string = "",
         public ins: string = FEDERATIONID()
-    ) {  }
+    ) { }
 }

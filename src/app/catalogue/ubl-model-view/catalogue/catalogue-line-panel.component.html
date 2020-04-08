@@ -21,11 +21,10 @@
         <!-- catalogue lines are in view mode in catalogue view -->
         <ng-container *ngIf="presentationMode == 'view'">
             <div class="mr-1"><button type="button" class="btn btn-danger" (click)="deleteCatalogueLine()"><span [innerHTML]="'Delete' | translate"></span></button></div>
-            <div ><button type="button" class="btn btn-primary" (click)="redirectToEdit()"><span [innerHTML]="'Edit' | translate"></span></button></div>
+            <div><button type="button" class="btn btn-primary" (click)="redirectToEdit()"><span [innerHTML]="'Edit' | translate"></span></button></div>
         </ng-container>
     </div>
 
-    <product-details-tabs [wrapper]="productWrapper" [showOverview]="true"
-                          [settings]="settings" [readonly]="true">
+    <product-details-tabs [wrapper]="productWrapper" [showOverview]="true" [settings]="settings" [readonly]="true">
     </product-details-tabs>
 </div>

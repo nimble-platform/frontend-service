@@ -12,13 +12,13 @@
    limitations under the License.
  */
 
-import {Item} from "./item";
-import {Quantity} from "./quantity";
+import { Item } from "./item";
+import { Quantity } from "./quantity";
 
 export class ReceiptLine {
     constructor(
         public rejectedQuantity: Quantity = new Quantity(),
         public rejectReason: string[] = [],
-        public item:Item = null
-    ) {  }
+        public item: Item = null
+    ) { }
 }

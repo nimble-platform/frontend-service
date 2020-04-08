@@ -13,11 +13,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
 .price-option-row {
     margin-bottom: 0.5rem;
 }
 
-.card-body > div:last-child hr {
+.card-body>div:last-child hr {
     display: none;
 }

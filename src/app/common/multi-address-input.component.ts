@@ -14,13 +14,13 @@
    limitations under the License.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
-import {Address} from '../catalogue/model/publish/address';
-import {addressToString} from '../user-mgmt/utils';
-import {DeliveryTerms} from '../user-mgmt/model/delivery-terms';
-import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
-import {Option} from './options-input.component';
-import {EmptyFormBase} from './validation/empty-form-base';
+import { Component, Input, OnInit } from '@angular/core';
+import { Address } from '../catalogue/model/publish/address';
+import { addressToString } from '../user-mgmt/utils';
+import { DeliveryTerms } from '../user-mgmt/model/delivery-terms';
+import { UBLModelUtils } from '../catalogue/model/ubl-model-utils';
+import { Option } from './options-input.component';
+import { EmptyFormBase } from './validation/empty-form-base';
 
 @Component({
     selector: 'multi-address-input',

@@ -12,15 +12,15 @@
    limitations under the License.
  */
 
-import {Code} from "./code";
-import {Period} from "./period";
-import {Party} from "./party";
-import {Attachment} from "./attachment";
+import { Code } from "./code";
+import { Period } from "./period";
+import { Party } from "./party";
+import { Attachment } from "./attachment";
 
 export class DocumentReference {
     constructor(
         public id: string = null,
         public documentType: string = null,
         public attachment: Attachment = null,
-    ) {  }
+    ) { }
 }

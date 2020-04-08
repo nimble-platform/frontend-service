@@ -12,7 +12,7 @@
    limitations under the License.
  */
 
-import {Address} from "./address";
+import { Address } from "./address";
 export class Location {
     constructor(public address: Address = new Address()) {
     }

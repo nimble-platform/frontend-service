@@ -13,30 +13,29 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
 .star {
-  position: relative;
-  display: inline-block;
-  color: #b0c4de;
+    position: relative;
+    display: inline-block;
+    color: #b0c4de;
     font-size: 130%;
 }
 
 .star-b {
-  font-size: 392% !important;
-  line-height: 110%;
+    font-size: 392% !important;
+    line-height: 110%;
 }
-
 
 .half {
-  position: absolute;
-  display: inline-block;
-  overflow: hidden;
-  color: #1e90ff;
+    position: absolute;
+    display: inline-block;
+    overflow: hidden;
+    color: #1e90ff;
 }
-
 
 .full {
-  color: #1e90ff;
+    color: #1e90ff;
 }
 
-.dropdown-toggle:after{content: initial}
+.dropdown-toggle:after {
+    content: initial
+}

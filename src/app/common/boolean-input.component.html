@@ -13,17 +13,15 @@
  -->
 
 <div class="row {{ rowClass }}">
-  <div *ngIf="label" [class]="labelClass">
+    <div *ngIf="label" [class]="labelClass">
         <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
         </input-label>
-  </div>
-  <div [class]="valueClass">
-      <input type="checkbox"
-          [(ngModel)]="value"
-          *ngIf="presentationMode === 'edit'">
-      <div *ngIf="presentationMode != 'edit'">
-        <p [class]="valueTextClass" *ngIf="value === true"><span [innerHTML]="'Yes' | translate"></span></p>
-        <p [class]="valueTextClass" *ngIf="value === false"><span [innerHTML]="'No' | translate"></span></p>
-      </div>
-  </div>
+    </div>
+    <div [class]="valueClass">
+        <input type="checkbox" [(ngModel)]="value" *ngIf="presentationMode === 'edit'">
+        <div *ngIf="presentationMode != 'edit'">
+            <p [class]="valueTextClass" *ngIf="value === true"><span [innerHTML]="'Yes' | translate"></span></p>
+            <p [class]="valueTextClass" *ngIf="value === false"><span [innerHTML]="'No' | translate"></span></p>
+        </div>
+    </div>
 </div>

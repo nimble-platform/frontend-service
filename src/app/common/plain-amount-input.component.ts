@@ -15,9 +15,9 @@
  */
 
 import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
-import {ChildFormBase} from './validation/child-form-base';
-import {FormControl, ValidatorFn, Validators} from '@angular/forms';
-import {ValidationService} from './validation/validators';
+import { ChildFormBase } from './validation/child-form-base';
+import { FormControl, ValidatorFn, Validators } from '@angular/forms';
+import { ValidationService } from './validation/validators';
 const FIELD_NAME_NUMBER = 'number';
 @Component({
     selector: "plain-amount-input",
@@ -30,7 +30,7 @@ export class PlainAmountInputComponent extends ChildFormBase implements OnInit {
     @Input() disabled: boolean = false;
     @Input() presentationMode: "edit" | "view" = "edit";
     @Input() required = false;
-    _maxValue:number = null;
+    _maxValue: number = null;
 
     @Input() label: string;
     @Input() definition: string;
@@ -61,7 +61,7 @@ export class PlainAmountInputComponent extends ChildFormBase implements OnInit {
     }
 
     ngOnInit() {
-        if(!this.valueClass) {
+        if (!this.valueClass) {
             this.valueClass = this.label ? "col-9" : "col-12";
         }
         this.initViewFormAndAddToParentForm();
@@ -72,18 +72,18 @@ export class PlainAmountInputComponent extends ChildFormBase implements OnInit {
     }
 
     initializeForm(): void {
-        let validators:ValidatorFn[] = this.getValidators();
+        let validators: ValidatorFn[] = this.getValidators();
 
         this.amountFormControl = new FormControl(this.amount, validators);
         this.addToCurrentForm(FIELD_NAME_NUMBER, this.amountFormControl);
     }
 
-    getValidators():ValidatorFn[]{
-        let validators:ValidatorFn[] = [];
-        if(this.required){
+    getValidators(): ValidatorFn[] {
+        let validators: ValidatorFn[] = [];
+        if (this.required) {
             validators.push(Validators.required);
         }
-        if(this.maxValue !== null){
+        if (this.maxValue !== null) {
             validators.push(Validators.max(this.maxValue));
         }
 
@@ -91,10 +91,10 @@ export class PlainAmountInputComponent extends ChildFormBase implements OnInit {
     }
 
     @Input("maxValue")
-    set maxValue(value:number){
+    set maxValue(value: number) {
         this._maxValue = value;
-        if(this.amountFormControl){
-            let validators:ValidatorFn[] = this.getValidators();
+        if (this.amountFormControl) {
+            let validators: ValidatorFn[] = this.getValidators();
             // need to override existing validators for the from control
             this.amountFormControl.setValidators(validators);
             // check the validity of from control
@@ -102,7 +102,7 @@ export class PlainAmountInputComponent extends ChildFormBase implements OnInit {
         }
     }
 
-    get maxValue(){
+    get maxValue() {
         return this._maxValue;
     }
 }

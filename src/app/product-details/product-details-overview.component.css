@@ -13,7 +13,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
 .img-selected {
     object-fit: contain;
     object-position: center;
@@ -23,8 +22,8 @@
 
 .carousel-active {
     display: flex;
-    width:100%;
-    height:300px;
+    width: 100%;
+    height: 300px;
     overflow: hidden;
     margin: 0 auto;
     text-align: center;
@@ -37,15 +36,15 @@
 }
 
 .carousel-resize {
-    min-width:100%;
-    max-width:100%;
-    height:300px;
-    margin:0;
+    min-width: 100%;
+    max-width: 100%;
+    height: 300px;
+    margin: 0;
 }
 
 .carousel-inactive {
-    width:100%;
-    height:80px;
+    width: 100%;
+    height: 80px;
     overflow: hidden;
     margin: 0 auto;
     text-align: center;
@@ -53,7 +52,7 @@
 }
 
 .carousel-inactive-resize {
-    height:80px;
+    height: 80px;
 }
 
 .btn-carousel {

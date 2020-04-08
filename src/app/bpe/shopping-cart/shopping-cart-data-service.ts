@@ -12,15 +12,15 @@
    limitations under the License.
  */
 
-import {Injectable} from '@angular/core';
-import {Catalogue} from '../../catalogue/model/publish/catalogue';
-import {CookieService} from 'ng2-cookies';
-import {getAuthorizedHeaders} from '../../common/utils';
+import { Injectable } from '@angular/core';
+import { Catalogue } from '../../catalogue/model/publish/catalogue';
+import { CookieService } from 'ng2-cookies';
+import { getAuthorizedHeaders } from '../../common/utils';
 import * as myGlobals from '../../globals';
-import {Http} from '@angular/http';
-import {CatalogueLine} from '../../catalogue/model/publish/catalogue-line';
-import {UBLModelUtils} from '../../catalogue/model/ubl-model-utils';
-import {CategoryService} from '../../catalogue/category/category.service';
+import { Http } from '@angular/http';
+import { CatalogueLine } from '../../catalogue/model/publish/catalogue-line';
+import { UBLModelUtils } from '../../catalogue/model/ubl-model-utils';
+import { CategoryService } from '../../catalogue/category/category.service';
 
 @Injectable()
 export class ShoppingCartDataService {
@@ -34,29 +34,29 @@ export class ShoppingCartDataService {
     serviceRootCategories: string[];
 
     constructor(private cookieService: CookieService,
-                private categoryService: CategoryService,
-                private http: Http) {
+        private categoryService: CategoryService,
+        private http: Http) {
         this.fetchServiceRootCategories();
     }
 
-    public addItemToCart(productHjid: string | number,quantity:number = 1,delegateId:string): Promise<Catalogue> {
+    public addItemToCart(productHjid: string | number, quantity: number = 1, delegateId: string): Promise<Catalogue> {
         if (this.cartCatalogue == null) {
             return this.getShoppingCart().then(() => {
-                return this.execAddItemToCart(productHjid,quantity,delegateId);
+                return this.execAddItemToCart(productHjid, quantity, delegateId);
             });
         } else {
-            return this.execAddItemToCart(productHjid,quantity,delegateId);
+            return this.execAddItemToCart(productHjid, quantity, delegateId);
         }
     }
 
-    private execAddItemToCart(productHjid: string | number,quantity:number = 1,delegateId:string): Promise<Catalogue> {
+    private execAddItemToCart(productHjid: string | number, quantity: number = 1, delegateId: string): Promise<Catalogue> {
         let url = `${this.url}/shopping-cart?productId=${productHjid}&quantity=${quantity}`;
         let headers = getAuthorizedHeaders(this.cookieService);
-        if(delegateId != null){
-            headers.append("federationId",delegateId);
+        if (delegateId != null) {
+            headers.append("federationId", delegateId);
         }
         return this.http
-            .post(url, null, {headers: headers})
+            .post(url, null, { headers: headers })
             .toPromise()
             .then(res => {
                 this.cartCatalogue = res.json();
@@ -79,7 +79,7 @@ export class ShoppingCartDataService {
             }
         }
         return this.http
-            .delete(url, {headers: getAuthorizedHeaders(this.cookieService)})
+            .delete(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
                 for (let cartLineHjid of cartLineHjids) {
@@ -100,7 +100,7 @@ export class ShoppingCartDataService {
     public async createShoppingCart(): Promise<Catalogue> {
         let url = `${this.url}/shopping-cart/new`;
         return this.http
-            .post(url, null, {headers: getAuthorizedHeaders(this.cookieService)})
+            .post(url, null, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
                 this.cartCatalogue = res.json();
@@ -118,7 +118,7 @@ export class ShoppingCartDataService {
 
         let url = `${this.url}/shopping-cart`;
         return this.http
-            .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
+            .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
                 if (res.text() === '') {
@@ -148,7 +148,7 @@ export class ShoppingCartDataService {
         })
     }
 
-    isShoppingCartButtonVisible(categoryUris:string[]): boolean {
+    isShoppingCartButtonVisible(categoryUris: string[]): boolean {
         if (this.serviceRootCategories == null || !this.cartFetched()) {
             return false;
         }

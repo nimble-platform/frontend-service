@@ -13,6 +13,6 @@
  */
 
 export class OrderLineReference {
-    constructor(public lineID:string){
+    constructor(public lineID: string) {
     }
 }

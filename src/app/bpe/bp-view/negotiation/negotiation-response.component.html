@@ -14,27 +14,15 @@
    limitations under the License.
  -->
 
-<negotiation-response-item *ngFor="let wrapper of wrappers;let i=index" [wrapper]="wrapper" [defaultTermsAndConditions]="defaultTermsAndConditions" [frameContract]="frameContracts ? frameContracts[i] : null" [frameContractNegotiation]="frameContractNegotiations ? frameContractNegotiations[i]:null"
-                           [frameContractQuotation]="frameContractQuotations ? frameContractQuotations[i]:null" [lastOfferQuotation]="lastOfferQuotation" [rfq]="rfq" [isCatalogueLineDeleted]="isCatalogueLineDeleted(wrapper.catalogueLine)" [primaryTermsSource]="primaryTermsSources ? primaryTermsSources[i]:null"
-                           [quotation]="quotation" [readonly]="readonly" [hidden]="selectedLineIndex != wrapper.lineIndex"></negotiation-response-item>
+<negotiation-response-item *ngFor="let wrapper of wrappers;let i=index" [wrapper]="wrapper" [defaultTermsAndConditions]="defaultTermsAndConditions" [frameContract]="frameContracts ? frameContracts[i] : null" [frameContractNegotiation]="frameContractNegotiations ? frameContractNegotiations[i]:null" [frameContractQuotation]="frameContractQuotations ? frameContractQuotations[i]:null" [lastOfferQuotation]="lastOfferQuotation" [rfq]="rfq" [isCatalogueLineDeleted]="isCatalogueLineDeleted(wrapper.catalogueLine)" [primaryTermsSource]="primaryTermsSources ? primaryTermsSources[i]:null" [quotation]="quotation" [readonly]="readonly" [hidden]="selectedLineIndex != wrapper.lineIndex"></negotiation-response-item>
 
 <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showNotesAndAdditionalFiles,'bg-danger text-white':highlightNotesAndFilesSection()}" (click)="showNotesAndAdditionalFiles=showTab(showNotesAndAdditionalFiles)"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>
 
-<div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showPurchaseOrder}" (click)="showPurchaseOrder = showTab(showPurchaseOrder)"><span [innerHTML]="'Purchase Order' | translate" ></span></div>
+<div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showPurchaseOrder}" (click)="showPurchaseOrder = showTab(showPurchaseOrder)"><span [innerHTML]="'Purchase Order' | translate"></span></div>
 
 <!--Notes-->
 <div class="ml-2 space-before">
-    <note-file-view *ngIf="showNotesAndAdditionalFiles"
-                    [notes]="quotation.note"
-                    [requestNotes]="rfq.note"
-                    [documents]="quotation.additionalDocumentReference"
-                    [requestDocuments]="rfq.additionalDocumentReference"
-                    [label]="'Notes'"
-                    [firstCol]="'col-3'"
-                    [secondCol]="'col-3'"
-                    [thirdCol]="'col-3'"
-                    [lastCol]="'col-3'"
-                    [readonly]="isLoading() || isReadOnly()"></note-file-view>
+    <note-file-view *ngIf="showNotesAndAdditionalFiles" [notes]="quotation.note" [requestNotes]="rfq.note" [documents]="quotation.additionalDocumentReference" [requestDocuments]="rfq.additionalDocumentReference" [label]="'Notes'" [firstCol]="'col-3'" [secondCol]="'col-3'" [thirdCol]="'col-3'" [lastCol]="'col-3'" [readonly]="isLoading() || isReadOnly()"></note-file-view>
 </div>
 
 <!--Purchase Order-->
@@ -70,9 +58,11 @@
 <!-- Action buttons are only displayed for the last product -->
 <ng-container *ngIf="selectedLineIndex == lines.length-1">
     <div class="row actions-row" *ngIf="userRole === 'seller' && !isReadOnly()">
-        <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-6 call-status-col">
+            <call-status [callStatus]="callStatus"></call-status>
+        </div>
         <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading() || isThereADeletedProduct()" (click)="onRespondToQuotation(false)" singleClick>
@@ -90,14 +80,18 @@
     </div>
 
     <div class="row actions-row" *ngIf="userRole === 'seller' && isReadOnly()">
-        <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-10 call-status-col">
+            <call-status [callStatus]="callStatus"></call-status>
+        </div>
         <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
     </div>
 
     <div class="row actions-row" *ngIf="userRole === 'buyer' && !readonly">
-        <div class="col-5 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-5 call-status-col">
+            <call-status [callStatus]="callStatus"></call-status>
+        </div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>

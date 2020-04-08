@@ -14,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
 /*@import "assets/css/bootstrap.min.css";*/
 /*@import "assets/css/fontawesome-all.min.css";*/
 @import "global-styles.css";
@@ -28,18 +27,18 @@ html, body {
 }
 
 p {
-  /*word-break: break-all;*/
-  overflow-wrap: break-word;
+    /*word-break: break-all;*/
+    overflow-wrap: break-word;
 }
 
 .all-break {
-  word-break: break-all;
+    word-break: break-all;
 }
 
 .max-container {
-  padding-top:15px;
-  padding-bottom:15px;
-  max-width: 100% !important;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    max-width: 100% !important;
 }
 
 .container-fluid {
@@ -67,9 +66,8 @@ strong {
 /*
 Overwrite default values for Bootstrap buttons.
 */
-
 .btn, .badge {
-  white-space: normal;
+    white-space: normal;
 }
 
 .btn.btn-primary {
@@ -149,9 +147,11 @@ Overwrite default values for Bootstrap buttons.
 a.nav-link {
     color: #2980b9;
 }
+
 a.nav-link:hover {
     color: #002e60;
 }
+
 textarea {
     min-height: 2.375rem;
     resize: none;
@@ -170,32 +170,32 @@ textarea {
 }
 
 #loading-bg {
-	position:fixed;
-	left:0;
-	top:0;
-	height:100%;
-	width:100%;
-	background-color:rgba(255,255,255,0.7);
-	z-index:9999;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.7);
+    z-index: 9999;
 }
 
 #support-btn {
-	position: fixed;
-	right: 1rem;
-	bottom: 1rem;
-	width: 70px;
-	height: 70px;
-	border-radius: 35px;
-	background-color: var(--main-color);
-	z-index: 9998;
-	cursor: pointer;
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    width: 70px;
+    height: 70px;
+    border-radius: 35px;
+    background-color: var(--main-color);
+    z-index: 9998;
+    cursor: pointer;
 }
 
 #support-img {
-	height: 50px;
-	width: 50px;
-	margin-left: 10px;
-	margin-top: 8px;
+    height: 50px;
+    width: 50px;
+    margin-left: 10px;
+    margin-top: 8px;
 }
 
 .nimble-bg {
@@ -207,10 +207,10 @@ textarea {
 }
 
 .nimble-col {
-	border: 2px solid var(--main-color);
-	border-radius: 0.25rem;
-	padding: 0.5rem;
-	text-align: center;
+    border: 2px solid var(--main-color);
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    text-align: center;
 }
 
 .space-before {
@@ -256,7 +256,6 @@ textarea {
 	word-wrap: break-word;
 }
 */
-
 .ng-valid[required], .ng-valid.required {
     border-right: 5px solid #42A948;
 }
@@ -301,15 +300,15 @@ textarea {
 }
 
 .cont-max {
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
-  padding-left: 15px;
-  padding-right: 15px;
-  overflow: hidden;
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    padding-left: 15px;
+    padding-right: 15px;
+    overflow: hidden;
 }
 
 .bordered {
@@ -324,7 +323,7 @@ textarea {
 }
 
 .inline {
-	display: inline-block !important;
+    display: inline-block !important;
 }
 
 .pointer {
@@ -332,7 +331,7 @@ textarea {
 }
 
 .disabled {
-  cursor: not-allowed;
+    cursor: not-allowed;
 }
 
 .align-left {
@@ -352,7 +351,7 @@ textarea {
     opacity: 0.5 !important;
 }
 
-.navbar-inverse .navbar-nav .active > .nav-link, .navbar-inverse .navbar-nav .nav-link.active, .navbar-inverse .navbar-nav .nav-link.open, .navbar-inverse .navbar-nav .open > .nav-link {
+.navbar-inverse .navbar-nav .active>.nav-link, .navbar-inverse .navbar-nav .nav-link.active, .navbar-inverse .navbar-nav .nav-link.open, .navbar-inverse .navbar-nav .open>.nav-link {
     opacity: 1 !important;
 }
 
@@ -361,19 +360,19 @@ textarea {
 }
 
 .dropdown-item:hover {
-  color: #292b2c !important;
-	background-color: #ccc !important;
+    color: #292b2c !important;
+    background-color: #ccc !important;
 }
 
 .dropdown-item.active, .dropdown-item:active {
-	color: #fff !important;
-	background-color: var(--main-color) !important;
+    color: #fff !important;
+    background-color: var(--main-color) !important;
 }
 
 .dropdown-menu-right {
-  right: 0 !important;
-  left: auto !important;
-  position: absolute !important;
+    right: 0 !important;
+    left: auto !important;
+    position: absolute !important;
 }
 
 .flex-1 {
@@ -423,22 +422,21 @@ ngb-pagination .page-item.active .page-link {
 }
 
 .modal-dialog {
-	max-width: 800px !important;
+    max-width: 800px !important;
 }
 
 .tooltip-icon {
-	position: absolute;
-	right: 0;
-	cursor: pointer;
+    position: absolute;
+    right: 0;
+    cursor: pointer;
 }
 
 .text-std, .text-std:focus, .text-std:hover {
-	color: #292b2c !important;
-	text-decoration: none !important;
+    color: #292b2c !important;
+    text-decoration: none !important;
 }
 
 /* ------------------- */
-
 /* CSS Loader */
 #sk-loading-icon {
     position: fixed;
@@ -449,105 +447,111 @@ ngb-pagination .page-item.active .page-link {
 }
 
 .sk-folding-cube {
-  margin: 50px auto;
-  width: 100px;
-  height: 100px;
-  position: relative;
-  -webkit-transform: rotateZ(45deg);
-          transform: rotateZ(45deg);
+    margin: 50px auto;
+    width: 100px;
+    height: 100px;
+    position: relative;
+    -webkit-transform: rotateZ(45deg);
+    transform: rotateZ(45deg);
 }
 
 .sk-folding-cube .sk-cube {
-  float: left;
-  width: 50%;
-  height: 50%;
-  position: relative;
-  -webkit-transform: scale(1.1);
-      -ms-transform: scale(1.1);
-          transform: scale(1.1);
+    float: left;
+    width: 50%;
+    height: 50%;
+    position: relative;
+    -webkit-transform: scale(1.1);
+    -ms-transform: scale(1.1);
+    transform: scale(1.1);
 }
 
 .sk-folding-cube .sk-cube:before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--main-color);
-  -webkit-animation: sk-foldCubeAngle 2.4s infinite linear both;
-          animation: sk-foldCubeAngle 2.4s infinite linear both;
-  -webkit-transform-origin: 100% 100%;
-      -ms-transform-origin: 100% 100%;
-          transform-origin: 100% 100%;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--main-color);
+    -webkit-animation: sk-foldCubeAngle 2.4s infinite linear both;
+    animation: sk-foldCubeAngle 2.4s infinite linear both;
+    -webkit-transform-origin: 100% 100%;
+    -ms-transform-origin: 100% 100%;
+    transform-origin: 100% 100%;
 }
 
 .sk-folding-cube .sk-cube2 {
-  -webkit-transform: scale(1.1) rotateZ(90deg);
-          transform: scale(1.1) rotateZ(90deg);
+    -webkit-transform: scale(1.1) rotateZ(90deg);
+    transform: scale(1.1) rotateZ(90deg);
 }
 
 .sk-folding-cube .sk-cube3 {
-  -webkit-transform: scale(1.1) rotateZ(180deg);
-          transform: scale(1.1) rotateZ(180deg);
+    -webkit-transform: scale(1.1) rotateZ(180deg);
+    transform: scale(1.1) rotateZ(180deg);
 }
 
 .sk-folding-cube .sk-cube4 {
-  -webkit-transform: scale(1.1) rotateZ(270deg);
-          transform: scale(1.1) rotateZ(270deg);
+    -webkit-transform: scale(1.1) rotateZ(270deg);
+    transform: scale(1.1) rotateZ(270deg);
 }
 
 .sk-folding-cube .sk-cube2:before {
-  -webkit-animation-delay: 0.3s;
-          animation-delay: 0.3s;
+    -webkit-animation-delay: 0.3s;
+    animation-delay: 0.3s;
 }
 
 .sk-folding-cube .sk-cube3:before {
-  -webkit-animation-delay: 0.6s;
-          animation-delay: 0.6s;
+    -webkit-animation-delay: 0.6s;
+    animation-delay: 0.6s;
 }
 
 .sk-folding-cube .sk-cube4:before {
-  -webkit-animation-delay: 0.9s;
-          animation-delay: 0.9s;
+    -webkit-animation-delay: 0.9s;
+    animation-delay: 0.9s;
 }
 
 @-webkit-keyframes sk-foldCubeAngle {
-  0%, 10% {
-    -webkit-transform: perspective(140px) rotateX(-180deg);
-            transform: perspective(140px) rotateX(-180deg);
-    opacity: 0;
-  } 25%, 75% {
-    -webkit-transform: perspective(140px) rotateX(0deg);
-            transform: perspective(140px) rotateX(0deg);
-    opacity: 1;
-  } 90%, 100% {
-    -webkit-transform: perspective(140px) rotateY(180deg);
-            transform: perspective(140px) rotateY(180deg);
-    opacity: 0;
-  }
+    0%, 10% {
+        -webkit-transform: perspective(140px) rotateX(-180deg);
+        transform: perspective(140px) rotateX(-180deg);
+        opacity: 0;
+    }
+
+    25%, 75% {
+        -webkit-transform: perspective(140px) rotateX(0deg);
+        transform: perspective(140px) rotateX(0deg);
+        opacity: 1;
+    }
+
+    90%, 100% {
+        -webkit-transform: perspective(140px) rotateY(180deg);
+        transform: perspective(140px) rotateY(180deg);
+        opacity: 0;
+    }
 }
 
 @keyframes sk-foldCubeAngle {
-  0%, 10% {
-    -webkit-transform: perspective(140px) rotateX(-180deg);
-            transform: perspective(140px) rotateX(-180deg);
-    opacity: 0;
-  } 25%, 75% {
-    -webkit-transform: perspective(140px) rotateX(0deg);
-            transform: perspective(140px) rotateX(0deg);
-    opacity: 1;
-  } 90%, 100% {
-    -webkit-transform: perspective(140px) rotateY(180deg);
-            transform: perspective(140px) rotateY(180deg);
-    opacity: 0;
-  }
+    0%, 10% {
+        -webkit-transform: perspective(140px) rotateX(-180deg);
+        transform: perspective(140px) rotateX(-180deg);
+        opacity: 0;
+    }
+
+    25%, 75% {
+        -webkit-transform: perspective(140px) rotateX(0deg);
+        transform: perspective(140px) rotateX(0deg);
+        opacity: 1;
+    }
+
+    90%, 100% {
+        -webkit-transform: perspective(140px) rotateY(180deg);
+        transform: perspective(140px) rotateY(180deg);
+        opacity: 0;
+    }
 }
 
 /* ------------------- */
-
 /* Floating BP actions */
-
 .actions-hr {
     margin-top: 3rem;
 }
@@ -587,7 +591,6 @@ ngb-pagination .page-item.active .page-link {
 }
 
 /* ------------------- */
-
 /* Title row with bolder text and bottom border */
 .title-row {
     margin-bottom: 1rem;
@@ -603,16 +606,14 @@ ngb-pagination .page-item.active .page-link {
 }
 
 /* ------------------- */
-
 /* Legislation UI */
-
-.btn-center{
+.btn-center {
     text-align: center;
 }
 
 .btn-nimblered {
-	background-color: #b77563;
-	color: #fff;
+    background-color: #b77563;
+    color: #fff;
 }
 
 .collapse-margin {

@@ -45,7 +45,7 @@ export class TnTEventDetailsComponent implements OnChanges {
     dashboardQuery: string;
     selectedBizLocation = '';
 
-    constructor(private tntBackend: TnTService, private translate: TranslateService) {}
+    constructor(private tntBackend: TnTService, private translate: TranslateService) { }
 
     ngOnChanges() {
         if (!this.events.length) {
@@ -73,10 +73,10 @@ export class TnTEventDetailsComponent implements OnChanges {
             console.log(this.events[0].readPoint);
         }
         const prefix = 'urn:epc:id:sgln:';
-         this.tntBackend.getGateInfo(prefix + this.events[0].readPoint)
+        this.tntBackend.getGateInfo(prefix + this.events[0].readPoint)
             .then(resp => {
                 this.gateInformation = resp;
-                }
+            }
             )
             .catch(err => {
                 this.falsecode = err._body;
@@ -92,8 +92,8 @@ export class TnTEventDetailsComponent implements OnChanges {
         this.selectedBizLocation = prefix + this.events[0].bizLocation;
         this.tntBackend.getGateInfo(prefix + this.events[0].bizLocation)
             .then(resp => {
-                    this.bizLocationInformation = resp;
-                }
+                this.bizLocationInformation = resp;
+            }
             )
             .catch(err => {
                 this.falsecode = err._body;
@@ -127,16 +127,16 @@ export class TnTEventDetailsComponent implements OnChanges {
             'to': toTimeStamp
         };
         this.tntBackend.verifyIOTBC(verification_query)
-        .then(resp => {
-            if (this.debug) {
-                console.log(resp);
-            }
-            this.bcIoTDataHashExists = resp['exists'];
-            this.bcIoTDataIntegrityValidated = resp['validated'];
-            this.bcIoTHash = resp['hash'];
-        }).catch(err => {
-            console.log(err);
-        })
+            .then(resp => {
+                if (this.debug) {
+                    console.log(resp);
+                }
+                this.bcIoTDataHashExists = resp['exists'];
+                this.bcIoTDataIntegrityValidated = resp['validated'];
+                this.bcIoTHash = resp['hash'];
+            }).catch(err => {
+                console.log(err);
+            })
     }
 
 }

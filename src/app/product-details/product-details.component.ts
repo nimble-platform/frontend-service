@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import {Component, OnInit, ViewChild} from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
 import { CatalogueService } from "../catalogue/catalogue.service";
 import { CallStatus } from "../common/call-status";
@@ -22,7 +22,7 @@ import { BPDataService } from "../bpe/bp-view/bp-data-service";
 import { CatalogueLine } from "../catalogue/model/publish/catalogue-line";
 import { ProcessType } from "../bpe/model/process-type";
 import { ProductWrapper } from "../common/product-wrapper";
-import {TranslateService} from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Item } from "../catalogue/model/publish/item";
 import {
     copy,
@@ -35,24 +35,24 @@ import {
 import { AppComponent } from "../app.component";
 import { UserService } from "../user-mgmt/user.service";
 import { CompanySettings } from "../user-mgmt/model/company-settings";
-import {Quantity} from '../catalogue/model/publish/quantity';
-import {DiscountModalComponent} from './discount-modal.component';
-import {BpActivityEvent} from '../catalogue/model/publish/bp-start-event';
+import { Quantity } from '../catalogue/model/publish/quantity';
+import { DiscountModalComponent } from './discount-modal.component';
+import { BpActivityEvent } from '../catalogue/model/publish/bp-start-event';
 import { CookieService } from 'ng2-cookies';
-import {FAVOURITE_LINEITEM_PUT_OPTIONS, FEDERATIONID} from '../catalogue/model/constants';
+import { FAVOURITE_LINEITEM_PUT_OPTIONS, FEDERATIONID } from '../catalogue/model/constants';
 import * as myGlobals from '../globals';
-import {DiscountPriceWrapper} from "../common/discount-price-wrapper";
-import {DigitalAgreement} from "../catalogue/model/publish/digital-agreement";
-import {DocumentService} from "../bpe/bp-view/document-service";
-import {BPEService} from "../bpe/bpe.service";
-import {UBLModelUtils} from "../catalogue/model/ubl-model-utils";
-import {QuotationWrapper} from "../bpe/bp-view/negotiation/quotation-wrapper";
-import {SearchContextService} from '../simple-search/search-context.service';
-import {UnshippedOrdersTransitionService} from '../bpe/unshipped-order-transition-service';
-import {Price} from '../catalogue/model/publish/price';
-import {AbstractControl, FormControl, Validators} from '@angular/forms';
-import {ValidatorFn} from '@angular/forms/src/directives/validators';
-import {stepValidator, ValidationService} from '../common/validation/validators';
+import { DiscountPriceWrapper } from "../common/discount-price-wrapper";
+import { DigitalAgreement } from "../catalogue/model/publish/digital-agreement";
+import { DocumentService } from "../bpe/bp-view/document-service";
+import { BPEService } from "../bpe/bpe.service";
+import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
+import { QuotationWrapper } from "../bpe/bp-view/negotiation/quotation-wrapper";
+import { SearchContextService } from '../simple-search/search-context.service';
+import { UnshippedOrdersTransitionService } from '../bpe/unshipped-order-transition-service';
+import { Price } from '../catalogue/model/publish/price';
+import { AbstractControl, FormControl, Validators } from '@angular/forms';
+import { ValidatorFn } from '@angular/forms/src/directives/validators';
+import { stepValidator, ValidationService } from '../common/validation/validators';
 
 @Component({
     selector: 'product-details',
@@ -69,7 +69,7 @@ export class ProductDetailsComponent implements OnInit {
 
     id: string;
     catalogueId: string;
-    isSearchContextValid:boolean;
+    isSearchContextValid: boolean;
     favouriteItemIds: string[] = [];
 
     // options: BpWorkflowOptions = new BpWorkflowOptions();
@@ -86,7 +86,7 @@ export class ProductDetailsComponent implements OnInit {
     frameContract: DigitalAgreement;
     tabToOpen: string = "";
     isLogistics: boolean = false;
-    isTransportService:boolean = false;
+    isTransportService: boolean = false;
 
     termsSelectBoxValue: 'product_defaults' | 'frame_contract' = 'product_defaults';
 
@@ -104,23 +104,23 @@ export class ProductDetailsComponent implements OnInit {
     onOrderQuantityKeyPressed = validateNumberInput;
 
     constructor(private bpeService: BPEService,
-                private bpDataService: BPDataService,
-                private catalogueService: CatalogueService,
-                private documentService: DocumentService,
-                private userService: UserService,
-                private route: ActivatedRoute,
-                private cookieService: CookieService,
-                private searchContextService:SearchContextService,
-                private unShippedOrdersTransitionService: UnshippedOrdersTransitionService,
-                private validationService: ValidationService,
-                private translate: TranslateService,
-                public appComponent: AppComponent) {
+        private bpDataService: BPDataService,
+        private catalogueService: CatalogueService,
+        private documentService: DocumentService,
+        private userService: UserService,
+        private route: ActivatedRoute,
+        private cookieService: CookieService,
+        private searchContextService: SearchContextService,
+        private unShippedOrdersTransitionService: UnshippedOrdersTransitionService,
+        private validationService: ValidationService,
+        private translate: TranslateService,
+        public appComponent: AppComponent) {
 
     }
 
     ngOnInit() {
-		this.route.queryParams.subscribe(params => {
-			let id = params['id'];
+        this.route.queryParams.subscribe(params => {
+            let id = params['id'];
             let catalogueId = params['catalogueId'];
             let isSearchContextValid = params['contextValid'];
             this.tabToOpen = params['tabToOpen'];
@@ -129,7 +129,7 @@ export class ProductDetailsComponent implements OnInit {
                 this.orderQuantity = Number.parseInt(orderQuantity);
             }
 
-            if(id !== this.id || catalogueId !== this.catalogueId) {
+            if (id !== this.id || catalogueId !== this.catalogueId) {
                 this.id = id;
                 this.catalogueId = catalogueId;
                 this.isSearchContextValid = isSearchContextValid;
@@ -151,21 +151,21 @@ export class ProductDetailsComponent implements OnInit {
                             [this.line.id],
                             FEDERATIONID(),
                             this.line.goodsItem.item.manufacturerParty.federationInstanceID).then(contracts => {
-                            // contract exists, get the corresponding quotation including the terms
-                            this.documentService.getCachedDocument(contracts[0].quotationReference.id,this.line.goodsItem.item.manufacturerParty.federationInstanceID).then(document => {
-                                this.frameContract = contracts[0];
-                                this.frameContractQuotationWrapper = new QuotationWrapper(document, this.line, UBLModelUtils.getFrameContractQuotationLineIndexForProduct(document.quotationLine,catalogueId,id));
-                                // quotation ordered quantity contains the actual ordered quantity in that business process,
-                                // so we overwrite it with the options's quantity, which is by default 1
-                                this.frameContractQuotationWrapper.orderedQuantity.value = this.orderQuantity;
+                                // contract exists, get the corresponding quotation including the terms
+                                this.documentService.getCachedDocument(contracts[0].quotationReference.id, this.line.goodsItem.item.manufacturerParty.federationInstanceID).then(document => {
+                                    this.frameContract = contracts[0];
+                                    this.frameContractQuotationWrapper = new QuotationWrapper(document, this.line, UBLModelUtils.getFrameContractQuotationLineIndexForProduct(document.quotationLine, catalogueId, id));
+                                    // quotation ordered quantity contains the actual ordered quantity in that business process,
+                                    // so we overwrite it with the options's quantity, which is by default 1
+                                    this.frameContractQuotationWrapper.orderedQuantity.value = this.orderQuantity;
 
-                                this.initCheckGetFrameContractStatus.callback(null, true);
+                                    this.initCheckGetFrameContractStatus.callback(null, true);
+                                }).catch(error => {
+                                    this.initCheckGetFrameContractStatus.callback(null, true);
+                                });
                             }).catch(error => {
                                 this.initCheckGetFrameContractStatus.callback(null, true);
                             });
-                        }).catch(error => {
-                            this.initCheckGetFrameContractStatus.callback(null, true);
-                        });
 
                         return Promise.all([this.userService.getSettingsForProduct(line), this.retrieveAssociatedProductDetails()]);
                     })
@@ -177,13 +177,13 @@ export class ProductDetailsComponent implements OnInit {
                             this.line.requiredItemLocationQuantity.price,
                             copy(this.line.requiredItemLocationQuantity.price),
                             this.line.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
-                            new Quantity(1,this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode),
+                            new Quantity(1, this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode),
                             this.line.priceOption,
                             [],
                             this.line.goodsItem.deliveryTerms.incoterms,
                             settings.negotiationSettings.paymentMeans[0],
                             this.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure);
-                        this.productWrapper = new ProductWrapper(this.line, settings.negotiationSettings,this.priceWrapper.orderedQuantity);
+                        this.productWrapper = new ProductWrapper(this.line, settings.negotiationSettings, this.priceWrapper.orderedQuantity);
 
                         // get the business workflow of seller company
                         this.companyWorkflowMap = this.bpDataService.getCompanyWorkflowMap(settings.negotiationSettings.company.processID);
@@ -205,17 +205,17 @@ export class ProductDetailsComponent implements OnInit {
             }
         });
 
-		// load favourite item ids for the person
+        // load favourite item ids for the person
         let userId = this.cookieService.get("user_id");
         this.callStatus.submit();
         this.userService.getPerson(userId)
-        .then(person => {
-            this.callStatus.callback("Successfully loaded user profile", true);
-            this.favouriteItemIds = person.favouriteProductID;
-        })
-        .catch(error => {
-            this.callStatus.error("Invalid credentials", error);
-        });
+            .then(person => {
+                this.callStatus.callback("Successfully loaded user profile", true);
+                this.favouriteItemIds = person.favouriteProductID;
+            })
+            .catch(error => {
+                this.callStatus.error("Invalid credentials", error);
+            });
     }
 
     ngOnDestroy() {
@@ -241,7 +241,7 @@ export class ProductDetailsComponent implements OnInit {
         // precedingOrderId and activityVariablesOfAssociatedOrder have some values only when the user is navigated to the search for searching a transport service provider
         // for an existing order , that is, this.isSearchContextValid is true
         let precedingOrderId = this.isSearchContextValid ? this.searchContextService.getPrecedingOrderId() : null;
-        let processMetadataOfAssociatedOrder = this.isSearchContextValid ? this.searchContextService.getAssociatedProcessMetadata() :null;
+        let processMetadataOfAssociatedOrder = this.isSearchContextValid ? this.searchContextService.getAssociatedProcessMetadata() : null;
         let unShippedOrderIds = this.unShippedOrdersTransitionService.getUnShippedOrderIds();
         this.bpDataService.startBp(
             new BpActivityEvent(
@@ -267,7 +267,7 @@ export class ProductDetailsComponent implements OnInit {
     onOrderQuantityChange(value: number): void {
         this.orderQuantity = value;
         this.priceWrapper.orderedQuantity.value = this.orderQuantity;
-        if(this.frameContractQuotationWrapper != null) {
+        if (this.frameContractQuotationWrapper != null) {
             this.frameContractQuotationWrapper.orderedQuantity.value = this.orderQuantity;
         }
 
@@ -311,7 +311,7 @@ export class ProductDetailsComponent implements OnInit {
     }
 
     getQuantityUnit(): string {
-        if(!this.line) {
+        if (!this.line) {
             return "";
         }
         return this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode || "";
@@ -335,47 +335,47 @@ export class ProductDetailsComponent implements OnInit {
         return this.validationService.getValidationErrorMessage(formControl);
     }
 
-    private openDiscountModal(): void{
+    private openDiscountModal(): void {
         this.discountModal.open(this.priceWrapper);
     }
 
     removeFavorites(item: CatalogueLine) {
         if (!this.addFavoriteCategoryStatus.isLoading()) {
-          let itemidList = [];
-          itemidList.push(item.hjid.toString());
-          this.addFavoriteCategoryStatus.submit();
-          this.userService.putUserFavourite(itemidList, FAVOURITE_LINEITEM_PUT_OPTIONS[0].value).then(res => {
-              const prefCats_tmp = [];
-              var index = this.favouriteItemIds.indexOf(item.hjid.toString());
-              if (index !== -1) {
-                this.favouriteItemIds.splice(index, 1);
-              }
-             this.findPrefItem(item.hjid);
-              this.addFavoriteCategoryStatus.callback("Category removed from favorites", true);
-          })
-          .catch(error => {
-              this.addFavoriteCategoryStatus.error("Error while removing category from favorites", error);
-          });
+            let itemidList = [];
+            itemidList.push(item.hjid.toString());
+            this.addFavoriteCategoryStatus.submit();
+            this.userService.putUserFavourite(itemidList, FAVOURITE_LINEITEM_PUT_OPTIONS[0].value).then(res => {
+                const prefCats_tmp = [];
+                var index = this.favouriteItemIds.indexOf(item.hjid.toString());
+                if (index !== -1) {
+                    this.favouriteItemIds.splice(index, 1);
+                }
+                this.findPrefItem(item.hjid);
+                this.addFavoriteCategoryStatus.callback("Category removed from favorites", true);
+            })
+                .catch(error => {
+                    this.addFavoriteCategoryStatus.error("Error while removing category from favorites", error);
+                });
         }
     }
 
     addFavorites(item: CatalogueLine) {
         if (!this.addFavoriteCategoryStatus.isLoading()) {
-          let itemidList = [];
-          itemidList.push(item.hjid.toString());
-          this.addFavoriteCategoryStatus.submit();
-          this.userService.putUserFavourite(itemidList, FAVOURITE_LINEITEM_PUT_OPTIONS[0].value).then(res => {
-              const prefCats_tmp = [];
-              var index = this.favouriteItemIds.indexOf(item.hjid.toString());
-              if (index == -1) {
-                this.favouriteItemIds.push(item.hjid.toString());
-              }
-             this.findPrefItem(item.hjid);
-              this.addFavoriteCategoryStatus.callback("Category removed from favorites", true);
-          })
-          .catch(error => {
-              this.addFavoriteCategoryStatus.error("Error while removing category from favorites", error);
-          });
+            let itemidList = [];
+            itemidList.push(item.hjid.toString());
+            this.addFavoriteCategoryStatus.submit();
+            this.userService.putUserFavourite(itemidList, FAVOURITE_LINEITEM_PUT_OPTIONS[0].value).then(res => {
+                const prefCats_tmp = [];
+                var index = this.favouriteItemIds.indexOf(item.hjid.toString());
+                if (index == -1) {
+                    this.favouriteItemIds.push(item.hjid.toString());
+                }
+                this.findPrefItem(item.hjid);
+                this.addFavoriteCategoryStatus.callback("Category removed from favorites", true);
+            })
+                .catch(error => {
+                    this.addFavoriteCategoryStatus.error("Error while removing category from favorites", error);
+                });
         }
     }
 
@@ -388,12 +388,12 @@ export class ProductDetailsComponent implements OnInit {
     }
 
     setTab(data) {
-      if (data) {
-    	this.tabToOpen = "COMPANY";
-      }
-      else {
-    	this.tabToOpen = null;
-      }
+        if (data) {
+            this.tabToOpen = "COMPANY";
+        }
+        else {
+            this.tabToOpen = null;
+        }
     }
 
     /**

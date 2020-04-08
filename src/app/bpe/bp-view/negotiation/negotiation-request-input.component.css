@@ -11,10 +11,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
 .col-quantity-value {
     padding-right: 0.1rem;
 }
+
 .col-quantity-unit {
     padding-left: 0.1rem;
     display: flex;

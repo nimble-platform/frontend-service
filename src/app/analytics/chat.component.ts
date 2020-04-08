@@ -13,9 +13,9 @@
  */
 
 import { Component, OnInit } from "@angular/core";
-import {  NgbModal, ModalDismissReasons , NgbModalOptions} from '@ng-bootstrap/ng-bootstrap';
-import {rocketChatEndpoint} from "../globals";
-import {DomSanitizer} from "@angular/platform-browser";
+import { NgbModal, ModalDismissReasons, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { rocketChatEndpoint } from "../globals";
+import { DomSanitizer } from "@angular/platform-browser";
 
 @Component({
     selector: "chat",
@@ -29,7 +29,7 @@ export class ChatComponent implements OnInit {
 
     chatURL = this.sanitizer.bypassSecurityTrustResourceUrl(rocketChatEndpoint);
 
-    constructor(public sanitizer: DomSanitizer) {}
+    constructor(public sanitizer: DomSanitizer) { }
 
     ngOnInit(): void {
 

@@ -63,7 +63,7 @@
                 </div>
                 <div class="col-6">
                     <button class="btn btn-danger action" (click)="deleteUser(userProfile)">
-                            <span [innerHTML]="'Delete' | translate"></span>
+                        <span [innerHTML]="'Delete' | translate"></span>
                     </button>
                 </div>
             </div>
@@ -75,24 +75,17 @@
             <form (ngSubmit)="onChangePasswordSubmit()" class="space-before" #changePasswordForm="ngForm" novalidate>
                 <div class="form-group row">
                     <div class="col-12">
-                        <input type="password" class="form-control" id="oldPassword" required
-                               [(ngModel)]="changePasswordCredentials.oldPassword"
-                               name="oldPassword" placeholder="Old password" pattern=".{6,}">
+                        <input type="password" class="form-control" id="oldPassword" required [(ngModel)]="changePasswordCredentials.oldPassword" name="oldPassword" placeholder="Old password" pattern=".{6,}">
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-12">
-                        <input type="password" class="form-control" id="newPassword" required
-                               [(ngModel)]="changePasswordCredentials.newPassword"
-                               name="newPassword" placeholder="New password" pattern=".{6,}" (input)="validatePasswords()">
+                        <input type="password" class="form-control" id="newPassword" required [(ngModel)]="changePasswordCredentials.newPassword" name="newPassword" placeholder="New password" pattern=".{6,}" (input)="validatePasswords()">
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-12">
-                        <input type="password" class="form-control" id="newPasswordRepeated" required
-                               [(ngModel)]="newPasswordRepeated" [ngClass]="pw_val_class"
-                               name="newPasswordRepeated" placeholder="New password (repeat)" pattern=".{6,}"
-                               (input)="validatePasswords()">
+                        <input type="password" class="form-control" id="newPasswordRepeated" required [(ngModel)]="newPasswordRepeated" [ngClass]="pw_val_class" name="newPasswordRepeated" placeholder="New password (repeat)" pattern=".{6,}" (input)="validatePasswords()">
                     </div>
                 </div>
 
@@ -103,7 +96,7 @@
                     </div>
                     <div class="col-6">
                         <button type="submit" class="btn btn-primary action" [disabled]="!changePasswordForm.form.valid || !passwords_matching || changePasswordCallStatus.isLoading()">
-                                <span [innerHTML]="'Change Password' | translate"></span>
+                            <span [innerHTML]="'Change Password' | translate"></span>
                         </button>
                     </div>
                 </div>

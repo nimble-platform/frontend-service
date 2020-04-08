@@ -47,58 +47,58 @@ import { CompanyTermsAndConditions } from './company-settings/company-terms-and-
 import { EditTradingTermModalComponent } from './company-settings/edit-trading-term-modal.component';
 
 @NgModule({
-	imports: [
-		CommonModule,
-		AppCommonModule,
-		FormsModule,
-		ReactiveFormsModule,
-		HttpModule,
-		UserMgmtRoutingModule,
-		NgbModule.forRoot(),
-	],
-	declarations: [
-		LoginComponent,
+    imports: [
+        CommonModule,
+        AppCommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpModule,
+        UserMgmtRoutingModule,
+        NgbModule.forRoot(),
+    ],
+    declarations: [
+        LoginComponent,
         LogoutComponent,
-		RegistrationComponent,
-		UserFormComponent,
-		CredentialsFormComponent,
-		AddressSubForm,
+        RegistrationComponent,
+        UserFormComponent,
+        CredentialsFormComponent,
+        AddressSubForm,
         DeliveryTermsSubForm,
         CompanySettingsComponent,
-		CompanyDescriptionSettingsComponent,
-		CompanyRegistrationComponent,
-		CompanyInvitationComponent,
-		CompanyNegotiationSettingsComponent,
-		CompanyCertificatesSettingsComponent,
-		CompanyDataSettingsComponent,
-		CompanyDeliveryTermsComponent,
-		CompanyCategoriesSettingsComponent,
-		CompanyTermsAndConditions,
-		EditTradingTermModalComponent,
-		CompanyDetailsComponent,
-		CompanyRatingComponent,
-		UserProfileComponent,
-		ForgotPasswordComponent,
-		AgentsComponent
-	],
-	exports: [
-		LoginComponent,
+        CompanyDescriptionSettingsComponent,
+        CompanyRegistrationComponent,
+        CompanyInvitationComponent,
+        CompanyNegotiationSettingsComponent,
+        CompanyCertificatesSettingsComponent,
+        CompanyDataSettingsComponent,
+        CompanyDeliveryTermsComponent,
+        CompanyCategoriesSettingsComponent,
+        CompanyTermsAndConditions,
+        EditTradingTermModalComponent,
+        CompanyDetailsComponent,
+        CompanyRatingComponent,
+        UserProfileComponent,
+        ForgotPasswordComponent,
+        AgentsComponent
+    ],
+    exports: [
+        LoginComponent,
         LogoutComponent,
-		RegistrationComponent,
-		UserFormComponent,
-		CredentialsFormComponent,
-		AddressSubForm,
+        RegistrationComponent,
+        UserFormComponent,
+        CredentialsFormComponent,
+        AddressSubForm,
         DeliveryTermsSubForm,
-		CompanyRegistrationComponent,
-		CompanyInvitationComponent,
-		CompanyDetailsComponent,
-		CompanyRatingComponent,
-		UserProfileComponent,
-		ForgotPasswordComponent,
-		AgentsComponent
-	],
-	providers: [
-	]
+        CompanyRegistrationComponent,
+        CompanyInvitationComponent,
+        CompanyDetailsComponent,
+        CompanyRatingComponent,
+        UserProfileComponent,
+        ForgotPasswordComponent,
+        AgentsComponent
+    ],
+    providers: [
+    ]
 })
 
-export class UserMgmtModule {}
+export class UserMgmtModule { }

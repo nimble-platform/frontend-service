@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import {Component, OnInit} from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { BPDataService } from "../bp-data-service";
 import { Router } from "@angular/router";
 
@@ -26,12 +26,12 @@ import { Router } from "@angular/router";
 export class ItemInformationComponent implements OnInit {
 
     constructor(private bpDataService: BPDataService,
-                private router: Router) {
+        private router: Router) {
 
     }
 
     ngOnInit() {
-        if(this.bpDataService.bpActivityEvent.userRole == null) {
+        if (this.bpDataService.bpActivityEvent.userRole == null) {
             this.router.navigate(['dashboard']);
         }
     }

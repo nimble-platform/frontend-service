@@ -13,16 +13,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
 .thead-light-equivalent {
     vertical-align: bottom;
     font-weight: 700;
 }
 
 .fixed {
-    position:sticky;
+    position: sticky;
     z-index: 999;
-    top:0;
+    top: 0;
 }
 
 .fixed-header {
@@ -35,7 +34,7 @@
 }
 
 .hover-row:hover {
-    background-color: rgba(0,0,0,.075);
+    background-color: rgba(0, 0, 0, .075);
 }
 
 .selected-row {
@@ -56,24 +55,24 @@
 }
 
 .star {
-  position: relative;
-  display: inline-block;
-  color: #b0c4de;
-	font-size: 130%;
+    position: relative;
+    display: inline-block;
+    color: #b0c4de;
+    font-size: 130%;
 }
 
 .star-b {
-	font-size: 220% !important;
-  line-height: 110%;
+    font-size: 220% !important;
+    line-height: 110%;
 }
 
 .full {
-  color: #1e90ff;
+    color: #1e90ff;
 }
 
 .half {
-  position: absolute;
-  display: inline-block;
-  overflow: hidden;
-  color: #1e90ff;
+    position: absolute;
+    display: inline-block;
+    overflow: hidden;
+    color: #1e90ff;
 }

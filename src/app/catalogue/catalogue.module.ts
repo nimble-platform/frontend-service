@@ -36,26 +36,26 @@ import { ProductDetailsModule } from "../product-details/product-details.module"
 import { ProductPriceTabComponent } from "./publish/product-price-tab.component";
 import { ProductCertificatesTabComponent } from "./publish/product-certificates-tab.component";
 import { UserMgmtModule } from "../user-mgmt/user-mgmt.module";
-import {NoteFileViewComponent} from './ubl-model-view/note-file-view.component';
-import {BulkPublishComponent} from "./publish/bulk-publish.component";
-import {OptionsPanelComponent} from './publish/options-panel.component';
-import {OriginDestinationViewComponent} from './publish/origin-destination-view-component';
-import {NameDescriptionPanelComponent} from './publish/name-description-panel.component';
-import {LogisticServicePublishComponent} from './publish/logistic-service-publish.component';
-import {LogisticPublishDeactivateGuardService} from './logistic-publish-deactivate-guard.service';
-import {DeleteExportCatalogueModalComponent} from "./ubl-model-view/catalogue/delete-export-catalogue-modal.component";
+import { NoteFileViewComponent } from './ubl-model-view/note-file-view.component';
+import { BulkPublishComponent } from "./publish/bulk-publish.component";
+import { OptionsPanelComponent } from './publish/options-panel.component';
+import { OriginDestinationViewComponent } from './publish/origin-destination-view-component';
+import { NameDescriptionPanelComponent } from './publish/name-description-panel.component';
+import { LogisticServicePublishComponent } from './publish/logistic-service-publish.component';
+import { LogisticPublishDeactivateGuardService } from './logistic-publish-deactivate-guard.service';
+import { DeleteExportCatalogueModalComponent } from "./ubl-model-view/catalogue/delete-export-catalogue-modal.component";
 
 @NgModule({
-	imports: [CommonModule,
-		AppCommonModule,
-		FormsModule,
-		ReactiveFormsModule,
-		HttpModule,
+    imports: [CommonModule,
+        AppCommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpModule,
         CatalogueRoutingModule,
         ProductDetailsModule,
         UserMgmtModule,
         NgbModule.forRoot()
-	],
+    ],
     declarations: [
         CategorySearchComponent,
         CategoryTreeComponent,
@@ -86,4 +86,4 @@ import {DeleteExportCatalogueModalComponent} from "./ubl-model-view/catalogue/de
     ],
     providers: [PublishDeactivateGuardService, CategoryDeactivateGuardService, LogisticPublishDeactivateGuardService]
 })
-export class CatalogueModule {}
+export class CatalogueModule { }

@@ -15,13 +15,13 @@
  */
 
 import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
-import {LANGUAGES} from '../catalogue/model/constants';
-import {TranslateService} from '@ngx-translate/core';
-import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
-import {ChildFormBase} from './validation/child-form-base';
-import {AbstractControl, FormControl, Validators} from '@angular/forms';
-import {ValidatorFn} from '@angular/forms/src/directives/validators';
-import {spaceValidator, ValidationService} from './validation/validators';
+import { LANGUAGES } from '../catalogue/model/constants';
+import { TranslateService } from '@ngx-translate/core';
+import { UBLModelUtils } from '../catalogue/model/ubl-model-utils';
+import { ChildFormBase } from './validation/child-form-base';
+import { AbstractControl, FormControl, Validators } from '@angular/forms';
+import { ValidatorFn } from '@angular/forms/src/directives/validators';
+import { spaceValidator, ValidationService } from './validation/validators';
 
 const TEXT_INPUT_FIELD_NAME = 'text';
 @Component({
@@ -45,14 +45,14 @@ export class TextInputComponent extends ChildFormBase implements OnInit {
     @Input() flexClass: string = "";
     @Input() valueClass: string; // set based on label
     @Input() placeholder: string = "...";
-    @Input() addButtonStyle:string = "";
-    @Input() deleteButtonStyle:string = "";
+    @Input() addButtonStyle: string = "";
+    @Input() deleteButtonStyle: string = "";
 
     private textValue: string;
     private languageIdValue: string;
-    @Input() languageIdClass:String = "";
+    @Input() languageIdClass: String = "";
     @Input() valueTextClass: string = "";
-    @Input() textGeneratorClass:string = "";
+    @Input() textGeneratorClass: string = "";
     @Output() textChange = new EventEmitter<string>();
     @Output() languageIdChange = new EventEmitter<string>();
     @Output() addTextInput = new EventEmitter();
@@ -65,12 +65,12 @@ export class TextInputComponent extends ChildFormBase implements OnInit {
     languages = LANGUAGES;
 
     constructor(private validationService: ValidationService,
-                private translate: TranslateService) {
+        private translate: TranslateService) {
         super();
     }
 
     ngOnInit() {
-        if(!this.valueClass) {
+        if (!this.valueClass) {
             this.valueClass = this.label ? "col-9" : "col-12";
         }
         this.initViewFormAndAddToParentForm();
@@ -83,16 +83,16 @@ export class TextInputComponent extends ChildFormBase implements OnInit {
     @Input()
     get text(): string {
         if (this.presentationMode == "view") {
-          let textBreaks = "";
-          let textBreaksArr = [""];
-          if (this.textValue && typeof(this.textValue) == "string") {
-            textBreaksArr = this.textValue.split("\n");
-          }
-          if (textBreaksArr.length > 1)
-            textBreaks = textBreaksArr.join("<br/>");
-          else
-            textBreaks = textBreaksArr[0];
-          return textBreaks;
+            let textBreaks = "";
+            let textBreaksArr = [""];
+            if (this.textValue && typeof (this.textValue) == "string") {
+                textBreaksArr = this.textValue.split("\n");
+            }
+            if (textBreaksArr.length > 1)
+                textBreaks = textBreaksArr.join("<br/>");
+            else
+                textBreaks = textBreaksArr[0];
+            return textBreaks;
         }
         return this.textValue;
     }
@@ -103,25 +103,25 @@ export class TextInputComponent extends ChildFormBase implements OnInit {
     }
 
     @Input()
-    get languageId(): string{
+    get languageId(): string {
         return this.languageIdValue;
     }
 
-    set languageId(languageId: string){
+    set languageId(languageId: string) {
         this.languageIdValue = languageId;
         this.languageIdChange.emit(languageId);
     }
 
-    onAddTextInput(){
+    onAddTextInput() {
         this.addTextInput.emit();
     }
 
-    onDeleteTextInput(){
+    onDeleteTextInput() {
         this.deleteTextInput.emit();
     }
 
-    generateText(){
-       this.text = UBLModelUtils.generateUUID();
+    generateText() {
+        this.text = UBLModelUtils.generateUUID();
     }
 
     initializeForm(): void {

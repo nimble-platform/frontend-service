@@ -40,9 +40,7 @@
         <button *ngIf="mode == 'delete-images'" type="button" class="btn btn-primary" (click)="onDeleteImagesClicked(d);">
             <span><span [innerHTML]="'Delete All Product Images of Selected Catalogues' | translate"></span></span>
         </button>
-        <input #imagePackage type="file" (change)="uploadImagePackage($event,d)"
-               accept="application/zip"
-               style="display: none">
+        <input #imagePackage type="file" (change)="uploadImagePackage($event,d)" accept="application/zip" style="display: none">
         <button *ngIf="mode == 'upload-image'" type="button" class="btn btn-primary" (click)="imagePackage.click()">
             <span><span [innerHTML]="'Upload Image Package for the Selected Catalogue' | translate"></span></span>
         </button>

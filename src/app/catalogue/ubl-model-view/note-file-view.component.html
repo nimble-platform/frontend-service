@@ -25,8 +25,7 @@
         <ng-container *ngFor="let note of requestNotes;let i=index;">
             <div class="row">
                 <div class="col-12 space-after">
-                <textarea  class="form-control note-textarea" rows="3" maxlength="255"
-                           [disabled]="true" [ngModel]="requestNotes[i]">
+                    <textarea class="form-control note-textarea" rows="3" maxlength="255" [disabled]="true" [ngModel]="requestNotes[i]">
                 </textarea>
                 </div>
             </div>
@@ -36,14 +35,12 @@
         <ng-container *ngFor="let note of notes;let i=index;">
             <div class="row">
                 <div class="{{ i === 0 || readonly ? 'col-12' : (thirdCol ? 'col-8' : 'col-9') }} space-after">
-                <textarea  class="form-control note-textarea" rows="3" maxlength="255"
-                           [disabled]="readonly" [ngModel]="notes[i]" (change)="setNote(i, $event)">
+                    <textarea class="form-control note-textarea" rows="3" maxlength="255" [disabled]="readonly" [ngModel]="notes[i]" (change)="setNote(i, $event)">
                 </textarea>
                 </div>
                 <div *ngIf="!readonly && i > 0 " class="col-3">
-                    <button class="btn btn-danger btn-remove-value float-right"
-                            (click)="onRemoveNote(i)">
-                            <span [innerHTML]="'Remove' | translate"></span>
+                    <button class="btn btn-danger btn-remove-value float-right" (click)="onRemoveNote(i)">
+                        <span [innerHTML]="'Remove' | translate"></span>
                     </button>
                 </div>
             </div>
@@ -66,9 +63,7 @@
         </file-input>
     </div>
     <div [class]="lastCol">
-        <file-input [disabled]="readonly" [multiple]="true" [presentationMode]="readonly ? 'view' : 'edit'"
-                    (onSelectFile)="onSelectFile($event)" [binaryObjects]="files"
-                    (onClearFile)="onUnSelectFile($event)">
+        <file-input [disabled]="readonly" [multiple]="true" [presentationMode]="readonly ? 'view' : 'edit'" (onSelectFile)="onSelectFile($event)" [binaryObjects]="files" (onClearFile)="onUnSelectFile($event)">
         </file-input>
     </div>
 </div>

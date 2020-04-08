@@ -11,7 +11,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
 ::ng-deep .large-modal .modal-dialog {
     max-width: 80% !important;
     width: 80% !important;

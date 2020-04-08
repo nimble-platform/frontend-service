@@ -12,9 +12,9 @@
    limitations under the License.
  */
 
-import {Component, OnInit} from '@angular/core';
-import {AnalyticsService} from "./analytics.service";
-import {TranslateService} from '@ngx-translate/core';
+import { Component, OnInit } from '@angular/core';
+import { AnalyticsService } from "./analytics.service";
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'company-analytics',

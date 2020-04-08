@@ -15,8 +15,7 @@
  -->
 
 <div *ngIf="isReady()">
-    <order-item *ngFor="let priceWrapper of priceWrappers;let i=index" [lineIndex]="i" [buyerParty]="buyerParty" [sellerParty]="sellerParty" [priceWrapper]="priceWrapper" [hidden]="selectedLineIndex != i"
-                [selectedLineIndex]="selectedLineIndex"></order-item>
+    <order-item *ngFor="let priceWrapper of priceWrappers;let i=index" [lineIndex]="i" [buyerParty]="buyerParty" [sellerParty]="sellerParty" [priceWrapper]="priceWrapper" [hidden]="selectedLineIndex != i" [selectedLineIndex]="selectedLineIndex"></order-item>
 
     <div class="ml-2">
         <div class="row mb-4 mt-4">
@@ -31,16 +30,12 @@
     <ng-container *ngIf="selectedPanel == 'TRACK_AND_TRACE'">
         <ul class="nav nav-tabs space-after">
             <li class="nav-item">
-                <a href id="EPC_CODES" class="nav-link"
-                   [ngClass]="{ active: selectedTrackAndTraceTab === 'EPC_CODES'}"
-                   (click)="onTTTabSelect($event,'EPC_CODES')">
+                <a href id="EPC_CODES" class="nav-link" [ngClass]="{ active: selectedTrackAndTraceTab === 'EPC_CODES'}" (click)="onTTTabSelect($event,'EPC_CODES')">
                     <span [innerHTML]="'EPC Codes' | translate"></span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href id="PRODUCTION_PROCESS_TEMPLATE" class="nav-link"
-                   [ngClass]="{ active: selectedTrackAndTraceTab === 'PRODUCTION_PROCESS_TEMPLATE'}"
-                   (click)="onTTTabSelect($event,'PRODUCTION_PROCESS_TEMPLATE')">
+                <a href id="PRODUCTION_PROCESS_TEMPLATE" class="nav-link" [ngClass]="{ active: selectedTrackAndTraceTab === 'PRODUCTION_PROCESS_TEMPLATE'}" (click)="onTTTabSelect($event,'PRODUCTION_PROCESS_TEMPLATE')">
                     <span [innerHTML]="'Production Process Template' | translate"></span>
                 </a>
             </li>
@@ -78,16 +73,15 @@
                     <!-- Save -->
                     <div class="row">
                         <div class="col-12">
-                            <button class="btn btn-primary w-100 save-epc-btn" [disabled]="!areEpcCodesDirty() || !isThereAValidEPCCode()"
-                                    (click)="onSaveEpcCodes()"><span [innerHTML]="'Save' | translate"></span></button>
+                            <button class="btn btn-primary w-100 save-epc-btn" [disabled]="!areEpcCodesDirty() || !isThereAValidEPCCode()" (click)="onSaveEpcCodes()"><span [innerHTML]="'Save' | translate"></span></button>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-12 d-flex justify-content-end">
-                  <span class="align-self-center">
-                      <call-status [callStatus]="saveEpcCodesCallStatus"></call-status>
-                  </span>
+                            <span class="align-self-center">
+                                <call-status [callStatus]="saveEpcCodesCallStatus"></call-status>
+                            </span>
                         </div>
                     </div>
 
@@ -98,10 +92,7 @@
         <div *ngIf="selectedTrackAndTraceTab === 'PRODUCTION_PROCESS_TEMPLATE'">
             <div class="d-flex">
                 <div class="col-3 mr-2">
-                    <file-input [binaryObjects]="productionTemplateFile"
-                                (onSelectFile)="onTTFileSelected($event)"
-                                (onClearFile)="onTTFileRemoved()"
-                                [presentationMode]="isSeller() && processMetadata.collaborationStatus != 'CANCELLED' ? 'edit' : 'view'">
+                    <file-input [binaryObjects]="productionTemplateFile" (onSelectFile)="onTTFileSelected($event)" (onClearFile)="onTTFileRemoved()" [presentationMode]="isSeller() && processMetadata.collaborationStatus != 'CANCELLED' ? 'edit' : 'view'">
                     </file-input>
                 </div>
                 <div *ngIf="isSeller()">
@@ -131,21 +122,10 @@
     <ng-container *ngIf="selectedPanel == 'NOTES_AND_FILES'">
         <div class="row content-row" *ngIf="isReady()">
             <div class="col-6">
-                <note-file-view [notes]="order.note"
-                                [label]="'Customer\'s Note'"
-                                [documents]="order.additionalDocumentReference"
-                                [firstCol]="'col-4'"
-                                [lastCol]="'col-8'"
-                                [readonly]="isReadOnly() || isSeller()"></note-file-view>
+                <note-file-view [notes]="order.note" [label]="'Customer\'s Note'" [documents]="order.additionalDocumentReference" [firstCol]="'col-4'" [lastCol]="'col-8'" [readonly]="isReadOnly() || isSeller()"></note-file-view>
             </div>
             <div class="col-6">
-                <note-file-view *ngIf="showOrderResponseNotes()"
-                                [notes]="orderResponse.note"
-                                [documents]="orderResponse.additionalDocumentReference"
-                                [label]="'Supplier\'s Note'"
-                                [firstCol]="'col-4'"
-                                [lastCol]="'col-8'"
-                                [readonly]="isReadOnly()"></note-file-view>
+                <note-file-view *ngIf="showOrderResponseNotes()" [notes]="orderResponse.note" [documents]="orderResponse.additionalDocumentReference" [label]="'Supplier\'s Note'" [firstCol]="'col-4'" [lastCol]="'col-8'" [readonly]="isReadOnly()"></note-file-view>
             </div>
         </div>
     </ng-container>
@@ -185,7 +165,9 @@
         <ng-container *ngIf="isBuyer() && isReady()">
 
             <div class="row actions-row" *ngIf="!isReadOnly()">
-                <div class="col-8 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
+                <div class="col-8 call-status-col">
+                    <call-status [callStatus]="submitCallStatus"></call-status>
+                </div>
                 <div class="col-2">
                     <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
                         <span [innerHTML]="'Back' | translate"></span>
@@ -202,7 +184,9 @@
             </div>
 
             <div class="row actions-row" *ngIf="isReadOnly() && !isOrderCompleted()">
-                <div class="col-10 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
+                <div class="col-10 call-status-col">
+                    <call-status [callStatus]="submitCallStatus"></call-status>
+                </div>
                 <div class="col-2">
                     <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
                         <span [innerHTML]="'Back' | translate"></span>
@@ -211,7 +195,9 @@
             </div>
 
             <div class="row actions-row" *ngIf="isReadOnly() && isOrderCompleted()">
-                <div class="col-5 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
+                <div class="col-5 call-status-col">
+                    <call-status [callStatus]="submitCallStatus"></call-status>
+                </div>
                 <div class="col-2">
                     <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
                         <span [innerHTML]="'Back' | translate"></span>
@@ -233,7 +219,9 @@
         <ng-container *ngIf="isSeller() && isReady()">
 
             <div class="row actions-row" *ngIf="!isOrderCompleted()">
-                <div class="col-6 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
+                <div class="col-6 call-status-col">
+                    <call-status [callStatus]="submitCallStatus"></call-status>
+                </div>
                 <div class="col-2">
                     <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
                         <span [innerHTML]="'Back' | translate"></span>
@@ -252,7 +240,9 @@
             </div>
 
             <div class="row actions-row" *ngIf="isOrderCompleted()">
-                <div class="{{companyWorkflowMap.get('Fulfilment') ? 'col-1' : 'col-6'}} call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
+                <div class="{{companyWorkflowMap.get('Fulfilment') ? 'col-1' : 'col-6'}} call-status-col">
+                    <call-status [callStatus]="submitCallStatus"></call-status>
+                </div>
                 <div class="col-2">
                     <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
                         <span [innerHTML]="'Back' | translate"></span>

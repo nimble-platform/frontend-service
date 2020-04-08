@@ -12,10 +12,10 @@
    limitations under the License.
  */
 
-import {Text} from '../../catalogue/model/publish/text';
+import { Text } from '../../catalogue/model/publish/text';
 
 export class PaymentMeans {
     constructor(
         public instructionNote: Text[] = [],
-    ) {  }
+    ) { }
 }

@@ -13,5 +13,5 @@
  */
 
 export class GlobalSettings {
-	public debug = true;
+    public debug = true;
 }

@@ -17,5 +17,5 @@ export class ForgotPasswordCredentials {
         public username: String,
         public key: string,
         public newPassword: string,
-    ) {  }
+    ) { }
 }

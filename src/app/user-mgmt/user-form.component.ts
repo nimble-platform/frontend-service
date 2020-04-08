@@ -27,8 +27,8 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { Router } from '@angular/router';
 import { CallStatus } from '../common/call-status';
 import * as constants from '../common/constants';
-import {TranslateService} from '@ngx-translate/core';
-import {selectValueOfTextObject} from '../common/utils';
+import { TranslateService } from '@ngx-translate/core';
+import { selectValueOfTextObject } from '../common/utils';
 //declare var jsSHA: any;
 
 @Component({
@@ -42,7 +42,7 @@ export class UserFormComponent implements OnInit {
     pw_val_class = "ng-valid";
     passwords_matching = false;
     email_preset = false;
-	  eula_accepted = false;
+    eula_accepted = false;
     debug = myGlobals.debug;
     config = myGlobals.config;
     requiredAgreements = {};
@@ -59,16 +59,16 @@ export class UserFormComponent implements OnInit {
         private userService: UserService,
         private translate: TranslateService,
         private router: Router,
-		private modalService: NgbModal,
-    private credentialsService: CredentialsService,
-		private cookieService: CookieService,
-		private appComponent: AppComponent,
+        private modalService: NgbModal,
+        private credentialsService: CredentialsService,
+        private cookieService: CookieService,
+        private appComponent: AppComponent,
         public route: ActivatedRoute
-    ) {}
+    ) { }
 
     ngOnInit(): void {
-        for (var i=0; i<this.config.requiredAgreements.length; i++) {
-          this.requiredAgreements[this.config.requiredAgreements[i].title] = false;
+        for (var i = 0; i < this.config.requiredAgreements.length; i++) {
+            this.requiredAgreements[this.config.requiredAgreements[i].title] = false;
         }
         this.route.queryParams.subscribe(params => {
             if (params['email']) {
@@ -100,8 +100,8 @@ export class UserFormComponent implements OnInit {
                 //this.router.navigate(["/user-mgmt/login"], {queryParams: { pageRef: "registration" }});
                 this.login(userRegistration.credentials);
             })
-			.catch(error => {
-				this.submitCallStatus.error("Registration failed - please make sure your account is not yet registered and try again later", error);
+            .catch(error => {
+                this.submitCallStatus.error("Registration failed - please make sure your account is not yet registered and try again later", error);
             });
     }
 
@@ -140,63 +140,63 @@ export class UserFormComponent implements OnInit {
     }
 
     login(credentials: Credentials): void {
-  		this.submitCallStatus.submit();
-  		this.credentialsService.post(credentials)
-  		.then(res => {
-  			if (myGlobals.debug)
-  				console.log(`User logged in . Response: ${JSON.stringify(res)}`);
+        this.submitCallStatus.submit();
+        this.credentialsService.post(credentials)
+            .then(res => {
+                if (myGlobals.debug)
+                    console.log(`User logged in . Response: ${JSON.stringify(res)}`);
 
-  			this.response = res;
-  			this.cookieService.set("user_id",res.userID);
-  			if (res.companyID)
-  				this.cookieService.set("company_id",res.companyID);
-  			else
-  				this.cookieService.set("company_id",null);
-  			if (res.companyName)
-  				this.cookieService.set("active_company_name",selectValueOfTextObject(res.companyName));
-  			else
-  				this.cookieService.set("active_company_name",null);
-  			if (res.showWelcomeInfo)
-  				this.cookieService.set("show_welcome","true");
-  			else
-  				this.cookieService.set("show_welcome","false");
-  			this.cookieService.set("user_fullname",res.firstname+" "+res.lastname);
-  			this.cookieService.set("user_email",res.email);
-  			this.cookieService.set("bearer_token",res.accessToken);
+                this.response = res;
+                this.cookieService.set("user_id", res.userID);
+                if (res.companyID)
+                    this.cookieService.set("company_id", res.companyID);
+                else
+                    this.cookieService.set("company_id", null);
+                if (res.companyName)
+                    this.cookieService.set("active_company_name", selectValueOfTextObject(res.companyName));
+                else
+                    this.cookieService.set("active_company_name", null);
+                if (res.showWelcomeInfo)
+                    this.cookieService.set("show_welcome", "true");
+                else
+                    this.cookieService.set("show_welcome", "false");
+                this.cookieService.set("user_fullname", res.firstname + " " + res.lastname);
+                this.cookieService.set("user_email", res.email);
+                this.cookieService.set("bearer_token", res.accessToken);
 
-  			// Setting cookie path to root to facilitate the iframe base login
-  			if (myGlobals.config.showChat) {
-                this.cookieService.set(constants.chatToken, res.rocketChatToken, undefined, '/');
-                this.cookieService.set(constants.chatUsername, res.rocketChatUsername, undefined, '/');
-                this.cookieService.set(constants.chatUserID, res.rocketChatUserID, undefined, '/');
-            }
-  			this.submitCallStatus.callback("Login Successful");
-        if (!res.companyID && myGlobals.config.companyRegistrationRequired)
-          this.appComponent.checkLogin("/user-mgmt/company-registration");
-        else
-  			   this.appComponent.checkLogin("/dashboard");
-  		})
-  		.catch(error => {
-  			this.cookieService.delete("user_id");
-  			this.cookieService.delete("company_id");
-  			this.cookieService.delete("user_fullname");
-  			this.cookieService.delete("user_email");
-  			this.cookieService.delete("active_company_name");
-  			this.cookieService.delete("show_welcome");
-  			this.cookieService.delete("bearer_token");
-            this.cookieService.delete(constants.chatToken, '/');
-            this.cookieService.delete(constants.chatUsername, '/');
-            this.cookieService.delete(constants.chatUserID, '/');
-            this.cookieService.delete(constants.chatRCToken, '/');
-            this.cookieService.delete(constants.chatRCID, '/');
-            this.cookieService.delete(constants.chatRCConnect, '/');
-  			this.appComponent.checkLogin("/user-mgmt/login");
-  			this.submitCallStatus.error("Invalid email or password", error);
-  		});
-  	}
+                // Setting cookie path to root to facilitate the iframe base login
+                if (myGlobals.config.showChat) {
+                    this.cookieService.set(constants.chatToken, res.rocketChatToken, undefined, '/');
+                    this.cookieService.set(constants.chatUsername, res.rocketChatUsername, undefined, '/');
+                    this.cookieService.set(constants.chatUserID, res.rocketChatUserID, undefined, '/');
+                }
+                this.submitCallStatus.callback("Login Successful");
+                if (!res.companyID && myGlobals.config.companyRegistrationRequired)
+                    this.appComponent.checkLogin("/user-mgmt/company-registration");
+                else
+                    this.appComponent.checkLogin("/dashboard");
+            })
+            .catch(error => {
+                this.cookieService.delete("user_id");
+                this.cookieService.delete("company_id");
+                this.cookieService.delete("user_fullname");
+                this.cookieService.delete("user_email");
+                this.cookieService.delete("active_company_name");
+                this.cookieService.delete("show_welcome");
+                this.cookieService.delete("bearer_token");
+                this.cookieService.delete(constants.chatToken, '/');
+                this.cookieService.delete(constants.chatUsername, '/');
+                this.cookieService.delete(constants.chatUserID, '/');
+                this.cookieService.delete(constants.chatRCToken, '/');
+                this.cookieService.delete(constants.chatRCID, '/');
+                this.cookieService.delete(constants.chatRCConnect, '/');
+                this.appComponent.checkLogin("/user-mgmt/login");
+                this.submitCallStatus.error("Invalid email or password", error);
+            });
+    }
 
-	open(content) {
-		this.modalService.open(content);
-	}
+    open(content) {
+        this.modalService.open(content);
+    }
 
 }

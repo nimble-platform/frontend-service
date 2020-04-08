@@ -22,12 +22,12 @@
 
     <small [innerHtml]="config.imprint"></small>
 
-    <hr/>
+    <hr />
 
     <h4><span [innerHTML]="'Platform Terms & Conditions' | translate"></span></h4>
 
     <div *ngFor="let ra of config.requiredAgreements">
-        <a class="clickable" href="{{ra.src}}" target="_blank">{{ra.title}}</a><br/>
+        <a class="clickable" href="{{ra.src}}" target="_blank">{{ra.title}}</a><br />
     </div>
 
 </div>

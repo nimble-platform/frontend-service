@@ -12,13 +12,13 @@
    limitations under the License.
  */
 
-import {BpUserRole} from '../../../bpe/model/bp-user-role';
-import {ProcessType} from '../../../bpe/model/process-type';
-import {ThreadEventMetadata} from './thread-event-metadata';
-import {Item} from "./item";
-import {Quantity} from "./quantity";
+import { BpUserRole } from '../../../bpe/model/bp-user-role';
+import { ProcessType } from '../../../bpe/model/process-type';
+import { ThreadEventMetadata } from './thread-event-metadata';
+import { Item } from "./item";
+import { Quantity } from "./quantity";
 
-export class BpActivityEvent{
+export class BpActivityEvent {
     constructor(
         public userRole: BpUserRole = null,
         public processType: ProcessType = null,
@@ -34,9 +34,9 @@ export class BpActivityEvent{
         public previousProcessInstanceId = null,
         public previousDocumentId = null,
         public termsSources: ('product_defaults' | 'frame_contract')[] = null,
-        public sellerFederationId:string = null,
+        public sellerFederationId: string = null,
         public precedingOrderId = null, // identifier of the Order for which the transport service related processes are started
-        public processMetadataOfAssociatedOrder:ThreadEventMetadata = null, // activity variables of the associated order
-        public unShippedOrderIds:string[] = null // identifiers of associated unshipped orders
-    ){}
+        public processMetadataOfAssociatedOrder: ThreadEventMetadata = null, // activity variables of the associated order
+        public unShippedOrderIds: string[] = null // identifiers of associated unshipped orders
+    ) { }
 }

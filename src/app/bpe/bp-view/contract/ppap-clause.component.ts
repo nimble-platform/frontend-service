@@ -14,11 +14,11 @@
    limitations under the License.
  */
 
-import {Component, Input, OnInit } from "@angular/core";
-import {PpapResponse} from "../../../catalogue/model/publish/ppap-response";
-import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
+import { Component, Input, OnInit } from "@angular/core";
+import { PpapResponse } from "../../../catalogue/model/publish/ppap-response";
+import { DocumentReference } from "../../../catalogue/model/publish/document-reference";
 import { CallStatus } from "../../../common/call-status";
-import {TranslateService} from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'ppap-clause',
@@ -47,7 +47,7 @@ export class PpapClauseComponent implements OnInit {
         }
         const a = document.createElement("a");
         document.body.appendChild(a);
-        const blob = new Blob([bytes], {type: doc.attachment.embeddedDocumentBinaryObject.mimeCode});
+        const blob = new Blob([bytes], { type: doc.attachment.embeddedDocumentBinaryObject.mimeCode });
         const url = window.URL.createObjectURL(blob);
         a.href = url;
         a.download = doc.attachment.embeddedDocumentBinaryObject.fileName;

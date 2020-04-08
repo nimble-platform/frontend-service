@@ -16,9 +16,9 @@
 
 import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
 import { BinaryObject } from "../catalogue/model/publish/binary-object";
-import {CatalogueService} from '../catalogue/catalogue.service';
-import {DEFAULT_LANGUAGE, LANGUAGES} from "../catalogue/model/constants";
-import {TranslateService} from '@ngx-translate/core';
+import { CatalogueService } from '../catalogue/catalogue.service';
+import { DEFAULT_LANGUAGE, LANGUAGES } from "../catalogue/model/constants";
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "file-input",
@@ -56,15 +56,15 @@ export class FileInputComponent implements OnInit {
     private languages: Array<string> = LANGUAGES;
     selectedLanguage: string;
 
-    constructor(public catalogueService:CatalogueService,private translate: TranslateService) {
+    constructor(public catalogueService: CatalogueService, private translate: TranslateService) {
     }
 
     ngOnInit() {
-        if(!this.valueClass) {
+        if (!this.valueClass) {
             this.valueClass = this.label ? "col-9" : "col-12";
         }
-        for(let binaryObject of this.binaryObjects) {
-            if(binaryObject.languageID == this.activeLanguage) {
+        for (let binaryObject of this.binaryObjects) {
+            if (binaryObject.languageID == this.activeLanguage) {
                 this.fileExistsWithDefaultLanguage = true;
             }
         }
@@ -75,28 +75,28 @@ export class FileInputComponent implements OnInit {
         const file = fileList.length > 0 ? fileList[0] : null;
         // reset the input
         event.target.value = "";
-        if(file) {
-            const filesize = parseInt(((file.size/1024)/1024).toFixed(4));
+        if (file) {
+            const filesize = parseInt(((file.size / 1024) / 1024).toFixed(4));
             if (filesize < this.maxSize) {
-              const reader = new FileReader();
-              const self = this;
-              reader.onload = function () {
-                  const base64String = (reader.result as string).split(',').pop();
-                  const binaryObject = new BinaryObject(base64String, file.type, file.name, "", self.selectedLanguage, "");
-                  self.binaryObjects.push(binaryObject);
-                  self.onSelectFile.emit(binaryObject);
-              };
-              reader.readAsDataURL(file);
+                const reader = new FileReader();
+                const self = this;
+                reader.onload = function() {
+                    const base64String = (reader.result as string).split(',').pop();
+                    const binaryObject = new BinaryObject(base64String, file.type, file.name, "", self.selectedLanguage, "");
+                    self.binaryObjects.push(binaryObject);
+                    self.onSelectFile.emit(binaryObject);
+                };
+                reader.readAsDataURL(file);
             }
             else {
-              alert("Maximum allowed filesize: "+this.maxSize+" MB");
+                alert("Maximum allowed filesize: " + this.maxSize + " MB");
             }
         }
     }
 
     onRemoveFile(index: number) {
         const removed = this.binaryObjects.splice(index, 1);
-        if(removed.length > 0) {
+        if (removed.length > 0) {
             this.onClearFile.emit(removed[0]);
             this.onRemovingEmit.emit(true);
         }
@@ -121,7 +121,7 @@ export class FileInputComponent implements OnInit {
             a.click();
             window.URL.revokeObjectURL(url);
         }).catch(error => {
-            console.error("Failed to download the file",error);
+            console.error("Failed to download the file", error);
         });
 
 

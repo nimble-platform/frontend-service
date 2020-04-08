@@ -14,13 +14,13 @@
    limitations under the License.
  */
 
-import {Component, OnInit, Input, EventEmitter, Output} from "@angular/core";
+import { Component, OnInit, Input, EventEmitter, Output } from "@angular/core";
 import { Category } from "../model/category/category";
-import {CategoryService} from "./category.service";
+import { CategoryService } from "./category.service";
 import { CallStatus } from "../../common/call-status";
 import { ParentCategories } from "../model/category/parent-categories";
-import {sortCategories, scrollToDiv, selectPreferredName} from '../../common/utils';
-import {Property} from '../model/category/property';
+import { sortCategories, scrollToDiv, selectPreferredName } from '../../common/utils';
+import { Property } from '../model/category/property';
 
 @Component({
     selector: 'category-tree',
@@ -63,19 +63,19 @@ export class CategoryTreeComponent implements OnInit {
     }
 
     @Input() set parentCategories(parentCategories: ParentCategories) {
-        if(this.category.taxonomyId == "eClass" || (this.category.taxonomyId == "FurnitureOntology" && this.numberOfSteps > -1)){
+        if (this.category.taxonomyId == "eClass" || (this.category.taxonomyId == "FurnitureOntology" && this.numberOfSteps > -1)) {
             this._parentCategories = parentCategories;
-            if(parentCategories && this.category.code === parentCategories.parents[this.level - 1].code && this.level < parentCategories.parents.length) {
+            if (parentCategories && this.category.code === parentCategories.parents[this.level - 1].code && this.level < parentCategories.parents.length) {
                 this.expanded = true;
                 this.childrenCategories = sortCategories(parentCategories.categories[this.level])
             }
         }
     }
 
-    @Input() set scrollToDivId(divId){
+    @Input() set scrollToDivId(divId) {
         this._scrollToDivId = divId;
-        setTimeout((()=>{
-            if(this.category.code === divId) {
+        setTimeout((() => {
+            if (this.category.code === divId) {
                 scrollToDiv(this.category.code);
             }
         }), 0)
@@ -92,7 +92,7 @@ export class CategoryTreeComponent implements OnInit {
     toggleExpanded(event: Event) {
         event.stopPropagation;
         this.expanded = !this.expanded;
-        if(this.expanded && !this.childrenCategories) {
+        if (this.expanded && !this.childrenCategories) {
             this.getCategoryTree();
         }
     }
@@ -111,42 +111,42 @@ export class CategoryTreeComponent implements OnInit {
 
     showDetails(category: Category = this.category): void {
         if (!this.loadingStatus) {
-          this.detailsEvent.emit(category);
-          if (!this.childrenCategories)
-            this.getCategoryTree();
+            this.detailsEvent.emit(category);
+            if (!this.childrenCategories)
+                this.getCategoryTree();
         }
     }
 
     isSelected(): boolean {
-        if(this.selectedCategory != null) {
+        if (this.selectedCategory != null) {
             return this.category.code === this.selectedCategory.code;
         }
         return false;
     }
 
     isSelectedPath(): boolean {
-      let ret = false;
-      /*
-      if (this.isSelected())
-        ret = true;
-        */
-      if (this.selectedPath && this.selectedPath.parents && this.selectedPath.parents.length > 0) {
-        for (var i=0; i<this.selectedPath.parents.length; i++) {
-          if (this.selectedPath.parents[i].code == this.category.code)
-            ret = true;
+        let ret = false;
+        /*
+        if (this.isSelected())
+          ret = true;
+          */
+        if (this.selectedPath && this.selectedPath.parents && this.selectedPath.parents.length > 0) {
+            for (var i = 0; i < this.selectedPath.parents.length; i++) {
+                if (this.selectedPath.parents[i].code == this.category.code)
+                    ret = true;
+            }
         }
-      }
-      return ret;
+        return ret;
     }
 
     isInSelectedCategories(): boolean {
-        return this.selectedCategories.findIndex(c => c.id == this.category.id) >-1;
+        return this.selectedCategories.findIndex(c => c.id == this.category.id) > -1;
     }
 
     getToggleIcon(): string {
-        if(this.level === 4){
+        if (this.level === 4) {
             return "";
-        } else if(this.expanded === true) {
+        } else if (this.expanded === true) {
             return "fa-caret-down";
         } else {
             return "fa-caret-right";

@@ -12,7 +12,7 @@
    limitations under the License.
  */
 
-import {ChildFormBase} from './child-form-base';
+import { ChildFormBase } from './child-form-base';
 
 export class EmptyFormBase extends ChildFormBase {
     initializeForm(): void {

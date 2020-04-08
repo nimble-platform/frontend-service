@@ -16,5 +16,5 @@ export class ItemPropertyRange {
     constructor(
         public minimumValue: string,
         public maximumValue: string
-    ) {  }
+    ) { }
 }

@@ -12,9 +12,9 @@
    limitations under the License.
  */
 
-import {Code} from "./code";
-import {DocumentReference} from "./document-reference";
-import {Country} from "./country";
+import { Code } from "./code";
+import { DocumentReference } from "./document-reference";
+import { Country } from "./country";
 
 export class Certificate {
     constructor(
@@ -24,5 +24,5 @@ export class Certificate {
         public documentReference: DocumentReference[] = [],
         public country: Country[] = [],
         public hjid: number = null
-    ) {  }
+    ) { }
 }

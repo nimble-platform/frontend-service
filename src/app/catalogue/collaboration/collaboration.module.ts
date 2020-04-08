@@ -24,14 +24,14 @@ import { AppCommonModule } from "../../common/common.module";
 import { UserMgmtModule } from "../../user-mgmt/user-mgmt.module";
 
 @NgModule({
-	imports: [CommonModule,
-		AppCommonModule,
-		FormsModule,
-		ReactiveFormsModule,
-		HttpModule,
+    imports: [CommonModule,
+        AppCommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpModule,
         UserMgmtModule,
-		NgbModule.forRoot()
-	],
+        NgbModule.forRoot()
+    ],
     declarations: [
         CollaborationViewComponent
     ],
@@ -40,4 +40,4 @@ import { UserMgmtModule } from "../../user-mgmt/user-mgmt.module";
     ],
     providers: []
 })
-export class CollaborationModule {}
+export class CollaborationModule { }

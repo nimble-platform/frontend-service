@@ -15,7 +15,7 @@
  */
 
 import { ProcessType } from "../model/process-type";
-import {BpUserRole} from '../model/bp-user-role';
+import { BpUserRole } from '../model/bp-user-role';
 
 export class ActivityVariableParser {
     static getProcessType(processVariables): ProcessType {
@@ -26,14 +26,14 @@ export class ActivityVariableParser {
         return processVariables["processInstanceId"]
     }
 
-    static getUserRole(buyerPartyId:any,buyerFederationId:string,partyId:string,federationId:string){
-        let role:BpUserRole = buyerPartyId == partyId && buyerFederationId == federationId ? 'buyer' : 'seller';
+    static getUserRole(buyerPartyId: any, buyerFederationId: string, partyId: string, federationId: string) {
+        let role: BpUserRole = buyerPartyId == partyId && buyerFederationId == federationId ? 'buyer' : 'seller';
         return role;
     }
 
-    static getPrecedingDocumentId(activityVariables:any){
-        for(let activityVariable of activityVariables){
-            if(activityVariable.name == "responseDocumentID"){
+    static getPrecedingDocumentId(activityVariables: any) {
+        for (let activityVariable of activityVariables) {
+            if (activityVariable.name == "responseDocumentID") {
                 return activityVariable.value;
             }
         }

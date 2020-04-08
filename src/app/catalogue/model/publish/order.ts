@@ -21,7 +21,7 @@ import { Address } from "./address";
 import { Period } from "./period";
 import { Contract } from "./contract";
 import { MonetaryTotal } from "./monetary-total";
-import {DocumentReference} from './document-reference';
+import { DocumentReference } from './document-reference';
 export class Order {
     constructor(
         public id: string = null,
@@ -35,6 +35,6 @@ export class Order {
         public sellerSupplierParty: SupplierParty = null,
         public anticipatedMonetaryTotal: MonetaryTotal = new MonetaryTotal(),
         public orderLine: OrderLine[] = null,
-        public additionalDocumentReference:DocumentReference[] = []
-    ) {}
+        public additionalDocumentReference: DocumentReference[] = []
+    ) { }
 }

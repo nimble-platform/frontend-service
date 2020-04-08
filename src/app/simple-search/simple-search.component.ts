@@ -14,8 +14,8 @@
    limitations under the License.
  */
 
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, RouterStateSnapshot} from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, RouterStateSnapshot } from '@angular/router';
 
 @Component({
     selector: 'simple-search',
@@ -26,7 +26,7 @@ export class SimpleSearchComponent implements OnInit {
 
     pageRef = '';
 
-    constructor (private route: ActivatedRoute) {}
+    constructor(private route: ActivatedRoute) { }
 
     ngOnInit(): void {
         this.route.queryParams.subscribe(params => {

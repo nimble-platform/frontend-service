@@ -16,13 +16,13 @@
 
 export class ProcessInstanceGroupFilter {
     constructor(public partyID: string = null,
-                public tradingPartnerIDs: string[] = [],
-                public tradingPartnerNames: string[] = [],
-                public relatedProducts: string[] = [],
-                public relatedProductCategories: string[] = [],
-                public status: string[] = [],
-                public startDate: string = "",
-                public endDate: string = "",
-                public instanceNames:string[] = []) {
+        public tradingPartnerIDs: string[] = [],
+        public tradingPartnerNames: string[] = [],
+        public relatedProducts: string[] = [],
+        public relatedProductCategories: string[] = [],
+        public status: string[] = [],
+        public startDate: string = "",
+        public endDate: string = "",
+        public instanceNames: string[] = []) {
     }
 }

@@ -12,9 +12,9 @@
    limitations under the License.
  */
 
-import {DocumentReference} from "./document-reference";
+import { DocumentReference } from "./document-reference";
 
 export class OrderReference {
-    constructor(public documentReference:DocumentReference){
+    constructor(public documentReference: DocumentReference) {
     }
 }

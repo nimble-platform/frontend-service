@@ -12,15 +12,15 @@
    limitations under the License.
  */
 
-import {DigitalAgreementTerms} from "./digital-agreement-terms";
-import {Party} from "./party";
-import {Item} from "./item";
-import {DocumentReference} from "./document-reference";
+import { DigitalAgreementTerms } from "./digital-agreement-terms";
+import { Party } from "./party";
+import { Item } from "./item";
+import { DocumentReference } from "./document-reference";
 export class DigitalAgreement {
     constructor(public hjid: number = null,
-                public participantParty: Party[] = [],
-                public item: Item = null,
-                public digitalAgreementTerms: DigitalAgreementTerms = new DigitalAgreementTerms(),
-                public quotationReference: DocumentReference = new DocumentReference()) {
+        public participantParty: Party[] = [],
+        public item: Item = null,
+        public digitalAgreementTerms: DigitalAgreementTerms = new DigitalAgreementTerms(),
+        public quotationReference: DocumentReference = new DocumentReference()) {
     }
 }

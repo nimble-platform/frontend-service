@@ -14,25 +14,18 @@
    limitations under the License.
  -->
 
-<text-input label="Handling Instructions" definition="The handling required for this shipment" labelClass="col-2" valueClass="col-10"
-    [disabled]="disabled" [presentationMode]="presentationMode" [(text)]="shipment.handlingInstructions[0].value">
+<text-input label="Handling Instructions" definition="The handling required for this shipment" labelClass="col-2" valueClass="col-10" [disabled]="disabled" [presentationMode]="presentationMode" [(text)]="shipment.handlingInstructions[0].value">
 </text-input>
 
-<text-input *ngIf="disabled || presentationMode == 'view'" label="Estimated Delivery Date" rowClass="space-before" labelClass="col-2" valueClass="col-10"
-            [disabled]="disabled" [presentationMode]="presentationMode" [(text)]="date"
-            definition="The estimated date of delivery in this plan between the start and date of the service.">
+<text-input *ngIf="disabled || presentationMode == 'view'" label="Estimated Delivery Date" rowClass="space-before" labelClass="col-2" valueClass="col-10" [disabled]="disabled" [presentationMode]="presentationMode" [(text)]="date" definition="The estimated date of delivery in this plan between the start and date of the service.">
 
 </text-input>
 
-<date-input *ngIf="!disabled && presentationMode == 'edit'" [presentationMode]="presentationMode" labelClass="col-2" valueClass="col-10"
-            label="Estimated Delivery Date" definition="The estimated date of delivery in this plan between the start and date of the service."
-            [(date)]="shipment.shipmentStage[0].estimatedDeliveryDate" rowClass="space-before" [disabled]="disabled" (dateChange)="setEstimatedDeliveryDate()">
+<date-input *ngIf="!disabled && presentationMode == 'edit'" [presentationMode]="presentationMode" labelClass="col-2" valueClass="col-10" label="Estimated Delivery Date" definition="The estimated date of delivery in this plan between the start and date of the service." [(date)]="shipment.shipmentStage[0].estimatedDeliveryDate" rowClass="space-before" [disabled]="disabled" (dateChange)="setEstimatedDeliveryDate()">
 </date-input>
 
-<text-input label="Carrier Party" definition="The party carrying the goods" rowClass="space-before" labelClass="col-2" valueClass="col-10"
-    [disabled]="disabled" [presentationMode]="presentationMode" [(text)]="shipment.shipmentStage[0].carrierParty.partyName[0].name.value">
+<text-input label="Carrier Party" definition="The party carrying the goods" rowClass="space-before" labelClass="col-2" valueClass="col-10" [disabled]="disabled" [presentationMode]="presentationMode" [(text)]="shipment.shipmentStage[0].carrierParty.partyName[0].name.value">
 </text-input>
 
-<text-input label="Carrier Party Contact" definition="The primary contact for carrier party" rowClass="space-before" labelClass="col-2" valueClass="col-10"
-    [disabled]="disabled" [presentationMode]="presentationMode" [(text)]="shipment.shipmentStage[0].carrierParty.contact.telephone">
+<text-input label="Carrier Party Contact" definition="The primary contact for carrier party" rowClass="space-before" labelClass="col-2" valueClass="col-10" [disabled]="disabled" [presentationMode]="presentationMode" [(text)]="shipment.shipmentStage[0].carrierParty.contact.telephone">
 </text-input>

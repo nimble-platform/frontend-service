@@ -23,16 +23,16 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { TABS } from "./constants";
 import { DashboardUser } from "./model/dashboard-user";
 import * as myGlobals from '../globals';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FEDERATION, FEDERATIONID} from '../catalogue/model/constants';
-import {Subject} from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FEDERATION, FEDERATIONID } from '../catalogue/model/constants';
+import { Subject } from 'rxjs';
 
 @Component({
     selector: "dashboard-threaded",
     templateUrl: "./dashboard-threaded.component.html",
     styleUrls: ["./dashboard-threaded.component.css"]
 })
-export class DashboardThreadedComponent implements OnInit{
+export class DashboardThreadedComponent implements OnInit {
 
     user: DashboardUser;
     selectedTab: string;
@@ -42,7 +42,7 @@ export class DashboardThreadedComponent implements OnInit{
     sellerCounter = 0;
 
     ngUnsubscribe: Subject<void> = new Subject<void>();
-    delegated=(FEDERATION() == "ON");
+    delegated = (FEDERATION() == "ON");
 
     TABS = TABS;
     public config = myGlobals.config;
@@ -55,16 +55,16 @@ export class DashboardThreadedComponent implements OnInit{
         private router: Router,
         private route: ActivatedRoute,
         public appComponent: AppComponent
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.computeUserFromCookies();
         this.getTabCounters();
         this.route.queryParams.subscribe(params => {
             if (params['ins'])
-              this.instance = params['ins'];
+                this.instance = params['ins'];
             else
-              this.instance = FEDERATIONID();
+                this.instance = FEDERATIONID();
             this.selectedTab = this.sanitizeTab(params['tab']);
         });
     }
@@ -84,10 +84,10 @@ export class DashboardThreadedComponent implements OnInit{
         event.stopImmediatePropagation();
         this.user.showWelcomeTab = false;
         this.userService.setWelcomeFlag(false)
-        .then(res => {
-          this.cookieService.set("show_welcome","false");
-        });
-        if(this.selectedTab === TABS.WELCOME) {
+            .then(res => {
+                this.cookieService.set("show_welcome", "false");
+            });
+        if (this.selectedTab === TABS.WELCOME) {
             if (this.appComponent.checkRoles('purchases'))
                 this.selectedTab = TABS.PURCHASES;
             else if (this.appComponent.checkRoles('sales'))
@@ -120,7 +120,7 @@ export class DashboardThreadedComponent implements OnInit{
                     const at_payload_json = JSON.parse(atob(at_payload));
                     const at_payload_json_roles = at_payload_json["realm_access"]["roles"];
                     this.user.roles = at_payload_json_roles;
-                } catch (e) {}
+                } catch (e) { }
             }
         }
 
@@ -129,14 +129,14 @@ export class DashboardThreadedComponent implements OnInit{
     }
 
     private getTabCounters() {
-      this.buyerCounter = 0;
-      this.sellerCounter = 0;
-      this.bpeService
-      .getActionRequiredCounter(this.cookieService.get("company_id"))
-      .then(response => {
-          this.buyerCounter = parseInt(response.buyer);
-          this.sellerCounter = parseInt(response.seller);
-      });
+        this.buyerCounter = 0;
+        this.sellerCounter = 0;
+        this.bpeService
+            .getActionRequiredCounter(this.cookieService.get("company_id"))
+            .then(response => {
+                this.buyerCounter = parseInt(response.buyer);
+                this.sellerCounter = parseInt(response.seller);
+            });
     }
 
     private sanitizeTab(tab: string): string {
@@ -144,12 +144,12 @@ export class DashboardThreadedComponent implements OnInit{
             if (this.selectedTab) {
                 return this.selectedTab;
             }
-            if(this.user.showWelcomeTab) {
+            if (this.user.showWelcomeTab) {
                 return TABS.WELCOME;
             }
         } else {
             const upped = tab.toUpperCase()
-            if(upped === TABS.CATALOGUE ||
+            if (upped === TABS.CATALOGUE ||
                 upped === TABS.SALES ||
                 upped === TABS.WELCOME ||
                 upped === TABS.FAVOURITE ||
@@ -163,21 +163,21 @@ export class DashboardThreadedComponent implements OnInit{
             }
         }
         if (this.appComponent.checkRoles('purchases'))
-          return TABS.PURCHASES;
+            return TABS.PURCHASES;
         if (this.appComponent.checkRoles('sales'))
-          return TABS.SALES;
+            return TABS.SALES;
         if (this.appComponent.checkRoles('catalogue'))
-          return TABS.CATALOGUE;
+            return TABS.CATALOGUE;
         if (this.config.collaborationEnabled && this.appComponent.checkRoles('collaboration'))
-          return TABS.COLLABORATION;
+            return TABS.COLLABORATION;
         if (this.appComponent.checkRoles('favourite'))
-          return TABS.FAVOURITE;
+            return TABS.FAVOURITE;
         if (this.appComponent.checkRoles('compare'))
-          return TABS.COMPARE;
+            return TABS.COMPARE;
         if (this.config.projectsEnabled && this.appComponent.checkRoles('projects'))
-          return TABS.PROJECTS;
+            return TABS.PROJECTS;
         if (this.appComponent.checkRoles('performance'))
-          return TABS.PERFORMANCE;
+            return TABS.PERFORMANCE;
         return null;
     }
 }

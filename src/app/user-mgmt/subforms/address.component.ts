@@ -21,7 +21,7 @@ import { Address } from '../model/address';
 import { validateCountry, getCountrySuggestions } from '../../common/utils';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import {TranslateService} from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     moduleId: module.id,
@@ -33,26 +33,26 @@ import {TranslateService} from '@ngx-translate/core';
 
 export class AddressSubForm {
 
-  @Input('group')
-  public addressForm: FormGroup;
-	@Input() disabledFlag: boolean = false;
-  @Input() requiredFlag: boolean = true;
+    @Input('group')
+    public addressForm: FormGroup;
+    @Input() disabledFlag: boolean = false;
+    @Input() requiredFlag: boolean = true;
 
 
-  constructor(
-    private translate: TranslateService
+    constructor(
+        private translate: TranslateService
     ) {
     }
 
-  getSuggestions = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(50),
-      distinctUntilChanged(),
-      map(term => getCountrySuggestions(term))
-    );
+    getSuggestions = (text$: Observable<string>) =>
+        text$.pipe(
+            debounceTime(50),
+            distinctUntilChanged(),
+            map(term => getCountrySuggestions(term))
+        );
 
-	public static get(addressForm): Address {
-		return {
+    public static get(addressForm): Address {
+        return {
             streetName: addressForm.controls.streetName.value,
             buildingNumber: addressForm.controls.buildingNumber.value,
             cityName: addressForm.controls.cityName.value,
@@ -60,7 +60,7 @@ export class AddressSubForm {
             region: addressForm.controls.region.value,
             country: addressForm.controls.country.value
         };
-	}
+    }
 
     public static update(addressForm: FormGroup, address: Address): FormGroup {
         if (address) {
@@ -82,7 +82,7 @@ export class AddressSubForm {
             cityName: formDef,
             postalCode: formDef,
             region: formDef,
-            country: ['', [validateCountry] ]
+            country: ['', [validateCountry]]
         });
     }
 }

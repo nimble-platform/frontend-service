@@ -14,6 +14,6 @@
 
 export class LineReference {
     constructor(
-        public lineID:string = null
-    ) {  }
+        public lineID: string = null
+    ) { }
 }

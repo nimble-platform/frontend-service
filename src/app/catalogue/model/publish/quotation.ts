@@ -31,6 +31,6 @@ export class Quotation {
         public buyerCustomerParty: CustomerParty,
         public sellerSupplierParty: SupplierParty,
         public quotationLine: QuotationLine[],
-        public additionalDocumentReference:DocumentReference[] = []
-    ) {}
+        public additionalDocumentReference: DocumentReference[] = []
+    ) { }
 }

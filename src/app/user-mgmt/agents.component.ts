@@ -12,15 +12,15 @@
    limitations under the License.
  */
 
-import {Component, OnInit, TemplateRef, ViewChild} from "@angular/core";
+import { Component, OnInit, TemplateRef, ViewChild } from "@angular/core";
 import { UserService } from './user.service';
 import { CookieService } from 'ng2-cookies';
 import { CallStatus } from '../common/call-status';
-import {TranslateService} from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Router } from "@angular/router";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {AgentService} from "./agent.service";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { AgentService } from "./agent.service";
 import Swal from 'sweetalert2';
 import * as _ from 'underscore';
 
@@ -47,10 +47,10 @@ export class AgentsComponent implements OnInit {
     selectedTab: SelectedTab = "SELLING_AGENT";
     callStatus: CallStatus = new CallStatus();
     orders = [];
-    results = {count: 3, pageSize: 10,};
+    results = { count: 3, pageSize: 10, };
     showTransactions = false;
     selectedAgent = '';
-    isDev= false;
+    isDev = false;
 
     saErr = false;
     baErr = false;
@@ -58,16 +58,16 @@ export class AgentsComponent implements OnInit {
     SELLING_AGENT = 'SELLING_AGENT';
     BUYING_AGENT = 'BUYING_AGENT';
 
-    @ViewChild('buyingAgentModal') buyingAgentModal : TemplateRef<any>; // Note: TemplateRef
-    @ViewChild('sellingAgentModal') sellingAgentModal : TemplateRef<any>; // Note: TemplateRef
+    @ViewChild('buyingAgentModal') buyingAgentModal: TemplateRef<any>; // Note: TemplateRef
+    @ViewChild('sellingAgentModal') sellingAgentModal: TemplateRef<any>; // Note: TemplateRef
 
     constructor(private userService: UserService,
-                private agentService: AgentService,
-                private translate: TranslateService,
-                private cookieService: CookieService,
-                private router: Router,
-                private _fb: FormBuilder,
-                private modalService: NgbModal
+        private agentService: AgentService,
+        private translate: TranslateService,
+        private cookieService: CookieService,
+        private router: Router,
+        private _fb: FormBuilder,
+        private modalService: NgbModal
     ) {
 
     }
@@ -171,10 +171,10 @@ export class AgentsComponent implements OnInit {
         this.modalService.open(this.buyingAgentModal);
     }
 
-    getAllSellingAgents(){
+    getAllSellingAgents() {
         this.agentService.getAllSellingAgents().then((data) => {
             this.agentList = data;
-            if(data.length == 0){
+            if (data.length == 0) {
                 this.showEmptyPageSA = true;
             }
 
@@ -184,10 +184,10 @@ export class AgentsComponent implements OnInit {
         });
     }
 
-    getAllBuyingAgents(){
+    getAllBuyingAgents() {
         this.agentService.getAllBuyingAgents().then((data) => {
             this.buyingAgentList = data;
-            if(data.length == 0){
+            if (data.length == 0) {
                 this.showEmptyPageBA = true;
             }
         }).catch(err => {
@@ -237,7 +237,7 @@ export class AgentsComponent implements OnInit {
             }).then(() => {
                 this.closeModal();
             })
-        }else{
+        } else {
             // create a new agent
             this.agentService.createBuyingAgent(buyingAgentData).then((res) => {
                 this.showCreateBuyingAgent = false;
@@ -272,7 +272,7 @@ export class AgentsComponent implements OnInit {
         });
     }
 
-    submitSellingAgent(){
+    submitSellingAgent() {
         let sellingAgentData = {
             id: '',
             companyID: this.cookieService.get("company_id"),
@@ -313,7 +313,7 @@ export class AgentsComponent implements OnInit {
             }).then(() => {
                 this.closeModal();
             })
-        }else{
+        } else {
             // create a new agent
             this.agentService.createBuyingAgent(sellingAgentData).then((res) => {
                 this.showCreateBuyingAgent = false;
@@ -333,7 +333,7 @@ export class AgentsComponent implements OnInit {
         this.selectedTab = id;
     }
 
-    createSellingAgent(){
+    createSellingAgent() {
         this.showCreateSellingAgent = true;
         // TODO remove after testing
         if (this.isDev) {
@@ -341,7 +341,7 @@ export class AgentsComponent implements OnInit {
         }
     }
 
-    createBuyingAgent(){
+    createBuyingAgent() {
         this.showCreateBuyingAgent = true;
         // TODO remove after testing
         if (this.isDev) {
@@ -357,7 +357,7 @@ export class AgentsComponent implements OnInit {
         this.modalService.dismissAll();
     }
 
-    showTransactionsView(agentID){
+    showTransactionsView(agentID) {
         this.orders = [];
         this.agentService.getSAOrders(agentID).then((datas) => {
             datas.forEach((data) => {
@@ -389,7 +389,7 @@ export class AgentsComponent implements OnInit {
         this.router.navigate([`bpe/bpe-exec/${processInstanceID}/STAGING`]);
     }
 
-    viewAgentList(){
+    viewAgentList() {
         this.showTransactions = false;
     }
 
@@ -398,25 +398,25 @@ export class AgentsComponent implements OnInit {
     }
 
     activateBA(id) {
-        this.agentService.activateBuyingAgent({agentID: id}).then(() => {
+        this.agentService.activateBuyingAgent({ agentID: id }).then(() => {
             this.getAllBuyingAgents();
         });
     }
 
     deactivateBA(id) {
-        this.agentService.deactivateBuyingAgent({agentID: id}).then(() => {
+        this.agentService.deactivateBuyingAgent({ agentID: id }).then(() => {
             this.getAllBuyingAgents();
         });
     }
 
     activateSA(id) {
-        this.agentService.activateSellingAgent({agentID: id}).then(() => {
+        this.agentService.activateSellingAgent({ agentID: id }).then(() => {
             this.getAllSellingAgents();
         });
     }
 
     deactivateSA(id) {
-        this.agentService.deactivateSellingAgent({agentID: id}).then(() => {
+        this.agentService.deactivateSellingAgent({ agentID: id }).then(() => {
             this.getAllSellingAgents();
         });
     }
@@ -448,14 +448,14 @@ export class AgentsComponent implements OnInit {
 
     getSellingAgent(id) {
 
-        let agent = _.find(this.agentList, function (agent) {
+        let agent = _.find(this.agentList, function(agent) {
             return agent.id == id;
         });
 
         // TODO remove after testing
         if (this.isDev) {
             if (agent === undefined) {
-                    agent = this.fillRandomForSA()
+                agent = this.fillRandomForSA()
 
             }
         }
@@ -464,7 +464,7 @@ export class AgentsComponent implements OnInit {
 
     getBuyingAgent(id) {
 
-        let agent = _.find(this.buyingAgentList, function (agent) {
+        let agent = _.find(this.buyingAgentList, function(agent) {
             return agent.id == id;
         });
 
@@ -486,27 +486,27 @@ export class AgentsComponent implements OnInit {
         return Math.floor(Math.random() * Math.floor(max));
     }
 
-    fillRandomForSA(){
+    fillRandomForSA() {
         return {
             agentName: this.rand(5, null) + ' agent',
-            maxContractAmount: {value: this.getRandomInt(30000), unit: 'euro'},
-            minFulfillmentTime: {value: this.getRandomInt(10), unit: 'hour'},
-            maxFulfillmentTime: {value: this.getRandomInt(20), unit: 'day'},
-            maxVolume: {value: this.getRandomInt(50000), unit: 'day'},
-            maxNoOneToOne: {value: this.getRandomInt(5), unit: 'week'},
+            maxContractAmount: { value: this.getRandomInt(30000), unit: 'euro' },
+            minFulfillmentTime: { value: this.getRandomInt(10), unit: 'hour' },
+            maxFulfillmentTime: { value: this.getRandomInt(20), unit: 'day' },
+            maxVolume: { value: this.getRandomInt(50000), unit: 'day' },
+            maxNoOneToOne: { value: this.getRandomInt(5), unit: 'week' },
             productNames: ['ff1c8a90-6248-494d-8d12-4292c7b40185'],
             maxNoContractPerDay: this.getRandomInt(5)
         };
     }
 
-    fillRandomForBA(){
+    fillRandomForBA() {
         return {
             agentName: this.rand(5, null) + ' agent',
-            maxContractAmount: {value: this.getRandomInt(30000), unit: 'euro'},
-            minFulfillmentTime: {value: this.getRandomInt(10), unit: 'hour'},
-            maxFulfillmentTime: {value: this.getRandomInt(20), unit: 'day'},
-            maxVolume: {value: this.getRandomInt(50000), unit: 'day'},
-            maxNoOneToOne: {value: this.getRandomInt(5), unit: 'week'},
+            maxContractAmount: { value: this.getRandomInt(30000), unit: 'euro' },
+            minFulfillmentTime: { value: this.getRandomInt(10), unit: 'hour' },
+            maxFulfillmentTime: { value: this.getRandomInt(20), unit: 'day' },
+            maxVolume: { value: this.getRandomInt(50000), unit: 'day' },
+            maxNoOneToOne: { value: this.getRandomInt(5), unit: 'week' },
             productNames: ['ff1c8a90-6248-494d-8d12-4292c7b40185'],
             maxNoContractPerDay: this.getRandomInt(5)
         };

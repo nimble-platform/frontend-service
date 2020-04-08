@@ -11,25 +11,24 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
 .star {
-  position: relative;
-  display: inline-block;
-  color: #b0c4de;
-	font-size: 130%;
+    position: relative;
+    display: inline-block;
+    color: #b0c4de;
+    font-size: 130%;
 }
 
 .star-b {
-	font-size: 170% !important;
+    font-size: 170% !important;
 }
 
 .full {
-  color: #1e90ff;
+    color: #1e90ff;
 }
 
 .half {
-  position: absolute;
-  display: inline-block;
-  overflow: hidden;
-  color: #1e90ff;
+    position: absolute;
+    display: inline-block;
+    overflow: hidden;
+    color: #1e90ff;
 }

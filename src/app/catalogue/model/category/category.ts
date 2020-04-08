@@ -12,8 +12,8 @@
    limitations under the License.
  */
 
-import {Property} from "./property";
-import {Text} from "../publish/text";
+import { Property } from "./property";
+import { Text } from "../publish/text";
 
 export class Category {
     constructor(
@@ -28,5 +28,5 @@ export class Category {
         public keywords: string[],
         public taxonomyId: string,
         public categoryUri: string
-    ) {  }
+    ) { }
 }

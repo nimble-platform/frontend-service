@@ -14,16 +14,7 @@
    limitations under the License.
  -->
 
-<options-input *ngIf="!disabled"
-               [label]="'Use Existing Address' | translate"
-               [(selected)]="selectedAddress"
-               [options]="addressOptions"
-               rowClass="mb-1"
-               labelClass="col-2"
-               valueClass="col-10">
+<options-input *ngIf="!disabled" [label]="'Use Existing Address' | translate" [(selected)]="selectedAddress" [options]="addressOptions" rowClass="mb-1" labelClass="col-2" valueClass="col-10">
 </options-input>
-<address-input [address]="address"
-               [disabled]="isDisabled()"
-               [parentForm]="parentForm"
-               [formFieldName]="formFieldName">
+<address-input [address]="address" [disabled]="isDisabled()" [parentForm]="parentForm" [formFieldName]="formFieldName">
 </address-input>

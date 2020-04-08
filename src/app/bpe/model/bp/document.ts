@@ -13,6 +13,6 @@
  */
 
 export class Document {
-    constructor( ) {
+    constructor() {
     }
 }

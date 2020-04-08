@@ -12,11 +12,11 @@
    limitations under the License.
  */
 
-import {Text} from "./text";
-import {DEFAULT_LANGUAGE} from '../constants';
+import { Text } from "./text";
+import { DEFAULT_LANGUAGE } from '../constants';
 
 export class Country {
     constructor(
-        public name: Text = new Text(null,DEFAULT_LANGUAGE())
-    ) {  }
+        public name: Text = new Text(null, DEFAULT_LANGUAGE())
+    ) { }
 }

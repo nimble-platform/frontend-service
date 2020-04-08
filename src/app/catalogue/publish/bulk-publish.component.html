@@ -20,11 +20,9 @@
     <!--<option *ngFor='let language of languages' [value]="language" [selected]="templateLanguage === language">{{language}}</option>-->
     <!--</select>-->
     <div class="col-3 p-0">
-        <button class="btn btn-secondary btn-download-template" [disabled]="!selectCategories"
-                (click)="downloadTemplate()"><span [innerHTML]="'Download template' | translate"></span>
+        <button class="btn btn-secondary btn-download-template" [disabled]="!selectCategories" (click)="downloadTemplate()"><span [innerHTML]="'Download template' | translate"></span>
         </button>
-        <div *ngIf="showCategoryWarning"
-             class="alert-danger rounded align-self-center mt-2 pl-3 pr-2">
+        <div *ngIf="showCategoryWarning" class="alert-danger rounded align-self-center mt-2 pl-3 pr-2">
             <small><span [innerHTML]="'At least one category should be selected!' | translate"></span></small>
             <button type="button" class="close" aria-label="Close" (click)="closeCategoryWarning()">
                 <span aria-hidden="true">&times;</span>
@@ -41,8 +39,7 @@
             <li><span [innerHTML]="'Replace mode: All previously published items having the same categories specified in the template are deleted; and only the new ones are added to the catalogue.' | translate"></span></li>
         </ul>
     </label>
-    <select #uploadModeSelect class="col-3 btn btn-outline-secondary align-self-start" style="text-align-last:center;"
-            (change)="checkMode(uploadModeSelect.value)">
+    <select #uploadModeSelect class="col-3 btn btn-outline-secondary align-self-start" style="text-align-last:center;" (change)="checkMode(uploadModeSelect.value)">
         <option value="append"><span [innerHTML]="'Append' | translate"></span></option>
         <option value="replace"><span [innerHTML]="'Replace' | translate"></span></option>
     </select>
@@ -50,19 +47,14 @@
 <div class="d-flex mb-4">
     <label class="col-9"><span [innerHTML]="'3. Upload the template after filling it with your product / service information' | translate"></span>
     </label>
-    <input #template type="file" (change)="uploadTemplate($event, uploadModeSelect.value)"
-           multiple="true"
-           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-           style="display: none">
-    <button class="btn btn-secondary col-3 align-self-start"
-            (click)="template.click()"><span [innerHTML]="'Upload template(s)' | translate"></span>
+    <input #template type="file" (change)="uploadTemplate($event, uploadModeSelect.value)" multiple="true" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display: none">
+    <button class="btn btn-secondary col-3 align-self-start" (click)="template.click()"><span [innerHTML]="'Upload template(s)' | translate"></span>
     </button>
 </div>
 <!-- upload statuses -->
 <div *ngIf="selectedFileList?.length > 0" class="col-9 mb-4">
     <ng-container *ngFor="let selectedFile of selectedFileList; let i = index">
-        <div class="mt-1 position-relative"
-             [ngClass]="{'d-flex justify-content-between alert-danger rounded align-self-center p-2' : uploadPublishStatus[i].isLoading()}">
+        <div class="mt-1 position-relative" [ngClass]="{'d-flex justify-content-between alert-danger rounded align-self-center p-2' : uploadPublishStatus[i].isLoading()}">
             <span *ngIf="uploadPublishStatus[i].isLoading()">{{selectedFile.name}}</span>
             <call-status [callStatus]="uploadPublishStatus[i]">
             </call-status>
@@ -72,18 +64,14 @@
 <div class="d-flex mb-4">
     <label class="col-9"><span [innerHTML]="'4. Upload a zip package' | translate"></span>
     </label>
-    <input #imagePackage type="file" (change)="uploadImagePackage($event)"
-           accept="application/zip"
-           style="display: none">
-    <button class="btn btn-secondary col-3 align-self-start"
-            (click)="imagePackage.click()"><span [innerHTML]="'Upload Image Package' | translate"></span>
+    <input #imagePackage type="file" (change)="uploadImagePackage($event)" accept="application/zip" style="display: none">
+    <button class="btn btn-secondary col-3 align-self-start" (click)="imagePackage.click()"><span [innerHTML]="'Upload Image Package' | translate"></span>
     </button>
 </div>
 
 <div class="d-flex mb-4">
     <span class="col-9"></span>
-    <button class="btn btn-secondary col-3 align-self-start"
-            (click)="navigateToCatalogueTab()"><span [innerHTML]="'See Catalogue' | translate"></span>
+    <button class="btn btn-secondary col-3 align-self-start" (click)="navigateToCatalogueTab()"><span [innerHTML]="'See Catalogue' | translate"></span>
     </button>
 </div>
 

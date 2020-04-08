@@ -14,20 +14,20 @@
    limitations under the License.
  */
 
-import {Component, Input, Output,EventEmitter} from "@angular/core";
-import {CatalogueLine} from "../../model/publish/catalogue-line";
-import {CatalogueService} from "../../catalogue.service";
-import {Router} from "@angular/router";
-import {TranslateService} from '@ngx-translate/core';
-import {PublishService} from "../../publish-and-aip.service";
-import {CategoryService} from "../../category/category.service";
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { CatalogueLine } from "../../model/publish/catalogue-line";
+import { CatalogueService } from "../../catalogue.service";
+import { Router } from "@angular/router";
+import { TranslateService } from '@ngx-translate/core';
+import { PublishService } from "../../publish-and-aip.service";
+import { CategoryService } from "../../category/category.service";
 import { ProductWrapper } from "../../../common/product-wrapper";
 import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
 import { CallStatus } from "../../../common/call-status";
-import {isLogisticsService, isTransportService} from '../../../common/utils';
+import { isLogisticsService, isTransportService } from '../../../common/utils';
 import { CompanySettings } from "../../../user-mgmt/model/company-settings";
-import {Item} from '../../model/publish/item';
-import {selectDescription,selectName} from '../../../common/utils';
+import { Item } from '../../model/publish/item';
+import { selectDescription, selectName } from '../../../common/utils';
 
 @Component({
     selector: 'catalogue-line-panel',
@@ -48,13 +48,13 @@ export class CatalogueLinePanelComponent {
     productWrapper: ProductWrapper;
 
     constructor(private catalogueService: CatalogueService,
-                private categoryService: CategoryService,
-                private publishService: PublishService,
-                private translate: TranslateService,
-                private router: Router) {
+        private categoryService: CategoryService,
+        private publishService: PublishService,
+        private translate: TranslateService,
+        private router: Router) {
     }
 
-    selectItemName (item:  Item) {
+    selectItemName(item: Item) {
         return selectName(item);
     }
 
@@ -68,10 +68,10 @@ export class CatalogueLinePanelComponent {
         this.publishService.publishingStarted = false;
         this.categoryService.resetSelectedCategories();
 
-        if(isLogisticsService(this.catalogueLine))
-            this.router.navigate(['catalogue/publish-logistic'], {queryParams: {pg: "single"}});
+        if (isLogisticsService(this.catalogueLine))
+            this.router.navigate(['catalogue/publish-logistic'], { queryParams: { pg: "single" } });
         else
-            this.router.navigate(['catalogue/publish'], {queryParams: {pg: "single"}});
+            this.router.navigate(['catalogue/publish'], { queryParams: { pg: "single" } });
     }
 
     deleteCatalogueLine(): void {

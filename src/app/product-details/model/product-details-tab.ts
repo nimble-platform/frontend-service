@@ -14,4 +14,4 @@
    limitations under the License.
  */
 
-export type ProductDetailsTab = "OVERVIEW" | "DETAILS" |"PRICE" | "DELIVERY_TRADING" | "CERTIFICATES" | "LCPA" | "COMPANY" | "RATING";
+export type ProductDetailsTab = "OVERVIEW" | "DETAILS" | "PRICE" | "DELIVERY_TRADING" | "CERTIFICATES" | "LCPA" | "COMPANY" | "RATING";

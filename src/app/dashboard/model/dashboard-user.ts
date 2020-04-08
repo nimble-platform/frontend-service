@@ -18,5 +18,5 @@ export class DashboardUser {
         public hasCompany: boolean = false,
         public showWelcomeTab: boolean = true,
         public roles: string[] = []
-    ) {  }
+    ) { }
 }

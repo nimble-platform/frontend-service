@@ -12,11 +12,11 @@
    limitations under the License.
  */
 
-import {Clause} from './clause';
+import { Clause } from './clause';
 
 export class TradingPreferences {
     constructor(
-        public termOrCondition:Clause[] = []
-    ) {  }
+        public termOrCondition: Clause[] = []
+    ) { }
 
 }

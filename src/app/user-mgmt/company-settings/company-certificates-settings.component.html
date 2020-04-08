@@ -17,30 +17,32 @@
 <!-- Ppap -->
 <!-- <h3 class="space-after space-before">PPAP</h3> -->
 <div *ngIf="config.showPPAP">
-  <div class="form-group row space-before">
-      <strong class="col-2 col-form-label"><span [innerHTML]="'PPAP Comp. Level:' | translate"></span></strong>
-      <div class="col-10">
-          <select class="form-control" [(ngModel)]="ppapLevel">
-              <option [value]="0">-</option>
-              <option [value]="1"><span [innerHTML]="'Level 1' | translate"></span></option>
-              <option [value]="2"><span [innerHTML]="'Level 2' | translate"></span></option>
-              <option [value]="3"><span [innerHTML]="'Level 3' | translate"></span></option>
-              <option [value]="4"><span [innerHTML]="'Level 3' | translate"></span></option>
-              <option [value]="5"><span [innerHTML]="'Level 5' | translate"></span></option>
-          </select>
-      </div>
-  </div>
+    <div class="form-group row space-before">
+        <strong class="col-2 col-form-label"><span [innerHTML]="'PPAP Comp. Level:' | translate"></span></strong>
+        <div class="col-10">
+            <select class="form-control" [(ngModel)]="ppapLevel">
+                <option [value]="0">-</option>
+                <option [value]="1"><span [innerHTML]="'Level 1' | translate"></span></option>
+                <option [value]="2"><span [innerHTML]="'Level 2' | translate"></span></option>
+                <option [value]="3"><span [innerHTML]="'Level 3' | translate"></span></option>
+                <option [value]="4"><span [innerHTML]="'Level 3' | translate"></span></option>
+                <option [value]="5"><span [innerHTML]="'Level 5' | translate"></span></option>
+            </select>
+        </div>
+    </div>
 
-  <div class="row actions-row">
-      <div class="col-10 call-status-col"><call-status [callStatus]="savePpapLevelCallStatus"></call-status></div>
-      <div class="col-2">
-          <button class="btn btn-primary action" type="button" [disabled]="!isPpapLevelDirty()" (click)="onSavePpapLevel()">
-            <span [innerHTML]="'Save' | translate"></span>
-          </button>
-      </div>
-  </div>
+    <div class="row actions-row">
+        <div class="col-10 call-status-col">
+            <call-status [callStatus]="savePpapLevelCallStatus"></call-status>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-primary action" type="button" [disabled]="!isPpapLevelDirty()" (click)="onSavePpapLevel()">
+                <span [innerHTML]="'Save' | translate"></span>
+            </button>
+        </div>
+    </div>
 
-  <hr>
+    <hr>
 </div>
 
 <!-- Certificates -->
@@ -57,8 +59,15 @@
                 <col style="width: 150%;">
                 <col style="width: auto;">
             </colgroup>
-            <tr><th><span [innerHTML]="'Certificate Type' | translate"></span></th><th><span [innerHTML]="'Certificate Name' | translate"></span></th><th><span [innerHTML]="'Certificate Description' | translate"></span></th><th class="col-3"><span [innerHTML]="'Actions' | translate"></span></th></tr>
-            <tr *ngIf="certificates.length==0"><td colspan="4"><span [innerHTML]="'No data' | translate"></span></td></tr>
+            <tr>
+                <th><span [innerHTML]="'Certificate Type' | translate"></span></th>
+                <th><span [innerHTML]="'Certificate Name' | translate"></span></th>
+                <th><span [innerHTML]="'Certificate Description' | translate"></span></th>
+                <th class="col-3"><span [innerHTML]="'Actions' | translate"></span></th>
+            </tr>
+            <tr *ngIf="certificates.length==0">
+                <td colspan="4"><span [innerHTML]="'No data' | translate"></span></td>
+            </tr>
             <tr *ngFor="let certificate of certificates; let i = index">
                 <td>{{certificate.type}}</td>
                 <td>{{certificate.name}}</td>
@@ -94,46 +103,39 @@
             </button>
         </div>
         <div class="modal-body">
-                <div class="form-group row">
-                    <label class="col-2 col-form-label"><span [innerHTML]="'File' | translate"></span></label>
-                    <div class="col-10">
-                        <file-input [disabled]="disabled"
-                            [presentationMode]="'edit'"
-                            (onSelectFile)="onSetCertificateFile($event)"
-                            (onRemovingEmit)="removedFile($event)"
-                            [languageEnabled]="true"
-                            [binaryObjects]="selectedFiles"
-                            [multiple]="false"
-                            required>
-                        </file-input>
-                    </div>
+            <div class="form-group row">
+                <label class="col-2 col-form-label"><span [innerHTML]="'File' | translate"></span></label>
+                <div class="col-10">
+                    <file-input [disabled]="disabled" [presentationMode]="'edit'" (onSelectFile)="onSetCertificateFile($event)" (onRemovingEmit)="removedFile($event)" [languageEnabled]="true" [binaryObjects]="selectedFiles" [multiple]="false" required>
+                    </file-input>
                 </div>
-                <div class="form-group row">
-                    <label class="col-2 col-form-label"><span [innerHTML]="'Type' | translate"></span></label>
-                    <div class="col-10">
-                        <select class="form-control" [formControl]="addCertForm.controls['type']" required>
-                            <option></option>
-                            <option *ngFor="let certType of config.supportedCertificates" [selected]="certType == addCertForm.controls['type'].value">{{certType}}</option>
-                        </select>
-                    </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-2 col-form-label"><span [innerHTML]="'Type' | translate"></span></label>
+                <div class="col-10">
+                    <select class="form-control" [formControl]="addCertForm.controls['type']" required>
+                        <option></option>
+                        <option *ngFor="let certType of config.supportedCertificates" [selected]="certType == addCertForm.controls['type'].value">{{certType}}</option>
+                    </select>
                 </div>
-                <div class="form-group row">
-                    <label class="col-2 col-form-label"><span [innerHTML]="'Name' | translate"></span></label>
-                    <div class="col-10">
-                        <input type="text" class="form-control" [formControl]="addCertForm.controls['name']" required>
-                    </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-2 col-form-label"><span [innerHTML]="'Name' | translate"></span></label>
+                <div class="col-10">
+                    <input type="text" class="form-control" [formControl]="addCertForm.controls['name']" required>
                 </div>
-                <div class="form-group row">
-                    <label class="col-2 col-form-label"><span [innerHTML]="'Description' | translate"></span></label>
-                    <div class="col-10">
-                        <input type="text" class="form-control" [formControl]="addCertForm.controls['description']">
-                    </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-2 col-form-label"><span [innerHTML]="'Description' | translate"></span></label>
+                <div class="col-10">
+                    <input type="text" class="form-control" [formControl]="addCertForm.controls['description']">
                 </div>
+            </div>
         </div>
         <div class="modal-footer">
             <call-status [callStatus]="saveCertCallStatus"></call-status>
             <button type="button" class="btn btn-primary save-cert-btn" [disabled]="!addCertForm.valid || saveCertCallStatus.isLoading()" (click)="onSaveCertificate(addCertForm, d);">
-                    <span><span [innerHTML]="'Save' | translate"></span></span>
+                <span><span [innerHTML]="'Save' | translate"></span></span>
             </button>
         </div>
     </form>

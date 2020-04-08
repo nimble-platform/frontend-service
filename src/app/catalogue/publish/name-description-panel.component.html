@@ -19,43 +19,18 @@
     <div class="row space-before">
         <!-- Image -->
         <div class="col-3 product-image">
-            <img *ngIf="catalogueLine.goodsItem.item.productImage.length == 0"
-                 class="img-max"
-                 src="../../../assets/images/empty_img.png">
-            <img *ngIf="catalogueLine.goodsItem.item.productImage.length > 0"
-                 class="img-selected d-block active"
-                 src="data:{{catalogueLine.goodsItem.item.productImage[0].mimeCode}};base64,{{catalogueLine.goodsItem.item.productImage[0].value}}"/>
+            <img *ngIf="catalogueLine.goodsItem.item.productImage.length == 0" class="img-max" src="../../../assets/images/empty_img.png">
+            <img *ngIf="catalogueLine.goodsItem.item.productImage.length > 0" class="img-selected d-block active" src="data:{{catalogueLine.goodsItem.item.productImage[0].mimeCode}};base64,{{catalogueLine.goodsItem.item.productImage[0].value}}" />
         </div>
 
         <div class="col-9">
             <!-- product ID -->
-            <text-input [label]="'ID' | translate"
-                        [(text)]="catalogueLine.goodsItem.item.manufacturersItemIdentification.id"
-                        [rows]="1"
-                        [maxLength]="256"
-                        [rowClass]="'m-0'"
-                        [textGeneratorClass]="'col-1'"
-                        [valueClass]="'col-8'"
-                        (textChange)="onLineIdChange()"
-                        [disabled]="!productIdEditable"
-                        [required]="true"
-                        [forbiddenPrecedingTrailingSpace]="true"
-                        [formFieldName]="'product_id'"
-                        [parentForm]="formGroup">
+            <text-input [label]="'ID' | translate" [(text)]="catalogueLine.goodsItem.item.manufacturersItemIdentification.id" [rows]="1" [maxLength]="256" [rowClass]="'m-0'" [textGeneratorClass]="'col-1'" [valueClass]="'col-8'" (textChange)="onLineIdChange()" [disabled]="!productIdEditable" [required]="true" [forbiddenPrecedingTrailingSpace]="true" [formFieldName]="'product_id'" [parentForm]="formGroup">
             </text-input>
             <hr>
             <div *ngFor="let itemName of catalogueLine.goodsItem.item.name; let i = index" class="space-after">
                 <!-- Name -->
-                <text-input [label]="'Name' | translate"
-                            [(text)]="itemName.value"
-                            [rows]="1" [maxLength]="2047"
-                            [rowClass]="'m-0'" [valueClass]="'col-8'"
-                            [(languageId)]="itemName.languageID" [languageIdClass]="'col-1'"
-                            (languageIdChange)="catalogueLine.goodsItem.item.name[i].languageID = $event;catalogueLine.goodsItem.item.description[i].languageID = $event"
-                            [required]="true"
-                            [parentForm]="formGroup"
-                            [formFieldName]="'product_name'"
-                            [componentIndex]="i">
+                <text-input [label]="'Name' | translate" [(text)]="itemName.value" [rows]="1" [maxLength]="2047" [rowClass]="'m-0'" [valueClass]="'col-8'" [(languageId)]="itemName.languageID" [languageIdClass]="'col-1'" (languageIdChange)="catalogueLine.goodsItem.item.name[i].languageID = $event;catalogueLine.goodsItem.item.description[i].languageID = $event" [required]="true" [parentForm]="formGroup" [formFieldName]="'product_name'" [componentIndex]="i">
                 </text-input>
                 <!-- Description -->
                 <text-input *ngIf="i==0" [label]="'Description' | translate" [(text)]="catalogueLine.goodsItem.item.description[i].value" [rows]="6" [maxLength]="2047" [rowClass]="'m-0 space-before'" [valueClass]="'col-8'">
@@ -79,7 +54,7 @@
             </div>
             <div class="add-image btn btn-outline-primary">
                 <span><span [innerHTML]="'Add Image' | translate"></span></span>
-                <input type="file" (change)="onAddImage($event)" multiple/>
+                <input type="file" (change)="onAddImage($event)" multiple />
                 <i class="fa fa-question-circle delete-image" (click)="onClickImageRecommendations(imageRecommendationModal)"></i>
             </div>
         </div>

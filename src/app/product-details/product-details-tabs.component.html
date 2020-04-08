@@ -20,54 +20,39 @@
         <ul class="nav nav-tabs">
             <ng-container *ngIf="showOverview">
                 <li class="nav-item">
-                    <a href id="OVERVIEW" class="nav-link"
-                        [ngClass]="{ active: selectedTab === 'OVERVIEW'}"
-                        (click)="onSelectTab($event,'OVERVIEW')">
+                    <a href id="OVERVIEW" class="nav-link" [ngClass]="{ active: selectedTab === 'OVERVIEW'}" (click)="onSelectTab($event,'OVERVIEW')">
                         <span [innerHTML]="'Overview' | translate"></span>
                     </a>
                 </li>
             </ng-container>
             <li *ngIf="haveDetails" class="nav-item">
-                <a href id="DETAILS" class="nav-link"
-                    [ngClass]="{ active: selectedTab === 'DETAILS'}"
-                    (click)="onSelectTab($event,'DETAILS')">
+                <a href id="DETAILS" class="nav-link" [ngClass]="{ active: selectedTab === 'DETAILS'}" (click)="onSelectTab($event,'DETAILS')">
                     <span [innerHTML]="'Details' | translate"></span>
                 </a>
             </li>
             <!-- For transport/logistic services, we do not need to show Price tab since these services do not have price details -->
             <li *ngIf="haveTransportServiceDetails && !(isLogistics || isTransportService) && !isCatalogueLineDeleted" class="nav-item">
-                    <a href id="PRICE" class="nav-link"
-                        [ngClass]="{ active: selectedTab === 'PRICE'}"
-                        (click)="onSelectTab($event,'PRICE')">
-                        <span [innerHTML]="'Price' | translate"></span>
-                    </a>
+                <a href id="PRICE" class="nav-link" [ngClass]="{ active: selectedTab === 'PRICE'}" (click)="onSelectTab($event,'PRICE')">
+                    <span [innerHTML]="'Price' | translate"></span>
+                </a>
             </li>
             <li *ngIf="haveTransportServiceDetails && !isCatalogueLineDeleted" class="nav-item">
-                <a href id="DELIVERY_TRADING" class="nav-link"
-                    *ngIf="isLogistics === false"
-                    [ngClass]="{ active: selectedTab === 'DELIVERY_TRADING'}"
-                    (click)="onSelectTab($event,'DELIVERY_TRADING')">
+                <a href id="DELIVERY_TRADING" class="nav-link" *ngIf="isLogistics === false" [ngClass]="{ active: selectedTab === 'DELIVERY_TRADING'}" (click)="onSelectTab($event,'DELIVERY_TRADING')">
                     <span [innerHTML]="'Delivery' | translate"></span> &amp; <span [innerHTML]="'Trading' | translate"></span>
                 </a>
             </li>
             <li *ngIf="haveCertificates" class="nav-item">
-                <a href id="CERTIFICATES" class="nav-link"
-                    [ngClass]="{ active: selectedTab === 'CERTIFICATES'}"
-                    (click)="onSelectTab($event,'CERTIFICATES')">
+                <a href id="CERTIFICATES" class="nav-link" [ngClass]="{ active: selectedTab === 'CERTIFICATES'}" (click)="onSelectTab($event,'CERTIFICATES')">
                     <span [innerHTML]="'Certificates' | translate"></span>
                 </a>
             </li>
             <li *ngIf="config.showLCPA && haveLCPA" class="nav-item">
-                <a href id="LCPA" class="nav-link" *ngIf="isLogistics === false"
-                   [ngClass]="{ active: selectedTab === 'LCPA'}"
-                   (click)="onSelectTab($event,'LCPA')">
-                   <span [innerHTML]="'LCPA' | translate"></span>
+                <a href id="LCPA" class="nav-link" *ngIf="isLogistics === false" [ngClass]="{ active: selectedTab === 'LCPA'}" (click)="onSelectTab($event,'LCPA')">
+                    <span [innerHTML]="'LCPA' | translate"></span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href id="COMPANY" class="nav-link"
-                    [ngClass]="{ active: selectedTab === 'COMPANY'}"
-                    (click)="onSelectTab($event,'COMPANY')">
+                <a href id="COMPANY" class="nav-link" [ngClass]="{ active: selectedTab === 'COMPANY'}" (click)="onSelectTab($event,'COMPANY')">
                     <span [innerHTML]="'Company Details' | translate"></span>
                 </a>
             </li>
@@ -86,11 +71,7 @@
     <!-- Overview Tab -->
     <div *ngIf="selectedTab === 'OVERVIEW'" class="p-3 col-12">
         <h3 class="p-1"><span [innerHTML]="'Overview' | translate"></span></h3>
-        <product-details-overview [wrapper]="wrapper"
-                                  [itemWithSelectedProps]="itemWithSelectedProps"
-                                  [associatedProducts]="associatedProducts"
-                                  [readonly]="readonly"
-                                  (compStatus)="setTab($event)">
+        <product-details-overview [wrapper]="wrapper" [itemWithSelectedProps]="itemWithSelectedProps" [associatedProducts]="associatedProducts" [readonly]="readonly" (compStatus)="setTab($event)">
         </product-details-overview>
     </div>
 
@@ -104,14 +85,14 @@
             <div *ngFor="let multiValuedDimension of wrapper.getDimensionMultiValue(false)" class="p-1 col-6 d-flex">
                 <strong>{{ multiValuedDimension.attributeID }}: </strong>
                 <span class="ml-2">
-                {{getMultiValuedDimensionAsString(multiValuedDimension.measure)}}
-            </span>
+                    {{getMultiValuedDimensionAsString(multiValuedDimension.measure)}}
+                </span>
             </div>
             <div *ngFor="let property of wrapper.getUniquePropertiesWithValue()" class="p-1 col-6 d-flex">
                 <strong>{{ getHumanReadablePropertyName(wrapper.getPropertyName(property)) }}: </strong>
                 <span *ngIf="property.valueQualifier !== 'FILE'" class="ml-2">
-                {{ getValuesAsString(property).join(", ") }}
-            </span>
+                    {{ getValuesAsString(property).join(", ") }}
+                </span>
                 <ng-container *ngIf="property.valueQualifier === 'FILE'">
                     <file-input presentationMode="view" [binaryObjects]="property.valueBinary" [multiple]="true" rowClass="ml-2" [small]="true"></file-input>
                 </ng-container>
@@ -131,22 +112,22 @@
 
     <!-- Price Tab -->
     <div *ngIf="selectedTab === 'PRICE'" class="p-3 col-12">
-            <div style="flex-grow:1;">
-                <h3 *ngIf="wrapper.getPricePerItem() != '' || wrapper.getFreeSample() != ''" class="p-1"><span [innerHTML]="'Price' | translate"></span></h3>
-                <div *ngIf="wrapper.getPricePerItem() != ''" class="p-1">
-                    <strong><span [innerHTML]="'Price:' | translate"></span> </strong> {{ wrapper.getPricePerItem() }}
-                </div>
-                <div *ngIf="config.vatEnabled && wrapper.getVat() != ''" class="p-1">
-                    <strong><span [innerHTML]="'VAT:' | translate"></span></strong> {{ wrapper.getVat() }}%
-                </div>
-                <div *ngIf="wrapper.getFreeSample() != ''" class="p-1">
-                    <strong><span [innerHTML]="'Free Sample:' | translate"></span></strong> {{ wrapper.getFreeSample() }}
-                </div>
-                <h3 *ngIf="wrapper.line.priceOption && wrapper.line.priceOption.length > 0" class="p-1"><span [innerHTML]="'Discounts/Charges' | translate"></span></h3>
-                <div class="p-1">
-                    <discount-details [catalogueLine]="wrapper.line" [companyNegotiationSettings]="settings.negotiationSettings" [readonly]="true"></discount-details>
-                </div>
+        <div style="flex-grow:1;">
+            <h3 *ngIf="wrapper.getPricePerItem() != '' || wrapper.getFreeSample() != ''" class="p-1"><span [innerHTML]="'Price' | translate"></span></h3>
+            <div *ngIf="wrapper.getPricePerItem() != ''" class="p-1">
+                <strong><span [innerHTML]="'Price:' | translate"></span> </strong> {{ wrapper.getPricePerItem() }}
             </div>
+            <div *ngIf="config.vatEnabled && wrapper.getVat() != ''" class="p-1">
+                <strong><span [innerHTML]="'VAT:' | translate"></span></strong> {{ wrapper.getVat() }}%
+            </div>
+            <div *ngIf="wrapper.getFreeSample() != ''" class="p-1">
+                <strong><span [innerHTML]="'Free Sample:' | translate"></span></strong> {{ wrapper.getFreeSample() }}
+            </div>
+            <h3 *ngIf="wrapper.line.priceOption && wrapper.line.priceOption.length > 0" class="p-1"><span [innerHTML]="'Discounts/Charges' | translate"></span></h3>
+            <div class="p-1">
+                <discount-details [catalogueLine]="wrapper.line" [companyNegotiationSettings]="settings.negotiationSettings" [readonly]="true"></discount-details>
+            </div>
+        </div>
     </div>
 
     <!-- Delivery & Trading Tab -->
@@ -157,10 +138,10 @@
                 <div *ngIf="wrapper.getIncoterms() != ''" class="p-1">
                     <strong><span [innerHTML]="'Incoterms:' | translate"></span></strong> {{ wrapper.getIncoterms() }}
                 </div>
-                <div  *ngIf="wrapper.getSpecialTerms() != null" class="p-1">
+                <div *ngIf="wrapper.getSpecialTerms() != null" class="p-1">
                     <strong><span [innerHTML]="'Special Terms:' | translate"></span></strong> {{ wrapper.getSpecialTerms() }}
                 </div>
-                <div  *ngIf="wrapper.getDeliveryPeriod() != ''" class="p-1">
+                <div *ngIf="wrapper.getDeliveryPeriod() != ''" class="p-1">
                     <strong><span [innerHTML]="'Delivery Period:' | translate"></span></strong> {{ wrapper.getDeliveryPeriod() }}
                 </div>
             </div>
@@ -175,14 +156,13 @@
 
     <!-- Certificates Tab -->
     <div *ngIf="selectedTab === 'CERTIFICATES'" class="p-3 col-12">
-        <product-details-certificates  (certificateStatus)="getCertificateStatusTab($event)"  [wrapper]="wrapper" [settings]="settings">
+        <product-details-certificates (certificateStatus)="getCertificateStatusTab($event)" [wrapper]="wrapper" [settings]="settings">
         </product-details-certificates>
     </div>
 
     <!-- LCPA Tab -->
     <div *ngIf="selectedTab === 'LCPA'" class="p-3 col-12">
-        <product-lcpa-tab  (lcpaStatus)="getLCPAStatusTab($event)"  [presentationMode]="'view'"
-                          [catalogueLine]="wrapper.line">
+        <product-lcpa-tab (lcpaStatus)="getLCPAStatusTab($event)" [presentationMode]="'view'" [catalogueLine]="wrapper.line">
         </product-lcpa-tab>
     </div>
 

@@ -21,11 +21,7 @@
     </div>
 
     <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible">
-        <input type="date" class="form-control {{valueDateClass}}"
-               [(ngModel)]="date"
-               [disableControl]="disabled"
-               [formControl]="dateFormControl"
-               [ngbTooltip]="validationService.getValidationErrorMessage(dateFormControl)" [placement]="'auto'"  title="">
+        <input type="date" class="form-control {{valueDateClass}}" [(ngModel)]="date" [disableControl]="disabled" [formControl]="dateFormControl" [ngbTooltip]="validationService.getValidationErrorMessage(dateFormControl)" [placement]="'auto'" title="">
     </div>
 
     <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">

@@ -20,5 +20,5 @@ export class AddressSimple {
         public buildingNumber: string = '',
         public streetName: string = '',
         public country: string = ''
-        ) {  }
+    ) { }
 }

@@ -14,137 +14,145 @@
 
 <!-- Company Statement -->
 <div class="form-group row space-before">
-  <label class="col-2 col-form-label">
-    <strong><span [innerHTML]="'Company Description:' | translate"></span></strong>
-  </label>
-  <div class="col-10">
-    <ng-container *ngFor="let companyStatementEntry of companyStatementArr; let i = index; trackBy:trackFn">
-      <div class="row mb-1">
-        <div class="col-8">
-          <textarea rows="3" class="form-control" [(ngModel)]="companyStatementArr[i].text" [ngModelOptions]="{standalone: true}" (input)="flagChanged()" maxlength="255"></textarea>
+    <label class="col-2 col-form-label">
+        <strong><span [innerHTML]="'Company Description:' | translate"></span></strong>
+    </label>
+    <div class="col-10">
+        <ng-container *ngFor="let companyStatementEntry of companyStatementArr; let i = index; trackBy:trackFn">
+            <div class="row mb-1">
+                <div class="col-8">
+                    <textarea rows="3" class="form-control" [(ngModel)]="companyStatementArr[i].text" [ngModelOptions]="{standalone: true}" (input)="flagChanged()" maxlength="255"></textarea>
+                </div>
+                <div class="col-2">
+                    <select class="form-control" [(ngModel)]="companyStatementArr[i].lang" [ngModelOptions]="{standalone: true}" (change)="flagChanged()">
+                        <option *ngFor='let language of languages' [value]="language">{{language}}</option>
+                    </select>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-danger w-100" type="button" (click)="removeCompanyStatement(i)"><span [innerHTML]="'Delete' | translate"></span></button>
+                </div>
+            </div>
+        </ng-container>
+        <div class="row mt-2 mb-1">
+            <div class="col-10"></div>
+            <div class="col-2">
+                <button class="btn btn-secondary w-100" type="button" (click)="addCompanyStatement()">
+                    <span [innerHTML]="'Add' | translate"></span>
+                </button>
+            </div>
         </div>
-        <div class="col-2">
-          <select class="form-control" [(ngModel)]="companyStatementArr[i].lang" [ngModelOptions]="{standalone: true}" (change)="flagChanged()">
-              <option *ngFor='let language of languages' [value]="language">{{language}}</option>
-          </select>
-        </div>
-        <div class="col-2">
-          <button class="btn btn-danger w-100" type="button" (click)="removeCompanyStatement(i)"><span [innerHTML]="'Delete' | translate"></span></button>
-        </div>
-      </div>
-    </ng-container>
-    <div class="row mt-2 mb-1">
-      <div class="col-10"></div>
-      <div class="col-2">
-        <button class="btn btn-secondary w-100" type="button" (click)="addCompanyStatement()">
-          <span [innerHTML]="'Add' | translate"></span>
-        </button>
-      </div>
     </div>
-  </div>
 </div>
 
 <!-- Website -->
 <div class="form-group row">
-  <label class="col-2 col-form-label">
-    <strong><span [innerHTML]="'Website:' | translate"></span></strong>
-  </label>
-  <div class="col-10">
-    <input type="text" class="form-control" [formControl]="descriptionForm.controls['website']" maxlength="255">
-  </div>
+    <label class="col-2 col-form-label">
+        <strong><span [innerHTML]="'Website:' | translate"></span></strong>
+    </label>
+    <div class="col-10">
+        <input type="text" class="form-control" [formControl]="descriptionForm.controls['website']" maxlength="255">
+    </div>
 </div>
 
 <!-- Social Media List -->
 <div class="form-group row">
-  <label class="col-2 col-form-label">
-    <strong><span [innerHTML]="'Social Media:' | translate"></span></strong>
-  </label>
-  <div class="col-10">
-    <ng-container *ngFor="let socialMediaEntry of socialMediaList; let i = index; trackBy:trackFn">
-      <div class="row mb-1">
-        <div class="col-10">
-          <input type="text" class="form-control" [(ngModel)]="socialMediaList[i]" (input)="flagSocialMediaChanged()" maxlength="255">
+    <label class="col-2 col-form-label">
+        <strong><span [innerHTML]="'Social Media:' | translate"></span></strong>
+    </label>
+    <div class="col-10">
+        <ng-container *ngFor="let socialMediaEntry of socialMediaList; let i = index; trackBy:trackFn">
+            <div class="row mb-1">
+                <div class="col-10">
+                    <input type="text" class="form-control" [(ngModel)]="socialMediaList[i]" (input)="flagSocialMediaChanged()" maxlength="255">
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-danger w-100" (click)="removeSocialMediaEntry(i)"><span [innerHTML]="'Delete' | translate"></span></button>
+                </div>
+            </div>
+        </ng-container>
+        <div class="row mt-2 mb-1">
+            <div class="col-10"></div>
+            <div class="col-2">
+                <button class="btn btn-secondary w-100" [disabled]="saveCallStatus.isLoading()" (click)="addSocialMediaEntry()">
+                    <span [innerHTML]="'Add Social Media' | translate"></span>
+                </button>
+            </div>
         </div>
-        <div class="col-2">
-          <button class="btn btn-danger w-100" (click)="removeSocialMediaEntry(i)"><span [innerHTML]="'Delete' | translate"></span></button>
-        </div>
-      </div>
-    </ng-container>
-    <div class="row mt-2 mb-1">
-      <div class="col-10"></div>
-      <div class="col-2">
-        <button class="btn btn-secondary w-100" [disabled]="saveCallStatus.isLoading()" (click)="addSocialMediaEntry()">
-          <span [innerHTML]="'Add Social Media' | translate"></span>
-        </button>
-      </div>
     </div>
-  </div>
 </div>
 
 <!-- Link (External Resource) List -->
 <div class="form-group row">
-  <label class="col-2 col-form-label">
-    <strong><span [innerHTML]="'Other Links:' | translate"></span></strong>
-  </label>
-  <div class="col-10">
-    <ng-container *ngFor="let extEntry of externalResources; let i = index; trackBy:trackFn">
-      <div class="row mb-1">
-        <div class="col-10">
-          <input type="text" class="form-control" [(ngModel)]="externalResources[i]" (input)="flagExternalResourcesChanged()" maxlength="255">
+    <label class="col-2 col-form-label">
+        <strong><span [innerHTML]="'Other Links:' | translate"></span></strong>
+    </label>
+    <div class="col-10">
+        <ng-container *ngFor="let extEntry of externalResources; let i = index; trackBy:trackFn">
+            <div class="row mb-1">
+                <div class="col-10">
+                    <input type="text" class="form-control" [(ngModel)]="externalResources[i]" (input)="flagExternalResourcesChanged()" maxlength="255">
+                </div>
+                <div class="col-2 align-right">
+                    <button class="btn btn-danger w-100" (click)="removeExternalResourceEntry(i)"><span [innerHTML]="'Delete' | translate"></span></button>
+                </div>
+            </div>
+        </ng-container>
+        <div class="row mt-2 mb-1">
+            <div class="col-10"></div>
+            <div class="col-2">
+                <button class="btn btn-secondary w-100" [disabled]="saveCallStatus.isLoading()" (click)="addExternalResourceEntry()">
+                    <span [innerHTML]="'Add Other Link' | translate"></span>
+                </button>
+            </div>
         </div>
-        <div class="col-2 align-right">
-          <button class="btn btn-danger w-100" (click)="removeExternalResourceEntry(i)"><span [innerHTML]="'Delete' | translate"></span></button>
-        </div>
-      </div>
-    </ng-container>
-    <div class="row mt-2 mb-1">
-      <div class="col-10"></div>
-      <div class="col-2">
-        <button class="btn btn-secondary w-100" [disabled]="saveCallStatus.isLoading()" (click)="addExternalResourceEntry()">
-          <span [innerHTML]="'Add Other Link' | translate"></span>
-        </button>
-      </div>
     </div>
-  </div>
 </div>
 
 <!-- Event List -->
 <div class="form-group row">
-  <label class="col-2 col-form-label">
-    <strong><span [innerHTML]="'Events:' | translate"></span></strong>
-  </label>
-  <div class="col-10">
-      <table class="table table-striped table-bordered mb-1 mt-0" style="table-layout: fixed; width: 100%;">
-          <colgroup>
-              <col style="width: 150%;">
-              <col style="width: 150%;">
-              <col style="width: 150%;">
-              <col style="width: 150%;">
-              <col style="width: auto;">
-          </colgroup>
-          <tr><th><span [innerHTML]="'Date' | translate"></span></th><th><span [innerHTML]="'Name' | translate"></span></th><th><span [innerHTML]="'Description' | translate"></span></th><th><span [innerHTML]="'Location' | translate"></span></th><th class="col-2"><span [innerHTML]="'Actions' | translate"></span></th></tr>
-          <tr *ngIf="compEvents.length==0"><td colspan="5"><span [innerHTML]="'No data' | translate"></span></td></tr>
-          <tr *ngFor="let ev of compEvents; let i = index">
-              <td>{{ev.dateFrom}} - {{ev.dateTo}}</td>
-              <td>{{ev.name}}</td>
-              <td *ngIf="ev.description">{{ev.description}}</td>
-              <td *ngIf="!ev.description"><span [innerHTML]="'n/A' | translate"></span></td>
-              <td *ngIf="ev.place.streetName">{{ev.place.streetName}}<span *ngIf="ev.place.buildingNumber"> {{ev.place.buildingNumber}}</span><br/>{{ev.place.postalCode}} {{ev.place.cityName}}<br/>{{ev.place.country}}</td>
-              <td *ngIf="!ev.place.streetName"><span [innerHTML]="'n/A' | translate"></span></td>
-              <td>
-                  <button class="btn btn-danger btn-sm" (click)="removeCompEventEntry(i)"><span [innerHTML]="'Delete' | translate"></span></button>
-              </td>
-          </tr>
-      </table>
-      <div class="row mt-2 mb-1">
-        <div class="col-10"></div>
-        <div class="col-2">
-          <button class="btn btn-secondary w-100" [disabled]="saveCallStatus.isLoading()" (click)="addCompEventEntry(addEventModal)">
-            <span [innerHTML]="'Add Event' | translate"></span>
-          </button>
+    <label class="col-2 col-form-label">
+        <strong><span [innerHTML]="'Events:' | translate"></span></strong>
+    </label>
+    <div class="col-10">
+        <table class="table table-striped table-bordered mb-1 mt-0" style="table-layout: fixed; width: 100%;">
+            <colgroup>
+                <col style="width: 150%;">
+                <col style="width: 150%;">
+                <col style="width: 150%;">
+                <col style="width: 150%;">
+                <col style="width: auto;">
+            </colgroup>
+            <tr>
+                <th><span [innerHTML]="'Date' | translate"></span></th>
+                <th><span [innerHTML]="'Name' | translate"></span></th>
+                <th><span [innerHTML]="'Description' | translate"></span></th>
+                <th><span [innerHTML]="'Location' | translate"></span></th>
+                <th class="col-2"><span [innerHTML]="'Actions' | translate"></span></th>
+            </tr>
+            <tr *ngIf="compEvents.length==0">
+                <td colspan="5"><span [innerHTML]="'No data' | translate"></span></td>
+            </tr>
+            <tr *ngFor="let ev of compEvents; let i = index">
+                <td>{{ev.dateFrom}} - {{ev.dateTo}}</td>
+                <td>{{ev.name}}</td>
+                <td *ngIf="ev.description">{{ev.description}}</td>
+                <td *ngIf="!ev.description"><span [innerHTML]="'n/A' | translate"></span></td>
+                <td *ngIf="ev.place.streetName">{{ev.place.streetName}}<span *ngIf="ev.place.buildingNumber"> {{ev.place.buildingNumber}}</span><br />{{ev.place.postalCode}} {{ev.place.cityName}}<br />{{ev.place.country}}</td>
+                <td *ngIf="!ev.place.streetName"><span [innerHTML]="'n/A' | translate"></span></td>
+                <td>
+                    <button class="btn btn-danger btn-sm" (click)="removeCompEventEntry(i)"><span [innerHTML]="'Delete' | translate"></span></button>
+                </td>
+            </tr>
+        </table>
+        <div class="row mt-2 mb-1">
+            <div class="col-10"></div>
+            <div class="col-2">
+                <button class="btn btn-secondary w-100" [disabled]="saveCallStatus.isLoading()" (click)="addCompEventEntry(addEventModal)">
+                    <span [innerHTML]="'Add Event' | translate"></span>
+                </button>
+            </div>
         </div>
-      </div>
-  </div>
+    </div>
 </div>
 
 <div class="row actions-row pr-0 space-before">
@@ -170,7 +178,7 @@
     -->
     <div class="col-2">
         <button class="btn btn-primary action" [disabled]="!descriptionForm.valid || (!descriptionForm.dirty && !inputChanged && !socialMediaListChanged && !externalResourcesChanged && !compEventsChanged) || saveCallStatus.isLoading()" (click)="onSave(descriptionForm)">
-          <span [innerHTML]="'Save' | translate"></span>
+            <span [innerHTML]="'Save' | translate"></span>
         </button>
     </div>
 </div>
@@ -181,49 +189,49 @@
 <h4><span [innerHTML]="'Images' | translate"></span></h4>
 
 <div class="form-group row">
-  <label class="col-2 col-form-label">
-    <strong><span [innerHTML]="'Logo:' | translate"></span></strong>
-  </label>
-  <div class="col-10">
-    <div *ngIf="!settings.description.logoImageId" class="card m-2" style="width: 15rem;">
-      <div class="card-body p-2">
-          <div class="align-center">
-            <img class="img-max" src="../../../assets/images/empty_img.png">
-          </div>
-      </div>
+    <label class="col-2 col-form-label">
+        <strong><span [innerHTML]="'Logo:' | translate"></span></strong>
+    </label>
+    <div class="col-10">
+        <div *ngIf="!settings.description.logoImageId" class="card m-2" style="width: 15rem;">
+            <div class="card-body p-2">
+                <div class="align-center">
+                    <img class="img-max" src="../../../assets/images/empty_img.png">
+                </div>
+            </div>
+        </div>
+        <div *ngIf="settings.description.logoImageId" class="card m-2" style="width: 15rem;">
+            <div class="card-body p-2">
+                <div class="align-center">
+                    <img class="img-max" src="{{imgEndpoint}}{{settings.description.logoImageId}}">
+                </div>
+                <button [disabled]="saveCallStatusImage.isLoading()" class="btn btn-danger btn-sm mt-2" (click)="onDeleteImage(settings.description.logoImageId)"><span [innerHTML]="'Delete' | translate"></span></button>
+            </div>
+        </div>
     </div>
-    <div *ngIf="settings.description.logoImageId" class="card m-2" style="width: 15rem;">
-      <div class="card-body p-2">
-          <div class="align-center">
-            <img class="img-max" src="{{imgEndpoint}}{{settings.description.logoImageId}}">
-          </div>
-          <button [disabled]="saveCallStatusImage.isLoading()" class="btn btn-danger btn-sm mt-2" (click)="onDeleteImage(settings.description.logoImageId)"><span [innerHTML]="'Delete' | translate"></span></button>
-      </div>
-    </div>
-  </div>
 </div>
 
 <div class="form-group row">
-  <label class="col-2 col-form-label">
-    <strong><span [innerHTML]="'Photos At Work' | translate"></span></strong>
-  </label>
-  <div class="col-10 row ml-0 mr-0">
-    <div *ngIf="settings.description.companyPhotoList.length == 0" class="card m-2" style="width: 15rem;">
-      <div class="card-body p-2">
-          <div class="align-center">
-            <img class="img-max" src="../../../assets/images/empty_img.png">
-          </div>
-      </div>
+    <label class="col-2 col-form-label">
+        <strong><span [innerHTML]="'Photos At Work' | translate"></span></strong>
+    </label>
+    <div class="col-10 row ml-0 mr-0">
+        <div *ngIf="settings.description.companyPhotoList.length == 0" class="card m-2" style="width: 15rem;">
+            <div class="card-body p-2">
+                <div class="align-center">
+                    <img class="img-max" src="../../../assets/images/empty_img.png">
+                </div>
+            </div>
+        </div>
+        <div *ngFor="let photo of settings.description.companyPhotoList" class="card m-2" style="width: 15rem;">
+            <div class="card-body p-2">
+                <div class="align-center">
+                    <img class="img-max" src="{{imgEndpoint}}{{photo}}">
+                </div>
+                <button [disabled]="saveCallStatusImage.isLoading()" class="btn btn-danger btn-sm mt-2" (click)="onDeleteImage(photo)"><span [innerHTML]="'Delete' | translate"></span></button>
+            </div>
+        </div>
     </div>
-    <div *ngFor="let photo of settings.description.companyPhotoList" class="card m-2" style="width: 15rem;">
-      <div class="card-body p-2">
-          <div class="align-center">
-            <img class="img-max" src="{{imgEndpoint}}{{photo}}">
-          </div>
-          <button [disabled]="saveCallStatusImage.isLoading()" class="btn btn-danger btn-sm mt-2" (click)="onDeleteImage(photo)"><span [innerHTML]="'Delete' | translate"></span></button>
-      </div>
-    </div>
-  </div>
 </div>
 
 <div class="row actions-row pr-0 space-before">
@@ -232,12 +240,12 @@
     </div>
     <div class="col-2">
         <button class="btn btn-primary action" [disabled]="saveCallStatusImage.isLoading() || settings.description.logoImageId" (click)="addImage(addImageModal,true)">
-          <span [innerHTML]="'Add Logo' | translate"></span>
+            <span [innerHTML]="'Add Logo' | translate"></span>
         </button>
     </div>
     <div class="col-2">
         <button class="btn btn-primary action" [disabled]="saveCallStatusImage.isLoading()" (click)="addImage(addImageModal,false)">
-          <span [innerHTML]="'Add Photo' | translate"></span>
+            <span [innerHTML]="'Add Photo' | translate"></span>
         </button>
     </div>
     <div class="col-8"></div>
@@ -254,27 +262,27 @@
             </button>
         </div>
         <div class="modal-body">
-                <date-input labelClass="col-2 col-form-label" labelMainClass="mb-0" valueClass="col-10" rowClass="form-group" label="Start Date" [disabled]="false" [(date)]="compEventFromDate">
-                </date-input>
-                <date-input labelClass="col-2 col-form-label" labelMainClass="mb-0" valueClass="col-10" rowClass="form-group" label="End Date" [disabled]="false" [(date)]="compEventToDate">
-                </date-input>
-                <div class="form-group row">
-                    <label class="col-2 col-form-label">
-                      <strong><span [innerHTML]="'Name:' | translate"></span></strong>
-                    </label>
-                    <div class="col-10">
-                        <input type="text" class="form-control" [formControl]="addEventForm.controls['name']" maxlength="255" required>
-                    </div>
+            <date-input labelClass="col-2 col-form-label" labelMainClass="mb-0" valueClass="col-10" rowClass="form-group" label="Start Date" [disabled]="false" [(date)]="compEventFromDate">
+            </date-input>
+            <date-input labelClass="col-2 col-form-label" labelMainClass="mb-0" valueClass="col-10" rowClass="form-group" label="End Date" [disabled]="false" [(date)]="compEventToDate">
+            </date-input>
+            <div class="form-group row">
+                <label class="col-2 col-form-label">
+                    <strong><span [innerHTML]="'Name:' | translate"></span></strong>
+                </label>
+                <div class="col-10">
+                    <input type="text" class="form-control" [formControl]="addEventForm.controls['name']" maxlength="255" required>
                 </div>
-                <div class="form-group row">
-                    <label class="col-2 col-form-label">
-                      <strong><span [innerHTML]="'Description:' | translate"></span></strong>
-                    </label>
-                    <div class="col-10">
-                        <input type="text" class="form-control" [formControl]="addEventForm.controls['description']" maxlength="255">
-                    </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-2 col-form-label">
+                    <strong><span [innerHTML]="'Description:' | translate"></span></strong>
+                </label>
+                <div class="col-10">
+                    <input type="text" class="form-control" [formControl]="addEventForm.controls['description']" maxlength="255">
                 </div>
-                <address-form [group]="addEventForm.controls.place" [requiredFlag]=false></address-form>
+            </div>
+            <address-form [group]="addEventForm.controls.place" [requiredFlag]=false></address-form>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-primary save-cert-btn" [disabled]="!addEventForm.valid" (click)="onSaveEventEntry(addEventForm, d);">
@@ -294,12 +302,12 @@
             </button>
         </div>
         <div class="modal-body">
-          <div class="form-group row">
-            <label class="col-2 col-form-label"><span [innerHTML]="'Image' | translate"></span></label>
-              <div class="col-10">
-                  <input type="file" class="form-control" [formControl]="addImageForm.controls['file']" (change)="onSetImageFile($event, addImageForm)" required>
-              </div>
-          </div>
+            <div class="form-group row">
+                <label class="col-2 col-form-label"><span [innerHTML]="'Image' | translate"></span></label>
+                <div class="col-10">
+                    <input type="file" class="form-control" [formControl]="addImageForm.controls['file']" (change)="onSetImageFile($event, addImageForm)" required>
+                </div>
+            </div>
         </div>
         <div class="modal-footer">
             <call-status [callStatus]="saveCallStatusImage"></call-status>

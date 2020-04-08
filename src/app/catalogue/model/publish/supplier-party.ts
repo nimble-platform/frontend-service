@@ -12,10 +12,10 @@
    limitations under the License.
  */
 
-import {Party} from "./party";
+import { Party } from "./party";
 
 export class SupplierParty {
     constructor(
-        public party:Party = new Party()
+        public party: Party = new Party()
     ) { }
 }

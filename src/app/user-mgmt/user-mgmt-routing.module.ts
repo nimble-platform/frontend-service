@@ -27,8 +27,8 @@ import { CompanyDetailsComponent } from "./company-details.component";
 import { CompanyRatingComponent } from './company-rating.component';
 import { UserProfileComponent } from './user-profile.component';
 import { AgentsComponent } from './agents.component';
-import {ForgotPasswordComponent} from "./forgot-password.component";
-import {CompanyTermsAndConditions} from './company-settings/company-terms-and-conditions';
+import { ForgotPasswordComponent } from "./forgot-password.component";
+import { CompanyTermsAndConditions } from './company-settings/company-terms-and-conditions';
 
 const routes: Routes = [
     { path: "login", component: LoginComponent },
@@ -40,7 +40,7 @@ const routes: Routes = [
     { path: "company-settings", component: CompanySettingsComponent },
     { path: "company-details", component: CompanyDetailsComponent },
     { path: "company-rating", component: CompanyRatingComponent },
-    { path: "company-terms-and-conditions", component: CompanyTermsAndConditions},
+    { path: "company-terms-and-conditions", component: CompanyTermsAndConditions },
     { path: "user-profile", component: UserProfileComponent },
     { path: "agents", component: AgentsComponent }
 ];
@@ -49,4 +49,4 @@ const routes: Routes = [
     imports: [RouterModule.forChild(routes)],
     exports: [RouterModule]
 })
-export class UserMgmtRoutingModule {}
+export class UserMgmtRoutingModule { }

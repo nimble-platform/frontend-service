@@ -21,7 +21,7 @@ import { DeliveryTermsSubForm } from "../subforms/delivery-terms.component";
 import * as myGlobals from "../../globals";
 import { CallStatus } from "../../common/call-status";
 import { CookieService } from "ng2-cookies";
-import {TranslateService} from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { UserService } from "../user.service";
 
 @Component({
@@ -39,9 +39,9 @@ export class CompanyDeliveryTermsComponent implements OnInit {
     @Output() onSaveEvent: EventEmitter<void> = new EventEmitter();
 
     constructor(private _fb: FormBuilder,
-                private cookieService: CookieService,
-                private translate: TranslateService,
-                private userService: UserService) {
+        private cookieService: CookieService,
+        private translate: TranslateService,
+        private userService: UserService) {
 
     }
 
@@ -101,10 +101,10 @@ export class CompanyDeliveryTermsComponent implements OnInit {
     }
 
     // this function is used to create languageId-value pairs for SpecialTerms using the raw value of special terms
-    private generateSpecialTermsMap(deliveryTermsRawValue){
-        for(let delTer of deliveryTermsRawValue){
+    private generateSpecialTermsMap(deliveryTermsRawValue) {
+        for (let delTer of deliveryTermsRawValue) {
             let specialTermsMapping = {};
-            if(delTer.specialTerms.value != ""){
+            if (delTer.specialTerms.value != "") {
                 specialTermsMapping[delTer.specialTerms.languageID] = delTer.specialTerms.value;
             }
             delTer.specialTerms = specialTermsMapping;

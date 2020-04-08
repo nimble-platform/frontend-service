@@ -16,5 +16,5 @@ export class AddressLine {
     constructor(
         public line: string,
         public hjid: string
-    ) {  }
+    ) { }
 }

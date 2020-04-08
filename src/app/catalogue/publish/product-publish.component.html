@@ -17,31 +17,25 @@
 <!-- Topmost navigation bar -->
 <ul class="nav nav-tabs" *ngIf="publishMode !== 'edit' && publishMode !== 'copy'">
     <li class="nav-item">
-        <a href id="singleUpload"
-           [ngClass]="{'nav-link': true, active: publishingGranularity === 'single'}"
-           (click)="onSelectTab($event,'singleUpload')"
-        ><span [innerHTML]="'Single Upload' | translate"></span></a>
+        <a href id="singleUpload" [ngClass]="{'nav-link': true, active: publishingGranularity === 'single'}" (click)="onSelectTab($event,'singleUpload')"><span [innerHTML]="'Single Upload' | translate"></span></a>
     </li>
 
     <li class="nav-item">
-        <a href id="bulkUpload"
-           [ngClass]="{'nav-link': true, active: publishingGranularity == 'bulk'}"
-           (click)="onSelectTab($event,'bulkUpload')"
-        ><span [innerHTML]="'Bulk Upload' | translate"></span></a>
+        <a href id="bulkUpload" [ngClass]="{'nav-link': true, active: publishingGranularity == 'bulk'}" (click)="onSelectTab($event,'bulkUpload')"><span [innerHTML]="'Bulk Upload' | translate"></span></a>
     </li>
 </ul>
 
 <div *ngIf="cataloguesIds.length > 1 && publishingGranularity !== 'bulk'" class="row space-before">
-        <div class="col-2 category-list-label">
-            <strong *ngIf="!productCatalogueRetrievalStatus.isLoading()"><span [innerHTML]="'Catalogue:' | translate"></span></strong>
-            <strong class="mr-2" *ngIf="productCatalogueRetrievalStatus.isLoading()"><span [innerHTML]="'Fetching Catalogues' | translate"></span></strong>
-            <call-status [callStatus]="productCatalogueRetrievalStatus"></call-status>
-        </div>
-        <div class="col-4">
-          <select class="custom-select" [(ngModel)]="selectedCatalogueId" (change)="changeCat();$event.stopPropagation()">
-            <option *ngFor="let catalogueId of cataloguesIds"  [ngValue]="catalogueId" [innerHtml]="catalogueId == 'default'? 'Main Catalogue': catalogueId"></option>
-          </select>
-        </div>
+    <div class="col-2 category-list-label">
+        <strong *ngIf="!productCatalogueRetrievalStatus.isLoading()"><span [innerHTML]="'Catalogue:' | translate"></span></strong>
+        <strong class="mr-2" *ngIf="productCatalogueRetrievalStatus.isLoading()"><span [innerHTML]="'Fetching Catalogues' | translate"></span></strong>
+        <call-status [callStatus]="productCatalogueRetrievalStatus"></call-status>
+    </div>
+    <div class="col-4">
+        <select class="custom-select" [(ngModel)]="selectedCatalogueId" (change)="changeCat();$event.stopPropagation()">
+            <option *ngFor="let catalogueId of cataloguesIds" [ngValue]="catalogueId" [innerHtml]="catalogueId == 'default'? 'Main Catalogue': catalogueId"></option>
+        </select>
+    </div>
 </div>
 
 <!-- Selected Categories -->
@@ -53,13 +47,11 @@
     </div>
     <div class="col-10 ">
         <div class="object-list">
-            <div *ngFor="let selectedCategory of selectedCategories"
-                 class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
+            <div *ngFor="let selectedCategory of selectedCategories" class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
                 <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
                 <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
             </div>
-            <button class="btn btn-outline-primary btn-add-category"
-                    (click)="onAddCategory()" [disabled]="isLoading()">
+            <button class="btn btn-outline-primary btn-add-category" (click)="onAddCategory()" [disabled]="isLoading()">
                 <span [innerHTML]="'Add Category' | translate"></span>
             </button>
         </div>
@@ -67,7 +59,9 @@
         <div *ngIf="invalidCategoryCodes.length > 0" class="alert-danger">
             <strong><span [innerHTML]="'Following categories are not valid any more:' | translate"></span></strong>
             <ul>
-                <strong><li *ngFor="let invalidCategoryCode of invalidCategoryCodes">{{invalidCategoryCode.name}}</li></strong>
+                <strong>
+                    <li *ngFor="let invalidCategoryCode of invalidCategoryCodes">{{invalidCategoryCode.name}}</li>
+                </strong>
             </ul>
             <div class="d-flex justify-content-end">
                 <button class="btn btn-outline-primary justify-content-end space-right" (click)="removeInvalidCategories()"><span [innerHTML]="'Remove them from the product' | translate"></span></button>
@@ -83,10 +77,7 @@
 
 <ng-container *ngIf="publishingGranularity === 'single' && catalogueLine">
     <hr>
-    <name-description-panel [catalogueLine]="catalogueLine"
-                            [productIdEditable]="isProductIdEditable()"
-                            [productIdEditable]="isProductIdEditable()"
-                            [parentForm]="publishForm">
+    <name-description-panel [catalogueLine]="catalogueLine" [productIdEditable]="isProductIdEditable()" [productIdEditable]="isProductIdEditable()" [parentForm]="publishForm">
     </name-description-panel>
     <hr>
 
@@ -96,38 +87,28 @@
             <div class="col-12">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a href id="DETAILS" class="nav-link"
-                           [ngClass]="{ active: selectedTabSinglePublish === 'DETAILS'}"
-                           (click)="onSelectTabSinglePublish($event,'DETAILS')">
-                           <span [innerHTML]="'Details' | translate"></span>
+                        <a href id="DETAILS" class="nav-link" [ngClass]="{ active: selectedTabSinglePublish === 'DETAILS'}" (click)="onSelectTabSinglePublish($event,'DETAILS')">
+                            <span [innerHTML]="'Details' | translate"></span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href id="PRICE" class="nav-link"
-                           [ngClass]="{ active: selectedTabSinglePublish === 'PRICE'}"
-                           (click)="onSelectTabSinglePublish($event,'PRICE')">
-                           <span [innerHTML]="'Price' | translate"></span>
+                        <a href id="PRICE" class="nav-link" [ngClass]="{ active: selectedTabSinglePublish === 'PRICE'}" (click)="onSelectTabSinglePublish($event,'PRICE')">
+                            <span [innerHTML]="'Price' | translate"></span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href id="DELIVERY_TRADING" class="nav-link"
-                           [ngClass]="{ active: selectedTabSinglePublish === 'DELIVERY_TRADING'}"
-                           (click)="onSelectTabSinglePublish($event,'DELIVERY_TRADING')">
-                           <span [innerHTML]="'Delivery' | translate"></span> &amp; <span [innerHTML]="'Trading' | translate"></span>
+                        <a href id="DELIVERY_TRADING" class="nav-link" [ngClass]="{ active: selectedTabSinglePublish === 'DELIVERY_TRADING'}" (click)="onSelectTabSinglePublish($event,'DELIVERY_TRADING')">
+                            <span [innerHTML]="'Delivery' | translate"></span> &amp; <span [innerHTML]="'Trading' | translate"></span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href id="CERTIFICATES" class="nav-link"
-                           [ngClass]="{ active: selectedTabSinglePublish === 'CERTIFICATES'}"
-                           (click)="onSelectTabSinglePublish($event,'CERTIFICATES')">
-                           <span [innerHTML]="'Certificates' | translate"></span>
+                        <a href id="CERTIFICATES" class="nav-link" [ngClass]="{ active: selectedTabSinglePublish === 'CERTIFICATES'}" (click)="onSelectTabSinglePublish($event,'CERTIFICATES')">
+                            <span [innerHTML]="'Certificates' | translate"></span>
                         </a>
                     </li>
                     <li *ngIf="config.showLCPA" class="nav-item">
-                        <a href id="LCPA" class="nav-link"
-                           [ngClass]="{ active: selectedTabSinglePublish === 'LCPA'}"
-                           (click)="onSelectTabSinglePublish($event,'LCPA')">
-                           <span [innerHTML]="'LCPA' | translate"></span>
+                        <a href id="LCPA" class="nav-link" [ngClass]="{ active: selectedTabSinglePublish === 'LCPA'}" (click)="onSelectTabSinglePublish($event,'LCPA')">
+                            <span [innerHTML]="'LCPA' | translate"></span>
                         </a>
                     </li>
                 </ul>
@@ -138,25 +119,25 @@
         <div class="row space-before" [hidden]="selectedTabSinglePublish != 'DETAILS'">
             <div class="col-12">
                 <button class='btn btn-outline-primary' (click)="toggleDimensionCard()"><span [innerHTML]="'Dimensions' | translate"></span></button>
-                <div [hidden]="!showDimensions" >
+                <div [hidden]="!showDimensions">
                     <div class="row border-bottom m-0" *ngFor="let multiValuedDimension of multiValuedDimensions">
                         <div class="col-3" style="padding:.75rem;padding-left:0;">
                             <div class="col-form-label">
-                              <strong>{{multiValuedDimension.attributeID}} : </strong>
+                                <strong>{{multiValuedDimension.attributeID}} : </strong>
                             </div>
                         </div>
                         <div class="col-6">
                             <table class="table table-borderless" style="margin-bottom:.75rem;">
                                 <tbody>
-                                <tr *ngFor="let quantity of multiValuedDimension.measure;let i=index">
-                                    <td class="pb-0">
-                                        <quantity-input [quantity]="quantity" rowClass="quantity-input" [quantityUnits]="dimensionUnits" large="true" [step]="0.01">
-                                        </quantity-input>
-                                    </td>
-                                    <td *ngIf="i>0" class="align-right pb-0" >
-                                        <button class="btn btn-danger"  type="button" (click)="onRemoveDimension(multiValuedDimension.attributeID,quantity)">&times;</button>
-                                    </td>
-                                </tr>
+                                    <tr *ngFor="let quantity of multiValuedDimension.measure;let i=index">
+                                        <td class="pb-0">
+                                            <quantity-input [quantity]="quantity" rowClass="quantity-input" [quantityUnits]="dimensionUnits" large="true" [step]="0.01">
+                                            </quantity-input>
+                                        </td>
+                                        <td *ngIf="i>0" class="align-right pb-0">
+                                            <button class="btn btn-danger" type="button" (click)="onRemoveDimension(multiValuedDimension.attributeID,quantity)">&times;</button>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -172,18 +153,18 @@
                 <div class="row border-bottom m-0" *ngFor="let prop of getProductProperties()">
                     <div class="col-3" style="padding:.75rem;padding-left:0;">
                         <div class="col-form-label">
-                          <strong [title]="getDefinition(prop)">{{ getPrettyName(prop) }}: </strong>
+                            <strong [title]="getDefinition(prop)">{{ getPrettyName(prop) }}: </strong>
                         </div>
                     </div>
                     <div class="col-6">
                         <table *ngIf="prop.valueQualifier === 'FILE'" class="table table-borderless" style="margin-bottom:.75rem;">
                             <tbody>
-                            <tr>
-                                <td class="pb-0">
-                                    <file-input [binaryObjects]="prop.valueBinary" [multiple]="true" [maxSize]=1>
-                                    </file-input>
-                                </td>
-                            </tr>
+                                <tr>
+                                    <td class="pb-0">
+                                        <file-input [binaryObjects]="prop.valueBinary" [multiple]="true" [maxSize]=1>
+                                        </file-input>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                         <table *ngIf="prop.valueQualifier !== 'FILE'" class="table table-borderless" style="margin-bottom:.75rem;">
@@ -198,17 +179,17 @@
                                         </select>
                                     </td>
                                     <td *ngIf="prop.valueQualifier === 'QUANTITY'" style="vertical-align:middle" class="pb-0">
-                                      <quantity-input [parentProperty]="prop" [quantity]="prop.valueQuantity[i]" rowClass="quantity-input" large="true" [step]="0.01">
-                                      </quantity-input>
+                                        <quantity-input [parentProperty]="prop" [quantity]="prop.valueQuantity[i]" rowClass="quantity-input" large="true" [step]="0.01">
+                                        </quantity-input>
                                     </td>
                                     <td *ngIf="prop.valueQualifier === 'BOOLEAN'" style="vertical-align:middle;line-height:2.375rem;" class="pb-0">
-                                      <input type="checkbox" [checked]="prop.value[i].value == 'true'" (change)="setBooleanValue(prop, i, $event)">
+                                        <input type="checkbox" [checked]="prop.value[i].value == 'true'" (change)="setBooleanValue(prop, i, $event)">
                                     </td>
                                     <td *ngIf="prop.valueQualifier !== 'STRING' && prop.valueQualifier !== 'QUANTITY' && prop.valueQualifier !== 'BOOLEAN'" style="vertical-align:middle" class="pb-0">
-                                      <input type="number" class="form-control value-input" [ngModel]="prop.valueDecimal[i]" (change)="setValueDecimal(prop, i, $event)" step="0.01">
+                                        <input type="number" class="form-control value-input" [ngModel]="prop.valueDecimal[i]" (change)="setValueDecimal(prop, i, $event)" step="0.01">
                                     </td>
                                     <td *ngIf="i>0 && prop.valueQualifier !== 'BOOLEAN'" class="align-right" style="vertical-align:middle" class="pb-0 align-right">
-                                        <button class="btn btn-danger"  type="button" (click)="onRemoveValue(prop,i)">&times;</button>
+                                        <button class="btn btn-danger" type="button" (click)="onRemoveValue(prop,i)">&times;</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -247,8 +228,7 @@
                         -->
                     </div>
                     <div class="col-3 align-right" style="padding:.75rem;padding-right:0;">
-                        <button class="btn btn-outline-primary" (click)="onAddValue(prop)"
-                            *ngIf="prop.valueQualifier !== 'BOOLEAN' && prop.valueQualifier !== 'FILE'">
+                        <button class="btn btn-outline-primary" (click)="onAddValue(prop)" *ngIf="prop.valueQualifier !== 'BOOLEAN' && prop.valueQualifier !== 'FILE'">
                             <span [innerHTML]="'Add' | translate"></span>
                         </button>
                         <button class="btn btn-outline-primary ml-1" (click)="onEditProperty(prop)"><span [innerHTML]="'Edit' | translate"></span></button>
@@ -270,10 +250,7 @@
         <!-- Price Tab -->
         <div class="row space-before" [hidden]="selectedTabSinglePublish != 'PRICE'">
             <div class="col-12">
-                <product-price-tab [catalogueLine]="catalogueLine"
-                                   [disabled]="isLoading()"
-                                   [companyNegotiationSettings]="companyNegotiationSettings"
-                                   [parentForm]="publishForm">
+                <product-price-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()" [companyNegotiationSettings]="companyNegotiationSettings" [parentForm]="publishForm">
                 </product-price-tab>
             </div>
         </div>
@@ -307,14 +284,16 @@
 
     <!-- Actions -->
     <div class="row actions-row pr-0">
-        <div class="col-4"><call-status [callStatus]="publishStatus"></call-status></div>
+        <div class="col-4">
+            <call-status [callStatus]="publishStatus"></call-status>
+        </div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
                 <span [innerHTML]="'Cancel' | translate"></span>
             </button>
         </div>
         <div class="col-3">
-            <span [ngbTooltip]="validationService.extractErrorMessage(publishForm)" [placement]="'auto'"  title="">
+            <span [ngbTooltip]="validationService.extractErrorMessage(publishForm)" [placement]="'auto'" title="">
                 <button class="btn btn-primary action" [disabled]="isLoading() || !areInputNumbersValid() || !publishForm.valid" (click)="onPublish(false)">
                     <span *ngIf="publishStateService.publishMode === 'edit'" [innerHTML]="'Save & Continue' | translate"></span>
                     <span *ngIf="publishStateService.publishMode !== 'edit'" [innerHTML]="'Publish & Continue' | translate"></span>
@@ -322,7 +301,7 @@
             </span>
         </div>
         <div class="col-3">
-            <span [ngbTooltip]="validationService.extractErrorMessage(publishForm)" [placement]="'auto'"  title="">
+            <span [ngbTooltip]="validationService.extractErrorMessage(publishForm)" [placement]="'auto'" title="">
                 <button class="btn btn-primary action" [disabled]="isLoading() || !areInputNumbersValid() || !publishForm.valid" (click)="onPublish(true)">
                     <span *ngIf="publishStateService.publishMode === 'edit'" [innerHTML]="'Save & Exit' | translate"></span>
                     <span *ngIf="publishStateService.publishMode !== 'edit'" [innerHTML]="'Publish & Exit' | translate"></span>
@@ -344,8 +323,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="form-group">
-                            <input type="text" class="form-control" name="inputCtrl" [(ngModel)]="categoryModalPropertyKeyword"
-                                placeholder="Filter Properties..." (input)="onFilterPropertiesInCategoryModal()"/>
+                            <input type="text" class="form-control" name="inputCtrl" [(ngModel)]="categoryModalPropertyKeyword" placeholder="Filter Properties..." (input)="onFilterPropertiesInCategoryModal()" />
                         </div>
                     </div>
                 </div>
@@ -353,18 +331,17 @@
                     <hr *ngIf="i > 0">
                     <h5>{{ selectPreferredName(category) }}</h5>
                     <div class="row">
-                      <div class="col-12">
-                        <a href class="btn-link" (click)="selectAllProperties(category,$event)"><span [innerHTML]="'Select all' | translate"></span></a>
-                        <span [innerHTML]="'or' | translate"></span>
-                        <a href class="btn-link" (click)="selectNoProperties(category,$event)"><span [innerHTML]="'Select none' | translate"></span></a>
-                      </div>
+                        <div class="col-12">
+                            <a href class="btn-link" (click)="selectAllProperties(category,$event)"><span [innerHTML]="'Select all' | translate"></span></a>
+                            <span [innerHTML]="'or' | translate"></span>
+                            <a href class="btn-link" (click)="selectNoProperties(category,$event)"><span [innerHTML]="'Select none' | translate"></span></a>
+                        </div>
                     </div>
                     <hr>
                     <div class="row">
                         <ng-container *ngFor="let property of getCategoryProperties(category)">
                             <div class="col-6 form-check modal-category-property" *ngIf="isPropertyFilteredIn(property)">
-                                <input type="checkbox" class="form-check-input" [ngModel]="isCategoryPropertySelected(category, property)"
-                                    (change)="onToggleCategoryPropertySelected(category, property)">
+                                <input type="checkbox" class="form-check-input" [ngModel]="isCategoryPropertySelected(category, property)" (change)="onToggleCategoryPropertySelected(category, property)">
                                 <label class="form-check-label">{{ selectPreferredName(property) }} ({{ getPropertyType(property) }})</label>
                             </div>
                         </ng-container>
@@ -398,7 +375,7 @@
     </ng-template>
 
     <!-- Edit Property Value(s) Modal -->
-    <edit-property-modal >
+    <edit-property-modal>
     </edit-property-modal>
 </ng-container>
 
