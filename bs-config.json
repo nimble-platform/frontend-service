@@ -1,13 +1,13 @@
 {
-	"port": 9092,
-	"files": ["./dist/**"],
-	"server": {
-		"baseDir": "./dist",
-		"routes": {
-			"/node_modules": "node_modules"
-		}
-	},
-	"ui": {
-		"port": 8001
-	}
+    "port": 9092,
+    "files": ["./dist/**"],
+    "server": {
+        "baseDir": "./dist",
+        "routes": {
+            "/node_modules": "node_modules"
+        }
+    },
+    "ui": {
+        "port": 8001
+    }
 }

@@ -1,11 +1,26 @@
-import {Component, Input, OnInit} from '@angular/core';
+/*
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
+import { Component, Input, OnInit } from '@angular/core';
 import { Order } from "../../../catalogue/model/publish/order";
 import { CallStatus } from "../../../common/call-status";
 import { BPDataService } from "../bp-data-service";
 import { Location } from "@angular/common";
-import { PaymentTermsWrapper } from "../payment-terms-wrapper";
 import { Router } from "@angular/router";
-import {copy, quantityToString, roundToTwoDecimals} from '../../../common/utils';
+import { copy, quantityToString, roundToTwoDecimals } from '../../../common/utils';
 import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
 import { UserService } from "../../../user-mgmt/user.service";
 import { CookieService } from "ng2-cookies";
@@ -21,19 +36,18 @@ import { Address } from "../../../catalogue/model/publish/address";
 import { SearchContextService } from "../../../simple-search/search-context.service";
 import { EpcCodes } from "../../../data-channel/model/epc-codes";
 import { EpcService } from "../epc-service";
-import {DocumentService} from "../document-service";
-import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
+import { DocumentService } from "../document-service";
+import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
 import * as myGlobals from '../../../globals';
-import {Contract} from '../../../catalogue/model/publish/contract';
-import {BinaryObject} from "../../../catalogue/model/publish/binary-object";
-import {TranslateService} from '@ngx-translate/core';
-import {DocumentReference} from "../../../catalogue/model/publish/document-reference";
-import {CatalogueLine} from '../../../catalogue/model/publish/catalogue-line';
-import {Item} from '../../../catalogue/model/publish/item';
+import { Contract } from '../../../catalogue/model/publish/contract';
+import { BinaryObject } from "../../../catalogue/model/publish/binary-object";
+import { TranslateService } from '@ngx-translate/core';
+import { DocumentReference } from "../../../catalogue/model/publish/document-reference";
+import { CatalogueLine } from '../../../catalogue/model/publish/catalogue-line';
+import { Item } from '../../../catalogue/model/publish/item';
+import { Invoice } from '../../../catalogue/model/publish/invoice';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-/**
- * Created by suat on 20-Sep-17.
- */
 @Component({
     selector: "order",
     templateUrl: "./order.component.html",
@@ -41,9 +55,9 @@ import {Item} from '../../../catalogue/model/publish/item';
 })
 export class OrderComponent implements OnInit {
 
-    @Input() selectedLineIndex:number;
+    @Input() selectedLineIndex: number;
     // whether the process details are viewed for all products in the negotiation
-    @Input() areProcessDetailsViewedForAllProducts:boolean;
+    @Input() areProcessDetailsViewedForAllProducts: boolean;
     order: Order;
     address: Address
     orderResponse: OrderResponseSimple;
@@ -55,6 +69,7 @@ export class OrderComponent implements OnInit {
     buyerParty: Party;
     sellerParty: Party;
     isPaymentDone: boolean = false;
+    invoice: Invoice = null;
 
     epcCodes: EpcCodes;
     savedEpcCodes: EpcCodes;
@@ -81,16 +96,25 @@ export class OrderComponent implements OnInit {
 
     quantityToString = quantityToString;
 
+    // invoice related variables
+    showInvoiceModal: boolean = false;
+    invoiceId: string = null;
+    invoiceBlockChainRecordCallStatus: CallStatus = new CallStatus();
+    blockChainRecord: any = null;
+
+    objectKeys = Object.keys;
+
     constructor(public bpDataService: BPDataService,
-                private userService: UserService,
-                private bpeService: BPEService,
-                private cookieService: CookieService,
-                private searchContextService: SearchContextService,
-                private epcService: EpcService,
-                private location: Location,
-                private router: Router,
-                private translate: TranslateService,
-                private documentService: DocumentService) {
+        private userService: UserService,
+        private bpeService: BPEService,
+        private cookieService: CookieService,
+        private searchContextService: SearchContextService,
+        private epcService: EpcService,
+        private location: Location,
+        private router: Router,
+        private translate: TranslateService,
+        private modalService: NgbModal,
+        private documentService: DocumentService) {
     }
 
     ngOnInit(): void {
@@ -113,14 +137,16 @@ export class OrderComponent implements OnInit {
         this.userRole = this.bpDataService.bpActivityEvent.userRole;
         this.orderResponse = this.bpDataService.orderResponse;
 
+        // check whether we need to show invoice model after a payment is made
+        this.setShowInvoiceModal();
         this.priceWrappers = [];
-        for(let orderLine of this.order.orderLine){
+        for (let orderLine of this.order.orderLine) {
             this.priceWrappers.push(new PriceWrapper(
                 orderLine.lineItem.price,
                 this.getCatalogueLine(orderLine.lineItem.item).requiredItemLocationQuantity.applicableTaxCategory[0].percent,
                 orderLine.lineItem.quantity,
                 orderLine.lineItem.item
-            )) ;
+            ));
         }
 
         this.companyWorkflowMap = this.bpDataService.getCompanyWorkflowMap(null);
@@ -131,41 +157,43 @@ export class OrderComponent implements OnInit {
 
         // null check is for checking whether a new order is initialized
         // preceding process id check is for checking whether there is any preceding process before the order
-        if(this.getNonTermAndConditionContract() == null && this.bpDataService.precedingProcessId != null) {
+        if (this.getNonTermAndConditionContract() == null && this.bpDataService.precedingProcessId != null) {
             Promise.all([
-                this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId,this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID),
+                this.bpeService.constructContractForProcess(this.bpDataService.precedingProcessId, this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID),
                 this.userService.getParty(buyerId),
-                this.userService.getParty(sellerId,this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID),
-                this.bpeService.isPaymentDone(this.order.id,this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID)
+                this.userService.getParty(sellerId, this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID),
+                this.bpeService.isPaymentDone(this.order.id, this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID),
+                this.bpeService.getInvoice(this.order.id)
             ])
-                .then(([contract, buyerParty, sellerParty,isPaymentDone]) => {
+                .then(([contract, buyerParty, sellerParty, isPaymentDone, invoice]) => {
                     this.buyerParty = buyerParty;
                     this.sellerParty = sellerParty;
                     this.isPaymentDone = isPaymentDone == "true";
+                    this.invoice = invoice;
                     this.order.contract.push(contract);
                     this.initCallStatus.callback("Initialized", true);
 
-            }).catch(error => {
-                this.initCallStatus.error("Error while initializing", error);
-            });
+                }).catch(error => {
+                    this.initCallStatus.error("Error while initializing", error);
+                });
 
         } else {
             Promise.all([
                 this.userService.getParty(buyerId),
-                this.userService.getParty(sellerId,this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID),
-                this.bpeService.isPaymentDone(this.order.id,this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID)
+                this.userService.getParty(sellerId, this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID),
+                this.bpeService.isPaymentDone(this.order.id, this.order.orderLine[0].lineItem.item.manufacturerParty.federationInstanceID)
             ]).then(([buyerParty, sellerParty, isPaymentDone]) => {
                 this.buyerParty = buyerParty;
                 this.sellerParty = sellerParty;
                 this.isPaymentDone = isPaymentDone == "true";
                 this.initCallStatus.callback("Initialized", true);
             })
-            .catch(error => {
-                this.initCallStatus.error("Error while initializing", error);
-            });
+                .catch(error => {
+                    this.initCallStatus.error("Error while initializing", error);
+                });
         }
 
-        if(this.orderResponse) {
+        if (this.orderResponse) {
             this.initializeEPCCodes();
             let productionTemplateFile: DocumentReference = this.getProductionTemplateFromOrderResponse();
             if (productionTemplateFile != null) {
@@ -174,10 +202,29 @@ export class OrderComponent implements OnInit {
         }
     }
 
-    private getCatalogueLine(item:Item):CatalogueLine{
-        for(let catalogueLine of this.bpDataService.getCatalogueLines()){
-            if(item.catalogueDocumentReference.id == catalogueLine.goodsItem.item.catalogueDocumentReference.id &&
-                item.manufacturersItemIdentification.id == catalogueLine.goodsItem.item.manufacturersItemIdentification.id){
+    setShowInvoiceModal() {
+        for (let orderLine of this.order.orderLine) {
+            for (let itemProperty of orderLine.lineItem.item.additionalItemProperty) {
+                if (itemProperty.valueQualifier == "BOOLEAN") {
+                    for (let text of itemProperty.name) {
+                        if (text.value == "Certificate origin on demand") {
+                            this.showInvoiceModal = true;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    openInvoiceModal(content) {
+        this.modalService.open(content);
+    }
+
+    private getCatalogueLine(item: Item): CatalogueLine {
+        for (let catalogueLine of this.bpDataService.getCatalogueLines()) {
+            if (item.catalogueDocumentReference.id == catalogueLine.goodsItem.item.catalogueDocumentReference.id &&
+                item.manufacturersItemIdentification.id == catalogueLine.goodsItem.item.manufacturersItemIdentification.id) {
                 return catalogueLine;
             }
         }
@@ -185,11 +232,11 @@ export class OrderComponent implements OnInit {
     }
 
     // retrieve the order contract which is not the Term and Condition contract
-    getNonTermAndConditionContract(){
-        if(this.order.contract){
-            for(let contract of this.order.contract){
-                for(let clause of contract.clause){
-                    if(clause.type){
+    getNonTermAndConditionContract() {
+        if (this.order.contract) {
+            for (let contract of this.order.contract) {
+                for (let clause of contract.clause) {
+                    if (clause.type) {
                         return contract;
                     }
                 }
@@ -223,34 +270,34 @@ export class OrderComponent implements OnInit {
         order.buyerCustomerParty = new CustomerParty(this.buyerParty);
         order.sellerSupplierParty = new SupplierParty(this.sellerParty);
 
-        this.bpeService.startProcessWithDocument(order,this.sellerParty.federationInstanceID)
+        this.bpeService.startProcessWithDocument(order, this.sellerParty.federationInstanceID)
             .then(res => {
                 this.submitCallStatus.callback("Order placed", true);
                 var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
-                  tab = "SALES";
-                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
+                    tab = "SALES";
+                this.router.navigate(['dashboard'], { queryParams: { tab: tab, ins: this.sellerParty.federationInstanceID } });
             }).catch(error => {
                 this.submitCallStatus.error("Failed to send Order", error);
             });
     }
 
     onOrderUpdate() {
-        if(!this.areProcessDetailsViewedForAllProducts){
+        if (!this.areProcessDetailsViewedForAllProducts) {
             alert("Please, make sure that you view the order details of all products before sending your request!");
             return;
         }
         this.submitCallStatus.submit();
         const order = copy(this.bpDataService.order);
 
-        this.bpeService.updateBusinessProcess(JSON.stringify(order),"ORDER",this.processMetadata.processInstanceId,this.processMetadata.sellerFederationId)
+        this.bpeService.updateBusinessProcess(JSON.stringify(order), "ORDER", this.processMetadata.processInstanceId, this.processMetadata.sellerFederationId)
             .then(() => {
-                this.documentService.updateCachedDocument(order.id,order);
+                this.documentService.updateCachedDocument(order.id, order);
                 this.submitCallStatus.callback("Order updated", true);
                 var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
-                  tab = "SALES";
-                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
+                    tab = "SALES";
+                this.router.navigate(['dashboard'], { queryParams: { tab: tab } });
             })
             .catch(error => {
                 this.submitCallStatus.error("Failed to update Order", error);
@@ -258,7 +305,7 @@ export class OrderComponent implements OnInit {
     }
 
     onRespondToOrder(accepted: boolean): void {
-        if(!this.areProcessDetailsViewedForAllProducts){
+        if (!this.areProcessDetailsViewedForAllProducts) {
             alert("Please, make sure that you view the order details of all products before sending your response!");
             return;
         }
@@ -266,13 +313,13 @@ export class OrderComponent implements OnInit {
         this.bpDataService.orderResponse.acceptedIndicator = accepted;
 
         //this.submitCallStatus.submit();
-        this.bpeService.startProcessWithDocument(this.bpDataService.orderResponse,this.bpDataService.orderResponse.sellerSupplierParty.party.federationInstanceID)
+        this.bpeService.startProcessWithDocument(this.bpDataService.orderResponse, this.bpDataService.orderResponse.sellerSupplierParty.party.federationInstanceID)
             .then(res => {
                 this.submitCallStatus.callback("Order Response placed", true);
                 var tab = "PURCHASES";
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
-                  tab = "SALES";
-                this.router.navigate(['dashboard'], {queryParams: {tab: tab}});
+                    tab = "SALES";
+                this.router.navigate(['dashboard'], { queryParams: { tab: tab, ins: this.bpDataService.orderResponse.sellerSupplierParty.party.federationInstanceID } });
             }).catch(error => {
                 this.submitCallStatus.error("Failed to send Order Response", error);
             });
@@ -280,7 +327,7 @@ export class OrderComponent implements OnInit {
 
     onDownloadContact() {
         this.submitCallStatus.submit();
-        this.bpeService.downloadContractBundle(this.order.id,this.order.sellerSupplierParty.party.federationInstanceID)
+        this.bpeService.downloadContractBundle(this.order.id, this.order.sellerSupplierParty.party.federationInstanceID)
             .then(result => {
                 const link = document.createElement('a');
                 link.id = 'downloadLink';
@@ -293,23 +340,34 @@ export class OrderComponent implements OnInit {
                 document.body.removeChild(downloadLink);
                 this.submitCallStatus.callback("Bundle successfully downloaded.", true);
             },
-            error => {
-                this.submitCallStatus.error("Error while downloading bundle.", error);
-            });
+                error => {
+                    this.submitCallStatus.error("Error while downloading bundle.", error);
+                });
     }
 
-    onPaymentDone(){
+    onPaymentDone(close = null) {
         this.submitCallStatus.submit();
-        this.bpeService.paymentDone(this.order.id,this.sellerParty.federationInstanceID).then(response => {
+        this.bpeService.paymentDone(this.order.id, this.invoiceId, this.sellerParty.federationInstanceID).then(response => {
             this.isPaymentDone = true;
-            this.submitCallStatus.callback(null,true);
+            this.submitCallStatus.callback(null, true);
+            // redirect user to purchase or sales tab according to his role
+            alert(this.translate.instant("Successfully saved. You are now getting redirected."));
+            // close the modal,if exists
+            if (close) {
+                close();
+            }
+            this.router.navigate(['dashboard'], {
+                queryParams: {
+                    tab: this.processMetadata.buyer ? "PURCHASES" : "SALES",
+                }
+            });
         }).catch(error => {
             this.submitCallStatus.error("Error while processing the payment", error);
         })
     }
 
     onDispatchOrder() {
-        this.bpDataService.setCopyDocuments(false, false, true,false);
+        this.bpDataService.setCopyDocuments(false, false, true, false);
         this.bpDataService.proceedNextBpStep(this.userRole, "Fulfilment");
     }
 
@@ -318,9 +376,9 @@ export class OrderComponent implements OnInit {
         this.router.navigate(['simple-search'], {
             queryParams: {
                 searchContext: 'orderbp',
-                q:'*',
-                cat:'Transport Service',
-                catID:'nimble:category:TransportService'
+                q: '*',
+                cat: 'Transport Service',
+                catID: 'nimble:category:TransportService'
             }
         });
     }
@@ -333,8 +391,8 @@ export class OrderComponent implements OnInit {
         this.saveEpcCodesCallStatus.submit();
         // remove empty codes
         const selectedEpcCodes = [];
-        for(const code of this.epcCodes.codes) {
-            if(code) {
+        for (const code of this.epcCodes.codes) {
+            if (code) {
                 selectedEpcCodes.push(code);
             }
         }
@@ -353,7 +411,7 @@ export class OrderComponent implements OnInit {
             });
     }
 
-    onTTTabSelect(event:any,id:any): void {
+    onTTTabSelect(event: any, id: any): void {
         event.preventDefault();
         this.selectedTrackAndTraceTab = id;
     }
@@ -372,7 +430,7 @@ export class OrderComponent implements OnInit {
     onUpdateOrderResponse(): void {
         this.updateOrderResponseCallStatus.submit();
 
-        this.documentService.updateDocument(this.orderResponse.id, 'ORDERRESPONSESIMPLE', JSON.stringify(this.orderResponse),this.orderResponse.sellerSupplierParty.party.federationInstanceID)
+        this.documentService.updateDocument(this.orderResponse.id, 'ORDERRESPONSESIMPLE', JSON.stringify(this.orderResponse), this.orderResponse.sellerSupplierParty.party.federationInstanceID)
             .then(() => {
                 this.updateOrderResponseCallStatus.callback("Production template file added to the order response", true);
             })
@@ -385,7 +443,7 @@ export class OrderComponent implements OnInit {
         this.epcCodes.codes.push("");
     }
 
-    onTCTabSelect(event:any,id:any): void {
+    onTCTabSelect(event: any, id: any): void {
         event.preventDefault();
         this.selectedTCTab = id;
     }
@@ -419,7 +477,7 @@ export class OrderComponent implements OnInit {
     }
 
     isReadOnly(): boolean {
-        if(this.userRole === "buyer") {
+        if (this.userRole === "buyer") {
             return !!this.processMetadata && !this.processMetadata.isBeingUpdated;
         }
         return this.isOrderCompleted();
@@ -429,24 +487,40 @@ export class OrderComponent implements OnInit {
         return this.isReady() && this.isOrderCompleted() && this.config.showTrack;
     }
 
+    isInvoiceTabShown(): boolean {
+        if (this.invoice && this.invoice.id != null) {
+            return true;
+        }
+        return false;
+    }
+
+    getInvoiceBlockChainInfo() {
+        this.invoiceBlockChainRecordCallStatus.submit();
+        this.bpeService.getInvoiceBlockChainInfo(this.invoice.id).then(response => {
+            this.blockChainRecord = response;
+            this.invoiceBlockChainRecordCallStatus.callback("Retrieved blockchain record successfully", true);
+        }).catch(error => {
+            this.invoiceBlockChainRecordCallStatus.error("Failed to retrieve blockchain record for the invoice", error);
+        });
+    }
     isDispatchDisabled(): boolean {
         return this.isLoading() || this.isOrderRejected() || this.isThereADeletedProduct() || this.processMetadata.collaborationStatus == "COMPLETED";
     }
 
     areEpcCodesDirty(): boolean {
-        if(!this.epcCodes || !this.savedEpcCodes) {
+        if (!this.epcCodes || !this.savedEpcCodes) {
             return false;
         }
 
         const codes = this.epcCodes.codes;
         const saved = this.savedEpcCodes.codes;
 
-        if(codes.length !== saved.length) {
+        if (codes.length !== saved.length) {
             return true;
         }
 
-        for(let i = 0; i < saved.length; i++) {
-            if(codes[i] !== saved[i]) {
+        for (let i = 0; i < saved.length; i++) {
+            if (codes[i] !== saved[i]) {
                 return true;
             }
         }
@@ -455,9 +529,9 @@ export class OrderComponent implements OnInit {
     }
 
     isThereAValidEPCCode(): boolean {
-        if(this.epcCodes) {
-            for(let code of this.epcCodes.codes) {
-                if(code) {
+        if (this.epcCodes) {
+            for (let code of this.epcCodes.codes) {
+                if (code) {
                     return true;
                 }
             }
@@ -467,7 +541,7 @@ export class OrderComponent implements OnInit {
 
     getProductionTemplateFromOrderResponse(): DocumentReference {
         let ttDocRef = this.orderResponse.additionalDocumentReference.filter(docRef => docRef.documentType === 'PRODUCTIONTEMPLATE');
-        if(ttDocRef.length > 0) {
+        if (ttDocRef.length > 0) {
             return ttDocRef[0];
         }
         return null;
@@ -478,23 +552,23 @@ export class OrderComponent implements OnInit {
      */
 
     private initializeEPCCodes() {
-        if(this.processMetadata
+        if (this.processMetadata
             && this.processMetadata.processStatus == 'Completed'
             && this.bpDataService.orderResponse.acceptedIndicator
             && this.config.showTrack) {
             this.initEpcCodesCallStatus.submit();
             this.epcService.getEpcCodes(this.order.id).then(res => {
                 this.epcCodes = res;
-                if(this.epcCodes.codes == null){
+                if (this.epcCodes.codes == null) {
                     this.epcCodes.codes = [];
                 }
                 this.epcCodes.codes.sort();
                 this.savedEpcCodes = copy(this.epcCodes);
                 this.initEpcCodesCallStatus.callback("EPC Codes initialized", true);
             }).catch(error => {
-                if(error.status && error.status == 404) {
-                    this.epcCodes = new EpcCodes(this.order.id,[]);
-                    this.savedEpcCodes = new EpcCodes(this.order.id,[]);
+                if (error.status && error.status == 404) {
+                    this.epcCodes = new EpcCodes(this.order.id, []);
+                    this.savedEpcCodes = new EpcCodes(this.order.id, []);
                     this.initEpcCodesCallStatus.callback("EPC Codes initialized", true);
                 } else {
                     this.initEpcCodesCallStatus.error("Error while initializing EPC Codes", error);
@@ -503,12 +577,12 @@ export class OrderComponent implements OnInit {
         }
     }
 
-    getOrderContract():Contract{
+    getOrderContract(): Contract {
         let orderContract = null;
-        if(this.order.contract){
-            for(let contract of this.order.contract){
-                for(let clause of contract.clause){
-                    if(clause.type){
+        if (this.order.contract) {
+            for (let contract of this.order.contract) {
+                for (let clause of contract.clause) {
+                    if (clause.type) {
                         orderContract = contract;
                         break;
                     }
@@ -518,52 +592,52 @@ export class OrderComponent implements OnInit {
         return orderContract;
     }
 
-    getTotalPrice(){
+    getTotalPrice() {
         let totalPrice = 0;
-        for(let priceWrapper of this.priceWrappers){
+        for (let priceWrapper of this.priceWrappers) {
             totalPrice += priceWrapper.totalPrice;
         }
         return roundToTwoDecimals(totalPrice);
     }
 
-    getTotalPriceString(){
+    getTotalPriceString() {
         let totalPrice = 0;
-        for(let priceWrapper of this.priceWrappers){
+        for (let priceWrapper of this.priceWrappers) {
             totalPrice += priceWrapper.totalPrice;
         }
         return roundToTwoDecimals(totalPrice) + " " + this.priceWrappers[0].currency;
     }
 
-    getVatTotalString(){
+    getVatTotalString() {
         let vatTotal = 0;
-        for(let priceWrapper of this.priceWrappers){
+        for (let priceWrapper of this.priceWrappers) {
             vatTotal += priceWrapper.vatTotal
         }
         return roundToTwoDecimals(vatTotal) + " " + this.priceWrappers[0].currency;
     }
 
-    getGrossTotalString(){
+    getGrossTotalString() {
         let grossTotal = 0;
-        for(let priceWrapper of this.priceWrappers){
+        for (let priceWrapper of this.priceWrappers) {
             grossTotal += priceWrapper.grossTotal;
         }
         return roundToTwoDecimals(grossTotal) + " " + this.priceWrappers[0].currency;
     }
 
-    isThereADeletedProduct():boolean{
-        for(let isProductDeleted of this.processMetadata.areProductsDeleted){
-            if(isProductDeleted){
+    isThereADeletedProduct(): boolean {
+        for (let isProductDeleted of this.processMetadata.areProductsDeleted) {
+            if (isProductDeleted) {
                 return true;
             }
         }
         return false;
     }
 
-    isPaymentButtonDisabled():boolean{
+    isPaymentButtonDisabled(): boolean {
         return this.isLoading() || this.isOrderRejected() || this.isPaymentDone || this.processMetadata.collaborationStatus == 'CANCELLED';
     }
 
-    showOrderResponseNotes(){
+    showOrderResponseNotes() {
         return this.isOrderCompleted || (this.orderResponse && this.processMetadata.collaborationStatus != 'CANCELLED');
     }
 }

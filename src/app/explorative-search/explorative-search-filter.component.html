@@ -18,53 +18,50 @@
 
 <!-- Display the Filter Panel only when the filterConfig is non empty -->
 <!--<div class="filterArea" *ngIf="(filterProperties['filterJSON'] | json) != '{}'">-->
-    <!--<h4>{{filterProperties.fName}} Filter</h4>-->
-    <!--<div *ngFor="let every of result">-->
-        <!--&lt;!&ndash; CheckBoxes for the Filter &ndash;&gt;-->
-        <!--<input #cbCheck type="checkbox"-->
-               <!--(change)="cbCheck.checked"-->
-               <!--[value]="every.description"-->
-            <!--(click)="checkedValues(cbCheck.value, $event.target.checked)">{{every.description}}-->
-    <!--</div>-->
-    <!--<br>-->
-    <!--&lt;!&ndash; Slider &ndash;&gt;-->
-    <!--<div>-->
-        <!--<p>Amount Of Groups  <span #rangeVal>3</span></p>-->
-        <!--<input type="range" min="1" max="10" value="3" (change)="getGroupVal($event.target.value)">-->
-    <!--</div>-->
-    <!--&lt;!&ndash; Submission of Filter Parameters &ndash;&gt;-->
-    <!--&lt;!&ndash;<button type="submit" class="btn btn-large btn-success"-->
-            <!--(click)="submitFilter()">Submit-->
-    <!--</button> &ndash;&gt;-->
+<!--<h4>{{filterProperties.fName}} Filter</h4>-->
+<!--<div *ngFor="let every of result">-->
+<!--&lt;!&ndash; CheckBoxes for the Filter &ndash;&gt;-->
+<!--<input #cbCheck type="checkbox"-->
+<!--(change)="cbCheck.checked"-->
+<!--[value]="every.description"-->
+<!--(click)="checkedValues(cbCheck.value, $event.target.checked)">{{every.description}}-->
+<!--</div>-->
+<!--<br>-->
+<!--&lt;!&ndash; Slider &ndash;&gt;-->
+<!--<div>-->
+<!--<p>Amount Of Groups  <span #rangeVal>3</span></p>-->
+<!--<input type="range" min="1" max="10" value="3" (change)="getGroupVal($event.target.value)">-->
+<!--</div>-->
+<!--&lt;!&ndash; Submission of Filter Parameters &ndash;&gt;-->
+<!--&lt;!&ndash;<button type="submit" class="btn btn-large btn-success"-->
+<!--(click)="submitFilter()">Submit-->
+<!--</button> &ndash;&gt;-->
 <!--</div>-->
 <!--<div [hidden]="!_error_detected_slider">-->
-    <!--<div class="alert alert-danger space-before" role="alert">An error occured - please try again later</div>-->
+<!--<div class="alert alert-danger space-before" role="alert">An error occured - please try again later</div>-->
 <!--</div>-->
 <div class="card" *ngIf="filterProperties['filterJSON'] !== undefined">
-<div class="card-header">
-    <h4> {{filterProperties.fName}} <span [innerHTML]="'Filter' | translate"></span> </h4>
-</div>
-<div class="card-body">
-    <ngb-alert type="info" [dismissible]="false">
-        <p><i class="fa fa-1x fa-info-circle pr-1"></i> <span [innerHTML]="'Filter Values are Optional.' | translate"></span>
-        </p>
-        <p><span [innerHTML]="'exp-search-filter-help-1' | translate"></span></p>
-    </ngb-alert>
-    <div *ngFor="let every of result">
-        <!-- CheckBoxes for the Filter -->
-        <label>
-            <input #cbCheck type="checkbox"
-            (change)="cbCheck.checked"
-            [value]="every.description"
-            (click)="checkedValues(cbCheck.value, $event.target.checked)">
-            <span>{{every.description}}</span>
-        </label>
+    <div class="card-header">
+        <h4> {{filterProperties.fName}} <span [innerHTML]="'Filter' | translate"></span> </h4>
     </div>
+    <div class="card-body">
+        <ngb-alert type="info" [dismissible]="false">
+            <p><i class="fa fa-1x fa-info-circle pr-1"></i> <span [innerHTML]="'Filter Values are Optional.' | translate"></span>
+            </p>
+            <p><span [innerHTML]="'exp-search-filter-help-1' | translate"></span></p>
+        </ngb-alert>
+        <div *ngFor="let every of result">
+            <!-- CheckBoxes for the Filter -->
+            <label>
+                <input #cbCheck type="checkbox" (change)="cbCheck.checked" [value]="every.description" (click)="checkedValues(cbCheck.value, $event.target.checked)">
+                <span>{{every.description}}</span>
+            </label>
+        </div>
 
-    <div>
-    <p><span [innerHTML]="'Amount Of Groups' | translate"></span>  <span #rangeVal>3</span></p>
-    <input type="range" min="1" max="10" value="3" (change)="getGroupVal($event.target.value)">
+        <div>
+            <p><span [innerHTML]="'Amount Of Groups' | translate"></span> <span #rangeVal>3</span></p>
+            <input type="range" min="1" max="10" value="3" (change)="getGroupVal($event.target.value)">
+        </div>
+        <button class="btn btn-primary" (click)="submitFilter()"><span [innerHTML]="'Apply Filter' | translate"></span></button>
     </div>
-    <button class="btn btn-primary" (click)="submitFilter()"><span [innerHTML]="'Apply Filter' | translate"></span></button>
-</div>
 </div>

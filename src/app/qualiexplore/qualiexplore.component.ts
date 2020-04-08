@@ -23,4 +23,4 @@ import { Component } from '@angular/core';
     styleUrls: ['./qualiexplore.component.css']
 })
 
-export class QualiExploreComponent {}
+export class QualiExploreComponent { }

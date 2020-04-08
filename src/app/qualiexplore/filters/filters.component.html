@@ -17,46 +17,40 @@
 <div class="container mt-5">
     <h2><span [innerHTML]="'QualiExplore' | translate"></span></h2>
     <div class="mt-lg-auto jumbotron">
-      <h3 class="display-5"><span [innerHTML]="'Step - 1' | translate"></span></h3>
-      <p class="lead"><span [innerHTML]="'quali-desc-1' | translate"></span></p>
-      <!-- <p>It highlights the most relevant factors with a  <i class="fas fa-flag fa-1x"></i> symbol.</p> -->
+        <h3 class="display-5"><span [innerHTML]="'Step - 1' | translate"></span></h3>
+        <p class="lead"><span [innerHTML]="'quali-desc-1' | translate"></span></p>
+        <!-- <p>It highlights the most relevant factors with a  <i class="fas fa-flag fa-1x"></i> symbol.</p> -->
     </div>
 
     <!-- <pre>{{filters | json}}</pre> -->
-  <div class="row mt-5">
-    <div class="col-lg-4" *ngFor="let filter of filters">
-      
-      <h4>
-        <i class="fas fa-check" *ngIf="filter['name'] === 'Quality'"></i>
-        <i class="fas fa-bullseye" *ngIf="filter['name']==='Goals'"></i>
-        <i class="fas fa-info" *ngIf="filter['name'] === 'Sources'"></i>
-        <!-- <i class="fas fa-exchange-alt" *ngIf="filter['name'] === 'Information channel'"></i> -->
-        {{filter['name']}}
-      </h4>
-      <hr>
-      <div *ngFor="let label of filter['labels']">
-          <div class="form-check">
-            <input class="form-check-input"
-                   type="checkbox"
-                   value="{{label['id']}}"
-                   id="{{label['id']}}"
-                   [(ngModel)]="label['checked']"
-                   (change)="changeCheck(label['id'], $event); label['checked'] = true;"
-            >
-              <label class="form-check-label" for="{{label['id']}}">
-                {{label['name']}}
-              </label>
-          </div>
-      </div>
+    <div class="row mt-5">
+        <div class="col-lg-4" *ngFor="let filter of filters">
+
+            <h4>
+                <i class="fas fa-check" *ngIf="filter['name'] === 'Quality'"></i>
+                <i class="fas fa-bullseye" *ngIf="filter['name']==='Goals'"></i>
+                <i class="fas fa-info" *ngIf="filter['name'] === 'Sources'"></i>
+                <!-- <i class="fas fa-exchange-alt" *ngIf="filter['name'] === 'Information channel'"></i> -->
+                {{filter['name']}}
+            </h4>
+            <hr>
+            <div *ngFor="let label of filter['labels']">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="{{label['id']}}" id="{{label['id']}}" [(ngModel)]="label['checked']" (change)="changeCheck(label['id'], $event); label['checked'] = true;">
+                    <label class="form-check-label" for="{{label['id']}}">
+                        {{label['name']}}
+                    </label>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-  <hr>
-  <div class="text-right">
-    <button class="btn btn-md btn-outline-secondary float-left" (click)="reset()" [disabled]="!selections.length">
-      <span [innerHTML]="'Reset Filters' | translate"></span>
-    </button>
-    <button class="btn btn-lg btn-primary" (click)="proceed()" [disabled]="!selections.length">
-      <span [innerHTML]="'Proceed' | translate"></span>
-  </button>
-  </div>
+    <hr>
+    <div class="text-right">
+        <button class="btn btn-md btn-outline-secondary float-left" (click)="reset()" [disabled]="!selections.length">
+            <span [innerHTML]="'Reset Filters' | translate"></span>
+        </button>
+        <button class="btn btn-lg btn-primary" (click)="proceed()" [disabled]="!selections.length">
+            <span [innerHTML]="'Proceed' | translate"></span>
+        </button>
+    </div>
 </div>

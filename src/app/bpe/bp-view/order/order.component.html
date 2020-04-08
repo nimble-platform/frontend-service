@@ -1,10 +1,26 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <div *ngIf="isReady()">
-    <order-item *ngFor="let priceWrapper of priceWrappers;let i=index" [lineIndex]="i" [buyerParty]="buyerParty" [sellerParty]="sellerParty" [priceWrapper]="priceWrapper" [hidden]="selectedLineIndex != i"
-                [selectedLineIndex]="selectedLineIndex"></order-item>
+    <order-item *ngFor="let priceWrapper of priceWrappers;let i=index" [lineIndex]="i" [buyerParty]="buyerParty" [sellerParty]="sellerParty" [priceWrapper]="priceWrapper" [hidden]="selectedLineIndex != i" [selectedLineIndex]="selectedLineIndex"></order-item>
 
     <div class="ml-2">
         <div class="row mb-4 mt-4">
             <div *ngIf="isEpcTabShown()" class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'TRACK_AND_TRACE'}" (click)="selectedPanel = 'TRACK_AND_TRACE'"><span [innerHTML]="'Track and Trace' | translate"></span></div>
+            <div *ngIf="isInvoiceTabShown()" class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'INVOICE'}" (click)="selectedPanel = 'INVOICE';getInvoiceBlockChainInfo()"><span [innerHTML]="'Invoice' | translate"></span></div>
             <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'NOTES_AND_FILES'}" (click)="selectedPanel = 'NOTES_AND_FILES'"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>
             <div class="btn btn-outline-primary ml-2" [ngClass]="{'active':selectedPanel == 'PURCHASE_ORDER'}" (click)="selectedPanel = 'PURCHASE_ORDER'"><span [innerHTML]="'Purchase Order' | translate"></span></div>
         </div>
@@ -14,16 +30,12 @@
     <ng-container *ngIf="selectedPanel == 'TRACK_AND_TRACE'">
         <ul class="nav nav-tabs space-after">
             <li class="nav-item">
-                <a href id="EPC_CODES" class="nav-link"
-                   [ngClass]="{ active: selectedTrackAndTraceTab === 'EPC_CODES'}"
-                   (click)="onTTTabSelect($event,'EPC_CODES')">
+                <a href id="EPC_CODES" class="nav-link" [ngClass]="{ active: selectedTrackAndTraceTab === 'EPC_CODES'}" (click)="onTTTabSelect($event,'EPC_CODES')">
                     <span [innerHTML]="'EPC Codes' | translate"></span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href id="PRODUCTION_PROCESS_TEMPLATE" class="nav-link"
-                   [ngClass]="{ active: selectedTrackAndTraceTab === 'PRODUCTION_PROCESS_TEMPLATE'}"
-                   (click)="onTTTabSelect($event,'PRODUCTION_PROCESS_TEMPLATE')">
+                <a href id="PRODUCTION_PROCESS_TEMPLATE" class="nav-link" [ngClass]="{ active: selectedTrackAndTraceTab === 'PRODUCTION_PROCESS_TEMPLATE'}" (click)="onTTTabSelect($event,'PRODUCTION_PROCESS_TEMPLATE')">
                     <span [innerHTML]="'Production Process Template' | translate"></span>
                 </a>
             </li>
@@ -38,7 +50,8 @@
                 <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
                     <div class="row mb-1" *ngFor="let code of epcCodes.codes; let i = index; trackBy:trackByFn">
                         <div class="{{ isSeller() ? 'col-9' : 'col-12' }}">
-                            <input type="text" class="form-control" [(ngModel)]="epcCodes.codes[i]" [disabled]="isBuyer()">
+                            <input *ngIf="isSeller()" type="text" class="form-control" [(ngModel)]="epcCodes.codes[i]">
+                            <label *ngIf="isBuyer()">{{epcCodes.codes[i]}}</label>
                         </div>
                         <div class="col-3" *ngIf="isSeller()">
                             <button class="btn btn-danger w-100" (click)="onDeleteEpcCode(i)"><span [innerHTML]="'Delete' | translate"></span></button>
@@ -60,16 +73,15 @@
                     <!-- Save -->
                     <div class="row">
                         <div class="col-12">
-                            <button class="btn btn-primary w-100 save-epc-btn" [disabled]="!areEpcCodesDirty() || !isThereAValidEPCCode()"
-                                    (click)="onSaveEpcCodes()"><span [innerHTML]="'Save' | translate"></span></button>
+                            <button class="btn btn-primary w-100 save-epc-btn" [disabled]="!areEpcCodesDirty() || !isThereAValidEPCCode()" (click)="onSaveEpcCodes()"><span [innerHTML]="'Save' | translate"></span></button>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-12 d-flex justify-content-end">
-                  <span class="align-self-center">
-                      <call-status [callStatus]="saveEpcCodesCallStatus"></call-status>
-                  </span>
+                            <span class="align-self-center">
+                                <call-status [callStatus]="saveEpcCodesCallStatus"></call-status>
+                            </span>
                         </div>
                     </div>
 
@@ -80,10 +92,7 @@
         <div *ngIf="selectedTrackAndTraceTab === 'PRODUCTION_PROCESS_TEMPLATE'">
             <div class="d-flex">
                 <div class="col-3 mr-2">
-                    <file-input [binaryObjects]="productionTemplateFile"
-                                (onSelectFile)="onTTFileSelected($event)"
-                                (onClearFile)="onTTFileRemoved()"
-                                [presentationMode]="isSeller() && processMetadata.collaborationStatus != 'CANCELLED' ? 'edit' : 'view'">
+                    <file-input [binaryObjects]="productionTemplateFile" (onSelectFile)="onTTFileSelected($event)" (onClearFile)="onTTFileRemoved()" [presentationMode]="isSeller() && processMetadata.collaborationStatus != 'CANCELLED' ? 'edit' : 'view'">
                     </file-input>
                 </div>
                 <div *ngIf="isSeller()">
@@ -94,25 +103,29 @@
         </div>
     </ng-container>
 
+    <!-- Invoice -->
+    <ng-container *ngIf="selectedPanel == 'INVOICE'">
+        <call-status [callStatus]="invoiceBlockChainRecordCallStatus"></call-status>
+        <!--  Blockchain information-->
+        <div *ngIf="blockChainRecord">
+            <table class="table table-bordered space-before">
+                <tr *ngFor="let key of objectKeys(this.blockChainRecord[0])">
+                    <th>{{key}}</th>
+                    <td *ngIf="key == 'optionalLink'"><a href="{{blockChainRecord[0][key]}}">{{blockChainRecord[0][key]}}</a></td>
+                    <td *ngIf="key != 'optionalLink'">{{blockChainRecord[0][key]}}</td>
+                </tr>
+            </table>
+        </div>
+    </ng-container>
+
     <!-- Notes -->
     <ng-container *ngIf="selectedPanel == 'NOTES_AND_FILES'">
         <div class="row content-row" *ngIf="isReady()">
             <div class="col-6">
-                <note-file-view [notes]="order.note"
-                                [label]="'Customer\'s Note'"
-                                [documents]="order.additionalDocumentReference"
-                                [firstCol]="'col-4'"
-                                [lastCol]="'col-8'"
-                                [readonly]="isReadOnly() || isSeller()"></note-file-view>
+                <note-file-view [notes]="order.note" [label]="'Customer\'s Note'" [documents]="order.additionalDocumentReference" [firstCol]="'col-4'" [lastCol]="'col-8'" [readonly]="isReadOnly() || isSeller()"></note-file-view>
             </div>
             <div class="col-6">
-                <note-file-view *ngIf="showOrderResponseNotes()"
-                                [notes]="orderResponse.note"
-                                [documents]="orderResponse.additionalDocumentReference"
-                                [label]="'Supplier\'s Note'"
-                                [firstCol]="'col-4'"
-                                [lastCol]="'col-8'"
-                                [readonly]="isReadOnly()"></note-file-view>
+                <note-file-view *ngIf="showOrderResponseNotes()" [notes]="orderResponse.note" [documents]="orderResponse.additionalDocumentReference" [label]="'Supplier\'s Note'" [firstCol]="'col-4'" [lastCol]="'col-8'" [readonly]="isReadOnly()"></note-file-view>
             </div>
         </div>
     </ng-container>
@@ -145,108 +158,134 @@
         </tr>
     </table>
 
+    <hr class="actions-hr">
     <!-- Actions -->
-    <ng-container *ngIf="isBuyer() && isReady()">
+    <!-- Action buttons are only displayed for the last product -->
+    <ng-container *ngIf="selectedLineIndex == order.orderLine.length-1">
+        <ng-container *ngIf="isBuyer() && isReady()">
 
-        <hr class="actions-hr">
+            <div class="row actions-row" *ngIf="!isReadOnly()">
+                <div class="col-8 call-status-col">
+                    <call-status [callStatus]="submitCallStatus"></call-status>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
+                        <span [innerHTML]="'Back' | translate"></span>
+                    </button>
+                </div>
+                <div class="col-2">
+                    <button *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading()" (click)="onOrder()" singleClick>
+                        <span [innerHTML]="'Order' | translate"></span>
+                    </button>
+                    <button *ngIf="processMetadata && processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading()" (click)="onOrderUpdate()" singleClick>
+                        <span [innerHTML]="'Update Order' | translate"></span>
+                    </button>
+                </div>
+            </div>
 
-        <div class="row actions-row" *ngIf="!isReadOnly()">
-            <div class="col-8 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
-            <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
-                    <span [innerHTML]="'Back' | translate"></span>
-                </button>
+            <div class="row actions-row" *ngIf="isReadOnly() && !isOrderCompleted()">
+                <div class="col-10 call-status-col">
+                    <call-status [callStatus]="submitCallStatus"></call-status>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
+                        <span [innerHTML]="'Back' | translate"></span>
+                    </button>
+                </div>
             </div>
-            <div class="col-2">
-                <button *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading()" (click)="onOrder()">
-                    <span [innerHTML]="'Order' | translate"></span>
-                </button>
-                <button *ngIf="processMetadata && processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading()" (click)="onOrderUpdate()">
-                    <span [innerHTML]="'Update Order' | translate"></span>
-                </button>
-            </div>
-        </div>
 
-        <div class="row actions-row" *ngIf="isReadOnly() && !isOrderCompleted()">
-            <div class="col-10 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
-            <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
-                    <span [innerHTML]="'Back' | translate"></span>
-                </button>
+            <div class="row actions-row" *ngIf="isReadOnly() && isOrderCompleted()">
+                <div class="col-5 call-status-col">
+                    <call-status [callStatus]="submitCallStatus"></call-status>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
+                        <span [innerHTML]="'Back' | translate"></span>
+                    </button>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-primary action" [disabled]="isPaymentButtonDisabled()" (click)="onPaymentDone()">
+                        <span [innerHTML]="'Payment Done' | translate"></span>
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || isOrderRejected()" (click)="onDownloadContact()">
+                        <span [innerHTML]="'Download Contract' | translate"></span>
+                    </button>
+                </div>
             </div>
-        </div>
+        </ng-container>
 
-        <div class="row actions-row" *ngIf="isReadOnly() && isOrderCompleted()">
-            <div class="col-5 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
-            <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
-                    <span [innerHTML]="'Back' | translate"></span>
-                </button>
+        <ng-container *ngIf="isSeller() && isReady()">
+
+            <div class="row actions-row" *ngIf="!isOrderCompleted()">
+                <div class="col-6 call-status-col">
+                    <call-status [callStatus]="submitCallStatus"></call-status>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
+                        <span [innerHTML]="'Back' | translate"></span>
+                    </button>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-secondary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.collaborationStatus == 'CANCELLED'" (click)="onRespondToOrder(false)" singleClick>
+                        <span [innerHTML]="'Reject' | translate"></span>
+                    </button>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.collaborationStatus == 'CANCELLED'" (click)="onRespondToOrder(true)" singleClick>
+                        <span [innerHTML]="'Accept' | translate"></span>
+                    </button>
+                </div>
             </div>
-            <div class="col-2">
-                <button class="btn btn-primary action" [disabled]="isPaymentButtonDisabled()" (click)="onPaymentDone()">
-                    <span [innerHTML]="'Payment Done' | translate"></span>
-                </button>
+
+            <div class="row actions-row" *ngIf="isOrderCompleted()">
+                <div class="{{companyWorkflowMap.get('Fulfilment') ? 'col-1' : 'col-6'}} call-status-col">
+                    <call-status [callStatus]="submitCallStatus"></call-status>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
+                        <span [innerHTML]="'Back' | translate"></span>
+                    </button>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-secondary action" [disabled]="isLoading() || isOrderRejected()" (click)="onDownloadContact()">
+                        <span [innerHTML]="'Download Contract' | translate"></span>
+                    </button>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-primary action" [disabled]="isPaymentButtonDisabled()" (click)="showInvoiceModal ? openInvoiceModal(addInvoiceModal):onPaymentDone()">
+                        <span [innerHTML]="'Payment Received' | translate"></span>
+                    </button>
+                </div>
+                <div class="col-3" *ngIf="companyWorkflowMap.get('Fulfilment')">
+                    <button class="btn btn-primary action" [disabled]="isDispatchDisabled()" (click)="onSearchTransportService()">
+                        <span [innerHTML]="'Search for Transport Service Provider' | translate"></span>
+                    </button>
+                </div>
+                <div class="col-2" *ngIf="companyWorkflowMap.get('Fulfilment')">
+                    <button class="btn btn-primary action" [disabled]="isDispatchDisabled()" (click)="onDispatchOrder()">
+                        <span [innerHTML]="'Dispatch Order' | translate"></span>
+                    </button>
+                </div>
             </div>
-            <div class="col-3">
-                <button class="btn btn-primary action" [disabled]="isLoading() || isOrderRejected()" (click)="onDownloadContact()">
-                    <span [innerHTML]="'Download Contract' | translate"></span>
-                </button>
-            </div>
-        </div>
+        </ng-container>
     </ng-container>
 
-    <ng-container *ngIf="isSeller() && isReady()">
-
-        <hr class="actions-hr">
-
-        <div class="row actions-row" *ngIf="!isOrderCompleted()">
-            <div class="col-6 call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
-            <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
-                    <span [innerHTML]="'Back' | translate"></span>
-                </button>
-            </div>
-            <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.collaborationStatus == 'CANCELLED'" (click)="onRespondToOrder(false)">
-                    <span [innerHTML]="'Reject' | translate"></span>
-                </button>
-            </div>
-            <div class="col-2">
-                <button class="btn btn-primary action" [disabled]="isLoading() || isThereADeletedProduct() || processMetadata.collaborationStatus == 'CANCELLED'" (click)="onRespondToOrder(true)">
-                    <span [innerHTML]="'Accept' | translate"></span>
-                </button>
-            </div>
+    <ng-template #addInvoiceModal let-d="dismiss">
+        <div class="modal-header">
+            <h5 class="modal-title"><span [innerHTML]="'Enter the identifier of invoice generated for this payment, if any' | translate"></span></h5>
+            <button type="button" class="close" aria-label="Close" (click)="d('')">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
-
-        <div class="row actions-row" *ngIf="isOrderCompleted()">
-            <div class="{{companyWorkflowMap.get('Fulfilment') ? 'col-1' : 'col-6'}} call-status-col"><call-status [callStatus]="submitCallStatus"></call-status></div>
-            <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
-                    <span [innerHTML]="'Back' | translate"></span>
-                </button>
-            </div>
-            <div class="col-2">
-                <button class="btn btn-secondary action" [disabled]="isLoading() || isOrderRejected()" (click)="onDownloadContact()">
-                    <span [innerHTML]="'Download Contract' | translate"></span>
-                </button>
-            </div>
-            <div class="col-2">
-                <button class="btn btn-primary action" [disabled]="isPaymentButtonDisabled()" (click)="onPaymentDone()">
-                    <span [innerHTML]="'Payment Received' | translate"></span>
-                </button>
-            </div>
-            <div class="col-3" *ngIf="companyWorkflowMap.get('Fulfilment')">
-                <button class="btn btn-primary action" [disabled]="isDispatchDisabled()" (click)="onSearchTransportService()">
-                    <span [innerHTML]="'Search for Transport Service Provider' | translate"></span>
-                </button>
-            </div>
-            <div class="col-2" *ngIf="companyWorkflowMap.get('Fulfilment')">
-                <button class="btn btn-primary action" [disabled]="isDispatchDisabled()" (click)="onDispatchOrder()">
-                    <span [innerHTML]="'Dispatch Order' | translate"></span>
-                </button>
-            </div>
+        <div class="modal-body">
+            <input type="text" class="form-control" [(ngModel)]="invoiceId">
         </div>
-    </ng-container>
-
+        <div class="modal-footer">
+            <button class="btn btn-primary action" [disabled]="isPaymentButtonDisabled()" (click)="onPaymentDone(d)">
+                <span [innerHTML]="'Payment Received' | translate"></span>
+            </button>
+        </div>
+    </ng-template>
 </div>

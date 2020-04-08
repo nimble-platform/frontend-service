@@ -1,3 +1,19 @@
+<!--
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   In collaboration with
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <div class="row">
     <div class="col-12">
         <p class="nimble-title"><span [innerHTML]="'Dashboard' | translate"></span></p>
@@ -6,17 +22,18 @@
 
 <!-- Welcome jumbotron, no company -->
 <div *ngIf="!user.hasCompany" class="jumbotron space-after">
-    <span [innerHTML]="'You are not yet linked to a company' | translate"></span>.<br/>
-    <span [innerHTML]="'You will not be able to make purchases or create a catalogue without a company' | translate"></span>.<br/>
-  <p class="text-center space-before mb-0"><a class="btn btn-primary btn-lg" href="#/user-mgmt/company-registration" role="button"><span [innerHTML]="'Register a Company' | translate"></span></a></p>
+    <span [innerHTML]="'You are not yet linked to a company' | translate"></span>.<br />
+    <span [innerHTML]="'You will not be able to make purchases or create a catalogue without a company' | translate"></span>.<br />
+    <p class="text-center space-before mb-0"><a class="btn btn-primary btn-lg" href="#/user-mgmt/company-registration" role="button"><span [innerHTML]="'Register a Company' | translate"></span></a></p>
 </div>
 
 <!-- Welcome jumbotron, company waiting for approval -->
 <div *ngIf="user.roles.indexOf('initial_representative')!= -1 && user.roles.indexOf('legal_representative') == -1" class="jumbotron space-after">
-  <b><span [innerHTML]="'Your company is now registered' | translate"></span></b><br/>
-  <span *ngIf="!config.companyRegistrationRequired"><span [innerHTML]="'You can start publishing your catalogue' | translate"></span>.<br/></span>
-  <span [innerHTML]="'In order to execute business processes your company needs to be verified by an administrator - please stay tuned' | translate"></span>.<br/>
-  <span [innerHTML]="'If you are not being verified with 24h, please contact our support' | translate"></span> <a href="mailto:{{config.supportMail}}">{{config.supportMail}}</a>.
+    <b><span [innerHTML]="'Your company is now registered' | translate"></span></b><br />
+    <span *ngIf="!config.companyRegistrationRequired"><span [innerHTML]="'You can start publishing your catalogue' | translate"></span>.<br /></span>
+    <span [innerHTML]="'In order to execute business processes your company needs to be verified by an administrator - please stay tuned' | translate"></span>.<br />
+    <span [innerHTML]="'If you are not being verified with 24h, please contact our support' | translate"></span> <a href="mailto:{{config.supportMail}}">{{config.supportMail}}</a>.<br />
+    <span [innerHTML]="'Once you received the verification e-mail, you need to logout and login again' | translate"></span>.
 </div>
 
 <!-- Regular content -->
@@ -36,7 +53,7 @@
                     </li>
                 </ng-container>
                 <li class="nav-item">
-                    <a href id="PURCHASES" *ngIf="this.appComponent.checkRoles('purchases')"  [ngClass]="{'nav-link': true, active: selectedTab === TABS.PURCHASES}" (click)="onChangeTab($event,'PURCHASES')"><span [innerHTML]="'Purchases' | translate"></span> <span *ngIf="buyerCounter>0" class="badge badge-pill badge-danger ml-1">{{buyerCounter}}</span></a>
+                    <a href id="PURCHASES" *ngIf="this.appComponent.checkRoles('purchases')" [ngClass]="{'nav-link': true, active: selectedTab === TABS.PURCHASES}" (click)="onChangeTab($event,'PURCHASES')"><span [innerHTML]="'Purchases' | translate"></span> <span *ngIf="buyerCounter>0" class="badge badge-pill badge-danger ml-1">{{buyerCounter}}</span></a>
                 </li>
                 <li class="nav-item">
                     <a href id="SALES" *ngIf="this.appComponent.checkRoles('sales')" [ngClass]="{'nav-link': true, active: selectedTab === TABS.SALES}" (click)="onChangeTab($event,'SALES')"><span [innerHTML]="'Sales' | translate"></span> <span *ngIf="sellerCounter>0" class="badge badge-pill badge-danger ml-1">{{sellerCounter}}</span></a>
@@ -45,10 +62,10 @@
                     <a href id="PROJECTS" *ngIf="config.projectsEnabled && this.appComponent.checkRoles('projects')" [ngClass]="{'nav-link': true, active: selectedTab === TABS.PROJECTS}" (click)="onChangeTab($event,'PROJECTS')"><span [innerHTML]="'Projects' | translate"></span></a>
                 </li>
                 <li class="nav-item">
-                    <a href id="FRAME_CONTRACTS" *ngIf="config.frameContractTabEnabled && this.appComponent.checkRoles('sales') || this.appComponent.checkRoles('purchases')" [ngClass]="{'nav-link': true, active: selectedTab === TABS.FRAME_CONTRACTS}" (click)="onChangeTab($event,'FRAME_CONTRACTS')"><span [innerHTML]="'Frame Contracts' | translate"></span></a>
+                    <a href id="FRAME_CONTRACTS" *ngIf="config.frameContractTabEnabled && (this.appComponent.checkRoles('sales') || this.appComponent.checkRoles('purchases'))" [ngClass]="{'nav-link': true, active: selectedTab === TABS.FRAME_CONTRACTS}" (click)="onChangeTab($event,'FRAME_CONTRACTS')"><span [innerHTML]="'Frame Contracts' | translate"></span></a>
                 </li>
                 <li class="nav-item">
-                    <a href id="UNSHIPPED_ORDERS" *ngIf="config.unshippedOrdersTabEnabled && (this.appComponent.checkRoles('sales') || this.appComponent.checkRoles('purchases'))" [ngClass]="{'nav-link': true, active: selectedTab === TABS.UNSHIPPED_ORDERS}" (click)="onChangeTab($event,'UNSHIPPED_ORDERS')"><span [innerHTML]="'Unshipped Orders' | translate"></span></a>
+                    <a href id="UNSHIPPED_ORDERS" *ngIf="config.unshippedOrdersTabEnabled && (this.appComponent.checkRoles('sales') || this.appComponent.checkRoles('purchases'))" [ngClass]="{'nav-link': true, active: selectedTab === TABS.UNSHIPPED_ORDERS}" (click)="onChangeTab($event,'UNSHIPPED_ORDERS')"><span [innerHTML]="'Expected Orders' | translate"></span></a>
                 </li>
                 <li class="nav-item">
                     <a href id="CATALOGUE" *ngIf="this.appComponent.checkRoles('catalogue')" [ngClass]="{'nav-link': true, active: selectedTab === TABS.CATALOGUE}" (click)="onChangeTab($event,'CATALOGUE')"><span [innerHTML]="'Catalogue' | translate"></span></a>
@@ -69,37 +86,36 @@
         </div>
     </div>
 
-
     <!-- Welcome tab -->
     <div *ngIf="selectedTab === TABS.WELCOME" class="row">
         <div class="col-12">
             <h4 class="space-before mb-4 text-center"><span [innerHTML]="'Looks like you are new here' | translate"></span>.</h4>
             <div class="row mb-4 ">
-              <div class="col-6">
-                <p class="mb-1"><span [innerHTML]="'This is your dashboard - it shows' | translate"></span>:</p>
-                <ul>
-                    <li><strong><span [innerHTML]="'Purchases' | translate"></span>:</strong> <span [innerHTML]="'the history of all your purchases' | translate"></span></li>
-                    <li><strong><span [innerHTML]="'Sales' | translate"></span>:</strong><span [innerHTML]="'the history of all your sales' | translate"></span> </li>
-                    <li><strong><span [innerHTML]="'Catalogue' | translate"></span>:</strong><span [innerHTML]="'the list of all your published products / services' | translate"></span> </li>
-                </ul>
-              </div>
-              <div class="col-6">
-                <p class="mb-1"><span [innerHTML]="'In your Purchases and Sales the following statuses are possible' | translate"></span>:</p>
-                <div>
-                  <span [innerHTML]="'Step completed' | translate" class="badge badge-success"></span> <span [innerHTML]="'Waiting for trading partner' | translate" class="badge badge-warning"></span> <span [innerHTML]="'Action required' | translate" class="badge badge-danger"></span> <span [innerHTML]="'Step cancelled' | translate" class="badge badge-secondary"></span>
+                <div class="col-6">
+                    <p class="mb-1"><span [innerHTML]="'This is your dashboard - it shows' | translate"></span>:</p>
+                    <ul>
+                        <li><strong><span [innerHTML]="'Purchases' | translate"></span>:</strong> <span [innerHTML]="'the history of all your purchases' | translate"></span></li>
+                        <li><strong><span [innerHTML]="'Sales' | translate"></span>:</strong> <span [innerHTML]="'the history of all your sales' | translate"></span> </li>
+                        <li><strong><span [innerHTML]="'Catalogue' | translate"></span>:</strong> <span [innerHTML]="'the list of all your published products / services' | translate"></span> </li>
+                    </ul>
                 </div>
-              </div>
+                <div class="col-6">
+                    <p class="mb-1"><span [innerHTML]="'In your Purchases and Sales the following statuses are possible' | translate"></span>:</p>
+                    <div>
+                        <span [innerHTML]="'Step completed' | translate" class="badge badge-success"></span> <span [innerHTML]="'Waiting for trading partner' | translate" class="badge badge-warning"></span> <span [innerHTML]="'Action required' | translate" class="badge badge-danger"></span> <span [innerHTML]="'Step cancelled' | translate" class="badge badge-secondary"></span>
+                    </div>
+                </div>
             </div>
             <div class="row text-center">
                 <div *ngIf="this.appComponent.checkRoles('purchases')" class="col-6">
-                    <p><span [innerHTML]="'If you are looking to' | translate"></span> <b> <span [innerHTML]="'buy' | translate"></span></b><span [innerHTML]="'Products / Services' | translate"></span></p>
+                    <p><span [innerHTML]="'If you are looking to' | translate"></span> <b><span [innerHTML]="'buy' | translate"></span></b> <span [innerHTML]="'Products / Services' | translate"></span></p>
                     <a class="btn btn-primary btn-lg" href="#/simple-search" role="button"><span [innerHTML]="'Search for Products / Services' | translate"></span></a>
                 </div>
 
                 <div *ngIf="this.appComponent.checkRoles('sales')" class="col-6">
-                    <p><span [innerHTML]="'If you are looking to' | translate"></span> <b><span [innerHTML]="'sell' | translate"></span></b><span [innerHTML]="'Products / Services' | translate"></span> </p>
+                    <p><span [innerHTML]="'If you are looking to' | translate"></span> <b><span [innerHTML]="'sell' | translate"></span></b> <span [innerHTML]="'Products / Services' | translate"></span> </p>
                     <a *ngIf="this.appComponent.checkRoles('catalogue')" class="btn btn-primary btn-lg" href="#/catalogue/categorysearch" role="button"><span [innerHTML]="'Publish a Product / Service' | translate"></span></a>
-					<p *ngIf="!this.appComponent.checkRoles('catalogue')"><span [innerHTML]="'Please refer to the company manager or a legal representative to get permission to publish products / services in the NIMBLE Platform' | translate"></span>.</p>
+                    <p *ngIf="!this.appComponent.checkRoles('catalogue')"><span [innerHTML]="'Please refer to the company manager or a legal representative to get permission to publish products / services in the NIMBLE Platform' | translate"></span>.</p>
                 </div>
 
                 <div *ngIf="!this.appComponent.checkRoles('purchases') && !this.appComponent.checkRoles('sales')" class="col-12">
@@ -111,7 +127,8 @@
 
     <!-- Sales and Purchase tabs -->
     <div *ngIf="selectedTab === TABS.SALES || selectedTab === TABS.PURCHASES || selectedTab === TABS.PROJECTS">
-        <groups-tab class="row" (onViewUpdatedEvent)="getTabCounters()" [selectedTab]="selectedTab"></groups-tab>
+        <collaboration-groups-tab class="row" (onViewUpdatedEvent)="getTabCounters()" [instance]="instance" [selectedTab]="selectedTab">
+        </collaboration-groups-tab>
     </div>
 
     <!-- Catalogue tab -->
@@ -135,8 +152,8 @@
         </div>
     </div>
 
-     <!-- Compare tab -->
-     <div *ngIf="selectedTab === TABS.COMPARE" class="row">
+    <!-- Compare tab -->
+    <div *ngIf="selectedTab === TABS.COMPARE" class="row">
         <div class="col-12">
             <compare-view></compare-view>
         </div>
@@ -150,12 +167,10 @@
     </unshipped-orders-tab>
 
     <!-- Performance tab -->
-     <div *ngIf="selectedTab === TABS.PERFORMANCE" class="row">
+    <div *ngIf="selectedTab === TABS.PERFORMANCE" class="row">
         <div class="col-12">
             <performance-analytics></performance-analytics>
         </div>
     </div>
-
-
 
 </div>

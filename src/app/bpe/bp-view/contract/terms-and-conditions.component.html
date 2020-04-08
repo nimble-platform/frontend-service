@@ -1,3 +1,17 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <call-status [callStatus]="callStatus"></call-status>
 <div class="col-12 section" *ngIf="_termsAndConditions">
     <div *ngFor="let clause of _termsAndConditions;let i=index" class="mb-1">
@@ -14,8 +28,8 @@
                         {{tradingTerm.id}}
                     </div>
                     <div class="col-8">
-                        <input *ngIf="tradingTerm.value.valueQualifier == 'STRING'" type="text" class="form-control" value="{{tradingTerms.get(tradingTerm.id).value.value[0].value}}"  (keyup)="updateParameter(i,tradingTerm.id,$event.target.value)">
-                        <input *ngIf="tradingTerm.value.valueQualifier == 'NUMBER'" type="number" class="form-control" value="{{tradingTerms.get(tradingTerm.id).value.valueDecimal[0]}}"  (change)="updateParameter(i,tradingTerm.id,$event.target.value)" (keyup)="updateParameter(i,tradingTerm.id,$event.target.value)">
+                        <input *ngIf="tradingTerm.value.valueQualifier == 'STRING'" type="text" class="form-control" value="{{tradingTerms.get(tradingTerm.id).value.value[0].value}}" (keyup)="updateParameter(i,tradingTerm.id,$event.target.value)">
+                        <input *ngIf="tradingTerm.value.valueQualifier == 'NUMBER'" type="number" class="form-control" value="{{tradingTerms.get(tradingTerm.id).value.valueDecimal[0]}}" (change)="updateParameter(i,tradingTerm.id,$event.target.value)" (keyup)="updateParameter(i,tradingTerm.id,$event.target.value)">
                         <select *ngIf="tradingTerm.value.valueQualifier == 'CODE' && tradingTerm.value.valueCode[0].listID == 'INCOTERMS_LIST'" class="form-control custom-select" value="{{tradingTerms.get(tradingTerm.id).value.valueCode[0].value}}" (change)="updateParameter(i,tradingTerm.id,$event.target.value)">
                             <option *ngFor="let option of availableIncoTerms" [value]="option">{{option}}</option>
                         </select>
@@ -26,8 +40,8 @@
                             <option *ngFor="let option of COUNTRY_NAMES" [value]="option">{{option}}</option>
                         </select>
                         <div *ngIf="tradingTerm.value.valueQualifier == 'QUANTITY'" class="row" style="margin: 0px">
-                            <input type="number" class="form-control col-6" value="{{tradingTerms.get(tradingTerm.id).value.valueQuantity[0].value}}"  (keyup)="updateParameter(i,tradingTerm.id,$event.target.value)" (change)="updateParameter(i,tradingTerm.id,$event.target.value)">
-                            <input type="text" class="form-control col-6" value="{{tradingTerms.get(tradingTerm.id).value.valueQuantity[0].unitCode}}"  (keyup)="updateParameter(i,tradingTerm.id,$event.target.value,true)" placeholder="Unit">
+                            <input type="number" class="form-control col-6" value="{{tradingTerms.get(tradingTerm.id).value.valueQuantity[0].value}}" (keyup)="updateParameter(i,tradingTerm.id,$event.target.value)" (change)="updateParameter(i,tradingTerm.id,$event.target.value)">
+                            <input type="text" class="form-control col-6" value="{{tradingTerms.get(tradingTerm.id).value.valueQuantity[0].unitCode}}" (keyup)="updateParameter(i,tradingTerm.id,$event.target.value,true)" placeholder="Unit">
                         </div>
                     </div>
                 </div>

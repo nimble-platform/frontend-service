@@ -1,3 +1,18 @@
+/*
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
 .thread-entry {
     border: 1px solid rgba(0, 0, 0, 0.15) !important;
     border-radius: 0.25rem !important;
@@ -12,17 +27,20 @@
 .thread-entry .row {
     margin: 0;
 }
+
 .thread-entry-header {
     padding: 0;
     margin: 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
-    background: rgba(0,0,0,.05);
+    background: rgba(0, 0, 0, .05);
     /*cursor: pointer;*/
 }
+
 .thread-entry-header .header-label {
     margin-top: 0.2rem;
     margin-bottom: 0.2rem;
 }
+
 .thread-entry-header .header-label label {
     margin-bottom: 0;
     padding-bottom: 0;
@@ -33,31 +51,31 @@
 }
 
 .inline {
-  display:inline-block;
+    display: inline-block;
 }
 
 .star {
-  position: relative;
-  display: inline-block;
-  color: #b0c4de;
-	font-size: 130%;
+    position: relative;
+    display: inline-block;
+    color: #b0c4de;
+    font-size: 130%;
 }
 
 .star-b {
-	font-size: 130% !important;
+    font-size: 130% !important;
 }
 
 .star-c {
-	font-size: 170% !important;
+    font-size: 170% !important;
 }
 
 .full {
-  color: #1e90ff;
+    color: #1e90ff;
 }
 
 .half {
-  position: absolute;
-  display: inline-block;
-  overflow: hidden;
-  color: #1e90ff;
+    position: absolute;
+    display: inline-block;
+    overflow: hidden;
+    color: #1e90ff;
 }

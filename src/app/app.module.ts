@@ -1,3 +1,21 @@
+/*
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   In collaboration with
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+ * UB - University of Bremen, Faculty of Production Engineering; Bremen; Germany
+ * BIBA - Bremer Institut für Produktion und Logistik GmbH; Bremen; Germany
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
@@ -33,16 +51,16 @@ import { PrecedingBPDataService } from "./bpe/bp-view/preceding-bp-data-service"
 import { TnTService } from './tnt/tnt.service';
 import { AnalyticsService } from './analytics/analytics.service';
 import { EpcService } from './bpe/bp-view/epc-service';
-import {DocumentService} from "./bpe/bp-view/document-service";
-import {PublishingPropertyService} from './catalogue/publish/publishing-property.service';
-import {FrameContractTransitionService} from "./bpe/bp-view/contract/frame-contract-transition.service";
-import {ShoppingCartDataService} from './bpe/shopping-cart/shopping-cart-data-service';
-import {CollaborationService} from './catalogue/collaboration/collaboration.service';
-import {UnshippedOrdersTransitionService} from './bpe/unshipped-order-transition-service';
-import {ValidationService} from './common/validation/validators';
+import { DocumentService } from "./bpe/bp-view/document-service";
+import { PublishingPropertyService } from './catalogue/publish/publishing-property.service';
+import { FrameContractTransitionService } from "./bpe/bp-view/contract/frame-contract-transition.service";
+import { ShoppingCartDataService } from './bpe/shopping-cart/shopping-cart-data-service';
+import { CollaborationService } from './catalogue/collaboration/collaboration.service';
+import { UnshippedOrdersTransitionService } from './bpe/unshipped-order-transition-service';
+import { ValidationService } from './common/validation/validators';
 
 export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+    return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
 @NgModule({
@@ -55,28 +73,28 @@ export function HttpLoaderFactory(http: HttpClient) {
         HttpClientModule,
         AppRoutingModule,
         ReactiveFormsModule,
-		    AppCommonModule,
+        AppCommonModule,
         NgbModule.forRoot(),
         TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: HttpLoaderFactory,
-            deps: [HttpClient]
-          },
-          isolate: false
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            },
+            isolate: false
         })
     ],
     declarations: [
         AppComponent
-	],
+    ],
     providers: [
-		CookieService,
-		BPEService,
+        CookieService,
+        BPEService,
         DataChannelService,
-		BPService,
-		BPDataService,
+        BPService,
+        BPDataService,
         FrameContractTransitionService,
-		CatalogueService,
+        CatalogueService,
         CategoryService,
         PublishingPropertyService,
         PublishService,

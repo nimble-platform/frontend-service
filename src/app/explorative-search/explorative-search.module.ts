@@ -27,7 +27,7 @@ import { ExplorativeSearchComponent } from './explorative-search.component';
 import { ExplorativeSearchFormComponent } from './explorative-search-form.component';
 import { ExplorativeSearchDetailsComponent } from './explorative-search-details.component';
 import { ExplorativeSearchFilterComponent } from './explorative-search-filter.component';
-import {ExplorativeSearchSemanticComponent} from './explorative-search-semantic.component';
+import { ExplorativeSearchSemanticComponent } from './explorative-search-semantic.component';
 
 import { HttpClientModule } from '@angular/common/http';
 
@@ -60,4 +60,4 @@ import { HttpClientModule } from '@angular/common/http';
     entryComponents: []
 })
 
-export class ExplorativeSearchModule {}
+export class ExplorativeSearchModule { }

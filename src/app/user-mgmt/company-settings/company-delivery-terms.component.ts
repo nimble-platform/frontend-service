@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   In collaboration with
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 import { Component, OnInit, Input, EventEmitter, Output } from "@angular/core";
 import { CompanySettings } from "../model/company-settings";
 import { FormGroup, FormBuilder, FormArray } from "@angular/forms";
@@ -5,7 +21,7 @@ import { DeliveryTermsSubForm } from "../subforms/delivery-terms.component";
 import * as myGlobals from "../../globals";
 import { CallStatus } from "../../common/call-status";
 import { CookieService } from "ng2-cookies";
-import {TranslateService} from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { UserService } from "../user.service";
 
 @Component({
@@ -23,9 +39,9 @@ export class CompanyDeliveryTermsComponent implements OnInit {
     @Output() onSaveEvent: EventEmitter<void> = new EventEmitter();
 
     constructor(private _fb: FormBuilder,
-                private cookieService: CookieService,
-                private translate: TranslateService,
-                private userService: UserService) {
+        private cookieService: CookieService,
+        private translate: TranslateService,
+        private userService: UserService) {
 
     }
 
@@ -85,10 +101,10 @@ export class CompanyDeliveryTermsComponent implements OnInit {
     }
 
     // this function is used to create languageId-value pairs for SpecialTerms using the raw value of special terms
-    private generateSpecialTermsMap(deliveryTermsRawValue){
-        for(let delTer of deliveryTermsRawValue){
+    private generateSpecialTermsMap(deliveryTermsRawValue) {
+        for (let delTer of deliveryTermsRawValue) {
             let specialTermsMapping = {};
-            if(delTer.specialTerms.value != ""){
+            if (delTer.specialTerms.value != "") {
                 specialTermsMapping[delTer.specialTerms.languageID] = delTer.specialTerms.value;
             }
             delTer.specialTerms = specialTermsMapping;

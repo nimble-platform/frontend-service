@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 import { Option } from "../../common/options-input.component";
 import * as myGlobals from '../../globals';
 
@@ -36,13 +52,13 @@ export const CURRENCIES = [
 ]
 
 export const CATALOGUE_LINE_SORT_OPTIONS = [
-    { name: "PRICE_LOW_TO_HIGH", value: "Price:Low to High"},
-    { name: "PRICE_HIGH_TO_LOW", value: "Price:High to Low"}
+    { name: "PRICE_LOW_TO_HIGH", value: "Price:Low to High" },
+    { name: "PRICE_HIGH_TO_LOW", value: "Price:High to Low" }
 ]
 
 export const FAVOURITE_LINEITEM_PUT_OPTIONS = [
-    { name: "ITEM_PUT", value: 1},
-    { name: "LIST_REMOVE", value: 2}
+    { name: "ITEM_PUT", value: 1 },
+    { name: "LIST_REMOVE", value: 2 }
 ]
 
 export const CUSTOM_PROPERTY_LIST_ID = "Custom";
@@ -57,12 +73,12 @@ export const PROPERTY_TYPES: Option[] = [
 ]
 
 export const PROCESSES = [
-    { id: "Item_Information_Request", name: "Item Information Request" },
-    { id: "Ppap", name: "PPAP" },
-    { id: "Negotiation", name: "Negotiation" },
-    { id: "Order", name: "Order" },
-    { id: "Transport_Execution_Plan", name: "Transport Execution Plan" },
-    { id: "Fulfilment", name: "Fulfilment" },
+    { id: "Item_Information_Request", name: "Item Information Request", tooltip: "Allows buyers to request additional information regarding a product / service" },
+    { id: "Ppap", name: "PPAP", tooltip: "Prodution part approval process (specific sectors only)" },
+    { id: "Negotiation", name: "Negotiation", tooltip: "Allows buyers to negotiate the terms of a product / service" },
+    { id: "Order", name: "Order", tooltip: "Required to allow ordering of products" },
+    { id: "Transport_Execution_Plan", name: "Transport Execution Plan", tooltip: "Covers the logistics-related step of the workflow" },
+    { id: "Fulfilment", name: "Fulfilment", tooltip: "Final step to confirm the success or report on problems" },
 ]
 
 export const TRANSPORT_SERVICE_CATEGORY_NAME = "Transport service"
@@ -98,12 +114,12 @@ export const REGIONS = [
 ]
 
 export const PRICE_OPTIONS = {
-    ORDERED_QUANTITY: {text:'Ordered Quantity',typeID:1},
-    PRODUCT_PROPERTY: {text:'Product Property',typeID:2},
-    DELIVERY_PERIOD: {text:'Delivery Period',typeID:4},
-    INCOTERM: {text:'Incoterm',typeID:8},
-    PAYMENT_MEAN: {text:'Payment Mean',typeID:16},
-    DELIVERY_LOCATION: {text:'Delivery Location',typeID:32}
+    ORDERED_QUANTITY: { text: 'Ordered Quantity', typeID: 1 },
+    PRODUCT_PROPERTY: { text: 'Product Property', typeID: 2 },
+    DELIVERY_PERIOD: { text: 'Delivery Period', typeID: 4 },
+    INCOTERM: { text: 'Incoterm', typeID: 8 },
+    PAYMENT_MEAN: { text: 'Payment Mean', typeID: 16 },
+    DELIVERY_LOCATION: { text: 'Delivery Location', typeID: 32 }
 };
 
 export const DISCOUNT_TARGETS = {
@@ -113,21 +129,21 @@ export const DISCOUNT_TARGETS = {
 
 export const DISCOUNT_UNITS = CURRENCIES.concat(['%']);
 
-export const FEDERATION = function () {
+export const FEDERATION = function() {
     let fed = document.getElementsByTagName('html')[0].getAttribute('data-fed');
     if (!myGlobals.config.delegationEnabled || !fed)
-      fed = "OFF";
+        fed = "OFF";
     return fed;
 }
 
-export const FEDERATIONID = function () {
+export const FEDERATIONID = function() {
     return myGlobals.config.federationInstanceId;
 }
 
-export const LANGUAGES:Array<string>  = myGlobals.config.languageSettings.available;
+export const LANGUAGES: Array<string> = myGlobals.config.languageSettings.available;
 
-export const DEFAULT_LANGUAGE = function () {
+export const DEFAULT_LANGUAGE = function() {
     return document.getElementsByTagName('html')[0].getAttribute('lang');
 };
 
-export const FALLBACK_LANGUAGE:string = myGlobals.config.languageSettings.fallback;
+export const FALLBACK_LANGUAGE: string = myGlobals.config.languageSettings.fallback;

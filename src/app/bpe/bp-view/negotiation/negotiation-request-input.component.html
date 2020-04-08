@@ -1,64 +1,62 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <div class="row">
 
     <!-- Edit checkbox -->
     <div class="col-5">
         <!--<input type="checkbox" class="form-check-input" [(ngModel)]="cbModel" [id]="id"-->
-            <!--[disabled]="disabled || cbDisabled">-->
+        <!--[disabled]="disabled || cbDisabled">-->
         <label class="form-check-label" [for]="id"><strong class="font-weight-500">{{label}}:</strong></label>
         <span *ngIf="!!description" title="{{description}}">&#9432;</span>
     </div>
 
     <!-- Text -->
     <div *ngIf="text !== undefined" class="col-7">
-        <input type="text" class="form-control form-control-sm" [(ngModel)]="text"
-            [ngClass]="formControlClass" [disabled]="disabled">
+        <input type="text" class="form-control form-control-sm" [(ngModel)]="text" [ngClass]="formControlClass" [disabled]="disabled">
     </div>
 
     <!-- Options -->
     <div *ngIf="options" class="col-7">
-        <select class="form-control form-control-sm" [(ngModel)]="selected"
-            [ngClass]="formControlClass" [disabled]="disabled">
+        <select class="form-control form-control-sm" [(ngModel)]="selected" [ngClass]="formControlClass" [disabled]="disabled">
             <option *ngFor="let option of options" [value]="option">{{option}}</option>
         </select>
     </div>
 
     <!-- Quantity -->
     <div *ngIf="quantity !== undefined" class="col-4 col-quantity-value">
-        <input type="number" class="form-control form-control-sm"
-               [ngModel]="quantity.value"
-               (ngModelChange)="quantity.value = $event; onQuantityValueChanged()"
-               [ngClass]="formControlClass"
-               [disabled]="disabled"
-               [step]="step"
-               [formControl]="quantityValueFormControl"
-               [ngbTooltip]="validationService.getValidationErrorMessage(quantityValueFormControl)" [placement]="'auto'"  title="">
+        <input type="number" class="form-control form-control-sm" [ngModel]="quantity.value" (ngModelChange)="quantity.value = $event; onQuantityChanged()" [ngClass]="formControlClass" [disabled]="disabled" [step]="step" [formControl]="quantityValueFormControl" [ngbTooltip]="validationService.getValidationErrorMessage(quantityValueFormControl)" [placement]="'auto'" title="">
     </div>
     <div *ngIf="quantity !== undefined && !quantityUnits" class="col-3 col-quantity-unit">
-        <input type="text" class="form-control form-control-sm"
-               [(ngModel)]="quantity.unitCode"
-               [disabled]="disabled || disableQuantityUnit"
-               [formControl]="quantityUnitFormControl">
+        <input type="text" class="form-control form-control-sm" [(ngModel)]="quantity.unitCode" [disabled]="disabled || disableQuantityUnit" [formControl]="quantityUnitFormControl">
     </div>
     <div *ngIf="quantity !== undefined && quantityUnits" class="col-3 col-quantity-unit">
-        <select class="form-control form-control-sm"
-                [ngModel]="quantity.unitCode"
-                (ngModelChange)="quantity.unitCode = $event; onQuantityValueChanged()"
-                [disabled]="disabled || disableQuantityUnit"
-                [formControl]="quantityUnitFormControl">
+        <select class="form-control form-control-sm" [ngModel]="quantity.unitCode" (ngModelChange)="quantity.unitCode = $event; onQuantityChanged()" [disabled]="disabled || disableQuantityUnit" [formControl]="quantityUnitFormControl">
             <option *ngFor="let option of quantityUnits" [value]="option">{{option}}</option>
         </select>
     </div>
 
     <!-- Amount (no unit) -->
     <div *ngIf="amount !== undefined && !amountUnit" class="col-7">
-        <input type="number" class="form-control form-control-sm" [(ngModel)]="amount" 
-            [ngClass]="formControlClass" [disabled]="disabled">
+        <input type="number" class="form-control form-control-sm" [(ngModel)]="amount" [ngClass]="formControlClass" [disabled]="disabled">
     </div>
 
     <!-- Amount (with unit) -->
     <div *ngIf="amount !== undefined && amountUnit" class="col-6 col-quantity-value">
-        <input type="number" class="form-control form-control-sm" [(ngModel)]="amount" 
-            [ngClass]="formControlClass" [disabled]="disabled">
+        <input type="number" class="form-control form-control-sm" [(ngModel)]="amount" [ngClass]="formControlClass" [disabled]="disabled">
     </div>
     <div *ngIf="amount !== undefined && amountUnit" class="col-1 col-quantity-unit">
         {{ amountUnit }}

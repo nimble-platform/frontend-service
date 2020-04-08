@@ -1,3 +1,18 @@
+/*
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
 .status-text {
     width: 17%;
     text-align: center;
@@ -33,7 +48,6 @@
 /**
  * Before the active step
  */
-
 .steps .step:not(:first-child)::before {
     background: #007706;
     content: "";
@@ -69,7 +83,6 @@
 /**
  * The current step
  */
-
 /* General */
 .steps .step.current span::before {
     background: #ffffff;
@@ -99,8 +112,8 @@
 /* Action to take */
 .steps .step.current.action_required span::before {
     border: 0.1rem solid #d30000;
-
 }
+
 .steps .step.current.action_required span {
     color: #d30000;
 }
@@ -108,8 +121,8 @@
 /* Waiting for reply */
 .steps .step.current.waiting span::before {
     border: 0.1rem solid #c48601;
-
 }
+
 .steps .step.current.waiting span {
     color: #c48601;
 }
@@ -117,8 +130,8 @@
 /* Reply sent/received */
 .steps .step.current.done span::before {
     border: 0.1rem solid #007706;
-
 }
+
 .steps .step.current.done span {
     color: #007706;
 }
@@ -126,8 +139,8 @@
 /* Cancelled */
 .steps .step.current.cancelled span::before {
     border: 0.1rem solid #363636;
-
 }
+
 .steps .step.current.cancelled span {
     color: #363636;
 }
@@ -135,17 +148,16 @@
 /**
  * After the active step
  */
-
-.steps .step.current ~ .step::before {
+.steps .step.current~.step::before {
     background: #b3b3b3;
 }
 
-.steps .step.current ~ .step span::before {
+.steps .step.current~.step span::before {
     background: #b3b3b3;
     border: 0.1rem solid #ffffff;
 }
 
-.steps .step.current ~ .step span {
+.steps .step.current~.step span {
     color: #b3b3b3;
 }
 

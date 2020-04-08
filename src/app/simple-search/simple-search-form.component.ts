@@ -1,29 +1,45 @@
+/*
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   In collaboration with
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 import { Component, OnInit } from '@angular/core';
 import { Search } from './model/search';
 import { SimpleSearchService } from './simple-search.service';
-import { Router, ActivatedRoute} from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import * as myGlobals from '../globals';
-import {SearchContextService} from "./search-context.service";
+import { SearchContextService } from "./search-context.service";
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import {copy, isSearchResultLogisticsService, roundToTwoDecimals, selectNameFromLabelObject} from '../common/utils';
+import { copy, roundToTwoDecimals, selectNameFromLabelObject } from '../common/utils';
 import { CallStatus } from '../common/call-status';
 import { CURRENCIES } from "../catalogue/model/constants";
 import { CategoryService } from '../catalogue/category/category.service';
 import { Category } from '../catalogue/model/category/category';
-import { DEFAULT_LANGUAGE} from '../catalogue/model/constants';
-import {CatalogueService} from "../catalogue/catalogue.service";
-import {PublishService} from "../catalogue/publish-and-aip.service";
-import {ShoppingCartDataService} from '../bpe/shopping-cart/shopping-cart-data-service';
-import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
-import {product_base_quantity, product_base_quantity_unit} from '../common/constants';
-import {TranslateService} from '@ngx-translate/core';
+import { DEFAULT_LANGUAGE } from '../catalogue/model/constants';
+import { CatalogueService } from "../catalogue/catalogue.service";
+import { PublishService } from "../catalogue/publish-and-aip.service";
+import { ShoppingCartDataService } from '../bpe/shopping-cart/shopping-cart-data-service';
+import { UBLModelUtils } from '../catalogue/model/ubl-model-utils';
+import { product_base_quantity, product_base_quantity_unit } from '../common/constants';
+import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from '../app.component';
 
 @Component({
-	selector: 'simple-search-form',
-	templateUrl: './simple-search-form.component.html',
-	styleUrls: ['./simple-search-form.component.css']
+    selector: 'simple-search-form',
+    templateUrl: './simple-search-form.component.html',
+    styleUrls: ['./simple-search-form.component.css']
 })
 
 export class SimpleSearchFormComponent implements OnInit {
@@ -85,7 +101,6 @@ export class SimpleSearchFormComponent implements OnInit {
     searchCallStatus: CallStatus = new CallStatus();
     searchDone = false;
     callback = false;
-    showOther = false;
     size = 0;
     page = 1;
     rows = 12;
@@ -97,10 +112,7 @@ export class SimpleSearchFormComponent implements OnInit {
     catID = "";
     cat_level = -1;
     cat_levels = [];
-    cat_other = [];
-    cat_other_count = 0;
     cat_loading = true;
-    suggestions = [];
     searchContext = null;
     model = new Search('');
     objToSubmit = new Search('');
@@ -111,11 +123,7 @@ export class SimpleSearchFormComponent implements OnInit {
     imageMap: any = {}; // keeps the images if exists for the search results
     // check whether 'p' query parameter exists or not
     noP = true;
-
     maxFacets = 5;
-
-    //manufacturer.legalName : {id,count}
-    //manufacturerIdCountMap : { [indx : string], string};
     manufacturerIdCountMap: any;
 
     imgEndpoint = myGlobals.user_mgmt_endpoint + "/company-settings/image/";
@@ -126,33 +134,30 @@ export class SimpleSearchFormComponent implements OnInit {
     // used to get labels of the ubl properties
     ublProperties = null;
 
-    partyNamesList: any;
-
     pageRef = ''; // page where the user is navigated from. empty string ('') means the search is opened directly
 
     productsSelectedForPublish: any[] = []; // keeps the products in the Solr format
 
-    isSearchResultLogisticsService=isSearchResultLogisticsService;
-
-		ngUnsubscribe: Subject<void> = new Subject<void>();
-		private translations:any;
+    ngUnsubscribe: Subject<void> = new Subject<void>();
+    private translations: any;
 
     constructor(private simpleSearchService: SimpleSearchService,
-                private searchContextService: SearchContextService,
-                private categoryService: CategoryService,
-                private catalogueService: CatalogueService,
-                private publishService: PublishService,
-                private shoppingCartDataService: ShoppingCartDataService,
-                private translateService: TranslateService,
-								private appComponent: AppComponent,
-                public route: ActivatedRoute,
-                public router: Router) {
+        private searchContextService: SearchContextService,
+        private categoryService: CategoryService,
+        private catalogueService: CatalogueService,
+        private publishService: PublishService,
+        public shoppingCartDataService: ShoppingCartDataService,
+        private translateService: TranslateService,
+        private appComponent: AppComponent,
+        public route: ActivatedRoute,
+        public router: Router) {
     }
 
     ngOnInit(): void {
-				this.appComponent.translate.get(['Other']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
-						this.translations = res;
-				});
+        this.appComponent.translate.get(['Other']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
+            this.translations = res;
+        });
+
         this.route.queryParams.subscribe(params => {
             let q = params['q'];
             let fq = params['fq'];
@@ -219,7 +224,7 @@ export class SimpleSearchFormComponent implements OnInit {
             if (pageRef) {
                 this.pageRef = pageRef;
             }
-            this.searchContext = searchContext ? true: false;
+            this.searchContext = searchContext ? true : false;
             if (q && sTop) {
                 if (sTop == "prod")
                     this.getCall(q, fq, p, rows, sort, cat, catID, sIdx, sTop);
@@ -256,7 +261,7 @@ export class SimpleSearchFormComponent implements OnInit {
         });
 
         // populate shoppingCartCallStatuses
-        for(let i = 0; i < this.rows; i++) {
+        for (let i = 0; i < this.rows; i++) {
             this.shoppingCartCallStatuses.push(new CallStatus());
         }
     }
@@ -448,9 +453,9 @@ export class SimpleSearchFormComponent implements OnInit {
     }
 
     private constructCategoryTree(indexCategories: any[],
-                                  categoryDisplayInfo: any,
-                                  taxonomy: string,
-                                  taxonomyPrefix: string) {
+        categoryDisplayInfo: any,
+        taxonomy: string,
+        taxonomyPrefix: string) {
         if (this.cat_level === -1) {
             // get root categories
             let rootCategories: any[] = [];
@@ -476,7 +481,7 @@ export class SimpleSearchFormComponent implements OnInit {
 
                 let parentsAndChildren: string[] =
                     ((selectedIndexCategory.allChildren != null || selectedIndexCategory.allChildren !== []) ? selectedIndexCategory.allChildren : [])
-                    .concat((selectedIndexCategory.allParents != null || selectedIndexCategory.allParents !== []) ? selectedIndexCategory.allParents : []);
+                        .concat((selectedIndexCategory.allParents != null || selectedIndexCategory.allParents !== []) ? selectedIndexCategory.allParents : []);
                 let catLevel = indexCategory.allParents != null ? indexCategory.allParents.length : 0;
                 if (indexCategory.uri !== selectedIndexCategory.uri && // include the taxonomy itself no matter what
                     // do not include the category if it is not include in the hierarchy of the selected category
@@ -516,12 +521,12 @@ export class SimpleSearchFormComponent implements OnInit {
 
     private sortCatLevels() {
         for (var i = 0; i < this.cat_levels.length; i++) {
-            this.cat_levels[i].sort(function (a, b) {
+            this.cat_levels[i].sort(function(a, b) {
                 var a_c: string = a.name;
                 var b_c: string = b.name;
                 return a_c.localeCompare(b_c);
             });
-            this.cat_levels[i].sort(function (a, b) {
+            this.cat_levels[i].sort(function(a, b) {
                 return b.count - a.count;
             });
         }
@@ -612,86 +617,86 @@ export class SimpleSearchFormComponent implements OnInit {
         this.searchTopic = sTop;
         this.searchCallStatus.submit();
         this.simpleSearchService.getFields()
-        .then(res => {
-            let fieldLabels: string [] = this.getFieldNames(res);
-            this.simpleSearchService.get(q, Object.keys(fieldLabels), fq, p, rows, sort, cat, catID, this.searchIndex)
             .then(res => {
-                if (res.result.length == 0) {
-                    this.cat_loading = false;
-                    this.callback = true;
-                    this.searchCallStatus.callback("Search done.", true);
-                    this.response = res.result;
-                    this.size = res.totalElements;
-                    this.page = p;
-                    this.start = this.page * this.rows - this.rows + 1;
-                    this.end = this.start + res.result.length - 1;
-                    this.displayShoppingCartMessages();
-                }
-                else {
-                    this.simpleSearchService.getUblProperties(Object.keys(fieldLabels)).then(response => {
-                        this.facetObj = [];
-                        this.temp = [];
-                        this.manufacturerIdCountMap = new Map();
-
-                        for (let facet in res.facets) {
-                            if (facet == this.product_cat_mix) {
-                                this.buildCatTree(res.facets[this.product_cat_mix].entry);
-                                this.handleFacets(fieldLabels, res, p, response.result);
-                                break;
-                            }
+                let fieldLabels: string[] = this.getFieldNames(res);
+                this.simpleSearchService.get(q, Object.keys(fieldLabels), fq, p, rows, sort, cat, catID, this.searchIndex)
+                    .then(res => {
+                        if (res.result.length == 0) {
+                            this.cat_loading = false;
+                            this.callback = true;
+                            this.searchCallStatus.callback("Search done.", true);
+                            this.response = res.result;
+                            this.size = res.totalElements;
+                            this.page = p;
+                            this.start = this.page * this.rows - this.rows + 1;
+                            this.end = this.start + res.result.length - 1;
+                            this.displayShoppingCartMessages();
                         }
+                        else {
+                            this.simpleSearchService.getUblProperties(Object.keys(fieldLabels)).then(response => {
+                                this.facetObj = [];
+                                this.temp = [];
+                                this.manufacturerIdCountMap = new Map();
 
-                        for (let facet in res.facets) {
-                            if (facet == this.item_manufacturer_id) {
-                                let facetEntries = res.facets[this.item_manufacturer_id].entry;
-                                for (let manufacturerEntry of facetEntries) {
-                                    this.manufacturerIdCountMap.set(manufacturerEntry.label, manufacturerEntry.count);
-                                }
-                                //getting the manufacturer ids list
-                                let manufacturerIds = Array.from(this.manufacturerIdCountMap.keys());
-                                this.getCompanyNameFromIds(manufacturerIds).then((res1) => {
-                                    this.handleCompanyFacets(res1, "manufacturer.", this.manufacturerIdCountMap);
-                                    //this.cat_loading = false;
-                                    this.callback = true;
-                                    this.searchCallStatus.callback("Search done.", true);
-
-                                    this.temp = res.result;
-                                    for (let doc in this.temp) {
-                                        if (this.temp[doc][this.product_img]) {
-                                            var img = this.temp[doc][this.product_img];
-                                            if (Array.isArray(img)) {
-                                                this.temp[doc][this.product_img] = img[0];
-                                            }
-                                        }
+                                for (let facet in res.facets) {
+                                    if (facet == this.product_cat_mix) {
+                                        this.buildCatTree(res.facets[this.product_cat_mix].entry);
+                                        this.handleFacets(fieldLabels, res, p, response.result);
+                                        break;
                                     }
+                                }
 
-                                    this.response = copy(this.temp);
-                                    this.size = res.totalElements;
-                                    this.page = p;
-                                    this.start = this.page * this.rows - this.rows + 1;
-                                    this.end = this.start + res.result.length - 1;
-                                    this.displayShoppingCartMessages()
-                                }).catch((error) => {
-                                    this.searchCallStatus.error("Error while creating Vendor filters in the search.", error);
-                                });
-                                break;
-                            }
+                                for (let facet in res.facets) {
+                                    if (facet == this.item_manufacturer_id) {
+                                        let facetEntries = res.facets[this.item_manufacturer_id].entry;
+                                        for (let manufacturerEntry of facetEntries) {
+                                            this.manufacturerIdCountMap.set(manufacturerEntry.label, manufacturerEntry.count);
+                                        }
+                                        //getting the manufacturer ids list
+                                        let manufacturerIds = Array.from(this.manufacturerIdCountMap.keys());
+                                        this.getCompanyNameFromIds(manufacturerIds).then((res1) => {
+                                            this.handleCompanyFacets(res1, "manufacturer.", this.manufacturerIdCountMap);
+                                            //this.cat_loading = false;
+                                            this.callback = true;
+                                            this.searchCallStatus.callback("Search done.", true);
+
+                                            this.temp = res.result;
+                                            for (let doc in this.temp) {
+                                                if (this.temp[doc][this.product_img]) {
+                                                    var img = this.temp[doc][this.product_img];
+                                                    if (Array.isArray(img)) {
+                                                        this.temp[doc][this.product_img] = img[0];
+                                                    }
+                                                }
+                                            }
+
+                                            this.response = copy(this.temp);
+                                            this.size = res.totalElements;
+                                            this.page = p;
+                                            this.start = this.page * this.rows - this.rows + 1;
+                                            this.end = this.start + res.result.length - 1;
+                                            this.displayShoppingCartMessages()
+                                        }).catch((error) => {
+                                            this.searchCallStatus.error("Error while creating Vendor filters in the search.", error);
+                                        });
+                                        break;
+                                    }
+                                }
+
+                            }).catch(error => {
+                                this.searchCallStatus.error("Error while running search.", error);
+                            })
+                            this.fetchImages(res.result, this.product_img);
                         }
 
-                    }).catch(error => {
-                        this.searchCallStatus.error("Error while running search.", error);
                     })
-                    this.fetchImages(res.result, this.product_img);
-                }
-
+                    .catch(error => {
+                        this.searchCallStatus.error("Error while running search.", error);
+                    });
             })
             .catch(error => {
                 this.searchCallStatus.error("Error while running search.", error);
             });
-        })
-        .catch(error => {
-            this.searchCallStatus.error("Error while running search.", error);
-        });
     }
 
     private getCompCall(q: string, fq: any, p: number, rows: number, sort: string, sTop: string) {
@@ -709,56 +714,56 @@ export class SimpleSearchFormComponent implements OnInit {
         this.searchTopic = sTop;
         this.searchCallStatus.submit();
         this.simpleSearchService.getCompFields()
-        .then(res => {
-            let fieldLabels: string [] = this.getFieldNames(res);
-            this.simpleSearchService.getComp(q, Object.keys(fieldLabels), fq, p, rows, sort)
             .then(res => {
-                if (res.result.length == 0) {
-                    this.cat_loading = false;
-                    this.callback = true;
-                    this.searchCallStatus.callback("Company search done.", true);
-                    this.response = res.result;
-                    this.size = res.totalElements;
-                    this.page = p;
-                    this.start = this.page * this.rows - this.rows + 1;
-                    this.end = this.start + res.result.length - 1;
-                }
-                else {
-                    this.simpleSearchService.getUblProperties(Object.keys(fieldLabels)).then(response => {
-                        this.facetObj = [];
-                        this.temp = [];
-                        this.handleFacets(fieldLabels, res, p, response.result);
-                        this.callback = true;
-                        this.searchCallStatus.callback("Company search done.", true);
+                let fieldLabels: string[] = this.getFieldNames(res);
+                this.simpleSearchService.getComp(q, Object.keys(fieldLabels), fq, p, rows, sort)
+                    .then(res => {
+                        if (res.result.length == 0) {
+                            this.cat_loading = false;
+                            this.callback = true;
+                            this.searchCallStatus.callback("Company search done.", true);
+                            this.response = res.result;
+                            this.size = res.totalElements;
+                            this.page = p;
+                            this.start = this.page * this.rows - this.rows + 1;
+                            this.end = this.start + res.result.length - 1;
+                        }
+                        else {
+                            this.simpleSearchService.getUblProperties(Object.keys(fieldLabels)).then(response => {
+                                this.facetObj = [];
+                                this.temp = [];
+                                this.handleFacets(fieldLabels, res, p, response.result);
+                                this.callback = true;
+                                this.searchCallStatus.callback("Company search done.", true);
 
-                        this.temp = res.result;
-                        for (let doc in this.temp) {
-                            if (this.temp[doc][this.product_vendor_img]) {
-                                var img = this.temp[doc][this.product_vendor_img];
-                                if (Array.isArray(img)) {
-                                    this.temp[doc][this.product_vendor_img] = img[0];
+                                this.temp = res.result;
+                                for (let doc in this.temp) {
+                                    if (this.temp[doc][this.product_vendor_img]) {
+                                        var img = this.temp[doc][this.product_vendor_img];
+                                        if (Array.isArray(img)) {
+                                            this.temp[doc][this.product_vendor_img] = img[0];
+                                        }
+                                    }
                                 }
-                            }
+
+                                this.response = copy(this.temp);
+                                this.size = res.totalElements;
+                                this.page = p;
+                                this.start = this.page * this.rows - this.rows + 1;
+                                this.end = this.start + res.result.length - 1;
+                            }).catch(error => {
+                                this.searchCallStatus.error("Error while running company search.", error);
+                            })
                         }
 
-                        this.response = copy(this.temp);
-                        this.size = res.totalElements;
-                        this.page = p;
-                        this.start = this.page * this.rows - this.rows + 1;
-                        this.end = this.start + res.result.length - 1;
-                    }).catch(error => {
-                        this.searchCallStatus.error("Error while running company search.", error);
                     })
-                }
-
+                    .catch(error => {
+                        this.searchCallStatus.error("Error while running company search.", error);
+                    });
             })
             .catch(error => {
                 this.searchCallStatus.error("Error while running company search.", error);
             });
-        })
-        .catch(error => {
-            this.searchCallStatus.error("Error while running company search.", error);
-        });
     }
 
     fetchImages(searchResults: any[], field): void {
@@ -816,6 +821,10 @@ export class SimpleSearchFormComponent implements OnInit {
                 let genName = name;
                 if (genName.indexOf(DEFAULT_LANGUAGE() + "_") != -1)
                     genName = genName.replace(DEFAULT_LANGUAGE() + "_", "");
+                else if (genName.indexOf("{NULL}_") != -1)
+                    genName = genName.replace("{NULL}_", "");
+                else if (genName.indexOf(prefix + "_") == 0)
+                    genName = genName.replace("_", "");
 
                 let total = 0;
                 let selected = false;
@@ -844,12 +853,12 @@ export class SimpleSearchFormComponent implements OnInit {
                     }
                 }
 
-                options.sort(function (a, b) {
+                options.sort(function(a, b) {
                     var a_c = a.name;
                     var b_c = b.name;
                     return a_c.localeCompare(b_c);
                 });
-                options.sort(function (a, b) {
+                options.sort(function(a, b) {
                     return b.count - a.count;
                 });
                 if (total == 0)
@@ -880,6 +889,10 @@ export class SimpleSearchFormComponent implements OnInit {
                 let genName = facet;
                 if (genName.indexOf(DEFAULT_LANGUAGE() + "_") != -1)
                     genName = genName.replace(DEFAULT_LANGUAGE() + "_", "");
+                else if (genName.indexOf("{NULL}_") != -1)
+                    genName = genName.replace("{NULL}_", "");
+                else if (genName.indexOf("_") == 0)
+                    genName = genName.replace("_", "");
 
                 this.facetObj.push({
                     "name": facet,
@@ -942,24 +955,24 @@ export class SimpleSearchFormComponent implements OnInit {
                     }
                 }
 
-                this.facetObj[index].options.sort(function (a, b) {
+                this.facetObj[index].options.sort(function(a, b) {
                     var a_c = a.name;
                     var b_c = b.name;
                     return a_c.localeCompare(b_c);
                 });
-                this.facetObj[index].options.sort(function (a, b) {
+                this.facetObj[index].options.sort(function(a, b) {
                     return b.count - a.count;
                 });
                 index++;
-                this.facetObj.sort(function (a, b) {
+                this.facetObj.sort(function(a, b) {
                     var a_c = a.name;
                     var b_c = b.name;
                     return a_c.localeCompare(b_c);
                 });
-                this.facetObj.sort(function (a, b) {
+                this.facetObj.sort(function(a, b) {
                     return b.total - a.total;
                 });
-                this.facetObj.sort(function (a, b) {
+                this.facetObj.sort(function(a, b) {
                     var ret = 0;
                     if (a.selected && !b.selected)
                         ret = -1;
@@ -982,6 +995,8 @@ export class SimpleSearchFormComponent implements OnInit {
     }
 
     onSubmit() {
+        if (this.model.q == "")
+            this.model.q = "*";
         this.objToSubmit = copy(this.model);
         this.page = 1;
         this.get(this.objToSubmit);
@@ -1312,6 +1327,13 @@ export class SimpleSearchFormComponent implements OnInit {
         var name = facet.split(":")[0];
         if (name.indexOf(DEFAULT_LANGUAGE() + "_") != -1)
             name = name.replace(DEFAULT_LANGUAGE() + "_", "");
+        else if (name.indexOf("{NULL}_") != -1) {
+            name = name.replace("{NULL}_", "");
+        }
+        else if (name.indexOf("_") == 0)
+            name = name.replace("_", "");
+        else if (name.indexOf("._") != -1)
+            name = name.replace("._", ".");
         name = this.getFacetName(name);
         return name;
     }
@@ -1424,6 +1446,12 @@ export class SimpleSearchFormComponent implements OnInit {
         this.get(this.objToSubmit);
     }
 
+    resetSearch() {
+        this.model.q = '*';
+        this.objToSubmit.q = '*';
+        this.get(this.objToSubmit);
+    }
+
     checkFacet(outer: string, inner: string): boolean {
         var match = false;
         var fq = outer + ":\"" + inner + "\"";
@@ -1495,13 +1523,14 @@ export class SimpleSearchFormComponent implements OnInit {
 
     redirectToRating(event: any, result: any) {
         event.preventDefault();
-        this.router.navigate(['product-details'], {queryParams: {catalogueId: result.catalogueId, id: result.manufactuerItemId, tabToOpen: "rating"}});
+        this.router.navigate(['product-details'], { queryParams: { catalogueId: result.catalogueId, id: result.manufactuerItemId, tabToOpen: "rating" } });
     }
 
     getCompanyNameFromIds(idList: any[]): Promise<any> {
         let facets = this.party_facet_field_list.slice();
         for (let i = 0; i < facets.length; i++) {
             facets[i] = facets[i].replace("{LANG}_", (DEFAULT_LANGUAGE() + "_"));
+            facets[i] = facets[i].replace("{NULL}_", "_");
         }
         let query = "";
         let length = idList.length;
@@ -1530,10 +1559,10 @@ export class SimpleSearchFormComponent implements OnInit {
     getCompLink(res: any): string {
         let link = "";
         if (res && res.id) {
-						if (!res.isFromLocalInstance && res.nimbleInstanceName && res.nimbleInstanceName != '')
-            	link += "#/user-mgmt/company-details?id=" + res.id + "&delegateId="+res.nimbleInstanceName;
-						else
-							link += "#/user-mgmt/company-details?id=" + res.id;
+            if (!res.isFromLocalInstance && res.nimbleInstanceName && res.nimbleInstanceName != '')
+                link += "#/user-mgmt/company-details?id=" + res.id + "&delegateId=" + res.nimbleInstanceName;
+            else
+                link += "#/user-mgmt/company-details?id=" + res.id;
         }
         return link;
     }
@@ -1563,12 +1592,12 @@ export class SimpleSearchFormComponent implements OnInit {
 
     onContinuePublishing(): void {
         this.publishService.selectedProductsInSearch = this.productsSelectedForPublish.map(product => {
-            return {hjid: product.uri, label: product.label};
+            return { hjid: product.uri, label: product.label };
         });
-        this.router.navigate(['catalogue/publish'], {queryParams: {pg: 'single', productType: 'product', searchRef: 'true'}});
+        this.router.navigate(['catalogue/publish'], { queryParams: { pg: 'single', productType: 'product', searchRef: 'true' } });
     }
 
-    onAddToCart(result: any,index:number, event: any): void {
+    onAddToCart(result: any, index: number, event: any): void {
         event.preventDefault();
         // check whether the item can be added to the cart
         let isProductAddable: boolean = this.shoppingCartDataService.isProductAddableToCart(result.catalogueId, result.manufactuerItemId);
@@ -1577,8 +1606,8 @@ export class SimpleSearchFormComponent implements OnInit {
         }
 
         // do not add item to the cart if a process is still being added
-        for(let shoppingCartCallStatus of this.shoppingCartCallStatuses){
-            if(shoppingCartCallStatus.isLoading()){
+        for (let shoppingCartCallStatus of this.shoppingCartCallStatuses) {
+            if (shoppingCartCallStatus.isLoading()) {
                 return;
             }
         }
@@ -1586,7 +1615,7 @@ export class SimpleSearchFormComponent implements OnInit {
         let shoppingCartCallStatus = this.getShoppingCartStatus(index);
         shoppingCartCallStatus.submit();
 
-        this.shoppingCartDataService.addItemToCart(result.uri,1,result.nimbleInstanceName).then(catalogue => {
+        this.shoppingCartDataService.addItemToCart(result.uri, 1, result.nimbleInstanceName).then(catalogue => {
             shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
         }).catch(() => {
             shoppingCartCallStatus.error(null);
@@ -1598,7 +1627,7 @@ export class SimpleSearchFormComponent implements OnInit {
     }
 
     // display a message for the products included in the shopping cart
-    displayShoppingCartMessages(){
+    displayShoppingCartMessages() {
         this.shoppingCartDataService.getShoppingCart().then(shoppingCart => {
             // reset all call statuses
             for (let callStatus of this.shoppingCartCallStatuses) {

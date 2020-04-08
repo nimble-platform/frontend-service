@@ -1,13 +1,35 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <ng-container *ngIf="receiptAdvice">
 
     <div class="row title-row">
-        <div class="col-6"><h4><span [innerHTML]="'Dispatch Advice' | translate"></span></h4></div>
-        <div class="col-6"><h4><span [innerHTML]="'Receipt Advice' | translate"></span></h4></div>
+        <div class="col-6">
+            <h4><span [innerHTML]="'Dispatch Advice' | translate"></span></h4>
+        </div>
+        <div class="col-6">
+            <h4><span [innerHTML]="'Receipt Advice' | translate"></span></h4>
+        </div>
     </div>
 
     <div class="content-row bg-light">
         <div class="row">
-            <div class="col-6"><h5><span>Dispatched Quantities</span></h5></div>
+            <div class="col-6">
+                <h5><span>Dispatched Quantities</span></h5>
+            </div>
         </div>
         <div *ngFor="let dispatchAdviceLine of dispatchAdvice.despatchLine;let i=index" class="row">
             <div class="col-2">
@@ -19,13 +41,11 @@
 
             <div class="col-6">
                 <!-- Rejected Quantity -->
-                <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
-                                label="Rejected Quantity" [quantity]="receiptAdvice.receiptLine[i].rejectedQuantity">
+                <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true" label="Rejected Quantity" [quantity]="receiptAdvice.receiptLine[i].rejectedQuantity">
                 </quantity-input>
             </div>
         </div>
     </div>
-
 
     <div class="row content-row">
         <div class="col-6">
@@ -35,30 +55,19 @@
         </div>
         <div class="col-6">
             <!-- Reject Reason -->
-            <text-input label="Reject Reason" [disabled]="isLoading() || isReadOnly()" 
-                [(text)]="receiptAdvice.receiptLine[0].rejectReason[0]" rows="6">
+            <text-input label="Reject Reason" [disabled]="isLoading() || isReadOnly()" [(text)]="receiptAdvice.receiptLine[0].rejectReason[0]" rows="6">
             </text-input>
         </div>
     </div>
-
 
     <!-- Notes -->
     <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
     <div class="row content-row bg-light">
         <div class="col-6">
-            <note-file-view [notes]="dispatchAdvice.note"
-                       [documents]="dispatchAdvice.additionalDocumentReference"
-                       [firstCol]="'col-4'"
-                       [lastCol]="'col-8'"
-                       [label]="'Supplier\'s Note'"></note-file-view>
+            <note-file-view [notes]="dispatchAdvice.note" [documents]="dispatchAdvice.additionalDocumentReference" [firstCol]="'col-4'" [lastCol]="'col-8'" [label]="'Supplier\'s Note'"></note-file-view>
         </div>
         <div class="col-6">
-            <note-file-view [notes]="receiptAdvice.note"
-                       [documents]="receiptAdvice.additionalDocumentReference"
-                       [firstCol]="'col-4'"
-                       [lastCol]="'col-8'"
-                       [readonly]="isLoading() || isReadOnly()"
-                       [label]="'Customer\'s Note'"></note-file-view>
+            <note-file-view [notes]="receiptAdvice.note" [documents]="receiptAdvice.additionalDocumentReference" [firstCol]="'col-4'" [lastCol]="'col-8'" [readonly]="isLoading() || isReadOnly()" [label]="'Customer\'s Note'"></note-file-view>
         </div>
     </div>
 
@@ -66,19 +75,23 @@
 
     <!-- Actions -->
     <div class="d-flex justify-content-end actions-row" *ngIf="userRole === 'buyer'">
-        <div class="col-8 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-8 call-status-col">
+            <call-status [callStatus]="callStatus"></call-status>
+        </div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div *ngIf="!isReadOnly()" class="col-2">
-            <button class="btn btn-primary action" [disabled]="isLoading() || isReadOnly() || isThereADeletedProduct()" (click)="onSendReceiptAdvice()">
+            <button class="btn btn-primary action" [disabled]="isLoading() || isReadOnly() || isThereADeletedProduct()" (click)="onSendReceiptAdvice()" singleClick>
                 <span [innerHTML]="'Send Advice' | translate"></span>
             </button>
         </div>
     </div>
 
     <div class="row actions-row" *ngIf="userRole === 'seller'">
-        <div class="col-7 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-7 call-status-col">
+            <call-status [callStatus]="callStatus"></call-status>
+        </div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>

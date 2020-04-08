@@ -54,7 +54,6 @@ export class TnTFormComponent {
             })
             .catch(error => {
                 if (error.status === 404) {
-                    // console.log(error);
                     this.falsecode = error._body;
                 }
                 this.error_detc = true;
@@ -65,23 +64,24 @@ export class TnTFormComponent {
         this.falsecode = '';
         this.bpInfo = [];
         this.trackingInfo = [];
+        this.verified = false;
     }
 
-    getTableInfo(code, data) {
-                this.trackingInfo = data.map(el => {
-                    let _out = {
-                        'epc': code,
-                        'eventTime': el.eventTime.$date,
-                        'bizStep': el.bizStep.split(':').pop(),
-                        'action': el.action,
-                        'readPoint': el.readPoint.id.split(':').pop(),
-                    };
-                    if ('bizLocation' in el) {
-                        _out['bizLocation'] = el.bizLocation.id.split(':').pop();
-                        return _out;
-                    }
-                    return _out;
-                });
+    getTableInfo(code: string, data: any) {
+        this.trackingInfo = data.map((el: any) => {
+            let _out = {
+                'epc': code,
+                'eventTime': el.eventTime.$date,
+                'bizStep': el.bizStep.split(':').pop(),
+                'action': el.action,
+                'readPoint': el.readPoint.id.split(':').pop(),
+            };
+            if ('bizLocation' in el) {
+                _out['bizLocation'] = el.bizLocation.id.split(':').pop();
+                return _out;
+            }
+            return _out;
+        });
     }
 
     verifyOnBlockchain() {
@@ -90,10 +90,7 @@ export class TnTFormComponent {
                 if (this.debug) {
                     console.log(res);
                 }
-                this.verified = res;
-                this.trackingInfo.forEach(event => {
-                    event['verified'] = this.verified
-                });
+                this.verified = (res === 'true');
             })
             .catch(err => {
                 this.falsecode = err._body;

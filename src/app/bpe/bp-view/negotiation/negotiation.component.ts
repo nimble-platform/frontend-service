@@ -1,23 +1,39 @@
-import {Component, OnInit, OnDestroy, Input} from '@angular/core';
+/*
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { BPDataService } from "../bp-data-service";
 import { CallStatus } from "../../../common/call-status";
-import {ThreadEventMetadata} from "../../../catalogue/model/publish/thread-event-metadata";
-import {DocumentService} from "../document-service";
-import {BpActivityEvent} from "../../../catalogue/model/publish/bp-start-event";
-import {Subscription} from "rxjs/Subscription";
-import {DigitalAgreement} from "../../../catalogue/model/publish/digital-agreement";
-import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
-import {Quotation} from "../../../catalogue/model/publish/quotation";
-import {ActivatedRoute} from "@angular/router";
-import {BPEService} from "../../bpe.service";
-import {CookieService} from "ng2-cookies";
-import {Clause} from "../../../catalogue/model/publish/clause";
-import {frameContractDurationUnitListId} from "../../../common/constants";
-import {RequestForQuotation} from "../../../catalogue/model/publish/request-for-quotation";
-import {Quantity} from "../../../catalogue/model/publish/quantity";
-import {CatalogueLine} from '../../../catalogue/model/publish/catalogue-line';
-import {FEDERATIONID} from '../../../catalogue/model/constants';
-import {copy} from '../../../common/utils';
+import { ThreadEventMetadata } from "../../../catalogue/model/publish/thread-event-metadata";
+import { DocumentService } from "../document-service";
+import { BpActivityEvent } from "../../../catalogue/model/publish/bp-start-event";
+import { Subscription } from "rxjs/Subscription";
+import { DigitalAgreement } from "../../../catalogue/model/publish/digital-agreement";
+import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
+import { Quotation } from "../../../catalogue/model/publish/quotation";
+import { ActivatedRoute } from "@angular/router";
+import { BPEService } from "../../bpe.service";
+import { CookieService } from "ng2-cookies";
+import { Clause } from "../../../catalogue/model/publish/clause";
+import { frameContractDurationUnitListId } from "../../../common/constants";
+import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
+import { Quantity } from "../../../catalogue/model/publish/quantity";
+import { CatalogueLine } from '../../../catalogue/model/publish/catalogue-line';
+import { FEDERATIONID } from '../../../catalogue/model/constants';
+import { copy } from '../../../common/utils';
 
 @Component({
     selector: 'negotiation',
@@ -38,7 +54,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
 
     // rfq document to be passed into the inner negotiation request component
     rfq: RequestForQuotation;
-    frameContracts:any;
+    frameContracts: any;
     frameContractQuotations: Quotation[];
     isFrameContractBeingNegotiatedInThisNegotiation: boolean[];
     lastOfferQuotation: Quotation;
@@ -48,17 +64,17 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     sliderIndex: number = -1;
 
     // whether the item is deleted or not
-    @Input() areCatalogueLinesDeleted:boolean[];
+    @Input() areCatalogueLinesDeleted: boolean[];
     // the product for which the users negotiate
-    @Input() selectedLineIndex:number;
+    @Input() selectedLineIndex: number;
     // whether the process details are viewed for all products in the negotiation
-    @Input() areProcessDetailsViewedForAllProducts:boolean;
+    @Input() areProcessDetailsViewedForAllProducts: boolean;
 
     constructor(public bpDataService: BPDataService,
-                private bpeService: BPEService,
-                private documentService: DocumentService,
-                private cookieService: CookieService,
-                private route: ActivatedRoute) {
+        private bpeService: BPEService,
+        private documentService: DocumentService,
+        private cookieService: CookieService,
+        private route: ActivatedRoute) {
     }
 
     ngOnInit() {
@@ -87,7 +103,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
             }
         });
 
-        if(this.bpDataService.requestForQuotation == null) {
+        if (this.bpDataService.requestForQuotation == null) {
             this.initCallStatus.submit();
             this.bpDataService.initRfq()
                 .then(() => {
@@ -121,7 +137,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     private async initialDefaultTermsAndConditionsAndFrameContract(): Promise<any> {
         let buyerPartyId;
         let buyerFederationId;
-        if(this.bpDataService.bpActivityEvent.userRole === 'buyer') {
+        if (this.bpDataService.bpActivityEvent.userRole === 'buyer') {
             buyerPartyId = this.cookieService.get("company_id");
             buyerFederationId = FEDERATIONID();
         } else {
@@ -134,12 +150,12 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         this.frameContractAndTermsCallStatus.submit();
 
         let productIds = [];
-        for(let rfqLine of this.bpDataService.requestForQuotation.requestForQuotationLine){
+        for (let rfqLine of this.bpDataService.requestForQuotation.requestForQuotationLine) {
             productIds.push(rfqLine.lineItem.item.manufacturersItemIdentification.id);
         }
 
         let termsAndConditionsPromises = [];
-        for(let catalogueLine of this.bpDataService.getCatalogueLines()){
+        for (let catalogueLine of this.bpDataService.getCatalogueLines()) {
             termsAndConditionsPromises.push(this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms && this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms.termOrCondition.length > 0
                 ? this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms.termOrCondition // if the seller company has T&Cs, use them
                 : this.bpeService.getTermsAndConditions( // otherwise, use the default T&Cs
@@ -158,7 +174,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
 
         this.defaultTermsAndConditions = termsAndConditions;
 
-        let frameContracts:any = await this.bpeService.getFrameContract(
+        let frameContracts: any = await this.bpeService.getFrameContract(
             UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLines()[0].goodsItem.item.manufacturerParty),
             buyerPartyId,
             productIds,
@@ -166,12 +182,12 @@ export class NegotiationComponent implements OnInit, OnDestroy {
             this.bpDataService.getCatalogueLines()[0].goodsItem.item.manufacturerParty.federationInstanceID);
 
         this.frameContracts = [];
-        for(let rfqLine of this.bpDataService.requestForQuotation.requestForQuotationLine){
+        for (let rfqLine of this.bpDataService.requestForQuotation.requestForQuotationLine) {
             let frameContractForProduct = null;
-            if(frameContracts){
-                for(let frameContract of frameContracts){
-                    if(rfqLine.lineItem.item.manufacturersItemIdentification.id == frameContract.item.manufacturersItemIdentification.id &&
-                        rfqLine.lineItem.item.catalogueDocumentReference.id == frameContract.item.catalogueDocumentReference.id){
+            if (frameContracts) {
+                for (let frameContract of frameContracts) {
+                    if (rfqLine.lineItem.item.manufacturersItemIdentification.id == frameContract.item.manufacturersItemIdentification.id &&
+                        rfqLine.lineItem.item.catalogueDocumentReference.id == frameContract.item.catalogueDocumentReference.id) {
                         frameContractForProduct = frameContract;
                         break;
                     }
@@ -179,29 +195,29 @@ export class NegotiationComponent implements OnInit, OnDestroy {
             }
             this.frameContracts.push(frameContractForProduct);
         }
-        let frameContractQuotationPromises= [];
-        for(let frameContract of this.frameContracts){
-            if(frameContract == null){
+        let frameContractQuotationPromises = [];
+        for (let frameContract of this.frameContracts) {
+            if (frameContract == null) {
                 frameContractQuotationPromises.push(Promise.resolve(null));
             }
-            else{
+            else {
                 // load the quotation associated to the frame contract
-                frameContractQuotationPromises.push(this.documentService.getCachedDocument(frameContract.quotationReference.id,this.bpDataService.getCatalogueLines()[0].goodsItem.item.manufacturerParty.federationInstanceID));
+                frameContractQuotationPromises.push(this.documentService.getCachedDocument(frameContract.quotationReference.id, this.bpDataService.getCatalogueLines()[0].goodsItem.item.manufacturerParty.federationInstanceID));
             }
         }
 
         this.frameContractQuotations = [];
         let size = frameContractQuotationPromises.length;
-        for(let i = 0; i < size;i++){
-            let frameContract:DigitalAgreement = this.frameContracts[i];
+        for (let i = 0; i < size; i++) {
+            let frameContract: DigitalAgreement = this.frameContracts[i];
             let frameContractQuotationPromise = frameContractQuotationPromises[i];
             let frameContractQuotation = await frameContractQuotationPromise;
-            if(frameContractQuotation != null) {
+            if (frameContractQuotation != null) {
                 // retrieve the corresponding documents for the frame contract and last offer
                 this.frameContractQuotations.push(frameContractQuotation);
                 // this check is required to prevent override the value passed via the route subscription
-                let primaryTermsSourceIndex = this.getPrimaryTermsSourceForProduct(frameContract.item.catalogueDocumentReference.id,frameContract.item.manufacturersItemIdentification.id);
-                if(this.primaryTermsSource[primaryTermsSourceIndex] == null) {
+                let primaryTermsSourceIndex = this.getPrimaryTermsSourceForProduct(frameContract.item.catalogueDocumentReference.id, frameContract.item.manufacturersItemIdentification.id);
+                if (this.primaryTermsSource[primaryTermsSourceIndex] == null) {
                     this.primaryTermsSource[primaryTermsSourceIndex] = 'frame_contract';
                 }
             }
@@ -211,13 +227,13 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         return null;
     }
 
-    private getPrimaryTermsSourceForProduct(catalogueId:string,lineId:string){
+    private getPrimaryTermsSourceForProduct(catalogueId: string, lineId: string) {
         let size = this.bpDataService.getCatalogueLines().length;
-        for(let i=0; i <size;i++){
+        for (let i = 0; i < size; i++) {
             const catalogueUuid = this.bpDataService.getCatalogueLines()[i].goodsItem.item.catalogueDocumentReference.id;
             const catalogueLineId = this.bpDataService.getCatalogueLines()[i].goodsItem.item.manufacturersItemIdentification.id;
 
-            if(catalogueUuid == catalogueId && catalogueLineId == lineId){
+            if (catalogueUuid == catalogueId && catalogueLineId == lineId) {
                 return i;
             }
         }
@@ -229,7 +245,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
 
         let responseDocument: Promise<any> = this.getLastOfferQuotationPromise();
         this.lastOfferQuotation = await responseDocument;
-        if(this.lastOfferQuotation != null) {
+        if (this.lastOfferQuotation != null) {
             this.primaryTermsSource = Array(this.primaryTermsSource.length).fill('last_offer');
         }
 
@@ -240,13 +256,13 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     private getLastOfferQuotationPromise(): Promise<any> {
         let responseDocument: Promise<any> = Promise.resolve(null);
 
-        if(this.isLastStepNegotiation(this.bpDataService.bpActivityEvent)) {
+        if (this.isLastStepNegotiation(this.bpDataService.bpActivityEvent)) {
             let checkIndex = 0;
             // if the process is not new, then the previous step is in the 1st index i.e. [1]
-            if(!this.bpDataService.bpActivityEvent.newProcess) {
+            if (!this.bpDataService.bpActivityEvent.newProcess) {
                 checkIndex = 1;
             }
-            responseDocument = this.documentService.getResponseDocument(this.bpDataService.bpActivityEvent.processHistory[checkIndex].activityVariables,this.bpDataService.bpActivityEvent.processHistory[checkIndex].sellerFederationId);
+            responseDocument = this.documentService.getResponseDocument(this.bpDataService.bpActivityEvent.processHistory[checkIndex].activityVariables, this.bpDataService.bpActivityEvent.processHistory[checkIndex].sellerFederationId);
         }
 
         return responseDocument;
@@ -257,9 +273,9 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         this.negotiationProcessList = [];
 
         let history: ThreadEventMetadata[] = this.bpDataService.bpActivityEvent.processHistory;
-        if(history && history.length > 0) {
-            for(let processMetadata of history) {
-                if(processMetadata.processType == 'Negotiation') {
+        if (history && history.length > 0) {
+            for (let processMetadata of history) {
+                if (processMetadata.processType == 'Negotiation') {
                     this.negotiationProcessList.push(processMetadata);
                 }
             }
@@ -270,17 +286,17 @@ export class NegotiationComponent implements OnInit, OnDestroy {
 
         // if this is a new process, put an empty object
         // just to have a correct number of elements in the negotiationProcessList array
-        if(this.newProcess) {
+        if (this.newProcess) {
             this.negotiationProcessList.push(null);
         }
 
-        this.sliderIndex = this.negotiationProcessList.length-1;
+        this.sliderIndex = this.negotiationProcessList.length - 1;
         this.fetchHistoryDocuments();
     }
 
     private fetchHistoryDocuments(): void {
         // check there are entries in the history
-        if(this.negotiationProcessList.length <= 1) {
+        if (this.negotiationProcessList.length <= 1) {
             return;
         }
 
@@ -288,13 +304,13 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         this.negotiationDocuments = [];
         let documentPromises: Promise<any>[] = [];
         // the documents for the last step is already available via the BpDataService
-        for(let i=0; i < this.negotiationProcessList.length - 1; i++) {
-            documentPromises.push(this.documentService.getInitialDocument(this.negotiationProcessList[i].activityVariables,this.negotiationProcessList[i].sellerFederationId));
-            documentPromises.push(this.documentService.getResponseDocument(this.negotiationProcessList[i].activityVariables,this.negotiationProcessList[i].sellerFederationId));
+        for (let i = 0; i < this.negotiationProcessList.length - 1; i++) {
+            documentPromises.push(this.documentService.getInitialDocument(this.negotiationProcessList[i].activityVariables, this.negotiationProcessList[i].sellerFederationId));
+            documentPromises.push(this.documentService.getResponseDocument(this.negotiationProcessList[i].activityVariables, this.negotiationProcessList[i].sellerFederationId));
         }
 
         Promise.all(documentPromises).then(responseArray => {
-            for(let i=0; i<responseArray.length; i++) {
+            for (let i = 0; i < responseArray.length; i++) {
                 let documents: any = {};
                 documents.request = responseArray[i];
                 i++;
@@ -323,16 +339,16 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     getPrimaryTermsSource(lastOfferQuotation): ('product_defaults' | 'frame_contract' | 'last_offer')[] {
         let termsSources = copy(this.primaryTermsSource);
         let size = termsSources.length;
-        for(let i = 0; i < size;i++){
-            if(termsSources[i] == null) {
-                if(this.frameContracts[i] != null && !this.isFrameContractBeingNegotiatedInThisNegotiation[i]) {
+        for (let i = 0; i < size; i++) {
+            if (termsSources[i] == null) {
+                if (this.frameContracts[i] != null && !this.isFrameContractBeingNegotiatedInThisNegotiation[i]) {
                     termsSources[i] = 'frame_contract';
                 } else {
                     termsSources[i] = 'product_defaults';
                 }
-            } else if(termsSources[i] == 'last_offer' || termsSources[i] == 'frame_contract') {
-                if(lastOfferQuotation == null) {
-                    if(this.frameContracts[i] != null && !this.isFrameContractBeingNegotiatedInThisNegotiation[i]) {
+            } else if (termsSources[i] == 'last_offer' || termsSources[i] == 'frame_contract') {
+                if (lastOfferQuotation == null) {
+                    if (this.frameContracts[i] != null && !this.isFrameContractBeingNegotiatedInThisNegotiation[i]) {
                         termsSources[i] = 'frame_contract';
                     } else {
                         termsSources[i] = 'product_defaults';
@@ -346,9 +362,9 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     // this method is called a few times as soon as various information is fetched
     setFrameContractNegotiationFlag(): void {
         // stores the products (catalogue id, line id pairs) for which the frame contracts are being negotiated
-        let productsFrameContractsBeingNegotiatedFor:any = [];
+        let productsFrameContractsBeingNegotiatedFor: any = [];
         this.isFrameContractBeingNegotiatedInThisNegotiation = [];
-        for(let primaryTermsSource of this.primaryTermsSource){
+        for (let primaryTermsSource of this.primaryTermsSource) {
             this.isFrameContractBeingNegotiatedInThisNegotiation.push(false);
         }
 
@@ -356,37 +372,37 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         // first check the current request for quotation contains a frame contract duration. currently it is assumed that if an rfq contains a frame
         // contract duration, the contract is being negotiated in that history
         let frameContractDuration: Quantity;
-        if(this.bpDataService.requestForQuotation) {
+        if (this.bpDataService.requestForQuotation) {
             requestForQuotation = this.bpDataService.requestForQuotation;
             let size = requestForQuotation.requestForQuotationLine.length;
-            for(let i = 0; i <size;i++){
+            for (let i = 0; i < size; i++) {
                 let catalogueId = requestForQuotation.requestForQuotationLine[i].lineItem.item.catalogueDocumentReference.id;
                 let lineId = requestForQuotation.requestForQuotationLine[i].lineItem.item.manufacturersItemIdentification.id;
                 frameContractDuration = UBLModelUtils.getFrameContractDurationFromRfqLine(requestForQuotation.requestForQuotationLine[i]);
-                if(!UBLModelUtils.isEmptyQuantity(frameContractDuration)) {
+                if (!UBLModelUtils.isEmptyQuantity(frameContractDuration)) {
                     // frame contract is being negotiated for the product
                     let productExists = false;
                     for (let productFrameContractsBeingNegotiatedFor of productsFrameContractsBeingNegotiatedFor) {
-                        if(catalogueId == productFrameContractsBeingNegotiatedFor.catalogueId && lineId == productFrameContractsBeingNegotiatedFor.lineId ){
+                        if (catalogueId == productFrameContractsBeingNegotiatedFor.catalogueId && lineId == productFrameContractsBeingNegotiatedFor.lineId) {
                             productExists = true;
                             break;
                         }
                     }
-                    if(!productExists){
-                        productsFrameContractsBeingNegotiatedFor.push({catalogueId:catalogueId,lineId:lineId});
+                    if (!productExists) {
+                        productsFrameContractsBeingNegotiatedFor.push({ catalogueId: catalogueId, lineId: lineId });
                     }
                 }
             }
         }
 
         // check the negotiation history documents
-        for(let i=0; i<this.negotiationDocuments.length; i=i+2) {
+        for (let i = 0; i < this.negotiationDocuments.length; i = i + 2) {
             let rfq: RequestForQuotation = this.negotiationDocuments[i].request;
-            if(requestForQuotation == null){
+            if (requestForQuotation == null) {
                 requestForQuotation = rfq;
             }
             let size = rfq.requestForQuotationLine.length;
-            for(let i = 0; i <size;i++){
+            for (let i = 0; i < size; i++) {
                 let catalogueId = rfq.requestForQuotationLine[i].lineItem.item.catalogueDocumentReference.id;
                 let lineId = rfq.requestForQuotationLine[i].lineItem.item.manufacturersItemIdentification.id;
                 frameContractDuration = UBLModelUtils.getFrameContractDurationFromRfqLine(rfq.requestForQuotationLine[i]);
@@ -394,24 +410,24 @@ export class NegotiationComponent implements OnInit, OnDestroy {
                     // frame contract is being negotiated for the product
                     let productExists = false;
                     for (let productFrameContractsBeingNegotiatedFor of productsFrameContractsBeingNegotiatedFor) {
-                        if(catalogueId == productFrameContractsBeingNegotiatedFor.catalogueId && lineId == productFrameContractsBeingNegotiatedFor.lineId ){
+                        if (catalogueId == productFrameContractsBeingNegotiatedFor.catalogueId && lineId == productFrameContractsBeingNegotiatedFor.lineId) {
                             productExists = true;
                             break;
                         }
                     }
-                    if(!productExists){
-                        productsFrameContractsBeingNegotiatedFor.push({catalogueId:catalogueId,lineId:lineId});
+                    if (!productExists) {
+                        productsFrameContractsBeingNegotiatedFor.push({ catalogueId: catalogueId, lineId: lineId });
                     }
                 }
             }
         }
         // update this.isFrameContractBeingNegotiatedInThisNegotiation array according to the productsFrameContractsBeingNegotiatedFor array
         let size = requestForQuotation.requestForQuotationLine.length;
-        for(let i = 0; i < size ;i++){
+        for (let i = 0; i < size; i++) {
             let catalogueId = requestForQuotation.requestForQuotationLine[i].lineItem.item.catalogueDocumentReference.id;
             let lineId = requestForQuotation.requestForQuotationLine[i].lineItem.item.manufacturersItemIdentification.id;
             for (let productFrameContractsBeingNegotiatedFor of productsFrameContractsBeingNegotiatedFor) {
-                if(catalogueId == productFrameContractsBeingNegotiatedFor.catalogueId && lineId == productFrameContractsBeingNegotiatedFor.lineId ){
+                if (catalogueId == productFrameContractsBeingNegotiatedFor.catalogueId && lineId == productFrameContractsBeingNegotiatedFor.lineId) {
                     this.isFrameContractBeingNegotiatedInThisNegotiation[i] = true;
                     break;
                 }
@@ -427,18 +443,18 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         let checkIndex = 0;
         // if the event is emitted for an existing process, the history contains entry for that process
         // in such a case, we should check the soonest step which is available in the 1st index
-        if(!bpActivityEvent.newProcess) {
+        if (!bpActivityEvent.newProcess) {
             checkIndex = 1;
         }
 
-        if(bpActivityEvent.processHistory.length > checkIndex &&
+        if (bpActivityEvent.processHistory.length > checkIndex &&
             bpActivityEvent.processHistory[checkIndex].processType == 'Negotiation') {
             return true;
         }
         return false;
     }
 
-    showNegotiationResponse(){
+    showNegotiationResponse() {
         let isCollaborationCancelled = this.bpDataService.bpActivityEvent.processMetadata && this.bpDataService.bpActivityEvent.processMetadata.collaborationStatus == 'CANCELLED';
         let isResponseSent = this.bpDataService.bpActivityEvent.processMetadata && this.bpDataService.bpActivityEvent.processMetadata.processStatus == 'Completed';
         return isResponseSent || (this.bpDataService.quotation && !isCollaborationCancelled);

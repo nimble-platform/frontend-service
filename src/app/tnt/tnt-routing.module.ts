@@ -21,12 +21,12 @@ import { Routes, RouterModule } from '@angular/router';
 import { TnTComponent } from './tnt.component';
 
 const routes: Routes = [
-    {path: '', component: TnTComponent}
+    { path: '', component: TnTComponent }
 ];
 
 @NgModule({
     imports: [RouterModule.forChild(routes)],
-    exports: [ RouterModule ]
+    exports: [RouterModule]
 })
 
-export class TnTRoutingModule {}
+export class TnTRoutingModule { }

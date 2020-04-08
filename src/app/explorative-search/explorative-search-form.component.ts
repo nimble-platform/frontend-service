@@ -32,8 +32,8 @@ import { Component, OnInit } from '@angular/core';
 import { ExplorativeSearchService } from './explorative-search.service';
 import { Explorative } from './model/explorative';
 import { Search } from './model/search';
-import {NgbTabChangeEvent} from '@ng-bootstrap/ng-bootstrap';
-import { CookieService} from 'ng2-cookies';
+import { NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
+import { CookieService } from 'ng2-cookies';
 import { TranslateService } from '@ngx-translate/core';
 
 /**
@@ -50,8 +50,8 @@ export const OUTPUT: Explorative[] = [];
     templateUrl: './explorative-search-form.component.html',
     styleUrls: ['./explorative-search-form.component.css'],
     providers: [
-            ExplorativeSearchService,
-            CookieService
+        ExplorativeSearchService,
+        CookieService
     ]
 })
 
@@ -64,7 +64,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
     public loading_query = false;
     cbInput = true;
     langInput = true;
-    language = 'ENGLISH'; // default search in english
+    language = 'en'; // default search in english
     availableLanguages = {};
     // Use the stored data which might further
     // data visualization
@@ -122,19 +122,19 @@ export class ExplorativeSearchFormComponent implements OnInit {
         // console.log(lang)
         this.loading = true;
         this.expSearch.searchData(inputVal, this.language, this._user_id)
-                .then(res => {
-                    // push the data in to List
-                    // console.log(res);
-                    if (res['conceptOverview'].length !== 0) { // if the keyword does exist..
-                        // only then push
-                        this.Output.push(<Explorative> {kw: inputVal, resp: res});
-                        this._warning_kw = false;
-                    } else { // display warning
-                        this._warning_kw = true;
-                    }
-                    this._error_detected_kw = false;
-                    this.loading = false;
-                })
+            .then(res => {
+                // push the data in to List
+                // console.log(res);
+                if (res['conceptOverview'].length !== 0) { // if the keyword does exist..
+                    // only then push
+                    this.Output.push(<Explorative>{ kw: inputVal, resp: res });
+                    this._warning_kw = false;
+                } else { // display warning
+                    this._warning_kw = true;
+                }
+                this._error_detected_kw = false;
+                this.loading = false;
+            })
             .catch(error => {
                 // console.log(error);
                 this._error_detected_kw = true;
@@ -192,7 +192,8 @@ export class ExplorativeSearchFormComponent implements OnInit {
         }
         // HTTP GET to backend Server for visualization
         // create a JSON request for the queried button
-        let temp = {'concept': inputVal.trim(), 'stepRange': 2, 'frozenConcept': inputVal.trim(),
+        let temp = {
+            'concept': inputVal.trim(), 'stepRange': 2, 'frozenConcept': inputVal.trim(),
             'language': this.language, 'distanceToFrozenConcept': 0,
             'conceptURIPath': [inputVal.trim()],
             'conceptSource': this.conceptSource
@@ -204,7 +205,8 @@ export class ExplorativeSearchFormComponent implements OnInit {
                 // console.log(res);
                 // this.visData = new Array();
                 if (this.activeTabName === 'sqp') {
-                    this.SQPConfig = {'concept': encodeURIComponent(this.conceptURL), 'stepRange': 1, 'language': this.language,
+                    this.SQPConfig = {
+                        'concept': encodeURIComponent(this.conceptURL), 'stepRange': 1, 'language': this.language,
                         frozenConcept: this.conceptName, 'distanceToFrozenConcept': 0, 'conceptURIPath': [],
                         'currenSelections': [],
                         conceptSource: this.conceptSource
@@ -216,7 +218,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
                 // console.log(this.visData);
                 this._error_detected_query = false;
             }
-        )
+            )
             .catch(error => {
                 // console.log(error);
                 this._error_detected_query = true;

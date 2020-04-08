@@ -1,3 +1,19 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <div *ngIf="productWrapper" class="row product-details">
     <div class="col-9">
         <div class="row">
@@ -6,34 +22,26 @@
                 <h1 class="py-2">{{selectPreferredValue(item.name)}}</h1>
             </div>
             <div class="col-xs-auto align-right">
-              <div class="float-right">
-                  <span *ngIf="!findPrefItem(line.hjid)" class="star star-b pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="addFavorites(line)" title="Add To Favorite">
-                    <span class="half" style="width:0%">&#9733;</span>&#9733;
-                  </span>
-                  <span  *ngIf="findPrefItem(line.hjid)"  class="star star-b full pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="removeFavorites(line)" title="Remove From Favorite">
-                    <span class="half" style="width:100%">&#9733;</span>&#9733;
-                  </span>
-              </div>
-              <div class="float-right mr-3 pt-2">
-                  <call-status [callStatus]="addFavoriteCategoryStatus"></call-status>
-              </div>
+                <div class="float-right">
+                    <span *ngIf="!findPrefItem(line.hjid)" class="star star-b pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="addFavorites(line)" title="Add To Favorite">
+                        <span class="half" style="width:0%">&#9733;</span>&#9733;
+                    </span>
+                    <span *ngIf="findPrefItem(line.hjid)" class="star star-b full pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="removeFavorites(line)" title="Remove From Favorite">
+                        <span class="half" style="width:100%">&#9733;</span>&#9733;
+                    </span>
+                </div>
+                <div class="float-right mr-3 pt-2">
+                    <call-status [callStatus]="addFavoriteCategoryStatus"></call-status>
+                </div>
             </div>
         </div>
         <div class="row">
             <div class="col-12">
-              <product-details-overview [wrapper]="productWrapper"
-                                        [itemWithSelectedProps]="itemWithSelectedProperties"
-                                        [associatedProducts]="associatedProducts"
-                                        [showAddToCartButton]="true"
-                                        (compStatus)="setTab($event)"
-                                        (onPropertyValueChange)="onTermsChange(termsSelectBoxValue)">
-              </product-details-overview>
+                <product-details-overview [wrapper]="productWrapper" [itemWithSelectedProps]="itemWithSelectedProperties" [associatedProducts]="associatedProducts" [showAddToCartButton]="true" (compStatus)="setTab($event)" (onPropertyValueChange)="onTermsChange(termsSelectBoxValue)">
+                </product-details-overview>
             </div>
         </div>
-        <product-details-tabs [wrapper]="productWrapper"
-                              [settings]="settings"
-                              [tabToOpen]="tabToOpen"
-                              (tabStatus)="setTab($event)">
+        <product-details-tabs [wrapper]="productWrapper" [settings]="settings" [tabToOpen]="tabToOpen" (tabStatus)="setTab($event)">
         </product-details-tabs>
     </div>
     <div class="col-3">
@@ -139,28 +147,13 @@
                     <span [innerHTML]="'Quantity:' | translate"></span>
                 </label>
                 <span class="order-qty-input">
-                    <input type="number"
-                           (keypress)="onOrderQuantityKeyPressed($event)"
-                           [formControl]="quantityValueFormControl"
-                           [ngModel]="orderQuantity"
-                           (ngModelChange)="onOrderQuantityChange($event)"
-                           class="form-control form-control-sm w-75 px-1"
-                           [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()"
-                           [step]="priceWrapper.itemPrice.price.baseQuantity.value || 1"
-                           [ngbTooltip]="getValidationErrorMessage(quantityValueFormControl)" [placement]="'auto'"  title=""/>
+                    <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [formControl]="quantityValueFormControl" [ngModel]="orderQuantity" (ngModelChange)="onOrderQuantityChange($event)" class="form-control form-control-sm w-75 px-1" [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()" [step]="priceWrapper.itemPrice.price.baseQuantity.value || 1" [ngbTooltip]="getValidationErrorMessage(quantityValueFormControl)" [placement]="'auto'" title="" />
                     <span *ngIf="getQuantityUnit() !== ''" class="ml-2">{{ getQuantityUnit() }}</span>
                 </span>
             </div>
             <div class="inline-order-group">
                 <span class="order-qty-range">
-                    <input type="range"
-                           [ngModel]="orderQuantity"
-                           (ngModelChange)="onOrderQuantityChange($event)"
-                           class="form-control-range"
-                           [min]="getStepRange()"
-                           [max]="getMaximumQuantity()"
-                           [step]="getStepRange()"
-                           [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()"/>
+                    <input type="range" [ngModel]="orderQuantity" (ngModelChange)="onOrderQuantityChange($event)" class="form-control-range" [min]="getStepRange()" [max]="getMaximumQuantity()" [step]="getStepRange()" [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()" />
                 </span>
             </div>
 
@@ -172,7 +165,7 @@
                     <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
                         {{priceWrapper.vatTotalString}}
                     </span>
-                        <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
+                    <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
                         {{frameContractQuotationWrapper.priceWrapper.vatTotalString}}
                     </span>
                 </div>
@@ -182,27 +175,24 @@
                     </label>
                     <div class="inline-order-value">
                         <span *ngIf="termsSelectBoxValue == 'product_defaults'">
-                                {{priceWrapper.calculateTotalDiscount()}} {{priceWrapper.currency}}
-                            </span>
-                        <span class="space-left"
-                              data-toggle="tooltip" data-placement="top"
-                              (click)="openDiscountModal()"
-                              title="Applied Discounts/Charges" style="cursor: pointer">
+                            {{priceWrapper.calculateTotalDiscount()}} {{priceWrapper.currency}}
+                        </span>
+                        <span class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
                             <i class="fa fa-search" aria-hidden="true"></i>
                         </span>
                     </div>
                 </div>
                 <div class="order-group">
-                        <label class="order-label order-price">
-                            <span [innerHTML]="'Total Price:' | translate"></span>
-                        </label>
+                    <label class="order-label order-price">
+                        <span [innerHTML]="'Total Price:' | translate"></span>
+                    </label>
 
-                        <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-price-value">
-                            {{priceWrapper.grossTotalString}}
-                        </span>
-                        <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-price-value">
-                            {{frameContractQuotationWrapper.priceWrapper.grossTotalString}}
-                        </span>
+                    <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-price-value">
+                        {{priceWrapper.grossTotalString}}
+                    </span>
+                    <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-price-value">
+                        {{frameContractQuotationWrapper.priceWrapper.grossTotalString}}
+                    </span>
                 </div>
             </ng-container>
             <ng-container *ngIf="getPricePerItem() === 'On demand'">
@@ -217,10 +207,7 @@
             </ng-container>
 
             <!-- Action Button -->
-            <button *ngIf="companyWorkflowMap.get('Negotiation')"
-                    class="btn btn-primary pt-2 w-100"
-                    (click)="onNegotiate(termsSelectBoxValue)"
-                    [disabled]="!this.appComponent.checkRoles('bp') || !quantityValueFormControl.valid">
+            <button *ngIf="companyWorkflowMap.get('Negotiation')" class="btn btn-primary pt-2 w-100" (click)="onNegotiate(termsSelectBoxValue)" [disabled]="!this.appComponent.checkRoles('bp') || !quantityValueFormControl.valid">
                 {{companyWorkflowMap.get('Order') ? 'Negotiate & Order' : 'Negotiate'}}
             </button>
         </div>
@@ -260,8 +247,7 @@
             </div>
 
             <!-- Action Button -->
-            <button *ngIf="companyWorkflowMap.get('Negotiation')" class="btn btn-primary pt-2 w-100"
-                (click)="onNegotiate(termsSelectBoxValue)" [disabled]="!this.appComponent.checkRoles('bp') || orderQuantity <= 0">
+            <button *ngIf="companyWorkflowMap.get('Negotiation')" class="btn btn-primary pt-2 w-100" (click)="onNegotiate(termsSelectBoxValue)" [disabled]="!this.appComponent.checkRoles('bp') || orderQuantity <= 0">
                 {{companyWorkflowMap.get('Transport_Execution_Plan') && isTransportService ? 'Negotiate & Order' : 'Negotiate' }}
             </button>
 
@@ -283,6 +269,5 @@
 
 <discount-modal></discount-modal>
 
-<call-status [callStatus]="getProductStatus"
-                [large]="true">
+<call-status [callStatus]="getProductStatus" [large]="true">
 </call-status>

@@ -1,39 +1,54 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <ng-template #modal let-c="close" let-d="dismiss">
-        <div class="modal-header">
-            <h5 class="modal-title" id="modal-basic-title">{{ lcpaInputDetail.name.value }}</h5>
-            <button type="button" class="close" aria-label="Close" (click)="d('cross')">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <div class="container-fluid">
-                <div class="row space-before">
-                    <div class="col-3">
-                        <strong><span [innerHTML]="'Name:' | translate"></span></strong>
-                    </div>
-                    <div class="col-9">
-                        <input [(ngModel)]="lcpaInputDetail.name.value" class="form-control" type="text" name="{{lcpaInputDetail.name.value}}" [disabled]="presentationMode === 'view'" />
-                    </div>
+    <div class="modal-header">
+        <h5 class="modal-title" id="modal-basic-title">{{ lcpaInputDetail.name.value }}</h5>
+        <button type="button" class="close" aria-label="Close" (click)="d('cross')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <div class="row space-before">
+                <div class="col-3">
+                    <strong><span [innerHTML]="'Name:' | translate"></span></strong>
                 </div>
-                <options-input label="Data Type" [presentationMode]="presentationMode"
-                               [options]="valueQualifiers" [(selected)]="lcpaInputDetail.valueQualifier" rowClass="space-before">
-                </options-input>
-                <div class="row space-before">
-                    <div class="offset-3 col-9">
-                        <div *ngIf="lcpaInputDetail.valueQualifier === 'QUANTITY'">
-                            <quantity-input [quantity]="lcpaInputDetail.valueQuantity[0]">
-                            </quantity-input>
-                        </div>
-                        <div *ngIf="lcpaInputDetail.valueQualifier === 'STRING'">
-                            <text-input [(text)]="lcpaInputDetail.value[0].value" [rows]="1">
-                            </text-input>
-                        </div>
+                <div class="col-9">
+                    <input [(ngModel)]="lcpaInputDetail.name.value" class="form-control" type="text" name="{{lcpaInputDetail.name.value}}" [disabled]="presentationMode === 'view'" />
+                </div>
+            </div>
+            <options-input label="Data Type" [presentationMode]="presentationMode" [options]="valueQualifiers" [(selected)]="lcpaInputDetail.valueQualifier" rowClass="space-before">
+            </options-input>
+            <div class="row space-before">
+                <div class="offset-3 col-9">
+                    <div *ngIf="lcpaInputDetail.valueQualifier === 'QUANTITY'">
+                        <quantity-input [quantity]="lcpaInputDetail.valueQuantity[0]">
+                        </quantity-input>
+                    </div>
+                    <div *ngIf="lcpaInputDetail.valueQualifier === 'STRING'">
+                        <text-input [(text)]="lcpaInputDetail.value[0].value" [rows]="1">
+                        </text-input>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="d('cancel')"><span [innerHTML]="'Cancel' | translate"></span></button>
-            <button type="button" class="btn btn-primary" (click)="addDetail(c)" [disabled]="lcpaInputDetail.name.value==''"><span [innerHTML]="'OK' | translate"></span></button>
-        </div>
-    </ng-template>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="d('cancel')"><span [innerHTML]="'Cancel' | translate"></span></button>
+        <button type="button" class="btn btn-primary" (click)="addDetail(c)" [disabled]="lcpaInputDetail.name.value==''"><span [innerHTML]="'OK' | translate"></span></button>
+    </div>
+</ng-template>

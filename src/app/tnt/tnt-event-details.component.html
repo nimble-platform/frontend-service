@@ -24,7 +24,7 @@
         <div class="col-md-12 align-center">
             <h4><span [innerHTML]="'Event & IoT Information' | translate"></span></h4>
             <p class="text-secondary">
-                    <span [innerHTML]="'tnt-iot-info' | translate"></span>
+                <span [innerHTML]="'tnt-iot-info' | translate"></span>
             </p>
         </div>
     </div>
@@ -34,10 +34,7 @@
     <ngb-tab>
         <ng-template ngbTabTitle><span [innerHTML]="'Event Information' | translate"></span></ng-template>
         <ng-template ngbTabContent>
-            
-            <ngb-alert type="success" [dismissible]="false" *ngIf="bcEventVerified">
-                    <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'This Data is Verified by BlockChain' | translate"></span>  <i class="fas fa-project-diagram pl-1"></i>
-            </ngb-alert>
+
             <table class="table table-bordered mt-2">
                 <thead>
                     <th scope="col"><span [innerHTML]="'Attributes' | translate"></span></th>
@@ -82,25 +79,31 @@
     <ngb-tab>
         <ng-template ngbTabTitle><span [innerHTML]="'IoT Information' | translate"></span> </ng-template>
         <ng-template ngbTabContent>
-            <ngb-alert type="success" [dismissible]="false" *ngIf="bcIoTDataVerified">
-                    <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'These Data are Registered in BlockChain' | translate"></span>  <i class="fas fa-project-diagram pl-1"></i>
+            <ngb-alert type="success" [dismissible]="false" *ngIf="bcIoTDataHashExists">
+                <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'These Data are Registered in BlockChain' | translate"></span> <i class="fas fa-project-diagram pl-1"></i>
+                <p *ngIf="bcIoTHash">
+                    Hash: <span class="text-weight-lighter">{{bcIoTHash}}</span>
+                </p>
+            </ngb-alert>
+            <ngb-alert type="success" [dismissible]="false" *ngIf="bcIoTDataIntegrityValidated">
+                <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'The Data Integrity with Original Data Source and BlockChain Verified' | translate"></span> <i class="fas fa-project-diagram pl-1"></i>
             </ngb-alert>
             <div class="row mt-2" *ngIf="dashboardQuery.length">
                 <iframe [src]="dashboardQuery | safe" width="650" height="400" frameborder="0"></iframe>
             </div>
             <div class="row mt-1" *ngIf="events.length > 1">
-                    <ngb-alert type="info" [dismissible]="false">
-                        <h5><span [innerHTML]="'Overview' | translate"></span></h5>
-                        <p>
-                         <span [innerHTML]="'Previous Event' | translate"></span>: {{events[1]['eventTime'] | date:'medium': 'UTC'}} <i class="fas fa-arrow-right"></i> <span [innerHTML]="'Current Event' | translate"></span> {{events[0]['eventTime'] | date: 'medium': 'UTC'}}
-                        </p>
-                        <p>
-                            <i class="fas fa-info-circle"></i> <span [innerHTML]="'iot-dashboard-info-1' | translate"></span>
-                        </p>
-                        <p>
-                            <i class="fas fa-info-circle"></i> <span [innerHTML]="'iot-dashboard-info-2' | translate"></span>
-                        </p>
-                    </ngb-alert>
+                <ngb-alert type="info" [dismissible]="false">
+                    <h5><span [innerHTML]="'Overview' | translate"></span></h5>
+                    <p>
+                        <span [innerHTML]="'Previous Event' | translate"></span>: {{events[1]['eventTime'] | date:'medium': 'UTC'}} <i class="fas fa-arrow-right"></i> <span [innerHTML]="'Current Event' | translate"></span> {{events[0]['eventTime'] | date: 'medium': 'UTC'}}
+                    </p>
+                    <p>
+                        <i class="fas fa-info-circle"></i> <span [innerHTML]="'iot-dashboard-info-1' | translate"></span>
+                    </p>
+                    <p>
+                        <i class="fas fa-info-circle"></i> <span [innerHTML]="'iot-dashboard-info-2' | translate"></span>
+                    </p>
+                </ngb-alert>
             </div>
             <div class="jumbotron mt-1" *ngIf="events.length === 1">
                 <div class="row">
@@ -112,7 +115,7 @@
                     <div class="col-md-12 align-center">
                         <h4><span [innerHTML]="'No IoT Sensor Information Available' | translate"></span></h4>
                         <p class="text-secondary">
-                                <span [innerHTML]="'no-iot-data-info' | translate"></span>
+                            <span [innerHTML]="'no-iot-data-info' | translate"></span>
                         </p>
                     </div>
                 </div>

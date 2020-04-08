@@ -1,19 +1,35 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <div class="row">
     <div class="col-4">
-        <strong><span [innerHTML]="'Product / Service by:' | translate"></span></strong><br/>
-         <span (click)="openCompTab()" class="clickable">
+        <strong><span [innerHTML]="'Product / Service by:' | translate"></span></strong><br />
+        <span (click)="openCompTab()" class="clickable">
             {{manufacturerPartyName}}
         </span>
         <call-status [callStatus]="getManufacturerPartyNameStatus">
         </call-status>
     </div>
     <div class="col-2">
-        <strong><span [innerHTML]="'Catalogue:' | translate"></span></strong><br/>
+        <strong><span [innerHTML]="'Catalogue:' | translate"></span></strong><br />
         <span>
             {{catalogueName}}
         </span>
     </div>
-    <div *ngIf="showAddToCartButton" class="ml-auto">
+    <div *ngIf="showAddToCartButton && shoppingCartDataService.isShoppingCartButtonVisible(categoryUris)" class="ml-auto">
         <call-status class="d-inline-block mr-1" [callStatus]="shoppingCartCallStatus"></call-status>
         <button class="btn btn-primary" (click)="onAddToCart()" [disabled]="isAddCartDisabled()">
             <span class="fas fa-shopping-cart mr-1"></span>
@@ -24,17 +40,13 @@
         <div class="btn btn-primary" (click)="onRemoveFromCartButtonClicked()">
             <span [innerHTML]="'Remove from Cart' | translate"></span>
         </div>
-        <span *ngIf="isNegotiatingAnyTerm" [ngbTooltip]="validationService.extractErrorMessage(shoppingCartItemForm)" [placement]="'auto'"  title="">
-            <button class="btn btn-primary"
-                    [disabled]="isNegotiateOrderButtonDisabled || !shoppingCartItemForm.valid"
-                    (click)="onNegotiateAndOrderButtonClicked()">
+        <span *ngIf="isNegotiatingAnyTerm" [ngbTooltip]="validationService.extractErrorMessage(shoppingCartItemForm)" [placement]="'auto'" title="">
+            <button class="btn btn-primary" [disabled]="isNegotiateOrderButtonDisabled || !shoppingCartItemForm.valid" (click)="onNegotiateAndOrderButtonClicked()" singleClick>
                 <span [innerHTML]="'Negotiate' | translate"></span>
             </button>
         </span>
-        <span *ngIf="!isNegotiatingAnyTerm" [ngbTooltip]="validationService.extractErrorMessage(shoppingCartItemForm)" [placement]="'auto'"  title="">
-            <button class="btn btn-primary"
-                    [disabled]="isNegotiateOrderButtonDisabled || !shoppingCartItemForm.valid"
-                    (click)="onNegotiateAndOrderButtonClicked()">
+        <span *ngIf="!isNegotiatingAnyTerm" [ngbTooltip]="validationService.extractErrorMessage(shoppingCartItemForm)" [placement]="'auto'" title="">
+            <button class="btn btn-primary" [disabled]="isNegotiateOrderButtonDisabled || !shoppingCartItemForm.valid" (click)="onNegotiateAndOrderButtonClicked()" singleClick>
                 <span [innerHTML]="'Order' | translate"></span>
             </button>
         </span>
@@ -46,52 +58,35 @@
         <div id="carousel-large" class="carousel slide carousel-resize mt-2 mb-4" data-ride="carousel" [ngClass]="{'empty-carousel': wrapper.item.productImage.length === 0}">
             <div class="carousel-inner">
                 <div class="carousel-item active carousel-active" [ngClass]="{'empty-carousel': wrapper.item.productImage.length === 0}">
-                    <img *ngIf="wrapper.item.productImage.length === 0"
-                        class="img-max"
-                        src="../../assets/images/empty_img.png">
-                    <img *ngIf="wrapper.item.productImage.length > 0"
-                        class="img-selected d-block active"
-                        style="cursor:zoom-in"
-                        src="data:{{wrapper.item.productImage[selectedImage].mimeCode}};base64,{{wrapper.item.productImage[selectedImage].value}}"
-                        (click)="open(imgZoom)"/>
+                    <img *ngIf="wrapper.item.productImage.length === 0" class="img-max" src="../../assets/images/empty_img.png">
+                    <img *ngIf="wrapper.item.productImage.length > 0" class="img-selected d-block active" style="cursor:zoom-in" src="data:{{wrapper.item.productImage[selectedImage].mimeCode}};base64,{{wrapper.item.productImage[selectedImage].value}}" (click)="open(imgZoom)" />
                 </div>
             </div>
         </div>
         <div *ngIf="wrapper.item.productImage.length > 1 && wrapper.item.productImage.length <=2" class="d-flex justify-content-center">
             <div id="carousel-smaller" class="carousel slide carousel-inactive-resize inline">
                 <div class="inline border" [ngClass]="{'border-primary': selectedImage === 0}">
-                    <img class="carousel-inactive"
-                        (click)="onSelectImage(selectedImage - 1)"
-                        src="data:{{wrapper.item.productImage[0].mimeCode}};base64,{{wrapper.item.productImage[0].value}}" />
+                    <img class="carousel-inactive" (click)="onSelectImage(selectedImage - 1)" src="data:{{wrapper.item.productImage[0].mimeCode}};base64,{{wrapper.item.productImage[0].value}}" />
                 </div>
                 <div class="inline border" [ngClass]="{'border-primary': selectedImage === 1}">
-                    <img class="carousel-inactive"
-                        (click)="onSelectImage(selectedImage + 1)"
-                        src="data:{{wrapper.item.productImage[1].mimeCode}};base64,{{wrapper.item.productImage[1].value}}" />
+                    <img class="carousel-inactive" (click)="onSelectImage(selectedImage + 1)" src="data:{{wrapper.item.productImage[1].mimeCode}};base64,{{wrapper.item.productImage[1].value}}" />
                 </div>
             </div>
         </div>
         <div *ngIf="wrapper.item.productImage.length > 2" class="carousel-buttons">
-            <button class="btn btn-secondary inline btn-carousel mr-1"
-                (click)="onSelectImage(selectedImage - 1)">
+            <button class="btn btn-secondary inline btn-carousel mr-1" (click)="onSelectImage(selectedImage - 1)">
                 <i class="fas fa-chevron-left fa-2x"></i>
             </button>
             <div class="inline" *ngIf="wrapper.item.productImage.length > 2">
-                <img class="carousel-inactive"
-                    (click)="onSelectImage(selectedImage - 1)"
-                    src="data:{{wrapper.item.productImage[selectedImage].mimeCode}};base64,{{wrapper.item.productImage[navigateImages(selectedImage - 1, wrapper.item.productImage.length)].value}}" />
+                <img class="carousel-inactive" (click)="onSelectImage(selectedImage - 1)" src="data:{{wrapper.item.productImage[selectedImage].mimeCode}};base64,{{wrapper.item.productImage[navigateImages(selectedImage - 1, wrapper.item.productImage.length)].value}}" />
             </div>
             <div class="inline border border-primary">
-                <img class="carousel-inactive"
-                    src="data:{{wrapper.item.productImage[selectedImage].mimeCode}};base64,{{wrapper.item.productImage[selectedImage].value}}" />
+                <img class="carousel-inactive" src="data:{{wrapper.item.productImage[selectedImage].mimeCode}};base64,{{wrapper.item.productImage[selectedImage].value}}" />
             </div>
             <div class="inline">
-                <img class="carousel-inactive"
-                    (click)="onSelectImage(selectedImage + 1)"
-                    src="data:{{wrapper.item.productImage[selectedImage].mimeCode}};base64,{{wrapper.item.productImage[navigateImages(selectedImage + 1, wrapper.item.productImage.length)].value}}" />
+                <img class="carousel-inactive" (click)="onSelectImage(selectedImage + 1)" src="data:{{wrapper.item.productImage[selectedImage].mimeCode}};base64,{{wrapper.item.productImage[navigateImages(selectedImage + 1, wrapper.item.productImage.length)].value}}" />
             </div>
-            <button class="btn btn-secondary inline btn-carousel ml-1"
-                (click)="onSelectImage(selectedImage + 1)">
+            <button class="btn btn-secondary inline btn-carousel ml-1" (click)="onSelectImage(selectedImage + 1)">
                 <i class="fas fa-chevron-right fa-2x"></i>
             </button>
         </div>
@@ -99,9 +94,9 @@
     <div class="col-8 pt-4">
         <div>
             <!-- Categories -->
-            <strong><span [innerHTML]="'Categories:' | translate"></span></strong><br/>
+            <strong><span [innerHTML]="'Categories:' | translate"></span></strong><br />
             <div class="d-flex flex-wrap">
-                <div *ngFor="let name of classificationNames" >
+                <div *ngFor="let name of classificationNames">
                     <div class="rounded px-1 inline space-right mb-1" style="color:#919191; border:1px solid #919191;">
                         {{name}}
                     </div>
@@ -120,15 +115,14 @@
             <div *ngFor="let property of wrapper.getPropertiesWithListOfValues()" class="my-1">
                 <strong>{{selectName(property)}}: </strong>
                 <span *ngFor="let val of getValuesAsString(property); let i = index" class="btn-group-toggle" data-toggle="buttons">
-                    <button type="button" class="btn btn-outline-primary no-y-padding" (click)="onTogglePropertyValue(property, i)"
-                        [disabled]="isDisabled()" [ngClass]="{ 'active': isPropertyValueSelected(property, i) }">
+                    <button type="button" class="btn btn-outline-primary no-y-padding" (click)="onTogglePropertyValue(property, i)" [disabled]="isDisabled()" [ngClass]="{ 'active': isPropertyValueSelected(property, i) }">
                         {{val}}
                     </button>
                 </span>
             </div>
         </div>
         <div class="col-12 pr-0 space-before">
-          <small class="float-right">ID: {{productId}}</small>
+            <small class="float-right">ID: {{productId}}</small>
         </div>
     </div>
 </div>
@@ -140,6 +134,6 @@
         </button>
     </div>
     <div class="modal-body">
-        <img [src]="zoomedImgURL" class="w-100"/>
+        <img [src]="zoomedImgURL" class="w-100" />
     </div>
 </ng-template>

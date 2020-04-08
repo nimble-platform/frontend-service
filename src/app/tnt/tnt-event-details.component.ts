@@ -34,7 +34,9 @@ import moment = require('moment');
 export class TnTEventDetailsComponent implements OnChanges {
     @Input('eventsToDisplay') events: TrackInfo[];
     debug = myGlobals.debug;
-    bcIoTDataVerified: boolean;
+    bcIoTDataHashExists: boolean;
+    bcIoTDataIntegrityValidated: boolean;
+    bcIoTHash: string;
     bcEventVerified: boolean;
     falsecode = '';
     gateInformation = [];
@@ -43,22 +45,21 @@ export class TnTEventDetailsComponent implements OnChanges {
     dashboardQuery: string;
     selectedBizLocation = '';
 
-    constructor(private tntBackend: TnTService, private translate: TranslateService) {}
+    constructor(private tntBackend: TnTService, private translate: TranslateService) { }
 
     ngOnChanges() {
         if (!this.events.length) {
             return;
         }
-
-        // Get Event Information irrespective if last event
-        this.bcEventVerified = this.events[0].verified;
         this.getGateInfo();
         this.getBizLocInfo();
 
         if (this.events.length > 1) {
             // Display IoT information only if there was a previous event
             // Avoid calling this information on the last event
-            this.bcIoTDataVerified = false;
+            this.bcIoTDataHashExists = false;
+            this.bcIoTDataIntegrityValidated = false;
+            this.bcIoTHash = '';
             this.displaySensorDashboard();
             this.callIoTBCApi();
         } else {
@@ -72,10 +73,10 @@ export class TnTEventDetailsComponent implements OnChanges {
             console.log(this.events[0].readPoint);
         }
         const prefix = 'urn:epc:id:sgln:';
-         this.tntBackend.getGateInfo(prefix + this.events[0].readPoint)
+        this.tntBackend.getGateInfo(prefix + this.events[0].readPoint)
             .then(resp => {
                 this.gateInformation = resp;
-                }
+            }
             )
             .catch(err => {
                 this.falsecode = err._body;
@@ -91,8 +92,8 @@ export class TnTEventDetailsComponent implements OnChanges {
         this.selectedBizLocation = prefix + this.events[0].bizLocation;
         this.tntBackend.getGateInfo(prefix + this.events[0].bizLocation)
             .then(resp => {
-                    this.bizLocationInformation = resp;
-                }
+                this.bizLocationInformation = resp;
+            }
             )
             .catch(err => {
                 this.falsecode = err._body;
@@ -126,14 +127,16 @@ export class TnTEventDetailsComponent implements OnChanges {
             'to': toTimeStamp
         };
         this.tntBackend.verifyIOTBC(verification_query)
-        .then(resp => {
-            if (this.debug) {
-                console.log(resp);
-            }
-            this.bcIoTDataVerified = resp['validated'];
-        }).catch(err => {
-            console.log(err);
-        })
+            .then(resp => {
+                if (this.debug) {
+                    console.log(resp);
+                }
+                this.bcIoTDataHashExists = resp['exists'];
+                this.bcIoTDataIntegrityValidated = resp['validated'];
+                this.bcIoTHash = resp['hash'];
+            }).catch(err => {
+                console.log(err);
+            })
     }
 
 }

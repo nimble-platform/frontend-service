@@ -1,19 +1,35 @@
-import {Component, OnInit, Input, ViewChild, ElementRef} from "@angular/core";
+/*
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
+import { Component, OnInit, Input, ViewChild, ElementRef } from "@angular/core";
 import { CatalogueLine } from "../model/publish/catalogue-line";
 import { Certificate } from "../model/publish/certificate";
 import * as myGlobals from '../../globals';
-import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {DocumentReference} from "../model/publish/document-reference";
-import {Attachment} from "../model/publish/attachment";
-import {BinaryObject} from "../model/publish/binary-object";
-import {UBLModelUtils} from "../model/ubl-model-utils";
-import {COUNTRY_NAMES, getCountrySuggestions, validateCountrySimple} from "../../common/utils";
-import {Country} from "../model/publish/country";
-import {Text} from "../model/publish/text";
+import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { DocumentReference } from "../model/publish/document-reference";
+import { Attachment } from "../model/publish/attachment";
+import { BinaryObject } from "../model/publish/binary-object";
+import { UBLModelUtils } from "../model/ubl-model-utils";
+import { COUNTRY_NAMES, getCountrySuggestions, validateCountrySimple } from "../../common/utils";
+import { Country } from "../model/publish/country";
+import { Text } from "../model/publish/text";
 import { Observable } from "rxjs";
 import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
-import {TranslateService} from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "product-certificates-tab",
@@ -35,8 +51,8 @@ export class ProductCertificatesTabComponent implements OnInit {
     editedCertificate: Certificate;
 
     constructor(private _fb: FormBuilder,
-                private modalService: NgbModal,
-                private translate: TranslateService) {
+        private modalService: NgbModal,
+        private translate: TranslateService) {
     }
 
     ngOnInit() {
@@ -53,13 +69,13 @@ export class ProductCertificatesTabComponent implements OnInit {
             type: [this.editedCertificate.certificateType]
         });
         this.selectedFiles = [];
-        for(let docRef of this.editedCertificate.documentReference) {
+        for (let docRef of this.editedCertificate.documentReference) {
             this.selectedFiles.push(docRef.attachment.embeddedDocumentBinaryObject);
         }
 
         this.countryFormControl = new FormControl('');
         this.selectedCountries = [];
-        for(let country of this.editedCertificate.country) {
+        for (let country of this.editedCertificate.country) {
             this.selectedCountries.push(country.name.value);
         }
 
@@ -87,9 +103,9 @@ export class ProductCertificatesTabComponent implements OnInit {
         this.certificateFilesProvided = true;
     }
 
-    removedFile(event:boolean){
-        if(event){
-            if(this.selectedFiles.length == 0) {
+    removedFile(event: boolean) {
+        if (event) {
+            if (this.selectedFiles.length == 0) {
                 this.certificateFilesProvided = false;
             }
         }
@@ -120,8 +136,8 @@ export class ProductCertificatesTabComponent implements OnInit {
         close();
     }
 
-    validateCountry (): boolean {
-      return validateCountrySimple(this.countryFormControl.value);
+    validateCountry(): boolean {
+        return validateCountrySimple(this.countryFormControl.value);
     }
 
     onCountrySelected() {
@@ -135,19 +151,19 @@ export class ProductCertificatesTabComponent implements OnInit {
     }
 
     getSuggestions = (text$: Observable<string>) =>
-      text$.pipe(
-        debounceTime(50),
-        distinctUntilChanged(),
-        map(term => getCountrySuggestions(term))
-      );
+        text$.pipe(
+            debounceTime(50),
+            distinctUntilChanged(),
+            map(term => getCountrySuggestions(term))
+        );
 
-    getCertificateCountryNames(certificate:Certificate): string[] {
-        let countryNames:string[] = [];
-        if(certificate.country == null || certificate.country.length == 0) {
+    getCertificateCountryNames(certificate: Certificate): string[] {
+        let countryNames: string[] = [];
+        if (certificate.country == null || certificate.country.length == 0) {
             return countryNames;
         }
 
-        for(let country of certificate.country) {
+        for (let country of certificate.country) {
             countryNames.push(country.name.value);
         }
         return countryNames;

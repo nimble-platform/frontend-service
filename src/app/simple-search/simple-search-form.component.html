@@ -1,722 +1,736 @@
+<!--
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   In collaboration with
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <form (ngSubmit)="onSubmit()" class="space-before" #simpleSearchForm="ngForm" novalidate>
 
-	<div [hidden]="!searchTopic" class="form-group row">
-		<div class="col-12">
-				<div class="input-group">
-					<input *ngIf="searchTopic=='prod'" type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" pattern=".{1,}" [placeholder]="'Product / Service' | translate">
-					<input *ngIf="searchTopic=='comp'" type="text" class="form-control" id="searchTerm" required [(ngModel)]="model.q" [ngbTypeahead]="getCompSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" pattern=".{1,}" [placeholder]="'Company' | translate">
-					<div *ngIf="searchTopic=='prod'" ngbDropdown class="d-inline-block input-group-append">
-						<button *ngIf="searchTopic=='prod'" class="btn btn-outline-secondary" type="button" id="searchIndex" ngbDropdownToggle>
-							<span [innerHTML]="searchIndex | translate"></span>
-						</button>
-						<div ngbDropdownMenu aria-labelledby="searchIndex">
-							<a *ngFor="let searchIndexName of searchIndexes" class="dropdown-item" (click)="changeSearchIndex(searchIndexName)"><span [innerHTML]="searchIndexName | translate"></span></a>
-						</div>
-					</div>
-					<div class="input-group-append">
-						<button type="submit" class="btn btn-outline-secondary" [disabled]="!simpleSearchForm.form.valid">
-							<i class="fa fa-search"></i>
-						</button>
-					</div>
-				</div>
-		</div>
-	</div>
+    <div [hidden]="!searchTopic" class="form-group row">
+        <div class="col-12">
+            <div class="input-group">
+                <input *ngIf="searchTopic=='prod'" type="text" class="form-control" id="searchTerm" [(ngModel)]="model.q" [disabled]="searchCallStatus.isLoading()" [ngbTypeahead]="getSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" [placeholder]="'Product / Service' | translate">
+                <input *ngIf="searchTopic=='comp'" type="text" class="form-control" id="searchTerm" [(ngModel)]="model.q" [disabled]="searchCallStatus.isLoading()" [ngbTypeahead]="getCompSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" [placeholder]="'Company' | translate">
+                <div *ngIf="searchTopic=='prod'" ngbDropdown class="d-inline-block input-group-append">
+                    <button *ngIf="searchTopic=='prod'" class="btn btn-outline-secondary" type="button" id="searchIndex" ngbDropdownToggle>
+                        <span [innerHTML]="searchIndex | translate"></span>
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="searchIndex">
+                        <a *ngFor="let searchIndexName of searchIndexes" class="dropdown-item" (click)="changeSearchIndex(searchIndexName)"><span [innerHTML]="searchIndexName | translate"></span></a>
+                    </div>
+                </div>
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-outline-secondary" [disabled]="searchCallStatus.isLoading() || !simpleSearchForm.form.valid">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-	<call-status [callStatus]="searchCallStatus" [large]="true"></call-status>
+    <call-status [callStatus]="searchCallStatus" [large]="true"></call-status>
 
+    <div [hidden]="searchTopic || searchCallStatus.isLoading()">
+        <div class="row">
+            <div class="card col mr-3 ml-3 pl-0 pr-0 pointer" (click)="setSearchTopic('prod')">
+                <div class="card-body p-2 text-center">
+                    <p class="card-text" style="font-size:32px"><i class="fas fa-store"></i></p>
+                    <h6 class="card-title mb-0 clickable"><span [innerHTML]="'Product / Service' | translate"></span></h6>
+                </div>
+            </div>
+            <div class="card col mr-3 ml-3 pl-0 pr-0 pointer" (click)="setSearchTopic('comp')">
+                <div class="card-body p-2 text-center">
+                    <p class="card-text" style="font-size:32px"><i class="fas fa-building"></i></p>
+                    <h6 class="card-title mb-0 clickable"><span [innerHTML]="'Company' | translate"></span></h6>
+                </div>
+            </div>
+        </div>
+    </div>
 
-	<div [hidden]="searchTopic || searchCallStatus.isLoading()">
-		<div class="row">
-			<div class="card col mr-3 ml-3 pl-0 pr-0 pointer" (click)="setSearchTopic('prod')">
-				<div class="card-body p-2 text-center">
-					<p class="card-text" style="font-size:32px"><i class="fas fa-store"></i></p>
-					<h6 class="card-title mb-0 clickable"><span [innerHTML]="'Product / Service' | translate"></span></h6>
-				</div>
-			</div>
-			<div class="card col mr-3 ml-3 pl-0 pr-0 pointer" (click)="setSearchTopic('comp')">
-				<div class="card-body p-2 text-center">
-					<p class="card-text" style="font-size:32px"><i class="fas fa-building"></i></p>
-					<h6 class="card-title mb-0 clickable"><span [innerHTML]="'Company' | translate"></span></h6>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div *ngIf="false" [hidden]="searchDone">
+        <div class="card border-primary-nimble">
+            <div class="card-header text-white bg-primary-nimble">
+                <span [innerHTML]="'Categories' | translate"></span>
+            </div>
+            <div class="card-body">
+                <call-status [callStatus]="categoriesCallStatus" [large]="true"></call-status>
+                <ng-container *ngIf="!categoriesCallStatus.isLoading() && !cat_loading && cat_levels.length>0 && cat_levels[0].length>0">
+                    <div *ngFor="let lvl0 of cat_levels[0]; let idx = index;">
+                        <div *ngIf="idx%4==0" class="row">
+                            <div *ngIf="idx<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx].name,cat_levels[0][idx].id)">
+                                <div class="card-body p-2 text-center">
+                                    <h6 class="card-title clickable">{{ cat_levels[0][idx].preferredName }}</h6>
+                                    <h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx].count }} items</h6>
+                                </div>
+                            </div>
+                            <div *ngIf="idx+1<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx+1].name,cat_levels[0][idx+1].id)">
+                                <div class="card-body p-2 text-center">
+                                    <h6 class="card-title clickable">{{ cat_levels[0][idx+1].preferredName }}</h6>
+                                    <h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+1].count }} items</h6>
+                                </div>
+                            </div>
+                            <div *ngIf="idx+2<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx+2].name,cat_levels[0][idx+2].id)">
+                                <div class="card-body p-2 text-center">
+                                    <h6 class="card-title clickable">{{ cat_levels[0][idx+2].preferredName }}</h6>
+                                    <h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+2].count }} items</h6>
+                                </div>
+                            </div>
+                            <div *ngIf="idx+3<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx+3].name,cat_levels[0][idx+3].id)">
+                                <div class="card-body p-2 text-center">
+                                    <h6 class="card-title clickable">{{ cat_levels[0][idx+3].preferredName }}</h6>
+                                    <h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+3].count }} items</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
 
-	<div *ngIf="false" [hidden]="searchDone">
-		<div class="card border-primary-nimble">
-			<div class="card-header text-white bg-primary-nimble">
-				<span [innerHTML]="'Categories' | translate"></span>
-			</div>
-			<div class="card-body">
-				<call-status [callStatus]="categoriesCallStatus" [large]="true"></call-status>
-				<ng-container *ngIf="!categoriesCallStatus.isLoading() && !cat_loading && cat_levels.length>0 && cat_levels[0].length>0">
-					<div *ngFor="let lvl0 of cat_levels[0]; let idx = index;">
-						<div *ngIf="idx%4==0" class="row">
-							<div *ngIf="idx<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx].name,cat_levels[0][idx].id)">
-								<div class="card-body p-2 text-center">
-								<h6 class="card-title clickable">{{ cat_levels[0][idx].preferredName }}</h6>
-								<h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx].count }} items</h6>
-								</div>
-							</div>
-							<div *ngIf="idx+1<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx+1].name,cat_levels[0][idx+1].id)">
-								<div class="card-body p-2 text-center">
-								<h6 class="card-title clickable">{{ cat_levels[0][idx+1].preferredName }}</h6>
-								<h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+1].count }} items</h6>
-								</div>
-							</div>
-							<div *ngIf="idx+2<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx+2].name,cat_levels[0][idx+2].id)">
-								<div class="card-body p-2 text-center">
-								<h6 class="card-title clickable">{{ cat_levels[0][idx+2].preferredName }}</h6>
-								<h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+2].count }} items</h6>
-								</div>
-							</div>
-							<div *ngIf="idx+3<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx+3].name,cat_levels[0][idx+3].id)">
-								<div class="card-body p-2 text-center">
-								<h6 class="card-title clickable">{{ cat_levels[0][idx+3].preferredName }}</h6>
-								<h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+3].count }} items</h6>
-								</div>
-							</div>
-						</div>
-					</div>
-				</ng-container>
-			</div>
-		</div>
-	</div>
+    <div [hidden]="!callback || searchCallStatus.isLoading() || searchCallStatus.isError()">
+        <ng-container *ngIf="pageRef === 'publish'">
+            <hr>
+            <div class="row">
+                <div class="offset-4 col-6">
+                    <span *ngFor="let selectedProduct of productsSelectedForPublish">
+                        <span class="badge badge-secondary mr-1 mb-2 pointer" (click)="onRemoveSelectedProduct(selectedProduct.uri)">
+                            {{getMultilingualLabel(selectedProduct[product_name])}}
+                        </span>
+                    </span>
+                </div>
+                <div class="col-2">
+                    <div class="btn btn-primary float-right" (click)="onContinuePublishing()"><span [innerHTML]="'Continue Publishing' | translate"></span></div>
+                </div>
+            </div>
+        </ng-container>
+        <hr />
 
-	<div [hidden]="!callback || searchCallStatus.isLoading() || searchCallStatus.isError()">
-		<ng-container *ngIf="pageRef === 'publish'">
-			<hr>
-			<div class="row">
-				<div class="offset-4 col-6">
-					<span *ngFor="let selectedProduct of productsSelectedForPublish">
-						<span class="badge badge-secondary mr-1 mb-2 pointer" (click)="onRemoveSelectedProduct(selectedProduct.uri)">
-							{{getMultilingualLabel(selectedProduct[product_name])}}
-						</span>
-					</span>
-				</div>
-				<div class="col-2">
-					<div class="btn btn-primary float-right" (click)="onContinuePublishing()"><span [innerHTML]="'Continue Publishing' | translate"></span></div>
-				</div>
-			</div>
-		</ng-container>
-		<hr/>
+        <div>
 
-		<div>
+            <div class="row">
+                <div *ngIf="size==0" class="col-12">
+                    <span [innerHTML]="'No search results' | translate"></span><br />
+                    <button class="btn btn-secondary mt-2 mb-2" (click)="resetSearch()"><span [innerHTML]="'Reset Search' | translate"></span></button>
+                </div>
+                <div *ngIf="size>0" class="col-4">
+                    <span [innerHTML]="'Showing results' | translate"></span> {{ start }} - {{ end }} <span [innerHTML]="'of' | translate"></span> {{ size }}
+                </div>
 
-			<div class="row">
-				<div *ngIf="size==0" class="col-12">
-					<span [innerHTML]="'No search results' | translate"></span>
-				</div>
-				<div *ngIf="size>0" class="col-4">
-					<span [innerHTML]="'Showing results' | translate"></span> {{ start }} - {{ end }} <span [innerHTML]="'of' | translate"></span> {{ size }}
-				</div>
+                <!-- Search headers -->
+                <div *ngIf="size>0" class="col-8">
+                    <!-- Pagination -->
+                    <div class="justify-content-center pagination">
+                        <ngb-pagination [(collectionSize)]="size" [(page)]="page" [pageSize]="rows" [maxSize]="5" [boundaryLinks]="true" (pageChange)="get(objToSubmit)"></ngb-pagination>
+                    </div>
+                    <!-- Display options -->
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label"><span [innerHTML]="'Per page' | translate"></span>:</label>
+                        <div class="col-sm-2">
+                            <select class="form-control" (change)="setRows($event.target.value)">
+                                <option value="9" [selected]="rows==9">9</option>
+                                <option value="12" [selected]="rows==12">12</option>
+                                <option value="18" [selected]="rows==18">18</option>
+                                <option value="24" [selected]="rows==24">24</option>
+                            </select>
+                        </div>
+                        <label class="col-sm-2 col-form-label"><span [innerHTML]="'Style' | translate"></span>:</label>
+                        <div class="col-sm-2">
+                            <select class="form-control" (change)="setDisplay($event.target.value)">
+                                <option value="list" [selected]="display=='list'"><span [innerHTML]="'List' | translate"></span></option>
+                                <option value="panel" [selected]="display=='panel'"><span [innerHTML]="'Panel' | translate"></span></option>
+                            </select>
+                        </div>
+                        <label class="col-sm-2 col-form-label"><span [innerHTML]="'Sorting' | translate"></span>:</label>
+                        <div class="col-sm-2">
+                            <select class="form-control" (change)="setSort($event.target.value)">
+                                <option value="score desc" [selected]="sort=='score desc'"><span [innerHTML]="'Relevance' | translate"></span></option>
+                                <option *ngIf="searchTopic=='prod'" [value]="getCurrencySort('asc')" [selected]="sort==getCurrencySort('asc')"><span [innerHTML]="'Price: Asc.' | translate"></span></option>
+                                <option *ngIf="searchTopic=='prod'" [value]="getCurrencySort('desc')" [selected]="sort==getCurrencySort('desc')"><span [innerHTML]="'Price: Desc.' | translate"></span></option>
+                                <option *ngIf="searchTopic=='prod'" value="{LANG}_label asc" [selected]="sort=='{LANG}_label asc'"><span [innerHTML]="'A -> Z' | translate"></span></option>
+                                <option *ngIf="searchTopic=='prod'" value="{LANG}_label desc" [selected]="sort=='{LANG}_label desc'"><span [innerHTML]="'Z -> A' | translate"></span></option>
+                                <option *ngIf="searchTopic=='comp'" value="trustRating desc" [selected]="sort=='trustRating desc'"><span [innerHTML]="'Rating' | translate"></span></option>
+                                <option *ngIf="searchTopic=='comp'" value="trustScore desc" [selected]="sort=='trustScore desc'"><span [innerHTML]="'Trust' | translate"></span></option>
+                                <option *ngIf="searchTopic=='comp'" value="{LANG}_brandName asc" [selected]="sort=='{LANG}_brandName asc'"><span [innerHTML]="'A -> Z' | translate"></span></option>
+                                <option *ngIf="searchTopic=='comp'" value="{LANG}_brandName desc" [selected]="sort=='{LANG}_brandName desc'"><span [innerHTML]="'Z -> A' | translate"></span></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div *ngIf="ublProperties">
+                        <span *ngFor="let fq of facetQuery">
+                            <span *ngIf="isFacetSelectable(fq)" class="badge badge-secondary mr-1 mb-2 pointer" (click)="clearFacetQuery(fq)">
+                                {{getFacetQueryName(fq)}}: {{getFacetQueryValue(fq)}}
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
 
-				<!-- Search headers -->
-				<div *ngIf="size>0" class="col-8">
-					<!-- Pagination -->
-					<div class="justify-content-center pagination">
-						<ngb-pagination [(collectionSize)]="size" [(page)]="page" [pageSize]="rows" [maxSize]="5" [boundaryLinks]="true" (pageChange)="get(objToSubmit)"></ngb-pagination>
-					</div>
-					<!-- Display options -->
-					<div class="form-group row">
-				    <label class="col-sm-2 col-form-label"><span [innerHTML]="'Per page' | translate"></span>:</label>
-				    <div class="col-sm-2">
-				      <select class="form-control" (change)="setRows($event.target.value)">
-								<option value="9" [selected]="rows==9">9</option>
-								<option value="12" [selected]="rows==12">12</option>
-								<option value="18" [selected]="rows==18">18</option>
-								<option value="24" [selected]="rows==24">24</option>
-							</select>
-				    </div>
-						<label class="col-sm-2 col-form-label"><span [innerHTML]="'Style' | translate"></span>:</label>
-				    <div class="col-sm-2">
-				      <select class="form-control" (change)="setDisplay($event.target.value)">
-								<option value="list" [selected]="display=='list'"><span [innerHTML]="'List' | translate"></span></option>
-								<option value="panel" [selected]="display=='panel'"><span [innerHTML]="'Panel' | translate"></span></option>
-							</select>
-				    </div>
-						<label class="col-sm-2 col-form-label"><span [innerHTML]="'Sorting' | translate"></span>:</label>
-				    <div class="col-sm-2">
-				      <select class="form-control" (change)="setSort($event.target.value)">
-								<option value="score desc" [selected]="sort=='score desc'"><span [innerHTML]="'Relevance' | translate"></span></option>
-								<option *ngIf="searchTopic=='prod'" [value]="getCurrencySort('asc')" [selected]="sort==getCurrencySort('asc')"><span [innerHTML]="'Price: Asc.' | translate"></span></option>
-								<option *ngIf="searchTopic=='prod'" [value]="getCurrencySort('desc')" [selected]="sort==getCurrencySort('desc')"><span [innerHTML]="'Price: Desc.' | translate"></span></option>
-								<option *ngIf="searchTopic=='prod'" value="{LANG}_label asc" [selected]="sort=='{LANG}_label asc'"><span [innerHTML]="'A -> Z' | translate"></span></option>
-								<option *ngIf="searchTopic=='prod'" value="{LANG}_label desc" [selected]="sort=='{LANG}_label desc'"><span [innerHTML]="'Z -> A' | translate"></span></option>
-								<option *ngIf="searchTopic=='comp'" value="trustRating desc" [selected]="sort=='trustRating desc'"><span [innerHTML]="'Rating' | translate"></span></option>
-								<option *ngIf="searchTopic=='comp'" value="trustScore desc" [selected]="sort=='trustScore desc'"><span [innerHTML]="'Trust' | translate"></span></option>
-								<option *ngIf="searchTopic=='comp'" value="{LANG}_brandName asc" [selected]="sort=='{LANG}_brandName asc'"><span [innerHTML]="'A -> Z' | translate"></span></option>
-								<option *ngIf="searchTopic=='comp'" value="{LANG}_brandName desc" [selected]="sort=='{LANG}_brandName desc'"><span [innerHTML]="'Z -> A' | translate"></span></option>
-							</select>
-				    </div>
-				  </div>
-					<div *ngIf="ublProperties">
-						<span *ngFor="let fq of facetQuery">
-							<span *ngIf="isFacetSelectable(fq)" class="badge badge-secondary mr-1 mb-2 pointer" (click)="clearFacetQuery(fq)">
-								{{getFacetQueryName(fq)}}: {{getFacetQueryValue(fq)}}
-							</span>
-						</span>
-					</div>
-				</div>
-			</div>
+            <div class="row align-items-start">
+                <!-- Facets -->
+                <div class="col-4">
 
-			<div class="row align-items-start">
-				<!-- Facets -->
-				<div class="col-4">
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <button *ngIf="searchTopic=='prod'" class="btn btn-secondary" [disabled]="cat==''" (click)="setCat('','')"><span [innerHTML]="'Reset category' | translate"></span></button>
+                            <button class="btn btn-secondary" [ngClass]="{'ml-2':searchTopic=='prod'}" [disabled]="!facetQuery || (facetQuery && facetQuery.length==0)" (click)="resetFilter()"><span [innerHTML]="'Reset filter' | translate"></span></button>
+                        </div>
+                    </div>
 
-					<div class="row mb-3">
-						<div class="col-12">
-							<button *ngIf="searchTopic=='prod'" class="btn btn-secondary" [disabled]="cat==''" (click)="setCat('','')"><span [innerHTML]="'Reset category' | translate"></span></button>
-							<button class="btn btn-secondary" [ngClass]="{'ml-2':searchTopic=='prod'}" [disabled]="!facetQuery || (facetQuery && facetQuery.length==0)" (click)="resetFilter()"><span [innerHTML]="'Reset filter' | translate"></span></button>
-						</div>
-					</div>
+                    <div *ngIf="size>0 && searchTopic=='prod'">
 
-					<div *ngIf="size>0 && searchTopic=='prod'">
+                        <!-- category facet panel -->
+                        <div class="pointer" (click)="showCatSection=!showCatSection">
+                            <h5><span [innerHTML]="'Categories' | translate"></span> <span *ngIf="!showCatSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCatSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+                        </div>
 
-						<!-- category facet panel -->
-						<div class="pointer" (click)="showCatSection=!showCatSection">
-							<h5><span [innerHTML]="'Categories' | translate"></span> <span *ngIf="!showCatSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCatSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
-						</div>
+                        <div *ngIf="showCatSection">
+                            <div class="card border-primary-nimble mb-3">
+                                <div class="card-header text-white bg-primary-nimble">
+                                    <span [innerHTML]="'Category' | translate"></span>
+                                </div>
+                                <div class="card-body">
+                                    <div *ngIf="cat_loading">
+                                        <img src="../../assets/images/form_loader.gif" />
+                                    </div>
+                                    <div *ngIf="!cat_loading">
+                                        <div *ngFor="let c of cat_levels; let i = index">
+                                            <!-- if there is not a selected category, render only the root level-->
+                                            <!-- it a category is selected, render the one more finer level than the level of selected category -->
+                                            <ng-container *ngIf="(cat_level === -1 && i === 0) || (cat_level !== -1 && cat_level >= (i - 1))">
+                                                <div *ngFor="let lvl of c">
+                                                    <!-- selected category -->
+                                                    <div *ngIf="catID == lvl.id">
+                                                        <!-- bolded entry, rendered when there is no excluding category facets -->
+                                                        <!-- or for the deepest level entry when the Others entry is selected -->
+                                                        <!-- cat_level here corresponds to the level of parent category -->
+                                                        <ng-container *ngIf="(!excludingCategoryFacetQueryExists() && cat_level == i) || (excludingCategoryFacetQueryExists() && cat_level < i)">
+                                                            <span class="clickable" (click)="setCat('','', lvl.other)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName"><b>{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></b></span> ({{ lvl.count }})
+                                                        </ng-container>
+                                                        <!-- the parent cateory having the same id with the child 'Others' entry -->
+                                                        <ng-container *ngIf="(!excludingCategoryFacetQueryExists() && i > cat_level) || (excludingCategoryFacetQueryExists() && i === cat_level)">
+                                                            <span class="clickable" (click)="setCat(lvl.preferredName,lvl.id, lvl.other)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></span> ({{ lvl.count }})
+                                                        </ng-container>
+                                                    </div>
+                                                    <!-- other categories in the hierarchy -->
+                                                    <div *ngIf="catID!=lvl.id&&cat_level!=i">
+                                                        <span class="clickable" (click)="setCat(lvl.name, lvl.id, lvl.other)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></span> ({{ lvl.count }})
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div *ngIf="showCatSection">
-							<div class="card border-primary-nimble mb-3">
-								<div class="card-header text-white bg-primary-nimble">
-									<span [innerHTML]="'Category' | translate"></span>
-								</div>
-								<div class="card-body">
-									<div *ngIf="cat_loading">
-										<img src="../../assets/images/form_loader.gif"/>
-									</div>
-									<div *ngIf="!cat_loading">
-										<div *ngFor="let c of cat_levels; let i = index">
-											<!-- if there is not a selected category, render only the root level-->
-											<!-- it a category is selected, render the one more finer level than the level of selected category -->
-											<ng-container *ngIf="(cat_level === -1 && i === 0) || (cat_level !== -1 && cat_level >= (i - 1))">
-												<div *ngFor="let lvl of c">
-													<!-- selected category -->
-													<div *ngIf="catID == lvl.id">
-														<!-- bolded entry, rendered when there is no excluding category facets -->
-														<!-- or for the deepest level entry when the Others entry is selected -->
-														<!-- cat_level here corresponds to the level of parent category -->
-														<ng-container *ngIf="(!excludingCategoryFacetQueryExists() && cat_level == i) || (excludingCategoryFacetQueryExists() && cat_level < i)">
-															<span class="clickable" (click)="setCat('','', lvl.other)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName"><b>{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></b></span> ({{ lvl.count }})
-														</ng-container>
-														<!-- the parent cateory having the same id with the child 'Others' entry -->
-														<ng-container *ngIf="(!excludingCategoryFacetQueryExists() && i > cat_level) || (excludingCategoryFacetQueryExists() && i === cat_level)">
-															<span class="clickable" (click)="setCat(lvl.preferredName,lvl.id, lvl.other)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></span> ({{ lvl.count }})
-														</ng-container>
-													</div>
-													<!-- other categories in the hierarchy -->
-													<div *ngIf="catID!=lvl.id&&cat_level!=i">
-														<span class="clickable" (click)="setCat(lvl.name, lvl.id, lvl.other)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></span> ({{ lvl.count }})
-													</div>
-												</div>
-											</ng-container>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
+                        <hr />
 
-						<hr/>
+                        <div *ngIf="checkProdCatCount()>0">
 
-						<div *ngIf="checkProdCatCount()>0">
+                            <div class="pointer" (click)="showProductSection=!showProductSection">
+                                <h5><span [innerHTML]="'Product / Service' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showProdSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showProdSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+                            </div>
 
-							<div class="pointer" (click)="showProductSection=!showProductSection">
-								<h5><span [innerHTML]="'Product / Service' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showProdSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showProdSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
-							</div>
+                            <div *ngIf="showProductSection">
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        {{ getName(product_price) }}
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row mb-2">
+                                            <div class="col-4">
+                                                <input class="form-control form-control-sm" [(ngModel)]="selectedPriceMin" [ngModelOptions]="{standalone: true}" type="number">
+                                            </div>
+                                            <div class="col-1">
+                                                -
+                                            </div>
+                                            <div class="col-4">
+                                                <input class="form-control form-control-sm" [(ngModel)]="selectedPriceMax" [ngModelOptions]="{standalone: true}" type="number">
+                                            </div>
+                                            <div class="col-3">
+                                                <select class="form-control form-control-sm" [(ngModel)]="selectedCurrency" [ngModelOptions]="{standalone: true}">
+                                                    <option *ngFor="let currency of CURRENCIES" [value]="currency">
+                                                        {{ currency }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-primary" (click)="setPriceFilter()" [disabled]="!checkPriceFilter()"><span [innerHTML]="'Apply' | translate"></span></button>
+                                        <button class="btn btn-secondary ml-2" (click)="resetPriceFilter()" [hidden]="!checkPriceFacet()"><span [innerHTML]="'Reset' | translate"></span></button>
+                                    </div>
+                                </div>
+                                <div *ngFor="let facet of facetObj">
+                                    <div *ngIf="facet.total > 0 && checkProdCat(facet.name)" class="card mb-3">
+                                        <div class="card-header">
+                                            {{ getName(facet.realName) }}
+                                        </div>
+                                        <div class="card-body">
+                                            <div *ngFor="let facetInner of facet.options; let i=index">
+                                                <div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
+                                                    <span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> ({{ facetInner.count }})
+                                                </div>
+                                                <div *ngIf="checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
+                                                    <span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> ({{ facetInner.count }})
+                                                </div>
+                                            </div>
+                                            <div *ngIf="facet.options.length>maxFacets">
+                                                <hr>
+                                                <span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded"><span [innerHTML]="'Show more' | translate"></span></span><span *ngIf="facet.expanded"><span [innerHTML]="'Show less' | translate"></span></span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-							<div *ngIf="showProductSection">
-								<div class="card mb-3">
-									<div class="card-header">
-										{{ getName(product_price) }}
-									</div>
-									<div class="card-body">
-										<div class="row mb-2">
-												<div class="col-4">
-													<input class="form-control form-control-sm" [(ngModel)]="selectedPriceMin" [ngModelOptions]="{standalone: true}" type="number">
-												</div>
-												<div class="col-1">
-													-
-												</div>
-												<div class="col-4">
-													<input class="form-control form-control-sm" [(ngModel)]="selectedPriceMax" [ngModelOptions]="{standalone: true}" type="number">
-												</div>
-												<div class="col-3">
-													<select class="form-control form-control-sm" [(ngModel)]="selectedCurrency" [ngModelOptions]="{standalone: true}">
-									            <option *ngFor="let currency of CURRENCIES" [value]="currency">
-									                {{ currency }}
-									            </option>
-									        </select>
-												</div>
-										</div>
-										<button class="btn btn-primary" (click)="setPriceFilter()" [disabled]="!checkPriceFilter()"><span [innerHTML]="'Apply' | translate"></span></button>
-										<button class="btn btn-secondary ml-2" (click)="resetPriceFilter()" [hidden]="!checkPriceFacet()"><span [innerHTML]="'Reset' | translate"></span></button>
-									</div>
-								</div>
-								<div *ngFor="let facet of facetObj">
-									<div *ngIf="facet.total > 0 && checkProdCat(facet.name)" class="card mb-3">
-										<div class="card-header">
-											{{ getName(facet.realName) }}
-										</div>
-										<div class="card-body">
-											<div *ngFor="let facetInner of facet.options; let i=index">
-												<div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> ({{ facetInner.count }})
-												</div>
-												<div *ngIf="checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> ({{ facetInner.count }})
-												</div>
-											</div>
-											<div *ngIf="facet.options.length>maxFacets">
-												<hr>
-												<span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded"><span [innerHTML]="'Show more' | translate"></span></span><span *ngIf="facet.expanded"><span [innerHTML]="'Show less' | translate"></span></span></span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
+                            <hr />
 
-							<hr/>
+                        </div>
 
-						</div>
+                        <div *ngIf="checkCompCatCount()>0">
 
-						<div *ngIf="checkCompCatCount()>0">
+                            <div class="pointer" (click)="showCompSection=!showCompSection">
+                                <h5><span [innerHTML]="'Product / Service' | translate"></span> <span [innerHTML]="'Vendor' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+                            </div>
 
-							<div class="pointer" (click)="showCompSection=!showCompSection">
-								<h5><span [innerHTML]="'Product / Service' | translate"></span> <span [innerHTML]="'Vendor' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
-							</div>
+                            <div *ngIf="showCompSection">
+                                <div *ngFor="let facet of facetObj">
+                                    <div *ngIf="facet.total > 0 && checkCompCat(facet.genName)" class="card mb-3">
+                                        <div class="card-header">
+                                            {{ getName(facet.genName) }}
+                                        </div>
+                                        <div class="card-body">
+                                            <div *ngFor="let facetInner of facet.options; let i = index">
+                                                <div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
+                                                    <span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> <span *ngIf="facetInner.count>0">({{ facetInner.count }})</span>
+                                                </div>
+                                                <div *ngIf="checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
+                                                    <span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> <span *ngIf="facetInner.count>0">({{ facetInner.count }})</span>
+                                                </div>
+                                            </div>
+                                            <div *ngIf="facet.options.length>maxFacets">
+                                                <hr>
+                                                <span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded"><span [innerHTML]="'Show more' | translate"></span></span><span *ngIf="facet.expanded"><span [innerHTML]="'Show less' | translate"></span></span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-							<div *ngIf="showCompSection">
-								<div *ngFor="let facet of facetObj">
-									<div *ngIf="facet.total > 0 && checkCompCat(facet.genName)" class="card mb-3">
-										<div class="card-header">
-											{{ getName(facet.genName) }}
-										</div>
-										<div class="card-body">
-											<div *ngFor="let facetInner of facet.options; let i = index">
-												<div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> <span *ngIf="facetInner.count>0">({{ facetInner.count }})</span>
-												</div>
-												<div *ngIf="checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> <span *ngIf="facetInner.count>0">({{ facetInner.count }})</span>
-												</div>
-											</div>
-											<div *ngIf="facet.options.length>maxFacets">
-												<hr>
-												<span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded"><span [innerHTML]="'Show more' | translate"></span></span><span *ngIf="facet.expanded"><span [innerHTML]="'Show less' | translate"></span></span></span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
+                            <hr />
 
-							<hr/>
+                        </div>
 
-						</div>
+                        <div *ngIf="checkCompCatCount()>0">
 
-						<div *ngIf="checkCompCatCount()>0">
+                            <div class="pointer" (click)="showTrustSection=!showTrustSection">
+                                <h5><span [innerHTML]="'Rating / Trust' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showTrustSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showTrustSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+                            </div>
 
-							<div class="pointer" (click)="showTrustSection=!showTrustSection">
-								<h5><span [innerHTML]="'Rating / Trust' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showTrustSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showTrustSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
-							</div>
+                            <div *ngIf="showTrustSection">
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <span [innerHTML]="'Rating / Trust' | translate"></span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-2">
+                                            <div class="mb-2">
+                                                {{ getName(product_vendor_rating,product_vendor) }}<br />
+                                                <ngb-rating [(rate)]="ratingOverall" max="5">
+                                                    <ng-template let-fill="fill">
+                                                        <span class="star star-b" [class.full]="fill === 100">
+                                                            <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                                                        </span>
+                                                    </ng-template>
+                                                </ngb-rating>
+                                            </div>
+                                            <div class="mb-2">
+                                                {{ getName(product_vendor_rating_seller,product_vendor) }}<br />
+                                                <ngb-rating [(rate)]="ratingSeller" max="5">
+                                                    <ng-template let-fill="fill">
+                                                        <span class="star star-b" [class.full]="fill === 100">
+                                                            <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                                                        </span>
+                                                    </ng-template>
+                                                </ngb-rating>
+                                            </div>
+                                            <div class="mb-2">
+                                                {{ getName(product_vendor_rating_fulfillment,product_vendor) }}<br />
+                                                <ngb-rating [(rate)]="ratingFulfillment" max="5">
+                                                    <ng-template let-fill="fill">
+                                                        <span class="star star-b" [class.full]="fill === 100">
+                                                            <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                                                        </span>
+                                                    </ng-template>
+                                                </ngb-rating>
+                                            </div>
+                                            <div class="mb-2">
+                                                {{ getName(product_vendor_rating_delivery,product_vendor) }}<br />
+                                                <ngb-rating [(rate)]="ratingDelivery" max="5">
+                                                    <ng-template let-fill="fill">
+                                                        <span class="star star-b" [class.full]="fill === 100">
+                                                            <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                                                        </span>
+                                                    </ng-template>
+                                                </ngb-rating>
+                                            </div>
+                                            <div class="mb-2">
+                                                {{ getName(product_vendor_trust,product_vendor) }}<br />
+                                                <ngb-rating [(rate)]="ratingTrust" max="5">
+                                                    <ng-template let-fill="fill">
+                                                        <span class="heart heart-b" [class.full-heart]="fill === 100">
+                                                            <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
+                                                        </span>
+                                                    </ng-template>
+                                                </ngb-rating>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-primary" (click)="setTrustFilter()" [disabled]="!checkTrustFilter()"><span [innerHTML]="'Apply' | translate"></span></button>
+                                        <button class="btn btn-secondary ml-2" (click)="resetTrustFilter()" [hidden]="!checkTrustFacet()"><span [innerHTML]="'Reset' | translate"></span></button>
+                                    </div>
+                                </div>
 
-							<div *ngIf="showTrustSection">
-								<div class="card mb-3">
-									<div class="card-header">
-										<span [innerHTML]="'Rating / Trust' | translate"></span>
-									</div>
-									<div class="card-body">
-										<div class="mb-2">
-											<div class="mb-2">
-												{{ getName(product_vendor_rating,product_vendor) }}<br/>
-												<ngb-rating [(rate)]="ratingOverall" max="5">
-													<ng-template let-fill="fill">
-														<span class="star star-b" [class.full]="fill === 100">
-															<span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-														</span>
-													</ng-template>
-												</ngb-rating>
-											</div>
-											<div class="mb-2">
-												{{ getName(product_vendor_rating_seller,product_vendor) }}<br/>
-												<ngb-rating [(rate)]="ratingSeller" max="5">
-													<ng-template let-fill="fill">
-														<span class="star star-b" [class.full]="fill === 100">
-															<span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-														</span>
-													</ng-template>
-												</ngb-rating>
-											</div>
-											<div class="mb-2">
-												{{ getName(product_vendor_rating_fulfillment,product_vendor) }}<br/>
-												<ngb-rating [(rate)]="ratingFulfillment" max="5">
-													<ng-template let-fill="fill">
-														<span class="star star-b" [class.full]="fill === 100">
-															<span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-														</span>
-													</ng-template>
-												</ngb-rating>
-											</div>
-											<div class="mb-2">
-												{{ getName(product_vendor_rating_delivery,product_vendor) }}<br/>
-												<ngb-rating [(rate)]="ratingDelivery" max="5">
-													<ng-template let-fill="fill">
-														<span class="star star-b" [class.full]="fill === 100">
-															<span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-														</span>
-													</ng-template>
-												</ngb-rating>
-											</div>
-											<div class="mb-2">
-												{{ getName(product_vendor_trust,product_vendor) }}<br/>
-												<ngb-rating [(rate)]="ratingTrust" max="5">
-													<ng-template let-fill="fill">
-														<span class="heart heart-b" [class.full-heart]="fill === 100">
-															<span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
-														</span>
-													</ng-template>
-												</ngb-rating>
-											</div>
-										</div>
-										<button class="btn btn-primary" (click)="setTrustFilter()" [disabled]="!checkTrustFilter()"><span [innerHTML]="'Apply' | translate"></span></button>
-										<button class="btn btn-secondary ml-2" (click)="resetTrustFilter()" [hidden]="!checkTrustFacet()"><span [innerHTML]="'Reset' | translate"></span></button>
-									</div>
-								</div>
+                            </div>
 
-							</div>
+                            <hr />
 
-							<hr/>
+                        </div>
 
-						</div>
+                        <div *ngIf="checkOtherCatCount()>0">
 
-						<div *ngIf="checkOtherCatCount()>0">
+                            <div class="pointer" (click)="showOtherSection=!showOtherSection">
+                                <h5><span [innerHTML]="'Other' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showOtherSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showOtherSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+                            </div>
 
-							<div class="pointer" (click)="showOtherSection=!showOtherSection">
-								<h5><span [innerHTML]="'Other' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showOtherSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showOtherSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
-							</div>
+                            <div *ngIf="showOtherSection">
+                                <div *ngFor="let facet of facetObj">
+                                    <div *ngIf="facet.total > 0 && checkOtherCat(facet.name)" class="card mb-3">
+                                        <div class="card-header">
+                                            {{ facet.realName }}
+                                        </div>
+                                        <div class="card-body">
+                                            <div *ngFor="let facetInner of facet.options; let i = index">
+                                                <div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
+                                                    <span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> ({{ facetInner.count }})
+                                                </div>
+                                                <div *ngIf="checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
+                                                    <span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> ({{ facetInner.count }})
+                                                </div>
+                                            </div>
+                                            <div *ngIf="facet.options.length>maxFacets">
+                                                <hr>
+                                                <span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded"><span [innerHTML]="'Show more' | translate"></span></span><span *ngIf="facet.expanded"><span [innerHTML]="'Show less' | translate"></span></span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-							<div *ngIf="showOtherSection">
-								<div *ngFor="let facet of facetObj">
-									<div *ngIf="facet.total > 0 && checkOtherCat(facet.name)" class="card mb-3">
-										<div class="card-header">
-											{{ facet.realName }}
-										</div>
-										<div class="card-body">
-											<div *ngFor="let facetInner of facet.options; let i = index">
-												<div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> ({{ facetInner.count }})
-												</div>
-												<div *ngIf="checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> ({{ facetInner.count }})
-												</div>
-											</div>
-											<div *ngIf="facet.options.length>maxFacets">
-												<hr>
-												<span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded"><span [innerHTML]="'Show more' | translate"></span></span><span *ngIf="facet.expanded"><span [innerHTML]="'Show less' | translate"></span></span></span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
+                        </div>
 
-						</div>
+                    </div>
 
-					</div>
+                    <div *ngIf="size>0 && searchTopic=='comp'">
 
-					<div *ngIf="size>0 && searchTopic=='comp'">
+                        <div *ngIf="checkCompMainCatCount()>0">
 
-						<div *ngIf="checkCompMainCatCount()>0">
+                            <div class="pointer" (click)="showCompSection=!showCompSection">
+                                <h5><span [innerHTML]="'Company' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+                            </div>
 
-							<div class="pointer" (click)="showCompSection=!showCompSection">
-								<h5><span [innerHTML]="'Company' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
-							</div>
+                            <div *ngIf="showCompSection">
+                                <div *ngFor="let facet of facetObj">
+                                    <div *ngIf="facet.total > 0 && checkCompMainCat(facet.genName)" class="card mb-3">
+                                        <div class="card-header">
+                                            {{ getName(facet.genName,product_vendor) }}
+                                        </div>
+                                        <div class="card-body">
+                                            <div *ngFor="let facetInner of facet.options; let i = index">
+                                                <div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
+                                                    <span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> ({{ facetInner.count }})
+                                                </div>
+                                                <div *ngIf="checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
+                                                    <span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> ({{ facetInner.count }})
+                                                </div>
+                                            </div>
+                                            <div *ngIf="facet.options.length>maxFacets">
+                                                <hr>
+                                                <span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded"><span [innerHTML]="'Show more' | translate"></span></span><span *ngIf="facet.expanded"><span [innerHTML]="'Show less' | translate"></span></span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-							<div *ngIf="showCompSection">
-								<div *ngFor="let facet of facetObj">
-									<div *ngIf="facet.total > 0 && checkCompMainCat(facet.genName)" class="card mb-3">
-										<div class="card-header">
-											{{ getName(facet.genName,product_vendor) }}
-										</div>
-										<div class="card-body">
-											<div *ngFor="let facetInner of facet.options; let i = index">
-												<div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> ({{ facetInner.count }})
-												</div>
-												<div *ngIf="checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
-													<span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> ({{ facetInner.count }})
-												</div>
-											</div>
-											<div *ngIf="facet.options.length>maxFacets">
-												<hr>
-												<span class="clickable" (click)="facet.expanded=!facet.expanded"><span *ngIf="!facet.expanded"><span [innerHTML]="'Show more' | translate"></span></span><span *ngIf="facet.expanded"><span [innerHTML]="'Show less' | translate"></span></span></span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
+                            <hr />
 
-							<hr/>
+                        </div>
 
-						</div>
+                        <div *ngIf="checkCompTrustCatCount()>0">
 
-						<div *ngIf="checkCompTrustCatCount()>0">
+                            <div class="pointer" (click)="showTrustSection=!showTrustSection">
+                                <h5><span [innerHTML]="'Rating / Trust' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showTrustSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showTrustSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+                            </div>
 
-							<div class="pointer" (click)="showTrustSection=!showTrustSection">
-								<h5><span [innerHTML]="'Rating / Trust' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showTrustSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showTrustSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
-							</div>
+                            <div *ngIf="showTrustSection">
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <span [innerHTML]="'Rating / Trust' | translate"></span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-2">
+                                            <div class="mb-2">
+                                                {{ getName(product_vendor_rating,product_vendor) }}<br />
+                                                <ngb-rating [(rate)]="ratingOverall" max="5">
+                                                    <ng-template let-fill="fill">
+                                                        <span class="star star-b" [class.full]="fill === 100">
+                                                            <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                                                        </span>
+                                                    </ng-template>
+                                                </ngb-rating>
+                                            </div>
+                                            <div class="mb-2">
+                                                {{ getName(product_vendor_rating_seller,product_vendor) }}<br />
+                                                <ngb-rating [(rate)]="ratingSeller" max="5">
+                                                    <ng-template let-fill="fill">
+                                                        <span class="star star-b" [class.full]="fill === 100">
+                                                            <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                                                        </span>
+                                                    </ng-template>
+                                                </ngb-rating>
+                                            </div>
+                                            <div class="mb-2">
+                                                {{ getName(product_vendor_rating_fulfillment,product_vendor) }}<br />
+                                                <ngb-rating [(rate)]="ratingFulfillment" max="5">
+                                                    <ng-template let-fill="fill">
+                                                        <span class="star star-b" [class.full]="fill === 100">
+                                                            <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                                                        </span>
+                                                    </ng-template>
+                                                </ngb-rating>
+                                            </div>
+                                            <div class="mb-2">
+                                                {{ getName(product_vendor_rating_delivery,product_vendor) }}<br />
+                                                <ngb-rating [(rate)]="ratingDelivery" max="5">
+                                                    <ng-template let-fill="fill">
+                                                        <span class="star star-b" [class.full]="fill === 100">
+                                                            <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                                                        </span>
+                                                    </ng-template>
+                                                </ngb-rating>
+                                            </div>
+                                            <div class="mb-2">
+                                                {{ getName(product_vendor_trust,product_vendor) }}<br />
+                                                <ngb-rating [(rate)]="ratingTrust" max="5">
+                                                    <ng-template let-fill="fill">
+                                                        <span class="heart heart-b" [class.full-heart]="fill === 100">
+                                                            <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
+                                                        </span>
+                                                    </ng-template>
+                                                </ngb-rating>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-primary" (click)="setCompTrustFilter()" [disabled]="!checkTrustFilter()"><span [innerHTML]="'Apply' | translate"></span></button>
+                                        <button class="btn btn-secondary ml-2" (click)="resetCompTrustFilter()" [hidden]="!checkCompTrustFacet()"><span [innerHTML]="'Reset' | translate"></span></button>
+                                    </div>
+                                </div>
 
-							<div *ngIf="showTrustSection">
-								<div class="card mb-3">
-									<div class="card-header">
-										<span [innerHTML]="'Rating / Trust' | translate"></span>
-									</div>
-									<div class="card-body">
-										<div class="mb-2">
-											<div class="mb-2">
-												{{ getName(product_vendor_rating,product_vendor) }}<br/>
-												<ngb-rating [(rate)]="ratingOverall" max="5">
-													<ng-template let-fill="fill">
-														<span class="star star-b" [class.full]="fill === 100">
-															<span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-														</span>
-													</ng-template>
-												</ngb-rating>
-											</div>
-											<div class="mb-2">
-												{{ getName(product_vendor_rating_seller,product_vendor) }}<br/>
-												<ngb-rating [(rate)]="ratingSeller" max="5">
-													<ng-template let-fill="fill">
-														<span class="star star-b" [class.full]="fill === 100">
-															<span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-														</span>
-													</ng-template>
-												</ngb-rating>
-											</div>
-											<div class="mb-2">
-												{{ getName(product_vendor_rating_fulfillment,product_vendor) }}<br/>
-												<ngb-rating [(rate)]="ratingFulfillment" max="5">
-													<ng-template let-fill="fill">
-														<span class="star star-b" [class.full]="fill === 100">
-															<span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-														</span>
-													</ng-template>
-												</ngb-rating>
-											</div>
-											<div class="mb-2">
-												{{ getName(product_vendor_rating_delivery,product_vendor) }}<br/>
-												<ngb-rating [(rate)]="ratingDelivery" max="5">
-													<ng-template let-fill="fill">
-														<span class="star star-b" [class.full]="fill === 100">
-															<span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-														</span>
-													</ng-template>
-												</ngb-rating>
-											</div>
-											<div class="mb-2">
-												{{ getName(product_vendor_trust,product_vendor) }}<br/>
-												<ngb-rating [(rate)]="ratingTrust" max="5">
-													<ng-template let-fill="fill">
-														<span class="heart heart-b" [class.full-heart]="fill === 100">
-															<span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
-														</span>
-													</ng-template>
-												</ngb-rating>
-											</div>
-										</div>
-										<button class="btn btn-primary" (click)="setCompTrustFilter()" [disabled]="!checkTrustFilter()"><span [innerHTML]="'Apply' | translate"></span></button>
-										<button class="btn btn-secondary ml-2" (click)="resetCompTrustFilter()" [hidden]="!checkCompTrustFacet()"><span [innerHTML]="'Reset' | translate"></span></button>
-									</div>
-								</div>
+                            </div>
 
-							</div>
+                        </div>
 
-						</div>
+                    </div>
 
-					</div>
+                </div>
+                <!-- End of facets -->
+                <!-- Results -->
+                <div class="col-8 row pr-0">
 
-				</div>
-				<!-- End of facets -->
-				<!-- Results -->
-				<div class="col-8 row pr-0">
+                    <!-- Product results -->
+                    <div *ngFor="let result of response;let ind=index" class="pr-0" [ngClass]="{'col-12':display=='list','col-4':display=='panel'}">
+                        <div *ngIf="result.uri != null && searchTopic=='prod'" class="card pointer mb-3">
+                            <a class="text-std" [href]="getProdLink(result)" (click)="onSearchResultClicked($event)">
+                                <!--<a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: result.catalogueId, id: result.manufactuerItemId}">-->
+                                <div class="card-body">
+                                    <div *ngIf="!result.isFromLocalInstance && result.nimbleInstanceName && result.nimbleInstanceName != ''" [title]="result.nimbleInstanceName" class="badge badge-pill badge-secondary p-2" style="position:absolute;right:-0.7rem;top:-0.7rem">
+                                        <i class="fa fa-database pr-1"></i> <span>{{result.nimbleInstanceName}}</span>
+                                    </div>
+                                    <div class="row">
+                                        <div *ngIf="pageRef === 'publish'" #productSelect class="align-self-center" [ngClass]="{'col-1':display=='list','col-12 pb-1':display=='panel'}" (click)="onToggleProductSelectForPublish(result, $event)">
+                                            <input type="checkbox" [checked]="productSelected(result.uri)" (click)="$event.preventDefault();  $event.stopPropagation(); productSelect.click();">
+                                        </div>
+                                        <div class="align-center" [ngClass]="{'col-2':display=='list','col-12 pb-1':display=='panel'}">
+                                            <img src="{{imageMap[result.uri]}}" class="thumb" onerror="this.src='assets/empty_img.png';" />
+                                        </div>
+                                        <div [ngClass]="{'col-6':display=='list'&&pageRef!=='publish','col-5':display=='list'&&pageRef==='publish','col-12 pt-1 pb-1':display=='panel'}">
+                                            <div style="max-height:1.5rem;overflow:hidden">
+                                                <span [title]="getMultilingualLabel(result[product_name])"><b>{{ getMultilingualLabel(result[product_name]) }}</b></span>
+                                            </div>
+                                            <div *ngIf="display=='list'" style="max-height:3rem;overflow:hidden">
+                                                <span *ngIf="result.description" [title]="getMultilingualLabel(result[product_description])"><small>{{getMultilingualLabel(result[product_description])}}</small></span>
+                                            </div>
+                                        </div>
+                                        <!-- Price -->
+                                        <div [ngClass]="{'col-2 border-right':display=='list','col-12 border-bottom pt-1 pb-2':display=='panel'}">
+                                            <!-- Price is available -->
+                                            <ng-container *ngIf="result[product_price] && !checkEmpty(result[product_price])">
+                                                <span class="badge badge-primary-nimble">
+                                                    <ng-container *ngIf="result[product_base_quantity] > 1">
+                                                        <span>{{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}</span>
+                                                        <span [innerHTML]="'per' | translate"></span>
+                                                        <span>{{result[product_base_quantity]}} {{result[product_base_quantity_unit]}}</span>
+                                                    </ng-container>
+                                                    <span *ngIf="!result[product_base_quantity] || result[product_base_quantity] === 1">
+                                                        {{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}
+                                                    </span>
+                                                </span>
+                                            </ng-container>
+                                            <!-- Price is not available -->
+                                            <span class="badge badge-warning" *ngIf="!result[product_price] || checkEmpty(result[product_price])"><span [innerHTML]="'Upon request' | translate"></span></span><br />
+                                            <!-- Shopping cart buttons -->
+                                            <ng-container *ngIf="shoppingCartDataService.isShoppingCartButtonVisible(result.classificationUri)">
+                                                <button *ngIf="!getShoppingCartStatus(ind).fb_submitted" class="badge {{getShoppingCartStatus(ind).fb_callback ? 'badge-secondary disabled' : 'badge-primary pointer'}} mt-1" (click)="onAddToCart(result,ind, $event)">
+                                                    <span class="fas fa-shopping-cart mr-1"></span>
+                                                    <span [innerHTML]="'Add to Cart' | translate"></span>
+                                                </button>
+                                                <call-status [callStatus]="getShoppingCartStatus(ind)"></call-status>
+                                            </ng-container>
+                                        </div>
+                                        <div *ngIf="result[product_vendor]" [ngClass]="{'col-2':display=='list','col-12 pt-2':display=='panel'}">
+                                            <div style="max-height:1.5rem;overflow:hidden">
+                                                <span *ngIf="result[product_vendor][product_vendor_brand_name]" [title]="result[product_vendor][product_vendor_name]">{{ getMultilingualLabel(result[product_vendor][product_vendor_brand_name]) }}</span>
+                                                <span *ngIf="!result[product_vendor][product_vendor_brand_name]" [title]="result[product_vendor][product_vendor_name]">{{ result[product_vendor][product_vendor_name] }}</span>
+                                            </div>
+                                            <div *ngIf="!checkNaN(result[product_vendor][product_vendor_rating])" [title]="getName(product_vendor_rating,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating],1)+'/5\n\n'+getName(product_vendor_rating_seller,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating_seller],1)+'/5\n\n'+getName(product_vendor_rating_fulfillment,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating_fulfillment],1)+'/5\n\n'+getName(product_vendor_rating_delivery,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating_delivery],1)+'/5\n\n' + 'Total No OF Trust Evaluations' +':\n'+calcRating(result[product_vendor][product_vendor_evaluation],1)+''">
+                                                <ngb-rating [rate]="calcRating(result[product_vendor][product_vendor_rating],1)" [readonly]="true" max="5">
+                                                    <ng-template let-fill="fill">
+                                                        <span class="star" [class.full]="fill === 100">
+                                                            <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                                                        </span>
+                                                    </ng-template>
+                                                </ngb-rating>
+                                            </div>
+                                            <div *ngIf="checkNaN(result[product_vendor][product_vendor_rating])" [title]="getName(product_vendor_rating,product_vendor)+':\n-'">
+                                                <ngb-rating [rate]="0" [readonly]="true" max="5">
+                                                    <ng-template let-fill="fill">
+                                                        <span class="star" [class.full]="fill === 100">
+                                                            <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                                                        </span>
+                                                    </ng-template>
+                                                </ngb-rating>
+                                            </div>
+                                            <div *ngIf="!checkNaN(result[product_vendor][product_vendor_trust])" [title]="getName(product_vendor_trust,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_trust],5)+'/5'">
+                                                <ngb-rating [rate]="calcRating(result[product_vendor][product_vendor_trust],5)" [readonly]="true" max="5">
+                                                    <ng-template let-fill="fill">
+                                                        <span class="heart" [class.full-heart]="fill === 100">
+                                                            <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
+                                                        </span>
+                                                    </ng-template>
+                                                </ngb-rating>
+                                            </div>
+                                            <div *ngIf="checkNaN(result[product_vendor][product_vendor_trust])" [title]="getName(product_vendor_trust,product_vendor)+':\n-'">
+                                                <ngb-rating [rate]="0" [readonly]="true" max="5">
+                                                    <ng-template let-fill="fill">
+                                                        <span class="heart" [class.full-heart]="fill === 100">
+                                                            <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
+                                                        </span>
+                                                    </ng-template>
+                                                </ngb-rating>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="!result[product_vendor]" [ngClass]="{'col-2':display=='list','col-12':display=='panel'}">
+                                            <span [innerHTML]="'Unknown' | translate"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
 
-					<!-- Product results -->
-					<div *ngFor="let result of response;let ind=index" class="pr-0" [ngClass]="{'col-12':display=='list','col-4':display=='panel'}">
-						<div *ngIf="result.uri != null && searchTopic=='prod'" class="card pointer mb-3">
-							<a class="text-std" [href]="getProdLink(result)" (click)="onSearchResultClicked($event)">
-							<!--<a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: result.catalogueId, id: result.manufactuerItemId}">-->
-								<div class="card-body">
-									<div *ngIf="!result.isFromLocalInstance && result.nimbleInstanceName && result.nimbleInstanceName != ''" [title]="result.nimbleInstanceName" class="badge badge-pill badge-secondary p-2" style="position:absolute;right:-0.7rem;top:-0.7rem">
-										<i class="fa fa-database pr-1"></i> <span>{{result.nimbleInstanceName}}</span>
-									</div>
-									<div class="row">
-										<div *ngIf="pageRef === 'publish'" #productSelect class="align-self-center" [ngClass]="{'col-1':display=='list','col-12 pb-1':display=='panel'}" (click)="onToggleProductSelectForPublish(result, $event)">
-											<input type="checkbox" [checked]="productSelected(result.uri)" (click)="$event.preventDefault();  $event.stopPropagation(); productSelect.click();">
-										</div>
-										<div class="align-center" [ngClass]="{'col-2':display=='list','col-12 pb-1':display=='panel'}">
-											<img src="{{imageMap[result.uri]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
-										</div>
-										<div [ngClass]="{'col-6':display=='list'&&pageRef!=='publish','col-5':display=='list'&&pageRef==='publish','col-12 pt-1 pb-1':display=='panel'}">
-											<div style="max-height:1.5rem;overflow:hidden">
-												<span [title]="getMultilingualLabel(result[product_name])"><b>{{ getMultilingualLabel(result[product_name]) }}</b></span>
-											</div>
-											<div *ngIf="display=='list'" style="max-height:3rem;overflow:hidden">
-												<span *ngIf="result.description" [title]="getMultilingualLabel(result[product_description])"><small>{{getMultilingualLabel(result[product_description])}}</small></span>
-											</div>
-										</div>
-										<!-- Price -->
-										<div [ngClass]="{'col-2 border-right':display=='list','col-12 border-bottom pt-1 pb-2':display=='panel'}">
-											<!-- Price is available -->
-											<ng-container *ngIf="result[product_price] && !checkEmpty(result[product_price])">
-												<span class="badge badge-primary-nimble">
-													<ng-container *ngIf="result[product_base_quantity] > 1">
-														<span >{{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}</span>
-														<span [innerHTML]="'per' | translate"></span>
-														<span >{{result[product_base_quantity]}} {{result[product_base_quantity_unit]}}</span>
-													</ng-container>
-													<span *ngIf="!result[product_base_quantity] || result[product_base_quantity] === 1">
-														{{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}
-													</span>
-												</span>
-											</ng-container>
-											<!-- Price is not available -->
-											<span class="badge badge-warning" *ngIf="!result[product_price] || checkEmpty(result[product_price])"><span [innerHTML]="'Upon request' | translate"></span></span><br/>
-											<!-- Shopping cart buttons -->
-											<ng-container *ngIf="shoppingCartDataService.cartFetched() && !isSearchResultLogisticsService(result)">
-												<button *ngIf="!getShoppingCartStatus(ind).fb_submitted"
-													  class="badge {{getShoppingCartStatus(ind).fb_callback ? 'badge-secondary disabled' : 'badge-primary pointer'}} mt-1"
-													  (click)="onAddToCart(result,ind, $event)">
-													<span class="fas fa-shopping-cart mr-1"></span>
-													<span [innerHTML]="'Add to Cart' | translate"></span>
-												</button>
-												<call-status [callStatus]="getShoppingCartStatus(ind)"></call-status>
-											</ng-container>
-										</div>
-										<div *ngIf="result[product_vendor]" [ngClass]="{'col-2':display=='list','col-12 pt-2':display=='panel'}">
-											<div style="max-height:1.5rem;overflow:hidden">
-												<span *ngIf="result[product_vendor][product_vendor_brand_name]" [title]="result[product_vendor][product_vendor_name]">{{ getMultilingualLabel(result[product_vendor][product_vendor_brand_name]) }}</span>
-												<span *ngIf="!result[product_vendor][product_vendor_brand_name]" [title]="result[product_vendor][product_vendor_name]">{{ result[product_vendor][product_vendor_name] }}</span>
-											</div>
-											<div *ngIf="!checkNaN(result[product_vendor][product_vendor_rating])" [title]="getName(product_vendor_rating,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating],1)+'/5\n\n'+getName(product_vendor_rating_seller,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating_seller],1)+'/5\n\n'+getName(product_vendor_rating_fulfillment,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating_fulfillment],1)+'/5\n\n'+getName(product_vendor_rating_delivery,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating_delivery],1)+'/5\n\n' + 'Total No OF Trust Evaluations' +':\n'+calcRating(result[product_vendor][product_vendor_evaluation],1)+''">
-												<ngb-rating [rate]="calcRating(result[product_vendor][product_vendor_rating],1)" [readonly]="true" max="5">
-													<ng-template let-fill="fill">
-													  <span class="star" [class.full]="fill === 100">
-													    <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-													  </span>
-													</ng-template>
-												</ngb-rating>
-											</div>
-											<div *ngIf="checkNaN(result[product_vendor][product_vendor_rating])" [title]="getName(product_vendor_rating,product_vendor)+':\n-'">
-												<ngb-rating [rate]="0" [readonly]="true" max="5">
-													<ng-template let-fill="fill">
-													  <span class="star" [class.full]="fill === 100">
-													    <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-													  </span>
-													</ng-template>
-												</ngb-rating>
-											</div>
-											<div *ngIf="!checkNaN(result[product_vendor][product_vendor_trust])" [title]="getName(product_vendor_trust,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_trust],5)+'/5'">
-												<ngb-rating [rate]="calcRating(result[product_vendor][product_vendor_trust],5)" [readonly]="true" max="5">
-													<ng-template let-fill="fill">
-													  <span class="heart" [class.full-heart]="fill === 100">
-													    <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
-													  </span>
-													</ng-template>
-												</ngb-rating>
-											</div>
-											<div *ngIf="checkNaN(result[product_vendor][product_vendor_trust])" [title]="getName(product_vendor_trust,product_vendor)+':\n-'">
-												<ngb-rating [rate]="0" [readonly]="true" max="5">
-													<ng-template let-fill="fill">
-													  <span class="heart" [class.full-heart]="fill === 100">
-													    <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
-													  </span>
-													</ng-template>
-												</ngb-rating>
-											</div>
-										</div>
-										<div *ngIf="!result[product_vendor]" [ngClass]="{'col-2':display=='list','col-12':display=='panel'}">
-											<span [innerHTML]="'Unknown' | translate"></span>
-										</div>
-									</div>
-								</div>
-							</a>
-						</div>
+                        <!-- Company results -->
+                        <div *ngIf="result.uri != null && searchTopic=='comp'" class="card pointer mb-3">
+                            <a class="text-std" [href]="getCompLink(result)">
+                                <!--<a class="text-std" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: result.id}">-->
+                                <div class="card-body">
+                                    <div *ngIf="!result.isFromLocalInstance && result.nimbleInstanceName && result.nimbleInstanceName != ''" [title]="result.nimbleInstanceName" class="badge badge-pill badge-secondary p-2" style="position:absolute;right:-0.7rem;top:-0.7rem;">
+                                        <i class="fa fa-database pr-1"></i> <span>{{result.nimbleInstanceName}}</span>
+                                    </div>
+                                    <div class="row">
+                                        <div class="align-center" [ngClass]="{'col-2':display=='list','col-12 pb-1':display=='panel'}">
+                                            <img src="{{imgEndpoint}}{{result[product_vendor_img]}}" class="thumb" onerror="this.src='assets/empty_img.png';" />
+                                        </div>
+                                        <div [ngClass]="{'col-8 border-right':display=='list','col-12 pt-1 pb-2 border-bottom':display=='panel'}">
+                                            <div style="max-height:1.5rem;overflow:hidden">
+                                                <span *ngIf="result[product_vendor_brand_name]" [title]="result[product_vendor_name]"><b>{{ getMultilingualLabel(result[product_vendor_brand_name]) }}</b></span>
+                                                <span *ngIf="!result[product_vendor_brand_name]" [title]="result[product_vendor_name]"><b>{{ result[product_vendor_name] }}</b></span>
+                                            </div>
+                                            <div *ngIf="display=='list'" style="max-height:3rem;overflow:hidden">
+                                                <span *ngIf="result.businessType" [title]="result.businessType"><small>{{result.businessType}}</small></span>
+                                            </div>
+                                        </div>
+                                        <div [ngClass]="{'col-2':display=='list','col-12 pt-2':display=='panel'}">
+                                            <div *ngIf="!checkNaN(result[product_vendor_rating])" [title]="getName(product_vendor_rating,product_vendor)+':\n'+calcRating(result[product_vendor_rating],1)+'/5\n\n'+getName(product_vendor_rating_seller,product_vendor)+':\n'+calcRating(result[product_vendor_rating_seller],1)+'/5\n\n'+getName(product_vendor_rating_fulfillment,product_vendor)+':\n'+calcRating(result[product_vendor_rating_fulfillment],1)+'/5\n\n'+getName(product_vendor_rating_delivery,product_vendor)+':\n'+calcRating(result[product_vendor_rating_delivery],1)+'/5'">
+                                                <ngb-rating [rate]="calcRating(result[product_vendor_rating],1)" [readonly]="true" max="5">
+                                                    <ng-template let-fill="fill">
+                                                        <span class="star" [class.full]="fill === 100">
+                                                            <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                                                        </span>
+                                                    </ng-template>
+                                                </ngb-rating>
+                                            </div>
+                                            <div *ngIf="checkNaN(result[product_vendor_rating])" [title]="getName(product_vendor_rating,product_vendor)+':\n-'">
+                                                <ngb-rating [rate]="0" [readonly]="true" max="5">
+                                                    <ng-template let-fill="fill">
+                                                        <span class="star" [class.full]="fill === 100">
+                                                            <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                                                        </span>
+                                                    </ng-template>
+                                                </ngb-rating>
+                                            </div>
+                                            <div *ngIf="!checkNaN(result[product_vendor_trust])" [title]="getName(product_vendor_trust,product_vendor)+':\n'+calcRating(result[product_vendor_trust],5)+'/5'">
+                                                <ngb-rating [rate]="calcRating(result[product_vendor_trust],5)" [readonly]="true" max="5">
+                                                    <ng-template let-fill="fill">
+                                                        <span class="heart" [class.full-heart]="fill === 100">
+                                                            <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
+                                                        </span>
+                                                    </ng-template>
+                                                </ngb-rating>
+                                            </div>
+                                            <div *ngIf="checkNaN(result[product_vendor_trust])" [title]="getName(product_vendor_trust,product_vendor)+':\n-'">
+                                                <ngb-rating [rate]="0" [readonly]="true" max="5">
+                                                    <ng-template let-fill="fill">
+                                                        <span class="heart" [class.full-heart]="fill === 100">
+                                                            <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
+                                                        </span>
+                                                    </ng-template>
+                                                </ngb-rating>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
 
-						<!-- Company results -->
-						<div *ngIf="result.uri != null && searchTopic=='comp'" class="card pointer mb-3">
-							<a class="text-std" [href]="getCompLink(result)">
-							<!--<a class="text-std" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: result.id}">-->
-								<div class="card-body">
-									<div *ngIf="!result.isFromLocalInstance && result.nimbleInstanceName && result.nimbleInstanceName != ''" [title]="result.nimbleInstanceName" class="badge badge-pill badge-secondary p-2" style="position:absolute;right:-0.7rem;top:-0.7rem;">
-										<i class="fa fa-database pr-1"></i> <span>{{result.nimbleInstanceName}}</span>
-									</div>
-									<div class="row">
-										<div class="align-center" [ngClass]="{'col-2':display=='list','col-12 pb-1':display=='panel'}">
-											<img src="{{imgEndpoint}}{{result[product_vendor_img]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
-										</div>
-										<div [ngClass]="{'col-8 border-right':display=='list','col-12 pt-1 pb-2 border-bottom':display=='panel'}">
-											<div style="max-height:1.5rem;overflow:hidden">
-												<span *ngIf="result[product_vendor_brand_name]" [title]="result[product_vendor_name]"><b>{{ getMultilingualLabel(result[product_vendor_brand_name]) }}</b></span>
-												<span *ngIf="!result[product_vendor_brand_name]" [title]="result[product_vendor_name]"><b>{{ result[product_vendor_name] }}</b></span>
-											</div>
-											<div *ngIf="display=='list'" style="max-height:3rem;overflow:hidden">
-												<span *ngIf="result.businessType" [title]="result.businessType"><small>{{result.businessType}}</small></span>
-											</div>
-										</div>
-										<div [ngClass]="{'col-2':display=='list','col-12 pt-2':display=='panel'}">
-											<div *ngIf="!checkNaN(result[product_vendor_rating])" [title]="getName(product_vendor_rating,product_vendor)+':\n'+calcRating(result[product_vendor_rating],1)+'/5\n\n'+getName(product_vendor_rating_seller,product_vendor)+':\n'+calcRating(result[product_vendor_rating_seller],1)+'/5\n\n'+getName(product_vendor_rating_fulfillment,product_vendor)+':\n'+calcRating(result[product_vendor_rating_fulfillment],1)+'/5\n\n'+getName(product_vendor_rating_delivery,product_vendor)+':\n'+calcRating(result[product_vendor_rating_delivery],1)+'/5'">
-												<ngb-rating [rate]="calcRating(result[product_vendor_rating],1)" [readonly]="true" max="5">
-													<ng-template let-fill="fill">
-													  <span class="star" [class.full]="fill === 100">
-													    <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-													  </span>
-													</ng-template>
-												</ngb-rating>
-											</div>
-											<div *ngIf="checkNaN(result[product_vendor_rating])" [title]="getName(product_vendor_rating,product_vendor)+':\n-'">
-												<ngb-rating [rate]="0" [readonly]="true" max="5">
-													<ng-template let-fill="fill">
-													  <span class="star" [class.full]="fill === 100">
-													    <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-													  </span>
-													</ng-template>
-												</ngb-rating>
-											</div>
-											<div *ngIf="!checkNaN(result[product_vendor_trust])" [title]="getName(product_vendor_trust,product_vendor)+':\n'+calcRating(result[product_vendor_trust],5)+'/5'">
-												<ngb-rating [rate]="calcRating(result[product_vendor_trust],5)" [readonly]="true" max="5">
-													<ng-template let-fill="fill">
-													  <span class="heart" [class.full-heart]="fill === 100">
-													    <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
-													  </span>
-													</ng-template>
-												</ngb-rating>
-											</div>
-											<div *ngIf="checkNaN(result[product_vendor_trust])" [title]="getName(product_vendor_trust,product_vendor)+':\n-'">
-												<ngb-rating [rate]="0" [readonly]="true" max="5">
-													<ng-template let-fill="fill">
-													  <span class="heart" [class.full-heart]="fill === 100">
-													    <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
-													  </span>
-													</ng-template>
-												</ngb-rating>
-											</div>
-										</div>
-									</div>
-								</div>
-							</a>
-						</div>
+                    </div>
 
-					</div>
+                    <div *ngIf="size>0" class="justify-content-center pagination col-12 pr-0">
+                        <ngb-pagination [(collectionSize)]="size" [(page)]="page" [pageSize]="rows" [maxSize]="5" [boundaryLinks]="true" (pageChange)="get(objToSubmit)"></ngb-pagination>
+                    </div>
 
-					<div *ngIf="size>0" class="justify-content-center pagination col-12 pr-0">
-						<ngb-pagination [(collectionSize)]="size" [(page)]="page" [pageSize]="rows" [maxSize]="5" [boundaryLinks]="true" (pageChange)="get(objToSubmit)"></ngb-pagination>
-					</div>
+                </div>
 
-				</div>
+            </div>
 
-			</div>
-
-		</div>
-	</div>
+        </div>
+    </div>
 
 </form>

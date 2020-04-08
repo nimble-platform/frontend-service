@@ -1,8 +1,24 @@
-import {Component, ElementRef, EventEmitter, Output, ViewChild} from "@angular/core";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {Quantity} from "../../../catalogue/model/publish/quantity";
-import {UBLModelUtils} from "../../../catalogue/model/ubl-model-utils";
-import {TranslateService} from '@ngx-translate/core';
+/*
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
+import { Component, ElementRef, EventEmitter, Output, ViewChild } from "@angular/core";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { Quantity } from "../../../catalogue/model/publish/quantity";
+import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "custom-term-modal",
@@ -22,7 +38,7 @@ export class CustomTermModalComponent {
 
     @ViewChild("modal") modal: ElementRef;
 
-    constructor(private modalService: NgbModal,private translate: TranslateService) {
+    constructor(private modalService: NgbModal, private translate: TranslateService) {
     }
 
 
@@ -33,22 +49,22 @@ export class CustomTermModalComponent {
         });
     }
 
-    reset(){
+    reset() {
         this.termName = "";
         this.termDescription = "";
         this.selectedDataType = 'TEXT';
-        this.stringValue= "";
+        this.stringValue = "";
         this.numberValue = null;
         this.quantityValue = new Quantity();
     }
 
     onAddCustomTerm(): void {
         let value;
-        if(this.selectedDataType == 'TEXT') {
+        if (this.selectedDataType == 'TEXT') {
             value = this.stringValue;
-        } else if(this.selectedDataType == 'NUMBER') {
+        } else if (this.selectedDataType == 'NUMBER') {
             value = this.numberValue;
-        } else  {
+        } else {
             value = this.quantityValue;
         }
         let termDetails: any = {};
@@ -60,16 +76,16 @@ export class CustomTermModalComponent {
     }
 
     validValueSpecified(): boolean {
-        if(this.selectedDataType == 'TEXT') {
-            if(this.stringValue) {
+        if (this.selectedDataType == 'TEXT') {
+            if (this.stringValue) {
                 return true;
             }
-        } else if(this.selectedDataType == 'NUMBER') {
-            if(this.numberValue) {
+        } else if (this.selectedDataType == 'NUMBER') {
+            if (this.numberValue) {
                 return true;
             }
         } else {
-            if(!UBLModelUtils.isEmptyOrIncompleteQuantity(this.quantityValue)) {
+            if (!UBLModelUtils.isEmptyOrIncompleteQuantity(this.quantityValue)) {
                 return true;
             }
         }

@@ -1,67 +1,87 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <div *ngIf="!routeProcessInstanceId" class="row thread-entry m-0">
     <div class="col-12">
         <!-- Title bar -->
         <div class="row">
             <div class="col-12 d-flex thread-entry-header">
-            <!--<div class="col-12 d-flex thread-entry-header" (click)="expanded = !expanded">-->
+                <!--<div class="col-12 d-flex thread-entry-header" (click)="expanded = !expanded">-->
                 <div *ngIf="!titleEvent" class="header-label mr-auto d-flex w-100">
                     <div class="row w-100 m-0">
-                      <div class="col pl-2 pr-2">
-                          <span *ngIf="fetchCallStatus.isLoading()"><img src="../../../assets/images/form_loader.gif"/></span>
-                          <span *ngIf="fetchCallStatus.isError()" [innerHTML]="'Error while fetching thread.' | translate"></span>
-                      </div>
+                        <div class="col pl-2 pr-2">
+                            <span *ngIf="fetchCallStatus.isLoading()"><img src="../../../assets/images/form_loader.gif" /></span>
+                            <span *ngIf="fetchCallStatus.isError()" [innerHTML]="'Error while fetching thread.' | translate"></span>
+                        </div>
                     </div>
                 </div>
                 <div *ngIf="titleEvent" class="header-label mr-auto d-flex w-100">
                     <div class="row w-100 m-0">
                         <div class="col pl-2">
-                          <strong><span [innerHTML]="'Product / Service' | translate"></span>:</strong><br/>
-                          <span *ngFor="let catalogId of titleEvent.products.catalogIds;let i=index" >
-                              <span class="clickable" (click)="navigateToSearchDetails(titleEvent.products,i)">{{selectPreferredValue(titleEvent.products.productNames[i])}}</span> {{i != titleEvent.products.catalogIds.length-1 ? " / ":""}}
-                          </span>
+                            <strong><span [innerHTML]="'Product / Service' | translate"></span>:</strong><br />
+                            <ng-container *ngFor="let catalogId of titleEvent.products.catalogIds;let i=index">
+                                <span [title]="getProductTitle(i)">
+                                    <span class="clickable" (click)="navigateToSearchDetails(titleEvent.products,i)" [ngStyle]="{'pointer-events':titleEvent.areProductsDeleted[i] ? 'none':'auto'}">{{selectPreferredValue(titleEvent.products.productNames[i])}}</span> {{i != titleEvent.products.catalogIds.length-1 ? " / ":""}}
+                                </span>
+                            </ng-container>
                         </div>
                         <div class="col pl-1">
-                          <strong><span [innerHTML]="'Trading Partner' | translate"></span>:</strong><br/>
-                          <span class="clickable" (click)="navigateToCompanyDetails()">{{tradingPartnerName}}</span>
+                            <strong><span [innerHTML]="'Trading Partner' | translate"></span>:</strong><br />
+                            <span [title]="getTradingPartnerTitle()">
+                                <span class="clickable" (click)="navigateToCompanyDetails()" [ngStyle]="{'pointer-events':sellerNegoSettings.company.deleted ? 'none':'auto'}">{{tradingPartnerName}}</span>
+                            </span>
                         </div>
                         <div class="col pl-1">
-                            <strong><span [innerHTML]="'Status' | translate"></span>:</strong><br/>
+                            <strong><span [innerHTML]="'Status' | translate"></span>:</strong><br />
                             <span *ngIf="processInstanceGroup.status == 'CANCELLED'" class="badge badge-secondary">{{getCollaborationCancelledStatus(titleEvent.cancellationReason,titleEvent.completionDate)}}</span>
                             <span *ngIf="processInstanceGroup.status == 'INPROGRESS'" class="badge" [ngClass]="{'badge-secondary':(titleEvent.status=='CANCELLED'),'badge-success':(titleEvent.status=='DONE'),'badge-warning':(titleEvent.status=='WAITING'),'badge-danger':(titleEvent.status=='ACTION_REQUIRED')}">{{titleEvent.statusText}}</span>
                             <span *ngIf="processInstanceGroup.status == 'COMPLETED'" class="badge badge-primary"><span>{{getCollaborationFinishedStatus(titleEvent.completionDate)}}</span></span>
                         </div>
                         <div class="col pl-1">
-                          <strong><span [innerHTML]="'Actions' | translate"></span>:</strong><br/>
-                          <span *ngIf="processInstanceGroup.status == 'CANCELLED'"><span [innerHTML]="'n/A' | translate"></span></span>
-                          <span *ngIf="processInstanceGroup.status != 'CANCELLED' && titleEvent.actionText !== ''" class="clickable" (click)="openBpProcessView()">{{titleEvent.actionText}}</span>
+                            <strong><span [innerHTML]="'Actions' | translate"></span>:</strong><br />
+                            <span *ngIf="processInstanceGroup.status == 'CANCELLED'"><span [innerHTML]="'n/A' | translate"></span></span>
+                            <span *ngIf="processInstanceGroup.status != 'CANCELLED' && titleEvent.actionText !== ''" class="clickable" (click)="openBpProcessView()" singleClick>{{titleEvent.actionText}}</span>
                         </div>
                         <div class="col-xs-auto align-right pl-1 pr-2" style="min-width:6rem">
-                          <div *ngIf="titleEvent && showDataChannelButton && enableDataChannelButton" class="inline" data-toggle="tooltip" data-placement="top" [title]="'Show Data Channel' | translate">
-                              <i class="fa fa-exchange-alt p-1 pointer" aria-hidden="true" [routerLink]="[channelLink]"></i>
-                          </div>
-                          <div *ngIf="titleEvent && showDataChannelButton && !enableDataChannelButton" class="inline" data-toggle="tooltip" data-placement="top" [title]="'Waiting for trading partner...' | translate" (click)="alertWait()">
-                              <i class="fa fa-exchange-alt p-1 pointer" aria-hidden="true"></i>
-                          </div>
-                          <!--
+                            <div *ngIf="titleEvent && showDataChannelButton && enableDataChannelButton" class="inline" data-toggle="tooltip" data-placement="top" [title]="'Show Data Channel' | translate">
+                                <i class="fa fa-exchange-alt p-1 pointer" aria-hidden="true" [routerLink]="[channelLink]"></i>
+                            </div>
+                            <div *ngIf="titleEvent && showDataChannelButton && !enableDataChannelButton" class="inline" data-toggle="tooltip" data-placement="top" [title]="'Waiting for trading partner...' | translate" (click)="alertWait()">
+                                <i class="fa fa-exchange-alt p-1 pointer" aria-hidden="true"></i>
+                            </div>
+                            <!--
                           <div *ngIf="titleEvent && processInstanceGroup.archived" class="inline" (click)="deleteGroup()" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
                               <i class="fa fa-trash-alt p-1 pointer" aria-hidden="true"></i>
                           </div>
                           -->
-                          <div *ngIf="titleEvent && showRateCollaborationButton && sellerNegoSettings" class="inline" (click)="rateCollaborationSuccess(addSuccessRatingModal)" data-toggle="tooltip" data-placement="top" [title]="'Rate this collaboration' | translate">
-                              <i class="fa fa-star p-1 pointer" aria-hidden="true"></i>
-                          </div>
-                          <div *ngIf="titleEvent && showFinishCollaborationButton" class="inline" (click)="finishCollaboration()" data-toggle="tooltip" data-placement="top" [title]="'Finish the collaboration' | translate">
-                              <i class="far fa-check-circle p-1 pointer" aria-hidden="true"></i>
-                          </div>
-                          <div *ngIf="titleEvent && showCancelCollaborationButton" class="inline" (click)="rateCollaborationCancelled(addCancelRatingModal)" data-toggle="tooltip" data-placement="top" [title]="'Cancel the collaboration' | translate">
-                              <i class="fa fa-times p-1 pointer" aria-hidden="true"></i>
-                          </div>
-                          <div *ngIf="!expanded" class="inline" (click)="expanded = !expanded" data-toggle="tooltip" data-placement="top" [title]="'Show details' | translate">
-                              <i class="fa fa-angle-double-down p-1 pointer" aria-hidden="true"></i>
-                          </div>
-                          <div *ngIf="expanded" class="inline" (click)="expanded = !expanded" data-toggle="tooltip" data-placement="top" [title]="'Hide details' | translate">
-                              <i class="fa fa-angle-double-up p-1 pointer" aria-hidden="true"></i>
-                          </div>
+                            <div *ngIf="titleEvent && showRateCollaborationButton && sellerNegoSettings" class="inline" (click)="rateCollaborationSuccess(addSuccessRatingModal)" data-toggle="tooltip" data-placement="top" [title]="'Rate this collaboration' | translate">
+                                <i class="fa fa-star p-1 pointer" aria-hidden="true"></i>
+                            </div>
+                            <div *ngIf="titleEvent && showFinishCollaborationButton" class="inline" (click)="finishCollaboration()" data-toggle="tooltip" data-placement="top" [title]="'Finish the collaboration' | translate">
+                                <i class="far fa-check-circle p-1 pointer" aria-hidden="true"></i>
+                            </div>
+                            <div *ngIf="titleEvent && showCancelCollaborationButton" class="inline" (click)="rateCollaborationCancelled(addCancelRatingModal)" data-toggle="tooltip" data-placement="top" [title]="'Cancel the collaboration' | translate">
+                                <i class="fa fa-times p-1 pointer" aria-hidden="true"></i>
+                            </div>
+                            <div *ngIf="!expanded" class="inline" (click)="expanded = !expanded" data-toggle="tooltip" data-placement="top" [title]="'Show details' | translate">
+                                <i class="fa fa-angle-double-down p-1 pointer" aria-hidden="true"></i>
+                            </div>
+                            <div *ngIf="expanded" class="inline" (click)="expanded = !expanded" data-toggle="tooltip" data-placement="top" [title]="'Hide details' | translate">
+                                <i class="fa fa-angle-double-up p-1 pointer" aria-hidden="true"></i>
+                            </div>
                         </div>
                     </div>
                     <!--
@@ -103,12 +123,7 @@
             </div>
 
             <!-- Most recent event -->
-            <thread-event *ngIf="lastEvent"
-                          [processInstanceGroup]="processInstanceGroup"
-                          [collaborationGroupId]="collaborationGroupId"
-                          [event]="lastEvent"
-                          [history]="completeHistory"
-                          (processCancelled)="threadStateUpdated.next()">
+            <thread-event *ngIf="lastEvent" [processInstanceGroup]="processInstanceGroup" [collaborationGroupId]="collaborationGroupId" [event]="lastEvent" [history]="completeHistory" (processCancelled)="threadStateUpdated.next()">
             </thread-event>
 
             <!-- Loading most recent event -->
@@ -119,11 +134,7 @@
             <!-- History -->
             <ng-container *ngIf="historyExpanded && history">
                 <ng-container *ngFor="let event of history">
-                    <thread-event [processInstanceGroup]="processInstanceGroup"
-                                  [event]="event"
-                                  [history]="completeHistory"
-                                  [collaborationGroupId]="collaborationGroupId"
-                                  (processCancelled)="threadStateUpdated.next()">
+                    <thread-event [processInstanceGroup]="processInstanceGroup" [event]="event" [history]="completeHistory" [collaborationGroupId]="collaborationGroupId" (processCancelled)="threadStateUpdated.next()">
                     </thread-event>
                 </ng-container>
             </ng-container>
@@ -152,165 +163,165 @@
         <div class="modal-body">
             <div class="form-group row">
                 <label class="col-6 col-form-label border border-dark">
-                  <strong><span [innerHTML]="'Overall Rating' | translate"></span>
-                    <span title="Overall rating of the company based on 'Seller Communication','Fulfillment of Terms' and 'Delivery & Packaging'. See the subitems for more details.">
-                      <i class="fa fa-exclamation-circle"></i>
-                    </span>
-                  </strong>
-                </label>
-                  <div class="col-6 align-right">
-                    <ngb-rating [rate]="ratingOverall" [readonly]="true" max="5">
-                      <ng-template let-fill="fill">
-                        <span class="star star-c" [class.full]="fill === 100">
-                          <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                    <strong><span [innerHTML]="'Overall Rating' | translate"></span>
+                        <span title="Overall rating of the company based on 'Seller Communication','Fulfillment of Terms' and 'Delivery & Packaging'. See the subitems for more details.">
+                            <i class="fa fa-exclamation-circle"></i>
                         </span>
-                      </ng-template>
-                    </ngb-rating>
-                  </div>
-              </div>
-          <div  *ngIf="responsetime || negotiationQuality"  class="form-group row">
-            <label class="col-5 col-form-label offset-1 border border-dark" >
-              <strong><span [innerHTML]="'Seller Communication' | translate"></span>
-                <span title=' Overall rating of how well the seller communicated based on "Quality of Negotiation Process","Quality of Ordering Process" and "Response Time". See the subitems for more details.'>
-                  <i class="fa fa-exclamation-circle"></i>
-                </span>
-              </strong>
-            </label>
-              <div class="col-6 align-right">
-                <ngb-rating [rate]="ratingSeller" [readonly]="true" max="5">
-                  <ng-template let-fill="fill">
-                    <span class="star star-c" [class.full]="fill === 100">
-                      <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-                    </span>
-                  </ng-template>
-                </ngb-rating>
-              </div>
-          </div>
-          <div *ngIf="negotiationQuality" class="form-group row">
-            <label class="col-6 col-form-label offset-2 border border-warning"><span [innerHTML]="'Quality of Negotiation Process' | translate"></span>
-                <span title='Indicates how well the negotiation was executed; e.g. clear responses, flexibility on provided terms, supporting documentation, etc.'>
-                    <i class="fa fa-exclamation-circle"></i>
-                </span>
-            </label>
-              <div class="col-4 align-right">
-                <ngb-rating [(rate)]="compRating.QualityOfTheNegotiationProcess" max="5" (rateChange)= "changeCommunicationRating()">
-                  <ng-template let-fill="fill">
-                    <span class="star star-b" [class.full]="fill === 100">
-                      <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-                    </span>
-                  </ng-template>
-                </ngb-rating>
-              </div>
-          </div>
-          <div *ngIf="responsetime"  class="form-group row">
-            <label class="col-6 col-form-label offset-2 border border-warning"><span [innerHTML]="'Response Time' | translate"></span>
-                <span title="Indicates how the response times were perceived by the trading partner. This is a subjective value.">
-                    <i class="fa fa-exclamation-circle"></i>
-                  </span>
-            </label>
-              <div class="col-4 align-right">
-                <ngb-rating [(rate)]="compRating.ResponseTime" max="5" (rateChange)= "changeCommunicationRating()">
-                  <ng-template let-fill="fill">
-                    <span class="star star-b" [class.full]="fill === 100">
-                      <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-                    </span>
-                  </ng-template>
-                </ngb-rating>
-              </div>
-          </div>
-          <div  *ngIf="conformToOtherAggre || prodListingAccu || orderQuality"  class="form-group row">
-              <label class="col-5 col-form-label offset-1 border border-dark">
-                <strong><span [innerHTML]="'Fulfillment of Terms' | translate"></span>
-                  <span title='Overall rating of how accurately the seller fulfilled the agreed upon terms based on "Quality of Requested Information" and "Conformance to Contractual Terms". See the subitems for more details.'>
-                    <i class="fa fa-exclamation-circle"></i>
-                  </span>
-                </strong>
-              </label>
+                    </strong>
+                </label>
                 <div class="col-6 align-right">
-                  <ngb-rating [rate]="ratingFulfillment" [readonly]="true" max="5">
-                    <ng-template let-fill="fill">
-                      <span class="star star-c" [class.full]="fill === 100">
-                        <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-                      </span>
-                    </ng-template>
-                  </ngb-rating>
+                    <ngb-rating [rate]="ratingOverall" [readonly]="true" max="5">
+                        <ng-template let-fill="fill">
+                            <span class="star star-c" [class.full]="fill === 100">
+                                <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                            </span>
+                        </ng-template>
+                    </ngb-rating>
+                </div>
+            </div>
+            <div *ngIf="responsetime || negotiationQuality" class="form-group row">
+                <label class="col-5 col-form-label offset-1 border border-dark">
+                    <strong><span [innerHTML]="'Seller Communication' | translate"></span>
+                        <span title=' Overall rating of how well the seller communicated based on "Quality of Negotiation Process","Quality of Ordering Process" and "Response Time". See the subitems for more details.'>
+                            <i class="fa fa-exclamation-circle"></i>
+                        </span>
+                    </strong>
+                </label>
+                <div class="col-6 align-right">
+                    <ngb-rating [rate]="ratingSeller" [readonly]="true" max="5">
+                        <ng-template let-fill="fill">
+                            <span class="star star-c" [class.full]="fill === 100">
+                                <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                            </span>
+                        </ng-template>
+                    </ngb-rating>
+                </div>
+            </div>
+            <div *ngIf="negotiationQuality" class="form-group row">
+                <label class="col-6 col-form-label offset-2 border border-warning"><span [innerHTML]="'Quality of Negotiation Process' | translate"></span>
+                    <span title='Indicates how well the negotiation was executed; e.g. clear responses, flexibility on provided terms, supporting documentation, etc.'>
+                        <i class="fa fa-exclamation-circle"></i>
+                    </span>
+                </label>
+                <div class="col-4 align-right">
+                    <ngb-rating [(rate)]="compRating.QualityOfTheNegotiationProcess" max="5" (rateChange)="changeCommunicationRating()">
+                        <ng-template let-fill="fill">
+                            <span class="star star-b" [class.full]="fill === 100">
+                                <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                            </span>
+                        </ng-template>
+                    </ngb-rating>
+                </div>
+            </div>
+            <div *ngIf="responsetime" class="form-group row">
+                <label class="col-6 col-form-label offset-2 border border-warning"><span [innerHTML]="'Response Time' | translate"></span>
+                    <span title="Indicates how the response times were perceived by the trading partner. This is a subjective value.">
+                        <i class="fa fa-exclamation-circle"></i>
+                    </span>
+                </label>
+                <div class="col-4 align-right">
+                    <ngb-rating [(rate)]="compRating.ResponseTime" max="5" (rateChange)="changeCommunicationRating()">
+                        <ng-template let-fill="fill">
+                            <span class="star star-b" [class.full]="fill === 100">
+                                <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                            </span>
+                        </ng-template>
+                    </ngb-rating>
+                </div>
+            </div>
+            <div *ngIf="conformToOtherAggre || prodListingAccu || orderQuality" class="form-group row">
+                <label class="col-5 col-form-label offset-1 border border-dark">
+                    <strong><span [innerHTML]="'Fulfillment of Terms' | translate"></span>
+                        <span title='Overall rating of how accurately the seller fulfilled the agreed upon terms based on "Quality of Requested Information" and "Conformance to Contractual Terms". See the subitems for more details.'>
+                            <i class="fa fa-exclamation-circle"></i>
+                        </span>
+                    </strong>
+                </label>
+                <div class="col-6 align-right">
+                    <ngb-rating [rate]="ratingFulfillment" [readonly]="true" max="5">
+                        <ng-template let-fill="fill">
+                            <span class="star star-c" [class.full]="fill === 100">
+                                <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                            </span>
+                        </ng-template>
+                    </ngb-rating>
                 </div>
             </div>
 
-          <div *ngIf="prodListingAccu"  class="form-group row">
-            <label class="col-6 col-form-label offset-2 border border-warning"><span [innerHTML]="'Quality of Requested Information' | translate"></span>
-                <span title="Indicates how well the received product or service matches the listed details.">
-                    <i class="fa fa-exclamation-circle"></i>
-                  </span>
-            </label>
-              <div class="col-4 align-right">
-                <ngb-rating [(rate)]="compRating.ProductListingAccuracy" max="5" (rateChange)="changeFullfillmentRating()">
-                  <ng-template let-fill="fill">
-                    <span class="star star-b" [class.full]="fill === 100">
-                      <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+            <div *ngIf="prodListingAccu" class="form-group row">
+                <label class="col-6 col-form-label offset-2 border border-warning"><span [innerHTML]="'Quality of Requested Information' | translate"></span>
+                    <span title="Indicates how well the received product or service matches the listed details.">
+                        <i class="fa fa-exclamation-circle"></i>
                     </span>
-                  </ng-template>
-                </ngb-rating>
-              </div>
-          </div>
-          <div *ngIf="orderQuality" class="form-group row">
-            <label class="col-6 col-form-label offset-2 border border-warning"><span [innerHTML]="'Quality of Ordering Process' | translate"></span>
-                <span title=' Indicates how well the ordering was executed; e.g. clear responses, supporting documentation, transition to fulfillment, etc.'>
-                    <i class="fa fa-exclamation-circle"></i>
-                  </span>
-            </label>
-              <div class="col-4 align-right">
-                <ngb-rating [(rate)]="compRating.QualityOfTheOrderingProcess" max="5" (rateChange)= "changeFullfillmentRating()">
-                  <ng-template let-fill="fill">
-                    <span class="star star-b" [class.full]="fill === 100">
-                      <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                </label>
+                <div class="col-4 align-right">
+                    <ngb-rating [(rate)]="compRating.ProductListingAccuracy" max="5" (rateChange)="changeFullfillmentRating()">
+                        <ng-template let-fill="fill">
+                            <span class="star star-b" [class.full]="fill === 100">
+                                <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                            </span>
+                        </ng-template>
+                    </ngb-rating>
+                </div>
+            </div>
+            <div *ngIf="orderQuality" class="form-group row">
+                <label class="col-6 col-form-label offset-2 border border-warning"><span [innerHTML]="'Quality of Ordering Process' | translate"></span>
+                    <span title=' Indicates how well the ordering was executed; e.g. clear responses, supporting documentation, transition to fulfillment, etc.'>
+                        <i class="fa fa-exclamation-circle"></i>
                     </span>
-                  </ng-template>
-                </ngb-rating>
-              </div>
-          </div>
-          <div *ngIf="conformToOtherAggre" class="form-group row">
-            <label class="col-6 col-form-label offset-2 border border-warning "><span [innerHTML]="'Conformance to Contractual Terms' | translate"></span>
-                <span title="Indicates how accurately the seller conformed to the agreed upon contractual terms; e.g. dispatch date, payment method, additional services, etc.">
-                    <i class="fa fa-exclamation-circle"></i>
-                  </span>
-            </label>
-              <div class="col-4 align-right">
-                <ngb-rating [(rate)]="compRating.ConformanceToOtherAgreedTerms" max="5" (rateChange)="changeFullfillmentRating()">
-                  <ng-template let-fill="fill">
-                    <span class="star star-b" [class.full]="fill === 100">
-                      <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                </label>
+                <div class="col-4 align-right">
+                    <ngb-rating [(rate)]="compRating.QualityOfTheOrderingProcess" max="5" (rateChange)="changeFullfillmentRating()">
+                        <ng-template let-fill="fill">
+                            <span class="star star-b" [class.full]="fill === 100">
+                                <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                            </span>
+                        </ng-template>
+                    </ngb-rating>
+                </div>
+            </div>
+            <div *ngIf="conformToOtherAggre" class="form-group row">
+                <label class="col-6 col-form-label offset-2 border border-warning "><span [innerHTML]="'Conformance to Contractual Terms' | translate"></span>
+                    <span title="Indicates how accurately the seller conformed to the agreed upon contractual terms; e.g. dispatch date, payment method, additional services, etc.">
+                        <i class="fa fa-exclamation-circle"></i>
                     </span>
-                  </ng-template>
-                </ngb-rating>
-              </div>
-          </div>
-          <div *ngIf="deliveryPackage" class="form-group row">
-            <label class="col-5 col-form-label offset-1 border border-warning">
-              <strong><span [innerHTML]="'Delivery & Packaging' | translate"></span></strong>
-              <span title="Overall rating of the quality of delivery and packaging, e.g. delivery date, adequate packing, adequate delivery method, etc.">
-                  <i class="fa fa-exclamation-circle"></i>
-                </span>
-              </label>
-              <div class="col-6 align-right">
-                <ngb-rating [(rate)]="compRating.DeliveryAndPackaging" max="5" (rateChange)="changeDeliveryRating()">
-                  <ng-template let-fill="fill">
-                    <span class="star star-c" [class.full]="fill === 100">
-                      <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                </label>
+                <div class="col-4 align-right">
+                    <ngb-rating [(rate)]="compRating.ConformanceToOtherAgreedTerms" max="5" (rateChange)="changeFullfillmentRating()">
+                        <ng-template let-fill="fill">
+                            <span class="star star-b" [class.full]="fill === 100">
+                                <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                            </span>
+                        </ng-template>
+                    </ngb-rating>
+                </div>
+            </div>
+            <div *ngIf="deliveryPackage" class="form-group row">
+                <label class="col-5 col-form-label offset-1 border border-warning">
+                    <strong><span [innerHTML]="'Delivery & Packaging' | translate"></span></strong>
+                    <span title="Overall rating of the quality of delivery and packaging, e.g. delivery date, adequate packing, adequate delivery method, etc.">
+                        <i class="fa fa-exclamation-circle"></i>
                     </span>
-                  </ng-template>
-                </ngb-rating>
-              </div>
-          </div>
-          <hr>
-          <div class="form-group row">
-              <label class="col-2 col-form-label">
-                <strong><span [innerHTML]="'Comment' | translate"></span>:</strong>
-              </label>
-              <div class="col-10">
-                  <input type="text" class="form-control" [(ngModel)]="compComment" name="compCommentSuccess">
-              </div>
-          </div>
+                </label>
+                <div class="col-6 align-right">
+                    <ngb-rating [(rate)]="compRating.DeliveryAndPackaging" max="5" (rateChange)="changeDeliveryRating()">
+                        <ng-template let-fill="fill">
+                            <span class="star star-c" [class.full]="fill === 100">
+                                <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                            </span>
+                        </ng-template>
+                    </ngb-rating>
+                </div>
+            </div>
+            <hr>
+            <div class="form-group row">
+                <label class="col-2 col-form-label">
+                    <strong><span [innerHTML]="'Comment' | translate"></span>:</strong>
+                </label>
+                <div class="col-10">
+                    <input type="text" class="form-control" [(ngModel)]="compComment" name="compCommentSuccess">
+                </div>
+            </div>
         </div>
         <div class="modal-footer">
             <call-status [callStatus]="saveCallStatusRating"></call-status>
@@ -331,22 +342,22 @@
             </button>
         </div>
         <div class="modal-body">
-          <div class="form-group row">
-              <label class="col-2 col-form-label">
-                <strong> <span [innerHTML]="'Reason' | translate"></span>:</strong>
-              </label>
-              <div class="col-10">
-                  <select class="form-control" [(ngModel)]="compComment" name="compCommentCancel">
-                    <option></option>
-                    <!--  We store english labels of cancellation reasons -->
-                    <option value="Slow Response Time"><span [innerHTML]="'Slow Response Time' | translate"></span></option>
-                    <option value="Suspicious Company Information"><span [innerHTML]="'Suspicious Company Information' | translate"></span></option>
-                    <option value="Undervalued Offer"><span [innerHTML]="'Undervalued Offer' | translate"></span></option>
-                    <option value="Rejected Delivery Terms"><span [innerHTML]="'Rejected Delivery Terms' | translate"></span></option>
-                    <option value="Other"><span [innerHTML]="'Other' | translate"></span></option>
-                  </select>
-              </div>
-          </div>
+            <div class="form-group row">
+                <label class="col-2 col-form-label">
+                    <strong> <span [innerHTML]="'Reason' | translate"></span>:</strong>
+                </label>
+                <div class="col-10">
+                    <select class="form-control" [(ngModel)]="compComment" name="compCommentCancel">
+                        <option></option>
+                        <!--  We store english labels of cancellation reasons -->
+                        <option value="Slow Response Time"><span [innerHTML]="'Slow Response Time' | translate"></span></option>
+                        <option value="Suspicious Company Information"><span [innerHTML]="'Suspicious Company Information' | translate"></span></option>
+                        <option value="Undervalued Offer"><span [innerHTML]="'Undervalued Offer' | translate"></span></option>
+                        <option value="Rejected Delivery Terms"><span [innerHTML]="'Rejected Delivery Terms' | translate"></span></option>
+                        <option value="Other"><span [innerHTML]="'Other' | translate"></span></option>
+                    </select>
+                </div>
+            </div>
         </div>
         <div class="modal-footer">
             <call-status [callStatus]="saveCallStatusRating"></call-status>

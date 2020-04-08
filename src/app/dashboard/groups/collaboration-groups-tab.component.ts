@@ -1,33 +1,61 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {TranslateService} from '@ngx-translate/core';
-import {DashboardQueryParameters} from '../model/dashboard-query-parameters';
-import {DashboardOrdersQueryResults} from '../model/dashboard-orders-query-results';
-import {CallStatus} from '../../common/call-status';
-import {ProcessInstanceGroupFilter} from '../../bpe/model/process-instance-group-filter';
-import {ActivatedRoute, Params, Router} from '@angular/router';
-import {BPEService} from '../../bpe/bpe.service';
-import {CookieService} from 'ng2-cookies';
-import {DashboardOrdersQuery} from '../model/dashboard-orders-query';
-import {FEDERATION, FEDERATIONID} from '../../catalogue/model/constants';
-import {PAGE_SIZE, TABS} from '../constants';
-import {FederatedCollaborationGroupMetadata} from '../../bpe/model/federated-collaboration-group-metadata';
+/*
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { DashboardQueryParameters } from '../model/dashboard-query-parameters';
+import { CollaborationGroupResults } from '../model/collaboration-group-results';
+import { CallStatus } from '../../common/call-status';
+import { ProcessInstanceGroupFilter } from '../../bpe/model/process-instance-group-filter';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { BPEService } from '../../bpe/bpe.service';
+import { CookieService } from 'ng2-cookies';
+import { DashboardQuery } from '../model/dashboard-query';
+import { FEDERATION, FEDERATIONID } from '../../catalogue/model/constants';
+import { PAGE_SIZE, TABS } from '../constants';
+import { FederatedCollaborationGroupMetadata } from '../../bpe/model/federated-collaboration-group-metadata';
 import * as myGlobals from '../../globals';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {CollaborationGroup} from '../../bpe/model/collaboration-group';
-import {DashboardUser} from '../model/dashboard-user';
-import {deepEquals} from '../../common/utils';
-import {AppComponent} from '../../app.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { CollaborationGroup } from '../../bpe/model/collaboration-group';
+import { DashboardUser } from '../model/dashboard-user';
+import { deepEquals, selectNameFromLabelObject } from '../../common/utils';
+import { AppComponent } from '../../app.component';
+import { ProcessInstanceGroupResults } from '../model/process-instance-group-results';
+import { CategoryService } from '../../catalogue/category/category.service';
 @Component({
-    selector: 'groups-tab',
-    templateUrl: './groups-tab.component.html',
-    styleUrls: ['./groups-tab.component.css']
+    selector: 'collaboration-groups-tab',
+    templateUrl: './collaboration-groups-tab.component.html',
+    styleUrls: ['./collaboration-groups-tab.component.css']
 })
-export class GroupsTabComponent {
+export class CollaborationGroupsTabComponent {
+    _instance: string;
+    @Input()
+    set instance(value: string) {
+        this._instance = value;
+    }
+    get instance(): string {
+        return this._instance;
+    }
+
     _selectedTab: string;
     @Input()
     set selectedTab(value: string) {
         this._selectedTab = value;
-        this.updateQueryParameters({ tab: value });
+        if (this._instance)
+            this.updateQueryParameters({ tab: value, ins: this._instance });
+        else
+            this.updateQueryParameters({ tab: value });
     }
     get selectedTab(): string {
         return this._selectedTab;
@@ -36,11 +64,16 @@ export class GroupsTabComponent {
 
     user: DashboardUser;
     queryParameters: DashboardQueryParameters = new DashboardQueryParameters();
-    query: DashboardOrdersQuery = new DashboardOrdersQuery();
-    querypopup: DashboardOrdersQuery = new DashboardOrdersQuery();
+    query: DashboardQuery = new DashboardQuery();
+    // used for binding to the pagination entities. dedicated variables are needed to be able to identify the change in the
+    // selected page and old page
+    cgQueryPage = 1;
+    pigQueryPage = 1;
+    querypopup: DashboardQuery = new DashboardQuery();
     filterSet: ProcessInstanceGroupFilter;
     modifiedFilterSet: ProcessInstanceGroupFilter = new ProcessInstanceGroupFilter();
-    results: DashboardOrdersQueryResults = new DashboardOrdersQueryResults();
+    collaborationGroupResults: CollaborationGroupResults;
+    processInstanceGroupResults: ProcessInstanceGroupResults;
     isProject = false;
     delegated = (FEDERATION() === 'ON');
     // this contains status-name-defaultName information of collaboration groups
@@ -59,16 +92,19 @@ export class GroupsTabComponent {
     filterQueryStatus: CallStatus = new CallStatus();
     exportCallStatus: CallStatus = new CallStatus();
 
+    categoryNames: string[] = null;
+    facetQueryParameterNames: string[] = ['', '', '', ''];
     TABS = TABS;
     config = myGlobals.config;
 
     constructor(private bpeService: BPEService,
-                private translate: TranslateService,
-                private cookieService: CookieService,
-                private modalService: NgbModal,
-                private router: Router,
-                private route: ActivatedRoute,
-                private appComponent: AppComponent) {}
+        private translate: TranslateService,
+        private cookieService: CookieService,
+        private modalService: NgbModal,
+        private router: Router,
+        private route: ActivatedRoute,
+        private categoryService: CategoryService,
+        private appComponent: AppComponent) { }
 
     /**
      * init methods
@@ -76,6 +112,8 @@ export class GroupsTabComponent {
 
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
+            if (params['ins'])
+                this._instance = params['ins'];
             this.updateStateFromQueryParameters(params)
         });
     }
@@ -94,17 +132,22 @@ export class GroupsTabComponent {
     }
 
     onFilterChange(): void {
+        // check which page number to use for the pagination
+        // if there is no selected facet now, we should use the collaboration group page,
+        // otherwise the one keeping the process instance page
+        let page: number = this.isAnyFacetSelected(this.modifiedFilterSet) ? this.pigQueryPage : this.cgQueryPage;
         this.updateQueryParameters({
             prd: this.toString(this.modifiedFilterSet.relatedProducts),
             cat: this.toString(this.modifiedFilterSet.relatedProductCategories),
             sts: this.toString(this.modifiedFilterSet.status),
             prt: this.getSelectedPartners(this.modifiedFilterSet),
-            ins: this.toString(this.modifiedFilterSet.instanceNames)
-        })
+            ins: this.toString(this.modifiedFilterSet.instanceNames),
+            pg: page
+        });
     }
 
     onPageChange(): void {
-        this.updateQueryParameters({ pg: this.query.page });
+        this.updateQueryParameters({ pg: this.isFacetFilterActive() ? this.pigQueryPage : this.cgQueryPage });
     }
 
     onExportClicked() {
@@ -112,18 +155,18 @@ export class GroupsTabComponent {
         let partyId: string = this.cookieService.get('company_id');
         this.bpeService.exportTransactions(partyId, null, null, null).then(result => {
 
-                let link = document.createElement('a');
-                link.id = 'downloadLink';
-                link.href = window.URL.createObjectURL(result.content);
-                link.download = result.fileName;
+            let link = document.createElement('a');
+            link.id = 'downloadLink';
+            link.href = window.URL.createObjectURL(result.content);
+            link.download = result.fileName;
 
-                document.body.appendChild(link);
-                let downloadLink = document.getElementById('downloadLink');
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
+            document.body.appendChild(link);
+            let downloadLink = document.getElementById('downloadLink');
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
 
-                this.exportCallStatus.callback('Exported transactions successfully', true);
-            },
+            this.exportCallStatus.callback('Exported transactions successfully', true);
+        },
             error => {
                 this.exportCallStatus.error('Failed to export transactions', error);
             });
@@ -132,7 +175,7 @@ export class GroupsTabComponent {
     updateCollaborationGroupName(cgIndex: number, id: string, federationId: string, name: string) {
         this.bpeService.updateCollaborationGroupName(id, federationId, name)
             .then(() => {
-                this.results.orders[cgIndex].name = name;
+                (this.collaborationGroupResults as CollaborationGroupResults).collaborationGroups[cgIndex].name = name;
                 this.changeCollaborationGroupNameStatus(cgIndex, false);
                 this.onViewUpdated(false);
             })
@@ -144,7 +187,7 @@ export class GroupsTabComponent {
     changeCollaborationGroupNameStatus(index: number, status: boolean) {
         // if status is true,then we will change the name of the group.
         if (status) {
-            this.updatingCollaborationGroupName[index].name = this.results.orders[index].name;
+            this.updatingCollaborationGroupName[index].name = (this.collaborationGroupResults as CollaborationGroupResults).collaborationGroups[index].name;
         }
         this.updatingCollaborationGroupName[index].status = status;
     }
@@ -180,7 +223,7 @@ export class GroupsTabComponent {
     open(content, index, order) {
         this.selectedNegotiation = order;
         this.selectedNegotiationIndex = index + (this.query.page - 1) * this.query.pageSize;
-        this.modalService.open(content, {backdropClass: 'light-blue-backdrop'}).result.then((result) => {
+        this.modalService.open(content, { backdropClass: 'light-blue-backdrop' }).result.then((result) => {
             this.selectedNegotiations = [];
             this.selectedNegotiationLists = [];
         }, () => {
@@ -223,7 +266,7 @@ export class GroupsTabComponent {
 
     onOrderRemovedFromView(): void {
         this.filterSet = null;
-        if (this.results.resultCount === 1 && this.query.page > 1) {
+        if (this.collaborationGroupResults.resultCount === 1 && this.query.page > 1) {
             this.updateQueryParameters({ pg: this.queryParameters.pg - 1 });
         } else {
             this.onViewUpdated(true);
@@ -242,12 +285,23 @@ export class GroupsTabComponent {
      * selectors for the template
      */
 
+    noDataConditionsMet(): boolean {
+        return ((!this.isFacetFilterActive() && this.collaborationGroupResults && this.collaborationGroupResults.resultCount === 0) ||
+            (this.isFacetFilterActive() && this.processInstanceGroupResults && this.processInstanceGroupResults.resultCount === 0)) &&
+            !this.areOrdersLoading()
+    }
+
+    resultsAvailable(): boolean {
+        return (!this.isFacetFilterActive() && this.collaborationGroupResults && this.collaborationGroupResults.resultCount > 0) ||
+            (this.isFacetFilterActive() && this.processInstanceGroupResults && this.processInstanceGroupResults.resultCount > 0);
+    }
+
     areOrdersLoading(): boolean {
         return this.queryStatus.fb_submitted;
     }
 
     isToggleArchivedButtonEnabled(): boolean {
-        return this.query.archived || this.results.hasArchivedOrders
+        return this.query.archived || this.collaborationGroupResults.hasArchivedGroups
     }
 
     getToggleArchivedButtonText(): string {
@@ -261,12 +315,9 @@ export class GroupsTabComponent {
         return this.filterQueryStatus.fb_submitted;
     }
 
-    // isFacetFilterActive(): boolean {
-    //     if (!this.queryParameters.prd || !this.queryParameters.cat || this.queryParameters.prt || this.queryParameters.sts) {
-    //         return true;
-    //     }
-    //     return false;
-    // }
+    isFacetFilterActive(): boolean {
+        return this.includesSelectedFacet(this.queryParameters);
+    }
 
     /**
      * internal logic
@@ -306,14 +357,19 @@ export class GroupsTabComponent {
 
         if (forceUpdate || this.isReexecutionNeeded(query)) {
             this.executeOrdersFiltersQuery(query);
-            this.executeOrdersQuery(query);
+
+            if (!this.isFacetFilterActive()) {
+                this.executeCollaborationGroupQuery(query);
+            } else {
+                this.executeProcessInstanceGroupQuery(query);
+            }
         }
 
         this.query = query
     }
 
-    private computeOrderQueryFromQueryParams(): DashboardOrdersQuery {
-        return new DashboardOrdersQuery(
+    private computeOrderQueryFromQueryParams(): DashboardQuery {
+        return new DashboardQuery(
             this.queryParameters.arch,
             this.queryParameters.tab === TABS.PURCHASES || this.queryParameters.tab === TABS.PROJECTS ? 'BUYER' : 'SELLER',
             this.queryParameters.pg,
@@ -326,7 +382,7 @@ export class GroupsTabComponent {
         )
     }
 
-    private isReexecutionNeeded(query: DashboardOrdersQuery): boolean {
+    private isReexecutionNeeded(query: DashboardQuery): boolean {
         if (this.queryParameters.tab === 'PROJECTS' && this.isProject === false) {
             return true;
 
@@ -337,8 +393,9 @@ export class GroupsTabComponent {
         return !deepEquals(this.query, query);
     }
 
-    private executeOrdersFiltersQuery(query: DashboardOrdersQuery): void {
+    private executeOrdersFiltersQuery(query: DashboardQuery): void {
         this.filterQueryStatus.submit();
+        this.categoryNames = null;
         if (this.queryParameters.tab === 'PROJECTS') {
             this.isProject = true;
         } else {
@@ -359,7 +416,7 @@ export class GroupsTabComponent {
                     }
                 }
                 // status
-                if (query.status.length > 0 ) {
+                if (query.status.length > 0) {
                     for (let status of response.status) {
                         this.modifiedFilterSet.status.push(status);
                     }
@@ -384,6 +441,8 @@ export class GroupsTabComponent {
                     this.modifiedFilterSet.instanceNames.push(FEDERATIONID());
                 }
                 this.filterSet = response;
+                // get category names
+                this.getCategoryNames();
                 this.filterQueryStatus.callback('Successfully fetched filters', true);
             })
             .catch(error => {
@@ -391,28 +450,57 @@ export class GroupsTabComponent {
             });
     }
 
-    private isOrdersQueryNeeded(query: DashboardOrdersQuery): boolean {
-        if (!deepEquals(this.query, query)) {
-            return true;
-        }
-        return false;
+    getCategoryNames() {
+        this.categoryService.getCategories(this.filterSet.relatedProductCategories).then(response => {
+            this.categoryNames = [];
+            for (let categoryUri of this.filterSet.relatedProductCategories) {
+                for (let category of response.result) {
+                    if (categoryUri == category.uri) {
+                        this.categoryNames.push(selectNameFromLabelObject(category.label));
+                        break;
+                    }
+                }
+            }
+        });
     }
 
-    private executeOrdersQuery(query: DashboardOrdersQuery): void {
-        this.results = new DashboardOrdersQueryResults();
-        this.queryStatus.submit();
-        this.getOrdersQuery(query)
+    private executeCollaborationGroupQuery(query: DashboardQuery): void {
+        this.collaborationGroupResults = new CollaborationGroupResults();
+        // for each query, we create a new CallStatus so that only the latest one is bound to the template.
+        // otherwise, for the multiple queries, we might end up with a CallStatus loading forever since the callback count
+        // may be higher than the call count which is 1.
+        this.queryStatus = new CallStatus();
+        // use the latest CallStatus for the query
+        let queryStatus = this.queryStatus
+        queryStatus.submit();
+        this.getCollaborationGroupsQuery(query)
             .then(() => {
-                this.queryStatus.callback('Successfully fetched orders', true);
+                queryStatus.callback('Successfully fetched collaboration groups', true);
             })
             .catch(error => {
-                this.queryStatus.error('Error while fetching orders.', error);
+                this.queryStatus.error('Error while fetching collaboration groups.', error);
             });
     }
 
-    private getOrdersQuery(query: DashboardOrdersQuery): Promise<void> {
+    private executeProcessInstanceGroupQuery(query: DashboardQuery): void {
+        this.collaborationGroupResults = new CollaborationGroupResults();
+        // for each query, we create a new CallStatus so that only the latest one is bound to the template.
+        // otherwise, for the multiple queries, we might end up with a CallStatus loading forever since the callback count
+        // may be higher than the call count which is 1.
+        this.queryStatus = new CallStatus();
+        // use the latest CallStatus for the query
+        let queryStatus = this.queryStatus
+        queryStatus.submit();
+        this.getProcessInstanceGroupsQuery(query)
+            .then(() => {
+                queryStatus.callback('Successfully fetched process instance groups', true);
+            })
+            .catch(error => {
+                this.queryStatus.error('Error while fetching process instance groups.', error);
+            });
+    }
 
-
+    private getCollaborationGroupsQuery(query: DashboardQuery): Promise<void> {
         if (this.queryParameters.tab === 'PROJECTS') {
             this.isProject = true;
         } else {
@@ -426,7 +514,7 @@ export class GroupsTabComponent {
                     query.instanceName, query.collaborationRole, query.page - 1, query.pageSize, query.archived,
                     query.products, query.categories, query.partners, query.status)
                 .then(response => {
-                    this.results = new DashboardOrdersQueryResults(
+                    this.collaborationGroupResults = new CollaborationGroupResults(
                         response.collaborationGroups,
                         response.collaborationGroups.length > 0,
                         response.size
@@ -447,7 +535,7 @@ export class GroupsTabComponent {
                     query.collaborationRole, 0, 1, true, [], [], [], []
                 ),
             ]).then(([response, archived]) => {
-                this.results = new DashboardOrdersQueryResults(
+                this.collaborationGroupResults = new CollaborationGroupResults(
                     response.collaborationGroups,
                     archived.collaborationGroups.length > 0,
                     response.size
@@ -457,16 +545,56 @@ export class GroupsTabComponent {
         }
     }
 
+    private getProcessInstanceGroupsQuery(query: DashboardQuery): Promise<void> {
+        if (query.archived) {
+            // only one query needed
+            return this.bpeService
+                .getProcessInstanceGroups(this.cookieService.get('company_id'),
+                    query.instanceName, query.collaborationRole, query.page - 1, query.pageSize, query.archived,
+                    query.products, query.categories, query.partners, query.status)
+                .then(response => {
+                    this.processInstanceGroupResults = new ProcessInstanceGroupResults(
+                        response.groups,
+                        response.collaborationGroupIds,
+                        response.groups.length > 0,
+                        response.size
+                    );
+                    this.createUpdatingCollaborationGroupNameArray()
+                });
+        } else {
+            // Needs to query for archived orders to know if the "Show Archived" button should be enabled
+            // TODO no need make the following calls synchronous
+            return Promise.all([
+                // regular query
+                this.bpeService.getProcessInstanceGroups(this.cookieService.get('company_id'), query.instanceName,
+                    query.collaborationRole, query.page - 1, query.pageSize, query.archived,
+                    query.products, query.categories, query.partners, query.status
+                ),
+                // query for archived orders
+                this.bpeService.getProcessInstanceGroups(this.cookieService.get('company_id'), query.instanceName,
+                    query.collaborationRole, 0, 1, true, [], [], [], []
+                ),
+            ]).then(([response, archived]) => {
+                this.processInstanceGroupResults = new ProcessInstanceGroupResults(
+                    response.groups,
+                    response.collaborationGroupIds,
+                    archived.groups.length > 0,
+                    response.size
+                );
+            });
+        }
+    }
+
     private createUpdatingCollaborationGroupNameArray() {
         this.updatingCollaborationGroupName = [];
-        for (let order of this.results.orders) {
-            this.updatingCollaborationGroupName.push({status: false, name: order.name, defaultName: this.getDefaultCollaborationNames(order)})
+        for (let order of (this.collaborationGroupResults as CollaborationGroupResults).collaborationGroups) {
+            this.updatingCollaborationGroupName.push({ status: false, name: order.name, defaultName: this.getDefaultCollaborationNames(order) })
         }
     }
 
     private getDefaultCollaborationNames(collaborationGroup: CollaborationGroup): string {
         let defaultName = this.translate.instant('Activities on') + ' ';
-        for (let i = 0 ; i < collaborationGroup.associatedProcessInstanceGroups.length ; i++) {
+        for (let i = 0; i < collaborationGroup.associatedProcessInstanceGroups.length; i++) {
             if (i === collaborationGroup.associatedProcessInstanceGroups.length - 1) {
                 defaultName += collaborationGroup.associatedProcessInstanceGroups[i].name;
             } else {
@@ -519,6 +647,21 @@ export class GroupsTabComponent {
         } catch (e) {
             return 1;
         }
+    }
+
+    includesSelectedFacet(queryParameters: DashboardQueryParameters): boolean {
+        if (queryParameters.prd || queryParameters.cat || queryParameters.prt || queryParameters.sts) {
+            return true;
+        }
+        return false;
+    }
+
+    isAnyFacetSelected(facetFilter: ProcessInstanceGroupFilter): boolean {
+        if (facetFilter.relatedProductCategories.length > 0 || facetFilter.relatedProducts.length > 0 ||
+            facetFilter.tradingPartnerIDs.length > 0 || facetFilter.status.length > 0) {
+            return true;
+        }
+        return false;
     }
 
     private parseArray(param: string): string[] {

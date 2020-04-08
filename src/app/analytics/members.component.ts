@@ -1,12 +1,29 @@
-import { Component, OnInit } from "@angular/core";
+/*
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
+import { Component, OnInit, Input } from "@angular/core";
 import { AnalyticsService } from "./analytics.service";
 import { CallStatus } from '../common/call-status';
 import * as myGlobals from '../globals';
-import {selectPartyName, sanitizeLink} from '../common/utils';
+import { sanitizeLink, copy } from '../common/utils';
 import { AppComponent } from "../app.component";
 import { ActivatedRoute } from "@angular/router";
-import {COMPANY_LIST_SORT_OPTIONS} from './constants';
-import {TranslateService} from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
+import { SimpleSearchService } from "../simple-search/simple-search.service";
+import { Search } from "./model/search";
+import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
+import { Observable } from "rxjs/Observable";
 
 @Component({
     selector: "members-info",
@@ -16,127 +33,167 @@ import {TranslateService} from '@ngx-translate/core';
 
 export class MembersComponent implements OnInit {
 
+    @Input() unverified: boolean = false;
+    @Input() mgmt_view: boolean = false;
+    @Input() rows: number = 12;
+    companiesCallStatus: CallStatus = new CallStatus();
     config = myGlobals.config;
-    registeredCompaniesPage = null;
-    orgCompaniesPage = null;
-    registeredCompaniesCallStatus: CallStatus = new CallStatus();
-    imgEndpoint = myGlobals.user_mgmt_endpoint+"/company-settings/image/";
-    size = 12;
-    expanded = false;
-    filter = "";
-
-    getNameOfTheCompany = selectPartyName;
+    size = 0;
+    page = 1;
+    start = 0;
+    end = 0;
+    totalElements = 0;
+    model = new Search('');
+    q = "";
+    q_submit = "";
+    sort = "legalName asc";
+    response: any;
+    temp: any;
+    product_vendor_img = myGlobals.product_vendor_img;
+    product_vendor_name = myGlobals.product_vendor_name;
+    product_vendor_brand_name = myGlobals.product_vendor_brand_name;
+    imgEndpoint = myGlobals.user_mgmt_endpoint + "/company-settings/image/";
     getLink = sanitizeLink;
 
-    COMPANY_LIST_SORT_OPTIONS = COMPANY_LIST_SORT_OPTIONS;
-    sortOptionForVerifiedCompanies = this.COMPANY_LIST_SORT_OPTIONS[0].name;
-
     constructor(
-      private analyticsService: AnalyticsService,
-      public appComponent: AppComponent,
-      private route: ActivatedRoute,
-      private translate: TranslateService,
+        private analyticsService: AnalyticsService,
+        public appComponent: AppComponent,
+        private route: ActivatedRoute,
+        private simpleSearchService: SimpleSearchService,
+        private translate: TranslateService
     ) {
     }
 
     ngOnInit(): void {
         this.route.queryParams.subscribe(params => {
             if (params["size"]) {
-              this.size = params["size"];
-            }
-            else {
-              this.size = 12;
+                this.rows = params["size"];
             }
         });
-        this.registeredCompaniesCallStatus.submit();
-        this.updateRegisteredCompanies(1, this.COMPANY_LIST_SORT_OPTIONS[0].sortBy, this.COMPANY_LIST_SORT_OPTIONS[0].orderBy);
+        if (this.mgmt_view) {
+            if (!this.appComponent.checkRoles("pm"))
+                this.mgmt_view = false;
+        }
+        this.model.q = "*";
+        this.getCompanies();
     }
 
-    updateRegisteredCompanies(requestedPage: number, sortBy?: string, orderBy?: string): void {
-        this.analyticsService
-            .getVerifiedCompanies(requestedPage,99999, sortBy, orderBy)
+    getCompanies() {
+        this.companiesCallStatus.submit();
+        if (this.model.q == "") {
+            this.model.q = "*";
+        }
+        this.q_submit = this.model.q;
+        if (this.model.q == "*") {
+            this.model.q = "";
+        }
+        this.simpleSearchService.getComp(this.q_submit, [], [], this.page, this.rows, this.sort, this.unverified, true)
             .then(res => {
-                this.registeredCompaniesCallStatus.callback("Successfully loaded registered companies", true);
-                this.orgCompaniesPage = res;
-                this.orgCompaniesPage.number += 1; // number has offset of 1
-                this.filterCompanyPage();
+                this.companiesCallStatus.callback("Successfully loaded companies", true);
+                if (this.q_submit == "*")
+                    this.totalElements = res.totalElements;
+                if (res.result.length == 0) {
+                    this.response = res.result;
+                    this.size = res.totalElements;
+                    this.start = this.page * this.rows - this.rows + 1;
+                    this.end = this.start + res.result.length - 1;
+                }
+                else {
+                    this.temp = res.result;
+                    for (let doc in this.temp) {
+                        if (this.temp[doc][this.product_vendor_img]) {
+                            var img = this.temp[doc][this.product_vendor_img];
+                            if (Array.isArray(img)) {
+                                this.temp[doc][this.product_vendor_img] = img[0];
+                            }
+                        }
+                    }
+                    this.response = copy(this.temp);
+                    this.size = res.totalElements;
+                    this.start = this.page * this.rows - this.rows + 1;
+                    this.end = this.start + res.result.length - 1;
+                }
             })
             .catch(error => {
-                this.registeredCompaniesCallStatus.error("Error while loading registered companies page", error);
+                this.companiesCallStatus.error("Error while loading companies", error);
             });
     }
 
-    toggleExpand() {
-      this.expanded = !this.expanded;
-      this.filterCompanyPage();
-    }
+    getCompSuggestions = (text$: Observable<string>) =>
+        text$.pipe(
+            debounceTime(200),
+            distinctUntilChanged(),
+            switchMap(term =>
+                this.simpleSearchService.getCompSuggestions(term, [this.product_vendor_name, ("{LANG}_" + this.product_vendor_brand_name)], true)
+            )
+        );
 
-    filterCompanyPage() {
-      this.registeredCompaniesPage = null;
-      let remaining = 99999;
-      if (!this.expanded)
-        remaining = this.size;
-      for (let i=0; i<this.orgCompaniesPage.content.length; i++) {
-        if (this.filter != "" && remaining > 0) {
-          let name = selectPartyName(this.orgCompaniesPage.content[i].partyName).toLowerCase();
-          let filterLower = this.filter.toLowerCase();
-          if (name.indexOf(filterLower) == -1)
-            this.orgCompaniesPage.content[i].display = false;
-          else {
-            this.orgCompaniesPage.content[i].display = true;
-            remaining--;
-          }
-        }
-        else if (remaining > 0) {
-          this.orgCompaniesPage.content[i].display = true;
-          remaining--;
-        }
-        else {
-          this.orgCompaniesPage.content[i].display = false;
-        }
-      }
-      this.buildFilteredPage();
-    }
-
-    buildFilteredPage() {
-      let tmpPage = JSON.parse(JSON.stringify(this.orgCompaniesPage));
-      let tmpPageContent = [];
-      for (let i=0; i<tmpPage.content.length; i++) {
-        if (tmpPage.content[i].display)
-          tmpPageContent.push(tmpPage.content[i]);
-      }
-      tmpPage.content = tmpPageContent;
-      this.registeredCompaniesPage = tmpPage;
-    }
-
-    getCompanyLogo(ref: any): string {
-      var href = "assets/empty_img.png";
-      if (ref) {
-        var id = -1;
-        for (var i=0; i<ref.length; i++) {
-          if (ref[i].documentType && ref[i].hjid && ref[i].documentType=="CompanyLogo")
-            id = ref[i].hjid;
-        }
-        if (id != -1)
-          href = this.imgEndpoint+""+id;
-      }
-      return href;
-    }
-
-    onRegisteredCompaniesPageChange(newPage): void {
-        this.registeredCompaniesCallStatus.submit();
-        if (newPage && newPage !== this.registeredCompaniesPage.number) {
-            let selectedSortOption = COMPANY_LIST_SORT_OPTIONS.filter(i => i.name === this.sortOptionForVerifiedCompanies);
-            this.updateRegisteredCompanies(newPage, selectedSortOption[0].sortBy, selectedSortOption[0].orderBy);
+    verifyCompany(id): void {
+        if (confirm("Are you sure that you want to verify this company?")) {
+            this.companiesCallStatus.submit();
+            this.analyticsService.verifyCompany(id)
+                .then(res => {
+                    this.companiesCallStatus.callback("Successfully verified company", true);
+                    this.searchCompany();
+                })
+                .catch(error => {
+                    this.companiesCallStatus.error("Error while verifing company", error);
+                });
         }
     }
 
-    sortRegisteredCompanyList(): void {
-        let selectedSortOption = COMPANY_LIST_SORT_OPTIONS.filter(i => i.name === this.sortOptionForVerifiedCompanies);
-        this.updateRegisteredCompanies(1, selectedSortOption[0].sortBy, selectedSortOption[0].orderBy);
-        this.registeredCompaniesCallStatus.submit();
-        this.registeredCompaniesPage = null;
-        this.orgCompaniesPage = null;
+    rejectCompany(id): void {
+        if (confirm("Are you sure that you want to reject this company?")) {
+            this.companiesCallStatus.submit();
+            this.analyticsService.deleteCompany(id)
+                .then(res => {
+                    this.companiesCallStatus.callback("Successfully rejected company", true);
+                    this.searchCompany();
+                })
+                .catch(error => {
+                    this.companiesCallStatus.error("Error while rejecting company", error);
+                });
+        }
+    }
+
+    deleteCompany(id): void {
+        if (confirm("Are you sure that you want to delete this company?")) {
+            this.companiesCallStatus.submit();
+            this.analyticsService.deleteCompany(id)
+                .then(res => {
+                    this.companiesCallStatus.callback("Successfully deleted company", true);
+                    this.searchCompany();
+                })
+                .catch(error => {
+                    this.companiesCallStatus.error("Error while deleting company", error);
+                });
+        }
+    }
+
+    setSort(val: string) {
+        this.size = 0;
+        this.page = 1;
+        this.start = 0;
+        this.end = 0;
+        this.sort = val;
+        this.getCompanies();
+    }
+
+    searchCompany() {
+        this.size = 0;
+        this.page = 1;
+        this.start = 0;
+        this.end = 0;
+        this.getCompanies();
+    }
+
+    resetSearch() {
+        this.model.q = "*";
+        this.size = 0;
+        this.page = 1;
+        this.start = 0;
+        this.end = 0;
+        this.getCompanies();
     }
 
 }

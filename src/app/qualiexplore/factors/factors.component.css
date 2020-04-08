@@ -14,11 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
 .fa-flag {
     color: red;
     margin-right: 10px;
 }
+
 .fa-flag.marked {
     color: green;
     margin-right: 10px;
