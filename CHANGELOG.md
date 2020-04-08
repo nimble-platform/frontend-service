@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file.
 
+## [17.0.0] - 2020-04-08
+
+### Added
+
+- Legislation UI integration
+- Agent management interface
+- Invoice tab in order view
+- Rating comments (visible for own company only)
+- Document caching for performance improvement
+- Federated type-ahead in search
+- Code beautification
+- Apache license information
+- Platform configuration comments
+
+### Changed
+
+- Retrieval of (un)verfified company lists via index instead of identity service
+- Company deletion by request to platform manager only
+- Disabled shopping cart feature for services
+- Improved navbar layout and grouping
+- Improved form validation
+- Improved dashboard filters
+- Fixed rating retrieval and visualization
+- Fixed analytics calculation
+- Fixed company search filters
+- Fixed bug causing multiple company registration when logo upload failed
+- Fixed Solr query building for special characters
+- Updates to Explorative Search and Track & Trace components
+- Prevent multiple clicks on action buttons
+- User manual link to project homepage
+
 ## [16.0.0] - 2020-03-10
 
 ### Added
@@ -132,7 +163,7 @@ All notable changes to this project will be documented in this file.
 - Compare products
 - Search all products from company
 - Self descriptive trust fields
-- Search boosting 
+- Search boosting
 
 ### Changed
 
