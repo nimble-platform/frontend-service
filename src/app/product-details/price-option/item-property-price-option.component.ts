@@ -1,6 +1,6 @@
 import {Component, Input} from "@angular/core";
 import {PriceOption} from "../../catalogue/model/publish/price-option";
-import {copy, getPropertyValuesAsStrings, selectPreferredValues} from '../../common/utils';
+import {copy, getPropertyValueAsString, getPropertyValues, getPropertyValuesAsStrings, selectPreferredValues} from '../../common/utils';
 import {ItemProperty} from "../../catalogue/model/publish/item-property";
 import {UBLModelUtils} from "../../catalogue/model/ubl-model-utils";
 import {CatalogueLine} from "../../catalogue/model/publish/catalogue-line";
@@ -49,9 +49,13 @@ constructor(
         this.priceOption.additionalItemProperty = [].concat(this.priceOption.additionalItemProperty);
     }
 
-    getOriginalValuesOfProperty(copyProperty): string[] {
+    getOriginalValuesOfProperty(copyProperty): any {
         let itemProperty: ItemProperty = this.catalogueLine.goodsItem.item.additionalItemProperty.find(property => property.id == copyProperty.id);
-        return getPropertyValuesAsStrings(itemProperty);
+        return getPropertyValues(itemProperty);
+    }
+
+    getValueAsString(value:any,valueQualifier:string){
+        return getPropertyValueAsString(value,valueQualifier);
     }
 
     selectPropertyValue(value: any, copyProperty: ItemProperty): void {
@@ -61,15 +65,18 @@ constructor(
             case "NUMBER": {
                 let index: number = copyProperty.valueDecimal.findIndex(propVal => propVal == value)
                 index !== -1 ? copyProperty.valueDecimal.splice(index, 1) : copyProperty.valueDecimal.push(value);
+                break;
             }
             case "QUANTITY": {
                 let quantityVal: Quantity = value;
                 let index: number = copyProperty.valueQuantity.findIndex(propVal => propVal.value == quantityVal.value && propVal.unitCode == quantityVal.unitCode)
-                index !== -1 ? copyProperty.value.splice(index, 1) : copyProperty.value.push(new Text(value));
+                index !== -1 ? copyProperty.valueQuantity.splice(index, 1) : copyProperty.valueQuantity.push(new Quantity(quantityVal.value,quantityVal.unitCode));
+                break;
             }
             case "STRING": {
-                let index: number = copyProperty.value.findIndex(propVal => propVal == value)
-                index !== -1 ? copyProperty.value.splice(index, 1) : copyProperty.value.push(new Text(value));
+                let index: number = copyProperty.value.findIndex(propVal => propVal.value == value.value && propVal.languageID == value.languageID)
+                index !== -1 ? copyProperty.value.splice(index, 1) : copyProperty.value.push(new Text(value.value,value.languageID));
+                break;
             }
         }
         this.priceOption.additionalItemProperty = [].concat(this.priceOption.additionalItemProperty);
@@ -94,7 +101,7 @@ constructor(
                 return index != -1;
             }
             case "STRING": {
-                let index: number = copyProperty.value.findIndex(propVal => propVal.value == value)
+                let index: number = copyProperty.value.findIndex(propVal => propVal.value == value.value && propVal.languageID == value.languageID)
                 return index != -1;
             }
         }

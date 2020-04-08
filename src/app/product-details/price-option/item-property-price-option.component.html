@@ -34,11 +34,11 @@
 
         <div *ngIf="!readonly" class="col-9 object-list align-items-center">
             <div *ngFor="let value of getOriginalValuesOfProperty(itemProperty)"
-                 class="bordered value-pill" title="{{ value }}"
+                 class="bordered value-pill" title="{{ getValueAsString(value,itemProperty.valueQualifier) }}"
                  (click)="selectPropertyValue(value, itemProperty)">
                 <div class="d-flex align-items-center">
                     <div class="mr-2">
-                        <label>{{ value }}</label>
+                        <label>{{ getValueAsString(value,itemProperty.valueQualifier) }}</label>
                     </div>
                     <div class="form-check">
                         <label class="form-check-label">
