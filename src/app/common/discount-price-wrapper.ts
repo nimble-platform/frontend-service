@@ -232,29 +232,33 @@ export class DiscountPriceWrapper {
                 let checkRegion = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].region != "";
                 let country: Country = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country;
                 let checkCountryName = country && country.name.value && country.name.value != "";
-                if (checkStreetName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].streetName.toLocaleLowerCase() != this.deliveryLocation.streetName.toLocaleLowerCase()) {
-                    continue;
+
+                // if the address is not specified for this price option, skip it
+                if(checkStreetName || checkBuildingNumber || checkPostalZone || checkCityName || checkRegion || checkCountryName){
+                    if (checkStreetName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].streetName.toLocaleLowerCase() != this.deliveryLocation.streetName.toLocaleLowerCase()) {
+                        continue;
+                    }
+                    if (checkBuildingNumber && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber != this.deliveryLocation.buildingNumber) {
+                        continue;
+                    }
+                    if (checkPostalZone && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != this.deliveryLocation.postalZone) {
+                        continue;
+                    }
+                    if (checkCityName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName.toLocaleLowerCase() != this.deliveryLocation.cityName.toLocaleLowerCase()) {
+                        continue;
+                    }
+                    if (checkRegion && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].region.toLocaleLowerCase() != this.deliveryLocation.region.toLocaleLowerCase()) {
+                        continue;
+                    }
+                    if (checkCountryName && this.deliveryLocation.country.name.value != null && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value.toLocaleLowerCase() != this.deliveryLocation.country.name.value.toLocaleLowerCase()) {
+                        continue;
+                    }
+                    // the delivery location satisfies all conditions
+                    priceOption.discount = this.calculateDiscountAmount(priceOption, totalPrice);
+                    totalDiscount += priceOption.discount;
+                    // add this discount to appliedDiscounts list
+                    this.appliedDiscounts.push(priceOption);
                 }
-                if (checkBuildingNumber && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber != this.deliveryLocation.buildingNumber) {
-                    continue;
-                }
-                if (checkPostalZone && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != this.deliveryLocation.postalZone) {
-                    continue;
-                }
-                if (checkCityName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName.toLocaleLowerCase() != this.deliveryLocation.cityName.toLocaleLowerCase()) {
-                    continue;
-                }
-                if (checkRegion && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].region.toLocaleLowerCase() != this.deliveryLocation.region.toLocaleLowerCase()) {
-                    continue;
-                }
-                if (checkCountryName && this.deliveryLocation.country.name.value != null && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value.toLocaleLowerCase() != this.deliveryLocation.country.name.value.toLocaleLowerCase()) {
-                    continue;
-                }
-                // the delivery location satisfies all conditions
-                priceOption.discount = this.calculateDiscountAmount(priceOption, totalPrice);
-                totalDiscount += priceOption.discount;
-                // add this discount to appliedDiscounts list
-                this.appliedDiscounts.push(priceOption);
             }
         }
 
