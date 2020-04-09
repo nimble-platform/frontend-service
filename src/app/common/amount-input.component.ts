@@ -93,7 +93,6 @@ export class AmountInputComponent extends ChildFormBase implements OnInit {
     private initNumberInputFormControl(): void {
         let validators: ValidatorFn[] = [];
         if (this.required) {
-            validators.push(Validators.min(1));
             validators.push(Validators.required);
         }
 
