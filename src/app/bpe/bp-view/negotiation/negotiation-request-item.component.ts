@@ -180,7 +180,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
 
         // get frame contract units
         this.unitService.getCachedUnitList(frameContractDurationUnitListId).then(list => {
-            this.frameContractDurationUnits = list;
+            this.frameContractDurationUnits = [""].concat(list);
         });
 
         // set tc tab based on the existence of custom terms
