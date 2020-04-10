@@ -238,6 +238,13 @@ export class NegotiationResponseComponent implements OnInit {
             this.bpDataService.isFinalProcessInTheWorkflow('Negotiation');
     }
 
+    getAcceptAndOrderButtonValidationMessages(){
+        if(!this.isPriceValid()){
+            return this.translate.instant("Price should be negotiated before proceeding to the order phase");
+        }
+        return '';
+    }
+
     isThereADeletedProduct():boolean{
         for(let isProductDeleted of this.areCatalogueLinesDeleted){
             if(isProductDeleted){

@@ -91,9 +91,11 @@
             </button>
         </div>
         <div class="col-2">
-            <button class="btn btn-primary action" [disabled]="isAcceptAndOrderDisabled()" (click)="onAcceptAndOrder()">
-                <span [innerHTML]="'Accept & Order' | translate"></span>
-            </button>
+            <span [ngbTooltip]="getAcceptAndOrderButtonValidationMessages()" [placement]="'auto'"  title="">
+                <button class="btn btn-primary action" [disabled]="isAcceptAndOrderDisabled()" (click)="onAcceptAndOrder()">
+                    <span [innerHTML]="'Accept & Order' | translate"></span>
+                </button>
+            </span>
         </div>
     </div>
 </ng-container>
