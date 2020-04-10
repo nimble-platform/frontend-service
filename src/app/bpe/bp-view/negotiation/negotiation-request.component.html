@@ -74,7 +74,7 @@
             <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div class="col-3"   *ngIf="!(processMetadata && processMetadata.isBeingUpdated)">
-        <span [ngbTooltip]="validationService.extractErrorMessage(negotiationRequestForm)" [placement]="'auto'"  title="">
+        <span [ngbTooltip]="getValidationError()" [placement]="'auto'"  title="">
             <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onSendRequest()" singleClick>
                 <span *ngIf="!doesManufacturerOfferHasPrice() || isNegotiatingAnyTerm() || bpDataService.isFinalProcessInTheWorkflow('Negotiation')" [innerHTML]="'Send Request' | translate"></span>
                 <span *ngIf="!(!doesManufacturerOfferHasPrice() || isNegotiatingAnyTerm() || bpDataService.isFinalProcessInTheWorkflow('Negotiation'))" [innerHTML]="'Continue With Manufacturer\'s Terms' | translate"></span>

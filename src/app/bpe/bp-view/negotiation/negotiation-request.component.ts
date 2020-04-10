@@ -91,6 +91,8 @@ export class NegotiationRequestComponent implements OnInit {
 
     areNotesOrFilesAttachedToDocument = UBLModelUtils.areNotesOrFilesAttachedToDocument;
 
+    VALIDATION_ERROR_FOR_FRAME_CONTRACT="validation_provide_valid_input_for_frame_contract";
+
     constructor(private bpDataService: BPDataService,
                 private bpeService:BPEService,
                 private userService:UserService,
@@ -353,7 +355,11 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     getValidationError(): string {
-        return this.validationService.extractErrorMessage(this.negotiationRequestForm);
+        let errorMessage = this.validationService.extractErrorMessage(this.negotiationRequestForm);
+        if(errorMessage == '' && !this.isFrameContractValid()){
+            errorMessage = this.translate.instant(this.VALIDATION_ERROR_FOR_FRAME_CONTRACT)
+        }
+        return errorMessage;
     }
 
     /**

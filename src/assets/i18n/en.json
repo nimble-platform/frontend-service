@@ -861,6 +861,7 @@
 	"validation_error_multiple": "The field should be a multiple of {{step}}. Closest values are: {{minClosest}} and {{maxClosest}}",
 	"validation_error_required": "This field is required",
 	"validation_provide_valid_input": "Please provide a valid input for the specified fields:",
+	"validation_provide_valid_input_for_frame_contract": "Please provide a valid input for the frame contract duration",
 	"form_field_amount_value": "Amount value",
 	"form_field_basic_product_details": "Basic product details",
 	"form_field_building_number": "Building number",
