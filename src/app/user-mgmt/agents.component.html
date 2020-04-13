@@ -287,11 +287,51 @@
                 <!--Maximum_no_of_contracts_per_day-->
                 <div class="form-group row space-before">
                     <label class="col-4 col-form-label">
-                        <strong><span [innerHTML]="'Preferred product IDs:' | translate"></span></strong>
+                        <strong><span [innerHTML]="'Catalogue Name:' | translate"></span></strong>
                     </label>
                     <div class="col-8">
-                        <input type="text" class="form-control" formControlName="productNames" required maxlength="255">
+                        <input type="text" class="form-control" formControlName="catalogueName" required maxlength="255">
                     </div>
+                </div>
+
+                <!--Maximum_no_of_contracts_per_day-->
+                <div class="form-group row space-before">
+                    <label class="col-4 col-form-label">
+                        <strong><span [innerHTML]="'Product Names:' | translate"></span></strong>
+                    </label>
+                    <div formArrayName="productNames" class="col-8 multi-input-group">
+                        <div *ngFor="let productName of productNames.controls; let i=index" class="sub-input-set">
+                            <input type="text" class="form-control" formControlName="{{i}}" required maxlength="255">
+                            <div *ngIf="i>0" (click)="deleteProductName(i)" class="btn-delete-icon"><i class="fa fa-trash" aria-hidden="true"></i></div>
+                            <div *ngIf="submitted && productName.errors" class="invalid-feedback">
+                                <div *ngIf="productName.errors.required">Notification No is required.</div>
+                            </div>
+                        </div>
+
+                        <div class="btn-add-icon" (click)="addCategoryName()">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row space-before">
+                    <label class="col-4 col-form-label">
+                        <strong><span [innerHTML]="'Category Names:' | translate"></span></strong>
+                    </label>
+                    <div formArrayName="categoryNames" class="col-8 multi-input-group">
+                        <div *ngFor="let categoryName of categoryNames.controls; let i=index" class="sub-input-set">
+                            <input type="text" class="form-control" formControlName="{{i}}" required maxlength="255">
+                            <div *ngIf="i>0" (click)="deleteCategoryName(i)" class="btn-delete-icon"><i class="fa fa-trash" aria-hidden="true"></i></div>
+                            <div *ngIf="submitted && categoryName.errors" class="invalid-feedback">
+                                <div *ngIf="categoryName.errors.required">Notification No is required.</div>
+                            </div>
+                        </div>
+
+                        <div class="btn-add-icon" (click)="addCategoryName()">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- Submit -->
