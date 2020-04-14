@@ -31,7 +31,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 export class AppComponent implements OnInit {
 
-    public project: Project.Type = Project.Type.Nimble;
+    public project: Project.Type = Project.Type.IAsset;
 
     public loading = false;
     public isLoggedIn = false;
