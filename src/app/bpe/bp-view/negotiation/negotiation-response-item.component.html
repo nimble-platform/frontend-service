@@ -224,7 +224,7 @@
         <ng-container *ngIf="isFrameContractPanelVisible()">
             <div class="btn btn-danger align-self-start ml-2" [ngClass]="{'active':showFrameContractDetails}" (click)="showFrameContractDetails=showTab(showFrameContractDetails)"><span [innerHTML]="'Frame Contract' | translate"></span></div>
         </ng-container>
-        <div class="btn align-self-start ml-2 {{highlightDeliveryDetailsTab() ? 'bg-danger':'btn-outline-primary'}}" [ngClass]="{'active':showDeliveryDetails}" (click)="showDeliveryDetails=showTab(showDeliveryDetails)"><span [innerHTML]="'Delivery Details' | translate"></span></div>
+        <div class="btn align-self-start ml-2 {{highlightDeliveryDetailsTab() ? 'btn-danger':'btn-outline-primary'}}" [ngClass]="{'active':showDeliveryDetails}" (click)="showDeliveryDetails=showTab(showDeliveryDetails)"><span [innerHTML]="'Delivery Details' | translate"></span></div>
     </div>
 </div>
 <div class="row mb-2">

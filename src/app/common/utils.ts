@@ -667,6 +667,23 @@ export function getPropertyValuesAsStrings(property: ItemProperty): string[] {
     }
 }
 
+export function getPropertyValueAsString(value:any,valueQualifier:string): string {
+    switch(valueQualifier) {
+        case "INT":
+        case "DOUBLE":
+        case "NUMBER":
+            return String(value);
+        case "FILE":
+            return value.fileName;
+        case "QUANTITY":
+            return `${value.value} ${value.unitCode}`;
+        case "STRING":
+            return value.value;
+        case "BOOLEAN":
+            return value[0].value;
+    }
+}
+
 export function areTransportServices(products: CatalogueLine[]): boolean {
     if (products) {
         for (let product of products) {

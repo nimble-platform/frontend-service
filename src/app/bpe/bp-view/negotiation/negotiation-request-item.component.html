@@ -212,12 +212,12 @@
 
 <div class="row mb-2">
     <div class="col-12">
-        <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'btn-outline-primary':!(clausesDiffer || custTermsDiffer),'btn-danger':(clausesDiffer || custTermsDiffer),'active':showTermsAndConditions}" (click)="showTermsAndConditions=showTab(showTermsAndConditions)"><span [innerHTML]="'Terms and Conditions' | translate"></span></div>
-        <div *ngIf="config.dataChannelsEnabled" class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'btn-outline-primary':wrapper.checkEqualForRequest(manufacturersTermsSource, 'dataMonitoring'),'btn-danger':!wrapper.checkEqualForRequest(manufacturersTermsSource, 'dataMonitoring'),'active':showDataMonitoring}" (click)="showDataMonitoring=showTab(showDataMonitoring)"><span [innerHTML]="'Data Monitoring' | translate"></span></div>
+        <div class="btn align-self-start ml-2" [ngClass]="{'btn-outline-primary':!(clausesDiffer || custTermsDiffer),'btn-danger':(clausesDiffer || custTermsDiffer),'active':showTermsAndConditions}" (click)="showTermsAndConditions=showTab(showTermsAndConditions)"><span [innerHTML]="'Terms and Conditions' | translate"></span></div>
+        <div *ngIf="config.dataChannelsEnabled" class="btn align-self-start ml-2" [ngClass]="{'btn-outline-primary':wrapper.checkEqualForRequest(manufacturersTermsSource, 'dataMonitoring'),'btn-danger':!wrapper.checkEqualForRequest(manufacturersTermsSource, 'dataMonitoring'),'active':showDataMonitoring}" (click)="showDataMonitoring=showTab(showDataMonitoring)"><span [innerHTML]="'Data Monitoring' | translate"></span></div>
         <ng-container *ngIf="isFrameContractVisible()">
             <div class="btn {{wrapper.rfqFrameContractDuration == null ?'btn-outline-primary' : 'btn-danger'}} align-self-start ml-2" [ngClass]="{'active':showFrameContractDetails}" (click)="showFrameContractDetails=showTab(showFrameContractDetails)"><span [innerHTML]="'Frame Contract' | translate"></span></div>
         </ng-container>
-        <div class="btn btn-outline-primary align-self-start ml-2 {{highlightDeliveryDetailsTab() ? 'bg-danger':'btn-outline-primary'}}" [ngClass]="{'active':showDeliveryDetails}" (click)="showDeliveryDetails=showTab(showDeliveryDetails)"><span [innerHTML]="'Delivery Details' | translate"></span></div>
+        <div class="btn align-self-start ml-2 {{highlightDeliveryDetailsTab() ? 'btn-danger':'btn-outline-primary'}}" [ngClass]="{'active':showDeliveryDetails}" (click)="showDeliveryDetails=showTab(showDeliveryDetails)"><span [innerHTML]="'Delivery Details' | translate"></span></div>
     </div>
 </div>
 

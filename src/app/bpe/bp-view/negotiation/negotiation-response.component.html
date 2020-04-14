@@ -16,7 +16,7 @@
 
 <negotiation-response-item *ngFor="let wrapper of wrappers;let i=index" [wrapper]="wrapper" [defaultTermsAndConditions]="defaultTermsAndConditions" [frameContract]="frameContracts ? frameContracts[i] : null" [frameContractNegotiation]="frameContractNegotiations ? frameContractNegotiations[i]:null" [frameContractQuotation]="frameContractQuotations ? frameContractQuotations[i]:null" [lastOfferQuotation]="lastOfferQuotation" [rfq]="rfq" [isCatalogueLineDeleted]="isCatalogueLineDeleted(wrapper.catalogueLine)" [primaryTermsSource]="primaryTermsSources ? primaryTermsSources[i]:null" [quotation]="quotation" [readonly]="readonly" [hidden]="selectedLineIndex != wrapper.lineIndex"></negotiation-response-item>
 
-<div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showNotesAndAdditionalFiles,'bg-danger text-white':highlightNotesAndFilesSection()}" (click)="showNotesAndAdditionalFiles=showTab(showNotesAndAdditionalFiles)"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>
+<div class="btn align-self-start ml-2" [ngClass]="{'active':showNotesAndAdditionalFiles,'btn-outline-primary':!highlightNotesAndFilesSection(),'btn-danger text-white':highlightNotesAndFilesSection()}" (click)="showNotesAndAdditionalFiles=showTab(showNotesAndAdditionalFiles)"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>
 
 <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showPurchaseOrder}" (click)="showPurchaseOrder = showTab(showPurchaseOrder)"><span [innerHTML]="'Purchase Order' | translate"></span></div>
 
@@ -101,9 +101,11 @@
             </button>
         </div>
         <div class="col-2">
-            <button class="btn btn-primary action" [disabled]="isAcceptAndOrderDisabled()" (click)="onAcceptAndOrder()">
-                <span [innerHTML]="'Accept & Order' | translate"></span>
-            </button>
+            <span [ngbTooltip]="getAcceptAndOrderButtonValidationMessages()" [placement]="'auto'"  title="">
+                <button class="btn btn-primary action" [disabled]="isAcceptAndOrderDisabled()" (click)="onAcceptAndOrder()">
+                    <span [innerHTML]="'Accept & Order' | translate"></span>
+                </button>
+            </span>
         </div>
     </div>
 </ng-container>
