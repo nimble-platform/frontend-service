@@ -1,4 +1,21 @@
-import {Component, AfterViewInit, Input, OnChanges, ViewEncapsulation} from '@angular/core';
+/**
+ * Copyright 2020
+ * University of Bremen, Faculty of Production Engineering, Badgasteiner Straße 1, 28359 Bremen, Germany.
+ * In collaboration with BIBA - Bremer Institut für Produktion und Logistik GmbH, Bremen, Germany.
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
+import { Component, AfterViewInit, Input, OnChanges, ViewEncapsulation } from '@angular/core';
 import * as d3 from 'd3';
 import { ExplorativeSearchService } from './explorative-search.service';
 import { Router } from '@angular/router';
@@ -70,7 +87,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
     private root: any;
     // BackEnd Service + Modal Service declared here
     constructor(private expSearch: ExplorativeSearchService, private router: Router, private translate: TranslateService) {
-     }
+    }
 
     /**
      * using OnChanges LifeCycle Hook for incoming Configuration
@@ -128,7 +145,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         const link = g.selectAll('.link')
             .data(root.links())
             .enter().append('path')
-            .attr('id', function(d) { return d['source']['data']['id']})
+            .attr('id', function(d) { return d['source']['data']['id'] })
             .attr('class', 'link')
             .attr('d', <any>d3.linkRadial()
                 .angle(function(d) { return d['x']; })
@@ -137,7 +154,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         const node = g.selectAll('.node')
             .data(root.descendants())
             .enter().append('g')
-            .attr('id', function(d) { return d['data']['id']})
+            .attr('id', function(d) { return d['data']['id'] })
             .attr('class', function(d) { return 'node' + (d.children ? ' node--internal' : ' node--leaf'); })
             .attr('transform', function(d) { return 'translate(' + radialPoint(d.x, d.y) + ')'; })
             .on('click', click)
@@ -146,11 +163,11 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
         node.append('circle')
             .attr('r', 5)
             .style('fill', (d: any) => {
-                    if (d.depth === 0) { // make root grey for distinction
-                        return '#999';
+                if (d.depth === 0) { // make root grey for distinction
+                    return '#999';
                 } else {
-                        return d.data.color;
-                    }
+                    return d.data.color;
+                }
             });
 
         node.append('text')
@@ -158,7 +175,8 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             .attr('x', function(d) { return d.x < Math.PI === !d.children ? 6 : -6; })
             .attr('text-anchor', function(d) { return d.x < Math.PI === !d.children ? 'start' : 'end'; })
             .attr('transform', function(d) {
-                return 'rotate(' + (d.x < Math.PI ? d.x - Math.PI / 2 : d.x + Math.PI / 2) * 180 / Math.PI + ')'; })
+                return 'rotate(' + (d.x < Math.PI ? d.x - Math.PI / 2 : d.x + Math.PI / 2) * 180 / Math.PI + ')';
+            })
             .text(function(d) { return d.data['name']; });
 
         // If the graph is rerendered make sure to add Dashed Lines to from root to the merged Node
@@ -247,10 +265,12 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
 
     obtainProperties(nodeInfo: any) {
         const self = this;
-        let _jsonForFilter = {'concept': '', 'property': '', 'amountOfGroups': 3, 'language': this.lang,
-        'propertySource': ''};
-        let jsonFilterForEachChild = {'fName': '', 'fQuery': '', 'fQueryRoot': '', 'fQueryRootUrl': ''};
-        let pathForSparqlJson = {'urlOfProperty': '', path: []};
+        let _jsonForFilter = {            
+'concept': '', 'property': '', 'amountOfGroups': 3, 'language': this.lang,
+            'propertySource': ''
+        };
+        let jsonFilterForEachChild = { 'fName': '', 'fQuery': '', 'fQueryRoot': '', 'fQueryRootUrl': '' };
+        let pathForSparqlJson = { 'urlOfProperty': '', path: [] };
         // console.log(nodeInfo); // DEBUG-Check
         if (nodeInfo.depth === 1 && nodeInfo.data.objectPropertySource === '' && nodeInfo.data.color === 'green') {
             //  CASE: 1 direct datatype properties to root
@@ -279,7 +299,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 this.tableJSON['language'] = this.lang;
                 this.arrayPassedToChild.push(jsonFilterForEachChild);
                 // console.log(this.arrayPassedToChild);
-                pathForSparqlJson.path.push({'concept': _jsonForFilter.concept});
+                pathForSparqlJson.path.push({ 'concept': _jsonForFilter.concept });
                 pathForSparqlJson.urlOfProperty = _jsonForFilter.property;
                 this.tableJSON['parametersIncludingPath'].push(pathForSparqlJson);
                 this.tableJSON['concept'] = _jsonForFilter.concept;
@@ -296,7 +316,8 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 let rootNode = ancestors.pop();
                 // console.log('rerender');
                 this._backUpPaths['path'].push(
-                    {concept: encodeURIComponent(nodeInfo.parent.data.url),
+                    {
+                        concept: encodeURIComponent(nodeInfo.parent.data.url),
                         urlOfProperty: encodeURIComponent(nodeInfo.parent.data.objectPropertySource)
                     });
                 this._backUpPaths['urlOfProperty'] = encodeURIComponent(nodeInfo.data.url);
@@ -330,7 +351,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 // CASE: 2B Not a rerendered graph and has normal immediate parent
                 let ancestors = nodeInfo.ancestors();
                 let rootNode = ancestors.pop();
-                pathForSparqlJson.path.push({concept: encodeURIComponent(rootNode.data.url)});
+                pathForSparqlJson.path.push({ concept: encodeURIComponent(rootNode.data.url) });
                 pathRec(ancestors);
                 // console.log(pathForSparqlJson); //DEBUG-Check
                 _jsonForFilter.concept = encodeURIComponent(nodeInfo.parent.data.url);
@@ -368,7 +389,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             // console.log(nodeInfo.ancestors());
             let ancestors = nodeInfo.ancestors();
             let rootNode = ancestors.pop();
-            pathForSparqlJson.path.push({concept: encodeURIComponent(rootNode.data.url)});
+            pathForSparqlJson.path.push({ concept: encodeURIComponent(rootNode.data.url) });
             pathRec(ancestors);
             // console.log(pathForSparqlJson); // Debug-Check
             this._backUpPaths = pathForSparqlJson;
@@ -383,14 +404,14 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             newJSON['concept'] = nodeInfo.data.url;
             newJSON['conceptURIPath'] = [];
             self.config['completeStructure']
-                ['objectproperties'][nodeInfo.parent.data.url]['objectproperties']
-                [nodeInfo.data.url]['conceptURIPath'].forEach(u => {
+            ['objectproperties'][nodeInfo.parent.data.url]['objectproperties']
+            [nodeInfo.data.url]['conceptURIPath'].forEach(u => {
                 newJSON['conceptURIPath'].push(u);
             });
             newJSON['language'] = self.lang;
             newJSON['stepRange'] = 1;
             newJSON['frozenConcept'] = self.config['completeStructure']
-                ['objectproperties'][nodeInfo.parent.data.url]['frozenConcept'];
+            ['objectproperties'][nodeInfo.parent.data.url]['frozenConcept'];
             newJSON['distanceToFrozenConcept'] = nodeInfo.depth;
             newJSON['oldJsonLogicalView'] = self.config['completeStructure'];
             newJSON['currentSelections'] = [];
@@ -418,7 +439,8 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
             if (ances.length !== 1) {
                 let immediateParent = ances.pop();
                 pathForSparqlJson.path.push(
-                    {concept: encodeURIComponent(immediateParent.data.url),
+                    {
+                        concept: encodeURIComponent(immediateParent.data.url),
                         urlOfProperty: encodeURIComponent(immediateParent.data.objectPropertySource)
                     });
                 pathRec(ances);
@@ -467,7 +489,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      */
     getSparqlOptionalSelect(indexUUID): void {
         // console.log(indexUUID); // DEBUG-Check
-        let optSPARQLQuery = {uuid: encodeURIComponent(this.tableResult.uuids[indexUUID].trim()), 'language': this.lang};
+        let optSPARQLQuery = { uuid: encodeURIComponent(this.tableResult.uuids[indexUUID].trim()), 'language': this.lang };
         // console.log(optSPARQLQuery); // DEBUG-Check
         this.expSearch.getOptionalSelect(optSPARQLQuery)
             .then(res => {
@@ -495,7 +517,7 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
      */
     negotiation(): void {
         this.router.navigate(['/product-details'],
-            { queryParams: {catalogueId: this._negotiation_catalogue_id, id: this._negotiation_id} });
+            { queryParams: { catalogueId: this._negotiation_catalogue_id, id: this._negotiation_id } });
     }
 
     /**
@@ -519,7 +541,8 @@ export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChang
                 name: datProp['translatedURL'], url: datProp['url'],
                 color: 'green', conceptSource: datProp['conceptSource'], propertySource: datProp['propertySource'],
                 objectPropertySource: '',
-                children: []});
+                children: []
+            });
         }
 
         // adding object properties

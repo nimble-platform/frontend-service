@@ -1,3 +1,19 @@
+<!--
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   In collaboration with
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <div class="row {{ rowClass }}" [hidden]="presentationMode === 'view' && visible && (!text || text == '')">
     <div *ngIf="label" [class]="labelClass">
         <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
@@ -5,41 +21,27 @@
     </div>
 
     <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible && rows > 1">
-        <textarea class="form-control {{valueTextClass}}"
-                  [rows]="rows"
-                  [(ngModel)]="text"
-                  [disableControl]="disabled"
-                  [required]="required"
-                  [maxlength]="maxLength"
-                  [formControl]="textInputFormControl"
-                  [ngbTooltip]="getValidationErrorMessage(textInputFormControl)" [placement]="'auto'"  title="">
+        <textarea class="form-control {{valueTextClass}}" [rows]="rows" [(ngModel)]="text" [disableControl]="disabled" [required]="required" [maxlength]="maxLength" [formControl]="textInputFormControl" [ngbTooltip]="getValidationErrorMessage(textInputFormControl)" [placement]="'auto'" title="">
         </textarea>
     </div>
 
     <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible && rows === 1">
-        <input type="text"
-               class="form-control {{valueTextClass}}"
-               [(ngModel)]="text"
-               [disableControl]="disabled"
-               [required]="required"
-               [maxlength]="maxLength"
-               [formControl]="textInputFormControl"
-               [ngbTooltip]="getValidationErrorMessage(textInputFormControl)" [placement]="'auto'"  title="">
+        <input type="text" class="form-control {{valueTextClass}}" [(ngModel)]="text" [disableControl]="disabled" [required]="required" [maxlength]="maxLength" [formControl]="textInputFormControl" [ngbTooltip]="getValidationErrorMessage(textInputFormControl)" [placement]="'auto'" title="">
     </div>
 
     <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">
         <p class="{{valueTextClass}}" [innerHTML]="text"></p>
     </div>
 
-    <select class="form-control {{languageIdClass}}" *ngIf="languageIdClass != ''" [(ngModel)]="languageId" >
+    <select class="form-control {{languageIdClass}}" *ngIf="languageIdClass != ''" [(ngModel)]="languageId">
         <option *ngFor='let language of languages' [value]="language">{{language}}</option>
     </select>
 
-<!--    Button to generate random text values-->
+    <!--    Button to generate random text values-->
     <button class="btn btn-outline-primary {{textGeneratorClass}}" *ngIf="textGeneratorClass != '' && !disabled" (click)="generateText()"><i class="fas fa-undo"></i></button>
 
     <div class="d-flex align-items-end justify-content-end {{flexClass}}">
-        <button *ngIf="addButtonStyle != ''" class="btn {{addButtonStyle}}"  type="button" (click)="onAddTextInput()"><span [innerHTML]="'Add' | translate"></span></button>
-        <button *ngIf="deleteButtonStyle != ''" class="btn {{deleteButtonStyle}} "   type="button" (click)="onDeleteTextInput()" ><span [innerHTML]="'Delete' | translate"></span></button>
+        <button *ngIf="addButtonStyle != ''" class="btn {{addButtonStyle}}" type="button" (click)="onAddTextInput()"><span [innerHTML]="'Add' | translate"></span></button>
+        <button *ngIf="deleteButtonStyle != ''" class="btn {{deleteButtonStyle}} " type="button" (click)="onDeleteTextInput()"><span [innerHTML]="'Delete' | translate"></span></button>
     </div>
 </div>

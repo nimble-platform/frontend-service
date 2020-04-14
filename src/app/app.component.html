@@ -1,22 +1,38 @@
+<!--
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   In collaboration with
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+ * AIDIMME - Technological Institute of Metalworking, Furniture, Wood, Packaging and Related sectors; Valencia; Spain
+ * UB - University of Bremen, Faculty of Production Engineering; Bremen; Germany
+ * BIBA - Bremer Institut für Produktion und Logistik GmbH; Bremen; Germany
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <nav *ngIf="!minimalView" class="navbar navbar-expand-lg navbar-dark nimble-bg space-after">
-    <a *ngIf="isLoggedIn && (checkRoles('comp_req') || checkRoles('wait_comp'))" class="navbar-brand"
-       routerLink="/dashboard" routerLinkActive="active" [title]="config.platformName">
+    <a *ngIf="isLoggedIn && (checkRoles('comp_req') || checkRoles('wait_comp'))" class="navbar-brand" routerLink="/dashboard" routerLinkActive="active" [title]="config.platformName">
         <img id="nav-logo" [src]="config.logoPath" height="30" class="d-inline-block align-top" alt="">
     </a>
-    <a *ngIf="isLoggedIn && (!checkRoles('comp_req') && !checkRoles('wait_comp'))" class="navbar-brand"
-       routerLink="/user-mgmt/company-registration" routerLinkActive="active" [title]="config.platformName">
+    <a *ngIf="isLoggedIn && (!checkRoles('comp_req') && !checkRoles('wait_comp'))" class="navbar-brand" routerLink="/user-mgmt/company-registration" routerLinkActive="active" [title]="config.platformName">
         <img id="nav-logo" [src]="config.logoPath" height="30" class="d-inline-block align-top" alt="">
     </a>
     <a *ngIf="!isLoggedIn" class="navbar-brand" routerLink="/user-mgmt/login" routerLinkActive="active" [title]="config.platformName">
         <img id="nav-logo" [src]="config.logoPath" height="30" class="d-inline-block align-top" alt="">
     </a>
-    <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" aria-controls="navbarNavAltMarkup"
-            [attr.aria-expanded]="!isCollapsed">
-		<span class="navbar-toggler-icon">
-			<span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-		</span>
+    <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" aria-controls="navbarNavAltMarkup" [attr.aria-expanded]="!isCollapsed">
+        <span class="navbar-toggler-icon">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </span>
     </button>
     <div class="navbar-collapse" [ngbCollapse]="isCollapsed" id="navbarNavAltMarkup">
         <ul *ngIf="!isLoggedIn" class="nav navbar-nav mr-auto">
@@ -42,150 +58,83 @@
                     <i class="fa fa-arrow-up"></i> <span [innerHTML]="'Publish' | translate"></span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuPublish" ngbDropdownMenu>
-                    <a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']"
-                       [queryParams]="{pageRef: 'menu', productType: 'product'}" routerLinkActive="active">
-                        <i class="fa fa-shopping-cart dd-icon"></i> <span [innerHTML]="'Product / Service' | translate"></span>
+                    <a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'product'}" routerLinkActive="active">
+                        <i class="fa fa-cog dd-icon"></i> <span [innerHTML]="'Product / Service' | translate"></span>
                     </a>
-                    <a *ngIf="enableLogisticServicePublishing" class="dropdown-item" [routerLink]="['/catalogue/publish-logistic']"
-                       [queryParams]="{pageRef: 'single', productType: 'transportation'}" routerLinkActive="active">
-                        <i class="fa fa-truck dd-icon"></i> <span [innerHTML]="'Logistics Service' | translate"></span>
+                    <a *ngIf="enableLogisticServicePublishing" class="dropdown-item" [routerLink]="['/catalogue/publish-logistic']" [queryParams]="{pageRef: 'single', productType: 'transportation'}" routerLinkActive="active">
+                        <i class="fa fa-database dd-icon"></i> <span [innerHTML]="'Logistics Service' | translate"></span>
                     </a>
                 </div>
             </li>
-
-            <li class="nav-item" *ngIf="!config.showExplorative && checkRoles('comp_req')" routerLinkActive="active">
+            <li class="nav-item" *ngIf="checkRoles('comp_req')" routerLinkActive="active">
                 <a class="nav-link" routerLink="/simple-search">
                     <i class="fa fa-search"></i> <span [innerHTML]="'Search' | translate"></span>
                 </a>
             </li>
-
-            <li ngbDropdown class="nav-item dropdown" *ngIf="config.showExplorative && checkRoles('comp_req')"
-                routerLinkActive="active">
-                <a class="nav-link pointer" id="dropdownMenuSearch" ngbDropdownToggle>
-                    <i class="fa fa-search"></i> <span [innerHTML]="'Search' | translate"></span>
-                </a>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuSearch" ngbDropdownMenu>
-                    <a class="dropdown-item" routerLink="/simple-search" routerLinkActive="active">
-                        <i class="fa fa-keyboard dd-icon"></i> <span [innerHTML]="'Text-based' | translate"></span>
-                    </a>
-                    <a class="dropdown-item" routerLink="/explore-search" routerLinkActive="active">
-                        <i class="fa fa-code-branch dd-icon"></i> <span [innerHTML]="'Explorative' | translate"></span>
-                    </a>
-                </div>
-            </li>
-
-            <!--
-            <li class="nav-item" *ngIf="debug||roles.indexOf('legal_representative')!=-1" routerLinkActive="active">
-                <a class="nav-link" [routerLink]="['/bpe/bpe-design']" [queryParams]="{fromScratch: true}">
-                    <i class="fa fa-exchange-alt"></i> <span>Business Process</span>
-                </a>
-            </li>
-            -->
-
             <li class="nav-item" *ngIf="checkRoles('reg_comp')" routerLinkActive="active">
                 <a class="nav-link" routerLink="/user-mgmt/company-registration">
                     <i class="fa fa-edit"></i> <span [innerHTML]="'Register a Company' | translate"></span>
                 </a>
             </li>
-
-            <!-- Tracking and Tracing Component UB Initial Version-->
-            <!-- This Will be adapted by the platform's core dev-team later -->
-            <li class="nav-item" *ngIf="config.showTrack && checkRoles('track')" routerLinkActive="active">
-                <a class="nav-link" routerLink="/tnt" routerLinkActive="active">
-                    <i class="fa fa-truck"></i> <span [innerHTML]="'Track' | translate"></span>
+            <li *ngIf="checkAdvMenu()" ngbDropdown class="nav-item dropdown" routerLinkActive="active">
+                <a class="nav-link pointer" id="dropdownMenuAdv" ngbDropdownToggle>
+                    <i class="fa fa-plus-circle"></i> <span [innerHTML]="'Advanced' | translate"></span>
                 </a>
-            </li>
-
-            <!-- QualiExplore Component UB-->
-            <li class="nav-item" *ngIf="config.showTrack && checkRoles('track')" routerLinkActive="active">
-                <a class="nav-link" routerLink="/qualiexplore" routerLinkActive="active">
-                    <i class="fas fa-certificate"></i> <span [innerHTML]="'QualiExplore' | translate"></span>
-                </a>
-            </li>
-
-            <li class="nav-item" *ngIf="checkRoles('comp') || (checkRoles('view_comp') && config.showCompanyMembers)"
-                routerLinkActive="active">
-                <a class="nav-link" [title]="activeCompanyName?activeCompanyName:''"
-                   routerLink="/user-mgmt/company-invitation">
-                    <i class="fa fa-building"></i> <span [innerHTML]="'Company Members' | translate"></span>
-                </a>
-            </li>
-
-            <li ngbDropdown class="nav-item dropdown" *ngIf="checkRoles('pm')" routerLinkActive="active">
-                <a class="nav-link pointer" id="dropdownMenuPM" ngbDropdownToggle>
-                    <i class="fa fa-chart-pie"></i> <span [innerHTML]="'Platform Management' | translate"></span>
-                </a>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuPM" ngbDropdownMenu>
-                    <a class="dropdown-item" routerLink="/analytics/management" routerLinkActive="active">
-                        <i class="fa fa-user-tie dd-icon"></i> <span [innerHTML]="'Company Management' | translate"></span>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuAdv" ngbDropdownMenu>
+                    <a *ngIf="config.legislationSettings.enabled && checkRoles('legislation')" class="dropdown-item" routerLink="/legislation" routerLinkActive="active">
+                        <i class="fa fa-balance-scale dd-icon"></i> <span [innerHTML]="'Legislation' | translate"></span>
                     </a>
-                    <a class="dropdown-item" routerLink="/analytics/trust" routerLinkActive="active">
-                        <i class="fa fa-sliders-h dd-icon"></i> <span [innerHTML]="'Trust Policy Configuration' | translate"></span>
+                    <a *ngIf="config.showExplorative && checkRoles('comp_req')" class="dropdown-item" routerLink="/explore-search" routerLinkActive="active">
+                        <i class="fa fa-code-branch dd-icon"></i> <span [innerHTML]="'Explorative Search' | translate"></span>
                     </a>
-                    <a class="dropdown-item" routerLink="/analytics/platform" routerLinkActive="active">
-                        <i class="fa fa-chart-area dd-icon"></i> <span [innerHTML]="'Platform Analytics' | translate"></span>
+                    <a *ngIf="config.showTrack && checkRoles('track')" class="dropdown-item" routerLink="/tnt" routerLinkActive="active">
+                        <i class="fa fa-truck dd-icon"></i> <span [innerHTML]="'Track' | translate"></span>
                     </a>
-                    <!--
-                    <a class="dropdown-item" href="https://nimble-platform.uk-south.containers.mybluemix.net/dashboards/status" target="_blank">
-                        <i class="fa fa-briefcase-medical dd-icon"></i> Health Report
+                    <a *ngIf="config.showTrack && checkRoles('track')" class="dropdown-item" routerLink="/qualiexplore" routerLinkActive="active">
+                        <i class="fas fa-certificate dd-icon"></i> <span [innerHTML]="'QualiExplore' | translate"></span>
                     </a>
-                    <a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/5ad4bff0-119d-11e8-96a2-b11689429755" target="_blank">
-                        <i class="fa fa-clock dd-icon"></i> Activity Report
-                    </a>
-                    <a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/5f19a540-1250-11e8-96a2-b11689429755" target="_blank">
-                        <i class="fa fa-user-lock dd-icon"></i> Security Report
-                    </a>
-                    <a class="dropdown-item" href="http://nimble-platform.salzburgresearch.at:5602/app/kibana#/dashboard/d0c4a3a0-1194-11e8-96a2-b11689429755" target="_blank">
-                        <i class="fa fa-file-alt dd-icon"></i> Log Analysis
-                    </a>
-                    -->
                 </div>
             </li>
-
-            <li class="nav-item" [ngClass]="{'active':chatVisible}" routerLinkActive="active" *ngIf="config.showChat">
-                <!--
-                <a class="nav-link" routerLink="/analytics/chat">
-                    <i class="fa fa-comments"></i> <span [innerHTML]="'Chat' | translate"></span>
-                </a>
-                -->
-                <a class="nav-link pointer" (click)="toggleChat()">
-                    <i class="fa fa-comments"></i> <span [innerHTML]="'Chat' | translate"></span>
-                </a>
-            </li>
-
             <li class="nav-item" *ngIf="checkRoles('purchases')" routerLinkActive="active">
                 <a class="nav-link" routerLink="/bpe/shopping-cart" routerLinkActive="active">
-                    <i class="fas fa-shopping-cart"></i> <span [innerHTML]="'Shopping Cart' | translate"></span>
+                    <i class="fas fa-arrow-down"></i> <span [innerHTML]="'Shopping Cart' | translate"></span>
                 </a>
             </li>
-
         </ul>
-
-        <ul *ngIf="config.delegationEnabled" class="nav navbar-nav">
-            <li ngbDropdown class="nav-item dropdown">
-                <a class="nav-link pointer" id="dropdownMenuFed" ngbDropdownToggle [title]="'Federation' | translate">
-                    <i class="fas fa-project-diagram"></i> <span *ngIf="federation" [innerHTML]="'ON' | translate"></span><span *ngIf="!federation" [innerHTML]="'OFF' | translate"></span>
+        <ul *ngIf="config.showChat && isLoggedIn" class="nav navbar-nav">
+            <li ngbDropdown class="nav-item dropdown" [ngClass]="{'active':chatVisible}">
+                <a class="nav-link pointer" id="dropdownMenuChat" ngbDropdownToggle [title]="getChatText()">
+                    <i class="fa fa-comments"></i>
                 </a>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuFed" ngbDropdownMenu>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuChat" ngbDropdownMenu>
+                    <a class="dropdown-item pointer" [ngClass]="{'active': chatVisible}" (click)="toggleChat(true)"><span [innerHTML]="'ON' | translate"></span></a>
+                    <a class="dropdown-item pointer" [ngClass]="{'active': !chatVisible}" (click)="toggleChat(false)"><span [innerHTML]="'OFF' | translate"></span></a>
+                </div>
+            </li>
+        </ul>
+        <ul *ngIf="config.delegationEnabled" class="nav navbar-nav">
+            <li ngbDropdown class="nav-item dropdown" [ngClass]="{'active':federation}">
+                <a class="nav-link pointer" id="dropdownMenuFed" ngbDropdownToggle [title]="getFederationText()">
+                    <i class="fas fa-project-diagram"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuFed" ngbDropdownMenu>
                     <a class="dropdown-item pointer" [ngClass]="{'active': federation}" (click)="setFed(true)"><span [innerHTML]="'ON' | translate"></span></a>
                     <a class="dropdown-item pointer" [ngClass]="{'active': !federation}" (click)="setFed(false)"><span [innerHTML]="'OFF' | translate"></span></a>
                 </div>
             </li>
         </ul>
-
         <ul class="nav navbar-nav">
             <li ngbDropdown class="nav-item dropdown">
-                <a class="nav-link pointer" id="dropdownMenuLang" ngbDropdownToggle >
-                    <i class="fas fa-globe"></i> <span>{{language.toUpperCase()}}</span>
+                <a class="nav-link pointer" id="dropdownMenuLang" ngbDropdownToggle [title]="getLangText()">
+                    <i class="fas fa-globe"></i>
                 </a>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuLang" ngbDropdownMenu>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLang" ngbDropdownMenu>
                     <ng-container *ngFor="let lang of availableLanguages">
-                      <a class="dropdown-item pointer" [ngClass]="{'active': lang==language}" (click)="setLang(lang)">{{lang.toUpperCase()}}</a>
+                        <a class="dropdown-item pointer" [ngClass]="{'active': lang==language}" (click)="setLang(lang)">{{lang.toUpperCase()}}</a>
                     </ng-container>
                 </div>
             </li>
         </ul>
-
         <ul class="nav navbar-nav">
             <li class="nav-item" routerLinkActive="active">
                 <a class="nav-link pointer" routerLink="/analytics/info" [title]="'Imprint / Info' | translate">
@@ -193,7 +142,6 @@
                 </a>
             </li>
         </ul>
-
         <ul class="nav navbar-nav">
             <li class="nav-item">
                 <a class="nav-link pointer" (click)="open(support)" [title]="'Help' | translate">
@@ -201,37 +149,56 @@
                 </a>
             </li>
         </ul>
-
         <ul class="nav navbar-nav">
-            <li class="nav-item" routerLinkActive="active">
-                <a class="nav-link" routerLink="/analytics/members">
-                    <i class="fa fa-users"></i> <span [innerHTML]="'Platform Members' | translate"></span>
+            <li ngbDropdown class="nav-item dropdown" routerLinkActive="active">
+                <a class="nav-link pointer" [title]="config.platformName" id="dropdownMenuPlat" ngbDropdownToggle>
+                    <i class="fa fa-coins"></i> <span [innerHTML]="'Platform' | translate"></span>
                 </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuPlat" ngbDropdownMenu>
+                    <a class="dropdown-item" routerLink="/analytics/members">
+                        <i class="fa fa-user-friends dd-icon"></i> <span [innerHTML]="'Platform Members' | translate"></span>
+                    </a>
+                    <a *ngIf="checkRoles('pm')" class="dropdown-item" routerLink="/analytics/management" routerLinkActive="active">
+                        <i class="fa fa-cogs dd-icon"></i> <span [innerHTML]="'Company Management' | translate"></span>
+                    </a>
+                    <a *ngIf="checkRoles('pm')" class="dropdown-item" routerLink="/analytics/trust" routerLinkActive="active">
+                        <i class="fa fa-sliders-h dd-icon"></i> <span [innerHTML]="'Trust Policy Configuration' | translate"></span>
+                    </a>
+                    <a *ngIf="checkRoles('pm')" class="dropdown-item" routerLink="/analytics/platform" routerLinkActive="active">
+                        <i class="fa fa-chart-area dd-icon"></i> <span [innerHTML]="'Platform Analytics' | translate"></span>
+                    </a>
+                </div>
             </li>
         </ul>
-
-        <ul *ngIf="isLoggedIn" class="nav navbar-nav">
+        <ul *ngIf="checkCompMenu()" class="nav navbar-nav">
             <li ngbDropdown class="nav-item dropdown" routerLinkActive="active">
-                <a class="nav-link pointer" [title]="activeCompanyName?activeCompanyName:''" id="dropdownMenuUser"
-                   ngbDropdownToggle>
-                    <i class="fa fa-user"></i> <span>{{fullName}}</span>
+                <a class="nav-link pointer" [title]="activeCompanyName?activeCompanyName:''" id="dropdownMenuComp" ngbDropdownToggle>
+                    <i class="fa fa-building"></i> <span [innerHTML]="'Company' | translate"></span>
                 </a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser" ngbDropdownMenu>
-                    <a *ngIf="checkRoles('comp-settings')" class="dropdown-item"
-                       [title]="activeCompanyName?activeCompanyName:''" routerLink="/user-mgmt/company-settings"
-                       routerLinkActive="active">
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuComp" ngbDropdownMenu>
+                    <a *ngIf="checkRoles('comp') || (checkRoles('view_comp') && config.showCompanyMembers)" class="dropdown-item" routerLink="/user-mgmt/company-invitation">
+                        <i class="fa fa-user-friends dd-icon"></i> <span [innerHTML]="'Company Members' | translate"></span>
+                    </a>
+                    <a *ngIf="checkRoles('comp-settings')" class="dropdown-item" routerLink="/user-mgmt/company-settings" routerLinkActive="active">
                         <i class="fa fa-cog dd-icon"></i> <span [innerHTML]="'Company Settings' | translate"></span>
                     </a>
-                    <a *ngIf="checkRoles('comp-ratings')" class="dropdown-item"
-                       [title]="activeCompanyName?activeCompanyName:''" routerLink="/user-mgmt/company-rating"
-                       routerLinkActive="active">
+                    <a *ngIf="checkRoles('comp-ratings')" class="dropdown-item" routerLink="/user-mgmt/company-rating" routerLinkActive="active">
                         <i class="fa fa-star dd-icon"></i> <span [innerHTML]="'Company Ratings' | translate"></span>
                     </a>
-                    <a class="dropdown-item" routerLink="/user-mgmt/user-profile" routerLinkActive="active">
-                        <i class="fa fa-user-tie dd-icon"></i> <span [innerHTML]="'User Profile' | translate"></span>
-                    </a>
-                    <a *ngIf="showAgents" class="dropdown-item" routerLink="/user-mgmt/agents" routerLinkActive="active">
+                    <a *ngIf="config.showAgent && checkRoles('bp')" class="dropdown-item" routerLink="/user-mgmt/agents" routerLinkActive="active">
                         <i class="fa fa-user-tie dd-icon"></i> <span [innerHTML]="'Agents' | translate"></span>
+                    </a>
+                </div>
+            </li>
+        </ul>
+        <ul *ngIf="isLoggedIn" class="nav navbar-nav">
+            <li ngbDropdown class="nav-item dropdown" routerLinkActive="active">
+                <a class="nav-link pointer" [title]="fullName" id="dropdownMenuUser" ngbDropdownToggle>
+                    <i class="fa fa-user"></i> <span [innerHTML]="'User' | translate"></span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser" ngbDropdownMenu>
+                    <a class="dropdown-item" routerLink="/user-mgmt/user-profile" routerLinkActive="active">
+                        <i class="fa fa-address-book dd-icon"></i> <span [innerHTML]="'User Profile' | translate"></span>
                     </a>
                     <a class="dropdown-item" routerLink="/user-mgmt/logout">
                         <i class="fa fa-lock dd-icon"></i> <span [innerHTML]="'Logout' | translate"></span>
@@ -252,14 +219,8 @@
 </div> -->
 
 <div id="loading-bg" *ngIf="loading">
-    <div id="sk-loading-icon">
-        <div class="sk-folding-cube">
-            <div class="sk-cube1 sk-cube"></div>
-            <div class="sk-cube2 sk-cube"></div>
-            <div class="sk-cube4 sk-cube"></div>
-            <div class="sk-cube3 sk-cube"></div>
-        </div>
-    </div>
+    <loader-nimble *ngIf="project === 0"></loader-nimble>
+    <loader-iasset *ngIf="project === 1"></loader-iasset>
 </div>
 
 <ng-template #support let-d="dismiss">
@@ -271,30 +232,29 @@
     </div>
     <div class="modal-body" [innerHTML]="'help-modal-text' | translate"></div>
     <div class="modal-footer">
-        <a href="assets/user_manual.pdf" target="_blank" role="button" class="btn btn-primary" (click)="d('')" [innerHTML]="'Open manual' | translate"></a>
+        <a [href]="config.docLink" target="_blank" role="button" class="btn btn-primary" (click)="d('')" [innerHTML]="'Open manual' | translate"></a>
         <a [href]="mailto" role="button" class="btn btn-primary" (click)="d('')" [innerHTML]="'Contact support' | translate"></a>
     </div>
 </ng-template>
-<!--<div id="support-btn" (click)="open(support)"><img id="support-img" src="assets/support_white.png"/></div>-->
 
 <div id="wrapper" [ngClass]="{'max-container':minimalView,'wrapper-max':chatVisible}">
     <div class="row">
-      <div [ngClass]="{'col-12':!chatVisible,'col-6':chatVisible}">
-        <router-outlet></router-outlet>
-      </div>
-      <div *ngIf="chatVisible" class="col-6">
-        <iframe id="chatWindow" [src]="chatURL" frameborder="0"></iframe>
-      </div>
+        <div [ngClass]="{'col-12':!chatVisible,'col-6':chatVisible}">
+            <router-outlet></router-outlet>
+        </div>
+        <div *ngIf="chatVisible" class="col-6">
+            <iframe id="chatWindow" [src]="chatURL" frameborder="0"></iframe>
+        </div>
     </div>
 </div>
 
 <div *ngIf="!minimalView" id="footer">
-    <img src="../assets/images/eu_flag.png" alt=""> <span [innerHTML]="'funding-disclaimer' | translate"></span>
+    <img src="../assets/images/at_flag.png" alt=""> <span [innerHTML]="'funding-disclaimer' | translate"></span>
     <div *ngIf="versions.length > 0">
         <small>
-			<span *ngFor="let version of versions; let i = index" [attr.data-index]="i">
-				<span><i *ngIf="i>0"> | </i>{{version.id}}: {{version.ver}}</span>
-			</span>
+            <span *ngFor="let version of versions; let i = index" [attr.data-index]="i">
+                <span><i *ngIf="i>0"> | </i>{{version.id}}: {{version.ver}}</span>
+            </span>
         </small>
     </div>
 </div>

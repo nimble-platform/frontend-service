@@ -1,45 +1,57 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <call-status [callStatus]="initCallStatus"></call-status>
 
 <ng-container *ngIf="isReady()">
     <div class="row title-row">
-        <div class="col-6"><h4><span [innerHTML]="'Order Details' | translate"></span></h4></div>
-        <div class="col-6"><h4><span [innerHTML]="'Delivery Details' | translate"></span></h4></div>
+        <div class="col-6">
+            <h4><span [innerHTML]="'Order Details' | translate"></span></h4>
+        </div>
+        <div class="col-6">
+            <h4><span [innerHTML]="'Delivery Details' | translate"></span></h4>
+        </div>
     </div>
 
     <div class="row content-row">
         <div class="col-6">
             <div>
-                <text-input presentationMode="view" label="Warranty"
-                            [text]="getWarrantyPeriodText()" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" label="Warranty" [text]="getWarrantyPeriodText()" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
             <div>
-                <text-input presentationMode="view" label="Incoterms"
-                            [text]="getIncoterm()" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" label="Incoterms" [text]="getIncoterm()" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
             <div>
-                <text-input presentationMode="view" label="Quantity"
-                            [text]="getQuantityText()" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" label="Quantity" [text]="getQuantityText()" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
             <div>
-                <text-input presentationMode="view" label="Net Price"
-                            [text]="priceWrapper.totalPriceString" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" label="Net Price" [text]="priceWrapper.totalPriceString" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
             <div *ngIf="config.vatEnabled">
-                <text-input presentationMode="view" label="VAT"
-                            [text]="priceWrapper.vatTotalString" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" label="VAT" [text]="priceWrapper.vatTotalString" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
             <div *ngIf="config.vatEnabled">
-                <text-input presentationMode="view" label="Gross Total"
-                            [text]="priceWrapper.grossTotalString" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" label="Gross Total" [text]="priceWrapper.grossTotalString" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
             <div *ngIf="config.dataChannelsEnabled" class="space-after">
-                <div class = "row">
+                <div class="row">
                     <div class="col-4">
                         <strong><span [innerHTML]="'Data Monitoring Service' | translate"></span>:</strong>
                     </div>
@@ -50,50 +62,41 @@
                 </div>
             </div>
             <div>
-                <text-input presentationMode="view" label="Payment Means"
-                            [text]="getPaymentMeans()" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" label="Payment Means" [text]="getPaymentMeans()" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
             <div>
-                <text-input presentationMode="view" label="Payment Terms"
-                            [text]="paymentTermsWrapper.paymentTerm" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" label="Payment Terms" [text]="paymentTermsWrapper.paymentTerm" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
         </div>
         <div class="col-6">
             <div *ngIf="!areDeliveryDatesAvailable">
-                <text-input presentationMode="view" label="Delivery Period"
-                            [text]="getDeliveryPeriodText()" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" label="Delivery Period" *ngIf="isDeliveryPeriodSpecified()" [text]="getDeliveryPeriodText()" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
             <div>
-                <text-input presentationMode="view" label="Street Name"
-                            [text]="address.streetName" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" label="Street Name" [text]="address.streetName" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
             <div>
-                <text-input presentationMode="view" label="Building Number"
-                            [text]="address.buildingNumber" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" label="Building Number" [text]="address.buildingNumber" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
             <div>
-                <text-input presentationMode="view" label="City / Town"
-                            [text]="address.cityName" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" label="City / Town" [text]="address.cityName" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
             <div>
-                <text-input presentationMode="view" label="State / Province"
-                            [text]="address.region" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" label="State / Province" [text]="address.region" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
             <div>
-                <text-input presentationMode="view" label="Postal Code"
-                            [text]="address.postalZone" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" label="Postal Code" [text]="address.postalZone" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
             <div>
-                <text-input presentationMode="view" label="Country"
-                            [text]="address.country.name.value" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" label="Country" [text]="address.country.name.value" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
             <div *ngIf="areDeliveryDatesAvailable">
@@ -128,23 +131,17 @@
     <!-- Contract Preview -->
     <ng-container *ngIf="isReady()">
         <!--<div>-->
-        <contract *ngIf="selectedPanel == 'PREVIOUS_STEPS'" [contract]="orderContract" [collapsable]="false" [sellerFederationId]="sellerParty.federationInstanceID"
-                  [selectedLineIndex]="selectedLineIndex"
-                  [areCatalogueLinesDeleted]="populateAreCatalogueLinesDeletedArray()"></contract>
+        <contract *ngIf="selectedPanel == 'PREVIOUS_STEPS'" [contract]="orderContract" [collapsable]="false" [sellerFederationId]="sellerParty.federationInstanceID" [selectedLineIndex]="selectedLineIndex" [areCatalogueLinesDeleted]="populateAreCatalogueLinesDeletedArray()"></contract>
         <!--</div>-->
         <div *ngIf="selectedPanel == 'TERMS_AND_CONDITIONS'">
             <ul class="nav nav-tabs space-after space-before">
                 <li class="nav-item">
-                    <a href id="CUSTOM_TERMS" class="nav-link"
-                       [ngClass]="{ active: selectedTCTab === 'CUSTOM_TERMS'}"
-                       (click)="onTCTabSelect($event,'CUSTOM_TERMS')">
+                    <a href id="CUSTOM_TERMS" class="nav-link" [ngClass]="{ active: selectedTCTab === 'CUSTOM_TERMS'}" (click)="onTCTabSelect($event,'CUSTOM_TERMS')">
                         <span [innerHTML]="'Custom Terms' | translate"></span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href id="CLAUSES" class="nav-link"
-                       [ngClass]="{ active: selectedTCTab === 'CLAUSES'}"
-                       (click)="onTCTabSelect($event,'CLAUSES')">
+                    <a href id="CLAUSES" class="nav-link" [ngClass]="{ active: selectedTCTab === 'CLAUSES'}" (click)="onTCTabSelect($event,'CLAUSES')">
                         <span [innerHTML]="'Clauses' | translate"></span>
                     </a>
                 </li>
@@ -158,23 +155,14 @@
                             <strong class="font-weight-500">{{tradingTerm.id}}:</strong>
                             <span *ngIf="tradingTerm.description.length > 0" [title]="tradingTerm.description[0].value">&#9432;</span>
                         </div>
-                        <multi-type-input [multiTypeValue]="tradingTerm.value"
-                                          [presentationMode]="'view'">
+                        <multi-type-input [multiTypeValue]="tradingTerm.value" [presentationMode]="'view'">
                         </multi-type-input>
                     </div>
                 </ng-container>
             </ng-container>
 
             <!-- Clauses -->
-            <terms-and-conditions *ngIf="selectedTCTab == 'CLAUSES'"
-                                  [selectedIncoterm]="order.orderLine[0].lineItem.deliveryTerms.incoterms"
-                                  [selectedTradingTerm]="order.orderLine[lineIndex].lineItem.paymentTerms.tradingTerms"
-                                  [sellerPartyId]="getPartyId(sellerParty)"
-                                  [sellerFederationId]="sellerParty.federationInstanceID"
-                                  [readOnly]="true"
-                                  [enableComparisonWithOtherTerms]="false"
-                                  [documentType]="'order'"
-                                  [termsAndConditions]="getTermAndConditionClauses()">
+            <terms-and-conditions *ngIf="selectedTCTab == 'CLAUSES'" [selectedIncoterm]="order.orderLine[0].lineItem.deliveryTerms.incoterms" [selectedTradingTerm]="order.orderLine[lineIndex].lineItem.paymentTerms.tradingTerms" [sellerPartyId]="getPartyId(sellerParty)" [sellerFederationId]="sellerParty.federationInstanceID" [readOnly]="true" [enableComparisonWithOtherTerms]="false" [documentType]="'order'" [termsAndConditions]="getTermAndConditionClauses()">
             </terms-and-conditions>
         </div>
     </ng-container>

@@ -1,17 +1,29 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <!-- Input - Results Tabs-->
 <div class="row mb-3 ml-1">
     <ul class="nav nav-tabs space-after space-before">
         <li class="nav-item">
-            <a href class="nav-link"
-               [ngClass]="{ active: selectedTab === 'INPUT'}"
-               (click)="onTabSelect($event,'INPUT')">
+            <a href class="nav-link" [ngClass]="{ active: selectedTab === 'INPUT'}" (click)="onTabSelect($event,'INPUT')">
                 <span [innerHTML]="'Inputs' | translate"></span>
             </a>
         </li>
         <li class="nav-item" *ngIf="lcpaDetails.lcpaoutput">
-            <a href  class="nav-link"
-               [ngClass]="{ active: selectedTab === 'RESULT'}"
-               (click)="onTabSelect($event,'RESULT')">
+            <a href class="nav-link" [ngClass]="{ active: selectedTab === 'RESULT'}" (click)="onTabSelect($event,'RESULT')">
                 <span [innerHTML]="'Results' | translate"></span>
             </a>
         </li>
@@ -21,87 +33,23 @@
 <ng-container *ngIf="selectedTab == 'INPUT' && lcpaDetails.lcpainput">
     <!-- LCPA Inputs-->
     <div class="d-flex flex-wrap align-items-start fixed-info-container">
-        <quantity-input *ngIf="isVisible(lcpaDetails.lcpainput.lifeCycleLength, 'QUANTITY')"
-                        [disabled]="isDisabled()"
-                        class="col-6"
-                        [label]="'Average Life Cycle Length' | translate"
-                        [labelClass]="'col-6'"
-                        [valueClass]="'col-6'"
-                        [disableQuantityUnit]="true"
-                        [quantityUnits]="['month(s)']"
-                        [quantity]="lcpaDetails.lcpainput.lifeCycleLength">
+        <quantity-input *ngIf="isVisible(lcpaDetails.lcpainput.lifeCycleLength, 'QUANTITY')" [disabled]="isDisabled()" class="col-6" [label]="'Average Life Cycle Length' | translate" [labelClass]="'col-6'" [valueClass]="'col-6'" [disableQuantityUnit]="true" [quantityUnits]="['month(s)']" [quantity]="lcpaDetails.lcpainput.lifeCycleLength">
         </quantity-input>
-        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.purchasingPrice)"
-                      class="col-6"
-                      [disabled]="isDisabled()"
-                      [label]="'Average Purchasing Price' | translate"
-                      [labelClass]="'col-6'"
-                      [valueClass]="'col-6'"
-                      [amount]="lcpaDetails.lcpainput.purchasingPrice"
-                      [amountType]="'lcpa_input_currency_quantity'">
+        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.purchasingPrice)" class="col-6" [disabled]="isDisabled()" [label]="'Average Purchasing Price' | translate" [labelClass]="'col-6'" [valueClass]="'col-6'" [amount]="lcpaDetails.lcpainput.purchasingPrice" [amountType]="'lcpa_input_currency_quantity'">
         </amount-input>
-        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.assemblyCost)"
-                      class="col-6"
-                      [disabled]="isDisabled()"
-                      [label]="'Average Assembly Cost' | translate"
-                      [labelClass]="'col-6'"
-                      [valueClass]="'col-6'"
-                      [amount]="lcpaDetails.lcpainput.assemblyCost"
-                      [amountType]="'lcpa_input_currency_quantity'">
+        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.assemblyCost)" class="col-6" [disabled]="isDisabled()" [label]="'Average Assembly Cost' | translate" [labelClass]="'col-6'" [valueClass]="'col-6'" [amount]="lcpaDetails.lcpainput.assemblyCost" [amountType]="'lcpa_input_currency_quantity'">
         </amount-input>
-        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.transportCost)"
-                      class="col-6"
-                      [disabled]="isDisabled()"
-                      [label]="'Average Transport Cost' | translate"
-                      [labelClass]="'col-6'"
-                      [valueClass]="'col-6'"
-                      [amount]="lcpaDetails.lcpainput.transportCost"
-                      [amountType]="'lcpa_input_currency_quantity'">
+        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.transportCost)" class="col-6" [disabled]="isDisabled()" [label]="'Average Transport Cost' | translate" [labelClass]="'col-6'" [valueClass]="'col-6'" [amount]="lcpaDetails.lcpainput.transportCost" [amountType]="'lcpa_input_currency_quantity'">
         </amount-input>
-        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.consumableCost)"
-                      class="col-6"
-                      [label]="'Average Consumable Cost' | translate"
-                      [disabled]="isDisabled()"
-                      [labelClass]="'col-6'"
-                      [valueClass]="'col-6'"
-                      [amount]="lcpaDetails.lcpainput.consumableCost"
-                      [amountType]="'lcpa_input_currency_quantity'">
+        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.consumableCost)" class="col-6" [label]="'Average Consumable Cost' | translate" [disabled]="isDisabled()" [labelClass]="'col-6'" [valueClass]="'col-6'" [amount]="lcpaDetails.lcpainput.consumableCost" [amountType]="'lcpa_input_currency_quantity'">
         </amount-input>
-        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.energyConsumptionCost)"
-                      class="col-6"
-                      [label]="'Average Energy Consumption Cost' | translate"
-                      [disabled]="isDisabled()"
-                      [labelClass]="'col-6'"
-                      [valueClass]="'col-6'"
-                      [amount]="lcpaDetails.lcpainput.energyConsumptionCost"
-                      [amountType]="'lcpa_input_currency_quantity'">
+        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.energyConsumptionCost)" class="col-6" [label]="'Average Energy Consumption Cost' | translate" [disabled]="isDisabled()" [labelClass]="'col-6'" [valueClass]="'col-6'" [amount]="lcpaDetails.lcpainput.energyConsumptionCost" [amountType]="'lcpa_input_currency_quantity'">
         </amount-input>
-        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.maintenanceCost)"
-                      class="col-6"
-                      [label]="'Average Maintenance Cost' | translate"
-                      [disabled]="isDisabled()"
-                      [labelClass]="'col-6'"
-                      [valueClass]="'col-6'"
-                      [amount]="lcpaDetails.lcpainput.maintenanceCost"
-                      [amountType]="'lcpa_input_currency_quantity'">
+        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.maintenanceCost)" class="col-6" [label]="'Average Maintenance Cost' | translate" [disabled]="isDisabled()" [labelClass]="'col-6'" [valueClass]="'col-6'" [amount]="lcpaDetails.lcpainput.maintenanceCost" [amountType]="'lcpa_input_currency_quantity'">
         </amount-input>
-        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.sparePartCost)"
-                      class="col-6"
-                      [label]="'Average Spare Part Cost' | translate"
-                      [disabled]="isDisabled()"
-                      [labelClass]="'col-6'"
-                      [valueClass]="'col-6'"
-                      [amount]="lcpaDetails.lcpainput.sparePartCost"
-                      [amountType]="'lcpa_input_currency_quantity'">
+        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.sparePartCost)" class="col-6" [label]="'Average Spare Part Cost' | translate" [disabled]="isDisabled()" [labelClass]="'col-6'" [valueClass]="'col-6'" [amount]="lcpaDetails.lcpainput.sparePartCost" [amountType]="'lcpa_input_currency_quantity'">
         </amount-input>
-        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.endOfLifeCost)"
-                      class="col-6"
-                      [label]="'Average End of Life Cost' | translate"
-                      [disabled]="isDisabled()"
-                      [labelClass]="'col-6'"
-                      [valueClass]="'col-6'"
-                      [amount]="lcpaDetails.lcpainput.endOfLifeCost"
-                      [amountType]="'lcpa_input_currency_quantity'">
+        <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.endOfLifeCost)" class="col-6" [label]="'Average End of Life Cost' | translate" [disabled]="isDisabled()" [labelClass]="'col-6'" [valueClass]="'col-6'" [amount]="lcpaDetails.lcpainput.endOfLifeCost" [amountType]="'lcpa_input_currency_quantity'">
         </amount-input>
     </div>
     <!-- Additional LCPA Inputs-->
@@ -114,24 +62,14 @@
 
             <div class="row space-before">
                 <ng-container *ngIf="isVisible(detail.valueQuantity[0],'QUANTITY')">
-                    <quantity-input *ngSwitchCase="'QUANTITY'"
-                                    class="col"
-                                    [disabled]="isDisabled()"
-                                    [label]="detail.name.value"
-                                    [quantity]="detail.valueQuantity[0]">
+                    <quantity-input *ngSwitchCase="'QUANTITY'" class="col" [disabled]="isDisabled()" [label]="detail.name.value" [quantity]="detail.valueQuantity[0]">
                     </quantity-input>
                 </ng-container>
-                <text-input *ngSwitchDefault
-                            class="col"
-                            [disabled]="isDisabled()"
-                            [(text)]="detail.value[0].value"
-                            [label]="detail.name.value"
-                            [rows]="1">
+                <text-input *ngSwitchDefault class="col" [disabled]="isDisabled()" [(text)]="detail.value[0].value" [label]="detail.name.value" [rows]="1">
                 </text-input>
                 <div *ngIf="isEditMode()" class="col-1">
-                    <button class="btn btn-danger btn-remove-value btn-sm btn-block"
-                            (click)="onDeleteDetail(i)">
-                            <span [innerHTML]="'Delete' | translate"></span>
+                    <button class="btn btn-danger btn-remove-value btn-sm btn-block" (click)="onDeleteDetail(i)">
+                        <span [innerHTML]="'Delete' | translate"></span>
                     </button>
                 </div>
             </div>
@@ -153,8 +91,7 @@
             <label class="col-6"><span [innerHTML]="'Download the Bill of Material template' | translate"></span></label>
             <div class="col-3 p-0">
                 <call-status [callStatus]="downloadTemplateStatus"></call-status>
-                <button class="btn btn-secondary btn-download-template"
-                        (click)="downloadTemplate()"><span [innerHTML]="'Download template' | translate"></span>
+                <button class="btn btn-secondary btn-download-template" (click)="downloadTemplate()"><span [innerHTML]="'Download template' | translate"></span>
                 </button>
             </div>
         </div>
@@ -162,9 +99,8 @@
             <div class="col-6">
                 <strong><span [innerHTML]="'For environmental footprint estimation, please upload the bill of material (BOM)' | translate"></span></strong>
             </div>
-            <div >
-                <file-input [multiple]="false" [presentationMode]="presentationMode" (onSelectFile)="onSelectBOM($event)" [binaryObjects]="getBOM()"
-                            (onClearFile)="onUnSelectBOM($event)">
+            <div>
+                <file-input [multiple]="false" [presentationMode]="presentationMode" (onSelectFile)="onSelectBOM($event)" [binaryObjects]="getBOM()" (onClearFile)="onUnSelectBOM($event)">
                 </file-input>
             </div>
         </div>

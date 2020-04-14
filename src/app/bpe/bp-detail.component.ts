@@ -1,12 +1,26 @@
+/*
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 import 'rxjs/add/operator/switchMap';
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, ParamMap} from '@angular/router';
-import {Location} from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { Location } from '@angular/common';
 
-import {BP} from './model/bp';
-import {BPService} from './bp.service';
+import { BP } from './model/bp';
+import { BPService } from './bp.service';
 
-import {ExternalDiagram} from './lib/external-diagram';
+import { ExternalDiagram } from './lib/external-diagram';
 
 @Component({
     selector: 'bp-detail',
@@ -18,8 +32,8 @@ export class BPDetailComponent implements OnInit {
     isCreatePage: boolean;
 
     constructor(private bpService: BPService,
-                private route: ActivatedRoute,
-                private location: Location) {
+        private route: ActivatedRoute,
+        private location: Location) {
         this.isCreatePage = this.location.isCurrentPathEqualTo('/bpe/bpe-design/create');
         if (this.isCreatePage) {
             this.bp = new BP('', '', '', '', '', []);

@@ -1,3 +1,19 @@
+<!--
+ * Copyright 2020
+ * University of Bremen, Faculty of Production Engineering, Badgasteiner Straße 1, 28359 Bremen, Germany.
+ * In collaboration with BIBA - Bremer Institut für Produktion und Logistik GmbH, Bremen, Germany.
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License. -->
+
 <ngb-alert type="info" *ngIf="infoAlert" (close)="infoAlert = false">
     <div class="row">
         <div class="col-md-2">
@@ -17,75 +33,70 @@
     </div>
 </ngb-alert>
 <ol class="breadcrumb">
-    <li class="breadcrumb-item active"
-        *ngFor="let concept of conceptPaths; let i=index;">
-        <button (click)="check(concept, i)"
-                class="btn btn-link btn-sm"
-                placement="bottom"
-                ngbTooltip="Click to go back to {{concept.concept}}"
-        >{{concept.concept}}</button>
+    <li class="breadcrumb-item active" *ngFor="let concept of conceptPaths; let i=index;">
+        <button (click)="check(concept, i)" class="btn btn-link btn-sm" placement="bottom" ngbTooltip="Click to go back to {{concept.concept}}">{{concept.concept}}</button>
     </li>
 </ol>
 
 <!--<ng-template #valuesTemplateRef let-values>-->
-    <!--<div class="card">-->
-        <!--<div class="card-header">Available Values</div>-->
-        <!--<div class="card-body">-->
-            <!--<p>Select One or More Value</p>-->
-            <!--<div style="overflow-y: scroll; height: 250px;">-->
-                <!--<div *ngFor="let eachVal of values" class="custom-control custom-checkbox">-->
-                        <!--<input type="checkbox"-->
-                               <!--[disabled]="!disableManualFilters"-->
-                               <!--(change)="filtersSelected(eachVal, $event)" class="custom-control-input"-->
-                               <!--id="{{eachVal}}"-->
-                        <!--/>-->
-                    <!--<label for="{{eachVal}}" class="custom-control-label">-->
-                        <!--<span><strong>{{eachVal}}</strong></span>-->
-                    <!--</label>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<hr>-->
-            <!--<div *ngIf="valuesAreNumeric">-->
-                <!--<div class="row">-->
-                    <!--<p>Manual Filter-->
-                    <!--<span><button-->
-                            <!--class="btn btn-outline-secondary btn-sm"-->
-                            <!--(click)="disableManualFilters = !disableManualFilters"-->
-                    <!--&gt;{{disableManualFilters ? 'Activate' : 'Deactivate'}}</button></span>-->
-                    <!--</p>-->
-                <!--</div>-->
-                <!--<div class="input-group-sm">-->
-                    <!--<label for="min"><span>min</span></label>-->
-                    <!--<input id="min" type="number"-->
-                           <!--class="form-control-sm"-->
-                           <!--[disabled]="disableManualFilters"-->
-                           <!--#minVal-->
-                    <!--&gt;-->
-                    <!--<br>-->
-                    <!--<label for="max"><span>max</span></label>-->
-                    <!--<input id="max" type="number"-->
-                           <!--class="form-control-sm"-->
-                           <!--[disabled]="disableManualFilters"-->
-                           <!--#maxVal-->
-                    <!--&gt;-->
+<!--<div class="card">-->
+<!--<div class="card-header">Available Values</div>-->
+<!--<div class="card-body">-->
+<!--<p>Select One or More Value</p>-->
+<!--<div style="overflow-y: scroll; height: 250px;">-->
+<!--<div *ngFor="let eachVal of values" class="custom-control custom-checkbox">-->
+<!--<input type="checkbox"-->
+<!--[disabled]="!disableManualFilters"-->
+<!--(change)="filtersSelected(eachVal, $event)" class="custom-control-input"-->
+<!--id="{{eachVal}}"-->
+<!--/>-->
+<!--<label for="{{eachVal}}" class="custom-control-label">-->
+<!--<span><strong>{{eachVal}}</strong></span>-->
+<!--</label>-->
+<!--</div>-->
+<!--</div>-->
+<!--<hr>-->
+<!--<div *ngIf="valuesAreNumeric">-->
+<!--<div class="row">-->
+<!--<p>Manual Filter-->
+<!--<span><button-->
+<!--class="btn btn-outline-secondary btn-sm"-->
+<!--(click)="disableManualFilters = !disableManualFilters"-->
+<!--&gt;{{disableManualFilters ? 'Activate' : 'Deactivate'}}</button></span>-->
+<!--</p>-->
+<!--</div>-->
+<!--<div class="input-group-sm">-->
+<!--<label for="min"><span>min</span></label>-->
+<!--<input id="min" type="number"-->
+<!--class="form-control-sm"-->
+<!--[disabled]="disableManualFilters"-->
+<!--#minVal-->
+<!--&gt;-->
+<!--<br>-->
+<!--<label for="max"><span>max</span></label>-->
+<!--<input id="max" type="number"-->
+<!--class="form-control-sm"-->
+<!--[disabled]="disableManualFilters"-->
+<!--#maxVal-->
+<!--&gt;-->
 
-                    <!--<button class="btn btn-primary btn-sm"-->
-                            <!--[disabled]="disableManualFilters"-->
-                            <!--(click)="applyManualFilter(minVal.value, maxVal.value)"-->
-                    <!--&gt;Apply</button>-->
-                    <!--<button class="btn btn-danger btn-sm"-->
-                            <!--[disabled]="disableManualFilters"-->
-                            <!--(click)="removeManualFilter(minVal.value, maxVal.value)"-->
-                    <!--&gt;Remove</button>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-        <!--<div class="card-footer">-->
-            <!--<button class="btn btn-primary" (click)="noFilterSelected()"-->
-                    <!--[disabled]="disableAddPropBtn || !disableManualFilters"-->
-            <!--&gt;Add Property without Filters</button>-->
-        <!--</div>-->
-    <!--</div>-->
+<!--<button class="btn btn-primary btn-sm"-->
+<!--[disabled]="disableManualFilters"-->
+<!--(click)="applyManualFilter(minVal.value, maxVal.value)"-->
+<!--&gt;Apply</button>-->
+<!--<button class="btn btn-danger btn-sm"-->
+<!--[disabled]="disableManualFilters"-->
+<!--(click)="removeManualFilter(minVal.value, maxVal.value)"-->
+<!--&gt;Remove</button>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="card-footer">-->
+<!--<button class="btn btn-primary" (click)="noFilterSelected()"-->
+<!--[disabled]="disableAddPropBtn || !disableManualFilters"-->
+<!--&gt;Add Property without Filters</button>-->
+<!--</div>-->
+<!--</div>-->
 <!--</ng-template>-->
 <div [hidden]="!hiddenElement">
     <div class="row">
@@ -98,24 +109,24 @@
             <table class="table table-hover table-bordered">
                 <caption><span [innerHTML]="'Product / Service Overview' | translate"></span></caption>
                 <thead>
-                <tr>
-                    <th>
-                        <span [innerHTML]="'Properties' | translate"></span>
-                    </th>
-                    <th>
-                        <span [innerHTML]="'Specifications' | translate"></span>
-                    </th>
-                </tr>
+                    <tr>
+                        <th>
+                            <span [innerHTML]="'Properties' | translate"></span>
+                        </th>
+                        <th>
+                            <span [innerHTML]="'Specifications' | translate"></span>
+                        </th>
+                    </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let column of sparqlSelectedOption['columns']; let i=index">
-                    <th scope="row">
-                        {{column}}
-                    </th>
-                    <td>
-                        {{sparqlSelectedOption.rows[0][i]}}
-                    </td>
-                </tr>
+                    <tr *ngFor="let column of sparqlSelectedOption['columns']; let i=index">
+                        <th scope="row">
+                            {{column}}
+                        </th>
+                        <td>
+                            {{sparqlSelectedOption.rows[0][i]}}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -131,72 +142,71 @@
     </div>
 </div>
 
-
 <!--<div style="margin-top: 20px" *ngIf="configSPQ" [hidden]="hiddenElement">-->
-        <!--<h4> Property Explorer for {{configSPQ.frozenConcept}}</h4>-->
-        <!--<div class="row">-->
-            <!--<div class="col-md-6">-->
-                <!--<div class="card">-->
-                    <!--<div class="card-header">-->
-                        <!--Available Properties-->
-                    <!--</div>-->
-                    <!--<ngb-alert type="info" [dismissible]="false" *ngIf="updateInfoAlert">-->
-                        <!--<p>Information Updated</p>-->
-                    <!--</ngb-alert>-->
-                    <!--<div class="card-body">-->
-                        <!--<div class="input-group-md">-->
-                            <!--<label for="typeahead-template"><span>Search</span></label>-->
-                            <!--<input id="typeahead-template"-->
-                                   <!--type="text"-->
-                                   <!--class="form-control"-->
-                                   <!--[(ngModel)]="searchModel"-->
-                                   <!--[ngbTypeahead]="search" [resultTemplate]="rt" [inputFormatter]="formatter"-->
-                                   <!--(keyup.enter)="checkUserSelection(searchModel)"-->
-                            <!--/>-->
-                            <!--<ng-template #rt let-r="result" let-t="term">-->
-                                <!--{{ r.translatedProperty}}-->
-                            <!--</ng-template>-->
+<!--<h4> Property Explorer for {{configSPQ.frozenConcept}}</h4>-->
+<!--<div class="row">-->
+<!--<div class="col-md-6">-->
+<!--<div class="card">-->
+<!--<div class="card-header">-->
+<!--Available Properties-->
+<!--</div>-->
+<!--<ngb-alert type="info" [dismissible]="false" *ngIf="updateInfoAlert">-->
+<!--<p>Information Updated</p>-->
+<!--</ngb-alert>-->
+<!--<div class="card-body">-->
+<!--<div class="input-group-md">-->
+<!--<label for="typeahead-template"><span>Search</span></label>-->
+<!--<input id="typeahead-template"-->
+<!--type="text"-->
+<!--class="form-control"-->
+<!--[(ngModel)]="searchModel"-->
+<!--[ngbTypeahead]="search" [resultTemplate]="rt" [inputFormatter]="formatter"-->
+<!--(keyup.enter)="checkUserSelection(searchModel)"-->
+<!--/>-->
+<!--<ng-template #rt let-r="result" let-t="term">-->
+<!--{{ r.translatedProperty}}-->
+<!--</ng-template>-->
 
-                        <!--</div>-->
-                        <!--<br>-->
-                        <!--<br>-->
-                        <!--<select size="15" class="form-control mr-4">-->
-                            <!--<optgroup label="Properties">-->
-                                <!--<option *ngFor="let eachVal of dataResults"-->
-                                        <!--[selected]="searchModel.translatedProperty===eachVal.translatedProperty"-->
-                                        <!--(click)="getPropertyValues(eachVal)"-->
-                                        <!--[ngClass]="{'checkMark': propSelection(eachVal.translatedProperty)}"-->
-                                <!--&gt;{{eachVal.translatedProperty}}-->
-                                <!--</option>-->
-                            <!--</optgroup>-->
-                            <!--<optgroup label="References">-->
-                                <!--<option *ngFor="let eachVal of objResults; let i=index;"-->
-                                        <!--[selected]="searchModel.translatedProperty===eachVal.translatedProperty"-->
-                                        <!--(click)="getReferenceValues(eachVal, i)">-->
-                                    <!--{{eachVal.translatedProperty}}-->
-                                <!--</option>-->
-                            <!--</optgroup>-->
-                        <!--</select>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="col-md-4" *ngIf="emptyFilterAlert" >-->
-                <!--<ngb-alert type="danger" (close)="emptyFilterAlert=false">-->
-                    <!--<p> We couldn't find any filters for the selection.</p>-->
-                <!--</ngb-alert>-->
-            <!--</div>-->
-            <!--<div class="col-md-4" *ngIf="loadingFilter">-->
-              <!--<div class="align-center">-->
-                <!--<p>Loading Filter</p>-->
-                <!--<i class="fa fa-spin fa-spinner fa-6x"></i>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<div class="col-md-6" *ngIf="searchvalue.length > 0">-->
-                <!--<template [ngTemplateOutlet]="valuesTemplateRef" [ngTemplateOutletContext]="{$implicit: searchvalue}">-->
-                <!--</template>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--<hr>-->
+<!--</div>-->
+<!--<br>-->
+<!--<br>-->
+<!--<select size="15" class="form-control mr-4">-->
+<!--<optgroup label="Properties">-->
+<!--<option *ngFor="let eachVal of dataResults"-->
+<!--[selected]="searchModel.translatedProperty===eachVal.translatedProperty"-->
+<!--(click)="getPropertyValues(eachVal)"-->
+<!--[ngClass]="{'checkMark': propSelection(eachVal.translatedProperty)}"-->
+<!--&gt;{{eachVal.translatedProperty}}-->
+<!--</option>-->
+<!--</optgroup>-->
+<!--<optgroup label="References">-->
+<!--<option *ngFor="let eachVal of objResults; let i=index;"-->
+<!--[selected]="searchModel.translatedProperty===eachVal.translatedProperty"-->
+<!--(click)="getReferenceValues(eachVal, i)">-->
+<!--{{eachVal.translatedProperty}}-->
+<!--</option>-->
+<!--</optgroup>-->
+<!--</select>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="col-md-4" *ngIf="emptyFilterAlert" >-->
+<!--<ngb-alert type="danger" (close)="emptyFilterAlert=false">-->
+<!--<p> We couldn't find any filters for the selection.</p>-->
+<!--</ngb-alert>-->
+<!--</div>-->
+<!--<div class="col-md-4" *ngIf="loadingFilter">-->
+<!--<div class="align-center">-->
+<!--<p>Loading Filter</p>-->
+<!--<i class="fa fa-spin fa-spinner fa-6x"></i>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="col-md-6" *ngIf="searchvalue.length > 0">-->
+<!--<template [ngTemplateOutlet]="valuesTemplateRef" [ngTemplateOutletContext]="{$implicit: searchvalue}">-->
+<!--</template>-->
+<!--</div>-->
+<!--</div>-->
+<!--<hr>-->
 <!--</div>-->
 <div *ngIf="configSPQ" [hidden]="hiddenElement">
     <div>
@@ -206,17 +216,11 @@
         <div class="col-7 pr-0 pb-0">
             <div class="input-group-md">
                 <label for="typeahead-template"><span [innerHTML]="'Quick Search' | translate"></span></label>
-                <input id="typeahead-template"
-                type="text"
-                class="form-control"
-                [(ngModel)]="searchModel"
-                [ngbTypeahead]="search" [resultTemplate]="rt" [inputFormatter]="formatter"
-                (keyup.enter)="checkUserSelection(searchModel)"
-                />
+                <input id="typeahead-template" type="text" class="form-control" [(ngModel)]="searchModel" [ngbTypeahead]="search" [resultTemplate]="rt" [inputFormatter]="formatter" (keyup.enter)="checkUserSelection(searchModel)" />
                 <ng-template #rt let-r="result" let-t="term">
-                {{ r.translatedProperty}}
+                    {{ r.translatedProperty}}
                 </ng-template>
-                </div>
+            </div>
         </div>
     </div>
 
@@ -245,37 +249,28 @@
                 </div>
                 <table class="table table-hover mb-0">
                     <tbody>
-                    <ng-container *ngIf="selectedTab === 'PROPS'">
-                        <tr *ngFor="let eachVal of dataResults" [ngClass]="{'selected-row': eachVal===selectedProperty}">
-                            <td class="py-2 px-3"
-                                (click)="getPropertyValues(eachVal)"
-                            >{{eachVal.translatedProperty}}</td>
-                        </tr>
-                    </ng-container>
-                    <ng-container *ngIf="selectedTab === 'REFS'">
-                        <div class="disabled-section align-content-center" style="height: 55vh">
-                            <p *ngIf="!objResults.length"> <span [innerHTML]="'References for this Product are not available' | translate"></span></p>
-                        </div>
-                        <tr *ngFor="let eachVal of objResults; let i=index;">
-                            <td class="py-2 px-3"
-                                (click)="getReferenceValues(eachVal, i)"
-                            >{{eachVal.translatedProperty}}</td>
-                        </tr>
-                    </ng-container>
+                        <ng-container *ngIf="selectedTab === 'PROPS'">
+                            <tr *ngFor="let eachVal of dataResults" [ngClass]="{'selected-row': eachVal===selectedProperty}">
+                                <td class="py-2 px-3" (click)="getPropertyValues(eachVal)">{{eachVal.translatedProperty}}</td>
+                            </tr>
+                        </ng-container>
+                        <ng-container *ngIf="selectedTab === 'REFS'">
+                            <div class="disabled-section align-content-center" style="height: 55vh">
+                                <p *ngIf="!objResults.length"> <span [innerHTML]="'References for this Product are not available' | translate"></span></p>
+                            </div>
+                            <tr *ngFor="let eachVal of objResults; let i=index;">
+                                <td class="py-2 px-3" (click)="getReferenceValues(eachVal, i)">{{eachVal.translatedProperty}}</td>
+                            </tr>
+                        </ng-container>
                     </tbody>
                 </table>
             </div>
         </div>
 
-
         <!-- Details (Right Side Panel) -->
 
-
         <div class="col-5 pl-0">
-            <div class="border align-center disabled-section"
-                 style="height:55vh; overflow-x: hidden; overflow-y: scroll;"
-                 [hidden]="(emptyFilterAlert)"
-                 *ngIf="!searchvalue.length">
+            <div class="border align-center disabled-section" style="height:55vh; overflow-x: hidden; overflow-y: scroll;" [hidden]="(emptyFilterAlert)" *ngIf="!searchvalue.length">
                 <div *ngIf="loadingFilter">
                     <img src="../../assets/images/form_loader.gif">
                 </div>
@@ -284,32 +279,21 @@
                     <h5><span [innerHTML]="'Select Property to Obtain Filter Values' | translate"></span></h5>
                 </div>
             </div>
-            <div *ngIf="emptyFilterAlert" >
+            <div *ngIf="emptyFilterAlert">
                 <ngb-alert type="danger" (close)="emptyFilterAlert=false">
-                    <i class="fas fa-exclamation-triangle pr-1"></i><p> <span [innerHTML]="'exp-search-semantic-help-7' | translate"></span></p>
+                    <i class="fas fa-exclamation-triangle pr-1"></i>
+                    <p> <span [innerHTML]="'exp-search-semantic-help-7' | translate"></span></p>
                 </ngb-alert>
             </div>
             <div *ngIf="searchvalue.length" class="d-flex flex-row fixed p-2" [ngClass]="{'fixed-header': searchvalue.length}">
                 <h4 class="font-weight-bold mr-auto"><span [innerHTML]="'Values' | translate"></span></h4>
                 <div>
-                    <button class="btn btn-secondary float-right"
-                            placement="right"
-                            ngbTooltip="Add Property without Filter Values"
-                            (click)="noFilterSelected()"
-                            [disabled]="disableAddPropBtn || !disableManualFilters"
-                    ><span [innerHTML]="'Select Property' | translate"></span></button>
+                    <button class="btn btn-secondary float-right" placement="right" ngbTooltip="Add Property without Filter Values" (click)="noFilterSelected()" [disabled]="disableAddPropBtn || !disableManualFilters"><span [innerHTML]="'Select Property' | translate"></span></button>
                 </div>
             </div>
-            <div class="p-2 mt-2" style="overflow-y: scroll; height: 30vh; overflow-x: hidden"
-                 *ngIf="searchvalue.length"
-            >
-                <div *ngFor="let eachVal of searchvalue"
-                     class="custom-control custom-checkbox my-1">
-                    <input type="checkbox"
-                           [disabled]="!disableManualFilters"
-                           (change)="filtersSelected(eachVal, $event)" class="custom-control-input"
-                           id="{{eachVal}}"
-                    />
+            <div class="p-2 mt-2" style="overflow-y: scroll; height: 30vh; overflow-x: hidden" *ngIf="searchvalue.length">
+                <div *ngFor="let eachVal of searchvalue" class="custom-control custom-checkbox my-1">
+                    <input type="checkbox" [disabled]="!disableManualFilters" (change)="filtersSelected(eachVal, $event)" class="custom-control-input" id="{{eachVal}}" />
                     <label for="{{eachVal}}" class="custom-control-label">
                         <span><strong>{{eachVal}}</strong></span>
                     </label>
@@ -321,35 +305,18 @@
                 <div class="d-flex flex-row fixed p-2">
                     <h5><span [innerHTML]="'Manual Filter' | translate"></span></h5>
                     <div>
-                        <button
-                                class="btn btn-link btn-sm float-right"
-                                (click)="disableManualFilters = !disableManualFilters"
-                        >{{disableManualFilters ? 'Activate' : 'Deactivate'}}
+                        <button class="btn btn-link btn-sm float-right" (click)="disableManualFilters = !disableManualFilters">{{disableManualFilters ? 'Activate' : 'Deactivate'}}
                         </button>
                     </div>
                 </div>
                 <div class="input-group-sm auto-mr">
                     <label for="min"><span [innerHTML]="'min' | translate"></span></label>
-                    <input id="min" type="number"
-                           class="form-control-sm"
-                           [disabled]="disableManualFilters"
-                           #minVal
-                    >
+                    <input id="min" type="number" class="form-control-sm" [disabled]="disableManualFilters" #minVal>
                     <label for="max"><span [innerHTML]="'max' | translate"></span></label>
-                    <input id="max" type="number"
-                           class="form-control-sm"
-                           [disabled]="disableManualFilters"
-                           #maxVal
-                    >
+                    <input id="max" type="number" class="form-control-sm" [disabled]="disableManualFilters" #maxVal>
 
-                        <button class="btn btn-success btn-sm"
-                            [disabled]="disableManualFilters"
-                            (click)="applyManualFilter(minVal.value, maxVal.value)"
-                        ><i class="fas fa-check"></i> </button>
-                        <button class="btn btn-danger btn-sm"
-                            [disabled]="disableManualFilters"
-                            (click)="removeManualFilter(minVal.value)"
-                        ><i class="fas fa-trash"></i></button>
+                    <button class="btn btn-success btn-sm" [disabled]="disableManualFilters" (click)="applyManualFilter(minVal.value, maxVal.value)"><i class="fas fa-check"></i> </button>
+                    <button class="btn btn-danger btn-sm" [disabled]="disableManualFilters" (click)="removeManualFilter(minVal.value)"><i class="fas fa-trash"></i></button>
                 </div>
             </div>
         </div>
@@ -364,20 +331,15 @@
         <p class="mt-1 mb-0 mr-3 flex-shrink-0" *ngIf="allSelectedProperties.size === 0"><span [innerHTML]="'None. Please add a property from above to proceed.' | translate"></span></p>
         <div class="w-100 h-100 align-self-start">
             <div class="d-flex flex-wrap">
-                <div *ngFor="let selectedProp of allSelectedProperties"
-                     class="bordered d-flex align-items-center mx-1 my-1">
+                <div *ngFor="let selectedProp of allSelectedProperties" class="bordered d-flex align-items-center mx-1 my-1">
                     <small class="p-0">{{selectedProp}}</small>
-                    <i class="fa fa-times-circle pl-1 text-red"
-                       placement="right"
-                       (click)="removeSelection(selectedProp)"></i>
+                    <i class="fa fa-times-circle pl-1 text-red" placement="right" (click)="removeSelection(selectedProp)"></i>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-3 align-self-center">
-        <button class="btn btn-primary w-100 inline"
-                [disabled]="!sparqlJSON.parameters.length"
-                (click)="genTable()">
+        <button class="btn btn-primary w-100 inline" [disabled]="!sparqlJSON.parameters.length" (click)="genTable()">
             <span [innerHTML]="'Obtain Results' | translate">
             </span>
         </button>
@@ -419,30 +381,28 @@
             <table class="table table-sm table-bordered">
                 <caption><span [innerHTML]="'Available Results from NIMBLE' | translate"></span></caption>
                 <thead>
-                <tr>
-                    <!--<th>-->
-                    <!--Results-->
-                    <!--</th>-->
-                    <th *ngFor="let column of tableResult?.columns; let i=index" scope="col">
-                        {{column}}
-                    </th>
-                    <th *ngIf="tableResult?.uuids.length">
-                        <span [innerHTML]="'More' | translate"></span>
-                    </th>
-                </tr>
+                    <tr>
+                        <!--<th>-->
+                        <!--Results-->
+                        <!--</th>-->
+                        <th *ngFor="let column of tableResult?.columns; let i=index" scope="col">
+                            {{column}}
+                        </th>
+                        <th *ngIf="tableResult?.uuids.length">
+                            <span [innerHTML]="'More' | translate"></span>
+                        </th>
+                    </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let row of tableResult?.rows; let i=index" [ngClass] = "{'selected-row': i === selectedProduct}">
-                    <!--<td>{{i+1}}</td>-->
-                    <td *ngFor="let field of row">{{field}}</td>
-                    <td *ngIf="tableResult?.uuids.length">
-                        <button class="btn btn-xs btn-outline-primary"
-                                (click)="getSparqlOptionalSelect(i)"
-                        >
-                            <span [innerHTML]="'Further Info.' | translate"></span>
-                        </button>
-                    </td>
-                </tr>
+                    <tr *ngFor="let row of tableResult?.rows; let i=index" [ngClass]="{'selected-row': i === selectedProduct}">
+                        <!--<td>{{i+1}}</td>-->
+                        <td *ngFor="let field of row">{{field}}</td>
+                        <td *ngIf="tableResult?.uuids.length">
+                            <button class="btn btn-xs btn-outline-primary" (click)="getSparqlOptionalSelect(i)">
+                                <span [innerHTML]="'Further Info.' | translate"></span>
+                            </button>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -450,7 +410,7 @@
 
 </div>
 <!--<pre>-->
-    <!--<code>{{tableResult | json}}</code>-->
+<!--<code>{{tableResult | json}}</code>-->
 <!--</pre>-->
 <!--<div class="container">-->
 <!--<pre>-->

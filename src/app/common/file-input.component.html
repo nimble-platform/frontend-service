@@ -1,3 +1,19 @@
+<!--
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   In collaboration with
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <div class="row {{ rowClass }} {{ small ? 'file-link-row-sm' : '' }}">
     <div *ngIf="label" [class]="labelClass">
         <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
@@ -6,11 +22,10 @@
     <div class="{{valueClass}}" *ngIf="visible">
         <div *ngFor="let file of binaryObjects; let i = index" class="file-link-row justify-content-end">
             <!-- in edit mode show only the files annotated with the default language, if available -->
-            <a href *ngIf="presentationMode == 'edit' || !fileExistsWithDefaultLanguage || (presentationMode == 'view' && file.languageID == activeLanguage)"
-               class="btn-link mr-auto" (click)="onDownloadFile(file, $event)">{{ file.fileName }}</a>
+            <a href *ngIf="presentationMode == 'edit' || !fileExistsWithDefaultLanguage || (presentationMode == 'view' && file.languageID == activeLanguage)" class="btn-link mr-auto" (click)="onDownloadFile(file, $event)">{{ file.fileName }}</a>
             <button class="btn btn-danger btn-sm" (click)="onRemoveFile(i)" *ngIf="presentationMode === 'edit'">
                 <span [innerHTML]="'Remove' | translate"></span>
-                
+
             </button>
             <select *ngIf="languageEnabled && presentationMode == 'edit'" [(ngModel)]="file.languageID" class="form-control language-select" type="text" name="{{file.languageID}}">
                 <option *ngFor='let language of languages' [value]="language" [selected]="language === file.languageID">{{language}}</option>
@@ -18,8 +33,7 @@
         </div>
         <div class="d-flex">
             <div class="custom-file" *ngIf="isShowingInput()">
-                <input type="file" class="custom-file-input" [accept]="accept"
-                    (change)="onChooseFile($event)" [disabled]="disabled">
+                <input type="file" class="custom-file-input" [accept]="accept" (change)="onChooseFile($event)" [disabled]="disabled">
                 <label class="custom-file-label" [ngClass]="getFileClasses()">
                     {{ placeholder }}
                 </label>

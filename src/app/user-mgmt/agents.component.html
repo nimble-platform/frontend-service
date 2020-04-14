@@ -1,3 +1,17 @@
+<!--
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <div class="row">
     <div class="col-12">
         <p class="nimble-title"><span [innerHTML]="'Agent Settings' | translate"></span></p>
@@ -28,8 +42,7 @@
 
             <div class="col-12">
                 <div class="d-flex justify-content-end">
-                    <button class="btn btn-primary align-self-start float-right ml-2"
-                            (click)="createBuyingAgent();openModal(buyingAgentModal)">
+                    <button class="btn btn-primary align-self-start float-right ml-2" (click)="createBuyingAgent();openModal(buyingAgentModal)">
                         <span [innerHTML]="'Create Agent' | translate"></span>
                     </button>
                 </div>
@@ -45,16 +58,16 @@
                         <th><span [innerHTML]="'Agent Name' | translate"></span></th>
                         <th><span [innerHTML]="'No of Contracts' | translate"></span></th>
                         <th><span [innerHTML]="'Is Active' | translate"></span></th>
-                        <th><span [innerHTML]="'Last Activity In' | translate"></span></th>
+                        <th><span [innerHTML]="'Last Activity On' | translate"></span></th>
                         <th><span [innerHTML]="'Options' | translate"></span></th>
                     </tr>
                     <tr [hidden]="!membersFetched || buyingAgentList.length > 0">
                         <td colspan="4"><span [innerHTML]="'No data' | translate"></span></td>
                     </tr>
-                    <tr *ngFor="let inv of agentList">
-                        <td>{{inv.name}}</td>
+                    <tr *ngFor="let inv of buyingAgentList">
+                        <td>{{inv.agentName}}</td>
                         <td>
-                            {{inv.transaction}}
+                            {{inv.noOfTransactions}}
                         </td>
                         <td>
                             <span *ngIf="inv.isActive" class="badge badge-success"><span [innerHTML]="'Active' | translate"></span></span>
@@ -92,8 +105,7 @@
             <div class="col-12">
                 <div class="d-flex justify-content-end">
                     <!--<call-status [callStatus]="exportCallStatus"></call-status>-->
-                    <button class="btn btn-primary align-self-start float-right ml-2"
-                            (click)="createSellingAgent();openModal(sellingAgentModal)">
+                    <button class="btn btn-primary align-self-start float-right ml-2" (click)="createSellingAgent();openModal(sellingAgentModal)">
                         <span [innerHTML]="'Create Agent' | translate"></span>
                     </button>
                 </div>
@@ -109,7 +121,7 @@
                         <th><span [innerHTML]="'Agent Name' | translate"></span></th>
                         <th><span [innerHTML]="'No of Contracts' | translate"></span></th>
                         <th><span [innerHTML]="'Is Active' | translate"></span></th>
-                        <th><span [innerHTML]="'Last Activity In' | translate"></span></th>
+                        <th><span [innerHTML]="'Last Activity On' | translate"></span></th>
                         <th><span [innerHTML]="'Options' | translate"></span></th>
                     </tr>
                     <tr [hidden]="!membersFetched || agentList.length > 0">
@@ -128,7 +140,7 @@
                             {{inv.lastActive}}
                         </td>
                         <td>
-                            <button class="btn btn-success btn-sm" (click)="showTransactionsView(inv.name)"><span [innerHTML]="'View Orders' | translate"></span></button>
+                            <button class="btn btn-success btn-sm" (click)="showTransactionsView(inv.id)"><span [innerHTML]="'View Orders' | translate"></span></button>
                             <button class="btn btn-primary btn-sm" (click)="editSellingAgent(inv.id)"><span [innerHTML]="'Edit' | translate"></span></button>
                             <button class="btn btn-danger btn-sm" (click)="deleteAgent(inv.id, SELLING_AGENT)"><span [innerHTML]="'Delete' | translate"></span></button>
                             <span *ngIf="inv.isActive">
@@ -149,8 +161,6 @@
         </div>
     </div>
 </div>
-
-
 
 <!-- Buying Agent Modal -->
 <ng-template #buyingAgentModal let-d="dismiss" let-modal>
@@ -185,11 +195,7 @@
                     </div>
 
                     <div class="col-3">
-                        <select
-                                formControlName="maxContractAmountUnit"
-                                id="maxContractAmountUnit-type"
-                                name="type"
-                                class="form-control custom-select">
+                        <select formControlName="maxContractAmountUnit" id="maxContractAmountUnit-type" name="type" class="form-control custom-select">
                             <option value="" class="selected">Currency</option>
                             <option value="euro">euro</option>
                         </select>
@@ -205,11 +211,7 @@
                         <input type="number" class="form-control" formControlName="minFulfillmentTime" required maxlength="255">
                     </div>
                     <div class="col-3">
-                        <select
-                                formControlName="minFulfillmentTimeUnit"
-                                id="minFulfillmentTimeUnit-type"
-                                name="type"
-                                class="form-control custom-select">
+                        <select formControlName="minFulfillmentTimeUnit" id="minFulfillmentTimeUnit-type" name="type" class="form-control custom-select">
                             <option value="" class="selected">Time Unit</option>
                             <option value="hour">hours(s)</option>
                             <option value="day">days(s)</option>
@@ -227,11 +229,7 @@
                         <input type="text" class="form-control" formControlName="maxFulfillmentTime" required maxlength="255">
                     </div>
                     <div class="col-3">
-                        <select
-                                formControlName="maxFulfillmentTimeUnit"
-                                id="maxFulfillmentTime-type"
-                                name="type"
-                                class="form-control custom-select">
+                        <select formControlName="maxFulfillmentTimeUnit" id="maxFulfillmentTime-type" name="type" class="form-control custom-select">
                             <option value="" class="selected">Time Unit</option>
                             <option value="hour">hours(s)</option>
                             <option value="day">days(s)</option>
@@ -250,7 +248,6 @@
                     </div>
                 </div>
 
-
                 <!--Maximum_volume_of_agent_contracts_per_hour/day/week/month-->
                 <div class="form-group row space-before">
                     <label class="col-4 col-form-label">
@@ -260,11 +257,7 @@
                         <input type="text" class="form-control" formControlName="maxVolume" required maxlength="255">
                     </div>
                     <div class="col-3">
-                        <select
-                                formControlName="maxVolumeUnit"
-                                id="maxVolumeUnit-type"
-                                name="type"
-                                class="form-control custom-select">
+                        <select formControlName="maxVolumeUnit" id="maxVolumeUnit-type" name="type" class="form-control custom-select">
                             <option value="" class="selected">Time Unit</option>
                             <option value="hour">hour</option>
                             <option value="day">day</option>
@@ -282,11 +275,7 @@
                         <input type="number" class="form-control" formControlName="maxNoOneToOne" required maxlength="255">
                     </div>
                     <div class="col-3">
-                        <select
-                                formControlName="maxNoOneToOneUnit"
-                                id="maxNoOneToOneUnit-type"
-                                name="type"
-                                class="form-control custom-select">
+                        <select formControlName="maxNoOneToOneUnit" id="maxNoOneToOneUnit-type" name="type" class="form-control custom-select">
                             <option value="" class="selected">Time Unit</option>
                             <option value="hour">hour</option>
                             <option value="day">day</option>
@@ -349,11 +338,7 @@
                     </div>
 
                     <div class="col-3">
-                        <select
-                                formControlName="maxContractAmountUnit"
-                                id="maxContractAmountUnit-type"
-                                name="type"
-                                class="form-control custom-select">
+                        <select formControlName="maxContractAmountUnit" id="maxContractAmountUnit-type" name="type" class="form-control custom-select">
                             <option value="" class="selected">Currency</option>
                             <option value="euro">euro</option>
                         </select>
@@ -369,11 +354,7 @@
                         <input type="number" class="form-control" formControlName="minFulfillmentTime" required maxlength="255">
                     </div>
                     <div class="col-3">
-                        <select
-                                formControlName="minFulfillmentTimeUnit"
-                                id="minFulfillmentTimeUnit-type"
-                                name="type"
-                                class="form-control custom-select">
+                        <select formControlName="minFulfillmentTimeUnit" id="minFulfillmentTimeUnit-type" name="type" class="form-control custom-select">
                             <option value="" class="selected">Time Unit</option>
                             <option value="hour">hours(s)</option>
                             <option value="day">days(s)</option>
@@ -391,11 +372,7 @@
                         <input type="text" class="form-control" formControlName="maxFulfillmentTime" required maxlength="255">
                     </div>
                     <div class="col-3">
-                        <select
-                                formControlName="maxFulfillmentTimeUnit"
-                                id="maxFulfillmentTime-type"
-                                name="type"
-                                class="form-control custom-select">
+                        <select formControlName="maxFulfillmentTimeUnit" id="maxFulfillmentTime-type" name="type" class="form-control custom-select">
                             <option value="" class="selected">Time Unit</option>
                             <option value="hour">hours(s)</option>
                             <option value="day">days(s)</option>
@@ -414,7 +391,6 @@
                     </div>
                 </div>
 
-
                 <!--Maximum_volume_of_agent_contracts_per_hour/day/week/month-->
                 <div class="form-group row space-before">
                     <label class="col-4 col-form-label">
@@ -424,11 +400,7 @@
                         <input type="text" class="form-control" formControlName="maxVolume" required maxlength="255">
                     </div>
                     <div class="col-3">
-                        <select
-                                formControlName="maxVolumeUnit"
-                                id="maxVolumeUnit-type"
-                                name="type"
-                                class="form-control custom-select">
+                        <select formControlName="maxVolumeUnit" id="maxVolumeUnit-type" name="type" class="form-control custom-select">
                             <option value="" class="selected">Time Unit</option>
                             <option value="hour">hour</option>
                             <option value="day">day</option>
@@ -446,11 +418,7 @@
                         <input type="number" class="form-control" formControlName="maxNoOneToOne" required maxlength="255">
                     </div>
                     <div class="col-3">
-                        <select
-                                formControlName="maxNoOneToOneUnit"
-                                id="maxNoOneToOneUnit-type"
-                                name="type"
-                                class="form-control custom-select">
+                        <select formControlName="maxNoOneToOneUnit" id="maxNoOneToOneUnit-type" name="type" class="form-control custom-select">
                             <option value="" class="selected">Time Unit</option>
                             <option value="hour">hour</option>
                             <option value="day">day</option>
@@ -482,21 +450,18 @@
 
 <!-- Show Transaction tab -->
 <div *ngIf="showTransactions" class="col-12 space-after space-before">
-    <button class="btn btn-primary align-self-start float-right ml-2"
-            (click)="viewAgentList()">
+    <button class="btn btn-primary align-self-start float-right ml-2" (click)="viewAgentList()">
         <span [innerHTML]="'Back' | translate"></span>
-    </button>
-    <button class="btn btn-dark align-self-start float-right ml-2"
-            (click)="viewAgentList()">
-        <span [innerHTML]="'Show Archived' | translate"></span>
     </button>
 </div>
 
 <div *ngIf="showTransactions">
     <div class="col-12 mx-auto space-before space-after ">
-        <span><h3>Orders of: {{selectedAgent}} </h3>(Total: 23, Archived: 19)</span>
+        <span>
+            <h3>Orders of: {{selectedAgent}} </h3>(Total: {{orders.length}})
+        </span>
         <!--<div class="d-flex justify-content-end">-->
-            <!--<call-status [callStatus]="exportCallStatus"></call-status>-->
+        <!--<call-status [callStatus]="exportCallStatus"></call-status>-->
 
         <!--</div>-->
     </div>
@@ -515,41 +480,37 @@
                                         <div class="header-label mr-auto d-flex">
                                             Product/Service: <span class="clickable">{{order.productName}}</span>
                                         </div>
-                                        <!--<div class="clickable float-right ml-2">View Request</div>-->
                                     </div>
                                 </div>
                                 <hr class="collaboration-hr">
                                 <div>
                                     <div class="space-after">
-                                        <!--If Purchases tab is selected, show groups whose collaboration role is Buyer-->
                                         <div class="row thread-entry m-0">
                                             <div class="col-12 d-flex thread-entry-header">
                                                 <div class="col pl-2">
-                                                    <strong><span [innerHTML]="'Trading Partner' | translate"></span>:</strong><br/>
+                                                    <strong><span [innerHTML]="'Trading Partner' | translate"></span>:</strong><br />
                                                     <span class="clickable">{{order.companyName}}</span>
                                                 </div>
                                                 <div class="col pl-1">
-                                                    <strong><span [innerHTML]="'Date' | translate"></span>:</strong><br/>
+                                                    <strong><span [innerHTML]="'Date' | translate"></span>:</strong><br />
                                                     <span>{{order.date}}</span>
                                                 </div>
                                                 <div class="col pl-1">
-                                                    <strong><span [innerHTML]="'Units' | translate"></span>:</strong><br/>
+                                                    <strong><span [innerHTML]="'Units' | translate"></span>:</strong><br />
                                                     <span>{{order.units}}</span>
                                                 </div>
                                                 <div class="col pl-1">
-                                                    <strong><span [innerHTML]="'Amount' | translate"></span>:</strong><br/>
+                                                    <strong><span [innerHTML]="'Amount' | translate"></span>:</strong><br />
                                                     <span>{{order.price}} EUR</span>
                                                 </div>
                                                 <div class="col pl-1">
-                                                    <strong><span [innerHTML]="'Status' | translate"></span>:</strong><br/>
+                                                    <strong><span [innerHTML]="'Status' | translate"></span>:</strong><br />
                                                     <!--<span>{{order.status}}</span>-->
-                                                    <span *ngIf="order.status == 'CANCELLED'" class="badge badge-secondary"><span [innerHTML]="'Collaboration cancelled' | translate"></span></span>
-                                                    <span *ngIf="order.status == 'INPROGRESS'" class="badge badge-secondary" >In progress</span>
-                                                    <span *ngIf="order.status == 'COMPLETED'" class="badge badge-primary"><span [innerHTML]="'Collaboration finished' | translate"></span></span>
+                                                    <span class="badge badge-secondary"><span> {{order.status}}</span></span>
                                                 </div>
                                                 <div class="col pl-1">
-                                                    <strong><span [innerHTML]="'Actions' | translate"></span>:</strong><br/>
-                                                    <span class="clickable">View Order Details</span>
+                                                    <strong><span [innerHTML]="'Actions' | translate"></span>:</strong><br />
+                                                    <span class="clickable" (click)="navigateToProcess(order.processInstanceID)">View Order Details</span>
                                                 </div>
                                             </div>
                                         </div>

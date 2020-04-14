@@ -1,3 +1,17 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <ng-template #modal let-c="close" let-d="dismiss">
     <div class="modal-header">
         <h5 *ngIf="mode == 'delete'" class="modal-title"><span [innerHTML]="'Delete Catalogues' | translate"></span></h5>
@@ -26,9 +40,7 @@
         <button *ngIf="mode == 'delete-images'" type="button" class="btn btn-primary" (click)="onDeleteImagesClicked(d);">
             <span><span [innerHTML]="'Delete All Product Images of Selected Catalogues' | translate"></span></span>
         </button>
-        <input #imagePackage type="file" (change)="uploadImagePackage($event,d)"
-               accept="application/zip"
-               style="display: none">
+        <input #imagePackage type="file" (change)="uploadImagePackage($event,d)" accept="application/zip" style="display: none">
         <button *ngIf="mode == 'upload-image'" type="button" class="btn btn-primary" (click)="imagePackage.click()">
             <span><span [innerHTML]="'Upload Image Package for the Selected Catalogue' | translate"></span></span>
         </button>

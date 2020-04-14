@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpModule } from "@angular/http";
@@ -20,26 +36,26 @@ import { ProductDetailsModule } from "../product-details/product-details.module"
 import { ProductPriceTabComponent } from "./publish/product-price-tab.component";
 import { ProductCertificatesTabComponent } from "./publish/product-certificates-tab.component";
 import { UserMgmtModule } from "../user-mgmt/user-mgmt.module";
-import {NoteFileViewComponent} from './ubl-model-view/note-file-view.component';
-import {BulkPublishComponent} from "./publish/bulk-publish.component";
-import {OptionsPanelComponent} from './publish/options-panel.component';
-import {OriginDestinationViewComponent} from './publish/origin-destination-view-component';
-import {NameDescriptionPanelComponent} from './publish/name-description-panel.component';
-import {LogisticServicePublishComponent} from './publish/logistic-service-publish.component';
-import {LogisticPublishDeactivateGuardService} from './logistic-publish-deactivate-guard.service';
-import {DeleteExportCatalogueModalComponent} from "./ubl-model-view/catalogue/delete-export-catalogue-modal.component";
+import { NoteFileViewComponent } from './ubl-model-view/note-file-view.component';
+import { BulkPublishComponent } from "./publish/bulk-publish.component";
+import { OptionsPanelComponent } from './publish/options-panel.component';
+import { OriginDestinationViewComponent } from './publish/origin-destination-view-component';
+import { NameDescriptionPanelComponent } from './publish/name-description-panel.component';
+import { LogisticServicePublishComponent } from './publish/logistic-service-publish.component';
+import { LogisticPublishDeactivateGuardService } from './logistic-publish-deactivate-guard.service';
+import { DeleteExportCatalogueModalComponent } from "./ubl-model-view/catalogue/delete-export-catalogue-modal.component";
 
 @NgModule({
-	imports: [CommonModule,
-		AppCommonModule,
-		FormsModule,
-		ReactiveFormsModule,
-		HttpModule,
+    imports: [CommonModule,
+        AppCommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpModule,
         CatalogueRoutingModule,
         ProductDetailsModule,
         UserMgmtModule,
         NgbModule.forRoot()
-	],
+    ],
     declarations: [
         CategorySearchComponent,
         CategoryTreeComponent,
@@ -70,4 +86,4 @@ import {DeleteExportCatalogueModalComponent} from "./ubl-model-view/catalogue/de
     ],
     providers: [PublishDeactivateGuardService, CategoryDeactivateGuardService, LogisticPublishDeactivateGuardService]
 })
-export class CatalogueModule {}
+export class CatalogueModule { }

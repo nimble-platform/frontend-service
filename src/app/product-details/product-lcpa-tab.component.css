@@ -1,4 +1,17 @@
-.fixed-info-container > amount-input, .fixed-info-container > quantity-input {
+/*
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+.fixed-info-container>amount-input, .fixed-info-container>quantity-input {
     margin-top: 0.5rem;
 }
 
@@ -6,14 +19,14 @@
     border-right: 1px solid black !important;
 }
 
-.legend-capex{
+.legend-capex {
     display: inline-block;
     height: 15px;
     width: 15px;
     background-color: blue;
 }
 
-.legend-opex{
+.legend-opex {
     display: inline-block;
     height: 15px;
     width: 15px;

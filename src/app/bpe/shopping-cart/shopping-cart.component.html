@@ -1,3 +1,19 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <!-- title -->
 <div class="row">
     <div class="col-3">
@@ -16,24 +32,18 @@
             <span [innerHTML]="'Show Common Cart Terms' | translate"></span>
         </div>
         <div>
-            <span [ngbTooltip]="validationService.extractErrorMessage(shoppingCartForm)" [placement]="'auto'"  title="">
-                <button class="btn btn-primary ml-2"
-                    [disabled]="startBpCallStatus.fb_submitted || !shoppingCartForm.valid"
-                    (click)="openShoppingCartSummary()">
+            <span [ngbTooltip]="validationService.extractErrorMessage(shoppingCartForm)" [placement]="'auto'" title="">
+                <button class="btn btn-primary ml-2" [disabled]="startBpCallStatus.fb_submitted || !shoppingCartForm.valid" (click)="openShoppingCartSummary()">
                     <span [innerHTML]="'Negotiate / Order All' | translate"></span>
                 </button>
             </span>
         </div>
         <call-status [large]="true" [callStatus]="startBpCallStatus"></call-status>
     </div>
-    <common-cart-terms *ngIf="showCommonTerms && shoppingCart?.catalogueLine.length > 0"
-                       [buyerCompanySettings]="buyerCompanySettings"
-                       [doesBuyerCompanyHasItsOwnTerms]="doesBuyerCompanyHasItsOwnTerms"
-                       (onApplyTermsEvent)="onApplyTerms($event)">
+    <common-cart-terms *ngIf="showCommonTerms && shoppingCart?.catalogueLine.length > 0" [buyerCompanySettings]="buyerCompanySettings" [doesBuyerCompanyHasItsOwnTerms]="doesBuyerCompanyHasItsOwnTerms" (onApplyTermsEvent)="onApplyTerms($event)">
     </common-cart-terms>
 
-    <div *ngFor="let cartLine of shoppingCart?.catalogueLine; let i = index"
-         class="cart-item space-before">
+    <div *ngFor="let cartLine of shoppingCart?.catalogueLine; let i = index" class="cart-item space-before">
         <div class="d-flex">
             <div class="btn btn-primary btn-outline-primary" (click)="collapsedStatusesOfCartItems.set(cartLine.hjid, !collapsedStatusesOfCartItems.get(cartLine.hjid))">
                 {{getProductName(cartLine.goodsItem.item.name)}}
@@ -42,33 +52,13 @@
             <call-status *ngIf="deleteCallStatuses.get(cartLine.hjid).isLoading()" class="ml-auto" [callStatus]="deleteCallStatuses.get(cartLine.hjid)"></call-status>
         </div>
         <div [hidden]="!collapsedStatusesOfCartItems.get(cartLine.hjid)" class="space-before">
-            <product-details-overview [wrapper]="productWrappers.get(cartLine.hjid)"
-                                      [itemWithSelectedProps]="modifiedCatalogueLines.get(cartLine.hjid).goodsItem.item"
-                                      [associatedProducts]="associatedProducts.get(cartLine.hjid)"
-                                      [inShoppingBasket]="true"
-                                      [isNegotiatingAnyTerm]="areNegotiationConditionsSatisfied(cartLine)"
-                                      (onCartItemDeleted)="onRemoveFromCart($event)"
-                                      (onNegotiate)="onSingleLineNegotiation($event)"
-                                      [shoppingCartItemForm]="shoppingCartForm.controls['shopping_cart_item' + i]"
-                                      [isNegotiateOrderButtonDisabled]="deleteCallStatuses.get(cartLine.hjid).fb_submitted">
+            <product-details-overview [wrapper]="productWrappers.get(cartLine.hjid)" [itemWithSelectedProps]="modifiedCatalogueLines.get(cartLine.hjid).goodsItem.item" [associatedProducts]="associatedProducts.get(cartLine.hjid)" [inShoppingBasket]="true" [isNegotiatingAnyTerm]="areNegotiationConditionsSatisfied(cartLine)" (onCartItemDeleted)="onRemoveFromCart($event)" (onNegotiate)="onSingleLineNegotiation($event)" [shoppingCartItemForm]="shoppingCartForm.controls['shopping_cart_item' + i]" [isNegotiateOrderButtonDisabled]="deleteCallStatuses.get(cartLine.hjid).fb_submitted">
             </product-details-overview>
-            <product-details-tabs [wrapper]="productWrappers.get(cartLine.hjid)"
-                                  [settings]="sellersSettings.get(getPartyId(cartLine.goodsItem.item.manufacturerParty))">
+            <product-details-tabs [wrapper]="productWrappers.get(cartLine.hjid)" [settings]="sellersSettings.get(getPartyId(cartLine.goodsItem.item.manufacturerParty))">
             </product-details-tabs>
-            <negotiation-request-item [rfq]="getRfq(cartLine)"
-                                      [lastOfferQuotation]="null"
-                                      [frameContractQuotation]="frameContracts.has(cartLine.hjid) ? frameContracts.get(cartLine.hjid)[1] : null"
-                                      [frameContract]="frameContracts.has(cartLine.hjid) ? frameContracts.get(cartLine.hjid)[0] : null"
-                                      [manufacturersTermsSource]="frameContracts.has(cartLine.hjid) ? 'frame_contract' : 'product_defaults'"
-                                      [defaultTermsAndConditions]="sellersSettings.get(getLinePartyId(cartLine)).negotiationSettings.company.salesTerms != null && sellersSettings.get(getLinePartyId(cartLine)).negotiationSettings.company.salesTerms.termOrCondition.length > 0
+            <negotiation-request-item [rfq]="getRfq(cartLine)" [lastOfferQuotation]="null" [frameContractQuotation]="frameContracts.has(cartLine.hjid) ? frameContracts.get(cartLine.hjid)[1] : null" [frameContract]="frameContracts.has(cartLine.hjid) ? frameContracts.get(cartLine.hjid)[0] : null" [manufacturersTermsSource]="frameContracts.has(cartLine.hjid) ? 'frame_contract' : 'product_defaults'" [defaultTermsAndConditions]="sellersSettings.get(getLinePartyId(cartLine)).negotiationSettings.company.salesTerms != null && sellersSettings.get(getLinePartyId(cartLine)).negotiationSettings.company.salesTerms.termOrCondition.length > 0
                                                                     ? sellersSettings.get(getLinePartyId(cartLine)).negotiationSettings.company.salesTerms.termOrCondition
-                                                                    : platformTermsAndConditions.get(cartLine.hjid)"
-                                      [deliverytermsOfBuyer]="buyerCompanySettings.tradeDetails.deliveryTerms"
-                                      [wrapper]="negotiationModelWrappers.get(cartLine.hjid)"
-                                      [hidden]="false"
-                                      [parentForm]="shoppingCartForm"
-                                      [componentIndex]="i"
-                                      [formFieldName]="'shopping_cart_item'">
+                                                                    : platformTermsAndConditions.get(cartLine.hjid)" [deliverytermsOfBuyer]="buyerCompanySettings.tradeDetails.deliveryTerms" [wrapper]="negotiationModelWrappers.get(cartLine.hjid)" [hidden]="false" [parentForm]="shoppingCartForm" [componentIndex]="i" [formFieldName]="'shopping_cart_item'">
             </negotiation-request-item>
         </div>
     </div>

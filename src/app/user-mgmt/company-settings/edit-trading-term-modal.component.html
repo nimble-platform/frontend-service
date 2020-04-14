@@ -1,3 +1,19 @@
+<!--
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   In collaboration with
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <ng-template #modal let-c="close" let-d="dismiss">
     <!-- Header -->
     <div class="modal-header">
@@ -14,12 +30,11 @@
                     <strong><span [innerHTML]="'Id:' | translate"></span></strong>
                 </div>
                 <div class="col-9">
-                    <input [(ngModel)]="tradingTerm.id" class="form-control" type="text" (keyup)="onIdUpdate()"/>
+                    <input [(ngModel)]="tradingTerm.id" class="form-control" type="text" (keyup)="onIdUpdate()" />
                 </div>
             </div>
             <!-- Trading term data type -->
-            <options-input label="Data Type" *ngIf="tradingTerm.value.valueQualifier != 'CODE'"
-                           [options]="DATA_TYPES" [(selected)]="tradingTerm.value.valueQualifier" rowClass="space-before">
+            <options-input label="Data Type" *ngIf="tradingTerm.value.valueQualifier != 'CODE'" [options]="DATA_TYPES" [(selected)]="tradingTerm.value.valueQualifier" rowClass="space-before">
             </options-input>
             <!-- Trading term default values -->
             <div class="row space-before">
@@ -35,9 +50,9 @@
                                     <input [(ngModel)]="text.value" class="form-control" type="text" />
                                 </td>
                                 <!--<td>-->
-                                    <!--<select [(ngModel)]="text.languageID" class="form-control" type="text" >-->
-                                        <!--<option *ngFor='let language of languages' [value]="language" [selected]="language === text.languageID">{{language}}</option>-->
-                                    <!--</select>-->
+                                <!--<select [(ngModel)]="text.languageID" class="form-control" type="text" >-->
+                                <!--<option *ngFor='let language of languages' [value]="language" [selected]="language === text.languageID">{{language}}</option>-->
+                                <!--</select>-->
                                 <!--</td>-->
                             </tr>
                         </tbody>
@@ -46,8 +61,7 @@
                         <div class="col-12">
                             <!-- NUMBER data type-->
                             <ng-container *ngIf="tradingTerm.value.valueQualifier === 'NUMBER'">
-                                <input type="number" class="form-control form-control-sm value-input"
-                                       [ngModel]="tradingTerm.value.valueDecimal[i]" (change)="setValueDecimal(0, $event.target.value)">
+                                <input type="number" class="form-control form-control-sm value-input" [ngModel]="tradingTerm.value.valueDecimal[i]" (change)="setValueDecimal(0, $event.target.value)">
                             </ng-container>
                             <!-- QUANTITY data type-->
                             <ng-container *ngIf="tradingTerm.value.valueQualifier === 'QUANTITY'">
@@ -56,13 +70,13 @@
                             </ng-container>
                             <!-- CODE data type-->
                             <ng-container *ngIf="tradingTerm.value.valueQualifier === 'CODE'">
-                                <select *ngIf="tradingTerm.value.valueCode[0].listID == 'INCOTERMS_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value" >
+                                <select *ngIf="tradingTerm.value.valueCode[0].listID == 'INCOTERMS_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value">
                                     <option *ngFor="let option of INCOTERMS" [value]="option">{{option}}</option>
                                 </select>
-                                <select *ngIf="tradingTerm.value.valueCode[0].listID == 'PAYMENT_MEANS_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value" >
+                                <select *ngIf="tradingTerm.value.valueCode[0].listID == 'PAYMENT_MEANS_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value">
                                     <option *ngFor="let option of PAYMENT_TERMS" [value]="option">{{option}}</option>
                                 </select>
-                                <select *ngIf="tradingTerm.value.valueCode[0].listID == 'COUNTRY_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value" >
+                                <select *ngIf="tradingTerm.value.valueCode[0].listID == 'COUNTRY_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value">
                                     <option *ngFor="let option of COUNTRY_NAMES" [value]="option">{{option}}</option>
                                 </select>
                             </ng-container>

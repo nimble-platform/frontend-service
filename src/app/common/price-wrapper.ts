@@ -1,9 +1,25 @@
+/*
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   In collaboration with
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 import { Price } from "../catalogue/model/publish/price";
 import { Quantity } from "../catalogue/model/publish/quantity";
-import {currencyToString, roundToTwoDecimals} from "./utils";
+import { currencyToString, roundToTwoDecimals } from "./utils";
 import { ItemPriceWrapper } from "./item-price-wrapper";
-import {defaultVatRate} from "./constants";
-import {Item} from '../catalogue/model/publish/item';
+import { defaultVatRate } from "./constants";
+import { Item } from '../catalogue/model/publish/item';
 
 /**
  * Wrapper around a price and a quantity, contains convenience methods to get the total price,
@@ -18,14 +34,14 @@ export class PriceWrapper {
     itemPrice: ItemPriceWrapper;
 
     constructor(public price: Price,
-                public vatPercentage: number = defaultVatRate,
-                public orderedQuantity: Quantity = new Quantity(1, price.baseQuantity.unitCode),
-                public item:Item = null) {
+        public vatPercentage: number = defaultVatRate,
+        public orderedQuantity: Quantity = new Quantity(1, price.baseQuantity.unitCode),
+        public item: Item = null) {
         this.itemPrice = new ItemPriceWrapper(price);
     }
 
     get totalPrice(): number {
-        if(!this.itemPrice.hasPrice()) {
+        if (!this.itemPrice.hasPrice()) {
             return 0;
         }
 
@@ -41,7 +57,7 @@ export class PriceWrapper {
     }
 
     get totalPriceString(): string {
-        if(!this.itemPrice.hasPrice()) {
+        if (!this.itemPrice.hasPrice()) {
             return "On demand";
         }
         return `${roundToTwoDecimals(this.totalPrice)} ${this.currency}`;
@@ -54,9 +70,9 @@ export class PriceWrapper {
     get pricePerItemString(): string {
         const amount = this.price.priceAmount;
         const qty = this.price.baseQuantity
-        const baseQuantity = qty.value || 1;
+        const baseQuantity = qty.value ||  1;
 
-        if(!amount.value || amount.value == 0 || !this.isOrderedQuantityValid()) {
+        if (!amount.value || amount.value == 0 || !this.isOrderedQuantityValid()) {
             return "On demand";
         }
 
@@ -69,7 +85,7 @@ export class PriceWrapper {
 
     get vatTotalString(): string {
         let vatTotal = this.vatTotal;
-        if(vatTotal == 0){
+        if (vatTotal == 0) {
             return "On demand";
         }
         return `${roundToTwoDecimals(vatTotal)} ${this.currency}`
@@ -81,7 +97,7 @@ export class PriceWrapper {
 
     get grossTotalString(): string {
         let grossTotal = this.grossTotal;
-        if(grossTotal == 0){
+        if (grossTotal == 0) {
             return "On demand";
         }
         return `${roundToTwoDecimals(grossTotal)} ${this.currency}`;

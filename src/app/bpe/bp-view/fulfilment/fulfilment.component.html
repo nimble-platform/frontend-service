@@ -1,28 +1,53 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <!--Show fulfilment statistics-->
 <div *ngIf="!isLoading()" class="row justify-content-center">
-    <div class="card col-7">
+    <div class="card col-3 borderless">
         <div class="card-body text-center">
-            <h4 class="card-title"><b>{{blueTotalDispatched[_selectedOrderLineIndex]}}</b></h4>
-            <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Dispatched Quantity' | translate"></span></h6>
+            <h4 class="card-title"><b>{{totalAccepted[_selectedOrderLineIndex]}} {{line.requiredItemLocationQuantity.price.baseQuantity.unitCode}}</b></h4>
+            <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Accepted' | translate"></span></h6>
             <p class="card-text" style="font-size:32px"><i class="fa fa-truck"></i></p>
         </div>
     </div>
-    <div class="col-8">
-        <div class="progress space-before">
-            <div class="progress-bar bg-success" role="progressbar" [ngStyle]="{'width':green_perc_str[_selectedOrderLineIndex]}" [attr.aria-valuenow]="green_perc[_selectedOrderLineIndex]" aria-valuemin="0" aria-valuemax="100"></div>
-            <div class="progress-bar bg-warning" role="progressbar" [ngStyle]="{'width':yellow_perc_str[_selectedOrderLineIndex]}" [attr.aria-valuenow]="yellow_perc[_selectedOrderLineIndex]" aria-valuemin="0" aria-valuemax="100"></div>
-            <div class="progress-bar bg-danger" role="progressbar" [ngStyle]="{'width':red_perc_str[_selectedOrderLineIndex]}" [attr.aria-valuenow]="red_perc[_selectedOrderLineIndex]" aria-valuemin="0" aria-valuemax="100"></div>
+    <div class="card {{totalWaitingResponse[_selectedOrderLineIndex] > 0 ? 'col-3' : 'col-6'}} borderless">
+        <div class="card-body text-center">
+            <h4 class="card-title"><b>{{totalRejected[_selectedOrderLineIndex]}} {{line.requiredItemLocationQuantity.price.baseQuantity.unitCode}}</b></h4>
+            <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Rejected' | translate"></span></h6>
+            <p class="card-text" style="font-size:32px"><i class="fa fa-truck"></i></p>
         </div>
-        <div class="space-before text-center">
-            <span class="badge badge-pill badge-success">{{greenTotalAccepted[_selectedOrderLineIndex]}} Accepted ({{green_perc_str[_selectedOrderLineIndex]}})</span>
-            <span class="badge badge-pill badge-warning">{{yellowTotalWaiting[_selectedOrderLineIndex]}} Waiting ({{yellow_perc_str[_selectedOrderLineIndex]}})</span>
-            <span class="badge badge-pill badge-danger">{{redTotalRejected[_selectedOrderLineIndex]}} Rejected ({{red_perc_str[_selectedOrderLineIndex]}})</span>
+    </div>
+    <div *ngIf="totalWaitingResponse[_selectedOrderLineIndex] > 0" class="card col-3 borderless">
+        <div class="card-body text-center">
+            <h4 class="card-title"><b>{{totalWaitingResponse[_selectedOrderLineIndex]}} {{line.requiredItemLocationQuantity.price.baseQuantity.unitCode}}</b></h4>
+            <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Waiting Response' | translate"></span></h6>
+            <p class="card-text" style="font-size:32px"><i class="fa fa-truck"></i></p>
+        </div>
+    </div>
+    <div class="card col-3 borderless">
+        <div class="card-body text-center">
+            <h4 class="card-title"><b>{{totalToBeShipped[_selectedOrderLineIndex]}} {{line.requiredItemLocationQuantity.price.baseQuantity.unitCode}}</b></h4>
+            <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'To Be Shipped' | translate"></span></h6>
+            <p class="card-text" style="font-size:32px"><i class="fa fa-truck"></i></p>
         </div>
     </div>
 </div>
 <hr class="mb-3">
 <ng-container *ngIf="line && !isLoading()">
-    <dispatch-advice *ngIf="!showReceiptAdvice()" [waitingQuantityValues]="yellowTotalWaiting" [orderLineItemHjids]="orderLineItemHjids">
+    <dispatch-advice *ngIf="!showReceiptAdvice()" [waitingQuantityValues]="totalToBeShipped" [orderLineItemHjids]="orderLineItemHjids">
     </dispatch-advice>
     <receipt-advice *ngIf="showReceiptAdvice()">
     </receipt-advice>

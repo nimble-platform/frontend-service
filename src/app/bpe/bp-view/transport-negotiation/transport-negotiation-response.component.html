@@ -1,30 +1,39 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <!-- Tabs -->
 <div class="col-12 pt-4" *ngIf="isTransportService">
     <ul class="nav nav-tabs">
         <li class="nav-item">
-            <a href id="OVERVIEW" class="nav-link"
-                [ngClass]="{ active: selectedTab === 'OVERVIEW'}"
-                (click)="onSelectTab($event,'OVERVIEW')">
+            <a href id="OVERVIEW" class="nav-link" [ngClass]="{ active: selectedTab === 'OVERVIEW'}" (click)="onSelectTab($event,'OVERVIEW')">
                 <span [innerHTML]="'Transport Service Details' | translate"></span>
             </a>
         </li>
         <li class="nav-item">
-            <a href id="ADDRESS" class="nav-link"
-                [ngClass]="{ active: selectedTab === 'ADDRESS'}"
-                (click)="onSelectTab($event,'ADDRESS')">
+            <a href id="ADDRESS" class="nav-link" [ngClass]="{ active: selectedTab === 'ADDRESS'}" (click)="onSelectTab($event,'ADDRESS')">
                 <span [innerHTML]="'Pick-up & Drop-off' | translate"></span>
             </a>
         </li>
         <li class="nav-item">
-            <a href id="NEGOTIATION" class="nav-link"
-                [ngClass]="{ active: selectedTab === 'NEGOTIATION'}"
-                (click)="onSelectTab($event,'NEGOTIATION')">
+            <a href id="NEGOTIATION" class="nav-link" [ngClass]="{ active: selectedTab === 'NEGOTIATION'}" (click)="onSelectTab($event,'NEGOTIATION')">
                 <span [innerHTML]="'Negotiable Terms' | translate"></span>
             </a>
         </li>
     </ul>
 </div>
-
 
 <!-- Transport Service Details -->
 <ng-container *ngIf="selectedTab === 'OVERVIEW'">
@@ -32,17 +41,15 @@
     </transport-service-details>
 </ng-container>
 
-
 <!-- Address Tab -->
 <ng-container *ngIf="selectedTab === 'ADDRESS'">
     <transport-negotiation-address [lineItem]="rfq.requestForQuotationLine[0].lineItem" [disabled]="true">
     </transport-negotiation-address>
 </ng-container>
 
-
 <!-- Negotiable Terms Tab -->
 <ng-container *ngIf="selectedTab === 'NEGOTIATION'">
-    <div  class="row space-before title-row">
+    <div class="row space-before title-row">
         <div class="col-2">
             <h5 class="space-before"><span [innerHTML]="'Term' | translate"></span></h5>
         </div>
@@ -67,9 +74,7 @@
             <div *ngIf="isDisabled()">
                 {{quotationPrice.itemPrice.value}} {{quotationPrice.itemPrice.currency}}
             </div>
-            <quantity-input *ngIf="!isDisabled()"
-                [quantity]="quotationPrice.itemPrice"
-                [quantityUnits]="CURRENCIES">
+            <quantity-input *ngIf="!isDisabled()" [quantity]="quotationPrice.itemPrice" [quantityUnits]="CURRENCIES">
             </quantity-input>
         </div>
     </div>
@@ -87,9 +92,7 @@
             <div *ngIf="isDisabled()">
                 {{quotation.quotationLine[0].lineItem.paymentMeans.paymentMeansCode.value}}
             </div>
-            <options-input *ngIf="!isDisabled()"
-                [(selected)]="quotation.quotationLine[0].lineItem.paymentMeans.paymentMeansCode.value"
-                [options]="PAYMENT_MEANS">
+            <options-input *ngIf="!isDisabled()" [(selected)]="quotation.quotationLine[0].lineItem.paymentMeans.paymentMeansCode.value" [options]="PAYMENT_MEANS">
             </options-input>
         </div>
     </div>
@@ -107,9 +110,7 @@
             <div *ngIf="isDisabled()">
                 {{quotationPaymentTerms.paymentTerm}}
             </div>
-            <options-input *ngIf="!isDisabled()"
-                [(selected)]="quotationPaymentTerms.paymentTerm"
-                [options]="PAYMENT_TERMS">
+            <options-input *ngIf="!isDisabled()" [(selected)]="quotationPaymentTerms.paymentTerm" [options]="PAYMENT_TERMS">
             </options-input>
         </div>
     </div>
@@ -127,9 +128,7 @@
             <div *ngIf="isDisabled()">
                 {{quotation.quotationLine[0].lineItem.deliveryTerms.incoterms}}
             </div>
-            <options-input *ngIf="!isDisabled()"
-                [(selected)]="quotation.quotationLine[0].lineItem.deliveryTerms.incoterms"
-                [options]="INCOTERMS">
+            <options-input *ngIf="!isDisabled()" [(selected)]="quotation.quotationLine[0].lineItem.deliveryTerms.incoterms" [options]="INCOTERMS">
             </options-input>
         </div>
     </div>
@@ -147,12 +146,10 @@
             <div *ngIf="isDisabled()">
                 {{quotation.quotationLine[0].lineItem.deliveryTerms.specialTerms[0].value}}
             </div>
-            <text-input [(text)]="quotation.quotationLine[0].lineItem.deliveryTerms.specialTerms[0].value"
-                        *ngIf="!isDisabled()">
+            <text-input [(text)]="quotation.quotationLine[0].lineItem.deliveryTerms.specialTerms[0].value" *ngIf="!isDisabled()">
             </text-input>
         </div>
     </div>
-
 
     <div *ngIf="isTransportService">
         <hr>
@@ -170,9 +167,7 @@
                 <div *ngIf="isDisabled()">
                     {{quantityToString(quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure)}}
                 </div>
-                <quantity-input *ngIf="!isDisabled()"
-                                [quantity]="quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure"
-                                quantityType="time_quantity">
+                <quantity-input *ngIf="!isDisabled()" [quantity]="quotation.quotationLine[0].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure" quantityType="time_quantity">
                 </quantity-input>
             </div>
         </div>
@@ -212,15 +207,7 @@
 
     <!--Notes-->
     <h5 [ngClass]="{'bg-danger text-white':isNoteUpdated()}"><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
-    <note-file-view [notes]="quotation.note"
-               [requestNotes]="rfq.note"
-               [documents]="quotation.additionalDocumentReference"
-               [requestDocuments]="rfq.additionalDocumentReference"
-               [label]="'Notes'"
-               [firstCol]="'col-2'"
-               [thirdCol]="'col-5'"
-               [lastCol]="'col-5'"
-               [readonly]="isDisabled()"></note-file-view>
+    <note-file-view [notes]="quotation.note" [requestNotes]="rfq.note" [documents]="quotation.additionalDocumentReference" [requestDocuments]="rfq.additionalDocumentReference" [label]="'Notes'" [firstCol]="'col-2'" [thirdCol]="'col-5'" [lastCol]="'col-5'" [readonly]="isDisabled()"></note-file-view>
 
 </ng-container>
 
@@ -228,36 +215,42 @@
 
 <!-- Actions -->
 <div class="row actions-row" *ngIf="userRole === 'seller' && !isReadOnly()">
-    <div class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-6 call-status-col">
+        <call-status [callStatus]="callStatus"></call-status>
+    </div>
     <div class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRespondToQuotation(false)">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onRespondToQuotation(false)" singleClick>
             <span [innerHTML]="'Reject Offer' | translate"></span>
         </button>
     </div>
     <div class="col-2">
-        <button *ngIf="!hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToQuotation(true)">
+        <button *ngIf="!hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToQuotation(true)" singleClick>
             <span [innerHTML]="'Accept Offer' | translate"></span>
         </button>
-        <button *ngIf="hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToQuotation(true)">
+        <button *ngIf="hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading()" (click)="onRespondToQuotation(true)" singleClick>
             <span [innerHTML]="'Submit Response' | translate"></span>
         </button>
     </div>
 </div>
 
 <div class="row actions-row" *ngIf="userRole === 'seller' && isReadOnly() && !readonly">
-    <div class="col-10 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="col-10 call-status-col">
+        <call-status [callStatus]="callStatus"></call-status>
+    </div>
     <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
 </div>
 
 <div class="row actions-row" *ngIf="userRole === 'buyer' && !readonly">
-    <div class="{{bpDataService.isFinalProcessInTheWorkflow('Negotiation') ? 'col-7' : 'col-5' }} call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div class="{{bpDataService.isFinalProcessInTheWorkflow('Negotiation') ? 'col-7' : 'col-5' }} call-status-col">
+        <call-status [callStatus]="callStatus"></call-status>
+    </div>
     <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div class="col-3">
         <button class="btn btn-secondary action" [disabled]="isLoading() || processMetadata.collaborationStatus == 'COMPLETED' || processMetadata.collaborationStatus == 'CANCELLED'" (click)="onRequestNewQuotation()">

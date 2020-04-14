@@ -1,8 +1,24 @@
+/*
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   In collaboration with
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
-import {dateToString} from './utils';
-import {ChildFormBase} from './validation/child-form-base';
-import {FormControl, ValidatorFn, Validators} from '@angular/forms';
-import {ValidationService} from './validation/validators';
+import { dateToString } from './utils';
+import { ChildFormBase } from './validation/child-form-base';
+import { FormControl, ValidatorFn, Validators } from '@angular/forms';
+import { ValidationService } from './validation/validators';
 const FIELD_NAME_DATE_VALUE = 'date';
 @Component({
     selector: "date-input",
@@ -27,14 +43,14 @@ export class DateInputComponent extends ChildFormBase implements OnInit {
     private dateValue: string;
     dateFormControl: FormControl;
     @Output() dateChange = new EventEmitter<string>();
-    dateToString=dateToString;
+    dateToString = dateToString;
 
     constructor(public validationService: ValidationService) {
         super();
     }
 
     ngOnInit() {
-        if(!this.valueClass) {
+        if (!this.valueClass) {
             this.valueClass = this.label ? "col-9" : "col-12";
         }
         this.initViewFormAndAddToParentForm();
@@ -46,10 +62,10 @@ export class DateInputComponent extends ChildFormBase implements OnInit {
     }
 
     set date(date: string) {
-        if(date){
+        if (date) {
             let index = date.indexOf("T");
-            if (index != -1){
-                date = date.substring(0,date.indexOf("T"));
+            if (index != -1) {
+                date = date.substring(0, date.indexOf("T"));
             }
         }
         this.dateValue = date;

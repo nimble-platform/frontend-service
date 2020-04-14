@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   In collaboration with
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
@@ -15,70 +31,73 @@ import { AddressInputComponent } from './address-input.component';
 import { BooleanInputComponent } from './boolean-input.component';
 import { MultiAddressInputComponent } from './multi-address-input.component';
 import { InputLabelComponent } from './input-label.component';
-import {AmountInputComponent} from "./amount-input.component";
-import {ExpandableFlexRow} from "./expandable-flex-row.component";
-import {MultiTypeInputComponent} from "./multi-type-input.component";
+import { AmountInputComponent } from "./amount-input.component";
+import { ExpandableFlexRow } from "./expandable-flex-row.component";
+import { MultiTypeInputComponent } from "./multi-type-input.component";
 import { HttpClient } from "@angular/common/http";
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import {DisableControlDirective} from './disable-control-directive';
+import { DisableControlDirective } from './disable-control-directive';
+import { SingleClickDirective } from './single-click.directive';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
 @NgModule({
-	imports: [
-		CommonModule,
-		FormsModule,
-		HttpModule,
-		ReactiveFormsModule,
-		NgbModule.forRoot(),
-		TranslateModule.forChild({
+    imports: [
+        CommonModule,
+        FormsModule,
+        HttpModule,
+        ReactiveFormsModule,
+        NgbModule.forRoot(),
+        TranslateModule.forChild({
             loader: {
-              provide: TranslateLoader,
-              useFactory: HttpLoaderFactory,
-              deps: [HttpClient]
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
             },
             isolate: false
         })
-	],
-	declarations: [
-		CallStatusComponent,
-		TextInputComponent,
-		OptionsInputComponent,
-		QuantityInputComponent,
-		PlainAmountInputComponent,
-		FileInputComponent,
-		DateInputComponent,
-		AddressInputComponent,
-		BooleanInputComponent,
-		MultiAddressInputComponent,
-		InputLabelComponent,
-		AmountInputComponent,
-		ExpandableFlexRow,
-		MultiTypeInputComponent,
-		DisableControlDirective
-	],
-	exports: [
-		CallStatusComponent,
-		TextInputComponent,
-		OptionsInputComponent,
-		QuantityInputComponent,
-		PlainAmountInputComponent,
-		FileInputComponent,
-		DateInputComponent,
-		AddressInputComponent,
-		BooleanInputComponent,
-		MultiAddressInputComponent,
-		InputLabelComponent,
-		AmountInputComponent,
-		ExpandableFlexRow,
-		MultiTypeInputComponent,
-    TranslateModule
-	],
-	providers: [
-	]
+    ],
+    declarations: [
+        CallStatusComponent,
+        TextInputComponent,
+        OptionsInputComponent,
+        QuantityInputComponent,
+        PlainAmountInputComponent,
+        FileInputComponent,
+        DateInputComponent,
+        AddressInputComponent,
+        BooleanInputComponent,
+        MultiAddressInputComponent,
+        InputLabelComponent,
+        AmountInputComponent,
+        ExpandableFlexRow,
+        MultiTypeInputComponent,
+        DisableControlDirective,
+        SingleClickDirective
+    ],
+    exports: [
+        CallStatusComponent,
+        TextInputComponent,
+        OptionsInputComponent,
+        QuantityInputComponent,
+        PlainAmountInputComponent,
+        FileInputComponent,
+        DateInputComponent,
+        AddressInputComponent,
+        BooleanInputComponent,
+        MultiAddressInputComponent,
+        InputLabelComponent,
+        AmountInputComponent,
+        ExpandableFlexRow,
+        MultiTypeInputComponent,
+        TranslateModule,
+        SingleClickDirective
+    ],
+    providers: [
+    ]
 })
 
-export class AppCommonModule {}
+export class AppCommonModule { }

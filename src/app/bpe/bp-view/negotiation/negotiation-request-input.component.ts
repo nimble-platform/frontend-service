@@ -1,12 +1,28 @@
+/*
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 import { Component, EventEmitter, OnInit, Input, Output, OnChanges } from "@angular/core";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { UnitService } from "../../../common/unit-service";
-import {ChildFormBase} from '../../../common/validation/child-form-base';
-import {FormControl, Validators} from '@angular/forms';
-import {ValidatorFn} from '@angular/forms/src/directives/validators';
-import {periodValidator, stepValidator, ValidationService} from '../../../common/validation/validators';
-import {FIELD_NAME_QUANTITY_VALUE} from '../../../common/constants';
-import {PeriodRange} from '../../../user-mgmt/model/period-range';
+import { ChildFormBase } from '../../../common/validation/child-form-base';
+import { FormControl, Validators } from '@angular/forms';
+import { ValidatorFn } from '@angular/forms/src/directives/validators';
+import { periodValidator, stepValidator, ValidationService } from '../../../common/validation/validators';
+import { FIELD_NAME_QUANTITY_VALUE } from '../../../common/constants';
+import { PeriodRange } from '../../../user-mgmt/model/period-range';
 const FIELD_NAME_NEGOTIATION_REQUEST_QUANTITY_INPUT_VALUE = 'quantity_value';
 const FIELD_NAME_NEGOTIATION_REQUEST_QUANTITY_INPUT_UNIT = 'quantity_unit';
 @Component({
@@ -26,7 +42,7 @@ export class NegotiationRequestInputComponent extends ChildFormBase implements O
     @Input() disabled: boolean = false;
     @Input() invalid: boolean = false;
     @Input() id: string;
-    
+
     // Set if the input should be of type text.
     private textValue?: string;
     @Output() textChange = new EventEmitter<string>();
@@ -53,7 +69,7 @@ export class NegotiationRequestInputComponent extends ChildFormBase implements O
     @Input() amountUnit?: string;
 
     constructor(private unitService: UnitService,
-                private validationService: ValidationService) {
+        private validationService: ValidationService) {
         super();
     }
 
@@ -87,8 +103,11 @@ export class NegotiationRequestInputComponent extends ChildFormBase implements O
         this.selectedChange.emit(selected);
     }
 
-    onQuantityValueChanged(): void {
+    onQuantityChanged(): void {
         this.quantityChange.emit(this.quantity);
+        // since PeriodValidator uses both quantity value and unit for the validation,
+        // we need to check the validity of quantity value (i.e., calling PeriodValidator) when the unit is updated as well
+        this.quantityValueFormControl.updateValueAndValidity();
     }
 
     @Input()

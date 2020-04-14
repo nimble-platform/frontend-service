@@ -1,15 +1,27 @@
-import {Injectable} from '@angular/core';
-import {Catalogue} from '../../catalogue/model/publish/catalogue';
-import {CookieService} from 'ng2-cookies';
-import {getAuthorizedHeaders} from '../../common/utils';
-import * as myGlobals from '../../globals';
-import {Http} from '@angular/http';
-import {CatalogueLine} from '../../catalogue/model/publish/catalogue-line';
-import {UBLModelUtils} from '../../catalogue/model/ubl-model-utils';
-
-/**
- * Created by suat on 11-Oct-19.
+/*
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
  */
+
+import { Injectable } from '@angular/core';
+import { Catalogue } from '../../catalogue/model/publish/catalogue';
+import { CookieService } from 'ng2-cookies';
+import { getAuthorizedHeaders } from '../../common/utils';
+import * as myGlobals from '../../globals';
+import { Http } from '@angular/http';
+import { CatalogueLine } from '../../catalogue/model/publish/catalogue-line';
+import { UBLModelUtils } from '../../catalogue/model/ubl-model-utils';
+import { CategoryService } from '../../catalogue/category/category.service';
+
 @Injectable()
 export class ShoppingCartDataService {
     // the persisted catalogue storing the catalogue lines in the cart
@@ -18,27 +30,33 @@ export class ShoppingCartDataService {
     private url = myGlobals.bpe_endpoint;
     private addCardBehaviour: string = myGlobals.config.addCartBehaviour;
 
-    constructor(private cookieService: CookieService,
-                private http: Http) {}
+    // service root category uris for the taxonomies. They are used to disable add cart button for services.
+    serviceRootCategories: string[];
 
-    public addItemToCart(productHjid: string | number,quantity:number = 1,delegateId:string): Promise<Catalogue> {
+    constructor(private cookieService: CookieService,
+        private categoryService: CategoryService,
+        private http: Http) {
+        this.fetchServiceRootCategories();
+    }
+
+    public addItemToCart(productHjid: string | number, quantity: number = 1, delegateId: string): Promise<Catalogue> {
         if (this.cartCatalogue == null) {
             return this.getShoppingCart().then(() => {
-                return this.execAddItemToCart(productHjid,quantity,delegateId);
+                return this.execAddItemToCart(productHjid, quantity, delegateId);
             });
         } else {
-            return this.execAddItemToCart(productHjid,quantity,delegateId);
+            return this.execAddItemToCart(productHjid, quantity, delegateId);
         }
     }
 
-    private execAddItemToCart(productHjid: string | number,quantity:number = 1,delegateId:string): Promise<Catalogue> {
+    private execAddItemToCart(productHjid: string | number, quantity: number = 1, delegateId: string): Promise<Catalogue> {
         let url = `${this.url}/shopping-cart?productId=${productHjid}&quantity=${quantity}`;
         let headers = getAuthorizedHeaders(this.cookieService);
-        if(delegateId != null){
-            headers.append("federationId",delegateId);
+        if (delegateId != null) {
+            headers.append("federationId", delegateId);
         }
         return this.http
-            .post(url, null, {headers: headers})
+            .post(url, null, { headers: headers })
             .toPromise()
             .then(res => {
                 this.cartCatalogue = res.json();
@@ -61,7 +79,7 @@ export class ShoppingCartDataService {
             }
         }
         return this.http
-            .delete(url, {headers: getAuthorizedHeaders(this.cookieService)})
+            .delete(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
                 for (let cartLineHjid of cartLineHjids) {
@@ -82,7 +100,7 @@ export class ShoppingCartDataService {
     public async createShoppingCart(): Promise<Catalogue> {
         let url = `${this.url}/shopping-cart/new`;
         return this.http
-            .post(url, null, {headers: getAuthorizedHeaders(this.cookieService)})
+            .post(url, null, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
                 this.cartCatalogue = res.json();
@@ -100,7 +118,7 @@ export class ShoppingCartDataService {
 
         let url = `${this.url}/shopping-cart`;
         return this.http
-            .get(url, {headers: getAuthorizedHeaders(this.cookieService)})
+            .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
                 if (res.text() === '') {
@@ -121,6 +139,26 @@ export class ShoppingCartDataService {
         if (inCart && this.addCardBehaviour === 'single') {
             return false;
         }
+        return true;
+    }
+
+    fetchServiceRootCategories(): void {
+        this.categoryService.getServiceCategoriesForAvailableTaxonomies().then(result => {
+            this.serviceRootCategories = result;
+        })
+    }
+
+    isShoppingCartButtonVisible(categoryUris: string[]): boolean {
+        if (this.serviceRootCategories == null || !this.cartFetched()) {
+            return false;
+        }
+
+        for (let categoryUri of categoryUris) {
+            if (this.serviceRootCategories.findIndex(serviceCategory => serviceCategory === categoryUri) !== -1) {
+                return false;
+            }
+        }
+
         return true;
     }
 

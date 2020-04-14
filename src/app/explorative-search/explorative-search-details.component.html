@@ -1,17 +1,33 @@
+<!--
+ * Copyright 2020
+ * University of Bremen, Faculty of Production Engineering, Badgasteiner Straße 1, 28359 Bremen, Germany.
+ * In collaboration with BIBA - Bremer Institut für Produktion und Logistik GmbH, Bremen, Germany.
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License. -->
+
 <!-- Explorative Search Details HTML -->
 <ngb-alert type="info" *ngIf="!introAlert" (close)="introAlert = true">
     <div class="row">
-    <div class="col-md-2"><i class="fa fa-6x fa-info-circle"></i></div>
-    <div class="col-md-10">
-        <p>
-            <strong>Let Us Help You</strong>
-        </p>
+        <div class="col-md-2"><i class="fa fa-6x fa-info-circle"></i></div>
+        <div class="col-md-10">
+            <p>
+                <strong>Let Us Help You</strong>
+            </p>
             <ul>
                 <li><span [innerHTML]="'exp-search-details-help-1' | translate"></span></li>
                 <li><span [innerHTML]="'exp-search-details-help-2' | translate"></span></li>
                 <li><span [innerHTML]="'exp-search-details-help-3' | translate"></span></li>
             </ul>
-    </div>
+        </div>
     </div>
 </ngb-alert>
 <ngb-alert type="info" *ngIf="rerenderAlert" (close)="rerenderAlert = false">
@@ -22,9 +38,9 @@
 <div [hidden]="!hiddenElement">
     <div class="row">
         <!--<pre>-->
-            <!--<code>-->
-                <!--{{sparqlSelectedOption | json}}-->
-            <!--</code>-->
+        <!--<code>-->
+        <!--{{sparqlSelectedOption | json}}-->
+        <!--</code>-->
         <!--</pre>-->
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
@@ -78,16 +94,14 @@
             </div>
         </div>
         <div class="col-md-2" *ngIf="arrayPassedToChild.length">
-            <search-filter *ngFor="let eachFilter of arrayPassedToChild" [filterProperties]="eachFilter"
-                           (filterSelectionUpdated)="handleFilterSelectionUpdated($event)">
+            <search-filter *ngFor="let eachFilter of arrayPassedToChild" [filterProperties]="eachFilter" (filterSelectionUpdated)="handleFilterSelectionUpdated($event)">
             </search-filter>
         </div>
     </div>
 </div>
 <div class="row mt-4" [hidden]="hiddenElement">
     <div class="col-3 float-left">
-            <button class="btn btn-lg btn-primary" [disabled]="!tableJSON['parameters'].length"
-                    (click)="genTable()"><span [innerHTML]="'Obtain Results' | translate"></span></button>
+        <button class="btn btn-lg btn-primary" [disabled]="!tableJSON['parameters'].length" (click)="genTable()"><span [innerHTML]="'Obtain Results' | translate"></span></button>
     </div>
     <div class="col-9">
         <p class="text-secondary text-sm-left"><i class="fas fa-info-circle pr-1"></i> <span [innerHTML]="'exp-search-details-help-7' | translate"></span></p>
@@ -111,7 +125,6 @@
     </div>
 </div>
 
-
 <div *ngIf="tableJSON['parameters'].length">
     <div class="jumbotron" *ngIf="tableResult?.columns !== undefined && !tableResult?.columns.length">
         <div class="container">
@@ -129,38 +142,37 @@
         <div class="table-responsive table-hover" style="overflow-y: scroll; height: 35vh">
             <table class="table table-sm table-bordered">
                 <caption><span [innerHTML]="'Available Results from NIMBLE' | translate"></span></caption>
-              <thead>
-                <tr>
-                    <!--<th>-->
+                <thead>
+                    <tr>
+                        <!--<th>-->
                         <!--Result-->
-                    <!--</th>-->
-                    <th *ngFor="let column of tableResult?.columns; let i=index" scope="col">
-                        {{column}}
-                    </th>
-                    <th *ngIf="tableResult?.uuids.length">
-                        More
-                    </th>
-                </tr>
-              </thead>
+                        <!--</th>-->
+                        <th *ngFor="let column of tableResult?.columns; let i=index" scope="col">
+                            {{column}}
+                        </th>
+                        <th *ngIf="tableResult?.uuids.length">
+                            More
+                        </th>
+                    </tr>
+                </thead>
                 <tbody>
-                <tr *ngFor="let row of tableResult?.rows; let i=index"  [ngClass] = "{'selected-row': i === selectedProduct}">
-                    <!--<td>{{i+1}}</td>-->
-                    <td *ngFor="let field of row">{{field}}</td>
-                    <td *ngIf="tableResult?.uuids.length">
-                        <button class="btn btn-xs btn-outline-primary"
-                                (click)="getSparqlOptionalSelect(i)">
-                            <span [innerHTML]="'Further Info.' | translate"></span>
-                        </button>
-                    </td>
-                </tr>
+                    <tr *ngFor="let row of tableResult?.rows; let i=index" [ngClass]="{'selected-row': i === selectedProduct}">
+                        <!--<td>{{i+1}}</td>-->
+                        <td *ngFor="let field of row">{{field}}</td>
+                        <td *ngIf="tableResult?.uuids.length">
+                            <button class="btn btn-xs btn-outline-primary" (click)="getSparqlOptionalSelect(i)">
+                                <span [innerHTML]="'Further Info.' | translate"></span>
+                            </button>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
 <!--<pre>-->
-        <!--<code>{{tableJSON | json}}</code>-->
+<!--<code>{{tableJSON | json}}</code>-->
 <!--</pre>-->
 <!--<pre>-->
-    <!--<code>{{tableResult | json}}</code>-->
+<!--<code>{{tableResult | json}}</code>-->
 <!--</pre>-->

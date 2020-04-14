@@ -1,3 +1,20 @@
+/**
+ * Copyright 2020
+ * University of Bremen, Faculty of Production Engineering, Badgasteiner Straße 1, 28359 Bremen, Germany.
+ * In collaboration with BIBA - Bremer Institut für Produktion und Logistik GmbH, Bremen, Germany.
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 import { Component } from '@angular/core';
 import { Search } from './model/search';
 import { TnTService } from './tnt.service';
@@ -37,7 +54,6 @@ export class TnTFormComponent {
             })
             .catch(error => {
                 if (error.status === 404) {
-                    // console.log(error);
                     this.falsecode = error._body;
                 }
                 this.error_detc = true;
@@ -48,23 +64,24 @@ export class TnTFormComponent {
         this.falsecode = '';
         this.bpInfo = [];
         this.trackingInfo = [];
+        this.verified = false;
     }
 
-    getTableInfo(code, data) {
-                this.trackingInfo = data.map(el => {
-                    let _out = {
-                        'epc': code,
-                        'eventTime': el.eventTime.$date,
-                        'bizStep': el.bizStep.split(':').pop(),
-                        'action': el.action,
-                        'readPoint': el.readPoint.id.split(':').pop(),
-                    };
-                    if ('bizLocation' in el) {
-                        _out['bizLocation'] = el.bizLocation.id.split(':').pop();
-                        return _out;
-                    }
-                    return _out;
-                });
+    getTableInfo(code: string, data: any) {
+        this.trackingInfo = data.map((el: any) => {
+            let _out = {
+                'epc': code,
+                'eventTime': el.eventTime.$date,
+                'bizStep': el.bizStep.split(':').pop(),
+                'action': el.action,
+                'readPoint': el.readPoint.id.split(':').pop(),
+            };
+            if ('bizLocation' in el) {
+                _out['bizLocation'] = el.bizLocation.id.split(':').pop();
+                return _out;
+            }
+            return _out;
+        });
     }
 
     verifyOnBlockchain() {
@@ -73,10 +90,7 @@ export class TnTFormComponent {
                 if (this.debug) {
                     console.log(res);
                 }
-                this.verified = res;
-                this.trackingInfo.forEach(event => {
-                    event['verified'] = this.verified
-                });
+                this.verified = (res === 'true');
             })
             .catch(err => {
                 this.falsecode = err._body;
