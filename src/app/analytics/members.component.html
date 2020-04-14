@@ -1,97 +1,106 @@
+<!--
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <div class="row">
-  <div class="col-8">
-    <h4><span *ngIf="!mgmt_view" [innerHTML]="'Platform Members' | translate"></span><span *ngIf="mgmt_view && unverified" [innerHTML]="'Unverified Companies' | translate"></span><span *ngIf="mgmt_view && !unverified" [innerHTML]="'Registered Companies' | translate"></span>
-        <span *ngIf="totalElements>0">(<span [innerHTML]="'Total' | translate"></span> {{ totalElements }})</span>
-    </h4>
-  </div>
-  <div class="col-4 text-right">
-    <span [innerHTML]="'Showing results' | translate"></span> {{ start }} - {{ end }} <span [innerHTML]="'of' | translate"></span> {{ size }}
-  </div>
+    <div class="col-8">
+        <h4><span *ngIf="!mgmt_view" [innerHTML]="'Platform Members' | translate"></span><span *ngIf="mgmt_view && unverified" [innerHTML]="'Unverified Companies' | translate"></span><span *ngIf="mgmt_view && !unverified" [innerHTML]="'Registered Companies' | translate"></span>
+            <span *ngIf="totalElements>0">(<span [innerHTML]="'Total' | translate"></span> {{ totalElements }})</span>
+        </h4>
+    </div>
+    <div class="col-4 text-right">
+        <span [innerHTML]="'Showing results' | translate"></span> {{ start }} - {{ end }} <span [innerHTML]="'of' | translate"></span> {{ size }}
+    </div>
 </div>
 
 <form (ngSubmit)="searchCompany()" class="space-before" #searchForm="ngForm" novalidate>
-	<div class="form-group row">
-		<div class="col-8">
-				<div class="input-group">
-					<input type="text" class="form-control" id="searchTerm" [(ngModel)]="model.q" [ngbTypeahead]="getCompSuggestions" [focusFirst]=false [disabled]="companiesCallStatus.isLoading()" name="searchTerm" #q="ngModel" [placeholder]="'Company Name' | translate">
-					<div class="input-group-append">
-						<button type="submit" [disabled]="companiesCallStatus.isLoading() || !searchForm.form.valid" class="btn btn-outline-secondary">
-							<i class="fa fa-search"></i>
-						</button>
-					</div>
-				</div>
-		</div>
-    <div class="col-4 text-right">
-      <div class="input-group">
-          <label class="col-form-label space-right"><strong><span [innerHTML]="'Sort by:' | translate"></span></strong>
-          </label>
-          <select class="form-control custom-select" (change)="setSort($event.target.value)">
-            <!--<option value="score desc" [selected]="sort=='score desc'"><span [innerHTML]="'Relevance' | translate"></span></option>-->
-            <option value="legalName asc" [selected]="sort=='legalName asc'"><span [innerHTML]="'A -> Z' | translate"></span></option>
-            <option value="legalName desc" [selected]="sort=='legalName desc'"><span [innerHTML]="'Z -> A' | translate"></span></option>
-            <option *ngIf="mgmt_view" value="uri asc" [selected]="sort=='uri asc'"><span [innerHTML]="'ID: 0 -> 9' | translate"></span></option>
-            <option *ngIf="mgmt_view" value="uri desc" [selected]="sort=='uri desc'"><span [innerHTML]="'ID: 9 -> 0' | translate"></span></option>
-          </select>
-      </div>
+    <div class="form-group row">
+        <div class="col-8">
+            <div class="input-group">
+                <input type="text" class="form-control" id="searchTerm" [(ngModel)]="model.q" [ngbTypeahead]="getCompSuggestions" [focusFirst]=false [disabled]="companiesCallStatus.isLoading()" name="searchTerm" #q="ngModel" [placeholder]="'Company Name' | translate">
+                <div class="input-group-append">
+                    <button type="submit" [disabled]="companiesCallStatus.isLoading() || !searchForm.form.valid" class="btn btn-outline-secondary">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-4 text-right">
+            <div class="input-group">
+                <label class="col-form-label space-right"><strong><span [innerHTML]="'Sort by:' | translate"></span></strong>
+                </label>
+                <select class="form-control custom-select" (change)="setSort($event.target.value)">
+                    <!--<option value="score desc" [selected]="sort=='score desc'"><span [innerHTML]="'Relevance' | translate"></span></option>-->
+                    <option value="legalName asc" [selected]="sort=='legalName asc'"><span [innerHTML]="'A -> Z' | translate"></span></option>
+                    <option value="legalName desc" [selected]="sort=='legalName desc'"><span [innerHTML]="'Z -> A' | translate"></span></option>
+                    <option *ngIf="mgmt_view" value="uri asc" [selected]="sort=='uri asc'"><span [innerHTML]="'ID: 0 -> 9' | translate"></span></option>
+                    <option *ngIf="mgmt_view" value="uri desc" [selected]="sort=='uri desc'"><span [innerHTML]="'ID: 9 -> 0' | translate"></span></option>
+                </select>
+            </div>
+        </div>
     </div>
-	</div>
 </form>
 
 <call-status [callStatus]="companiesCallStatus" [large]="true"></call-status>
 
 <div *ngIf="!companiesCallStatus.isLoading()" class="row">
-  <div *ngIf="size==0" class="col-12">
-    <span [innerHTML]="'No search results' | translate"></span><br/>
-    <button *ngIf="totalElements>0" class="btn btn-secondary mt-2 mb-2" (click)="resetSearch()"><span [innerHTML]="'Reset Search' | translate"></span></button>
-  </div>
-  <div *ngIf="size>0" class="col-12">
-    <div class="row">
-      <div *ngFor="let result of response;let ind=index" class="col-3">
-        <div *ngIf="result.uri != null" class="card pointer mb-3">
-          <div class="card-body">
-            <div class="row">
-              <div class="align-center col-12 pb-1">
-                <img src="{{imgEndpoint}}{{result[product_vendor_img]}}" class="thumb" onerror="this.src='assets/empty_img.png';"/>
-              </div>
-              <div class="col-12 pt-1" [ngClass]="{'pb-1':!mgmt_view,'pb-2 border-bottom':mgmt_view}">
-                <div class="text-center" style="max-height:1.5rem;overflow:hidden;">
-                  <a *ngIf="result.website && getLink(result.website) != ''"
-                     [href]="getLink(result.website)"
-                     [title]="result[product_vendor_name]"
-                     target="_blank">{{result[product_vendor_name]}}</a>
-                  <span *ngIf="!result.website || getLink(result.website) == ''"
-                     [title]="result[product_vendor_name]">{{result[product_vendor_name]}}</span>
+    <div *ngIf="size==0" class="col-12">
+        <span [innerHTML]="'No search results' | translate"></span><br />
+        <button *ngIf="totalElements>0" class="btn btn-secondary mt-2 mb-2" (click)="resetSearch()"><span [innerHTML]="'Reset Search' | translate"></span></button>
+    </div>
+    <div *ngIf="size>0" class="col-12">
+        <div class="row">
+            <div *ngFor="let result of response;let ind=index" class="col-3">
+                <div *ngIf="result.uri != null" class="card pointer mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="align-center col-12 pb-1">
+                                <img src="{{imgEndpoint}}{{result[product_vendor_img]}}" class="thumb" onerror="this.src='assets/empty_img.png';" />
+                            </div>
+                            <div class="col-12 pt-1" [ngClass]="{'pb-1':!mgmt_view,'pb-2 border-bottom':mgmt_view}">
+                                <div class="text-center" style="max-height:1.5rem;overflow:hidden;">
+                                    <a *ngIf="result.website && getLink(result.website) != ''" [href]="getLink(result.website)" [title]="result[product_vendor_name]" target="_blank">{{result[product_vendor_name]}}</a>
+                                    <span *ngIf="!result.website || getLink(result.website) == ''" [title]="result[product_vendor_name]">{{result[product_vendor_name]}}</span>
+                                </div>
+                            </div>
+                            <div *ngIf="mgmt_view" class="col-12 pt-2">
+                                <div *ngIf="unverified">
+                                    <a class="btn btn-primary mb-2" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: result.uri, viewMode:'mgmt'}">Details (ID: {{result.uri}})</a><br />
+                                    <button class="btn btn-success" (click)="verifyCompany(result.uri)"><span [innerHTML]="'Verify' | translate"></span>
+                                    </button>
+                                    <button class="btn btn-danger ml-2" (click)="rejectCompany(result.uri)">
+                                        <span [innerHTML]="'Reject' | translate"></span>
+                                    </button>
+                                </div>
+                                <div *ngIf="!unverified">
+                                    <a class="btn btn-primary mb-2" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: result.uri, viewMode:'mgmt'}">Details (ID: {{result.uri}})</a><br />
+                                    <a class="btn btn-primary" role="button" target="_blank" [routerLink]="['/user-mgmt/company-settings']" [queryParams]="{id: result.uri, viewMode:'data'}">Change Data</a>
+                                    <button class="btn btn-danger ml-2" (click)="deleteCompany(result.uri)">
+                                        <span [innerHTML]="'Delete' | translate"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <div *ngIf="mgmt_view" class="col-12 pt-2">
-                <div *ngIf="unverified">
-                  <a class="btn btn-primary mb-2" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: result.uri, viewMode:'mgmt'}">Details (ID: {{result.uri}})</a><br/>
-                  <button class="btn btn-success" (click)="verifyCompany(result.uri)"
-                  ><span [innerHTML]="'Verify' | translate"></span>
-                  </button>
-                  <button class="btn btn-danger ml-2" (click)="rejectCompany(result.uri)">
-                    <span [innerHTML]="'Reject' | translate"></span>
-                  </button>
-                </div>
-                <div *ngIf="!unverified">
-                  <a class="btn btn-primary mb-2" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: result.uri, viewMode:'mgmt'}">Details (ID: {{result.uri}})</a><br/>
-                  <a class="btn btn-primary" role="button" target="_blank" [routerLink]="['/user-mgmt/company-settings']" [queryParams]="{id: result.uri, viewMode:'data'}">Change Data</a>
-                  <button class="btn btn-danger ml-2" (click)="deleteCompany(result.uri)">
-                    <span [innerHTML]="'Delete' | translate"></span>
-                  </button>
-                </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12">
-        <div class="justify-content-center pagination">
-          <ngb-pagination [(collectionSize)]="size" [(page)]="page" [pageSize]="rows" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getCompanies()"></ngb-pagination>
+        <div class="row">
+            <div class="col-12">
+                <div class="justify-content-center pagination">
+                    <ngb-pagination [(collectionSize)]="size" [(page)]="page" [pageSize]="rows" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getCompanies()"></ngb-pagination>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>

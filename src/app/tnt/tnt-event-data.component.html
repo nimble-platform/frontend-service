@@ -14,16 +14,16 @@
    See the License for the specific language governing permissions and
    limitations under the License. -->
 
-<div class="container-fluid"  *ngIf="incomingTrackingInfo.length">
+<div class="container-fluid" *ngIf="incomingTrackingInfo.length">
     <div class="row mt-3">
         <div class="col-sm-12">
             <h4>
                 <span><i class="fas fa-box"></i></span>
                 <span [innerHTML]="'Tracking Information' | translate"></span>
-                    : {{incomingTrackingInfo[0].epc}}
+                : {{incomingTrackingInfo[0].epc}}
             </h4>
             <ngb-alert type="success" [dismissible]="false" *ngIf="bcEventVerified">
-                <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'These Event Data are Registered in BlockChain' | translate"></span>  <i class="fas fa-project-diagram pl-1"></i>
+                <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'These Event Data are Registered in BlockChain' | translate"></span> <i class="fas fa-project-diagram pl-1"></i>
             </ngb-alert>
         </div>
     </div>
@@ -33,29 +33,29 @@
                 <ngb-tab>
                     <ng-template ngbTabTitle><span [innerHTML]="'Tabular View' | translate"></span> <i class="fas fa-table"></i></ng-template>
                     <ng-template ngbTabContent>
-                                <table class="table table-hover table-bordered mt-2">
-                                    <thead class="thead-dark">
-                                        <tr>
-                                            <th scope="col"><span [innerHTML]="'Event Time' | translate"></span> in UTC</th>
-                                            <th scope="col"><span [innerHTML]="'Business Step' | translate"></span></th>
-                                            <th scope="col"><span [innerHTML]="'Details' | translate"></span></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let entry of events; let i = index" [ngClass]="{'selected': selectedEvent==entry}">
-                                            <th scope="row">{{entry.eventTime | date:'medium':'UTC'}}</th>
-                                            <td>{{entry.bizStep}}</td>
-                                            <td><button class="btn btn-link btn-sm" (click)="eventSelection(entry)"><i class="fas fa-info-circle"></i>
-                                                    <span [innerHTML]="'More Info' | translate"></span>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div class="d-flex justify-content-between p-2">
-                                        <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize">
-                                        </ngb-pagination>
-                                </div>
+                        <table class="table table-hover table-bordered mt-2">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col"><span [innerHTML]="'Event Time' | translate"></span> in UTC</th>
+                                    <th scope="col"><span [innerHTML]="'Business Step' | translate"></span></th>
+                                    <th scope="col"><span [innerHTML]="'Details' | translate"></span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let entry of events; let i = index" [ngClass]="{'selected': selectedEvent==entry}">
+                                    <th scope="row">{{entry.eventTime | date:'medium':'UTC'}}</th>
+                                    <td>{{entry.bizStep}}</td>
+                                    <td><button class="btn btn-link btn-sm" (click)="eventSelection(entry)"><i class="fas fa-info-circle"></i>
+                                            <span [innerHTML]="'More Info' | translate"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-between p-2">
+                            <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize">
+                            </ngb-pagination>
+                        </div>
                     </ng-template>
                 </ngb-tab>
                 <ngb-tab>
@@ -64,8 +64,8 @@
                     </ng-template>
                     <ng-template ngbTabContent>
                         <div class="d-flex justify-content-between p-2">
-                                <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize">
-                                </ngb-pagination>
+                            <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize">
+                            </ngb-pagination>
                         </div>
                         <div class="timeline">
                             <div class="tl-container right" *ngFor="let entry of events; let i = index">
@@ -83,7 +83,7 @@
             </ngb-tabset>
         </div>
         <div class="col-sm-7 d-flex justify-content-center">
-                <tnt-event-details [eventsToDisplay]="eventsToDescribe"></tnt-event-details>
+            <tnt-event-details [eventsToDisplay]="eventsToDescribe"></tnt-event-details>
         </div>
     </div>
 </div>

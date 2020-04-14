@@ -1,19 +1,32 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <div class="row" *ngIf="!readonly">
     <div class="col-6">
         <div class="row">
             <div class="col-5">
                 <input-label [label]="'Item Property'"></input-label>
                 <!--<div *ngFor="let itemProperty of priceOption.itemProperty; let i = index">-->
-                    <!--<div class="mt-3">-->
-                        <!--<strong>{{itemProperty.name}}: </strong>-->
-                    <!--</div>-->
+                <!--<div class="mt-3">-->
+                <!--<strong>{{itemProperty.name}}: </strong>-->
+                <!--</div>-->
                 <!--</div>-->
             </div>
             <div class="col-7">
                 <select class="form-control form-control-sm" #itemPropertySelect>
                     <ng-container *ngFor="let itemProperty of catalogueLine.goodsItem.item.additionalItemProperty">
-                        <option *ngIf="itemProperty.valueQualifier !== 'BOOLEAN' && itemProperty.valueQualifier !== 'FILE'"
-                                [value]="itemProperty.id">{{getItemPropertyName(itemProperty.name)}}</option>
+                        <option *ngIf="itemProperty.valueQualifier !== 'BOOLEAN' && itemProperty.valueQualifier !== 'FILE'" [value]="itemProperty.id">{{getItemPropertyName(itemProperty.name)}}</option>
                     </ng-container>
                 </select>
             </div>
@@ -53,8 +66,7 @@
             </div>
         </div>
         <div *ngIf="readonly" class="col-9 object-list align-items-center">
-            <div *ngFor="let value of getPropertyValuesAsStrings(itemProperty)"
-                 class="bordered value-pill" title="{{ value }}">
+            <div *ngFor="let value of getPropertyValuesAsStrings(itemProperty)" class="bordered value-pill" title="{{ value }}">
                 <div class="d-flex align-items-center">
                     <div class="mr-2">
                         <label>{{ value }}</label>

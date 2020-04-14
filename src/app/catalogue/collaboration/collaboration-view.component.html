@@ -1,6 +1,21 @@
+<!--
+ * Copyright 2020
+ * DOMINA - Organization and Logistics; Biella; Italy
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <div class="d-flex justify-content-end">
-    <call-status [callStatus]="callStatus"
-        class="d-flex">
+    <call-status [callStatus]="callStatus" class="d-flex">
     </call-status>
 </div>
 
@@ -8,140 +23,97 @@
     <div class="col-md-4">
         <div>
             <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
-			    <span class="nav-item">Project:&nbsp;&nbsp;&nbsp;</span>
-	            <select  class="custom-select col-8 space-right" [(ngModel)]="activeProject" (change)="onProjectSelected()">
-					<option *ngFor="let prj of projects" [value]="prj.name">{{prj.name}}</option>
-				</select>
+                <span class="nav-item">Project:&nbsp;&nbsp;&nbsp;</span>
+                <select class="custom-select col-8 space-right" [(ngModel)]="activeProject" (change)="onProjectSelected()">
+                    <option *ngFor="let prj of projects" [value]="prj.name">{{prj.name}}</option>
+                </select>
                 <button (click)="onProjectSelected()" class="btn btn-outline-secondary">
-					<i class="fa fa-search"></i>
+                    <i class="fa fa-search"></i>
                 </button>
 
             </div>
 
-			<div *ngFor="let itemLine of resources; let i = index" class="space-before">
-				<div class="card pointer" style="background-color:#F2F2F2;padding-left: 25px;">
-					<div class="card-body" (click)="onResourceClick(itemLine)">
-						<div class="row">	
-							<div class="col-10">
-								<p style="word-break: break-all;word-wrap: break-word;">						
-									<strong>{{itemLine.name}}</strong>
-								</p>
-								<p style="word-break: break-all;word-wrap: break-word;">
-									Version {{itemLine.version}} &nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;{{itemLine.user}}
-									<br>
-									{{itemLine.notes}}
-								</p>
-							</div>
-							<div class="col-12 pr-0 align-right space-before">						
-								<button type="button"  class="btn btn-primary action" (click)="showResourceHistory(itemLine)">
-									History
-								</button>
-							</div>
-						</div>
-					</div>
-					<div *ngFor="let itemH of itemLine.children; let i = index" class="space-before">
-						<div class="card pointer" style="background-color:#FAFAFA;padding-left: 25px;">
-							<div class="card-body" (click)="onResourceHistoryClick(itemH)">
-								<div class="row">	
-									<div class="col-10">
-										<p style="word-break: break-all;word-wrap: break-word;">						
-											<strong>{{itemH.name}}</strong>
-										</p>
-										<p style="word-break: break-all;word-wrap: break-word;">
-											Version {{itemH.version}} &nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;{{itemH.user}}
-											<br>
-											{{itemH.notes}}
-										</p>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+            <div *ngFor="let itemLine of resources; let i = index" class="space-before">
+                <div class="card pointer" style="background-color:#F2F2F2;padding-left: 25px;">
+                    <div class="card-body" (click)="onResourceClick(itemLine)">
+                        <div class="row">
+                            <div class="col-10">
+                                <p style="word-break: break-all;word-wrap: break-word;">
+                                    <strong>{{itemLine.name}}</strong>
+                                </p>
+                                <p style="word-break: break-all;word-wrap: break-word;">
+                                    Version {{itemLine.version}} &nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;{{itemLine.user}}
+                                    <br>
+                                    {{itemLine.notes}}
+                                </p>
+                            </div>
+                            <div class="col-12 pr-0 align-right space-before">
+                                <button type="button" class="btn btn-primary action" (click)="showResourceHistory(itemLine)">
+                                    History
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngFor="let itemH of itemLine.children; let i = index" class="space-before">
+                        <div class="card pointer" style="background-color:#FAFAFA;padding-left: 25px;">
+                            <div class="card-body" (click)="onResourceHistoryClick(itemH)">
+                                <div class="row">
+                                    <div class="col-10">
+                                        <p style="word-break: break-all;word-wrap: break-word;">
+                                            <strong>{{itemH.name}}</strong>
+                                        </p>
+                                        <p style="word-break: break-all;word-wrap: break-word;">
+                                            Version {{itemH.version}} &nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;{{itemH.user}}
+                                            <br>
+                                            {{itemH.notes}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="col-md-8">
-		<div class="card pointer" style="background-color:#F2F2F2;padding-left: 25px;">
-			<span>{{tebugTextP1}}</span>
-			<div *ngIf="activeResource != null" class="card-body">
-				<div class="row">
-					<div class="col-10">				
-						<!-- Image -->
-						<div class="product-image justify-content-center">
+        <div class="card pointer" style="background-color:#F2F2F2;padding-left: 25px;">
+            <span>{{tebugTextP1}}</span>
+            <div *ngIf="activeResource != null" class="card-body">
+                <div class="row">
+                    <div class="col-10">
+                        <!-- Image -->
+                        <div class="product-image justify-content-center">
 
-							<img *ngIf="activeResource.imageData == ''"
-								 class="img-max"
-							     style="margin: auto; padding: 20px;"
-								 src="../../../assets/images/empty_img.png">
-							<img *ngIf="activeResource.imageData != ''"
-								 class="img-selected d-block active"
-							     style="margin: auto; padding: 20px;"
-								 src="data:image/png;base64,{{activeResource.imageData}}"/>
+                            <img *ngIf="activeResource.imageData == ''" class="img-max" style="margin: auto; padding: 20px;" src="../../../assets/images/empty_img.png">
+                            <img *ngIf="activeResource.imageData != ''" class="img-selected d-block active" style="margin: auto; padding: 20px;" src="data:image/png;base64,{{activeResource.imageData}}" />
 
-						</div>
+                        </div>
 
-						<!-- product ID -->
-						<text-input label="Name"
-									[(text)]="activeResource.key"
-									[rows]="1"
-									[maxLength]="150"
-									[rowClass]="'m-0'"
-									[valueClass]="'col-8 pr-0'"
-									[disabled]="true">
-						</text-input>
-						<text-input label="Season"
-									[(text)]="activeResource.season"
-									[rows]="1"
-									[maxLength]="250"
-									[rowClass]="'m-0'"
-									[valueClass]="'col-8 pr-0'"
-									[disabled]="true">
-						</text-input>
-						<text-input label="Sector"
-									[(text)]="activeResource.sector"
-									[rows]="1"
-									[maxLength]="250"
-									[rowClass]="'m-0'"
-									[valueClass]="'col-8 pr-0'"
-									[disabled]="true">
-						</text-input>
-						<text-input label="Composition"
-									[(text)]="activeResource.composition"
-									[rows]="2"
-									[maxLength]="300"
-									[rowClass]="'m-0'"
-									[valueClass]="'col-8 pr-0'"
-									[disabled]="true">
-						</text-input>
-						<text-input label="Price"
-									[(text)]="activeResource.price"
-									[rows]="1"
-									[maxLength]="150"
-									[rowClass]="'m-0'"
-									[valueClass]="'col-8 pr-0'"
-									[disabled]="true">
-						</text-input>
-						<hr>
-						<!-- NOTES -->
-						<text-input label="Notes" 
-								    [(text)]="itemNote" 
-									[rows]="6" 
-									[maxLength]="2047" 
-									[rowClass]="'m-0 space-before'" 
-									[flexClass]="'col-1 pr-0'" 
-									(textChange)="onUpdateResource()"
-									[valueClass]="'col-8 pr-0'">
-						</text-input>
-						<br>
-						<div class="col-12 pr-0 align-right space-before">						
-							<button type="button"  class="btn btn-primary action" [disabled]="!isResourceModified()" (click)="updateResource()">
-								Update Sample
-							</button>
-						</div>
-					</div>
+                        <!-- product ID -->
+                        <text-input label="Name" [(text)]="activeResource.key" [rows]="1" [maxLength]="150" [rowClass]="'m-0'" [valueClass]="'col-8 pr-0'" [disabled]="true">
+                        </text-input>
+                        <text-input label="Season" [(text)]="activeResource.season" [rows]="1" [maxLength]="250" [rowClass]="'m-0'" [valueClass]="'col-8 pr-0'" [disabled]="true">
+                        </text-input>
+                        <text-input label="Sector" [(text)]="activeResource.sector" [rows]="1" [maxLength]="250" [rowClass]="'m-0'" [valueClass]="'col-8 pr-0'" [disabled]="true">
+                        </text-input>
+                        <text-input label="Composition" [(text)]="activeResource.composition" [rows]="2" [maxLength]="300" [rowClass]="'m-0'" [valueClass]="'col-8 pr-0'" [disabled]="true">
+                        </text-input>
+                        <text-input label="Price" [(text)]="activeResource.price" [rows]="1" [maxLength]="150" [rowClass]="'m-0'" [valueClass]="'col-8 pr-0'" [disabled]="true">
+                        </text-input>
+                        <hr>
+                        <!-- NOTES -->
+                        <text-input label="Notes" [(text)]="itemNote" [rows]="6" [maxLength]="2047" [rowClass]="'m-0 space-before'" [flexClass]="'col-1 pr-0'" (textChange)="onUpdateResource()" [valueClass]="'col-8 pr-0'">
+                        </text-input>
+                        <br>
+                        <div class="col-12 pr-0 align-right space-before">
+                            <button type="button" class="btn btn-primary action" [disabled]="!isResourceModified()" (click)="updateResource()">
+                                Update Sample
+                            </button>
+                        </div>
+                    </div>
 
-					<!--
+                    <!--
 							<button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLine()" (click)="onPublish(true)">
 								{{ publishStateService.publishMode === "edit" ? "Save & Exit" : "Publish & Exit"  }}
 							</button>
@@ -156,7 +128,7 @@
 						</text-input>
 
 					<div _ngcontent-c4="" class="col-10">
-						<p _ngcontent-c4="" style="word-break: break-all;word-wrap: break-word;">						
+						<p _ngcontent-c4="" style="word-break: break-all;word-wrap: break-word;">
 							<strong _ngcontent-c4=""> art</strong>
 						</p>
 						<p _ngcontent-c4="" style="word-break: break-all;word-wrap: break-word;">
@@ -166,9 +138,9 @@
 						</p>
 					</div>
 					-->
-				</div>
-			</div>
-		</div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

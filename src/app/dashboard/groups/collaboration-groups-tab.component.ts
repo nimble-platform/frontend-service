@@ -1,24 +1,38 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {TranslateService} from '@ngx-translate/core';
-import {DashboardQueryParameters} from '../model/dashboard-query-parameters';
-import {CollaborationGroupResults} from '../model/collaboration-group-results';
-import {CallStatus} from '../../common/call-status';
-import {ProcessInstanceGroupFilter} from '../../bpe/model/process-instance-group-filter';
-import {ActivatedRoute, Params, Router} from '@angular/router';
-import {BPEService} from '../../bpe/bpe.service';
-import {CookieService} from 'ng2-cookies';
-import {DashboardQuery} from '../model/dashboard-query';
-import {FEDERATION, FEDERATIONID} from '../../catalogue/model/constants';
-import {PAGE_SIZE, TABS} from '../constants';
-import {FederatedCollaborationGroupMetadata} from '../../bpe/model/federated-collaboration-group-metadata';
+/*
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { DashboardQueryParameters } from '../model/dashboard-query-parameters';
+import { CollaborationGroupResults } from '../model/collaboration-group-results';
+import { CallStatus } from '../../common/call-status';
+import { ProcessInstanceGroupFilter } from '../../bpe/model/process-instance-group-filter';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { BPEService } from '../../bpe/bpe.service';
+import { CookieService } from 'ng2-cookies';
+import { DashboardQuery } from '../model/dashboard-query';
+import { FEDERATION, FEDERATIONID } from '../../catalogue/model/constants';
+import { PAGE_SIZE, TABS } from '../constants';
+import { FederatedCollaborationGroupMetadata } from '../../bpe/model/federated-collaboration-group-metadata';
 import * as myGlobals from '../../globals';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {CollaborationGroup} from '../../bpe/model/collaboration-group';
-import {DashboardUser} from '../model/dashboard-user';
-import {deepEquals, selectNameFromLabelObject} from '../../common/utils';
-import {AppComponent} from '../../app.component';
-import {ProcessInstanceGroupResults} from '../model/process-instance-group-results';
-import {CategoryService} from '../../catalogue/category/category.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { CollaborationGroup } from '../../bpe/model/collaboration-group';
+import { DashboardUser } from '../model/dashboard-user';
+import { deepEquals, selectNameFromLabelObject } from '../../common/utils';
+import { AppComponent } from '../../app.component';
+import { ProcessInstanceGroupResults } from '../model/process-instance-group-results';
+import { CategoryService } from '../../catalogue/category/category.service';
 @Component({
     selector: 'collaboration-groups-tab',
     templateUrl: './collaboration-groups-tab.component.html',
@@ -39,9 +53,9 @@ export class CollaborationGroupsTabComponent {
     set selectedTab(value: string) {
         this._selectedTab = value;
         if (this._instance)
-          this.updateQueryParameters({ tab: value, ins: this._instance });
+            this.updateQueryParameters({ tab: value, ins: this._instance });
         else
-          this.updateQueryParameters({ tab: value });
+            this.updateQueryParameters({ tab: value });
     }
     get selectedTab(): string {
         return this._selectedTab;
@@ -78,19 +92,19 @@ export class CollaborationGroupsTabComponent {
     filterQueryStatus: CallStatus = new CallStatus();
     exportCallStatus: CallStatus = new CallStatus();
 
-    categoryNames:string[] = null;
+    categoryNames: string[] = null;
     facetQueryParameterNames: string[] = ['', '', '', ''];
     TABS = TABS;
     config = myGlobals.config;
 
     constructor(private bpeService: BPEService,
-                private translate: TranslateService,
-                private cookieService: CookieService,
-                private modalService: NgbModal,
-                private router: Router,
-                private route: ActivatedRoute,
-                private categoryService: CategoryService,
-                private appComponent: AppComponent) {}
+        private translate: TranslateService,
+        private cookieService: CookieService,
+        private modalService: NgbModal,
+        private router: Router,
+        private route: ActivatedRoute,
+        private categoryService: CategoryService,
+        private appComponent: AppComponent) { }
 
     /**
      * init methods
@@ -99,7 +113,7 @@ export class CollaborationGroupsTabComponent {
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
             if (params['ins'])
-              this._instance = params['ins'];
+                this._instance = params['ins'];
             this.updateStateFromQueryParameters(params)
         });
     }
@@ -141,18 +155,18 @@ export class CollaborationGroupsTabComponent {
         let partyId: string = this.cookieService.get('company_id');
         this.bpeService.exportTransactions(partyId, null, null, null).then(result => {
 
-                let link = document.createElement('a');
-                link.id = 'downloadLink';
-                link.href = window.URL.createObjectURL(result.content);
-                link.download = result.fileName;
+            let link = document.createElement('a');
+            link.id = 'downloadLink';
+            link.href = window.URL.createObjectURL(result.content);
+            link.download = result.fileName;
 
-                document.body.appendChild(link);
-                let downloadLink = document.getElementById('downloadLink');
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
+            document.body.appendChild(link);
+            let downloadLink = document.getElementById('downloadLink');
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
 
-                this.exportCallStatus.callback('Exported transactions successfully', true);
-            },
+            this.exportCallStatus.callback('Exported transactions successfully', true);
+        },
             error => {
                 this.exportCallStatus.error('Failed to export transactions', error);
             });
@@ -209,7 +223,7 @@ export class CollaborationGroupsTabComponent {
     open(content, index, order) {
         this.selectedNegotiation = order;
         this.selectedNegotiationIndex = index + (this.query.page - 1) * this.query.pageSize;
-        this.modalService.open(content, {backdropClass: 'light-blue-backdrop'}).result.then((result) => {
+        this.modalService.open(content, { backdropClass: 'light-blue-backdrop' }).result.then((result) => {
             this.selectedNegotiations = [];
             this.selectedNegotiationLists = [];
         }, () => {
@@ -402,7 +416,7 @@ export class CollaborationGroupsTabComponent {
                     }
                 }
                 // status
-                if (query.status.length > 0 ) {
+                if (query.status.length > 0) {
                     for (let status of response.status) {
                         this.modifiedFilterSet.status.push(status);
                     }
@@ -436,7 +450,7 @@ export class CollaborationGroupsTabComponent {
             });
     }
 
-    getCategoryNames(){
+    getCategoryNames() {
         this.categoryService.getCategories(this.filterSet.relatedProductCategories).then(response => {
             this.categoryNames = [];
             for (let categoryUri of this.filterSet.relatedProductCategories) {
@@ -574,13 +588,13 @@ export class CollaborationGroupsTabComponent {
     private createUpdatingCollaborationGroupNameArray() {
         this.updatingCollaborationGroupName = [];
         for (let order of (this.collaborationGroupResults as CollaborationGroupResults).collaborationGroups) {
-            this.updatingCollaborationGroupName.push({status: false, name: order.name, defaultName: this.getDefaultCollaborationNames(order)})
+            this.updatingCollaborationGroupName.push({ status: false, name: order.name, defaultName: this.getDefaultCollaborationNames(order) })
         }
     }
 
     private getDefaultCollaborationNames(collaborationGroup: CollaborationGroup): string {
         let defaultName = this.translate.instant('Activities on') + ' ';
-        for (let i = 0 ; i < collaborationGroup.associatedProcessInstanceGroups.length ; i++) {
+        for (let i = 0; i < collaborationGroup.associatedProcessInstanceGroups.length; i++) {
             if (i === collaborationGroup.associatedProcessInstanceGroups.length - 1) {
                 defaultName += collaborationGroup.associatedProcessInstanceGroups[i].name;
             } else {

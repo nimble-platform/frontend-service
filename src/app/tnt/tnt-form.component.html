@@ -21,10 +21,7 @@
             <label class="col-2 col-form-label"><span [innerHTML]="'Enter EPC Code' | translate"></span></label>
             <div class="col-10">
                 <div class="input-group">
-                    <input type="text"
-                           class="form-control" required [(ngModel)]="model.q"
-                           name="trackSearch" #q="ngModel" pattern=".{1,}"
-                           [placeholder]="'Your SGTIN Code' | translate">
+                    <input type="text" class="form-control" required [(ngModel)]="model.q" name="trackSearch" #q="ngModel" pattern=".{1,}" [placeholder]="'Your SGTIN Code' | translate">
                     <div class="input-group-append">
                         <button type="submit" class="btn btn-outline-secondary" [disabled]="!trackForm.form.valid">
                             <i class="fa fa-search"></i>
@@ -35,8 +32,7 @@
         </div>
     </form>
     <div [hidden]="!error_detc">
-        <div class="alert alert-danger space-before"
-             role="alert">
+        <div class="alert alert-danger space-before" role="alert">
             <p>
                 <em><span [innerHTML]="'An Error Occured' | translate"></span></em> - <span [innerHTML]="'tnt-error' | translate"></span>
             </p>

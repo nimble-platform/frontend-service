@@ -1,3 +1,17 @@
+<!--
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <div class="row">
     <div class="col-12">
         <p class="nimble-title"><span [innerHTML]="'Agent Settings' | translate"></span></p>
@@ -28,8 +42,7 @@
 
             <div class="col-12">
                 <div class="d-flex justify-content-end">
-                    <button class="btn btn-primary align-self-start float-right ml-2"
-                            (click)="createBuyingAgent();openModal(buyingAgentModal)">
+                    <button class="btn btn-primary align-self-start float-right ml-2" (click)="createBuyingAgent();openModal(buyingAgentModal)">
                         <span [innerHTML]="'Create Agent' | translate"></span>
                     </button>
                 </div>
@@ -92,8 +105,7 @@
             <div class="col-12">
                 <div class="d-flex justify-content-end">
                     <!--<call-status [callStatus]="exportCallStatus"></call-status>-->
-                    <button class="btn btn-primary align-self-start float-right ml-2"
-                            (click)="createSellingAgent();openModal(sellingAgentModal)">
+                    <button class="btn btn-primary align-self-start float-right ml-2" (click)="createSellingAgent();openModal(sellingAgentModal)">
                         <span [innerHTML]="'Create Agent' | translate"></span>
                     </button>
                 </div>
@@ -150,8 +162,6 @@
     </div>
 </div>
 
-
-
 <!-- Buying Agent Modal -->
 <ng-template #buyingAgentModal let-d="dismiss" let-modal>
     <div class="modal-header">
@@ -185,11 +195,7 @@
                     </div>
 
                     <div class="col-3">
-                        <select
-                                formControlName="maxContractAmountUnit"
-                                id="maxContractAmountUnit-type"
-                                name="type"
-                                class="form-control custom-select">
+                        <select formControlName="maxContractAmountUnit" id="maxContractAmountUnit-type" name="type" class="form-control custom-select">
                             <option value="" class="selected">Currency</option>
                             <option value="euro">euro</option>
                         </select>
@@ -205,11 +211,7 @@
                         <input type="number" class="form-control" formControlName="minFulfillmentTime" required maxlength="255">
                     </div>
                     <div class="col-3">
-                        <select
-                                formControlName="minFulfillmentTimeUnit"
-                                id="minFulfillmentTimeUnit-type"
-                                name="type"
-                                class="form-control custom-select">
+                        <select formControlName="minFulfillmentTimeUnit" id="minFulfillmentTimeUnit-type" name="type" class="form-control custom-select">
                             <option value="" class="selected">Time Unit</option>
                             <option value="hour">hours(s)</option>
                             <option value="day">days(s)</option>
@@ -227,11 +229,7 @@
                         <input type="text" class="form-control" formControlName="maxFulfillmentTime" required maxlength="255">
                     </div>
                     <div class="col-3">
-                        <select
-                                formControlName="maxFulfillmentTimeUnit"
-                                id="maxFulfillmentTime-type"
-                                name="type"
-                                class="form-control custom-select">
+                        <select formControlName="maxFulfillmentTimeUnit" id="maxFulfillmentTime-type" name="type" class="form-control custom-select">
                             <option value="" class="selected">Time Unit</option>
                             <option value="hour">hours(s)</option>
                             <option value="day">days(s)</option>
@@ -250,7 +248,6 @@
                     </div>
                 </div>
 
-
                 <!--Maximum_volume_of_agent_contracts_per_hour/day/week/month-->
                 <div class="form-group row space-before">
                     <label class="col-4 col-form-label">
@@ -260,11 +257,7 @@
                         <input type="text" class="form-control" formControlName="maxVolume" required maxlength="255">
                     </div>
                     <div class="col-3">
-                        <select
-                                formControlName="maxVolumeUnit"
-                                id="maxVolumeUnit-type"
-                                name="type"
-                                class="form-control custom-select">
+                        <select formControlName="maxVolumeUnit" id="maxVolumeUnit-type" name="type" class="form-control custom-select">
                             <option value="" class="selected">Time Unit</option>
                             <option value="hour">hour</option>
                             <option value="day">day</option>
@@ -282,11 +275,7 @@
                         <input type="number" class="form-control" formControlName="maxNoOneToOne" required maxlength="255">
                     </div>
                     <div class="col-3">
-                        <select
-                                formControlName="maxNoOneToOneUnit"
-                                id="maxNoOneToOneUnit-type"
-                                name="type"
-                                class="form-control custom-select">
+                        <select formControlName="maxNoOneToOneUnit" id="maxNoOneToOneUnit-type" name="type" class="form-control custom-select">
                             <option value="" class="selected">Time Unit</option>
                             <option value="hour">hour</option>
                             <option value="day">day</option>
@@ -298,11 +287,51 @@
                 <!--Maximum_no_of_contracts_per_day-->
                 <div class="form-group row space-before">
                     <label class="col-4 col-form-label">
-                        <strong><span [innerHTML]="'Preferred product IDs:' | translate"></span></strong>
+                        <strong><span [innerHTML]="'Catalogue Name:' | translate"></span></strong>
                     </label>
                     <div class="col-8">
-                        <input type="text" class="form-control" formControlName="productNames" required maxlength="255">
+                        <input type="text" class="form-control" formControlName="catalogueName" required maxlength="255">
                     </div>
+                </div>
+
+                <!--Maximum_no_of_contracts_per_day-->
+                <div class="form-group row space-before">
+                    <label class="col-4 col-form-label">
+                        <strong><span [innerHTML]="'Product Names:' | translate"></span></strong>
+                    </label>
+                    <div formArrayName="productNames" class="col-8 multi-input-group">
+                        <div *ngFor="let productName of productNames.controls; let i=index" class="sub-input-set">
+                            <input type="text" class="form-control" formControlName="{{i}}" required maxlength="255">
+                            <div *ngIf="i>0" (click)="deleteProductName(i)" class="btn-delete-icon"><i class="fa fa-trash" aria-hidden="true"></i></div>
+                            <div *ngIf="submitted && productName.errors" class="invalid-feedback">
+                                <div *ngIf="productName.errors.required">Notification No is required.</div>
+                            </div>
+                        </div>
+
+                        <div class="btn-add-icon" (click)="addCategoryName()">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row space-before">
+                    <label class="col-4 col-form-label">
+                        <strong><span [innerHTML]="'Category Names:' | translate"></span></strong>
+                    </label>
+                    <div formArrayName="categoryNames" class="col-8 multi-input-group">
+                        <div *ngFor="let categoryName of categoryNames.controls; let i=index" class="sub-input-set">
+                            <input type="text" class="form-control" formControlName="{{i}}" required maxlength="255">
+                            <div *ngIf="i>0" (click)="deleteCategoryName(i)" class="btn-delete-icon"><i class="fa fa-trash" aria-hidden="true"></i></div>
+                            <div *ngIf="submitted && categoryName.errors" class="invalid-feedback">
+                                <div *ngIf="categoryName.errors.required">Notification No is required.</div>
+                            </div>
+                        </div>
+
+                        <div class="btn-add-icon" (click)="addCategoryName()">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- Submit -->
@@ -349,11 +378,7 @@
                     </div>
 
                     <div class="col-3">
-                        <select
-                                formControlName="maxContractAmountUnit"
-                                id="maxContractAmountUnit-type"
-                                name="type"
-                                class="form-control custom-select">
+                        <select formControlName="maxContractAmountUnit" id="maxContractAmountUnit-type" name="type" class="form-control custom-select">
                             <option value="" class="selected">Currency</option>
                             <option value="euro">euro</option>
                         </select>
@@ -369,11 +394,7 @@
                         <input type="number" class="form-control" formControlName="minFulfillmentTime" required maxlength="255">
                     </div>
                     <div class="col-3">
-                        <select
-                                formControlName="minFulfillmentTimeUnit"
-                                id="minFulfillmentTimeUnit-type"
-                                name="type"
-                                class="form-control custom-select">
+                        <select formControlName="minFulfillmentTimeUnit" id="minFulfillmentTimeUnit-type" name="type" class="form-control custom-select">
                             <option value="" class="selected">Time Unit</option>
                             <option value="hour">hours(s)</option>
                             <option value="day">days(s)</option>
@@ -391,11 +412,7 @@
                         <input type="text" class="form-control" formControlName="maxFulfillmentTime" required maxlength="255">
                     </div>
                     <div class="col-3">
-                        <select
-                                formControlName="maxFulfillmentTimeUnit"
-                                id="maxFulfillmentTime-type"
-                                name="type"
-                                class="form-control custom-select">
+                        <select formControlName="maxFulfillmentTimeUnit" id="maxFulfillmentTime-type" name="type" class="form-control custom-select">
                             <option value="" class="selected">Time Unit</option>
                             <option value="hour">hours(s)</option>
                             <option value="day">days(s)</option>
@@ -414,7 +431,6 @@
                     </div>
                 </div>
 
-
                 <!--Maximum_volume_of_agent_contracts_per_hour/day/week/month-->
                 <div class="form-group row space-before">
                     <label class="col-4 col-form-label">
@@ -424,11 +440,7 @@
                         <input type="text" class="form-control" formControlName="maxVolume" required maxlength="255">
                     </div>
                     <div class="col-3">
-                        <select
-                                formControlName="maxVolumeUnit"
-                                id="maxVolumeUnit-type"
-                                name="type"
-                                class="form-control custom-select">
+                        <select formControlName="maxVolumeUnit" id="maxVolumeUnit-type" name="type" class="form-control custom-select">
                             <option value="" class="selected">Time Unit</option>
                             <option value="hour">hour</option>
                             <option value="day">day</option>
@@ -446,11 +458,7 @@
                         <input type="number" class="form-control" formControlName="maxNoOneToOne" required maxlength="255">
                     </div>
                     <div class="col-3">
-                        <select
-                                formControlName="maxNoOneToOneUnit"
-                                id="maxNoOneToOneUnit-type"
-                                name="type"
-                                class="form-control custom-select">
+                        <select formControlName="maxNoOneToOneUnit" id="maxNoOneToOneUnit-type" name="type" class="form-control custom-select">
                             <option value="" class="selected">Time Unit</option>
                             <option value="hour">hour</option>
                             <option value="day">day</option>
@@ -482,17 +490,18 @@
 
 <!-- Show Transaction tab -->
 <div *ngIf="showTransactions" class="col-12 space-after space-before">
-    <button class="btn btn-primary align-self-start float-right ml-2"
-            (click)="viewAgentList()">
+    <button class="btn btn-primary align-self-start float-right ml-2" (click)="viewAgentList()">
         <span [innerHTML]="'Back' | translate"></span>
     </button>
 </div>
 
 <div *ngIf="showTransactions">
     <div class="col-12 mx-auto space-before space-after ">
-        <span><h3>Orders of: {{selectedAgent}} </h3>(Total: {{orders.length}})</span>
+        <span>
+            <h3>Orders of: {{selectedAgent}} </h3>(Total: {{orders.length}})
+        </span>
         <!--<div class="d-flex justify-content-end">-->
-            <!--<call-status [callStatus]="exportCallStatus"></call-status>-->
+        <!--<call-status [callStatus]="exportCallStatus"></call-status>-->
 
         <!--</div>-->
     </div>
@@ -519,28 +528,28 @@
                                         <div class="row thread-entry m-0">
                                             <div class="col-12 d-flex thread-entry-header">
                                                 <div class="col pl-2">
-                                                    <strong><span [innerHTML]="'Trading Partner' | translate"></span>:</strong><br/>
+                                                    <strong><span [innerHTML]="'Trading Partner' | translate"></span>:</strong><br />
                                                     <span class="clickable">{{order.companyName}}</span>
                                                 </div>
                                                 <div class="col pl-1">
-                                                    <strong><span [innerHTML]="'Date' | translate"></span>:</strong><br/>
+                                                    <strong><span [innerHTML]="'Date' | translate"></span>:</strong><br />
                                                     <span>{{order.date}}</span>
                                                 </div>
                                                 <div class="col pl-1">
-                                                    <strong><span [innerHTML]="'Units' | translate"></span>:</strong><br/>
+                                                    <strong><span [innerHTML]="'Units' | translate"></span>:</strong><br />
                                                     <span>{{order.units}}</span>
                                                 </div>
                                                 <div class="col pl-1">
-                                                    <strong><span [innerHTML]="'Amount' | translate"></span>:</strong><br/>
+                                                    <strong><span [innerHTML]="'Amount' | translate"></span>:</strong><br />
                                                     <span>{{order.price}} EUR</span>
                                                 </div>
                                                 <div class="col pl-1">
-                                                    <strong><span [innerHTML]="'Status' | translate"></span>:</strong><br/>
+                                                    <strong><span [innerHTML]="'Status' | translate"></span>:</strong><br />
                                                     <!--<span>{{order.status}}</span>-->
                                                     <span class="badge badge-secondary"><span> {{order.status}}</span></span>
                                                 </div>
                                                 <div class="col pl-1">
-                                                    <strong><span [innerHTML]="'Actions' | translate"></span>:</strong><br/>
+                                                    <strong><span [innerHTML]="'Actions' | translate"></span>:</strong><br />
                                                     <span class="clickable" (click)="navigateToProcess(order.processInstanceID)">View Order Details</span>
                                                 </div>
                                             </div>

@@ -1,0 +1,500 @@
+<!--
+ * Copyright 2020
+ * AIDIMME - Technological Institute of Metalworking, Furniture, Wood, Packaging and Related sectors; Valencia; Spain
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
+<form class="form-horizontal" (ngSubmit)="searchDocuments()" [formGroup]="formSearch">
+
+    <div class="btn-group-wrap btn-center">
+        <div class="btn-group" role="group" aria-label="Document type">
+            <button id="btn0" type="button" class="btn btn-secondary" (click)="setVisibleCard('0')" [innerHTML]="'Regulation' | translate"></button>
+            <button id="btn1" type="button" class="btn btn-secondary" (click)="setVisibleCard('1')" [innerHTML]="'Legislation' | translate"></button>
+            <button id="btn3" type="button" class="btn btn-secondary" (click)="setVisibleCard('3')" [innerHTML]="'Sectorial report' | translate"></button>
+        </div>
+
+        <button class="btn btn-light" type="button" (click)="isCollapsed = !isCollapsed" [attr.aria-expanded]="!isCollapsed" aria-controls="collapseSearchOptions">
+            <i class="fa fa-cog inline-icon"></i> <span [innerHTML]="'Search options' | translate"></span>
+        </button>
+    </div>
+
+    <div class="collapse collapse-margin" id="collapseSearchOptions" [ngbCollapse]="!isCollapsed">
+        <div class="card card-block card-padding">
+            <div class="custom-control custom-radio">
+                <input id="radio1" type="radio" class="custom-control-input" value="radio1" name="orMode" formControlName="orMode">
+                <label class="custom-control-label" for="radio1" [innerHTML]="'Get documents that match all the entered fields' | translate"></label>
+            </div>
+
+            <div class="custom-control custom-radio">
+                <input id="radio2" type="radio" class="custom-control-input" value="radio2" name="orMode" formControlName="orMode">
+                <label class="custom-control-label" for="radio2" [innerHTML]="'Get documents that match some of the entered fields' | translate"></label>
+            </div>
+        </div>
+    </div>
+
+    <hr class="hr-section" />
+
+    <!-- CARD MAIN INFORMATION -->
+    <div>
+        <div class="card-block">
+            <h5 class="card-title"><span [innerHTML]="'Main information' | translate"></span></h5>
+
+            <div class="form-group row">
+                <label for="name" class="col-2 col-form-label" [innerHTML]="'Code' | translate"></label>
+                <div class="col-10">
+                    <input type="text" class="form-control" formControlName="code" id="code">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="name" class="col-2 col-form-label" [innerHTML]="'Title' | translate"></label>
+                <div class="col-10">
+                    <input type="text" class="form-control" formControlName="title" id="title">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="description" class="col-2 col-form-label" [innerHTML]="'Description' | translate"></label>
+                <div class="col-10">
+                    <input type="text" class="form-control" formControlName="description" id="description">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-sm-6">
+                    <label for="datepickerEntryFrom" [innerHTML]="'Date entry from' | translate"></label>
+
+                    <div class="input-group date" id="datepickerEntryFrom">
+                        <input type="text" class="form-control" formControlName="dateEntryFrom" ngbDatepicker #dpef="ngbDatepicker" placeholder="{{datePlaceholder}}" [class.is-invalid]="dateEntryFrom.invalid" (dateSelect)="onDateSelect($event)" />
+                        <button type="button" class="btn btn-primary action space-left" (click)="dpef.toggle()">Select</button>
+                        <div class="invalid-tooltip">{{ dateEntryFrom.invalid ? "Date is invalid" : undefined }}</div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label for="datepickerEntryTo" [innerHTML]="'Date entry to' | translate"></label>
+
+                    <div class="input-group date" id="datepickerEntryTo">
+                        <input type="text" class="form-control" formControlName="dateEntryTo" ngbDatepicker #dpet="ngbDatepicker" placeholder="{{datePlaceholder}}" [class.is-invalid]="dateEntryTo.invalid" (dateSelect)="onDateSelect($event)" />
+                        <button type="button" class="btn btn-primary action space-left" (click)="dpet.toggle()">Select</button>
+                        <div class="invalid-tooltip">{{ dateEntryTo.invalid ? "Date is invalid" : undefined }}</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <hr class="hr-section" />
+
+    <div id="cardContainer">
+
+        <!-- CARD NORMATIVA -->
+        <div class="hide" id="cardAttr0">
+            <div class="card-block">
+                <h5 class="card-title" [innerHTML]="'Normative attributes' | translate"></h5>
+
+                <div class="form-group row">
+                    <label for="regulationType" class="col-2 col-form-label icon" (click)="isCollapsedRt = !isCollapsedRt" [attr.aria-expanded]="!isCollapsedRt" aria-controls="collapseRegulationTypeInfo" [innerHTML]="'Regulation type' | translate"></label>
+                    <div class="col-10">
+                        <input type="text" class="form-control" formControlName="regulationType" id="regulationType">
+                    </div>
+                </div>
+
+                <div class="collapse" id="collapseRegulationTypeInfo" [ngbCollapse]="!isCollapsedRt">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <th scope="row">UNE</th>
+                                    <td>Una Norma Española</td>
+                                    <td>Spain</td>
+                                    <td [innerHTML]="'une-description' | translate">
+                                        This is a collection of norms, experimental norms and reports (standards) created in the
+                                        'Comités Técnicos de Normalización' (CTN) of the 'Asociación Española de Normalización y Certificación' (AENOR)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">UNE-EN</th>
+                                    <td>Official version in Spanish of a European norm</td>
+                                    <td>Spain / European Union</td>
+                                    <td [innerHTML]="'une-en-description' | translate">
+                                        When some European or International norm is officially adopted in Spain, the preffix UNE is added to the codification
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">ISO</th>
+                                    <td>International Organization for Standardization</td>
+                                    <td>International</td>
+                                    <td [innerHTML]="'iso-description' | translate">
+                                        The International Organization for Standardization (ISO) is an organization for the creation
+                                        of international standards formed by different national standardisation bodies. Main offices at Geneva, Switzerland
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">ASTM</th>
+                                    <td>American Society for Testing and Materials</td>
+                                    <td>International</td>
+                                    <td [innerHTML]="'astm-description' | translate">
+                                        ASTM international is an organization of international norms that develops and publishes voluntary agreements
+                                        of technical norms for a wide range of materials, products, systems and services. Main offices at USA
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">ANSI</th>
+                                    <td>American National Standards Institute</td>
+                                    <td>USA</td>
+                                    <td [innerHTML]="'ansi-description' | translate">
+                                        ANSI is a nonprofit organization that monitors the development of standards for products, services, processes
+                                        and systems in the United States of America
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="regulationNumber" class="col-2 col-form-label" [innerHTML]="'Regulation number' | translate"></label>
+                    <div class="col-10">
+                        <input type="text" class="form-control" formControlName="regulationNumber" id="regulationNumber">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="descriptors" class="col-2 col-form-label" [innerHTML]="'Descriptors' | translate"></label>
+                    <div class="col-10">
+                        <input type="text" class="form-control" formControlName="descriptors0" id="descriptors0">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- CARD LEGISLACIÓN -->
+        <div class="hide" id="cardAttr1">
+            <div class="card-block">
+                <h5 class="card-title" [innerHTML]="'Legislation attributes' | translate"></h5>
+
+                <div class="form-group row">
+                    <label for="descriptors" class="col-2 col-form-label" [innerHTML]="'Descriptors' | translate"></label>
+                    <div class="col-10">
+                        <input type="text" class="form-control" formControlName="descriptors1" id="descriptors1">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD INFORMES SECTORIALES -->
+        <div class="hide" id="cardAttr3">
+            <div class="card-block">
+                <h5 class="card-title" [innerHTML]="'Sectorial report attributes' | translate"></h5>
+
+                <div class="form-group row">
+                    <label for="authors" class="col-2 col-form-label" [innerHTML]="'Authors' | translate"></label>
+                    <div class="col-10">
+                        <input type="text" class="form-control" formControlName="authors" id="authors">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="datepickerDateOfDocumentFrom" [innerHTML]="'Date of document from' | translate"></label>
+
+                        <div class="input-group date" id="datepickerDateOfDocumentFrom">
+                            <input type="text" class="form-control" formControlName="dateOfDocumentFrom" ngbDatepicker #dpdodf="ngbDatepicker" placeholder="{{datePlaceholder}}" [class.is-invalid]="dateOfDocumentFrom.invalid" (dateSelect)="onDateSelect($event)" />
+                            <button type="button" class="btn btn-primary action space-left" (click)="dpdodf.toggle()">Select</button>
+                            <div class="invalid-tooltip">{{ dateOfDocumentFrom.invalid ? "Date is invalid" : undefined }}</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="datepickerDateOfDocumentTo" [innerHTML]="'Date of document to' | translate">Date of document to</label>
+
+                        <div class="input-group date" id="datepickerDateOfDocumentTo">
+                            <input type="text" class="form-control" formControlName="dateOfDocumentTo" ngbDatepicker #dpdodt="ngbDatepicker" placeholder="{{datePlaceholder}}" [class.is-invalid]="dateOfDocumentTo.invalid" (dateSelect)="onDateSelect($event)" />
+                            <button type="button" class="btn btn-primary action space-left" (click)="dpdodt.toggle()">Select</button>
+                            <div class="invalid-tooltip">{{ dateOfDocumentTo.invalid ? "Date is invalid" : undefined }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="descriptors" class="col-2 col-form-label" [innerHTML]="'Descriptors' | translate"></label>
+                    <div class="col-10">
+                        <input type="text" class="form-control" formControlName="descriptors3" id="descriptors3">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="hr-section" />
+
+        <button class="btn btn-primary action" [innerHTML]="'Search documents' | translate" type="submit"></button>
+    </div>
+
+    <br>
+    <p *ngFor="let alert of alerts">
+        <ngb-alert [type]="alert.type" (close)="closeAlert(alert)" [innerHTML]="alert.message"></ngb-alert>
+    </p>
+
+    <hr class="hr-section" />
+
+    <div class="hide" id="cardResults">
+
+        <div class="card-block">
+            <h5 class="card-title"><span>{{docService.DOCUS.length}}</span>&nbsp;<span [innerHTML]="'documents found' | translate"></span></h5>
+
+            <div class="form-group row">
+
+                <div class="col-12">
+                    <div class="form-group form-inline">
+                        Full text search: <input #inputFullText class="form-control ml-2" type="text" (keyup)="onInputFullTextchange(inputFullText.value)" />
+                        <span class="ml-3" *ngIf="docService.loading$ | async" [innerHTML]="'Loading...' | translate"></span>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-condensed table-hover table-striped">
+                            <colgroup>
+                                <col span="1" style="width: 5%;">
+                                <col span="1" style="width: 5%;">
+                                <col span="1" style="width: 20%;">
+                                <col span="1" style="width: 55%;">
+                                <col span="1" style="width: 10%;">
+                                <col span="1" style="width: 5%;">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th *ngFor="let head of headElements" sortable="{{head}}" scope="col" (sort)="onSort($event)" style="cursor:pointer" title="Sort by: {{head}}">
+                                        <span *ngIf="head=='documentId'" [innerHTML]="'documentId' | translate | titlecase"></span>
+                                        <!--<img [src]="'assets/images/sort.png'" height="10px">-->
+                                        <span *ngIf="head=='type'" [innerHTML]="'type' | translate | titlecase"></span>
+                                        <span *ngIf="head=='code'" [innerHTML]="'code' | translate | titlecase"></span>
+                                        <span *ngIf="head=='title'" [innerHTML]="'title' | translate | titlecase"></span>
+                                        <span *ngIf="head=='date'" [innerHTML]="'date' | translate | titlecase"></span>
+                                    </th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tr *ngFor="let elem of documents$ | async">
+                                <td>
+                                    <ngb-highlight [result]="elem.mainAttr.documentId" [term]="docService.searchTerm"></ngb-highlight>
+                                </td>
+                                <!--<td><img height="47" [src]="'assets//icon-doctype-' + selectedDocumentType + '.png'" title={{showDocumentType(selectedDocumentType)}}></td>-->
+                                <td><i [ngClass]="getDocumentTypeClass(selectedDocumentType)" title={{showDocumentType(selectedDocumentType)}}></i></td>
+                                <td class="td-pointer">
+                                    <ngb-highlight [result]="elem.mainAttr.code" (click)="loadDocumentDetails(elem.mainAttr.documentId)" [term]="docService.searchTerm"></ngb-highlight>
+                                </td>
+                                <td class="td-pointer">
+                                    <ngb-highlight [result]="truncateText(elem.mainAttr.title)" title="{{elem.mainAttr.title}}" (click)="loadDocumentDetails(elem.mainAttr.documentId)" [term]="docService.searchTerm"></ngb-highlight>
+                                </td>
+                                <td>
+                                    <ngb-highlight [result]="formatOutDate(elem.mainAttr.dateEntry)" [term]="docService.searchTerm"></ngb-highlight>
+                                </td>
+                                <td class="tableCell">
+                                    <a target="_blank" [routerLink]="['/legislation/details/',selectedDocumentType,elem.mainAttr.documentId]">
+                                        <!--<img height="47" src="../../../assets/images/icon-newtab.png" title="Open details in new tab">-->
+                                        <i class="fa fa-external-link-alt doc-icon nimble-text" title="Open details in new tab"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="center-block">
+                <ngb-pagination [collectionSize]="total$ | async" [(page)]="docService.page" [pageSize]="docService.pageSize" [maxSize]="docService.numVisiblePages">
+                </ngb-pagination>
+
+                <select class="custom-select" #selectItemsPerPage style="width: auto" formControlName="pageSizeCtrl" [value]="docService.pageSize" (change)="onOptionsItemsPerPageChange(selectItemsPerPage.value)">
+                    <option [value]="4">4 <span [innerHTML]="'items per page' | translate"></span></option>
+                    <option [value]="8">8 <span [innerHTML]="'items per page' | translate"></span></option>
+                    <option [value]="10">10 <span [innerHTML]="'items per page' | translate"></span></option>
+                </select>
+            </div>
+        </div>
+        <hr class="hr-section" />
+        <button class="btn btn-primary action space-left" (click)="scrollToSearch()" [innerHTML]="'Back to search' | translate"></button>
+        <hr class="hr-section" />
+    </div>
+    <hr class="hr-section" />
+
+    <!-- DOCUMENT DETAILS -->
+    <div class="hide bg-light text-dark mb-3" style="padding: 10px;" id="cardDocumentDetails">
+        <div class="card-block">
+            <h5 class="card-title" [innerHTML]="'Document details' | translate"></h5>
+
+            <div class="form-group row">
+                <div class="col-12">
+                    <div class="alert alert-warning space-before" role="alert"><span [innerHTML]="'Selected document' | translate"></span>: {{selectedDocumentId}}</div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="regulationType" class="col-2 col-form-label" [innerHTML]="'Code' | translate"></label>
+                <div class="col-10">
+                    <input readonly type="text" class="form-control" formControlName="seldoc_code">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="regulationType" class="col-2 col-form-label" [innerHTML]="'Title' | translate"></label>
+                <div class="col-10">
+                    <input readonly type="text" class="form-control" formControlName="seldoc_title" title="{{selectedDocument.mainAttr.title}}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="regulationType" class="col-2 col-form-label" [innerHTML]="'Description' | translate"></label>
+                <div class="col-10">
+                    <textarea readonly class="form-control" formControlName="seldoc_description" rows="2">{{selectedDocument.mainAttr.description}}</textarea>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="regulationType" class="col-2 col-form-label" [innerHTML]="'Date Entry' | translate"></label>
+                <div class="col-10">
+                    <input readonly type="text" class="form-control" formControlName="seldoc_dateEntry">
+                </div>
+            </div>
+
+            <!-- DETAILS REGULATION -->
+            <div id="detailsChunk0" class="d-none">
+                <div class="form-group row">
+                    <label for="regulationType" class="col-2 col-form-label" [innerHTML]="'Regulation type' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_regulationType">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="regulationNumber" class="col-2 col-form-label" [innerHTML]="'Regulation number' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_regulationNumber">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="technicalCommittee" class="col-2 col-form-label icon" (click)="isCollapsedTc = !isCollapsedTc" [attr.aria-expanded]="!isCollapsedTc" aria-controls="collapseRegulationTypeInfo" [innerHTML]="'Technical Committee' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_technicalCommittee">
+                    </div>
+                </div>
+                <div class="collapse" id="collapseTechnicalCommittee" [ngbCollapse]="!isCollapsedTc">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <th scope="row">CTN</th>
+                                    <td>Comité técnico de normalización</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">CEN</th>
+                                    <td>European Committee for Standardization</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="editingDate" class="col-2 col-form-label" [innerHTML]="'Editing Date' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_editingDate">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="numOfPages" class="col-2 col-form-label" [innerHTML]="'Num. of Pages' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_numOfPages">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="language" class="col-2 col-form-label" [innerHTML]="'Language' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_language">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="identifyEN" class="col-2 col-form-label" [innerHTML]="'Identify EN' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_identifyEN">
+                    </div>
+                </div>
+            </div>
+
+            <!-- DETAILS LEGISLATION -->
+            <div id="detailsChunk1" class="d-none">
+                <div class="form-group row">
+                    <label for="legalAssessment" class="col-2 col-form-label" [innerHTML]="'Legal assessment' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_legalAssessment">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="link" class="col-2 col-form-label" [innerHTML]="'Link' | translate"></label>
+                    <div class="col-10">
+                        <a href="{{selectedDocument.specAttr.link}}" target="_blank">{{selectedDocument.specAttr.link}}</a>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="country" class="col-2 col-form-label" [innerHTML]="'Country' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_country">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="publicationDate" class="col-2 col-form-label" [innerHTML]="'Publication date' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_publicationDate">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="documentOrigin" class="col-2 col-form-label" [innerHTML]="'Origin of document' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_documentOrigin">
+                    </div>
+                </div>
+            </div>
+
+            <!-- DETAILS REPORT -->
+            <div id="detailsChunk3" class="d-none">
+                <div class="form-group row">
+                    <label for="authors" class="col-2 col-form-label" [innerHTML]="'Authors' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_authors">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="dateOfDocument" class="col-2 col-form-label" [innerHTML]="'Date Of Document' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_dateOfDocument">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="country" class="col-2 col-form-label" [innerHTML]="'Country' | translate"></label>
+                    <div class="col-10">
+                        <input readonly type="text" class="form-control" formControlName="seldoc_country">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="descriptors" class="col-2 col-form-label" [innerHTML]="'Descriptors' | translate"></label>
+                <div class="col-10">
+                    <input readonly type="text" class="form-control" formControlName="seldoc_descriptors">
+                </div>
+            </div>
+
+        </div>
+
+        <hr class="hr-section" />
+        <button class="btn btn-primary action space-left" (click)="scrollToSearch()" [innerHTML]="'Back to search' | translate"></button>
+        <hr class="hr-section" />
+    </div>
+
+</form>

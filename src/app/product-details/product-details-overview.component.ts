@@ -1,4 +1,20 @@
-import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
+/*
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { ProductWrapper } from "../common/product-wrapper";
 import { CommodityClassification } from "../catalogue/model/publish/commodity-classification";
 import { ItemProperty } from "../catalogue/model/publish/item-property";
@@ -11,30 +27,30 @@ import {
     selectNameFromLabelObject,
     selectPreferredValue,
 } from '../common/utils';
-import {Item} from '../catalogue/model/publish/item';
-import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
-import {CategoryService} from '../catalogue/category/category.service';
+import { Item } from '../catalogue/model/publish/item';
+import { UBLModelUtils } from '../catalogue/model/ubl-model-utils';
+import { CategoryService } from '../catalogue/category/category.service';
 import { CatalogueService } from "../catalogue/catalogue.service";
-import {CallStatus} from '../common/call-status';
-import { ActivatedRoute,Router } from "@angular/router";
+import { CallStatus } from '../common/call-status';
+import { ActivatedRoute, Router } from "@angular/router";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {TranslateService} from '@ngx-translate/core';
-import {CatalogueLine} from "../catalogue/model/publish/catalogue-line";
+import { TranslateService } from '@ngx-translate/core';
+import { CatalogueLine } from "../catalogue/model/publish/catalogue-line";
 import * as moment from "moment";
 import { CookieService } from 'ng2-cookies';
-import {CredentialsService} from '../user-mgmt/credentials.service';
+import { CredentialsService } from '../user-mgmt/credentials.service';
 import * as myGlobals from '../globals';
-import {UserService} from '../user-mgmt/user.service';
-import {ShoppingCartDataService} from '../bpe/shopping-cart/shopping-cart-data-service';
-import {ValidationService} from '../common/validation/validators';
-import {FormGroup} from '@angular/forms';
+import { UserService } from '../user-mgmt/user.service';
+import { ShoppingCartDataService } from '../bpe/shopping-cart/shopping-cart-data-service';
+import { ValidationService } from '../common/validation/validators';
+import { FormGroup } from '@angular/forms';
 
 @Component({
     selector: 'product-details-overview',
     templateUrl: './product-details-overview.component.html',
     styleUrls: ['./product-details-overview.component.css']
 })
-export class ProductDetailsOverviewComponent implements OnInit{
+export class ProductDetailsOverviewComponent implements OnInit {
 
     @Input() wrapper: ProductWrapper;
     @Input() itemWithSelectedProps: Item;
@@ -42,7 +58,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
     @Input() readonly: boolean;
     @Input() showAddToCartButton: boolean;
     @Input() inShoppingBasket: boolean;
-    @Input() isNegotiateOrderButtonDisabled:boolean = false;
+    @Input() isNegotiateOrderButtonDisabled: boolean = false;
     @Input() shoppingCartItemForm: FormGroup;
     // flag to adjust the name of the negotiate or order button,
     // true means the there are some negotiated terms and a negotiation process should be started. otherwise an order process is started
@@ -53,7 +69,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
     @Output() onPropertyValueChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     selectedImage: number = 0;
-    manufacturerPartyName:string = null;
+    manufacturerPartyName: string = null;
 
     getManufacturerPartyNameStatus: CallStatus = new CallStatus();
     getClassificationNamesStatus: CallStatus = new CallStatus();
@@ -74,31 +90,31 @@ export class ProductDetailsOverviewComponent implements OnInit{
     zoomedImgURL = "";
 
     // uris of the categories included in the product
-    categoryUris:string[] = [];
+    categoryUris: string[] = [];
 
     constructor(
         private translate: TranslateService,
-        public categoryService:CategoryService,
-        public catalogueService:CatalogueService,
+        public categoryService: CategoryService,
+        public catalogueService: CatalogueService,
         public shoppingCartDataService: ShoppingCartDataService,
         private validationService: ValidationService,
         private modalService: NgbModal,
         private route: ActivatedRoute,
         private cookieService: CookieService,
         private credentialsService: CredentialsService,
-		public router: Router,
+        public router: Router,
         public userService: UserService
-    ) {}
+    ) { }
 
-    ngOnInit(){
-		this.companyId = this.cookieService.get("company_id");
-		this.activeComp = this.cookieService.get("active_company_name");
+    ngOnInit() {
+        this.companyId = this.cookieService.get("company_id");
+        this.activeComp = this.cookieService.get("active_company_name");
 
-        if(this.wrapper){
+        if (this.wrapper) {
             this.getManufacturerPartyNameStatus.submit();
-            this.userService.getParty(this.wrapper.item.manufacturerParty.partyIdentification[0].id,this.wrapper.item.manufacturerParty.federationInstanceID).then(party => {
+            this.userService.getParty(this.wrapper.item.manufacturerParty.partyIdentification[0].id, this.wrapper.item.manufacturerParty.federationInstanceID).then(party => {
                 this.manufacturerPartyName = UBLModelUtils.getPartyDisplayName(party);
-                this.getManufacturerPartyNameStatus.callback(null,true);
+                this.getManufacturerPartyNameStatus.callback(null, true);
             }).catch(error => {
                 this.getManufacturerPartyNameStatus.error("Failed to get manufacturer party name", error);
             })
@@ -112,12 +128,12 @@ export class ProductDetailsOverviewComponent implements OnInit{
          */
         this.getClassificationNamesStatus.submit();
         let classifications = this.getClassifications();
-        if(classifications.length > 0) {
+        if (classifications.length > 0) {
             for (let classification of this.wrapper.item.commodityClassification) {
                 this.categoryUris.push(classification.itemClassificationCode.uri);
             }
             this.classificationNames = [];
-            let manPartyId  =  UBLModelUtils.getPartyId(this.wrapper.goodsItem.item.manufacturerParty);
+            let manPartyId = UBLModelUtils.getPartyId(this.wrapper.goodsItem.item.manufacturerParty);
             let userId = this.cookieService.get('user_id');
             let log = {
                 "@timestamp": moment().utc().toISOString(),
@@ -126,38 +142,38 @@ export class ProductDetailsOverviewComponent implements OnInit{
                 "userId": userId,
                 "companyId": this.companyId,
                 "active_company": this.activeComp,
-                "manufactured_companyId" : manPartyId,
+                "manufactured_companyId": manPartyId,
                 "activity": "product_visit"
-              };
+            };
 
-              if (this.debug)
-                console.log("Writing log "+JSON.stringify(log));
-              this.credentialsService.logUrl(log)
-                .then(res => {})
-                .catch(error => {});
+            if (this.debug)
+                console.log("Writing log " + JSON.stringify(log));
+            this.credentialsService.logUrl(log)
+                .then(res => { })
+                .catch(error => { });
 
             this.categoryService.getCategories(this.categoryUris).then(response => {
-                for(let category of response.result) {
+                for (let category of response.result) {
                     this.classificationNames.push(selectNameFromLabelObject(category.label));
                     let LabelName = selectNameFromLabelObject(category.label);
                     if (this.config.loggingEnabled && this.companyId != manPartyId) {
-                      let log = {
-                        "@timestamp": moment().utc().toISOString(),
-                        "level": "INFO",
-                        "serviceID": "frontend-service",
-                        "userId": userId,
-                        "companyId": this.companyId,
-                        "active_company": this.activeComp,
-                        "manufactured_companyId" : manPartyId,
-                        "category" : LabelName,
-                        "activity": "category_visits"
-                      };
-        
-                      if (this.debug)
-                        console.log("Writing log "+JSON.stringify(log));
-                      this.credentialsService.logUrl(log)
-                        .then(res => {})
-                        .catch(error => {});
+                        let log = {
+                            "@timestamp": moment().utc().toISOString(),
+                            "level": "INFO",
+                            "serviceID": "frontend-service",
+                            "userId": userId,
+                            "companyId": this.companyId,
+                            "active_company": this.activeComp,
+                            "manufactured_companyId": manPartyId,
+                            "category": LabelName,
+                            "activity": "category_visits"
+                        };
+
+                        if (this.debug)
+                            console.log("Writing log " + JSON.stringify(log));
+                        this.credentialsService.logUrl(log)
+                            .then(res => { })
+                            .catch(error => { });
                     }
                 }
 
@@ -173,32 +189,31 @@ export class ProductDetailsOverviewComponent implements OnInit{
 
         this.route.queryParams.subscribe(params => {
             if (params["id"]) {
-              this.productId = params["id"];
-            }else {
+                this.productId = params["id"];
+            } else {
                 this.productId = this.wrapper.item.manufacturersItemIdentification.id;
             }
 
-            if(params["catalogueId"]){
+            if (params["catalogueId"]) {
                 this.catalogueId = params["catalogueId"];
-            }else{
+            } else {
                 this.catalogueId = this.wrapper.item.catalogueDocumentReference.id;
             }
 
             this.productCatalogueNameRetrievalStatus.submit();
 
             this.catalogueService.getCatalogueFromUuid(this.catalogueId)
-            .then((res) =>
-            {
-              this.catalogueName = res.id;
-              this.productCatalogueNameRetrievalStatus.callback("Successfully loaded catalogue name", true);
+                .then((res) => {
+                    this.catalogueName = res.id;
+                    this.productCatalogueNameRetrievalStatus.callback("Successfully loaded catalogue name", true);
 
-            })
-            .catch(err => {
-                this.productCatalogueNameRetrievalStatus.error('Failed to get product catalogue');
-            })
+                })
+                .catch(err => {
+                    this.productCatalogueNameRetrievalStatus.error('Failed to get product catalogue');
+                })
             // display a message if the product is included in the shopping cart
             this.shoppingCartDataService.getShoppingCart().then(catalogue => {
-                if(UBLModelUtils.isProductInCart(catalogue,this.catalogueId,this.productId)){
+                if (UBLModelUtils.isProductInCart(catalogue, this.catalogueId, this.productId)) {
                     this.shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
                 }
             })
@@ -221,7 +236,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
         }
 
         this.shoppingCartCallStatus.submit();
-        this.shoppingCartDataService.addItemToCart(this.wrapper.line.hjid,this.wrapper.quantity.value,this.wrapper.item.manufacturerParty.federationInstanceID).then(() => {
+        this.shoppingCartDataService.addItemToCart(this.wrapper.line.hjid, this.wrapper.quantity.value, this.wrapper.item.manufacturerParty.federationInstanceID).then(() => {
             this.shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
         }).catch((err) => {
             this.shoppingCartCallStatus.error('Failed to add product to cart', err);
@@ -272,14 +287,14 @@ export class ProductDetailsOverviewComponent implements OnInit{
 
     onSelectImage(index: number): void {
         this.selectedImage = index;
-        if(!this.wrapper) {
+        if (!this.wrapper) {
             return;
         }
-        if(this.selectedImage < 0) {
+        if (this.selectedImage < 0) {
             this.selectedImage = this.wrapper.item.productImage.length - 1;
         }
         // also works if productImage.length === 0
-        if(this.selectedImage >= this.wrapper.item.productImage.length) {
+        if (this.selectedImage >= this.wrapper.item.productImage.length) {
             this.selectedImage = 0;
         }
     }
@@ -292,7 +307,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
         this.onNegotiate.emit(this.wrapper.line);
     }
 
-    selectName (ip: ItemProperty | Item) {
+    selectName(ip: ItemProperty | Item) {
         return selectName(ip);
     }
 
@@ -307,7 +322,7 @@ export class ProductDetailsOverviewComponent implements OnInit{
     }
 
     getClassifications(): CommodityClassification[] {
-        if(!this.wrapper) {
+        if (!this.wrapper) {
             return [];
         }
 
@@ -341,24 +356,24 @@ export class ProductDetailsOverviewComponent implements OnInit{
         return getPropertyValuesAsStrings(property);
     }
 
-    openCompTab(){
-      this.compStatus.emit(true);
+    openCompTab() {
+        this.compStatus.emit(true);
     }
 
     open(content) {
-      this.zoomedImgURL = "data:"+this.wrapper.item.productImage[this.selectedImage].mimeCode+";base64,"+this.wrapper.item.productImage[this.selectedImage].value
-    	this.modalService.open(content);
+        this.zoomedImgURL = "data:" + this.wrapper.item.productImage[this.selectedImage].mimeCode + ";base64," + this.wrapper.item.productImage[this.selectedImage].value
+        this.modalService.open(content);
     }
 
     navigateImages(index: number, length: number): number {
-        if(index < 0) {
+        if (index < 0) {
             return length - 1;
         }
-        else if(index < length) {
+        else if (index < length) {
             return index;
         }
         // also works if productImage.length === 0
-        else if(index >= length) {
+        else if (index >= length) {
             return 0;
         }
     }

@@ -1,33 +1,27 @@
-<negotiation-request-item *ngFor="let wrapper of wrappers;let i=index"
-                          [rfq]="rfq"
-                          [processMetadata]="bpActivityEvent ? bpActivityEvent.processMetadata : null"
-                          [manufacturersTermsSource]="manufacturersTermsSources[i]"
-                          [lastOfferQuotation]="lastOfferQuotation"
-                          [frameContractQuotation]="frameContractQuotations[i]"
-                          [frameContractNegotiation]="frameContractNegotiations[i]"
-                          [frameContract]="frameContracts[i]"
-                          [defaultTermsAndConditions]="defaultTermsAndConditions"
-                          [deliverytermsOfBuyer]="deliverytermsOfBuyer"
-                          [wrapper]="wrapper"
-                          [hidden]="selectedLineIndex != wrapper.lineIndex"
-                          [componentIndex]="i"
-                          [parentForm]="negotiationRequestForm"
-                          [formFieldName]="'negotiated_item'">
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
+<negotiation-request-item *ngFor="let wrapper of wrappers;let i=index" [rfq]="rfq" [processMetadata]="bpActivityEvent ? bpActivityEvent.processMetadata : null" [manufacturersTermsSource]="manufacturersTermsSources[i]" [lastOfferQuotation]="lastOfferQuotation" [frameContractQuotation]="frameContractQuotations[i]" [frameContractNegotiation]="frameContractNegotiations[i]" [frameContract]="frameContracts[i]" [defaultTermsAndConditions]="defaultTermsAndConditions" [deliverytermsOfBuyer]="deliverytermsOfBuyer" [wrapper]="wrapper" [hidden]="selectedLineIndex != wrapper.lineIndex" [componentIndex]="i" [parentForm]="negotiationRequestForm" [formFieldName]="'negotiated_item'">
 </negotiation-request-item>
 <div class="btn align-self-start ml-2" [ngClass]="{'active':showNotesAndAdditionalFiles,'btn-outline-primary':!areNotesOrFilesAttachedToDocument(rfq),'btn-danger':areNotesOrFilesAttachedToDocument(rfq)}" (click)="showNotesAndAdditionalFiles= showTab(showNotesAndAdditionalFiles)"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>
-<div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showPurchaseOrder}" (click)="showPurchaseOrder = showTab(showPurchaseOrder)"><span [innerHTML]="'Purchase Order' | translate" ></span></div>
+<div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showPurchaseOrder}" (click)="showPurchaseOrder = showTab(showPurchaseOrder)"><span [innerHTML]="'Purchase Order' | translate"></span></div>
 
 <!--Notes-->
 <div class="ml-2 space-before">
-    <note-file-view *ngIf="showNotesAndAdditionalFiles"
-                    class="mb-2"
-                    [notes]="rfq.note"
-                    [documents]="rfq.additionalDocumentReference"
-                    [label]="'Notes'"
-                    [firstCol]="'col-2'"
-                    [secondCol]="'col-5'"
-                    [lastCol]="'col-5'"
-                    [readonly]="isLoading() || isReadOnly()"></note-file-view>
+    <note-file-view *ngIf="showNotesAndAdditionalFiles" class="mb-2" [notes]="rfq.note" [documents]="rfq.additionalDocumentReference" [label]="'Notes'" [firstCol]="'col-2'" [secondCol]="'col-5'" [lastCol]="'col-5'" [readonly]="isLoading() || isReadOnly()"></note-file-view>
 </div>
 
 <!--Purchase Order-->
@@ -64,37 +58,39 @@
 <!-- Action buttons are only displayed for the last product -->
 <ng-container *ngIf="selectedLineIndex == catalogueLines.length-1">
     <div *ngIf="!showRequestedPrice()" class="d-flex justify-content-end actions-row">
-        <div class="col-3 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-3 call-status-col">
+            <call-status [callStatus]="callStatus"></call-status>
+        </div>
         <div class="col-4">
             <div class="price-col"><span [innerHTML]="'Net Price' | translate"></span>: {{ getTotalPriceString()}}</div>
             <div *ngIf="config.vatEnabled" class="price-col"><span [innerHTML]="'VAT' | translate"></span>: {{ getVatTotalString()}}</div>
             <div *ngIf="config.vatEnabled" class="price-col"><span [innerHTML]="'Gross Total' | translate"></span>: {{ getGrossTotalString() }}</div>
         </div>
         <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
-        <div class="col-3"   *ngIf="!(processMetadata && processMetadata.isBeingUpdated)">
-        <span [ngbTooltip]="getValidationError()" [placement]="'auto'"  title="">
-            <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onSendRequest()" singleClick>
-                <span *ngIf="!doesManufacturerOfferHasPrice() || isNegotiatingAnyTerm() || bpDataService.isFinalProcessInTheWorkflow('Negotiation')" [innerHTML]="'Send Request' | translate"></span>
-                <span *ngIf="!(!doesManufacturerOfferHasPrice() || isNegotiatingAnyTerm() || bpDataService.isFinalProcessInTheWorkflow('Negotiation'))" [innerHTML]="'Continue With Manufacturer\'s Terms' | translate"></span>
-            </button>
-        </span>
+        <div class="col-3" *ngIf="!(processMetadata && processMetadata.isBeingUpdated)">
+            <span [ngbTooltip]="getValidationError()" [placement]="'auto'" title="">
+                <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onSendRequest()" singleClick>
+                    <span *ngIf="!doesManufacturerOfferHasPrice() || isNegotiatingAnyTerm() || bpDataService.isFinalProcessInTheWorkflow('Negotiation')" [innerHTML]="'Send Request' | translate"></span>
+                    <span *ngIf="!(!doesManufacturerOfferHasPrice() || isNegotiatingAnyTerm() || bpDataService.isFinalProcessInTheWorkflow('Negotiation'))" [innerHTML]="'Continue With Manufacturer\'s Terms' | translate"></span>
+                </button>
+            </span>
         </div>
         <div class="col-3" *ngIf="processMetadata && processMetadata.isBeingUpdated">
-        <span [ngbTooltip]="getValidationError()" [placement]="'auto'"  title="">
-            <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onUpdateRequest()" singleClick>
-                <span [innerHTML]="'Update Request' | translate"></span>
-            </button>
-        </span>
+            <span [ngbTooltip]="getValidationError()" [placement]="'auto'" title="">
+                <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onUpdateRequest()" singleClick>
+                    <span [innerHTML]="'Update Request' | translate"></span>
+                </button>
+            </span>
         </div>
     </div>
 
     <div *ngIf="showRequestedPrice()" class="row actions-row">
         <div class="col-6"></div>
-        <div class="col-4 price-col"><span [innerHTML]="'Requested Price' | translate"></span>: {{  getGrossTotalString() }}</div>
+        <div class="col-4 price-col"><span [innerHTML]="'Requested Price' | translate"></span>: {{ getGrossTotalString() }}</div>
         <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()">Back</button>
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
         </div>
     </div>
 </ng-container>

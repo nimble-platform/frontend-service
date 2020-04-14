@@ -1,15 +1,31 @@
+/*
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 import 'rxjs/add/operator/switchMap';
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, ParamMap} from '@angular/router';
-import {Location} from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { Location } from '@angular/common';
 
-import {BP} from './model/bp';
-import {BPService} from './bp.service';
-import {ProcessConfiguration} from './model/process-configuration';
-import {TransactionConfiguration} from './model/transaction-configuration';
-import {ExecutionConfiguration} from './model/execution-configuration';
+import { BP } from './model/bp';
+import { BPService } from './bp.service';
+import { ProcessConfiguration } from './model/process-configuration';
+import { TransactionConfiguration } from './model/transaction-configuration';
+import { ExecutionConfiguration } from './model/execution-configuration';
 
-import {ExternalDiagram} from './lib/external-diagram';
+import { ExternalDiagram } from './lib/external-diagram';
 
 declare var jQuery: any;
 
@@ -37,8 +53,8 @@ export class BPConfigureComponent implements OnInit {
     startSelecting: boolean;
 
     constructor(private bpService: BPService,
-                private route: ActivatedRoute,
-                private location: Location) {
+        private route: ActivatedRoute,
+        private location: Location) {
         this.partnerID = 'buyer1387';
         this.partnerRole = '';
         this.configuration = new ProcessConfiguration(this.partnerID, this.partnerRole, '', []);
@@ -105,7 +121,7 @@ export class BPConfigureComponent implements OnInit {
                         if (this.selectedTransactionID !== '') {
                             this.onSelect();
                         }
-                    } );
+                    });
             });
 
             jQuery('.signal').on('click', (event) => {

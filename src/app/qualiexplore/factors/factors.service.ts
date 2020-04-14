@@ -23,7 +23,7 @@ import { Http } from '@angular/http';
 export class FactorsService {
     private _factorsUrl = 'https://gist.githubusercontent.com/shantanoo-desai/5163182aba74baf7ec04d7ac426bd944/raw/Data.json';
 
-    constructor(private http: Http) {}
+    constructor(private http: Http) { }
 
     async getFactors() {
         try {

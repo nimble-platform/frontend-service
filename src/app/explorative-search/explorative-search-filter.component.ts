@@ -23,8 +23,8 @@
  * Child Component for this class: none
  */
 
-import {Component, Input, OnChanges, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
-import {ExplorativeSearchService} from './explorative-search.service';
+import { Component, Input, OnChanges, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
+import { ExplorativeSearchService } from './explorative-search.service';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -53,7 +53,7 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
     userSelections: any[] = [];
     /*Component where the slider value is shown everytime the value changes*/
     @ViewChild('rangeVal') slider: ElementRef;
-    private  _error_detected_slider;
+    private _error_detected_slider;
 
     constructor(private expSearch: ExplorativeSearchService, private translate: TranslateService) {
     }
@@ -65,7 +65,7 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
     ngOnChanges(): void {
         // console.log('FilterConfig ', this.filterProperties['filterJSON']); // DEBUG Check
         this.result = [];
-        this.finalSelectionJSON = {'root': this.filterProperties['fQueryRootUrl'], 'filter': []};
+        this.finalSelectionJSON = { 'root': this.filterProperties['fQueryRootUrl'], 'filter': [] };
         if (this.filterProperties['filterJSON'] === {}) {
             this.userSelections = [];
         }
@@ -92,7 +92,8 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
                     // NEED TO WORK HERE.. Must be a Array of JSON according to API input
                     // let tempArr: any[] = [];
                     // tempArr.push({'property': this.keyForConf, 'values': [eachResult['min'], eachResult['max']]});
-                    this.userSelections.push({'property': this.filterProperties['fQuery'],
+                    this.userSelections.push({
+                        'property': this.filterProperties['fQuery'],
                         'values': [eachResult['min'], eachResult['max']]
                     });
                 }
@@ -103,11 +104,13 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
         }
         // console.log('Filter Area: ', this.userSelections); // DEBUG CHECK
         if (this.userSelections.length > 0) {
-            this.finalSelectionJSON = {'root': this.filterProperties['fQueryRoot'], 'filter': this.userSelections};
+            this.finalSelectionJSON = { 'root': this.filterProperties['fQueryRoot'], 'filter': this.userSelections };
         } else {
             // console.log('FilterArea: this.userSelections', this.userSelections);
-            this.finalSelectionJSON = {'root': this.filterProperties['fQueryRoot'],
-                'child': this.filterProperties['fQuery'], 'filter': []};
+            this.finalSelectionJSON = {
+                'root': this.filterProperties['fQueryRoot'],
+                'child': this.filterProperties['fQuery'], 'filter': []
+            };
         }
     }
 
@@ -130,9 +133,11 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
                 this.filterProperties['fQuery'] = key;
             }
         }
-        let filteringInput = {'concept': encodeURIComponent(this.filterProperties['fQueryRoot'].trim()),
+        let filteringInput = {
+            'concept': encodeURIComponent(this.filterProperties['fQueryRoot'].trim()),
             'property': encodeURIComponent(this.filterProperties['fQuery'].trim()),
-            'amountOfGroups': eventValue};
+            'amountOfGroups': eventValue
+        };
         // Call API everytime the slider value changes.
         this.expSearch.getPropertyValues(filteringInput)
             .then(res => {

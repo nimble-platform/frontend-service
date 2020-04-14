@@ -1,13 +1,29 @@
+/*
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   In collaboration with
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 import { Price } from "../catalogue/model/publish/price";
 import { Quantity } from "../catalogue/model/publish/quantity";
-import {copy, currencyToString, roundToTwoDecimals, roundToTwoDecimalsNumber} from "./utils";
+import { copy, currencyToString, roundToTwoDecimals, roundToTwoDecimalsNumber } from "./utils";
 import { ItemPriceWrapper } from "./item-price-wrapper";
-import {PriceOption} from '../catalogue/model/publish/price-option';
-import {PRICE_OPTIONS} from '../catalogue/model/constants';
-import {ItemProperty} from '../catalogue/model/publish/item-property';
-import {Address} from '../catalogue/model/publish/address';
-import {Text} from '../catalogue/model/publish/text';
-import {Country} from '../catalogue/model/publish/country';
+import { PriceOption } from '../catalogue/model/publish/price-option';
+import { PRICE_OPTIONS } from '../catalogue/model/constants';
+import { ItemProperty } from '../catalogue/model/publish/item-property';
+import { Address } from '../catalogue/model/publish/address';
+import { Text } from '../catalogue/model/publish/text';
+import { Country } from '../catalogue/model/publish/country';
 
 /**
  * Wrapper around a price and a quantity, contains convenience methods to get the total price,
@@ -22,15 +38,15 @@ export class DiscountPriceWrapper {
     appliedDiscounts: PriceOption[] = [];
 
     constructor(public originalCatalogueLinePrice: Price, // immutable initial price that to be used as the starting price while calculating the discount
-                public price: Price, // dynamically changing price upon the updates on the price
-                public vatPercentage: number,
-                public orderedQuantity: Quantity = new Quantity(1, price.baseQuantity.unitCode), // ordered quantity
-                public priceOptions:PriceOption[] = [],
-                public additionalItemProperties:ItemProperty[] = [],
-                public incoterm:string = null,
-                public paymentMeans:string = null,
-                public deliveryPeriod: Quantity = null,
-                public deliveryLocation: Address = null
+        public price: Price, // dynamically changing price upon the updates on the price
+        public vatPercentage: number,
+        public orderedQuantity: Quantity = new Quantity(1, price.baseQuantity.unitCode), // ordered quantity
+        public priceOptions: PriceOption[] = [],
+        public additionalItemProperties: ItemProperty[] = [],
+        public incoterm: string = null,
+        public paymentMeans: string = null,
+        public deliveryPeriod: Quantity = null,
+        public deliveryLocation: Address = null
     ) {
         this.immutableOriginalCatalogueLinePrice = copy(originalCatalogueLinePrice);
         this.itemPrice = new ItemPriceWrapper(price);
@@ -38,7 +54,7 @@ export class DiscountPriceWrapper {
     }
 
     get originalPricePerItem(): number {
-        if(!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
+        if (!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
             return 0;
         }
 
@@ -47,7 +63,7 @@ export class DiscountPriceWrapper {
     }
 
     get pricePerItem(): number {
-        if(!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
+        if (!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
             return 0;
         }
 
@@ -57,7 +73,7 @@ export class DiscountPriceWrapper {
     get pricePerItemString(): string {
         const qty = this.orderedQuantity;
 
-        if(!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
+        if (!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
             return "On demand";
         }
 
@@ -65,7 +81,7 @@ export class DiscountPriceWrapper {
     }
 
     get discountedPricePerItem(): number {
-        if(!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
+        if (!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
             return 0;
         }
 
@@ -75,7 +91,7 @@ export class DiscountPriceWrapper {
 
     get discountedPricePerItemString(): string {
         const qty = this.orderedQuantity;
-        if(!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
+        if (!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
             return "On demand";
         }
 
@@ -83,7 +99,7 @@ export class DiscountPriceWrapper {
     }
 
     get totalPrice(): number {
-        if(!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
+        if (!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
             return 0;
         }
 
@@ -96,7 +112,7 @@ export class DiscountPriceWrapper {
     }
 
     get totalPriceString(): string {
-        if(!this.itemPrice.hasPrice()) {
+        if (!this.itemPrice.hasPrice()) {
             return "On demand";
         }
         return `${roundToTwoDecimals(this.totalPrice)} ${this.currency}`;
@@ -116,7 +132,7 @@ export class DiscountPriceWrapper {
 
     get grossTotalString(): string {
         let grossTotal = this.grossTotal;
-        if(grossTotal == 0){
+        if (grossTotal == 0) {
             return "On demand";
         }
         return `${roundToTwoDecimals(grossTotal)} ${this.currency}`;
@@ -143,18 +159,18 @@ export class DiscountPriceWrapper {
         //const pricePerItem = this.useCatalogueLinePrice ? this.initialCatalogueLinePrice : this.itemPrice.value;
         let totalPrice = this.orderedQuantity.value * this.originalPricePerItem;
 
-        let totalDiscount:number = 0;
+        let totalDiscount: number = 0;
         // for Minimum Order Quantity and Delivery Period price options, we find the ones offering the maximum discounts
         let maximumMinimumOrderQuantityDiscount = 0;
-        let minimumOrderQuantityPriceOptionForDiscount:PriceOption = null;
+        let minimumOrderQuantityPriceOptionForDiscount: PriceOption = null;
         let maximumDeliveryPeriodDiscount = 0;
-        let deliveryPeriodPriceOptionForDiscount:PriceOption = null;
+        let deliveryPeriodPriceOptionForDiscount: PriceOption = null;
         // for Minimum Order Quantity and Delivery Period price options, we find the ones offering the maximum charges
         // (the most negative one since charges are represented by negative values)
         let minimumMinimumOrderQuantityCharge = 0;
-        let minimumOrderQuantityPriceOptionForCharge:PriceOption = null;
+        let minimumOrderQuantityPriceOptionForCharge: PriceOption = null;
         let minimumDeliveryPeriodCharge = 0;
-        let deliveryPeriodPriceOptionForCharge:PriceOption = null;
+        let deliveryPeriodPriceOptionForCharge: PriceOption = null;
         // there might be multiple price options for delivery location
         // in this case, we need to apply the one which satisfies the most address fields
         let numberOfAddressFieldsSatisfiedByPriceOptionForDeliveryLocation = 0;
@@ -186,7 +202,7 @@ export class DiscountPriceWrapper {
                 && this.orderedQuantity.value >= priceOption.itemLocationQuantity.minimumQuantity.value) {
                 let qDiscount = this.calculateDiscountAmount(priceOption, totalPrice);
                 // discount
-                if(qDiscount > 0 && qDiscount > maximumMinimumOrderQuantityDiscount){
+                if (qDiscount > 0 && qDiscount > maximumMinimumOrderQuantityDiscount) {
                     maximumMinimumOrderQuantityDiscount = qDiscount;
                     minimumOrderQuantityPriceOptionForDiscount = priceOption;
                 }
@@ -203,7 +219,7 @@ export class DiscountPriceWrapper {
 
                 let dpDiscount = this.calculateDiscountAmount(priceOption, totalPrice);
                 // discount
-                if(dpDiscount > 0 && dpDiscount > maximumDeliveryPeriodDiscount){
+                if (dpDiscount > 0 && dpDiscount > maximumDeliveryPeriodDiscount) {
                     maximumDeliveryPeriodDiscount = dpDiscount;
                     deliveryPeriodPriceOptionForDiscount = priceOption;
                 }
@@ -276,19 +292,19 @@ export class DiscountPriceWrapper {
         totalDiscount += minimumMinimumOrderQuantityCharge;
         totalDiscount += minimumDeliveryPeriodCharge;
 
-        if(minimumOrderQuantityPriceOptionForDiscount != null){
+        if (minimumOrderQuantityPriceOptionForDiscount != null) {
             minimumOrderQuantityPriceOptionForDiscount.discount = maximumMinimumOrderQuantityDiscount;
             this.appliedDiscounts.push(minimumOrderQuantityPriceOptionForDiscount);
         }
-        if(deliveryPeriodPriceOptionForDiscount != null){
+        if (deliveryPeriodPriceOptionForDiscount != null) {
             deliveryPeriodPriceOptionForDiscount.discount = maximumDeliveryPeriodDiscount;
             this.appliedDiscounts.push(deliveryPeriodPriceOptionForDiscount);
         }
-        if(minimumOrderQuantityPriceOptionForCharge != null){
+        if (minimumOrderQuantityPriceOptionForCharge != null) {
             minimumOrderQuantityPriceOptionForCharge.discount = minimumMinimumOrderQuantityCharge;
             this.appliedDiscounts.push(minimumOrderQuantityPriceOptionForCharge);
         }
-        if(deliveryPeriodPriceOptionForCharge != null){
+        if (deliveryPeriodPriceOptionForCharge != null) {
             deliveryPeriodPriceOptionForCharge.discount = minimumDeliveryPeriodCharge;
             this.appliedDiscounts.push(deliveryPeriodPriceOptionForCharge);
         }
@@ -302,14 +318,14 @@ export class DiscountPriceWrapper {
         return totalPrice - totalDiscount;
     }
 
-    private calculateDiscountAmount(priceOption:PriceOption,totalPrice:number): number{
+    private calculateDiscountAmount(priceOption: PriceOption, totalPrice: number): number {
         let discount = 0;
 
         // total price
-        if(priceOption.itemLocationQuantity.allowanceCharge[0].amount && priceOption.itemLocationQuantity.allowanceCharge[0].amount.value){
+        if (priceOption.itemLocationQuantity.allowanceCharge[0].amount && priceOption.itemLocationQuantity.allowanceCharge[0].amount.value) {
             // unit is %
-            if(priceOption.itemLocationQuantity.allowanceCharge[0].amount.currencyID == "%"){
-                discount += totalPrice*priceOption.itemLocationQuantity.allowanceCharge[0].amount.value/100.0;
+            if (priceOption.itemLocationQuantity.allowanceCharge[0].amount.currencyID == "%") {
+                discount += totalPrice * priceOption.itemLocationQuantity.allowanceCharge[0].amount.value / 100.0;
             }
             // unit is not %
             else {
@@ -317,25 +333,25 @@ export class DiscountPriceWrapper {
             }
         }
         // per unit
-        else if(priceOption.itemLocationQuantity.allowanceCharge[0].perUnitAmount.value){
+        else if (priceOption.itemLocationQuantity.allowanceCharge[0].perUnitAmount.value) {
             discount += priceOption.itemLocationQuantity.allowanceCharge[0].perUnitAmount.value * this.orderedQuantity.value;
         }
 
         return discount;
     }
 
-    public calculateTotalDiscount():number {
+    public calculateTotalDiscount(): number {
         let totalDiscount = 0;
-        for(let discount of this.appliedDiscounts){
+        for (let discount of this.appliedDiscounts) {
             totalDiscount += discount.discount;
         }
         return totalDiscount;
     }
 
     // checks whether there's a price option for the selected property value or not
-    private existenceOfPriceOptionForPropertyValue(priceOptionPropertyValues:Text[],selectedPropertyValue:Text):boolean{
-        for(let property of priceOptionPropertyValues){
-            if(property.value == selectedPropertyValue.value && property.languageID == selectedPropertyValue.languageID){
+    private existenceOfPriceOptionForPropertyValue(priceOptionPropertyValues: Text[], selectedPropertyValue: Text): boolean {
+        for (let property of priceOptionPropertyValues) {
+            if (property.value == selectedPropertyValue.value && property.languageID == selectedPropertyValue.languageID) {
                 return true;
             }
         }

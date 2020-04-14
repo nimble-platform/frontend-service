@@ -1,6 +1,24 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {CookieService} from 'ng2-cookies';
-import {CredentialsService} from './user-mgmt/credentials.service';
+/*
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   In collaboration with
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+ * UB - University of Bremen, Faculty of Production Engineering; Bremen; Germany
+ * BIBA - Bremer Institut für Produktion und Logistik GmbH; Bremen; Germany
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { CookieService } from 'ng2-cookies';
+import { CredentialsService } from './user-mgmt/credentials.service';
 import {
     Router,
     NavigationStart,
@@ -9,17 +27,17 @@ import {
     RoutesRecognized,
     ActivatedRoute
 } from '@angular/router';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from './globals';
 import * as moment from "moment";
-import {DEFAULT_LANGUAGE,LANGUAGES, FALLBACK_LANGUAGE, FEDERATION} from './catalogue/model/constants';
-import {TranslateService} from '@ngx-translate/core';
+import { DEFAULT_LANGUAGE, LANGUAGES, FALLBACK_LANGUAGE, FEDERATION } from './catalogue/model/constants';
+import { TranslateService } from '@ngx-translate/core';
 
 import 'zone.js';
 
-import {Headers, Http} from "@angular/http";
-import {selectValueOfTextObject} from "./common/utils";
-import {CallStatus} from "./common/call-status";
+import { Headers, Http } from "@angular/http";
+import { selectValueOfTextObject } from "./common/utils";
+import { CallStatus } from "./common/call-status";
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
@@ -60,7 +78,7 @@ export class AppComponent implements OnInit {
     response: any;
     submitCallStatus: CallStatus = new CallStatus();
 
-    private translations:any = [];
+    private translations: any = [];
 
     constructor(
         private http: Http,
@@ -93,29 +111,29 @@ export class AppComponent implements OnInit {
             }
         });
         if (cookieService.get("federation")) {
-          let fS = cookieService.get("federation");
-          this.federation = (fS == "ON");
-          this.federationStr = fS;
-          document.getElementsByTagName('html')[0].setAttribute('data-fed',this.federationStr);
+            let fS = cookieService.get("federation");
+            this.federation = (fS == "ON");
+            this.federationStr = fS;
+            document.getElementsByTagName('html')[0].setAttribute('data-fed', this.federationStr);
         }
         else {
-          this.federation = false;
-          this.federationStr = "OFF";
-          cookieService.set("federation",this.federationStr);
-          document.getElementsByTagName('html')[0].setAttribute('data-fed',this.federationStr);
+            this.federation = false;
+            this.federationStr = "OFF";
+            cookieService.set("federation", this.federationStr);
+            document.getElementsByTagName('html')[0].setAttribute('data-fed', this.federationStr);
         }
         if (cookieService.get("language")) {
-          this.language = cookieService.get("language");
-          document.getElementsByTagName('html')[0].setAttribute('lang',this.language);
+            this.language = cookieService.get("language");
+            document.getElementsByTagName('html')[0].setAttribute('lang', this.language);
         }
         else {
-          let langTmp = translate.getBrowserLang();
-          if(LANGUAGES.indexOf(langTmp) == -1){
-              langTmp = FALLBACK_LANGUAGE;
-          }
-          this.language = langTmp;
-          cookieService.set("language",this.language);
-          document.getElementsByTagName('html')[0].setAttribute('lang',this.language);
+            let langTmp = translate.getBrowserLang();
+            if (LANGUAGES.indexOf(langTmp) == -1) {
+                langTmp = FALLBACK_LANGUAGE;
+            }
+            this.language = langTmp;
+            cookieService.set("language", this.language);
+            document.getElementsByTagName('html')[0].setAttribute('lang', this.language);
         }
         translate.setDefaultLang(FALLBACK_LANGUAGE);
         translate.use(DEFAULT_LANGUAGE());
@@ -123,11 +141,11 @@ export class AppComponent implements OnInit {
             this.translations = res;
         });
         if (this.debug)
-          console.log("Initialized platform with language: "+DEFAULT_LANGUAGE());
+            console.log("Initialized platform with language: " + DEFAULT_LANGUAGE());
     }
 
     toggleChat(val) {
-      this.chatVisible = val;
+        this.chatVisible = val;
     }
 
     getQueryParameter(name): any {
@@ -180,32 +198,32 @@ export class AppComponent implements OnInit {
     }
 
     getChatText(): string {
-      let txt = this.translations['Chat'];
-      if (this.chatVisible)
-        txt += ": " + this.translations['ON'];
-      else
-        txt += ": " + this.translations['OFF'];
-      return txt;
+        let txt = this.translations['Chat'];
+        if (this.chatVisible)
+            txt += ": " + this.translations['ON'];
+        else
+            txt += ": " + this.translations['OFF'];
+        return txt;
     }
 
     getFederationText(): string {
         let txt = this.translations['Federation'];
         if (this.federation)
-          txt += ": " + this.translations['ON'];
+            txt += ": " + this.translations['ON'];
         else
-          txt += ": " + this.translations['OFF'];
+            txt += ": " + this.translations['OFF'];
         return txt;
     }
 
     getLangText(): string {
-      let txt = this.translations['Language'];
-      txt += ": " + this.language.toUpperCase();
-      return txt;
+        let txt = this.translations['Language'];
+        txt += ": " + this.language.toUpperCase();
+        return txt;
     }
 
     ngOnInit() {
         // the user could not publish logistic services if the standard taxonomy is 'eClass'
-        if(this.config.standardTaxonomy == "eClass"){
+        if (this.config.standardTaxonomy == "eClass") {
             this.enableLogisticServicePublishing = false;
         }
 
@@ -224,7 +242,7 @@ export class AppComponent implements OnInit {
         if (code != null) {
 
             let redirectURL = window.location.href.split("code=");
-            if(redirectURL.length != 1){
+            if (redirectURL.length != 1) {
                 let lastChar = redirectURL[0].charAt(redirectURL[0].length - 1);
                 if (lastChar == '?' || lastChar == '&') {
                     redirectURL[0] = redirectURL[0].substring(0, redirectURL[0].length - 1);
@@ -234,7 +252,7 @@ export class AppComponent implements OnInit {
             const url = myGlobals.user_mgmt_endpoint + `/federation/login`;
             this.submitCallStatus.submit();
             return this.http
-                .post(url, JSON.stringify({'code': code, 'redirect_URL': redirectURL[0]}), {headers: new Headers({'Content-Type': 'application/json'})})
+                .post(url, JSON.stringify({ 'code': code, 'redirect_URL': redirectURL[0] }), { headers: new Headers({ 'Content-Type': 'application/json' }) })
                 .toPromise()
                 .then(res => {
                     this.submitCallStatus.callback("Login Successful!");
@@ -251,7 +269,7 @@ export class AppComponent implements OnInit {
 
                     if (catalogueId != null && id != null) {
                         window.location.href = this.generateProductURL(catalogueId, id);
-                    } else if (!this.response.companyID && myGlobals.config.companyRegistrationRequired){
+                    } else if (!this.response.companyID && myGlobals.config.companyRegistrationRequired) {
                         this.checkLogin("/user-mgmt/company-registration");
                     } else
                         this.checkLogin("/dashboard");
@@ -270,27 +288,27 @@ export class AppComponent implements OnInit {
         });
     }
 
-    setLang(lang:string) {
-      if (lang != this.language) {
-        this.loading = true;
-        document.getElementsByTagName('html')[0].setAttribute('lang',this.language);
-        this.cookieService.set("language",lang);
-        location.reload();
-      }
+    setLang(lang: string) {
+        if (lang != this.language) {
+            this.loading = true;
+            document.getElementsByTagName('html')[0].setAttribute('lang', this.language);
+            this.cookieService.set("language", lang);
+            location.reload();
+        }
     }
 
-    setFed(fed:boolean) {
-      if (fed != this.federation) {
-        this.loading = true;
-        this.federation = fed;
-        if (this.federation)
-          this.federationStr = "ON";
-        else
-          this.federationStr = "OFF";
-        document.getElementsByTagName('html')[0].setAttribute('data-fed',this.federationStr);
-        this.cookieService.set("federation",this.federationStr);
-        location.reload();
-      }
+    setFed(fed: boolean) {
+        if (fed != this.federation) {
+            this.loading = true;
+            this.federation = fed;
+            if (this.federation)
+                this.federationStr = "ON";
+            else
+                this.federationStr = "OFF";
+            document.getElementsByTagName('html')[0].setAttribute('data-fed', this.federationStr);
+            this.cookieService.set("federation", this.federationStr);
+            location.reload();
+        }
     }
 
     getVersions(): void {
@@ -303,7 +321,7 @@ export class AppComponent implements OnInit {
                     this.removeVersion("identity");
                 }
             })
-            .catch(error => {});
+            .catch(error => { });
         this.credentialsService.getVersionBP()
             .then(res => {
                 if (res.git && res.git.branch && res.git.commit && res.git.commit.time && res.git.commit.id) {
@@ -313,7 +331,7 @@ export class AppComponent implements OnInit {
                     this.removeVersion("business-process");
                 }
             })
-            .catch(error => {});
+            .catch(error => { });
         this.credentialsService.getVersionCatalog()
             .then(res => {
                 if (res.git && res.git.branch && res.git.commit && res.git.commit.time && res.git.commit.id) {
@@ -323,7 +341,8 @@ export class AppComponent implements OnInit {
                     this.removeVersion("catalog");
                 }
             })
-            .catch(error => {});
+            .catch(error => { });
+        /*
         this.credentialsService.getVersionDataChannel()
             .then(res => {
                 if (res.git && res.git.branch && res.git.commit && res.git.commit.time && res.git.commit.id) {
@@ -333,7 +352,8 @@ export class AppComponent implements OnInit {
                     this.removeVersion("data-channel");
                 }
             })
-            .catch(error => {});
+            .catch(error => { });
+        */
     }
 
     public addVersion(id: String, ver: String, date: String) {
@@ -351,7 +371,7 @@ export class AppComponent implements OnInit {
             "ver": ver,
             "date": date
         });
-        this.versions.sort(function (a, b) {
+        this.versions.sort(function(a, b) {
             var a_comp = a.id;
             var b_comp = b.id;
             return a_comp.localeCompare(b_comp);
@@ -368,7 +388,7 @@ export class AppComponent implements OnInit {
         }
         if (idx >= 0) {
             this.versions.splice(idx, 1);
-            this.versions.sort(function (a, b) {
+            this.versions.sort(function(a, b) {
                 var a_comp = a.id;
                 var b_comp = b.id;
                 return a_comp.localeCompare(b_comp);
@@ -426,60 +446,60 @@ export class AppComponent implements OnInit {
             if (!this.cookieService.get("user_id")) {
                 if (link != "/" && link != "/user-mgmt/login" && link != "/user-mgmt/registration" && link != "/analytics/info"
                     && link != "/analytics/members" && link != "/user-mgmt/forgot") {
-                    this.router.navigate(["/user-mgmt/login"], {queryParams: {redirectURL: url}});
+                    this.router.navigate(["/user-mgmt/login"], { queryParams: { redirectURL: url } });
                 }
                 else {
-                  this.logUrl(url);
+                    this.logUrl(url);
                 }
             }
             else {
-              this.logUrl(url);
+                this.logUrl(url);
             }
         }
     }
 
     public logUrl(url) {
-      if (this.config.loggingEnabled) {
-        let cID = "";
-        if (this.companyID)
-          cID = this.companyID;
-        let splitHash = url.split("?");
-        let hashBase = splitHash[0];
-        if (hashBase == "/")
-          hashBase = "/user-mgmt/login";
-        let params = {};
-        if (splitHash.length > 1) {
-          let paramArr = splitHash[1].split("&");
-          for (let i=0; i<paramArr.length; i++) {
-            let splitParam = paramArr[i].split("=");
-            let paramName = splitParam[0];
-            let paramValue = splitParam[1];
-            params[paramName] = paramValue;
-          }
+        if (this.config.loggingEnabled) {
+            let cID = "";
+            if (this.companyID)
+                cID = this.companyID;
+            let splitHash = url.split("?");
+            let hashBase = splitHash[0];
+            if (hashBase == "/")
+                hashBase = "/user-mgmt/login";
+            let params = {};
+            if (splitHash.length > 1) {
+                let paramArr = splitHash[1].split("&");
+                for (let i = 0; i < paramArr.length; i++) {
+                    let splitParam = paramArr[i].split("=");
+                    let paramName = splitParam[0];
+                    let paramValue = splitParam[1];
+                    params[paramName] = paramValue;
+                }
+            }
+            let log = {
+                "@timestamp": moment().utc().toISOString(),
+                "level": "INFO",
+                "serviceID": "frontend-service",
+                "userId": this.userID,
+                "companyId": cID,
+                "activity": hashBase,
+                "message": JSON.stringify({
+                    "params": params
+                })
+            };
+            if (this.debug)
+                console.log("Writing log " + JSON.stringify(log));
+            this.credentialsService.logUrl(log)
+                .then(res => { })
+                .catch(error => { });
         }
-        let log = {
-          "@timestamp": moment().utc().toISOString(),
-          "level": "INFO",
-          "serviceID": "frontend-service",
-          "userId": this.userID,
-          "companyId": cID,
-          "activity": hashBase,
-          "message": JSON.stringify({
-            "params": params
-          })
-        };
-        if (this.debug)
-          console.log("Writing log "+JSON.stringify(log));
-        this.credentialsService.logUrl(log)
-          .then(res => {})
-          .catch(error => {});
-      }
     }
 
-    public checkLogin(path: any,redirected?:boolean) {
+    public checkLogin(path: any, redirected?: boolean) {
         let redUrl = false;
         if (redirected)
-          redUrl = redirected;
+            redUrl = redirected;
         if (this.cookieService.get("user_id")) {
             this.isLoggedIn = true;
             /*
@@ -524,89 +544,91 @@ export class AppComponent implements OnInit {
             this.userID = "";
             this.roles = [];
             if (!this.cookieService.get('bearer_token')) {
-              this.generateDefaultToken();
+                this.generateDefaultToken();
             }
         }
         if (path != "") {
-          if(!redUrl)
-            this.router.navigate([path]);
-          else {
-            let tmpUrl = decodeURIComponent(path);
-            if (tmpUrl.indexOf("?") == -1)
-              this.router.navigate([tmpUrl]);
+            if (!redUrl)
+                this.router.navigate([path]);
             else {
-              let tmpPath = tmpUrl.split("?")[0];
-              let tmpParams = tmpUrl.split("?")[1];
-              let tmpParamsSplit = tmpParams.split("&");
-              let tmpParamsObj = { queryParams : {} };
-              for (let i=0; i<tmpParamsSplit.length; i++) {
-                let key = tmpParamsSplit[i].split("=")[0];
-                let value = tmpParamsSplit[i].split("=")[1];
-                tmpParamsObj.queryParams[key] = value;
-              }
-              this.router.navigate([tmpPath],tmpParamsObj);
+                let tmpUrl = decodeURIComponent(path);
+                if (tmpUrl.indexOf("?") == -1)
+                    this.router.navigate([tmpUrl]);
+                else {
+                    let tmpPath = tmpUrl.split("?")[0];
+                    let tmpParams = tmpUrl.split("?")[1];
+                    let tmpParamsSplit = tmpParams.split("&");
+                    let tmpParamsObj = { queryParams: {} };
+                    for (let i = 0; i < tmpParamsSplit.length; i++) {
+                        let key = tmpParamsSplit[i].split("=")[0];
+                        let value = tmpParamsSplit[i].split("=")[1];
+                        tmpParamsObj.queryParams[key] = value;
+                    }
+                    this.router.navigate([tmpPath], tmpParamsObj);
+                }
             }
-          }
         }
     }
 
     private generateDefaultToken(): void {
-      let default_token = "";
-      let header = {
-        "alg": "RS256",
-        "typ": "JWT"
-      };
-      let payload = {
-        "iss": myGlobals.idpURL,
-        "aud": "nimble_client",
-        "typ": "Bearer",
-        "azp": "nimble_client",
-        "allowed-origins": [],
-        "realm_access": {
-          "roles": [
-            "nimble_user"
-          ]
-        },
-        "resource_access": {
-          "account": {
-            "roles": []
-          }
-        },
-        "preferred_username": "user@domain.com",
-        "email": "user@domain.com"
-      };
-      let verify = {
-        "timestamp": Date.now().toString()
-      };
-      default_token = [this.encodeToken(header),this.encodeToken(payload),this.encodeToken(verify)].join(".");
-      this.cookieService.set("bearer_token", default_token);
+        let default_token = "";
+        let header = {
+            "alg": "RS256",
+            "typ": "JWT"
+        };
+        let payload = {
+            "iss": myGlobals.idpURL,
+            "aud": "nimble_client",
+            "typ": "Bearer",
+            "azp": "nimble_client",
+            "allowed-origins": [],
+            "realm_access": {
+                "roles": [
+                    "nimble_user"
+                ]
+            },
+            "resource_access": {
+                "account": {
+                    "roles": []
+                }
+            },
+            "preferred_username": "user@domain.com",
+            "email": "user@domain.com"
+        };
+        let verify = {
+            "timestamp": Date.now().toString()
+        };
+        default_token = [this.encodeToken(header), this.encodeToken(payload), this.encodeToken(verify)].join(".");
+        this.cookieService.set("bearer_token", default_token);
     }
 
     private encodeToken(str: any): string {
-      let ret = JSON.stringify(str);
-      return btoa(ret);
+        let ret = JSON.stringify(str);
+        return btoa(ret);
     }
 
     private checkAdvMenu(): boolean {
-      let ret = false;
-      if (this.config.showExplorative && this.checkRoles('comp_req'))
-        ret = true;
-      else if (this.config.showTrack && this.checkRoles('track'))
-        ret = true;
-      return ret;
+        let ret = false;
+        if (this.config.legislationSettings.enabled && this.checkRoles('legislation'))
+            ret = true;
+        else if (this.config.showExplorative && this.checkRoles('comp_req'))
+            ret = true;
+        else if (this.config.showTrack && this.checkRoles('track'))
+            ret = true;
+        return ret;
     }
 
     private checkCompMenu(): boolean {
-      let ret = false;
-      if (this.checkRoles('comp') || (this.checkRoles('view_comp') && this.config.showCompanyMembers))
-        ret = true;
-      else if (this.checkRoles('comp-settings'))
-        ret = true;
-      else if (this.checkRoles('comp-ratings'))
-        ret = true;
-      else if (this.config.showAgent && this.checkRoles('bp'))
-        ret = true;
-      return ret;
+        let ret = false;
+        if (this.checkRoles('comp') || (this.checkRoles('view_comp') && this.config.showCompanyMembers))
+            ret = true;
+        else if (this.checkRoles('comp-settings'))
+            ret = true;
+        else if (this.checkRoles('comp-ratings'))
+            ret = true;
+        else if (this.config.showAgent && this.checkRoles('bp'))
+            ret = true;
+        return ret;
     }
 
     public checkRoles(func) {
@@ -628,6 +650,7 @@ export class AppComponent implements OnInit {
         const purch = this.roles.indexOf("purchaser") != -1;
         const sales = this.roles.indexOf("sales_officer") != -1;
         const manager = this.roles.indexOf("platform_manager") != -1 || this.debug;
+        const legislation = this.roles.indexOf("query-legislation") != -1;
         const all_rights = admin || external || legal;
         switch (func) {
             case "comp_req":
@@ -658,11 +681,11 @@ export class AppComponent implements OnInit {
                 if (all_rights || publish || purch || sales || (initial && !compReq))
                     this.allowed = true;
                 break;
-            case "compare" :
+            case "compare":
                 if (all_rights || publish || purch || sales || (initial && !compReq))
                     this.allowed = true;
                 break;
-            case "projects" :
+            case "projects":
                 if (all_rights || purch || sales || monitor || (initial && !compReq))
                     this.allowed = true;
                 break;
@@ -704,6 +727,10 @@ export class AppComponent implements OnInit {
                 break;
             case "collaboration":
                 if (all_rights || publish)
+                    this.allowed = true;
+                break;
+            case "legislation":
+                if (legislation)
                     this.allowed = true;
                 break;
             default:

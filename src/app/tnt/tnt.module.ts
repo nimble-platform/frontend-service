@@ -16,7 +16,7 @@
  */
 
 import { NgModule } from '@angular/core';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { CommonModule } from '@angular/common';
 import { AppCommonModule } from '../common/common.module';
@@ -59,4 +59,4 @@ import { HttpClientModule } from '@angular/common/http';
     entryComponents: []
 })
 
-export class TnTModule {}
+export class TnTModule { }

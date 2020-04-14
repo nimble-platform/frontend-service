@@ -1,5 +1,21 @@
+/*
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 import { Component, OnInit } from "@angular/core";
-import {ActivatedRoute, Params, Router, RouterStateSnapshot} from "@angular/router";
+import { ActivatedRoute, Params, Router, RouterStateSnapshot } from "@angular/router";
 import { Category } from "../model/category/category";
 import { CategoryService } from "./category.service";
 import { CookieService } from "ng2-cookies";
@@ -8,17 +24,17 @@ import { CatalogueService } from "../catalogue.service";
 import { PublishService } from "../publish-and-aip.service";
 import { ProductPublishComponent } from "../publish/product-publish.component";
 import { CallStatus } from "../../common/call-status";
-import {sanitizeDataTypeName, selectPreferredName, selectPreferredValues} from '../../common/utils';
+import { sanitizeDataTypeName, selectPreferredName, selectPreferredValues } from '../../common/utils';
 import { ParentCategories } from "../model/category/parent-categories";
-import { sortCategories,scrollToDiv } from "../../common/utils";
+import { sortCategories, scrollToDiv } from "../../common/utils";
 import { Property } from "../model/category/property";
 import * as myGlobals from '../../globals';
 import { AppComponent } from "../../app.component";
-import { Text} from '../model/publish/text';
+import { Text } from '../model/publish/text';
 import { Observable } from "rxjs/Observable";
 import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
 import { SimpleSearchService } from "../../simple-search/simple-search.service";
-import {TranslateService} from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 type ProductType = "product" | "transportation";
 type SelectedTab = "TREE"
@@ -93,7 +109,7 @@ export class CategorySearchComponent implements OnInit {
 
     ngOnInit(): void {
         if (this.standardTaxonomy == "All")
-          this.standardTaxonomy = "eClass";
+            this.standardTaxonomy = "eClass";
         this.route.queryParams.subscribe((params: Params) => {
             // current page regs considered: menu, publish, null
             this.pageRef = params["pageRef"];
@@ -148,7 +164,7 @@ export class CategorySearchComponent implements OnInit {
         // get available taxonomy ids
         this.categoryService.getAvailableTaxonomies().then(taxonomyIDs => {
             this.taxonomyIDs = ["All"];
-            for(let i = 0; i < taxonomyIDs.length;i++){
+            for (let i = 0; i < taxonomyIDs.length; i++) {
                 this.taxonomyIDs.push(taxonomyIDs[i]);
             }
             this.getRootCategories(this.taxonomyId == "All" ? this.standardTaxonomy : this.taxonomyId);
@@ -158,7 +174,7 @@ export class CategorySearchComponent implements OnInit {
     onSelectTab(event: any, id: any) {
         event.preventDefault();
         if (!this.getCategoryDetailsStatus.isDisplayed())
-          this.selectedTab = id;
+            this.selectedTab = id;
     }
 
     private getFavoriteCategories() {
@@ -174,27 +190,27 @@ export class CategorySearchComponent implements OnInit {
             this.prefCats = prefCats_tmp;
             this.favoriteCategoriesStatus.callback("Succesfully fetched favorite categories", true);
         })
-        .catch(error => {
-            this.favoriteCategoriesStatus.error("Error while fetching favorite categories.", error);
-        });
+            .catch(error => {
+                this.favoriteCategoriesStatus.error("Error while fetching favorite categories.", error);
+            });
     }
 
     private getRecentCategories() {
-      this.recCats = [];
-      this.recentCategoriesStatus.submit();
-      let userId = this.cookieService.get("user_id");
-      this.userService.getRecCat(userId).then(res => {
-          var recCats_tmp = [];
-          for (var i = 0; i < res.length; i++) {
-              if (res[i].split("::")[3] == this.productType) recCats_tmp.push(res[i]);
-          }
-          recCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
-          this.recCats = recCats_tmp;
-          this.recentCategoriesStatus.callback("Succesfully fetched recent categories", true);
-      })
-      .catch(error => {
-          this.recentCategoriesStatus.error("Error while fetching favorite categories.", error);
-      });
+        this.recCats = [];
+        this.recentCategoriesStatus.submit();
+        let userId = this.cookieService.get("user_id");
+        this.userService.getRecCat(userId).then(res => {
+            var recCats_tmp = [];
+            for (var i = 0; i < res.length; i++) {
+                if (res[i].split("::")[3] == this.productType) recCats_tmp.push(res[i]);
+            }
+            recCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
+            this.recCats = recCats_tmp;
+            this.recentCategoriesStatus.callback("Succesfully fetched recent categories", true);
+        })
+            .catch(error => {
+                this.recentCategoriesStatus.error("Error while fetching favorite categories.", error);
+            });
     }
 
     findPrefCat(cat: Category): boolean {
@@ -206,65 +222,65 @@ export class CategorySearchComponent implements OnInit {
 
     removeCategoryFromFavorites(cat: Category) {
         if (!this.addFavoriteCategoryStatus.isLoading()) {
-          this.addFavoriteCategoryStatus.submit();
-          const cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + this.productType;
-          const userId = this.cookieService.get("user_id");
-          this.userService.togglePrefCat(userId, cat_str).then(res => {
-              const prefCats_tmp = [];
-              for (var i = 0; i < res.length; i++) {
-                  if (res[i].split("::")[3] == this.productType) prefCats_tmp.push(res[i]);
-              }
-              prefCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
-              this.prefCats = prefCats_tmp;
-              this.addFavoriteCategoryStatus.callback("Category removed from favorites", true);
-          })
-          .catch(error => {
-              this.addFavoriteCategoryStatus.error("Error while removing category from favorites", error);
-          });
+            this.addFavoriteCategoryStatus.submit();
+            const cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + this.productType;
+            const userId = this.cookieService.get("user_id");
+            this.userService.togglePrefCat(userId, cat_str).then(res => {
+                const prefCats_tmp = [];
+                for (var i = 0; i < res.length; i++) {
+                    if (res[i].split("::")[3] == this.productType) prefCats_tmp.push(res[i]);
+                }
+                prefCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
+                this.prefCats = prefCats_tmp;
+                this.addFavoriteCategoryStatus.callback("Category removed from favorites", true);
+            })
+                .catch(error => {
+                    this.addFavoriteCategoryStatus.error("Error while removing category from favorites", error);
+                });
         }
     }
 
     addCategoryToFavorites(cat: Category) {
         if (!this.addFavoriteCategoryStatus.isLoading()) {
-          this.addFavoriteCategoryStatus.submit();
-          const cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + this.productType;
-          const userId = this.cookieService.get("user_id");
-          this.userService.togglePrefCat(userId, cat_str).then(res => {
-              const prefCats_tmp = [];
-              for (var i = 0; i < res.length; i++) {
-                  if (res[i].split("::")[3] == this.productType) prefCats_tmp.push(res[i]);
-              }
-              prefCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
-              this.prefCats = prefCats_tmp;
-              this.addFavoriteCategoryStatus.callback("Category added to favorites", true);
-          })
-          .catch(error => {
-              this.addFavoriteCategoryStatus.error("Error while adding category to favorites", error);
-          });
+            this.addFavoriteCategoryStatus.submit();
+            const cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + this.productType;
+            const userId = this.cookieService.get("user_id");
+            this.userService.togglePrefCat(userId, cat_str).then(res => {
+                const prefCats_tmp = [];
+                for (var i = 0; i < res.length; i++) {
+                    if (res[i].split("::")[3] == this.productType) prefCats_tmp.push(res[i]);
+                }
+                prefCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
+                this.prefCats = prefCats_tmp;
+                this.addFavoriteCategoryStatus.callback("Category added to favorites", true);
+            })
+                .catch(error => {
+                    this.addFavoriteCategoryStatus.error("Error while adding category to favorites", error);
+                });
         }
     }
 
     addRecentCategories(cat: Category[]) {
-      this.addRecentCategoryStatus.submit();
-      var recCatPost = [];
-      var timeStamp = new Date().getTime();
-      for (var i=0; i<cat.length; i++) {
-        const cat_str = cat[i].id + "::" + cat[i].taxonomyId + "::" + selectPreferredName(cat[i]) + "::" + this.productType + "::" + timeStamp;
-        recCatPost.push(cat_str);
-      }
-      const userId = this.cookieService.get("user_id");
-      this.userService.addRecCat(userId, recCatPost).then(res => {
-        var recCats_tmp = [];
-        for (var i = 0; i < res.length; i++) {
-            if (res[i].split("::")[3] == this.productType) recCats_tmp.push(res[i]);
+        this.addRecentCategoryStatus.submit();
+        var recCatPost = [];
+        var timeStamp = new Date().getTime();
+        for (var i = 0; i < cat.length; i++) {
+            const cat_str = cat[i].id + "::" + cat[i].taxonomyId + "::" + selectPreferredName(cat[i]) + "::" + this.productType + "::" + timeStamp;
+            recCatPost.push(cat_str);
         }
-        recCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
-        this.recCats = recCats_tmp;
-        this.addRecentCategoryStatus.callback("Categories added to recently used", true);
-      })
-      .catch(error => {
-          this.addRecentCategoryStatus.error("Error while adding categories to recently used", error);
-      });
+        const userId = this.cookieService.get("user_id");
+        this.userService.addRecCat(userId, recCatPost).then(res => {
+            var recCats_tmp = [];
+            for (var i = 0; i < res.length; i++) {
+                if (res[i].split("::")[3] == this.productType) recCats_tmp.push(res[i]);
+            }
+            recCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
+            this.recCats = recCats_tmp;
+            this.addRecentCategoryStatus.callback("Categories added to recently used", true);
+        })
+            .catch(error => {
+                this.addRecentCategoryStatus.error("Error while adding categories to recently used", error);
+            });
     }
 
     selectPreferredName(cp: Category | Property) {
@@ -276,10 +292,10 @@ export class CategorySearchComponent implements OnInit {
     }
 
     getPropertyDefinitionOrRemark(property: Property): string {
-        if(property.definition != null && property.definition.trim().length > 0) {
+        if (property.definition != null && property.definition.trim().length > 0) {
             return property.definition;
         }
-        if(property.remark != null && property.remark.length > 0) {
+        if (property.remark != null && property.remark.length > 0) {
             return selectPreferredValues(property.remark)[0];
         }
         return "";
@@ -313,7 +329,7 @@ export class CategorySearchComponent implements OnInit {
         this.treeView = !this.treeView;
     }
 
-    private getRootCategories(taxonomyId:string): any {
+    private getRootCategories(taxonomyId: string): any {
         this.getCategoriesStatus.submit();
         this.categoryService
             .getRootCategories(taxonomyId)
@@ -321,18 +337,18 @@ export class CategorySearchComponent implements OnInit {
                 this.rootCategories = sortCategories(rootCategories);
                 this.getCategoriesStatus.callback("Retrieved category details", true);
                 if (this.categoryFilter[taxonomyId]) {
-                  this.logisticsCategory = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].logisticsCategory);
-                  if(this.logisticsCategory != null){
-                      let searchIndex = this.findCategoryInArray(this.rootCategories, this.logisticsCategory);
-                      this.rootCategories.splice(searchIndex, 1);
-                  }
-                  for (var i=0; i<this.categoryFilter[taxonomyId].hiddenCategories.length; i++) {
-                      let filterCat = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].hiddenCategories[i]);
-                      if(filterCat != null){
-                          let searchIndex = this.findCategoryInArray(this.rootCategories, filterCat);
-                          this.rootCategories.splice(searchIndex, 1);
-                      }
-                  }
+                    this.logisticsCategory = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].logisticsCategory);
+                    if (this.logisticsCategory != null) {
+                        let searchIndex = this.findCategoryInArray(this.rootCategories, this.logisticsCategory);
+                        this.rootCategories.splice(searchIndex, 1);
+                    }
+                    for (var i = 0; i < this.categoryFilter[taxonomyId].hiddenCategories.length; i++) {
+                        let filterCat = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].hiddenCategories[i]);
+                        if (filterCat != null) {
+                            let searchIndex = this.findCategoryInArray(this.rootCategories, filterCat);
+                            this.rootCategories.splice(searchIndex, 1);
+                        }
+                    }
                 }
             })
             .catch(error => {
@@ -341,13 +357,13 @@ export class CategorySearchComponent implements OnInit {
     }
 
     getSuggestions = (text$: Observable<string>) =>
-      text$.pipe(
-        debounceTime(200),
-        distinctUntilChanged(),
-        switchMap(term =>
-          this.simpleSearchService.getClassSuggestions(term,("{LANG}_label"),this.taxonomyId == "All" ? "" : this.categoryFilter[this.taxonomyId].ontologyPrefix)
-        )
-      );
+        text$.pipe(
+            debounceTime(200),
+            distinctUntilChanged(),
+            switchMap(term =>
+                this.simpleSearchService.getClassSuggestions(term, ("{LANG}_label"), this.taxonomyId == "All" ? "" : this.categoryFilter[this.taxonomyId].ontologyPrefix)
+            )
+        );
 
     displayRootCategories(taxonomyId: string): void {
         this.treeView = true;
@@ -358,7 +374,7 @@ export class CategorySearchComponent implements OnInit {
     private getCategories(): void {
         this.getCategoriesStatus.submit();
         this.categoryService
-            .getCategoriesByName(this.categoryKeyword, this.taxonomyId,this.isLogistics)
+            .getCategoriesByName(this.categoryKeyword, this.taxonomyId, this.isLogistics)
             .then(categories => {
                 this.parentCategories = null;
                 this.pathToSelectedCategories = null;
@@ -377,7 +393,7 @@ export class CategorySearchComponent implements OnInit {
             return;
         }
 
-        if(this.selectedCategoryWithDetails !== category) {
+        if (this.selectedCategoryWithDetails !== category) {
             throw new Error("Inconsistent state: can only select the details category.");
         }
 
@@ -402,7 +418,7 @@ export class CategorySearchComponent implements OnInit {
         this.router.navigate(["catalogue/publish"], { queryParams: { pg: this.publishingGranularity, productType: this.productType } });
     }
 
-    getCategoryTree(category: Category,scrollToDivId = null) {
+    getCategoryTree(category: Category, scrollToDivId = null) {
         this.selectedCategoryWithDetails = null;
         this.treeView = true;
         this.taxonomyId = category.taxonomyId;
@@ -414,7 +430,7 @@ export class CategorySearchComponent implements OnInit {
                     .getCategory(category)
                     .then(category => {
                         this.rootCategories = sortCategories(categories.categories[0]);
-                        if(!scrollToDivId){
+                        if (!scrollToDivId) {
                             this.scrollToDivId = category.code;
                         }
                         else {
@@ -430,10 +446,10 @@ export class CategorySearchComponent implements OnInit {
                         }
                         this.getCategoriesStatus.callback(null, true);
                         if (this.treeView) {
-                          setTimeout(function(){
-                            scrollToDiv(category.code);
-                            document.getElementById("scrollDiv").scrollTop-=57;
-                          },100);
+                            setTimeout(function() {
+                                scrollToDiv(category.code);
+                                document.getElementById("scrollDiv").scrollTop -= 57;
+                            }, 100);
                         }
                     })
                     .catch(error => {
@@ -472,42 +488,42 @@ export class CategorySearchComponent implements OnInit {
 
     getCategoryDetails(category: Category, fav: boolean) {
         if (!this.getCategoryDetailsStatus.isDisplayed()) {
-          if (!this.selectedCategory ||  (this.selectedCategory && this.selectedCategory.id !== category.id)) {
-            this.favSelected = fav;
-            this.selectedCategory = category;
-            this.selectedCategoryWithDetails = null;
-            this.getCategoryDetailsStatus.submit();
+            if (!this.selectedCategory || (this.selectedCategory && this.selectedCategory.id !== category.id)) {
+                this.favSelected = fav;
+                this.selectedCategory = category;
+                this.selectedCategoryWithDetails = null;
+                this.getCategoryDetailsStatus.submit();
 
-            this.showOtherProperties = false;
-            this.categoryService
-                .getCategory(category)
-                .then(category => {
-                    this.categoryService.getParentCategories(category).then(parentCategories => {
-                        this.pathToSelectedCategories = parentCategories;
-                        this.getCategoryDetailsStatus.callback("Retrieved details of the category", true);
-                        this.selectedCategoryWithDetails = category;
-                        if (this.treeView) {
-                          setTimeout(function(){
-                            scrollToDiv(category.code);
-                            document.getElementById("scrollDiv").scrollTop-=57;
-                          },100);
-                        }
-                    }).catch(error => {
-                        this.getCategoryDetailsStatus.error("Failed to retrieved parents of the category",error);
+                this.showOtherProperties = false;
+                this.categoryService
+                    .getCategory(category)
+                    .then(category => {
+                        this.categoryService.getParentCategories(category).then(parentCategories => {
+                            this.pathToSelectedCategories = parentCategories;
+                            this.getCategoryDetailsStatus.callback("Retrieved details of the category", true);
+                            this.selectedCategoryWithDetails = category;
+                            if (this.treeView) {
+                                setTimeout(function() {
+                                    scrollToDiv(category.code);
+                                    document.getElementById("scrollDiv").scrollTop -= 57;
+                                }, 100);
+                            }
+                        }).catch(error => {
+                            this.getCategoryDetailsStatus.error("Failed to retrieved parents of the category", error);
+                        })
+
                     })
-
-                })
-                .catch(error => {
-                    this.getCategoryDetailsStatus.error("Failed to retrieved details of the category", error);
-                });
-          }
+                    .catch(error => {
+                        this.getCategoryDetailsStatus.error("Failed to retrieved details of the category", error);
+                    });
+            }
         }
     }
 
     getCategoryProperty(propName): string {
         // Type of the definition field is Text[]. Therefore, we have to use selectPreferredValues method
         // to get proper value of this category property
-        if(propName == "definition"){
+        if (propName == "definition") {
             return selectPreferredValues(this.selectedCategoryWithDetails[propName])[0];
         }
         return String(this.selectedCategoryWithDetails[propName]);
@@ -521,33 +537,33 @@ export class CategorySearchComponent implements OnInit {
         return categoryArray.findIndex(c => c.id == category.id);
     }
 
-    private changeTaxonomyId(taxonomyId){
+    private changeTaxonomyId(taxonomyId) {
         if (this.taxonomyId != taxonomyId) {
-          this.parentCategories = null;
-          this.pathToSelectedCategories = null;
-          this.selectedCategory = null;
-          this.selectedCategoryWithDetails = null;
-          this.taxonomyId = taxonomyId;
-          if(this.categoryKeyword){
-              this.getCategories();
-          }
-          if(this.selectedTab == "TREE"){
-              this.getRootCategories(this.taxonomyId == "All" ? this.standardTaxonomy : this.taxonomyId);
-          }
+            this.parentCategories = null;
+            this.pathToSelectedCategories = null;
+            this.selectedCategory = null;
+            this.selectedCategoryWithDetails = null;
+            this.taxonomyId = taxonomyId;
+            if (this.categoryKeyword) {
+                this.getCategories();
+            }
+            if (this.selectedTab == "TREE") {
+                this.getRootCategories(this.taxonomyId == "All" ? this.standardTaxonomy : this.taxonomyId);
+            }
         }
     }
 
-    private scrollToDiv(divId:string,event:any){
+    private scrollToDiv(divId: string, event: any) {
         //this.scrollToDivId = divId;
         // if treeView is false,firstly we have to switch to tree view
         if (!this.getCategoryDetailsStatus.isDisplayed()) {
-          if(!this.treeView){
-              this.getCategoryTree(this.selectedCategoryWithDetails,divId);
-          }
-          else{
-              scrollToDiv(divId);
-              document.getElementById("scrollDiv").scrollTop-=57;
-          }
+            if (!this.treeView) {
+                this.getCategoryTree(this.selectedCategoryWithDetails, divId);
+            }
+            else {
+                scrollToDiv(divId);
+                document.getElementById("scrollDiv").scrollTop -= 57;
+            }
         }
     }
 }

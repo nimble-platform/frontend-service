@@ -1,3 +1,19 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <ng-container *ngIf="dispatchAdvice">
     <!-- Dispatched Quantities -->
     <div class="row space-before">
@@ -14,8 +30,7 @@
                     {{dispatchLine.item.name[0].value}}
                 </div>
                 <div class="col-9">
-                    <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
-                                    [quantity]="dispatchLine.deliveredQuantity" labelClass="col-2" valueClass="col-10">
+                    <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true" [quantity]="dispatchLine.deliveredQuantity" labelClass="col-2" valueClass="col-10">
                     </quantity-input>
                 </div>
             </div>
@@ -32,24 +47,20 @@
 
     <!--Notes-->
     <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
-    <note-file-view [notes]="dispatchAdvice.note"
-               [documents]="dispatchAdvice.additionalDocumentReference"
-               [label]="'Notes'"
-               [firstCol]="'col-2'"
-               [lastCol]="'col-10'"
-               [readonly]="isLoading() || isReadOnly()"></note-file-view>
+    <note-file-view [notes]="dispatchAdvice.note" [documents]="dispatchAdvice.additionalDocumentReference" [label]="'Notes'" [firstCol]="'col-2'" [lastCol]="'col-10'" [readonly]="isLoading() || isReadOnly()"></note-file-view>
 
     <hr class="actions-hr">
 
     <!-- Actions -->
     <div class="d-flex justify-content-end actions-row">
-        <div class="col-8 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+        <div class="col-8 call-status-col">
+            <call-status [callStatus]="callStatus"></call-status>
+        </div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
         </div>
         <div *ngIf="!isReadOnly()" class="col-2">
-            <button *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading() || isReadOnly() || (dispatchAdvice.despatchLine.length > 1 && !isAtLeastOneProductSelected())" (click)="onSendDispatchAdvice()"
-                    singleClick>
+            <button *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading() || isReadOnly() || (dispatchAdvice.despatchLine.length > 1 && !isAtLeastOneProductSelected())" (click)="onSendDispatchAdvice()" singleClick>
                 <span [innerHTML]="'Send Advice' | translate"></span>
             </button>
             <button *ngIf="processMetadata && processMetadata.isBeingUpdated" class="btn btn-primary action" [disabled]="isLoading() || isReadOnly() || (dispatchAdvice.despatchLine.length > 1 && !isAtLeastOneProductSelected())" (click)="onUpdateDispatchAdvice()" singleClick>

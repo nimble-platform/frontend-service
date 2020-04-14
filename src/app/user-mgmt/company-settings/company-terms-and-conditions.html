@@ -1,3 +1,17 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <div *ngIf="defaultTermsAndConditions">
 
     <!-- Default Clauses -->
@@ -21,15 +35,15 @@
             {{clause.id}}
         </button>
         <!-- Button to delete clause -->
-        <button class="btn btn-danger btn-sm"  (click)="onRemoveClause(clause)">&times;</button>
+        <button class="btn btn-danger btn-sm" (click)="onRemoveClause(clause)">&times;</button>
         <!-- Card representing the clause-->
         <div class="card" [hidden]="!showSection.get(clause.id)" style="font-size: 0.9rem">
             <!-- Clause Id-->
             <div class="card-header">
-                <input type="text" class="form-control" value="{{clause.id}}"  (keyup)="onClauseIdUpdated(clause.id,i,$event.target.value)">
+                <input type="text" class="form-control" value="{{clause.id}}" (keyup)="onClauseIdUpdated(clause.id,i,$event.target.value)">
             </div>
             <!-- Clause Content -->
-            <span id="{{clause.id}}" class="card-body" contenteditable="true"  (input)="onContentUpdated(clause,$event)">
+            <span id="{{clause.id}}" class="card-body" contenteditable="true" (input)="onContentUpdated(clause,$event)">
 
             </span>
             <!-- Trading Terms -->
@@ -43,38 +57,38 @@
                     <div class="col-10">
                         <table>
                             <tbody>
-                            <tr>
-                                <!-- STRING data type-->
-                                <td *ngIf="tradingTerm.value.valueQualifier === 'STRING'" style="vertical-align:middle">
-                                    <input [(ngModel)]="tradingTerm.value.value[0].value" class="form-control" type="text" name="{{tradingTerm.id}}" />
-                                </td>
-                                <!-- QUANTITY data type-->
-                                <td *ngIf="tradingTerm.value.valueQualifier === 'QUANTITY'" style="vertical-align:middle">
-                                    <quantity-input [quantity]="tradingTerm.value.valueQuantity[0]">
-                                    </quantity-input>
-                                </td>
-                                <!-- NUMBER data type-->
-                                <td *ngIf="tradingTerm.value.valueQualifier === 'NUMBER'" style="vertical-align:middle">
-                                    <input type="number" class="form-control value-input" [ngModel]="tradingTerm.value.valueDecimal[0]" (change)="setValueDecimal(tradingTerm, 0, $event)">
-                                </td>
-                                <!-- CODE data type -->
-                                <td *ngIf="tradingTerm.value.valueQualifier === 'CODE'" style="vertical-align:middle">
-                                    <select *ngIf="tradingTerm.value.valueCode[0].listID == 'INCOTERMS_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value" >
-                                        <option *ngFor="let option of INCOTERMS" [value]="option">{{option}}</option>
-                                    </select>
-                                    <select *ngIf="tradingTerm.value.valueCode[0].listID == 'PAYMENT_MEANS_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value" >
-                                        <option *ngFor="let option of PAYMENT_TERMS" [value]="option">{{option}}</option>
-                                    </select>
-                                    <select *ngIf="tradingTerm.value.valueCode[0].listID == 'COUNTRY_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value" >
-                                        <option *ngFor="let option of COUNTRY_NAMES" [value]="option">{{option}}</option>
-                                    </select>
-                                </td>
-                                <!-- Button to delete trading term-->
-                                <td class="align-right" style="vertical-align:middle">
-                                    <button class="btn btn-outline-primary ml-1" (click)="onEditTradingTerm(clause,tradingTerm)"><span [innerHTML]="'Edit' | translate"></span></button>
-                                    <button class="btn btn-danger"  type="button" (click)="onRemoveTradingTerm(clause,tradingTerm)">&times;</button>
-                                </td>
-                            </tr>
+                                <tr>
+                                    <!-- STRING data type-->
+                                    <td *ngIf="tradingTerm.value.valueQualifier === 'STRING'" style="vertical-align:middle">
+                                        <input [(ngModel)]="tradingTerm.value.value[0].value" class="form-control" type="text" name="{{tradingTerm.id}}" />
+                                    </td>
+                                    <!-- QUANTITY data type-->
+                                    <td *ngIf="tradingTerm.value.valueQualifier === 'QUANTITY'" style="vertical-align:middle">
+                                        <quantity-input [quantity]="tradingTerm.value.valueQuantity[0]">
+                                        </quantity-input>
+                                    </td>
+                                    <!-- NUMBER data type-->
+                                    <td *ngIf="tradingTerm.value.valueQualifier === 'NUMBER'" style="vertical-align:middle">
+                                        <input type="number" class="form-control value-input" [ngModel]="tradingTerm.value.valueDecimal[0]" (change)="setValueDecimal(tradingTerm, 0, $event)">
+                                    </td>
+                                    <!-- CODE data type -->
+                                    <td *ngIf="tradingTerm.value.valueQualifier === 'CODE'" style="vertical-align:middle">
+                                        <select *ngIf="tradingTerm.value.valueCode[0].listID == 'INCOTERMS_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value">
+                                            <option *ngFor="let option of INCOTERMS" [value]="option">{{option}}</option>
+                                        </select>
+                                        <select *ngIf="tradingTerm.value.valueCode[0].listID == 'PAYMENT_MEANS_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value">
+                                            <option *ngFor="let option of PAYMENT_TERMS" [value]="option">{{option}}</option>
+                                        </select>
+                                        <select *ngIf="tradingTerm.value.valueCode[0].listID == 'COUNTRY_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value">
+                                            <option *ngFor="let option of COUNTRY_NAMES" [value]="option">{{option}}</option>
+                                        </select>
+                                    </td>
+                                    <!-- Button to delete trading term-->
+                                    <td class="align-right" style="vertical-align:middle">
+                                        <button class="btn btn-outline-primary ml-1" (click)="onEditTradingTerm(clause,tradingTerm)"><span [innerHTML]="'Edit' | translate"></span></button>
+                                        <button class="btn btn-danger" type="button" (click)="onRemoveTradingTerm(clause,tradingTerm)">&times;</button>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -91,7 +105,9 @@
 
     <!-- Actions -->
     <div class="row actions-row space-before">
-        <div class="col-10 call-status-col"><call-status [callStatus]="initPageStatus"></call-status></div>
+        <div class="col-10 call-status-col">
+            <call-status [callStatus]="initPageStatus"></call-status>
+        </div>
         <div class="col-2">
             <button class="btn btn-primary action" (click)="onSave()"><span [innerHTML]="'Save' | translate"></span></button>
         </div>

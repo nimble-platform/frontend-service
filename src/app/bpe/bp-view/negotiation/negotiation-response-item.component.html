@@ -1,17 +1,33 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <div class="row title-row">
     <div class="col-3"></div>
     <div class="col-3">
         <h3 *ngIf="!isTermDropDownVisible()" class="font-weight-600"><span [innerHTML]="'Product Defaults' | translate"></span></h3>
-        <select [hidden]="!isTermDropDownVisible()"
-                #termSelectBox class="btn btn-outline-secondary"
-                [(ngModel)]="primaryTermsSource">
+        <select [hidden]="!isTermDropDownVisible()" #termSelectBox class="btn btn-outline-secondary" [(ngModel)]="primaryTermsSource">
             <option *ngIf="lastOfferQuotation" value="last_offer"><span [innerHTML]="'Last Offer' | translate"></span></option>
             <option *ngIf="frameContractQuotation && !frameContractNegotiation" value="frame_contract"><span [innerHTML]="'Frame Contract' | translate"></span></option>
             <option value="product_defaults"><span [innerHTML]="'Product Defaults' | translate"></span></option>
         </select>
     </div>
-    <div class="col-3"><h3 class="font-weight-600"><span [innerHTML]="'Customer Request' | translate"></span></h3></div>
-    <div class="col-3"><h3 class="font-weight-600"><span [innerHTML]="'Producer Response' | translate"></span></h3></div>
+    <div class="col-3">
+        <h3 class="font-weight-600"><span [innerHTML]="'Customer Request' | translate"></span></h3>
+    </div>
+    <div class="col-3">
+        <h3 class="font-weight-600"><span [innerHTML]="'Producer Response' | translate"></span></h3>
+    </div>
 </div>
 
 <!--Warranty-->
@@ -24,9 +40,7 @@
     </ng-container>
     <div class="col-3">{{ wrapper.rfqWarrantyString }}</div>
     <div class="col-3 {{wrapper.checkEqualForResponse('warranty') ? 'bg-white text-dark':'bg-danger'}}">
-        <quantity-input *ngIf="isSellerTermsVisible()"
-                        [presentationMode]="getPresentationMode()"
-                        [disabled]="isDisabled()" [quantity]="wrapper.newQuotationWrapper.warranty" quantityType="warranty_period">
+        <quantity-input *ngIf="isSellerTermsVisible()" [presentationMode]="getPresentationMode()" [disabled]="isDisabled()" [quantity]="wrapper.newQuotationWrapper.warranty" quantityType="warranty_period">
         </quantity-input>
     </div>
 </div>
@@ -40,9 +54,7 @@
     </ng-container>
     <div class="col-3">{{ wrapper.rfqIncoterms }}</div>
     <div class="col-3 {{wrapper.checkEqualForResponse('incoTerms') ? 'bg-white text-dark':'bg-danger'}}">
-        <options-input *ngIf="isSellerTermsVisible()"
-                       [presentationMode]="getPresentationMode()"
-                       [disabled]="isDisabled()" [options]="wrapper.sellerSettings.incoterms" [(selected)]="wrapper.newQuotationWrapper.incoterms">
+        <options-input *ngIf="isSellerTermsVisible()" [presentationMode]="getPresentationMode()" [disabled]="isDisabled()" [options]="wrapper.sellerSettings.incoterms" [(selected)]="wrapper.newQuotationWrapper.incoterms">
         </options-input>
     </div>
 </div>
@@ -56,10 +68,7 @@
     </ng-container>
     <div class="col-3">{{ wrapper.rfqPaymentTerms.paymentTerm }}</div>
     <div class="col-3 {{wrapper.checkEqualForResponse('paymentTerms') ? 'bg-white text-dark':'bg-danger'}}">
-        <options-input *ngIf="isSellerTermsVisible()"
-                       [presentationMode]="getPresentationMode()"
-                       [disabled]="isDisabled()" [options]="wrapper.sellerSettings.paymentTerms"
-                       [(selected)]="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm">
+        <options-input *ngIf="isSellerTermsVisible()" [presentationMode]="getPresentationMode()" [disabled]="isDisabled()" [options]="wrapper.sellerSettings.paymentTerms" [(selected)]="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm">
         </options-input>
     </div>
 </div>
@@ -73,9 +82,7 @@
     </ng-container>
     <div class="col-3">{{ wrapper.rfqPaymentMeans }}</div>
     <div class="col-3 {{wrapper.checkEqualForResponse('paymentMeans') ? 'bg-white text-dark':'bg-danger'}}">
-        <options-input *ngIf="isSellerTermsVisible()"
-                       [presentationMode]="getPresentationMode()"
-                       [disabled]="isDisabled()" [options]="wrapper.sellerSettings.paymentMeans" [(selected)]="wrapper.newQuotationWrapper.paymentMeans">
+        <options-input *ngIf="isSellerTermsVisible()" [presentationMode]="getPresentationMode()" [disabled]="isDisabled()" [options]="wrapper.sellerSettings.paymentMeans" [(selected)]="wrapper.newQuotationWrapper.paymentMeans">
         </options-input>
     </div>
 </div>
@@ -93,8 +100,7 @@
     <!-- Manufacturer's response -->
     <ng-container *ngIf="wrapper.rfqDataMonitoringRequested">
         <div class="col-3 {{wrapper.checkEqualForResponse('dataMonitoring') ? 'bg-white text-dark':'bg-danger'}}" *ngIf="!isReadOnly()">
-            <input type="checkbox" [(ngModel)]="quotation.quotationLine[wrapper.lineIndex].lineItem.dataMonitoringRequested"
-                   [disabled]="isDisabled()">
+            <input type="checkbox" [(ngModel)]="quotation.quotationLine[wrapper.lineIndex].lineItem.dataMonitoringRequested" [disabled]="isDisabled()">
             <label><span [innerHTML]="'Provide data monitoring service' | translate"></span></label>
         </div>
         <div class="col-3" *ngIf="isReadOnly() && isSellerTermsVisible()">
@@ -129,32 +135,28 @@
     <!-- Original terms -->
     <ng-container [ngSwitch]="primaryTermsSource">
         <div *ngSwitchCase="'product_defaults'" class="col-3">
-            {{isCatalogueLineDeleted ? "Not available" : wrapper.lineDiscountPriceWrapper.totalPriceString }}<br/>
+            {{isCatalogueLineDeleted ? "Not available" : wrapper.lineDiscountPriceWrapper.totalPriceString }}<br />
             <small *ngIf="!isCatalogueLineDeleted">( {{ wrapper.lineDiscountPriceWrapper.discountedPricePerItemString }} )</small>
         </div>
         <div *ngSwitchCase="'frame_contract'" class="col-3">
-            {{ wrapper.frameContractQuotationWrapper.priceWrapper.totalPriceString }}<br/>
+            {{ wrapper.frameContractQuotationWrapper.priceWrapper.totalPriceString }}<br />
             <small>( {{ wrapper.frameContractQuotationWrapper.priceWrapper.pricePerItemString }} )</small>
         </div>
         <div *ngSwitchCase="'last_offer'" class="col-3">
-            {{ wrapper.lastOfferQuotationWrapper.priceWrapper.totalPriceString }}<br/>
+            {{ wrapper.lastOfferQuotationWrapper.priceWrapper.totalPriceString }}<br />
             <small>( {{ wrapper.lastOfferQuotationWrapper.priceWrapper.pricePerItemString }} )</small>
         </div>
     </ng-container>
     <!-- Customer's request -->
     <div class="col-3">
-        {{ wrapper.rfqTotalPriceString }}<br/>
+        {{ wrapper.rfqTotalPriceString }}<br />
         <small>( {{ wrapper.rfqPricePerItemString}} )</small>
     </div>
     <!-- Seller's response -->
     <!--<div class="col-3" [ngClass]="wrapper.quotationDiscountPriceWrapper.appliedDiscounts.length > 0 ? 'd-flex' : null">-->
     <div class="col-3 {{wrapper.checkEqualForResponse('price') ? 'bg-white text-dark':'bg-danger'}}">
         <ng-container *ngIf="getPresentationMode() == 'edit'">
-            <quantity-input [presentationMode]="'edit'" [disabled]="isDisabled()"
-                            [quantity]="quotationTotalPrice" [quantityUnits]="CURRENCIES"
-                            (onQuantityValueChange)="onQuotationPriceUpdated()"
-                            [step]="0.01"
-                            [disableQuantityUnit]="wrapper.lineDiscountPriceWrapper.itemPrice.hasPrice()">
+            <quantity-input [presentationMode]="'edit'" [disabled]="isDisabled()" [quantity]="quotationTotalPrice" [quantityUnits]="CURRENCIES" (onQuantityValueChange)="onQuotationPriceUpdated()" [step]="0.01" [disableQuantityUnit]="wrapper.lineDiscountPriceWrapper.itemPrice.hasPrice()">
             </quantity-input>
             <small>( {{ wrapper.newQuotationWrapper.priceWrapper.pricePerItemString}} )</small>
             <span *ngIf="isDiscountIconVisibleInCustomerRequestColumn()" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
@@ -166,7 +168,7 @@
             <span *ngIf="isDiscountIconVisibleInCustomerRequestColumn()" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
                 <i class="fa fa-search" aria-hidden="true"></i>
             </span>
-            <br/>
+            <br />
             <small>( {{ wrapper.newQuotationWrapper.priceWrapper.pricePerItemString}} )</small>
         </ng-container>
         <!--{{ wrapper.newQuotationWrapper.priceWrapper.totalPriceString }}<br/>-->
@@ -196,7 +198,6 @@
 <!--</div>-->
 <!--</div>-->
 
-
 <!-- Gross total price -->
 <div *ngIf="config.vatEnabled" class="row content-row mb-3">
     <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Gross Total' | translate"></span>:</strong></div>
@@ -223,8 +224,7 @@
         <ng-container *ngIf="isFrameContractPanelVisible()">
             <div class="btn btn-danger align-self-start ml-2" [ngClass]="{'active':showFrameContractDetails}" (click)="showFrameContractDetails=showTab(showFrameContractDetails)"><span [innerHTML]="'Frame Contract' | translate"></span></div>
         </ng-container>
-        <div class="btn align-self-start ml-2 {{highlightDeliveryDetailsTab() ? 'btn-danger':'btn-outline-primary'}}"
-             [ngClass]="{'active':showDeliveryDetails}" (click)="showDeliveryDetails=showTab(showDeliveryDetails)"><span [innerHTML]="'Delivery Details' | translate"></span></div>
+        <div class="btn align-self-start ml-2 {{highlightDeliveryDetailsTab() ? 'btn-danger':'btn-outline-primary'}}" [ngClass]="{'active':showDeliveryDetails}" (click)="showDeliveryDetails=showTab(showDeliveryDetails)"><span [innerHTML]="'Delivery Details' | translate"></span></div>
     </div>
 </div>
 <div class="row mb-2">
@@ -240,38 +240,14 @@
                         </div>
                         <div class="col-3"></div>
                         <div class="col-3">
-                            <quantity-input [rowClass]="'space-before'"
-                                            [label]="'Valid for'"
-                                            [labelClass]="'col-5'"
-                                            [valueClass]="'col-7'"
-                                            [valueSizeClass]="'col-5'"
-                                            [unitSizeClass]="'col-7'"
-                                            [definition]="'The period within which the offered conditions will be valid upon confirmation by the seller.'"
-                                            [quantity]="wrapper.rfqFrameContractDuration"
-                                            [disabled]="true">
+                            <quantity-input [rowClass]="'space-before'" [label]="'Valid for'" [labelClass]="'col-5'" [valueClass]="'col-7'" [valueSizeClass]="'col-5'" [unitSizeClass]="'col-7'" [definition]="'The period within which the offered conditions will be valid upon confirmation by the seller.'" [quantity]="wrapper.rfqFrameContractDuration" [disabled]="true">
                             </quantity-input>
                         </div>
                         <div class="col-3">
                             <ng-container *ngIf="isSellerTermsVisible()">
-                                <quantity-input rowClass="space-before {{!wrapper.checkEqualForResponse('frameContract') ? 'bg-danger': ''}}"
-                                                [label]="'Valid for'"
-                                                [labelClass]="'col-5'"
-                                                [valueClass]="'col-7'"
-                                                [valueSizeClass]="'col-5'"
-                                                [unitSizeClass]="'col-7'"
-                                                [definition]="'The period within which the offered conditions will be valid upon confirmation by the seller.'"
-                                                [quantity]="wrapper.newQuotationWrapper.frameContractDuration"
-                                                [quantityType]="'frame_contract_period'"
-                                                [disabled]="isReadOnly()">
+                                <quantity-input rowClass="space-before {{!wrapper.checkEqualForResponse('frameContract') ? 'bg-danger': ''}}" [label]="'Valid for'" [labelClass]="'col-5'" [valueClass]="'col-7'" [valueSizeClass]="'col-5'" [unitSizeClass]="'col-7'" [definition]="'The period within which the offered conditions will be valid upon confirmation by the seller.'" [quantity]="wrapper.newQuotationWrapper.frameContractDuration" [quantityType]="'frame_contract_period'" [disabled]="isReadOnly()">
                                 </quantity-input>
-                                <text-input [rowClass]="'space-before'"
-                                            [rows]="1"
-                                            [label]="'Until'"
-                                            [labelClass]="'col-5'"
-                                            [valueClass]="'col-7'"
-                                            [definition]="'The date until which the frame contract will be valid.'"
-                                            [disabled]="true"
-                                            [text]="getContractEndDate()">
+                                <text-input [rowClass]="'space-before'" [rows]="1" [label]="'Until'" [labelClass]="'col-5'" [valueClass]="'col-7'" [definition]="'The date until which the frame contract will be valid.'" [disabled]="true" [text]="getContractEndDate()">
                                 </text-input>
                             </ng-container>
                         </div>
@@ -284,16 +260,12 @@
         <div [hidden]="!showTermsAndConditions||!defaultTermsAndConditions" class="ml-2">
             <ul *ngIf="getNonFrameContractTermNumber() > 0" class="nav nav-tabs space-after space-before">
                 <li class="nav-item">
-                    <a href id="CUSTOM_TERMS" class="nav-link"
-                       [ngClass]="{ active: selectedTCTab === 'CUSTOM_TERMS'}"
-                       (click)="onTCTabSelect($event,'CUSTOM_TERMS')">
+                    <a href id="CUSTOM_TERMS" class="nav-link" [ngClass]="{ active: selectedTCTab === 'CUSTOM_TERMS'}" (click)="onTCTabSelect($event,'CUSTOM_TERMS')">
                         <span [innerHTML]="'Custom Terms' | translate"></span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href id="CLAUSES" class="nav-link"
-                       [ngClass]="{ active: selectedTCTab === 'CLAUSES'}"
-                       (click)="onTCTabSelect($event,'CLAUSES')">
+                    <a href id="CLAUSES" class="nav-link" [ngClass]="{ active: selectedTCTab === 'CLAUSES'}" (click)="onTCTabSelect($event,'CLAUSES')">
                         <span [innerHTML]="'Clauses' | translate"></span>
                     </a>
                 </li>
@@ -301,8 +273,7 @@
 
             <ng-container *ngIf="selectedTCTab == 'CUSTOM_TERMS' && getNonFrameContractTermNumber() > 0">
                 <ng-container *ngFor="let tradingTerm of wrapper.newQuotation.quotationLine[wrapper.lineIndex].lineItem.tradingTerms">
-                    <div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row"
-                         [ngClass]="{'bg-danger text-white':!areTermsEqual(tradingTerm.id)}">
+                    <div *ngIf="tradingTerm.id != 'FRAME_CONTRACT_DURATION'" class="row" [ngClass]="{'bg-danger text-white':!areTermsEqual(tradingTerm.id)}">
                         <div class="col-3">
                             <strong class="font-weight-500">{{tradingTerm.id}}:</strong>
                             <span *ngIf="tradingTerm.description.length > 0" [title]="tradingTerm.description[0].value">&#9432;</span>
@@ -310,13 +281,11 @@
                         <div class="col-3">
                             <ng-container [ngSwitch]="primaryTermsSource">
                                 <div *ngSwitchCase="'frame_contract'" class="col-3">
-                                    <multi-type-input [multiTypeValue]="wrapper.frameContractQuotationWrapper.getTradingTerm(tradingTerm.id)?.value"
-                                                      [presentationMode]="'view'">
+                                    <multi-type-input [multiTypeValue]="wrapper.frameContractQuotationWrapper.getTradingTerm(tradingTerm.id)?.value" [presentationMode]="'view'">
                                     </multi-type-input>
                                 </div>
                                 <div *ngSwitchCase="'last_offer'" class="col-3">
-                                    <multi-type-input [multiTypeValue]="wrapper.lastOfferQuotationWrapper.getTradingTerm(tradingTerm.id)?.value"
-                                                      [presentationMode]="'view'">
+                                    <multi-type-input [multiTypeValue]="wrapper.lastOfferQuotationWrapper.getTradingTerm(tradingTerm.id)?.value" [presentationMode]="'view'">
                                     </multi-type-input>
                                 </div>
                             </ng-container>
@@ -335,46 +304,20 @@
             <div [hidden]="selectedTCTab != 'CLAUSES'" class="row content-row">
                 <div class="col-3"></div>
                 <div class="col-3">
-                    <terms-and-conditions [hidden]="primaryTermsSource != 'product_defaults'"
-                                          [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer-product-defaults'"
-                                          [sellerFederationId]="rfq.sellerSupplierParty.party.federationInstanceID"
-                                          [termsAndConditions]="defaultTermsAndConditions"
-                                          [originalTermAndConditionClauses]="defaultTermsAndConditions">
+                    <terms-and-conditions [hidden]="primaryTermsSource != 'product_defaults'" [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer-product-defaults'" [sellerFederationId]="rfq.sellerSupplierParty.party.federationInstanceID" [termsAndConditions]="defaultTermsAndConditions" [originalTermAndConditionClauses]="defaultTermsAndConditions">
                     </terms-and-conditions>
-                    <terms-and-conditions *ngIf="wrapper.frameContractQuotation" [hidden]="primaryTermsSource != 'frame_contract'"
-                                          [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer-frame-contract'"
-                                          [sellerFederationId]="rfq.sellerSupplierParty.party.federationInstanceID"
-                                          [termsAndConditions]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause"
-                                          [originalTermAndConditionClauses]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause">
+                    <terms-and-conditions *ngIf="wrapper.frameContractQuotation" [hidden]="primaryTermsSource != 'frame_contract'" [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer-frame-contract'" [sellerFederationId]="rfq.sellerSupplierParty.party.federationInstanceID" [termsAndConditions]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause" [originalTermAndConditionClauses]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause">
                     </terms-and-conditions>
-                    <terms-and-conditions *ngIf="wrapper.lastOfferQuotation" [hidden]="primaryTermsSource != 'last_offer'"
-                                          [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer-last-offer'"
-                                          [sellerFederationId]="rfq.sellerSupplierParty.party.federationInstanceID"
-                                          [termsAndConditions]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause"
-                                          [originalTermAndConditionClauses]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause">
+                    <terms-and-conditions *ngIf="wrapper.lastOfferQuotation" [hidden]="primaryTermsSource != 'last_offer'" [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer-last-offer'" [sellerFederationId]="rfq.sellerSupplierParty.party.federationInstanceID" [termsAndConditions]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause" [originalTermAndConditionClauses]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause">
                     </terms-and-conditions>
                 </div>
                 <div class="col-3">
                     <terms-and-conditions [originalTermAndConditionClauses]="primaryTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause :
-                                      (primaryTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause : defaultTermsAndConditions)"
-                                          (onClauseUpdated)="onClauseUpdate($event);"
-                                          [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq'"
-                                          [sellerFederationId]="rfq.sellerSupplierParty.party.federationInstanceID"
-                                          [termsAndConditions]="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.clause"></terms-and-conditions>
+                                      (primaryTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause : defaultTermsAndConditions)" (onClauseUpdated)="onClauseUpdate($event);" [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq'" [sellerFederationId]="rfq.sellerSupplierParty.party.federationInstanceID" [termsAndConditions]="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.clause"></terms-and-conditions>
                 </div>
                 <div class="col-3">
-                    <terms-and-conditions *ngIf="isSellerTermsVisible()"
-                                          [selectedIncoterm]="wrapper.newQuotationWrapper.incoterms"
-                                          [selectedTradingTerm]="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm"
-                                          (onClauseUpdated)="onClauseUpdate($event);"
-                                          (onIncotermChanged)="wrapper.newQuotationWrapper.incoterms = $event"
-                                          (onPaymentMeansChanged)="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm = $event"
-                                          [originalTermAndConditionClauses]="primaryTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause :
-                                      (primaryTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause : defaultTermsAndConditions)"
-                                          [sellerPartyId]="getPartyId(quotation.sellerSupplierParty.party)" [readOnly]="isLoading() || isReadOnly()"
-                                          [sellerFederationId]="quotation.sellerSupplierParty.party.federationInstanceID"
-                                          [documentType]="'quotation'"
-                                          [termsAndConditions]="quotation.quotationLine[wrapper.lineIndex].lineItem.clause"></terms-and-conditions>
+                    <terms-and-conditions *ngIf="isSellerTermsVisible()" [selectedIncoterm]="wrapper.newQuotationWrapper.incoterms" [selectedTradingTerm]="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm" (onClauseUpdated)="onClauseUpdate($event);" (onIncotermChanged)="wrapper.newQuotationWrapper.incoterms = $event" (onPaymentMeansChanged)="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm = $event" [originalTermAndConditionClauses]="primaryTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause :
+                                      (primaryTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause : defaultTermsAndConditions)" [sellerPartyId]="getPartyId(quotation.sellerSupplierParty.party)" [readOnly]="isLoading() || isReadOnly()" [sellerFederationId]="quotation.sellerSupplierParty.party.federationInstanceID" [documentType]="'quotation'" [termsAndConditions]="quotation.quotationLine[wrapper.lineIndex].lineItem.clause"></terms-and-conditions>
                 </div>
             </div>
         </div>
@@ -383,16 +326,12 @@
         <div *ngIf="showDeliveryDetails" class="row mb-3 ml-1">
             <ul class="nav nav-tabs space-after space-before">
                 <li class="nav-item">
-                    <a href id="DELIVERY_ADDRESS" class="nav-link"
-                       [ngClass]="{ active: selectedDeliveryTab === 'DELIVERY_ADDRESS'}"
-                       (click)="onDeliveryTabSelect($event,'DELIVERY_ADDRESS')">
+                    <a href id="DELIVERY_ADDRESS" class="nav-link" [ngClass]="{ active: selectedDeliveryTab === 'DELIVERY_ADDRESS'}" (click)="onDeliveryTabSelect($event,'DELIVERY_ADDRESS')">
                         <span [innerHTML]="'Delivery Address' | translate"></span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href id="DELIVERY_DATE" class="nav-link"
-                       [ngClass]="{ active: selectedDeliveryTab === 'DELIVERY_DATE'}"
-                       (click)="onDeliveryTabSelect($event,'DELIVERY_DATE')">
+                    <a href id="DELIVERY_DATE" class="nav-link" [ngClass]="{ active: selectedDeliveryTab === 'DELIVERY_DATE'}" (click)="onDeliveryTabSelect($event,'DELIVERY_DATE')">
                         <span [innerHTML]="'Delivery Date' | translate"></span>
                     </a>
                 </li>
@@ -418,9 +357,7 @@
                         <div class="col-3">{{ wrapper.rfqDeliveryPeriodString }}</div>
                         <div class="col-3 {{wrapper.checkEqualForResponse('deliveryPeriod') ? 'bg-white text-dark':'bg-danger'}}">
                             <!-- don't show any term if the customer offer was rejected -->
-                            <quantity-input *ngIf="isSellerTermsVisible()"
-                                            [presentationMode]="getPresentationMode()"
-                                            [disabled]="isDisabled()" [quantity]="wrapper.newQuotationWrapper.deliveryPeriod" quantityType="time_quantity">
+                            <quantity-input *ngIf="isSellerTermsVisible()" [presentationMode]="getPresentationMode()" [disabled]="isDisabled()" [quantity]="wrapper.newQuotationWrapper.deliveryPeriod" quantityType="time_quantity">
                             </quantity-input>
                         </div>
                     </div>
@@ -462,9 +399,7 @@
                                             <strong class="font-weight-500"><span [innerHTML]="'Quantity' | translate"></span>:</strong>
                                         </div>
                                         <div class="col-4 quantity-input">
-                                            <input type="number" [ngModel]="quotationDelivery.shipment.goodsItem[0].quantity.value" (ngModelChange)="quotationDelivery.shipment.goodsItem[0].quantity.value = $event;"
-                                                   class="form-control form-control-sm"
-                                                   [disabled]="isReadOnly() "/>
+                                            <input type="number" [ngModel]="quotationDelivery.shipment.goodsItem[0].quantity.value" (ngModelChange)="quotationDelivery.shipment.goodsItem[0].quantity.value = $event;" class="form-control form-control-sm" [disabled]="isReadOnly() " />
                                         </div>
                                         <span class="col-3">{{ quotationDelivery.shipment.goodsItem[0].quantity.unitCode }}</span>
                                     </div>

@@ -1,266 +1,280 @@
+<!--
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <form class="company-settings-form" [formGroup]="registrationForm" novalidate (ngSubmit)="save(registrationForm)">
 
-	<div *ngIf="!alertClosed">
-		<p class="space-before">
-			<ngb-alert type="info" (close)="alertClosed=true">
-					<span [innerHTML]="'During this first step of the company registration we ask you to provide your most vital company data in order to get started.' | translate"></span><br/>
-					<span [innerHTML]="'After submitting your registration you will be taken to your company settings where you can provide even more information.' | translate"></span><br/>
-				<strong><span [innerHTML]="'Beware:' | translate"></span></strong> <span [innerHTML]="'Data submitted in this step can only be changed after re-validation by a platform manager.' | translate"></span>
-			</ngb-alert>
-		</p>
-	</div>
+    <div *ngIf="!alertClosed">
+        <p class="space-before">
+            <ngb-alert type="info" (close)="alertClosed=true">
+                <span [innerHTML]="'During this first step of the company registration we ask you to provide your most vital company data in order to get started.' | translate"></span><br />
+                <span [innerHTML]="'After submitting your registration you will be taken to your company settings where you can provide even more information.' | translate"></span><br />
+                <strong><span [innerHTML]="'Beware:' | translate"></span></strong> <span [innerHTML]="'Data submitted in this step can only be changed after re-validation by a platform manager.' | translate"></span>
+            </ngb-alert>
+        </p>
+    </div>
 
-	<h3 class="space-after"><span [innerHTML]="'Company Registration' | translate"></span></h3>
+    <h3 class="space-after"><span [innerHTML]="'Company Registration' | translate"></span></h3>
 
-	<div *ngIf="!vatSkipped && !vatValidated">
+    <div *ngIf="!vatSkipped && !vatValidated">
 
-		<div class="form-group row">
-			<label class="col-2 col-form-label">
-				<strong><span [innerHTML]="'VAT Number:' | translate"></span></strong>
-			</label>
-			<div class="col-10">
-				<input type="text" class="form-control" [(ngModel)]="vat" [ngModelOptions]="{standalone: true}" required maxlength="255">
-			</div>
-		</div>
+        <div class="form-group row">
+            <label class="col-2 col-form-label">
+                <strong><span [innerHTML]="'VAT Number:' | translate"></span></strong>
+            </label>
+            <div class="col-10">
+                <input type="text" class="form-control" [(ngModel)]="vat" [ngModelOptions]="{standalone: true}" required maxlength="255">
+            </div>
+        </div>
 
-		<div class="row actions-row pr-0">
-			<div class="col-8 call-status-col">
-				<call-status [callStatus]="vatCallStatus" [large]="true" [showAllDetails]="true"></call-status>
-			</div>
-			<div class="col-2">
-				<button class="btn btn-secondary action" type="button" [disabled]="vatCallStatus.isLoading()" (click)="skipVAT()"><span [innerHTML]="'Skip' | translate"></span></button>
-			</div>
-			<div class="col-2">
-				<button class="btn btn-primary action" type="button" [disabled]="vat=='' || vatCallStatus.isLoading()" (click)="validateVAT()"><span [innerHTML]="'Validate' | translate"></span></button>
-			</div>
-		</div>
+        <div class="row actions-row pr-0">
+            <div class="col-8 call-status-col">
+                <call-status [callStatus]="vatCallStatus" [large]="true" [showAllDetails]="true"></call-status>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-secondary action" type="button" [disabled]="vatCallStatus.isLoading()" (click)="skipVAT()"><span [innerHTML]="'Skip' | translate"></span></button>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-primary action" type="button" [disabled]="vat=='' || vatCallStatus.isLoading()" (click)="validateVAT()"><span [innerHTML]="'Validate' | translate"></span></button>
+            </div>
+        </div>
 
-	</div>
+    </div>
 
-		<div [hidden]="!vatSkipped && !vatValidated">
+    <div [hidden]="!vatSkipped && !vatValidated">
 
-		<!-- Legal Name -->
-		<div class="form-group row">
-			<label class="col-2 col-form-label">
-				<strong><span [innerHTML]="'Company Name:' | translate"></span></strong>
-			</label>
-			<div class="col-10">
-				<ng-container *ngFor="let companyNameEntry of companyNameArr; let i = index; trackBy:trackFn">
-	        <div class="row mb-1">
-	          <div class="col-8">
-	            <input type="text" class="form-control" [(ngModel)]="companyNameArr[i].text" [ngModelOptions]="{standalone: true}" required maxlength="255">
-	          </div>
-	          <div class="col-2">
-	            <select class="form-control" [(ngModel)]="companyNameArr[i].lang" [ngModelOptions]="{standalone: true}" required>
-	                <option *ngFor='let language of languages' [value]="language">{{language}}</option>
-	            </select>
-	          </div>
-	          <div class="col-2">
-	            <button class="btn btn-danger w-100" type="button" (click)="removeCompanyName(i)"><span [innerHTML]="'Delete' | translate"></span></button>
-	          </div>
-	        </div>
-	      </ng-container>
-	      <div class="row mt-2 mb-1">
-	        <div class="col-10"></div>
-	        <div class="col-2">
-	          <button class="btn btn-secondary w-100" type="button" (click)="addCompanyName()">
-	            <span [innerHTML]="'Add' | translate"></span>
-	          </button>
-	        </div>
-	      </div>
-			</div>
-		</div>
+        <!-- Legal Name -->
+        <div class="form-group row">
+            <label class="col-2 col-form-label">
+                <strong><span [innerHTML]="'Company Name:' | translate"></span></strong>
+            </label>
+            <div class="col-10">
+                <ng-container *ngFor="let companyNameEntry of companyNameArr; let i = index; trackBy:trackFn">
+                    <div class="row mb-1">
+                        <div class="col-8">
+                            <input type="text" class="form-control" [(ngModel)]="companyNameArr[i].text" [ngModelOptions]="{standalone: true}" required maxlength="255">
+                        </div>
+                        <div class="col-2">
+                            <select class="form-control" [(ngModel)]="companyNameArr[i].lang" [ngModelOptions]="{standalone: true}" required>
+                                <option *ngFor='let language of languages' [value]="language">{{language}}</option>
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <button class="btn btn-danger w-100" type="button" (click)="removeCompanyName(i)"><span [innerHTML]="'Delete' | translate"></span></button>
+                        </div>
+                    </div>
+                </ng-container>
+                <div class="row mt-2 mb-1">
+                    <div class="col-10"></div>
+                    <div class="col-2">
+                        <button class="btn btn-secondary w-100" type="button" (click)="addCompanyName()">
+                            <span [innerHTML]="'Add' | translate"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-		<!-- Brand Name -->
-		<div class="form-group row">
-			<label class="col-2 col-form-label">
-				<strong><span [innerHTML]="'Trade Name:' | translate"></span></strong>
-			</label>
-			<div class="col-10">
-				<ng-container *ngFor="let brandNameEntry of brandNameArr; let i = index; trackBy:trackFn">
-	        <div class="row mb-1">
-	          <div class="col-8">
-	            <input type="text" class="form-control" [(ngModel)]="brandNameArr[i].text" [ngModelOptions]="{standalone: true}" maxlength="255">
-	          </div>
-	          <div class="col-2">
-	            <select class="form-control" [(ngModel)]="brandNameArr[i].lang" [ngModelOptions]="{standalone: true}">
-	                <option *ngFor='let language of languages' [value]="language">{{language}}</option>
-	            </select>
-	          </div>
-	          <div class="col-2">
-	            <button class="btn btn-danger w-100" type="button" (click)="removeBrandName(i)"><span [innerHTML]="'Delete' | translate"></span></button>
-	          </div>
-	        </div>
-	      </ng-container>
-	      <div class="row mt-2 mb-1">
-	        <div class="col-10"></div>
-	        <div class="col-2">
-	          <button class="btn btn-secondary w-100" type="button" (click)="addBrandName()">
-	            <span [innerHTML]="'Add' | translate"></span>
-	          </button>
-	        </div>
-	      </div>
-			</div>
-		</div>
+        <!-- Brand Name -->
+        <div class="form-group row">
+            <label class="col-2 col-form-label">
+                <strong><span [innerHTML]="'Trade Name:' | translate"></span></strong>
+            </label>
+            <div class="col-10">
+                <ng-container *ngFor="let brandNameEntry of brandNameArr; let i = index; trackBy:trackFn">
+                    <div class="row mb-1">
+                        <div class="col-8">
+                            <input type="text" class="form-control" [(ngModel)]="brandNameArr[i].text" [ngModelOptions]="{standalone: true}" maxlength="255">
+                        </div>
+                        <div class="col-2">
+                            <select class="form-control" [(ngModel)]="brandNameArr[i].lang" [ngModelOptions]="{standalone: true}">
+                                <option *ngFor='let language of languages' [value]="language">{{language}}</option>
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <button class="btn btn-danger w-100" type="button" (click)="removeBrandName(i)"><span [innerHTML]="'Delete' | translate"></span></button>
+                        </div>
+                    </div>
+                </ng-container>
+                <div class="row mt-2 mb-1">
+                    <div class="col-10"></div>
+                    <div class="col-2">
+                        <button class="btn btn-secondary w-100" type="button" (click)="addBrandName()">
+                            <span [innerHTML]="'Add' | translate"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-		<!-- VAT Number -->
-		<div class="form-group row">
-			<label class="col-2 col-form-label">
-				<strong><span [innerHTML]="'VAT Number:' | translate"></span></strong>
-			</label>
-			<div class="col-10">
-				<input type="text" class="form-control" [formControl]="registrationForm.controls['vatNumber']" required [readonly]="vatValidated" maxlength="255">
-			</div>
-		</div>
+        <!-- VAT Number -->
+        <div class="form-group row">
+            <label class="col-2 col-form-label">
+                <strong><span [innerHTML]="'VAT Number:' | translate"></span></strong>
+            </label>
+            <div class="col-10">
+                <input type="text" class="form-control" [formControl]="registrationForm.controls['vatNumber']" required [readonly]="vatValidated" maxlength="255">
+            </div>
+        </div>
 
-		<!-- Logo -->
-		<div *ngIf="config.logoRequired" class="form-group row">
-			<label class="col-2 col-form-label">
-				<strong><span [innerHTML]="'Logo:' | translate"></span></strong>
-				<span class="tooltip-icon" (click)="showLogoTT(tooltip)"><i class="fa fa-question-circle"></i></span>
-			</label>
-			<div class="col-10">
-				<input type="file" class="form-control" [formControl]="registrationForm.controls['logo']" (change)="onSetImageFile($event, registrationForm)" required>
-			</div>
-		</div>
+        <!-- Logo -->
+        <div *ngIf="config.logoRequired" class="form-group row">
+            <label class="col-2 col-form-label">
+                <strong><span [innerHTML]="'Logo:' | translate"></span></strong>
+                <span class="tooltip-icon" (click)="showLogoTT(tooltip)"><i class="fa fa-question-circle"></i></span>
+            </label>
+            <div class="col-10">
+                <input type="file" class="form-control" [formControl]="registrationForm.controls['logo']" (change)="onSetImageFile($event, registrationForm)" required>
+            </div>
+        </div>
 
-		<!-- Verification Info -->
-		<div *ngIf="config.showVerification" class="form-group row">
-			<label class="col-2 col-form-label">
-				<span>
-					<strong><span [innerHTML]="'Verification Info:' | translate"></span></strong>
-				</span>
-				<span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><i class="fa fa-question-circle"></i></span>
-			</label>
-			<div class="col-10">
-				<input type="text" class="form-control" [formControl]="registrationForm.controls['verificationInformation']" maxlength="255">
-			</div>
-		</div>
+        <!-- Verification Info -->
+        <div *ngIf="config.showVerification" class="form-group row">
+            <label class="col-2 col-form-label">
+                <span>
+                    <strong><span [innerHTML]="'Verification Info:' | translate"></span></strong>
+                </span>
+                <span class="tooltip-icon" (click)="showVerificationTT(tooltip)"><i class="fa fa-question-circle"></i></span>
+            </label>
+            <div class="col-10">
+                <input type="text" class="form-control" [formControl]="registrationForm.controls['verificationInformation']" maxlength="255">
+            </div>
+        </div>
 
-		<!-- Business Type -->
-		<div class="form-group row">
-			<label class="col-2 col-form-label">
-				<strong><span [innerHTML]="'Business Type:' | translate"></span></strong>
-			</label>
-			<div class="col-10">
-				<select class="form-control" [formControl]="registrationForm.controls['businessType']" (change)="registrationForm.controls['industrySectors'].setValue('')" required>
-					<option *ngFor="let type of config.supportedBusinessTypes">{{type}}</option>
-				</select>
-			</div>
-		</div>
+        <!-- Business Type -->
+        <div class="form-group row">
+            <label class="col-2 col-form-label">
+                <strong><span [innerHTML]="'Business Type:' | translate"></span></strong>
+            </label>
+            <div class="col-10">
+                <select class="form-control" [formControl]="registrationForm.controls['businessType']" (change)="registrationForm.controls['industrySectors'].setValue('')" required>
+                    <option *ngFor="let type of config.supportedBusinessTypes">{{type}}</option>
+                </select>
+            </div>
+        </div>
 
-		<!-- Industry Sectors -->
-		<div class="form-group row">
-			<label class="col-2 col-form-label">
-				<strong><span [innerHTML]="'Activity Sectors:' | translate"></span></strong>
-				<span *ngIf="config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length>0 && !forceActText" class="tooltip-icon" (click)="showSectorTT(tooltip)"><i class="fa fa-question-circle"></i></span>
-			</label>
-			<div class="col-10">
-				<input *ngIf="registrationForm.getRawValue()['businessType'] == ''" type="text" class="form-control" [formControl]="registrationForm.controls['industrySectors']" placeholder="Select Business Type" required readonly maxlength="255">
-				<ng-container *ngIf="config.supportedActivitySectors[registrationForm.getRawValue()['businessType']] && config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length>0 && !forceActText">
-	        <select class="form-control" [(ngModel)]="industrySectorsArr[0].text" [ngModelOptions]="{standalone: true}" multiple required>
-	          <option *ngFor="let sector of config.supportedActivitySectors[registrationForm.getRawValue()['businessType']]" [value]="sector">{{sector}}</option>
-	        </select>
-	      </ng-container>
-	      <ng-container *ngIf="registrationForm.getRawValue()['businessType'] != '' && (!config.supportedActivitySectors[registrationForm.getRawValue()['businessType']] || config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length==0 || forceActText)">
-	        <ng-container *ngFor="let industrySectorsEntry of industrySectorsArr; let i = index; trackBy:trackFn">
-	          <div class="row mb-1">
-	            <div class="col-8">
-	              <textarea rows="3" class="form-control" [(ngModel)]="industrySectorsArr[i].text" [ngModelOptions]="{standalone: true}" placeholder="Separate entries using new lines" required maxlength="255"></textarea>
-	            </div>
-	            <div class="col-2">
-	              <select class="form-control" [(ngModel)]="industrySectorsArr[i].lang" [ngModelOptions]="{standalone: true}" required>
-	                  <option *ngFor='let language of languages' [value]="language">{{language}}</option>
-	              </select>
-	            </div>
-	            <div class="col-2">
-	              <button class="btn btn-danger w-100" type="button" (click)="removeIndustrySectors(i)"><span [innerHTML]="'Delete' | translate"></span></button>
-	            </div>
-	          </div>
-	        </ng-container>
-	        <div class="row mt-2 mb-1">
-	          <div class="col-10"></div>
-	          <div class="col-2">
-	            <button class="btn btn-secondary w-100" type="button" (click)="addIndustrySectors()">
-	              <span [innerHTML]="'Add' | translate"></span>
-	            </button>
-	          </div>
-	        </div>
-	      </ng-container>
-	      <div *ngIf="config.supportedActivitySectors[registrationForm.getRawValue()['businessType']] && config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length>0"><button class="btn btn-link pl-0" type="button" (click)="switchInput()"><span *ngIf="!forceActText"><span [innerHTML]="'Nothing fitting your business? Switch to manual input.' | translate"></span></span><span *ngIf="forceActText"><span [innerHTML]="'Want to make use of the predefined sectors? Switch to list input.' | translate"></span></span></button></div>
-			</div>
-		</div>
+        <!-- Industry Sectors -->
+        <div class="form-group row">
+            <label class="col-2 col-form-label">
+                <strong><span [innerHTML]="'Activity Sectors:' | translate"></span></strong>
+                <span *ngIf="config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length>0 && !forceActText" class="tooltip-icon" (click)="showSectorTT(tooltip)"><i class="fa fa-question-circle"></i></span>
+            </label>
+            <div class="col-10">
+                <input *ngIf="registrationForm.getRawValue()['businessType'] == ''" type="text" class="form-control" [formControl]="registrationForm.controls['industrySectors']" placeholder="Select Business Type" required readonly maxlength="255">
+                <ng-container *ngIf="config.supportedActivitySectors[registrationForm.getRawValue()['businessType']] && config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length>0 && !forceActText">
+                    <select class="form-control" [(ngModel)]="industrySectorsArr[0].text" [ngModelOptions]="{standalone: true}" multiple required>
+                        <option *ngFor="let sector of config.supportedActivitySectors[registrationForm.getRawValue()['businessType']]" [value]="sector">{{sector}}</option>
+                    </select>
+                </ng-container>
+                <ng-container *ngIf="registrationForm.getRawValue()['businessType'] != '' && (!config.supportedActivitySectors[registrationForm.getRawValue()['businessType']] || config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length==0 || forceActText)">
+                    <ng-container *ngFor="let industrySectorsEntry of industrySectorsArr; let i = index; trackBy:trackFn">
+                        <div class="row mb-1">
+                            <div class="col-8">
+                                <textarea rows="3" class="form-control" [(ngModel)]="industrySectorsArr[i].text" [ngModelOptions]="{standalone: true}" placeholder="Separate entries using new lines" required maxlength="255"></textarea>
+                            </div>
+                            <div class="col-2">
+                                <select class="form-control" [(ngModel)]="industrySectorsArr[i].lang" [ngModelOptions]="{standalone: true}" required>
+                                    <option *ngFor='let language of languages' [value]="language">{{language}}</option>
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <button class="btn btn-danger w-100" type="button" (click)="removeIndustrySectors(i)"><span [innerHTML]="'Delete' | translate"></span></button>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <div class="row mt-2 mb-1">
+                        <div class="col-10"></div>
+                        <div class="col-2">
+                            <button class="btn btn-secondary w-100" type="button" (click)="addIndustrySectors()">
+                                <span [innerHTML]="'Add' | translate"></span>
+                            </button>
+                        </div>
+                    </div>
+                </ng-container>
+                <div *ngIf="config.supportedActivitySectors[registrationForm.getRawValue()['businessType']] && config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length>0"><button class="btn btn-link pl-0" type="button" (click)="switchInput()"><span *ngIf="!forceActText"><span [innerHTML]="'Nothing fitting your business? Switch to manual input.' | translate"></span></span><span *ngIf="forceActText"><span [innerHTML]="'Want to make use of the predefined sectors? Switch to list input.' | translate"></span></span></button></div>
+            </div>
+        </div>
 
-		<!-- Business Keywords -->
-		<div class="form-group row">
-			<label class="col-2 col-form-label">
-				<strong><span [innerHTML]="'Business Keywords:' | translate"></span></strong>
-				<span class="tooltip-icon" (click)="showKeywordsTT(tooltip)"><i class="fa fa-question-circle"></i></span>
-			</label>
-			<div class="col-10">
-				<ng-container *ngFor="let businessKeywordsEntry of businessKeywordsArr; let i = index; trackBy:trackFn">
-	        <div class="row mb-1">
-	          <div class="col-8">
-	            <textarea rows="3" class="form-control" [(ngModel)]="businessKeywordsArr[i].text" [ngModelOptions]="{standalone: true}" placeholder="Separate entries using new lines" maxlength="255"></textarea>
-	          </div>
-	          <div class="col-2">
-	            <select class="form-control" [(ngModel)]="businessKeywordsArr[i].lang" [ngModelOptions]="{standalone: true}">
-	                <option *ngFor='let language of languages' [value]="language">{{language}}</option>
-	            </select>
-	          </div>
-	          <div class="col-2">
-	            <button class="btn btn-danger w-100" type="button" (click)="removeBusinessKeywords(i)"><span [innerHTML]="'Delete' | translate"></span></button>
-	          </div>
-	        </div>
-	      </ng-container>
-	      <div class="row mt-2 mb-1">
-	        <div class="col-10"></div>
-	        <div class="col-2">
-	          <button class="btn btn-secondary w-100" type="button" (click)="addBusinessKeywords()">
-	            <span [innerHTML]="'Add' | translate"></span>
-	          </button>
-	        </div>
-	      </div>
-			</div>
-		</div>
+        <!-- Business Keywords -->
+        <div class="form-group row">
+            <label class="col-2 col-form-label">
+                <strong><span [innerHTML]="'Business Keywords:' | translate"></span></strong>
+                <span class="tooltip-icon" (click)="showKeywordsTT(tooltip)"><i class="fa fa-question-circle"></i></span>
+            </label>
+            <div class="col-10">
+                <ng-container *ngFor="let businessKeywordsEntry of businessKeywordsArr; let i = index; trackBy:trackFn">
+                    <div class="row mb-1">
+                        <div class="col-8">
+                            <textarea rows="3" class="form-control" [(ngModel)]="businessKeywordsArr[i].text" [ngModelOptions]="{standalone: true}" placeholder="Separate entries using new lines" maxlength="255"></textarea>
+                        </div>
+                        <div class="col-2">
+                            <select class="form-control" [(ngModel)]="businessKeywordsArr[i].lang" [ngModelOptions]="{standalone: true}">
+                                <option *ngFor='let language of languages' [value]="language">{{language}}</option>
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <button class="btn btn-danger w-100" type="button" (click)="removeBusinessKeywords(i)"><span [innerHTML]="'Delete' | translate"></span></button>
+                        </div>
+                    </div>
+                </ng-container>
+                <div class="row mt-2 mb-1">
+                    <div class="col-10"></div>
+                    <div class="col-2">
+                        <button class="btn btn-secondary w-100" type="button" (click)="addBusinessKeywords()">
+                            <span [innerHTML]="'Add' | translate"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-		<!-- Year of Comp. Reg. -->
-		<div class="form-group row">
-			<label class="col-2 col-form-label">
-				<strong><span [innerHTML]="'Year of Foundation:' | translate"></span></strong>
-			</label>
-			<div class="col-10">
-				<input type="number" class="form-control" [formControl]="registrationForm.controls['yearOfReg']">
-			</div>
-		</div>
+        <!-- Year of Comp. Reg. -->
+        <div class="form-group row">
+            <label class="col-2 col-form-label">
+                <strong><span [innerHTML]="'Year of Foundation:' | translate"></span></strong>
+            </label>
+            <div class="col-10">
+                <input type="number" class="form-control" [formControl]="registrationForm.controls['yearOfReg']">
+            </div>
+        </div>
 
-		<!-- Address -->
-		<address-form [group]="registrationForm.controls.address"></address-form>
+        <!-- Address -->
+        <address-form [group]="registrationForm.controls.address"></address-form>
 
-		<!-- Submit -->
-		<div class="row actions-row pr-0">
-			<div class="col-8 call-status-col">
-				<call-status [callStatus]="submitCallStatus" [large]="true"></call-status>
-			</div>
-			<div class="col-2">
-				<button class="btn btn-secondary action" type="button" [disabled]="submitCallStatus.isLoading()" (click)="backToVAT()"><span [innerHTML]="'Back' | translate"></span></button>
-			</div>
-			<div class="col-2">
-				<button class="btn btn-primary action" type="submit" [disabled]="!registrationForm.valid || isRequiredEmpty() || submitCallStatus.isLoading()"><span [innerHTML]="'Register' | translate"></span></button>
-			</div>
-		</div>
+        <!-- Submit -->
+        <div class="row actions-row pr-0">
+            <div class="col-8 call-status-col">
+                <call-status [callStatus]="submitCallStatus" [large]="true"></call-status>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-secondary action" type="button" [disabled]="submitCallStatus.isLoading()" (click)="backToVAT()"><span [innerHTML]="'Back' | translate"></span></button>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-primary action" type="submit" [disabled]="!registrationForm.valid || isRequiredEmpty() || submitCallStatus.isLoading()"><span [innerHTML]="'Register' | translate"></span></button>
+            </div>
+        </div>
 
-	</div>
+    </div>
 
 </form>
 
 <ng-template #tooltip let-d="dismiss">
-	<div class="modal-header">
-		<h4 class="modal-title"><span [innerHTML]="'Tooltip' | translate"></span></h4>
-		<button type="button" class="close" aria-label="Close" (click)="d('')">
-			<span aria-hidden="true">&times;</span>
-		</button>
-	</div>
-	<div class="modal-body" [innerHTML]="tooltipHTML">
-	</div>
+    <div class="modal-header">
+        <h4 class="modal-title"><span [innerHTML]="'Tooltip' | translate"></span></h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" [innerHTML]="tooltipHTML">
+    </div>
 </ng-template>

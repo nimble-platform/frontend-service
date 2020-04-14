@@ -14,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
 /**
  * Style Sheet for Explorative Search Form
 */
@@ -44,5 +43,5 @@
 }
 
 ul {
-     list-style: none;
+    list-style: none;
 }

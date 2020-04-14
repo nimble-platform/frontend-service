@@ -1,11 +1,25 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
 <div class="row space-before">
     <div class="col-3">
         <strong class="font-weight-500"><label for="customFile"><span [innerHTML]="'Requested filled technical data sheet(s)' | translate"></span>:</label></strong>
     </div>
     <div class="col-9">
-        <file-input [disabled]="isLoading() || isRequestSent()" [multiple]="true" [presentationMode]="getPresentationMode()"
-            (onSelectFile)="onSelectItemSpecificationFile($event)" [binaryObjects]="files"
-            (onClearFile)="onUnselectItemSpecificationFile($event)">
+        <file-input [disabled]="isLoading() || isRequestSent()" [multiple]="true" [presentationMode]="getPresentationMode()" (onSelectFile)="onSelectItemSpecificationFile($event)" [binaryObjects]="files" (onClearFile)="onUnselectItemSpecificationFile($event)">
         </file-input>
     </div>
 </div>
@@ -14,20 +28,21 @@
 
 <!--Notes-->
 <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
-<note-file-view [notes]="request.note"
-           [label]="'Notes'"
-           [documents]="request.additionalDocumentReference"
-           [readonly]="isLoading() || isRequestSent()"></note-file-view>
+<note-file-view [notes]="request.note" [label]="'Notes'" [documents]="request.additionalDocumentReference" [readonly]="isLoading() || isRequestSent()"></note-file-view>
 
 <hr class="actions-hr">
 
 <!-- Actions -->
 <div *ngIf="!isRequestSent()" class="row actions-row">
     <div class="{{bpDataService.isFinalProcessInTheWorkflow('Item_Information_Request') ? 'col-4' : 'col-2'}}"></div>
-    <div *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="col-4 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
-    <div *ngIf="processMetadata && processMetadata.isBeingUpdated" class="col-6 call-status-col"><call-status [callStatus]="callStatus"></call-status></div>
+    <div *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="col-4 call-status-col">
+        <call-status [callStatus]="callStatus"></call-status>
+    </div>
+    <div *ngIf="processMetadata && processMetadata.isBeingUpdated" class="col-6 call-status-col">
+        <call-status [callStatus]="callStatus"></call-status>
+    </div>
     <div class="col-2">
-        <button class="btn btn-secondary action" [disabled]="isLoading()"(click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
     </div>
     <div *ngIf="!(processMetadata && processMetadata.isBeingUpdated) && !bpDataService.isFinalProcessInTheWorkflow('Item_Information_Request')" class="col-2">
         <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onSkip()">

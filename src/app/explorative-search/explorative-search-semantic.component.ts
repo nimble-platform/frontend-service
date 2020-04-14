@@ -15,12 +15,12 @@
    limitations under the License.
  */
 
-import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
+import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import {ExplorativeSearchService} from './explorative-search.service';
+import { ExplorativeSearchService } from './explorative-search.service';
 import { Observable } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
-import {isNumeric} from 'rxjs/util/isNumeric';
+import { isNumeric } from 'rxjs/util/isNumeric';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -87,15 +87,15 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
             map((term: string) => term === '' ? []
                 : this.propertyResults.filter(v => v.translatedProperty.toLowerCase()
                     .indexOf(term.toLowerCase()) > -1).slice(0, 10))
-    );
-    public formatter = (x: {translatedProperty: string}) => x.translatedProperty;
+        );
+    public formatter = (x: { translatedProperty: string }) => x.translatedProperty;
 
 
 
     constructor(private expSearch: ExplorativeSearchService,
-                private router: Router,
-                private translate: TranslateService) {
-                }
+        private router: Router,
+        private translate: TranslateService) {
+    }
 
     /**
      * ngOnChanges: Angular Life Cycle Hook
@@ -141,7 +141,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         this.sparqlJSON['parameters'] = [];
         this.sparqlJSON['parametersURL'] = [];
         this.sparqlJSON['filters'] = [];
-        this.sparqlJSON['orangeCommandSelected'] = {name: ''};
+        this.sparqlJSON['orangeCommandSelected'] = { name: '' };
         this.sparqlJSON['parametersURL'] = [];
         this.sparqlJSON['propertySources'] = [];
     }
@@ -152,17 +152,17 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         this.objResults = [];
         this.expSearch.searchForProperty(inputJSON)
             .then((res) => {
-                    // console.log(res); // DEBUG
-                    this.propertyResults = res;
-                    res.filter(value => {
-                        // filter out only datatype properties from all available properties
-                        if (value.datatypeProperty) {
-                            this.dataResults.push(value);
-                        } else if (value.objectProperty) {
-                            this.objResults.push(value);
-                        }
-                    });
-                }
+                // console.log(res); // DEBUG
+                this.propertyResults = res;
+                res.filter(value => {
+                    // filter out only datatype properties from all available properties
+                    if (value.datatypeProperty) {
+                        this.dataResults.push(value);
+                    } else if (value.objectProperty) {
+                        this.objResults.push(value);
+                    }
+                });
+            }
             );
     }
 
@@ -174,9 +174,11 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         // console.log(inputJSON);
         this.loadingFilter = true;
         this.searchvalue = [];
-        let dummyJSON = {'conceptURL': this.configSPQ['concept'],
+        let dummyJSON = {
+            'conceptURL': this.configSPQ['concept'],
             'propertyURL': encodeURIComponent(inputJSON.propertyURL),
-            'propertySource': inputJSON.propertySource};
+            'propertySource': inputJSON.propertySource        
+};
         this.expSearch.searchForPropertyValues(dummyJSON)
             .then(res => {
                 this.valueResults = res;
@@ -199,7 +201,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
 
     getReferenceValues(inputJSON, index?: number) {
         // console.log(inputJSON);
-        let dummyJSON = {'conceptURL': this.configSPQ['concept'], 'language': this.configSPQ['language']};
+        let dummyJSON = { 'conceptURL': this.configSPQ['concept'], 'language': this.configSPQ['language'] };
         let jsonforProperties = this.configSPQ;
         let newConcept = '';
         this.expSearch.getReferencesFromConcept(dummyJSON)
@@ -212,27 +214,27 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                 // console.log(jsonforProperties);
                 this.expSearch.searchForProperty(jsonforProperties)
                     .then((resp) => {
-                            // console.log(res); // DEBUG
-                            this.propertyResults = [];
-                            this.updateInfoAlert = true;
-                            this.dataResults = [];
-                            this.objResults = [];
-                            this.propertyResults = resp;
-                            resp.filter(value => {
-                                // filter out only datatype properties from all available properties
-                                if (value.datatypeProperty) {
-                                    this.dataResults.push(value);
-                                } else if (value.objectProperty) {
-                                    this.objResults.push(value);
-                                }
-                            });
+                        // console.log(res); // DEBUG
+                        this.propertyResults = [];
+                        this.updateInfoAlert = true;
+                        this.dataResults = [];
+                        this.objResults = [];
+                        this.propertyResults = resp;
+                        resp.filter(value => {
+                            // filter out only datatype properties from all available properties
+                            if (value.datatypeProperty) {
+                                this.dataResults.push(value);
+                            } else if (value.objectProperty) {
+                                this.objResults.push(value);
+                            }
+                        });
                         setTimeout(() => this.updateInfoAlert = false, 3000);
                         this.conceptPaths.push({
                             concept: this.refResultsRange[0]['translation'],
                             url: this.refResultsRange[0]['original'],
                             objPropUrl: this.referenceResults['objectPropertyURL']
                         });
-                        }
+                    }
                     );
             });
     }
@@ -266,11 +268,11 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
             if (this.conceptPaths.length === 1) {
                 let pathJSON = {
                     urlOfProperty: encodeURIComponent(this.selectedProperty['propertyURL']),
-                    path: [{concept: this.configSPQ['concept']}]
+                    path: [{ concept: this.configSPQ['concept'] }]
                 };
                 this.sparqlJSON['parametersIncludingPath'].push(pathJSON);
             } else {
-                let pathJSON = {urlOfProperty: encodeURIComponent(this.selectedProperty['propertyURL']), path: []};
+                let pathJSON = { urlOfProperty: encodeURIComponent(this.selectedProperty['propertyURL']), path: [] };
                 this.conceptPaths.forEach(path => {
                     if ('objPropUrl' in path) {
                         // console.log(path['objPropUrl']);
@@ -280,7 +282,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                                 urlOfProperty: encodeURIComponent(path.objPropUrl)
                             });
                     } else {
-                        pathJSON.path.push({concept: encodeURIComponent(path.url)});
+                        pathJSON.path.push({ concept: encodeURIComponent(path.url) });
                     }
                 });
                 this.sparqlJSON['parametersIncludingPath'].push(pathJSON);
@@ -322,13 +324,13 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
             if (this.conceptPaths.length === 1) {
                 let pathJSON = {
                     urlOfProperty: encodeURIComponent(this.selectedProperty['propertyURL']),
-                    path: [{concept: this.configSPQ['concept']}]
+                    path: [{ concept: this.configSPQ['concept'] }]
                 };
                 if (this.sparqlJSON['parametersIncludingPath'].findIndex(i => i.urlOfProperty === pathJSON.urlOfProperty) === -1) {
                     this.sparqlJSON['parametersIncludingPath'].push(pathJSON);
                 }
             } else {
-                let pathJSON = {urlOfProperty: encodeURIComponent(this.selectedProperty['propertyURL']), path: []};
+                let pathJSON = { urlOfProperty: encodeURIComponent(this.selectedProperty['propertyURL']), path: [] };
                 this.conceptPaths.forEach(path => {
                     if ('objPropUrl' in path) {
                         // console.log(path['objPropUrl']);
@@ -338,7 +340,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                                 urlOfProperty: encodeURIComponent(path.objPropUrl)
                             });
                     } else {
-                        pathJSON.path.push({concept: encodeURIComponent(path.url)});
+                        pathJSON.path.push({ concept: encodeURIComponent(path.url) });
                     }
                 });
                 if (this.sparqlJSON['parametersIncludingPath'].findIndex(i => i.urlOfProperty === pathJSON.urlOfProperty) === -1) {
@@ -349,7 +351,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
 
         } else {
             this.sparqlJSON['filters'].splice(
-            this.sparqlJSON['filters'].findIndex(fil => fil.exactValue === filterValue), 1);
+                this.sparqlJSON['filters'].findIndex(fil => fil.exactValue === filterValue), 1);
         }
         // console.log(this.sparqlJSON);
         this.allSelectedProperties.add(this.selectedProperty['translatedProperty']);
@@ -369,7 +371,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
                 if (this.conceptPaths.length === 1) {
                     let pathJSON = {
                         urlOfProperty: encodeURIComponent(this.selectedProperty['propertyURL']),
-                        path: [{concept: this.configSPQ['concept']}]
+                        path: [{ concept: this.configSPQ['concept'] }]
                     };
                     this.sparqlJSON['parametersIncludingPath'].push(pathJSON);
                 }
@@ -397,30 +399,30 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
         this.allSelectedProperties.delete(name);
         let tableIndexToRemove = this.tableResult['columns'].findIndex(i => i === name);
         let propIndexToRemove = this.sparqlJSON['parameters'].findIndex(i => i === name);
-            if (tableIndexToRemove === 0 && this.tableResult['columns'].length === 1) {
-                this.tableResult['uuids'] = [];
-            }
-            if (propIndexToRemove > -1) {
-                this.tableResult['rows'].forEach(entry => {
-                    entry.splice(tableIndexToRemove, 1);
-                });
-                this.tableResult['columns'].splice(tableIndexToRemove, 1);
+        if (tableIndexToRemove === 0 && this.tableResult['columns'].length === 1) {
+            this.tableResult['uuids'] = [];
+        }
+        if (propIndexToRemove > -1) {
+            this.tableResult['rows'].forEach(entry => {
+                entry.splice(tableIndexToRemove, 1);
+            });
+            this.tableResult['columns'].splice(tableIndexToRemove, 1);
 
-                // remove selection from SPARQL
-                this.sparqlJSON['parameters'].splice(propIndexToRemove, 1);
-                let removePropURL = this.sparqlJSON['parameters'][propIndexToRemove];
-                this.sparqlJSON['parametersURL'].splice(propIndexToRemove, 1);
-                this.sparqlJSON['parametersIncludingPath'].splice(propIndexToRemove, 1);
-                this.sparqlJSON['propertySources'].splice(propIndexToRemove, 1);
-                let filterIndexToRemove = this.sparqlJSON['filters'].findIndex(el => el.property === removePropURL);
-                if (filterIndexToRemove > -1) {
-                    this.sparqlJSON['filters'].splice(filterIndexToRemove);
-                }
+            // remove selection from SPARQL
+            this.sparqlJSON['parameters'].splice(propIndexToRemove, 1);
+            let removePropURL = this.sparqlJSON['parameters'][propIndexToRemove];
+            this.sparqlJSON['parametersURL'].splice(propIndexToRemove, 1);
+            this.sparqlJSON['parametersIncludingPath'].splice(propIndexToRemove, 1);
+            this.sparqlJSON['propertySources'].splice(propIndexToRemove, 1);
+            let filterIndexToRemove = this.sparqlJSON['filters'].findIndex(el => el.property === removePropURL);
+            if (filterIndexToRemove > -1) {
+                this.sparqlJSON['filters'].splice(filterIndexToRemove);
             }
-            if (!(this.tableResult['uuids'].length && this.tableResult['columns'].length)) {
-                // if the whole tableResult is now empty
-                this.tableResult['columns'] = undefined;
-            }
+        }
+        if (!(this.tableResult['uuids'].length && this.tableResult['columns'].length)) {
+            // if the whole tableResult is now empty
+            this.tableResult['columns'] = undefined;
+        }
     }
 
     onSelectTab(event: any, id: any) {
@@ -442,12 +444,12 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     negotiation(): void {
         // console.log(this._negotiation_catalogue_id, this._negotiation_id)
         this.router.navigate(['/product-details'],
-            { queryParams: {catalogueId: this._negotiation_catalogue_id, id: this._negotiation_id} });
+            { queryParams: { catalogueId: this._negotiation_catalogue_id, id: this._negotiation_id } });
     }
 
     getSparqlOptionalSelect(indexUUID) {
         // console.log(indexUUID);
-        let optSPARQLQuery = {uuid: encodeURIComponent(this.tableResult.uuids[indexUUID].trim()), 'language': this.lang};
+        let optSPARQLQuery = { uuid: encodeURIComponent(this.tableResult.uuids[indexUUID].trim()), 'language': this.lang };
         // console.log(optSPARQLQuery);
         this.expSearch.getOptionalSelect(optSPARQLQuery)
             .then(res => {

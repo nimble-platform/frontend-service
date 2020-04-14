@@ -1,10 +1,24 @@
+/*
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 import { Component, OnInit, Input, ViewChild, ElementRef } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import {PriceOption} from '../catalogue/model/publish/price-option';
+import { PriceOption } from '../catalogue/model/publish/price-option';
 import { PRICE_OPTIONS } from '../catalogue/model/constants';
-import {roundToTwoDecimals, selectPreferredValues} from '../common/utils';
-import {DiscountPriceWrapper} from "../common/discount-price-wrapper";
-import {TranslateService} from '@ngx-translate/core';
+import { roundToTwoDecimals, selectPreferredValues } from '../common/utils';
+import { DiscountPriceWrapper } from "../common/discount-price-wrapper";
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "discount-modal",
@@ -15,19 +29,19 @@ export class DiscountModalComponent implements OnInit {
 
     @ViewChild("modal") modal: ElementRef;
 
-    orderedQuantityDiscounts:PriceOption[] = [];
-    productPropertyDiscounts:PriceOption[] = [];
-    deliveryPeriodDiscounts:PriceOption[] = [];
-    incotermDiscounts:PriceOption[] = [];
-    paymentMeanDiscounts:PriceOption[] = [];
-    deliveryLocationDiscount:PriceOption[] = [];
+    orderedQuantityDiscounts: PriceOption[] = [];
+    productPropertyDiscounts: PriceOption[] = [];
+    deliveryPeriodDiscounts: PriceOption[] = [];
+    incotermDiscounts: PriceOption[] = [];
+    paymentMeanDiscounts: PriceOption[] = [];
+    deliveryLocationDiscount: PriceOption[] = [];
 
     PRICE_OPTIONS = PRICE_OPTIONS;
     currencyId = null;
     totalDiscount = null;
 
     constructor(private translate: TranslateService,
-                private modalService: NgbModal) {
+        private modalService: NgbModal) {
     }
 
     ngOnInit() {
@@ -41,8 +55,8 @@ export class DiscountModalComponent implements OnInit {
         this.currencyId = priceWrapper.currency;
 
         this.resetDiscounts();
-        for(let discount of appliedDiscounts){
-            switch (discount.typeID){
+        for (let discount of appliedDiscounts) {
+            switch (discount.typeID) {
                 case PRICE_OPTIONS.ORDERED_QUANTITY.typeID:
                     this.orderedQuantityDiscounts.push(discount);
                     break;
@@ -73,7 +87,7 @@ export class DiscountModalComponent implements OnInit {
 
     }
 
-    private resetDiscounts():void{
+    private resetDiscounts(): void {
         this.orderedQuantityDiscounts = [];
         this.deliveryLocationDiscount = [];
         this.productPropertyDiscounts = [];
@@ -82,7 +96,7 @@ export class DiscountModalComponent implements OnInit {
         this.paymentMeanDiscounts = [];
     }
 
-    private getAbsValue(value:number):number{
+    private getAbsValue(value: number): number {
         return roundToTwoDecimals(Math.abs(value));
     }
 }

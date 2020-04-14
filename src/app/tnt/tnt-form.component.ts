@@ -68,20 +68,20 @@ export class TnTFormComponent {
     }
 
     getTableInfo(code: string, data: any) {
-                this.trackingInfo = data.map((el: any) => {
-                    let _out = {
-                        'epc': code,
-                        'eventTime': el.eventTime.$date,
-                        'bizStep': el.bizStep.split(':').pop(),
-                        'action': el.action,
-                        'readPoint': el.readPoint.id.split(':').pop(),
-                    };
-                    if ('bizLocation' in el) {
-                        _out['bizLocation'] = el.bizLocation.id.split(':').pop();
-                        return _out;
-                    }
-                    return _out;
-                });
+        this.trackingInfo = data.map((el: any) => {
+            let _out = {
+                'epc': code,
+                'eventTime': el.eventTime.$date,
+                'bizStep': el.bizStep.split(':').pop(),
+                'action': el.action,
+                'readPoint': el.readPoint.id.split(':').pop(),
+            };
+            if ('bizLocation' in el) {
+                _out['bizLocation'] = el.bizLocation.id.split(':').pop();
+                return _out;
+            }
+            return _out;
+        });
     }
 
     verifyOnBlockchain() {
