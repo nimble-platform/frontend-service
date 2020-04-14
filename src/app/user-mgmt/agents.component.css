@@ -11,3 +11,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
+.multi-input-group {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+}
+.multi-input-group .sub-input-set {
+    display: flex;
+    margin-bottom: 10px;
+    flex-direction: column;
+    position: relative;
+}
+.multi-input-group .sub-input-set .btn-delete-icon {
+    position: absolute;
+    right: -15px;
+    top: 10px;
+}

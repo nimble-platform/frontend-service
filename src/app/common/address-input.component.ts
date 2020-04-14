@@ -29,6 +29,7 @@ export class AddressInputComponent extends EmptyFormBase implements OnInit {
     @Input() address: Address = new Address();
     @Input() presentationMode: PresentationMode = "edit";
     @Input() disabled: boolean = false;
+    @Input() required:boolean = true;
 
     constructor() {
         super(ADDRESS_INPUT_FIELD_NAME);

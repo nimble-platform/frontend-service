@@ -48,7 +48,7 @@
                 </h2>
 
                 <!-- Product Details Panel -->
-                <product-details-tabs *ngIf="productsExpanded[i]" [wrapper]="wrappers[i]" [showOverview]="true" [isCatalogueLineDeleted]="areCatalogueLinesDeleted[i]" [settings]="settings" [itemWithSelectedProps]="productWithSelectedProperties" [readonly]="true">
+                <product-details-tabs *ngIf="productsExpanded[i]" [wrapper]="wrappers[i]" [showOverview]="true" [isCatalogueLineDeleted]="areCatalogueLinesDeleted[i]" [settings]="settings" [itemWithSelectedProps]="productsWithSelectedProperties[i]" [readonly]="true">
                 </product-details-tabs>
 
                 <!-- BP Steps -->
@@ -96,11 +96,11 @@
                     <ng-container *ngFor="let serviceWrapper of serviceWrappers;let i=index">
                         <product-details-tabs *ngIf="serviceExpanded" [wrapper]="serviceWrapper" [showOverview]="true" [isCatalogueLineDeleted]="areCatalogueLinesDeleted[i]" [settings]="serviceSettings" [itemWithSelectedProps]="serviceWithSelectedProperties" [readonly]="true">
                         </product-details-tabs>
-                    </ng-container>
 
-                    <!-- BP Steps -->
-                    <product-bp-steps *ngIf="(currentStep !== 'Fulfilment' && selectedLines[i]) || (currentStep === 'Fulfilment' && i == lines.length-1)" [currentStep]="currentStep" [status]="getStepsStatus()" [statusText]="getStepsStatusText()" [displayMode]="stepsDisplayMode">
-                    </product-bp-steps>
+                        <!-- BP Steps -->
+                        <product-bp-steps *ngIf="(currentStep !== 'Fulfilment' && selectedLines[i]) || (currentStep === 'Fulfilment' && i == lines.length-1)" [currentStep]="currentStep" [status]="getStepsStatus()" [statusText]="getStepsStatusText()" [displayMode]="stepsDisplayMode">
+                        </product-bp-steps>
+                    </ng-container>
 
                     <item-information *ngIf="currentStep === 'Item_Information_Request' || currentStep === 'Transport_Information_Request'">
                     </item-information>

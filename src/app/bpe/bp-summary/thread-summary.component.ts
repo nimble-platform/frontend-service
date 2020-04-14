@@ -198,8 +198,8 @@ export class ThreadSummaryComponent implements OnInit {
         this.historyExpanded = !this.historyExpanded;
     }
 
-    async openBpProcessView() {
-        let userRole: BpUserRole = this.titleEvent.buyer ? "buyer" : "seller";
+    openBpProcessView() {
+        let userRole:BpUserRole = this.titleEvent.buyer ? "buyer": "seller";
 
         let termsSources = [];
 

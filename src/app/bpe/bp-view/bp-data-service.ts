@@ -149,8 +149,10 @@ export class BPDataService {
         this.modifiedCatalogueLines = copy(this.catalogueLines);
         // set the item of modifiedCatalogueLines
         // if the item is included in bpActivityEvent (i.e, starting a process through search details page), use it, otherwise get the item from corresponding process document
-        this.modifiedCatalogueLines[0].goodsItem.item = copy(this.bpActivityEvent.itemsWithSelectedProperties ? this.bpActivityEvent.itemsWithSelectedProperties[0] : this.getItemsWithSelectedPropertiesForProcess(processType));
-        this.modifiedCatalogueLines[0].goodsItem.quantity = this.bpActivityEvent.itemQuantity ? this.bpActivityEvent.itemQuantity : new Quantity(1, this.modifiedCatalogueLines[0].requiredItemLocationQuantity.price.baseQuantity.unitCode);
+        this.modifiedCatalogueLines.forEach((modifiedCatalogueLine, index) => {
+            modifiedCatalogueLine.goodsItem.item = copy(this.bpActivityEvent.itemsWithSelectedProperties ?this.bpActivityEvent.itemsWithSelectedProperties[index] :this.getItemsWithSelectedPropertiesForProcess(processType,index));
+        });
+        this.modifiedCatalogueLines[0].goodsItem.quantity = this.bpActivityEvent.itemQuantity ? this.bpActivityEvent.itemQuantity: new Quantity(1,this.modifiedCatalogueLines[0].requiredItemLocationQuantity.price.baseQuantity.unitCode);
     }
 
     // returns the item having product details with selected properties for the given process type
@@ -183,7 +185,7 @@ export class BPDataService {
         return this.sellerSettings;
     }
 
-    private async setProcessDocuments(processMetadata: ThreadEventMetadata) {
+    public async setProcessDocuments(processMetadata: ThreadEventMetadata) {
         let activityVariables = processMetadata.activityVariables;
         let processType = processMetadata.processType;
         if (processType == 'Negotiation') {
@@ -277,14 +279,10 @@ export class BPDataService {
      For dashboard, business process history contains process document metadatas since they are already started/completed.
      However, in the product-details page, we start a new business process, this is why we check for new process processMetadata.
      */
-    async startBp(bpActivityEvent: BpActivityEvent) {
+    startBp(bpActivityEvent: BpActivityEvent){
         this.resetBpData();
 
         this.bpActivityEvent = bpActivityEvent;
-        // if the event is not created for a new process, processMetadata contains the process metadata for the continued process
-        if (!bpActivityEvent.newProcess) {
-            await this.setProcessDocuments(bpActivityEvent.processMetadata);
-        }
         this.navigateToBpExec();
     }
 
@@ -415,12 +413,6 @@ export class BPDataService {
 
     initRfqForTransportationWithOrder(order: Order): void {
         this.requestForQuotation = UBLModelUtils.createRequestForQuotationWithCopies(order, this.modifiedCatalogueLines[0]);
-    }
-
-    async initRfqForTransportationWithThreadMetadata(thread: ThreadEventMetadata): Promise<RequestForQuotation> {
-        await this.setProcessDocuments(thread);
-        this.initRfqForTransportationWithOrder(this.order);
-        return Promise.resolve(this.requestForQuotation);
     }
 
     private initFetchedRfq(): void {
