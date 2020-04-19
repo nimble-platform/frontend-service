@@ -250,8 +250,7 @@ export class NegotiationResponseComponent implements OnInit {
             this.isThereADeletedProduct() ||
             !this.isPriceValid() ||
             this.processMetadata.collaborationStatus == "COMPLETED" ||
-            this.quotation.documentStatusCode.name === 'Rejected' ||
-            this.bpDataService.isFinalProcessInTheWorkflow('Negotiation');
+            this.quotation.documentStatusCode.name === 'Rejected';
     }
 
     getAcceptAndOrderButtonValidationMessages(){

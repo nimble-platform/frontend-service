@@ -89,7 +89,7 @@
     </div>
 
     <div class="row actions-row" *ngIf="userRole === 'buyer' && !readonly">
-        <div class="col-5 call-status-col">
+        <div class="{{bpDataService.isFinalProcessInTheWorkflow('Negotiation') ? 'col-7':'col-5'}} call-status-col">
             <call-status [callStatus]="callStatus"></call-status>
         </div>
         <div class="col-2">
@@ -100,7 +100,7 @@
                 <span [innerHTML]="'Request new Quotation' | translate"></span>
             </button>
         </div>
-        <div class="col-2">
+        <div *ngIf="!bpDataService.isFinalProcessInTheWorkflow('Negotiation')" class="col-2">
             <span [ngbTooltip]="getAcceptAndOrderButtonValidationMessages()" [placement]="'auto'"  title="">
                 <button class="btn btn-primary action" [disabled]="isAcceptAndOrderDisabled()" (click)="onAcceptAndOrder()">
                     <span [innerHTML]="'Accept & Order' | translate"></span>
