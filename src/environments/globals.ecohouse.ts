@@ -111,7 +111,7 @@ export const config = {
             "src": "./assets/eula.pdf"
         }
     ],
-    "showChat": true,
+    "showChat": false,
     "showAgent": false,
     "showCompanyMembers": false,
     "showExplorative": true,
