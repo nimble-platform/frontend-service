@@ -53,23 +53,23 @@
                     <i class="fa fa-list-ul"></i> <span [innerHTML]="'Dashboard' | translate"></span>
                 </a>
             </li>
-            <li ngbDropdown class="nav-item dropdown" *ngIf="checkRoles('catalogue')" routerLinkActive="active">
-                <a class="nav-link pointer" id="dropdownMenuPublish" ngbDropdownToggle>
-                    <i class="fa fa-arrow-up"></i> <span [innerHTML]="'Publish' | translate"></span>
-                </a>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuPublish" ngbDropdownMenu>
-                    <a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'product'}" routerLinkActive="active">
-                        <i class="fa fa-cog dd-icon"></i> <span [innerHTML]="'Product / Service' | translate"></span>
-                    </a>
-                    <a *ngIf="enableLogisticServicePublishing" class="dropdown-item" [routerLink]="['/catalogue/publish-logistic']" [queryParams]="{pageRef: 'single', productType: 'transportation'}" routerLinkActive="active">
-                        <i class="fa fa-database dd-icon"></i> <span [innerHTML]="'Logistics Service' | translate"></span>
-                    </a>
-                </div>
-            </li>
             <li class="nav-item" *ngIf="checkRoles('comp_req')" routerLinkActive="active">
                 <a class="nav-link" routerLink="/simple-search">
                     <i class="fa fa-search"></i> <span [innerHTML]="'Search' | translate"></span>
                 </a>
+            </li>
+            <li ngbDropdown class="nav-item dropdown" *ngIf="checkRoles('catalogue')" routerLinkActive="active">
+                <a class="nav-link pointer" id="dropdownMenuPublish" ngbDropdownToggle>
+                    <i class="fa fa-arrow-up"></i> <span [innerHTML]="'Register' | translate"></span>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuPublish" ngbDropdownMenu>
+                    <a class="dropdown-item" [routerLink]="['/catalogue/register-type']" [queryParams]="{pageRef: 'menu', productType: 'product'}" routerLinkActive="active">
+                        <i class="fa fa-cog dd-icon"></i> <span [innerHTML]="'Asset Type' | translate"></span>
+                    </a>
+                    <a *ngIf="enableLogisticServicePublishing" class="dropdown-item" [routerLink]="['/catalogue/register-instance']" [queryParams]="{pageRef: 'single', productType: 'transportation'}" routerLinkActive="active">
+                        <i class="fa fa-database dd-icon"></i> <span [innerHTML]="'Asset Instance' | translate"></span>
+                    </a>
+                </div>
             </li>
             <li class="nav-item" *ngIf="checkRoles('reg_comp')" routerLinkActive="active">
                 <a class="nav-link" routerLink="/user-mgmt/company-registration">

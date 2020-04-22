@@ -24,12 +24,16 @@ import { PublishDeactivateGuardService } from "./publish-deactivate-guard.servic
 import { CategoryDeactivateGuardService } from "./category/category-deactivate-guard.service";
 import { LogisticServicePublishComponent } from './publish/logistic-service-publish.component';
 import { LogisticPublishDeactivateGuardService } from './logistic-publish-deactivate-guard.service';
+import { AssetTypeRegistry } from './iasset-registry/type-registry.component';
+import { AssetInstanceRegistry } from './iasset-registry/instance-registry.component';
 
 const routes: Routes = [
     { path: "categorysearch", component: CategorySearchComponent, canDeactivate: [CategoryDeactivateGuardService] },
     { path: "publish", component: ProductPublishComponent, canDeactivate: [PublishDeactivateGuardService] },
     { path: "publish-logistic", component: LogisticServicePublishComponent, canDeactivate: [LogisticPublishDeactivateGuardService] },
-    { path: "catalogue", component: CatalogueViewComponent }
+    { path: "catalogue", component: CatalogueViewComponent },
+    { path: "register-type", component: AssetTypeRegistry },
+    { path: "register-instance", component: AssetInstanceRegistry }
 ];
 
 @NgModule({

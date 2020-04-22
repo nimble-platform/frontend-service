@@ -23,6 +23,8 @@ import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { CatalogueRoutingModule } from "./catalogue-routing.module";
 import { CategorySearchComponent } from "./category/category-search.component";
 import { ProductPublishComponent } from "./publish/product-publish.component";
+import { AssetTypeRegistry } from './iasset-registry/type-registry.component';
+import { AssetInstanceRegistry } from './iasset-registry/instance-registry.component';
 import { CatalogueViewComponent } from "./ubl-model-view/catalogue/catalogue-view.component";
 import { FavouriteViewComponent } from "./favourite/favourite-view.component";
 import { CompareViewComponent } from "./compare-product/compare-view.component";
@@ -61,6 +63,8 @@ import { DeleteExportCatalogueModalComponent } from "./ubl-model-view/catalogue/
         CategoryTreeComponent,
         ProductPublishComponent,
         LogisticServicePublishComponent,
+        AssetTypeRegistry,
+        AssetInstanceRegistry,
         EditPropertyModalComponent,
         BulkPublishComponent,
         OptionsPanelComponent,

@@ -1,0 +1,101 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
+
+<!------------------------------------------------------------------------------------------------------------>
+<!-- Topmost navigation bar -->
+<!------------------------------------------------------------------------------------------------------------>
+<ul class="nav nav-tabs" *ngIf="publishMode !== 'edit' && publishMode !== 'copy'">
+    <li class="nav-item">
+        <a href id="singleUpload"
+           [ngClass]="{'nav-link': true, active: publishingGranularity === 'manually'}"
+           (click)="onSelectTab($event,'singleUpload')">
+            <span [innerHTML]="'Register Asset Type' | translate"></span>
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a href id="bulkUpload"
+           [ngClass]="{'nav-link': true, active: publishingGranularity == 'automatically'}"
+           (click)="onSelectTab($event,'bulkUpload')">
+            <span [innerHTML]="'JSON Upload' | translate"></span>
+        </a>
+    </li>
+</ul>
+
+<br/>
+
+<!------------------------------------------------------------------------------------------------------------>
+<!-- Area for components of manual adding -->
+<!------------------------------------------------------------------------------------------------------------>
+<div *ngIf="publishingGranularity === 'manually'" class="form-group" id="new-type">
+
+    <h6><span [innerHTML]="'Add new asset type manually' | translate"></span></h6><br />
+    <form id="add-type-form" #customPropertyForm="ngForm" class="col-12">
+
+        <!-- name -->
+        <text-input label="Name of asset type" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newAssetType.name" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- short ID -->
+        <text-input label="Short-ID of asset type" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newAssetType.shortID" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- semantic ID -->
+        <text-input label="Semantic-ID of asset type" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newAssetType.semanticID" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- type description -->
+        <text-input label="Type description" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newAssetType.description" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- certificate -->
+        <text-input label="Certificate" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newAssetType.certificate" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- properties -->
+        <text-input label="Properties" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newAssetType.properties" [rows]="1" [required]="true">
+        </text-input>
+
+        <br />
+
+        <button class="btn btn-success ml-2 add-type-btn" [disabled]="!customPropertyForm.form.valid" (click)="addSensor()">
+            <span [innerHTML]="'Add Asset Type' | translate"></span>
+        </button>
+    </form>
+    <p><span [innerHTML]="'Names of asset types are unique. Entering the name of an existing type, will be prevented.' | translate"></span></p>
+
+</div>
+
+<!------------------------------------------------------------------------------------------------------------>
+<!-- Area for components of automatic adding -->
+<!------------------------------------------------------------------------------------------------------------>
+<div *ngIf="publishingGranularity === 'automatically'">
+
+    <h6><span [innerHTML]="'Add new asset type automatically' | translate"></span></h6><br />
+
+    <form id="add-json-form" #customPropertyForm="ngForm" class="col-12">
+        <button class="btn btn-success ml-2 add-json-btn" [disabled]="!customPropertyForm.form.valid" (click)="addSensor()">
+            <span [innerHTML]="'Upload AAS-Json-File' | translate"></span>
+        </button>
+    </form>
+</div>

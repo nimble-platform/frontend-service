@@ -1,0 +1,112 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
+
+<!------------------------------------------------------------------------------------------------------------>
+<!-- Topmost navigation bar-->
+<!------------------------------------------------------------------------------------------------------------>
+<ul class="nav nav-tabs" *ngIf="publishMode !== 'edit' && publishMode !== 'copy'">
+    <li class="nav-item">
+        <a href id="singleUpload"
+           [ngClass]="{'nav-link': true, active: publishingGranularity === 'manually'}"
+           (click)="onSelectTab($event,'singleUpload')">
+            <span [innerHTML]="'Register Asset Instance' | translate"></span>
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a href id="bulkUpload"
+           [ngClass]="{'nav-link': true, active: publishingGranularity == 'automatically'}"
+           (click)="onSelectTab($event,'bulkUpload')">
+            <span [innerHTML]="'JSON Upload' | translate"></span>
+        </a>
+    </li>
+</ul>
+
+
+<br/>
+
+<!------------------------------------------------------------------------------------------------------------>
+<!-- Area for components of manual adding -->
+<!------------------------------------------------------------------------------------------------------------>
+<div *ngIf="publishingGranularity === 'manually'" class="form-group" id="new-instance">
+
+    <h6><span [innerHTML]="'Add new asset instance manually' | translate"></span></h6><br />
+    <form id="add-instance-form" #customPropertyForm="ngForm" class="col-12">
+
+        <!-- name -->
+        <text-input label="Name of asset instance" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newAssetInstance.name" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- assetType -->
+        <text-input label="Type of asset instance" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newAssetInstance.assetType" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- serialNumber -->
+        <text-input label="Serial Number / Vendor Number" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newAssetInstance.serialNumber" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- currentLocation -->
+        <text-input label="Current Location of Asset" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newAssetInstance.currentLocation" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- originalLocation -->
+        <text-input label="Original Location of Asset" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newAssetInstance.originalLocation" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- listMaintenance -->
+        <text-input label="Maintenance List" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newAssetInstance.listMaintenance" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- listAvailableProperties -->
+        <text-input label="Readable Properties List" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newAssetInstance.listAvailableProperties" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- ownerProperty -->
+        <text-input label="Owner Property" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newAssetInstance.ownerProperty" [rows]="1" [required]="true">
+        </text-input>
+
+        <br />
+
+        <button class="btn btn-success ml-2 add-instance-btn" [disabled]="!customPropertyForm.form.valid" (click)="addSensor()">
+            <span [innerHTML]="'Add Asset Instance' | translate"></span>
+        </button>
+    </form>
+    <p><span [innerHTML]="'Names of asset instances are unique. Entering the name of an existing instance, will be prevented.' | translate"></span></p>
+
+</div>
+
+<!------------------------------------------------------------------------------------------------------------>
+<!-- Area for components of automatic adding -->
+<!------------------------------------------------------------------------------------------------------------>
+<div *ngIf="publishingGranularity === 'automatically'">
+
+    <h6><span [innerHTML]="'Add new asset instance automatically' | translate"></span></h6><br />
+
+    <form id="add-json-form" #customPropertyForm="ngForm" class="col-12">
+        <button class="btn btn-success ml-2 add-json-btn" [disabled]="!customPropertyForm.form.valid" (click)="addSensor()">
+            <span [innerHTML]="'Upload AAS-Json-File' | translate"></span>
+        </button>
+    </form>
+</div>
