@@ -12,18 +12,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export class ModelAssetInstance {
+export class ModelProperty {
 
     public id: string;
 
 constructor(
         public name: string,
-        public assetType: string,
-        public serialNumber: string,
-        public currentLocation: string,
-        public originalLocation: string,
-        public listMaintenance: string,
-        public listAvailableProperties: string,
-        public ownerProperty: string
-    ) { }
+        public shortID: string,
+        public semanticID: string,
+        public description: string,
+        public dataSpecification: string,
+        public properties: string
+    ) {}
 }

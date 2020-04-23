@@ -67,6 +67,13 @@
     margin-right: 10px;
 }
 
+#register-instance-manually {
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid;
+    border-color: #E8E8E8;
+}
+
 #new-instance {
     padding: 10px;
     margin-top: 10px;

@@ -12,6 +12,8 @@
    limitations under the License.
  */
 
+import { ModelProperty } from "./model-property";
+
 export class ModelAssetType {
 
     public id: string;
@@ -19,9 +21,9 @@ export class ModelAssetType {
     constructor(
         public name: string,
         public shortID: string,
-        public semanticID: number,
+        public semanticID: string,
         public description: string,
         public certificate: string,
-        public properties: string
+        public properties: ModelProperty[]
     ) {}
 }

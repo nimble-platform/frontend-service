@@ -67,7 +67,21 @@
     margin-right: 10px;
 }
 
+#register-type-manually {
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid;
+    border-color: #E8E8E8;
+}
+
 #new-type {
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid;
+    border-color: #E8E8E8;
+}
+
+#new-property {
     padding: 10px;
     margin-top: 10px;
     border: 1px solid;

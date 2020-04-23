@@ -17,14 +17,30 @@ limitations under the License.
 import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { PublishMode } from "../model/publish/publish-mode";
 import { ModelAssetType } from "./model/model-asset-type";
+import { ModelProperty } from "./model/model-property";
+import { AssetRegistryService } from "./iasset-registry.service";
 
 class NewAssetType {
 constructor(
         public name: string,
         public shortID: string,
-        public semanticID: number,
+        public semanticID: string,
         public description: string,
         public certificate: string,
+        public properties: ModelProperty[]
+    )
+    {
+        this.properties = [];
+    }
+}
+
+class NewProperty {
+constructor(
+        public name: string,
+        public shortID: string,
+        public semanticID: string,
+        public description: string,
+        public dataSpecification: string,
         public properties: string
     ) {}
 }
@@ -43,6 +59,7 @@ export class AssetTypeRegistry implements OnInit {
     private publishMode: PublishMode;
     private publishingGranularity: "manually" | "automatically" = "manually";
     private newAssetType: NewAssetType = new NewAssetType(null, null, null, null, null, null);
+    private newProperty: NewProperty = new NewProperty(null, null, null, null, null, null);
 
     //-------------------------------------------------------------------------------------
     // canDeactivate
@@ -61,6 +78,39 @@ export class AssetTypeRegistry implements OnInit {
         } else {
             this.publishingGranularity = "automatically";
         }
+    }
+
+    //-------------------------------------------------------------------------------------
+    // add a property
+    //-------------------------------------------------------------------------------------
+    addProperty(): void {
+
+        this.newAssetType.properties.push(new ModelProperty(this.newProperty.name,
+                                                            this.newProperty.shortID,
+                                                            this.newProperty.semanticID,
+                                                            this.newProperty.description,
+                                                            this.newProperty.dataSpecification,
+                                                            this.newProperty.properties));
+    }
+
+    //-------------------------------------------------------------------------------------
+    // remove a property
+    //-------------------------------------------------------------------------------------
+    removeProperty(property: ModelProperty): void {
+
+        const index = this.newAssetType.properties.indexOf(property, 0);
+        if (index > -1) {
+            this.newAssetType.properties.splice(index, 1);
+        }
+    }
+
+    //-------------------------------------------------------------------------------------
+    // add asset type
+    //-------------------------------------------------------------------------------------
+    addAssetType(): void {
+
+        // TODO: post request to register asset with all properties
+        alert("Not yet implemented!");
     }
 
     //-------------------------------------------------------------------------------------

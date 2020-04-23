@@ -27,8 +27,10 @@ export const debug = false;
 
 // Base path variables
 
-// Platform base path of backend services
+// Nimble Platform base path of backend services
 export const base_path = "http://nimble-staging.salzburgresearch.at";
+// IAsset platform base path of backend services
+export const base_path_iasset = "http://iasset.salzburgresearch.at";
 // Base path of explorative search endpoints
 export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
 // Base path of Keycloak IDP
@@ -47,9 +49,10 @@ export const user_mgmt_endpoint = `${base_path}/identity`;
 export const catalogue_endpoint = `${base_path}/catalog`;
 export const bpe_endpoint = `${base_path}/business-process`; // TODO: Mathias: maybe not needed?
 export const data_channel_endpoint = `${base_path}/data-channel`;
+export const iasset_registry_endpoint = `${base_path_iasset}/registry-service`;
 export const data_aggregation_endpoint = `${base_path}/data-aggregation`;
 export const trust_service_endpoint = `${base_path}/trust`;
-export const indexing_service_endpoint = `${base_path}/index`; // TODO: Mathias: maybe not needed?
+export const indexing_service_endpoint = `${base_path}/index`; // TODO: Mathias: new indexing
 export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}/logstash`;
 export const kibana_endpoint = `${base_path}/kibana/app/kibana`;

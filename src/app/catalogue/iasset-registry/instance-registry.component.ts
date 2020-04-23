@@ -21,7 +21,7 @@ import { ModelAssetInstance } from "./model/model-asset-instance";
 class NewAssetInstance {
 constructor(
         public name: string,
-        public assetType: number,
+        public assetType: string,
         public serialNumber: string,
         public currentLocation: string,
         public originalLocation: string,
@@ -63,6 +63,15 @@ export class AssetInstanceRegistry implements OnInit {
         } else {
             this.publishingGranularity = "automatically";
         }
+    }
+
+    //-------------------------------------------------------------------------------------
+    // add asset instance
+    //-------------------------------------------------------------------------------------
+    addAssetInstance(): void {
+
+        // TODO: post request to register asset instance
+        alert("Not yet implemented!");
     }
 
     //-------------------------------------------------------------------------------------
