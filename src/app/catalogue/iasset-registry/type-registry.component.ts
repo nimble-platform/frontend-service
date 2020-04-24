@@ -109,8 +109,23 @@ export class AssetTypeRegistry implements OnInit {
     //-------------------------------------------------------------------------------------
     addAssetType(): void {
 
-        // TODO: post request to register asset with all properties
-        alert("Not yet implemented!");
+        var type = new ModelAssetType(this.newAssetType.name,
+                                      this.newAssetType.shortID,
+                                      this.newAssetType.semanticID,
+                                      this.newAssetType.description,
+                                      this.newAssetType.certificate,
+                                      this.newAssetType.properties)
+
+        // add to backend
+        const registryID = "1234";
+        this.registryService.registerAssetType(registryID, type)
+            .then(addedAssetType => {
+                //this.update();
+                alert("Added AssetType succesfully.");
+            })
+            .catch(() => {
+                alert("Error while adding AssetType.");
+            });
     }
 
     //-------------------------------------------------------------------------------------
@@ -120,7 +135,7 @@ export class AssetTypeRegistry implements OnInit {
 
     }
 
-    constructor() {
+    constructor(private registryService: AssetRegistryService) {
 
     }
 }

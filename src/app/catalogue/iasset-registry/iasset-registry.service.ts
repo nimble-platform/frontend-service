@@ -42,15 +42,42 @@ export class AssetRegistryService {
     //-------------------------------------------------------------------------------------
     // GET - Requests
     //-------------------------------------------------------------------------------------
-    // TODO
+    getAllAssetTypes(registryID: string): Promise<any> {
+        const url = `${this.url}/registry/${registryID}/types`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers = new Headers({ 'Authorization': token });
+        return this.http
+            .get(url, { headers: headers, withCredentials: true })
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
 
     //-------------------------------------------------------------------------------------
     // POST - Requests
     //-------------------------------------------------------------------------------------
-    // TODO
+    registerAssetType(registryID: string, type: ModelAssetType): Promise<any> {
+        const url = `${this.url}/registry/${registryID}/type`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers = new Headers({ 'Authorization': token });
+        return this.http
+            .post(url, type, { headers: headers, withCredentials: true })
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
 
     //-------------------------------------------------------------------------------------
     // DELETE - Requests
     //-------------------------------------------------------------------------------------
-    // TODO
+    unregisterAssetType(registryID: string, type: ModelAssetType): Promise<any> {
+        const url = `${this.url}/registry/${registryID}/types/${type.id}`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers = new Headers({ 'Authorization': token });
+        return this.http
+            .delete(url, { headers: headers, withCredentials: true })
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
 }

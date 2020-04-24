@@ -46,6 +46,7 @@ import { UserService } from './user-mgmt/user.service';
 import { AgentService } from './user-mgmt/agent.service';
 import { CredentialsService } from './user-mgmt/credentials.service';
 import { DataChannelService } from "./data-channel/data-channel.service";
+import { AssetRegistryService } from "./catalogue/iasset-registry/iasset-registry.service";
 import { UnitService } from './common/unit-service';
 import { PrecedingBPDataService } from "./bpe/bp-view/preceding-bp-data-service";
 import { TnTService } from './tnt/tnt.service';
@@ -96,6 +97,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         CookieService,
         BPEService,
         DataChannelService,
+        AssetRegistryService,
         BPService,
         BPDataService,
         FrameContractTransitionService,
