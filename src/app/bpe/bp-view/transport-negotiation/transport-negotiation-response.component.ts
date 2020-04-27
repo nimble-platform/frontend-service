@@ -111,6 +111,11 @@ export class TransportNegotiationResponseComponent implements OnInit {
         return this.isResponseSent() || this.isLoading() || this.readonly;
     }
 
+    isRequestNewQuotationDisabled(): boolean {
+        return this.isLoading() ||  this.processMetadata.collaborationStatus == "COMPLETED" || this.processMetadata.collaborationStatus == "CANCELLED"
+            || (this.bpDataService.isFinalProcessInTheWorkflow('Negotiation') && this.quotation.documentStatusCode.name == NEGOTIATION_RESPONSES.ACCEPTED);
+    }
+
     isLoading(): boolean {
         return this.callStatus.fb_submitted;
     }

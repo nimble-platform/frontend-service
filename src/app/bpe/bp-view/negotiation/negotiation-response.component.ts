@@ -242,7 +242,8 @@ export class NegotiationResponseComponent implements OnInit {
     }
 
     isRequestNewQuotationDisabled(): boolean {
-        return this.isLoading() || this.isThereADeletedProduct() || this.processMetadata.collaborationStatus == "COMPLETED" || this.processMetadata.collaborationStatus == "CANCELLED";
+        return this.isLoading() || this.isThereADeletedProduct() || this.processMetadata.collaborationStatus == "COMPLETED" || this.processMetadata.collaborationStatus == "CANCELLED"
+            || (this.bpDataService.isFinalProcessInTheWorkflow('Negotiation') && this.quotation.documentStatusCode.name == NEGOTIATION_RESPONSES.ACCEPTED);
     }
 
     isAcceptAndOrderDisabled(): boolean {
