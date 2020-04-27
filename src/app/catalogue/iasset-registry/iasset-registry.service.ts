@@ -32,18 +32,27 @@ export class AssetRegistryService {
     }
 
 
-/*
-    isBusinessProcessAttached(processID: string): Promise<boolean> {
-            return this.channelsForBusinessProcess(processID)
-                .then(res => Object.keys(res).length > 0)
-    }
-*/
+    //isBusinessProcessAttached(processID: string): Promise<boolean> {
+    //        return this.channelsForBusinessProcess(processID)
+    //            .then(res => Object.keys(res).length > 0)
+    //}
 
     //-------------------------------------------------------------------------------------
     // GET - Requests
     //-------------------------------------------------------------------------------------
     getAllAssetTypes(registryID: string): Promise<any> {
         const url = `${this.url}/registry/${registryID}/types`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers = new Headers({ 'Authorization': token });
+        return this.http
+            .get(url, { headers: headers, withCredentials: true })
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    getAllAssetInstances(registryID: string): Promise<any> {
+        const url = `${this.url}/registry/${registryID}/instances`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const headers = new Headers({ 'Authorization': token });
         return this.http
@@ -67,11 +76,33 @@ export class AssetRegistryService {
             .catch(this.handleError);
     }
 
+    registerAssetInstance(registryID: string, instance: ModelAssetInstance): Promise<any> {
+        const url = `${this.url}/registry/${registryID}/instance`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers = new Headers({ 'Authorization': token });
+        return this.http
+            .post(url, instance, { headers: headers, withCredentials: true })
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
     //-------------------------------------------------------------------------------------
     // DELETE - Requests
     //-------------------------------------------------------------------------------------
     unregisterAssetType(registryID: string, type: ModelAssetType): Promise<any> {
         const url = `${this.url}/registry/${registryID}/types/${type.id}`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers = new Headers({ 'Authorization': token });
+        return this.http
+            .delete(url, { headers: headers, withCredentials: true })
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    unregisterAssetInstance(registryID: string, instance: ModelAssetInstance): Promise<any> {
+        const url = `${this.url}/registry/${registryID}/instances/${instance.id}`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const headers = new Headers({ 'Authorization': token });
         return this.http
