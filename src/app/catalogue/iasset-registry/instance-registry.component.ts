@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { FormGroup } from "@angular/forms";
 import { PublishMode } from "../model/publish/publish-mode";
 import { ModelAssetInstance } from "./model/model-asset-instance";
 
@@ -45,6 +46,8 @@ export class AssetInstanceRegistry implements OnInit {
     private publishMode: PublishMode;
     private publishingGranularity: "manually" | "automatically" = "manually";
     private newAssetInstance: NewAssetInstance = new NewAssetInstance(null, null, null, null, null, null, null, null);
+    private publishForm: FormGroup = new FormGroup({});
+
 
     //-------------------------------------------------------------------------------------
     // canDeactivate

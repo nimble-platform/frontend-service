@@ -117,8 +117,7 @@ export class AssetTypeRegistry implements OnInit {
                                       this.newAssetType.properties)
 
         // add to backend
-        const registryID = "1234";
-        this.registryService.registerAssetType(registryID, type)
+        this.registryService.registerAssetType("12345", type)
             .then(addedAssetType => {
                 //this.update();
                 alert("Added AssetType succesfully.");
