@@ -57,9 +57,11 @@
             </text-input>
 
             <!-- assetType -->
-            <text-input label="Type of asset instance" labelClass="col-4" valueClass="col-8"
-                        [(text)]="newAssetInstance.assetType" [rows]="1" [required]="true">
-            </text-input>
+            <options-input #dataTypeOption large="true"
+                           label="Type of asset instance" labelClass="col-4" valueClass="col-8"
+                           [presentationMode]="'edit'" [options]="allTypeNames" [(selected)]="allTypeNames[0]"
+                           (selectedOptionChange)="newAssetInstance.assetType = $event">
+            </options-input>
 
             <!-- serialNumber -->
             <text-input label="Serial Number / Vendor Number" labelClass="col-4" valueClass="col-8"

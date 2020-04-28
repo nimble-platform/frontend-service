@@ -47,7 +47,7 @@ export class AssetRegistryService {
         return this.http
             .get(url, { headers: headers, withCredentials: true })
             .toPromise()
-            .then(res => res.json())
+            .then(res => res.json()) // has a parsable JSON-response
             .catch(this.handleError);
     }
 
@@ -58,7 +58,7 @@ export class AssetRegistryService {
         return this.http
             .get(url, { headers: headers, withCredentials: true })
             .toPromise()
-            .then(res => res.json())
+            .then(res => res.json()) // has a parsable JSON-response
             .catch(this.handleError);
     }
 
@@ -72,7 +72,7 @@ export class AssetRegistryService {
         return this.http
             .post(url, type, { headers: headers, withCredentials: true })
             .toPromise()
-            .then(res => res.json())
+            .then(res => res) // has no parsable response
             .catch(this.handleError);
     }
 
@@ -83,7 +83,7 @@ export class AssetRegistryService {
         return this.http
             .post(url, instance, { headers: headers, withCredentials: true })
             .toPromise()
-            .then(res => res.json())
+            .then(res => res) // has no parsable response
             .catch(this.handleError);
     }
 
@@ -97,7 +97,7 @@ export class AssetRegistryService {
         return this.http
             .delete(url, { headers: headers, withCredentials: true })
             .toPromise()
-            .then(res => res.json())
+            .then(res => res) // has no parsable response
             .catch(this.handleError);
     }
 
@@ -108,7 +108,7 @@ export class AssetRegistryService {
         return this.http
             .delete(url, { headers: headers, withCredentials: true })
             .toPromise()
-            .then(res => res.json())
+            .then(res => res) // has no parsable response
             .catch(this.handleError);
     }
 }

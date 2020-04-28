@@ -19,6 +19,7 @@ import { PublishMode } from "../model/publish/publish-mode";
 import { ModelAssetType } from "./model/model-asset-type";
 import { ModelProperty } from "./model/model-property";
 import { AssetRegistryService } from "./iasset-registry.service";
+import { Router } from "@angular/router";
 
 class NewAssetType {
 constructor(
@@ -119,8 +120,7 @@ export class AssetTypeRegistry implements OnInit {
         // add to backend
         this.registryService.registerAssetType("12345", type)
             .then(addedAssetType => {
-                //this.update();
-                alert("Added AssetType succesfully.");
+                this.router.navigate(['dashboard']);
             })
             .catch(() => {
                 alert("Error while adding AssetType.");
@@ -134,7 +134,9 @@ export class AssetTypeRegistry implements OnInit {
 
     }
 
-    constructor(private registryService: AssetRegistryService) {
+    constructor(private registryService: AssetRegistryService,
+                private router: Router)
+    {
 
     }
 }

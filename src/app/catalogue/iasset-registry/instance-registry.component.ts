@@ -17,10 +17,12 @@ limitations under the License.
 import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { PublishMode } from "../model/publish/publish-mode";
+import { ModelAssetType } from "./model/model-asset-type";
 import { ModelAssetInstance } from "./model/model-asset-instance";
 import { AssetImageLoader } from './image-loader.component';
 import { BinaryObject } from '../model/publish/binary-object';
 import { AssetRegistryService } from "./iasset-registry.service";
+import { Router } from "@angular/router";
 
 class NewAssetInstance {
 constructor(
@@ -55,6 +57,8 @@ export class AssetInstanceRegistry implements OnInit {
     private newAssetInstance: NewAssetInstance = new NewAssetInstance(null, null, null, null, null, null, null, null, null);
     private publishForm: FormGroup = new FormGroup({});
 
+    private registeredAssetTypes: ModelAssetType[] = [];  // all registered asset types
+    private allTypeNames: String[] = [];  // the names of all registered asset types
 
     //-------------------------------------------------------------------------------------
     // canDeactivate
@@ -93,8 +97,7 @@ export class AssetInstanceRegistry implements OnInit {
         // add to backend
         this.registryService.registerAssetInstance("12345", instance)
             .then(addedAssetInstance => {
-                //this.update();
-                alert("Added AssetInstance succesfully.");
+                this.router.navigate(['dashboard']);
             })
             .catch(() => {
                 alert("Error while adding AssetInstance.");
@@ -108,7 +111,14 @@ export class AssetInstanceRegistry implements OnInit {
 
     }
 
-    constructor(private registryService: AssetRegistryService) {
-
+    constructor(private registryService: AssetRegistryService,
+                private router: Router)
+    {
+        // get all registered types
+        this.registryService.getAllAssetTypes("12345")
+            .then(types => {
+                this.registeredAssetTypes = types;
+                this.allTypeNames = types.map( item => item.name );
+            });
     }
 }
