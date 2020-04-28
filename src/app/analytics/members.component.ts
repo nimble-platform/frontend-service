@@ -184,6 +184,8 @@ export class MembersComponent implements OnInit {
         this.page = 1;
         this.start = 0;
         this.end = 0;
+        // if there is a search term, sort the search results by relevance , otherwise sort them by their legal name
+        this.sort = this.model.q == "" ? "legalName asc" :'score desc';
         this.getCompanies();
     }
 
