@@ -41,7 +41,7 @@ constructor(private modalService: NgbModal,
         super(BASIC_PRODUCT_DETAILS);
     }
 
-    public productImage: BinaryObject[] = []
+    @Input() productImage: BinaryObject[];
 
     ngOnInit() {
         this.initViewFormAndAddToParentForm();

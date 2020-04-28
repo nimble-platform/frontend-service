@@ -18,6 +18,9 @@ import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { PublishMode } from "../model/publish/publish-mode";
 import { ModelAssetInstance } from "./model/model-asset-instance";
+import { AssetImageLoader } from './image-loader.component';
+import { BinaryObject } from '../model/publish/binary-object';
+import { AssetRegistryService } from "./iasset-registry.service";
 
 class NewAssetInstance {
 constructor(
@@ -28,8 +31,12 @@ constructor(
         public originalLocation: string,
         public listMaintenance: string,
         public listAvailableProperties: string,
-        public ownerProperty: string
-    ) {}
+        public ownerProperty: string,
+        public assetImages: BinaryObject[]
+    )
+    {
+        this.assetImages = [];
+    }
 }
 
 //-------------------------------------------------------------------------------------
@@ -45,7 +52,7 @@ export class AssetInstanceRegistry implements OnInit {
 
     private publishMode: PublishMode;
     private publishingGranularity: "manually" | "automatically" = "manually";
-    private newAssetInstance: NewAssetInstance = new NewAssetInstance(null, null, null, null, null, null, null, null);
+    private newAssetInstance: NewAssetInstance = new NewAssetInstance(null, null, null, null, null, null, null, null, null);
     private publishForm: FormGroup = new FormGroup({});
 
 
@@ -73,8 +80,25 @@ export class AssetInstanceRegistry implements OnInit {
     //-------------------------------------------------------------------------------------
     addAssetInstance(): void {
 
-        // TODO: post request to register asset instance
-        alert("Not yet implemented!");
+        var instance = new ModelAssetInstance(this.newAssetInstance.name,
+                                              this.newAssetInstance.assetType,
+                                              this.newAssetInstance.serialNumber,
+                                              this.newAssetInstance.currentLocation,
+                                              this.newAssetInstance.originalLocation,
+                                              this.newAssetInstance.listMaintenance,
+                                              this.newAssetInstance.listAvailableProperties,
+                                              this.newAssetInstance.ownerProperty,
+                                              this.newAssetInstance.assetImages)
+
+        // add to backend
+        this.registryService.registerAssetInstance("12345", instance)
+            .then(addedAssetInstance => {
+                //this.update();
+                alert("Added AssetInstance succesfully.");
+            })
+            .catch(() => {
+                alert("Error while adding AssetInstance.");
+            });
     }
 
     //-------------------------------------------------------------------------------------
@@ -84,7 +108,7 @@ export class AssetInstanceRegistry implements OnInit {
 
     }
 
-    constructor() {
+    constructor(private registryService: AssetRegistryService) {
 
     }
 }

@@ -12,6 +12,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { BinaryObject } from '../../model/publish/binary-object';
+
 export class ModelAssetInstance {
 
     public id: string;
@@ -24,6 +26,7 @@ constructor(
         public originalLocation: string,
         public listMaintenance: string,
         public listAvailableProperties: string,
-        public ownerProperty: string
+        public ownerProperty: string,
+        public assetImages: BinaryObject[]
     ) { }
 }
