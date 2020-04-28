@@ -943,6 +943,11 @@ export class SimpleSearchFormComponent implements OnInit {
                     }
                     //}
 
+                    // remove '.0' parts of numerical facets
+                    if(facetMetadata[facet] != null && facetMetadata[facet].dataType == 'double' && facet_innerLabel.endsWith(".0")){
+                        facet_innerLabel = facet_innerLabel.substring(0,facet_innerLabel.length-2)
+                    }
+
                     if (facet_innerLabel != "" && facet_innerLabel != ":" && facet_innerLabel != ' ' && facet_innerLabel.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
                         this.facetObj[index].options.push({
                             "name": facet_inner.label, // the label with the language id, if there is any
