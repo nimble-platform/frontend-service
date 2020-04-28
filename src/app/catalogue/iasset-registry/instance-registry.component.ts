@@ -118,7 +118,7 @@ export class AssetInstanceRegistry implements OnInit {
         this.registryService.getAllAssetTypes("12345")
             .then(types => {
                 this.registeredAssetTypes = types;
-                this.allTypeNames = types.map( item => item.name );
+                this.allTypeNames = types.map( item => item.name ).sort(); // name array sorted by alphabet
             });
     }
 }
