@@ -674,7 +674,7 @@ export class AppComponent implements OnInit {
                     this.allowed = true;
                 break;
             case "catalogue":
-                if (all_rights || publish || (initial && !compReq))
+                if (all_rights || publish || (initial && legal))
                     this.allowed = true;
                 break;
             case "favourite":
