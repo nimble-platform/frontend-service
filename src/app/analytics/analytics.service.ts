@@ -171,6 +171,18 @@ export class AnalyticsService {
             .catch(this.handleError);
     }
 
+    rejectCompany(companyId: string): Promise<any> {
+        const url = `${this.url_identity}/admin/reject_company/${companyId}`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+
+        return this.http
+            .delete(url, { headers: headers_token, withCredentials: true })
+            .toPromise()
+            .then(res => res)
+            .catch(this.handleError);
+    }
+
     deleteCompany(companyId: string): Promise<any> {
         const userId = this.cookieService.get("user_id");
         const url = `${this.url_identity}/admin/delete_company/${companyId}?userId=${userId}`;

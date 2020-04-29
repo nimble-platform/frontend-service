@@ -145,7 +145,7 @@ export class MembersComponent implements OnInit {
     rejectCompany(id): void {
         if (confirm("Are you sure that you want to reject this company?")) {
             this.companiesCallStatus.submit();
-            this.analyticsService.deleteCompany(id)
+            this.analyticsService.rejectCompany(id)
                 .then(res => {
                     this.companiesCallStatus.callback("Successfully rejected company", true);
                     this.searchCompany();
