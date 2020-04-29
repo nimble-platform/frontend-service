@@ -52,44 +52,44 @@
         <form id="add-instance-form" #customPropertyForm="ngForm" class="col-12">
 
             <!-- name -->
-            <text-input label="Name of asset instance" labelClass="col-4" valueClass="col-8"
+            <text-input label="AssetInstance-Name [Name]" labelClass="col-4" valueClass="col-8"
                         [(text)]="newAssetInstance.name" [rows]="1" [required]="true">
             </text-input>
 
             <!-- assetType -->
             <options-input #dataTypeOption large="true"
-                           label="Type of asset instance" labelClass="col-4" valueClass="col-8"
+                           label="Type of AssetInstance [Type]" labelClass="col-4" valueClass="col-8"
                            [presentationMode]="'edit'" [options]="allTypeNames" [(selected)]="allTypeNames[0]"
                            (selectedOptionChange)="newAssetInstance.assetType = $event">
             </options-input>
 
             <!-- serialNumber -->
-            <text-input label="Serial Number / Vendor Number" labelClass="col-4" valueClass="col-8"
+            <text-input label="Serial-/Vendor-Number [SerialNumber]" labelClass="col-4" valueClass="col-8"
                         [(text)]="newAssetInstance.serialNumber" [rows]="1" [required]="true">
             </text-input>
 
             <!-- currentLocation -->
-            <text-input label="Current Location of Asset" labelClass="col-4" valueClass="col-8"
+            <text-input label="Current Location of Asset [CurrentLocation]" labelClass="col-4" valueClass="col-8"
                         [(text)]="newAssetInstance.currentLocation" [rows]="1" [required]="true">
             </text-input>
 
             <!-- originalLocation -->
-            <text-input label="Original Location of Asset" labelClass="col-4" valueClass="col-8"
+            <text-input label="Original Location of Asset [OriginalLocation]" labelClass="col-4" valueClass="col-8"
                         [(text)]="newAssetInstance.originalLocation" [rows]="1" [required]="true">
             </text-input>
 
             <!-- listMaintenance -->
-            <text-input label="Maintenance List" labelClass="col-4" valueClass="col-8"
+            <text-input label="List of Maintenance done [MaintenanceList]" labelClass="col-4" valueClass="col-8"
                         [(text)]="newAssetInstance.listMaintenance" [rows]="1" [required]="true">
             </text-input>
 
             <!-- listAvailableProperties -->
-            <text-input label="Readable Properties List" labelClass="col-4" valueClass="col-8"
+            <text-input label="List of readable Properties [PropertiesList]" labelClass="col-4" valueClass="col-8"
                         [(text)]="newAssetInstance.listAvailableProperties" [rows]="1" [required]="true">
             </text-input>
 
             <!-- ownerProperty -->
-            <text-input label="Owner Property" labelClass="col-4" valueClass="col-8"
+            <text-input label="Owner of this Asset [OwnerProperty]" labelClass="col-4" valueClass="col-8"
                         [(text)]="newAssetInstance.ownerProperty" [rows]="1" [required]="true">
             </text-input>
 
