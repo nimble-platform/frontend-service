@@ -46,7 +46,7 @@
         <h6><span [innerHTML]="'Add new asset instance manually' | translate"></span></h6><br />
 
         <hr>
-        <image-loader [productImage]="newAssetInstance.assetImages" [parentForm]="publishForm"></image-loader>
+        <image-loader [readOnly]="false" [productImage]="newAssetInstance.assetImages" [parentForm]="publishForm"></image-loader>
         <hr>
 
         <form id="add-instance-form" #customPropertyForm="ngForm" class="col-12">

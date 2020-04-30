@@ -31,9 +31,9 @@
                 <img class="image-small img-thumbnail" src="data:{{image.mimeCode}};base64,{{image.value}}" />
                 <i *ngIf="i>0" class="fa fa-chevron-circle-left decrease-index" (click)="onDecreaseIndex(i)"></i>
                 <i *ngIf="i<productImage.length-1" class="fa fa-chevron-circle-right increase-index" (click)="onIncreaseIndex(i)"></i>
-                <i class="fa fa-times-circle delete-image" (click)="onRemoveImage(i)"></i>
+                <i *ngIf="!readOnly" class="fa fa-times-circle delete-image" (click)="onRemoveImage(i)"></i>
             </div>
-            <div class="add-image btn btn-outline-primary">
+            <div *ngIf="!readOnly" class="add-image btn btn-outline-primary">
                 <span><span [innerHTML]="'Add Image' | translate"></span></span>
                 <input type="file" (change)="onAddImage($event)" multiple />
                 <i class="fa fa-question-circle delete-image" (click)="onClickImageRecommendations(imageRecommendationModal)"></i>
