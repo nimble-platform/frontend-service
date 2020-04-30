@@ -1,0 +1,151 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
+<!------------------------------------------------------------------------------------------------------------>
+<!-- button area -->
+<!------------------------------------------------------------------------------------------------------------>
+<div class="form-group" id="buttons-view">
+    <form id="buttons-form" #customPropertyForm="ngForm" class="col-12">
+
+        <h6><span [innerHTML]="'Asset Operations' | translate"></span></h6><br />
+
+        <!-- core operations -->
+        <button class="btn btn-danger ml-2 operation-btn-left" [disabled]="!customPropertyForm.form.valid" (click)="deleteAsset()">
+            <span [innerHTML]="'Delete Asset' | translate"></span>
+        </button>
+
+        <button class="btn btn-primary ml-2 operation-btn-left" [disabled]="!customPropertyForm.form.valid" (click)="editAsset()">
+            <span [innerHTML]="'Edit Asset' | translate"></span>
+        </button>
+
+        <button class="btn btn-success ml-2 operation-btn-left" [disabled]="!customPropertyForm.form.valid" (click)="addMaintenance()">
+            <span [innerHTML]="'Add Maintenance' | translate"></span>
+        </button>
+
+        <!-- operator operations -->
+        <button class="btn btn-danger ml-2 operation-btn-right" [disabled]="!customPropertyForm.form.valid" (click)="stopAsset()">
+            <span [innerHTML]="'Stop Asset' | translate"></span>
+        </button>
+
+        <button class="btn btn-success ml-2 operation-btn-right" [disabled]="!customPropertyForm.form.valid" (click)="startAsset()">
+            <span [innerHTML]="'Start Asset' | translate"></span>
+        </button>
+
+        <br/><br/>
+    </form>
+</div>
+
+<br/><br/>
+
+<!------------------------------------------------------------------------------------------------------------>
+<!-- type view -->
+<!------------------------------------------------------------------------------------------------------------>
+<div class="form-group" id="type-view">
+
+    <h6><span [innerHTML]="'Asset Detail View' | translate"></span></h6><br />
+    <form id="type-form" #customPropertyForm="ngForm" class="col-12">
+
+        <!-- name -->
+        <text-input label="AssetType-Name [Name]" labelClass="col-4" valueClass="col-8"
+                    [disabled]="true" [(text)]="type.name" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- short ID -->
+        <text-input label="Abbreviation [ShortID]" labelClass="col-4" valueClass="col-8"
+                    [disabled]="true" [(text)]="type.shortID" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- semantic ID -->
+        <text-input label="E-Class Number [SemanticID]" labelClass="col-4" valueClass="col-8"
+                    [disabled]="true" [(text)]="type.semanticID" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- type description -->
+        <text-input label="Description [Description]" labelClass="col-4" valueClass="col-8"
+                    [disabled]="true" [(text)]="type.description" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- certificate -->
+        <text-input label="Certificate [Certificate]" labelClass="col-4" valueClass="col-8"
+                    [disabled]="true" [(text)]="type.certificate" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- properties
+        <text-input label="Properties" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newAssetType.properties" [rows]="1" [required]="true">
+        </text-input>-->
+    </form>
+</div>
+
+
+<!------------------------------------------------------------------------------------------------------------>
+<!-- instance view -->
+<!------------------------------------------------------------------------------------------------------------>
+<div>
+
+    <div class="form-group" id="instance-view">
+        <h6><span [innerHTML]="'Asset Detail View' | translate"></span></h6><br />
+
+        <!--
+        <hr>
+        <image-loader [productImage]="newAssetInstance.assetImages" [parentForm]="publishForm"></image-loader>
+        <hr>
+        -->
+
+        <form id="instance-form" #customPropertyForm="ngForm" class="col-12">
+
+            <!-- name -->
+            <text-input label="AssetInstance-Name [Name]" labelClass="col-4" valueClass="col-8"
+                        [disabled]="true" [(text)]="instance.name" [rows]="1" [required]="true">
+            </text-input>
+
+            <!-- type -->
+            <text-input label="Type of AssetInstance [Type]" labelClass="col-4" valueClass="col-8"
+                        [disabled]="true" [(text)]="instance.assetType" [rows]="1" [required]="true">
+            </text-input>
+
+            <!-- serialNumber -->
+            <text-input label="Serial-/Vendor-Number [SerialNumber]" labelClass="col-4" valueClass="col-8"
+                        [disabled]="true" [(text)]="instance.serialNumber" [rows]="1" [required]="true">
+            </text-input>
+
+            <!-- currentLocation -->
+            <text-input label="Current Location of Asset [CurrentLocation]" labelClass="col-4" valueClass="col-8"
+                        [disabled]="true" [(text)]="instance.currentLocation" [rows]="1" [required]="true">
+            </text-input>
+
+            <!-- originalLocation -->
+            <text-input label="Original Location of Asset [OriginalLocation]" labelClass="col-4" valueClass="col-8"
+                        [disabled]="true" [(text)]="instance.originalLocation" [rows]="1" [required]="true">
+            </text-input>
+
+            <!-- listMaintenance -->
+            <text-input label="List of Maintenance done [MaintenanceList]" labelClass="col-4" valueClass="col-8"
+                        [disabled]="true" [(text)]="instance.listMaintenance" [rows]="1" [required]="true">
+            </text-input>
+
+            <!-- listAvailableProperties -->
+            <text-input label="List of readable Properties [PropertiesList]" labelClass="col-4" valueClass="col-8"
+                        [disabled]="true" [(text)]="instance.listAvailableProperties" [rows]="1" [required]="true">
+            </text-input>
+
+            <!-- ownerProperty -->
+            <text-input label="Owner of this Asset [OwnerProperty]" labelClass="col-4" valueClass="col-8"
+                        [disabled]="true" [(text)]="instance.ownerProperty" [rows]="1" [required]="true">
+            </text-input>
+        </form>
+    </div>
+</div>

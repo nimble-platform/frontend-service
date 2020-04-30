@@ -48,6 +48,7 @@ import { DeleteExportCatalogueModalComponent } from "./ubl-model-view/catalogue/
 // IAsset specific imports
 import { AssetTypeRegistry } from './iasset-registry/type-registry.component';
 import { AssetInstanceRegistry } from './iasset-registry/instance-registry.component';
+import { AssetDetail } from './iasset-registry/asset-detail.component';
 import { AssetImageLoader } from './iasset-registry/image-loader.component';
 
 @NgModule({
@@ -65,6 +66,7 @@ import { AssetImageLoader } from './iasset-registry/image-loader.component';
         // IAsset specific declarations
         AssetTypeRegistry,
         AssetInstanceRegistry,
+        AssetDetail,
         AssetImageLoader,
         // general declarations
         CategorySearchComponent,
