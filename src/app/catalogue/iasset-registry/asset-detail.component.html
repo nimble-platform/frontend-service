@@ -147,5 +147,9 @@
                         [disabled]="true" [(text)]="instance.ownerProperty" [rows]="1" [required]="true">
             </text-input>
         </form>
+
+        <hr>
+        <image-loader [productImage]="instance.assetImages" [parentForm]="publishForm"></image-loader>
+        <hr>
     </div>
 </div>

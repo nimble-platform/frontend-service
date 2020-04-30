@@ -18,8 +18,9 @@ styleUrls: ["./asset-detail.component.css"]
 
 export class AssetDetail implements OnInit {
 
+    // --------------------------------------------------------------
     // TESTING - use real asset as soon as solr-search is working ---
-    private instance: ModelAssetInstance = new ModelAssetInstance("TEST", "TEST", "TEST", "TEST", "TEST", "TEST", "TEST", "TEST", null);
+    private instance: ModelAssetInstance = null;
     private type : ModelAssetType = new ModelAssetType("TEST", "TEST", "TEST", "TEST", "TEST", null);
     // --------------------------------------------------------------
 
@@ -31,7 +32,15 @@ export class AssetDetail implements OnInit {
     }
 
     constructor(private registryService: AssetRegistryService,
-                private router: Router) {
+                private router: Router)
+    {
+        // --------------------------------------------------------------
+        // TESTING ONLY - dont checkin!!!!!!!!!!!!!!!!!!!!
+        this.registryService.getAllAssetInstances("12345")
+            .then(instances => {
+                this.instance = instances[0];
+            });
+        // --------------------------------------------------------------
 
     }
 
