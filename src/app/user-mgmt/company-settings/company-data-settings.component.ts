@@ -53,6 +53,9 @@ export class CompanyDataSettingsComponent implements OnInit {
     @Output() onSaveEvent: EventEmitter<void> = new EventEmitter();
 
     selectValueOfTextObject = selectValueOfTextObject;
+    // keeps the keys of available activity sector
+    // it is updated when business type is changed
+    availableActivitySectorKeys:string[] = null;
 
     constructor(public appComponent: AppComponent,
         private _fb: FormBuilder,
@@ -82,10 +85,23 @@ export class CompanyDataSettingsComponent implements OnInit {
             yearOfReg: new FormControl({ value: (this.settings.details.yearOfCompanyRegistration || ""), disabled: (!this.appComponent.checkRoles('pm') && this.settings.details.yearOfCompanyRegistration) }),
             address: AddressSubForm.update(AddressSubForm.generateForm(this._fb), this.settings.details.address)
         });
+        // set available activity sector keys
+        this.setAvailableActivitySectorKeys();
         if (!this.appComponent.checkRoles('pm')) {
             this.bpeService.checkAllCollaborationsFinished(this.settings.companyID, this.settings.negotiationSettings.company.federationInstanceID).then(finished => {
                 this.isAllCollaborationsFinished = finished;
             });
+        }
+    }
+
+
+    setAvailableActivitySectorKeys(){
+        // get activity sectors for the selected business type
+        let activitySectors = this.config.supportedActivitySectors[this.dataForm.getRawValue()['businessType']];
+        if(activitySectors){
+            this.availableActivitySectorKeys = Object.keys(activitySectors);
+        } else{
+            this.availableActivitySectorKeys = [];
         }
     }
 
@@ -176,16 +192,37 @@ export class CompanyDataSettingsComponent implements OnInit {
 
     save(model: FormGroup) {
         this.saveCallStatus.submit();
+        // retrieve the translations of each selected industry sector
+        // so that we can index the selected industry sectors for all available languages
+        let industrySectorWithMultilingualLabels = [];
+        // the case where industry sectors are selected from the predefined values
         if (this.industrySectorsArr.length == 1 && Array.isArray(this.industrySectorsArr[0].text)) {
+            // retrieve the translation of each industry sector for the available languages
+            for (let languageId of myGlobals.config.languageSettings.available) {
+                let industrySectorTranslations = []
+                for (let industrySectorsArrKey of this.industrySectorsArr[0].text) {
+                    if(this.config.supportedActivitySectors[model.getRawValue()['businessType']][industrySectorsArrKey][languageId]){
+                        industrySectorTranslations.push(this.config.supportedActivitySectors[model.getRawValue()['businessType']][industrySectorsArrKey][languageId])
+                    }
+                }
+
+                if(industrySectorTranslations.length > 0){
+                    industrySectorWithMultilingualLabels.push({ "text": industrySectorTranslations.join("\n"), "lang": languageId});
+                }
+            }
+            // need to update industrySectorsArr[0].text to make sure that other methods such as isSectorArray will work properly
             this.industrySectorsArr[0].text = this.industrySectorsArr[0].text.join("\n");
-            this.industrySectorsArr[0].lang = DEFAULT_LANGUAGE();
+            this.industrySectorsArr[0].lang = 'en';
+        }
+        else{
+            industrySectorWithMultilingualLabels = this.industrySectorsArr;
         }
         this.settings.details.legalName = createTextObjectFromArray(this.companyNameArr);
         this.settings.details.brandName = createTextObjectFromArray(this.brandNameArr);
         this.settings.details.vatNumber = model.getRawValue()['vatNumber'];
         this.settings.details.verificationInformation = model.getRawValue()['verificationInformation'];
         this.settings.details.businessType = model.getRawValue()['businessType'];
-        this.settings.details.industrySectors = createTextObjectFromArray(this.industrySectorsArr);
+        this.settings.details.industrySectors = createTextObjectFromArray(industrySectorWithMultilingualLabels);
         this.settings.details.businessKeywords = createTextObjectFromArray(this.businessKeywordsArr);
         this.settings.details.yearOfCompanyRegistration = model.getRawValue()['yearOfReg'];
         this.settings.details.address = model.getRawValue()['address'];
@@ -212,11 +249,19 @@ export class CompanyDataSettingsComponent implements OnInit {
             });
     }
 
+    getMultilingualPredefinedIndustrySector(sector:string){
+        let label = this.config.supportedActivitySectors[this.dataForm.getRawValue()['businessType']][sector][DEFAULT_LANGUAGE()];
+        if(!label){
+            label = this.config.supportedActivitySectors[this.dataForm.getRawValue()['businessType']][sector]['en'];
+        }
+        return label;
+    }
+
     isSectorArray(sectors): boolean {
         let isArray = true;
-        if (this.config.supportedActivitySectors[this.settings.details.businessType] && this.config.supportedActivitySectors[this.settings.details.businessType].length > 0) {
+        if (this.config.supportedActivitySectors[this.settings.details.businessType] && Object.keys(this.config.supportedActivitySectors[this.settings.details.businessType]).length > 0) {
             let sectorsArr = sectors.split("\n");
-            let availableSectors = this.config.supportedActivitySectors[this.settings.details.businessType];
+            let availableSectors = Object.keys(this.config.supportedActivitySectors[this.settings.details.businessType]);
             for (let i = 0; i < sectorsArr.length; i++) {
                 if (availableSectors.indexOf(sectorsArr[i]) == -1)
                     isArray = false;
