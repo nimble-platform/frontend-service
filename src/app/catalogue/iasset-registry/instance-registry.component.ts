@@ -58,7 +58,7 @@ export class AssetInstanceRegistry implements OnInit {
     private publishForm: FormGroup = new FormGroup({});
 
     private registeredAssetTypes: ModelAssetType[] = [];  // all registered asset types
-    private allTypeNames: String[] = [];  // the names of all registered asset types
+    private allTypeNames: string[] = [];  // the names of all registered asset types
 
     //-------------------------------------------------------------------------------------
     // canDeactivate
@@ -119,6 +119,7 @@ export class AssetInstanceRegistry implements OnInit {
             .then(types => {
                 this.registeredAssetTypes = types;
                 this.allTypeNames = types.map( item => item.name ).sort(); // name array sorted by alphabet
+                this.newAssetInstance.assetType = this.allTypeNames[0]; // init with first type
             });
     }
 }

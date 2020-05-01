@@ -59,8 +59,7 @@
             <!-- assetType -->
             <options-input #dataTypeOption large="true"
                            label="Type of AssetInstance [Type]" labelClass="col-4" valueClass="col-8"
-                           [presentationMode]="'edit'" [options]="allTypeNames" [(selected)]="allTypeNames[0]"
-                           (selectedOptionChange)="newAssetInstance.assetType = $event">
+                           [presentationMode]="'edit'" [options]="allTypeNames" [(selected)]="newAssetInstance.assetType">
             </options-input>
 
             <!-- serialNumber -->
