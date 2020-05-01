@@ -59,7 +59,7 @@ export class AssetDetail implements OnInit {
     //-------------------------------------------------------------------------------------
     deleteAsset(): void {
 
-        this.registryService.unregisterAssetInstance("12345", instance)
+        this.registryService.unregisterAssetInstance("12345", this.instance)
             .then(() => {
                 this.router.navigate(['dashboard']);
             })
