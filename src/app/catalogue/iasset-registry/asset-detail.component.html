@@ -17,10 +17,10 @@
 <!------------------------------------------------------------------------------------------------------------>
 <!-- button area -->
 <!------------------------------------------------------------------------------------------------------------>
-<div class="form-group" id="buttons-view">
+<div class="form-group col-12 row" id="buttons-view">
     <form id="buttons-form" #customPropertyForm="ngForm" class="col-12">
 
-        <h6><span [innerHTML]="'Asset Operations' | translate"></span></h6><br />
+        <h3><span [innerHTML]="'Asset Control Operations' | translate"></span></h3><br />
 
         <!-- core operations -->
         <button class="btn btn-danger ml-2 operation-btn-left" [disabled]="!customPropertyForm.form.valid" (click)="deleteAsset()">
@@ -48,7 +48,6 @@
     </form>
 </div>
 
-<br/><br/>
 
 <!------------------------------------------------------------------------------------------------------------>
 <!-- type view -->
@@ -56,7 +55,7 @@
 <div class="form-group col-12 row" id="type-view">
 
     <div class="col-6 align-left">
-        <h6><span [innerHTML]="'Asset Type Information' | translate"></span></h6><br />
+        <h3><span [innerHTML]="'Asset Type Data' | translate"></span></h3><br/>
         <form id="type-form" #customPropertyForm="ngForm" class="col-12">
 
             <!-- name -->
@@ -92,10 +91,8 @@
         </form>
     </div>
 
-    <div id="datastream-view"
-         class="col-6 align-right"
-         style="background-color: lightblue; height: 300px; width: 300px;">
-        <h6><span [innerHTML]="'Data-Streaming of: [' + selectedPropertyStream + ']'"></span></h6><br/>
+    <div id="data-view" class="col-6 align-right">
+        <h5><span [innerHTML]="'Data-Streaming of: [' + selectedPropertyStream + ']'"></span></h5><br/>
     </div>
 </div>
 
@@ -106,7 +103,7 @@
 <div class="form-group col-12 row" id="instance-view">
 
     <div class="col-6 align-left">
-        <h6><span [innerHTML]="'Asset Instance Information' | translate"></span></h6><br/>
+        <h3><span [innerHTML]="'Asset Instance Data' | translate"></span></h3><br/>
 
         <form id="instance-form" #customPropertyForm="ngForm">
 
