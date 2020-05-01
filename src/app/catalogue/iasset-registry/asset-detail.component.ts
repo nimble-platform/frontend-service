@@ -21,7 +21,7 @@ export class AssetDetail implements OnInit {
     // --------------------------------------------------------------
     // TESTING - use real asset as soon as solr-search is working ---
     private instance: ModelAssetInstance = null;
-    private type : ModelAssetType = new ModelAssetType("TEST", "TEST", "TEST", "TEST", "TEST", null);
+    private type : ModelAssetType = null;
     // --------------------------------------------------------------
 
     //-------------------------------------------------------------------------------------
@@ -38,10 +38,23 @@ export class AssetDetail implements OnInit {
         // TESTING ONLY - dont checkin!!!!!!!!!!!!!!!!!!!!
         this.registryService.getAllAssetInstances("12345")
             .then(instances => {
-                this.instance = instances[0];
+
+                this.instance = instances[2];
+
+
+                if(this.instance.assetType != null)
+                {
+                    // THIS can stay DONT REMOVE----
+                    this.registryService.getAssociatedTypeByName(this.instance.assetType)
+                        .then(assoctype => {
+                            this.type = assoctype;
+                    });
+                }
+                //----
+
+
             });
         // --------------------------------------------------------------
-
     }
 
     //-------------------------------------------------------------------------------------

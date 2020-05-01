@@ -40,6 +40,17 @@ export class AssetRegistryService {
     //-------------------------------------------------------------------------------------
     // GET - Requests
     //-------------------------------------------------------------------------------------
+    getAssociatedTypeByName(typeName: string): Promise<any> {
+        const url = `${this.url}/registry/${typeName}/assoctype`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers = new Headers({ 'Authorization': token });
+        return this.http
+            .get(url, { headers: headers, withCredentials: true })
+            .toPromise()
+            .then(res => res.json()) // has a parsable JSON-response
+            .catch(this.handleError);
+    }
+
     getAllAssetTypes(registryID: string): Promise<any> {
         const url = `${this.url}/registry/${registryID}/types`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
