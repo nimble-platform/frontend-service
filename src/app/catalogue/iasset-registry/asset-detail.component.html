@@ -92,7 +92,33 @@
     </div>
 
     <div id="data-view" class="col-6 align-right">
-        <h5><span [innerHTML]="'Data-Streaming of: [' + selectedPropertyStream + ']'"></span></h5><br/>
+        <h3><span [innerHTML]="'[' + selectedPropertyStream + ']'"></span></h3><br/>
+
+        <!-- sample graph with sample datapoints -->
+        <figure class="css-chart" style="--widget-size: 200px;">
+            <ul class="line-chart">
+                <li style="--x: 40px; --y: 83.3333px;">
+                    <div class="data-point" data-value="25"></div>
+                    <div class="line-segment" style="--hypotenuse: 123.33333333333333; --angle:-71.07535558394876;"></div>
+                </li>
+                <li style="--x: 80px; --y: 200px;">
+                    <div class="data-point" data-value="60"></div>
+                    <div class="line-segment" style="--hypotenuse: 64.03124237432849; --angle:51.34019174590991;"></div>
+                </li>
+                <li style="--x: 120px; --y: 150px;">
+                    <div class="data-point" data-value="45"></div>
+                    <div class="line-segment" style="--hypotenuse: 43.333333333333336; --angle:-22.61986494804045;"></div>
+                </li>
+                <li style="--x: 160px; --y: 166.667px;">
+                    <div class="data-point" data-value="50"></div>
+                    <div class="line-segment" style="--hypotenuse: 52.068331172711055; --angle:39.805571092265225;"></div>
+                </li>
+                <li style="--x: 200px; --y: 133.333px;">
+                    <div class="data-point" data-value="40"></div>
+                    <div class="line-segment" style="--hypotenuse: 0; --angle:0;"></div>
+                </li>
+            </ul>
+        </figure>
     </div>
 </div>
 
