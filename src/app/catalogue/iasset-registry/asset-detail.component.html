@@ -53,103 +53,106 @@
 <!------------------------------------------------------------------------------------------------------------>
 <!-- type view -->
 <!------------------------------------------------------------------------------------------------------------>
-<div class="form-group" id="type-view">
+<div class="form-group col-12 row" id="type-view">
 
-    <h6><span [innerHTML]="'Asset Detail View' | translate"></span></h6><br />
-    <form id="type-form" #customPropertyForm="ngForm" class="col-12">
+    <div class="col-6 align-left">
+        <h6><span [innerHTML]="'Asset Type Information' | translate"></span></h6><br />
+        <form id="type-form" #customPropertyForm="ngForm" class="col-12">
 
-        <!-- name -->
-        <text-input label="AssetType-Name [Name]" labelClass="col-4" valueClass="col-8"
-                    [disabled]="true" [(text)]="type.name" [rows]="1" [required]="true">
-        </text-input>
+            <!-- name -->
+            <text-input label="AssetType-Name" labelClass="col-6" valueClass="col-6"
+                        [disabled]="true" [(text)]="type.name" [rows]="1" [required]="true">
+            </text-input>
 
-        <!-- short ID -->
-        <text-input label="Abbreviation [ShortID]" labelClass="col-4" valueClass="col-8"
-                    [disabled]="true" [(text)]="type.shortID" [rows]="1" [required]="true">
-        </text-input>
+            <!-- short ID -->
+            <text-input label="Abbreviation" labelClass="col-6" valueClass="col-6"
+                        [disabled]="true" [(text)]="type.shortID" [rows]="1" [required]="true">
+            </text-input>
 
-        <!-- semantic ID -->
-        <text-input label="E-Class Number [SemanticID]" labelClass="col-4" valueClass="col-8"
-                    [disabled]="true" [(text)]="type.semanticID" [rows]="1" [required]="true">
-        </text-input>
+            <!-- semantic ID -->
+            <text-input label="E-Class Number" labelClass="col-6" valueClass="col-6"
+                        [disabled]="true" [(text)]="type.semanticID" [rows]="1" [required]="true">
+            </text-input>
 
-        <!-- type description -->
-        <text-input label="Description [Description]" labelClass="col-4" valueClass="col-8"
-                    [disabled]="true" [(text)]="type.description" [rows]="1" [required]="true">
-        </text-input>
+            <!-- type description -->
+            <text-input label="Description" labelClass="col-6" valueClass="col-6"
+                        [disabled]="true" [(text)]="type.description" [rows]="1" [required]="true">
+            </text-input>
 
-        <!-- certificate -->
-        <text-input label="Certificate [Certificate]" labelClass="col-4" valueClass="col-8"
-                    [disabled]="true" [(text)]="type.certificate" [rows]="1" [required]="true">
-        </text-input>
+            <!-- certificate -->
+            <text-input label="Certificate" labelClass="col-6" valueClass="col-6"
+                        [disabled]="true" [(text)]="type.certificate" [rows]="1" [required]="true">
+            </text-input>
 
-        <!-- properties
-        <text-input label="Properties" labelClass="col-4" valueClass="col-8"
-                    [(text)]="newAssetType.properties" [rows]="1" [required]="true">
-        </text-input>-->
-    </form>
+            <options-input #dataTypeOption large="true"
+                           label="Properties" labelClass="col-6" valueClass="col-6"
+                           [presentationMode]="'edit'" [options]="propertyNames" [(selected)]="selectedPropertyStream"
+                           (selectedOptionChange)="handleSelectedPropertyChange($event)">
+            </options-input>
+        </form>
+    </div>
+
+    <div id="datastream-view"
+         class="col-6 align-right"
+         style="background-color: lightblue; height: 300px; width: 300px;">
+        <h6><span [innerHTML]="'Data-Streaming of: [' + selectedPropertyStream + ']'"></span></h6><br/>
+    </div>
 </div>
 
 
 <!------------------------------------------------------------------------------------------------------------>
 <!-- instance view -->
 <!------------------------------------------------------------------------------------------------------------>
-<div>
+<div class="form-group col-12 row" id="instance-view">
 
-    <div class="form-group" id="instance-view">
-        <h6><span [innerHTML]="'Asset Detail View' | translate"></span></h6><br />
+    <div class="col-6 align-left">
+        <h6><span [innerHTML]="'Asset Instance Information' | translate"></span></h6><br/>
 
-        <!--
-        <hr>
-        <image-loader [productImage]="newAssetInstance.assetImages" [parentForm]="publishForm"></image-loader>
-        <hr>
-        -->
-
-        <form id="instance-form" #customPropertyForm="ngForm" class="col-12">
+        <form id="instance-form" #customPropertyForm="ngForm">
 
             <!-- name -->
-            <text-input label="AssetInstance-Name [Name]" labelClass="col-4" valueClass="col-8"
+            <text-input label="AssetInstance-Name" labelClass="col-6" valueClass="col-6"
                         [disabled]="true" [(text)]="instance.name" [rows]="1" [required]="true">
             </text-input>
 
             <!-- type -->
-            <text-input label="Type of AssetInstance [Type]" labelClass="col-4" valueClass="col-8"
+            <text-input label="Type of AssetInstance" labelClass="col-6" valueClass="col-6"
                         [disabled]="true" [(text)]="instance.assetType" [rows]="1" [required]="true">
             </text-input>
 
             <!-- serialNumber -->
-            <text-input label="Serial-/Vendor-Number [SerialNumber]" labelClass="col-4" valueClass="col-8"
+            <text-input label="Serial-/Vendor-Number" labelClass="col-6" valueClass="col-6"
                         [disabled]="true" [(text)]="instance.serialNumber" [rows]="1" [required]="true">
             </text-input>
 
             <!-- currentLocation -->
-            <text-input label="Current Location of Asset [CurrentLocation]" labelClass="col-4" valueClass="col-8"
+            <text-input label="Current Location of Asset" labelClass="col-6" valueClass="col-6"
                         [disabled]="true" [(text)]="instance.currentLocation" [rows]="1" [required]="true">
             </text-input>
 
             <!-- originalLocation -->
-            <text-input label="Original Location of Asset [OriginalLocation]" labelClass="col-4" valueClass="col-8"
+            <text-input label="Original Location of Asset" labelClass="col-6" valueClass="col-6"
                         [disabled]="true" [(text)]="instance.originalLocation" [rows]="1" [required]="true">
             </text-input>
 
             <!-- listMaintenance -->
-            <text-input label="List of Maintenance done [MaintenanceList]" labelClass="col-4" valueClass="col-8"
+            <text-input label="List of Maintenance done" labelClass="col-6" valueClass="col-6"
                         [disabled]="true" [(text)]="instance.listMaintenance" [rows]="1" [required]="true">
             </text-input>
 
             <!-- listAvailableProperties -->
-            <text-input label="List of readable Properties [PropertiesList]" labelClass="col-4" valueClass="col-8"
+            <text-input label="List of readable Properties" labelClass="col-6" valueClass="col-6"
                         [disabled]="true" [(text)]="instance.listAvailableProperties" [rows]="1" [required]="true">
             </text-input>
 
             <!-- ownerProperty -->
-            <text-input label="Owner of this Asset [OwnerProperty]" labelClass="col-4" valueClass="col-8"
+            <text-input label="Owner of this Asset" labelClass="col-6" valueClass="col-6"
                         [disabled]="true" [(text)]="instance.ownerProperty" [rows]="1" [required]="true">
             </text-input>
         </form>
+    </div>
 
-        <hr>
+    <div class="col-6 align-right">
         <image-loader [readOnly]="true" [productImage]="instance.assetImages" [parentForm]="publishForm"></image-loader>
-        <hr>
     </div>
 </div>
