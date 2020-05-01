@@ -35,24 +35,21 @@ export class AssetDetail implements OnInit {
                 private router: Router)
     {
         // --------------------------------------------------------------
-        // TESTING ONLY - dont checkin!!!!!!!!!!!!!!!!!!!!
+        // FOR TESTING
+        // --------------------------------------------------------------
         this.registryService.getAllAssetInstances("12345")
             .then(instances => {
 
                 this.instance = instances[2];
 
 
-                if(this.instance.assetType != null)
-                {
-                    // THIS can stay DONT REMOVE----
-                    this.registryService.getAssociatedTypeByName(this.instance.assetType)
-                        .then(assoctype => {
-                            this.type = assoctype;
-                    });
-                }
-                //----
-
-
+                //if(this.instance.assetType != null)
+                //{
+                //    this.registryService.getAssociatedTypeByName(this.instance.assetType)
+                //        .then(assoctype => {
+                //            this.type = assoctype;
+                //    });
+                //}
             });
         // --------------------------------------------------------------
     }
@@ -61,7 +58,14 @@ export class AssetDetail implements OnInit {
     // Button Operations
     //-------------------------------------------------------------------------------------
     deleteAsset(): void {
-        alert("not yet implemented")
+
+        this.registryService.unregisterAssetInstance("12345", instance)
+            .then(() => {
+                this.router.navigate(['dashboard']);
+            })
+            .catch(() => {
+                alert("Error while removing AssetInstance.");
+            });
     }
 
     editAsset(): void {
