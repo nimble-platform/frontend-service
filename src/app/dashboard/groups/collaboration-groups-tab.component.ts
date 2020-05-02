@@ -451,17 +451,19 @@ export class CollaborationGroupsTabComponent {
     }
 
     getCategoryNames() {
-        this.categoryService.getCategories(this.filterSet.relatedProductCategories).then(response => {
-            this.categoryNames = [];
-            for (let categoryUri of this.filterSet.relatedProductCategories) {
-                for (let category of response.result) {
-                    if (categoryUri == category.uri) {
-                        this.categoryNames.push(selectNameFromLabelObject(category.label));
-                        break;
+        if(this.filterSet.relatedProductCategories && this.filterSet.relatedProductCategories.length > 0){
+            this.categoryService.getCategories(this.filterSet.relatedProductCategories).then(response => {
+                this.categoryNames = [];
+                for (let categoryUri of this.filterSet.relatedProductCategories) {
+                    for (let category of response.result) {
+                        if (categoryUri == category.uri) {
+                            this.categoryNames.push(selectNameFromLabelObject(category.label));
+                            break;
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     private executeCollaborationGroupQuery(query: DashboardQuery): void {
