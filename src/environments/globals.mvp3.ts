@@ -7,9 +7,9 @@ export const debug = false;
 
 // Base path variables
 
-export const base_path = "https://nimble-platform.salzburgresearch.at/nimble";
-export const ub_base = "https://nimble-platform.salzburgresearch.at/ub-search";
-export const idpURL = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master";
+export const base_path = "http://161.156.70.120";
+export const ub_base = "http://161.156.70.120:8090";
+export const idpURL = "http://161.156.70.120:8080/auth/realms/master";
 export const collab_path = "http://nimble.eu-de.containers.appdomain.cloud/collaborations";
 export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client";
 export const frontendURL = base_path + "/frontend/";
@@ -60,9 +60,9 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 // Platform Configuration
 
 export const config = {
-    "federationInstanceId": "MVP",
-    "platformName": "MVP",
-    "envName": "prod",
+    "federationInstanceId": "MVP3",
+    "platformName": "MVP3",
+    "envName": "mvp3",
     "addCartBehaviour": "single",
     "companyRegistrationRequired": false,
     "categoryFilter": {
@@ -75,17 +75,22 @@ export const config = {
             "hiddenCategories": ["Catalogue", "Company", "ContactPerson", "Guarantee", "Price", "Process", "Standard", "Style", "Technique"],
             "logisticsCategory": "LogisticsService",
             "ontologyPrefix": "http://www.aidimme.es/FurnitureSectorOntology.owl#"
-        }
+        },
+        "TextileOntology": {
+          "hiddenCategories": ["AppliedDyeingProcesses","Catalogue","Company","ContactPerson","Guarantee","Information","Price","Process","Standard","Style","Technique"],
+          "logisticsCategory": "LogisticsService",
+          "ontologyPrefix": "http://nimble-project.eu/TextileAndWGSectorsOntology.owl#"
+      }
     },
-    "collaborationEnabled": false,
+    "collaborationEnabled": true,
     "dataChannelsEnabled": true,
     "defaultBusinessProcessIds": [
     ],
     "defaultSearchIndex": "Name",
-    "delegationEnabled": false,
+    "delegationEnabled": true,
     "docLink": "https://www.nimble-project.org/docs/",
     "frameContractTabEnabled": true,
-    "imprint": "<u>Platform Owner & Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)",
+    "imprint": "<br/>E-Mail: <a href='mailto:nimble@il.ibm.com'>nimble@il.ibm.com</a><br/>",
     "kibanaConfig": {
         "companyDashboards": [],
         "companyGraphs": [],
@@ -96,19 +101,14 @@ export const config = {
         "available": ["en", "es", "de", "tr", "it", "sv"],
         "fallback": "en"
     },
-    "loggingEnabled": true,
+    "loggingEnabled": false,
     "logoPath": "./assets/logo_mvp.png",
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": false,
     "phoneNumberRequired": false,
     "vatEnabled": true,
     "projectsEnabled": true,
-    "requiredAgreements": [
-        {
-            "title": "End-User License Agreement (EULA)",
-            "src": "./assets/eula.pdf"
-        }
-    ],
+    "requiredAgreements": [],
     "showChat": false,
     "showAgent": false,
     "showCompanyMembers": false,
@@ -164,7 +164,7 @@ export const config = {
         "purchaser",
         "sales_officer"
     ],
-    "supportMail": "nimble-support@salzburgresearch.at",
+    "supportMail": "nimble@il.ibm.com",
     "supportMailContent": {
         "en": "Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]",
         "es": "Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"

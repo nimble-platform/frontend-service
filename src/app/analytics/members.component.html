@@ -40,7 +40,7 @@
                 <label class="col-form-label space-right"><strong><span [innerHTML]="'Sort by:' | translate"></span></strong>
                 </label>
                 <select class="form-control custom-select" (change)="setSort($event.target.value)">
-                    <!--<option value="score desc" [selected]="sort=='score desc'"><span [innerHTML]="'Relevance' | translate"></span></option>-->
+                    <option value="score desc" [selected]="sort=='score desc'"><span [innerHTML]="'Relevance' | translate"></span></option>
                     <option value="legalName asc" [selected]="sort=='legalName asc'"><span [innerHTML]="'A -> Z' | translate"></span></option>
                     <option value="legalName desc" [selected]="sort=='legalName desc'"><span [innerHTML]="'Z -> A' | translate"></span></option>
                     <option *ngIf="mgmt_view" value="uri asc" [selected]="sort=='uri asc'"><span [innerHTML]="'ID: 0 -> 9' | translate"></span></option>

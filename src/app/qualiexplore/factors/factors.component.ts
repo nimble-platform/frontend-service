@@ -93,8 +93,14 @@ export class FactorsComponent implements OnInit {
      */
     markRead(selectedFactor: TreeItem) {
         selectedFactor.checked = true;
-        this.totalResolvedFactors++;
-        // console.log(this.items);
+        if (selectedFactor.value.highlighted) {
+            if (this.totalResolvedFactors >= this.totalHighlightedFactors) { // If user clicks factors other than Highlighted Factors
+                // show the progress to be 100%
+                this.totalResolvedFactors = this.totalHighlightedFactors;
+            } else {
+                this.totalResolvedFactors++;
+            }
+        }
     }
 
     /**

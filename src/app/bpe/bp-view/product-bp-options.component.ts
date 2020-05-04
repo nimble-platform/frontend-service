@@ -43,6 +43,7 @@ import { UBLModelUtils } from '../../catalogue/model/ubl-model-utils';
 import { Item } from "../../catalogue/model/publish/item";
 import { AppComponent } from '../../app.component';
 import { DocumentService } from "./document-service";
+import {BpActivityEvent} from '../../catalogue/model/publish/bp-start-event';
 
 @Component({
     selector: "product-bp-options",
@@ -66,7 +67,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     lines: CatalogueLine[];
     wrappers: ProductWrapper[];
     // options: BpWorkflowOptions;
-    productWithSelectedProperties: Item;
+    productsWithSelectedProperties: Item[];
     settings: CompanySettings;
 
     // Refers to the previous order document for transport related business processes.
@@ -198,101 +199,119 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 return;
             }
 
-            // get copy of ThreadEventMetadata of the current business process
-            this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
-
-            if (this.bpDataService.bpActivityEvent.newProcess) {
-                this.processMetadata = null;
-            }
-            this.processType = bpActivityEvent.processType;
-            this.currentStep = this.getCurrentStep(bpActivityEvent.processType);
-            this.stepsDisplayMode = this.getStepsDisplayMode();
-
-            const ids = bpActivityEvent.catalogueLineIds;
-            const catalogueIds = bpActivityEvent.catalogueIds;
-            const sellerFederationId = bpActivityEvent.sellerFederationId;
-            this.bpDataService.precedingProcessId = bpActivityEvent.previousProcessInstanceId;
-            this.bpDataService.precedingDocumentId = bpActivityEvent.previousDocumentId;
-            this.bpDataService.precedingOrderId = bpActivityEvent.precedingOrderId;
-            this.bpDataService.unShippedOrderIds = bpActivityEvent.unShippedOrderIds;
-
-            if (this.id !== ids || this.catalogueId !== catalogueIds) {
-                this.id = ids;
-                this.catalogueId = catalogueIds;
-
+            // if the event is not created for a new process, processMetadata contains the process metadata for the continued process
+            // then, we need to retrieve process documents before initializing the process view
+            if(!bpActivityEvent.newProcess){
                 this.callStatus.submit();
-                const userId = this.cookieService.get("user_id");
-                Promise.all([
-                    this.getCatalogueLines(catalogueIds, ids, bpActivityEvent.processMetadata, sellerFederationId),
-                    this.getOrderForTransportService(bpActivityEvent.processMetadataOfAssociatedOrder),
-                    this.userService.getSettingsForUser(userId)
-
-                ]).then(([lines, order, currentUserSettings]) => {
-                    this.lines = lines;
-                    this.correspondingOrderOfTransportProcess = order;
-                    this.bpDataService.productOrder = order;
-                    this.bpDataService.currentUsersCompanySettings = currentUserSettings;
-
-                    return Promise.all([
-                        this.getReferencedCatalogueLines(lines, order),
-                        this.userService.getSettingsForProduct(lines[0]),
-                        this.bpDataService.bpActivityEvent.containerGroupId ? this.bpeService.checkCollaborationFinished(this.bpDataService.bpActivityEvent.containerGroupId, this.bpDataService.bpActivityEvent.processMetadata.sellerFederationId) : false
-                    ])
-                })
-                    .then(([referencedLines, sellerSettings, isCollaborationFinished]) => {
-                        // updates the company's business process workflow in order to eliminate the unnecessary steps from the displayed flow
-                        this.updateCompanyProcessWorkflowForThisProcess(isCollaborationFinished, sellerSettings);
-
-                        // set the product line to be the first fetched line, either service or product.
-                        this.bpDataService.setProductAndCompanyInformation(this.lines, sellerSettings, this.processType);
-                        this.productWithSelectedProperties = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
-
-                        // there is an order that references other products -> the line are services and the referencedLines are the original products
-                        if (referencedLines) {
-                            this.serviceLines = this.lines;
-                            this.serviceWrappers = [];
-                            for (let serviceLine of this.serviceLines) {
-                                this.serviceWrappers.push(new ProductWrapper(serviceLine, sellerSettings.negotiationSettings));
-                            }
-                            this.serviceSettings = sellerSettings;
-                            this.serviceWithSelectedProperties = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
-
-                            this.lines = referencedLines;
-                            this.productWithSelectedProperties = this.correspondingOrderOfTransportProcess.orderLine[0].lineItem.item;
-
-                            this.setProductsExpandedAndViewedProcessDetailsArrays(false);
-                            return this.userService.getSettingsForProduct(referencedLines[0]);
-
-                        } else {
-                            return Promise.resolve(sellerSettings);
-                        }
-                    })
-                    .then(settings => {
-                        // settings here always corresponds to the settings of the catalogue line either as the product itself being traded
-                        // or the product ordered before a logistics related business process
-                        this.wrappers = [];
-                        for (let line of this.lines) {
-                            this.wrappers.push(new ProductWrapper(line, settings.negotiationSettings));
-                        }
-                        this.settings = settings;
-
-                        if (this.processType) {
-                            this.currentStep = this.getCurrentStep(this.processType);
-                        }
-                        this.stepsDisplayMode = this.getStepsDisplayMode();
-
-                        this.setProductsExpandedAndViewedProcessDetailsArrays(false);
-                        this.callStatus.callback("Retrieved product details", true);
-                    })
-                    .catch(error => {
-                        this.callStatus.error("Failed to retrieve product details", error);
-                    });
-            }
-            // the user continues with the next bp step
-            else {
-                this.setProductsExpandedAndViewedProcessDetailsArrays(false);
+                this.bpDataService.setProcessDocuments(bpActivityEvent.processMetadata).then(() => {
+                    this.callStatus.callback("Set process documents", true);
+                    this.initializeProcessView(bpActivityEvent);
+                }).catch(error => {
+                    this.callStatus.error("Failed to set process documents",error)
+                });
+            } else{
+                this.initializeProcessView(bpActivityEvent);
             }
         });
+    }
+
+    initializeProcessView(bpActivityEvent:BpActivityEvent){
+        const ids = bpActivityEvent.catalogueLineIds;
+        const catalogueIds = bpActivityEvent.catalogueIds;
+        const sellerFederationId = bpActivityEvent.sellerFederationId;
+
+        // get copy of ThreadEventMetadata of the current business process
+        this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
+
+        if (this.bpDataService.bpActivityEvent.newProcess) {
+            this.processMetadata = null;
+        }
+        this.processType = bpActivityEvent.processType;
+        this.currentStep = this.getCurrentStep(bpActivityEvent.processType);
+        this.stepsDisplayMode = this.getStepsDisplayMode();
+
+
+        this.bpDataService.precedingProcessId = bpActivityEvent.previousProcessInstanceId;
+        this.bpDataService.precedingDocumentId = bpActivityEvent.previousDocumentId;
+        this.bpDataService.precedingOrderId = bpActivityEvent.precedingOrderId;
+        this.bpDataService.unShippedOrderIds = bpActivityEvent.unShippedOrderIds;
+
+        if (this.id !== ids || this.catalogueId !== catalogueIds) {
+            this.id = ids;
+            this.catalogueId = catalogueIds;
+
+            this.callStatus.submit();
+            const userId = this.cookieService.get("user_id");
+            Promise.all([
+                this.getCatalogueLines(catalogueIds, ids, bpActivityEvent.processMetadata,sellerFederationId),
+                this.getOrderForTransportService(bpActivityEvent.processMetadataOfAssociatedOrder),
+                this.userService.getSettingsForUser(userId)
+
+            ]).then(([lines, order, currentUserSettings]) => {
+                this.lines = lines;
+                this.correspondingOrderOfTransportProcess = order;
+                this.bpDataService.productOrder = order;
+                this.bpDataService.currentUsersCompanySettings = currentUserSettings;
+
+                return Promise.all([
+                    this.getReferencedCatalogueLines(lines, order),
+                    this.userService.getSettingsForProduct(lines[0]),
+                    this.bpDataService.bpActivityEvent.containerGroupId ? this.bpeService.checkCollaborationFinished(this.bpDataService.bpActivityEvent.containerGroupId,this.bpDataService.bpActivityEvent.processMetadata.sellerFederationId) : false
+                ])
+            })
+                .then(([referencedLines, sellerSettings, isCollaborationFinished]) => {
+                    // updates the company's business process workflow in order to eliminate the unnecessary steps from the displayed flow
+                    this.updateCompanyProcessWorkflowForThisProcess(isCollaborationFinished, sellerSettings);
+
+                    // set the product line to be the first fetched line, either service or product.
+                    this.bpDataService.setProductAndCompanyInformation(this.lines, sellerSettings,this.processType);
+                    this.productsWithSelectedProperties = this.bpDataService.modifiedCatalogueLines.map(modifiedCatalogueLine => modifiedCatalogueLine.goodsItem.item);
+
+                    // there is an order that references other products -> the line are services and the referencedLines are the original products
+                    if (referencedLines) {
+                        this.serviceLines = this.lines;
+                        this.serviceWrappers = [];
+                        for(let serviceLine of this.serviceLines){
+                            this.serviceWrappers.push(new ProductWrapper(serviceLine, sellerSettings.negotiationSettings));
+                        }
+                        this.serviceSettings = sellerSettings;
+                        this.serviceWithSelectedProperties = this.bpDataService.modifiedCatalogueLines[0].goodsItem.item;
+
+                        this.lines = referencedLines;
+                        this.productsWithSelectedProperties = this.correspondingOrderOfTransportProcess.orderLine.map(orderLine => orderLine.lineItem.item);
+
+                        this.setProductsExpandedAndViewedProcessDetailsArrays(false);
+                        return this.userService.getSettingsForProduct(referencedLines[0]);
+
+                    } else {
+                        return Promise.resolve(sellerSettings);
+                    }
+                })
+                .then(settings => {
+                    // settings here always corresponds to the settings of the catalogue line either as the product itself being traded
+                    // or the product ordered before a logistics related business process
+                    this.wrappers = [];
+                    for(let line of this.lines){
+                        this.wrappers.push(new ProductWrapper(line, settings.negotiationSettings));
+                    }
+                    this.settings = settings;
+
+                    if(this.processType) {
+                        this.currentStep = this.getCurrentStep(this.processType);
+                    }
+                    this.stepsDisplayMode = this.getStepsDisplayMode();
+
+                    this.setProductsExpandedAndViewedProcessDetailsArrays(false);
+                    this.callStatus.callback("Retrieved product details", true);
+                })
+                .catch(error => {
+                    this.callStatus.error("Failed to retrieve product details", error);
+                });
+        }
+        // the user continues with the next bp step
+        else{
+            this.setProductsExpandedAndViewedProcessDetailsArrays(false);
+        }
     }
 
     ngOnDestroy(): void {

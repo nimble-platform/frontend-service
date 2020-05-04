@@ -943,6 +943,11 @@ export class SimpleSearchFormComponent implements OnInit {
                     }
                     //}
 
+                    // remove '.0' parts of numerical facets
+                    if(facetMetadata[facet] != null && facetMetadata[facet].dataType == 'double' && facet_innerLabel.endsWith(".0")){
+                        facet_innerLabel = facet_innerLabel.substring(0,facet_innerLabel.length-2)
+                    }
+
                     if (facet_innerLabel != "" && facet_innerLabel != ":" && facet_innerLabel != ' ' && facet_innerLabel.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
                         this.facetObj[index].options.push({
                             "name": facet_inner.label, // the label with the language id, if there is any
@@ -1040,10 +1045,8 @@ export class SimpleSearchFormComponent implements OnInit {
 
     checkPriceFilter() {
         var check = false;
-        if (this.selectedCurrency && this.selectedPriceMin && this.selectedPriceMax) {
-            if (this.selectedPriceMin < this.selectedPriceMax) {
-                check = true;
-            }
+        if (this.selectedCurrency && (this.selectedPriceMin || this.selectedPriceMax)) {
+            check = !(this.selectedPriceMin && this.selectedPriceMax && this.selectedPriceMin > this.selectedPriceMax);
         }
         return check;
     }
@@ -1089,8 +1092,11 @@ export class SimpleSearchFormComponent implements OnInit {
     }
 
     setPriceFilter() {
+        // use default (0 for min price, Number.MAX_SAFE_INTEGER for max price) min/max prices in case no min/max prices are specified
+        let priceMin = this.selectedPriceMin ? this.selectedPriceMin:0;
+        let priceMax = this.selectedPriceMax ? this.selectedPriceMax:Number.MAX_SAFE_INTEGER;
         this.clearFacet(this.lowerFirstLetter(this.selectedCurrency) + "_" + this.product_price);
-        this.setRangeWithoutQuery(this.lowerFirstLetter(this.selectedCurrency) + "_" + this.product_price, this.selectedPriceMin, this.selectedPriceMax);
+        this.setRangeWithoutQuery(this.lowerFirstLetter(this.selectedCurrency) + "_" + this.product_price, priceMin, priceMax);
         this.get(this.objToSubmit);
     }
 

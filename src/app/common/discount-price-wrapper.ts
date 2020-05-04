@@ -171,6 +171,11 @@ export class DiscountPriceWrapper {
         let minimumOrderQuantityPriceOptionForCharge: PriceOption = null;
         let minimumDeliveryPeriodCharge = 0;
         let deliveryPeriodPriceOptionForCharge: PriceOption = null;
+        // there might be multiple price options for delivery location
+        // in this case, we need to apply the one which satisfies the most address fields
+        let numberOfAddressFieldsSatisfiedByPriceOptionForDeliveryLocation = 0;
+        // price option to be applied for delivery location
+        let priceOptionForDeliveryLocation = null;
 
         // reset appliedDiscounts
         this.appliedDiscounts = [];
@@ -248,29 +253,36 @@ export class DiscountPriceWrapper {
                 let checkRegion = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].region != "";
                 let country: Country = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country;
                 let checkCountryName = country && country.name.value && country.name.value != "";
-                if (checkStreetName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].streetName.toLocaleLowerCase() != this.deliveryLocation.streetName.toLocaleLowerCase()) {
-                    continue;
+
+                // if the address is not specified for this price option, skip it
+                if(checkStreetName || checkBuildingNumber || checkPostalZone || checkCityName || checkRegion || checkCountryName){
+                    if (checkStreetName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].streetName.toLocaleLowerCase() != this.deliveryLocation.streetName.toLocaleLowerCase()) {
+                        continue;
+                    }
+                    if (checkBuildingNumber && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber != this.deliveryLocation.buildingNumber) {
+                        continue;
+                    }
+                    if (checkPostalZone && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != this.deliveryLocation.postalZone) {
+                        continue;
+                    }
+                    if (checkCityName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName.toLocaleLowerCase() != this.deliveryLocation.cityName.toLocaleLowerCase()) {
+                        continue;
+                    }
+                    if (checkRegion && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].region.toLocaleLowerCase() != this.deliveryLocation.region.toLocaleLowerCase()) {
+                        continue;
+                    }
+                    if (checkCountryName && (this.deliveryLocation.country.name.value == null || (priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value.toLocaleLowerCase() != this.deliveryLocation.country.name.value.toLocaleLowerCase()))) {
+                        continue;
+                    }
+                    // the delivery location satisfies all conditions
+                    // check the number of address fields available in this price option
+                    let numberOfAddressFieldsInPriceOption = [checkStreetName,checkBuildingNumber,checkPostalZone,checkCityName,checkRegion,checkCountryName].filter(value => value).length;
+                    // this price option has more address field,so we need to use it for delivery location
+                    if(numberOfAddressFieldsInPriceOption > numberOfAddressFieldsSatisfiedByPriceOptionForDeliveryLocation){
+                        numberOfAddressFieldsSatisfiedByPriceOptionForDeliveryLocation = numberOfAddressFieldsInPriceOption;
+                        priceOptionForDeliveryLocation = priceOption;
+                    }
                 }
-                if (checkBuildingNumber && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber != this.deliveryLocation.buildingNumber) {
-                    continue;
-                }
-                if (checkPostalZone && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != this.deliveryLocation.postalZone) {
-                    continue;
-                }
-                if (checkCityName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName.toLocaleLowerCase() != this.deliveryLocation.cityName.toLocaleLowerCase()) {
-                    continue;
-                }
-                if (checkRegion && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].region.toLocaleLowerCase() != this.deliveryLocation.region.toLocaleLowerCase()) {
-                    continue;
-                }
-                if (checkCountryName && this.deliveryLocation.country.name.value != null && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value.toLocaleLowerCase() != this.deliveryLocation.country.name.value.toLocaleLowerCase()) {
-                    continue;
-                }
-                // the delivery location satisfies all conditions
-                priceOption.discount = this.calculateDiscountAmount(priceOption, totalPrice);
-                totalDiscount += priceOption.discount;
-                // add this discount to appliedDiscounts list
-                this.appliedDiscounts.push(priceOption);
             }
         }
 
@@ -295,6 +307,12 @@ export class DiscountPriceWrapper {
         if (deliveryPeriodPriceOptionForCharge != null) {
             deliveryPeriodPriceOptionForCharge.discount = minimumDeliveryPeriodCharge;
             this.appliedDiscounts.push(deliveryPeriodPriceOptionForCharge);
+        }
+        if(priceOptionForDeliveryLocation){
+            priceOptionForDeliveryLocation.discount = this.calculateDiscountAmount(priceOptionForDeliveryLocation, totalPrice);
+            totalDiscount += priceOptionForDeliveryLocation.discount;
+            // add this discount to appliedDiscounts list
+            this.appliedDiscounts.push(priceOptionForDeliveryLocation)
         }
 
         return totalPrice - totalDiscount;

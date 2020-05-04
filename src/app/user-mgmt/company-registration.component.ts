@@ -59,6 +59,10 @@ export class CompanyRegistrationComponent implements OnInit {
     forceActText = false;
     languages = LANGUAGES;
 
+    // keeps the keys of available activity sector
+    // it is updated when business type is changed
+    availableActivitySectorKeys:string[] = null;
+
     constructor(private _fb: FormBuilder,
         private appComponent: AppComponent,
         private cookieService: CookieService,
@@ -81,6 +85,18 @@ export class CompanyRegistrationComponent implements OnInit {
         this.brandNameArr = getArrayOfTextObject({});
         this.industrySectorsArr = getArrayOfTextObject({});
         this.businessKeywordsArr = getArrayOfTextObject({});
+        // set available activity sector keys
+        this.setAvailableActivitySectorKeys();
+    }
+
+    setAvailableActivitySectorKeys(){
+        // get activity sectors for the selected business type
+        let activitySectors = this.config.supportedActivitySectors[this.registrationForm.getRawValue()['businessType']];
+        if(activitySectors){
+            this.availableActivitySectorKeys = Object.keys(activitySectors);
+        } else{
+            this.availableActivitySectorKeys = [];
+        }
     }
 
     trackFn(index, item) {
@@ -180,9 +196,30 @@ export class CompanyRegistrationComponent implements OnInit {
     }
 
     save(model: FormGroup) {
+        // retrieve the translations of each selected industry sector
+        // so that we can index the selected industry sectors for all available languages
+        let industrySectorWithMultilingualLabels = [];
+        // the case where industry sectors are selected from the predefined values
         if (this.industrySectorsArr.length == 1 && Array.isArray(this.industrySectorsArr[0].text)) {
+            // retrieve the translation of each industry sector for the available languages
+            for (let languageId of myGlobals.config.languageSettings.available) {
+                let industrySectorTranslations = []
+                for (let industrySectorsArrKey of this.industrySectorsArr[0].text) {
+                    if(this.config.supportedActivitySectors[model.getRawValue()['businessType']][industrySectorsArrKey][languageId]){
+                        industrySectorTranslations.push(this.config.supportedActivitySectors[model.getRawValue()['businessType']][industrySectorsArrKey][languageId])
+                    }
+                }
+
+                if(industrySectorTranslations.length > 0){
+                    industrySectorWithMultilingualLabels.push({ "text": industrySectorTranslations.join("\n"), "lang": languageId});
+                }
+            }
+            // need to update industrySectorsArr[0].text to make sure that other methods will work properly
             this.industrySectorsArr[0].text = this.industrySectorsArr[0].text.join("\n");
-            this.industrySectorsArr[0].lang = DEFAULT_LANGUAGE();
+            this.industrySectorsArr[0].lang = 'en';
+        }
+        else{
+            industrySectorWithMultilingualLabels = this.industrySectorsArr;
         }
         // create company registration DTO
         let userId = this.cookieService.get('user_id');
@@ -199,7 +236,7 @@ export class CompanyRegistrationComponent implements OnInit {
                     model.getRawValue()['businessType'],
                     createTextObjectFromArray(this.companyNameArr),
                     createTextObjectFromArray(this.brandNameArr),
-                    createTextObjectFromArray(this.industrySectorsArr),
+                    createTextObjectFromArray(industrySectorWithMultilingualLabels),
                     model.getRawValue()['vatNumber'],
                     model.getRawValue()['verificationInformation'],
                     model.getRawValue()['yearOfReg'],
@@ -252,6 +289,14 @@ export class CompanyRegistrationComponent implements OnInit {
             });
 
         return false;
+    }
+
+    getMultilingualPredefinedIndustrySector(sector:string){
+        let label = this.config.supportedActivitySectors[this.registrationForm.getRawValue()['businessType']][sector][DEFAULT_LANGUAGE()];
+        if(!label){
+            label = this.config.supportedActivitySectors[this.registrationForm.getRawValue()['businessType']][sector]['en'];
+        }
+        return label;
     }
 
     switchInput() {
