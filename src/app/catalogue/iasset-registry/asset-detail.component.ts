@@ -83,7 +83,7 @@ export class AssetDetail implements OnInit {
     }
 
     //-------------------------------------------------------------------------------------
-    // Button Operations
+    // Delete Asset
     //-------------------------------------------------------------------------------------
     deleteAsset(): void {
 
@@ -96,23 +96,55 @@ export class AssetDetail implements OnInit {
             });
     }
 
+    //-------------------------------------------------------------------------------------
+    // Edit Asset
+    //-------------------------------------------------------------------------------------
     editAsset(): void {
         alert("not yet implemented")
     }
 
+    //-------------------------------------------------------------------------------------
+    // show Maintenance entr field
+    //-------------------------------------------------------------------------------------
     showMaintenance(): void {
         this.editMaintenance = true;
     }
 
+    //-------------------------------------------------------------------------------------
+    // register a maintenance
+    //-------------------------------------------------------------------------------------
     addMaintenance(): void {
-        // TODO
+
+        var maintenance = new ModelMaintenance(this.newMaintenance.maintenanceDate,
+                                              this.newMaintenance.maintenanceDuration,
+                                              this.newMaintenance.maintenanceReason,
+                                              this.newMaintenance.maintenanceCostPlan,
+                                              this.newMaintenance.descriptionPyhsicalChanges,
+                                              this.newMaintenance.descriptionSoftwareChanges,
+                                              this.newMaintenance.listOfInvolvedSuppliers,
+                                              this.newMaintenance.additionalText)
+
+        this.registryService.registerMaintenance(this.instance.name, maintenance)
+            .then(newAssetInstance => {
+                this.instance = newAssetInstance;
+                this.router.navigate(['dashboard']);
+            })
+            .catch(() => {
+                alert("Error while removing AssetInstance.");
+            });
+
         this.editMaintenance = false;
     }
-
+    //-------------------------------------------------------------------------------------
+    // start asset
+    //-------------------------------------------------------------------------------------
     startAsset(): void {
         alert("not yet implemented")
     }
 
+    //-------------------------------------------------------------------------------------
+    // stop asset
+    //-------------------------------------------------------------------------------------
     stopAsset(): void {
         alert("not yet implemented")
     }

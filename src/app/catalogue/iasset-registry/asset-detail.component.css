@@ -34,6 +34,13 @@
     margin-right: 10px;
 }
 
+#maintenance-view {
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid;
+    border-color: #E8E8E8;
+}
+
 #instance-view {
     padding: 10px;
     margin-top: 10px;

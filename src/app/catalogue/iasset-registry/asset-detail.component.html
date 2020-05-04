@@ -52,7 +52,7 @@
 <!------------------------------------------------------------------------------------------------------------>
 <!-- Form: Add-Maintenance -->
 <!------------------------------------------------------------------------------------------------------------>
-<div *ngIf="editMaintenance" class="form-group" id="new-maintenance">
+<div *ngIf="editMaintenance" class="form-group col-12 row align-left" id="new-maintenance">
 
     <form id="add-maintenance-form" #customPropertyForm="ngForm" class="col-12">
 
@@ -214,11 +214,6 @@
                         [disabled]="true" [(text)]="instance.originalLocation" [rows]="1" [required]="true">
             </text-input>
 
-            <!-- listMaintenance
-            <text-input label="List of Maintenance done" labelClass="col-6" valueClass="col-6"
-                        [disabled]="true" [(text)]="instance.listMaintenance" [rows]="1" [required]="true">
-            </text-input>-->
-
             <!-- listAvailableProperties -->
             <text-input label="List of readable Properties" labelClass="col-6" valueClass="col-6"
                         [disabled]="true" [(text)]="instance.listAvailableProperties" [rows]="1" [required]="true">
@@ -233,5 +228,39 @@
 
     <div class="col-6 align-right">
         <image-loader [readOnly]="true" [productImage]="instance.assetImages" [parentForm]="publishForm"></image-loader>
+    </div>
+</div>
+
+<!------------------------------------------------------------------------------------------------------------>
+<!-- List of added properties -->
+<!------------------------------------------------------------------------------------------------------------>
+<div class="form-group col-12 row align-left" id="maintenance-view">
+
+    <h3><span [innerHTML]="'List of Maintenance Changes' | translate"></span></h3><br/><br/>
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <th><span [innerHTML]="'Date' | translate"></span></th>
+                    <th><span [innerHTML]="'Duration' | translate"></span></th>
+                    <th><span [innerHTML]="'Reason' | translate"></span></th>
+                    <th><span [innerHTML]="'CostPlan' | translate"></span></th>
+                    <th><span [innerHTML]="'PhysicalChanges' | translate"></span></th>
+                    <th><span [innerHTML]="'SoftwareChanges' | translate"></span></th>
+                    <th><span [innerHTML]="'Involved Suppliers' | translate"></span></th>
+                    <th><span [innerHTML]="'Additional Text' | translate"></span></th>
+                </tr>
+                <tr *ngFor="let maintenance of instance.listMaintenance">
+                    <td>{{maintenance.maintenanceDate}}</td>
+                    <td>{{maintenance.maintenanceDuration}}</td>
+                    <td>{{maintenance.maintenanceReason}}</td>
+                    <td>{{maintenance.maintenanceCostPlan}}</td>
+                    <td>{{maintenance.descriptionPyhsicalChanges}}</td>
+                    <td>{{maintenance.descriptionSoftwareChanges}}</td>
+                    <td>{{maintenance.listOfInvolvedSuppliers}}</td>
+                    <td>{{maintenance.additionalText}}</td>
+                </tr>
+            </table>
+        </div>
     </div>
 </div>
