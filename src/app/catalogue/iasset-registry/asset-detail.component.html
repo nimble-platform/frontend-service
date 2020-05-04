@@ -31,7 +31,7 @@
             <span [innerHTML]="'Edit Asset' | translate"></span>
         </button>
 
-        <button class="btn btn-success ml-2 operation-btn-left" [disabled]="!customPropertyForm.form.valid" (click)="addMaintenance()">
+        <button class="btn btn-success ml-2 operation-btn-left" [disabled]="!customPropertyForm.form.valid" (click)="showMaintenance()">
             <span [innerHTML]="'Add Maintenance' | translate"></span>
         </button>
 
@@ -48,6 +48,62 @@
     </form>
 </div>
 
+
+<!------------------------------------------------------------------------------------------------------------>
+<!-- Form: Add-Maintenance -->
+<!------------------------------------------------------------------------------------------------------------>
+<div *ngIf="editMaintenance" class="form-group" id="new-maintenance">
+
+    <form id="add-maintenance-form" #customPropertyForm="ngForm" class="col-12">
+
+        <!-- maintenanceDate -->
+        <text-input label="Date of Maintenance" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newMaintenance.maintenanceDate" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- maintenanceDuration -->
+        <text-input label="Duration of Maintenance" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newMaintenance.maintenanceDuration" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- maintenanceReason -->
+        <text-input label="Reason of Maintenance" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newMaintenance.maintenanceReason" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- maintenanceCostPlan -->
+        <text-input label="Costs of Maintenance" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newMaintenance.maintenanceCostPlan" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- descriptionPyhsicalChanges -->
+        <text-input label="Description of pyhisical changes" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newMaintenance.descriptionPyhsicalChanges" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- descriptionSoftwareChanges -->
+        <text-input label="Description of software changes" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newMaintenance.descriptionSoftwareChanges" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- listOfInvolvedSuppliers -->
+        <text-input label="List of involved suppliers" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newMaintenance.listOfInvolvedSuppliers" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- additionalText -->
+        <text-input label="Any additional information" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newMaintenance.additionalText" [rows]="1" [required]="true">
+        </text-input>
+
+        <br />
+
+        <button class="btn btn-primary ml-2 add-maintenance-btn" [disabled]="!customPropertyForm.form.valid" (click)="addMaintenance()">
+            <span [innerHTML]="'Register as Maintenance' | translate"></span>
+        </button>
+    </form>
+    <p><span [innerHTML]="'Add a maintenance to the asset, when done.' | translate"></span></p>
+</div>
 
 <!------------------------------------------------------------------------------------------------------------>
 <!-- type view -->
@@ -158,10 +214,10 @@
                         [disabled]="true" [(text)]="instance.originalLocation" [rows]="1" [required]="true">
             </text-input>
 
-            <!-- listMaintenance -->
+            <!-- listMaintenance
             <text-input label="List of Maintenance done" labelClass="col-6" valueClass="col-6"
                         [disabled]="true" [(text)]="instance.listMaintenance" [rows]="1" [required]="true">
-            </text-input>
+            </text-input>-->
 
             <!-- listAvailableProperties -->
             <text-input label="List of readable Properties" labelClass="col-6" valueClass="col-6"

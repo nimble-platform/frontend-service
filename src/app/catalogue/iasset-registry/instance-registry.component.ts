@@ -19,6 +19,7 @@ import { FormGroup } from "@angular/forms";
 import { PublishMode } from "../model/publish/publish-mode";
 import { ModelAssetType } from "./model/model-asset-type";
 import { ModelAssetInstance } from "./model/model-asset-instance";
+import { ModelMaintenance } from "./model/model-maintenance";
 import { AssetImageLoader } from './image-loader.component';
 import { BinaryObject } from '../model/publish/binary-object';
 import { AssetRegistryService } from "./iasset-registry.service";
@@ -31,12 +32,13 @@ constructor(
         public serialNumber: string,
         public currentLocation: string,
         public originalLocation: string,
-        public listMaintenance: string,
+        public listMaintenance: ModelMaintenance[],
         public listAvailableProperties: string,
         public ownerProperty: string,
         public assetImages: BinaryObject[]
     )
     {
+        this.listMaintenance = [];
         this.assetImages = [];
     }
 }

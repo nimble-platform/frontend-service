@@ -12,22 +12,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { ModelMaintenance } from "./model-maintenance";
-import { BinaryObject } from '../../model/publish/binary-object';
-
-export class ModelAssetInstance {
+export class ModelMaintenance {
 
     public id: string;
 
 constructor(
-        public name: string,
-        public assetType: string,
-        public serialNumber: string,
-        public currentLocation: string,
-        public originalLocation: string,
-        public listMaintenance: ModelMaintenance[],
-        public listAvailableProperties: string,
-        public ownerProperty: string,
-        public assetImages: BinaryObject[]
-    ) { }
+        public maintenanceDate: string,
+        public maintenanceDuration: string,
+        public maintenanceReason: string,
+        public maintenanceCostPlan: string,
+        public descriptionPyhsicalChanges: string,
+        public descriptionSoftwareChanges: string,
+        public listOfInvolvedSuppliers: string,
+        public additionalText: string
+    ) {}
 }

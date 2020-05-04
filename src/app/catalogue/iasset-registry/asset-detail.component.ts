@@ -4,8 +4,22 @@ import { Component, OnInit } from "@angular/core";
 
 import { ModelAssetType } from "./model/model-asset-type";
 import { ModelAssetInstance } from "./model/model-asset-instance";
+import { ModelMaintenance } from "./model/model-maintenance";
 import { AssetRegistryService } from "./iasset-registry.service";
 import { Router } from "@angular/router";
+
+class NewMaintenance {
+constructor(
+        public maintenanceDate: string,
+        public maintenanceDuration: string,
+        public maintenanceReason: string,
+        public maintenanceCostPlan: string,
+        public descriptionPyhsicalChanges: string,
+        public descriptionSoftwareChanges: string,
+        public listOfInvolvedSuppliers: string,
+        public additionalText: string
+    ) {}
+}
 
 //-------------------------------------------------------------------------------------
 // Component
@@ -18,14 +32,18 @@ styleUrls: ["./asset-detail.component.css"]
 
 export class AssetDetail implements OnInit {
 
-    // --------------------------------------------------------------
-    // TESTING - use real asset as soon as solr-search is working ---
-    private instance: ModelAssetInstance = null;
+    // essential view members
+    private instance: ModelAssetInstance = null; // TESTING - use @Input as soon as solr-search is working
     private type : ModelAssetType = new ModelAssetType("", "", "", "", "", null);
 
+    // property display members
     private propertyNames : string[] = [];
     private selectedPropertyStream: string = "";
-    // --------------------------------------------------------------
+
+    // maintenance members
+    private editMaintenance: boolean = false;
+    private newMaintenance: NewMaintenance = new NewMaintenance(null, null, null, null, null, null, null, null);
+
 
     //-------------------------------------------------------------------------------------
     // Init Functions
@@ -82,8 +100,13 @@ export class AssetDetail implements OnInit {
         alert("not yet implemented")
     }
 
+    showMaintenance(): void {
+        this.editMaintenance = true;
+    }
+
     addMaintenance(): void {
-        alert("not yet implemented")
+        // TODO
+        this.editMaintenance = false;
     }
 
     startAsset(): void {
