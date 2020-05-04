@@ -105,7 +105,7 @@ export class BPEService {
     }
 
     notifyAgentService(processData, orderData) {
-        let url = myGlobals.agent_mgmt_endpoint + "/api/v1/agents/notifyAgent";
+        let url = myGlobals.agent_mgmt_endpoint + "/notifyAgent";
         const headers = this.getAuthorizedHeaders();
         orderData['processData'] = JSON.parse(processData);
         // Only inform the agent if it is an initiation of sales
@@ -120,6 +120,26 @@ export class BPEService {
                 })
                 .catch(this.handleError);
         }
+    }
+
+    getBAStatus(processID) {
+        let url = myGlobals.agent_mgmt_endpoint + "/getBAStatus/" + processID;
+        const headers = this.getAuthorizedHeaders();
+        return this.http
+            .get(url, { headers: headers })
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    getSAStatus(processID) {
+        let url = myGlobals.agent_mgmt_endpoint + "/getSAStatus/" + processID;
+        const headers = this.getAuthorizedHeaders();
+        return this.http
+            .get(url, { headers: headers })
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
     }
 
     cancelBusinessProcess(id: string, delegateId: string): Promise<any> {
