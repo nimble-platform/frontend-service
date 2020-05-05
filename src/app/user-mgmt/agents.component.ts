@@ -132,6 +132,12 @@ export class AgentsComponent implements OnInit {
             }
         });
 
+        agent.companyNames.forEach((val, idx) => {
+            if (idx !== agent.companyNames.length - 1) {
+                this.addCompanyName();
+            }
+        });
+
         this.buyingAgentForm.get("id").setValue(agent.id);
         this.buyingAgentForm.get("agentName").setValue(agent.agentName);
         this.buyingAgentForm.get("maxContractAmount").setValue(Number(agent.maxContractAmount.value));
@@ -146,8 +152,10 @@ export class AgentsComponent implements OnInit {
         this.buyingAgentForm.get("maxNoOneToOneUnit").setValue(agent.maxNoOneToOne.unit);
         this.buyingAgentForm.get("productNames").setValue(agent.productNames);
         this.buyingAgentForm.get("categoryNames").setValue(agent.categoryNames);
+        this.buyingAgentForm.get("companyNames").setValue(agent.companyNames);
         this.buyingAgentForm.get("catalogueName").setValue(agent.catalogueName);
         this.buyingAgentForm.get("maxNoContractPerDay").setValue(agent.maxNoContractPerDay);
+        this.buyingAgentForm.get("priceRisk").setValue(agent.priceRisk);
 
         // show the create form
         this.showCreateBuyingAgent = true;
@@ -206,8 +214,10 @@ export class AgentsComponent implements OnInit {
             },
             productNames: this.form.productNames.value,
             maxNoContractPerDay: this.form.maxNoContractPerDay.value,
+            priceRisk: this.form.priceRisk.value,
             categoryNames: this.form.categoryNames.value,
             catalogueName: this.form.catalogueName.value,
+            companyNames: this.form.catalogueName.value,
         };
 
         // If an id is avaiable for the agent update the agent
@@ -319,6 +329,7 @@ export class AgentsComponent implements OnInit {
     }
 
     createSellingAgent() {
+        this.initSA();
         this.showCreateSellingAgent = true;
         // TODO remove after testing
         if (this.isDev) {
@@ -327,6 +338,7 @@ export class AgentsComponent implements OnInit {
     }
 
     createBuyingAgent() {
+        this.initBA();
         this.showCreateBuyingAgent = true;
         // TODO remove after testing
         if (this.isDev) {
@@ -366,6 +378,35 @@ export class AgentsComponent implements OnInit {
             });
 
             this.selectedAgent = this.getSellingAgent(agentID)['agentName'];
+            this.showTransactions = true;
+        });
+    }
+
+
+    showTransactionsViewBA(agentID) {
+        this.orders = [];
+        this.agentService.getBAOrders(agentID).then((datas) => {
+            datas.forEach((data) => {
+                data = data['payload'];
+                let dateObj = data['processData']['creationDate'].split('T');
+                let date = dateObj[0];
+                let time = dateObj[1].split('.')[0];
+
+                let dateStr = `${date} (${time})`;
+                let saOrder = {
+                    productName: data['orderLine'][0]['lineItem']['item']['name'][0]['value'],
+                    units: data['orderLine'][0]['lineItem']['quantity']['value'],
+                    price: data['anticipatedMonetaryTotal']['payableAmount']['value'],
+                    companyName: data['sellerSupplierParty']['party']['partyName'][0]['name']['value'],
+                    date: dateStr,
+                    status: data['processData']['status'],
+                    processInstanceID: data['processData']['processInstanceID']
+                };
+
+                this.orders.push(saOrder);
+            });
+
+            this.selectedAgent = this.getBuyingAgent(agentID)['agentName'];
             this.showTransactions = true;
         });
     }
@@ -472,7 +513,7 @@ export class AgentsComponent implements OnInit {
     }
 
     fillRandomForSA() {
-        this.initSA()
+        this.initSA();
         return {
             agentName: this.rand(5, null) + ' agent',
             maxContractAmount: {value: this.getRandomInt(30000), unit: 'euro'},
@@ -486,9 +527,7 @@ export class AgentsComponent implements OnInit {
     }
 
     fillRandomForBA() {
-        this.initBA()
-        this.addCategoryName();
-        this.addProductName();
+        this.initBA();
         return {
             agentName: this.rand(5, null) + ' agent',
             maxContractAmount: {value: this.getRandomInt(30000), unit: 'euro'},
@@ -496,10 +535,12 @@ export class AgentsComponent implements OnInit {
             maxFulfillmentTime: {value: this.getRandomInt(20), unit: 'day'},
             maxVolume: {value: this.getRandomInt(50000), unit: 'day'},
             maxNoOneToOne: {value: this.getRandomInt(5), unit: 'week'},
-            productNames: ['Niros Piano', 'piano'],
+            productNames: ['Piano', 'pianos'],
             categoryNames: ['cat 1', 'cat 2'],
+            companyNames: ['company 1', 'company 2'],
             catalogueName: 'music',
-            maxNoContractPerDay: this.getRandomInt(5)
+            maxNoContractPerDay: this.getRandomInt(5),
+            priceRisk: this.getRandomInt(100)
         };
     }
 
@@ -527,6 +568,18 @@ export class AgentsComponent implements OnInit {
         this.productNames.removeAt(i);
     }
 
+    get companyNames() {
+        return this.buyingAgentForm.get('companyNames') as FormArray;
+    }
+
+    addCompanyName() {
+        this.companyNames.push(this._fb.control(''));
+    }
+
+    deleteCompanyName(i) {
+        this.companyNames.removeAt(i);
+    }
+
     initBA() {
         this.buyingAgentForm = this._fb.group(({
             id: [''],
@@ -545,8 +598,11 @@ export class AgentsComponent implements OnInit {
                 this._fb.control('')
             ]),
             maxNoContractPerDay: ['', Validators.required],
+            priceRisk: ['', Validators.required],
             catalogueName: ['', Validators.required],
-            companyNames: ['', Validators.required],
+            companyNames: this._fb.array([
+                this._fb.control('')
+            ]),
             categoryNames: this._fb.array([
                 this._fb.control('')
             ]),

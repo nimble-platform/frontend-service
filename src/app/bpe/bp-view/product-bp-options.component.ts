@@ -56,6 +56,8 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     stepsDisplayMode: ProductBpStepsDisplay;
     callStatus: CallStatus = new CallStatus();
     bpActivityEventSubs: Subscription;
+    sellingAgentInitiated = false;
+    buyingAgentInitiated = false;
 
     id: string;
     catalogueId: string;
@@ -175,6 +177,19 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 } else {
                     this.router.navigate(['dashboard']);
                 }
+            }
+
+            if (this.config.showAgent) {
+                this.bpeService.getSAStatus(processInstanceId).then((sa) => {
+                    if (sa.length !== 0) {
+                        this.sellingAgentInitiated = true;
+                    }
+                });
+                this.bpeService.getBAStatus(processInstanceId).then((ba) => {
+                    if (ba.length !== 0) {
+                        this.buyingAgentInitiated = true;
+                    }
+                })
             }
         });
 
