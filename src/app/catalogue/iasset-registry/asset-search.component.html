@@ -30,7 +30,12 @@
             <!-- Image -->
             <div id="search-result-img" class="col-3 align-left">
                 <div class="product-image">
-                    <img class="img-selected d-block active image-small img-thumbnail"
+                    <img *ngIf="instance.assetImages.length == 0"
+                         class="img-selected d-block active image-small img-thumbnail"
+                         src="../../../assets/images/empty_img.png"
+                    />
+                    <img *ngIf="instance.assetImages.length > 0"
+                         class="img-selected d-block active image-small img-thumbnail"
                          src="data:{{instance.assetImages[0].mimeCode}};base64,{{instance.assetImages[0].value}}"
                     />
                 </div>
