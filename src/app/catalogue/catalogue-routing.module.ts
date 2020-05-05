@@ -28,6 +28,7 @@ import { LogisticPublishDeactivateGuardService } from './logistic-publish-deacti
 // IAsset specific imports
 import { AssetTypeRegistry } from './iasset-registry/type-registry.component';
 import { AssetInstanceRegistry } from './iasset-registry/instance-registry.component';
+import { AssetSearch } from './iasset-registry/asset-search.component';
 import { AssetDetail } from './iasset-registry/asset-detail.component';
 
 const routes: Routes = [
@@ -38,6 +39,7 @@ const routes: Routes = [
     // IAsset specific paths
     { path: "register-type", component: AssetTypeRegistry },
     { path: "register-instance", component: AssetInstanceRegistry },
+    { path: "asset-search", component: AssetSearch },
     { path: "asset-detail", component: AssetDetail }
 ];
 

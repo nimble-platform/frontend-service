@@ -1,0 +1,51 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
+
+
+<div id="search-result-view" *ngIf="selectedInstance == null" >
+    <div *ngFor="let instance of instances">
+
+        <span id="search-result-card"
+              class="clickable row col-12"
+              (click)="selectInstance(instance)"
+              [title]="instance.name">
+
+            <!-- Image -->
+            <div id="search-result-img" class="col-3 align-left">
+                <div class="product-image">
+                    <img class="img-selected d-block active image-small img-thumbnail"
+                         src="data:{{instance.assetImages[0].mimeCode}};base64,{{instance.assetImages[0].value}}"
+                    />
+                </div>
+            </div>
+
+            <!-- InfoBox -->
+            <div id="search-result-infobox" class="col-8 align-right">
+
+                    <h3>{{instance.name}} </h3>
+                    <p>{{instance.assetType}}</p>
+                    <p>{{instance.serialNumber}}</p>
+                    <p>{{instance.currentLocation}}</p>
+                    <p>{{instance.originalLocation}}</p>
+                    <p>{{instance.ownerProperty}}</p>
+            </div>
+        </span>
+
+    </div>
+</div>
+
+<asset-detail *ngIf="selectedInstance != null" [instance]="selectedInstance"></asset-detail>
