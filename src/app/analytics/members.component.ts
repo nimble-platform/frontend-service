@@ -24,6 +24,7 @@ import { SimpleSearchService } from "../simple-search/simple-search.service";
 import { Search } from "./model/search";
 import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
 import { Observable } from "rxjs/Observable";
+import {MAX_INT} from '../common/constants';
 
 @Component({
     selector: "members-info",
@@ -43,6 +44,8 @@ export class MembersComponent implements OnInit {
     start = 0;
     end = 0;
     totalElements = 0;
+    expanded:boolean = false;
+    style:"Single Page"|"Pagination" = "Pagination";
     model = new Search('');
     q = "";
     q_submit = "";
@@ -74,11 +77,22 @@ export class MembersComponent implements OnInit {
             if (!this.appComponent.checkRoles("pm"))
                 this.mgmt_view = false;
         }
+
+        // default style is 'Pagination', but before logging in, only 'Single Page' option is available.
+        if(!this.appComponent.isLoggedIn){
+            this.style = 'Single Page';
+        }
+
         this.model.q = "*";
         this.getCompanies();
     }
 
     getCompanies() {
+        // if the style is 'Single Page', we need to retrieve all companies
+        let rows = this.rows;
+        if(this.style == "Single Page"){
+            rows = MAX_INT;
+        }
         this.companiesCallStatus.submit();
         if (this.model.q == "") {
             this.model.q = "*";
@@ -87,15 +101,15 @@ export class MembersComponent implements OnInit {
         if (this.model.q == "*") {
             this.model.q = "";
         }
-        this.simpleSearchService.getComp(this.q_submit, [], [], this.page, this.rows, this.sort, this.unverified, true)
+        this.simpleSearchService.getComp(this.q_submit, [], [], this.page, rows, this.sort, this.unverified, true)
             .then(res => {
                 this.companiesCallStatus.callback("Successfully loaded companies", true);
                 if (this.q_submit == "*")
                     this.totalElements = res.totalElements;
                 if (res.result.length == 0) {
-                    this.response = res.result;
+                    this.response = res.result.filter(party => party.uri != null);
                     this.size = res.totalElements;
-                    this.start = this.page * this.rows - this.rows + 1;
+                    this.start = this.page * rows - rows + 1;
                     this.end = this.start + res.result.length - 1;
                 }
                 else {
@@ -108,9 +122,9 @@ export class MembersComponent implements OnInit {
                             }
                         }
                     }
-                    this.response = copy(this.temp);
+                    this.response = copy(this.temp.filter(party => party.uri != null));
                     this.size = res.totalElements;
-                    this.start = this.page * this.rows - this.rows + 1;
+                    this.start = this.page * rows - rows + 1;
                     this.end = this.start + res.result.length - 1;
                 }
             })
@@ -179,11 +193,21 @@ export class MembersComponent implements OnInit {
         this.getCompanies();
     }
 
+    setStyle(val: "Single Page"|"Pagination") {
+        this.size = 0;
+        this.page = 1;
+        this.start = 0;
+        this.end = 0;
+        this.style = val;
+        this.getCompanies();
+    }
+
     searchCompany() {
         this.size = 0;
         this.page = 1;
         this.start = 0;
         this.end = 0;
+        this.expanded = false;
         // if there is a search term, sort the search results by relevance , otherwise sort them by their legal name
         this.sort = this.model.q == "" ? "legalName asc" :'score desc';
         this.getCompanies();

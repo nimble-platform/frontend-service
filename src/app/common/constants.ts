@@ -42,3 +42,5 @@ export const FIELD_NAME_PRODUCT_PRICE_BASE_QUANTITY = 'price_base_quantity';
 // product search result fields
 export const product_base_quantity = "baseQuantity";
 export const product_base_quantity_unit = "baseQuantityUnit";
+
+export const MAX_INT = 2147483647;
