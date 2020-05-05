@@ -97,7 +97,7 @@ export class AssetDetail implements OnInit {
     // show Maintenance entr field
     //-------------------------------------------------------------------------------------
     showMaintenance(): void {
-        this.editMaintenance = true;
+        this.editMaintenance = !this.editMaintenance;
     }
 
     //-------------------------------------------------------------------------------------
@@ -137,5 +137,13 @@ export class AssetDetail implements OnInit {
     //-------------------------------------------------------------------------------------
     stopAsset(): void {
         alert("not yet implemented")
+    }
+
+    //-------------------------------------------------------------------------------------
+    // return to search entries
+    //-------------------------------------------------------------------------------------
+    returnToSearch(): void {
+        this.instance = null;
+        window.location.reload();
     }
 }

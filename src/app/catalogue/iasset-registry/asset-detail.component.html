@@ -15,95 +15,16 @@
  -->
 
 <!------------------------------------------------------------------------------------------------------------>
-<!-- button area -->
+<!-- return button -->
 <!------------------------------------------------------------------------------------------------------------>
-<div class="form-group col-12 row" id="buttons-view">
-    <form id="buttons-form" #customPropertyForm="ngForm" class="col-12">
-
-        <h3><span [innerHTML]="'Asset Control Operations' | translate"></span></h3><br />
-
-        <!-- core operations -->
-        <button class="btn btn-danger ml-2 operation-btn-left" [disabled]="!customPropertyForm.form.valid" (click)="deleteAsset()">
-            <span [innerHTML]="'Delete Asset' | translate"></span>
-        </button>
-
-        <button class="btn btn-primary ml-2 operation-btn-left" [disabled]="!customPropertyForm.form.valid" (click)="editAsset()">
-            <span [innerHTML]="'Edit Asset' | translate"></span>
-        </button>
-
-        <button class="btn btn-success ml-2 operation-btn-left" [disabled]="!customPropertyForm.form.valid" (click)="showMaintenance()">
-            <span [innerHTML]="'Add Maintenance' | translate"></span>
-        </button>
-
-        <!-- operator operations -->
-        <button class="btn btn-danger ml-2 operation-btn-right" [disabled]="!customPropertyForm.form.valid" (click)="stopAsset()">
-            <span [innerHTML]="'Stop Asset' | translate"></span>
-        </button>
-
-        <button class="btn btn-success ml-2 operation-btn-right" [disabled]="!customPropertyForm.form.valid" (click)="startAsset()">
-            <span [innerHTML]="'Start Asset' | translate"></span>
-        </button>
-
-        <br/><br/>
-    </form>
+<br/>
+<div class="col-12 row">
+    <button class="btn btn-outline-dark fa fa-search operation-btn-left"
+            [disabled]="false" (click)="returnToSearch()">
+        <span [innerHTML]="'Return to Search' | translate"></span>
+    </button>
 </div>
-
-
-<!------------------------------------------------------------------------------------------------------------>
-<!-- Form: Add-Maintenance -->
-<!------------------------------------------------------------------------------------------------------------>
-<div *ngIf="editMaintenance" class="form-group col-12 row align-left" id="new-maintenance">
-
-    <form id="add-maintenance-form" #customPropertyForm="ngForm" class="col-12">
-
-        <!-- maintenanceDate -->
-        <text-input label="Date of Maintenance" labelClass="col-4" valueClass="col-8"
-                    [(text)]="newMaintenance.maintenanceDate" [rows]="1" [required]="true">
-        </text-input>
-
-        <!-- maintenanceDuration -->
-        <text-input label="Duration of Maintenance" labelClass="col-4" valueClass="col-8"
-                    [(text)]="newMaintenance.maintenanceDuration" [rows]="1" [required]="true">
-        </text-input>
-
-        <!-- maintenanceReason -->
-        <text-input label="Reason of Maintenance" labelClass="col-4" valueClass="col-8"
-                    [(text)]="newMaintenance.maintenanceReason" [rows]="1" [required]="true">
-        </text-input>
-
-        <!-- maintenanceCostPlan -->
-        <text-input label="Costs of Maintenance" labelClass="col-4" valueClass="col-8"
-                    [(text)]="newMaintenance.maintenanceCostPlan" [rows]="1" [required]="true">
-        </text-input>
-
-        <!-- descriptionPyhsicalChanges -->
-        <text-input label="Description of pyhisical changes" labelClass="col-4" valueClass="col-8"
-                    [(text)]="newMaintenance.descriptionPyhsicalChanges" [rows]="1" [required]="true">
-        </text-input>
-
-        <!-- descriptionSoftwareChanges -->
-        <text-input label="Description of software changes" labelClass="col-4" valueClass="col-8"
-                    [(text)]="newMaintenance.descriptionSoftwareChanges" [rows]="1" [required]="true">
-        </text-input>
-
-        <!-- listOfInvolvedSuppliers -->
-        <text-input label="List of involved suppliers" labelClass="col-4" valueClass="col-8"
-                    [(text)]="newMaintenance.listOfInvolvedSuppliers" [rows]="1" [required]="true">
-        </text-input>
-
-        <!-- additionalText -->
-        <text-input label="Any additional information" labelClass="col-4" valueClass="col-8"
-                    [(text)]="newMaintenance.additionalText" [rows]="1" [required]="true">
-        </text-input>
-
-        <br />
-
-        <button class="btn btn-primary ml-2 add-maintenance-btn" [disabled]="!customPropertyForm.form.valid" (click)="addMaintenance()">
-            <span [innerHTML]="'Register as Maintenance' | translate"></span>
-        </button>
-    </form>
-    <p><span [innerHTML]="'Add a maintenance to the asset, when done.' | translate"></span></p>
-</div>
+<br/>
 
 <!------------------------------------------------------------------------------------------------------------>
 <!-- type view -->
@@ -231,14 +152,108 @@
     </div>
 </div>
 
-<!------------------------------------------------------------------------------------------------------------>
-<!-- List of added properties -->
-<!------------------------------------------------------------------------------------------------------------>
-<div class="form-group col-12 row align-left" id="maintenance-view">
 
-    <h3><span [innerHTML]="'List of Maintenance Changes' | translate"></span></h3><br/><br/>
-    <div class="row">
-        <div class="col-12">
+<!------------------------------------------------------------------------------------------------------------>
+<!-- asset button area -->
+<!------------------------------------------------------------------------------------------------------------>
+<div class="form-group col-12 row" id="buttons-view">
+    <form id="buttons-form" #customPropertyForm="ngForm" class="col-12">
+
+        <h3><span [innerHTML]="'Asset Control Operations' | translate"></span></h3><br />
+
+        <!-- core operations -->
+        <button class="btn btn-danger ml-2 operation-btn-left" [disabled]="!customPropertyForm.form.valid" (click)="deleteAsset()">
+            <span [innerHTML]="'Delete Asset' | translate"></span>
+        </button>
+
+        <button class="btn btn-primary ml-2 operation-btn-left" [disabled]="!customPropertyForm.form.valid" (click)="editAsset()">
+            <span [innerHTML]="'Edit Asset' | translate"></span>
+        </button>
+
+        <button class="btn btn-success ml-2 operation-btn-left" [disabled]="!customPropertyForm.form.valid" (click)="showMaintenance()">
+            <span [innerHTML]="'Add Maintenance' | translate"></span>
+        </button>
+
+        <!-- operator operations -->
+        <button class="btn btn-danger ml-2 operation-btn-right" [disabled]="!customPropertyForm.form.valid" (click)="stopAsset()">
+            <span [innerHTML]="'Stop Asset' | translate"></span>
+        </button>
+
+        <button class="btn btn-success ml-2 operation-btn-right" [disabled]="!customPropertyForm.form.valid" (click)="startAsset()">
+            <span [innerHTML]="'Start Asset' | translate"></span>
+        </button>
+
+        <br/><br/>
+    </form>
+</div>
+
+
+<!------------------------------------------------------------------------------------------------------------>
+<!-- Form: Add-Maintenance -->
+<!------------------------------------------------------------------------------------------------------------>
+<div *ngIf="editMaintenance" class="form-group col-12 row align-left" id="new-maintenance">
+
+    <form id="add-maintenance-form" #customPropertyForm="ngForm" class="col-12">
+
+        <!-- maintenanceDate -->
+        <text-input label="Date of Maintenance" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newMaintenance.maintenanceDate" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- maintenanceDuration -->
+        <text-input label="Duration of Maintenance" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newMaintenance.maintenanceDuration" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- maintenanceReason -->
+        <text-input label="Reason of Maintenance" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newMaintenance.maintenanceReason" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- maintenanceCostPlan -->
+        <text-input label="Costs of Maintenance" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newMaintenance.maintenanceCostPlan" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- descriptionPyhsicalChanges -->
+        <text-input label="Description of pyhisical changes" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newMaintenance.descriptionPyhsicalChanges" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- descriptionSoftwareChanges -->
+        <text-input label="Description of software changes" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newMaintenance.descriptionSoftwareChanges" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- listOfInvolvedSuppliers -->
+        <text-input label="List of involved suppliers" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newMaintenance.listOfInvolvedSuppliers" [rows]="1" [required]="true">
+        </text-input>
+
+        <!-- additionalText -->
+        <text-input label="Any additional information" labelClass="col-4" valueClass="col-8"
+                    [(text)]="newMaintenance.additionalText" [rows]="1" [required]="true">
+        </text-input>
+
+        <br />
+
+        <button class="btn btn-primary ml-2 add-maintenance-btn" [disabled]="!customPropertyForm.form.valid" (click)="addMaintenance()">
+            <span [innerHTML]="'Register as Maintenance' | translate"></span>
+        </button>
+    </form>
+    <p><span [innerHTML]="'Add a maintenance to the asset, when done.' | translate"></span></p>
+</div>
+
+<!------------------------------------------------------------------------------------------------------------>
+<!-- List of added maintenance entries -->
+<!------------------------------------------------------------------------------------------------------------>
+<div class="row col-12 form-group" id="maintenance-view">
+
+    <form id="maintenance-form" #customPropertyForm="ngForm" class="col-12">
+
+        <h3><span [innerHTML]="'List of Maintenance Changes' | translate"></span></h3><br/>
+
+        <div class="row col-12">
             <table class="table table-striped table-bordered">
                 <tr>
                     <th><span [innerHTML]="'Date' | translate"></span></th>
@@ -262,5 +277,5 @@
                 </tr>
             </table>
         </div>
-    </div>
+    </form>
 </div>

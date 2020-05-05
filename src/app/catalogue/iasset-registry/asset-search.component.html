@@ -17,6 +17,9 @@
 
 
 <div id="search-result-view" *ngIf="selectedInstance == null" >
+
+    <h1> Search Results </h1> <br/>
+
     <div *ngFor="let instance of instances">
 
         <span id="search-result-card"
@@ -48,4 +51,6 @@
     </div>
 </div>
 
-<asset-detail *ngIf="selectedInstance != null" [instance]="selectedInstance"></asset-detail>
+<div id="asset-detail-view" *ngIf="selectedInstance != null">
+    <asset-detail [instance]="selectedInstance"></asset-detail>
+</div>
