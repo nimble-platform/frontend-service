@@ -31,11 +31,11 @@
             <div id="search-result-img" class="col-3 align-left">
                 <div class="product-image">
                     <img *ngIf="instance.assetImages.length == 0"
-                         class="img-selected d-block active image-small img-thumbnail"
+                         class="img-selected image-small img-thumbnail"
                          src="../../../assets/images/empty_img.png"
                     />
                     <img *ngIf="instance.assetImages.length > 0"
-                         class="img-selected d-block active image-small img-thumbnail"
+                         class="img-selected image-small img-thumbnail"
                          src="data:{{instance.assetImages[0].mimeCode}};base64,{{instance.assetImages[0].value}}"
                     />
                 </div>
@@ -44,12 +44,13 @@
             <!-- InfoBox -->
             <div id="search-result-infobox" class="col-8 align-right">
 
-                    <h3>{{instance.name}} </h3>
-                    <p>{{instance.assetType}}</p>
-                    <p>{{instance.serialNumber}}</p>
-                    <p>{{instance.currentLocation}}</p>
-                    <p>{{instance.originalLocation}}</p>
-                    <p>{{instance.ownerProperty}}</p>
+                    <h3 class="align-right"> {{instance.name}} </h3>
+                    <hr>
+                    <input-label label="Asset-Type"></input-label> {{instance.assetType}}  <br/>
+                    <input-label label="Serial-Number"></input-label> {{instance.serialNumber}} <br/>
+                    <input-label label="Current Location"></input-label> {{instance.currentLocation}} <br/>
+                    <input-label label="Original Location"></input-label> {{instance.originalLocation}} <br/>
+                    <input-label label="Owner of Asset"></input-label> {{instance.ownerProperty}} <br/>
             </div>
         </span>
 
