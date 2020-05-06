@@ -18,9 +18,6 @@
             <span *ngIf="totalElements>0">(<span [innerHTML]="'Total' | translate"></span> {{ totalElements }})</span>
         </h4>
     </div>
-    <div *ngIf="style == 'Pagination'" class="col-4 text-right">
-        <span [innerHTML]="'Showing results' | translate"></span> {{ start }} - {{ end }} <span [innerHTML]="'of' | translate"></span> {{ size }}
-    </div>
 </div>
 
 <form (ngSubmit)="searchCompany()" class="space-before" #searchForm="ngForm" novalidate>
@@ -36,27 +33,16 @@
             </div>
         </div>
         <!-- Sort By -->
-        <div class="{{appComponent.minimalView || !appComponent.isLoggedIn ? 'col-4' : 'col-2'}} text-right">
+        <div class="col-4 text-right">
             <div class="input-group">
                 <label class="col-form-label space-right"><strong><span [innerHTML]="'Sort by:' | translate"></span></strong>
                 </label>
                 <select class="form-control custom-select" (change)="setSort($event.target.value)">
-                    <option value="score desc" [selected]="sort=='score desc'"><span [innerHTML]="'Relevance' | translate"></span></option>
+                    <option value="score desc" [selected]="sort=='score desc'"></option>
                     <option value="legalName asc" [selected]="sort=='legalName asc'"><span [innerHTML]="'A -> Z' | translate"></span></option>
                     <option value="legalName desc" [selected]="sort=='legalName desc'"><span [innerHTML]="'Z -> A' | translate"></span></option>
                     <option *ngIf="mgmt_view" value="uri asc" [selected]="sort=='uri asc'"><span [innerHTML]="'ID: 0 -> 9' | translate"></span></option>
                     <option *ngIf="mgmt_view" value="uri desc" [selected]="sort=='uri desc'"><span [innerHTML]="'ID: 9 -> 0' | translate"></span></option>
-                </select>
-            </div>
-        </div>
-        <!-- Style -->
-        <div *ngIf="!appComponent.minimalView && appComponent.isLoggedIn" class="col-2 text-right">
-            <div class="input-group">
-                <label class="col-form-label space-right"><strong><span [innerHTML]="'Style:' | translate"></span></strong>
-                </label>
-                <select class="form-control custom-select" (change)="setStyle($event.target.value)">
-                    <option value="Pagination" [selected]="style=='Pagination'"><span [innerHTML]="'Pagination' | translate"></span></option>
-                    <option value="Single Page" [selected]="style=='Single Page'"><span [innerHTML]="'Single Page' | translate"></span></option>
                 </select>
             </div>
         </div>
@@ -73,7 +59,7 @@
     <div *ngIf="size>0" class="col-12">
         <div class="row">
             <div *ngFor="let result of response;let ind=index" class="col-3">
-                <div *ngIf="style == 'Pagination' || expanded || ind < rows " class="card pointer mb-3">
+                <div *ngIf="expanded || ind < rows " class="card pointer mb-3">
                     <div class="card-body">
                         <div class="row">
                             <div class="align-center col-12 pb-1">
@@ -107,20 +93,12 @@
                 </div>
             </div>
         </div>
-        <!-- Display pagination if the selected style is 'Pagination' -->
-        <div *ngIf="style == 'Pagination'" class="row">
-            <div class="col-12">
-                <div class="justify-content-center pagination">
-                    <ngb-pagination [(collectionSize)]="size" [(page)]="page" [pageSize]="rows" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getCompanies()"></ngb-pagination>
-                </div>
-            </div>
-        </div>
-        <!-- Display Show more/less text if the selected style is 'Single Page' -->
-        <div *ngIf=" style == 'Single Page' && response.length > rows">
+        <!-- Display Show more/less text -->
+        <div *ngIf="response.length > rows">
             <hr>
             <span class="clickable" (click)="expanded=!expanded">
-              <span *ngIf="!expanded" [innerHTML]="'Show more' | translate"></span>
-              <span *ngIf="expanded" [innerHTML]="'Show less' | translate"></span>
+              <b><span *ngIf="!expanded" [innerHTML]="'Show more' | translate"></span></b>
+              <b><span *ngIf="expanded" [innerHTML]="'Show less' | translate"></span></b>
               </span>
         </div>
     </div>

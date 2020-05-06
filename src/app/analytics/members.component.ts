@@ -41,11 +41,8 @@ export class MembersComponent implements OnInit {
     config = myGlobals.config;
     size = 0;
     page = 1;
-    start = 0;
-    end = 0;
     totalElements = 0;
     expanded:boolean = false;
-    style:"Single Page"|"Pagination" = "Pagination";
     model = new Search('');
     q = "";
     q_submit = "";
@@ -78,21 +75,13 @@ export class MembersComponent implements OnInit {
                 this.mgmt_view = false;
         }
 
-        // default style is 'Pagination', but before logging in, only 'Single Page' option is available.
-        if(!this.appComponent.isLoggedIn){
-            this.style = 'Single Page';
-        }
-
         this.model.q = "*";
         this.getCompanies();
     }
 
     getCompanies() {
-        // if the style is 'Single Page', we need to retrieve all companies
-        let rows = this.rows;
-        if(this.style == "Single Page"){
-            rows = MAX_INT;
-        }
+        // we'll retrieve all companies
+        let rows = MAX_INT;
         this.companiesCallStatus.submit();
         if (this.model.q == "") {
             this.model.q = "*";
@@ -109,8 +98,6 @@ export class MembersComponent implements OnInit {
                 if (res.result.length == 0) {
                     this.response = res.result.filter(party => party.uri != null);
                     this.size = res.totalElements;
-                    this.start = this.page * rows - rows + 1;
-                    this.end = this.start + res.result.length - 1;
                 }
                 else {
                     this.temp = res.result;
@@ -124,8 +111,6 @@ export class MembersComponent implements OnInit {
                     }
                     this.response = copy(this.temp.filter(party => party.uri != null));
                     this.size = res.totalElements;
-                    this.start = this.page * rows - rows + 1;
-                    this.end = this.start + res.result.length - 1;
                 }
             })
             .catch(error => {
@@ -187,26 +172,13 @@ export class MembersComponent implements OnInit {
     setSort(val: string) {
         this.size = 0;
         this.page = 1;
-        this.start = 0;
-        this.end = 0;
         this.sort = val;
-        this.getCompanies();
-    }
-
-    setStyle(val: "Single Page"|"Pagination") {
-        this.size = 0;
-        this.page = 1;
-        this.start = 0;
-        this.end = 0;
-        this.style = val;
         this.getCompanies();
     }
 
     searchCompany() {
         this.size = 0;
         this.page = 1;
-        this.start = 0;
-        this.end = 0;
         this.expanded = false;
         // if there is a search term, sort the search results by relevance , otherwise sort them by their legal name
         this.sort = this.model.q == "" ? "legalName asc" :'score desc';
@@ -217,8 +189,6 @@ export class MembersComponent implements OnInit {
         this.model.q = "*";
         this.size = 0;
         this.page = 1;
-        this.start = 0;
-        this.end = 0;
         this.getCompanies();
     }
 
