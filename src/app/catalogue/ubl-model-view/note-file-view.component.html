@@ -32,10 +32,10 @@
         </ng-container>
     </div>
     <div [class]="lastCol">
-        <ng-container *ngFor="let note of notes;let i=index;">
+        <ng-container *ngFor="let note of notes;let i=index;trackBy:customTrackBy">
             <div class="row">
                 <div class="{{ i === 0 || readonly ? 'col-12' : (thirdCol ? 'col-8' : 'col-9') }} space-after">
-                    <textarea class="form-control note-textarea" rows="3" maxlength="255" [disabled]="readonly" [ngModel]="notes[i]" (change)="setNote(i, $event)">
+                    <textarea class="form-control note-textarea" rows="3" maxlength="255" [disabled]="readonly" [(ngModel)]="notes[i]">
                 </textarea>
                 </div>
                 <div *ngIf="!readonly && i > 0 " class="col-3">

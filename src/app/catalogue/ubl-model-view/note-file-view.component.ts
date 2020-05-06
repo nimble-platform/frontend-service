@@ -66,10 +66,6 @@ export class NoteFileViewComponent implements OnInit {
         this.notes.push("");
     }
 
-    setNote(index, event) {
-        this.notes[index] = event.target.value;
-    }
-
     onSelectFile(binaryObject: BinaryObject) {
         const document: DocumentReference = new DocumentReference();
         const attachment: Attachment = new Attachment();
@@ -85,4 +81,7 @@ export class NoteFileViewComponent implements OnInit {
         }
     }
 
+    customTrackBy(index: number, obj: any): any{
+        return index;
+    }
 }
