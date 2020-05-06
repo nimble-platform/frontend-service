@@ -152,6 +152,7 @@ export const config = {
     "showAgent": false,
     "showCompanyMembers": true,
     "showExplorative": false,
+    "showFullName": false,
     "showLCPA": false,
     "showPPAP": false,
     "showTrack": false,

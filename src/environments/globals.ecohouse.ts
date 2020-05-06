@@ -115,6 +115,7 @@ export const config = {
     "showAgent": false,
     "showCompanyMembers": false,
     "showExplorative": true,
+    "showFullName": false,
     "showLCPA": true,
     "showPPAP": true,
     "showTrack": true,
