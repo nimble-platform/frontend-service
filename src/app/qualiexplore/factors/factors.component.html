@@ -108,7 +108,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <button class="btn btn-md btn-primary float-right" (click)="markRead(selectedFactor); proceedButtonDisabled = !proceedButtonDisabled" [disabled]="proceedButtonDisabled"><span [innerHTML]="'Proceed' | translate"></span></button>
+                        <button class="btn btn-md btn-primary float-right" (click)="markRead(selectedFactor); proceedButtonDisabled = !proceedButtonDisabled" [disabled]="proceedButtonDisabled || selectedFactor.checked"><span [innerHTML]="'Proceed' | translate"></span></button>
                     </div>
                 </div>
             </div>

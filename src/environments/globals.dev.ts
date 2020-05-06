@@ -124,6 +124,7 @@ export const config = {
     "showAgent": false,
     "showCompanyMembers": false,
     "showExplorative": true,
+    "showFullName": false,
     "showLCPA": true,
     "showPPAP": true,
     "showTrack": true,
@@ -132,11 +133,11 @@ export const config = {
     "standardCurrency": "EUR",
     "standardTaxonomy": "All",
     "supportedActivitySectors": {
-        "": [],
-        "Logistics Provider": [],
-        "Manufacturer": [],
-        "Service Provider": [],
-        "Other": []
+        "": {},
+        "Logistics Provider": {},
+        "Manufacturer": {},
+        "Service Provider": {},
+        "Other": {}
     },
     "supportedBusinessTypes": [
         "",

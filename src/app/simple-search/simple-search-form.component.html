@@ -154,7 +154,7 @@
                         <label class="col-sm-2 col-form-label"><span [innerHTML]="'Sorting' | translate"></span>:</label>
                         <div class="col-sm-2">
                             <select class="form-control" (change)="setSort($event.target.value)">
-                                <option value="score desc" [selected]="sort=='score desc'"><span [innerHTML]="'Relevance' | translate"></span></option>
+                                <option value="score desc" [selected]="sort=='score desc'"></option>
                                 <option *ngIf="searchTopic=='prod'" [value]="getCurrencySort('asc')" [selected]="sort==getCurrencySort('asc')"><span [innerHTML]="'Price: Asc.' | translate"></span></option>
                                 <option *ngIf="searchTopic=='prod'" [value]="getCurrencySort('desc')" [selected]="sort==getCurrencySort('desc')"><span [innerHTML]="'Price: Desc.' | translate"></span></option>
                                 <option *ngIf="searchTopic=='prod'" value="{LANG}_label asc" [selected]="sort=='{LANG}_label asc'"><span [innerHTML]="'A -> Z' | translate"></span></option>

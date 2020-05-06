@@ -194,7 +194,8 @@
         <ul *ngIf="isLoggedIn" class="nav navbar-nav">
             <li ngbDropdown class="nav-item dropdown" routerLinkActive="active">
                 <a class="nav-link pointer" [title]="fullName" id="dropdownMenuUser" ngbDropdownToggle>
-                    <i class="fa fa-user"></i> <span [innerHTML]="'User' | translate"></span>
+                    <span *ngIf="config.showFullName"><i class="fa fa-user"></i> <span>{{fullName}}</span></span>
+                    <span *ngIf="!config.showFullName"><i class="fa fa-user"></i> <span [innerHTML]="'User' | translate"></span></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser" ngbDropdownMenu>
                     <a class="dropdown-item" routerLink="/user-mgmt/user-profile" routerLinkActive="active">

@@ -20,7 +20,6 @@
                 <span [innerHTML]="'Mandatory and already submitted data during the registration can only be changed after re-validation by a platform manager.' | translate"></span>
                 <div *ngIf="appComponent.checkRoles('wait_comp')" class="jumbotron space-after" style="margin-top: 25px;">
                     <b><span [innerHTML]="'Your company is now registered' | translate"></span></b><br />
-                    <span *ngIf="!config.companyRegistrationRequired"><span [innerHTML]="'You can start publishing your catalogue.' | translate"></span><br /></span>
                     <span [innerHTML]="'In order to execute business processes your company needs to be verified by an administrator - please stay tuned.' | translate"></span><br />
                     <span [innerHTML]="'If you are not being verified with 24h, please contact our support' | translate"></span> <a href="mailto:{{config.supportMail}}">{{config.supportMail}}</a>.
                 </div>
@@ -121,7 +120,7 @@
             <strong><span [innerHTML]="'Business Type:' | translate"></span></strong>
         </label>
         <div class="col-10">
-            <select class="form-control" [formControl]="dataForm.controls['businessType']" (change)="dataForm.controls['industrySectors'].setValue('')" required>
+            <select class="form-control" [formControl]="dataForm.controls['businessType']" (change)="setAvailableActivitySectorKeys();dataForm.controls['industrySectors'].setValue('')" required>
                 <option *ngFor="let type of config.supportedBusinessTypes" value="{{type}}">{{type}}</option>
             </select>
         </div>
@@ -131,16 +130,16 @@
     <div class="form-group row">
         <label class="col-2 col-form-label">
             <strong><span [innerHTML]="'Activity Sectors:' | translate"></span></strong>
-            <span *ngIf="config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length>0 && !forceActText" class="tooltip-icon" (click)="showSectorTT(tooltip)"><i class="fa fa-question-circle"></i></span>
+            <span *ngIf="availableActivitySectorKeys.length>0 && !forceActText" class="tooltip-icon" (click)="showSectorTT(tooltip)"><i class="fa fa-question-circle"></i></span>
         </label>
         <div class="col-10">
             <input *ngIf="dataForm.getRawValue()['businessType'] == ''" type="text" class="form-control" [formControl]="dataForm.controls['industrySectors']" placeholder="Select Business Type" required readonly maxlength="255">
-            <ng-container *ngIf="config.supportedActivitySectors[dataForm.getRawValue()['businessType']] && config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length>0 && !forceActText">
+            <ng-container *ngIf="availableActivitySectorKeys.length>0 && !forceActText">
                 <select class="form-control" [(ngModel)]="industrySectorsArr[0].text" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" multiple required [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('pm')">
-                    <option *ngFor="let sector of config.supportedActivitySectors[dataForm.getRawValue()['businessType']]" [value]="sector">{{sector}}</option>
+                    <option *ngFor="let sector of availableActivitySectorKeys" [value]="sector">{{getMultilingualPredefinedIndustrySector(sector)}}</option>
                 </select>
             </ng-container>
-            <ng-container *ngIf="dataForm.getRawValue()['businessType'] != '' && (!config.supportedActivitySectors[dataForm.getRawValue()['businessType']] || config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length==0 || forceActText)">
+            <ng-container *ngIf="dataForm.getRawValue()['businessType'] != '' && (availableActivitySectorKeys.length == 0 || forceActText)">
                 <ng-container *ngFor="let industrySectorsEntry of industrySectorsArr; let i = index; trackBy:trackFn">
                     <div class="row mb-1">
                         <div class="col-8">
@@ -165,7 +164,7 @@
                     </div>
                 </div>
             </ng-container>
-            <div *ngIf="config.supportedActivitySectors[dataForm.getRawValue()['businessType']] && config.supportedActivitySectors[dataForm.getRawValue()['businessType']].length>0"><button class="btn btn-link pl-0" type="button" (click)="switchInput()"><span *ngIf="!forceActText"><span [innerHTML]="'Nothing fitting your business? Switch to manual input.' | translate"></span></span><span *ngIf="forceActText"><span [innerHTML]="'Want to make use of the predefined sectors? Switch to list input.' | translate"></span></span></button></div>
+            <div *ngIf="availableActivitySectorKeys.length>0"><button class="btn btn-link pl-0" type="button" (click)="switchInput()"><span *ngIf="!forceActText"><span [innerHTML]="'Nothing fitting your business? Switch to manual input.' | translate"></span></span><span *ngIf="forceActText"><span [innerHTML]="'Want to make use of the predefined sectors? Switch to list input.' | translate"></span></span></button></div>
         </div>
     </div>
 

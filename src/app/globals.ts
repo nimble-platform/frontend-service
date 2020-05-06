@@ -123,6 +123,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - showAgent: Boolean flag if the agent configuration is available on the instance
 - showCompanyMembers: Boolean flag if all company members shall be eligible to see the list of company members
 - showExplorative: Boolean flag if the explorative search feature is enabled on the instance
+- showFullName: Boolean flag if the full name of a user is shown in the navbar
 - showLCPA: Boolean flag if LCPA codes shall be linkable to products
 - showPPAP: Boolean flag if information regarding the PPAP process is enabled on the instance
 - showTrack: Boolean flag if the Track & Trace feature is enabled on the instance
@@ -130,7 +131,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - showVerification: Boolean flag if additional verification information can be submitted upon registration
 - standardCurrency: Default currency to use on the instance. Applicable values are "EUR", "SEK" and "USD"
 - standardTaxonomy: Default taxonomy to use during product publishing. Applicable values are "All" (search over all defined taxonomies) or any taxonomy name
-- supportedActivitySectors: Allows configuring a pre-defined selection of activity sectors for a company. The key is "" or any of the business types listed in "supportedBusinessTypes" and the value is an array of usable strings. In case of an empty array free text is allowed as input
+- supportedActivitySectors: Allows configuring a pre-defined selection of activity sectors for a company. The key is "" or any of the business types listed in "supportedBusinessTypes" and the value is a JSON object of usable strings and their translations. In case of an empty object free text is allowed as input
 - supportedBusinessTypes: An array of pre-defined business types usable during company registration
 - supportedCertificates: An array of pre-defined certificate types usable during document upload
 - supportedRoles: An array of roles supported when inviting new company members. Applicable values are "company_admin", "external_representative", "legal_representative", "monitor", "publisher", "purchaser" and "sales_officer"
@@ -236,6 +237,7 @@ export const config = {
     "showAgent": true,
     "showCompanyMembers": false,
     "showExplorative": true,
+    "showFullName": false,
     "showLCPA": true,
     "showPPAP": true,
     "showTrack": true,
@@ -244,11 +246,11 @@ export const config = {
     "standardCurrency": "EUR",
     "standardTaxonomy": "All",
     "supportedActivitySectors": {
-        "": [],
-        "Logistics Provider": [],
-        "Manufacturer": [],
-        "Service Provider": [],
-        "Other": []
+        "": {},
+        "Logistics Provider": {},
+        "Manufacturer": {},
+        "Service Provider": {},
+        "Other": {}
     },
     "supportedBusinessTypes": [
         "",

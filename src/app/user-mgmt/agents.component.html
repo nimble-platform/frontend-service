@@ -71,13 +71,13 @@
                         </td>
                         <td>
                             <span *ngIf="inv.isActive" class="badge badge-success"><span [innerHTML]="'Active' | translate"></span></span>
-                            <span *ngIf="!inv.isActive" class="badge badge-warning"><span [innerHTML]="'In Active' | translate"></span></span>
+                            <span *ngIf="!inv.isActive" class="badge badge-warning"><span [innerHTML]="'Inactive' | translate"></span></span>
                         </td>
                         <td>
                             {{inv.lastActive}}
                         </td>
                         <td>
-                            <button class="btn btn-success btn-sm" (click)="showTransactionsView(inv.id)"><span [innerHTML]="'View Orders' | translate"></span></button>
+                            <button class="btn btn-success btn-sm" (click)="showTransactionsViewBA(inv.id)"><span [innerHTML]="'View Orders' | translate"></span></button>
                             <button class="btn btn-primary btn-sm" (click)="editBuyingAgent(inv.id)"><span [innerHTML]="'Edit' | translate"></span></button>
                             <button class="btn btn-danger btn-sm" (click)="deleteAgent(inv.id, BUYING_AGENT)"><span [innerHTML]="'Delete' | translate"></span></button>
                             <span *ngIf="inv.isActive">
@@ -134,7 +134,7 @@
                         </td>
                         <td>
                             <span *ngIf="inv.isActive" class="badge badge-success"><span [innerHTML]="'Active' | translate"></span></span>
-                            <span *ngIf="!inv.isActive" class="badge badge-warning"><span [innerHTML]="'In Active' | translate"></span></span>
+                            <span *ngIf="!inv.isActive" class="badge badge-warning"><span [innerHTML]="'Inactive' | translate"></span></span>
                         </td>
                         <td>
                             {{inv.lastActive}}
@@ -248,6 +248,18 @@
                     </div>
                 </div>
 
+
+                <!--Price Risk-->
+                <div class="form-group row space-before">
+                    <label class="col-4 col-form-label">
+                        <strong><span [innerHTML]="'Price Risk (%):' | translate"></span></strong>
+                    </label>
+                    <div class="col-8">
+                        <input type="number" class="form-control" formControlName="priceRisk" required maxlength="255">
+                    </div>
+                </div>
+
+
                 <!--Maximum_volume_of_agent_contracts_per_hour/day/week/month-->
                 <div class="form-group row space-before">
                     <label class="col-4 col-form-label">
@@ -304,11 +316,11 @@
                             <input type="text" class="form-control" formControlName="{{i}}" required maxlength="255">
                             <div *ngIf="i>0" (click)="deleteProductName(i)" class="btn-delete-icon"><i class="fa fa-trash" aria-hidden="true"></i></div>
                             <div *ngIf="submitted && productName.errors" class="invalid-feedback">
-                                <div *ngIf="productName.errors.required">Notification No is required.</div>
+                                <div *ngIf="productName.errors.required">Product Name is required.</div>
                             </div>
                         </div>
 
-                        <div class="btn-add-icon" (click)="addCategoryName()">
+                        <div class="btn-add-icon" (click)="addProductName()">
                             <i class="fa fa-plus" aria-hidden="true"></i>
                         </div>
                     </div>
@@ -323,7 +335,7 @@
                             <input type="text" class="form-control" formControlName="{{i}}" required maxlength="255">
                             <div *ngIf="i>0" (click)="deleteCategoryName(i)" class="btn-delete-icon"><i class="fa fa-trash" aria-hidden="true"></i></div>
                             <div *ngIf="submitted && categoryName.errors" class="invalid-feedback">
-                                <div *ngIf="categoryName.errors.required">Notification No is required.</div>
+                                <div *ngIf="categoryName.errors.required">Category name is required.</div>
                             </div>
                         </div>
 

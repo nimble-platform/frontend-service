@@ -157,7 +157,7 @@
                 <strong><span [innerHTML]="'Business Type:' | translate"></span></strong>
             </label>
             <div class="col-10">
-                <select class="form-control" [formControl]="registrationForm.controls['businessType']" (change)="registrationForm.controls['industrySectors'].setValue('')" required>
+                <select class="form-control" [formControl]="registrationForm.controls['businessType']" (change)="setAvailableActivitySectorKeys();registrationForm.controls['industrySectors'].setValue('')" required>
                     <option *ngFor="let type of config.supportedBusinessTypes">{{type}}</option>
                 </select>
             </div>
@@ -167,16 +167,16 @@
         <div class="form-group row">
             <label class="col-2 col-form-label">
                 <strong><span [innerHTML]="'Activity Sectors:' | translate"></span></strong>
-                <span *ngIf="config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length>0 && !forceActText" class="tooltip-icon" (click)="showSectorTT(tooltip)"><i class="fa fa-question-circle"></i></span>
+                <span *ngIf="availableActivitySectorKeys.length>0 && !forceActText" class="tooltip-icon" (click)="showSectorTT(tooltip)"><i class="fa fa-question-circle"></i></span>
             </label>
             <div class="col-10">
                 <input *ngIf="registrationForm.getRawValue()['businessType'] == ''" type="text" class="form-control" [formControl]="registrationForm.controls['industrySectors']" placeholder="Select Business Type" required readonly maxlength="255">
-                <ng-container *ngIf="config.supportedActivitySectors[registrationForm.getRawValue()['businessType']] && config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length>0 && !forceActText">
+                <ng-container *ngIf="availableActivitySectorKeys.length>0 && !forceActText">
                     <select class="form-control" [(ngModel)]="industrySectorsArr[0].text" [ngModelOptions]="{standalone: true}" multiple required>
-                        <option *ngFor="let sector of config.supportedActivitySectors[registrationForm.getRawValue()['businessType']]" [value]="sector">{{sector}}</option>
+                        <option *ngFor="let sector of availableActivitySectorKeys" [value]="sector">{{getMultilingualPredefinedIndustrySector(sector)}}</option>
                     </select>
                 </ng-container>
-                <ng-container *ngIf="registrationForm.getRawValue()['businessType'] != '' && (!config.supportedActivitySectors[registrationForm.getRawValue()['businessType']] || config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length==0 || forceActText)">
+                <ng-container *ngIf="registrationForm.getRawValue()['businessType'] != '' && (availableActivitySectorKeys.length == 0 || forceActText)">
                     <ng-container *ngFor="let industrySectorsEntry of industrySectorsArr; let i = index; trackBy:trackFn">
                         <div class="row mb-1">
                             <div class="col-8">
@@ -201,7 +201,7 @@
                         </div>
                     </div>
                 </ng-container>
-                <div *ngIf="config.supportedActivitySectors[registrationForm.getRawValue()['businessType']] && config.supportedActivitySectors[registrationForm.getRawValue()['businessType']].length>0"><button class="btn btn-link pl-0" type="button" (click)="switchInput()"><span *ngIf="!forceActText"><span [innerHTML]="'Nothing fitting your business? Switch to manual input.' | translate"></span></span><span *ngIf="forceActText"><span [innerHTML]="'Want to make use of the predefined sectors? Switch to list input.' | translate"></span></span></button></div>
+                <div *ngIf="availableActivitySectorKeys.length>0"><button class="btn btn-link pl-0" type="button" (click)="switchInput()"><span *ngIf="!forceActText"><span [innerHTML]="'Nothing fitting your business? Switch to manual input.' | translate"></span></span><span *ngIf="forceActText"><span [innerHTML]="'Want to make use of the predefined sectors? Switch to list input.' | translate"></span></span></button></div>
             </div>
         </div>
 
