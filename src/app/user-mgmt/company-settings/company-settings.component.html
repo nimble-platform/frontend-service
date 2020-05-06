@@ -88,46 +88,46 @@
 
 <call-status [callStatus]="initCallStatus" [large]="true"></call-status>
 
-<!-- Company Data, hidden to avoid reloading  -->
-<div *ngIf="settings" [hidden]="selectedTab !== 'COMPANY_DATA'">
+<!-- Company Data -->
+<div *ngIf="settings && selectedTab == 'COMPANY_DATA'">
     <company-data-settings [settings]="settings" (onSaveEvent)="onSettingsUpdated()">
     </company-data-settings>
 </div>
 
-<!-- Company Description, hidden to avoid reloading  -->
-<div *ngIf="settings" [hidden]="selectedTab !== 'COMPANY_DESCRIPTION'">
+<!-- Company Description -->
+<div *ngIf="settings && selectedTab == 'COMPANY_DESCRIPTION'">
     <company-description-settings [settings]="settings" (onSaveEvent)="onSettingsUpdated()">
     </company-description-settings>
 </div>
 
 <div *ngIf="viewMode=='full'">
 
-    <!-- Negotiation Settings, hidden to avoid reloading -->
-    <div *ngIf="settings" [hidden]="selectedTab !== 'NEGOTIATION_SETTINGS'">
+    <!-- Negotiation Settings -->
+    <div *ngIf="settings && selectedTab == 'NEGOTIATION_SETTINGS'">
         <company-negotiation-settings [settings]="settings">
         </company-negotiation-settings>
     </div>
 
-    <!-- Terms and Conditions, hidden to avoid reloading -->
-    <div *ngIf="settings" [hidden]="selectedTab !== 'TERMS_AND_CONDITIONS'">
+    <!-- Terms and Conditions -->
+    <div *ngIf="settings && selectedTab == 'TERMS_AND_CONDITIONS'">
         <company-terms-and-conditions [settings]="settings">
         </company-terms-and-conditions>
     </div>
 
-    <!-- Delivery Terms, hidden to avoid reloading -->
-    <div *ngIf="settings" [hidden]="selectedTab !== 'DELIVERY_TERMS'">
+    <!-- Delivery Terms -->
+    <div *ngIf="settings && selectedTab == 'DELIVERY_TERMS'">
         <company-delivery-terms [settings]="settings" (onSaveEvent)="onSettingsUpdated()">
         </company-delivery-terms>
     </div>
 
-    <!-- Company Certificates, hidden to avoid reloading -->
-    <div *ngIf="settings" [hidden]="selectedTab !== 'CERTIFICATES'">
+    <!-- Company Certificates -->
+    <div *ngIf="settings && selectedTab == 'CERTIFICATES'">
         <company-certificates-settings [settings]="settings" [certificates]="certificates" [ppapLevel]="ppapLevel" (onSaveEvent)="onSettingsUpdated()">
         </company-certificates-settings>
     </div>
 
-    <!-- Company Favourite Categories, hidden to avoid reloading -->
-    <div *ngIf="settings" [hidden]="selectedTab !== 'CATEGORIES'">
+    <!-- Company Favourite Categories -->
+    <div *ngIf="settings && selectedTab == 'CATEGORIES'">
         <company-categories-settings [settings]="settings">
         </company-categories-settings>
     </div>
