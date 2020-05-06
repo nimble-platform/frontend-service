@@ -120,7 +120,7 @@ export class AssetDetail implements OnInit {
                 this.router.navigate(['dashboard']);
             })
             .catch(() => {
-                alert("Error while removing AssetInstance.");
+                alert("Error while adding maintenance.");
             });
 
         this.editMaintenance = false;
