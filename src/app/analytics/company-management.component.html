@@ -16,7 +16,7 @@
 
 <p class="nimble-title">Company Management</p>
 
-<div class="row mb-3">
+<div class="row">
     <div class="col-12">
         <ul class="nav nav-tabs">
             <ng-container>
@@ -33,10 +33,10 @@
             </li>
         </ul>
     </div>
-    <div *ngIf="selectedTab === 'UNVERIFIED'" class="p-3 col-12">
-        <members-info [mgmt_view]=true [unverified]=true [rows]=8></members-info>
+    <div *ngIf="selectedTab === 'UNVERIFIED'" class="pl-3 pr-3 pt-3 col-12">
+        <members-info [mgmt_view]=true [unverified]=true [rows]=8 [view]="'Pagination'"></members-info>
     </div>
-    <div *ngIf="selectedTab === 'VERIFIED'" class="p-3 col-12">
-        <members-info [mgmt_view]=true [unverified]=false [rows]=8></members-info>
+    <div *ngIf="selectedTab === 'VERIFIED'" class="pl-3 pr-3 pt-3 col-12">
+        <members-info [mgmt_view]=true [unverified]=false [rows]=8 [view]="'Pagination'"></members-info>
     </div>
 </div>

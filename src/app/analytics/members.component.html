@@ -18,6 +18,9 @@
             <span *ngIf="totalElements>0">(<span [innerHTML]="'Total' | translate"></span> {{ totalElements }})</span>
         </h4>
     </div>
+    <div *ngIf="view == 'Pagination'" class="col-4 text-right">
+        <span [innerHTML]="'Showing results' | translate"></span> {{ start }} - {{ end }} <span [innerHTML]="'of' | translate"></span> {{ size }}
+    </div>
 </div>
 
 <form (ngSubmit)="searchCompany()" class="space-before" #searchForm="ngForm" novalidate>
@@ -58,48 +61,56 @@
     </div>
     <div *ngIf="size>0" class="col-12">
         <div class="row">
-            <div *ngFor="let result of response;let ind=index" class="col-3">
-                <div *ngIf="expanded || ind < rows " class="card pointer mb-3">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="align-center col-12 pb-1">
-                                <img src="{{imgEndpoint}}{{result[product_vendor_img]}}" class="thumb" onerror="this.src='assets/empty_img.png';" />
-                            </div>
-                            <div class="col-12 pt-1" [ngClass]="{'pb-1':!mgmt_view,'pb-2 border-bottom':mgmt_view}">
-                                <div class="text-center" style="max-height:1.5rem;overflow:hidden;">
-                                    <a *ngIf="result.website && getLink(result.website) != ''" [href]="getLink(result.website)" [title]="result[product_vendor_name]" target="_blank">{{result[product_vendor_name]}}</a>
-                                    <span *ngIf="!result.website || getLink(result.website) == ''" [title]="result[product_vendor_name]">{{result[product_vendor_name]}}</span>
+            <ng-container *ngFor="let result of response;let ind=index">
+                <div *ngIf="expanded || ind < rows" class="col-3">
+                    <div class="card pointer mb-3">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="align-center col-12 pb-1">
+                                    <img src="{{imgEndpoint}}{{result[product_vendor_img]}}" class="thumb" onerror="this.src='assets/empty_img.png';" />
                                 </div>
-                            </div>
-                            <div *ngIf="mgmt_view" class="col-12 pt-2">
-                                <div *ngIf="unverified">
-                                    <a class="btn btn-primary mb-2" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: result.uri, viewMode:'mgmt'}">Details (ID: {{result.uri}})</a><br />
-                                    <button class="btn btn-success" (click)="verifyCompany(result.uri)"><span [innerHTML]="'Verify' | translate"></span>
-                                    </button>
-                                    <button class="btn btn-danger ml-2" (click)="rejectCompany(result.uri)">
-                                        <span [innerHTML]="'Reject' | translate"></span>
-                                    </button>
+                                <div class="col-12 pt-1" [ngClass]="{'pb-1':!mgmt_view,'pb-2 border-bottom':mgmt_view}">
+                                    <div class="text-center" style="max-height:1.5rem;overflow:hidden;">
+                                        <a *ngIf="result.website && getLink(result.website) != ''" [href]="getLink(result.website)" [title]="result[product_vendor_name]" target="_blank">{{result[product_vendor_name]}}</a>
+                                        <span *ngIf="!result.website || getLink(result.website) == ''" [title]="result[product_vendor_name]">{{result[product_vendor_name]}}</span>
+                                    </div>
                                 </div>
-                                <div *ngIf="!unverified">
-                                    <a class="btn btn-primary mb-2" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: result.uri, viewMode:'mgmt'}">Details (ID: {{result.uri}})</a><br />
-                                    <a class="btn btn-primary" role="button" target="_blank" [routerLink]="['/user-mgmt/company-settings']" [queryParams]="{id: result.uri, viewMode:'data'}">Change Data</a>
-                                    <button class="btn btn-danger ml-2" (click)="deleteCompany(result.uri)">
-                                        <span [innerHTML]="'Delete' | translate"></span>
-                                    </button>
+                                <div *ngIf="mgmt_view" class="col-12 pt-2">
+                                    <div *ngIf="unverified">
+                                        <a class="btn btn-primary mb-2" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: result.uri, viewMode:'mgmt'}">Details (ID: {{result.uri}})</a><br />
+                                        <button class="btn btn-success" (click)="verifyCompany(result.uri)"><span [innerHTML]="'Verify' | translate"></span>
+                                        </button>
+                                        <button class="btn btn-danger ml-2" (click)="rejectCompany(result.uri)">
+                                            <span [innerHTML]="'Reject' | translate"></span>
+                                        </button>
+                                    </div>
+                                    <div *ngIf="!unverified">
+                                        <a class="btn btn-primary mb-2" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: result.uri, viewMode:'mgmt'}">Details (ID: {{result.uri}})</a><br />
+                                        <a class="btn btn-primary" role="button" target="_blank" [routerLink]="['/user-mgmt/company-settings']" [queryParams]="{id: result.uri, viewMode:'data'}">Change Data</a>
+                                        <button class="btn btn-danger ml-2" (click)="deleteCompany(result.uri)">
+                                            <span [innerHTML]="'Delete' | translate"></span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </ng-container>
+        </div>
+        <div *ngIf="view == 'Pagination'" class="row">
+            <div class="col-12">
+                <div class="justify-content-center pagination">
+                    <ngb-pagination [(collectionSize)]="size" [(page)]="page" [pageSize]="rows" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getCompanies()"></ngb-pagination>
+                </div>
             </div>
         </div>
-        <!-- Display Show more/less text -->
-        <div *ngIf="response.length > rows">
+        <div *ngIf="view == 'List' && response.length > rows">
             <hr>
             <span class="clickable" (click)="expanded=!expanded">
-              <b><span *ngIf="!expanded" [innerHTML]="'Show more' | translate"></span></b>
-              <b><span *ngIf="expanded" [innerHTML]="'Show less' | translate"></span></b>
-              </span>
+                <span *ngIf="!expanded" [innerHTML]="'Show more' | translate"></span>
+                <span *ngIf="expanded" [innerHTML]="'Show less' | translate"></span>
+            </span>
         </div>
     </div>
 </div>

@@ -18,13 +18,12 @@ import { CallStatus } from '../common/call-status';
 import * as myGlobals from '../globals';
 import { sanitizeLink, copy } from '../common/utils';
 import { AppComponent } from "../app.component";
-import { ActivatedRoute } from "@angular/router";
 import { TranslateService } from '@ngx-translate/core';
 import { SimpleSearchService } from "../simple-search/simple-search.service";
 import { Search } from "./model/search";
 import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
 import { Observable } from "rxjs/Observable";
-import {MAX_INT} from '../common/constants';
+import { MAX_INT } from '../common/constants';
 
 @Component({
     selector: "members-info",
@@ -37,12 +36,15 @@ export class MembersComponent implements OnInit {
     @Input() unverified: boolean = false;
     @Input() mgmt_view: boolean = false;
     @Input() rows: number = 12;
+    @Input() view: string = "Pagination";
     companiesCallStatus: CallStatus = new CallStatus();
     config = myGlobals.config;
     size = 0;
     page = 1;
+    start = 0;
+    end = 0;
     totalElements = 0;
-    expanded:boolean = false;
+    expanded: boolean = false;
     model = new Search('');
     q = "";
     q_submit = "";
@@ -58,30 +60,25 @@ export class MembersComponent implements OnInit {
     constructor(
         private analyticsService: AnalyticsService,
         public appComponent: AppComponent,
-        private route: ActivatedRoute,
         private simpleSearchService: SimpleSearchService,
         private translate: TranslateService
     ) {
     }
 
     ngOnInit(): void {
-        this.route.queryParams.subscribe(params => {
-            if (params["size"]) {
-                this.rows = params["size"];
-            }
-        });
         if (this.mgmt_view) {
             if (!this.appComponent.checkRoles("pm"))
                 this.mgmt_view = false;
         }
-
         this.model.q = "*";
         this.getCompanies();
     }
 
     getCompanies() {
-        // we'll retrieve all companies
-        let rows = MAX_INT;
+        let rows = this.rows;
+        if (this.view == "List") {
+            rows = MAX_INT;
+        }
         this.companiesCallStatus.submit();
         if (this.model.q == "") {
             this.model.q = "*";
@@ -97,7 +94,9 @@ export class MembersComponent implements OnInit {
                     this.totalElements = res.totalElements;
                 if (res.result.length == 0) {
                     this.response = res.result.filter(party => party.uri != null);
-                    this.size = res.totalElements;
+                    this.size = 0;
+                    this.start = 0;
+                    this.end = 0;
                 }
                 else {
                     this.temp = res.result;
@@ -111,6 +110,8 @@ export class MembersComponent implements OnInit {
                     }
                     this.response = copy(this.temp.filter(party => party.uri != null));
                     this.size = res.totalElements;
+                    this.start = this.page * rows - rows + 1;
+                    this.end = this.start + res.result.length - 1;
                 }
             })
             .catch(error => {
@@ -172,6 +173,8 @@ export class MembersComponent implements OnInit {
     setSort(val: string) {
         this.size = 0;
         this.page = 1;
+        this.start = 0;
+        this.end = 0;
         this.sort = val;
         this.getCompanies();
     }
@@ -179,9 +182,13 @@ export class MembersComponent implements OnInit {
     searchCompany() {
         this.size = 0;
         this.page = 1;
+        this.start = 0;
+        this.end = 0;
         this.expanded = false;
-        // if there is a search term, sort the search results by relevance , otherwise sort them by their legal name
-        this.sort = this.model.q == "" ? "legalName asc" :'score desc';
+        this.sort = "score desc";
+        if (this.model.q == "" || this.model.q == "*") {
+            this.sort = "legalName asc";
+        }
         this.getCompanies();
     }
 
@@ -189,6 +196,9 @@ export class MembersComponent implements OnInit {
         this.model.q = "*";
         this.size = 0;
         this.page = 1;
+        this.start = 0;
+        this.end = 0;
+        this.sort = "legalName asc";
         this.getCompanies();
     }
 

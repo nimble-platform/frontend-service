@@ -29,6 +29,7 @@ import { MembersComponent } from './members.component';
 import { ChatComponent } from './chat.component';
 import { HttpClientModule } from "@angular/common/http";
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { PlatformMembersComponent } from './platform-members.component';
 
 @NgModule({
     imports: [
@@ -49,6 +50,7 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
         CompanyManagementComponent,
         PlatformInfoComponent,
         MembersComponent,
+        PlatformMembersComponent,
         ChatComponent,
         PerformanceAnalyticsComponent
     ],
@@ -59,6 +61,7 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
         CompanyManagementComponent,
         PlatformInfoComponent,
         MembersComponent,
+        PlatformMembersComponent,
         ChatComponent,
         PerformanceAnalyticsComponent
     ],
