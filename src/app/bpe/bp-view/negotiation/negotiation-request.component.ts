@@ -179,7 +179,7 @@ export class NegotiationRequestComponent implements OnInit {
             }
         }
 
-        if (!this.doesManufacturerOfferHasPrice() || this.isNegotiatingAnyTerm() || this.bpDataService.isFinalProcessInTheWorkflow("Negotiation")) {
+        if (!this.doesManufacturerOfferHasPrice() || this.isNegotiatingAnyTerm() || !this.bpDataService.isProcessPresentInTheWorkflow('Order')) {
             // final check on the rfq
             const rfq: RequestForQuotation = this.rfq;
 
