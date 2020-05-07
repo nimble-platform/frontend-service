@@ -582,6 +582,19 @@ export class BPDataService {
         return companyWorkflow[companyWorkflow.length - 1] == processId;
     }
 
+    // checks whether the given process is in the workflow or not
+    isProcessPresentInTheWorkflow(processId: string, sellerSettings: CompanySettings = null) {
+        if (sellerSettings == null) {
+            sellerSettings = this.getCompanySettings();
+        }
+        let companyWorkflow = sellerSettings.negotiationSettings.company.processID;
+        // if there is no workflow specified, then consider the default flow which contains the all processes
+        if (!companyWorkflow || companyWorkflow.length == 0) {
+            return true;
+        }
+        return companyWorkflow.indexOf(processId) != -1;
+    }
+
     // it retrieves the company's business workflow through settings and construct a workflow map
     // key is the id of process and value is true/false (whether this process is included in company's workflow or not)
     getCompanyWorkflowMap(companyWorkflow: string[]) {

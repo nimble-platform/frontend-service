@@ -545,7 +545,7 @@ export class ShoppingCartComponent implements OnInit {
                     let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
                     return !component.wrapper.lineDiscountPriceWrapper.itemPrice.hasPrice() ||
                         component.isNegotiatingAnyTerm() ||
-                        this.bpDataService.isFinalProcessInTheWorkflow('Negotiation', this.sellersSettings.get(sellerId));
+                        !this.bpDataService.isProcessPresentInTheWorkflow('Order', this.sellersSettings.get(sellerId));
                 }
             }
         }
