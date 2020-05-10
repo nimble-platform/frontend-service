@@ -147,7 +147,7 @@ export const config = {
         }
     ],
     "showChat": true,
-    "showAgent": false,
+    "showAgent": true,
     "showCompanyMembers": false,
     "showExplorative": true,
     "showFullName": false,
