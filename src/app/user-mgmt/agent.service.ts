@@ -144,10 +144,10 @@ export class AgentService {
             .catch(this.handleError);
     }
 
-    deactivateBuyingAgent(sellingAgentData): Promise<any> {
+    deactivateBuyingAgent(buyingAgentData): Promise<any> {
         const url = `${this.url}/deactivateBuyingAgent`;
         return this.http
-            .post(url, JSON.stringify(sellingAgentData), { headers: this.basic_header })
+            .post(url, JSON.stringify(buyingAgentData), { headers: this.basic_header })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);

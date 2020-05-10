@@ -310,7 +310,7 @@ export class AgentsComponent implements OnInit {
             })
         } else {
             // create a new agent
-            this.agentService.createBuyingAgent(sellingAgentData).then((res) => {
+            this.agentService.createSellingAgent(sellingAgentData).then((res) => {
                 this.showCreateBuyingAgent = false;
                 this.showEmptyPageSA = false;
                 this.getAllSellingAgents();
