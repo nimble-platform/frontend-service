@@ -24,7 +24,7 @@ export const data_channel_endpoint = `${base_path}/data-channel`;
 export const data_aggregation_endpoint = `${base_path}/data-aggregation`;
 export const trust_service_endpoint = `${base_path}/trust`;
 export const indexing_service_endpoint = `${base_path}/index`;
-export const rocketChatEndpoint = `${base_path}:3000`;
+export const rocketChatEndpoint = `http://efactory-security-portal.salzburgresearch.at/chat`;
 export const logstash_endpoint = `${base_path}/logstash`;
 export const kibana_endpoint = `${base_path}/kibana/app/kibana`;
 export const delegate_endpoint = `${base_path}/delegate`;
@@ -147,7 +147,7 @@ export const config = {
         }
     ],
     "showChat": true,
-    "showAgent": false,
+    "showAgent": true,
     "showCompanyMembers": false,
     "showExplorative": true,
     "showFullName": false,

@@ -44,6 +44,7 @@ import { Item } from "../../catalogue/model/publish/item";
 import { AppComponent } from '../../app.component';
 import { DocumentService } from "./document-service";
 import {BpActivityEvent} from '../../catalogue/model/publish/bp-start-event';
+import {hasOwnProperty} from "tslint/lib/utils";
 
 @Component({
     selector: "product-bp-options",
@@ -58,6 +59,8 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
     bpActivityEventSubs: Subscription;
     sellingAgentInitiated = false;
     buyingAgentInitiated = false;
+    agentDiscount = false;
+    agentDiscountProp = "";
 
     id: string;
     catalogueId: string;
@@ -188,7 +191,21 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 this.bpeService.getBAStatus(processInstanceId).then((ba) => {
                     if (ba.length !== 0) {
                         this.buyingAgentInitiated = true;
+                        if (ba[0]['payload']['orderLine'][0]['lineItem']['item'].hasOwnProperty('additionalItemProperty')) {
+                            let itemProperty = ba[0]['payload']['orderLine'][0]['lineItem']['item']['additionalItemProperty'];
+                            this.agentDiscount = true;
+                            if (itemProperty.length === 1) {
+                                this.agentDiscountProp = itemProperty[0]['value'][0]['value'];
+                            }else{
+                                this.agentDiscountProp = itemProperty[0]['value'][0]['value'];
+
+                                for (let k = 1; k < itemProperty.length; k++) {
+                                    this.agentDiscountProp = this.agentDiscountProp + ", " + itemProperty[k]['value'][0]['value'];
+                                }
+                            }
+                        }
                     }
+
                 })
             }
         });
