@@ -151,6 +151,12 @@
                     <strong><span [innerHTML]="'Packaging' | translate"></span>: </strong> {{ wrapper.getPackaging() }}
                 </div>
             </div>
+            <div style="flex-grow:1;">
+                <h3 class="pt-2 p-1"><span [innerHTML]="'Customization' | translate"></span></h3>
+                <div class="p-1">
+                    <strong><span [innerHTML]="'Customizable' | translate"></span>: </strong> {{ wrapper.getCustomizable() }}
+                </div>
+            </div>
         </div>
     </div>
 

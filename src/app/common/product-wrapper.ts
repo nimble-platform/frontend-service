@@ -163,6 +163,10 @@ export class ProductWrapper {
         return this.line.freeOfChargeIndicator ? "Yes" : "No";
     }
 
+    getCustomizable(): string {
+        return this.line.goodsItem.item.customizable ? "Yes" : "No";
+    }
+
     getPricePerItem(): string {
         return this.priceWrapper.discountedPricePerItemString;
     }
