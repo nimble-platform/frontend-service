@@ -651,6 +651,7 @@ export class AppComponent implements OnInit {
         const sales = this.roles.indexOf("sales_officer") != -1;
         const manager = this.roles.indexOf("platform_manager") != -1 || this.debug;
         const legislation = this.roles.indexOf("query-legislation") != -1;
+        const demo = this.roles.indexOf("demo") != -1;
         const all_rights = admin || external || legal;
         switch (func) {
             case "comp_req":
@@ -671,6 +672,10 @@ export class AppComponent implements OnInit {
                 break;
             case "purchases":
                 if (all_rights || purch || monitor)
+                    this.allowed = true;
+                break;
+            case "buy":
+                if (all_rights || purch)
                     this.allowed = true;
                 break;
             case "catalogue":
@@ -731,6 +736,10 @@ export class AppComponent implements OnInit {
                 break;
             case "legislation":
                 if (legislation)
+                    this.allowed = true;
+                break;
+            case "demo":
+                if (demo)
                     this.allowed = true;
                 break;
             default:

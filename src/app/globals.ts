@@ -142,6 +142,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - federationClientID: Keycloak client ID used for the federated login
 - federationIDP: Keycloak IDP used for the federated login
 - legislationSettings: Allows to toggle the legislation feature and define its relevant settings (furniture use case)
+- demo: Allows to toggle demo account functionality and its relevant settings on the login page
 */
 
 export const config = {
@@ -302,6 +303,17 @@ export const config = {
         "enabled": true,
         "authMode": "nimble",
         "datePlaceholder": "yyyy-mm-dd"
+    },
+    "demo": {
+        "enabled": false,
+        "disclaimer": {
+            "en": ""
+        },
+        "account": {
+            "name": "",
+            "user": "",
+            "pw": ""
+        }
     }
 };
 

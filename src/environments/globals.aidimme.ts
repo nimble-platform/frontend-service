@@ -408,6 +408,17 @@ export const config = {
         "enabled": true,
         "authMode": "nimble",
         "datePlaceholder": "yyyy-mm-dd"
+    },
+    "demo": {
+        "enabled": false,
+        "disclaimer": {
+            "en": ""
+        },
+        "account": {
+            "name": "",
+            "user": "",
+            "pw": ""
+        }
     }
 };
 

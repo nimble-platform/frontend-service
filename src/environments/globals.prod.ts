@@ -64,7 +64,7 @@ export const config = {
     "platformName": "MVP",
     "envName": "prod",
     "addCartBehaviour": "single",
-    "companyRegistrationRequired": false,
+    "companyRegistrationRequired": true,
     "categoryFilter": {
         "eClass": {
             "hiddenCategories": [],
@@ -93,13 +93,13 @@ export const config = {
     },
     "kibanaEnabled": false,
     "languageSettings": {
-        "available": ["en", "es", "de", "tr", "it", "sv"],
+        "available": ["en", "es"],
         "fallback": "en"
     },
     "loggingEnabled": true,
     "logoPath": "./assets/logo_mvp.png",
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
-    "logoRequired": false,
+    "logoRequired": true,
     "phoneNumberRequired": false,
     "vatEnabled": true,
     "projectsEnabled": true,
@@ -109,14 +109,14 @@ export const config = {
             "src": "./assets/eula.pdf"
         }
     ],
-    "showChat": false,
+    "showChat": true,
     "showAgent": false,
-    "showCompanyMembers": false,
-    "showExplorative": true,
+    "showCompanyMembers": true,
+    "showExplorative": false,
     "showFullName": false,
-    "showLCPA": true,
+    "showLCPA": false,
     "showPPAP": true,
-    "showTrack": true,
+    "showTrack": false,
     "showTrade": true,
     "showVerification": true,
     "standardCurrency": "EUR",
@@ -178,6 +178,17 @@ export const config = {
         "enabled": false,
         "authMode": "nimble",
         "datePlaceholder": "yyyy-mm-dd"
+    },
+    "demo": {
+        "enabled": true,
+        "disclaimer": {
+            "en": "Welcome to the NIMBLE demo platform!<br/>You can click on 'Demo' to play around without registration. You will have read access only.<br/>For full access follow the 'Registration' link. The verification is a manual process that can take up to one business day.<br/>Alternatively, have a look at our <a href='https://www.youtube.com/watch?v=m5llF-KfGx0' target='_blank'>Overview</a> or <a href='https://www.youtube.com/watch?v=rHoVDYjetj8' target='_blank'>Platform Guide</a> videos."
+        },
+        "account": {
+            "name": "Demo",
+            "user": "nimbleproject.eu+demo@gmail.com",
+            "pw": "demo123"
+        }
     }
 };
 

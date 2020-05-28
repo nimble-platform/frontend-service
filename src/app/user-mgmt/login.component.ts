@@ -15,6 +15,8 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import * as myGlobals from '../globals';
+import { DEFAULT_LANGUAGE } from '../catalogue/model/constants';
 
 @Component({
     selector: 'nimble-login',
@@ -24,6 +26,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 export class LoginComponent implements OnInit {
     public pageRef: string = null;
+    config = myGlobals.config;
+    disclaimer = "";
 
     constructor(
         private route: ActivatedRoute,
@@ -38,6 +42,12 @@ export class LoginComponent implements OnInit {
             .subscribe(params => {
                 this.pageRef = params['pageRef'];
             });
+        if (this.config.demo.enabled) {
+            if (this.config.demo.disclaimer[DEFAULT_LANGUAGE()])
+                this.disclaimer = this.config.demo.disclaimer[DEFAULT_LANGUAGE()];
+            else
+                this.disclaimer = this.config.demo.disclaimer["en"];
+        }
     }
 
     ngOnDestroy() {

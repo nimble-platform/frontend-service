@@ -179,6 +179,17 @@ export const config = {
         "enabled": false,
         "authMode": "nimble",
         "datePlaceholder": "yyyy-mm-dd"
+    },
+    "demo": {
+        "enabled": false,
+        "disclaimer": {
+            "en": ""
+        },
+        "account": {
+            "name": "",
+            "user": "",
+            "pw": ""
+        }
     }
 };
 

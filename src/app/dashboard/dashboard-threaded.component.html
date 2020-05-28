@@ -61,10 +61,10 @@
                     <a href id="PROJECTS" *ngIf="config.projectsEnabled && this.appComponent.checkRoles('projects')" [ngClass]="{'nav-link': true, active: selectedTab === TABS.PROJECTS}" (click)="onChangeTab($event,'PROJECTS')"><span [innerHTML]="'Projects' | translate"></span></a>
                 </li>
                 <li class="nav-item">
-                    <a href id="FRAME_CONTRACTS" *ngIf="config.frameContractTabEnabled && (this.appComponent.checkRoles('sales') || this.appComponent.checkRoles('purchases'))" [ngClass]="{'nav-link': true, active: selectedTab === TABS.FRAME_CONTRACTS}" (click)="onChangeTab($event,'FRAME_CONTRACTS')"><span [innerHTML]="'Frame Contracts' | translate"></span></a>
+                    <a href id="FRAME_CONTRACTS" *ngIf="config.frameContractTabEnabled && this.appComponent.checkRoles('bp')" [ngClass]="{'nav-link': true, active: selectedTab === TABS.FRAME_CONTRACTS}" (click)="onChangeTab($event,'FRAME_CONTRACTS')"><span [innerHTML]="'Frame Contracts' | translate"></span></a>
                 </li>
                 <li class="nav-item">
-                    <a href id="UNSHIPPED_ORDERS" *ngIf="config.unshippedOrdersTabEnabled && (this.appComponent.checkRoles('sales') || this.appComponent.checkRoles('purchases'))" [ngClass]="{'nav-link': true, active: selectedTab === TABS.UNSHIPPED_ORDERS}" (click)="onChangeTab($event,'UNSHIPPED_ORDERS')"><span [innerHTML]="'Expected Orders' | translate"></span></a>
+                    <a href id="UNSHIPPED_ORDERS" *ngIf="config.unshippedOrdersTabEnabled && this.appComponent.checkRoles('bp')" [ngClass]="{'nav-link': true, active: selectedTab === TABS.UNSHIPPED_ORDERS}" (click)="onChangeTab($event,'UNSHIPPED_ORDERS')"><span [innerHTML]="'Expected Orders' | translate"></span></a>
                 </li>
                 <li class="nav-item">
                     <a href id="CATALOGUE" *ngIf="this.appComponent.checkRoles('catalogue')" [ngClass]="{'nav-link': true, active: selectedTab === TABS.CATALOGUE}" (click)="onChangeTab($event,'CATALOGUE')"><span [innerHTML]="'Catalogue' | translate"></span></a>
@@ -108,7 +108,8 @@
             <div class="row text-center">
                 <div *ngIf="this.appComponent.checkRoles('purchases')" class="col-6">
                     <p><span [innerHTML]="'If you are looking to' | translate"></span> <b><span [innerHTML]="'buy' | translate"></span></b> <span [innerHTML]="'Products / Services' | translate"></span></p>
-                    <a class="btn btn-primary btn-lg" href="#/simple-search" role="button"><span [innerHTML]="'Search for Products / Services' | translate"></span></a>
+                    <a *ngIf="this.appComponent.checkRoles('buy')" class="btn btn-primary btn-lg" href="#/simple-search" role="button"><span [innerHTML]="'Search for Products / Services' | translate"></span></a>
+                    <p *ngIf="!this.appComponent.checkRoles('buy')"><span [innerHTML]="'Please refer to the company manager or a legal representative to get permission to purchase products / services in the NIMBLE Platform' | translate"></span>.</p>
                 </div>
 
                 <div *ngIf="this.appComponent.checkRoles('sales')" class="col-6">

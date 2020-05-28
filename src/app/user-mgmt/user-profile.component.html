@@ -62,7 +62,7 @@
                     <call-status [callStatus]="deleteUserCallStatus" [large]="true"></call-status>
                 </div>
                 <div class="col-6">
-                    <button class="btn btn-danger action" (click)="deleteUser(userProfile)">
+                    <button class="btn btn-danger action" (click)="deleteUser(userProfile)" [disabled]="this.appComponent.checkRoles('demo')">
                         <span [innerHTML]="'Delete' | translate"></span>
                     </button>
                 </div>
@@ -95,7 +95,7 @@
                         <call-status [callStatus]="changePasswordCallStatus" [large]="true"></call-status>
                     </div>
                     <div class="col-6">
-                        <button type="submit" class="btn btn-primary action" [disabled]="!changePasswordForm.form.valid || !passwords_matching || changePasswordCallStatus.isLoading()">
+                        <button type="submit" class="btn btn-primary action" [disabled]="!changePasswordForm.form.valid || !passwords_matching || changePasswordCallStatus.isLoading() || this.appComponent.checkRoles('demo')">
                             <span [innerHTML]="'Change Password' | translate"></span>
                         </button>
                     </div>

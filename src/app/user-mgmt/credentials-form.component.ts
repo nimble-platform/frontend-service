@@ -37,6 +37,7 @@ import { ActivatedRoute } from '@angular/router';
 export class CredentialsFormComponent implements OnInit {
 
     debug = myGlobals.debug;
+    config = myGlobals.config;
     pwLink = myGlobals.pw_reset_link;
     model = new Credentials('', '');
     objToSubmit = new Credentials('', '');
@@ -156,6 +157,11 @@ export class CredentialsFormComponent implements OnInit {
 		this.shaObj.update(this.model.password);
         this.objToSubmit.password = this.shaObj.getHash("HEX");
 		*/
+        this.post(this.objToSubmit);
+    }
+
+    demoLogin() {
+        this.objToSubmit = new Credentials(this.config.demo.account.user, this.config.demo.account.pw);
         this.post(this.objToSubmit);
     }
 
