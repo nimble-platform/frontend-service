@@ -93,7 +93,7 @@ export const config = {
     },
     "kibanaEnabled": false,
     "languageSettings": {
-        "available": ["en", "es"],
+        "available": ["en", "es", "de"],
         "fallback": "en"
     },
     "loggingEnabled": true,
@@ -182,7 +182,8 @@ export const config = {
     "demo": {
         "enabled": true,
         "disclaimer": {
-            "en": "Welcome to the NIMBLE demo platform!<br/>You can click on 'Demo' to play around without registration. You will have read access only.<br/>For full access follow the 'Registration' link. The verification is a manual process that can take up to one business day.<br/>Alternatively, have a look at our <a href='https://www.youtube.com/watch?v=m5llF-KfGx0' target='_blank'>Overview</a> or <a href='https://www.youtube.com/watch?v=rHoVDYjetj8' target='_blank'>Platform Guide</a> videos."
+            "en": "Welcome to the NIMBLE demo platform!<br/>You can click on 'Demo' to play around without registration. You will have read access only.<br/>For full access follow the 'Registration' link. The verification is a manual process that can take up to one business day.<br/>Alternatively, have a look at our <a href='https://www.youtube.com/watch?v=m5llF-KfGx0' target='_blank'>Overview</a> or <a href='https://www.youtube.com/watch?v=rHoVDYjetj8' target='_blank'>Platform Guide</a> videos.",
+			"de": "Willkommen auf der NIMBLE Demo Plattform!<br/>Sie können auf 'Demo' klicken, um die Plattform ohne Registrierung auszuprobieren - dabei werden Sie nur Lesezugriff haben.<br/>Für vollständigen Zugriff folgen Sie dem 'Registrierung'-Link. Die Verifikation ist ein manueller Schritt, der bis zu einem Werktag dauern kann.<br/>Alternativ können Sie sich unser <a href='https://www.youtube.com/watch?v=m5llF-KfGx0' target='_blank'>Übersicht-Video</a> oder die <a href='https://www.youtube.com/watch?v=rHoVDYjetj8' target='_blank'>Plattform Anleitung (EN)</a> ansehen.<br/><b>Achtung:</b> Die deutsche Sprachversion der Plattform ist noch unvollständig."
         },
         "account": {
             "name": "Demo",
