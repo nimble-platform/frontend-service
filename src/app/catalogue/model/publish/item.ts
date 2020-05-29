@@ -40,6 +40,7 @@ export class Item {
         public dimension: Dimension[] = [],
         public transportationServiceDetails = new TransportationService(),
         public trackAndTraceDetails: TrackAndTraceDetails = new TrackAndTraceDetails(),
-        public lifeCyclePerformanceAssessmentDetails: LifeCyclePerformanceAssessmentDetails = new LifeCyclePerformanceAssessmentDetails()
+        public lifeCyclePerformanceAssessmentDetails: LifeCyclePerformanceAssessmentDetails = new LifeCyclePerformanceAssessmentDetails(),
+        public customizable: boolean = null,
     ) { }
 }

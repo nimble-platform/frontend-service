@@ -142,6 +142,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - federationClientID: Keycloak client ID used for the federated login
 - federationIDP: Keycloak IDP used for the federated login
 - legislationSettings: Allows to toggle the legislation feature and define its relevant settings (furniture use case)
+- demo: Allows to toggle demo account functionality and its relevant settings on the login page
 */
 
 export const config = {
@@ -302,6 +303,17 @@ export const config = {
         "enabled": true,
         "authMode": "nimble",
         "datePlaceholder": "yyyy-mm-dd"
+    },
+    "demo": {
+        "enabled": false,
+        "disclaimer": {
+            "en": ""
+        },
+        "account": {
+            "name": "",
+            "user": "",
+            "pw": ""
+        }
     }
 };
 
@@ -333,7 +345,7 @@ export const item_manufacturer_id = "manufacturerId";
 // <<<
 // Grouping of facets into categories (Product / Service, Vendor, Trust / Rating, Other)
 // >>>
-export const product_filter_prod = ["freeOfCharge", "certificateType", "applicableCountries"];
+export const product_filter_prod = ["freeOfCharge", "certificateType", "applicableCountries", "customizable"];
 export const product_filter_comp = ["manufacturer.legalName", "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin", "manufacturer.certificateType", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType"];
 export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "{NULL}_certificateType", "ppapComplianceLevel", "ppapDocumentType"];
 export const party_filter_main = ["businessType", "activitySectors", "businessKeywords", "origin", "certificateType", "ppapComplianceLevel", "ppapDocumentType"];

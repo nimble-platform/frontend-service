@@ -22,6 +22,7 @@ import { CallStatus } from '../common/call-status';
 import { TranslateService } from '@ngx-translate/core';
 import { ResetPasswordCredentials } from './model/reset-password-credentials';
 import { Router } from "@angular/router";
+import { AppComponent } from "../app.component";
 
 @Component({
     selector: "user-profile",
@@ -43,6 +44,7 @@ export class UserProfileComponent implements OnInit {
         private translate: TranslateService,
         private cookieService: CookieService,
         private router: Router,
+        public appComponent: AppComponent
     ) {
 
     }

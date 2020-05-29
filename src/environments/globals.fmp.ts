@@ -419,6 +419,17 @@ export const config = {
         "enabled": true,
         "authMode": "nimble",
         "datePlaceholder": "yyyy-mm-dd"
+    },
+    "demo": {
+        "enabled": false,
+        "disclaimer": {
+            "en": ""
+        },
+        "account": {
+            "name": "",
+            "user": "",
+            "pw": ""
+        }
     }
 };
 
@@ -444,7 +455,7 @@ export const product_price = "price";
 export const product_currency = "currency";
 export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
-export const product_filter_prod = ["freeOfCharge", "certificateType", "applicableCountries"];
+export const product_filter_prod = ["freeOfCharge", "certificateType", "applicableCountries", "customizable"];
 export const product_filter_comp = ["manufacturer.legalName", "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin", "manufacturer.certificateType"];
 export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "{NULL}_certificateType"];
 export const party_filter_main = ["businessType", "activitySectors", "businessKeywords", "origin", "certificateType"];

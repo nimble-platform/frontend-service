@@ -42,3 +42,14 @@
 <!-- Packaging Type -->
 <text-input [label]="'Packaging Type' | translate" [disabled]="disabled" rowClass="space-before" [rows]="1" valueTextClass="form-control-sm" [(text)]="wrapper.line.goodsItem.containingPackage.packagingTypeCode.value">
 </text-input>
+
+<!-- Customizable -->
+<hr>
+<div class="row">
+    <div class="col-3">
+        <strong><span [innerHTML]="'Customizable' | translate"></span>:</strong>
+    </div>
+    <div class="col-9">
+        <input type="checkbox" [(ngModel)]="wrapper.line.goodsItem.item.customizable">
+    </div>
+</div>

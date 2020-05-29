@@ -24,7 +24,7 @@ export const data_channel_endpoint = `${base_path}/data-channel`;
 export const data_aggregation_endpoint = `${base_path}/data-aggregation`;
 export const trust_service_endpoint = `${base_path}/trust`;
 export const indexing_service_endpoint = `${base_path}/index`;
-export const rocketChatEndpoint = `${base_path}:3000`;
+export const rocketChatEndpoint = `https://efactory-security-portal.salzburgresearch.at/chat`;
 export const logstash_endpoint = `${base_path}/logstash`;
 export const kibana_endpoint = `${base_path}/kibana/app/kibana`;
 export const delegate_endpoint = `${base_path}:9265`;
@@ -64,7 +64,7 @@ export const config = {
     "platformName": "MVP",
     "envName": "prod",
     "addCartBehaviour": "single",
-    "companyRegistrationRequired": false,
+    "companyRegistrationRequired": true,
     "categoryFilter": {
         "eClass": {
             "hiddenCategories": [],
@@ -93,13 +93,13 @@ export const config = {
     },
     "kibanaEnabled": false,
     "languageSettings": {
-        "available": ["en", "es", "de", "tr", "it", "sv"],
+        "available": ["en", "es", "de"],
         "fallback": "en"
     },
     "loggingEnabled": true,
     "logoPath": "./assets/logo_mvp.png",
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
-    "logoRequired": false,
+    "logoRequired": true,
     "phoneNumberRequired": false,
     "vatEnabled": true,
     "projectsEnabled": true,
@@ -109,14 +109,14 @@ export const config = {
             "src": "./assets/eula.pdf"
         }
     ],
-    "showChat": false,
+    "showChat": true,
     "showAgent": false,
-    "showCompanyMembers": false,
-    "showExplorative": true,
+    "showCompanyMembers": true,
+    "showExplorative": false,
     "showFullName": false,
-    "showLCPA": true,
+    "showLCPA": false,
     "showPPAP": true,
-    "showTrack": true,
+    "showTrack": false,
     "showTrade": true,
     "showVerification": true,
     "standardCurrency": "EUR",
@@ -178,6 +178,18 @@ export const config = {
         "enabled": false,
         "authMode": "nimble",
         "datePlaceholder": "yyyy-mm-dd"
+    },
+    "demo": {
+        "enabled": true,
+        "disclaimer": {
+            "en": "Welcome to the NIMBLE demo platform!<br/>You can click on 'Demo' to play around without registration. You will have read access only.<br/>For full access follow the 'Registration' link. The verification is a manual process that can take up to one business day.<br/>Alternatively, have a look at our <a href='https://www.youtube.com/watch?v=m5llF-KfGx0' target='_blank'>Overview</a> or <a href='https://www.youtube.com/watch?v=rHoVDYjetj8' target='_blank'>Platform Guide</a> videos.",
+			"de": "Willkommen auf der NIMBLE Demo Plattform!<br/>Sie können auf 'Demo' klicken, um die Plattform ohne Registrierung auszuprobieren - dabei werden Sie nur Lesezugriff haben.<br/>Für vollständigen Zugriff folgen Sie dem 'Registrierung'-Link. Die Verifikation ist ein manueller Schritt, der bis zu einem Werktag dauern kann.<br/>Alternativ können Sie sich unser <a href='https://www.youtube.com/watch?v=m5llF-KfGx0' target='_blank'>Übersicht-Video</a> oder die <a href='https://www.youtube.com/watch?v=rHoVDYjetj8' target='_blank'>Plattform Anleitung (EN)</a> ansehen.<br/><b>Achtung:</b> Die deutsche Sprachversion der Plattform ist noch unvollständig."
+        },
+        "account": {
+            "name": "Demo",
+            "user": "nimbleproject.eu+demo@gmail.com",
+            "pw": "demo123"
+        }
     }
 };
 
@@ -203,7 +215,7 @@ export const product_price = "price";
 export const product_currency = "currency";
 export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
-export const product_filter_prod = ["freeOfCharge", "certificateType", "applicableCountries"];
+export const product_filter_prod = ["freeOfCharge", "certificateType", "applicableCountries", "customizable"];
 export const product_filter_comp = ["manufacturer.legalName", "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin", "manufacturer.certificateType", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType"];
 export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "{NULL}_certificateType", "ppapComplianceLevel", "ppapDocumentType"];
 export const party_filter_main = ["businessType", "activitySectors", "businessKeywords", "origin", "certificateType", "ppapComplianceLevel", "ppapDocumentType"];
