@@ -613,7 +613,7 @@ export class SimpleSearchFormComponent implements OnInit {
         this.page = p;
         this.rows = rows;
         this.sort = sort;
-        if (this.model.q == "")
+        if (this.model.q == "" && this.sort == "score desc")
           sort = "{LANG}_label asc";
         this.searchIndex = sIdx;
         this.searchTopic = sTop;
@@ -713,7 +713,7 @@ export class SimpleSearchFormComponent implements OnInit {
         this.page = p;
         this.rows = rows;
         this.sort = sort;
-        if (this.model.q == "")
+        if (this.model.q == "" && this.sort == "score desc")
           sort = "{LANG}_brandName asc";
         this.searchTopic = sTop;
         this.searchCallStatus.submit();
