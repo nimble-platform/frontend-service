@@ -1156,12 +1156,14 @@ export class SimpleSearchFormComponent implements OnInit {
         this.ratingFulfillment = 0;
         this.ratingDelivery = 0;
         this.ratingTrust = 0;
-        this.clearFacet(this.product_vendor_rating, this.product_vendor);
-        this.clearFacet(this.product_vendor_rating_seller, this.product_vendor);
-        this.clearFacet(this.product_vendor_rating_fulfillment, this.product_vendor);
-        this.clearFacet(this.product_vendor_rating_delivery, this.product_vendor);
-        this.clearFacet(this.product_vendor_trust, this.product_vendor);
-        this.get(this.objToSubmit);
+        if(this.checkTrustFacet()){
+            this.clearFacet(this.product_vendor_rating, this.product_vendor);
+            this.clearFacet(this.product_vendor_rating_seller, this.product_vendor);
+            this.clearFacet(this.product_vendor_rating_fulfillment, this.product_vendor);
+            this.clearFacet(this.product_vendor_rating_delivery, this.product_vendor);
+            this.clearFacet(this.product_vendor_trust, this.product_vendor);
+            this.get(this.objToSubmit);
+        }
     }
 
     resetCompTrustFilter() {
