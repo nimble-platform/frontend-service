@@ -613,7 +613,7 @@ export class SimpleSearchFormComponent implements OnInit {
         this.page = p;
         this.rows = rows;
         this.sort = sort;
-        if (this.model.q == "")
+        if (this.model.q == "" && this.sort == "score desc")
           sort = "{LANG}_label asc";
         this.searchIndex = sIdx;
         this.searchTopic = sTop;
@@ -713,7 +713,7 @@ export class SimpleSearchFormComponent implements OnInit {
         this.page = p;
         this.rows = rows;
         this.sort = sort;
-        if (this.model.q == "")
+        if (this.model.q == "" && this.sort == "score desc")
           sort = "{LANG}_brandName asc";
         this.searchTopic = sTop;
         this.searchCallStatus.submit();
@@ -1156,12 +1156,14 @@ export class SimpleSearchFormComponent implements OnInit {
         this.ratingFulfillment = 0;
         this.ratingDelivery = 0;
         this.ratingTrust = 0;
-        this.clearFacet(this.product_vendor_rating, this.product_vendor);
-        this.clearFacet(this.product_vendor_rating_seller, this.product_vendor);
-        this.clearFacet(this.product_vendor_rating_fulfillment, this.product_vendor);
-        this.clearFacet(this.product_vendor_rating_delivery, this.product_vendor);
-        this.clearFacet(this.product_vendor_trust, this.product_vendor);
-        this.get(this.objToSubmit);
+        if(this.checkTrustFacet()){
+            this.clearFacet(this.product_vendor_rating, this.product_vendor);
+            this.clearFacet(this.product_vendor_rating_seller, this.product_vendor);
+            this.clearFacet(this.product_vendor_rating_fulfillment, this.product_vendor);
+            this.clearFacet(this.product_vendor_rating_delivery, this.product_vendor);
+            this.clearFacet(this.product_vendor_trust, this.product_vendor);
+            this.get(this.objToSubmit);
+        }
     }
 
     resetCompTrustFilter() {

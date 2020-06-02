@@ -396,7 +396,7 @@
                                             </div>
                                         </div>
                                         <button class="btn btn-primary" (click)="setTrustFilter()" [disabled]="!checkTrustFilter()"><span [innerHTML]="'Apply' | translate"></span></button>
-                                        <button class="btn btn-secondary ml-2" (click)="resetTrustFilter()" [hidden]="!checkTrustFacet()"><span [innerHTML]="'Reset' | translate"></span></button>
+                                        <button class="btn btn-secondary ml-2" (click)="resetTrustFilter()" [disabled]="!checkTrustFilter()"><span [innerHTML]="'Reset' | translate"></span></button>
                                     </div>
                                 </div>
 
