@@ -19,8 +19,8 @@
     <div [hidden]="!searchTopic" class="form-group row">
         <div class="col-12">
             <div class="input-group">
-                <input *ngIf="searchTopic=='prod'" type="text" class="form-control" id="searchTerm" [(ngModel)]="model.q" [disabled]="searchCallStatus.isLoading()" [ngbTypeahead]="getSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" [placeholder]="'Product / Service' | translate">
-                <input *ngIf="searchTopic=='comp'" type="text" class="form-control" id="searchTerm" [(ngModel)]="model.q" [disabled]="searchCallStatus.isLoading()" [ngbTypeahead]="getCompSuggestions" [focusFirst]=false name="searchTerm" #q="ngModel" [placeholder]="'Company' | translate">
+                <input *ngIf="searchTopic=='prod'" type="text" class="form-control" id="searchTerm" [(ngModel)]="model.q" [disabled]="searchCallStatus.isLoading()" [ngbTypeahead]="getSuggestions" (selectItem)="onSubmit($event)" [focusFirst]=false name="searchTerm" #q="ngModel" [placeholder]="'Product / Service' | translate">
+                <input *ngIf="searchTopic=='comp'" type="text" class="form-control" id="searchTerm" [(ngModel)]="model.q" [disabled]="searchCallStatus.isLoading()" [ngbTypeahead]="getCompSuggestions" (selectItem)="onSubmit($event)" [focusFirst]=false name="searchTerm" #q="ngModel" [placeholder]="'Company' | translate">
                 <div *ngIf="searchTopic=='prod'" ngbDropdown class="d-inline-block input-group-append">
                     <button *ngIf="searchTopic=='prod'" class="btn btn-outline-secondary" type="button" id="searchIndex" ngbDropdownToggle>
                         <span [innerHTML]="searchIndex | translate"></span>

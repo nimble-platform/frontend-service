@@ -1003,7 +1003,11 @@ export class SimpleSearchFormComponent implements OnInit {
         return fieldLabes;
     }
 
-    onSubmit() {
+    onSubmit(selectedItemEvent=null) {
+        // selectedItemEvent is the event emitted when a product/company is selected from the suggestion list
+        if(selectedItemEvent){
+            this.model.q = selectedItemEvent.item;
+        }
         if (this.model.q == "")
             this.model.q = "*";
         this.objToSubmit = copy(this.model);
