@@ -480,8 +480,8 @@ export class SimpleSearchFormComponent implements OnInit {
                 }
 
                 let parentsAndChildren: string[] =
-                    ((selectedIndexCategory.allChildren != null || selectedIndexCategory.allChildren !== []) ? selectedIndexCategory.allChildren : [])
-                        .concat((selectedIndexCategory.allParents != null || selectedIndexCategory.allParents !== []) ? selectedIndexCategory.allParents : []);
+                    (selectedIndexCategory.allChildren != null ? selectedIndexCategory.allChildren : [])
+                        .concat(selectedIndexCategory.allParents != null ? selectedIndexCategory.allParents : []);
                 let catLevel = indexCategory.allParents != null ? indexCategory.allParents.length : 0;
                 if (indexCategory.uri !== selectedIndexCategory.uri && // include the taxonomy itself no matter what
                     // do not include the category if it is not include in the hierarchy of the selected category
