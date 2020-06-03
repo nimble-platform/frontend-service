@@ -59,6 +59,7 @@ export class TextInputComponent extends ChildFormBase implements OnInit {
     @Output() deleteTextInput = new EventEmitter();
     @Input() rows: number = 3;
     @Input() maxLength: string = "255";
+    @Input() isLink:boolean = false;
 
     textInputFormControl: FormControl;
 

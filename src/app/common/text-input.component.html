@@ -30,7 +30,8 @@
     </div>
 
     <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">
-        <p class="{{valueTextClass}}" [innerHTML]="text"></p>
+        <p *ngIf="!isLink" class="{{valueTextClass}}" [innerHTML]="text"></p>
+        <a *ngIf="isLink" [href]="text" [innerHTML]="text"></a>
     </div>
 
     <select class="form-control {{languageIdClass}}" *ngIf="languageIdClass != ''" [(ngModel)]="languageId">
