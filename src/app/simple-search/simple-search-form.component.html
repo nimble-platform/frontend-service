@@ -607,7 +607,7 @@
                                             </ng-container>
                                         </div>
                                         <div *ngIf="result[product_vendor]" [ngClass]="{'col-2':display=='list','col-12 pt-2':display=='panel'}">
-                                            <div style="max-height:1.5rem;overflow:hidden">
+                                            <div style="overflow:hidden">
                                                 <span *ngIf="result[product_vendor][product_vendor_brand_name]" [title]="result[product_vendor][product_vendor_name]">{{ getMultilingualLabel(result[product_vendor][product_vendor_brand_name]) }}</span>
                                                 <span *ngIf="!result[product_vendor][product_vendor_brand_name]" [title]="result[product_vendor][product_vendor_name]">{{ result[product_vendor][product_vendor_name] }}</span>
                                             </div>
