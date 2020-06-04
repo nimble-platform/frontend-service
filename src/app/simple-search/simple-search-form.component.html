@@ -196,7 +196,18 @@
 
                         <div *ngIf="showCatSection">
                             <div class="card border-primary-nimble mb-3">
-                                <div class="card-header text-white bg-primary-nimble">
+                                <!-- Category facet with combobox -->
+                                <div *ngIf="taxonomyIDs" class="card-header bg-primary-nimble input-group">
+                                    <div ngbDropdown class="d-inline-block input-group-prepend">
+                                        <button class="btn text-white bg-primary-nimble " type="button" id="allCategories" ngbDropdownToggle>
+                                            {{taxonomy.replace("FurnitureOntology", "Furniture Sector")}} <span [innerHTML]="'Categories' | translate"></span>
+                                        </button>
+                                        <div ngbDropdownMenu aria-labelledby="allCategories">
+                                            <a *ngFor="let taxonomyID of taxonomyIDs" class="dropdown-item" (click)="changeTaxonomyId(taxonomyID)">{{taxonomyID.replace("FurnitureOntology", "Furniture Sector")}} <span [innerHTML]="'Categories' | translate"></span></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="!taxonomyIDs" class="card-header text-white bg-primary-nimble">
                                     <span [innerHTML]="'Category' | translate"></span>
                                 </div>
                                 <div class="card-body">

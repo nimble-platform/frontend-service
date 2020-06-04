@@ -138,6 +138,13 @@ export class SimpleSearchFormComponent implements OnInit {
 
     productsSelectedForPublish: any[] = []; // keeps the products in the Solr format
 
+    // selected taxonomy in the category facet
+    taxonomy: string = null;
+    // available ontologies on the instance
+    taxonomyIDs:string[] = null;
+    // category counts which are needed to build category tree
+    categoryCounts: any[] = null;
+
     ngUnsubscribe: Subject<void> = new Subject<void>();
     private translations: any;
 
@@ -216,8 +223,28 @@ export class SimpleSearchFormComponent implements OnInit {
             }
             else
                 this.cat = "";
+
+            // if the standard taxonomy is 'All', then we use 'eClass' as the default taxonomy
+            // and populate 'taxonomyIDs' variable with the ones available in the instance
+            if(myGlobals.config.standardTaxonomy.localeCompare("All") ==  0){
+                this.taxonomy = "eClass";
+                this.taxonomyIDs = Object.keys(myGlobals.config.categoryFilter);
+            }
+            // otherwise, we use the selected taxonomy as the default one
+            else{
+                this.taxonomy = myGlobals.config.standardTaxonomy;
+            }
+
             if (catID) {
                 this.catID = catID;
+                // set the taxonomy according to the selected category
+                for (let taxonomy of Object.keys(myGlobals.config.categoryFilter)) {
+                    let ontologyPrefix = myGlobals.config.categoryFilter[taxonomy].ontologyPrefix;
+                    if(catID.startsWith(ontologyPrefix)){
+                        this.taxonomy = taxonomy;
+                        break;
+                    }
+                }
             }
             else
                 this.catID = "";
@@ -385,35 +412,31 @@ export class SimpleSearchFormComponent implements OnInit {
             )
         );
 
-    private async buildCatTree(categoryCounts: any[]) {
-        var taxonomy = "eClass";
-        if (this.config.standardTaxonomy.localeCompare("All") != 0 && this.config.standardTaxonomy.localeCompare("eClass") != 0) {
-            taxonomy = this.config.standardTaxonomy;
-        }
+    private async buildCatTree() {
 
         // taxonomy prefix corresponds to the base url of the taxonomy that exists before each relevant category
         // e.g. assuming category url: http://www.aidimme.es/FurnitureSectorOntology.owl#MDFBoard
         // taxonomy prefix would be: http://www.aidimme.es/FurnitureSectorOntology.owl#
         var taxonomyPrefix = "";
-        if (this.config.categoryFilter[taxonomy] && this.config.categoryFilter[taxonomy].ontologyPrefix)
-            taxonomyPrefix = this.config.categoryFilter[taxonomy].ontologyPrefix;
+        if (this.config.categoryFilter[this.taxonomy] && this.config.categoryFilter[this.taxonomy].ontologyPrefix)
+            taxonomyPrefix = this.config.categoryFilter[this.taxonomy].ontologyPrefix;
 
         // retrieve the labels for the category uris included in the categoryCounts field
         let categoryUris: string[] = [];
-        for (let categoryCount of categoryCounts) {
+        for (let categoryCount of this.categoryCounts) {
             categoryUris.push(categoryCount.label);
         }
         this.cat_loading = true;
         // here, all the information about the categories are fetched from the indexing service
         var indexCategories = await this.categoryService.getCategories(categoryUris);
         // extract only the required information in UI from the complete category information
-        let categoryDisplayInfo: any = this.getCategoryDisplayInfo(indexCategories, categoryCounts);
+        let categoryDisplayInfo: any = this.getCategoryDisplayInfo(indexCategories, this.categoryCounts);
         // set the level of the selected category, if any
         this.cat_level = this.getCatLevel(this.catID, indexCategories.result);
         this.cat_levels = [];
         if (taxonomyPrefix != "") {
             // ToDo: Remove manual distinction after search update
-            if (taxonomy == "eClass") {
+            if (this.taxonomy == "eClass") {
                 for (let categoryUri of Object.keys(categoryDisplayInfo)) {
                     let count = categoryDisplayInfo[categoryUri].count;
                     if (categoryUri.startsWith(taxonomyPrefix)) {
@@ -442,7 +465,7 @@ export class SimpleSearchFormComponent implements OnInit {
                 }
             } else {
                 // this.cat === '' indicates that there is no category selected for filtering the results
-                this.constructCategoryTree(indexCategories.result, categoryDisplayInfo, taxonomy, taxonomyPrefix);
+                this.constructCategoryTree(indexCategories.result, categoryDisplayInfo, this.taxonomy, taxonomyPrefix);
             }
 
             this.sortCatLevels();
@@ -642,7 +665,8 @@ export class SimpleSearchFormComponent implements OnInit {
 
                                 for (let facet in res.facets) {
                                     if (facet == this.product_cat_mix) {
-                                        this.buildCatTree(res.facets[this.product_cat_mix].entry);
+                                        this.categoryCounts = res.facets[this.product_cat_mix].entry;
+                                        this.buildCatTree();
                                         this.handleFacets(fieldLabels, res, p, response.result);
                                         break;
                                     }
@@ -990,6 +1014,13 @@ export class SimpleSearchFormComponent implements OnInit {
                     return ret;
                 });
             }
+        }
+    }
+
+    private changeTaxonomyId(taxonomyId) {
+        if (this.taxonomy != taxonomyId) {
+            this.taxonomy = taxonomyId;
+            this.buildCatTree();
         }
     }
 
