@@ -100,6 +100,7 @@ export const config = {
     "logoPath": "./assets/logo_efac.png",
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": true,
+    "permanentWelcomeTab": false,
     "phoneNumberRequired": true,
     "vatEnabled": false,
     "projectsEnabled": true,
@@ -400,6 +401,7 @@ export const config = {
     },
     "showLoginFederation": true,
     "unshippedOrdersTabEnabled": true,
+    "welcomeMessage":"Looks like you are new here",
     "federationClientID": "efact-test-client",
     "federationIDP": "EFS",
     "legislationSettings": {

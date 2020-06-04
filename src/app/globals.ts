@@ -113,6 +113,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - logoPath: Link to the logo disabled in the navbar
 - federationLogoPath: Link to the logo of the federated login
 - logoRequired: Boolean flag if the submission of a company logo is required upon registration
+- permanentWelcomeTab: Boolean flag if the welcome page is permanent
 - phoneNumberRequired: Boolean flag if the phone number of a user is required upon registration
 - vatEnabled: Boolean flag if VAT rates shall be included in price calculations
 - projectsEnabled: Boolean flag if project management is available on the dashboard
@@ -139,6 +140,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - supportMailContent: Allows defining the default body of a support mail. Keys are the ISO language codes and values are the strings displayed in the mail body (use \n for linebreaks)
 - showLoginFederation: Boolean flag if the federated login is available on the instance
 - unshippedOrdersTabEnabled: Boolean flag is the unshipped orders shall be shown on the dashboard
+- welcomeMessage: Message displayed in the welcome page
 - federationClientID: Keycloak client ID used for the federated login
 - federationIDP: Keycloak IDP used for the federated login
 - legislationSettings: Allows to toggle the legislation feature and define its relevant settings (furniture use case)
@@ -225,6 +227,7 @@ export const config = {
     "logoPath": "./assets/logo_mvp.png",
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": false,
+    "permanentWelcomeTab": false,
     "phoneNumberRequired": false,
     "vatEnabled": true,
     "projectsEnabled": true,
@@ -297,6 +300,7 @@ export const config = {
     },
     "showLoginFederation": true,
     "unshippedOrdersTabEnabled": true,
+    "welcomeMessage":"Looks like you are new here",
     "federationClientID": "efact-test-client",
     "federationIDP": "EFS",
     "legislationSettings": {

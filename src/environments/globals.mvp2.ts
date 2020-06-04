@@ -100,6 +100,7 @@ export const config = {
     "logoPath": "./assets/logo_mvp.png",
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": false,
+    "permanentWelcomeTab": false,
     "phoneNumberRequired": false,
     "vatEnabled": true,
     "projectsEnabled": true,
@@ -172,6 +173,7 @@ export const config = {
     },
     "showLoginFederation": false,
     "unshippedOrdersTabEnabled": true,
+    "welcomeMessage":"Looks like you are new here",
     "federationClientID": "sample-client",
     "federationIDP": "sampleIDP",
     "legislationSettings": {

@@ -144,7 +144,7 @@ export class DashboardThreadedComponent implements OnInit {
             if (this.selectedTab) {
                 return this.selectedTab;
             }
-            if (this.user.showWelcomeTab) {
+            if (this.user.showWelcomeTab || this.config.permanentWelcomeTab) {
                 return TABS.WELCOME;
             }
         } else {

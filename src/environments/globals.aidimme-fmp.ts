@@ -112,6 +112,7 @@ export const config = {
     "logoPath": "./assets/logo_fmp.png",
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": true,
+    "permanentWelcomeTab": false,
     "phoneNumberRequired": true,
     "vatEnabled": false,
     "projectsEnabled": true,
@@ -412,6 +413,7 @@ export const config = {
     },
     "showLoginFederation": false,
     "unshippedOrdersTabEnabled": false,
+    "welcomeMessage":"Looks like you are new here",
     "federationClientID": "sample-client",
     "federationIDP": "sampleIDP",
     "legislationSettings": {
