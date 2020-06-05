@@ -738,7 +738,7 @@ export class SimpleSearchFormComponent implements OnInit {
         this.rows = rows;
         this.sort = sort;
         if (this.model.q == "" && this.sort == "score desc")
-          sort = "{LANG}_brandName asc";
+          sort = "legalName asc";
         this.searchTopic = sTop;
         this.searchCallStatus.submit();
         this.simpleSearchService.getCompFields()
