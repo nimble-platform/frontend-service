@@ -827,18 +827,50 @@ export class SimpleSearchFormComponent implements OnInit {
     handleCompanyFacets(res, prefix: string, manufacturerIdCountMap: any) {
         //this.facetObj = [];
         this.temp = [];
-        //map for name:id
-        //loop through the result sent to create name:Id mapping
-        let manufacturerNameIdMap = new Map();
+        // map for keeping the value counts for each company facet
+        // the facet name is the key of the map
+        // The value of the map is another map which store the counts for each facet value
+        let companyFacetMap = new Map();
+        // get available facets
+        let companyFacets = this.party_facet_field_list.map(value => value.replace("{LANG}_", (DEFAULT_LANGUAGE() + "_")).replace("{NULL}_", "_"));
+        // initialize the companyFacetMap
+        companyFacets.forEach(filter => companyFacetMap.set(filter,new Map()));
+        // for each result in the response, populate the companyFacetMap
         for (let i = 0; i < res.result.length; i++) {
             let manufacturerId = res.result[i].id;
-            let manufacturerName = res.result[i].legalName;
-            manufacturerNameIdMap.set(manufacturerName, manufacturerId);
+            // check the response for each facet
+            for (let facet of companyFacets) {
+                let values = res.result[i][facet];
+                // if the facet has an underscore, it means that its value is a Label object
+                // therefore, we need to call selectNameFromLabelObject method to retrieve its values properly
+                let underscoreIndex = facet.indexOf("_");
+                if(underscoreIndex != -1){
+                    let resultFieldForFacet = facet.substring(underscoreIndex+1);
+                    values = selectNameFromLabelObject(res.result[i][resultFieldForFacet])
+                }
+                // if the facet values are not an array, make it an array
+                if(!Array.isArray(values)){
+                    values = [values];
+                }
+
+                for (let fieldValue of values) {
+                    // we store the values as string to make comparision easier
+                    if(typeof fieldValue == 'number'){
+                        fieldValue = fieldValue.toString();
+                    }
+                    if(companyFacetMap.get(facet).has(fieldValue)){
+                        companyFacetMap.get(facet).set(fieldValue,companyFacetMap.get(facet).get(fieldValue) + manufacturerIdCountMap.get(manufacturerId))
+                    }
+                    else{
+                        companyFacetMap.get(facet).set(fieldValue,manufacturerIdCountMap.get(manufacturerId));
+                    }
+                }
+
+            }
         }
 
         for (let facet in res.facets) {
             if (this.simpleSearchService.checkField(facet)) {
-                let propertyLabel = this.getName(facet);
                 let facet_innerLabel;
                 let facet_innerCount;
                 let facetCount = 0;
@@ -863,10 +895,9 @@ export class SimpleSearchFormComponent implements OnInit {
                 for (let facet_inner of res.facets[facet].entry) {
                     facet_innerLabel = facet_inner.label;
                     facet_innerCount = facet_inner.count;
-                    if (facet == "legalName") {
-                        let id = manufacturerNameIdMap.get(facet_innerLabel);
-                        let itemCountForManufacturer = manufacturerIdCountMap.get(id);
-                        facetCount = itemCountForManufacturer;
+                    // get the count of values for the facet using companyFacetMap
+                    if(companyFacetMap.has(facet)){
+                        facetCount = companyFacetMap.get(facet).get(facet_innerLabel);
                     }
 
                     if (facet_innerLabel != "" && facet_innerLabel != ":" && facet_innerLabel != ' ' && facet_innerLabel.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
