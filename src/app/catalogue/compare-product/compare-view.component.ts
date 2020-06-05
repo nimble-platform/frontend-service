@@ -419,63 +419,58 @@ export class CompareViewComponent implements OnInit {
                             this.searchFavouriteCallStatus.callback("Search done.", true);
                         }
                         else {
-                            this.simpleSearchService.getUblProperties(Object.keys(fieldLabels)).then(response => {
-                                this.facetObj = [];
-                                this.temp = [];
-                                this.manufacturerIdCountMap = new Map();
-                                for (let facet in res.facets) {
-                                    if (facet == this.product_cat_mix) {
-                                        this.buildCatTree(res.facets[this.product_cat_mix].entry);
-                                        break;
-                                    }
+                            this.facetObj = [];
+                            this.temp = [];
+                            this.manufacturerIdCountMap = new Map();
+                            for (let facet in res.facets) {
+                                if (facet == this.product_cat_mix) {
+                                    this.buildCatTree(res.facets[this.product_cat_mix].entry);
+                                    break;
                                 }
+                            }
 
-                                for (let facet in res.facets) {
-                                    if (facet == this.item_manufacturer_id) {
-                                        let facetEntries = res.facets[this.item_manufacturer_id].entry;
-                                        for (let manufacturerEntry of facetEntries) {
-                                            this.manufacturerIdCountMap.set(manufacturerEntry.label, manufacturerEntry.count);
-                                        }
-                                        //getting the manufacturer ids list
-                                        let manufacturerIds = Array.from(this.manufacturerIdCountMap.keys());
+                            for (let facet in res.facets) {
+                                if (facet == this.item_manufacturer_id) {
+                                    let facetEntries = res.facets[this.item_manufacturer_id].entry;
+                                    for (let manufacturerEntry of facetEntries) {
+                                        this.manufacturerIdCountMap.set(manufacturerEntry.label, manufacturerEntry.count);
+                                    }
+                                    //getting the manufacturer ids list
+                                    let manufacturerIds = Array.from(this.manufacturerIdCountMap.keys());
 
-                                        this.temp = res.result;
-                                        for (let doc in this.temp) {
-                                            if (this.temp[doc][this.product_img]) {
-                                                var img = this.temp[doc][this.product_img];
-                                                if (Array.isArray(img)) {
-                                                    this.temp[doc][this.product_img] = img[0];
-                                                }
+                                    this.temp = res.result;
+                                    for (let doc in this.temp) {
+                                        if (this.temp[doc][this.product_img]) {
+                                            var img = this.temp[doc][this.product_img];
+                                            if (Array.isArray(img)) {
+                                                this.temp[doc][this.product_img] = img[0];
                                             }
                                         }
+                                    }
 
-                                        if (this.temp.length > 0) {
-                                            if (this.firstSearch) {
-                                                this.itemTypeResponse_first = copy(this.temp);
-                                                this.hasFavourite_first = true;
-                                            } else {
-                                                this.itemTypeResponse = copy(this.temp);
-                                                this.hasFavourite = true;
-                                            }
-                                            this.init();
+                                    if (this.temp.length > 0) {
+                                        if (this.firstSearch) {
+                                            this.itemTypeResponse_first = copy(this.temp);
+                                            this.hasFavourite_first = true;
                                         } else {
-                                            if (this.firstSearch) {
-                                                this.hasFavourite_first = false
-                                            } else {
-                                                this.hasFavourite = false;
-                                            }
+                                            this.itemTypeResponse = copy(this.temp);
+                                            this.hasFavourite = true;
                                         }
-
-                                        break;
+                                        this.init();
+                                    } else {
+                                        if (this.firstSearch) {
+                                            this.hasFavourite_first = false
+                                        } else {
+                                            this.hasFavourite = false;
+                                        }
                                     }
+
+                                    break;
                                 }
+                            }
 
-                                this.fetchImages(res.result);
-                                this.searchFavouriteCallStatus.callback("Search done.", true);
-
-                            }).catch(error => {
-                                this.searchFavouriteCallStatus.error("Error while running search.", error);
-                            })
+                            this.fetchImages(res.result);
+                            this.searchFavouriteCallStatus.callback("Search done.", true);
                         }
 
                     })
