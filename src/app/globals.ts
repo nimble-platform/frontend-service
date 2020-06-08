@@ -95,6 +95,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 	* logisticsCategory: The ID of the logistics categoryFilter
 	* ontologyPrefix: The prefix of the ontology used to identify it
 - collaborationEnabled: Boolean flag if the collaboration feature is enabled in the dashboard (textile use case)
+- collapsiblePropertyFacets: Boolean flag if the property facets are collapsible or not
 - dataChannelsEnabled: Boolean flag if data channels shall be supported
 - defaultBusinessProcessIds: Array of default business processes that shall be enabled for a company upon registration. Applicable values are "Item_Information_Request", "Ppap", "Negotiation", "Order", "Transport_Execution_Plan" and "Fulfilment". An empty array enables all processes
 - defaultSearchIndex: If "Name" the product search query prioritizes the product name, if "Category" it prioritizes the category name
@@ -167,6 +168,7 @@ export const config = {
         }
     },
     "collaborationEnabled": false,
+    "collapsiblePropertyFacets": false,
     "dataChannelsEnabled": true,
     "defaultBusinessProcessIds": [
     ],

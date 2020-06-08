@@ -79,6 +79,7 @@ export const config = {
         }
     },
     "collaborationEnabled": false,
+    "collapsiblePropertyFacets": false,
     "dataChannelsEnabled": true,
     "defaultBusinessProcessIds": [
     ],

@@ -78,6 +78,7 @@ export class SimpleSearchFormComponent implements OnInit {
     item_manufacturer_id = myGlobals.item_manufacturer_id;
     searchIndex = myGlobals.config.defaultSearchIndex;
     productServiceFiltersEnabled = myGlobals.config.productServiceFiltersEnabled;
+    collapsiblePropertyFacets = myGlobals.config.collapsiblePropertyFacets;
     searchIndexes = ["Name", "Category"];
     searchTopic = null;
 
@@ -939,6 +940,12 @@ export class SimpleSearchFormComponent implements OnInit {
 
     }
 
+    onFacetClicked(facet:any){
+        if(this.collapsiblePropertyFacets){
+            facet.showContent=!facet.showContent;
+        }
+    }
+
     handleFacets(facetMetadata, facets, p, allProperties) {
         this.ublProperties = [];
         let quantityPropertiesLocalNameMap = new Map();
@@ -1023,6 +1030,7 @@ export class SimpleSearchFormComponent implements OnInit {
                                 "units": [unit], // available units for this quantity properties
                                 "selectedUnit": unit, // selected unit in the facet
                                 "total": 0,
+                                "showContent":!this.collapsiblePropertyFacets,
                                 "selected": false,
                                 "expanded": false,
                                 "localName": localName
@@ -1064,6 +1072,7 @@ export class SimpleSearchFormComponent implements OnInit {
                     "realName": facetMetadataExists ? selectNameFromLabelObject(facetMetadata[facet].label) : propertyLabel,
                     "options": [],
                     "total": 0,
+                    "showContent":!this.collapsiblePropertyFacets,
                     "selected": false,
                     "expanded": false,
                     "dataType": facetMetadata[facet] ? facetMetadata[facet].dataType: null,
