@@ -1066,6 +1066,7 @@ export class SimpleSearchFormComponent implements OnInit {
                     "total": 0,
                     "selected": false,
                     "expanded": false,
+                    "dataType": facetMetadata[facet] ? facetMetadata[facet].dataType: null,
                     "localName": null // used for identification of quantity properties
                 });
 
