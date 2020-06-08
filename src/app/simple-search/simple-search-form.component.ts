@@ -68,6 +68,7 @@ export class SimpleSearchFormComponent implements OnInit {
     product_filter_mappings = myGlobals.product_filter_mappings;
     product_nonfilter_full = myGlobals.product_nonfilter_full;
     product_nonfilter_regex = myGlobals.product_nonfilter_regex;
+    product_nonfilter_data_type = myGlobals.product_nonfilter_data_type
     product_cat = myGlobals.product_cat;
     product_cat_mix = myGlobals.product_cat_mix;
     party_facet_field_list = myGlobals.party_facet_field_list;
@@ -76,6 +77,7 @@ export class SimpleSearchFormComponent implements OnInit {
     roundToTwoDecimals = roundToTwoDecimals;
     item_manufacturer_id = myGlobals.item_manufacturer_id;
     searchIndex = myGlobals.config.defaultSearchIndex;
+    productServiceFiltersEnabled = myGlobals.config.productServiceFiltersEnabled;
     searchIndexes = ["Name", "Category"];
     searchTopic = null;
 
@@ -1367,8 +1369,18 @@ export class SimpleSearchFormComponent implements OnInit {
 
     checkProdCat(categoryName: string) {
         var found = false;
-        if (this.product_filter_prod.indexOf(categoryName) != -1) {
-            found = true;
+        if(this.productServiceFiltersEnabled){
+            if (this.product_filter_prod.indexOf(categoryName) != -1) {
+                found = true;
+            }
+        }
+        else{
+            for (let nonFilter of this.product_nonfilter_regex) {
+                if (categoryName.search(nonFilter) != -1) {
+                    return false;
+                }
+            }
+            return this.product_filter_prod.indexOf(categoryName) == -1 && !this.checkCompCat(name) && !this.checkTrustCat(name);
         }
         return found;
     }
@@ -1435,6 +1447,9 @@ export class SimpleSearchFormComponent implements OnInit {
     }
 
     checkOtherCatCount() {
+        if(!this.productServiceFiltersEnabled){
+            return 0;
+        }
         var count = 0;
         if (this.facetObj) {
             for (var i = 0; i < this.facetObj.length; i++) {

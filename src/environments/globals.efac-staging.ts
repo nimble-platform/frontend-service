@@ -137,6 +137,7 @@ export const config = {
     "logoRequired": true,
     "permanentWelcomeTab": false,
     "phoneNumberRequired": true,
+    "productServiceFiltersEnabled":true,
     "vatEnabled": false,
     "projectsEnabled": true,
     "requiredAgreements": [

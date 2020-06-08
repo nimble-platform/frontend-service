@@ -102,6 +102,7 @@ export const config = {
     "logoRequired": false,
     "permanentWelcomeTab": false,
     "phoneNumberRequired": false,
+    "productServiceFiltersEnabled":true,
     "vatEnabled": true,
     "projectsEnabled": true,
     "requiredAgreements": [

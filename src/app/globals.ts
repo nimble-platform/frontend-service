@@ -115,6 +115,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - logoRequired: Boolean flag if the submission of a company logo is required upon registration
 - permanentWelcomeTab: Boolean flag if the welcome page is permanent
 - phoneNumberRequired: Boolean flag if the phone number of a user is required upon registration
+- productServiceFiltersEnabled: Boolean flag if there is a separate filter for the product/service properties
 - vatEnabled: Boolean flag if VAT rates shall be included in price calculations
 - projectsEnabled: Boolean flag if project management is available on the dashboard
 - requiredAgreements: Array of JSON objects defining the terms a user has to agree to upon registration. Each entry uses the following structure:
@@ -229,6 +230,7 @@ export const config = {
     "logoRequired": false,
     "permanentWelcomeTab": false,
     "phoneNumberRequired": false,
+    "productServiceFiltersEnabled":true,
     "vatEnabled": true,
     "projectsEnabled": true,
     "requiredAgreements": [

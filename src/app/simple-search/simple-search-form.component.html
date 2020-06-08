@@ -254,7 +254,8 @@
                             </div>
 
                             <div *ngIf="showProductSection">
-                                <div class="card mb-3">
+                                <!-- Do not show price if it is excluded in the configs -->
+                                <div *ngIf="product_nonfilter_data_type.indexOf('price') == -1" class="card mb-3">
                                     <div class="card-header">
                                         {{ getName(product_price) }}
                                     </div>
