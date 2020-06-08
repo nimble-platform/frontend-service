@@ -642,8 +642,9 @@ export class SimpleSearchFormComponent implements OnInit {
         this.searchTopic = sTop;
         this.searchCallStatus.submit();
         this.simpleSearchService.getFields()
-            .then(res => {
-                let fieldLabels: string[] = this.getFieldNames(res);
+            .then(fields => {
+                let fieldLabels: string[] = this.getFieldNames(fields);
+                let idxFields:string[] = this.getIdxFields(fields);
                 this.simpleSearchService.get(q, Object.keys(fieldLabels), fq, p, rows, sort, cat, catID, this.searchIndex)
                     .then(res => {
                         if (res.result.length == 0) {
@@ -658,7 +659,7 @@ export class SimpleSearchFormComponent implements OnInit {
                             this.displayShoppingCartMessages();
                         }
                         else {
-                            this.simpleSearchService.getUblProperties(Object.keys(fieldLabels)).then(response => {
+                            this.simpleSearchService.getUblAndQuantityProperties(idxFields).then(response => {
                                 this.facetObj = [];
                                 this.temp = [];
                                 this.manufacturerIdCountMap = new Map();
@@ -667,7 +668,7 @@ export class SimpleSearchFormComponent implements OnInit {
                                     if (facet == this.product_cat_mix) {
                                         this.categoryCounts = res.facets[this.product_cat_mix].entry;
                                         this.buildCatTree();
-                                        this.handleFacets(fieldLabels, res, p, response.result);
+                                        this.handleFacets(fieldLabels, res.facets, p, response.result);
                                         break;
                                     }
                                 }
@@ -757,10 +758,10 @@ export class SimpleSearchFormComponent implements OnInit {
                             this.end = this.start + res.result.length - 1;
                         }
                         else {
-                            this.simpleSearchService.getUblProperties(Object.keys(fieldLabels)).then(response => {
+                            this.simpleSearchService.getUblAndQuantityProperties(Object.keys(fieldLabels)).then(response => {
                                 this.facetObj = [];
                                 this.temp = [];
-                                this.handleFacets(fieldLabels, res, p, response.result);
+                                this.handleFacets(fieldLabels, res.facets, p, response.result);
                                 this.callback = true;
                                 this.searchCallStatus.callback("Company search done.", true);
 
@@ -936,12 +937,25 @@ export class SimpleSearchFormComponent implements OnInit {
 
     }
 
-    handleFacets(facetMetadata, res, p, ublProperties) {
-        this.ublProperties = ublProperties;
+    handleFacets(facetMetadata, facets, p, allProperties) {
+        this.ublProperties = [];
+        let quantityPropertiesLocalNameMap = new Map();
+        // populate ublProperties and quantityPropertiesLocalNameMap
+        for(let property of allProperties){
+            // ubl properties
+            if(property.nameSpace == "http://www.nimble-project.org/resource/ubl#"){
+                this.ublProperties.push(property);
+            }
+            // quantity properties
+            else{
+                property.itemFieldNames.forEach(itemField => quantityPropertiesLocalNameMap.set(itemField,property.localName));
+            }
+        }
+
         this.facetObj = [];
         this.temp = [];
         var index = 0;
-        for (let facet in res.facets) {
+        for (let facet in facets) {
             if (this.simpleSearchService.checkField(facet)) {
                 let facetMetadataExists: boolean = facetMetadata[facet] != null && facetMetadata[facet].label != null;
                 let propertyLabel = this.getName(facet);
@@ -953,6 +967,95 @@ export class SimpleSearchFormComponent implements OnInit {
                 else if (genName.indexOf("_") == 0)
                     genName = genName.replace("_", "");
 
+                // we need to check decimal values separately since they might be the value of a quantity property
+                if(facet.endsWith("_dvalues")){
+                    let fieldName = facet.substring(0,facet.length-8);
+                    // if we have this field in quantityPropertiesLocalNameMap, then it's a quantity
+                    // otherwise, it's a simple number property
+                    if(quantityPropertiesLocalNameMap.has(fieldName)){
+                        // quantity property
+                        let localName = quantityPropertiesLocalNameMap.get(fieldName);
+                        // get corresponding facet
+                        let facetObj = this.facetObj.filter(facet => facet.localName == localName);
+                        // quantity unit
+                        let unit = fieldName.substring(fieldName.lastIndexOf(localName) + localName.length).toLocaleLowerCase();
+                        // we have already created a facet for this property
+                        if(facetObj.length > 0){
+                            // get facet
+                            facetObj = facetObj[0];
+                            // add unit to the facetObj
+                            facetObj.units.push(unit);
+                            for (let facet_inner of facets[facet].entry) {
+                                let facet_innerLabel = facet_inner.label;
+                                let facet_innerCount = facet_inner.count;
+
+                                // remove '.0' parts of numerical facets
+                                if(facetMetadata[facet] != null && facetMetadata[facet].dataType == 'double' && facet_innerLabel.endsWith(".0")){
+                                    facet_innerLabel = facet_innerLabel.substring(0,facet_innerLabel.length-2)
+                                }
+
+                                if (facet_innerLabel != "" && facet_innerLabel != ":" && facet_innerLabel != ' ' && facet_innerLabel.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
+                                    facetObj.options.push({
+                                        "name": facet_inner.label, // the label with the language id, if there is any
+                                        "realName": facet_innerLabel + " " + unit, // the displayed label
+                                        "count": facet_innerCount,
+                                        "unit": unit // unit
+                                    });
+                                    facetObj.total += facet_innerCount;
+                                    if (this.checkFacet(facetObj.name, facet_inner.label))
+                                        facetObj.selected = true;
+                                }
+                            }
+
+                            this.sortFacetObj(facetObj);
+
+
+                        }
+                        // create a facet for this quantity property
+                        else{
+                            this.facetObj.push({
+                                "name": facet,
+                                "genName": genName,
+                                "realName": facetMetadataExists ? selectNameFromLabelObject(facetMetadata[facet].label) : propertyLabel,
+                                "options": [],
+                                "units": [unit], // available units for this quantity properties
+                                "selectedUnit": unit, // selected unit in the facet
+                                "total": 0,
+                                "selected": false,
+                                "expanded": false,
+                                "localName": localName
+                            });
+
+                            for (let facet_inner of facets[facet].entry) {
+                                let facet_innerLabel = facet_inner.label;
+                                let facet_innerCount = facet_inner.count;
+
+                                // remove '.0' parts of numerical facets
+                                if(facetMetadata[facet] != null && facetMetadata[facet].dataType == 'double' && facet_innerLabel.endsWith(".0")){
+                                    facet_innerLabel = facet_innerLabel.substring(0,facet_innerLabel.length-2)
+                                }
+
+                                if (facet_innerLabel != "" && facet_innerLabel != ":" && facet_innerLabel != ' ' && facet_innerLabel.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
+                                    this.facetObj[index].options.push({
+                                        "name": facet_inner.label, // the label with the language id, if there is any
+                                        "realName": facet_innerLabel + " " + unit, // the displayed label
+                                        "count": facet_innerCount,
+                                        "unit": unit
+                                    });
+                                    this.facetObj[index].total += facet_innerCount;
+                                    if (this.checkFacet(this.facetObj[index].name, facet_inner.label))
+                                        this.facetObj[index].selected = true;
+                                }
+                            }
+
+
+                            this.sortFacetObj(this.facetObj[index]);
+                            index++;
+                        }
+                        continue;
+                    }
+                }
+
                 this.facetObj.push({
                     "name": facet,
                     "genName": genName,
@@ -960,34 +1063,35 @@ export class SimpleSearchFormComponent implements OnInit {
                     "options": [],
                     "total": 0,
                     "selected": false,
-                    "expanded": false
+                    "expanded": false,
+                    "localName": null // used for identification of quantity properties
                 });
 
                 let label;
                 let facet_innerLabel;
                 let facet_innerCount;
                 let tmp_lang = DEFAULT_LANGUAGE();
-                let atLeastOneMultilingualLabel: number = res.facets[facet].entry.findIndex(facetInner => {
+                let atLeastOneMultilingualLabel: number = facets[facet].entry.findIndex(facetInner => {
                     var idx = facetInner.label.lastIndexOf("@" + DEFAULT_LANGUAGE());
                     return (idx != -1 && idx + 3 == facetInner.label.length);
                 });
                 if (atLeastOneMultilingualLabel == -1) {
-                    atLeastOneMultilingualLabel = res.facets[facet].entry.findIndex(facetInner => {
+                    atLeastOneMultilingualLabel = facets[facet].entry.findIndex(facetInner => {
                         var idx = facetInner.label.lastIndexOf("@en");
                         return (idx != -1 && idx + 3 == facetInner.label.length);
                     });
                 }
                 if (atLeastOneMultilingualLabel == -1) {
-                    atLeastOneMultilingualLabel = res.facets[facet].entry.findIndex(facetInner => {
+                    atLeastOneMultilingualLabel = facets[facet].entry.findIndex(facetInner => {
                         var idx = facetInner.label.lastIndexOf("@");
                         return (idx != -1 && idx + 3 == facetInner.label.length);
                     });
                 }
                 if (atLeastOneMultilingualLabel != -1) {
-                    var idx = res.facets[facet].entry[atLeastOneMultilingualLabel].label.lastIndexOf("@");
-                    tmp_lang = res.facets[facet].entry[atLeastOneMultilingualLabel].label.substring(idx + 1);
+                    var idx = facets[facet].entry[atLeastOneMultilingualLabel].label.lastIndexOf("@");
+                    tmp_lang = facets[facet].entry[atLeastOneMultilingualLabel].label.substring(idx + 1);
                 }
-                for (let facet_inner of res.facets[facet].entry) {
+                for (let facet_inner of facets[facet].entry) {
                     facet_innerLabel = facet_inner.label;
                     facet_innerCount = facet_inner.count;
                     //if(facetMetadataExists && facetMetadata[facet].dataType == 'string') {
@@ -1018,34 +1122,38 @@ export class SimpleSearchFormComponent implements OnInit {
                             this.facetObj[index].selected = true;
                     }
                 }
-
-                this.facetObj[index].options.sort(function(a, b) {
-                    var a_c = a.name;
-                    var b_c = b.name;
-                    return a_c.localeCompare(b_c);
-                });
-                this.facetObj[index].options.sort(function(a, b) {
-                    return b.count - a.count;
-                });
+                this.sortFacetObj(this.facetObj[index]);
                 index++;
-                this.facetObj.sort(function(a, b) {
-                    var a_c = a.name;
-                    var b_c = b.name;
-                    return a_c.localeCompare(b_c);
-                });
-                this.facetObj.sort(function(a, b) {
-                    return b.total - a.total;
-                });
-                this.facetObj.sort(function(a, b) {
-                    var ret = 0;
-                    if (a.selected && !b.selected)
-                        ret = -1;
-                    else if (!a.selected && b.selected)
-                        ret = 1;
-                    return ret;
-                });
             }
         }
+    }
+
+    private sortFacetObj(facetObj:any){
+        facetObj.options.sort(function(a, b) {
+            var a_c = a.name;
+            var b_c = b.name;
+            return a_c.localeCompare(b_c);
+        });
+        facetObj.options.sort(function(a, b) {
+            return b.count - a.count;
+        });
+
+        this.facetObj.sort(function(a, b) {
+            var a_c = a.name;
+            var b_c = b.name;
+            return a_c.localeCompare(b_c);
+        });
+        this.facetObj.sort(function(a, b) {
+            return b.total - a.total;
+        });
+        this.facetObj.sort(function(a, b) {
+            var ret = 0;
+            if (a.selected && !b.selected)
+                ret = -1;
+            else if (!a.selected && b.selected)
+                ret = 1;
+            return ret;
+        });
     }
 
     private changeTaxonomyId(taxonomyId) {
@@ -1063,6 +1171,17 @@ export class SimpleSearchFormComponent implements OnInit {
             fieldLabes[field.fieldName].dataType = field.dataType;
         }
         return fieldLabes;
+    }
+
+    // we need idx fields only for the double properties
+    getIdxFields(fields: any[]):string[]{
+        let idxFields = [];
+        for (let field of fields) {
+            if(field.dynamicBase =="*_dvalues"){
+                idxFields.push(field.dynamicPart);
+            }
+        }
+        return idxFields;
     }
 
     onSubmit(selectedItemEvent=null) {

@@ -49,19 +49,17 @@ export class SimpleSearchService {
         private cookieService: CookieService) {
     }
 
-    getUblProperties(facets) {
+    // this service retrieves the ubl properties and quantity properties for the given idx fields
+    getUblAndQuantityProperties(idxFields:string[]) {
         let url = this.url + `/property/search`;
+        let fq = idxFields.map(idxField => "idxField:\""+idxField+"\"").join(" OR ");
+        fq = "nameSpace:\"http://www.nimble-project.org/resource/ubl#\"" +" OR (valueQualifier: \"QUANTITY\" AND ("+fq+"))";
         let searchObject: any = {};
         searchObject.rows = 2147483647;
         searchObject.start = 0;
         searchObject.q = "*:*";
         searchObject.fq = [];
-        searchObject.fq.push("nameSpace:\"http://www.nimble-project.org/resource/ubl#\"")
-
-        for (let facet of facets) {
-            //url += "&localName="+encodeURIComponent(facet);
-            // searchObject.fq.push("localName:" + facet)
-        }
+        searchObject.fq.push(fq);
         return this.http
             .post(url, searchObject, { headers: new Headers({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.cookieService.get("bearer_token") }) })
             .toPromise()

@@ -426,15 +426,28 @@
                             <div *ngIf="showOtherSection">
                                 <div *ngFor="let facet of facetObj">
                                     <div *ngIf="facet.total > 0 && checkOtherCat(facet.name)" class="card mb-3">
-                                        <div class="card-header">
+                                        <!-- Display the units for quantity properties -->
+                                        <div *ngIf="facet.units && facet.units.length > 1" class="card-header">
+                                            <div  class="row">
+                                                <div class="col-8 my-auto">
+                                                   {{ facet.realName }}
+                                                </div>
+                                                <div class="col-4">
+                                                    <select class="form-control custom-select" [(ngModel)]="facet.selectedUnit" [ngModelOptions]="{standalone: true}">
+                                                        <option *ngFor="let unit of facet.units">{{unit}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="!facet.units || facet.units.length == 1" class="card-header">
                                             {{ facet.realName }}
                                         </div>
                                         <div class="card-body">
                                             <div *ngFor="let facetInner of facet.options; let i = index">
-                                                <div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
+                                                <div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded) && (!facetInner.unit || (facetInner.unit && facetInner.unit == facet.selectedUnit))">
                                                     <span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> ({{ facetInner.count }})
                                                 </div>
-                                                <div *ngIf="checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
+                                                <div *ngIf="checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded) && (!facetInner.unit || (facetInner.unit && facetInner.unit == facet.selectedUnit))">
                                                     <span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> ({{ facetInner.count }})
                                                 </div>
                                             </div>
