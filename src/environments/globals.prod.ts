@@ -62,6 +62,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 export const config = {
     "federationInstanceId": "MVP",
     "platformName": "MVP",
+    "platformNameInMail":"NIMBLE",
     "envName": "prod",
     "addCartBehaviour": "single",
     "companyRegistrationRequired": true,

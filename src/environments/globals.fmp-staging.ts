@@ -62,6 +62,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 export const config = {
     "federationInstanceId": "STAGING",
     "platformName": "FMP Staging",
+    "platformNameInMail":"NIMBLE",
     "envName": "fmp-staging",
     "addCartBehaviour": "single",
     "companyRegistrationRequired": true,

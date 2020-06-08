@@ -62,6 +62,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 export const config = {
     "federationInstanceId": "K8S",
     "platformName": "K8S",
+    "platformNameInMail":"NIMBLE",
     "envName": "k8s",
     "addCartBehaviour": "single",
     "companyRegistrationRequired": false,

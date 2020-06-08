@@ -62,6 +62,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 export const config = {
     "federationInstanceId": "DEVELOPMENT",
     "platformName": "Development",
+    "platformNameInMail":"NIMBLE",
     "envName": "dev",
     "addCartBehaviour": "single",
     "companyRegistrationRequired": false,

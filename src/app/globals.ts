@@ -87,6 +87,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 /*
 - federationInstanceId: ID of this instance - should match the backend configuration
 - platformName: Readable name of this instance - to be displayed on the navbar
+- platformNameInMail: Name of the instance - to be used in the mail subject/body
 - envName: Short name of the current environment
 - addCartBehaviour: If "single" a product can be added to the shopping cart once, if "multiple" it can be added multiple times
 - companyRegistrationRequired: Boolean flag if users need to register (or be assigned to) a company before using any platform feature
@@ -152,6 +153,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 export const config = {
     "federationInstanceId": "STAGING",
     "platformName": "Local Development",
+    "platformNameInMail":"NIMBLE",
     "envName": "local",
     "addCartBehaviour": "single",
     "companyRegistrationRequired": false,

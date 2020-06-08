@@ -62,6 +62,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 export const config = {
     "federationInstanceId": "STAGING",
     "platformName": "eFactory Staging",
+    "platformNameInMail":"NIMBLE",
     "envName": "efac-staging",
     "addCartBehaviour": "single",
     "companyRegistrationRequired": true,

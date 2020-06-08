@@ -63,6 +63,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 export const config = {
     "federationInstanceId": "ECO-HOUSE",
     "platformName": "Eco-House",
+    "platformNameInMail":"NIMBLE",
     "envName": "ecohouse",
     "addCartBehaviour": "single",
     "companyRegistrationRequired": false,
