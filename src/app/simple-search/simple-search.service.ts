@@ -41,6 +41,7 @@ export class SimpleSearchService {
     product_img = myGlobals.product_img;
     product_nonfilter_full = myGlobals.product_nonfilter_full;
     product_nonfilter_regex = myGlobals.product_nonfilter_regex;
+    product_nonfilter_data_type = myGlobals.product_nonfilter_data_type;
     product_configurable = myGlobals.product_configurable;
     product_cat = myGlobals.product_cat;
     product_cat_mix = myGlobals.product_cat_mix;
@@ -465,7 +466,7 @@ export class SimpleSearchService {
         return value.replace(regexp, "\\$1");
     }
 
-    checkField(field: string): boolean {
+    checkField(field: string,facetMetadata:any=null): boolean {
         if (field == this.product_name || field == this.product_img || field == this.product_vendor_id || field == this.product_cat || field == this.product_cat_mix) {
             return false;
         }
@@ -479,6 +480,9 @@ export class SimpleSearchService {
         }
         for (let filter of this.product_configurable) {
             if (field.search(filter) != -1)
+                return false;
+        }
+        if(facetMetadata != null && this.product_nonfilter_data_type.length > 0 && this.product_nonfilter_data_type.indexOf(facetMetadata.dataType) != -1){
                 return false;
         }
         return true;
