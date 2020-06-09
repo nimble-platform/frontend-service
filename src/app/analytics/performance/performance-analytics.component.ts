@@ -131,7 +131,7 @@ export class PerformanceAnalyticsComponent implements OnInit {
     xAxisLabel = 'Month';
     showGridLines = true;
     showYAxisLabel = true;
-    yAxisLabel = 'Average Response Time(s) in days';
+    yAxisLabel = this.translate.instant('Average Response Time(s) in days');
     showChart = false;
     colorScheme = {
         domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']

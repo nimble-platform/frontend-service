@@ -87,6 +87,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 /*
 - federationInstanceId: ID of this instance - should match the backend configuration
 - platformName: Readable name of this instance - to be displayed on the navbar
+- platformNameInMail: Name of the instance - to be used in the mail subject/body
 - envName: Short name of the current environment
 - addCartBehaviour: If "single" a product can be added to the shopping cart once, if "multiple" it can be added multiple times
 - companyRegistrationRequired: Boolean flag if users need to register (or be assigned to) a company before using any platform feature
@@ -95,6 +96,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 	* logisticsCategory: The ID of the logistics categoryFilter
 	* ontologyPrefix: The prefix of the ontology used to identify it
 - collaborationEnabled: Boolean flag if the collaboration feature is enabled in the dashboard (textile use case)
+- collapsiblePropertyFacets: Boolean flag if the property facets are collapsible or not
 - dataChannelsEnabled: Boolean flag if data channels shall be supported
 - defaultBusinessProcessIds: Array of default business processes that shall be enabled for a company upon registration. Applicable values are "Item_Information_Request", "Ppap", "Negotiation", "Order", "Transport_Execution_Plan" and "Fulfilment". An empty array enables all processes
 - defaultSearchIndex: If "Name" the product search query prioritizes the product name, if "Category" it prioritizes the category name
@@ -113,7 +115,9 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - logoPath: Link to the logo disabled in the navbar
 - federationLogoPath: Link to the logo of the federated login
 - logoRequired: Boolean flag if the submission of a company logo is required upon registration
+- permanentWelcomeTab: Boolean flag if the welcome page is permanent
 - phoneNumberRequired: Boolean flag if the phone number of a user is required upon registration
+- productServiceFiltersEnabled: Boolean flag if there is a separate filter for the product/service properties
 - vatEnabled: Boolean flag if VAT rates shall be included in price calculations
 - projectsEnabled: Boolean flag if project management is available on the dashboard
 - requiredAgreements: Array of JSON objects defining the terms a user has to agree to upon registration. Each entry uses the following structure:
@@ -139,6 +143,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - supportMailContent: Allows defining the default body of a support mail. Keys are the ISO language codes and values are the strings displayed in the mail body (use \n for linebreaks)
 - showLoginFederation: Boolean flag if the federated login is available on the instance
 - unshippedOrdersTabEnabled: Boolean flag is the unshipped orders shall be shown on the dashboard
+- welcomeMessage: Message displayed in the welcome page
 - federationClientID: Keycloak client ID used for the federated login
 - federationIDP: Keycloak IDP used for the federated login
 - legislationSettings: Allows to toggle the legislation feature and define its relevant settings (furniture use case)
@@ -148,6 +153,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 export const config = {
     "federationInstanceId": "STAGING",
     "platformName": "Local Development",
+    "platformNameInMail":"NIMBLE",
     "envName": "local",
     "addCartBehaviour": "single",
     "companyRegistrationRequired": false,
@@ -164,6 +170,7 @@ export const config = {
         }
     },
     "collaborationEnabled": false,
+    "collapsiblePropertyFacets": false,
     "dataChannelsEnabled": true,
     "defaultBusinessProcessIds": [
     ],
@@ -211,7 +218,7 @@ export const config = {
                 "url": "#/dashboard/3296ca60-ec07-11e9-a14e-bde7739ac822?embed=true&_g=(refreshInterval:(pause:!t,value:0),time:(from:now-1y,mode:quick,to:now))&_a=(description:'',filters:!(),fullScreenMode:!f,options:(darkTheme:!f,hidePanelTitles:!f,useMargins:!t),panels:!((embeddableConfig:(),gridData:(h:11,i:'1',w:14,x:0,y:0),id:b0b3cdd0-e5d1-11e9-a14e-bde7739ac822,panelIndex:'1',type:visualization,version:'6.7.1'),(embeddableConfig:(),gridData:(h:11,i:'4',w:10,x:14,y:0),id:'699fc8d0-e5c8-11e9-a14e-bde7739ac822',panelIndex:'4',type:visualization,version:'6.7.1'),(embeddableConfig:(),gridData:(h:11,i:'5',w:10,x:24,y:0),id:'680d45d0-ec06-11e9-a14e-bde7739ac822',panelIndex:'5',type:visualization,version:'6.7.1'),(embeddableConfig:(),gridData:(h:11,i:'6',w:14,x:34,y:0),id:'0d278210-ec07-11e9-a14e-bde7739ac822',panelIndex:'6',type:visualization,version:'6.7.1')),query:(language:lucene,query:''),timeRestore:!f,title:'Platform+Visits+Dashboard',viewMode:view)"
             },
             {
-                "title": "Compay Visits",
+                "title": "Company Visits",
                 "url": "#/dashboard/a6b560c0-ec0f-11e9-a14e-bde7739ac822?embed=true&_g=(refreshInterval:(pause:!t,value:0),time:(from:now-1y,mode:quick,to:now))&_a=(description:'',filters:!(),fullScreenMode:!f,options:(darkTheme:!f,hidePanelTitles:!f,useMargins:!t),panels:!((embeddableConfig:(),gridData:(h:11,i:'1',w:24,x:0,y:0),id:ef9d04f0-e520-11e9-a14e-bde7739ac822,panelIndex:'1',type:visualization,version:'6.7.1'),(embeddableConfig:(),gridData:(h:11,i:'2',w:24,x:24,y:0),id:ff5d3930-e5bd-11e9-a14e-bde7739ac822,panelIndex:'2',type:visualization,version:'6.7.1')),query:(language:lucene,query:''),timeRestore:!f,title:'Platform+Company+Visits',viewMode:view)"
             }
         ]
@@ -225,7 +232,9 @@ export const config = {
     "logoPath": "./assets/logo_mvp.png",
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": false,
+    "permanentWelcomeTab": false,
     "phoneNumberRequired": false,
+    "productServiceFiltersEnabled":true,
     "vatEnabled": true,
     "projectsEnabled": true,
     "requiredAgreements": [
@@ -297,6 +306,7 @@ export const config = {
     },
     "showLoginFederation": true,
     "unshippedOrdersTabEnabled": true,
+    "welcomeMessage":"Looks like you are new here",
     "federationClientID": "efact-test-client",
     "federationIDP": "EFS",
     "legislationSettings": {
@@ -370,6 +380,8 @@ export const product_filter_mappings = {
 export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "catalogueId", "doctype", "manufacturerId", "manufacturerItemId", "allLabels"];
 // Facets removed from the UI by regex
 export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
+// Facets removed from the UI by data type
+export const product_nonfilter_data_type = []
 // Facets used for configuration
 export const product_configurable = [];
 // Facets used for default fields

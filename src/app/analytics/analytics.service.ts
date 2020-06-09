@@ -19,6 +19,7 @@ import { Headers, Http } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import { CookieService } from 'ng2-cookies';
+import {DEFAULT_LANGUAGE} from '../catalogue/model/constants';
 
 @Injectable()
 export class AnalyticsService {
@@ -92,10 +93,9 @@ export class AnalyticsService {
 
     getTrustPolicy(): Promise<any> {
         const url = `${this.url_trust}/policy/global`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .get(url, { headers: headers_token, withCredentials: true })
+            .get(url, { headers: headers, withCredentials: true })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -103,10 +103,9 @@ export class AnalyticsService {
 
     setTrustPolicy(policy: any): Promise<any> {
         const url = `${this.url_trust}/policy/global/update`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .post(url, JSON.stringify(policy), { headers: headers_token, withCredentials: true })
+            .post(url, JSON.stringify(policy), { headers: headers, withCredentials: true })
             .toPromise()
             .then(res => res)
             .catch(this.handleError);
@@ -114,10 +113,9 @@ export class AnalyticsService {
 
     initTrustPolicy(): Promise<any> {
         const url = `${this.url_trust}/policy/global/initialize`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .post(url, null, { headers: headers_token, withCredentials: true })
+            .post(url, null, { headers: headers, withCredentials: true })
             .toPromise()
             .then(res => res)
             .catch(this.handleError);
@@ -161,11 +159,10 @@ export class AnalyticsService {
 
     verifyCompany(companyId: string): Promise<any> {
         const url = `${this.url_identity}/admin/verify_company?companyId=${companyId}`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
 
         return this.http
-            .post(url, {}, { headers: headers_token, withCredentials: true })
+            .post(url, {}, { headers: headers, withCredentials: true })
             .toPromise()
             .then(res => res)
             .catch(this.handleError);
@@ -173,11 +170,10 @@ export class AnalyticsService {
 
     rejectCompany(companyId: string): Promise<any> {
         const url = `${this.url_identity}/admin/reject_company/${companyId}`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
 
         return this.http
-            .delete(url, { headers: headers_token, withCredentials: true })
+            .delete(url, { headers: headers, withCredentials: true })
             .toPromise()
             .then(res => res)
             .catch(this.handleError);
@@ -186,11 +182,10 @@ export class AnalyticsService {
     deleteCompany(companyId: string): Promise<any> {
         const userId = this.cookieService.get("user_id");
         const url = `${this.url_identity}/admin/delete_company/${companyId}?userId=${userId}`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
 
         return this.http
-            .delete(url, { headers: headers_token, withCredentials: true })
+            .delete(url, { headers: headers, withCredentials: true })
             .toPromise()
             .then(res => res)
             .catch(this.handleError);
@@ -198,8 +193,14 @@ export class AnalyticsService {
 
     private getAuthorizedHeaders(): Headers {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers = new Headers({ 'Accept': 'application/json', 'Authorization': token });
+        let headers = new Headers({ 'Accept': 'application/json', 'Authorization': token });
         this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
+        let defaultLanguage = DEFAULT_LANGUAGE();
+        let acceptLanguageHeader = defaultLanguage;
+        if(defaultLanguage != "en"){
+            acceptLanguageHeader += ",en;0.9";
+        }
+        headers.append("Accept-Language",acceptLanguageHeader);
         return headers;
     }
 

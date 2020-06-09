@@ -68,6 +68,7 @@ export class SimpleSearchFormComponent implements OnInit {
     product_filter_mappings = myGlobals.product_filter_mappings;
     product_nonfilter_full = myGlobals.product_nonfilter_full;
     product_nonfilter_regex = myGlobals.product_nonfilter_regex;
+    product_nonfilter_data_type = myGlobals.product_nonfilter_data_type
     product_cat = myGlobals.product_cat;
     product_cat_mix = myGlobals.product_cat_mix;
     party_facet_field_list = myGlobals.party_facet_field_list;
@@ -76,6 +77,8 @@ export class SimpleSearchFormComponent implements OnInit {
     roundToTwoDecimals = roundToTwoDecimals;
     item_manufacturer_id = myGlobals.item_manufacturer_id;
     searchIndex = myGlobals.config.defaultSearchIndex;
+    productServiceFiltersEnabled = myGlobals.config.productServiceFiltersEnabled;
+    collapsiblePropertyFacets = myGlobals.config.collapsiblePropertyFacets;
     searchIndexes = ["Name", "Category"];
     searchTopic = null;
 
@@ -137,6 +140,13 @@ export class SimpleSearchFormComponent implements OnInit {
     pageRef = ''; // page where the user is navigated from. empty string ('') means the search is opened directly
 
     productsSelectedForPublish: any[] = []; // keeps the products in the Solr format
+
+    // selected taxonomy in the category facet
+    taxonomy: string = null;
+    // available ontologies on the instance
+    taxonomyIDs:string[] = null;
+    // category counts which are needed to build category tree
+    categoryCounts: any[] = null;
 
     ngUnsubscribe: Subject<void> = new Subject<void>();
     private translations: any;
@@ -216,8 +226,28 @@ export class SimpleSearchFormComponent implements OnInit {
             }
             else
                 this.cat = "";
+
+            // if the standard taxonomy is 'All', then we use 'eClass' as the default taxonomy
+            // and populate 'taxonomyIDs' variable with the ones available in the instance
+            if(myGlobals.config.standardTaxonomy.localeCompare("All") ==  0){
+                this.taxonomy = "eClass";
+                this.taxonomyIDs = Object.keys(myGlobals.config.categoryFilter);
+            }
+            // otherwise, we use the selected taxonomy as the default one
+            else{
+                this.taxonomy = myGlobals.config.standardTaxonomy;
+            }
+
             if (catID) {
                 this.catID = catID;
+                // set the taxonomy according to the selected category
+                for (let taxonomy of Object.keys(myGlobals.config.categoryFilter)) {
+                    let ontologyPrefix = myGlobals.config.categoryFilter[taxonomy].ontologyPrefix;
+                    if(catID.startsWith(ontologyPrefix)){
+                        this.taxonomy = taxonomy;
+                        break;
+                    }
+                }
             }
             else
                 this.catID = "";
@@ -385,35 +415,31 @@ export class SimpleSearchFormComponent implements OnInit {
             )
         );
 
-    private async buildCatTree(categoryCounts: any[]) {
-        var taxonomy = "eClass";
-        if (this.config.standardTaxonomy.localeCompare("All") != 0 && this.config.standardTaxonomy.localeCompare("eClass") != 0) {
-            taxonomy = this.config.standardTaxonomy;
-        }
+    private async buildCatTree() {
 
         // taxonomy prefix corresponds to the base url of the taxonomy that exists before each relevant category
         // e.g. assuming category url: http://www.aidimme.es/FurnitureSectorOntology.owl#MDFBoard
         // taxonomy prefix would be: http://www.aidimme.es/FurnitureSectorOntology.owl#
         var taxonomyPrefix = "";
-        if (this.config.categoryFilter[taxonomy] && this.config.categoryFilter[taxonomy].ontologyPrefix)
-            taxonomyPrefix = this.config.categoryFilter[taxonomy].ontologyPrefix;
+        if (this.config.categoryFilter[this.taxonomy] && this.config.categoryFilter[this.taxonomy].ontologyPrefix)
+            taxonomyPrefix = this.config.categoryFilter[this.taxonomy].ontologyPrefix;
 
         // retrieve the labels for the category uris included in the categoryCounts field
         let categoryUris: string[] = [];
-        for (let categoryCount of categoryCounts) {
+        for (let categoryCount of this.categoryCounts) {
             categoryUris.push(categoryCount.label);
         }
         this.cat_loading = true;
         // here, all the information about the categories are fetched from the indexing service
         var indexCategories = await this.categoryService.getCategories(categoryUris);
         // extract only the required information in UI from the complete category information
-        let categoryDisplayInfo: any = this.getCategoryDisplayInfo(indexCategories, categoryCounts);
+        let categoryDisplayInfo: any = this.getCategoryDisplayInfo(indexCategories, this.categoryCounts);
         // set the level of the selected category, if any
         this.cat_level = this.getCatLevel(this.catID, indexCategories.result);
         this.cat_levels = [];
         if (taxonomyPrefix != "") {
             // ToDo: Remove manual distinction after search update
-            if (taxonomy == "eClass") {
+            if (this.taxonomy == "eClass") {
                 for (let categoryUri of Object.keys(categoryDisplayInfo)) {
                     let count = categoryDisplayInfo[categoryUri].count;
                     if (categoryUri.startsWith(taxonomyPrefix)) {
@@ -442,7 +468,7 @@ export class SimpleSearchFormComponent implements OnInit {
                 }
             } else {
                 // this.cat === '' indicates that there is no category selected for filtering the results
-                this.constructCategoryTree(indexCategories.result, categoryDisplayInfo, taxonomy, taxonomyPrefix);
+                this.constructCategoryTree(indexCategories.result, categoryDisplayInfo, this.taxonomy, taxonomyPrefix);
             }
 
             this.sortCatLevels();
@@ -480,8 +506,8 @@ export class SimpleSearchFormComponent implements OnInit {
                 }
 
                 let parentsAndChildren: string[] =
-                    ((selectedIndexCategory.allChildren != null || selectedIndexCategory.allChildren !== []) ? selectedIndexCategory.allChildren : [])
-                        .concat((selectedIndexCategory.allParents != null || selectedIndexCategory.allParents !== []) ? selectedIndexCategory.allParents : []);
+                    (selectedIndexCategory.allChildren != null ? selectedIndexCategory.allChildren : [])
+                        .concat(selectedIndexCategory.allParents != null ? selectedIndexCategory.allParents : []);
                 let catLevel = indexCategory.allParents != null ? indexCategory.allParents.length : 0;
                 if (indexCategory.uri !== selectedIndexCategory.uri && // include the taxonomy itself no matter what
                     // do not include the category if it is not include in the hierarchy of the selected category
@@ -619,8 +645,9 @@ export class SimpleSearchFormComponent implements OnInit {
         this.searchTopic = sTop;
         this.searchCallStatus.submit();
         this.simpleSearchService.getFields()
-            .then(res => {
-                let fieldLabels: string[] = this.getFieldNames(res);
+            .then(fields => {
+                let fieldLabels: string[] = this.getFieldNames(fields);
+                let idxFields:string[] = this.getIdxFields(fields);
                 this.simpleSearchService.get(q, Object.keys(fieldLabels), fq, p, rows, sort, cat, catID, this.searchIndex)
                     .then(res => {
                         if (res.result.length == 0) {
@@ -635,15 +662,16 @@ export class SimpleSearchFormComponent implements OnInit {
                             this.displayShoppingCartMessages();
                         }
                         else {
-                            this.simpleSearchService.getUblProperties(Object.keys(fieldLabels)).then(response => {
+                            this.simpleSearchService.getUblAndQuantityProperties(idxFields).then(response => {
                                 this.facetObj = [];
                                 this.temp = [];
                                 this.manufacturerIdCountMap = new Map();
 
                                 for (let facet in res.facets) {
                                     if (facet == this.product_cat_mix) {
-                                        this.buildCatTree(res.facets[this.product_cat_mix].entry);
-                                        this.handleFacets(fieldLabels, res, p, response.result);
+                                        this.categoryCounts = res.facets[this.product_cat_mix].entry;
+                                        this.buildCatTree();
+                                        this.handleFacets(fieldLabels, res.facets, p, response.result);
                                         break;
                                     }
                                 }
@@ -714,7 +742,7 @@ export class SimpleSearchFormComponent implements OnInit {
         this.rows = rows;
         this.sort = sort;
         if (this.model.q == "" && this.sort == "score desc")
-          sort = "{LANG}_brandName asc";
+          sort = "legalName asc";
         this.searchTopic = sTop;
         this.searchCallStatus.submit();
         this.simpleSearchService.getCompFields()
@@ -733,10 +761,10 @@ export class SimpleSearchFormComponent implements OnInit {
                             this.end = this.start + res.result.length - 1;
                         }
                         else {
-                            this.simpleSearchService.getUblProperties(Object.keys(fieldLabels)).then(response => {
+                            this.simpleSearchService.getUblAndQuantityProperties(Object.keys(fieldLabels)).then(response => {
                                 this.facetObj = [];
                                 this.temp = [];
-                                this.handleFacets(fieldLabels, res, p, response.result);
+                                this.handleFacets(fieldLabels, res.facets, p, response.result);
                                 this.callback = true;
                                 this.searchCallStatus.callback("Company search done.", true);
 
@@ -803,18 +831,50 @@ export class SimpleSearchFormComponent implements OnInit {
     handleCompanyFacets(res, prefix: string, manufacturerIdCountMap: any) {
         //this.facetObj = [];
         this.temp = [];
-        //map for name:id
-        //loop through the result sent to create name:Id mapping
-        let manufacturerNameIdMap = new Map();
+        // map for keeping the value counts for each company facet
+        // the facet name is the key of the map
+        // The value of the map is another map which store the counts for each facet value
+        let companyFacetMap = new Map();
+        // get available facets
+        let companyFacets = this.party_facet_field_list.map(value => value.replace("{LANG}_", (DEFAULT_LANGUAGE() + "_")).replace("{NULL}_", "_"));
+        // initialize the companyFacetMap
+        companyFacets.forEach(filter => companyFacetMap.set(filter,new Map()));
+        // for each result in the response, populate the companyFacetMap
         for (let i = 0; i < res.result.length; i++) {
             let manufacturerId = res.result[i].id;
-            let manufacturerName = res.result[i].legalName;
-            manufacturerNameIdMap.set(manufacturerName, manufacturerId);
+            // check the response for each facet
+            for (let facet of companyFacets) {
+                let values = res.result[i][facet];
+                // if the facet has an underscore, it means that its value is a Label object
+                // therefore, we need to call selectNameFromLabelObject method to retrieve its values properly
+                let underscoreIndex = facet.indexOf("_");
+                if(underscoreIndex != -1){
+                    let resultFieldForFacet = facet.substring(underscoreIndex+1);
+                    values = selectNameFromLabelObject(res.result[i][resultFieldForFacet])
+                }
+                // if the facet values are not an array, make it an array
+                if(!Array.isArray(values)){
+                    values = [values];
+                }
+
+                for (let fieldValue of values) {
+                    // we store the values as string to make comparision easier
+                    if(typeof fieldValue == 'number'){
+                        fieldValue = fieldValue.toString();
+                    }
+                    if(companyFacetMap.get(facet).has(fieldValue)){
+                        companyFacetMap.get(facet).set(fieldValue,companyFacetMap.get(facet).get(fieldValue) + manufacturerIdCountMap.get(manufacturerId))
+                    }
+                    else{
+                        companyFacetMap.get(facet).set(fieldValue,manufacturerIdCountMap.get(manufacturerId));
+                    }
+                }
+
+            }
         }
 
         for (let facet in res.facets) {
             if (this.simpleSearchService.checkField(facet)) {
-                let propertyLabel = this.getName(facet);
                 let facet_innerLabel;
                 let facet_innerCount;
                 let facetCount = 0;
@@ -839,10 +899,9 @@ export class SimpleSearchFormComponent implements OnInit {
                 for (let facet_inner of res.facets[facet].entry) {
                     facet_innerLabel = facet_inner.label;
                     facet_innerCount = facet_inner.count;
-                    if (facet == "legalName") {
-                        let id = manufacturerNameIdMap.get(facet_innerLabel);
-                        let itemCountForManufacturer = manufacturerIdCountMap.get(id);
-                        facetCount = itemCountForManufacturer;
+                    // get the count of values for the facet using companyFacetMap
+                    if(companyFacetMap.has(facet)){
+                        facetCount = companyFacetMap.get(facet).get(facet_innerLabel);
                     }
 
                     if (facet_innerLabel != "" && facet_innerLabel != ":" && facet_innerLabel != ' ' && facet_innerLabel.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
@@ -872,6 +931,7 @@ export class SimpleSearchFormComponent implements OnInit {
                     "genName": genName,
                     "realName": realName,
                     "options": options,
+                    "showContent":!this.collapsiblePropertyFacets,
                     "total": total,
                     "selected": selected,
                     "expanded": false
@@ -881,13 +941,32 @@ export class SimpleSearchFormComponent implements OnInit {
 
     }
 
-    handleFacets(facetMetadata, res, p, ublProperties) {
-        this.ublProperties = ublProperties;
+    onFacetClicked(facet:any){
+        if(this.collapsiblePropertyFacets){
+            facet.showContent=!facet.showContent;
+        }
+    }
+
+    handleFacets(facetMetadata, facets, p, allProperties) {
+        this.ublProperties = [];
+        let quantityPropertiesLocalNameMap = new Map();
+        // populate ublProperties and quantityPropertiesLocalNameMap
+        for(let property of allProperties){
+            // ubl properties
+            if(property.nameSpace == "http://www.nimble-project.org/resource/ubl#"){
+                this.ublProperties.push(property);
+            }
+            // quantity properties
+            else{
+                property.itemFieldNames.forEach(itemField => quantityPropertiesLocalNameMap.set(itemField,property.localName));
+            }
+        }
+
         this.facetObj = [];
         this.temp = [];
         var index = 0;
-        for (let facet in res.facets) {
-            if (this.simpleSearchService.checkField(facet)) {
+        for (let facet in facets) {
+            if (this.simpleSearchService.checkField(facet,facetMetadata[facet])) {
                 let facetMetadataExists: boolean = facetMetadata[facet] != null && facetMetadata[facet].label != null;
                 let propertyLabel = this.getName(facet);
                 let genName = facet;
@@ -898,41 +977,134 @@ export class SimpleSearchFormComponent implements OnInit {
                 else if (genName.indexOf("_") == 0)
                     genName = genName.replace("_", "");
 
+                // we need to check decimal values separately since they might be the value of a quantity property
+                if(facet.endsWith("_dvalues")){
+                    let fieldName = facet.substring(0,facet.length-8);
+                    // if we have this field in quantityPropertiesLocalNameMap, then it's a quantity
+                    // otherwise, it's a simple number property
+                    if(quantityPropertiesLocalNameMap.has(fieldName)){
+                        // quantity property
+                        let localName = quantityPropertiesLocalNameMap.get(fieldName);
+                        // get corresponding facet
+                        let facetObj = this.facetObj.filter(facet => facet.localName == localName);
+                        // quantity unit
+                        let unit = fieldName.substring(fieldName.lastIndexOf(localName) + localName.length).toLocaleLowerCase();
+                        // we have already created a facet for this property
+                        if(facetObj.length > 0){
+                            // get facet
+                            facetObj = facetObj[0];
+                            // add unit to the facetObj
+                            facetObj.units.push(unit);
+                            for (let facet_inner of facets[facet].entry) {
+                                let facet_innerLabel = facet_inner.label;
+                                let facet_innerCount = facet_inner.count;
+
+                                // remove '.0' parts of numerical facets
+                                if(facetMetadata[facet] != null && facetMetadata[facet].dataType == 'double' && facet_innerLabel.endsWith(".0")){
+                                    facet_innerLabel = facet_innerLabel.substring(0,facet_innerLabel.length-2)
+                                }
+
+                                if (facet_innerLabel != "" && facet_innerLabel != ":" && facet_innerLabel != ' ' && facet_innerLabel.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
+                                    facetObj.options.push({
+                                        "name": facet_inner.label, // the label with the language id, if there is any
+                                        "realName": facet_innerLabel + " " + unit, // the displayed label
+                                        "count": facet_innerCount,
+                                        "unit": unit // unit
+                                    });
+                                    facetObj.total += facet_innerCount;
+                                    if (this.checkFacet(facetObj.name, facet_inner.label))
+                                        facetObj.selected = true;
+                                }
+                            }
+
+                            this.sortFacetObj(facetObj);
+
+
+                        }
+                        // create a facet for this quantity property
+                        else{
+                            this.facetObj.push({
+                                "name": facet,
+                                "genName": genName,
+                                "realName": facetMetadataExists ? selectNameFromLabelObject(facetMetadata[facet].label) : propertyLabel,
+                                "options": [],
+                                "units": [unit], // available units for this quantity properties
+                                "selectedUnit": unit, // selected unit in the facet
+                                "total": 0,
+                                "showContent":!this.collapsiblePropertyFacets,
+                                "selected": false,
+                                "expanded": false,
+                                "localName": localName
+                            });
+
+                            for (let facet_inner of facets[facet].entry) {
+                                let facet_innerLabel = facet_inner.label;
+                                let facet_innerCount = facet_inner.count;
+
+                                // remove '.0' parts of numerical facets
+                                if(facetMetadata[facet] != null && facetMetadata[facet].dataType == 'double' && facet_innerLabel.endsWith(".0")){
+                                    facet_innerLabel = facet_innerLabel.substring(0,facet_innerLabel.length-2)
+                                }
+
+                                if (facet_innerLabel != "" && facet_innerLabel != ":" && facet_innerLabel != ' ' && facet_innerLabel.indexOf("urn:oasis:names:specification:ubl:schema:xsd") == -1) {
+                                    this.facetObj[index].options.push({
+                                        "name": facet_inner.label, // the label with the language id, if there is any
+                                        "realName": facet_innerLabel + " " + unit, // the displayed label
+                                        "count": facet_innerCount,
+                                        "unit": unit
+                                    });
+                                    this.facetObj[index].total += facet_innerCount;
+                                    if (this.checkFacet(this.facetObj[index].name, facet_inner.label))
+                                        this.facetObj[index].selected = true;
+                                }
+                            }
+
+
+                            this.sortFacetObj(this.facetObj[index]);
+                            index++;
+                        }
+                        continue;
+                    }
+                }
+
                 this.facetObj.push({
                     "name": facet,
                     "genName": genName,
                     "realName": facetMetadataExists ? selectNameFromLabelObject(facetMetadata[facet].label) : propertyLabel,
                     "options": [],
                     "total": 0,
+                    "showContent":!this.collapsiblePropertyFacets,
                     "selected": false,
-                    "expanded": false
+                    "expanded": false,
+                    "dataType": facetMetadata[facet] ? facetMetadata[facet].dataType: null,
+                    "localName": null // used for identification of quantity properties
                 });
 
                 let label;
                 let facet_innerLabel;
                 let facet_innerCount;
                 let tmp_lang = DEFAULT_LANGUAGE();
-                let atLeastOneMultilingualLabel: number = res.facets[facet].entry.findIndex(facetInner => {
+                let atLeastOneMultilingualLabel: number = facets[facet].entry.findIndex(facetInner => {
                     var idx = facetInner.label.lastIndexOf("@" + DEFAULT_LANGUAGE());
                     return (idx != -1 && idx + 3 == facetInner.label.length);
                 });
                 if (atLeastOneMultilingualLabel == -1) {
-                    atLeastOneMultilingualLabel = res.facets[facet].entry.findIndex(facetInner => {
+                    atLeastOneMultilingualLabel = facets[facet].entry.findIndex(facetInner => {
                         var idx = facetInner.label.lastIndexOf("@en");
                         return (idx != -1 && idx + 3 == facetInner.label.length);
                     });
                 }
                 if (atLeastOneMultilingualLabel == -1) {
-                    atLeastOneMultilingualLabel = res.facets[facet].entry.findIndex(facetInner => {
+                    atLeastOneMultilingualLabel = facets[facet].entry.findIndex(facetInner => {
                         var idx = facetInner.label.lastIndexOf("@");
                         return (idx != -1 && idx + 3 == facetInner.label.length);
                     });
                 }
                 if (atLeastOneMultilingualLabel != -1) {
-                    var idx = res.facets[facet].entry[atLeastOneMultilingualLabel].label.lastIndexOf("@");
-                    tmp_lang = res.facets[facet].entry[atLeastOneMultilingualLabel].label.substring(idx + 1);
+                    var idx = facets[facet].entry[atLeastOneMultilingualLabel].label.lastIndexOf("@");
+                    tmp_lang = facets[facet].entry[atLeastOneMultilingualLabel].label.substring(idx + 1);
                 }
-                for (let facet_inner of res.facets[facet].entry) {
+                for (let facet_inner of facets[facet].entry) {
                     facet_innerLabel = facet_inner.label;
                     facet_innerCount = facet_inner.count;
                     //if(facetMetadataExists && facetMetadata[facet].dataType == 'string') {
@@ -963,33 +1135,44 @@ export class SimpleSearchFormComponent implements OnInit {
                             this.facetObj[index].selected = true;
                     }
                 }
-
-                this.facetObj[index].options.sort(function(a, b) {
-                    var a_c = a.name;
-                    var b_c = b.name;
-                    return a_c.localeCompare(b_c);
-                });
-                this.facetObj[index].options.sort(function(a, b) {
-                    return b.count - a.count;
-                });
+                this.sortFacetObj(this.facetObj[index]);
                 index++;
-                this.facetObj.sort(function(a, b) {
-                    var a_c = a.name;
-                    var b_c = b.name;
-                    return a_c.localeCompare(b_c);
-                });
-                this.facetObj.sort(function(a, b) {
-                    return b.total - a.total;
-                });
-                this.facetObj.sort(function(a, b) {
-                    var ret = 0;
-                    if (a.selected && !b.selected)
-                        ret = -1;
-                    else if (!a.selected && b.selected)
-                        ret = 1;
-                    return ret;
-                });
             }
+        }
+    }
+
+    private sortFacetObj(facetObj:any){
+        facetObj.options.sort(function(a, b) {
+            var a_c = a.name;
+            var b_c = b.name;
+            return a_c.localeCompare(b_c);
+        });
+        facetObj.options.sort(function(a, b) {
+            return b.count - a.count;
+        });
+
+        this.facetObj.sort(function(a, b) {
+            var a_c = a.name;
+            var b_c = b.name;
+            return a_c.localeCompare(b_c);
+        });
+        this.facetObj.sort(function(a, b) {
+            return b.total - a.total;
+        });
+        this.facetObj.sort(function(a, b) {
+            var ret = 0;
+            if (a.selected && !b.selected)
+                ret = -1;
+            else if (!a.selected && b.selected)
+                ret = 1;
+            return ret;
+        });
+    }
+
+    private changeTaxonomyId(taxonomyId) {
+        if (this.taxonomy != taxonomyId) {
+            this.taxonomy = taxonomyId;
+            this.buildCatTree();
         }
     }
 
@@ -1003,7 +1186,22 @@ export class SimpleSearchFormComponent implements OnInit {
         return fieldLabes;
     }
 
-    onSubmit() {
+    // we need idx fields only for the double properties
+    getIdxFields(fields: any[]):string[]{
+        let idxFields = [];
+        for (let field of fields) {
+            if(field.dynamicBase =="*_dvalues"){
+                idxFields.push(field.dynamicPart);
+            }
+        }
+        return idxFields;
+    }
+
+    onSubmit(selectedItemEvent=null) {
+        // selectedItemEvent is the event emitted when a product/company is selected from the suggestion list
+        if(selectedItemEvent){
+            this.model.q = selectedItemEvent.item;
+        }
         if (this.model.q == "")
             this.model.q = "*";
         this.objToSubmit = copy(this.model);
@@ -1182,8 +1380,18 @@ export class SimpleSearchFormComponent implements OnInit {
 
     checkProdCat(categoryName: string) {
         var found = false;
-        if (this.product_filter_prod.indexOf(categoryName) != -1) {
-            found = true;
+        if(this.productServiceFiltersEnabled){
+            if (this.product_filter_prod.indexOf(categoryName) != -1) {
+                found = true;
+            }
+        }
+        else{
+            for (let nonFilter of this.product_nonfilter_regex) {
+                if (categoryName.search(nonFilter) != -1) {
+                    return false;
+                }
+            }
+            return this.product_filter_prod.indexOf(categoryName) == -1 && !this.checkCompCat(name) && !this.checkTrustCat(name);
         }
         return found;
     }
@@ -1250,6 +1458,9 @@ export class SimpleSearchFormComponent implements OnInit {
     }
 
     checkOtherCatCount() {
+        if(!this.productServiceFiltersEnabled){
+            return 0;
+        }
         var count = 0;
         if (this.facetObj) {
             for (var i = 0; i < this.facetObj.length; i++) {

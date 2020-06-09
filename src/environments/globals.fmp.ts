@@ -62,6 +62,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 export const config = {
     "federationInstanceId": "FMP",
     "platformName": "FMP",
+    "platformNameInMail":"NIMBLE",
     "envName": "fmp",
     "addCartBehaviour": "single",
     "companyRegistrationRequired": true,
@@ -78,6 +79,7 @@ export const config = {
         }
     },
     "collaborationEnabled": false,
+    "collapsiblePropertyFacets": true,
     "dataChannelsEnabled": false,
     "defaultBusinessProcessIds": [
         "Item_Information_Request",
@@ -113,7 +115,9 @@ export const config = {
     "logoPath": "./assets/logo_fmp.png",
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": true,
+    "permanentWelcomeTab": true,
     "phoneNumberRequired": true,
+    "productServiceFiltersEnabled":false,
     "vatEnabled": false,
     "projectsEnabled": true,
     "requiredAgreements": [
@@ -413,6 +417,7 @@ export const config = {
     },
     "showLoginFederation": false,
     "unshippedOrdersTabEnabled": false,
+    "welcomeMessage":"Looks like you are new here",
     "federationClientID": "sample-client",
     "federationIDP": "sampleIDP",
     "legislationSettings": {
@@ -456,7 +461,7 @@ export const product_currency = "currency";
 export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
 export const product_filter_prod = ["freeOfCharge", "certificateType", "applicableCountries", "customizable"];
-export const product_filter_comp = ["manufacturer.legalName", "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin", "manufacturer.certificateType"];
+export const product_filter_comp = [ "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin"];
 export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "{NULL}_certificateType"];
 export const party_filter_main = ["businessType", "activitySectors", "businessKeywords", "origin", "certificateType"];
 export const party_filter_trust = ["trustScore", "trustRating", "trustSellerCommunication", "trustFullfillmentOfTerms", "trustDeliveryPackaging", "trustNumberOfTransactions"];
@@ -476,7 +481,8 @@ export const product_filter_mappings = {
     "origin": "Vendor Origin"
 };
 export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "catalogueId", "doctype", "manufacturerId", "manufacturerItemId", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType", "allLabels"];
-export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
+export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass","baseQuantity","items_package","_deliveryTime"];
+export const product_nonfilter_data_type = ["string","price"]
 export const product_configurable = [];
 export const product_default = {};
 export const facet_min = 1;

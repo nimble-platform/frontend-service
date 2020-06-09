@@ -42,7 +42,7 @@
         <div *ngFor="let dashboard of dashboards">
             <div class="row">
                 <div class="col">
-                    <h6>{{dashboard.title}}</h6>
+                    <h6><span [innerHTML]="dashboard.title | translate"></span></h6>
                     <iframe [src]="dashboard.safeUrl" height="375" width="100%" frameborder="0" class="border"></iframe>
                 </div>
             </div>
@@ -102,7 +102,7 @@
                 <div class="card-body text-center">
                     <h4 *ngIf="bp_count>=0" class="card-title"><b>{{bp_count}}</b></h4>
                     <h4 *ngIf="bp_count<0" class="card-title"><b>???</b></h4>
-                    <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Total No of Collabarations' | translate"></span></h6>
+                    <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Total No of Collaborations' | translate"></span></h6>
                     <p class="card-text" style="font-size:32px"><i class="fa fa-briefcase"></i></p>
                 </div>
             </div>
@@ -114,9 +114,9 @@
                     <div class="progress-bar bg-danger" role="progressbar" [ngStyle]="{'width':red_perc_str}" [attr.aria-valuenow]="red_perc" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
                 <div *ngIf="bp_count>0" class="space-before text-center">
-                    <span class="badge badge-pill badge-success">{{green}} Approved ({{green_perc_str}})</span>
-                    <span class="badge badge-pill badge-warning">{{yellow}} Waiting ({{yellow_perc_str}})</span>
-                    <span class="badge badge-pill badge-danger">{{red}} Rejected ({{red_perc_str}})</span>
+                    <span class="badge badge-pill badge-success">{{green}} <span [innerHTML]="'Approved' | translate"></span> ({{green_perc_str}})</span>
+                    <span class="badge badge-pill badge-warning">{{yellow}} <span [innerHTML]="'Waiting' | translate"></span> ({{yellow_perc_str}})</span>
+                    <span class="badge badge-pill badge-danger">{{red}} <span [innerHTML]="'Rejected' | translate"></span> ({{red_perc_str}})</span>
                 </div>
             </div>
         </div>
@@ -140,9 +140,9 @@
                     <div class="progress-bar bg-danger" role="progressbar" [ngStyle]="{'width':trade_red_perc_str}" [attr.aria-valuenow]="trade_red_perc" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
                 <div *ngIf="trade_count>0" class="space-before text-center">
-                    <span class="badge badge-pill badge-success">{{trade_green}}€ Approved ({{trade_green_perc_str}})</span>
-                    <span class="badge badge-pill badge-warning">{{trade_yellow}}€ Waiting ({{trade_yellow_perc_str}})</span>
-                    <span class="badge badge-pill badge-danger">{{trade_red}}€ Rejected ({{trade_red_perc_str}})</span>
+                    <span class="badge badge-pill badge-success">{{trade_green}}€ <span [innerHTML]="'Approved' | translate"></span> ({{trade_green_perc_str}})</span>
+                    <span class="badge badge-pill badge-warning">{{trade_yellow}}€ <span [innerHTML]="'Waiting' | translate"></span> ({{trade_yellow_perc_str}})</span>
+                    <span class="badge badge-pill badge-danger">{{trade_red}}€ <span [innerHTML]="'Rejected' | translate"></span> ({{trade_red_perc_str}})</span>
                 </div>
             </div>
         </div>

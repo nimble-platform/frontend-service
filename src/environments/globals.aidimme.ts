@@ -62,6 +62,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 export const config = {
     "federationInstanceId": "AIDIMME-FMP",
     "platformName": "FMP",
+    "platformNameInMail":"NIMBLE",
     "envName": "aidimme",
     "addCartBehaviour": "single",
     "companyRegistrationRequired": true,
@@ -78,6 +79,7 @@ export const config = {
         }
     },
     "collaborationEnabled": false,
+    "collapsiblePropertyFacets": false,
     "dataChannelsEnabled": false,
     "defaultBusinessProcessIds": [
         "Item_Information_Request",
@@ -102,7 +104,9 @@ export const config = {
     "logoPath": "./assets/logo_fmp.png",
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": true,
+    "permanentWelcomeTab": false,
     "phoneNumberRequired": true,
+    "productServiceFiltersEnabled":true,
     "vatEnabled": false,
     "projectsEnabled": true,
     "requiredAgreements": [
@@ -402,6 +406,7 @@ export const config = {
     },
     "showLoginFederation": false,
     "unshippedOrdersTabEnabled": false,
+    "welcomeMessage":"Looks like you are new here",
     "federationClientID": "sample-client",
     "federationIDP": "sampleIDP",
     "legislationSettings": {
@@ -466,6 +471,7 @@ export const product_filter_mappings = {
 };
 export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "catalogueId", "doctype", "manufacturerId", "manufacturerItemId", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType", "allLabels"];
 export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
+export const product_nonfilter_data_type = []
 export const product_configurable = [];
 export const product_default = {};
 export const facet_min = 1;

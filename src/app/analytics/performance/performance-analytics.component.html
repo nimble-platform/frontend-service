@@ -20,7 +20,7 @@
         <ul class="nav nav-tabs">
             <li class="nav-item">
                 <a href id="Performance" class="nav-link" [ngClass]="{ active: selectedTab === 'Performance'}" (click)="onSelectTab($event,'Performance')">
-                    <span [innerHTML]="'Overall stats' | translate"></span>
+                    <span [innerHTML]="'Overall Stats' | translate"></span>
                 </a>
             </li>
             <li class="nav-item">
@@ -82,9 +82,9 @@
                             <div class="progress-bar bg-danger" role="progressbar" [ngStyle]="{'width':red_perc_str}" [attr.aria-valuenow]="red_perc" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <div *ngIf="bp_count>0" class="space-before text-center">
-                            <span class="badge badge-pill badge-success">{{greenTotalApproved}} Approved ({{green_perc_str}})</span>
-                            <span class="badge badge-pill badge-warning">{{yellowTotWaiting}} Waiting ({{yellow_perc_str}})</span>
-                            <span class="badge badge-pill badge-danger">{{redTotDenide}} Rejected ({{red_perc_str}})</span>
+                            <span class="badge badge-pill badge-success">{{greenTotalApproved}} <span [innerHTML]="'Approved' | translate"></span> ({{green_perc_str}})</span>
+                            <span class="badge badge-pill badge-warning">{{yellowTotWaiting}} <span [innerHTML]="'Waiting' | translate"></span> ({{yellow_perc_str}})</span>
+                            <span class="badge badge-pill badge-danger">{{redTotDenide}} <span [innerHTML]="'Rejected' | translate"></span> ({{red_perc_str}})</span>
                         </div>
                     </div>
                 </div>
@@ -106,9 +106,9 @@
                             <div class="progress-bar bg-danger" role="progressbar" [ngStyle]="{'width':red_perc_strBuyer}" [attr.aria-valuenow]="red_percBuyer" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <div *ngIf="totBuyer>0" class="space-before text-center">
-                            <span class="badge badge-pill badge-success">{{greenTotalApprovedBuyer}} Approved ({{green_perc_strBuyer}})</span>
-                            <span class="badge badge-pill badge-warning">{{yellowTotWaitingBuyer}} Waiting ({{yellow_perc_strBuyer}})</span>
-                            <span class="badge badge-pill badge-danger">{{redTotDenideBuyer}} Rejected ({{red_perc_strBuyer}})</span>
+                            <span class="badge badge-pill badge-success">{{greenTotalApprovedBuyer}} <span [innerHTML]="'Approved' | translate"></span> ({{green_perc_strBuyer}})</span>
+                            <span class="badge badge-pill badge-warning">{{yellowTotWaitingBuyer}} <span [innerHTML]="'Waiting' | translate"></span> ({{yellow_perc_strBuyer}})</span>
+                            <span class="badge badge-pill badge-danger">{{redTotDenideBuyer}} <span [innerHTML]="'Rejected' | translate"></span> ({{red_perc_strBuyer}})</span>
                         </div>
                     </div>
                 </div>
@@ -130,9 +130,9 @@
                             <div class="progress-bar bg-danger" role="progressbar" [ngStyle]="{'width':red_perc_strSeller}" [attr.aria-valuenow]="red_percSeller" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <div *ngIf="totSeller>0" class="space-before text-center">
-                            <span class="badge badge-pill badge-success">{{greenTotalApprovedSeller}} Approved ({{green_perc_strSeller}})</span>
-                            <span class="badge badge-pill badge-warning">{{yellowTotWaitingSeller}} Waiting ({{yellow_perc_strSeller}})</span>
-                            <span class="badge badge-pill badge-danger">{{redTotDenideSeller}} Rejected ({{red_perc_strSeller}})</span>
+                            <span class="badge badge-pill badge-success">{{greenTotalApprovedSeller}} <span [innerHTML]="'Approved' | translate"></span> ({{green_perc_strSeller}})</span>
+                            <span class="badge badge-pill badge-warning">{{yellowTotWaitingSeller}} <span [innerHTML]="'Waiting' | translate"></span> ({{yellow_perc_strSeller}})</span>
+                            <span class="badge badge-pill badge-danger">{{redTotDenideSeller}} <span [innerHTML]="'Rejected' | translate"></span> ({{red_perc_strSeller}})</span>
                         </div>
                     </div>
                 </div>
@@ -151,7 +151,7 @@
                         <div class="card-body text-center">
                             <h4 *ngIf="trade_count>=0" class="card-title"><b>{{trade_count}}€</b></h4>
                             <h4 *ngIf="trade_count<0" class="card-title"><b>???</b></h4>
-                            <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Trading Volume in collabarations' | translate"></span></h6>
+                            <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Trading Volume in collaborations' | translate"></span></h6>
                             <p class="card-text" style="font-size:32px"><i class="fa fa-money-bill"></i></p>
                         </div>
                     </div>
@@ -162,9 +162,9 @@
                             <div class="progress-bar bg-danger" role="progressbar" [ngStyle]="{'width':trade_red_perc_str}" [attr.aria-valuenow]="trade_red_perc" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <div *ngIf="trade_count>0" class="space-before text-center">
-                            <span class="badge badge-pill badge-success">{{trade_green}}€ Approved ({{trade_green_perc_str}})</span>
-                            <span class="badge badge-pill badge-warning">{{trade_yellow}}€ Waiting ({{trade_yellow_perc_str}})</span>
-                            <span class="badge badge-pill badge-danger">{{trade_red}}€ Rejected ({{trade_red_perc_str}})</span>
+                            <span class="badge badge-pill badge-success">{{trade_green}}€ <span [innerHTML]="'Approved' | translate"></span> ({{trade_green_perc_str}})</span>
+                            <span class="badge badge-pill badge-warning">{{trade_yellow}}€ <span [innerHTML]="'Waiting' | translate"></span> ({{trade_yellow_perc_str}})</span>
+                            <span class="badge badge-pill badge-danger">{{trade_red}}€ <span [innerHTML]="'Rejected' | translate"></span> ({{trade_red_perc_str}})</span>
                         </div>
                     </div>
                 </div>
@@ -175,7 +175,7 @@
                         <div class="card-body text-center">
                             <h4 *ngIf="trade_count_buy>=0" class="card-title"><b>{{trade_count_buy}}€</b></h4>
                             <h4 *ngIf="trade_count_buy<0" class="card-title"><b>???</b></h4>
-                            <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Trading Volume in purchases collabarations' | translate"></span></h6>
+                            <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Trading Volume in purchases collaborations' | translate"></span></h6>
                             <p class="card-text" style="font-size:32px"><i class="fa fa-money-bill"></i></p>
                         </div>
                     </div>
@@ -186,9 +186,9 @@
                             <div class="progress-bar bg-danger" role="progressbar" [ngStyle]="{'width':trade_red_perc_str_buy}" [attr.aria-valuenow]="trade_red_perc_buy" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <div *ngIf="trade_count_buy>0" class="space-before text-center">
-                            <span class="badge badge-pill badge-success">{{trade_green_buy}}€ Approved ({{trade_green_perc_str_buy}})</span>
-                            <span class="badge badge-pill badge-warning">{{trade_yellow_buy}}€ Waiting ({{trade_yellow_perc_str_buy}})</span>
-                            <span class="badge badge-pill badge-danger">{{trade_red_buy}}€ Rejected ({{trade_red_perc_str_buy}})</span>
+                            <span class="badge badge-pill badge-success">{{trade_green_buy}}€ <span [innerHTML]="'Approved' | translate"></span> ({{trade_green_perc_str_buy}})</span>
+                            <span class="badge badge-pill badge-warning">{{trade_yellow_buy}}€ <span [innerHTML]="'Waiting' | translate"></span> ({{trade_yellow_perc_str_buy}})</span>
+                            <span class="badge badge-pill badge-danger">{{trade_red_buy}}€ <span [innerHTML]="'Rejected' | translate"></span> ({{trade_red_perc_str_buy}})</span>
                         </div>
                     </div>
                 </div>
@@ -199,7 +199,7 @@
                         <div class="card-body text-center">
                             <h4 *ngIf="trade_count_sell>=0" class="card-title"><b>{{trade_count_sell}}€</b></h4>
                             <h4 *ngIf="trade_count_sell<0" class="card-title"><b>???</b></h4>
-                            <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Trading Volume in sales collabarations' | translate"></span></h6>
+                            <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Trading Volume in sales collaborations' | translate"></span></h6>
                             <p class="card-text" style="font-size:32px"><i class="fa fa-money-bill"></i></p>
                         </div>
                     </div>
@@ -210,9 +210,9 @@
                             <div class="progress-bar bg-danger" role="progressbar" [ngStyle]="{'width':trade_red_perc_str_sell}" [attr.aria-valuenow]="trade_red_perc_sell" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <div *ngIf="trade_count_sell>0" class="space-before text-center">
-                            <span class="badge badge-pill badge-success">{{trade_green_sell}}€ Approved ({{trade_green_perc_str_sell}})</span>
-                            <span class="badge badge-pill badge-warning">{{trade_yellow_sell}}€ Waiting ({{trade_yellow_perc_str_sell}})</span>
-                            <span class="badge badge-pill badge-danger">{{trade_red_sell}}€ Rejected ({{trade_red_perc_str_sell}})</span>
+                            <span class="badge badge-pill badge-success">{{trade_green_sell}}€ <span [innerHTML]="'Approved' | translate"></span> ({{trade_green_perc_str_sell}})</span>
+                            <span class="badge badge-pill badge-warning">{{trade_yellow_sell}}€ <span [innerHTML]="'Waiting' | translate"></span> ({{trade_yellow_perc_str_sell}})</span>
+                            <span class="badge badge-pill badge-danger">{{trade_red_sell}}€ <span [innerHTML]="'Rejected' | translate"></span> ({{trade_red_perc_str_sell}})</span>
                         </div>
                     </div>
                 </div>
@@ -292,7 +292,7 @@
         <div *ngFor="let dashboard of dashboards">
             <div class="row">
                 <div class="col">
-                    <h6>{{dashboard.title}}</h6>
+                    <h6><span [innerHTML]="dashboard.title | translate"></span></h6>
                     <iframe [src]="dashboard.safeUrl" height="480" width="100%" frameborder="0" class="border"></iframe>
                 </div>
             </div>
@@ -301,7 +301,7 @@
 
         <div class="row">
             <div class="col-6" *ngFor="let dashboard of graphsa">
-                <h6>{{dashboard.title}}</h6>
+                <h6><span [innerHTML]="dashboard.title | translate"></span></h6>
                 <iframe [src]="dashboard.safeUrl" height="480" width="100%" frameborder="0" class="border"></iframe>
                 <hr>
             </div>

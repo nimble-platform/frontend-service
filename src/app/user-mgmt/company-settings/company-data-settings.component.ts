@@ -283,70 +283,86 @@ export class CompanyDataSettingsComponent implements OnInit {
 
     changeData(content) {
         this.mailto = "mailto:" + this.config.supportMail;
-        var subject = "NIMBLE Company Data Change Request (UserID: " + this.appComponent.userID + ", Platform: " +
+        var subject = this.translate.instant("Company Data Change Request",{platformName:this.config.platformNameInMail})+" ("+this.translate.instant("UserID")+": " + this.appComponent.userID + ", "+this.translate.instant("Platform")+": " +
             this.config.platformName + ", Timestamp: " + new Date().toISOString() + ")";
         this.mailto += "?subject=" + encodeURIComponent(subject);
-        var body = "Dear NIMBLE support team,";
+        var body = this.translate.instant("Dear support team,",{platformName:this.config.platformNameInMail});
         body += "\n\n\n";
-        body += "I would like to change my company data to the following:";
+        body += this.translate.instant("I would like to change my company data to the following:");
         body += "\n\n";
-        body += "Company Name:\n";
+        body += this.translate.instant("Company Name:");
+        body += "\n";
         body += this.selectValueOfTextObject(this.settings.details.legalName) + "\n\n";
-        body += "Brand Name:\n";
+        body += this.translate.instant("Brand Name:");
+        body += "\n";
         body += this.selectValueOfTextObject(this.settings.details.brandName) + "\n\n";
-        body += "VAT Number:\n";
+        body += this.translate.instant("VAT Number:");
+        body += "\n";
         body += this.settings.details.vatNumber + "\n\n";
-        body += "Verification Info:\n";
+        body += this.translate.instant("Verification Info:");
+        body += "\n";
         body += this.settings.details.verificationInformation + "\n\n";
-        body += "Business Type:\n";
+        body += this.translate.instant("Business Type:");
+        body += "\n";
         body += this.settings.details.businessType + "\n\n";
-        body += "Activity Sectors:\n";
+        body += this.translate.instant("Activity Sectors:");
+        body += "\n";
         body += this.selectValueOfTextObject(this.settings.details.industrySectors) + "\n\n";
-        body += "Business Keywords:\n";
+        body += this.translate.instant("Business Keywords:");
+        body += "\n";
         body += this.selectValueOfTextObject(this.settings.details.businessKeywords) + "\n\n";
-        body += "Year of Foundation:\n";
+        body += this.translate.instant("Year of Foundation:");
+        body += "\n";
         body += this.settings.details.yearOfCompanyRegistration + "\n\n";
-        body += "Street:\n";
+        body += this.translate.instant("Street:");
+        body += "\n";
         body += this.settings.details.address.streetName + "\n\n";
-        body += "Building Number:\n";
+        body += this.translate.instant("Building Number:");
+        body += "\n";
         body += this.settings.details.address.buildingNumber + "\n\n";
-        body += "City / Town:\n";
+        body += this.translate.instant("City / Town:");
+        body += "\n";
         body += this.settings.details.address.cityName + "\n\n";
-        body += "State / Province:\n";
+        body += this.translate.instant("State / Province:");
+        body += "\n";
         body += this.settings.details.address.region + "\n\n";
-        body += "Postal Code:\n";
+        body += this.translate.instant("Postal Code:");
+        body += "\n";
         body += this.settings.details.address.postalCode + "\n\n";
-        body += "Country:\n";
+        body += this.translate.instant("Country:");
+        body += "\n";
         body += this.settings.details.address.country;
         body += "\n\n\n";
-        body += "Best regards,";
+        body += this.translate.instant("Best regards,");
         body += "\n\n";
         body += this.appComponent.fullName;
         body += "\n";
-        body += "(E-Mail: " + this.appComponent.eMail + ", Company: " + this.appComponent.activeCompanyName + ", CompanyID: " + this.appComponent.companyID + ")";
+        body += "(E-Mail: " + this.appComponent.eMail + ", "+this.translate.instant("Company")+": " + this.appComponent.activeCompanyName + ", "+this.translate.instant("CompanyID")+": " + this.appComponent.companyID + ")";
         this.mailto += "&body=" + encodeURIComponent(body);
         this.modalService.open(content);
     }
 
     deleteData(content) {
         this.mailto = "mailto:" + this.config.supportMail;
-        var subject = "NIMBLE Company Deletion Request (UserID: " + this.appComponent.userID + ", Platform: " +
+        var subject = this.translate.instant("Company Deletion Request",{platformName:this.config.platformNameInMail}) +" ("+this.translate.instant("UserID")+": " + this.appComponent.userID + ", "+this.translate.instant("Platform")+": " +
             this.config.platformName + ", Timestamp: " + new Date().toISOString() + ")";
         this.mailto += "?subject=" + encodeURIComponent(subject);
-        var body = "Dear NIMBLE support team,";
+        var body = this.translate.instant("Dear support team,",{platformName:this.config.platformNameInMail});
         body += "\n\n\n";
-        body += "I would like to delete my company:";
+        body += this.translate.instant("I would like to delete my company:");
         body += "\n\n";
-        body += "Company Name:\n";
+        body += this.translate.instant("Company Name:");
+        body += "\n";
         body += this.selectValueOfTextObject(this.settings.details.legalName) + "\n\n";
-        body += "Company ID:\n";
+        body += this.translate.instant("Company ID:");
+        body += "\n";
         body += this.appComponent.companyID;
         body += "\n\n\n";
-        body += "Best regards,";
+        body += this.translate.instant("Best regards,");
         body += "\n\n";
         body += this.appComponent.fullName;
         body += "\n";
-        body += "(E-Mail: " + this.appComponent.eMail + ", Company: " + this.appComponent.activeCompanyName + ", CompanyID: " + this.appComponent.companyID + ")";
+        body += "(E-Mail: " + this.appComponent.eMail + ", "+this.translate.instant("Company")+": " + this.appComponent.activeCompanyName + ", "+this.translate.instant("CompanyID")+": " + this.appComponent.companyID + ")";
         this.mailto += "&body=" + encodeURIComponent(body);
         this.modalService.open(content);
     }

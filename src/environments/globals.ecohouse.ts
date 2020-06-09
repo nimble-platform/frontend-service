@@ -63,6 +63,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 export const config = {
     "federationInstanceId": "ECO-HOUSE",
     "platformName": "Eco-House",
+    "platformNameInMail":"NIMBLE",
     "envName": "ecohouse",
     "addCartBehaviour": "single",
     "companyRegistrationRequired": false,
@@ -79,6 +80,7 @@ export const config = {
         }
     },
     "collaborationEnabled": false,
+    "collapsiblePropertyFacets": false,
     "dataChannelsEnabled": true,
     "defaultBusinessProcessIds": [
     ],
@@ -102,7 +104,9 @@ export const config = {
     "logoPath": "./assets/eco_house_logo.png",
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": false,
+    "permanentWelcomeTab": false,
     "phoneNumberRequired": false,
+    "productServiceFiltersEnabled":true,
     "vatEnabled": true,
     "projectsEnabled": true,
     "requiredAgreements": [
@@ -173,6 +177,7 @@ export const config = {
     },
     "showLoginFederation": false,
     "unshippedOrdersTabEnabled": true,
+    "welcomeMessage":"Looks like you are new here",
     "federationClientID": "sample-client",
     "federationIDP": "sampleIDP",
     "legislationSettings": {
@@ -237,6 +242,7 @@ export const product_filter_mappings = {
 };
 export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "catalogueId", "doctype", "manufacturerId", "manufacturerItemId", "allLabels"];
 export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
+export const product_nonfilter_data_type = []
 export const product_configurable = [];
 export const product_default = {};
 export const facet_min = 1;
