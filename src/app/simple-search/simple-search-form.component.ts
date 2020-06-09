@@ -931,6 +931,7 @@ export class SimpleSearchFormComponent implements OnInit {
                     "genName": genName,
                     "realName": realName,
                     "options": options,
+                    "showContent":!this.collapsiblePropertyFacets,
                     "total": total,
                     "selected": selected,
                     "expanded": false
