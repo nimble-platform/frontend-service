@@ -21,6 +21,7 @@ import { Credentials } from './model/credentials';
 import { ForgotPasswordCredentials } from './model/forgot-password-credentials';
 import * as myGlobals from '../globals';
 import * as moment from "moment";
+import {DEFAULT_LANGUAGE} from '../catalogue/model/constants';
 
 @Injectable()
 export class CredentialsService {
@@ -33,7 +34,7 @@ export class CredentialsService {
     post(credentials: Credentials): Promise<any> {
         const url = `${this.url}/login`;
         return this.http
-            .post(url, JSON.stringify(credentials), { headers: this.headers, withCredentials: true })
+            .post(url, JSON.stringify(credentials), { headers: this.getHeaders(), withCredentials: true })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -42,7 +43,7 @@ export class CredentialsService {
     passwordRecoveryAction(forgotPasswordCredentials: ForgotPasswordCredentials): Promise<any> {
         const url = `${this.url}/password-recovery`;
         return this.http
-            .post(url, JSON.stringify(forgotPasswordCredentials), { headers: this.headers, withCredentials: true })
+            .post(url, JSON.stringify(forgotPasswordCredentials), { headers: this.getHeaders(), withCredentials: true })
             .toPromise()
             .then()
             .catch(this.handleError);
@@ -51,7 +52,7 @@ export class CredentialsService {
     resetPassword(forgotPasswordCredentials: ForgotPasswordCredentials): Promise<any> {
         const url = `${this.url}/reset-forgot-password`;
         return this.http
-            .post(url, JSON.stringify(forgotPasswordCredentials), { headers: this.headers, withCredentials: true })
+            .post(url, JSON.stringify(forgotPasswordCredentials), { headers: this.getHeaders(), withCredentials: true })
             .toPromise()
             .then()
             .catch(this.handleError);
@@ -61,7 +62,7 @@ export class CredentialsService {
     getVersionIdentity(): Promise<any> {
         const url = `${myGlobals.user_mgmt_endpoint}/info`;
         return this.http
-            .get(url, { headers: this.headers, withCredentials: true })
+            .get(url, { headers: this.getHeaders(), withCredentials: true })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -70,7 +71,7 @@ export class CredentialsService {
     getVersionCatalog(): Promise<any> {
         const url = `${myGlobals.catalogue_endpoint}/info`;
         return this.http
-            .get(url, { headers: this.headers, withCredentials: true })
+            .get(url, { headers: this.getHeaders(), withCredentials: true })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -79,7 +80,7 @@ export class CredentialsService {
     getVersionBP(): Promise<any> {
         const url = `${myGlobals.bpe_endpoint}/info`;
         return this.http
-            .get(url, { headers: this.headers, withCredentials: true })
+            .get(url, { headers: this.getHeaders(), withCredentials: true })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -88,7 +89,7 @@ export class CredentialsService {
     getVersionDataChannel(): Promise<any> {
         const url = `${myGlobals.data_channel_endpoint}/info`;
         return this.http
-            .get(url, { headers: this.headers, withCredentials: true })
+            .get(url, { headers: this.getHeaders(), withCredentials: true })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -97,7 +98,7 @@ export class CredentialsService {
     logUrl(log: any): Promise<any> {
         const url = `${this.log_url}`;
         return this.http
-            .post(url, JSON.stringify(log), { headers: this.headers })
+            .post(url, JSON.stringify(log), { headers: this.getHeaders() })
             .toPromise()
             .then()
             .catch(this.handleError);
@@ -105,6 +106,18 @@ export class CredentialsService {
 
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);
+    }
+
+    private getHeaders(): Headers {
+        let headers = new Headers();
+        this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
+        let defaultLanguage = DEFAULT_LANGUAGE();
+        let acceptLanguageHeader = defaultLanguage;
+        if(defaultLanguage != "en"){
+            acceptLanguageHeader += ",en;0.9";
+        }
+        headers.append("Accept-Language",acceptLanguageHeader);
+        return headers;
     }
 
 }

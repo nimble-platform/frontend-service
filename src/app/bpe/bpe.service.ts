@@ -36,7 +36,7 @@ import { DigitalAgreement } from "../catalogue/model/publish/digital-agreement";
 import { CollaborationGroup } from "./model/collaboration-group";
 import { DocumentReference } from '../catalogue/model/publish/document-reference';
 import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
-import { FEDERATION, FEDERATIONID } from '../catalogue/model/constants';
+import {DEFAULT_LANGUAGE, FEDERATION, FEDERATIONID} from '../catalogue/model/constants';
 import { FederatedCollaborationGroupMetadata } from './model/federated-collaboration-group-metadata';
 import { CollaborationGroupResponse } from './model/collaboration-group-response';
 
@@ -421,52 +421,52 @@ export class BPEService {
     }
 
     updateCollaborationGroupName(groupId: string, delegateId: string, groupName: string) {
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        let headers = this.getAuthorizedHeaders();
         let url = `${this.url}/collaboration-groups/${groupId}?groupName=${groupName}`;
         if (this.delegated) {
             url = `${this.delegate_url}/collaboration-groups/${groupId}?groupName=${groupName}&delegateId=${delegateId}`;
         }
         return this.http
-            .patch(url, null, { headers: new Headers({ "Authorization": token }) })
+            .patch(url, null, { headers: headers})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
     }
 
     deleteCollaborationGroup(groupId: string, delegateId: string) {
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        let headers = this.getAuthorizedHeaders();
         let url = `${this.url}/collaboration-groups/${groupId}`;
         if (this.delegated) {
             url = `${this.delegate_url}/collaboration-groups/${groupId}?delegateId=${delegateId}`;
         }
         return this.http
-            .delete(url, { headers: new Headers({ "Authorization": token }) })
+            .delete(url, { headers: headers})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
     }
 
     archiveCollaborationGroup(groupId: string, delegateId: string) {
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        let headers = this.getAuthorizedHeaders();
         let url = `${this.url}/collaboration-groups/${groupId}/archive`;
         if (this.delegated) {
             url = `${this.delegate_url}/collaboration-groups/${groupId}/archive?delegateId=${delegateId}`;
         }
         return this.http
-            .post(url, null, { headers: new Headers({ "Authorization": token }) })
+            .post(url, null, { headers: headers})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
     }
 
     restoreCollaborationGroup(groupId: string, delegateId: string) {
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        let headers = this.getAuthorizedHeaders();
         let url = `${this.url}/collaboration-groups/${groupId}/restore`;
         if (this.delegated) {
             url = `${this.delegate_url}/collaboration-groups/${groupId}/restore?delegateId=${delegateId}`;
         }
         return this.http
-            .post(url, null, { headers: new Headers({ "Authorization": token }) })
+            .post(url, null, { headers: headers})
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -496,6 +496,12 @@ export class BPEService {
             xhr.open('GET', url, true);
             xhr.setRequestHeader('Accept', 'application/zip');
             xhr.setRequestHeader("Authorization", token);
+            let defaultLanguage = DEFAULT_LANGUAGE();
+            let acceptLanguageHeader = defaultLanguage;
+            if(defaultLanguage != "en"){
+                acceptLanguageHeader += ",en;0.9";
+            }
+            xhr.setRequestHeader("Accept-Language",acceptLanguageHeader);
             xhr.responseType = 'blob';
 
             xhr.onreadystatechange = function() {
@@ -515,9 +521,7 @@ export class BPEService {
     }
 
     getTermsAndConditions(buyerPartyId, buyerFederationId: string, sellerPartyId, incoterms: string, tradingTerm: string, delegateId: string): Promise<Clause[]> {
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers = new Headers({ 'Authorization': token });
-        this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
+        let headers = this.getAuthorizedHeaders();
 
         let url = `${this.url}/contracts/terms-and-conditions?sellerPartyId=${sellerPartyId}&incoterms=${incoterms == null ? "" : incoterms}`;
         if (this.delegated) {
@@ -611,7 +615,13 @@ export class BPEService {
 
     ratingExists(processInstanceId: string, partyId: string, federationId: string, delegateId: string): Promise<any> {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers = new Headers({ 'Accept': 'text/plain', 'Authorization': token, "federationId": federationId });
+        let headers = new Headers({ 'Accept': 'text/plain', 'Authorization': token, "federationId": federationId });
+        let defaultLanguage = DEFAULT_LANGUAGE();
+        let acceptLanguageHeader = defaultLanguage;
+        if(defaultLanguage != "en"){
+            acceptLanguageHeader += ",en;0.9";
+        }
+        headers.append("Accept-Language",acceptLanguageHeader);
         let url: string = `${this.url}/processInstance/${processInstanceId}/isRated?partyId=${partyId}`;
         if (this.delegated) {
             url = `${this.delegate_url}/processInstance/${processInstanceId}/isRated?partyId=${partyId}&delegateId=${delegateId}`;
@@ -625,7 +635,13 @@ export class BPEService {
 
     getProcessInstanceIdForDocument(documentId: string): Promise<any> {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers = new Headers({ 'Accept': 'text/plain', 'Authorization': token });
+        let headers = new Headers({ 'Accept': 'text/plain', 'Authorization': token });
+        let defaultLanguage = DEFAULT_LANGUAGE();
+        let acceptLanguageHeader = defaultLanguage;
+        if(defaultLanguage != "en"){
+            acceptLanguageHeader += ",en;0.9";
+        }
+        headers.append("Accept-Language",acceptLanguageHeader);
         let url: string = `${this.url}/processInstance/document/${documentId}`;
         return this.http
             .get(url, { headers: headers })
@@ -756,6 +772,12 @@ export class BPEService {
             xhr.setRequestHeader('Accept', 'text/plain');
             xhr.setRequestHeader('Authorization', token);
             xhr.setRequestHeader("federationId", FEDERATIONID());
+            let defaultLanguage = DEFAULT_LANGUAGE();
+            let acceptLanguageHeader = defaultLanguage;
+            if(defaultLanguage != "en"){
+                acceptLanguageHeader += ",en;0.9";
+            }
+            xhr.setRequestHeader("Accept-Language",acceptLanguageHeader);
             xhr.responseType = 'blob';
 
             xhr.onreadystatechange = function() {
@@ -798,8 +820,14 @@ export class BPEService {
 
     private getAuthorizedHeaders(): Headers {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers = new Headers({ 'Accept': 'application/json', 'Authorization': token });
+        let headers = new Headers({ 'Accept': 'application/json', 'Authorization': token });
         this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
+        let defaultLanguage = DEFAULT_LANGUAGE();
+        let acceptLanguageHeader = defaultLanguage;
+        if(defaultLanguage != "en"){
+            acceptLanguageHeader += ",en;0.9";
+        }
+        headers.append("Accept-Language",acceptLanguageHeader);
         return headers;
     }
 

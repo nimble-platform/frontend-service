@@ -30,7 +30,7 @@ import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
 import { UserRole } from './model/user-role';
 import { CompanyNegotiationSettings } from './model/company-negotiation-settings';
 import { CatalogueLine } from '../catalogue/model/publish/catalogue-line';
-import { FEDERATION, FEDERATIONID, INCOTERMS, PAYMENT_MEANS } from '../catalogue/model/constants';
+import {DEFAULT_LANGUAGE, FEDERATION, FEDERATIONID, INCOTERMS, PAYMENT_MEANS} from '../catalogue/model/constants';
 import { Person } from '../catalogue/model/publish/person';
 import { ResetPasswordCredentials } from './model/reset-password-credentials';
 import { UnitService } from "../common/unit-service";
@@ -63,10 +63,9 @@ export class UserService {
 
     setWelcomeFlag(flag: boolean): Promise<any> {
         const url = `${this.url}/set-welcome-info/${flag}`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .post(url, JSON.stringify({}), { headers: headers_token, withCredentials: true })
+            .post(url, JSON.stringify({}), { headers: headers, withCredentials: true })
             .toPromise()
             .then(res => res)
             .catch(this.handleError);
@@ -83,10 +82,9 @@ export class UserService {
 
     deleteUser(userId: string): Promise<any> {
         const url = `${this.url}/admin/delete_user/${userId}`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .delete(url, { headers: headers_token, withCredentials: true })
+            .delete(url, { headers: headers, withCredentials: true })
             .toPromise()
             .then(res => res)
             .catch(this.handleError);
@@ -94,10 +92,9 @@ export class UserService {
 
     registerCompany(company: CompanyRegistration) {
         const url = `${this.url}/register/company`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .post(url, JSON.stringify(company), { headers: headers_token, withCredentials: true })
+            .post(url, JSON.stringify(company), { headers: headers, withCredentials: true })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -106,10 +103,9 @@ export class UserService {
     deleteCompany(companyId: string): Promise<any> {
         const userId = this.cookieService.get("user_id");
         const url = `${this.url}/admin/delete_company/${companyId}?userId=${userId}`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .delete(url, { headers: headers_token, withCredentials: true })
+            .delete(url, { headers: headers, withCredentials: true })
             .toPromise()
             .then(res => res)
             .catch(this.handleError);
@@ -121,10 +117,9 @@ export class UserService {
             ownerCompanyId = partyId;
         }
         const url = `${this.url}/company_members/${ownerCompanyId}`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .get(url, { headers: headers_token, withCredentials: true })
+            .get(url, { headers: headers, withCredentials: true })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -133,10 +128,9 @@ export class UserService {
     deleteInvite(email: string) {
         var encodedMail = encodeURIComponent(email);
         const url = `${this.url}/invitations?username=${encodedMail}`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .delete(url, { headers: headers_token, withCredentials: true })
+            .delete(url, { headers: headers, withCredentials: true })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -144,10 +138,9 @@ export class UserService {
 
     inviteCompany(invitation: CompanyInvitation) {
         const url = `${this.url}/send_invitation`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .post(url, JSON.stringify(invitation), { headers: headers_token, withCredentials: true })
+            .post(url, JSON.stringify(invitation), { headers: headers, withCredentials: true })
             .toPromise()
             .then(res => res)
             .catch(this.handleError);
@@ -158,10 +151,9 @@ export class UserService {
         if (this.delegated) {
             url = `${this.delegate_url}/party/${partyId}?delegateId=${delegateId}`;
         }
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .get(url, { headers: headers_token })
+            .get(url, { headers: headers })
             .toPromise()
             .then(res => {
                 let party: Party = res.json();
@@ -214,10 +206,9 @@ export class UserService {
             if (this.delegated) {
                 url = `${this.delegate_url}/person/${personId}?delegateId=${delegateId}`;
             }
-            const token = 'Bearer ' + this.cookieService.get("bearer_token");
-            const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+            let headers = this.getAuthorizedHeaders();
             return this.http
-                .get(url, { headers: headers_token })
+                .get(url, { headers: headers })
                 .toPromise()
                 .then(res => {
                     let user = res.json();
@@ -238,10 +229,9 @@ export class UserService {
             return Promise.resolve(this.userParty);
         }
         const url = `${this.url}/party_by_person/${userId}`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .get(url, { headers: headers_token, withCredentials: true })
+            .get(url, { headers: headers, withCredentials: true })
             .toPromise()
             .then(res => {
                 this.userParty = res.json()[0];
@@ -274,10 +264,9 @@ export class UserService {
 
     getProfileCompleteness(partyId: string): Promise<any> {
         const url = `${this.url}/company-settings/${partyId}/completeness`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .get(url, { headers: headers_token, withCredentials: true })
+            .get(url, { headers: headers, withCredentials: true })
             .toPromise()
             .then(response => response.json())
             .catch(this.handleError)
@@ -288,10 +277,9 @@ export class UserService {
         if (this.delegated) {
             url = `${this.delegate_url}/company-settings/${partyId}?delegateId=${delegateId}`;
         }
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .get(url, { headers: headers_token })
+            .get(url, { headers: headers })
             .toPromise()
             .then(response => response.json() as CompanySettings)
             .catch(this.handleError)
@@ -299,10 +287,9 @@ export class UserService {
 
     resetPassword(credentials: ResetPasswordCredentials): Promise<any> {
         const url = `${this.url}/reset-password`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .post(url, JSON.stringify(credentials), { headers: headers_token, withCredentials: true })
+            .post(url, JSON.stringify(credentials), { headers: headers, withCredentials: true })
             .toPromise()
             .then(res => res)
             .catch(this.handleError);
@@ -310,10 +297,9 @@ export class UserService {
 
     getUserRoles(): Promise<UserRole[]> {
         const url = `${this.url}/roles`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .get(url, { headers: headers_token, withCredentials: true })
+            .get(url, { headers: headers, withCredentials: true })
             .toPromise()
             .then(res => {
                 let roles: UserRole[] = [];
@@ -328,10 +314,9 @@ export class UserService {
     setRoles(email: string, roleIDs: string[]) {
         const encodedMail = encodeURIComponent(email);
         const url = `${this.url}/roles/user?username=${encodedMail}`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .post(url, JSON.stringify(roleIDs), { headers: headers_token, withCredentials: true })
+            .post(url, JSON.stringify(roleIDs), { headers: headers, withCredentials: true })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -342,10 +327,9 @@ export class UserService {
         delete settings.negotiationSettings;
         return this.getUserParty(userId).then(party => {
             const url = `${this.url}/company-settings/${UBLModelUtils.getPartyId(party)}`;
-            const token = 'Bearer ' + this.cookieService.get("bearer_token");
-            const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+            let headers = this.getAuthorizedHeaders();
             return this.http
-                .put(url, settings, { headers: headers_token, withCredentials: true })
+                .put(url, settings, { headers: headers, withCredentials: true })
                 .toPromise()
                 .then(response => response.json())
                 .catch(this.handleError)
@@ -356,10 +340,9 @@ export class UserService {
         const settings = { ...rawSettings };
         delete settings.negotiationSettings;
         const url = `${this.url}/company-settings/${partyId}`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .put(url, settings, { headers: headers_token, withCredentials: true })
+            .put(url, settings, { headers: headers, withCredentials: true })
             .toPromise()
             .then(response => response.json())
             .catch(this.handleError)
@@ -469,10 +452,9 @@ export class UserService {
 
     deleteImage(id: string, partyId: string): Promise<void> {
         const url = `${this.url}/company-settings/${partyId}/image/${id}`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .delete(url, { headers: headers_token, withCredentials: true })
+            .delete(url, { headers: headers, withCredentials: true })
             .toPromise()
             .then(() => { })
             .catch(this.handleError)
@@ -485,10 +467,9 @@ export class UserService {
 
     downloadCertObject(id: string): Promise<Certificate> {
         const url = `${this.url}/company-settings/certificate/${id}/object`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .get(url, { headers: headers_token, withCredentials: true })
+            .get(url, { headers: headers, withCredentials: true })
             .toPromise()
             .then(res => {
                 return res.json();
@@ -498,10 +479,9 @@ export class UserService {
 
     deleteCert(id: string, partyId: string): Promise<void> {
         const url = `${this.url}/company-settings/${partyId}/certificate/${id}`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .delete(url, { headers: headers_token, withCredentials: true })
+            .delete(url, { headers: headers, withCredentials: true })
             .toPromise()
             .then(() => { })
             .catch(this.handleError)
@@ -520,10 +500,9 @@ export class UserService {
         if (this.delegated) {
             url = `${this.delegate_url}/company-settings/${partyId}/negotiation/?delegateId=${delegateId}`;
         }
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .get(url, { headers: headers_token })
+            .get(url, { headers: headers })
             .toPromise()
             .then(res => {
                 return this.sanitizeNegotiationSettings(res.json());
@@ -571,10 +550,9 @@ export class UserService {
 
     putCompanyNegotiationSettings(settings: CompanyNegotiationSettings, partyId: string): Promise<void> {
         const url = `${this.url}/company-settings/${partyId}/negotiation`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .put(url, settings, { headers: headers_token, withCredentials: true })
+            .put(url, settings, { headers: headers, withCredentials: true })
             .toPromise()
             .then(() => { })
             .catch(this.handleError)
@@ -591,10 +569,9 @@ export class UserService {
     putUserFavourite(uuid: string[], status: number = 1) {
         const userId = this.cookieService.get("user_id");
         const url = `${this.url}/favourite/${userId}?status=${status}`;
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        let headers = this.getAuthorizedHeaders();
         return this.http
-            .put(url, uuid, { headers: headers_token, withCredentials: true })
+            .put(url, uuid, { headers: headers, withCredentials: true })
             .toPromise()
             .then(() => {
                 // we need to remove user from the cache since this service updates the user info
@@ -605,5 +582,18 @@ export class UserService {
                 }
             })
             .catch(this.handleError)
+    }
+
+    private getAuthorizedHeaders(): Headers {
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        let headers = new Headers({ 'Accept': 'application/json', 'Authorization': token });
+        this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
+        let defaultLanguage = DEFAULT_LANGUAGE();
+        let acceptLanguageHeader = defaultLanguage;
+        if(defaultLanguage != "en"){
+            acceptLanguageHeader += ",en;0.9";
+        }
+        headers.append("Accept-Language",acceptLanguageHeader);
+        return headers;
     }
 }
