@@ -42,6 +42,8 @@ export class SimpleSearchService {
     product_nonfilter_full = myGlobals.product_nonfilter_full;
     product_nonfilter_regex = myGlobals.product_nonfilter_regex;
     product_nonfilter_data_type = myGlobals.product_nonfilter_data_type;
+    party_filter_main = myGlobals.party_filter_main;
+    party_filter_trust = myGlobals.party_filter_trust;
     product_configurable = myGlobals.product_configurable;
     product_cat = myGlobals.product_cat;
     product_cat_mix = myGlobals.product_cat_mix;
@@ -468,7 +470,7 @@ export class SimpleSearchService {
         return value.replace(regexp, "\\$1");
     }
 
-    checkField(field: string,facetMetadata:any=null): boolean {
+    checkField(field: string,prefix:string="",facetMetadata:any=null): boolean {
         if (field == this.product_name || field == this.product_img || field == this.product_vendor_id || field == this.product_cat || field == this.product_cat_mix) {
             return false;
         }
@@ -485,7 +487,17 @@ export class SimpleSearchService {
                 return false;
         }
         if(facetMetadata != null && this.product_nonfilter_data_type.length > 0 && this.product_nonfilter_data_type.indexOf(facetMetadata.dataType) != -1){
+            let genName = field;
+            if (genName.indexOf(DEFAULT_LANGUAGE() + "_") != -1)
+                genName = genName.replace(DEFAULT_LANGUAGE() + "_", "");
+            else if (genName.indexOf("{NULL}_") != -1)
+                genName = genName.replace("{NULL}_", "");
+            else if (genName.indexOf(prefix + "_") == 0)
+                genName = genName.replace("_", "");
+            // data type restriction only applies to fields which are not included in the main/trust filters of the party
+            if(this.party_filter_main.indexOf(genName) == -1 && this.party_filter_trust.indexOf(genName) == -1){
                 return false;
+            }
         }
         return true;
     }
