@@ -133,7 +133,7 @@ node('nimble-jenkins-slave') {
         }
 
         stage('Push Docker - Efac') {
-            sh 'docker push nimbleplatform/frontend-service:efac-latest'
+            sh 'docker push nimbleplatform/frontend-service:efac'
         }
 
         stage('Deploy - Efac') {
