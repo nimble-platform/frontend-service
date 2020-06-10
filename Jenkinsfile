@@ -131,6 +131,14 @@ node('nimble-jenkins-slave') {
         stage('Deploy - FMP') {
             sh 'ssh fmp-prod "cd /srv/nimble-fmp/ && ./run-fmp-prod.sh restart-single frontend-service"'
         }
+
+        stage('Push Docker - Efac') {
+            sh 'docker push nimbleplatform/frontend-service:efac-latest'
+        }
+
+        stage('Deploy - Efac') {
+           sh 'ssh efac-prod "cd /srv/nimble-efac/ && ./run-efac-prod.sh restart-single frontend-service"'
+        }
 		
     }
 }
