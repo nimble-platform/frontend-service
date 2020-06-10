@@ -53,8 +53,10 @@ export class SimpleSearchService {
     // this service retrieves the ubl properties and quantity properties for the given idx fields
     getUblAndQuantityProperties(idxFields:string[]) {
         let url = this.url + `/property/search`;
-        let fq = idxFields.map(idxField => "idxField:\""+idxField+"\"").join(" OR ");
-        fq = "nameSpace:\"http://www.nimble-project.org/resource/ubl#\"" +" OR (valueQualifier: \"QUANTITY\" AND ("+fq+"))";
+        let fq = "nameSpace:\"http://www.nimble-project.org/resource/ubl#\"";
+        if(idxFields.length != 0){
+            fq += " OR (valueQualifier: \"QUANTITY\" AND ("+idxFields.map(idxField => "idxField:\""+idxField+"\"").join(" OR ")+"))";
+        }
         let searchObject: any = {};
         searchObject.rows = 2147483647;
         searchObject.start = 0;
