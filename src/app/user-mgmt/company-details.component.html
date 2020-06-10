@@ -25,40 +25,40 @@
         <h4>
             <p><span [innerHTML]="'Company Data' | translate"></span></p>
         </h4>
-        <text-input presentationMode="view" label="Company Name" [text]="selectValueOfTextObject(details.details.legalName)" labelClass="col-4" valueClass="col-8">
+        <text-input presentationMode="view" [label]="'Company Name' | translate" [text]="selectValueOfTextObject(details.details.legalName)" labelClass="col-4" valueClass="col-8">
         </text-input>
-        <text-input presentationMode="view" label="Trade Name" [text]="selectValueOfTextObject(details.details.brandName)" labelClass="col-4" valueClass="col-8">
+        <text-input presentationMode="view" [label]="'Trade Name' | translate" [text]="selectValueOfTextObject(details.details.brandName)" labelClass="col-4" valueClass="col-8">
         </text-input>
-        <text-input presentationMode="view" label="VAT Number" [text]="details.details.vatNumber" labelClass="col-4" valueClass="col-8">
+        <text-input presentationMode="view" [label]="'VAT Number' | translate" [text]="details.details.vatNumber" labelClass="col-4" valueClass="col-8">
         </text-input>
-        <text-input presentationMode="view" label="Business Type" [text]="details.details.businessType" labelClass="col-4" valueClass="col-8">
+        <text-input presentationMode="view" [label]="'Business Type' | translate" [text]="details.details.businessType" labelClass="col-4" valueClass="col-8">
         </text-input>
-        <text-input presentationMode="view" label="Activity Sectors" [text]="selectValueOfTextObject(details.details.industrySectors)" labelClass="col-4" valueClass="col-8">
+        <text-input presentationMode="view" [label]="'Activity Sectors' | translate" [text]="selectValueOfTextObject(details.details.industrySectors)" labelClass="col-4" valueClass="col-8">
         </text-input>
-        <text-input presentationMode="view" label="Business Keywords" [text]="selectValueOfTextObject(details.details.businessKeywords)" labelClass="col-4" valueClass="col-8">
+        <text-input presentationMode="view" [label]="'Business Keywords' | translate" [text]="selectValueOfTextObject(details.details.businessKeywords)" labelClass="col-4" valueClass="col-8">
         </text-input>
-        <text-input presentationMode="view" label="Year of Foundation" [text]="details.details.yearOfCompanyRegistration" labelClass="col-4" valueClass="col-8">
+        <text-input presentationMode="view" [label]="'Year of Foundation' | translate" [text]="details.details.yearOfCompanyRegistration" labelClass="col-4" valueClass="col-8">
         </text-input>
-        <text-input presentationMode="view" label="Company Description" [text]="selectValueOfTextObject(details.description.companyStatement)" labelClass="col-4" valueClass="col-8">
+        <text-input presentationMode="view" [label]="'Company Description' | translate" [text]="selectValueOfTextObject(details.description.companyStatement)" labelClass="col-4" valueClass="col-8">
         </text-input>
-        <text-input presentationMode="view" label="Website" [text]="details.description.website" labelClass="col-4" valueClass="col-8" isLink="true">
+        <text-input presentationMode="view" [label]="'Website' | translate" [text]="details.description.website" labelClass="col-4" valueClass="col-8" isLink="true">
         </text-input>
     </div>
     <div class="col-5 border-left">
         <h4>
             <p><span [innerHTML]="'Address' | translate"></span></p>
         </h4>
-        <text-input presentationMode="view" label="Street Name" [text]="details.details.address.streetName" labelClass="col-4" valueClass="col-8">
+        <text-input presentationMode="view" [label]="'Street Name' | translate"  [text]="details.details.address.streetName" labelClass="col-4" valueClass="col-8">
         </text-input>
-        <text-input presentationMode="view" label="Building Number" [text]="details.details.address.buildingNumber" labelClass="col-4" valueClass="col-8">
+        <text-input presentationMode="view" [label]="'Building Number' | translate"  [text]="details.details.address.buildingNumber" labelClass="col-4" valueClass="col-8">
         </text-input>
-        <text-input presentationMode="view" label="City / Town" [text]="details.details.address.cityName" labelClass="col-4" valueClass="col-8">
+        <text-input presentationMode="view" [label]="'City / Town' | translate"  [text]="details.details.address.cityName" labelClass="col-4" valueClass="col-8">
         </text-input>
-        <text-input presentationMode="view" label="State / Province" [text]="details.details.address.region" labelClass="col-4" valueClass="col-8">
+        <text-input presentationMode="view" [label]="'State / Province' | translate"  [text]="details.details.address.region" labelClass="col-4" valueClass="col-8">
         </text-input>
-        <text-input presentationMode="view" label="Postal Code" [text]="details.details.address.postalCode" labelClass="col-4" valueClass="col-8">
+        <text-input presentationMode="view" [label]="'Postal Code' | translate"  [text]="details.details.address.postalCode" labelClass="col-4" valueClass="col-8">
         </text-input>
-        <text-input presentationMode="view" label="Country" [text]="details.details.address.country" labelClass="col-4" valueClass="col-8">
+        <text-input presentationMode="view" [label]="'Country' | translate"  [text]="details.details.address.country" labelClass="col-4" valueClass="col-8">
         </text-input>
     </div>
     <div class="col-2 border-left">
