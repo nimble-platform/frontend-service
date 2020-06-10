@@ -79,6 +79,7 @@ export class SimpleSearchFormComponent implements OnInit {
     searchIndex = myGlobals.config.defaultSearchIndex;
     productServiceFiltersEnabled = myGlobals.config.productServiceFiltersEnabled;
     collapsiblePropertyFacets = myGlobals.config.collapsiblePropertyFacets;
+    displayCategoryCounts = myGlobals.config.displayCategoryCounts
     searchIndexes = ["Name", "Category"];
     searchTopic = null;
 
@@ -874,7 +875,7 @@ export class SimpleSearchFormComponent implements OnInit {
         }
 
         for (let facet in res.facets) {
-            if (this.simpleSearchService.checkField(facet)) {
+            if (this.simpleSearchService.checkField(facet,prefix)) {
                 let facet_innerLabel;
                 let facet_innerCount;
                 let facetCount = 0;
@@ -966,7 +967,7 @@ export class SimpleSearchFormComponent implements OnInit {
         this.temp = [];
         var index = 0;
         for (let facet in facets) {
-            if (this.simpleSearchService.checkField(facet,facetMetadata[facet])) {
+            if (this.simpleSearchService.checkField(facet,"",facetMetadata[facet])) {
                 let facetMetadataExists: boolean = facetMetadata[facet] != null && facetMetadata[facet].label != null;
                 let propertyLabel = this.getName(facet);
                 let genName = facet;

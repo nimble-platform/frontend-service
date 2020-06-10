@@ -90,6 +90,7 @@ export const config = {
     ],
     "defaultSearchIndex": "Name",
     "delegationEnabled": true,
+    "displayCategoryCounts":true,
     "docLink": "https://www.nimble-project.org/docs/",
     "frameContractTabEnabled": true,
     "imprint": "<br/>E-Mail: <a href='mailto:nimble@il.ibm.com'>nimble@il.ibm.com</a><br/>",
