@@ -230,12 +230,12 @@
                                                         </ng-container>
                                                         <!-- the parent cateory having the same id with the child 'Others' entry -->
                                                         <ng-container *ngIf="(!excludingCategoryFacetQueryExists() && i > cat_level) || (excludingCategoryFacetQueryExists() && i === cat_level)">
-                                                            <span class="clickable" (click)="setCat(lvl.preferredName,lvl.id, lvl.other)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></span> ({{ lvl.count }})
+                                                            <span class="clickable" (click)="setCat(lvl.preferredName,lvl.id, lvl.other)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></span> <span *ngIf="displayCategoryCounts">({{ lvl.count }})</span>
                                                         </ng-container>
                                                     </div>
                                                     <!-- other categories in the hierarchy -->
                                                     <div *ngIf="catID!=lvl.id&&cat_level!=i">
-                                                        <span class="clickable" (click)="setCat(lvl.name, lvl.id, lvl.other)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></span> ({{ lvl.count }})
+                                                        <span class="clickable" (click)="setCat(lvl.name, lvl.id, lvl.other)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></span> <span *ngIf="displayCategoryCounts">({{ lvl.count }})</span>
                                                     </div>
                                                 </div>
                                             </ng-container>
