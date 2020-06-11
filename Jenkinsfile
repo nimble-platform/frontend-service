@@ -132,6 +132,14 @@ node('nimble-jenkins-slave') {
             sh 'ssh fmp-prod "cd /srv/nimble-fmp/ && ./run-fmp-prod.sh restart-single frontend-service"'
         }
 
+        stage('Build Application - Efac') {
+            sh 'mvn clean install -Denv=efac'
+        }
+
+        stage('Build Docker - Efac') {
+            sh 'docker build -t nimbleplatform/frontend-service:efac ./target'
+        }
+
         stage('Push Docker - Efac') {
             sh 'docker push nimbleplatform/frontend-service:efac'
         }
