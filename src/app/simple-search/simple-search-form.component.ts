@@ -1398,7 +1398,8 @@ export class SimpleSearchFormComponent implements OnInit {
     }
 
     checkProdCatCount() {
-        var count = 1;
+        // if product/service filters are enabled, we have the price filter by default
+        var count = this.productServiceFiltersEnabled ? 1:0;
         if (this.facetObj) {
             for (var i = 0; i < this.facetObj.length; i++) {
                 if (this.checkProdCat(this.facetObj[i].name)) {
