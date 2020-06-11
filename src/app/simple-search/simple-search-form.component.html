@@ -250,7 +250,7 @@
                         <div *ngIf="checkProdCatCount()>0">
 
                             <div class="pointer" (click)="showProductSection=!showProductSection">
-                                <h5><span [innerHTML]="'Product / Service' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showProdSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showProdSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+                                <h5><span [innerHTML]="'Product / Service' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showProductSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showProductSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
                             </div>
 
                             <div *ngIf="showProductSection">
