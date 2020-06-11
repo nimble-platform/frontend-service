@@ -874,6 +874,7 @@ export class SimpleSearchFormComponent implements OnInit {
             }
         }
 
+        let facetQueries = this.facetQuery.map(facet => facet.split(":")[0]);
         for (let facet in res.facets) {
             if (this.simpleSearchService.checkField(facet,prefix)) {
                 let facet_innerLabel;
@@ -932,7 +933,7 @@ export class SimpleSearchFormComponent implements OnInit {
                     "genName": genName,
                     "realName": realName,
                     "options": options,
-                    "showContent":!this.collapsiblePropertyFacets,
+                    "showContent":!this.collapsiblePropertyFacets || facetQueries.indexOf(name) != -1,
                     "total": total,
                     "selected": selected,
                     "expanded": false
@@ -966,6 +967,7 @@ export class SimpleSearchFormComponent implements OnInit {
         this.facetObj = [];
         this.temp = [];
         var index = 0;
+        let facetQueries = this.facetQuery.map(facet => facet.split(":")[0]);
         for (let facet in facets) {
             if (this.simpleSearchService.checkField(facet,"",facetMetadata[facet])) {
                 let facetMetadataExists: boolean = facetMetadata[facet] != null && facetMetadata[facet].label != null;
@@ -1032,7 +1034,7 @@ export class SimpleSearchFormComponent implements OnInit {
                                 "units": [unit], // available units for this quantity properties
                                 "selectedUnit": unit, // selected unit in the facet
                                 "total": 0,
-                                "showContent":!this.collapsiblePropertyFacets,
+                                "showContent":!this.collapsiblePropertyFacets || facetQueries.indexOf(facet) != -1,
                                 "selected": false,
                                 "expanded": false,
                                 "localName": localName
@@ -1074,7 +1076,7 @@ export class SimpleSearchFormComponent implements OnInit {
                     "realName": facetMetadataExists ? selectNameFromLabelObject(facetMetadata[facet].label) : propertyLabel,
                     "options": [],
                     "total": 0,
-                    "showContent":!this.collapsiblePropertyFacets,
+                    "showContent":!this.collapsiblePropertyFacets || facetQueries.indexOf(facet) != -1,
                     "selected": false,
                     "expanded": false,
                     "dataType": facetMetadata[facet] ? facetMetadata[facet].dataType: null,
