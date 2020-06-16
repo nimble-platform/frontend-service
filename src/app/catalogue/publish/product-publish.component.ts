@@ -660,7 +660,7 @@ export class ProductPublishComponent implements OnInit {
             this.publishStateService.publishingStarted = false;
         }
         if (ProductPublishComponent.dialogBox) {
-            let x: boolean = confirm("You will lose any changes you made, are you sure you want to quit ?");
+            let x: boolean = confirm(this.translate.instant('You will lose any changes you made, are you sure you want to quit ?'));
             if (x) {
                 this.publishStateService.publishMode = 'create';
                 this.publishStateService.publishingStarted = false;

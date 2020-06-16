@@ -48,7 +48,7 @@ export class CompanyCategoriesSettingsComponent implements OnInit {
     }
 
     removePrefCat(cat: string, i: number) {
-        if (confirm("Are you sure that you want to remove this category from your favorites?")) {
+        if (confirm(this.translate.instant("Are you sure that you want to remove this category from your favorites?"))) {
             this.prefCategoriesCallStatus[i].submit();
             let userId = this.cookieService.get("user_id");
             this.userService.togglePrefCat(userId, cat).then(res => {
@@ -63,7 +63,7 @@ export class CompanyCategoriesSettingsComponent implements OnInit {
     }
 
     removeRecCat(cat: string, i: number) {
-        if (confirm("Are you sure that you want to remove this category from your recently used ones?")) {
+        if (confirm(this.translate.instant("Are you sure that you want to remove this category from your recently used ones?"))) {
             this.recCategoriesCallStatus[i].submit();
             let userId = this.cookieService.get("user_id");
             this.userService.removeRecCat(userId, cat).then(res => {

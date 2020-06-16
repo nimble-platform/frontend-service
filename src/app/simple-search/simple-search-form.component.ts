@@ -161,6 +161,7 @@ export class SimpleSearchFormComponent implements OnInit {
         private translateService: TranslateService,
         private appComponent: AppComponent,
         public route: ActivatedRoute,
+        private translate: TranslateService,
         public router: Router) {
     }
 
@@ -874,6 +875,7 @@ export class SimpleSearchFormComponent implements OnInit {
             }
         }
 
+        let facetQueries = this.facetQuery.map(facet => facet.split(":")[0]);
         for (let facet in res.facets) {
             if (this.simpleSearchService.checkField(facet,prefix)) {
                 let facet_innerLabel;
@@ -932,7 +934,7 @@ export class SimpleSearchFormComponent implements OnInit {
                     "genName": genName,
                     "realName": realName,
                     "options": options,
-                    "showContent":!this.collapsiblePropertyFacets,
+                    "showContent":!this.collapsiblePropertyFacets || facetQueries.indexOf(name) != -1,
                     "total": total,
                     "selected": selected,
                     "expanded": false
@@ -966,6 +968,7 @@ export class SimpleSearchFormComponent implements OnInit {
         this.facetObj = [];
         this.temp = [];
         var index = 0;
+        let facetQueries = this.facetQuery.map(facet => facet.split(":")[0]);
         for (let facet in facets) {
             if (this.simpleSearchService.checkField(facet,"",facetMetadata[facet])) {
                 let facetMetadataExists: boolean = facetMetadata[facet] != null && facetMetadata[facet].label != null;
@@ -1032,7 +1035,7 @@ export class SimpleSearchFormComponent implements OnInit {
                                 "units": [unit], // available units for this quantity properties
                                 "selectedUnit": unit, // selected unit in the facet
                                 "total": 0,
-                                "showContent":!this.collapsiblePropertyFacets,
+                                "showContent":!this.collapsiblePropertyFacets || facetQueries.indexOf(facet) != -1,
                                 "selected": false,
                                 "expanded": false,
                                 "localName": localName
@@ -1074,7 +1077,7 @@ export class SimpleSearchFormComponent implements OnInit {
                     "realName": facetMetadataExists ? selectNameFromLabelObject(facetMetadata[facet].label) : propertyLabel,
                     "options": [],
                     "total": 0,
-                    "showContent":!this.collapsiblePropertyFacets,
+                    "showContent":!this.collapsiblePropertyFacets || facetQueries.indexOf(facet) != -1,
                     "selected": false,
                     "expanded": false,
                     "dataType": facetMetadata[facet] ? facetMetadata[facet].dataType: null,
@@ -1398,7 +1401,8 @@ export class SimpleSearchFormComponent implements OnInit {
     }
 
     checkProdCatCount() {
-        var count = 1;
+        // if product/service filters are enabled, we have the price filter by default
+        var count = this.productServiceFiltersEnabled ? 1:0;
         if (this.facetObj) {
             for (var i = 0; i < this.facetObj.length; i++) {
                 if (this.checkProdCat(this.facetObj[i].name)) {
@@ -1840,7 +1844,7 @@ export class SimpleSearchFormComponent implements OnInit {
         shoppingCartCallStatus.submit();
 
         this.shoppingCartDataService.addItemToCart(result.uri, 1, result.nimbleInstanceName).then(catalogue => {
-            shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
+            shoppingCartCallStatus.callback(this.translate.instant("Product is added to shopping cart."), false);
         }).catch(() => {
             shoppingCartCallStatus.error(null);
         });
@@ -1862,7 +1866,7 @@ export class SimpleSearchFormComponent implements OnInit {
             for (let i = 0; i < size; i++) {
                 let result = this.response[i];
                 if (UBLModelUtils.isProductInCart(shoppingCart, result.catalogueId, result.manufactuerItemId)) {
-                    this.getShoppingCartStatus(i).callback('Product is added to shopping cart.', false);
+                    this.getShoppingCartStatus(i).callback(this.translate.instant("Product is added to shopping cart."), false);
                 }
             }
         });

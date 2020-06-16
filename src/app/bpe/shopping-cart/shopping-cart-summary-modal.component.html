@@ -14,7 +14,7 @@
 
 <ng-template #modal let-c="close" let-d="dismiss">
     <div class="modal-header">
-        <h5 class="modal-title" id="modal-basic-title">Shopping Cart Summary</h5>
+        <h5 class="modal-title" id="modal-basic-title"><span [innerHTML]="'Shopping Cart Summary' | translate"></span></h5>
         <button type="button" class="close" aria-label="Close" (click)="d('cross')">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -23,7 +23,7 @@
         <div class="container-fluid">
             <table class="table table-striped">
                 <tr>
-                    <th><span>Ordered Product</span></th>
+                    <th><span [innerHTML]="'Ordered Product' | translate"></span></th>
                     <th><span [innerHTML]="'Product Id' | translate">Product Id</span></th>
                     <th><span [innerHTML]="'Quantity' | translate">Quantity</span></th>
                     <th><span [innerHTML]="'Net Price' | translate">Net Price</span></th>

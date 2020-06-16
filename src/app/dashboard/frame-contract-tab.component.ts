@@ -98,7 +98,7 @@ export class FrameContractTabComponent implements OnInit {
     }
 
     deleteFrameContract(frameContract: DigitalAgreement): void {
-        if (confirm("Are you sure that you want to delete this frame contract?")) {
+        if (confirm(this.translate.instant("Are you sure that you want to delete this frame contract?"))) {
             this.frameContractsRetrievalCallStatus.submit();
             this.bpeService.deleteFrameContract(frameContract.hjid, frameContract.item.manufacturerParty.federationInstanceID).then(response => {
                 // remove the deleted frame contract from the list

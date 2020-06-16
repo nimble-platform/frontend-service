@@ -682,7 +682,7 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     finishCollaboration() {
-        if (confirm("Are you sure that you want to finish this collaboration?")) {
+        if (confirm(this.translate.instant("Are you sure that you want to finish this collaboration?"))) {
             this.archiveCallStatus.submit();
             this.bpeService.finishCollaboration(this.processInstanceGroup.id, this.processInstanceGroup.sellerFederationId)
                 .then(() => {
@@ -696,7 +696,7 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     cancelCollaboration(close) {
-        if (confirm("Are you sure that you want to cancel this collaboration?")) {
+        if (confirm(this.translate.instant("Are you sure that you want to cancel this collaboration?"))) {
             this.archiveCallStatus.submit();
             this.bpeService.cancelCollaboration(this.processInstanceGroup.id, this.compComment, this.processInstanceGroup.sellerFederationId)
                 .then(() => {

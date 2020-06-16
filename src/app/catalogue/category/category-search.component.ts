@@ -126,7 +126,7 @@ export class CategorySearchComponent implements OnInit {
                 if (this.originalPageRef === 'publish') {
                     // This part is necessary since only the params has changes,canDeactivate method will not be called.
                     // This situation occurs when the user clicks on the Publish button in the top menu during the publication process.
-                    if (!confirm('You will lose any changes you made, are you sure you want to quit ?')) {
+                    if (!confirm(this.translate.instant('You will lose any changes you made, are you sure you want to quit ?'))) {
                         return;
                     }
                 }
@@ -303,7 +303,7 @@ export class CategorySearchComponent implements OnInit {
 
     canDeactivate(nextState: RouterStateSnapshot): boolean {
         if (this.originalPageRef === 'publish' && !nextState.url.startsWith('/catalogue/publish')) {
-            if (!confirm('You will lose any changes you made, are you sure you want to quit ?')) {
+            if (!confirm(this.translate.instant('You will lose any changes you made, are you sure you want to quit ?'))) {
                 return false;
             }
         }

@@ -47,6 +47,7 @@ import { ShoppingCartSummaryModalComponent } from './shopping-cart-summary-modal
 import { FEDERATIONID } from '../../catalogue/model/constants';
 import { ValidationService } from '../../common/validation/validators';
 import { FormGroup } from '@angular/forms';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'shopping-cart',
@@ -101,6 +102,7 @@ export class ShoppingCartComponent implements OnInit {
 
     constructor(private shoppingCartDataService: ShoppingCartDataService,
         private catalogueService: CatalogueService,
+        private translate: TranslateService,
         private bpeService: BPEService,
         private documentService: DocumentService,
         private bpDataService: BPDataService,
@@ -475,7 +477,7 @@ export class ShoppingCartComponent implements OnInit {
     // remove the given catalogue line from the shopping cart
     // moreover, update this.rfqs array accordingly
     onRemoveFromCart(cartLine: CatalogueLine): void {
-        if (confirm('Are you sure that you want to remove this product from the shopping cart?')) {
+        if (confirm(this.translate.instant('Are you sure that you want to remove this product from the shopping cart?'))) {
             let callStatus: CallStatus = this.deleteCallStatuses.get(cartLine.hjid);
             callStatus.submit();
             // get seller id
@@ -553,7 +555,7 @@ export class ShoppingCartComponent implements OnInit {
     }
 
     onSingleLineNegotiation(cartLine: CatalogueLine): void {
-        if (confirm('Are you sure that you want to send this request now ?')) {
+        if (confirm(this.translate.instant('Are you sure that you want to send this request now ?'))) {
             let callStatus: CallStatus = this.deleteCallStatuses.get(cartLine.hjid);
             callStatus.submit();
             let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
@@ -609,7 +611,7 @@ export class ShoppingCartComponent implements OnInit {
 
     // starts Negotiation/Order for the products included in the shopping basket
     onMultipleLineNegotiation(): void {
-        if (confirm('Are you sure that you want to send requests for all products now ?')) {
+        if (confirm(this.translate.instant('Are you sure that you want to send requests for all products now ?'))) {
             // identifier of the buyer company
             let companyId = this.cookieService.get('company_id');
             // this array contains the identifiers of buyer and seller companies

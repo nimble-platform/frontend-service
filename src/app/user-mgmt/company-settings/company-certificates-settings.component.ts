@@ -104,7 +104,7 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
     }
 
     onRemoveCertificate(id: string, index: number) {
-        if (confirm("Are you sure that you want to delete this certificate?")) {
+        if (confirm(this.translate.instant("Are you sure that you want to delete this certificate?"))) {
             this.certificatesCallStatus.submit();
             this.userService
                 .deleteCert(id, this.settings.companyID)
