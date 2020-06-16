@@ -91,7 +91,7 @@ export class UserProfileComponent implements OnInit {
     }
 
     deleteUser(user): void {
-        if (confirm("Are you sure that you want to delete this user?")) {
+        if (confirm(this.translate.instant("Are you sure that you want to delete this user?"))) {
             this.deleteUserCallStatus.submit();
             this.userService.deleteUser(user.hjid)
                 .then(res => {

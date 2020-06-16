@@ -129,7 +129,7 @@ export class MembersComponent implements OnInit {
         );
 
     verifyCompany(id): void {
-        if (confirm("Are you sure that you want to verify this company?")) {
+        if (confirm(this.translate.instant("Are you sure that you want to verify this company?"))) {
             this.companiesCallStatus.submit();
             this.analyticsService.verifyCompany(id)
                 .then(res => {
@@ -143,7 +143,7 @@ export class MembersComponent implements OnInit {
     }
 
     rejectCompany(id): void {
-        if (confirm("Are you sure that you want to reject this company?")) {
+        if (confirm(this.translate.instant("Are you sure that you want to reject this company?"))) {
             this.companiesCallStatus.submit();
             this.analyticsService.rejectCompany(id)
                 .then(res => {
@@ -157,7 +157,7 @@ export class MembersComponent implements OnInit {
     }
 
     deleteCompany(id): void {
-        if (confirm("Are you sure that you want to delete this company?")) {
+        if (confirm(this.translate.instant("Are you sure that you want to delete this company?"))) {
             this.companiesCallStatus.submit();
             this.analyticsService.deleteCompany(id)
                 .then(res => {

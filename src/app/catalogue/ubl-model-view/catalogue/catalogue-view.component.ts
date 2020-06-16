@@ -284,7 +284,7 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     deleteCatalogueLine(catalogueLine: CatalogueLine, i: number): void {
-        if (confirm("Are you sure that you want to delete this catalogue item?")) {
+        if (confirm(this.translate.instant("Are you sure that you want to delete this catalogue item?"))) {
             const status = this.getDeleteStatus(i);
             status.submit();
             let catalogue_uuid = "";

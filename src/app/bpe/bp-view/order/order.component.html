@@ -133,10 +133,10 @@
     <!--Purchase Order-->
     <table class="table table-striped" *ngIf="selectedPanel == 'PURCHASE_ORDER'">
         <tr>
-            <th><span>Ordered Product</span></th>
-            <th><span [innerHTML]="'Product Id' | translate">Product Id</span></th>
-            <th><span [innerHTML]="'Quantity' | translate">Quantity</span></th>
-            <th><span [innerHTML]="'Net Price' | translate">Net Price</span></th>
+            <th><span [innerHTML]="'Ordered Product' | translate"></span></th>
+            <th><span [innerHTML]="'Product Id' | translate"></span></th>
+            <th><span [innerHTML]="'Quantity' | translate"></span></th>
+            <th><span [innerHTML]="'Net Price' | translate"></span></th>
             <th *ngIf="config.vatEnabled" [innerHTML]="'VAT' | translate"><span>VAT</span></th>
             <th *ngIf="config.vatEnabled" [innerHTML]="'Gross Total' | translate"><span>Gross Total</span></th>
         </tr>

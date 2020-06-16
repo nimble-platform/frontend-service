@@ -161,6 +161,7 @@ export class SimpleSearchFormComponent implements OnInit {
         private translateService: TranslateService,
         private appComponent: AppComponent,
         public route: ActivatedRoute,
+        private translate: TranslateService,
         public router: Router) {
     }
 
@@ -1843,7 +1844,7 @@ export class SimpleSearchFormComponent implements OnInit {
         shoppingCartCallStatus.submit();
 
         this.shoppingCartDataService.addItemToCart(result.uri, 1, result.nimbleInstanceName).then(catalogue => {
-            shoppingCartCallStatus.callback("Product is added to shopping cart.", false);
+            shoppingCartCallStatus.callback(this.translate.instant("Product is added to shopping cart."), false);
         }).catch(() => {
             shoppingCartCallStatus.error(null);
         });
@@ -1865,7 +1866,7 @@ export class SimpleSearchFormComponent implements OnInit {
             for (let i = 0; i < size; i++) {
                 let result = this.response[i];
                 if (UBLModelUtils.isProductInCart(shoppingCart, result.catalogueId, result.manufactuerItemId)) {
-                    this.getShoppingCartStatus(i).callback('Product is added to shopping cart.', false);
+                    this.getShoppingCartStatus(i).callback(this.translate.instant("Product is added to shopping cart."), false);
                 }
             }
         });

@@ -514,7 +514,7 @@ export class FavouriteViewComponent implements OnInit {
             let size = this.catalogueLinesArray.length;
             for (let i = 0; i < size; i++) {
                 if (UBLModelUtils.isProductInCart(catalogue, this.catalogueLinesArray[i].catalogueId, this.catalogueLinesArray[i].manufactuerItemId)) {
-                    this.getShoppingCartStatus(i).callback("Product is added to shopping cart.", false);
+                    this.getShoppingCartStatus(i).callback(this.translate.instant("Product is added to shopping cart."), false);
                 }
             }
         })
@@ -584,7 +584,7 @@ export class FavouriteViewComponent implements OnInit {
 
         status.submit();
         this.shoppingCartDataService.addItemToCart(catLine.uri, 1, catLine.nimbleInstanceName).then(() => {
-            status.callback("Product is added to shopping cart.", false);
+            status.callback(this.translate.instant("Product is added to shopping cart."), false);
         }).catch((err) => {
             status.error('Failed to add product to cart', err);
         });

@@ -217,7 +217,7 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
     }
 
     onDeleteImage(id) {
-        if (confirm("Are you sure that you want to delete this image?")) {
+        if (confirm(this.translate.instant("Are you sure that you want to delete this image?"))) {
             this.saveCallStatusImage.submit();
             this.userService
                 .deleteImage(id, this.settings.companyID)

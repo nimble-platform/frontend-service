@@ -28,6 +28,7 @@ import { CustomTermModalComponent } from '../bp-view/negotiation/custom-term-mod
 import { CommonTerms } from '../../common/common-terms';
 import { ChildFormBase } from '../../common/validation/child-form-base';
 import { ValidationService } from '../../common/validation/validators';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'common-cart-terms',
@@ -71,6 +72,7 @@ export class CommonCartTermsComponent implements OnInit {
     private customTermModal: CustomTermModalComponent;
 
     constructor(private unitService: UnitService,
+        private translate: TranslateService,
         private validationService: ValidationService) {
     }
 
@@ -105,7 +107,7 @@ export class CommonCartTermsComponent implements OnInit {
      */
 
     onApplyTerms(): void {
-        if (confirm('Are you sure that you want to apply terms to all products?\nExisting terms will be overwritten.')) {
+        if (confirm(this.translate.instant('Are you sure that you want to apply terms to all products?\nExisting terms will be overwritten.'))) {
             let commonTerms: CommonTerms = new CommonTerms(this.deliveryPeriod,
                 this.warrantyPeriod,
                 this.incoTerm,

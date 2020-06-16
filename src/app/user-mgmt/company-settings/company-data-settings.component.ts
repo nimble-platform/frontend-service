@@ -176,7 +176,7 @@ export class CompanyDataSettingsComponent implements OnInit {
 
     deleteCompany(): void {
         if (this.settings.companyID) {
-            if (confirm("Are you sure that you want to delete this company?")) {
+            if (confirm(this.translate.instant("Are you sure that you want to delete this company?"))) {
                 this.saveCallStatus.submit();
                 this.userService.deleteCompany(this.settings.companyID)
                     .then(res => {

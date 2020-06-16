@@ -16,6 +16,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterStateSnapshot } from '@angular/router';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'simple-search',
@@ -26,7 +27,8 @@ export class SimpleSearchComponent implements OnInit {
 
     pageRef = '';
 
-    constructor(private route: ActivatedRoute) { }
+    constructor(private route: ActivatedRoute,
+                private translate: TranslateService,) { }
 
     ngOnInit(): void {
         this.route.queryParams.subscribe(params => {
@@ -36,7 +38,7 @@ export class SimpleSearchComponent implements OnInit {
 
     canDeactivate(nextState: RouterStateSnapshot): boolean {
         if (this.pageRef === 'publish' && !nextState.url.startsWith('/catalogue/publish')) {
-            if (!confirm('You will lose any changes you made, are you sure you want to quit ?')) {
+            if (!confirm(this.translate.instant('You will lose any changes you made, are you sure you want to quit ?'))) {
                 return false;
             }
         }

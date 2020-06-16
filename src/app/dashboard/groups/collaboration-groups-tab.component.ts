@@ -253,7 +253,7 @@ export class CollaborationGroupsTabComponent {
     }
 
     deleteGroup(id: string, federationId: string): void {
-        if (confirm('Are you sure that you want to delete this collaboration group?')) {
+        if (confirm(this.translate.instant('Are you sure that you want to delete this collaboration group?'))) {
             this.bpeService.deleteCollaborationGroup(id, federationId)
                 .then(() => {
                     this.onOrderRemovedFromView();

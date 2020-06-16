@@ -27,7 +27,7 @@
 <!--Purchase Order-->
 <table class="table table-striped ml-2 space-before" *ngIf="showPurchaseOrder">
     <tr>
-        <th><span>Ordered Product</span></th>
+        <th><span [innerHTML]="'Ordered Product' | translate"></span></th>
         <th><span [innerHTML]="'Product Id' | translate">Product Id</span></th>
         <th><span [innerHTML]="'Quantity' | translate">Quantity</span></th>
         <th><span [innerHTML]="'Net Price' | translate">Net Price</span></th>
