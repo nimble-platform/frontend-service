@@ -126,39 +126,14 @@ export class CategorySearchComponent implements OnInit {
                 if (this.originalPageRef === 'publish') {
                     // This part is necessary since only the params has changes,canDeactivate method will not be called.
                     // This situation occurs when the user clicks on the Publish button in the top menu during the publication process.
-                    if (!confirm(this.translate.instant('You will lose any changes you made, are you sure you want to quit ?'))) {
-                        return;
-                    }
+                    this.appComponent.confirmModalComponent.open('You will lose any changes you made, are you sure you want to quit ?').then(result => {
+                        if(result){
+                            this.initCategories(params);
+                        }
+                    });
                 }
-            }
-
-            if (this.pageRef == null || this.pageRef == "menu") {
-                // reset categories
-                this.categoryService.resetSelectedCategories();
-                this.selectedCategory = null;
-                this.selectedCategoryWithDetails = null;
-                this.pathToSelectedCategories = null;
-                // reset draft catalogue line
-                this.publishService.publishingStarted = false;
-                this.publishService.publishMode = "create";
-            }
-
-            // get the favorite categories
-            this.getFavoriteCategories();
-
-            // get the recently used categories
-            this.getRecentCategories();
-
-            // publishing granularity: single, bulk, null
-            this.publishingGranularity = params["pg"];
-            if (this.publishingGranularity == null) {
-                this.publishingGranularity = "single";
-            }
-
-            // handle category query term
-            this.categoryKeyword = params["cat"];
-            if (this.categoryKeyword != null) {
-                this.getCategories();
+            } else{
+                this.initCategories(params);
             }
         });
         // get available taxonomy ids
@@ -169,6 +144,37 @@ export class CategorySearchComponent implements OnInit {
             }
             this.getRootCategories(this.taxonomyId == "All" ? this.standardTaxonomy : this.taxonomyId);
         })
+    }
+
+    initCategories(params){
+        if (this.pageRef == null || this.pageRef == "menu") {
+            // reset categories
+            this.categoryService.resetSelectedCategories();
+            this.selectedCategory = null;
+            this.selectedCategoryWithDetails = null;
+            this.pathToSelectedCategories = null;
+            // reset draft catalogue line
+            this.publishService.publishingStarted = false;
+            this.publishService.publishMode = "create";
+        }
+
+        // get the favorite categories
+        this.getFavoriteCategories();
+
+        // get the recently used categories
+        this.getRecentCategories();
+
+        // publishing granularity: single, bulk, null
+        this.publishingGranularity = params["pg"];
+        if (this.publishingGranularity == null) {
+            this.publishingGranularity = "single";
+        }
+
+        // handle category query term
+        this.categoryKeyword = params["cat"];
+        if (this.categoryKeyword != null) {
+            this.getCategories();
+        }
     }
 
     onSelectTab(event: any, id: any) {
@@ -301,13 +307,14 @@ export class CategorySearchComponent implements OnInit {
         return "";
     }
 
-    canDeactivate(nextState: RouterStateSnapshot): boolean {
+    canDeactivate(nextState: RouterStateSnapshot): boolean | Promise<boolean>{
         if (this.originalPageRef === 'publish' && !nextState.url.startsWith('/catalogue/publish')) {
-            if (!confirm(this.translate.instant('You will lose any changes you made, are you sure you want to quit ?'))) {
-                return false;
-            }
+            return this.appComponent.confirmModalComponent.open('You will lose any changes you made, are you sure you want to quit ?').then(result => {
+                return result;
+            });
+        } else{
+            return true;
         }
-        return true;
     }
 
     onSearchCategory(): void {

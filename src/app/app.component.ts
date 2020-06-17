@@ -16,7 +16,7 @@
    limitations under the License.
  */
 
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import { CookieService } from 'ng2-cookies';
 import { CredentialsService } from './user-mgmt/credentials.service';
 import {
@@ -39,6 +39,7 @@ import { Headers, Http } from "@angular/http";
 import { selectValueOfTextObject } from "./common/utils";
 import { CallStatus } from "./common/call-status";
 import { DomSanitizer } from '@angular/platform-browser';
+import {ConfirmModalComponent} from './common/confirm-modal.component';
 
 @Component({
     selector: 'nimble-app',
@@ -79,6 +80,9 @@ export class AppComponent implements OnInit {
     submitCallStatus: CallStatus = new CallStatus();
 
     private translations: any = [];
+
+    @ViewChild(ConfirmModalComponent)
+    public confirmModalComponent: ConfirmModalComponent;
 
     constructor(
         private http: Http,

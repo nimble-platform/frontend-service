@@ -21,7 +21,7 @@ import { ProductPublishComponent } from "./publish/product-publish.component";
 @Injectable()
 export class PublishDeactivateGuardService implements CanDeactivate<ProductPublishComponent> {
 
-    canDeactivate(component: ProductPublishComponent): boolean {
+    canDeactivate(component: ProductPublishComponent): boolean | Promise<boolean>{
         return component.canDeactivate();
     }
 }

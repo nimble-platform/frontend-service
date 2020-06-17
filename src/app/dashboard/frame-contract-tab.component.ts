@@ -24,6 +24,7 @@ import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
 import { Router } from "@angular/router";
 import { TranslateService } from '@ngx-translate/core';
 import { UserService } from '../user-mgmt/user.service';
+import {AppComponent} from '../app.component';
 
 @Component({
     selector: 'frame-contract-tab',
@@ -40,6 +41,7 @@ export class FrameContractTabComponent implements OnInit {
     constructor(private bpeService: BPEService,
         private cookieService: CookieService,
         private translate: TranslateService,
+        private appComponent: AppComponent,
         private userService: UserService,
         private router: Router) {
     }
@@ -98,18 +100,20 @@ export class FrameContractTabComponent implements OnInit {
     }
 
     deleteFrameContract(frameContract: DigitalAgreement): void {
-        if (confirm(this.translate.instant("Are you sure that you want to delete this frame contract?"))) {
-            this.frameContractsRetrievalCallStatus.submit();
-            this.bpeService.deleteFrameContract(frameContract.hjid, frameContract.item.manufacturerParty.federationInstanceID).then(response => {
-                // remove the deleted frame contract from the list
-                let index = this.frameContracts.findIndex(fc => fc.hjid == frameContract.hjid);
-                this.frameContracts.splice(index, 1);
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to delete this frame contract?").then(result => {
+            if(result){
+                this.frameContractsRetrievalCallStatus.submit();
+                this.bpeService.deleteFrameContract(frameContract.hjid, frameContract.item.manufacturerParty.federationInstanceID).then(response => {
+                    // remove the deleted frame contract from the list
+                    let index = this.frameContracts.findIndex(fc => fc.hjid == frameContract.hjid);
+                    this.frameContracts.splice(index, 1);
 
-                this.frameContractsRetrievalCallStatus.callback(null, true);
-            }).catch(error => {
-                this.frameContractsRetrievalCallStatus.error("Failed to delete frame contract");
-            })
-        }
+                    this.frameContractsRetrievalCallStatus.callback(null, true);
+                }).catch(error => {
+                    this.frameContractsRetrievalCallStatus.error("Failed to delete frame contract");
+                })
+            }
+        });
     }
 
     getCorrespondingPartyId(frameContract: DigitalAgreement): string {

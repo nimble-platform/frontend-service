@@ -25,6 +25,7 @@ import { BpUserRole } from '../model/bp-user-role';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivityVariableParser } from '../bp-view/activity-variable-parser';
 import { UserService } from '../../user-mgmt/user.service';
+import {AppComponent} from '../../app.component';
 
 @Component({
     selector: "thread-event",
@@ -42,6 +43,7 @@ export class ThreadEventComponent implements OnInit {
     correspondent: string = null;
 
     constructor(private bpDataService: BPDataService,
+        private appComponent: AppComponent,
         private bpeService: BPEService,
         private userService: UserService,
         private translate: TranslateService) {
@@ -94,15 +96,17 @@ export class ThreadEventComponent implements OnInit {
     }
 
     cancelBP() {
-        if (confirm(this.translate.instant("Are you sure that you want to cancel this process?"))) {
-            this.bpeService.cancelBusinessProcess(this.event.processInstanceId, this.processInstanceGroup.sellerFederationId)
-                .then(res => {
-                    this.processCancelled.next();
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        }
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to cancel this process?").then(result => {
+            if(result){
+                this.bpeService.cancelBusinessProcess(this.event.processInstanceId, this.processInstanceGroup.sellerFederationId)
+                    .then(res => {
+                        this.processCancelled.next();
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            }
+        });
     }
 
     // do not allow the user to update the request document if the event has some deleted products

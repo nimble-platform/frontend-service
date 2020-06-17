@@ -129,45 +129,51 @@ export class MembersComponent implements OnInit {
         );
 
     verifyCompany(id): void {
-        if (confirm(this.translate.instant("Are you sure that you want to verify this company?"))) {
-            this.companiesCallStatus.submit();
-            this.analyticsService.verifyCompany(id)
-                .then(res => {
-                    this.companiesCallStatus.callback("Successfully verified company", true);
-                    this.searchCompany();
-                })
-                .catch(error => {
-                    this.companiesCallStatus.error("Error while verifing company", error);
-                });
-        }
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to verify this company?").then(result => {
+            if(result){
+                this.companiesCallStatus.submit();
+                this.analyticsService.verifyCompany(id)
+                    .then(res => {
+                        this.companiesCallStatus.callback("Successfully verified company", true);
+                        this.searchCompany();
+                    })
+                    .catch(error => {
+                        this.companiesCallStatus.error("Error while verifing company", error);
+                    });
+            }
+        });
     }
 
     rejectCompany(id): void {
-        if (confirm(this.translate.instant("Are you sure that you want to reject this company?"))) {
-            this.companiesCallStatus.submit();
-            this.analyticsService.rejectCompany(id)
-                .then(res => {
-                    this.companiesCallStatus.callback("Successfully rejected company", true);
-                    this.searchCompany();
-                })
-                .catch(error => {
-                    this.companiesCallStatus.error("Error while rejecting company", error);
-                });
-        }
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to reject this company?").then(result => {
+            if(result){
+                this.companiesCallStatus.submit();
+                this.analyticsService.rejectCompany(id)
+                    .then(res => {
+                        this.companiesCallStatus.callback("Successfully rejected company", true);
+                        this.searchCompany();
+                    })
+                    .catch(error => {
+                        this.companiesCallStatus.error("Error while rejecting company", error);
+                    });
+            }
+        });
     }
 
     deleteCompany(id): void {
-        if (confirm(this.translate.instant("Are you sure that you want to delete this company?"))) {
-            this.companiesCallStatus.submit();
-            this.analyticsService.deleteCompany(id)
-                .then(res => {
-                    this.companiesCallStatus.callback("Successfully deleted company", true);
-                    this.searchCompany();
-                })
-                .catch(error => {
-                    this.companiesCallStatus.error("Error while deleting company", error);
-                });
-        }
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to delete this company?").then(result => {
+            if(result){
+                this.companiesCallStatus.submit();
+                this.analyticsService.deleteCompany(id)
+                    .then(res => {
+                        this.companiesCallStatus.callback("Successfully deleted company", true);
+                        this.searchCompany();
+                    })
+                    .catch(error => {
+                        this.companiesCallStatus.error("Error while deleting company", error);
+                    });
+            }
+        });
     }
 
     setSort(val: string) {

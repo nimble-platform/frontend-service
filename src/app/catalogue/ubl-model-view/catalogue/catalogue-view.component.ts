@@ -36,6 +36,7 @@ import { Catalogue } from '../../model/publish/catalogue';
 import { CatalogueLine } from "../../model/publish/catalogue-line";
 import { TranslateService } from '@ngx-translate/core';
 import { DeleteExportCatalogueModalComponent } from "./delete-export-catalogue-modal.component";
+import {AppComponent} from '../../../app.component';
 
 @Component({
     selector: 'catalogue-view',
@@ -90,6 +91,7 @@ export class CatalogueViewComponent implements OnInit {
 
     constructor(private cookieService: CookieService,
         private publishService: PublishService,
+        private appComponent: AppComponent,
         private catalogueService: CatalogueService,
         private categoryService: CategoryService,
         private translate: TranslateService,
@@ -284,26 +286,28 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     deleteCatalogueLine(catalogueLine: CatalogueLine, i: number): void {
-        if (confirm(this.translate.instant("Are you sure that you want to delete this catalogue item?"))) {
-            const status = this.getDeleteStatus(i);
-            status.submit();
-            let catalogue_uuid = "";
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to delete this catalogue item?").then(result => {
+            if(result){
+                const status = this.getDeleteStatus(i);
+                status.submit();
+                let catalogue_uuid = "";
 
-            if (this.catalogueService.catalogueResponse.catalogueUuid === "" || this.catalogueService.catalogueResponse.catalogueUuid == null) {
-                catalogue_uuid = catalogueLine.goodsItem.item.catalogueDocumentReference.id;
-            } else {
-                catalogue_uuid = this.catalogueService.catalogueResponse.catalogueUuid;
+                if (this.catalogueService.catalogueResponse.catalogueUuid === "" || this.catalogueService.catalogueResponse.catalogueUuid == null) {
+                    catalogue_uuid = catalogueLine.goodsItem.item.catalogueDocumentReference.id;
+                } else {
+                    catalogue_uuid = this.catalogueService.catalogueResponse.catalogueUuid;
+                }
+
+                this.catalogueService.deleteCatalogueLine(catalogue_uuid, catalogueLine.id)
+                    .then(res => {
+                        this.requestCatalogue();
+                        status.callback("Catalogue line deleted", true);
+                    })
+                    .catch(error => {
+                        status.error("Error while deleting catalogue line");
+                    });
             }
-
-            this.catalogueService.deleteCatalogueLine(catalogue_uuid, catalogueLine.id)
-                .then(res => {
-                    this.requestCatalogue();
-                    status.callback("Catalogue line deleted", true);
-                })
-                .catch(error => {
-                    status.error("Error while deleting catalogue line");
-                });
-        }
+        });
     }
 
     getDeleteStatus(index: number): CallStatus {

@@ -48,6 +48,7 @@ import { FEDERATIONID } from '../../catalogue/model/constants';
 import { ValidationService } from '../../common/validation/validators';
 import { FormGroup } from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
+import {AppComponent} from '../../app.component';
 
 @Component({
     selector: 'shopping-cart',
@@ -108,6 +109,7 @@ export class ShoppingCartComponent implements OnInit {
         private bpDataService: BPDataService,
         private validationService: ValidationService,
         private userService: UserService,
+        private appComponent: AppComponent,
         private cookieService: CookieService,
         private router: Router) { }
 
@@ -477,61 +479,63 @@ export class ShoppingCartComponent implements OnInit {
     // remove the given catalogue line from the shopping cart
     // moreover, update this.rfqs array accordingly
     onRemoveFromCart(cartLine: CatalogueLine): void {
-        if (confirm(this.translate.instant('Are you sure that you want to remove this product from the shopping cart?'))) {
-            let callStatus: CallStatus = this.deleteCallStatuses.get(cartLine.hjid);
-            callStatus.submit();
-            // get seller id
-            let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
-            this.shoppingCartDataService.removeItemsFromCart([cartLine.hjid]).then(cartCatalogue => {
-                this.shoppingCart = cartCatalogue;
-                // get rfq for the seller
-                let rfq: RequestForQuotation = this.rfqs.get(sellerId);
-                // if rfq only contains this line, delete rfq as well
-                if (rfq.requestForQuotationLine.length == 1) {
-                    // remove the rfq from rfqCatalogueLineMap
-                    this.rfqCatalogueLineMap.delete(rfq.id);
-                    // remove NegotiationModelWrapper of this product
-                    this.negotiationModelWrappers.delete(cartLine.hjid);
-                    // remove rfq
-                    this.rfqs.delete(sellerId);
-                }
-                // otherwise, remove the rfq line created for this product
-                else {
-                    // get catalogue lines included in this rfq
-                    let cartLineHjids: number[] = this.rfqCatalogueLineMap.get(rfq.id);
+        this.appComponent.confirmModalComponent.open('Are you sure that you want to remove this product from the shopping cart?').then(result => {
+            if(result){
+                let callStatus: CallStatus = this.deleteCallStatuses.get(cartLine.hjid);
+                callStatus.submit();
+                // get seller id
+                let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
+                this.shoppingCartDataService.removeItemsFromCart([cartLine.hjid]).then(cartCatalogue => {
+                    this.shoppingCart = cartCatalogue;
+                    // get rfq for the seller
+                    let rfq: RequestForQuotation = this.rfqs.get(sellerId);
+                    // if rfq only contains this line, delete rfq as well
+                    if (rfq.requestForQuotationLine.length == 1) {
+                        // remove the rfq from rfqCatalogueLineMap
+                        this.rfqCatalogueLineMap.delete(rfq.id);
+                        // remove NegotiationModelWrapper of this product
+                        this.negotiationModelWrappers.delete(cartLine.hjid);
+                        // remove rfq
+                        this.rfqs.delete(sellerId);
+                    }
+                    // otherwise, remove the rfq line created for this product
+                    else {
+                        // get catalogue lines included in this rfq
+                        let cartLineHjids: number[] = this.rfqCatalogueLineMap.get(rfq.id);
 
-                    // remove catalogue line from the rfq
-                    let index = cartLineHjids.indexOf(cartLine.hjid);
-                    rfq.requestForQuotationLine.splice(index, 1);
-                    // we should also remove the line from the immutable rfq as it causes line index mismatch
-                    // between the normal rfq and immutable rfq. the immutable rfq is copied in all the negotiation model wrappers
-                    // for the lines of the same company
-                    for (let i = 0; i < cartLineHjids.length; i++) {
-                        this.negotiationModelWrappers.get(cartLineHjids[i]).initialImmutableRfq.requestForQuotationLine.splice(index, 1);
+                        // remove catalogue line from the rfq
+                        let index = cartLineHjids.indexOf(cartLine.hjid);
+                        rfq.requestForQuotationLine.splice(index, 1);
+                        // we should also remove the line from the immutable rfq as it causes line index mismatch
+                        // between the normal rfq and immutable rfq. the immutable rfq is copied in all the negotiation model wrappers
+                        // for the lines of the same company
+                        for (let i = 0; i < cartLineHjids.length; i++) {
+                            this.negotiationModelWrappers.get(cartLineHjids[i]).initialImmutableRfq.requestForQuotationLine.splice(index, 1);
+                        }
+
+                        // remove catalogue line for rfqCatalogueLineMap map
+                        cartLineHjids.splice(index, 1);
+                        this.rfqCatalogueLineMap.set(rfq.id, cartLineHjids);
+
+                        // when one product is removed from the rfq, indexes in negotiationModelWrappers should be updated
+                        let sizeOfCartLines = cartLineHjids.length;
+                        for (let i = 0; i < sizeOfCartLines; i++) {
+                            this.negotiationModelWrappers.get(cartLineHjids[i]).lineIndex = i;
+                        }
+                        // remove line from negotiationModelWrappers as well
+                        this.negotiationModelWrappers.delete(cartLine.hjid);
                     }
 
-                    // remove catalogue line for rfqCatalogueLineMap map
-                    cartLineHjids.splice(index, 1);
-                    this.rfqCatalogueLineMap.set(rfq.id, cartLineHjids);
-
-                    // when one product is removed from the rfq, indexes in negotiationModelWrappers should be updated
-                    let sizeOfCartLines = cartLineHjids.length;
-                    for (let i = 0; i < sizeOfCartLines; i++) {
-                        this.negotiationModelWrappers.get(cartLineHjids[i]).lineIndex = i;
-                    }
-                    // remove line from negotiationModelWrappers as well
-                    this.negotiationModelWrappers.delete(cartLine.hjid);
-                }
-
-                // update the status in the next iteration as the button status is not updated upon deleting a product from the basket
-                setTimeout(() => {
-                    callStatus.callback(null, true);
-                    this.deleteCallStatuses.delete(cartLine.hjid);
+                    // update the status in the next iteration as the button status is not updated upon deleting a product from the basket
+                    setTimeout(() => {
+                        callStatus.callback(null, true);
+                        this.deleteCallStatuses.delete(cartLine.hjid);
+                    })
+                }).catch(error => {
+                    callStatus.error('Failed to delete product from the shopping cart');
                 })
-            }).catch(error => {
-                callStatus.error('Failed to delete product from the shopping cart');
-            })
-        }
+            }
+        });
     }
 
     /**
@@ -555,46 +559,48 @@ export class ShoppingCartComponent implements OnInit {
     }
 
     onSingleLineNegotiation(cartLine: CatalogueLine): void {
-        if (confirm(this.translate.instant('Are you sure that you want to send this request now ?'))) {
-            let callStatus: CallStatus = this.deleteCallStatuses.get(cartLine.hjid);
-            callStatus.submit();
-            let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
-            // reset BP data
-            this.bpDataService.resetBpData();
+        this.appComponent.confirmModalComponent.open('Are you sure that you want to send this request now ?').then(result => {
+            if(result){
+                let callStatus: CallStatus = this.deleteCallStatuses.get(cartLine.hjid);
+                callStatus.submit();
+                let sellerId: string = UBLModelUtils.getLinePartyId(cartLine);
+                // reset BP data
+                this.bpDataService.resetBpData();
 
-            // final check on the rfq
-            const rfq: RequestForQuotation = copy(this.rfqs.get(sellerId));
-            // in the final rfq, there should be a single rfq line relating to selected catalogue line
-            // find this rfq line and remove the rest
-            let index = this.negotiationModelWrappers.get(cartLine.hjid).lineIndex;
-            rfq.requestForQuotationLine = [rfq.requestForQuotationLine[index]];
-            // replace properties of rfq line with the selected ones
-            rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty = this.modifiedCatalogueLines.get(cartLine.hjid).goodsItem.item.additionalItemProperty;
+                // final check on the rfq
+                const rfq: RequestForQuotation = copy(this.rfqs.get(sellerId));
+                // in the final rfq, there should be a single rfq line relating to selected catalogue line
+                // find this rfq line and remove the rest
+                let index = this.negotiationModelWrappers.get(cartLine.hjid).lineIndex;
+                rfq.requestForQuotationLine = [rfq.requestForQuotationLine[index]];
+                // replace properties of rfq line with the selected ones
+                rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty = this.modifiedCatalogueLines.get(cartLine.hjid).goodsItem.item.additionalItemProperty;
 
-            // start a request for quotation or order created using the rfq we have
-            let document: RequestForQuotation | Order;
-            callStatus.submit();
-            Promise.all([
-                this.userService.getParty(this.cookieService.get('company_id')),
-                this.userService.getParty(sellerId, cartLine.goodsItem.item.manufacturerParty.federationInstanceID),
+                // start a request for quotation or order created using the rfq we have
+                let document: RequestForQuotation | Order;
+                callStatus.submit();
+                Promise.all([
+                    this.userService.getParty(this.cookieService.get('company_id')),
+                    this.userService.getParty(sellerId, cartLine.goodsItem.item.manufacturerParty.federationInstanceID),
 
-            ]).then(([buyerPartyResp, sellerPartyResp]) => {
-                rfq.buyerCustomerParty = new CustomerParty(buyerPartyResp);
-                rfq.sellerSupplierParty = new SupplierParty(sellerPartyResp);
+                ]).then(([buyerPartyResp, sellerPartyResp]) => {
+                    rfq.buyerCustomerParty = new CustomerParty(buyerPartyResp);
+                    rfq.sellerSupplierParty = new SupplierParty(sellerPartyResp);
 
-                document = this.areNegotiationConditionsSatisfied(cartLine) ? rfq : this.createOrderWithRfq(rfq, [cartLine.hjid]);
+                    document = this.areNegotiationConditionsSatisfied(cartLine) ? rfq : this.createOrderWithRfq(rfq, [cartLine.hjid]);
 
-                return this.bpeService.startProcessWithDocument(document, document.sellerSupplierParty.party.federationInstanceID);
-            }).then(() => {
-                // started the negotiation for the product successfully,so remove it from the shopping cart
-                this.shoppingCartDataService.removeItemsFromCart([cartLine.hjid]);
-                callStatus.callback(null, true);
-                this.router.navigate(['dashboard'], { queryParams: { tab: 'PURCHASES', ins: document.sellerSupplierParty.party.federationInstanceID } });
+                    return this.bpeService.startProcessWithDocument(document, document.sellerSupplierParty.party.federationInstanceID);
+                }).then(() => {
+                    // started the negotiation for the product successfully,so remove it from the shopping cart
+                    this.shoppingCartDataService.removeItemsFromCart([cartLine.hjid]);
+                    callStatus.callback(null, true);
+                    this.router.navigate(['dashboard'], { queryParams: { tab: 'PURCHASES', ins: document.sellerSupplierParty.party.federationInstanceID } });
 
-            }).catch(error => {
-                callStatus.error('Failed to start process', error);
-            });
-        }
+                }).catch(error => {
+                    callStatus.error('Failed to start process', error);
+                });
+            }
+        });
     }
 
     openShoppingCartSummary() {
@@ -611,75 +617,77 @@ export class ShoppingCartComponent implements OnInit {
 
     // starts Negotiation/Order for the products included in the shopping basket
     onMultipleLineNegotiation(): void {
-        if (confirm(this.translate.instant('Are you sure that you want to send requests for all products now ?'))) {
-            // identifier of the buyer company
-            let companyId = this.cookieService.get('company_id');
-            // this array contains the identifiers of buyer and seller companies
-            let partyIds = Array.from(this.sellersSettings.keys()).concat(companyId);
-            let federationIds = this.getFederationIds();
+        this.appComponent.confirmModalComponent.open('Are you sure that you want to send requests for all products now ?').then(result => {
+            if(result){
+                // identifier of the buyer company
+                let companyId = this.cookieService.get('company_id');
+                // this array contains the identifiers of buyer and seller companies
+                let partyIds = Array.from(this.sellersSettings.keys()).concat(companyId);
+                let federationIds = this.getFederationIds();
 
-            this.startBpCallStatus.submit();
-            // reset BP data
-            this.bpDataService.resetBpData();
+                this.startBpCallStatus.submit();
+                // reset BP data
+                this.bpDataService.resetBpData();
 
-            // get parties
-            this.userService.getParties(partyIds, federationIds).then(parties => {
-                // create party id-party map
-                let partyMap: Map<string, Party> = this.createPartyMap(parties);
-                let promises: Promise<any>[] = [];
-                // for each rfq, start a Negotiation or Order
-                this.rfqs.forEach(rfq => {
-                    let copyRfq = copy(rfq);
-                    let sellerId: string = null;
-                    // if negotiation conditions are satisfied for at least one product included in the rfq, create a Request For Quotation
-                    // otherwise, create an Order
-                    let areNegotiationConditionsSatisfiedForAtLeastOneProduct: boolean = false;
-                    // we need line hjids to retrieve correct NegotiationModelWrapper which is necessary to calculate the price for Order
-                    let lineHjids: number[] = [];
-                    // replace properties of rfq lines with the selected ones
-                    for (let copyRfqLine of copyRfq.requestForQuotationLine) {
-                        let catalogueLine = this.getCatalogueLine(copyRfqLine);
+                // get parties
+                this.userService.getParties(partyIds, federationIds).then(parties => {
+                    // create party id-party map
+                    let partyMap: Map<string, Party> = this.createPartyMap(parties);
+                    let promises: Promise<any>[] = [];
+                    // for each rfq, start a Negotiation or Order
+                    this.rfqs.forEach(rfq => {
+                        let copyRfq = copy(rfq);
+                        let sellerId: string = null;
+                        // if negotiation conditions are satisfied for at least one product included in the rfq, create a Request For Quotation
+                        // otherwise, create an Order
+                        let areNegotiationConditionsSatisfiedForAtLeastOneProduct: boolean = false;
+                        // we need line hjids to retrieve correct NegotiationModelWrapper which is necessary to calculate the price for Order
+                        let lineHjids: number[] = [];
+                        // replace properties of rfq lines with the selected ones
+                        for (let copyRfqLine of copyRfq.requestForQuotationLine) {
+                            let catalogueLine = this.getCatalogueLine(copyRfqLine);
 
-                        // set seller id
-                        if (!sellerId) {
-                            sellerId = UBLModelUtils.getLinePartyId(catalogueLine);
-                        }
-                        // push line hjid to the list
-                        lineHjids.push(catalogueLine.hjid);
-                        // replace item properties
-                        copyRfqLine.lineItem.item.additionalItemProperty = this.modifiedCatalogueLines.get(catalogueLine.hjid).goodsItem.item.additionalItemProperty;
+                            // set seller id
+                            if (!sellerId) {
+                                sellerId = UBLModelUtils.getLinePartyId(catalogueLine);
+                            }
+                            // push line hjid to the list
+                            lineHjids.push(catalogueLine.hjid);
+                            // replace item properties
+                            copyRfqLine.lineItem.item.additionalItemProperty = this.modifiedCatalogueLines.get(catalogueLine.hjid).goodsItem.item.additionalItemProperty;
 
-                        if (!areNegotiationConditionsSatisfiedForAtLeastOneProduct) {
-                            let areNegotiationConditionsSatisfied = this.areNegotiationConditionsSatisfied(catalogueLine);
-                            if (areNegotiationConditionsSatisfied) {
-                                areNegotiationConditionsSatisfiedForAtLeastOneProduct = true;
+                            if (!areNegotiationConditionsSatisfiedForAtLeastOneProduct) {
+                                let areNegotiationConditionsSatisfied = this.areNegotiationConditionsSatisfied(catalogueLine);
+                                if (areNegotiationConditionsSatisfied) {
+                                    areNegotiationConditionsSatisfiedForAtLeastOneProduct = true;
+                                }
                             }
                         }
-                    }
-                    // set buyer and seller parties
-                    copyRfq.buyerCustomerParty = new CustomerParty(partyMap.get(companyId));
-                    copyRfq.sellerSupplierParty = new SupplierParty(partyMap.get(sellerId));
+                        // set buyer and seller parties
+                        copyRfq.buyerCustomerParty = new CustomerParty(partyMap.get(companyId));
+                        copyRfq.sellerSupplierParty = new SupplierParty(partyMap.get(sellerId));
 
-                    // start a request for quotation or order created using the rfq we have
-                    let document: RequestForQuotation | Order = areNegotiationConditionsSatisfiedForAtLeastOneProduct ? copyRfq : this.createOrderWithRfq(copyRfq, lineHjids);
-                    promises.push(this.bpeService.startProcessWithDocument(document, document.sellerSupplierParty.party.federationInstanceID));
-                });
-                Promise.all(promises).then(response => {
-                    // started the negotiation for all products successfully,so remove them from the shopping cart
-                    let hjids: number[] = [];
-                    for (let cartLine of this.shoppingCart.catalogueLine) {
-                        hjids.push(cartLine.hjid);
-                    }
-                    this.shoppingCartDataService.removeItemsFromCart(hjids);
-                    this.startBpCallStatus.callback(null, true);
-                    this.router.navigate(['dashboard'], { queryParams: { tab: 'PURCHASES' } });
+                        // start a request for quotation or order created using the rfq we have
+                        let document: RequestForQuotation | Order = areNegotiationConditionsSatisfiedForAtLeastOneProduct ? copyRfq : this.createOrderWithRfq(copyRfq, lineHjids);
+                        promises.push(this.bpeService.startProcessWithDocument(document, document.sellerSupplierParty.party.federationInstanceID));
+                    });
+                    Promise.all(promises).then(response => {
+                        // started the negotiation for all products successfully,so remove them from the shopping cart
+                        let hjids: number[] = [];
+                        for (let cartLine of this.shoppingCart.catalogueLine) {
+                            hjids.push(cartLine.hjid);
+                        }
+                        this.shoppingCartDataService.removeItemsFromCart(hjids);
+                        this.startBpCallStatus.callback(null, true);
+                        this.router.navigate(['dashboard'], { queryParams: { tab: 'PURCHASES' } });
+                    }).catch(error => {
+                        this.startBpCallStatus.error('Failed to start processes', error);
+                    });
                 }).catch(error => {
-                    this.startBpCallStatus.error('Failed to start processes', error);
-                });
-            }).catch(error => {
-                this.startBpCallStatus.error('Failed to get details of seller parties', error);
-            })
-        }
+                    this.startBpCallStatus.error('Failed to get details of seller parties', error);
+                })
+            }
+        });
 
     }
 

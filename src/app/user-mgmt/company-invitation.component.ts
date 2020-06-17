@@ -163,29 +163,33 @@ export class CompanyInvitationComponent implements OnInit {
     }
 
     cancelInvite(inv) {
-        if (confirm(this.translate.instant("Are you sure that you want to cancel the invitation for this user?"))) {
-            this.userService.deleteInvite(inv["email"])
-                .then(response => {
-                    this.loadInvites();
-                })
-                .catch(error => {
-                    console.error('An error occurred', error);
-                    this.loadInvites();
-                });
-        }
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to cancel the invitation for this user?").then(result => {
+            if(result){
+                this.userService.deleteInvite(inv["email"])
+                    .then(response => {
+                        this.loadInvites();
+                    })
+                    .catch(error => {
+                        console.error('An error occurred', error);
+                        this.loadInvites();
+                    });
+            }
+        });
     }
 
     deleteInvite(inv) {
-        if (confirm(this.translate.instant("Are you sure that you want to remove this user from your company?"))) {
-            this.userService.deleteInvite(inv["email"])
-                .then(response => {
-                    this.loadInvites();
-                })
-                .catch(error => {
-                    console.error('An error occurred', error);
-                    this.loadInvites();
-                });
-        }
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to remove this user from your company?").then(result => {
+            if(result){
+                this.userService.deleteInvite(inv["email"])
+                    .then(response => {
+                        this.loadInvites();
+                    })
+                    .catch(error => {
+                        console.error('An error occurred', error);
+                        this.loadInvites();
+                    });
+            }
+        });
     }
 
     showRoleTT(content) {

@@ -39,6 +39,7 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { DisableControlDirective } from './disable-control-directive';
 import { SingleClickDirective } from './single-click.directive';
+import {ConfirmModalComponent} from './confirm-modal.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -68,6 +69,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         PlainAmountInputComponent,
         FileInputComponent,
         DateInputComponent,
+        ConfirmModalComponent,
         AddressInputComponent,
         BooleanInputComponent,
         MultiAddressInputComponent,
@@ -88,6 +90,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         DateInputComponent,
         AddressInputComponent,
         BooleanInputComponent,
+        ConfirmModalComponent,
         MultiAddressInputComponent,
         InputLabelComponent,
         AmountInputComponent,

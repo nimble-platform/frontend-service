@@ -253,15 +253,17 @@ export class CollaborationGroupsTabComponent {
     }
 
     deleteGroup(id: string, federationId: string): void {
-        if (confirm(this.translate.instant('Are you sure that you want to delete this collaboration group?'))) {
-            this.bpeService.deleteCollaborationGroup(id, federationId)
-                .then(() => {
-                    this.onOrderRemovedFromView();
-                })
-                .catch(err => {
-                    console.error('Failed to delete the collaboration group', err);
-                });
-        }
+        this.appComponent.confirmModalComponent.open('Are you sure that you want to delete this collaboration group?').then(result => {
+            if(result){
+                this.bpeService.deleteCollaborationGroup(id, federationId)
+                    .then(() => {
+                        this.onOrderRemovedFromView();
+                    })
+                    .catch(err => {
+                        console.error('Failed to delete the collaboration group', err);
+                    });
+            }
+        });
     }
 
     onOrderRemovedFromView(): void {

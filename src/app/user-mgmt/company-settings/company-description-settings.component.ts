@@ -217,18 +217,20 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
     }
 
     onDeleteImage(id) {
-        if (confirm(this.translate.instant("Are you sure that you want to delete this image?"))) {
-            this.saveCallStatusImage.submit();
-            this.userService
-                .deleteImage(id, this.settings.companyID)
-                .then(() => {
-                    this.saveCallStatusImage.callback("Image deleted", true);
-                    this.onSaveEvent.emit();
-                })
-                .catch(error => {
-                    this.saveCallStatusImage.error("Error while deleting image", error);
-                });
-        }
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to delete this image?").then(result => {
+            if(result){
+                this.saveCallStatusImage.submit();
+                this.userService
+                    .deleteImage(id, this.settings.companyID)
+                    .then(() => {
+                        this.saveCallStatusImage.callback("Image deleted", true);
+                        this.onSaveEvent.emit();
+                    })
+                    .catch(error => {
+                        this.saveCallStatusImage.error("Error while deleting image", error);
+                    });
+            }
+        });
     }
 
     flagChanged() {

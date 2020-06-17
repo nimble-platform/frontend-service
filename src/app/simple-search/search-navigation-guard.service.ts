@@ -22,12 +22,9 @@ export class SearchNavigationGuardService implements CanDeactivate<SimpleSearchC
     canDeactivate(component: SimpleSearchComponent,
         currentRoute: ActivatedRouteSnapshot,
         currentState: RouterStateSnapshot,
-        nextState: RouterStateSnapshot): boolean {
+        nextState: RouterStateSnapshot): boolean | Promise<boolean>{
 
 
-        if (!component.canDeactivate(nextState)) {
-            return false;
-        }
-        return true;
+        return component.canDeactivate(nextState);
     }
 }
