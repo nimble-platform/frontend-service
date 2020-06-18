@@ -38,7 +38,7 @@
                             <i class="fa fa-exclamation-circle"></i>
                         </span>
                     </strong><br />
-                    <i>based on {{ratings.totalNumberOfRatings}} rating(s)</i>
+                    <i [innerHTML]="'based on rating(s)' | translate: {totalNumberOfRatings: ratings.totalNumberOfRatings}"></i>
                 </label>
                 <div class="col-6 align-right">
                     <ngb-rating [rate]="ratingOverall" [readonly]="true" max="5">
