@@ -18,7 +18,7 @@
             <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
 
                 <form (ngSubmit)="searchFavouriteSearch_first()" novalidate>
-                    <input class="form-control col-12" type="text" [(ngModel)]="searchText_first" #q="ngModel" [ngModelOptions]="{standalone: true}" [ngbTypeahead]="searchFavourite_first" placeholder="Search ...">
+                    <input class="form-control col-12" type="text" [(ngModel)]="searchText_first" #q="ngModel" [ngModelOptions]="{standalone: true}" [ngbTypeahead]="searchFavourite_first" [placeholder]="'Search ...' | translate">
                 </form>
                 <div class="input-group-append">
                     <button (click)="searchFavouriteSearch_first()" class="btn btn-outline-secondary">
@@ -90,7 +90,7 @@
         <div>
             <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
                 <form (ngSubmit)="searchFavouriteSearch()" novalidate>
-                    <input class="form-control col-12" type="text" [(ngModel)]="searchText" [ngModelOptions]="{standalone: true}" #q="ngModel" [ngbTypeahead]="searchFavourite" placeholder="Search ...">
+                    <input class="form-control col-12" type="text" [(ngModel)]="searchText" [ngModelOptions]="{standalone: true}" #q="ngModel" [ngbTypeahead]="searchFavourite" [placeholder]="'Search ...' | translate">
                 </form>
                 <div class="input-group-append">
                     <button (click)="searchFavouriteSearch()" class="btn btn-outline-secondary">
