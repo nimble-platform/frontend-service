@@ -438,7 +438,8 @@ export class SimpleSearchFormComponent implements OnInit {
         let categoryDisplayInfo: any = this.getCategoryDisplayInfo(indexCategories, this.categoryCounts);
         if (taxonomyPrefix != "") {
             // save the selected category
-            let originalSelectedCategory= this.catID;
+            let originalSelectedCategoryID= this.catID;
+            let originalSelectedCategoryName = this.cat;
             // build the category tree until the latest level contains more than one category or
             // the category at the latest level does not have any children categories
             let previouslySelectedCategoryId = "";
@@ -492,7 +493,8 @@ export class SimpleSearchFormComponent implements OnInit {
 
             } while (this.catID != previouslySelectedCategoryId);
             // set the selected category
-            this.catID = originalSelectedCategory;
+            this.catID = originalSelectedCategoryID;
+            this.cat = originalSelectedCategoryName;
         } else{
             // set the level of the selected category, if any
             this.cat_level = this.getCatLevel(this.catID, indexCategories.result);
