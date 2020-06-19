@@ -22,6 +22,7 @@ import { ChildFormBase } from './validation/child-form-base';
 import { AbstractControl, FormControl, Validators } from '@angular/forms';
 import { ValidatorFn } from '@angular/forms/src/directives/validators';
 import { spaceValidator, ValidationService } from './validation/validators';
+import {sanitizeLink} from './utils';
 
 const TEXT_INPUT_FIELD_NAME = 'text';
 @Component({
@@ -61,6 +62,7 @@ export class TextInputComponent extends ChildFormBase implements OnInit {
     @Input() maxLength: string = "255";
     @Input() isLink:boolean = false;
 
+    getLink = sanitizeLink;
     textInputFormControl: FormControl;
 
     languages = LANGUAGES;
