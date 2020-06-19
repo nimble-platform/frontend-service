@@ -436,45 +436,67 @@ export class SimpleSearchFormComponent implements OnInit {
         var indexCategories = await this.categoryService.getCategories(categoryUris);
         // extract only the required information in UI from the complete category information
         let categoryDisplayInfo: any = this.getCategoryDisplayInfo(indexCategories, this.categoryCounts);
-        // set the level of the selected category, if any
-        this.cat_level = this.getCatLevel(this.catID, indexCategories.result);
-        this.cat_levels = [];
         if (taxonomyPrefix != "") {
-            // ToDo: Remove manual distinction after search update
-            if (this.taxonomy == "eClass") {
-                for (let categoryUri of Object.keys(categoryDisplayInfo)) {
-                    let count = categoryDisplayInfo[categoryUri].count;
-                    if (categoryUri.startsWith(taxonomyPrefix)) {
-                        let eclass_idx = categoryDisplayInfo[categoryUri].code;
-                        let catLevel = 3;
-                        if (eclass_idx % 1000000 === 0) {
-                            catLevel = 0;
-                        } else if (eclass_idx % 10000 === 0) {
-                            catLevel = 1;
-                        } else if (eclass_idx % 100 === 0) {
-                            catLevel = 2;
-                        }
-
-                        if ((this.cat_level + 1) >= catLevel || (this.cat === '' && catLevel === 0)) {
-                            if (this.cat_levels[catLevel] == null) {
-                                this.cat_levels[catLevel] = [];
+            // save the selected category
+            let originalSelectedCategory= this.catID;
+            // build the category tree until the latest level contains more than one category or
+            // the category at the latest level does not have any children categories
+            let previouslySelectedCategoryId = "";
+            do {
+                previouslySelectedCategoryId = this.catID;
+                // set the level of the selected category, if any
+                this.cat_level = this.getCatLevel(this.catID, indexCategories.result);
+                this.cat_levels = [];
+                // ToDo: Remove manual distinction after search update
+                if (this.taxonomy == "eClass") {
+                    for (let categoryUri of Object.keys(categoryDisplayInfo)) {
+                        let count = categoryDisplayInfo[categoryUri].count;
+                        if (categoryUri.startsWith(taxonomyPrefix)) {
+                            let eclass_idx = categoryDisplayInfo[categoryUri].code;
+                            let catLevel = 3;
+                            if (eclass_idx % 1000000 === 0) {
+                                catLevel = 0;
+                            } else if (eclass_idx % 10000 === 0) {
+                                catLevel = 1;
+                            } else if (eclass_idx % 100 === 0) {
+                                catLevel = 2;
                             }
-                            this.cat_levels[catLevel].push({
-                                'name': categoryUri,
-                                'id': categoryUri,
-                                'count': count,
-                                'preferredName': selectNameFromLabelObject(categoryDisplayInfo[categoryUri].label)
-                            });
+
+                            if ((this.cat_level + 1) >= catLevel || (this.cat === '' && catLevel === 0)) {
+                                if (this.cat_levels[catLevel] == null) {
+                                    this.cat_levels[catLevel] = [];
+                                }
+                                this.cat_levels[catLevel].push({
+                                    'name': categoryUri,
+                                    'id': categoryUri,
+                                    'count': count,
+                                    'preferredName': selectNameFromLabelObject(categoryDisplayInfo[categoryUri].label)
+                                });
+                            }
                         }
                     }
+                } else {
+                    // this.cat === '' indicates that there is no category selected for filtering the results
+                    this.constructCategoryTree(indexCategories.result, categoryDisplayInfo, this.taxonomy, taxonomyPrefix);
                 }
-            } else {
-                // this.cat === '' indicates that there is no category selected for filtering the results
-                this.constructCategoryTree(indexCategories.result, categoryDisplayInfo, this.taxonomy, taxonomyPrefix);
-            }
 
-            this.sortCatLevels();
-            this.populateOtherEntries();
+                this.sortCatLevels();
+                this.populateOtherEntries();
+                // if the latest level contains only one category, make it the selected category
+                // and populate category tree again
+                let catLevelSize = this.cat_levels.length;
+                if(catLevelSize > 0 && this.cat_levels[catLevelSize-1].length == 1){
+                    this.catID = this.cat_levels[catLevelSize-1][0].id;
+                    this.cat = this.cat_levels[catLevelSize-1][0].name;
+                }
+
+            } while (this.catID != previouslySelectedCategoryId);
+            // set the selected category
+            this.catID = originalSelectedCategory;
+        } else{
+            // set the level of the selected category, if any
+            this.cat_level = this.getCatLevel(this.catID, indexCategories.result);
+            this.cat_levels = [];
         }
         this.cat_loading = false;
         this.categoriesCallStatus.callback("Categories loaded.", true);
@@ -1618,10 +1640,12 @@ export class SimpleSearchFormComponent implements OnInit {
      * @param id category id
      * @param excludeCategoriesAtCurrentLevel indicates that user has selected the "Other" entry in the category hierarchy.
      * This requires that the search must be performed with the parent category by excluding all the children
+     * @param level the level of the selected category
      */
-    setCat(name: string, id: string, excludeCategoriesAtCurrentLevel = false) {
+    setCat(name: string, id: string, excludeCategoriesAtCurrentLevel = false, level:number) {
         this.cat = name;
         this.catID = id;
+        this.cat_level = level;
 
         if (!excludeCategoriesAtCurrentLevel) {
             // remove the category related filters
@@ -1637,9 +1661,7 @@ export class SimpleSearchFormComponent implements OnInit {
             // others entry clicked and selected
             if (id !== '') {
                 // child categories of the selected are excluded via the field query
-                // cat level is still associated with the previously selected category i.e. the parent category.
-                // look at child level, so +1
-                let catLevel: number = this.cat_level + 1;
+                let catLevel: number = this.cat_level;
                 // do not add the "Other" entry to the filter query
                 for (let i = 0; i < this.cat_levels[catLevel].length - 1; i++) {
                     this.facetQuery.push(`-${this.product_cat_mix}:"${this.cat_levels[catLevel][i].id}"`);
