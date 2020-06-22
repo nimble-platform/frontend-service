@@ -71,8 +71,9 @@
                                 </div>
                                 <div class="col-12 pt-1" [ngClass]="{'pb-1':!mgmt_view,'pb-2 border-bottom':mgmt_view}">
                                     <div class="text-center" style="max-height:1.5rem;overflow:hidden;">
-                                        <a *ngIf="result.website && getLink(result.website) != ''" [href]="getLink(result.website)" [title]="result[product_vendor_name]" target="_blank">{{result[product_vendor_name]}}</a>
-                                        <span *ngIf="!result.website || getLink(result.website) == ''" [title]="result[product_vendor_name]">{{result[product_vendor_name]}}</span>
+                                        <a *ngIf="showCompanyDetailsOnClicked" [href]="getCompLink(result)" [title]="result[product_vendor_name]">{{result[product_vendor_name]}}</a>
+                                        <a *ngIf="!showCompanyDetailsOnClicked && result.website && getLink(result.website) != ''" [href]="getLink(result.website)" [title]="result[product_vendor_name]" target="_blank">{{result[product_vendor_name]}}</a>
+                                        <span *ngIf="!showCompanyDetailsOnClicked && (!result.website || getLink(result.website) == '')" [title]="result[product_vendor_name]">{{result[product_vendor_name]}}</span>
                                     </div>
                                 </div>
                                 <div *ngIf="mgmt_view" class="col-12 pt-2">

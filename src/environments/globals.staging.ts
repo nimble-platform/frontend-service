@@ -154,6 +154,7 @@ export const config = {
     "showChat": true,
     "showAgent": true,
     "showCompanyMembers": false,
+    "showCompanyDetailsInPlatformMembers":false,
     "showExplorative": true,
     "showFullName": false,
     "showLCPA": true,

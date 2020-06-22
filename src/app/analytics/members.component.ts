@@ -54,6 +54,7 @@ export class MembersComponent implements OnInit {
     product_vendor_img = myGlobals.product_vendor_img;
     product_vendor_name = myGlobals.product_vendor_name;
     product_vendor_brand_name = myGlobals.product_vendor_brand_name;
+    showCompanyDetailsOnClicked:boolean;
     imgEndpoint = myGlobals.user_mgmt_endpoint + "/company-settings/image/";
     getLink = sanitizeLink;
 
@@ -66,6 +67,7 @@ export class MembersComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.showCompanyDetailsOnClicked = myGlobals.config.showCompanyDetailsInPlatformMembers && this.appComponent.isLoggedIn;
         if (this.mgmt_view) {
             if (!this.appComponent.checkRoles("pm"))
                 this.mgmt_view = false;
@@ -174,6 +176,17 @@ export class MembersComponent implements OnInit {
                     });
             }
         });
+    }
+
+    getCompLink(res: any): string {
+        let link = "";
+        if (res && res.id) {
+            if (!res.isFromLocalInstance && res.nimbleInstanceName && res.nimbleInstanceName != '')
+                link += "#/user-mgmt/company-details?id=" + res.id + "&delegateId=" + res.nimbleInstanceName;
+            else
+                link += "#/user-mgmt/company-details?id=" + res.id;
+        }
+        return link;
     }
 
     setSort(val: string) {

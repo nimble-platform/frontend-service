@@ -117,6 +117,7 @@ export const config = {
     "showChat": true,
     "showAgent": false,
     "showCompanyMembers": true,
+    "showCompanyDetailsInPlatformMembers":false,
     "showExplorative": false,
     "showFullName": false,
     "showLCPA": false,
