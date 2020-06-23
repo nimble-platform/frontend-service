@@ -153,8 +153,14 @@ export class CatalogueViewComponent implements OnInit {
         const userId = this.cookieService.get("user_id");
         // check whether the user chose a category to filter the catalogue lines
         let categoryName = this.selectedCategory == "All" ? null : this.selectedCategory;
+        // get selected catalogue id
+        let catalogueId = this.catlogueId;
+        if(catalogueId != "all"){
+            let index = this.catalogueIdsUUids.indexOf(catalogueId);
+            catalogueId = this.cataloguesIds[index];
+        }
         Promise.all([
-            this.catalogueService.getCatalogueResponse(userId, categoryName, this.searchText, this.pageSize, (this.page - 1) * this.pageSize, this.sortOption, this.catlogueId),
+            this.catalogueService.getCatalogueResponse(userId, categoryName, this.searchText, this.pageSize, (this.page - 1) * this.pageSize, this.sortOption,catalogueId),
             this.getCompanySettings(userId)
         ])
             .then(([catalogueResponse, settings]) => {
