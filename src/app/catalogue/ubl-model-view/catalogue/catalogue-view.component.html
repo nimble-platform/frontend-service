@@ -163,7 +163,7 @@
         <div *ngIf="cataloguesIds.length > 0" class="col-11 space-before">
             <div class="row">
                 <div class="col-4 category-list-label">
-                    <label class="space-left space-right"><strong><span [innerHTML]="'Catalogue:' | translate"></span>Catalogue:</strong>
+                    <label class="space-left space-right"><strong><span [innerHTML]="'Catalogue:' | translate"></span></strong>
                     </label>
                     <select class="custom-select col-8 space-right" [(ngModel)]="selectedCatalogue" (change)="changeCat()">
                         <option value="all">All</option>
