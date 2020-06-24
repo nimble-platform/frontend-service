@@ -159,13 +159,13 @@
             <quantity-input [presentationMode]="'edit'" [disabled]="isDisabled()" [quantity]="quotationTotalPrice" [quantityUnits]="CURRENCIES" (onQuantityValueChange)="onQuotationPriceUpdated()" [step]="0.01" [disableQuantityUnit]="wrapper.lineDiscountPriceWrapper.itemPrice.hasPrice()">
             </quantity-input>
             <small>( {{ wrapper.newQuotationWrapper.priceWrapper.pricePerItemString}} )</small>
-            <span *ngIf="isDiscountIconVisibleInCustomerRequestColumn()" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
+            <span *ngIf="isDiscountIconVisibleInCustomerRequestColumn()" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" [title]="'Applied Discounts/Charges'|translate" style="cursor: pointer">
                 <i class="fa fa-search" aria-hidden="true"></i>
             </span>
         </ng-container>
         <ng-container *ngIf="getPresentationMode() == 'view' && isSellerTermsVisible()">
             {{ wrapper.newQuotationWrapper.priceWrapper.totalPriceString }}
-            <span *ngIf="isDiscountIconVisibleInCustomerRequestColumn()" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
+            <span *ngIf="isDiscountIconVisibleInCustomerRequestColumn()" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" [title]="'Applied Discounts/Charges'|translate" style="cursor: pointer">
                 <i class="fa fa-search" aria-hidden="true"></i>
             </span>
             <br />

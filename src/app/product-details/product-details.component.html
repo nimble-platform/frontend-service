@@ -95,11 +95,9 @@
                 <label class="order-label">
                     <span [innerHTML]="'Incoterms' | translate"></span>
                 </label>
-                <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
-                    {{ productWrapper.getIncoterms() }}
+                <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value" [innerHTML]="productWrapper.getIncoterms() | translate">
                 </span>
-                <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
-                    {{ frameContractQuotationWrapper.incotermsString }}
+                <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value" [innerHTML]="frameContractQuotationWrapper.incotermsString|translate">
                 </span>
             </div>
 
@@ -108,11 +106,9 @@
                 <label class="order-label">
                     <span [innerHTML]="'Payment Terms' | translate"></span>
                 </label>
-                <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
-                    {{ productWrapper.getPaymentTerms() }}
+                <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value" [innerHTML]="productWrapper.getPaymentTerms()|translate">
                 </span>
-                <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
-                    {{ frameContractQuotationWrapper.paymentTermsWrapper.paymentTerm }}
+                <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value" [innerHTML]="frameContractQuotationWrapper.paymentTermsWrapper.paymentTerm|translate">
                 </span>
             </div>
 
@@ -121,11 +117,9 @@
                 <label class="order-label">
                     <span [innerHTML]="'Payment Means' | translate"></span>
                 </label>
-                <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
-                    {{ productWrapper.getPaymentMeans() }}
+                <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value" [innerHTML]="productWrapper.getPaymentMeans()|translate">
                 </span>
-                <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
-                    {{ frameContractQuotationWrapper.paymentMeans }}
+                <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value" [innerHTML]="frameContractQuotationWrapper.paymentMeans|translate">
                 </span>
             </div>
 
@@ -179,7 +173,7 @@
                         <span *ngIf="termsSelectBoxValue == 'product_defaults'">
                             {{priceWrapper.calculateTotalDiscount()}} {{priceWrapper.currency}}
                         </span>
-                        <span class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
+                        <span class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" [title]="'Applied Discounts/Charges'|translate" style="cursor: pointer">
                             <i class="fa fa-search" aria-hidden="true"></i>
                         </span>
                     </div>

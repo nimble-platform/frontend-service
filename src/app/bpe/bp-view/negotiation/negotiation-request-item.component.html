@@ -157,7 +157,7 @@
                 <ng-container [ngSwitch]="manufacturersTermsSource">
                     <ng-container *ngSwitchCase="'product_defaults'">
                         {{ wrapper.lineDiscountPriceWrapper.discountedPricePerItemString }}
-                        <div *ngIf="wrapper.lineDiscountPriceWrapper.isDiscountApplied() > 0" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal(wrapper)" title="Applied Discounts/Charges" style="cursor: pointer">
+                        <div *ngIf="wrapper.lineDiscountPriceWrapper.isDiscountApplied() > 0" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal(wrapper)" [title]="'Applied Discounts/Charges'|translate" style="cursor: pointer">
                             <i class="fa fa-search" aria-hidden="true"></i>
                         </div>
                     </ng-container>
