@@ -22,7 +22,7 @@
 
 <!--Notes-->
 <div class="ml-2 space-before">
-    <note-file-view *ngIf="showNotesAndAdditionalFiles" [notes]="quotation.note" [requestNotes]="rfq.note" [documents]="quotation.additionalDocumentReference" [requestDocuments]="rfq.additionalDocumentReference" [label]="'Notes'" [firstCol]="'col-3'" [secondCol]="'col-3'" [thirdCol]="'col-3'" [lastCol]="'col-3'" [readonly]="isLoading() || isReadOnly()"></note-file-view>
+    <note-file-view *ngIf="showNotesAndAdditionalFiles" [notes]="quotation.note" [requestNotes]="rfq.note" [documents]="quotation.additionalDocumentReference" [requestDocuments]="rfq.additionalDocumentReference" [label]="'Notes'|translate" [firstCol]="'col-3'" [secondCol]="'col-3'" [thirdCol]="'col-3'" [lastCol]="'col-3'" [readonly]="isLoading() || isReadOnly()"></note-file-view>
 </div>
 
 <!--Purchase Order-->

@@ -83,7 +83,7 @@
     <terms-and-conditions *ngIf="shownTab == 'TERMS_AND_CONDITIONS'" [readOnly]="true" [enableComparisonWithOtherTerms]="false" [termsAndConditions]="quotationWrapper.quotation.quotationLine[quotationWrapper.quotationLineIndex].lineItem.clause">
     </terms-and-conditions>
 
-    <note-file-view *ngIf="shownTab == 'NOTES_AND_ADDITIONAL_FILES'" [notes]="quotationWrapper.quotation.note" [documents]="quotationWrapper.quotation.additionalDocumentReference" [label]="'Notes'" [firstCol]="'col-2'" [lastCol]="'col-10'" [readonly]="true">
+    <note-file-view *ngIf="shownTab == 'NOTES_AND_ADDITIONAL_FILES'" [notes]="quotationWrapper.quotation.note" [documents]="quotationWrapper.quotation.additionalDocumentReference" [label]="'Notes'|translate" [firstCol]="'col-2'" [lastCol]="'col-10'" [readonly]="true">
     </note-file-view>
 </ng-container>
 <h4 *ngIf="showNoFrameContractLabel"><span [innerHTML]="'No frame contract available' | translate"></span>.</h4>

@@ -95,8 +95,8 @@
 
     <!--Notes-->
     <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
-    <note-file-view [notes]="request.note" [documents]="request.additionalDocumentReference" [firstCol]="'col-2'" [lastCol]="'col-10'" [readonly]="isRequestDisabled()" [label]="'Request Notes'"></note-file-view>
-    <note-file-view *ngIf="response" [documents]="response.additionalDocumentReference" [notes]="response.note" [firstCol]="'col-2'" [lastCol]="'col-10'" [label]="'Response Notes'" [readonly]="isResponseDisabled()"></note-file-view>
+    <note-file-view [notes]="request.note" [documents]="request.additionalDocumentReference" [firstCol]="'col-2'" [lastCol]="'col-10'" [readonly]="isRequestDisabled()" [label]="'Request Notes'|translate"></note-file-view>
+    <note-file-view *ngIf="response" [documents]="response.additionalDocumentReference" [notes]="response.note" [firstCol]="'col-2'" [lastCol]="'col-10'" [label]="'Response Notes'|translate" [readonly]="isResponseDisabled()"></note-file-view>
     <!-- Contract -->
     <ng-container *ngIf="request.transportContract?.clause || contractCallStatus.isDisplayed()">
         <hr>

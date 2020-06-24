@@ -47,7 +47,7 @@
 
     <!--Notes-->
     <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
-    <note-file-view [notes]="dispatchAdvice.note" [documents]="dispatchAdvice.additionalDocumentReference" [label]="'Notes'" [firstCol]="'col-2'" [lastCol]="'col-10'" [readonly]="isLoading() || isReadOnly()"></note-file-view>
+    <note-file-view [notes]="dispatchAdvice.note" [documents]="dispatchAdvice.additionalDocumentReference" [label]="'Notes'|translate" [firstCol]="'col-2'" [lastCol]="'col-10'" [readonly]="isLoading() || isReadOnly()"></note-file-view>
 
     <hr class="actions-hr">
 

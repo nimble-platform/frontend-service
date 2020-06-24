@@ -28,7 +28,7 @@
 
 <!--Notes-->
 <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
-<note-file-view [notes]="request.note" [label]="'Notes'" [documents]="request.additionalDocumentReference" [readonly]="isLoading() || isRequestSent()"></note-file-view>
+<note-file-view [notes]="request.note" [label]="'Notes'|translate" [documents]="request.additionalDocumentReference" [readonly]="isLoading() || isRequestSent()"></note-file-view>
 
 <hr class="actions-hr">
 

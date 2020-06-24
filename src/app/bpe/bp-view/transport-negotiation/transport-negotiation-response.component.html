@@ -207,7 +207,7 @@
 
     <!--Notes-->
     <h5 [ngClass]="{'bg-danger text-white':isNoteUpdated()}"><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
-    <note-file-view [notes]="quotation.note" [requestNotes]="rfq.note" [documents]="quotation.additionalDocumentReference" [requestDocuments]="rfq.additionalDocumentReference" [label]="'Notes'" [firstCol]="'col-2'" [thirdCol]="'col-5'" [lastCol]="'col-5'" [readonly]="isDisabled()"></note-file-view>
+    <note-file-view [notes]="quotation.note" [requestNotes]="rfq.note" [documents]="quotation.additionalDocumentReference" [requestDocuments]="rfq.additionalDocumentReference" [label]="'Notes'|translate" [firstCol]="'col-2'" [thirdCol]="'col-5'" [lastCol]="'col-5'" [readonly]="isDisabled()"></note-file-view>
 
 </ng-container>
 

@@ -92,7 +92,7 @@
 
         <!--Notes-->
         <h5 [ngClass]="{'bg-danger text-white':isTermUpdated('notes')}"><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
-        <note-file-view [notes]="rfq.note" [documents]="rfq.additionalDocumentReference" [label]="'Notes'" [firstCol]="'col-2'" [lastCol]="'col-10'" [readonly]="isDisabled()"></note-file-view>
+        <note-file-view [notes]="rfq.note" [documents]="rfq.additionalDocumentReference" [label]="'Notes'|translate" [firstCol]="'col-2'" [lastCol]="'col-10'" [readonly]="isDisabled()"></note-file-view>
     </div>
 </div>
 
