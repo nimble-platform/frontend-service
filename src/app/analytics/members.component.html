@@ -78,7 +78,7 @@
                                 </div>
                                 <div *ngIf="mgmt_view" class="col-12 pt-2">
                                     <div *ngIf="unverified">
-                                        <a class="btn btn-primary mb-2" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: result.uri, viewMode:'mgmt'}">Details (ID: {{result.uri}})</a><br />
+                                        <a class="btn btn-primary mb-2" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: result.uri, viewMode:'mgmt'}"><span [innerHTML]="'Details-id' | translate: {id:result.uri}"></span></a><br />
                                         <button class="btn btn-success" (click)="verifyCompany(result.uri)"><span [innerHTML]="'Verify' | translate"></span>
                                         </button>
                                         <button class="btn btn-danger ml-2" (click)="rejectCompany(result.uri)">
@@ -86,8 +86,8 @@
                                         </button>
                                     </div>
                                     <div *ngIf="!unverified">
-                                        <a class="btn btn-primary mb-2" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: result.uri, viewMode:'mgmt'}">Details (ID: {{result.uri}})</a><br />
-                                        <a class="btn btn-primary" role="button" target="_blank" [routerLink]="['/user-mgmt/company-settings']" [queryParams]="{id: result.uri, viewMode:'data'}">Change Data</a>
+                                        <a class="btn btn-primary mb-2" role="button" target="_blank" [routerLink]="['/user-mgmt/company-details']" [queryParams]="{id: result.uri, viewMode:'mgmt'}"><span [innerHTML]="'Details-id' | translate: {id:result.uri}"></span></a><br />
+                                        <a class="btn btn-primary" role="button" target="_blank" [routerLink]="['/user-mgmt/company-settings']" [queryParams]="{id: result.uri, viewMode:'data'}"><span [innerHTML]="'Change Data' | translate"></span></a>
                                         <button class="btn btn-danger ml-2" (click)="deleteCompany(result.uri)">
                                             <span [innerHTML]="'Delete' | translate"></span>
                                         </button>

@@ -70,7 +70,7 @@
             </div>
             <!-- Customer's offer-->
             <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input label="Request Warranty" [disabled]="isLoading() || isReadOnly()" id="warrantyCb" [quantity]="wrapper.rfqWarranty" (quantityChange)="onTermsChange(FIXED_NEGOTIATION_TERMS.WARRANTY_PERIOD)" [quantityUnits]="wrapper.sellerSettings.warrantyPeriodUnits" [periodRanges]="wrapper.sellerSettings.warrantyPeriodRanges" [parentForm]="formGroup" [formFieldName]="'negotiated_warranty_period'">
+                <negotiation-request-input [label]="'Request Warranty' | translate" [disabled]="isLoading() || isReadOnly()" id="warrantyCb" [quantity]="wrapper.rfqWarranty" (quantityChange)="onTermsChange(FIXED_NEGOTIATION_TERMS.WARRANTY_PERIOD)" [quantityUnits]="wrapper.sellerSettings.warrantyPeriodUnits" [periodRanges]="wrapper.sellerSettings.warrantyPeriodRanges" [parentForm]="formGroup" [formFieldName]="'negotiated_warranty_period'">
                 </negotiation-request-input>
             </div>
         </div>
@@ -83,18 +83,18 @@
             <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
                 <ng-container [ngSwitch]="manufacturersTermsSource">
                     <ng-container *ngSwitchCase="'product_defaults'">
-                        {{ wrapper.lineIncoterms }}
+                        <span [innerHTML]="wrapper.lineIncoterms | translate"></span>
                     </ng-container>
                     <ng-container *ngSwitchCase="'frame_contract'">
-                        {{wrapper.frameContractQuotationWrapper.incoterms}}
+                        <span [innerHTML]="wrapper.frameContractQuotationWrapper.incoterms | translate"></span>
                     </ng-container>
                     <ng-container *ngSwitchCase="'last_offer'">
-                        {{wrapper.lastOfferQuotationWrapper.incoterms}}
+                        <span [innerHTML]="wrapper.lastOfferQuotationWrapper.incoterms | translate"></span>
                     </ng-container>
                 </ng-container>
             </div>
             <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input label="Request Incoterms" [disabled]="isLoading() || isReadOnly()" id="incotermsCb" [options]="wrapper.sellerSettings.incoterms" [selected]="wrapper.rfqIncoterms" (selectedChange)="wrapper.rfqIncoterms = $event; onTermsChange(FIXED_NEGOTIATION_TERMS.INCOTERMS)">
+                <negotiation-request-input [label]="'Request Incoterms' | translate" [disabled]="isLoading() || isReadOnly()" id="incotermsCb" [options]="wrapper.sellerSettings.incoterms" [selected]="wrapper.rfqIncoterms" (selectedChange)="wrapper.rfqIncoterms = $event; onTermsChange(FIXED_NEGOTIATION_TERMS.INCOTERMS)">
                 </negotiation-request-input>
             </div>
         </div>
@@ -107,18 +107,18 @@
             <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
                 <ng-container [ngSwitch]="manufacturersTermsSource">
                     <ng-container *ngSwitchCase="'product_defaults'">
-                        {{ wrapper.linePaymentTerms }}
+                        <span [innerHTML]="wrapper.linePaymentTerms | translate"></span>
                     </ng-container>
                     <ng-container *ngSwitchCase="'frame_contract'">
-                        {{ wrapper.frameContractQuotationWrapper.paymentTermsWrapper.paymentTerm }}
+                        <span [innerHTML]="wrapper.frameContractQuotationWrapper.paymentTermsWrapper.paymentTerm | translate"></span>
                     </ng-container>
                     <ng-container *ngSwitchCase="'last_offer'">
-                        {{ wrapper.lastOfferQuotationWrapper.paymentTermsWrapper.paymentTerm }}
+                        <span [innerHTML]="wrapper.lastOfferQuotationWrapper.paymentTermsWrapper.paymentTerm | translate"></span>
                     </ng-container>
                 </ng-container>
             </div>
             <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input label="Request Payment Terms" id="paymentTermsCb" [options]="wrapper.sellerSettings.paymentTerms" [selected]="wrapper.rfqPaymentTerms.paymentTerm" (selectedChange)="wrapper.rfqPaymentTerms.paymentTerm = $event; onTermsChange(FIXED_NEGOTIATION_TERMS.PAYMENT_TERMS)" [disabled]="isLoading() || isReadOnly()">
+                <negotiation-request-input [label]="'Request Payment Terms' | translate" id="paymentTermsCb" [options]="wrapper.sellerSettings.paymentTerms" [selected]="wrapper.rfqPaymentTerms.paymentTerm" (selectedChange)="wrapper.rfqPaymentTerms.paymentTerm = $event; onTermsChange(FIXED_NEGOTIATION_TERMS.PAYMENT_TERMS)" [disabled]="isLoading() || isReadOnly()">
                 </negotiation-request-input>
             </div>
         </div>
@@ -131,18 +131,18 @@
             <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
                 <ng-container [ngSwitch]="manufacturersTermsSource">
                     <ng-container *ngSwitchCase="'product_defaults'">
-                        {{ wrapper.linePaymentMeans }}
+                        <span [innerHTML]="wrapper.linePaymentMeans | translate"></span>
                     </ng-container>
                     <ng-container *ngSwitchCase="'frame_contract'">
-                        {{ wrapper.frameContractQuotationWrapper.paymentMeans}}
+                        <span [innerHTML]="wrapper.frameContractQuotationWrapper.paymentMeans | translate"></span>
                     </ng-container>
                     <ng-container *ngSwitchCase="'last_offer'">
-                        {{ wrapper.lastOfferQuotationWrapper.paymentMeans }}
+                        <span [innerHTML]="wrapper.lastOfferQuotationWrapper.paymentMeans | translate"></span>
                     </ng-container>
                 </ng-container>
             </div>
             <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input label="Request Payment Means" id="paymentMeansCb" [options]="wrapper.sellerSettings.paymentMeans" [selected]="wrapper.rfqPaymentMeans" (selectedChange)="wrapper.rfqPaymentMeans = $event; onTermsChange(FIXED_NEGOTIATION_TERMS.PAYMENT_MEANS)" [disabled]="isLoading() || isReadOnly()">
+                <negotiation-request-input [label]="'Request Payment Means'| translate" id="paymentMeansCb" [options]="wrapper.sellerSettings.paymentMeans" [selected]="wrapper.rfqPaymentMeans" (selectedChange)="wrapper.rfqPaymentMeans = $event; onTermsChange(FIXED_NEGOTIATION_TERMS.PAYMENT_MEANS)" [disabled]="isLoading() || isReadOnly()">
                 </negotiation-request-input>
             </div>
         </div>
@@ -171,7 +171,7 @@
             </div>
             <!-- Customer's offer -->
             <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input label="Request Item Price" id="priceCb" [disabled]="isLoading() || isReadOnly()" [quantity]="wrapper.rfqDiscountPriceWrapper.itemPrice" [step]="0.01" (quantityChange)="onTermsChange(FIXED_NEGOTIATION_TERMS.PRICE, false)" [quantityUnits]="CURRENCIES" [disableQuantityUnit]="lineHasPrice()">
+                <negotiation-request-input [label]="'Request Item Price'| translate" id="priceCb" [disabled]="isLoading() || isReadOnly()" [quantity]="wrapper.rfqDiscountPriceWrapper.itemPrice" [step]="0.01" (quantityChange)="onTermsChange(FIXED_NEGOTIATION_TERMS.PRICE, false)" [quantityUnits]="CURRENCIES" [disableQuantityUnit]="lineHasPrice()">
                 </negotiation-request-input>
             </div>
         </div>
@@ -316,7 +316,7 @@
                     </div>
                     <!-- Customer's offer-->
                     <div class="col-5">
-                        <negotiation-request-input [label]="'Request Delivery Period'" [disabled]="isLoading() || isReadOnly()" id="deliveryCb" [quantity]="wrapper.rfqDeliveryPeriod" (quantityChange)="onTermsChange(FIXED_NEGOTIATION_TERMS.DELIVERY_PERIOD)" [quantityUnits]="wrapper.sellerSettings.deliveryPeriodUnits" [periodRanges]="wrapper.sellerSettings.deliveryPeriodRanges" [parentForm]="formGroup" [formFieldName]="'negotiated_delivery_period'">
+                        <negotiation-request-input [label]="'Request Delivery Period' | translate" [disabled]="isLoading() || isReadOnly()" id="deliveryCb" [quantity]="wrapper.rfqDeliveryPeriod" (quantityChange)="onTermsChange(FIXED_NEGOTIATION_TERMS.DELIVERY_PERIOD)" [quantityUnits]="wrapper.sellerSettings.deliveryPeriodUnits" [periodRanges]="wrapper.sellerSettings.deliveryPeriodRanges" [parentForm]="formGroup" [formFieldName]="'negotiated_delivery_period'">
                         </negotiation-request-input>
                     </div>
                 </div>
