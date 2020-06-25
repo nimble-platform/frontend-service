@@ -163,7 +163,7 @@ export class CompanyDetailsComponent implements OnInit {
                 searchContext: null,
                 cat: "",
                 catID: "",
-                sIdx: "Products",
+                sIdx: "Name",
                 sTop: "prod"
             }
         });
