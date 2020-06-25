@@ -131,7 +131,6 @@ export class SimpleSearchFormComponent implements OnInit {
     manufacturerIdCountMap: any;
 
     imgEndpoint = myGlobals.user_mgmt_endpoint + "/company-settings/image/";
-    zoomedImgURL = "assets/empty_img.png";
 
     config = myGlobals.config;
     getMultilingualLabel = selectNameFromLabelObject;
@@ -178,7 +177,6 @@ export class SimpleSearchFormComponent implements OnInit {
             let sort = params['sort'];
             let cat = params['cat'];
             let catID = params['catID'];
-            let del = params['del'];
             let pageRef = params['pageRef'];
             if (p) {
                 this.noP = false;
@@ -1465,18 +1463,6 @@ export class SimpleSearchFormComponent implements OnInit {
         return found;
     }
 
-    checkTrustCatCount() {
-        var count = 0;
-        if (this.facetObj) {
-            for (var i = 0; i < this.facetObj.length; i++) {
-                if (this.checkTrustCat(this.facetObj[i].name)) {
-                    count++;
-                }
-            }
-        }
-        return count;
-    }
-
     checkOtherCat(name: string) {
         for (let nonFilter of this.product_nonfilter_regex) {
             if (name.search(nonFilter) != -1) {
@@ -1611,13 +1597,6 @@ export class SimpleSearchFormComponent implements OnInit {
         else
             this.facetQuery.splice(this.facetQuery.indexOf(fq), 1);
         this.get(this.objToSubmit);
-    }
-
-    setFacetWithoutQuery(outer: string, inner: string, prefix?: string) {
-        if (prefix)
-            outer = prefix + "." + outer;
-        var fq = outer + ":\"" + inner + "\"";
-        this.facetQuery.push(fq);
     }
 
     setRangeWithoutQuery(outer: string, min: number, max: number, prefix?: string) {
@@ -1762,20 +1741,6 @@ export class SimpleSearchFormComponent implements OnInit {
 
     lowerFirstLetter(string) {
         return string.charAt(0).toLowerCase() + string.slice(1);
-    }
-
-    isJson(str: string): boolean {
-        try {
-            JSON.parse(str);
-        } catch (e) {
-            return false;
-        }
-        return true;
-    }
-
-    redirectToRating(event: any, result: any) {
-        event.preventDefault();
-        this.router.navigate(['product-details'], { queryParams: { catalogueId: result.catalogueId, id: result.manufactuerItemId, tabToOpen: "rating" } });
     }
 
     getCompanyNameFromIds(idList: any[]): Promise<any> {
