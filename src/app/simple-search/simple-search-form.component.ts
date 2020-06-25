@@ -1447,7 +1447,7 @@ export class SimpleSearchFormComponent implements OnInit {
         var count = 0;
         if (this.facetObj) {
             for (var i = 0; i < this.facetObj.length; i++) {
-                if (this.checkCompCat(this.facetObj[i].name)) {
+                if (this.checkCompCat(this.facetObj[i].genName)) {
                     count++;
                 }
             }
