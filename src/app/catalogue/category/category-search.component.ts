@@ -122,16 +122,14 @@ export class CategorySearchComponent implements OnInit {
             this.productType = params["productType"] === "transportation" ? "transportation" : "product";
             this.isLogistics = this.productType === "transportation";
 
-            if (this.pageRef === 'menu') {
-                if (this.originalPageRef === 'publish') {
-                    // This part is necessary since only the params has changes,canDeactivate method will not be called.
-                    // This situation occurs when the user clicks on the Publish button in the top menu during the publication process.
-                    this.appComponent.confirmModalComponent.open('You will lose any changes you made, are you sure you want to quit ?').then(result => {
-                        if(result){
-                            this.initCategories(params);
-                        }
-                    });
-                }
+            if (this.pageRef === 'menu' && this.originalPageRef === 'publish') {
+                // This part is necessary since only the params has changes,canDeactivate method will not be called.
+                // This situation occurs when the user clicks on the Publish button in the top menu during the publication process.
+                this.appComponent.confirmModalComponent.open('You will lose any changes you made, are you sure you want to quit ?').then(result => {
+                    if(result){
+                        this.initCategories(params);
+                    }
+                });
             } else{
                 this.initCategories(params);
             }
