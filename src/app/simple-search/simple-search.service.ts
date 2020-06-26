@@ -106,9 +106,9 @@ export class SimpleSearchService {
                 "boosting": false,
                 "boostingFactors": {}
             };
-            queryRes = this.buildQueryString(query, querySettings, true, false);
+            queryRes = this.buildQueryString(query, querySettings, true, true);
         } else {
-            queryRes = this.buildQueryString(query, myGlobals.query_settings, true, false);
+            queryRes = this.buildQueryString(query, myGlobals.query_settings, true, true);
             searchObject.sort = [];
             sort = sort.replace("{LANG}", DEFAULT_LANGUAGE());
             searchObject.sort.push(sort);
