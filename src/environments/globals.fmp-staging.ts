@@ -519,11 +519,11 @@ export const product_default = {};
 export const facet_min = 1;
 export const facet_count = -1;
 export const query_settings = {
-    "fields": ["STANDARD", "commodityClassficationUri", "{LANG}_label", "{LANG}_desc"],
+    "fields": ["STANDARD", "classification.allLabels", "{LANG}_label", "{LANG}_desc"],
     "boosting": true,
     "boostingFactors": {
         "STANDARD": 4,
-        "commodityClassficationUri": 16,
+        "classification.allLabels": 16,
         "{LANG}_label": 64,
         "{LANG}_desc": -1
     }

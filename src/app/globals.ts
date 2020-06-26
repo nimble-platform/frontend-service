@@ -404,11 +404,11 @@ export const facet_count = -1;
 - boostingFactors: Allows defining different boosting factors for searching by relevance. Keys are the field names listed in "fields" and values are -1 (for negative boosts) or a multiple of 2
 */
 export const query_settings = {
-    "fields": ["STANDARD", "commodityClassficationUri", "{LANG}_label", "{LANG}_desc"],
+    "fields": ["STANDARD","classification.allLabels","{LANG}_label", "{LANG}_desc"],
     "boosting": true,
     "boostingFactors": {
         "STANDARD": 4,
-        "commodityClassficationUri": 16,
+        "classification.allLabels":16,
         "{LANG}_label": 64,
         "{LANG}_desc": -1
     }
