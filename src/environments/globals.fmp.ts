@@ -85,7 +85,7 @@ export const config = {
         "Item_Information_Request",
         "Negotiation"
     ],
-    "defaultSearchIndex": "Name",
+    "defaultSearchIndex": "Category",
     "delegationEnabled": false,
     "displayCategoryCounts":false,
     "docLink": "https://www.nimble-project.org/docs_es/",
