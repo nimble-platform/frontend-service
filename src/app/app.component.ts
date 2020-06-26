@@ -403,12 +403,12 @@ export class AppComponent implements OnInit {
 
     public open(content) {
         this.mailto = "mailto:" + this.config.supportMail;
-        var subject = "NIMBLE Support Request (";
+        var subject = this.translate.instant("Support Request",{platformName:this.config.platformNameInMail}) +"(";
         if (this.userID)
-            subject += "UserID: " + this.userID + ", ";
+            subject += this.translate.instant("UserID") + ": " + this.userID + ", ";
         if (this.companyID)
-            subject += "CompanyID: " + this.companyID + ", ";
-        subject += "Timestamp: " + new Date().toISOString() + ")";
+            subject += this.translate.instant("CompanyID") + ": " + this.companyID + ", ";
+        subject += this.translate.instant("Timestamp") + ": " + new Date().toISOString() + ")";
         this.mailto += "?subject=" + encodeURIComponent(subject);
         var body = "";
         if (this.config.supportMailContent[DEFAULT_LANGUAGE()])
@@ -418,10 +418,10 @@ export class AppComponent implements OnInit {
         body += "\n\n\n";
         body += "-----";
         body += "\n\n";
-        body += "Path:\n" + window.location.href;
+        body += this.translate.instant("Path") + ":\n" + window.location.href;
         if (this.versions.length > 0) {
             body += "\n\n";
-            body += "Versions:\n";
+            body += this.translate.instant("Versions") +":\n";
             for (var i = 0; i < this.versions.length; i++) {
                 if (i > 0) {
                     body += " | ";
@@ -431,11 +431,11 @@ export class AppComponent implements OnInit {
         }
         if (this.userID) {
             body += "\n\n";
-            body += "User:\n" + this.fullName + " (ID: " + this.userID + ", E-Mail: " + this.eMail + ")";
+            body += this.translate.instant("User") + ":\n" + this.fullName + " ("+this.translate.instant("ID")+": " + this.userID + ", "+this.translate.instant("E-Mail")+": " + this.eMail + ")";
         }
         if (this.companyID) {
             body += "\n\n";
-            body += "Company:\n" + this.activeCompanyName + " (ID: " + this.companyID + ")";
+            body += this.translate.instant("Company")+":\n" + this.activeCompanyName + " ("+this.translate.instant("ID")+": " + this.companyID + ")";
         }
         body += "\n";
         this.mailto += "&body=" + encodeURIComponent(body);
