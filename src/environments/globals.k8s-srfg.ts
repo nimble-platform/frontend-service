@@ -78,6 +78,7 @@ export const config = {
             "ontologyPrefix": "http://www.nimble-project.org/resource/eclass#"
         }
     },
+    "contractForCatalogueEnabled":false,
     "collaborationEnabled": false,
     "collapsiblePropertyFacets": false,
     "companyInformationInSearchResult": "BusinessType",

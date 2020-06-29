@@ -78,7 +78,7 @@ export class NegotiationRequestComponent implements OnInit {
     // frame contract option is disabled when displaying the history through which the contract is being negotiated.
     @Input() frameContractNegotiations: boolean[];
     @Input() lastOfferQuotation: Quotation;
-    @Input() defaultTermsAndConditions: Clause[];
+    @Input() defaultTermsAndConditions: any;
     // whether the process details are viewed for all products in the negotiation
     @Input() areProcessDetailsViewedForAllProducts: boolean;
 

@@ -25,6 +25,8 @@ import { DocumentService } from "../document-service";
 import { UBLModelUtils } from '../../../catalogue/model/ubl-model-utils';
 import { BPDataService } from '../bp-data-service';
 import { copy } from '../../../common/utils';
+import {ContractService} from '../contract-service';
+import {Ppap} from '../../../catalogue/model/publish/ppap';
 
 @Component({
     selector: 'clause',
@@ -44,11 +46,12 @@ export class ClauseComponent implements OnInit {
     expanded: boolean = false;
 
     // default T&C for negotiation
-    defaultTermsAndConditions: Clause[] = null;
+    defaultTermsAndConditions: any = null;
 
     constructor(private bpeService: BPEService,
-        private bpDataService: BPDataService,
-        private documentService: DocumentService) {
+                private bpDataService: BPDataService,
+                private contractService: ContractService,
+                private documentService: DocumentService) {
     }
 
     ngOnInit(): void {
@@ -72,27 +75,17 @@ export class ClauseComponent implements OnInit {
                     this.documentService.getRequestForQuotation(result)
                         .then(request => {
                             this.rfq = request;
-                            // if the seller company has T&Cs, then use them
-                            if (this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms && this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms.termOrCondition.length > 0) {
-                                this.defaultTermsAndConditions = copy(this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms.termOrCondition);
+                            // retrieve default terms and conditions
+                            this.contractService.getDefaultTermsAndConditions(this.rfq.requestForQuotationLine.map(value => value.lineItem.item.catalogueDocumentReference.id),
+                                this.rfq.requestForQuotationLine.map(value => value.lineItem.deliveryTerms.incoterms),
+                                UBLModelUtils.getPartyId(this.rfq.buyerCustomerParty.party),
+                                this.rfq.buyerCustomerParty.party.federationInstanceID,
+                                Array(this.rfq.requestForQuotationLine.length).fill(this.bpDataService.getCompanySettings())).then((defaultTermsAndConditions) => {
+                                this.defaultTermsAndConditions = defaultTermsAndConditions;
                                 this.clauseDocumentRetrievalStatus.callback("Successfully retrieved request for quotation", true);
-                            }
-                            // otherwise, use the default T&Cs
-                            else {
-                                this.bpeService.getTermsAndConditions(
-                                    UBLModelUtils.getPartyId(this.rfq.buyerCustomerParty.party),
-                                    this.rfq.buyerCustomerParty.party.federationInstanceID,
-                                    UBLModelUtils.getPartyId(this.rfq.sellerSupplierParty.party),
-                                    this.rfq.requestForQuotationLine[0].lineItem.deliveryTerms.incoterms,
-                                    this.bpDataService.getCompanySettings().negotiationSettings.paymentTerms[0],
-                                    this.rfq.sellerSupplierParty.party.federationInstanceID,
-                                ).then(defaultTermsAndConditions => {
-                                    this.defaultTermsAndConditions = defaultTermsAndConditions;
-                                    this.clauseDocumentRetrievalStatus.callback("Successfully retrieved request for quotation", true);
-                                }).catch(error => {
-                                    this.clauseDocumentRetrievalStatus.error("Failed to retrieve default T&C", error);
-                                });
-                            }
+                            }).catch(error => {
+                                this.clauseDocumentRetrievalStatus.error("Failed to retrieve default T&C", error);
+                            });
                         })
                         .catch(error => {
                             this.clauseDocumentRetrievalStatus.error("Failed to retrieve request for quotation", error);

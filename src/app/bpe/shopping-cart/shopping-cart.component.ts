@@ -47,6 +47,7 @@ import { ShoppingCartSummaryModalComponent } from './shopping-cart-summary-modal
 import { FEDERATIONID } from '../../catalogue/model/constants';
 import { ValidationService } from '../../common/validation/validators';
 import { FormGroup } from '@angular/forms';
+import {ContractService} from '../bp-view/contract-service';
 import {TranslateService} from '@ngx-translate/core';
 import {AppComponent} from '../../app.component';
 
@@ -67,8 +68,7 @@ export class ShoppingCartComponent implements OnInit {
     associatedProducts: Map<number, CatalogueLine[]> = new Map<number, CatalogueLine[]>();
     // company settings for each distinct company providing one or more product in the cart
     sellersSettings: Map<string, CompanySettings> = new Map<string, CompanySettings>();
-    // default settings to be used in case the seller does not have default terms and conditions
-    platformTermsAndConditions: Map<number, Clause[]> = new Map<number, Clause[]>();
+    productTermsAndConditions:any  = null;
     buyerCompanySettings: CompanySettings;
     // whether the buyer company has its own T&Cs
     doesBuyerCompanyHasItsOwnTerms: boolean = true;
@@ -105,6 +105,7 @@ export class ShoppingCartComponent implements OnInit {
         private catalogueService: CatalogueService,
         private translate: TranslateService,
         private bpeService: BPEService,
+        private contractService: ContractService,
         private documentService: DocumentService,
         private bpDataService: BPDataService,
         private validationService: ValidationService,
@@ -337,50 +338,28 @@ export class ShoppingCartComponent implements OnInit {
     }
 
     private getDefaultPlatformTermsAndConditionsForAllCartLines(): void {
-        let firstProduct: CatalogueLine = this.shoppingCart.catalogueLine[0];
-        let sellerId: string = UBLModelUtils.getLinePartyId(firstProduct);
-
         this.initCallStatus.aggregatedSubmit();
-        this.bpeService.getTermsAndConditions(
+
+        this.contractService.getDefaultTermsAndConditions(this.shoppingCart.catalogueLine.map(value => value.goodsItem.item.catalogueDocumentReference.id),
+            this.shoppingCart.catalogueLine.map(value => value.goodsItem.deliveryTerms.incoterms),
             this.cookieService.get('company_id'),
             FEDERATIONID(),
-            sellerId,
-            firstProduct.goodsItem.deliveryTerms.incoterms,
-            this.sellersSettings.get(sellerId).negotiationSettings.paymentTerms[0],
-            firstProduct.goodsItem.item.manufacturerParty.federationInstanceID
-
+            Array.from(this.sellersSettings.values())
         ).then(termsAndConditions => {
-            // adapt the terms and conditions for the other products by updating the terms including
-            // incoterm and payment terms
-            for (let i = 0; i < this.shoppingCart.catalogueLine.length; i++) {
-                sellerId = UBLModelUtils.getLinePartyId(this.shoppingCart.catalogueLine[i]);
-                // get default T&Cs for the products whose seller does not have specific T&Cs
-                if (this.sellersSettings.get(sellerId).negotiationSettings.company.salesTerms == null || this.sellersSettings.get(sellerId).negotiationSettings.company.salesTerms.termOrCondition.length == 0) {
-                    let copyTCs: Clause[] = copy(termsAndConditions);
-                    for (let clause of copyTCs) {
-                        for (let tradingTerm of clause.tradingTerms) {
-                            if (tradingTerm.id.includes('incoterms_id')) {
-                                tradingTerm.value.valueCode[0].value = this.shoppingCart.catalogueLine[i].goodsItem.deliveryTerms.incoterms;
-                            } else if (tradingTerm.id.includes('payment_id')) {
-                                tradingTerm.value.valueCode[0].value = this.sellersSettings.get(sellerId).negotiationSettings.paymentTerms[0];
-                            }
-                        }
-                    }
-                    this.platformTermsAndConditions.set(this.shoppingCart.catalogueLine[i].hjid, copyTCs);
-                }
-            }
-
+            this.productTermsAndConditions = termsAndConditions;
             // Check buyers terms and conditions also. Buyer terms are used in the common terms component as initial default values
             if (this.buyerCompanySettings.negotiationSettings.company.salesTerms == null || this.buyerCompanySettings.negotiationSettings.company.salesTerms.termOrCondition.length == 0) {
                 // the buyer company uses the default T&Cs of the platform
                 this.doesBuyerCompanyHasItsOwnTerms = false;
-                let copyTCs: Clause[] = copy(termsAndConditions);
+                let copyTCs: Clause[] = copy(termsAndConditions[0]);
                 for (let clause of copyTCs) {
                     for (let tradingTerm of clause.tradingTerms) {
                         if (tradingTerm.id.includes('incoterms_id')) {
                             tradingTerm.value.valueCode[0].value = this.buyerCompanySettings.negotiationSettings.incoterms[0];
                         } else if (tradingTerm.id.includes('payment_id')) {
                             tradingTerm.value.valueCode[0].value = this.buyerCompanySettings.negotiationSettings.paymentTerms[0];
+                        } else if (tradingTerm.id.includes("$seller_id") || tradingTerm.id.includes("$seller_website") || tradingTerm.id.includes("$seller_tel")){
+                            tradingTerm.value.value[0].value = null;
                         }
                     }
                 }
@@ -390,7 +369,7 @@ export class ShoppingCartComponent implements OnInit {
             this.initCallStatus.aggregatedCallBack();
         }).catch(err => {
             this.initCallStatus.aggregatedError('Failed to retrieve platform settings', err);
-        });
+        })
     }
 
     private initializeModelWrappers(): void {

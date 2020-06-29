@@ -78,6 +78,7 @@ export const config = {
             "ontologyPrefix": "http://www.aidimme.es/FurnitureSectorOntology.owl#"
         }
     },
+    "contractForCatalogueEnabled":true,
     "collaborationEnabled": false,
     "collapsiblePropertyFacets": false,
     "companyInformationInSearchResult": "BusinessType",

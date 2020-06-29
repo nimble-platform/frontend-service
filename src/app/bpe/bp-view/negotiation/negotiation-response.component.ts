@@ -52,7 +52,7 @@ export class NegotiationResponseComponent implements OnInit {
     @Input() frameContractQuotations: Quotation[];
     @Input() frameContracts: DigitalAgreement[];
     @Input() frameContractNegotiations: boolean[];
-    @Input() defaultTermsAndConditions: Clause[];
+    @Input() defaultTermsAndConditions: any;
     @Input() primaryTermsSources: ('product_defaults' | 'frame_contract' | 'last_offer')[];
     @Input() readonly: boolean = false;
     // whether the process details are viewed for all products in the negotiation

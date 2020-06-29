@@ -83,6 +83,7 @@ export const config = {
           "ontologyPrefix": "http://nimble-project.eu/TextileAndWGSectorsOntology.owl#"
       }
     },
+    "contractForCatalogueEnabled":false,
     "collaborationEnabled": true,
     "collapsiblePropertyFacets": false,
     "companyInformationInSearchResult": "BusinessType",

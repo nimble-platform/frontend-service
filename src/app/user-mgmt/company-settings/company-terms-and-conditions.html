@@ -14,6 +14,7 @@
 
 <div *ngIf="defaultTermsAndConditions">
 
+    <h3 *ngIf="catalogueId" class="space-after"><span [innerHTML]="'You are editing terms and conditions for your catalog:' | translate"></span>{{catalogueId == 'default'? 'Main Catalogue': catalogueId}}</h3>
     <!-- Default Clauses -->
     <h5><span [innerHTML]="'Choose clauses:' | translate"></span></h5>
     <div class="row">
@@ -57,38 +58,38 @@
                     <div class="col-10">
                         <table>
                             <tbody>
-                                <tr>
-                                    <!-- STRING data type-->
-                                    <td *ngIf="tradingTerm.value.valueQualifier === 'STRING'" style="vertical-align:middle">
-                                        <input [(ngModel)]="tradingTerm.value.value[0].value" class="form-control" type="text" name="{{tradingTerm.id}}" />
-                                    </td>
-                                    <!-- QUANTITY data type-->
-                                    <td *ngIf="tradingTerm.value.valueQualifier === 'QUANTITY'" style="vertical-align:middle">
-                                        <quantity-input [quantity]="tradingTerm.value.valueQuantity[0]">
-                                        </quantity-input>
-                                    </td>
-                                    <!-- NUMBER data type-->
-                                    <td *ngIf="tradingTerm.value.valueQualifier === 'NUMBER'" style="vertical-align:middle">
-                                        <input type="number" class="form-control value-input" [ngModel]="tradingTerm.value.valueDecimal[0]" (change)="setValueDecimal(tradingTerm, 0, $event)">
-                                    </td>
-                                    <!-- CODE data type -->
-                                    <td *ngIf="tradingTerm.value.valueQualifier === 'CODE'" style="vertical-align:middle">
-                                        <select *ngIf="tradingTerm.value.valueCode[0].listID == 'INCOTERMS_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value">
-                                            <option *ngFor="let option of INCOTERMS" [value]="option">{{option}}</option>
-                                        </select>
-                                        <select *ngIf="tradingTerm.value.valueCode[0].listID == 'PAYMENT_MEANS_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value">
-                                            <option *ngFor="let option of PAYMENT_TERMS" [value]="option">{{option}}</option>
-                                        </select>
-                                        <select *ngIf="tradingTerm.value.valueCode[0].listID == 'COUNTRY_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value">
-                                            <option *ngFor="let option of COUNTRY_NAMES" [value]="option">{{option}}</option>
-                                        </select>
-                                    </td>
-                                    <!-- Button to delete trading term-->
-                                    <td class="align-right" style="vertical-align:middle">
-                                        <button class="btn btn-outline-primary ml-1" (click)="onEditTradingTerm(clause,tradingTerm)"><span [innerHTML]="'Edit' | translate"></span></button>
-                                        <button class="btn btn-danger" type="button" (click)="onRemoveTradingTerm(clause,tradingTerm)">&times;</button>
-                                    </td>
-                                </tr>
+                            <tr>
+                                <!-- STRING data type-->
+                                <td *ngIf="tradingTerm.value.valueQualifier === 'STRING'" style="vertical-align:middle">
+                                    <input [(ngModel)]="tradingTerm.value.value[0].value" class="form-control" type="text" name="{{tradingTerm.id}}" />
+                                </td>
+                                <!-- QUANTITY data type-->
+                                <td *ngIf="tradingTerm.value.valueQualifier === 'QUANTITY'" style="vertical-align:middle">
+                                    <quantity-input [quantity]="tradingTerm.value.valueQuantity[0]">
+                                    </quantity-input>
+                                </td>
+                                <!-- NUMBER data type-->
+                                <td *ngIf="tradingTerm.value.valueQualifier === 'NUMBER'" style="vertical-align:middle">
+                                    <input type="number" class="form-control value-input" [ngModel]="tradingTerm.value.valueDecimal[0]" (change)="setValueDecimal(tradingTerm, 0, $event)">
+                                </td>
+                                <!-- CODE data type -->
+                                <td *ngIf="tradingTerm.value.valueQualifier === 'CODE'" style="vertical-align:middle">
+                                    <select *ngIf="tradingTerm.value.valueCode[0].listID == 'INCOTERMS_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value">
+                                        <option *ngFor="let option of INCOTERMS" [value]="option">{{option}}</option>
+                                    </select>
+                                    <select *ngIf="tradingTerm.value.valueCode[0].listID == 'PAYMENT_MEANS_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value">
+                                        <option *ngFor="let option of PAYMENT_TERMS" [value]="option">{{option}}</option>
+                                    </select>
+                                    <select *ngIf="tradingTerm.value.valueCode[0].listID == 'COUNTRY_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value">
+                                        <option *ngFor="let option of COUNTRY_NAMES" [value]="option">{{option}}</option>
+                                    </select>
+                                </td>
+                                <!-- Button to delete trading term-->
+                                <td class="align-right" style="vertical-align:middle">
+                                    <button class="btn btn-outline-primary ml-1" (click)="onEditTradingTerm(clause,tradingTerm)"><span [innerHTML]="'Edit' | translate"></span></button>
+                                    <button class="btn btn-danger" type="button" (click)="onRemoveTradingTerm(clause,tradingTerm)">&times;</button>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -105,8 +106,11 @@
 
     <!-- Actions -->
     <div class="row actions-row space-before">
-        <div class="col-10 call-status-col">
+        <div class="{{catalogueId ? 'col-8': 'col-10'}} call-status-col">
             <call-status [callStatus]="initPageStatus"></call-status>
+        </div>
+        <div *ngIf="catalogueId" class="col-2">
+            <button class="btn btn-secondary action" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div class="col-2">
             <button class="btn btn-primary action" (click)="onSave()"><span [innerHTML]="'Save' | translate"></span></button>

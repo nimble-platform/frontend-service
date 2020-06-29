@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import { Component, OnInit, ViewChild } from "@angular/core";
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import { CookieService } from 'ng2-cookies';
 import { CatalogueService } from "../../catalogue.service";
 import { CallStatus } from "../../../common/call-status";
@@ -37,6 +37,7 @@ import { CatalogueLine } from "../../model/publish/catalogue-line";
 import { TranslateService } from '@ngx-translate/core';
 import { DeleteExportCatalogueModalComponent } from "./delete-export-catalogue-modal.component";
 import {AppComponent} from '../../../app.component';
+import * as myGlobals from '../../../globals';
 
 @Component({
     selector: 'catalogue-view',
@@ -46,6 +47,8 @@ import {AppComponent} from '../../../app.component';
 })
 
 export class CatalogueViewComponent implements OnInit {
+
+    @Input() viewMode:"OwnerView"|"ContractView" = "OwnerView";
 
     catalogueResponse: CataloguePaginationResponse;
     settings: CompanySettings;
@@ -82,6 +85,10 @@ export class CatalogueViewComponent implements OnInit {
     callStatus = new CallStatus();
     deleteStatuses: CallStatus[] = [];
 
+    public config = myGlobals.config;
+
+    catalogueIdForContractCreation:string = null;
+    catalogueUuidForContractCreation:string = null;
     @ViewChild(DeleteExportCatalogueModalComponent)
     private deleteCatalogueModal: DeleteExportCatalogueModalComponent;
 
@@ -196,12 +203,30 @@ export class CatalogueViewComponent implements OnInit {
         }
     }
 
-    onDeleteCatalogue(deleteCatalogueModal): void {
+    onDeleteCatalogue(): void {
         this.deleteCatalogueModal.open('delete');
     }
 
     onDeleteCatalogueImages(): void {
         this.deleteCatalogueModal.open('delete-images');
+    }
+
+    onGenerateContractForCatalogue(): void {
+        const index = this.catalogueIdsUUids.findIndex(uuid => uuid == this.selectedCatalogue);
+        // save the selected catalogue id
+        this.catalogueIdForContractCreation = this.cataloguesIds[index];
+        // save the selected catalogue uuid
+        this.catalogueUuidForContractCreation = this.selectedCatalogue;
+        // change the view
+        this.viewMode = "ContractView";
+    }
+
+    onContractCreationCompleted(){
+        // change the view
+        this.viewMode = "OwnerView";
+        // reset the selected catalogue id and uuid
+        this.catalogueIdForContractCreation = null;
+        this.catalogueUuidForContractCreation = null;
     }
 
     onAddCatalogue() {

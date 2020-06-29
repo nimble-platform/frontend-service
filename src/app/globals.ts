@@ -95,6 +95,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 	* hiddenCategories: An array of top-level category IDs that will be hidden from the UI
 	* logisticsCategory: The ID of the logistics categoryFilter
 	* ontologyPrefix: The prefix of the ontology used to identify it
+- contractForCatalogueEnabled: Boolean flag if the contract generation is enabled for catalogues
 - collaborationEnabled: Boolean flag if the collaboration feature is enabled in the dashboard (textile use case)
 - collapsiblePropertyFacets: Boolean flag if the property facets are collapsible or not
 - companyInformationInSearchResult: If it is 'BusinessType', business type of the company is shown in the company search results, if it is 'BusinessKeywords', business keywords of the company are shown in the company search results
@@ -172,6 +173,7 @@ export const config = {
             "ontologyPrefix": "http://www.aidimme.es/FurnitureSectorOntology.owl#"
         }
     },
+    "contractForCatalogueEnabled":false,
     "collaborationEnabled": false,
     "collapsiblePropertyFacets": false,
     "companyInformationInSearchResult": "BusinessType",

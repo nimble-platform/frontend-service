@@ -34,6 +34,7 @@ import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { CatalogueLine } from '../../../catalogue/model/publish/catalogue-line';
 import { FEDERATIONID } from '../../../catalogue/model/constants';
 import { copy } from '../../../common/utils';
+import {ContractService} from '../contract-service';
 
 @Component({
     selector: 'negotiation',
@@ -71,10 +72,11 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     @Input() areProcessDetailsViewedForAllProducts: boolean;
 
     constructor(public bpDataService: BPDataService,
-        private bpeService: BPEService,
-        private documentService: DocumentService,
-        private cookieService: CookieService,
-        private route: ActivatedRoute) {
+                private bpeService: BPEService,
+                private documentService: DocumentService,
+                private contractService: ContractService,
+                private cookieService: CookieService,
+                private route: ActivatedRoute) {
     }
 
     ngOnInit() {
@@ -154,25 +156,14 @@ export class NegotiationComponent implements OnInit, OnDestroy {
             productIds.push(rfqLine.lineItem.item.manufacturersItemIdentification.id);
         }
 
-        let termsAndConditionsPromises = [];
-        for (let catalogueLine of this.bpDataService.getCatalogueLines()) {
-            termsAndConditionsPromises.push(this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms && this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms.termOrCondition.length > 0
-                ? this.bpDataService.getCompanySettings().negotiationSettings.company.salesTerms.termOrCondition // if the seller company has T&Cs, use them
-                : this.bpeService.getTermsAndConditions( // otherwise, use the default T&Cs
-                    buyerPartyId,
-                    buyerFederationId,
-                    UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLines()[0].goodsItem.item.manufacturerParty),
-                    catalogueLine.goodsItem.deliveryTerms.incoterms,
-                    this.bpDataService.getCompanySettings().negotiationSettings.paymentTerms[0],
-                    this.bpDataService.getCatalogueLines()[0].goodsItem.item.manufacturerParty.federationInstanceID
-                ));
-        }
+        // retrieve default terms and conditions
+        let termsAndConditionsPromise = this.contractService.getDefaultTermsAndConditions(this.bpDataService.getCatalogueLines().map(value => value.goodsItem.item.catalogueDocumentReference.id),
+            this.bpDataService.getCatalogueLines().map(value => value.goodsItem.deliveryTerms.incoterms),
+            buyerPartyId,
+            buyerFederationId,
+            Array(this.rfq.requestForQuotationLine.length).fill(this.bpDataService.getCompanySettings()));
 
-        let [termsAndConditions] = await Promise.all(
-            termsAndConditionsPromises
-        );
-
-        this.defaultTermsAndConditions = termsAndConditions;
+        this.defaultTermsAndConditions = await termsAndConditionsPromise;
 
         let frameContracts: any = await this.bpeService.getFrameContract(
             UBLModelUtils.getPartyId(this.bpDataService.getCatalogueLines()[0].goodsItem.item.manufacturerParty),

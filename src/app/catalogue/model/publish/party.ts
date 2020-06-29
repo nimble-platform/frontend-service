@@ -32,7 +32,8 @@ export class Party {
         public partyName: PartyName[] = null,
         public salesTerms: TradingPreferences = null,
         public processID: string[] = [],
-        public federationInstanceID: string = null
+        public federationInstanceID: string = null,
+        public websiteURI:string = null
     ) { }
 
 }

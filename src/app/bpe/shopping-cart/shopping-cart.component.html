@@ -56,9 +56,8 @@
             </product-details-overview>
             <product-details-tabs [wrapper]="productWrappers.get(cartLine.hjid)" [settings]="sellersSettings.get(getPartyId(cartLine.goodsItem.item.manufacturerParty))">
             </product-details-tabs>
-            <negotiation-request-item [rfq]="getRfq(cartLine)" [lastOfferQuotation]="null" [frameContractQuotation]="frameContracts.has(cartLine.hjid) ? frameContracts.get(cartLine.hjid)[1] : null" [frameContract]="frameContracts.has(cartLine.hjid) ? frameContracts.get(cartLine.hjid)[0] : null" [manufacturersTermsSource]="frameContracts.has(cartLine.hjid) ? 'frame_contract' : 'product_defaults'" [defaultTermsAndConditions]="sellersSettings.get(getLinePartyId(cartLine)).negotiationSettings.company.salesTerms != null && sellersSettings.get(getLinePartyId(cartLine)).negotiationSettings.company.salesTerms.termOrCondition.length > 0
-                                                                    ? sellersSettings.get(getLinePartyId(cartLine)).negotiationSettings.company.salesTerms.termOrCondition
-                                                                    : platformTermsAndConditions.get(cartLine.hjid)" [deliverytermsOfBuyer]="buyerCompanySettings.tradeDetails.deliveryTerms" [wrapper]="negotiationModelWrappers.get(cartLine.hjid)" [hidden]="false" [parentForm]="shoppingCartForm" [componentIndex]="i" [formFieldName]="'shopping_cart_item'">
+            <negotiation-request-item [rfq]="getRfq(cartLine)" [lastOfferQuotation]="null" [frameContractQuotation]="frameContracts.has(cartLine.hjid) ? frameContracts.get(cartLine.hjid)[1] : null" [frameContract]="frameContracts.has(cartLine.hjid) ? frameContracts.get(cartLine.hjid)[0] : null" [manufacturersTermsSource]="frameContracts.has(cartLine.hjid) ? 'frame_contract' : 'product_defaults'" [defaultTermsAndConditions]="productTermsAndConditions[i]"
+                                      [deliverytermsOfBuyer]="buyerCompanySettings.tradeDetails.deliveryTerms" [wrapper]="negotiationModelWrappers.get(cartLine.hjid)" [hidden]="false" [parentForm]="shoppingCartForm" [componentIndex]="i" [formFieldName]="'shopping_cart_item'">
             </negotiation-request-item>
         </div>
     </div>
