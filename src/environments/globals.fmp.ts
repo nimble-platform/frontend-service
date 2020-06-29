@@ -80,6 +80,7 @@ export const config = {
     },
     "collaborationEnabled": false,
     "collapsiblePropertyFacets": true,
+    "companyInformationInSearchResult": "BusinessKeywords",
     "dataChannelsEnabled": false,
     "defaultBusinessProcessIds": [
         "Item_Information_Request",

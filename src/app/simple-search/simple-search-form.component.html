@@ -715,7 +715,8 @@
                                                 <span [title]="result[product_vendor_name]"><b>{{ result[product_vendor_name] }}</b></span>
                                             </div>
                                             <div *ngIf="display=='list'" style="max-height:3rem;overflow:hidden">
-                                                <span *ngIf="result.businessType" [title]="result.businessType"><small>{{result.businessType}}</small></span>
+                                                <span *ngIf="companyInformationInSearchResult == 'BusinessType' && result.businessType" [title]="result.businessType"><small>{{result.businessType}}</small></span>
+                                                <span *ngIf="companyInformationInSearchResult == 'BusinessKeywords' && result.businessKeywords" [title]="getMultilingualLabel(result.businessKeywords)"><small>{{getMultilingualLabel(result.businessKeywords)}}</small></span>
                                             </div>
                                         </div>
                                         <div [ngClass]="{'col-2':display=='list','col-12 pt-2':display=='panel'}">

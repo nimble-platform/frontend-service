@@ -80,6 +80,7 @@ export const config = {
     },
     "collaborationEnabled": false,
     "collapsiblePropertyFacets": false,
+    "companyInformationInSearchResult": "BusinessType",
     "dataChannelsEnabled": false,
     "defaultBusinessProcessIds": [
     ],

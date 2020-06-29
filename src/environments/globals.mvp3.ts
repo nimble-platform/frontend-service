@@ -85,6 +85,7 @@ export const config = {
     },
     "collaborationEnabled": true,
     "collapsiblePropertyFacets": false,
+    "companyInformationInSearchResult": "BusinessType",
     "dataChannelsEnabled": true,
     "defaultBusinessProcessIds": [
     ],

@@ -79,7 +79,8 @@ export class SimpleSearchFormComponent implements OnInit {
     searchIndex = myGlobals.config.defaultSearchIndex;
     productServiceFiltersEnabled = myGlobals.config.productServiceFiltersEnabled;
     collapsiblePropertyFacets = myGlobals.config.collapsiblePropertyFacets;
-    displayCategoryCounts = myGlobals.config.displayCategoryCounts
+    displayCategoryCounts = myGlobals.config.displayCategoryCounts;
+    companyInformationInSearchResult = myGlobals.config.companyInformationInSearchResult;
     searchIndexes = ["Name", "Category"];
     searchTopic = null;
 
