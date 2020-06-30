@@ -277,7 +277,7 @@ export const config = {
             },
             "Outsourcing": {
                 "en": "Outsourcing",
-                "es": "Outsourcing"
+                "es": "Subcontratación"
             },
             "Print Services": {
                 "en": "Print Services",
