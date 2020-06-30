@@ -89,7 +89,7 @@ export class MembersComponent implements OnInit {
         if (this.model.q == "*") {
             this.model.q = "";
         }
-        this.simpleSearchService.getComp(this.q_submit, [], [], this.page, rows, this.sort, this.unverified, true)
+        this.simpleSearchService.getComp(this.q_submit, [], [], this.page, rows, this.sort,"Name", this.unverified, true)
             .then(res => {
                 this.companiesCallStatus.callback("Successfully loaded companies", true);
                 if (this.q_submit == "*")

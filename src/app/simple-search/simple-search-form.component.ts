@@ -193,6 +193,11 @@ export class SimpleSearchFormComponent implements OnInit {
                 this.searchTopic = sTop;
             else
                 this.searchTopic = null;
+            if(this.searchTopic == "comp"){
+                this.searchIndexes = ["Name", "Business Keyword"];
+            } else{
+                this.searchIndexes = ["Name", "Category"];
+            }
             let display = params['display'];
             if (display)
                 this.display = display;
@@ -412,7 +417,7 @@ export class SimpleSearchFormComponent implements OnInit {
             debounceTime(200),
             distinctUntilChanged(),
             switchMap(term =>
-                this.simpleSearchService.getCompSuggestions(term, [this.product_vendor_name, ("{LANG}_" + this.product_vendor_brand_name)])
+                this.simpleSearchService.getCompSuggestions(term,  this.searchIndex == "Business Keyword" ? ["{LANG}_businessKeywords"] : [this.product_vendor_name, ("{LANG}_" + this.product_vendor_brand_name)])
             )
         );
 
@@ -773,7 +778,7 @@ export class SimpleSearchFormComponent implements OnInit {
         this.simpleSearchService.getCompFields()
             .then(res => {
                 let fieldLabels: string[] = this.getFieldNames(res);
-                this.simpleSearchService.getComp(q, Object.keys(fieldLabels), fq, p, rows, sort)
+                this.simpleSearchService.getComp(q, Object.keys(fieldLabels), fq, p, rows, sort,this.searchIndex)
                     .then(res => {
                         if (res.result.length == 0) {
                             this.cat_loading = false;
