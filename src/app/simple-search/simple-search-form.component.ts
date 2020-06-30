@@ -198,6 +198,9 @@ export class SimpleSearchFormComponent implements OnInit {
             } else{
                 this.searchIndexes = ["Name", "Category"];
             }
+            if(this.searchIndex && this.searchIndexes.indexOf(this.searchIndex) == -1){
+                this.searchIndex = this.searchIndexes[0];
+            }
             let display = params['display'];
             if (display)
                 this.display = display;
@@ -880,7 +883,17 @@ export class SimpleSearchFormComponent implements OnInit {
                 let underscoreIndex = facet.indexOf("_");
                 if(underscoreIndex != -1){
                     let resultFieldForFacet = facet.substring(underscoreIndex+1);
-                    values = selectNameFromLabelObject(res.result[i][resultFieldForFacet])
+                    let labels = res.result[i][resultFieldForFacet];
+                    values = selectNameFromLabelObject(labels);
+                    // append the language id to value for brand names
+                    if(facet.endsWith("_brandName") && labels){
+                        let keys = Object.keys(labels);
+                        for(let key of keys){
+                            if(labels[key] == values){
+                                values = key + "@" + values;
+                            }
+                        }
+                    }
                 }
                 // if the facet values are not an array, make it an array
                 if(!Array.isArray(values)){
@@ -903,7 +916,61 @@ export class SimpleSearchFormComponent implements OnInit {
             }
         }
 
+        let inFacetQuery = false;
         let facetQueries = this.facetQuery.map(facet => facet.split(":")[0]);
+        // create a facet obj for brand name
+        // need to handle it separately since the facet may not be available due to the values coming from different languages
+        if(this.party_facet_field_list.indexOf("{LANG}_brandName") != -1){
+            let facetCount = 0;
+            let total = 0;
+            let selected = false;
+            let genName = "manufacturer.brandName";
+            let realName = "manufacturer." +DEFAULT_LANGUAGE() + "_brandName";
+            let name =  "manufacturer." +DEFAULT_LANGUAGE() + "_brandName";
+            let brandNameMap = companyFacetMap.get(DEFAULT_LANGUAGE() + "_brandName");
+            let options: any[] = [];
+            brandNameMap.forEach((count, brandName) => {
+                if(brandName != ""){
+                    let delimiterIndex = brandName.indexOf("@");
+                    let languageId = brandName.substring(0,delimiterIndex);
+                    brandName = brandName.substring(delimiterIndex+1);
+                    options.push({
+                        "name": brandName,
+                        "realName": brandName,
+                        "count": count,
+                        "languageId":languageId
+                    });
+                    total += facetCount;
+                    let name = "manufacturer." + languageId + "_brandName";
+                    if (this.checkFacet(name, brandName))
+                        selected = true;
+                    let fq = "manufacturer."+languageId+"_brandName";
+                    if(facetQueries.indexOf(fq) != -1){
+                        inFacetQuery = true;
+                    }
+                }
+            });
+            options.sort(function(a, b) {
+                var a_c = a.name;
+                var b_c = b.name;
+                return a_c.localeCompare(b_c);
+            });
+            options.sort(function(a, b) {
+                return b.count - a.count;
+            });
+            if (total == 0)
+                total = 1;
+            this.facetObj.push({
+                "name": name,
+                "genName": genName,
+                "realName": realName,
+                "options": options,
+                "showContent":!this.collapsiblePropertyFacets || inFacetQuery,
+                "total": total,
+                "selected": selected,
+                "expanded": false
+            });
+        }
         for (let facet in res.facets) {
             if (this.simpleSearchService.checkField(facet,prefix)) {
                 let facet_innerLabel;
@@ -924,6 +991,10 @@ export class SimpleSearchFormComponent implements OnInit {
                 let total = 0;
                 let selected = false;
 
+                // skip brand name facet, we handle it separately
+                if(genName == "manufacturer.brandName"){
+                    continue;
+                }
                 //creating options[]
                 let options: any[] = [];
 
@@ -1569,15 +1640,23 @@ export class SimpleSearchFormComponent implements OnInit {
 
     getFacetQueryName(facet: string): string {
         var name = facet.split(":")[0];
-        if (name.indexOf(DEFAULT_LANGUAGE() + "_") != -1)
-            name = name.replace(DEFAULT_LANGUAGE() + "_", "");
-        else if (name.indexOf("{NULL}_") != -1) {
-            name = name.replace("{NULL}_", "");
+        let containsLanguageId = false;
+        // check whether the facet contains any language id
+        for(let languageId of  this.config.languageSettings.available){
+            if (name.indexOf(languageId+ "_") != -1){
+                name = name.replace(languageId + "_", "");
+                containsLanguageId = true;
+            }
         }
-        else if (name.indexOf("_") == 0)
-            name = name.replace("_", "");
-        else if (name.indexOf("._") != -1)
-            name = name.replace("._", ".");
+        if(!containsLanguageId){
+            if (name.indexOf("{NULL}_") != -1) {
+                name = name.replace("{NULL}_", "");
+            }
+            else if (name.indexOf("_") == 0)
+                name = name.replace("_", "");
+            else if (name.indexOf("._") != -1)
+                name = name.replace("._", ".");
+        }
         name = this.getFacetName(name);
         return name;
     }
@@ -1594,10 +1673,12 @@ export class SimpleSearchFormComponent implements OnInit {
         this.get(this.objToSubmit);
     }
 
-    setFacet(outer: string, inner: string, prefix?: string) {
-        if (prefix)
-            outer = prefix + "." + outer;
-        var fq = outer + ":\"" + inner + "\"";
+    setFacet(outer: string, inner: string,genName:string,languageId?:string) {
+        let fq =  outer + ":\"" + inner + "\"";
+        // handle brand name facet separately since it can contain values for different languages
+        if(genName == "manufacturer.brandName"){
+            fq = "manufacturer."+languageId+"_brandName:\"" + inner + "\"";
+        }
         if (this.facetQuery.indexOf(fq) == -1)
             this.facetQuery.push(fq);
         else
@@ -1689,9 +1770,13 @@ export class SimpleSearchFormComponent implements OnInit {
         this.get(this.objToSubmit);
     }
 
-    checkFacet(outer: string, inner: string): boolean {
+    checkFacet(outer: string, inner: string,languageId?:string): boolean {
         var match = false;
         var fq = outer + ":\"" + inner + "\"";
+        // language id is available only for the brand name facet
+        if(languageId){
+            fq = "manufacturer."+languageId+"_brandName:\"" + inner+ "\"";
+        }
         if (this.facetQuery.indexOf(fq) != -1)
             match = true;
         return match;
