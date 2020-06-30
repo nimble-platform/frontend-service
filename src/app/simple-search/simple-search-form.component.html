@@ -327,7 +327,7 @@
                         <div *ngIf="checkCompCatCount()>0">
 
                             <div class="pointer" (click)="showCompSection=!showCompSection">
-                                <h5><span [innerHTML]="'Product / Service' | translate"></span> <span [innerHTML]="'Vendor' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+                                <h5><span [innerHTML]="'Vendor Filters' | translate"></span> <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
                             </div>
 
                             <div *ngIf="showCompSection">
