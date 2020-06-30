@@ -921,7 +921,6 @@ export class SimpleSearchFormComponent implements OnInit {
         // create a facet obj for brand name
         // need to handle it separately since the facet may not be available due to the values coming from different languages
         if(this.party_facet_field_list.indexOf("{LANG}_brandName") != -1){
-            let facetCount = 0;
             let total = 0;
             let selected = false;
             let genName = "manufacturer.brandName";
@@ -940,7 +939,7 @@ export class SimpleSearchFormComponent implements OnInit {
                         "count": count,
                         "languageId":languageId
                     });
-                    total += facetCount;
+                    total += count;
                     let name = "manufacturer." + languageId + "_brandName";
                     if (this.checkFacet(name, brandName))
                         selected = true;
