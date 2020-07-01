@@ -14,9 +14,10 @@
    limitations under the License.
  */
 
-import { Component } from "@angular/core";
+import {Component, OnInit} from '@angular/core';
 import * as myGlobals from '../globals';
 import { TranslateService } from '@ngx-translate/core';
+import {DEFAULT_LANGUAGE} from '../catalogue/model/constants';
 
 @Component({
     selector: "platform-info",
@@ -24,12 +25,20 @@ import { TranslateService } from '@ngx-translate/core';
     styleUrls: ["./platform-info.component.css"]
 })
 
-export class PlatformInfoComponent {
+export class PlatformInfoComponent implements OnInit{
 
     config = myGlobals.config;
+
+    imprint = null;
 
     constructor(private translate: TranslateService,
     ) {
     }
 
+    ngOnInit() {
+        if (this.config.imprint[DEFAULT_LANGUAGE()])
+            this.imprint = this.config.imprint[DEFAULT_LANGUAGE()];
+        else
+            this.imprint = this.config.imprint["en"];
+    }
 }

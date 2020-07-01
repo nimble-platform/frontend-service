@@ -79,7 +79,8 @@ export class SimpleSearchFormComponent implements OnInit {
     searchIndex = myGlobals.config.defaultSearchIndex;
     productServiceFiltersEnabled = myGlobals.config.productServiceFiltersEnabled;
     collapsiblePropertyFacets = myGlobals.config.collapsiblePropertyFacets;
-    displayCategoryCounts = myGlobals.config.displayCategoryCounts
+    displayCategoryCounts = myGlobals.config.displayCategoryCounts;
+    companyInformationInSearchResult = myGlobals.config.companyInformationInSearchResult;
     searchIndexes = ["Name", "Category"];
     searchTopic = null;
 
@@ -131,7 +132,6 @@ export class SimpleSearchFormComponent implements OnInit {
     manufacturerIdCountMap: any;
 
     imgEndpoint = myGlobals.user_mgmt_endpoint + "/company-settings/image/";
-    zoomedImgURL = "assets/empty_img.png";
 
     config = myGlobals.config;
     getMultilingualLabel = selectNameFromLabelObject;
@@ -178,7 +178,6 @@ export class SimpleSearchFormComponent implements OnInit {
             let sort = params['sort'];
             let cat = params['cat'];
             let catID = params['catID'];
-            let del = params['del'];
             let pageRef = params['pageRef'];
             if (p) {
                 this.noP = false;
@@ -194,6 +193,14 @@ export class SimpleSearchFormComponent implements OnInit {
                 this.searchTopic = sTop;
             else
                 this.searchTopic = null;
+            if(this.searchTopic == "comp"){
+                this.searchIndexes = ["Name", "Business Keyword"];
+            } else{
+                this.searchIndexes = ["Name", "Category"];
+            }
+            if(this.searchIndex && this.searchIndexes.indexOf(this.searchIndex) == -1){
+                this.searchIndex = this.searchIndexes[0];
+            }
             let display = params['display'];
             if (display)
                 this.display = display;
@@ -413,7 +420,7 @@ export class SimpleSearchFormComponent implements OnInit {
             debounceTime(200),
             distinctUntilChanged(),
             switchMap(term =>
-                this.simpleSearchService.getCompSuggestions(term, [this.product_vendor_name, ("{LANG}_" + this.product_vendor_brand_name)])
+                this.simpleSearchService.getCompSuggestions(term,  this.searchIndex == "Business Keyword" ? ["{LANG}_businessKeywords"] : [this.product_vendor_name, ("{LANG}_" + this.product_vendor_brand_name)])
             )
         );
 
@@ -436,45 +443,69 @@ export class SimpleSearchFormComponent implements OnInit {
         var indexCategories = await this.categoryService.getCategories(categoryUris);
         // extract only the required information in UI from the complete category information
         let categoryDisplayInfo: any = this.getCategoryDisplayInfo(indexCategories, this.categoryCounts);
-        // set the level of the selected category, if any
-        this.cat_level = this.getCatLevel(this.catID, indexCategories.result);
-        this.cat_levels = [];
         if (taxonomyPrefix != "") {
-            // ToDo: Remove manual distinction after search update
-            if (this.taxonomy == "eClass") {
-                for (let categoryUri of Object.keys(categoryDisplayInfo)) {
-                    let count = categoryDisplayInfo[categoryUri].count;
-                    if (categoryUri.startsWith(taxonomyPrefix)) {
-                        let eclass_idx = categoryDisplayInfo[categoryUri].code;
-                        let catLevel = 3;
-                        if (eclass_idx % 1000000 === 0) {
-                            catLevel = 0;
-                        } else if (eclass_idx % 10000 === 0) {
-                            catLevel = 1;
-                        } else if (eclass_idx % 100 === 0) {
-                            catLevel = 2;
-                        }
-
-                        if ((this.cat_level + 1) >= catLevel || (this.cat === '' && catLevel === 0)) {
-                            if (this.cat_levels[catLevel] == null) {
-                                this.cat_levels[catLevel] = [];
+            // save the selected category
+            let originalSelectedCategoryID= this.catID;
+            let originalSelectedCategoryName = this.cat;
+            // build the category tree until the latest level contains more than one category or
+            // the category at the latest level does not have any children categories
+            let previouslySelectedCategoryId = "";
+            do {
+                previouslySelectedCategoryId = this.catID;
+                // set the level of the selected category, if any
+                this.cat_level = this.getCatLevel(this.catID, indexCategories.result);
+                this.cat_levels = [];
+                // ToDo: Remove manual distinction after search update
+                if (this.taxonomy == "eClass") {
+                    for (let categoryUri of Object.keys(categoryDisplayInfo)) {
+                        let count = categoryDisplayInfo[categoryUri].count;
+                        if (categoryUri.startsWith(taxonomyPrefix)) {
+                            let eclass_idx = categoryDisplayInfo[categoryUri].code;
+                            let catLevel = 3;
+                            if (eclass_idx % 1000000 === 0) {
+                                catLevel = 0;
+                            } else if (eclass_idx % 10000 === 0) {
+                                catLevel = 1;
+                            } else if (eclass_idx % 100 === 0) {
+                                catLevel = 2;
                             }
-                            this.cat_levels[catLevel].push({
-                                'name': categoryUri,
-                                'id': categoryUri,
-                                'count': count,
-                                'preferredName': selectNameFromLabelObject(categoryDisplayInfo[categoryUri].label)
-                            });
+
+                            if ((this.cat_level + 1) >= catLevel || (this.cat === '' && catLevel === 0)) {
+                                if (this.cat_levels[catLevel] == null) {
+                                    this.cat_levels[catLevel] = [];
+                                }
+                                this.cat_levels[catLevel].push({
+                                    'name': categoryUri,
+                                    'id': categoryUri,
+                                    'count': count,
+                                    'preferredName': selectNameFromLabelObject(categoryDisplayInfo[categoryUri].label)
+                                });
+                            }
                         }
                     }
+                } else {
+                    // this.cat === '' indicates that there is no category selected for filtering the results
+                    this.constructCategoryTree(indexCategories.result, categoryDisplayInfo, this.taxonomy, taxonomyPrefix);
                 }
-            } else {
-                // this.cat === '' indicates that there is no category selected for filtering the results
-                this.constructCategoryTree(indexCategories.result, categoryDisplayInfo, this.taxonomy, taxonomyPrefix);
-            }
 
-            this.sortCatLevels();
-            this.populateOtherEntries();
+                this.sortCatLevels();
+                this.populateOtherEntries();
+                // if the latest level contains only one category, make it the selected category
+                // and populate category tree again
+                let catLevelSize = this.cat_levels.length;
+                if(catLevelSize > 0 && this.cat_levels[catLevelSize-1].length == 1){
+                    this.catID = this.cat_levels[catLevelSize-1][0].id;
+                    this.cat = this.cat_levels[catLevelSize-1][0].name;
+                }
+
+            } while (this.catID != previouslySelectedCategoryId);
+            // set the selected category
+            this.catID = originalSelectedCategoryID;
+            this.cat = originalSelectedCategoryName;
+        } else{
+            // set the level of the selected category, if any
+            this.cat_level = this.getCatLevel(this.catID, indexCategories.result);
+            this.cat_levels = [];
         }
         this.cat_loading = false;
         this.categoriesCallStatus.callback("Categories loaded.", true);
@@ -750,7 +781,7 @@ export class SimpleSearchFormComponent implements OnInit {
         this.simpleSearchService.getCompFields()
             .then(res => {
                 let fieldLabels: string[] = this.getFieldNames(res);
-                this.simpleSearchService.getComp(q, Object.keys(fieldLabels), fq, p, rows, sort)
+                this.simpleSearchService.getComp(q, Object.keys(fieldLabels), fq, p, rows, sort,this.searchIndex)
                     .then(res => {
                         if (res.result.length == 0) {
                             this.cat_loading = false;
@@ -852,7 +883,17 @@ export class SimpleSearchFormComponent implements OnInit {
                 let underscoreIndex = facet.indexOf("_");
                 if(underscoreIndex != -1){
                     let resultFieldForFacet = facet.substring(underscoreIndex+1);
-                    values = selectNameFromLabelObject(res.result[i][resultFieldForFacet])
+                    let labels = res.result[i][resultFieldForFacet];
+                    values = selectNameFromLabelObject(labels);
+                    // append the language id to value for brand names
+                    if(facet.endsWith("_brandName") && labels){
+                        let keys = Object.keys(labels);
+                        for(let key of keys){
+                            if(labels[key] == values){
+                                values = key + "@" + values;
+                            }
+                        }
+                    }
                 }
                 // if the facet values are not an array, make it an array
                 if(!Array.isArray(values)){
@@ -875,7 +916,60 @@ export class SimpleSearchFormComponent implements OnInit {
             }
         }
 
+        let inFacetQuery = false;
         let facetQueries = this.facetQuery.map(facet => facet.split(":")[0]);
+        // create a facet obj for brand name
+        // need to handle it separately since the facet may not be available due to the values coming from different languages
+        if(this.party_facet_field_list.indexOf("{LANG}_brandName") != -1){
+            let total = 0;
+            let selected = false;
+            let genName = "manufacturer.brandName";
+            let realName = "manufacturer." +DEFAULT_LANGUAGE() + "_brandName";
+            let name =  "manufacturer." +DEFAULT_LANGUAGE() + "_brandName";
+            let brandNameMap = companyFacetMap.get(DEFAULT_LANGUAGE() + "_brandName");
+            let options: any[] = [];
+            brandNameMap.forEach((count, brandName) => {
+                if(brandName != ""){
+                    let delimiterIndex = brandName.indexOf("@");
+                    let languageId = brandName.substring(0,delimiterIndex);
+                    brandName = brandName.substring(delimiterIndex+1);
+                    options.push({
+                        "name": brandName,
+                        "realName": brandName,
+                        "count": count,
+                        "languageId":languageId
+                    });
+                    total += count;
+                    let name = "manufacturer." + languageId + "_brandName";
+                    if (this.checkFacet(name, brandName))
+                        selected = true;
+                    let fq = "manufacturer."+languageId+"_brandName";
+                    if(facetQueries.indexOf(fq) != -1){
+                        inFacetQuery = true;
+                    }
+                }
+            });
+            options.sort(function(a, b) {
+                var a_c = a.name;
+                var b_c = b.name;
+                return a_c.localeCompare(b_c);
+            });
+            options.sort(function(a, b) {
+                return b.count - a.count;
+            });
+            if (total == 0)
+                total = 1;
+            this.facetObj.push({
+                "name": name,
+                "genName": genName,
+                "realName": realName,
+                "options": options,
+                "showContent":!this.collapsiblePropertyFacets || inFacetQuery,
+                "total": total,
+                "selected": selected,
+                "expanded": false
+            });
+        }
         for (let facet in res.facets) {
             if (this.simpleSearchService.checkField(facet,prefix)) {
                 let facet_innerLabel;
@@ -896,6 +990,10 @@ export class SimpleSearchFormComponent implements OnInit {
                 let total = 0;
                 let selected = false;
 
+                // skip brand name facet, we handle it separately
+                if(genName == "manufacturer.brandName"){
+                    continue;
+                }
                 //creating options[]
                 let options: any[] = [];
 
@@ -1425,7 +1523,7 @@ export class SimpleSearchFormComponent implements OnInit {
         var count = 0;
         if (this.facetObj) {
             for (var i = 0; i < this.facetObj.length; i++) {
-                if (this.checkCompCat(this.facetObj[i].name)) {
+                if (this.checkCompCat(this.facetObj[i].genName)) {
                     count++;
                 }
             }
@@ -1439,18 +1537,6 @@ export class SimpleSearchFormComponent implements OnInit {
             found = true;
         }
         return found;
-    }
-
-    checkTrustCatCount() {
-        var count = 0;
-        if (this.facetObj) {
-            for (var i = 0; i < this.facetObj.length; i++) {
-                if (this.checkTrustCat(this.facetObj[i].name)) {
-                    count++;
-                }
-            }
-        }
-        return count;
     }
 
     checkOtherCat(name: string) {
@@ -1489,7 +1575,7 @@ export class SimpleSearchFormComponent implements OnInit {
         var count = 0;
         if (this.facetObj) {
             for (var i = 0; i < this.facetObj.length; i++) {
-                if (this.checkCompMainCat(this.facetObj[i].name)) {
+                if (this.checkCompMainCat(this.facetObj[i].genName)) {
                     count++;
                 }
             }
@@ -1553,15 +1639,23 @@ export class SimpleSearchFormComponent implements OnInit {
 
     getFacetQueryName(facet: string): string {
         var name = facet.split(":")[0];
-        if (name.indexOf(DEFAULT_LANGUAGE() + "_") != -1)
-            name = name.replace(DEFAULT_LANGUAGE() + "_", "");
-        else if (name.indexOf("{NULL}_") != -1) {
-            name = name.replace("{NULL}_", "");
+        let containsLanguageId = false;
+        // check whether the facet contains any language id
+        for(let languageId of  this.config.languageSettings.available){
+            if (name.indexOf(languageId+ "_") != -1){
+                name = name.replace(languageId + "_", "");
+                containsLanguageId = true;
+            }
         }
-        else if (name.indexOf("_") == 0)
-            name = name.replace("_", "");
-        else if (name.indexOf("._") != -1)
-            name = name.replace("._", ".");
+        if(!containsLanguageId){
+            if (name.indexOf("{NULL}_") != -1) {
+                name = name.replace("{NULL}_", "");
+            }
+            else if (name.indexOf("_") == 0)
+                name = name.replace("_", "");
+            else if (name.indexOf("._") != -1)
+                name = name.replace("._", ".");
+        }
         name = this.getFacetName(name);
         return name;
     }
@@ -1578,22 +1672,17 @@ export class SimpleSearchFormComponent implements OnInit {
         this.get(this.objToSubmit);
     }
 
-    setFacet(outer: string, inner: string, prefix?: string) {
-        if (prefix)
-            outer = prefix + "." + outer;
-        var fq = outer + ":\"" + inner + "\"";
+    setFacet(outer: string, inner: string,genName:string,languageId?:string) {
+        let fq =  outer + ":\"" + inner + "\"";
+        // handle brand name facet separately since it can contain values for different languages
+        if(genName == "manufacturer.brandName"){
+            fq = "manufacturer."+languageId+"_brandName:\"" + inner + "\"";
+        }
         if (this.facetQuery.indexOf(fq) == -1)
             this.facetQuery.push(fq);
         else
             this.facetQuery.splice(this.facetQuery.indexOf(fq), 1);
         this.get(this.objToSubmit);
-    }
-
-    setFacetWithoutQuery(outer: string, inner: string, prefix?: string) {
-        if (prefix)
-            outer = prefix + "." + outer;
-        var fq = outer + ":\"" + inner + "\"";
-        this.facetQuery.push(fq);
     }
 
     setRangeWithoutQuery(outer: string, min: number, max: number, prefix?: string) {
@@ -1618,10 +1707,12 @@ export class SimpleSearchFormComponent implements OnInit {
      * @param id category id
      * @param excludeCategoriesAtCurrentLevel indicates that user has selected the "Other" entry in the category hierarchy.
      * This requires that the search must be performed with the parent category by excluding all the children
+     * @param level the level of the selected category
      */
-    setCat(name: string, id: string, excludeCategoriesAtCurrentLevel = false) {
+    setCat(name: string, id: string, excludeCategoriesAtCurrentLevel = false, level:number) {
         this.cat = name;
         this.catID = id;
+        this.cat_level = level;
 
         if (!excludeCategoriesAtCurrentLevel) {
             // remove the category related filters
@@ -1637,9 +1728,7 @@ export class SimpleSearchFormComponent implements OnInit {
             // others entry clicked and selected
             if (id !== '') {
                 // child categories of the selected are excluded via the field query
-                // cat level is still associated with the previously selected category i.e. the parent category.
-                // look at child level, so +1
-                let catLevel: number = this.cat_level + 1;
+                let catLevel: number = this.cat_level;
                 // do not add the "Other" entry to the filter query
                 for (let i = 0; i < this.cat_levels[catLevel].length - 1; i++) {
                     this.facetQuery.push(`-${this.product_cat_mix}:"${this.cat_levels[catLevel][i].id}"`);
@@ -1680,9 +1769,13 @@ export class SimpleSearchFormComponent implements OnInit {
         this.get(this.objToSubmit);
     }
 
-    checkFacet(outer: string, inner: string): boolean {
+    checkFacet(outer: string, inner: string,languageId?:string): boolean {
         var match = false;
         var fq = outer + ":\"" + inner + "\"";
+        // language id is available only for the brand name facet
+        if(languageId){
+            fq = "manufacturer."+languageId+"_brandName:\"" + inner+ "\"";
+        }
         if (this.facetQuery.indexOf(fq) != -1)
             match = true;
         return match;
@@ -1738,20 +1831,6 @@ export class SimpleSearchFormComponent implements OnInit {
 
     lowerFirstLetter(string) {
         return string.charAt(0).toLowerCase() + string.slice(1);
-    }
-
-    isJson(str: string): boolean {
-        try {
-            JSON.parse(str);
-        } catch (e) {
-            return false;
-        }
-        return true;
-    }
-
-    redirectToRating(event: any, result: any) {
-        event.preventDefault();
-        this.router.navigate(['product-details'], { queryParams: { catalogueId: result.catalogueId, id: result.manufactuerItemId, tabToOpen: "rating" } });
     }
 
     getCompanyNameFromIds(idList: any[]): Promise<any> {

@@ -19,7 +19,7 @@ import { LogisticServicePublishComponent } from './publish/logistic-service-publ
 @Injectable()
 export class LogisticPublishDeactivateGuardService implements CanDeactivate<LogisticServicePublishComponent> {
 
-    canDeactivate(component: LogisticServicePublishComponent): boolean {
+    canDeactivate(component: LogisticServicePublishComponent): boolean | Promise<boolean> {
         return component.canDeactivate();
     }
 }

@@ -13,7 +13,7 @@
  -->
 
 <div class="row">
-    <quantity-input class="col-6" [label]="'Minimum Order Quantity'" [labelClass]="'col-5'" [valueClass]="'col-7'" [presentationMode]="readonly ? 'view': 'edit'" [quantity]="priceOption.itemLocationQuantity.minimumQuantity" [step]="catalogueLine.requiredItemLocationQuantity.price.baseQuantity.value" [required]="true" [parentForm]="formGroup" [formFieldName]="'discount_order_quantity'" [disableQuantityUnit]="true">
+    <quantity-input class="col-6" [label]="'Minimum Order Quantity' | translate" [labelClass]="'col-5'" [valueClass]="'col-7'" [presentationMode]="readonly ? 'view': 'edit'" [quantity]="priceOption.itemLocationQuantity.minimumQuantity" [step]="catalogueLine.requiredItemLocationQuantity.price.baseQuantity.value" [required]="true" [parentForm]="formGroup" [formFieldName]="'discount_order_quantity'" [disableQuantityUnit]="true">
     </quantity-input>
 </div>
 <discount-target [priceOption]="priceOption" [discountUnits]="discountUnits" [readonly]="readonly" [parentForm]="formGroup">

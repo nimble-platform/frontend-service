@@ -32,8 +32,8 @@
 
     <!--Notes-->
     <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
-    <note-file-view [notes]="notes" [documents]="additionalDocuments" [label]="'Request Notes'"></note-file-view>
-    <note-file-view [notes]="notesToSend" [documents]="additionalDocumentsToSend" [label]="'Response Notes'" [readonly]="isLoading()"></note-file-view>
+    <note-file-view [notes]="notes" [documents]="additionalDocuments" [label]="'Request Notes'|translate"></note-file-view>
+    <note-file-view [notes]="notesToSend" [documents]="additionalDocumentsToSend" [label]="'Response Notes'|translate" [readonly]="isLoading()"></note-file-view>
 
     <hr class="actions-hr">
 

@@ -22,10 +22,8 @@ export class CategoryDeactivateGuardService implements CanDeactivate<CategorySea
     canDeactivate(component: CategorySearchComponent,
         currentRoute: ActivatedRouteSnapshot,
         currentState: RouterStateSnapshot,
-        nextState: RouterStateSnapshot): boolean {
-        if (!component.canDeactivate(nextState)) {
-            return false;
-        }
-        return true;
+        nextState: RouterStateSnapshot): boolean | Promise<boolean> {
+        return component.canDeactivate(nextState);
+
     }
 }

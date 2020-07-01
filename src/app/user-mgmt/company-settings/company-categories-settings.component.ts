@@ -18,6 +18,7 @@ import { CallStatus } from "../../common/call-status";
 import { UserService } from "../user.service";
 import { CookieService } from "ng2-cookies";
 import { TranslateService } from '@ngx-translate/core';
+import {AppComponent} from '../../app.component';
 
 @Component({
     selector: "company-categories-settings",
@@ -34,6 +35,7 @@ export class CompanyCategoriesSettingsComponent implements OnInit {
 
     constructor(private translate: TranslateService,
         private cookieService: CookieService,
+        private appComponent: AppComponent,
         private userService: UserService) {
 
     }
@@ -48,33 +50,37 @@ export class CompanyCategoriesSettingsComponent implements OnInit {
     }
 
     removePrefCat(cat: string, i: number) {
-        if (confirm(this.translate.instant("Are you sure that you want to remove this category from your favorites?"))) {
-            this.prefCategoriesCallStatus[i].submit();
-            let userId = this.cookieService.get("user_id");
-            this.userService.togglePrefCat(userId, cat).then(res => {
-                this.prefCats = res;
-                this.prefCats.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
-                this.prefCategoriesCallStatus[i].callback("Succesfully removed category from favorites", true);
-            })
-                .catch(error => {
-                    this.prefCategoriesCallStatus[i].error("Error while removing category from favourites", error);
-                });
-        }
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to remove this category from your favorites?").then(result => {
+            if(result){
+                this.prefCategoriesCallStatus[i].submit();
+                let userId = this.cookieService.get("user_id");
+                this.userService.togglePrefCat(userId, cat).then(res => {
+                    this.prefCats = res;
+                    this.prefCats.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
+                    this.prefCategoriesCallStatus[i].callback("Succesfully removed category from favorites", true);
+                })
+                    .catch(error => {
+                        this.prefCategoriesCallStatus[i].error("Error while removing category from favourites", error);
+                    });
+            }
+        });
     }
 
     removeRecCat(cat: string, i: number) {
-        if (confirm(this.translate.instant("Are you sure that you want to remove this category from your recently used ones?"))) {
-            this.recCategoriesCallStatus[i].submit();
-            let userId = this.cookieService.get("user_id");
-            this.userService.removeRecCat(userId, cat).then(res => {
-                this.recCats = res;
-                this.recCats.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
-                this.recCategoriesCallStatus[i].callback("Succesfully removed category from recently used", true);
-            })
-                .catch(error => {
-                    this.recCategoriesCallStatus[i].error("Error while removing category from recently used", error);
-                });
-        }
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to remove this category from your recently used ones?").then(result => {
+            if(result){
+                this.recCategoriesCallStatus[i].submit();
+                let userId = this.cookieService.get("user_id");
+                this.userService.removeRecCat(userId, cat).then(res => {
+                    this.recCats = res;
+                    this.recCats.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
+                    this.recCategoriesCallStatus[i].callback("Succesfully removed category from recently used", true);
+                })
+                    .catch(error => {
+                        this.recCategoriesCallStatus[i].error("Error while removing category from recently used", error);
+                    });
+            }
+        });
     }
 
 }

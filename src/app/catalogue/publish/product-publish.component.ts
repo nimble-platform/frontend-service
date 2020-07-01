@@ -231,7 +231,7 @@ export class ProductPublishComponent implements OnInit {
             this.userService.getUserParty(userId).then(party => {
                 return Promise.all([
                     Promise.resolve(party),
-                    this.catalogueService.getCatalogueResponse(userId),
+                    this.catalogueService.getCatalogueResponse(userId, null, null, 0, 0,  null, this.selectedCatalogueId),
                     this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party), party.federationInstanceID),
                     this.unitService.getCachedUnitList("dimensions"),
                     this.unitService.getCachedUnitList("length_quantity")
@@ -654,21 +654,23 @@ export class ProductPublishComponent implements OnInit {
      * Other Stuff
      */
 
-    canDeactivate(): boolean {
+    canDeactivate(): boolean | Promise<boolean>{
         if (this.changePublishModeCreate) {
             this.publishStateService.publishMode = 'create';
             this.publishStateService.publishingStarted = false;
         }
         if (ProductPublishComponent.dialogBox) {
-            let x: boolean = confirm(this.translate.instant('You will lose any changes you made, are you sure you want to quit ?'));
-            if (x) {
-                this.publishStateService.publishMode = 'create';
-                this.publishStateService.publishingStarted = false;
-            }
-            return x;
+            return this.appComponent.confirmModalComponent.open('You will lose any changes you made, are you sure you want to quit ?').then(result => {
+                if(result){
+                    this.publishStateService.publishMode = 'create';
+                    this.publishStateService.publishingStarted = false;
+                }
+                return result;
+            });
+        } else{
+            ProductPublishComponent.dialogBox = true;
+            return true;
         }
-        ProductPublishComponent.dialogBox = true;
-        return true;
     }
 
     private initView(userParty, catalogueResponse: CataloguePaginationResponse, settings): void {

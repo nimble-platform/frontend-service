@@ -163,48 +163,52 @@ export class CompanyInvitationComponent implements OnInit {
     }
 
     cancelInvite(inv) {
-        if (confirm(this.translate.instant("Are you sure that you want to cancel the invitation for this user?"))) {
-            this.userService.deleteInvite(inv["email"])
-                .then(response => {
-                    this.loadInvites();
-                })
-                .catch(error => {
-                    console.error('An error occurred', error);
-                    this.loadInvites();
-                });
-        }
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to cancel the invitation for this user?").then(result => {
+            if(result){
+                this.userService.deleteInvite(inv["email"])
+                    .then(response => {
+                        this.loadInvites();
+                    })
+                    .catch(error => {
+                        console.error('An error occurred', error);
+                        this.loadInvites();
+                    });
+            }
+        });
     }
 
     deleteInvite(inv) {
-        if (confirm(this.translate.instant("Are you sure that you want to remove this user from your company?"))) {
-            this.userService.deleteInvite(inv["email"])
-                .then(response => {
-                    this.loadInvites();
-                })
-                .catch(error => {
-                    console.error('An error occurred', error);
-                    this.loadInvites();
-                });
-        }
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to remove this user from your company?").then(result => {
+            if(result){
+                this.userService.deleteInvite(inv["email"])
+                    .then(response => {
+                        this.loadInvites();
+                    })
+                    .catch(error => {
+                        console.error('An error occurred', error);
+                        this.loadInvites();
+                    });
+            }
+        });
     }
 
     showRoleTT(content) {
         var tooltip = "";
         tooltip += "<table class='table table-striped table-bordered'>";
-        tooltip += "<tr><th>Role</th><th>Permissions</th></tr>";
+        tooltip += this.translate.instant("Role Permissions Row");
         if (this.config.supportedRoles.indexOf("company_admin") != -1)
-            tooltip += "<tr><td>Company Admin</td><td>A member of the company that got all rights on the NIMBLE platform (except for assigning external/legal representatives)</td></tr>";
+            tooltip += this.translate.instant("Company Admin Row",{platformName:this.config.platformNameInMail});
         if (this.config.supportedRoles.indexOf("external_representative") != -1)
-            tooltip += "<tr><td>External Representative</td><td>Somebody from outside the company that got all rights connected to the company on the NIMBLE platform (except for assigning external/legal representatives)</td></tr>";
-        tooltip += "<tr><td>Legal Representative</td><td>The legally liable representative of your company. Usually a single person. Has got all rights on the NIMBLE platform</td></tr>";
+            tooltip += this.translate.instant("External Representative Row",{platformName:this.config.platformNameInMail});
+        tooltip += this.translate.instant("Legal Representative Row",{platformName:this.config.platformNameInMail});
         if (this.config.supportedRoles.indexOf("monitor") != -1)
-            tooltip += "<tr><td>Monitor</td><td>Can observe sales, purchases and relevant business data on the NIMBLE platform without executing the associated business processes</td></tr>";
+            tooltip += this.translate.instant("Monitor Row",{platformName:this.config.platformNameInMail});
         if (this.config.supportedRoles.indexOf("publisher") != -1)
-            tooltip += "<tr><td>Publisher</td><td>Can publish and maintain the catalogues of the company</td></tr>";
+            tooltip += this.translate.instant("Publisher Row");
         if (this.config.supportedRoles.indexOf("purchaser") != -1)
-            tooltip += "<tr><td>Purchaser</td><td>Can observe purchases on the NIMBLE platform and execute the associated business processes</td></tr>";
+            tooltip += this.translate.instant("Purchaser Row",{platformName:this.config.platformNameInMail});
         if (this.config.supportedRoles.indexOf("sales_officer") != -1)
-            tooltip += "<tr><td>Sales Offices</td><td>Can observe sales on the NIMBLE platform and execute the associated business processes</td></tr>";
+            tooltip += this.translate.instant("Sales Officer Row", {platformName:this.config.platformNameInMail});
         this.tooltipHTML = tooltip;
         this.modalService.open(content);
     }

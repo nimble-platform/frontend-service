@@ -54,6 +54,7 @@ export class MembersComponent implements OnInit {
     product_vendor_img = myGlobals.product_vendor_img;
     product_vendor_name = myGlobals.product_vendor_name;
     product_vendor_brand_name = myGlobals.product_vendor_brand_name;
+    showCompanyDetailsOnClicked:boolean;
     imgEndpoint = myGlobals.user_mgmt_endpoint + "/company-settings/image/";
     getLink = sanitizeLink;
 
@@ -66,6 +67,7 @@ export class MembersComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.showCompanyDetailsOnClicked = myGlobals.config.showCompanyDetailsInPlatformMembers && this.appComponent.isLoggedIn;
         if (this.mgmt_view) {
             if (!this.appComponent.checkRoles("pm"))
                 this.mgmt_view = false;
@@ -87,7 +89,7 @@ export class MembersComponent implements OnInit {
         if (this.model.q == "*") {
             this.model.q = "";
         }
-        this.simpleSearchService.getComp(this.q_submit, [], [], this.page, rows, this.sort, this.unverified, true)
+        this.simpleSearchService.getComp(this.q_submit, [], [], this.page, rows, this.sort,"Name", this.unverified, true)
             .then(res => {
                 this.companiesCallStatus.callback("Successfully loaded companies", true);
                 if (this.q_submit == "*")
@@ -129,45 +131,62 @@ export class MembersComponent implements OnInit {
         );
 
     verifyCompany(id): void {
-        if (confirm(this.translate.instant("Are you sure that you want to verify this company?"))) {
-            this.companiesCallStatus.submit();
-            this.analyticsService.verifyCompany(id)
-                .then(res => {
-                    this.companiesCallStatus.callback("Successfully verified company", true);
-                    this.searchCompany();
-                })
-                .catch(error => {
-                    this.companiesCallStatus.error("Error while verifing company", error);
-                });
-        }
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to verify this company?").then(result => {
+            if(result){
+                this.companiesCallStatus.submit();
+                this.analyticsService.verifyCompany(id)
+                    .then(res => {
+                        this.companiesCallStatus.callback("Successfully verified company", true);
+                        this.searchCompany();
+                    })
+                    .catch(error => {
+                        this.companiesCallStatus.error("Error while verifing company", error);
+                    });
+            }
+        });
     }
 
     rejectCompany(id): void {
-        if (confirm(this.translate.instant("Are you sure that you want to reject this company?"))) {
-            this.companiesCallStatus.submit();
-            this.analyticsService.rejectCompany(id)
-                .then(res => {
-                    this.companiesCallStatus.callback("Successfully rejected company", true);
-                    this.searchCompany();
-                })
-                .catch(error => {
-                    this.companiesCallStatus.error("Error while rejecting company", error);
-                });
-        }
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to reject this company?").then(result => {
+            if(result){
+                this.companiesCallStatus.submit();
+                this.analyticsService.rejectCompany(id)
+                    .then(res => {
+                        this.companiesCallStatus.callback("Successfully rejected company", true);
+                        this.searchCompany();
+                    })
+                    .catch(error => {
+                        this.companiesCallStatus.error("Error while rejecting company", error);
+                    });
+            }
+        });
     }
 
     deleteCompany(id): void {
-        if (confirm(this.translate.instant("Are you sure that you want to delete this company?"))) {
-            this.companiesCallStatus.submit();
-            this.analyticsService.deleteCompany(id)
-                .then(res => {
-                    this.companiesCallStatus.callback("Successfully deleted company", true);
-                    this.searchCompany();
-                })
-                .catch(error => {
-                    this.companiesCallStatus.error("Error while deleting company", error);
-                });
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to delete this company?").then(result => {
+            if(result){
+                this.companiesCallStatus.submit();
+                this.analyticsService.deleteCompany(id)
+                    .then(res => {
+                        this.companiesCallStatus.callback("Successfully deleted company", true);
+                        this.searchCompany();
+                    })
+                    .catch(error => {
+                        this.companiesCallStatus.error("Error while deleting company", error);
+                    });
+            }
+        });
+    }
+
+    getCompLink(res: any): string {
+        let link = "";
+        if (res && res.id) {
+            if (!res.isFromLocalInstance && res.nimbleInstanceName && res.nimbleInstanceName != '')
+                link += "#/user-mgmt/company-details?id=" + res.id + "&delegateId=" + res.nimbleInstanceName;
+            else
+                link += "#/user-mgmt/company-details?id=" + res.id;
         }
+        return link;
     }
 
     setSort(val: string) {

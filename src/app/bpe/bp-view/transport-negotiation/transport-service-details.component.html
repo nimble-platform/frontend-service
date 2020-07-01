@@ -18,22 +18,22 @@
     <div class="col-12">
 
         <div>
-            <h4>Shipped Products</h4>
+            <h4 [innerHTML]="'Shipped Products' | translate"></h4>
             <div *ngFor="let goodsItem of goodsItems;let i=index">
 
-                <text-input label="Goods Item" definition="The goods item included in this shipment" [rows]="1" [(text)]="goodsItem.item.name[0].value" [disabled]="disabled" labelClass="col-2" valueClass="col-10" rowClass="space-before" [required]="true">
+                <text-input [label]="'Goods Item'|translate" [definition]="'The goods item included in this shipment'|translate" [rows]="1" [(text)]="goodsItem.item.name[0].value" [disabled]="disabled" labelClass="col-2" valueClass="col-10" rowClass="space-before" [required]="true">
                 </text-input>
 
                 <!-- Quantity -->
-                <quantity-input label="Quantity" definition="The quantity to transport." [quantity]="goodsItem.quantity" [disabled]="disabled" rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
+                <quantity-input [label]="'Quantity'|translate" [definition]="'The quantity to transport.'|translate" [quantity]="goodsItem.quantity" [disabled]="disabled" rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
                 </quantity-input>
 
                 <!-- Gross Volume -->
-                <quantity-input label="Gross Volume" definition="The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L" [quantity]="goodsItem.grossVolumeMeasure" [disabled]="disabled" rowClass="space-before" (onQuantityValueChange)="onGrossVolumeAndWeightUpdated('volume')" (onQuantityUnitChange)="onGrossVolumeAndWeightUnitUpdated('volume',$event)" quantityType="volume_quantity" labelClass="col-2" valueClass="col-10" [required]="true">
+                <quantity-input [label]="'Gross Volume'|translate" [definition]="'The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L'|translate" [quantity]="goodsItem.grossVolumeMeasure" [disabled]="disabled" rowClass="space-before" (onQuantityValueChange)="onGrossVolumeAndWeightUpdated('volume')" (onQuantityUnitChange)="onGrossVolumeAndWeightUnitUpdated('volume',$event)" quantityType="volume_quantity" labelClass="col-2" valueClass="col-10" [required]="true">
                 </quantity-input>
 
                 <!-- Gross Weight -->
-                <quantity-input label="Gross Weight" definition="The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg" [quantity]="goodsItem.grossWeightMeasure" [disabled]="disabled" (onQuantityValueChange)="onGrossVolumeAndWeightUpdated('weight')" (onQuantityUnitChange)="onGrossVolumeAndWeightUnitUpdated('weight',$event)" quantityType="weight_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
+                <quantity-input [label]="'Gross Weight'|translate" [definition]="'The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg'|translate" [quantity]="goodsItem.grossWeightMeasure" [disabled]="disabled" (onQuantityValueChange)="onGrossVolumeAndWeightUpdated('weight')" (onQuantityUnitChange)="onGrossVolumeAndWeightUnitUpdated('weight',$event)" quantityType="weight_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
                 </quantity-input>
 
                 <div class="d-flex justify-content-end space-before" *ngIf="goodsItems.length > 1 && !disabled">
@@ -51,31 +51,31 @@
             </div>
 
             <!-- Gross Volume -->
-            <quantity-input label="Total Gross Volume" definition="The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L" [quantity]="shipment.consignment[0].grossVolumeMeasure" [disabled]="true" rowClass="space-before" quantityType="volume_quantity" labelClass="col-2" valueClass="col-10" [required]="true">
+            <quantity-input [label]="'Total Gross Volume'|translate" [definition]="'The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L'|translate" [quantity]="shipment.consignment[0].grossVolumeMeasure" [disabled]="true" rowClass="space-before" quantityType="volume_quantity" labelClass="col-2" valueClass="col-10" [required]="true">
             </quantity-input>
 
             <!-- Gross Weight -->
-            <quantity-input label="Total Gross Weight" definition="The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg" [quantity]="shipment.consignment[0].grossWeightMeasure" [disabled]="true" quantityType="weight_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
+            <quantity-input [label]="'Total Gross Weight' | translate" [definition]="'The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg'|translate" [quantity]="shipment.consignment[0].grossWeightMeasure" [disabled]="true" quantityType="weight_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
             </quantity-input>
         </div>
 
         <hr>
 
-        <h4>Transport Handling</h4>
+        <h4><span [innerHTML]="'Transport Handling' | translate"></span></h4>
         <!-- Transport Handling Unit -->
-        <text-input label="Transport Handling Unit" description="The transport handling unit used" [rows]="1" [(text)]="shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name" [disabled]="disabled" rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
+        <text-input [label]="'Transport Handling Unit' | translate" [definition]="'The transport handling unit used'|translate" [rows]="1" [(text)]="shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name" [disabled]="disabled" rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
         </text-input>
 
         <!-- Dimension 1 -->
-        <quantity-input [label]="shipment.transportHandlingUnit[0].measurementDimension[0].attributeID" [quantity]="shipment.transportHandlingUnit[0].measurementDimension[0].measure" [disabled]="disabled" quantityType="length_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
+        <quantity-input [label]="shipment.transportHandlingUnit[0].measurementDimension[0].attributeID | translate" [quantity]="shipment.transportHandlingUnit[0].measurementDimension[0].measure" [disabled]="disabled" quantityType="length_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
         </quantity-input>
 
         <!-- Dimension 2 -->
-        <quantity-input [label]="shipment.transportHandlingUnit[0].measurementDimension[1].attributeID" [quantity]="shipment.transportHandlingUnit[0].measurementDimension[1].measure" [disabled]="disabled" quantityType="length_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
+        <quantity-input [label]="shipment.transportHandlingUnit[0].measurementDimension[1].attributeID | translate" [quantity]="shipment.transportHandlingUnit[0].measurementDimension[1].measure" [disabled]="disabled" quantityType="length_quantity" rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
         </quantity-input>
 
         <!--Notes-->
         <h5 class="space-before"><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
-        <note-file-view [notes]="quotationShipment ? quotationShipment.specialInstructions : shipment.specialInstructions" [requestNotes]="shipment.specialInstructions" [documents]="quotationShipment ? quotationShipment.additionalDocumentReference : shipment.additionalDocumentReference" [requestDocuments]="shipment.additionalDocumentReference" [label]="'Notes'" [firstCol]="'col-2'" [thirdCol]="quotationShipment ? 'col-5': null" [lastCol]="quotationShipment ? 'col-5': 'col-10'" [readonly]="isNoteSectionDisabled()"></note-file-view>
+        <note-file-view [notes]="quotationShipment ? quotationShipment.specialInstructions : shipment.specialInstructions" [requestNotes]="shipment.specialInstructions" [documents]="quotationShipment ? quotationShipment.additionalDocumentReference : shipment.additionalDocumentReference" [requestDocuments]="shipment.additionalDocumentReference" [label]="'Notes'|translate" [firstCol]="'col-2'" [thirdCol]="quotationShipment ? 'col-5': null" [lastCol]="quotationShipment ? 'col-5': 'col-10'" [readonly]="isNoteSectionDisabled()"></note-file-view>
     </div>
 </div>

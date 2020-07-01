@@ -91,17 +91,19 @@ export class UserProfileComponent implements OnInit {
     }
 
     deleteUser(user): void {
-        if (confirm(this.translate.instant("Are you sure that you want to delete this user?"))) {
-            this.deleteUserCallStatus.submit();
-            this.userService.deleteUser(user.hjid)
-                .then(res => {
-                    this.deleteUserCallStatus.callback("Successfully deleted user");
-                    this.router.navigate(['/user-mgmt/logout']);
-                })
-                .catch(error => {
-                    this.deleteUserCallStatus.error("Error while deleting user", error);
-                });
-        }
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to delete this user?").then(result => {
+            if(result){
+                this.deleteUserCallStatus.submit();
+                this.userService.deleteUser(user.hjid)
+                    .then(res => {
+                        this.deleteUserCallStatus.callback("Successfully deleted user");
+                        this.router.navigate(['/user-mgmt/logout']);
+                    })
+                    .catch(error => {
+                        this.deleteUserCallStatus.error("Error while deleting user", error);
+                    });
+            }
+        });
     }
 
 }

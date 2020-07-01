@@ -14,14 +14,14 @@
    limitations under the License.
  -->
 
-<negotiation-request-item *ngFor="let wrapper of wrappers;let i=index" [rfq]="rfq" [processMetadata]="bpActivityEvent ? bpActivityEvent.processMetadata : null" [manufacturersTermsSource]="manufacturersTermsSources[i]" [lastOfferQuotation]="lastOfferQuotation" [frameContractQuotation]="frameContractQuotations[i]" [frameContractNegotiation]="frameContractNegotiations[i]" [frameContract]="frameContracts[i]" [defaultTermsAndConditions]="defaultTermsAndConditions" [deliverytermsOfBuyer]="deliverytermsOfBuyer" [wrapper]="wrapper" [hidden]="selectedLineIndex != wrapper.lineIndex" [componentIndex]="i" [parentForm]="negotiationRequestForm" [formFieldName]="'negotiated_item'">
+<negotiation-request-item *ngFor="let wrapper of wrappers;let i=index" [rfq]="rfq" [processMetadata]="bpActivityEvent ? bpActivityEvent.processMetadata : null" [manufacturersTermsSource]="manufacturersTermsSources[i]" [lastOfferQuotation]="lastOfferQuotation" [frameContractQuotation]="frameContractQuotations[i]" [frameContractNegotiation]="frameContractNegotiations[i]" [frameContract]="frameContracts[i]" [defaultTermsAndConditions]="defaultTermsAndConditions[i]" [deliverytermsOfBuyer]="deliverytermsOfBuyer" [wrapper]="wrapper" [hidden]="selectedLineIndex != wrapper.lineIndex" [componentIndex]="i" [parentForm]="negotiationRequestForm" [formFieldName]="'negotiated_item'">
 </negotiation-request-item>
 <div class="btn align-self-start ml-2" [ngClass]="{'active':showNotesAndAdditionalFiles,'btn-outline-primary':!areNotesOrFilesAttachedToDocument(rfq),'btn-danger':areNotesOrFilesAttachedToDocument(rfq)}" (click)="showNotesAndAdditionalFiles= showTab(showNotesAndAdditionalFiles)"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>
 <div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showPurchaseOrder}" (click)="showPurchaseOrder = showTab(showPurchaseOrder)"><span [innerHTML]="'Purchase Order' | translate"></span></div>
 
 <!--Notes-->
 <div class="ml-2 space-before">
-    <note-file-view *ngIf="showNotesAndAdditionalFiles" class="mb-2" [notes]="rfq.note" [documents]="rfq.additionalDocumentReference" [label]="'Notes'" [firstCol]="'col-2'" [secondCol]="'col-5'" [lastCol]="'col-5'" [readonly]="isLoading() || isReadOnly()"></note-file-view>
+    <note-file-view *ngIf="showNotesAndAdditionalFiles" class="mb-2" [notes]="rfq.note" [documents]="rfq.additionalDocumentReference" [label]="'Notes'|translate" [firstCol]="'col-2'" [secondCol]="'col-5'" [lastCol]="'col-5'" [readonly]="isLoading() || isReadOnly()"></note-file-view>
 </div>
 
 <!--Purchase Order-->
@@ -73,7 +73,7 @@
             <span [ngbTooltip]="getValidationError()" [placement]="'auto'" title="">
                 <button class="btn btn-primary action" [disabled]="isLoading() || !isFormValid()" (click)="onSendRequest()" singleClick>
                     <span *ngIf="!doesManufacturerOfferHasPrice() || isNegotiatingAnyTerm() || !bpDataService.isProcessPresentInTheWorkflow('Order')" [innerHTML]="'Send Request' | translate"></span>
-                    <span *ngIf="!(!doesManufacturerOfferHasPrice() || isNegotiatingAnyTerm() || !bpDataService.isProcessPresentInTheWorkflow('Order'))" [innerHTML]="'Continue With Manufacturer\'s Terms' | translate"></span>
+                    <span *ngIf="!(!doesManufacturerOfferHasPrice() || isNegotiatingAnyTerm() || !bpDataService.isProcessPresentInTheWorkflow('Order'))" [innerHTML]="'Continue With Manufacturer Terms' | translate"></span>
                 </button>
             </span>
         </div>

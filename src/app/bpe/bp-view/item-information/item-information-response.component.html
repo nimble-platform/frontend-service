@@ -38,9 +38,9 @@
 
 <!--Notes-->
 <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
-<note-file-view [notes]="request.note" [documents]="request.additionalDocumentReference" [label]="'Customer\'s note'"></note-file-view>
+<note-file-view [notes]="request.note" [documents]="request.additionalDocumentReference" [label]="'Customer note'|translate"></note-file-view>
 <hr>
-<note-file-view [notes]="response.note" [documents]="response.additionalDocumentReference" [label]="'Manufacturer\'s note'" [readonly]="isLoading() || isResponseSent()"></note-file-view>
+<note-file-view [notes]="response.note" [documents]="response.additionalDocumentReference" [label]="'Manufacturer note'|translate" [readonly]="isLoading() || isResponseSent()"></note-file-view>
 
 <hr class="actions-hr">
 

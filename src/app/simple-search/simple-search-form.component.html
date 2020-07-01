@@ -21,8 +21,8 @@
             <div class="input-group">
                 <input *ngIf="searchTopic=='prod'" type="text" class="form-control" id="searchTerm" [(ngModel)]="model.q" [disabled]="searchCallStatus.isLoading()" [ngbTypeahead]="getSuggestions" (selectItem)="onSubmit($event)" [focusFirst]=false name="searchTerm" #q="ngModel" [placeholder]="'Product / Service' | translate">
                 <input *ngIf="searchTopic=='comp'" type="text" class="form-control" id="searchTerm" [(ngModel)]="model.q" [disabled]="searchCallStatus.isLoading()" [ngbTypeahead]="getCompSuggestions" (selectItem)="onSubmit($event)" [focusFirst]=false name="searchTerm" #q="ngModel" [placeholder]="'Company' | translate">
-                <div *ngIf="searchTopic=='prod'" ngbDropdown class="d-inline-block input-group-append">
-                    <button *ngIf="searchTopic=='prod'" class="btn btn-outline-secondary" type="button" id="searchIndex" ngbDropdownToggle>
+                <div ngbDropdown class="d-inline-block input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="searchIndex" ngbDropdownToggle>
                         <span [innerHTML]="searchIndex | translate"></span>
                     </button>
                     <div ngbDropdownMenu aria-labelledby="searchIndex">
@@ -182,7 +182,7 @@
 
                     <div class="row mb-3">
                         <div class="col-12">
-                            <button *ngIf="searchTopic=='prod'" class="btn btn-secondary" [disabled]="cat==''" (click)="setCat('','')"><span [innerHTML]="'Reset category' | translate"></span></button>
+                            <button *ngIf="searchTopic=='prod'" class="btn btn-secondary" [disabled]="cat==''" (click)="setCat('','',false,-1)"><span [innerHTML]="'Reset category' | translate"></span></button>
                             <button class="btn btn-secondary" [ngClass]="{'ml-2':searchTopic=='prod'}" [disabled]="!facetQuery || (facetQuery && facetQuery.length==0)" (click)="resetFilter()"><span [innerHTML]="'Reset filter' | translate"></span></button>
                         </div>
                     </div>
@@ -218,24 +218,24 @@
                                         <div *ngFor="let c of cat_levels; let i = index">
                                             <!-- if there is not a selected category, render only the root level-->
                                             <!-- it a category is selected, render the one more finer level than the level of selected category -->
-                                            <ng-container *ngIf="(cat_level === -1 && i === 0) || (cat_level !== -1 && cat_level >= (i - 1))">
+                                            <ng-container>
                                                 <div *ngFor="let lvl of c">
                                                     <!-- selected category -->
                                                     <div *ngIf="catID == lvl.id">
                                                         <!-- bolded entry, rendered when there is no excluding category facets -->
                                                         <!-- or for the deepest level entry when the Others entry is selected -->
                                                         <!-- cat_level here corresponds to the level of parent category -->
-                                                        <ng-container *ngIf="(!excludingCategoryFacetQueryExists() && cat_level == i) || (excludingCategoryFacetQueryExists() && cat_level < i)">
-                                                            <span class="clickable" (click)="setCat('','', lvl.other)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName"><b>{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></b></span> ({{ lvl.count }})
+                                                        <ng-container *ngIf="(!excludingCategoryFacetQueryExists() && !lvl.other) || (excludingCategoryFacetQueryExists() && lvl.other)">
+                                                            <span class="clickable" (click)="setCat('','', lvl.other,i)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName"><b>{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></b></span> ({{ lvl.count }})
                                                         </ng-container>
                                                         <!-- the parent cateory having the same id with the child 'Others' entry -->
-                                                        <ng-container *ngIf="(!excludingCategoryFacetQueryExists() && i > cat_level) || (excludingCategoryFacetQueryExists() && i === cat_level)">
-                                                            <span class="clickable" (click)="setCat(lvl.preferredName,lvl.id, lvl.other)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></span> <span *ngIf="displayCategoryCounts">({{ lvl.count }})</span>
+                                                        <ng-container *ngIf="(!excludingCategoryFacetQueryExists() && lvl.other) || (excludingCategoryFacetQueryExists() && !lvl.other)">
+                                                            <span class="clickable" (click)="setCat(lvl.preferredName,lvl.id, lvl.other,i)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></span> <span *ngIf="displayCategoryCounts">({{ lvl.count }})</span>
                                                         </ng-container>
                                                     </div>
                                                     <!-- other categories in the hierarchy -->
-                                                    <div *ngIf="catID!=lvl.id&&cat_level!=i">
-                                                        <span class="clickable" (click)="setCat(lvl.name, lvl.id, lvl.other)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></span> <span *ngIf="displayCategoryCounts">({{ lvl.count }})</span>
+                                                    <div *ngIf="catID!=lvl.id">
+                                                        <span class="clickable" (click)="setCat(lvl.name, lvl.id, lvl.other,i)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></span> <span *ngIf="displayCategoryCounts">({{ lvl.count }})</span>
                                                     </div>
                                                 </div>
                                             </ng-container>
@@ -303,12 +303,12 @@
                                         <div class="card-body" *ngIf="facet.showContent">
                                             <div *ngFor="let facetInner of facet.options; let i=index">
                                                 <div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
-                                                    <span *ngIf="facet.dataType != 'boolean'" class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span>
-                                                    <i *ngIf="facet.dataType == 'boolean'" (click)="setFacet(facet.name,facetInner.name)" class="fa {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable" [ngStyle]="{'color':facetInner.realName == 'true' ? 'green' : 'red'}" style="text-decoration: none" aria-hidden="true"></i> ({{ facetInner.count }})
+                                                    <span *ngIf="facet.dataType != 'boolean'" class="clickable" (click)="setFacet(facet.name,facetInner.name,facet.genName)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span>
+                                                    <i *ngIf="facet.dataType == 'boolean'" (click)="setFacet(facet.name,facetInner.name,facet.genName)" class="fa {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable" [ngStyle]="{'color':facetInner.realName == 'true' ? 'green' : 'red'}" style="text-decoration: none" aria-hidden="true"></i> ({{ facetInner.count }})
                                                 </div>
                                                 <div *ngIf="checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
-                                                    <span *ngIf="facet.dataType != 'boolean'" class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span>
-                                                    <i *ngIf="facet.dataType == 'boolean'" (click)="setFacet(facet.name,facetInner.name)" class="fa {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable" [ngStyle]="{'color':facetInner.realName == 'true' ? 'green' : 'red'}" style="text-decoration: none" aria-hidden="true"></i> ({{ facetInner.count }})
+                                                    <span *ngIf="facet.dataType != 'boolean'" class="clickable" (click)="setFacet(facet.name,facetInner.name,facet.genName)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span>
+                                                    <i *ngIf="facet.dataType == 'boolean'" (click)="setFacet(facet.name,facetInner.name,facet.genName)" class="fa {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable" [ngStyle]="{'color':facetInner.realName == 'true' ? 'green' : 'red'}" style="text-decoration: none" aria-hidden="true"></i> ({{ facetInner.count }})
                                                 </div>
                                             </div>
                                             <div *ngIf="facet.options.length>maxFacets">
@@ -327,7 +327,7 @@
                         <div *ngIf="checkCompCatCount()>0">
 
                             <div class="pointer" (click)="showCompSection=!showCompSection">
-                                <h5><span [innerHTML]="'Product / Service' | translate"></span> <span [innerHTML]="'Vendor' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+                                <h5><span [innerHTML]="'Vendor Filters' | translate"></span> <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
                             </div>
 
                             <div *ngIf="showCompSection">
@@ -338,11 +338,11 @@
                                         </div>
                                         <div *ngIf="facet.showContent" class="card-body">
                                             <div *ngFor="let facetInner of facet.options; let i = index">
-                                                <div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
-                                                    <span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> <span *ngIf="facetInner.count>0">({{ facetInner.count }})</span>
+                                                <div *ngIf="!checkFacet(facet.name,facetInner.name,facetInner.languageId) && (i < maxFacets || facet.expanded)">
+                                                    <span class="clickable" (click)="setFacet(facet.name,facetInner.name,facet.genName,facetInner.languageId)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> <span *ngIf="facetInner.count>0">({{ facetInner.count }})</span>
                                                 </div>
-                                                <div *ngIf="checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
-                                                    <span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> <span *ngIf="facetInner.count>0">({{ facetInner.count }})</span>
+                                                <div *ngIf="checkFacet(facet.name,facetInner.name,facetInner.languageId) && (i < maxFacets || facet.expanded)">
+                                                    <span class="clickable" (click)="setFacet(facet.name,facetInner.name,facet.genName,facetInner.languageId)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> <span *ngIf="facetInner.count>0">({{ facetInner.count }})</span>
                                                 </div>
                                             </div>
                                             <div *ngIf="facet.options.length>maxFacets">
@@ -461,12 +461,12 @@
                                         <div *ngIf="facet.showContent" class="card-body" >
                                             <div *ngFor="let facetInner of facet.options; let i = index">
                                                 <div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
-                                                    <span *ngIf="facet.dataType != 'boolean'" class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span>
-                                                    <i *ngIf="facet.dataType == 'boolean'" (click)="setFacet(facet.name,facetInner.name)" class="fa {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable" [ngStyle]="{'color':facetInner.realName == 'true' ? 'green' : 'red'}" style="text-decoration: none" aria-hidden="true"></i> ({{ facetInner.count }})
+                                                    <span *ngIf="facet.dataType != 'boolean'" class="clickable" (click)="setFacet(facet.name,facetInner.name,facet.genName)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span>
+                                                    <i *ngIf="facet.dataType == 'boolean'" (click)="setFacet(facet.name,facetInner.name,facet.genName)" class="fa {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable" [ngStyle]="{'color':facetInner.realName == 'true' ? 'green' : 'red'}" style="text-decoration: none" aria-hidden="true"></i> ({{ facetInner.count }})
                                                 </div>
                                                 <div *ngIf="checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
-                                                    <span *ngIf="facet.dataType != 'boolean'" class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span>
-                                                    <i *ngIf="facet.dataType == 'boolean'" (click)="setFacet(facet.name,facetInner.name)" class="fa {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable" [ngStyle]="{'color':facetInner.realName == 'true' ? 'green' : 'red'}" style="text-decoration: none" aria-hidden="true"></i> ({{ facetInner.count }})
+                                                    <span *ngIf="facet.dataType != 'boolean'" class="clickable" (click)="setFacet(facet.name,facetInner.name,facet.genName)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span>
+                                                    <i *ngIf="facet.dataType == 'boolean'" (click)="setFacet(facet.name,facetInner.name,facet.genName)" class="fa {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable" [ngStyle]="{'color':facetInner.realName == 'true' ? 'green' : 'red'}" style="text-decoration: none" aria-hidden="true"></i> ({{ facetInner.count }})
                                                 </div>
                                             </div>
                                             <div *ngIf="facet.options.length>maxFacets">
@@ -499,10 +499,10 @@
                                         <div *ngIf="facet.showContent" class="card-body">
                                             <div *ngFor="let facetInner of facet.options; let i = index">
                                                 <div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
-                                                    <span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> ({{ facetInner.count }})
+                                                    <span class="clickable" (click)="setFacet(facet.name,facetInner.name,facet.genName)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span> ({{ facetInner.count }})
                                                 </div>
                                                 <div *ngIf="checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded)">
-                                                    <span class="clickable" (click)="setFacet(facet.name,facetInner.name)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> ({{ facetInner.count }})
+                                                    <span class="clickable" (click)="setFacet(facet.name,facetInner.name,facet.genName)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span> ({{ facetInner.count }})
                                                 </div>
                                             </div>
                                             <div *ngIf="facet.options.length>maxFacets">
@@ -715,7 +715,8 @@
                                                 <span [title]="result[product_vendor_name]"><b>{{ result[product_vendor_name] }}</b></span>
                                             </div>
                                             <div *ngIf="display=='list'" style="max-height:3rem;overflow:hidden">
-                                                <span *ngIf="result.businessType" [title]="result.businessType"><small>{{result.businessType}}</small></span>
+                                                <span *ngIf="companyInformationInSearchResult == 'BusinessType' && result.businessType" [title]="result.businessType"><small>{{result.businessType}}</small></span>
+                                                <span *ngIf="companyInformationInSearchResult == 'BusinessKeywords' && result.businessKeywords" [title]="getMultilingualLabel(result.businessKeywords)"><small>{{getMultilingualLabel(result.businessKeywords)}}</small></span>
                                             </div>
                                         </div>
                                         <div [ngClass]="{'col-2':display=='list','col-12 pt-2':display=='panel'}">

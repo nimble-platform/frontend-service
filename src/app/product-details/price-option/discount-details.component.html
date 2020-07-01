@@ -23,7 +23,7 @@
         <select class="form-control form-control-sm" #priceOptionSelect>
             <ng-container *ngFor="let option of object.keys(priceOptions)">
                 <!-- do not show product property as a price option if the product does not have any property -->
-                <option *ngIf="option != 'PRODUCT_PROPERTY' || catalogueLine.goodsItem.item.additionalItemProperty.length > 0" [value]="option">{{priceOptions[option].text}}</option>
+                <option *ngIf="option != 'PRODUCT_PROPERTY' || catalogueLine.goodsItem.item.additionalItemProperty.length > 0" [value]="option"><span [innerHTML]="priceOptions[option].text | translate"></span></option>
             </ng-container>
         </select>
     </div>

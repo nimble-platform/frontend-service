@@ -58,6 +58,7 @@ import { ShoppingCartDataService } from './bpe/shopping-cart/shopping-cart-data-
 import { CollaborationService } from './catalogue/collaboration/collaboration.service';
 import { UnshippedOrdersTransitionService } from './bpe/unshipped-order-transition-service';
 import { ValidationService } from './common/validation/validators';
+import {ContractService} from './bpe/bp-view/contract-service';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -110,6 +111,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         AnalyticsService,
         EpcService,
         DocumentService,
+        ContractService,
         ShoppingCartDataService,
         CollaborationService,
         ValidationService,

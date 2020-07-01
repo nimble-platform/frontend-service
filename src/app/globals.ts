@@ -95,8 +95,10 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 	* hiddenCategories: An array of top-level category IDs that will be hidden from the UI
 	* logisticsCategory: The ID of the logistics categoryFilter
 	* ontologyPrefix: The prefix of the ontology used to identify it
+- contractForCatalogueEnabled: Boolean flag if the contract generation is enabled for catalogues
 - collaborationEnabled: Boolean flag if the collaboration feature is enabled in the dashboard (textile use case)
 - collapsiblePropertyFacets: Boolean flag if the property facets are collapsible or not
+- companyInformationInSearchResult: If it is 'BusinessType', business type of the company is shown in the company search results, if it is 'BusinessKeywords', business keywords of the company are shown in the company search results
 - dataChannelsEnabled: Boolean flag if data channels shall be supported
 - defaultBusinessProcessIds: Array of default business processes that shall be enabled for a company upon registration. Applicable values are "Item_Information_Request", "Ppap", "Negotiation", "Order", "Transport_Execution_Plan" and "Fulfilment". An empty array enables all processes
 - defaultSearchIndex: If "Name" the product search query prioritizes the product name, if "Category" it prioritizes the category name
@@ -127,6 +129,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - showChat: Boolean flag if the chat is available on the instance
 - showAgent: Boolean flag if the agent configuration is available on the instance
 - showCompanyMembers: Boolean flag if all company members shall be eligible to see the list of company members
+- showCompanyDetailsInPlatformMembers: Boolean flag if the company details are shown when the company is selected in platform members page
 - showExplorative: Boolean flag if the explorative search feature is enabled on the instance
 - showFullName: Boolean flag if the full name of a user is shown in the navbar
 - showLCPA: Boolean flag if LCPA codes shall be linkable to products
@@ -170,8 +173,10 @@ export const config = {
             "ontologyPrefix": "http://www.aidimme.es/FurnitureSectorOntology.owl#"
         }
     },
+    "contractForCatalogueEnabled":false,
     "collaborationEnabled": false,
     "collapsiblePropertyFacets": false,
+    "companyInformationInSearchResult": "BusinessType",
     "dataChannelsEnabled": true,
     "defaultBusinessProcessIds": [
     ],
@@ -180,7 +185,10 @@ export const config = {
     "displayCategoryCounts":true,
     "docLink": "https://www.nimble-project.org/docs/",
     "frameContractTabEnabled": true,
-    "imprint": "<u>Platform Owner & Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)",
+    "imprint": {
+        "en": "<u>Platform Owner & Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)",
+        "es": "<u>Propietario de Plataforma y Proveedor</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salsburgo, Austria<br/>Teléfono: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>Correo electrónico: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Director Gerente: Siegfried Reich<br/>Numero de Registro: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Oficial de Contenido: Siegfried Reich<br/>Propietario: State of Salzburg (100%)"
+    },
     "kibanaConfig": {
         "companyDashboards": [
             {
@@ -248,6 +256,7 @@ export const config = {
     "showChat": true,
     "showAgent": true,
     "showCompanyMembers": false,
+    "showCompanyDetailsInPlatformMembers":false,
     "showExplorative": true,
     "showFullName": false,
     "showLCPA": true,
@@ -399,11 +408,11 @@ export const facet_count = -1;
 - boostingFactors: Allows defining different boosting factors for searching by relevance. Keys are the field names listed in "fields" and values are -1 (for negative boosts) or a multiple of 2
 */
 export const query_settings = {
-    "fields": ["STANDARD", "commodityClassficationUri", "{LANG}_label", "{LANG}_desc"],
+    "fields": ["STANDARD","classification.allLabels","{LANG}_label", "{LANG}_desc"],
     "boosting": true,
     "boostingFactors": {
         "STANDARD": 4,
-        "commodityClassficationUri": 16,
+        "classification.allLabels":16,
         "{LANG}_label": 64,
         "{LANG}_desc": -1
     }

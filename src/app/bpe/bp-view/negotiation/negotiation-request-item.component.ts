@@ -556,7 +556,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
 
         if (range) {
             const unit = this.wrapper.rfqDeliveryPeriod.unitCode;
-            return ` (minimum: ${range.start} ${unit}, maximum: ${range.end} ${unit})`;
+            return this.translate.instant("min max range",{start:range.start,end:range.end,unit:unit});
         }
 
         return "";
@@ -582,7 +582,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
 
         if (range) {
             const unit = this.wrapper.rfqWarranty.unitCode;
-            return ` (minimum: ${range.start} ${unit}, maximum: ${range.end} ${unit})`;
+            return this.translate.instant("min max range",{start:range.start,end:range.end,unit:unit});
         }
 
         return "";

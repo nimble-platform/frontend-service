@@ -682,32 +682,36 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     finishCollaboration() {
-        if (confirm(this.translate.instant("Are you sure that you want to finish this collaboration?"))) {
-            this.archiveCallStatus.submit();
-            this.bpeService.finishCollaboration(this.processInstanceGroup.id, this.processInstanceGroup.sellerFederationId)
-                .then(() => {
-                    this.archiveCallStatus.callback("Finished collaboration successfully");
-                    this.threadStateUpdatedNoChange.next();
-                })
-                .catch(err => {
-                    this.archiveCallStatus.error("Failed to finish collaboration", err);
-                });
-        }
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to finish this collaboration?").then(result => {
+            if(result){
+                this.archiveCallStatus.submit();
+                this.bpeService.finishCollaboration(this.processInstanceGroup.id, this.processInstanceGroup.sellerFederationId)
+                    .then(() => {
+                        this.archiveCallStatus.callback("Finished collaboration successfully");
+                        this.threadStateUpdatedNoChange.next();
+                    })
+                    .catch(err => {
+                        this.archiveCallStatus.error("Failed to finish collaboration", err);
+                    });
+            }
+        })
     }
 
     cancelCollaboration(close) {
-        if (confirm(this.translate.instant("Are you sure that you want to cancel this collaboration?"))) {
-            this.archiveCallStatus.submit();
-            this.bpeService.cancelCollaboration(this.processInstanceGroup.id, this.compComment, this.processInstanceGroup.sellerFederationId)
-                .then(() => {
-                    this.archiveCallStatus.callback("Cancelled collaboration successfully");
-                    close();
-                    this.threadStateUpdatedNoChange.next();
-                })
-                .catch(err => {
-                    this.archiveCallStatus.error("Failed to cancel collaboration", err);
-                });
-        }
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to cancel this collaboration?").then(result => {
+            if(result){
+                this.archiveCallStatus.submit();
+                this.bpeService.cancelCollaboration(this.processInstanceGroup.id, this.compComment, this.processInstanceGroup.sellerFederationId)
+                    .then(() => {
+                        this.archiveCallStatus.callback("Cancelled collaboration successfully");
+                        close();
+                        this.threadStateUpdatedNoChange.next();
+                    })
+                    .catch(err => {
+                        this.archiveCallStatus.error("Failed to cancel collaboration", err);
+                    });
+            }
+        });
     }
 
     changeCommunicationRating() {

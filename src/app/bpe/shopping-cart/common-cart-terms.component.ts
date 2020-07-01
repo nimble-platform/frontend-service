@@ -29,6 +29,7 @@ import { CommonTerms } from '../../common/common-terms';
 import { ChildFormBase } from '../../common/validation/child-form-base';
 import { ValidationService } from '../../common/validation/validators';
 import {TranslateService} from '@ngx-translate/core';
+import {AppComponent} from '../../app.component';
 
 @Component({
     selector: 'common-cart-terms',
@@ -73,6 +74,7 @@ export class CommonCartTermsComponent implements OnInit {
 
     constructor(private unitService: UnitService,
         private translate: TranslateService,
+        private appComponent: AppComponent,
         private validationService: ValidationService) {
     }
 
@@ -107,20 +109,22 @@ export class CommonCartTermsComponent implements OnInit {
      */
 
     onApplyTerms(): void {
-        if (confirm(this.translate.instant('Are you sure that you want to apply terms to all products?\nExisting terms will be overwritten.'))) {
-            let commonTerms: CommonTerms = new CommonTerms(this.deliveryPeriod,
-                this.warrantyPeriod,
-                this.incoTerm,
-                this.paymentTerm,
-                this.paymentMean,
-                this.dataMonitoringRequested,
-                this.frameContractDuration,
-                this.deliveryAddress,
-                this.tradingTerms,
-                this.buyerCompanySettings.negotiationSettings.company.salesTerms.termOrCondition,
-                !this.doesBuyerCompanyHasItsOwnTerms);
-            this.onApplyTermsEvent.emit(commonTerms);
-        }
+        this.appComponent.confirmModalComponent.open('Are you sure that you want to apply terms to all products?\nExisting terms will be overwritten.').then(result => {
+            if(result){
+                let commonTerms: CommonTerms = new CommonTerms(this.deliveryPeriod,
+                    this.warrantyPeriod,
+                    this.incoTerm,
+                    this.paymentTerm,
+                    this.paymentMean,
+                    this.dataMonitoringRequested,
+                    this.frameContractDuration,
+                    this.deliveryAddress,
+                    this.tradingTerms,
+                    this.buyerCompanySettings.negotiationSettings.company.salesTerms.termOrCondition,
+                    !this.doesBuyerCompanyHasItsOwnTerms);
+                this.onApplyTermsEvent.emit(commonTerms);
+            }
+        });
     }
 
     onTCTabSelect(event: any, id: any): void {

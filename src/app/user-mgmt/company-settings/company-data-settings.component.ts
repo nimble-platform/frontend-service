@@ -176,17 +176,19 @@ export class CompanyDataSettingsComponent implements OnInit {
 
     deleteCompany(): void {
         if (this.settings.companyID) {
-            if (confirm(this.translate.instant("Are you sure that you want to delete this company?"))) {
-                this.saveCallStatus.submit();
-                this.userService.deleteCompany(this.settings.companyID)
-                    .then(res => {
-                        this.saveCallStatus.callback("Successfully deleted company");
-                        this.router.navigate(['/user-mgmt/logout']);
-                    })
-                    .catch(error => {
-                        this.saveCallStatus.error("Error while deleting company", error);
-                    });
-            }
+            this.appComponent.confirmModalComponent.open("Are you sure that you want to delete this company?").then(result => {
+                if(result){
+                    this.saveCallStatus.submit();
+                    this.userService.deleteCompany(this.settings.companyID)
+                        .then(res => {
+                            this.saveCallStatus.callback("Successfully deleted company");
+                            this.router.navigate(['/user-mgmt/logout']);
+                        })
+                        .catch(error => {
+                            this.saveCallStatus.error("Error while deleting company", error);
+                        });
+                }
+            });
         }
     }
 

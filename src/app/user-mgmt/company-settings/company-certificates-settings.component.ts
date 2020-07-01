@@ -26,6 +26,7 @@ import * as myGlobals from '../../globals';
 import { TranslateService } from '@ngx-translate/core';
 import { BinaryObject } from "../../catalogue/model/publish/binary-object";
 import { UBLModelUtils } from "../../catalogue/model/ubl-model-utils";
+import {AppComponent} from '../../app.component';
 
 @Component({
     selector: "company-certificates-settings",
@@ -54,6 +55,7 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
     constructor(private _fb: FormBuilder,
         private userService: UserService,
         private modalService: NgbModal,
+        private appComponent: AppComponent,
         private translate: TranslateService,
         private cookieService: CookieService) {
 
@@ -104,18 +106,20 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
     }
 
     onRemoveCertificate(id: string, index: number) {
-        if (confirm(this.translate.instant("Are you sure that you want to delete this certificate?"))) {
-            this.certificatesCallStatus.submit();
-            this.userService
-                .deleteCert(id, this.settings.companyID)
-                .then(() => {
-                    this.certificatesCallStatus.callback("Succesfully deleted certificate", true);
-                    this.onSaveEvent.emit();
-                })
-                .catch(error => {
-                    this.certificatesCallStatus.error("Error while deleting certificate", error);
-                });
-        }
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to delete this certificate?").then(result => {
+            if(result){
+                this.certificatesCallStatus.submit();
+                this.userService
+                    .deleteCert(id, this.settings.companyID)
+                    .then(() => {
+                        this.certificatesCallStatus.callback("Succesfully deleted certificate", true);
+                        this.onSaveEvent.emit();
+                    })
+                    .catch(error => {
+                        this.certificatesCallStatus.error("Error while deleting certificate", error);
+                    });
+            }
+        });
     }
 
     onSetCertificateFile(event: any) {

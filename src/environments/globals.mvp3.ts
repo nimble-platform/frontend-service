@@ -83,8 +83,10 @@ export const config = {
           "ontologyPrefix": "http://nimble-project.eu/TextileAndWGSectorsOntology.owl#"
       }
     },
+    "contractForCatalogueEnabled":false,
     "collaborationEnabled": true,
     "collapsiblePropertyFacets": false,
+    "companyInformationInSearchResult": "BusinessType",
     "dataChannelsEnabled": true,
     "defaultBusinessProcessIds": [
     ],
@@ -93,7 +95,10 @@ export const config = {
     "displayCategoryCounts":true,
     "docLink": "https://www.nimble-project.org/docs/",
     "frameContractTabEnabled": true,
-    "imprint": "<br/>E-Mail: <a href='mailto:nimble@il.ibm.com'>nimble@il.ibm.com</a><br/>",
+    "imprint": {
+        "en": "<br/>E-Mail: <a href='mailto:nimble@il.ibm.com'>nimble@il.ibm.com</a><br/>",
+        "es": "<br/>Correo electrónico: <a href='mailto:nimble@il.ibm.com'>nimble@il.ibm.com</a><br/>"
+    },
     "kibanaConfig": {
         "companyDashboards": [],
         "companyGraphs": [],
@@ -117,6 +122,7 @@ export const config = {
     "showChat": false,
     "showAgent": false,
     "showCompanyMembers": false,
+    "showCompanyDetailsInPlatformMembers":false,
     "showExplorative": true,
     "showFullName": false,
     "showLCPA": true,
@@ -248,11 +254,11 @@ export const product_default = {};
 export const facet_min = 1;
 export const facet_count = -1;
 export const query_settings = {
-    "fields": ["STANDARD", "commodityClassficationUri", "{LANG}_label", "{LANG}_desc"],
+    "fields": ["STANDARD", "classification.allLabels", "{LANG}_label", "{LANG}_desc"],
     "boosting": true,
     "boostingFactors": {
         "STANDARD": 4,
-        "commodityClassficationUri": 16,
+        "classification.allLabels": 16,
         "{LANG}_label": 64,
         "{LANG}_desc": -1
     }

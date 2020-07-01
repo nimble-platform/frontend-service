@@ -17,6 +17,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterStateSnapshot } from '@angular/router';
 import {TranslateService} from '@ngx-translate/core';
+import {AppComponent} from '../app.component';
 
 @Component({
     selector: 'simple-search',
@@ -28,6 +29,7 @@ export class SimpleSearchComponent implements OnInit {
     pageRef = '';
 
     constructor(private route: ActivatedRoute,
+                private appComponent: AppComponent,
                 private translate: TranslateService,) { }
 
     ngOnInit(): void {
@@ -36,12 +38,13 @@ export class SimpleSearchComponent implements OnInit {
         });
     }
 
-    canDeactivate(nextState: RouterStateSnapshot): boolean {
+    canDeactivate(nextState: RouterStateSnapshot): boolean | Promise<boolean>{
         if (this.pageRef === 'publish' && !nextState.url.startsWith('/catalogue/publish')) {
-            if (!confirm(this.translate.instant('You will lose any changes you made, are you sure you want to quit ?'))) {
-                return false;
-            }
+            return this.appComponent.confirmModalComponent.open('You will lose any changes you made, are you sure you want to quit ?').then(result => {
+                return result;
+            });
+        } else{
+            return true;
         }
-        return true;
     }
 }

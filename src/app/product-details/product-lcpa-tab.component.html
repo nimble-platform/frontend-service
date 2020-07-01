@@ -112,7 +112,7 @@
         <div class="row">
             <!-- Life cycle costs-->
             <div class="col-6 border-right">
-                <h3 class="text-center"><u>Life cycle costs</u></h3>
+                <h3 class="text-center"><u><span [innerHTML]="'Life cycle costs' | translate"></span></u></h3>
                 <div class="row justify-content-center space-before">
                     <div class="card col-10">
                         <div class="card-body text-center">
@@ -169,7 +169,7 @@
                     <div class="card col-10">
                         <div class="row">
                             <div class="card-body text-center col-12">
-                                <h6 class="card-title"><b>Share of Capex and Opex on LCC</b></h6>
+                                <h6 class="card-title"><b><span [innerHTML]="'Share of Capex and Opex on LCC' | translate"></span></b></h6>
                                 <ngx-charts-pie-chart [doughnut]="true" [results]="results" [labels]="true" [scheme]="scheme" [tooltipDisabled]="true">
 
                                 </ngx-charts-pie-chart>
@@ -187,11 +187,11 @@
             </div>
             <!-- Environmental footprint-->
             <div class="col-6">
-                <h3 class="text-center"><u>Environmental footprint</u></h3>
+                <h3 class="text-center"><u><span [innerHTML]="'Environmental footprint'| translate"></span></u></h3>
                 <div class="row justify-content-center space-before">
                     <div class="card col-10">
                         <div class="card-body text-center">
-                            <h6 class="card-title"><b>Global warming potential in {{lcpaDetails.lcpaoutput.globalWarmingPotential.unitCode}}</b></h6>
+                            <h6 class="card-title"><b><span [innerHTML]="'Global warming potential in' | translate: {potential:lcpaDetails.lcpaoutput.globalWarmingPotential.unitCode}"></span></b></h6>
                             <h6 class="card-subtitle mb-2 text-muted">{{lcpaDetails.lcpaoutput.globalWarmingPotential.value}}</h6>
                         </div>
                     </div>
@@ -199,7 +199,7 @@
                 <div class="row justify-content-center space-before">
                     <div class="card col-10">
                         <div class="card-body text-center">
-                            <h6 class="card-title"><b>Cumulative energy demand in {{lcpaDetails.lcpaoutput.cumulativeEnergyDemand.unitCode}}</b></h6>
+                            <h6 class="card-title"><b><span [innerHTML]="'Cumulative energy demand in' | translate: {energy:lcpaDetails.lcpaoutput.cumulativeEnergyDemand.unitCode}"></span></b></h6>
                             <h6 class="card-subtitle mb-2 text-muted">{{lcpaDetails.lcpaoutput.cumulativeEnergyDemand.value}}</h6>
                         </div>
                     </div>
@@ -207,7 +207,7 @@
                 <div class="row justify-content-center space-before">
                     <div class="card col-10">
                         <div class="card-body text-center">
-                            <h6 class="card-title"><b>Aerosol formation potential in {{lcpaDetails.lcpaoutput.aerosolFormationPotential.unitCode}}</b></h6>
+                            <h6 class="card-title"><b><span [innerHTML]="'Aerosol formation potential in' | translate: {potential:lcpaDetails.lcpaoutput.aerosolFormationPotential.unitCode}"></span></b></h6>
                             <h6 class="card-subtitle mb-2 text-muted">{{lcpaDetails.lcpaoutput.aerosolFormationPotential.value}}</h6>
                         </div>
                     </div>
@@ -215,7 +215,7 @@
                 <div class="row justify-content-center space-before">
                     <div class="card col-10">
                         <div class="card-body text-center">
-                            <h6 class="card-title"><b>Acidification potential in {{lcpaDetails.lcpaoutput.acidificationPotential.unitCode}}</b></h6>
+                            <h6 class="card-title"><b><span [innerHTML]="'Acidification potential in' | translate: {potential:lcpaDetails.lcpaoutput.acidificationPotential.unitCode}"></span></b></h6>
                             <h6 class="card-subtitle mb-2 text-muted">{{lcpaDetails.lcpaoutput.acidificationPotential.value}}</h6>
                         </div>
                     </div>
@@ -223,7 +223,7 @@
                 <div class="row justify-content-center space-before">
                     <div class="card col-10">
                         <div class="card-body text-center">
-                            <h6 class="card-title"><b>Eutrophication potential in {{lcpaDetails.lcpaoutput.eutrophicationPotential.unitCode}}</b></h6>
+                            <h6 class="card-title"><b><span [innerHTML]="'Eutrophication potential in' | translate: {potential:lcpaDetails.lcpaoutput.eutrophicationPotential.unitCode}"></span></b></h6>
                             <h6 class="card-subtitle mb-2 text-muted">{{lcpaDetails.lcpaoutput.eutrophicationPotential.value}}</h6>
                         </div>
                     </div>

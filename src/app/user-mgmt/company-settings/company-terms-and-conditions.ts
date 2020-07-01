@@ -12,8 +12,8 @@
    limitations under the License.
  */
 
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from "@angular/router";
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 import { AppComponent } from "../../app.component";
 import { CompanySettings } from '../model/company-settings';
 import { TradingTerm } from '../../catalogue/model/publish/trading-term';
@@ -29,6 +29,7 @@ import { TradingPreferences } from '../../catalogue/model/publish/trading-prefer
 import { UserService } from '../user.service';
 import { TranslateService } from '@ngx-translate/core';
 import { FEDERATIONID } from '../../catalogue/model/constants';
+import {CatalogueService} from '../../catalogue/catalogue.service';
 
 @Component({
     selector: "company-terms-and-conditions",
@@ -38,6 +39,9 @@ import { FEDERATIONID } from '../../catalogue/model/constants';
 export class CompanyTermsAndConditions implements OnInit {
 
     @Input() settings: CompanySettings = null;
+    // if catalogueId is available, then we are editing T&Cs for the given catalogue
+    @Input() catalogueId = null;
+    @Input() catalogueUuid = null;
 
     initPageStatus: CallStatus = new CallStatus();
     callStatus: CallStatus = new CallStatus();
@@ -59,13 +63,17 @@ export class CompanyTermsAndConditions implements OnInit {
 
     @ViewChild(EditTradingTermModalComponent)
     private editTradingTermModelComponent: EditTradingTermModalComponent;
+    // Emit an event when the contract creation is completed (either it is successfully saved or the user wants to cancel it and go back)
+    @Output() onContractCreationCompleted: EventEmitter<any> = new EventEmitter<any>();
 
     constructor(public route: ActivatedRoute,
-        public userService: UserService,
-        public appComponent: AppComponent,
-        public unitService: UnitService,
-        private translate: TranslateService,
-        public bpeService: BPEService) {
+                public userService: UserService,
+                public appComponent: AppComponent,
+                public unitService: UnitService,
+                public catalogueService: CatalogueService,
+                private router: Router,
+                private translate: TranslateService,
+                public bpeService: BPEService) {
 
     }
 
@@ -76,7 +84,8 @@ export class CompanyTermsAndConditions implements OnInit {
             this.unitService.getCachedUnitList(deliveryPeriodUnitListId),
             this.unitService.getCachedUnitList(warrantyPeriodUnitListId),
             this.bpeService.getTermsAndConditions(null, FEDERATIONID(), this.settings.companyID, null, null, this.settings.negotiationSettings.company.federationInstanceID),
-        ]).then(([deliveryPeriodUnits, warrantyPeriodUnits, defaultTermsAndConditions]) => {
+            this.catalogueUuid ? this.catalogueService.getContractForCatalogue([this.catalogueUuid]):Promise.resolve(null)
+        ]).then(([deliveryPeriodUnits, warrantyPeriodUnits, defaultTermsAndConditions, termsAndConditionsMap]) => {
 
             // populate available incoterms
             this.INCOTERMS = this.settings.negotiationSettings.incoterms;
@@ -98,7 +107,14 @@ export class CompanyTermsAndConditions implements OnInit {
             }
 
             // copy the terms and conditions
-            this.termsAndConditions = copy(this.settings.negotiationSettings.company.salesTerms.termOrCondition);
+            // if T&Cs of catalog are available, then use them, otherwise, use the T&Cs of the company
+            let termsAndConditionsForCatalog = termsAndConditionsMap[this.catalogueUuid];
+            if(termsAndConditionsForCatalog && termsAndConditionsForCatalog.length > 0){
+                this.termsAndConditions = copy(termsAndConditionsForCatalog);
+            } else{
+                this.termsAndConditions = copy(this.settings.negotiationSettings.company.salesTerms.termOrCondition);
+            }
+
             // sort terms and conditions
             this.termsAndConditions.sort((clause1, clause2) => {
                 let order1 = Number(clause1.id.substring(0, clause1.id.indexOf("_")));
@@ -257,20 +273,37 @@ export class CompanyTermsAndConditions implements OnInit {
             return;
         }
         this.addOrderNumberForClauses(termsAndConditions);
-        // copy the negotiation settings
-        let negotiationSettingsCopy = copy(this.settings.negotiationSettings);
-        // set the terms and conditions
-        negotiationSettingsCopy.company.salesTerms.termOrCondition = termsAndConditions;
-        this.userService
-            .putCompanyNegotiationSettings(negotiationSettingsCopy, this.settings.companyID)
-            .then(() => {
-                // update company negotiation settings
-                this.settings.negotiationSettings = copy(negotiationSettingsCopy);
-                this.callStatus.callback("Done saving company negotiation settings", true);
-            })
-            .catch(error => {
-                this.callStatus.error("Error while saving company negotiation settings.", error);
-            });
+        if(this.catalogueUuid){
+            this.catalogueService
+                .setContractForCatalogue(this.catalogueUuid, termsAndConditions)
+                .then(() => {
+                    this.callStatus.callback("Done saving terms and conditions for the catalogue", true);
+                    alert(this.translate.instant("Successfully saved. You are now getting redirected."));
+                    this.onContractCreationCompleted.emit(null);
+                })
+                .catch(error => {
+                    this.callStatus.error("Error while saving terms and conditions for the catalogue.", error);
+                });
+        } else{
+            // copy the negotiation settings
+            let negotiationSettingsCopy = copy(this.settings.negotiationSettings);
+            // set the terms and conditions
+            negotiationSettingsCopy.company.salesTerms.termOrCondition = termsAndConditions;
+            this.userService
+                .putCompanyNegotiationSettings(negotiationSettingsCopy, this.settings.companyID)
+                .then(() => {
+                    // update company negotiation settings
+                    this.settings.negotiationSettings = copy(negotiationSettingsCopy);
+                    this.callStatus.callback("Done saving company negotiation settings", true);
+                })
+                .catch(error => {
+                    this.callStatus.error("Error while saving company negotiation settings.", error);
+                });
+        }
+    }
+
+    onBack(){
+        this.onContractCreationCompleted.emit(null);
     }
 
     // each clause should have unique id

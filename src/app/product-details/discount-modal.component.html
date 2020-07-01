@@ -23,7 +23,7 @@
     </div>
     <div class="modal-body">
         <div *ngIf="orderedQuantityDiscounts.length > 0" class="space-after">
-            <h5>{{PRICE_OPTIONS.ORDERED_QUANTITY.text}}</h5>
+            <h5><span [innerHTML]="PRICE_OPTIONS.ORDERED_QUANTITY.text | translate"></span></h5>
             <div class="discount-hr"></div>
             <div *ngFor="let option of orderedQuantityDiscounts" class="row">
                 <div class="col-3">{{option.itemLocationQuantity.minimumQuantity.value}} {{option.itemLocationQuantity.minimumQuantity.unitCode}}</div>
@@ -42,12 +42,12 @@
                     </span>
                 </div>
                 <div class="col-3">
-                    {{getAbsValue(option.discount)}} {{currencyId}} <span *ngIf="option.discount >= 0">(Discount)</span> <span *ngIf="option.discount < 0">(Charge)</span>
+                    {{getAbsValue(option.discount)}} {{currencyId}} (<span [innerHTML]="(option.discount >= 0 ? 'Discount' : 'Charge') | translate"></span>)
                 </div>
             </div>
         </div>
         <div *ngIf="productPropertyDiscounts.length > 0" class="space-after">
-            <h5>{{PRICE_OPTIONS.PRODUCT_PROPERTY.text}}</h5>
+            <h5><span [innerHTML]="PRICE_OPTIONS.PRODUCT_PROPERTY.text | translate"></span></h5>
             <div class="discount-hr"></div>
             <div *ngFor="let option of productPropertyDiscounts" class="row">
                 <div class="col-3">{{getPropertyName(option.additionalItemProperty[0].name)[0]}}:
@@ -71,12 +71,12 @@
                     </span>
                 </div>
                 <div class="col-3">
-                    {{getAbsValue(option.discount)}} {{currencyId}} <span *ngIf="option.discount >= 0">(Discount)</span> <span *ngIf="option.discount < 0">(Charge)</span>
+                    {{getAbsValue(option.discount)}} {{currencyId}} (<span [innerHTML]="(option.discount >= 0 ? 'Discount' : 'Charge') | translate"></span>)
                 </div>
             </div>
         </div>
         <div *ngIf="deliveryPeriodDiscounts.length > 0" class="space-after">
-            <h5>{{PRICE_OPTIONS.DELIVERY_PERIOD.text}}</h5>
+            <h5><span [innerHTML]="PRICE_OPTIONS.DELIVERY_PERIOD.text | translate"></span></h5>
             <div class="discount-hr"></div>
             <div *ngFor="let option of deliveryPeriodDiscounts" class="row">
                 <div class="col-3">{{option.estimatedDeliveryPeriod.durationMeasure.value}} {{option.estimatedDeliveryPeriod.durationMeasure.unitCode}}</div>
@@ -95,12 +95,12 @@
                     </span>
                 </div>
                 <div class="col-3">
-                    {{getAbsValue(option.discount)}} {{currencyId}} <span *ngIf="option.discount >= 0">(Discount)</span> <span *ngIf="option.discount < 0">(Charge)</span>
+                    {{getAbsValue(option.discount)}} {{currencyId}} (<span [innerHTML]="(option.discount >= 0 ? 'Discount' : 'Charge') | translate"></span>)
                 </div>
             </div>
         </div>
         <div *ngIf="incotermDiscounts.length > 0" class="space-after">
-            <h5>{{PRICE_OPTIONS.INCOTERM.text}}</h5>
+            <h5><span [innerHTML]="PRICE_OPTIONS.INCOTERM.text | translate"></span></h5>
             <div class="discount-hr"></div>
             <div *ngFor="let option of incotermDiscounts" class="row">
                 <div class="col-3">{{option.incoterms[0]}}</div>
@@ -119,12 +119,12 @@
                     </span>
                 </div>
                 <div class="col-3">
-                    {{getAbsValue(option.discount)}} {{currencyId}} <span *ngIf="option.discount >= 0">(Discount)</span> <span *ngIf="option.discount < 0">(Charge)</span>
+                    {{getAbsValue(option.discount)}} {{currencyId}} (<span [innerHTML]="(option.discount >= 0 ? 'Discount' : 'Charge') | translate"></span>)
                 </div>
             </div>
         </div>
         <div *ngIf="paymentMeanDiscounts.length > 0" class="space-after">
-            <h5>{{PRICE_OPTIONS.PAYMENT_MEAN.text}}</h5>
+            <h5><span [innerHTML]="PRICE_OPTIONS.PAYMENT_MEAN.text | translate"></span></h5>
             <div class="discount-hr"></div>
             <div *ngFor="let option of paymentMeanDiscounts" class="row">
                 <div class="col-3">{{option.paymentMeans[0].paymentMeansCode.value}}</div>
@@ -143,12 +143,12 @@
                     </span>
                 </div>
                 <div class="col-3">
-                    {{getAbsValue(option.discount)}} {{currencyId}} <span *ngIf="option.discount >= 0">(Discount)</span> <span *ngIf="option.discount < 0">(Charge)</span>
+                    {{getAbsValue(option.discount)}} {{currencyId}} (<span [innerHTML]="(option.discount >= 0 ? 'Discount' : 'Charge') | translate"></span>)
                 </div>
             </div>
         </div>
         <div *ngIf="deliveryLocationDiscount.length > 0" class="space-after">
-            <h5>{{PRICE_OPTIONS.DELIVERY_LOCATION.text}}</h5>
+            <h5><span [innerHTML]="PRICE_OPTIONS.DELIVERY_LOCATION.text | translate"></span></h5>
             <div class="discount-hr"></div>
             <div *ngFor="let option of deliveryLocationDiscount" class="row">
                 <!--<div class="col-3" *ngIf="option.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber != ''">Building Number:{{option.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber}}</div>-->
@@ -179,7 +179,7 @@
                     </span>
                 </div>
                 <div class="col-3">
-                    {{getAbsValue(option.discount)}} {{currencyId}} <span *ngIf="option.discount >= 0">(Discount)</span> <span *ngIf="option.discount < 0">(Charge)</span>
+                    {{getAbsValue(option.discount)}} {{currencyId}} (<span [innerHTML]="(option.discount >= 0 ? 'Discount' : 'Charge') | translate"></span>)
                 </div>
             </div>
         </div>

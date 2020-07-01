@@ -202,21 +202,24 @@ export class LogisticServicePublishComponent implements OnInit {
         return this.publishStatus.fb_submitted;
     }
 
-    canDeactivate(): boolean {
+    canDeactivate(): boolean|Promise<boolean> {
         if (this.changePublishModeCreate) {
             this.publishStateService.publishMode = 'create';
             this.publishStateService.publishingStarted = false;
         }
         if (this.dialogBox) {
-            let x: boolean = confirm(this.translate.instant('You will lose any changes you made, are you sure you want to quit ?'));
-            if (x) {
-                this.publishStateService.publishMode = 'create';
-                this.publishStateService.publishingStarted = false;
-            }
-            return x;
+            return this.appComponent.confirmModalComponent.open('You will lose any changes you made, are you sure you want to quit ?').then(result => {
+                if(result){
+                    this.publishStateService.publishMode = 'create';
+                    this.publishStateService.publishingStarted = false;
+                }
+                return result;
+            });
         }
-        this.dialogBox = true;
-        return true;
+        else{
+            this.dialogBox = true;
+            return true;
+        }
     }
 
     private initView(userParty, catalogueResponse: CataloguePaginationResponse, settings, eClassLogisticCategories): void {

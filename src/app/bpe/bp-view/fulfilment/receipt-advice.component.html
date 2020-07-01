@@ -64,10 +64,10 @@
     <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
     <div class="row content-row bg-light">
         <div class="col-6">
-            <note-file-view [notes]="dispatchAdvice.note" [documents]="dispatchAdvice.additionalDocumentReference" [firstCol]="'col-4'" [lastCol]="'col-8'" [label]="'Supplier\'s Note'"></note-file-view>
+            <note-file-view [notes]="dispatchAdvice.note" [documents]="dispatchAdvice.additionalDocumentReference" [firstCol]="'col-4'" [lastCol]="'col-8'" [label]="'Supplier Note'|translate"></note-file-view>
         </div>
         <div class="col-6">
-            <note-file-view [notes]="receiptAdvice.note" [documents]="receiptAdvice.additionalDocumentReference" [firstCol]="'col-4'" [lastCol]="'col-8'" [readonly]="isLoading() || isReadOnly()" [label]="'Customer\'s Note'"></note-file-view>
+            <note-file-view [notes]="receiptAdvice.note" [documents]="receiptAdvice.additionalDocumentReference" [firstCol]="'col-4'" [lastCol]="'col-8'" [readonly]="isLoading() || isReadOnly()" [label]="'Customer note'|translate"></note-file-view>
         </div>
     </div>
 

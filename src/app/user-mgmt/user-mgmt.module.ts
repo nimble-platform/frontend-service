@@ -95,7 +95,8 @@ import { EditTradingTermModalComponent } from './company-settings/edit-trading-t
         CompanyRatingComponent,
         UserProfileComponent,
         ForgotPasswordComponent,
-        AgentsComponent
+        AgentsComponent,
+        CompanyTermsAndConditions
     ],
     providers: [
     ]

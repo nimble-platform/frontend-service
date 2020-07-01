@@ -32,7 +32,7 @@
     <!-- Options -->
     <div *ngIf="options" class="col-7">
         <select class="form-control form-control-sm" [(ngModel)]="selected" [ngClass]="formControlClass" [disabled]="disabled">
-            <option *ngFor="let option of options" [value]="option">{{option}}</option>
+            <option *ngFor="let option of options" [value]="option"><span [innerHTML]="option | translate"></span></option>
         </select>
     </div>
 

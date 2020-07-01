@@ -106,9 +106,9 @@ export class SimpleSearchService {
                 "boosting": false,
                 "boostingFactors": {}
             };
-            queryRes = this.buildQueryString(query, querySettings, true, false);
+            queryRes = this.buildQueryString(query, querySettings, true, true);
         } else {
-            queryRes = this.buildQueryString(query, myGlobals.query_settings, true, false);
+            queryRes = this.buildQueryString(query, myGlobals.query_settings, true, true);
             searchObject.sort = [];
             sort = sort.replace("{LANG}", DEFAULT_LANGUAGE());
             searchObject.sort.push(sort);
@@ -152,9 +152,19 @@ export class SimpleSearchService {
             .catch(this.handleError);
     }
 
-    getComp(query: string, facets: string[], facetQueries: string[], page: number, rows: number, sort: string, unverified?: boolean, forceLocal?: boolean): Promise<any> {
+    getComp(query: string, facets: string[], facetQueries: string[], page: number, rows: number, sort: string,search_index:string, unverified?: boolean, forceLocal?: boolean): Promise<any> {
         let queryRes;
-        queryRes = this.buildQueryString(query, myGlobals.query_settings_comp, true, false);
+        if(search_index == "Name"){
+            queryRes = this.buildQueryString(query, myGlobals.query_settings_comp, true, false);
+        }
+        else if(search_index == "Business Keyword"){
+            let querySettings = {
+                "fields": ["{LANG}_businessKeywords"],
+                "boosting": false,
+                "boostingFactors": {}
+            };
+            queryRes = this.buildQueryString(query, querySettings, true, true);
+        }
         query = queryRes.queryStr;
         let url = this.url + `/party/search`;
         let local = false;

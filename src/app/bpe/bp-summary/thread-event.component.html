@@ -29,18 +29,18 @@
     </div>
     <div *ngIf="event.status === 'CANCELLED'" class="col-2 alert-dark">
         <div class="pt-2"><strong><span [innerHTML]="'Cancelled' | translate"></span></strong></div>
-        <button class="btn btn-secondary" (click)="openBpProcessView(false)" singleClick [disabled]="!event.areProductsDeleted">{{event.actionText}}</button>
+        <button class="btn btn-secondary" (click)="openBpProcessView(false)" singleClick [disabled]="!event.areProductsDeleted"><span [innerHTML]="event.actionText | translate"></span></button>
     </div>
     <div *ngIf="event.status === 'DONE'" [ngClass]="processInstanceGroup.status == 'CANCELLED' ? 'col-2 alert-dark':'col-2 alert-success'">
         <div class="pt-1"><strong><span [innerHTML]="'Completed' | translate"></span></strong></div>
-        <div class="py-1">{{event.statusText}}</div>
-        <button class="btn btn-secondary" (click)="openBpProcessView(false)" singleClick [disabled]="!event.areProductsDeleted">{{event.actionText}}</button>
+        <div class="py-1"><span [innerHTML]="event.statusText | translate"></span></div>
+        <button class="btn btn-secondary" (click)="openBpProcessView(false)" singleClick [disabled]="!event.areProductsDeleted"><span [innerHTML]="event.actionText | translate"></span></button>
     </div>
     <div *ngIf="event.status === 'WAITING'" [ngClass]="processInstanceGroup.status == 'CANCELLED' ? 'col-2 alert-dark':'col-2 alert-warning'">
         <div *ngIf="processInstanceGroup.status !== 'CANCELLED'">
             <div class="pt-1"><strong><span [innerHTML]="'In Progress' | translate"></span></strong></div>
-            <div class="py-1">{{event.statusText}}</div>
-            <button class="btn btn-secondary" (click)="openBpProcessView(false)" singleClick [disabled]="!event.areProductsDeleted">{{event.actionText}}</button>
+            <div class="py-1"><span [innerHTML]="event.statusText | translate"></span></div>
+            <button class="btn btn-secondary" (click)="openBpProcessView(false)" singleClick [disabled]="!event.areProductsDeleted"><span [innerHTML]="event.actionText | translate"></span></button>
             <button *ngIf="!doesEventHaveDeletedProduct()" class="btn btn-secondary" (click)="openBpProcessView(true)" singleClick [disabled]="!event.areProductsDeleted"><span [innerHTML]="'Update Request' | translate"></span></button>
             <button class="btn btn-secondary" (click)="cancelBP()"><span [innerHTML]="'Cancel' | translate"></span></button>
         </div>
@@ -51,8 +51,8 @@
     <div *ngIf="event.status === 'ACTION_REQUIRED'" [ngClass]="processInstanceGroup.status == 'CANCELLED' ? 'col-2 alert-dark':'col-2 alert-danger'">
         <div *ngIf="processInstanceGroup.status !== 'CANCELLED'">
             <div class="pt-1"><strong><span [innerHTML]="'In Progress' | translate"></span></strong></div>
-            <div class="py-1">{{event.statusText}}</div>
-            <button class="btn btn-primary" (click)="openBpProcessView(false)" singleClick [disabled]="!event.areProductsDeleted">{{event.actionText}}</button>
+            <div class="py-1"><span [innerHTML]="event.statusText | translate"></span></div>
+            <button class="btn btn-primary" (click)="openBpProcessView(false)" singleClick [disabled]="!event.areProductsDeleted"><span [innerHTML]="event.actionText | translate"></span></button>
         </div>
         <div *ngIf="processInstanceGroup.status == 'CANCELLED'">
             <div class="pt-1"><strong><span [innerHTML]="'Collaboration cancelled' | translate"></span></strong></div>

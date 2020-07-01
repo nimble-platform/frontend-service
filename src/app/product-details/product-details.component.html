@@ -48,7 +48,9 @@
         <!-- Order Workflow For Product -->
         <div *ngIf="isLogistics === false" class="p-3 border border-dark border-bottom-0">
 
-            <h2 class="py-1">{{companyWorkflowMap.get('Order') ? 'Negotiate & Order' : 'Negotiate'}}</h2>
+            <h2 class="py-1">
+                <span [innerHTML]="(companyWorkflowMap.get('Order') ? 'Negotiate & Order'  : 'Negotiate') | translate"></span>
+            </h2>
 
             <div [hidden]="frameContract == null">
                 <hr>
@@ -93,11 +95,9 @@
                 <label class="order-label">
                     <span [innerHTML]="'Incoterms' | translate"></span>
                 </label>
-                <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
-                    {{ productWrapper.getIncoterms() }}
+                <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value" [innerHTML]="productWrapper.getIncoterms() | translate">
                 </span>
-                <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
-                    {{ frameContractQuotationWrapper.incotermsString }}
+                <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value" [innerHTML]="frameContractQuotationWrapper.incotermsString|translate">
                 </span>
             </div>
 
@@ -106,11 +106,9 @@
                 <label class="order-label">
                     <span [innerHTML]="'Payment Terms' | translate"></span>
                 </label>
-                <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
-                    {{ productWrapper.getPaymentTerms() }}
+                <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value" [innerHTML]="productWrapper.getPaymentTerms()|translate">
                 </span>
-                <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
-                    {{ frameContractQuotationWrapper.paymentTermsWrapper.paymentTerm }}
+                <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value" [innerHTML]="frameContractQuotationWrapper.paymentTermsWrapper.paymentTerm|translate">
                 </span>
             </div>
 
@@ -119,11 +117,9 @@
                 <label class="order-label">
                     <span [innerHTML]="'Payment Means' | translate"></span>
                 </label>
-                <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
-                    {{ productWrapper.getPaymentMeans() }}
+                <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value" [innerHTML]="productWrapper.getPaymentMeans()|translate">
                 </span>
-                <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
-                    {{ frameContractQuotationWrapper.paymentMeans }}
+                <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value" [innerHTML]="frameContractQuotationWrapper.paymentMeans|translate">
                 </span>
             </div>
 
@@ -177,7 +173,7 @@
                         <span *ngIf="termsSelectBoxValue == 'product_defaults'">
                             {{priceWrapper.calculateTotalDiscount()}} {{priceWrapper.currency}}
                         </span>
-                        <span class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" title="Applied Discounts/Charges" style="cursor: pointer">
+                        <span class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" [title]="'Applied Discounts/Charges'|translate" style="cursor: pointer">
                             <i class="fa fa-search" aria-hidden="true"></i>
                         </span>
                     </div>
@@ -208,7 +204,7 @@
 
             <!-- Action Button -->
             <button *ngIf="companyWorkflowMap.get('Negotiation')" class="btn btn-primary pt-2 w-100" (click)="onNegotiate(termsSelectBoxValue)" [disabled]="!this.appComponent.checkRoles('bp') || !quantityValueFormControl.valid">
-                {{companyWorkflowMap.get('Order') ? 'Negotiate & Order' : 'Negotiate'}}
+                <span [innerHTML]="(companyWorkflowMap.get('Order') ? 'Negotiate & Order' : 'Negotiate') | translate"></span>
             </button>
         </div>
 
@@ -216,7 +212,9 @@
         <div *ngIf="isLogistics === true" class="p-3 border border-dark border-bottom-0">
 
             <!-- Order step exists only for transport services-->
-            <h2 class="py-1">{{companyWorkflowMap.get('Transport_Execution_Plan') && isTransportService ? 'Negotiate & Order' : 'Negotiate'}}</h2>
+            <h2 class="py-1">
+                <span [innerHTML]="(companyWorkflowMap.get('Transport_Execution_Plan') && isTransportService ? 'Negotiate & Order' : 'Negotiate') | translate"></span>
+            </h2>
 
             <!-- Payment Terms -->
             <div class="order-group">
@@ -248,7 +246,7 @@
 
             <!-- Action Button -->
             <button *ngIf="companyWorkflowMap.get('Negotiation')" class="btn btn-primary pt-2 w-100" (click)="onNegotiate(termsSelectBoxValue)" [disabled]="!this.appComponent.checkRoles('bp') || orderQuantity <= 0">
-                {{companyWorkflowMap.get('Transport_Execution_Plan') && isTransportService ? 'Negotiate & Order' : 'Negotiate' }}
+                <span [innerHTML]="(companyWorkflowMap.get('Transport_Execution_Plan') && isTransportService ? 'Negotiate & Order' : 'Negotiate') | translate"></span>
             </button>
 
         </div>

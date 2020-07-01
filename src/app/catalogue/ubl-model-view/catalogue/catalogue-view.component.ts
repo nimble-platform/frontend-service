@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import { Component, OnInit, ViewChild } from "@angular/core";
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import { CookieService } from 'ng2-cookies';
 import { CatalogueService } from "../../catalogue.service";
 import { CallStatus } from "../../../common/call-status";
@@ -36,6 +36,8 @@ import { Catalogue } from '../../model/publish/catalogue';
 import { CatalogueLine } from "../../model/publish/catalogue-line";
 import { TranslateService } from '@ngx-translate/core';
 import { DeleteExportCatalogueModalComponent } from "./delete-export-catalogue-modal.component";
+import {AppComponent} from '../../../app.component';
+import * as myGlobals from '../../../globals';
 
 @Component({
     selector: 'catalogue-view',
@@ -45,6 +47,8 @@ import { DeleteExportCatalogueModalComponent } from "./delete-export-catalogue-m
 })
 
 export class CatalogueViewComponent implements OnInit {
+
+    @Input() viewMode:"OwnerView"|"ContractView" = "OwnerView";
 
     catalogueResponse: CataloguePaginationResponse;
     settings: CompanySettings;
@@ -81,6 +85,10 @@ export class CatalogueViewComponent implements OnInit {
     callStatus = new CallStatus();
     deleteStatuses: CallStatus[] = [];
 
+    public config = myGlobals.config;
+
+    catalogueIdForContractCreation:string = null;
+    catalogueUuidForContractCreation:string = null;
     @ViewChild(DeleteExportCatalogueModalComponent)
     private deleteCatalogueModal: DeleteExportCatalogueModalComponent;
 
@@ -90,6 +98,7 @@ export class CatalogueViewComponent implements OnInit {
 
     constructor(private cookieService: CookieService,
         private publishService: PublishService,
+        private appComponent: AppComponent,
         private catalogueService: CatalogueService,
         private categoryService: CategoryService,
         private translate: TranslateService,
@@ -151,8 +160,14 @@ export class CatalogueViewComponent implements OnInit {
         const userId = this.cookieService.get("user_id");
         // check whether the user chose a category to filter the catalogue lines
         let categoryName = this.selectedCategory == "All" ? null : this.selectedCategory;
+        // get selected catalogue id
+        let catalogueId = this.catlogueId;
+        if(catalogueId != "all"){
+            let index = this.catalogueIdsUUids.indexOf(catalogueId);
+            catalogueId = this.cataloguesIds[index];
+        }
         Promise.all([
-            this.catalogueService.getCatalogueResponse(userId, categoryName, this.searchText, this.pageSize, (this.page - 1) * this.pageSize, this.sortOption, this.catlogueId),
+            this.catalogueService.getCatalogueResponse(userId, categoryName, this.searchText, this.pageSize, (this.page - 1) * this.pageSize, this.sortOption,catalogueId),
             this.getCompanySettings(userId)
         ])
             .then(([catalogueResponse, settings]) => {
@@ -188,12 +203,30 @@ export class CatalogueViewComponent implements OnInit {
         }
     }
 
-    onDeleteCatalogue(deleteCatalogueModal): void {
+    onDeleteCatalogue(): void {
         this.deleteCatalogueModal.open('delete');
     }
 
     onDeleteCatalogueImages(): void {
         this.deleteCatalogueModal.open('delete-images');
+    }
+
+    onGenerateContractForCatalogue(): void {
+        const index = this.catalogueIdsUUids.findIndex(uuid => uuid == this.selectedCatalogue);
+        // save the selected catalogue id
+        this.catalogueIdForContractCreation = this.cataloguesIds[index];
+        // save the selected catalogue uuid
+        this.catalogueUuidForContractCreation = this.selectedCatalogue;
+        // change the view
+        this.viewMode = "ContractView";
+    }
+
+    onContractCreationCompleted(){
+        // change the view
+        this.viewMode = "OwnerView";
+        // reset the selected catalogue id and uuid
+        this.catalogueIdForContractCreation = null;
+        this.catalogueUuidForContractCreation = null;
     }
 
     onAddCatalogue() {
@@ -284,26 +317,28 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     deleteCatalogueLine(catalogueLine: CatalogueLine, i: number): void {
-        if (confirm(this.translate.instant("Are you sure that you want to delete this catalogue item?"))) {
-            const status = this.getDeleteStatus(i);
-            status.submit();
-            let catalogue_uuid = "";
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to delete this catalogue item?").then(result => {
+            if(result){
+                const status = this.getDeleteStatus(i);
+                status.submit();
+                let catalogue_uuid = "";
 
-            if (this.catalogueService.catalogueResponse.catalogueUuid === "" || this.catalogueService.catalogueResponse.catalogueUuid == null) {
-                catalogue_uuid = catalogueLine.goodsItem.item.catalogueDocumentReference.id;
-            } else {
-                catalogue_uuid = this.catalogueService.catalogueResponse.catalogueUuid;
+                if (this.catalogueService.catalogueResponse.catalogueUuid === "" || this.catalogueService.catalogueResponse.catalogueUuid == null) {
+                    catalogue_uuid = catalogueLine.goodsItem.item.catalogueDocumentReference.id;
+                } else {
+                    catalogue_uuid = this.catalogueService.catalogueResponse.catalogueUuid;
+                }
+
+                this.catalogueService.deleteCatalogueLine(catalogue_uuid, catalogueLine.id)
+                    .then(res => {
+                        this.requestCatalogue();
+                        status.callback("Catalogue line deleted", true);
+                    })
+                    .catch(error => {
+                        status.error("Error while deleting catalogue line");
+                    });
             }
-
-            this.catalogueService.deleteCatalogueLine(catalogue_uuid, catalogueLine.id)
-                .then(res => {
-                    this.requestCatalogue();
-                    status.callback("Catalogue line deleted", true);
-                })
-                .catch(error => {
-                    status.error("Error while deleting catalogue line");
-                });
-        }
+        });
     }
 
     getDeleteStatus(index: number): CallStatus {

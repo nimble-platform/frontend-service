@@ -123,7 +123,7 @@
                     <div class="row border-bottom m-0" *ngFor="let multiValuedDimension of multiValuedDimensions">
                         <div class="col-3" style="padding:.75rem;padding-left:0;">
                             <div class="col-form-label">
-                                <strong>{{multiValuedDimension.attributeID}} : </strong>
+                                <strong><span [innerHTML]="multiValuedDimension.attributeID | translate"></span> : </strong>
                             </div>
                         </div>
                         <div class="col-6">
