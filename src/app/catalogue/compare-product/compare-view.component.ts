@@ -184,7 +184,11 @@ export class CompareViewComponent implements OnInit {
             )
         );
 
-    searchFavouriteSearch_first() {
+    searchFavouriteSearch_first(selectedItemEvent=null) {
+        // selectedItemEvent is the event emitted when a product/company is selected from the suggestion list
+        if(selectedItemEvent){
+            this.searchText_first = selectedItemEvent.item;
+        }
         this.catalogueLinesArray_first = [];
         this.firstSearch = true;
         this.requestCatalogue(this.searchText_first);
@@ -200,7 +204,11 @@ export class CompareViewComponent implements OnInit {
             )
         );
 
-    searchFavouriteSearch() {
+    searchFavouriteSearch(selectedItemEvent=null) {
+        // selectedItemEvent is the event emitted when a product/company is selected from the suggestion list
+        if(selectedItemEvent){
+            this.searchText = selectedItemEvent.item;
+        }
         this.catalogueLinesArray = [];
         this.requestCatalogue(this.searchText);
         this.firstSearch = false;

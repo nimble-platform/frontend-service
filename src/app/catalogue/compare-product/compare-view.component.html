@@ -18,7 +18,7 @@
             <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
 
                 <form (ngSubmit)="searchFavouriteSearch_first()" novalidate>
-                    <input class="form-control col-12" type="text" [(ngModel)]="searchText_first" #q="ngModel" [ngModelOptions]="{standalone: true}" [ngbTypeahead]="searchFavourite_first" [placeholder]="'Search ...' | translate">
+                    <input class="form-control col-12" type="text" [(ngModel)]="searchText_first" #q="ngModel" [ngModelOptions]="{standalone: true}" (selectItem)="searchFavouriteSearch_first($event)" [ngbTypeahead]="searchFavourite_first" [placeholder]="'Search ...' | translate">
                 </form>
                 <div class="input-group-append">
                     <button (click)="searchFavouriteSearch_first()" class="btn btn-outline-secondary">
@@ -45,11 +45,11 @@
                                 <div class="col-10 d-flex justify-content-between">
                                     <div class="col-7">
                                         <p class="all-break">
-                                            <strong>{{ getMultilingualLabel(catLine[product_name]) }}
+                                            <b>{{ getMultilingualLabel(catLine[product_name]) }}
                                                 <a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.catalogueId, id: catLine.manufactuerItemId}" (click)="onOpenCatalogueLine($event)" target="_blank">
                                                     <i class="fas fa-external-link-alt btn-light"></i>
                                                 </a>
-                                            </strong>
+                                            </b>
                                         </p>
                                         <p *ngIf="catLine[product_description] != null">{{getMultilingualLabel(catLine[product_description])}}</p>
                                         <!-- <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" class="all-break">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p> -->
@@ -90,7 +90,7 @@
         <div>
             <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
                 <form (ngSubmit)="searchFavouriteSearch()" novalidate>
-                    <input class="form-control col-12" type="text" [(ngModel)]="searchText" [ngModelOptions]="{standalone: true}" #q="ngModel" [ngbTypeahead]="searchFavourite" [placeholder]="'Search ...' | translate">
+                    <input class="form-control col-12" type="text" [(ngModel)]="searchText" [ngModelOptions]="{standalone: true}" #q="ngModel" (selectItem)="searchFavouriteSearch($event)" [ngbTypeahead]="searchFavourite" [placeholder]="'Search ...' | translate">
                 </form>
                 <div class="input-group-append">
                     <button (click)="searchFavouriteSearch()" class="btn btn-outline-secondary">
@@ -116,11 +116,11 @@
                                 <div class="col-10 d-flex justify-content-between">
                                     <div class="col-7">
                                         <p class="all-break">
-                                            <strong>{{ getMultilingualLabel(catLine[product_name]) }}
+                                            <b>{{ getMultilingualLabel(catLine[product_name]) }}
                                                 <a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.catalogueId, id: catLine.manufactuerItemId}" (click)="onOpenCatalogueLine($event)" target="_blank">
                                                     <i class="fas fa-external-link-alt btn-light"></i>
                                                 </a>
-                                            </strong>
+                                            </b>
                                         </p>
                                         <p *ngIf="catLine[product_description] != null">{{getMultilingualLabel(catLine[product_description])}}</p>
                                         <!-- <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" class="all-break">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p> -->
