@@ -59,6 +59,7 @@ import { CollaborationService } from './catalogue/collaboration/collaboration.se
 import { UnshippedOrdersTransitionService } from './bpe/unshipped-order-transition-service';
 import { ValidationService } from './common/validation/validators';
 import {ContractService} from './bpe/bp-view/contract-service';
+import {WhiteBlackListService} from './catalogue/white-black-list.service';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -99,6 +100,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         CategoryService,
         PublishingPropertyService,
         PublishService,
+        WhiteBlackListService,
         ExplorativeSearchService,
         SimpleSearchService,
         SearchContextService,

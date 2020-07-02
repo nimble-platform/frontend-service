@@ -32,6 +32,7 @@ export class SimpleSearchService {
     private delegate_url = myGlobals.delegate_endpoint;
     private facetMin = myGlobals.facet_min;
     private facetCount = myGlobals.facet_count;
+    private eFactoryIndexingEndpoint = myGlobals.eFactory_indexing_endpoint
 
     private delegated = (FEDERATION() == "ON");
 
@@ -106,9 +107,9 @@ export class SimpleSearchService {
                 "boosting": false,
                 "boostingFactors": {}
             };
-            queryRes = this.buildQueryString(query, querySettings, true, true);
+            queryRes = this.buildQueryString(query, querySettings, true, true,true);
         } else {
-            queryRes = this.buildQueryString(query, myGlobals.query_settings, true, true);
+            queryRes = this.buildQueryString(query, myGlobals.query_settings, true, true,true);
             searchObject.sort = [];
             sort = sort.replace("{LANG}", DEFAULT_LANGUAGE());
             searchObject.sort.push(sort);
@@ -152,60 +153,87 @@ export class SimpleSearchService {
             .catch(this.handleError);
     }
 
-    getComp(query: string, facets: string[], facetQueries: string[], page: number, rows: number, sort: string,search_index:string, unverified?: boolean, forceLocal?: boolean): Promise<any> {
-        let queryRes;
-        if(search_index == "Name"){
-            queryRes = this.buildQueryString(query, myGlobals.query_settings_comp, true, false);
-        }
-        else if(search_index == "Business Keyword"){
-            let querySettings = {
-                "fields": ["{LANG}_businessKeywords"],
-                "boosting": false,
-                "boostingFactors": {}
-            };
-            queryRes = this.buildQueryString(query, querySettings, true, true);
-        }
-        query = queryRes.queryStr;
-        let url = this.url + `/party/search`;
-        let local = false;
-        if (forceLocal)
-            local = forceLocal;
-        if (this.delegated && !local)
-            url = this.delegate_url + `/party/search`;
+    getComp(query: string, facets: string[], facetQueries: string[], page: number, rows: number, sort: string,search_index:string,pageRef?:string, unverified?: boolean, forceLocal?: boolean): Promise<any> {
         let searchObject: any = {};
         searchObject.rows = rows;
         searchObject.start = page - 1;
-        searchObject.q = query;
         searchObject.sort = [];
         sort = sort.replace("{LANG}", DEFAULT_LANGUAGE());
         searchObject.sort.push(sort);
-        for (let facet of facets) {
-            if (facet.length === 0 || !facet.trim()) {
-            } else {
-                if (searchObject.facet == null) {
-                    searchObject.facet = {};
-                    searchObject.facet.field = [];
-                    searchObject.facet.minCount = this.facetMin;
-                    searchObject.facet.limit = this.facetCount;
-                }
-                searchObject.facet.field.push(facet)
-            }
+        let url = null;
+        // when the page reference is catalogue, we retrieve eFactory companies for white/black list
+        if(pageRef == "catalogue"){
+            url = this.eFactoryIndexingEndpoint + `/party/search`;
+            searchObject.q = "hasRegisteredUser:true";
+            searchObject.fq = [];
         }
-        for (let facetQuery of facetQueries) {
+        else{
+            let queryRes;
+            if(search_index == "Name"){
+                queryRes = this.buildQueryString(query, myGlobals.query_settings_comp, true, false);
+            }
+            else if(search_index == "Business Keyword"){
+                let querySettings = {
+                    "fields": ["{LANG}_businessKeywords"],
+                    "boosting": false,
+                    "boostingFactors": {}
+                };
+                queryRes = this.buildQueryString(query, querySettings, true, true);
+            }
+            query = queryRes.queryStr;
+            url = this.url + `/party/search`;
+            let local = false;
+            if (forceLocal)
+                local = forceLocal;
+            if (this.delegated && !local)
+                url = this.delegate_url + `/party/search`;
+            searchObject.q = query;
+            for (let facet of facets) {
+                if (facet.length === 0 || !facet.trim()) {
+                } else {
+                    if (searchObject.facet == null) {
+                        searchObject.facet = {};
+                        searchObject.facet.field = [];
+                        searchObject.facet.minCount = this.facetMin;
+                        searchObject.facet.limit = this.facetCount;
+                    }
+                    searchObject.facet.field.push(facet)
+                }
+            }
+            for (let facetQuery of facetQueries) {
+                if (searchObject.fq == null) {
+                    searchObject.fq = [];
+                }
+                searchObject.fq.push(facetQuery);
+            }
             if (searchObject.fq == null) {
                 searchObject.fq = [];
             }
-            searchObject.fq.push(facetQuery);
+            if (unverified) {
+                searchObject.fq.push("verified:false");
+            }
+            else {
+                searchObject.fq.push("verified:true");
+            }
         }
-        if (searchObject.fq == null) {
-            searchObject.fq = [];
-        }
-        if (unverified) {
-            searchObject.fq.push("verified:false");
-        }
-        else {
-            searchObject.fq.push("verified:true");
-        }
+        return this.http
+            .post(url, searchObject, { headers: new Headers({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.cookieService.get("bearer_token") }) })
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+
+    getEFactoryCompanies(vatNumbers:string[]){
+        let vatNumbersParam = [];
+        vatNumbers.forEach(vatNumber => vatNumbersParam.push("vatNumber:\""+vatNumber+"\""));
+
+        let searchObject: any = {};
+        searchObject.rows = vatNumbers.length;
+        searchObject.start = 0;
+        searchObject.sort = [];
+        let url = this.eFactoryIndexingEndpoint + `/party/search`;
+        searchObject.q = "hasRegisteredUser:true AND ("+ vatNumbersParam.join(" OR ") + ")";
+        searchObject.fq = [];
         return this.http
             .post(url, searchObject, { headers: new Headers({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.cookieService.get("bearer_token") }) })
             .toPromise()
@@ -219,7 +247,7 @@ export class SimpleSearchService {
             "boosting": false,
             "boostingFactors": {}
         };
-        let queryRes = this.buildQueryString(query, querySettings, true, true);
+        let queryRes = this.buildQueryString(query, querySettings, true, true,true);
         let url = this.url + `/item/search`;
         if (this.delegated)
             url = this.delegate_url + `/item/search`;
@@ -249,22 +277,29 @@ export class SimpleSearchService {
             );
     }
 
-    getCompSuggestions(query: string, item_field: string[], forceLocal?: boolean) {
+    getCompSuggestions(query: string, item_field: string[],pageRef?:string, forceLocal?: boolean) {
         let querySettings = {
             "fields": item_field,
             "boosting": false,
             "boostingFactors": {}
         };
-        let queryRes = this.buildQueryString(query, querySettings, true, true);
-        let url = this.url + `/party/search`;
-        let local = false;
-        if (forceLocal)
-            local = forceLocal;
-        if (this.delegated && !local)
-            url = this.delegate_url + `/party/search`;
         let searchObject: any = {};
-        searchObject.rows = 0;
-        searchObject.q = queryRes.queryStr;
+        let url = null;
+        let queryRes = this.buildQueryString(query, querySettings, true, true);
+        // when the page reference is catalogue, we retrieve suggestions for eFactory companies
+        if(pageRef == "catalogue"){
+            url = this.eFactoryIndexingEndpoint + `/party/search`;
+            searchObject.q = "hasRegisteredUser:true AND " + queryRes.queryStr;
+        }
+        else{
+            url = this.url + `/party/search`;
+            let local = false;
+            if (forceLocal)
+                local = forceLocal;
+            if (this.delegated && !local)
+                url = this.delegate_url + `/party/search`;
+            searchObject.q = queryRes.queryStr;
+        }
         searchObject.facet = {};
         searchObject.facet.field = [];
         searchObject.facet.limit = -1;
@@ -365,10 +400,13 @@ export class SimpleSearchService {
         return suggestions;
     }
 
-    buildQueryString(query: string, qS: any, full: boolean, allLang: boolean): any {
+    // forProduct indicates whether we are building the query string for a product or company.
+    // if it's for a product, we need to handle white/black lists of products
+    buildQueryString(query: string, qS: any, full: boolean, allLang: boolean,forProduct:boolean=false): any {
+        let companyVAT = this.cookieService.get("vat");
         if (query == "*") {
             return {
-                "queryStr": "*",
+                "queryStr": forProduct ? `permittedParties:${companyVAT} OR (-permittedParties:[* TO *] AND (*:* -restrictedParties:${companyVAT} ) )`: "*",
                 "queryArr": [],
                 "queryFields": []
             };
@@ -459,6 +497,9 @@ export class SimpleSearchService {
 
                 queryStr += " ";
             }
+        }
+        if(forProduct){
+            queryStr = "(" +queryStr+")" + ` AND (permittedParties:${companyVAT} OR (-permittedParties:[* TO *] AND (*:* -restrictedParties:${companyVAT} ) ))`;
         }
         return {
             "queryStr": queryStr,

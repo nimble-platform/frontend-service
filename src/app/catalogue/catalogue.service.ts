@@ -264,6 +264,14 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
+    addBlackWhiteListToCatalog(catalogueId: string, blackList: string[], whiteList: string[]) {
+        const url = this.baseUrl + `/catalogue/${catalogueId}/white-black-list?blackList=${blackList.join(",")}&whiteList=${whiteList.join(",")}`;
+        return this.http
+            .put(url, null,{ headers: this.getAuthorizedHeaders() })
+            .toPromise()
+            .catch(this.handleError);
+    }
+
     postCatalogue(catalogue: Catalogue): Promise<Catalogue> {
         const url = this.baseUrl + `/catalogue/ubl`;
         return this.http

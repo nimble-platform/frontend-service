@@ -106,6 +106,7 @@ export class CredentialsFormComponent implements OnInit {
                     this.cookieService.set("show_welcome", "true");
                 else
                     this.cookieService.set("show_welcome", "false");
+                this.cookieService.set("vat", res.vat);
                 this.cookieService.set("user_fullname", res.firstname + " " + res.lastname);
                 this.cookieService.set("user_email", res.email);
                 this.cookieService.set("bearer_token", res.accessToken);

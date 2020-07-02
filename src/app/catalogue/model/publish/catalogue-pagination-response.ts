@@ -21,5 +21,7 @@ export class CataloguePaginationResponse {
         public catalogueLines: CatalogueLine[] = null, // catalogue lines of the catalogue
         public categoryNames: String[] = [], // names of the categories which are included in catalogue lines of the catalogue
         public catalogueId: string = null, // identifier of the catalogue
+        public permittedParties:string[] = [], // white list for the catalogue
+        public restrictedParties:string[] = [] // black list for the catalogue
     ) { }
 }

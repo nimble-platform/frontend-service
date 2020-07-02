@@ -177,6 +177,7 @@ export class AppComponent implements OnInit {
             this.cookieService.set("show_welcome", "true");
         else
             this.cookieService.set("show_welcome", "false");
+        this.cookieService.set("vat", this.response.vat);
         this.cookieService.set("user_fullname", this.response.firstname + " " + this.response.lastname);
         this.cookieService.set("user_email", this.response.email);
         this.cookieService.set("bearer_token", this.response.accessToken);

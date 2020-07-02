@@ -35,6 +35,7 @@ import { UBLModelUtils } from '../catalogue/model/ubl-model-utils';
 import { product_base_quantity, product_base_quantity_unit } from '../common/constants';
 import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from '../app.component';
+import {WhiteBlackListService} from '../catalogue/white-black-list.service';
 
 @Component({
     selector: 'simple-search-form',
@@ -156,6 +157,7 @@ export class SimpleSearchFormComponent implements OnInit {
         private searchContextService: SearchContextService,
         private categoryService: CategoryService,
         private catalogueService: CatalogueService,
+        private whiteBlackListService: WhiteBlackListService,
         private publishService: PublishService,
         public shoppingCartDataService: ShoppingCartDataService,
         private translateService: TranslateService,
@@ -262,6 +264,8 @@ export class SimpleSearchFormComponent implements OnInit {
                 this.catID = "";
             if (pageRef) {
                 this.pageRef = pageRef;
+            } else{
+                this.pageRef = null;
             }
             this.searchContext = searchContext ? true : false;
             if (q && sTop) {
@@ -420,7 +424,7 @@ export class SimpleSearchFormComponent implements OnInit {
             debounceTime(200),
             distinctUntilChanged(),
             switchMap(term =>
-                this.simpleSearchService.getCompSuggestions(term,  this.searchIndex == "Business Keyword" ? ["{LANG}_businessKeywords"] : [this.product_vendor_name, ("{LANG}_" + this.product_vendor_brand_name)])
+                this.simpleSearchService.getCompSuggestions(term,  this.searchIndex == "Business Keyword" ? ["{LANG}_businessKeywords"] : [this.product_vendor_name, ("{LANG}_" + this.product_vendor_brand_name)],this.pageRef)
             )
         );
 
@@ -781,7 +785,7 @@ export class SimpleSearchFormComponent implements OnInit {
         this.simpleSearchService.getCompFields()
             .then(res => {
                 let fieldLabels: string[] = this.getFieldNames(res);
-                this.simpleSearchService.getComp(q, Object.keys(fieldLabels), fq, p, rows, sort,this.searchIndex)
+                this.simpleSearchService.getComp(q, Object.keys(fieldLabels), fq, p, rows, sort,this.searchIndex,this.pageRef)
                     .then(res => {
                         if (res.result.length == 0) {
                             this.cat_loading = false;
@@ -1313,7 +1317,8 @@ export class SimpleSearchFormComponent implements OnInit {
 
     onSearchResultClicked(event): void {
         // if the page reference is publish, we don't let users navigating to product details
-        if (this.pageRef === 'publish') {
+        // if the page reference is catalogue, we do not let users navigating to the company details
+        if (this.pageRef === 'publish' || this.pageRef === 'catalogue') {
             event.preventDefault();
         }
     }
@@ -1902,6 +1907,32 @@ export class SimpleSearchFormComponent implements OnInit {
             return { hjid: product.uri, label: product.label };
         });
         this.router.navigate(['catalogue/publish'], { queryParams: { pg: 'single', productType: 'product', searchRef: 'true' } });
+    }
+
+    // methods for white list/black list functionality
+    isCompanySelected(vatNumber:string): boolean {
+        return this.whiteBlackListService.isCompanySelected(vatNumber);
+    }
+
+    onToggleCompanySelectForWhiteBlackList(toggledCompany: any, event): void {
+        event.preventDefault();
+        // set timeout is required since the default checkbox implementation prevents updating status of the checkbox
+        setTimeout(() => {
+            if(this.whiteBlackListService.isCompanySelected(toggledCompany.vatNumber)){
+                this.onRemoveSelectedCompany(toggledCompany.vatNumber);
+            } else {
+                this.whiteBlackListService.onAddSelectedCompany(toggledCompany)
+            }
+        });
+    }
+
+    onRemoveSelectedCompany(removedCompanyVatNumber: any): void {
+        this.whiteBlackListService.onRemoveSelectedCompany(removedCompanyVatNumber);
+    }
+
+    // the end of methods for white list/black list functionality
+    onNavigateToCatalogue(): void {
+        this.router.navigate(['dashboard'], { queryParams: { tab:"CATALOGUE", searchRef: 'true'} })
     }
 
     onAddToCart(result: any, index: number, event: any): void {

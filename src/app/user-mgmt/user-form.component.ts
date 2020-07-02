@@ -163,6 +163,7 @@ export class UserFormComponent implements OnInit {
                 this.cookieService.set("user_fullname", res.firstname + " " + res.lastname);
                 this.cookieService.set("user_email", res.email);
                 this.cookieService.set("bearer_token", res.accessToken);
+                this.cookieService.set("vat", res.vat);
 
                 // Setting cookie path to root to facilitate the iframe base login
                 if (myGlobals.config.showChat) {

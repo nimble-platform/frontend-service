@@ -58,6 +58,7 @@ export const agent_mgmt_endpoint = `http://159.69.214.42/agents`;
 export const collaboration_endpoint = `${collab_path}`;
 export const certificate_of_origin_endpoint = `http://161.156.70.125:7695`;
 export const legislation_endpoint = `http://77.230.101.223/nimsys`;
+export const eFactory_indexing_endpoint = "https://efactory-security-portal.salzburgresearch.at/api/index";
 
 
 // Explorative Search endpoints
@@ -148,6 +149,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - showLoginFederation: Boolean flag if the federated login is available on the instance
 - unshippedOrdersTabEnabled: Boolean flag is the unshipped orders shall be shown on the dashboard
 - welcomeMessage: Message displayed in the welcome page
+- whiteBlackListForCatalogue: Boolean flag if the white list/ black list functionality is available
 - federationClientID: Keycloak client ID used for the federated login
 - federationIDP: Keycloak IDP used for the federated login
 - legislationSettings: Allows to toggle the legislation feature and define its relevant settings (furniture use case)
@@ -318,6 +320,7 @@ export const config = {
     "showLoginFederation": true,
     "unshippedOrdersTabEnabled": true,
     "welcomeMessage":"Looks like you are new here",
+    "whiteBlackListForCatalogue":false,
     "federationClientID": "efact-test-client",
     "federationIDP": "EFS",
     "legislationSettings": {

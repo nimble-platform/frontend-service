@@ -21,8 +21,7 @@ import { CallStatus } from "../../../common/call-status";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { PublishService } from "../../publish-and-aip.service";
 import { CategoryService } from "../../category/category.service";
-import { isLogisticsService, isTransportService } from '../../../common/utils';
-import { BPDataService } from "../../../bpe/bp-view/bp-data-service";
+import { isLogisticsService } from '../../../common/utils';
 import { UserService } from "../../../user-mgmt/user.service";
 import { CompanySettings } from "../../../user-mgmt/model/company-settings";
 import { CataloguePaginationResponse } from '../../model/publish/catalogue-pagination-response';
@@ -36,19 +35,22 @@ import { Catalogue } from '../../model/publish/catalogue';
 import { CatalogueLine } from "../../model/publish/catalogue-line";
 import { TranslateService } from '@ngx-translate/core';
 import { DeleteExportCatalogueModalComponent } from "./delete-export-catalogue-modal.component";
+import {WhiteBlackListService} from '../../white-black-list.service';
 import {AppComponent} from '../../../app.component';
 import * as myGlobals from '../../../globals';
+import {SimpleSearchService} from '../../../simple-search/simple-search.service';
 
 @Component({
     selector: 'catalogue-view',
     templateUrl: './catalogue-view.component.html',
-    styles: ['.dropdown-toggle:after{content: initial}'],
+    styleUrls: ["./catalogue-view.component.css"],
     providers: [CookieService]
 })
 
 export class CatalogueViewComponent implements OnInit {
 
     @Input() viewMode:"OwnerView"|"ContractView" = "OwnerView";
+    product_vendor_name = myGlobals.product_vendor_name;
 
     catalogueResponse: CataloguePaginationResponse;
     settings: CompanySettings;
@@ -68,6 +70,21 @@ export class CatalogueViewComponent implements OnInit {
     // default
     pageSize = 10;
     addCatalogue = false;
+
+    // variables for white/black list functionality
+    // whether the white/black list panel is visible
+    whiteBlackListPanelVisible:boolean = false;
+    // selected companies for white list
+    whiteListCompanies:any[] = [];
+    // selected companies for black list
+    blackListCompanies:any[] = [];
+    // party name map for the ones included in white/black list
+    partyNameMap:Map<string,string> = null;
+    // call status for white/black list operations
+    whiteBlackListCallStatus:CallStatus = new CallStatus();
+    // the end of variables for white/black list functionality
+    // Flag indicating that the source page is the search page.
+    searchRef:boolean = false;
 
     // check whether catalogue-line-panel should be displayed for a specific catalogue line
     catalogueLineView = {};
@@ -102,34 +119,83 @@ export class CatalogueViewComponent implements OnInit {
         private catalogueService: CatalogueService,
         private categoryService: CategoryService,
         private translate: TranslateService,
+        private simpleSearchService: SimpleSearchService,
+        private route: ActivatedRoute,
+        private whiteBlackListService: WhiteBlackListService,
         private userService: UserService,
         private router: Router) {
     }
 
     ngOnInit() {
-        this.searchText = "";
-        this.deleteStatuses = [];
-        this.catalogueText = "";
-        this.sortOption = null;
-        this.cataloguesIds = [];
-        this.catlogueId = "all";
-        this.selectedCatalogue = "all";
-        this.catalogueLinesWRTTypes = [];
-        this.catalogueLinesArray = [];
-        this.categoryNames = [];
-        this.selectedCategory = "All";
-        this.collectionSize = 0;
-        this.page = 1;
-        this.pageSize = 10;
-        this.addCatalogue = false;
-        this.catalogueLineView = {};
-        this.getCatagloueIdsForParty();
-        this.catalogueService.setEditMode(false);
-        this.sortOption = this.sortOption == null ? CATALOGUE_LINE_SORT_OPTIONS[0].name : this.sortOption;
-        this.requestCatalogue();
-        for (let i = 0; i < this.pageSize; i++) {
-            this.deleteStatuses.push(new CallStatus());
+        this.route.queryParams.subscribe((params: Params) => {
+            // searchRef is true if the source page is search page
+            this.searchRef = !!params['searchRef'];
+
+            this.searchText = "";
+            this.deleteStatuses = [];
+            this.catalogueText = "";
+            this.sortOption = null;
+            this.cataloguesIds = [];
+            this.catlogueId = this.searchRef && this.whiteBlackListService.catalogueId ? this.whiteBlackListService.catalogueId :"all";
+            this.selectedCatalogue = this.searchRef && this.whiteBlackListService.catalogueId ? this.whiteBlackListService.catalogueId :"all";
+            this.catalogueLinesWRTTypes = [];
+            this.catalogueLinesArray = [];
+            this.categoryNames = [];
+            this.selectedCategory = "All";
+            this.collectionSize = 0;
+            this.page = 1;
+            this.pageSize = 10;
+            this.addCatalogue = false;
+            this.whiteBlackListPanelVisible = this.searchRef && this.whiteBlackListService.catalogueId != null;
+            this.catalogueLineView = {};
+            this.getCatagloueIdsForParty();
+            this.catalogueService.setEditMode(false);
+            this.sortOption = this.sortOption == null ? CATALOGUE_LINE_SORT_OPTIONS[0].name : this.sortOption;
+            this.requestCatalogue();
+            for (let i = 0; i < this.pageSize; i++) {
+                this.deleteStatuses.push(new CallStatus());
+            }
+
+        });
+    }
+
+
+    setWhiteBlackListAndPopulatePartyNameMap(whiteListParties:any[],blackListParties:any[]){
+
+        let selectedParties = [].concat(whiteListParties).concat(blackListParties);
+        let vatNumbers = selectedParties.map(value => value.vatNumber);
+
+        if(vatNumbers.length > 0){
+            this.whiteBlackListCallStatus.submit();
+            this.simpleSearchService.getEFactoryCompanies(vatNumbers).then(response => {
+                let parties = response.result;
+                this.partyNameMap = new Map<string, string>();
+
+                for (let party of parties) {
+                    this.partyNameMap.set(party.vatNumber,party.legalName);
+                }
+
+                this.whiteListCompanies = [];
+                for (let whiteListParty of whiteListParties) {
+                    this.whiteListCompanies.push({"vatNumber":whiteListParty.vatNumber,"legalName":this.partyNameMap.get(whiteListParty.vatNumber)});
+                }
+                this.blackListCompanies = [];
+                for (let blackListParty of blackListParties) {
+                    this.blackListCompanies.push({"vatNumber":blackListParty.vatNumber,"legalName":this.partyNameMap.get(blackListParty.vatNumber)});
+                }
+
+                this.whiteBlackListCallStatus.callback("Retrieved party names",true);
+            }).catch(error => {
+                this.whiteBlackListCallStatus.error("Failed to get party names",error);
+            })
+        } else{
+            this.whiteListCompanies = [];
+            this.blackListCompanies = [];
         }
+    }
+
+    isWhiteBlackListCallStatusLoading(): boolean {
+        return this.whiteBlackListCallStatus.fb_submitted;
     }
 
     selectName(ip: ItemProperty | Item) {
@@ -142,6 +208,7 @@ export class CatalogueViewComponent implements OnInit {
 
     changeCat() {
         this.catlogueId = this.selectedCatalogue;
+        this.whiteBlackListPanelVisible = false;
         this.requestCatalogue();
     }
 
@@ -190,12 +257,29 @@ export class CatalogueViewComponent implements OnInit {
         return this.userService.getSettingsForUser(userId);
     }
 
+    // called when the catalogue pagination response is retrieved to update the view
     private init(): void {
         let len = this.catalogueResponse.catalogueLines.length;
         this.categoryNames = this.catalogueResponse.categoryNames;
         this.collectionSize = this.catalogueResponse.size;
         this.catalogueLinesArray = [...this.catalogueResponse.catalogueLines];
         this.catalogueLinesWRTTypes = this.catalogueLinesArray;
+        // if the white/black list functionality is available,
+        // we need to set white/black lists using:
+        //  - either the ones in the catalogue pagination response if the source page is not the company search page or new catalogue is selected
+        //  - or the ones in the whiteBlackListService if the source page is the company search page
+        if(this.config.whiteBlackListForCatalogue){
+            // the source page is the company search page
+            if(this.searchRef && this.whiteBlackListService.catalogueId){
+                this.setWhiteBlackListAndPopulatePartyNameMap(this.whiteBlackListService.getSelectedCompanies('White'),this.whiteBlackListService.getSelectedCompanies('Black'));
+                // reset whiteBlackListService service
+                this.whiteBlackListService.reset()
+            }
+            else{
+                this.setWhiteBlackListAndPopulatePartyNameMap(this.catalogueResponse.permittedParties ? this.catalogueResponse.permittedParties.map(value =>  this.getVatNumberObject(value)):[],
+                    this.catalogueResponse.restrictedParties ? this.catalogueResponse.restrictedParties.map(value => this.getVatNumberObject(value)) : [])
+            }
+        }
         let i = 0;
         // Initialize catalogueLineView
         for (; i < len; i++) {
@@ -203,10 +287,49 @@ export class CatalogueViewComponent implements OnInit {
         }
     }
 
+    getVatNumberObject(vatNumber:string){
+        return {"vatNumber":vatNumber}
+    }
+
     onDeleteCatalogue(): void {
         this.deleteCatalogueModal.open('delete');
     }
 
+    // methods for white/black list functionality
+    onAddWhiteBlackListToCatalogue(){
+        this.whiteBlackListPanelVisible = true;
+    }
+
+    onRemoveCompanyFromList(listMode:'White'|'Black',index:number) {
+        if(listMode=='White'){
+            this.whiteListCompanies.splice(index,1);
+        } else {
+            this.blackListCompanies.splice(index,1);
+        }
+    }
+
+    onAddCompanyToList(listMode:'White'|'Black'): void {
+        this.whiteBlackListService.listMode = listMode;
+        this.whiteBlackListService.catalogueId = this.selectedCatalogue;
+
+        this.whiteBlackListService.setSelectedPartiesInSearchForWhiteList(this.whiteListCompanies);
+        this.whiteBlackListService.setSelectedPartiesInSearchForBlackList(this.blackListCompanies);
+
+        this.router.navigate(['/simple-search'], { queryParams: { sTop: 'comp', pageRef: 'catalogue' } });
+    }
+
+    onSaveBlackWhiteLists(){
+        let blackList = this.blackListCompanies.map(value => value.vatNumber);
+        let whiteList = this.whiteListCompanies.map(value => value.vatNumber);
+
+        this.whiteBlackListCallStatus.submit();
+        this.catalogueService.addBlackWhiteListToCatalog(this.selectedCatalogue,blackList,whiteList).then(() => {
+            this.whiteBlackListCallStatus.callback(this.translate.instant("Added black/white list to catalogue successfully"))
+        }).catch(error => {
+            this.whiteBlackListCallStatus.error("Failed to add black/white list to catalogue",error)
+        })
+    }
+    // the end of methods for white/black list functionality
     onDeleteCatalogueImages(): void {
         this.deleteCatalogueModal.open('delete-images');
     }

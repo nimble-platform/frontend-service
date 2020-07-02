@@ -82,16 +82,28 @@
                     </select>
                     <call-status [callStatus]="productCatalogueRetrievalStatus"></call-status>
                 </div>
-                <ng-container *ngIf="config.contractForCatalogueEnabled && selectedCatalogue != 'all'">
-                    <div class="col-5"></div>
-                    <div class="col-3">
-                        <button type="button" class="btn btn-primary col" (click)="onGenerateContractForCatalogue()">
-                            <span [innerHTML]="'Generate Contract for Catalogue' | translate"></span>
-                        </button>
+                <ng-container *ngIf="(config.contractForCatalogueEnabled || config.whiteBlackListForCatalogue) && selectedCatalogue != 'all'">
+                    <div class="col-7"></div>
+                    <div class="col-1 d-flex justify-content-center">
+                        <ul class="nav navbar-nav">
+                            <li ngbDropdown class="nav-item dropdown">
+                                <button class="navbar-toggler bordered" type="button" aria-controls="navbarNavAltMarkup" ngbDropdownToggle>
+                                    <span class="fa fa-bars"></span>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser" ngbDropdownMenu>
+                                    <button *ngIf="config.contractForCatalogueEnabled" class="dropdown-item"  (click)="onGenerateContractForCatalogue()">
+                                        <span [innerHTML]="'Generate Contract for Catalogue' | translate"></span>
+                                    </button>
+                                    <button *ngIf="config.whiteBlackListForCatalogue" class="dropdown-item" (click)="onAddWhiteBlackListToCatalogue()">
+                                        <span [innerHTML]="'Add White/Black List to Catalogue' | translate"></span>
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
                 </ng-container>
             </div>
-            <br *ngIf="addCatalogue">
+            <br *ngIf="addCatalogue || whiteBlackListPanelVisible">
             <div *ngIf="addCatalogue" class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
                 <input class="form-control col-3" style="padding-left: 25px" type="text" [(ngModel)]="catalogueText" placeholder="Catalogue Title">
                 <div class="col-2">
@@ -101,6 +113,54 @@
                     <button type="button" class="btn btn-danger" (click)="cancelAddingCatalogue(); $event.stopPropagation();">
                         <span [innerHTML]="'Cancel' | translate"></span>
                     </button>
+                </div>
+            </div>
+            <div *ngIf="whiteBlackListPanelVisible" class="white-black-list-panel">
+                <div class="row space-before">
+                    <div class="col-2 company-list-label">
+                        <strong><span [innerHTML]="'White List:' | translate"></span></strong>
+                    </div>
+                    <div class="col-10 ">
+                        <div class="object-list">
+                            <div *ngFor="let company of whiteListCompanies;let i=index" class="bordered my-1 ml-1">
+                                <small class="p-0">{{company[product_vendor_name]}}</small>
+                                <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCompanyFromList('White',i)"></i>
+                            </div>
+                            <button class="btn btn-outline-primary space-left" (click)="onAddCompanyToList('White')" [disabled]="isWhiteBlackListCallStatusLoading()">
+                                <span [innerHTML]="'Add Company' | translate"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row space-before">
+                    <div class="col-2 company-list-label">
+                        <strong><span [innerHTML]="'Black List:' | translate"></span></strong>
+                    </div>
+                    <div class="col-10 ">
+                        <div class="object-list">
+                            <div *ngFor="let company of blackListCompanies;let i=index" class="bordered my-1 ml-1">
+                                <small class="p-0">{{company[product_vendor_name]}}</small>
+                                <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCompanyFromList('Black',i)"></i>
+                            </div>
+                            <button class="btn btn-outline-primary space-left" (click)="onAddCompanyToList('Black')" [disabled]="isWhiteBlackListCallStatusLoading()">
+                                <span [innerHTML]="'Add Company' | translate"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row actions-row space-before">
+                    <div class="col-8 call-status-col">
+                        <call-status [callStatus]="whiteBlackListCallStatus"></call-status>
+                    </div>
+                    <div class="col-2">
+                        <button class="btn btn-primary action" [disabled]="isWhiteBlackListCallStatusLoading()" (click)="whiteBlackListPanelVisible=false"><span [innerHTML]="'Cancel' | translate"></span>
+                        </button>
+                    </div>
+                    <div class="col-2">
+                        <button class="btn btn-primary action" [disabled]="isWhiteBlackListCallStatusLoading()" (click)="onSaveBlackWhiteLists()"><span [innerHTML]="'Save' | translate"></span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
