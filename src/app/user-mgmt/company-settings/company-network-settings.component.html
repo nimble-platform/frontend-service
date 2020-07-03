@@ -1,0 +1,88 @@
+<!--
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
+<!-- No Network Available -->
+<div *ngIf="(settings.negotiationSettings.company.network == null || settings.negotiationSettings.company.network.length == 0) && (networkGroups == null || networkGroups.length == 0)" class="jumbotron">
+    <h3><span [innerHTML]="'No network groups defined.' | translate"></span></h3>
+    <h5 class="mt-3">
+        <span (click)="onAddNetworkGroup()" class="pointer"><span [innerHTML]="'Add Network Group' | translate"></span></span>
+        <i class="fa fa-plus-circle pointer" (click)="onAddNetworkGroup()"></i>
+    </h5>
+</div>
+
+<!-- Network Groups -->
+<h4 *ngIf="(networkGroups && networkGroups.length > 0) || (settings.negotiationSettings.company.network && settings.negotiationSettings.company.network.length > 0)" class="space-before" [innerHTML]="'Your Network Groups'"></h4>
+<h6 *ngIf="(!networkGroups || networkGroups.length == 0) && (settings.negotiationSettings.company.network && settings.negotiationSettings.company.network.length > 0)" class="space-before" [innerHTML]="'No network groups defined.'"></h6>
+<div *ngFor="let network of networkGroups;trackBy:trackByFn; let i = index" class="space-before">
+    <!-- Network ID as a button to show network details -->
+    <button [ngClass]="'btn btn-primary btn-outline-primary small-button'" (click)="showNetwork[i]=!showNetwork[i]">
+        {{network.id}}
+    </button>
+    <!-- Button to delete network -->
+    <button class="btn btn-danger btn-sm" (click)="onRemoveNetworkGroup(i)">&times;</button>
+    <!-- Card representing the clause-->
+    <div class="card" [hidden]="!showNetwork[i]" style="font-size: 0.9rem">
+        <!-- Network Id-->
+        <div class="card-header">
+            <text-input [label]="'ID' | translate" [(text)]="network.id" [rows]="1" [maxLength]="256" [rowClass]="'m-0'"  [valueClass]="'col-7'" [required]="true" [forbiddenPrecedingTrailingSpace]="true">
+            </text-input>
+        </div>
+        <!-- Network Description -->
+        <div class="card-body" >
+            <div *ngFor="let description of network.description; let j = index" class="space-after">
+                <!-- Description -->
+                <text-input *ngIf="j==0" [label]="'Description' | translate" [(text)]="description.value" [rows]="6" [maxLength]="2047" [rowClass]="'m-0 space-before'" [valueClass]="'col-7'" [languageIdClass]="'col-1'" [(languageId)]="description.languageID">
+                </text-input>
+                <!-- Description -->
+                <text-input *ngIf="j>0" [label]="'Description' | translate" [(text)]="description.value" [rows]="6" [maxLength]="2047" [rowClass]="'m-0 space-before'" [flexClass]="'col-1 pr-0'" [valueClass]="'col-7'" [languageIdClass]="'col-1'" [(languageId)]="description.languageID" (deleteTextInput)="deleteNetworkDescription(i,j)" [deleteButtonStyle]="'btn-danger'">
+                </text-input>
+            </div>
+            <!-- Button to add new descriptions -->
+            <div class="col-12 pr-0 align-right space-before"><button class='btn btn-outline-primary' (click)="addNetworkDescription(i)"><span [innerHTML]="'Add Description' | translate"></span></button></div>
+        </div>
+        <!-- Companies in the Network -->
+        <div class="card-footer" >
+            <div class="row space-before">
+                <div class="col-3 company-list-label">
+                    <strong><span [innerHTML]="'Companies in the Network:' | translate"></span></strong>
+                </div>
+                <div class="col-7 ">
+                    <call-status [callStatus]="getPartyNameCallStatus"></call-status>
+                    <div *ngIf="partyNameMap || network.vatNumber.length == 0" class="object-list">
+                        <div *ngFor="let vatNumber of network.vatNumber;let j=index" class="bordered my-1 ml-1">
+                            <small class="p-0">{{partyNameMap.get(vatNumber)}}</small>
+                            <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCompanyFromList(i,j)"></i>
+                        </div>
+                        <button class="btn btn-outline-primary space-left" (click)="onAddCompanyToList(i)" [disabled]="isPartyNamesLoading()">
+                            <span [innerHTML]="'Add Company' | translate"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Actions -->
+<div *ngIf="(networkGroups && networkGroups.length > 0) || (settings.negotiationSettings.company.network && settings.negotiationSettings.company.network.length > 0)" class="space-before row actions-row space-before">
+    <div class="col-7 call-status-col">
+        <call-status [callStatus]="callStatus"></call-status>
+    </div>
+    <div class="col-3">
+        <button class="btn btn-primary action" (click)="onAddNetworkGroup()"><span [innerHTML]="'Add Network Group' | translate"></span></button>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary action" (click)="onSave()"><span [innerHTML]="'Save' | translate"></span></button>
+    </div>
+</div>

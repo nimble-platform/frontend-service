@@ -60,6 +60,7 @@ import { UnshippedOrdersTransitionService } from './bpe/unshipped-order-transiti
 import { ValidationService } from './common/validation/validators';
 import {ContractService} from './bpe/bp-view/contract-service';
 import {WhiteBlackListService} from './catalogue/white-black-list.service';
+import {NetworkCompanyListService} from './user-mgmt/network-company-list.service';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -101,6 +102,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         PublishingPropertyService,
         PublishService,
         WhiteBlackListService,
+        NetworkCompanyListService,
         ExplorativeSearchService,
         SimpleSearchService,
         SearchContextService,

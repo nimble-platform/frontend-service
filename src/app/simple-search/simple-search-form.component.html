@@ -26,7 +26,7 @@
                         <span [innerHTML]="searchIndex | translate"></span>
                     </button>
                     <!--  if page reference is catalogue, we display the companies from the eFactory index, therefore, we do not need a dropdown menu for the searchIndex selection-->
-                    <div *ngIf="pageRef!=='catalogue'" ngbDropdownMenu aria-labelledby="searchIndex">
+                    <div *ngIf="pageRef!=='catalogue' && pageRef!=='network' && pageRef!=='offering'" ngbDropdownMenu aria-labelledby="searchIndex">
                         <a *ngFor="let searchIndexName of searchIndexes" class="dropdown-item" (click)="changeSearchIndex(searchIndexName)"><span [innerHTML]="searchIndexName | translate"></span></a>
                     </div>
                 </div>
@@ -115,19 +115,28 @@
                 </div>
             </div>
         </ng-container>
-        <!--  The page reference is catalogue, so , we display the eFactory companies for the white/black list selection-->
-        <ng-container *ngIf="pageRef === 'catalogue'">
+        <ng-container *ngIf="pageRef === 'network' || pageRef === 'offering' || pageRef === 'catalogue'">
             <hr>
             <div class="row">
-                <div class="offset-4 col-6">
+                <div *ngIf="pageRef === 'catalogue'" class="offset-4 col-6">
                     <span *ngFor="let selectedCompany of whiteBlackListService.getSelectedCompanies()">
                         <span class="badge badge-secondary mr-1 mb-2 pointer" (click)="onRemoveSelectedCompany(selectedCompany)">
                             <span [title]="selectedCompany[product_vendor_name]"><b>{{ selectedCompany[product_vendor_name] }}</b></span>
                         </span>
                     </span>
                 </div>
+                <div *ngIf="pageRef === 'network' || pageRef === 'offering'" class="offset-4 col-6">
+                    <span *ngFor="let selectedCompany of networkCompanyListService.selectedPartiesInSolrFormat">
+                        <span class="badge badge-secondary mr-1 mb-2 pointer" (click)="onRemoveSelectedCompanyFromNetwork(selectedCompany)">
+                            <span [title]="selectedCompany[product_vendor_name]"><b>{{ selectedCompany[product_vendor_name] }}</b></span>
+                        </span>
+                    </span>
+                </div>
+
                 <div class="col-2">
-                    <div class="btn btn-primary float-right" (click)="onNavigateToCatalogue()"><span [innerHTML]="'Go to White/Black List' | translate"></span></div>
+                    <div *ngIf="pageRef == 'catalogue'" class="btn btn-primary float-right" (click)="onNavigateToCatalogue()"><span [innerHTML]="'Go to White/Black List' | translate"></span></div>
+                    <div *ngIf="pageRef == 'network'" class="btn btn-primary float-right" (click)="onNavigate(true)"><span [innerHTML]="'Go to Network' | translate"></span></div>
+                    <div *ngIf="pageRef == 'offering'" class="btn btn-primary float-right" (click)="onNavigate(false)"><span [innerHTML]="'Continue with product offering' | translate"></span></div>
                 </div>
             </div>
         </ng-container>
@@ -201,7 +210,7 @@
                         <div class="col-12">
                             <button *ngIf="searchTopic=='prod'" class="btn btn-secondary" [disabled]="cat==''" (click)="setCat('','',false,-1)"><span [innerHTML]="'Reset category' | translate"></span></button>
                             <!--  No need to show this button since no filter is available in the eFactory companies -->
-                            <button *ngIf="pageRef!=='catalogue'" class="btn btn-secondary" [ngClass]="{'ml-2':searchTopic=='prod'}" [disabled]="!facetQuery || (facetQuery && facetQuery.length==0)" (click)="resetFilter()"><span [innerHTML]="'Reset filter' | translate"></span></button>
+                            <button *ngIf="pageRef!=='catalogue' && pageRef!=='network' && pageRef!=='offering'" class="btn btn-secondary" [ngClass]="{'ml-2':searchTopic=='prod'}" [disabled]="!facetQuery || (facetQuery && facetQuery.length==0)" (click)="resetFilter()"><span [innerHTML]="'Reset filter' | translate"></span></button>
                         </div>
                     </div>
 
@@ -728,10 +737,13 @@
                                         <div *ngIf="pageRef === 'catalogue'" #companySelect class="align-self-center" [ngClass]="{'col-1':display=='list','col-12 pb-1':display=='panel'}" (click)="onToggleCompanySelectForWhiteBlackList(result, $event)">
                                             <input type="checkbox" [checked]="isCompanySelected(result.vatNumber)" (click)="$event.preventDefault();  $event.stopPropagation(); companySelect.click();">
                                         </div>
+                                        <div *ngIf="pageRef === 'network' || pageRef === 'offering'" #companySelect class="align-self-center" [ngClass]="{'col-1':display=='list','col-12 pb-1':display=='panel'}" (click)="onToggleCompanySelectForNetwork(result, $event)">
+                                            <input type="checkbox" [checked]="isCompanySelectedForNetwork(result.vatNumber)" (click)="$event.preventDefault();  $event.stopPropagation(); companySelect.click();">
+                                        </div>
                                         <div class="align-center" [ngClass]="{'col-2':display=='list','col-12 pb-1':display=='panel'}">
                                             <img src="{{imgEndpoint}}{{result[product_vendor_img]}}" class="thumb" onerror="this.src='assets/empty_img.png';" />
                                         </div>
-                                        <div [ngClass]="{'col-8 border-right':display=='list' && pageRef!=='catalogue','col-7 border-right':display=='list' && pageRef ==='catalogue','col-12 pt-1 pb-2 border-bottom':display=='panel'}">
+                                        <div [ngClass]="{'col-8 border-right':display=='list' && !(pageRef === 'network' || pageRef === 'offering' || pageRef === 'catalogue'),'col-7 border-right':display=='list' && (pageRef === 'network' || pageRef === 'offering' || pageRef === 'catalogue'),'col-12 pt-1 pb-2 border-bottom':display=='panel'}">
                                             <div style="max-height:1.5rem;overflow:hidden">
                                                 <span [title]="result[product_vendor_name]"><b>{{ result[product_vendor_name] }}</b></span>
                                             </div>

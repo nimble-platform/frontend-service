@@ -64,6 +64,9 @@ export class CompanySettingsComponent implements OnInit {
         this.route.queryParams.subscribe(params => {
             this.companyId = params['id'];
             this.federationId = params['delegateId'];
+            if(params['tab']){
+                this.selectedTab = params['tab'];
+            }
             if (!this.federationId) {
                 this.federationId = FEDERATIONID();
             }

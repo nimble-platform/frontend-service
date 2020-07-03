@@ -121,9 +121,11 @@ export const config = {
     "logoPath": "./assets/logo_fmp.png",
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": true,
+    "networkEnabled": false,
     "permanentWelcomeTab": true,
     "phoneNumberRequired": true,
     "productServiceFiltersEnabled":false,
+    "productOfferingEnabled":false,
     "vatEnabled": false,
     "projectsEnabled": true,
     "requiredAgreements": [

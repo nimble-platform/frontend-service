@@ -82,7 +82,7 @@
                     </select>
                     <call-status [callStatus]="productCatalogueRetrievalStatus"></call-status>
                 </div>
-                <ng-container *ngIf="(config.contractForCatalogueEnabled || config.whiteBlackListForCatalogue) && selectedCatalogue != 'all'">
+                <ng-container *ngIf="(config.contractForCatalogueEnabled || config.whiteBlackListForCatalogue || config.productOfferingEnabled) && !productSelectionForOffering">
                     <div class="col-7"></div>
                     <div class="col-1 d-flex justify-content-center">
                         <ul class="nav navbar-nav">
@@ -91,15 +91,32 @@
                                     <span class="fa fa-bars"></span>
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser" ngbDropdownMenu>
-                                    <button *ngIf="config.contractForCatalogueEnabled" class="dropdown-item"  (click)="onGenerateContractForCatalogue()">
+                                    <button *ngIf="config.contractForCatalogueEnabled && selectedCatalogue != 'all'" class="dropdown-item"  (click)="onGenerateContractForCatalogue()">
                                         <span [innerHTML]="'Generate Contract for Catalogue' | translate"></span>
                                     </button>
-                                    <button *ngIf="config.whiteBlackListForCatalogue" class="dropdown-item" (click)="onAddWhiteBlackListToCatalogue()">
+                                    <button *ngIf="config.whiteBlackListForCatalogue && selectedCatalogue != 'all'" class="dropdown-item" (click)="onAddWhiteBlackListToCatalogue()">
                                         <span [innerHTML]="'Add White/Black List to Catalogue' | translate"></span>
+                                    </button>
+                                    <button *ngIf="config.productOfferingEnabled" class="dropdown-item" (click)="onOfferCatalogueButtonClicked()">
+                                        <span [innerHTML]="'Offer Your Catalog/Product' | translate"></span>
                                     </button>
                                 </div>
                             </li>
                         </ul>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="productSelectionForOffering">
+                    <div class="col-4">
+                    </div>
+                    <div class="col-1">
+                        <div class="col-1">
+                            <button type="button" class="btn btn-secondary" (click)="productSelectionForOffering=false"><span [innerHTML]="'Cancel' | translate"></span></button>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <button type="button" class="btn btn-primary space-after col" (click)="offerCatalog(selectedCatalogue);$event.stopPropagation();" style="display: block">
+                            <span [innerHTML]="'Offer the selected catalog' | translate"></span>
+                        </button>
                     </div>
                 </ng-container>
             </div>
@@ -124,9 +141,9 @@
                         <div class="object-list">
                             <div *ngFor="let company of whiteListCompanies;let i=index" class="bordered my-1 ml-1">
                                 <small class="p-0">{{company[product_vendor_name]}}</small>
-                                <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCompanyFromList('White',i)"></i>
+                                <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCompanyFromWhiteBlackList('White',i)"></i>
                             </div>
-                            <button class="btn btn-outline-primary space-left" (click)="onAddCompanyToList('White')" [disabled]="isWhiteBlackListCallStatusLoading()">
+                            <button class="btn btn-outline-primary space-left" (click)="onAddCompanyToWhiteBlackList('White')" [disabled]="isWhiteBlackListCallStatusLoading()">
                                 <span [innerHTML]="'Add Company' | translate"></span>
                             </button>
                         </div>
@@ -141,9 +158,9 @@
                         <div class="object-list">
                             <div *ngFor="let company of blackListCompanies;let i=index" class="bordered my-1 ml-1">
                                 <small class="p-0">{{company[product_vendor_name]}}</small>
-                                <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCompanyFromList('Black',i)"></i>
+                                <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCompanyFromWhiteBlackList('Black',i)"></i>
                             </div>
-                            <button class="btn btn-outline-primary space-left" (click)="onAddCompanyToList('Black')" [disabled]="isWhiteBlackListCallStatusLoading()">
+                            <button class="btn btn-outline-primary space-left" (click)="onAddCompanyToWhiteBlackList('Black')" [disabled]="isWhiteBlackListCallStatusLoading()">
                                 <span [innerHTML]="'Add Company' | translate"></span>
                             </button>
                         </div>
@@ -190,7 +207,7 @@
                                     <p>{{selectDescription(catLine.goodsItem.item)}}</p>
                                     <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" class="all-break">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p>
                                 </div>
-                                <div class="col-2">
+                                <div *ngIf="!productSelectionForOffering" class="col-2">
                                     <button type="button" class="btn btn-primary space-after col" (click)="redirectToEdit(catLine) ; $event.stopPropagation();" style="display: block">
                                         <span [innerHTML]="'Edit' | translate"></span>
                                     </button>
@@ -202,9 +219,14 @@
                                     </button>
                                     <call-status [callStatus]="getDeleteStatus(i)"></call-status>
                                 </div>
+                                <div *ngIf="productSelectionForOffering" class="col-2">
+                                    <button type="button" class="btn btn-primary space-after col" (click)="offerProduct(catLine);$event.stopPropagation();" style="display: block">
+                                        <span [innerHTML]="'Offer' | translate"></span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        <catalogue-line-panel [catalogueLine]="catLine" [settings]="settings" [presentationMode]="'view'" (catalogueLineDeleted)="deleteCatalogueLine(catLine,i)" [(show)]="catalogueLineView[catLine.id]">
+                        <catalogue-line-panel [catalogueLine]="catLine" [settings]="settings" [presentationMode]="'view'" [offeringProduct]="productSelectionForOffering" (catalogueLineDeleted)="deleteCatalogueLine(catLine,i)" [(show)]="catalogueLineView[catLine.id]" (catalogueLineOffered)="offerProduct(catLine)">
                         </catalogue-line-panel>
                     </div>
                 </div>
@@ -252,7 +274,7 @@
                             <button class="dropdown-item" (click)="onAddingCatalogue()">
                                 <span [innerHTML]="'Add Catalogue' | translate"></span>
                             </button>
-                            <button class="dropdown-item" (click)="onDeleteCatalogue(deleteCatalogueModal)">
+                            <button class="dropdown-item" (click)="onDeleteCatalogue()">
                                 <span [innerHTML]="'Delete Catalogue' | translate"></span>
                             </button>
                         </div>
@@ -284,4 +306,69 @@
 <div *ngIf="viewMode == 'ContractView'">
     <company-terms-and-conditions [settings]="settings" [catalogueId]="catalogueIdForContractCreation" [catalogueUuid]="catalogueUuidForContractCreation"
                                   (onContractCreationCompleted)="onContractCreationCompleted()"></company-terms-and-conditions>
+</div>
+
+<div *ngIf="viewMode == 'OfferView' && productOfferingDetails">
+    <!-- Card representing the clause-->
+    <div class="card" style="font-size: 0.9rem">
+        <!-- Network Id-->
+        <div class="card-header">
+            <text-input *ngIf="productOfferingDetails.selectedProduct" [label]="'Product to be offered' | translate" [text]="selectName(productOfferingDetails.selectedProduct.goodsItem.item)" [rows]="6" [maxLength]="2047" [rowClass]="'m-0 space-before'" [valueClass]="'col-8'" [presentationMode]="'view'">
+            </text-input>
+            <text-input *ngIf="productOfferingDetails.selectedCatalogIds" [label]="'Catalogues to be offered' | translate" [(text)]="productOfferingDetails.selectedCatalogIds" [rows]="6" [maxLength]="2047" [rowClass]="'m-0 space-before'" [valueClass]="'col-8'" [presentationMode]="'view'">
+            </text-input>
+        </div>
+        <!-- Network Description -->
+        <div class="card-body" >
+            <!-- Description -->
+            <text-input [label]="'Offer Details' | translate" [(text)]="productOfferingDetails.description" [rows]="6" [maxLength]="2047" [rowClass]="'m-0 space-before'" [valueClass]="'col-8'" [placeholder]="'Please, explain the details of your offer here.'" [required]="true">
+            </text-input>
+        </div>
+        <!-- Companies in the Network -->
+        <div class="card-footer" >
+            <div *ngIf="!companyListInput" class="row space-before">
+                <div class="col-3 company-list-label">
+                    <strong><span [innerHTML]="'Select your network:' | translate"></span></strong>
+                </div>
+                <div class="col-7 space-left">
+                    <select class="form-control " (change)="onSelectedNetwork($event.target.value)" required>
+                        <option></option>
+                        <option *ngFor='let network of settings.negotiationSettings.company.network;let i=index'>{{network.id}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row space-before">
+                <div class="col-3 company-list-label">
+                    <strong><span [innerHTML]="'Companies:' | translate"></span></strong>
+                </div>
+                <div  class="col-7 ">
+                    <call-status [callStatus]="getPartyNameCallStatus"></call-status>
+                    <div *ngIf="partyNameMap || productOfferingDetails.vatNumber.length == 0" class="object-list">
+                        <div *ngFor="let vatNumber of productOfferingDetails.vatNumber;let i=index" class="bordered my-1 ml-1">
+                            <small class="p-0">{{partyNameMap.get(vatNumber)}}</small>
+                            <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCompanyFromList(i)"></i>
+                        </div>
+                        <button class="btn btn-outline-primary space-left" (click)="onAddCompanyToList()" [disabled]="isPartyNamesLoading()">
+                            <span [innerHTML]="'Add Company' | translate"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="config.networkEnabled && settings.negotiationSettings.company.network && settings.negotiationSettings.company.network.length > 0"><button class="btn btn-link pl-0" type="button" (click)="onListInputUpdated()"><span *ngIf="!companyListInput"><span [innerHTML]="'Switch to list input.' | translate"></span></span><span *ngIf="companyListInput"><span [innerHTML]="'Want to make use of your networks? Switch to network input.' | translate"></span></span></button></div>
+        </div>
+    </div>
+    <div class="space-before">
+        <!-- Actions -->
+        <div class="row actions-row space-before">
+            <div class="col-9 call-status-col">
+                <call-status [callStatus]="callStatus"></call-status>
+            </div>
+            <div class="col-1">
+                <button type="button" class="btn btn-secondary" (click)="cancelProductOffering()"><span [innerHTML]="'Back' | translate"></span></button>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-primary action" (click)="onSendOffer()" [disabled]="!productOfferingDetails.description"><span [innerHTML]="'Send Offer' | translate"></span></button>
+            </div>
+        </div>
+    </div>
 </div>

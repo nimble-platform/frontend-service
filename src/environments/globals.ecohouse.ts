@@ -111,9 +111,11 @@ export const config = {
     "logoPath": "./assets/eco_house_logo.png",
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": false,
+    "networkEnabled": false,
     "permanentWelcomeTab": false,
     "phoneNumberRequired": false,
     "productServiceFiltersEnabled":true,
+    "productOfferingEnabled":false,
     "vatEnabled": true,
     "projectsEnabled": true,
     "requiredAgreements": [

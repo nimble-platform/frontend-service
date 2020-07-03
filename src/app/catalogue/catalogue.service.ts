@@ -256,6 +256,22 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
+    offerCatalogsOrLines(catalogueUuids:string[],lineIds:string[],vatNumbers:string[],offerDetails:string) {
+        let url = this.baseUrl + `/catalogue/cataloguelines/offer`;
+
+        let catalogueUuidsParam = "?catalogueUuids=" + catalogueUuids.join();
+        let vatNumbersParam = "&vats=" + vatNumbers.join();
+        url += catalogueUuidsParam  + vatNumbersParam;
+        if(lineIds && lineIds.length > 0){
+            let lineIdsParam = "&lineIds=" + lineIds.join();
+            url += lineIdsParam;
+        }
+        return this.http
+            .post(url, offerDetails, { headers: this.getAuthorizedHeaders() })
+            .toPromise()
+            .catch(this.handleError);
+    }
+
     updateCatalogueLine(catalogueId: string, catalogueLineJson: string) {
         const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline`;
         return this.http

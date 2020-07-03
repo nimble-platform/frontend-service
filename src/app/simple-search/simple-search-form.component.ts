@@ -36,6 +36,7 @@ import { product_base_quantity, product_base_quantity_unit } from '../common/con
 import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from '../app.component';
 import {WhiteBlackListService} from '../catalogue/white-black-list.service';
+import {NetworkCompanyListService} from '../user-mgmt/network-company-list.service';
 
 @Component({
     selector: 'simple-search-form',
@@ -158,6 +159,7 @@ export class SimpleSearchFormComponent implements OnInit {
         private categoryService: CategoryService,
         private catalogueService: CatalogueService,
         private whiteBlackListService: WhiteBlackListService,
+        public networkCompanyListService: NetworkCompanyListService,
         private publishService: PublishService,
         public shoppingCartDataService: ShoppingCartDataService,
         private translateService: TranslateService,
@@ -1318,7 +1320,7 @@ export class SimpleSearchFormComponent implements OnInit {
     onSearchResultClicked(event): void {
         // if the page reference is publish, we don't let users navigating to product details
         // if the page reference is catalogue, we do not let users navigating to the company details
-        if (this.pageRef === 'publish' || this.pageRef === 'catalogue') {
+        if (this.pageRef === 'publish' || this.pageRef === 'network' || this.pageRef === 'offering' || this.pageRef === 'catalogue') {
             event.preventDefault();
         }
     }
@@ -1909,6 +1911,28 @@ export class SimpleSearchFormComponent implements OnInit {
         this.router.navigate(['catalogue/publish'], { queryParams: { pg: 'single', productType: 'product', searchRef: 'true' } });
     }
 
+    // methods for network functionality
+    isCompanySelectedForNetwork(vatNumber): boolean {
+        return this.networkCompanyListService.isCompanySelected(vatNumber);
+    }
+
+    onToggleCompanySelectForNetwork(toggledCompany: any, event): void {
+        event.preventDefault();
+        // set timeout is required since the default checkbox implementation prevents updating status of the checkbox
+        setTimeout(() => {
+            if(this.networkCompanyListService.isCompanySelected(toggledCompany.vatNumber)){
+                this.onRemoveSelectedCompanyFromNetwork(toggledCompany.vatNumber);
+            } else {
+                this.networkCompanyListService.onAddSelectedCompany(toggledCompany)
+            }
+        });
+    }
+
+    onRemoveSelectedCompanyFromNetwork(company: any): void {
+        this.networkCompanyListService.onRemoveSelectedCompany(company);
+    }
+    // the end of methods for network functionality
+
     // methods for white list/black list functionality
     isCompanySelected(vatNumber:string): boolean {
         return this.whiteBlackListService.isCompanySelected(vatNumber);
@@ -1933,6 +1957,14 @@ export class SimpleSearchFormComponent implements OnInit {
     // the end of methods for white list/black list functionality
     onNavigateToCatalogue(): void {
         this.router.navigate(['dashboard'], { queryParams: { tab:"CATALOGUE", searchRef: 'true'} })
+    }
+
+    onNavigate(toNetwork:boolean){
+        if(toNetwork){
+            this.router.navigate(['/user-mgmt/company-settings'], { queryParams: { tab:"NETWORK", searchRef: 'true'} })
+        } else{
+            this.router.navigate(['/dashboard'], { queryParams: { tab:"CATALOGUE", searchRef: 'true'} })
+        }
     }
 
     onAddToCart(result: any, index: number, event: any): void {

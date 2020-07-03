@@ -26,6 +26,7 @@ import * as myGlobals from '../globals';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FEDERATION, FEDERATIONID } from '../catalogue/model/constants';
 import { Subject } from 'rxjs';
+import {NetworkCompanyListService} from '../user-mgmt/network-company-list.service';
 
 @Component({
     selector: "dashboard-threaded",
@@ -41,6 +42,7 @@ export class DashboardThreadedComponent implements OnInit {
     buyerCounter = 0;
     sellerCounter = 0;
 
+    catalogueViewMode:"OwnerView"|"ContractView"|"OfferView" = "OwnerView";
     ngUnsubscribe: Subject<void> = new Subject<void>();
     delegated = (FEDERATION() == "ON");
 
@@ -52,6 +54,7 @@ export class DashboardThreadedComponent implements OnInit {
         private modalService: NgbModal,
         private bpeService: BPEService,
         private userService: UserService,
+        private networkCompanyListService: NetworkCompanyListService,
         private router: Router,
         private route: ActivatedRoute,
         public appComponent: AppComponent
@@ -66,6 +69,13 @@ export class DashboardThreadedComponent implements OnInit {
             else
                 this.instance = FEDERATIONID();
             this.selectedTab = this.sanitizeTab(params['tab']);
+
+            // searchRef is true if the searchRef parameter is set
+            let searchRef = !!params['searchRef'];
+
+            if(searchRef && this.networkCompanyListService.productOfferingDetails != null){
+                this.catalogueViewMode = "OfferView";
+            }
         });
     }
 

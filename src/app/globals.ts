@@ -119,9 +119,11 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - logoPath: Link to the logo disabled in the navbar
 - federationLogoPath: Link to the logo of the federated login
 - logoRequired: Boolean flag if the submission of a company logo is required upon registration
+- networkEnabled: Boolean flag if the network functionality is enabled
 - permanentWelcomeTab: Boolean flag if the welcome page is permanent
 - phoneNumberRequired: Boolean flag if the phone number of a user is required upon registration
 - productServiceFiltersEnabled: Boolean flag if there is a separate filter for the product/service properties
+- productOfferingEnabled: Boolean flag if the product offering functionality is enabled
 - vatEnabled: Boolean flag if VAT rates shall be included in price calculations
 - projectsEnabled: Boolean flag if project management is available on the dashboard
 - requiredAgreements: Array of JSON objects defining the terms a user has to agree to upon registration. Each entry uses the following structure:
@@ -244,9 +246,11 @@ export const config = {
     "logoPath": "./assets/logo_mvp.png",
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": false,
+    "networkEnabled": false,
     "permanentWelcomeTab": false,
     "phoneNumberRequired": false,
     "productServiceFiltersEnabled":true,
+    "productOfferingEnabled":false,
     "vatEnabled": true,
     "projectsEnabled": true,
     "requiredAgreements": [

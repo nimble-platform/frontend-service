@@ -39,11 +39,13 @@ export class CatalogueLinePanelComponent {
     @Input() catalogueLine: CatalogueLine;
     @Input() settings: CompanySettings;
     @Input() presentationMode: string;
+    @Input() offeringProduct:boolean = false;
 
     // check whether catalogue-line-panel should be displayed
     @Input() show = false;
     @Output() showChange = new EventEmitter<boolean>();
     @Output() catalogueLineDeleted = new EventEmitter();
+    @Output() catalogueLineOffered = new EventEmitter();
 
     productWrapper: ProductWrapper;
 
@@ -72,6 +74,10 @@ export class CatalogueLinePanelComponent {
             this.router.navigate(['catalogue/publish-logistic'], { queryParams: { pg: "single" } });
         else
             this.router.navigate(['catalogue/publish'], { queryParams: { pg: "single" } });
+    }
+
+    offerProduct(){
+        this.catalogueLineOffered.emit(null);
     }
 
     deleteCatalogueLine(): void {

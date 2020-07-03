@@ -21,7 +21,7 @@ import { CallStatus } from "../../../common/call-status";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { PublishService } from "../../publish-and-aip.service";
 import { CategoryService } from "../../category/category.service";
-import { isLogisticsService } from '../../../common/utils';
+import {copy, isLogisticsService} from '../../../common/utils';
 import { UserService } from "../../../user-mgmt/user.service";
 import { CompanySettings } from "../../../user-mgmt/model/company-settings";
 import { CataloguePaginationResponse } from '../../model/publish/catalogue-pagination-response';
@@ -36,9 +36,11 @@ import { CatalogueLine } from "../../model/publish/catalogue-line";
 import { TranslateService } from '@ngx-translate/core';
 import { DeleteExportCatalogueModalComponent } from "./delete-export-catalogue-modal.component";
 import {WhiteBlackListService} from '../../white-black-list.service';
+import {NetworkCompanyListService} from '../../../user-mgmt/network-company-list.service';
 import {AppComponent} from '../../../app.component';
 import * as myGlobals from '../../../globals';
 import {SimpleSearchService} from '../../../simple-search/simple-search.service';
+import {ProductOfferingDetails} from '../../model/publish/product-offering-details';
 
 @Component({
     selector: 'catalogue-view',
@@ -49,7 +51,7 @@ import {SimpleSearchService} from '../../../simple-search/simple-search.service'
 
 export class CatalogueViewComponent implements OnInit {
 
-    @Input() viewMode:"OwnerView"|"ContractView" = "OwnerView";
+    @Input() viewMode:"OwnerView"|"ContractView"|"OfferView" = "OwnerView";
     product_vendor_name = myGlobals.product_vendor_name;
 
     catalogueResponse: CataloguePaginationResponse;
@@ -102,6 +104,16 @@ export class CatalogueViewComponent implements OnInit {
     callStatus = new CallStatus();
     deleteStatuses: CallStatus[] = [];
 
+    // variables for product offering functionality
+    // whether the product selection is enabled for offering
+    productSelectionForOffering:boolean = false;
+    // call status for party names
+    getPartyNameCallStatus:CallStatus = new CallStatus();
+    // details of the product offer
+    productOfferingDetails:ProductOfferingDetails = null;
+    // whether the companies are selected from the network groups or not
+    companyListInput:boolean = true;
+    // the end of variables for product offering functionality
     public config = myGlobals.config;
 
     catalogueIdForContractCreation:string = null;
@@ -118,6 +130,7 @@ export class CatalogueViewComponent implements OnInit {
         private appComponent: AppComponent,
         private catalogueService: CatalogueService,
         private categoryService: CategoryService,
+        public networkCompanyListService: NetworkCompanyListService,
         private translate: TranslateService,
         private simpleSearchService: SimpleSearchService,
         private route: ActivatedRoute,
@@ -159,6 +172,41 @@ export class CatalogueViewComponent implements OnInit {
         });
     }
 
+    setSelectedPartiesAndPopulatePartyNameMap(){
+        // retrieve selected company vat numbers
+        let selectedPartyVatNumbers: string[] = [];
+        if(this.settings.negotiationSettings.company.network && this.settings.negotiationSettings.company.network.length > 0){
+            for (let network of this.settings.negotiationSettings.company.network) {
+                for (let vatNumber of network.vatNumber) {
+                    if(selectedPartyVatNumbers.indexOf(vatNumber) == -1){
+                        selectedPartyVatNumbers.push(vatNumber);
+                    }
+                }
+            }
+        }
+        if(this.productOfferingDetails.vatNumber.length > 0){
+            for (let vatNumber of this.productOfferingDetails.vatNumber) {
+                if(selectedPartyVatNumbers.indexOf(vatNumber) == -1){
+                    selectedPartyVatNumbers.push(vatNumber);
+                }
+            }
+        }
+
+        if(selectedPartyVatNumbers.length > 0){
+            this.getPartyNameCallStatus.submit();
+            this.simpleSearchService.getEFactoryCompanies(selectedPartyVatNumbers).then(parties => {
+                this.partyNameMap = new Map<string,string>();
+
+                for (let party of parties.result) {
+                    this.partyNameMap.set(party.vatNumber,party.legalName);
+                }
+
+                this.getPartyNameCallStatus.callback("Retrieved party names",true);
+            }).catch(error => {
+                this.getPartyNameCallStatus.error(this.translate.instant("Failed to get party names"),error);
+            })
+        }
+    }
 
     setWhiteBlackListAndPopulatePartyNameMap(whiteListParties:any[],blackListParties:any[]){
 
@@ -285,6 +333,10 @@ export class CatalogueViewComponent implements OnInit {
         for (; i < len; i++) {
             this.catalogueLineView[this.catalogueResponse.catalogueLines[i].id] = false;
         }
+        if(this.viewMode == 'OfferView'){
+            this.productOfferingDetails = copy(this.networkCompanyListService.productOfferingDetails);
+            this.setSelectedPartiesAndPopulatePartyNameMap();
+        }
     }
 
     getVatNumberObject(vatNumber:string){
@@ -298,9 +350,10 @@ export class CatalogueViewComponent implements OnInit {
     // methods for white/black list functionality
     onAddWhiteBlackListToCatalogue(){
         this.whiteBlackListPanelVisible = true;
+        this.productSelectionForOffering = false;
     }
 
-    onRemoveCompanyFromList(listMode:'White'|'Black',index:number) {
+    onRemoveCompanyFromWhiteBlackList(listMode:'White'|'Black', index:number) {
         if(listMode=='White'){
             this.whiteListCompanies.splice(index,1);
         } else {
@@ -308,7 +361,7 @@ export class CatalogueViewComponent implements OnInit {
         }
     }
 
-    onAddCompanyToList(listMode:'White'|'Black'): void {
+    onAddCompanyToWhiteBlackList(listMode:'White'|'Black'): void {
         this.whiteBlackListService.listMode = listMode;
         this.whiteBlackListService.catalogueId = this.selectedCatalogue;
 
@@ -330,6 +383,96 @@ export class CatalogueViewComponent implements OnInit {
         })
     }
     // the end of methods for white/black list functionality
+
+    // methods for product offering functionality
+    onOfferCatalogueButtonClicked(): void {
+        this.productSelectionForOffering = true;
+        this.whiteBlackListPanelVisible = false;
+    }
+
+    offerProduct(line){
+        this.viewMode = 'OfferView';
+
+        this.productOfferingDetails = new ProductOfferingDetails();
+        this.productOfferingDetails.selectedProduct = line;
+
+        // to retrieve party names for the ones in the network
+        this.setSelectedPartiesAndPopulatePartyNameMap();
+    }
+
+    offerCatalog(selectedCatalogueUuid:string){
+        this.productOfferingDetails = new ProductOfferingDetails();
+
+        if(selectedCatalogueUuid == 'all'){
+            this.productOfferingDetails.selectedCatalogueUuids = copy(this.catalogueIdsUUids);
+            this.productOfferingDetails.selectedCatalogIds = this.cataloguesIds.map(catalogueId => catalogueId == "default" ? "Main Catalogue":catalogueId).join();
+        } else{
+            let index = this.catalogueIdsUUids.findIndex(uuid => uuid == selectedCatalogueUuid);
+            this.productOfferingDetails.selectedCatalogueUuids = [selectedCatalogueUuid];
+            this.productOfferingDetails.selectedCatalogIds = this.cataloguesIds[index] == "default" ? "Main Catalogue": this.cataloguesIds[index];
+        }
+
+        this.viewMode = 'OfferView';
+
+        // to retrieve party names for the ones in the network
+        this.setSelectedPartiesAndPopulatePartyNameMap();
+    }
+
+    onRemoveCompanyFromList(companyIndex:number) {
+        this.productOfferingDetails.vatNumber.splice(companyIndex,1);
+    }
+
+    onAddCompanyToList(): void {
+        this.networkCompanyListService.reset();
+        this.networkCompanyListService.productOfferingDetails = this.productOfferingDetails;
+        this.router.navigate(['/simple-search'], { queryParams: { sTop: 'comp', pageRef: 'offering' } });
+    }
+
+    isPartyNamesLoading(): boolean {
+        return this.getPartyNameCallStatus.fb_submitted;
+    }
+
+    onSendOffer(){
+        this.callStatus.submit();
+
+        if(this.productOfferingDetails.vatNumber.length == 0){
+            this.callStatus.error(this.translate.instant("Select at least one company to send your offer!"));
+            return;
+        }
+
+        let catalogIds = this.productOfferingDetails.selectedCatalogueUuids;
+        let lineIds = null;
+        if(this.productOfferingDetails.selectedProduct){
+            catalogIds = [this.productOfferingDetails.selectedProduct.goodsItem.item.catalogueDocumentReference.id];
+            lineIds = [this.productOfferingDetails.selectedProduct.goodsItem.item.manufacturersItemIdentification.id]
+        }
+        this.catalogueService.offerCatalogsOrLines(catalogIds,lineIds,this.productOfferingDetails.vatNumber,this.productOfferingDetails.description).then(response => {
+            this.callStatus.callback(this.translate.instant("Offered the product details to specified companies successfully"));
+        }).catch(error => {
+            this.callStatus.error(this.translate.instant("Failed to offer your products"),error);
+        });
+    }
+
+    cancelProductOffering(){
+        this.viewMode = "OwnerView";
+        this.productSelectionForOffering = false;
+        // reset call status
+        this.callStatus.reset();
+    }
+
+    onListInputUpdated(){
+        this.companyListInput = !this.companyListInput;
+        this.productOfferingDetails.vatNumber = [];
+    }
+    onSelectedNetwork(networkId:string){
+        let network = this.settings.negotiationSettings.company.network.find(network => network.id == networkId);
+        if(network){
+            this.productOfferingDetails.vatNumber = copy(network.vatNumber);
+        } else{
+            this.productOfferingDetails.vatNumber = [];
+        }
+    }
+    // the end of methods for product offering functionality
     onDeleteCatalogueImages(): void {
         this.deleteCatalogueModal.open('delete-images');
     }
@@ -342,6 +485,8 @@ export class CatalogueViewComponent implements OnInit {
         this.catalogueUuidForContractCreation = this.selectedCatalogue;
         // change the view
         this.viewMode = "ContractView";
+
+        this.whiteBlackListPanelVisible = false;
     }
 
     onContractCreationCompleted(){

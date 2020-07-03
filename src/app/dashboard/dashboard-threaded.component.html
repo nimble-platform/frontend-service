@@ -139,7 +139,7 @@
     <!-- Catalogue tab -->
     <div *ngIf="selectedTab === TABS.CATALOGUE" class="row">
         <div class="col-12">
-            <catalogue-view></catalogue-view>
+            <catalogue-view [viewMode]="catalogueViewMode"></catalogue-view>
         </div>
     </div>
 

@@ -162,7 +162,7 @@ export class SimpleSearchService {
         searchObject.sort.push(sort);
         let url = null;
         // when the page reference is catalogue, we retrieve eFactory companies for white/black list
-        if(pageRef == "catalogue"){
+        if(pageRef == "catalogue" || pageRef == "network" || pageRef == "offering"){
             url = this.eFactoryIndexingEndpoint + `/party/search`;
             searchObject.q = "hasRegisteredUser:true";
             searchObject.fq = [];
@@ -287,7 +287,7 @@ export class SimpleSearchService {
         let url = null;
         let queryRes = this.buildQueryString(query, querySettings, true, true);
         // when the page reference is catalogue, we retrieve suggestions for eFactory companies
-        if(pageRef == "catalogue"){
+        if(pageRef == "catalogue" || pageRef == "network" || pageRef == "offering"){
             url = this.eFactoryIndexingEndpoint + `/party/search`;
             searchObject.q = "hasRegisteredUser:true AND " + queryRes.queryStr;
         }

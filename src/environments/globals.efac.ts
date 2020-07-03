@@ -108,9 +108,11 @@ export const config = {
     "logoPath": "./assets/logo_efac.png",
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": true,
+    "networkEnabled": true,
     "permanentWelcomeTab": false,
     "phoneNumberRequired": true,
     "productServiceFiltersEnabled":true,
+    "productOfferingEnabled":true,
     "vatEnabled": false,
     "projectsEnabled": true,
     "requiredAgreements": [
