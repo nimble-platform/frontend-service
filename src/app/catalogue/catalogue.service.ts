@@ -131,9 +131,9 @@ export class CatalogueService {
     }
 
     getCatalogueLine(catalogueId: string, lineId: string): Promise<CatalogueLine> {
-        let url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${lineId}`;
+        let url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${encodeURIComponent(lineId)}`;
         if (this.delegated) {
-            url = this.delegate_url + `/catalogue/${catalogueId}/catalogueline/${lineId}`;
+            url = this.delegate_url + `/catalogue/${catalogueId}/catalogueline/${encodeURIComponent(lineId)}`;
         }
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
@@ -173,7 +173,7 @@ export class CatalogueService {
         let size = lineIds.length;
         for (let i = 0; i < size; i++) {
 
-            lineIdsParam += lineIds[i];
+            lineIdsParam += encodeURIComponent(lineIds[i]);
             catalogueUuidsParam += catalogueIds[i];
 
             if (i != size - 1) {
@@ -206,7 +206,7 @@ export class CatalogueService {
         let size = lineIds.length;
         for (let i = 0; i < size; i++) {
 
-            lineIdsParam += lineIds[i];
+            lineIdsParam += encodeURIComponent(lineIds[i]);
             catalogueUuidsParam += catalogueIds[i];
 
             if (i != size - 1) {
@@ -231,7 +231,7 @@ export class CatalogueService {
                 url += "?lineIds=";
             }
 
-            url += lineIds[i];
+            url += encodeURIComponent(lineIds[i]);
 
             if (i != size - 1) {
                 url += ",";
@@ -263,7 +263,7 @@ export class CatalogueService {
         let vatNumbersParam = "&vats=" + vatNumbers.join();
         url += catalogueUuidsParam  + vatNumbersParam;
         if(lineIds && lineIds.length > 0){
-            let lineIdsParam = "&lineIds=" + lineIds.join();
+            let lineIdsParam = "&lineIds=" + lineIds.map(lineId => encodeURIComponent(lineId)).join();
             url += lineIdsParam;
         }
         return this.http
@@ -480,7 +480,7 @@ export class CatalogueService {
 
     deleteCatalogueLine(catalogueId: string, lineId: string): Promise<any> {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${lineId}`;
+        const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${encodeURIComponent(lineId)}`;
         return this.http
             .delete(url, { headers: new Headers({ "Authorization": token }) })
             .toPromise()
