@@ -123,6 +123,7 @@ export const config = {
     ],
     "showChat": false,
     "showAgent": false,
+    "showBusinessKeywordsInCompanyDetails":true,
     "showCompanyMembers": false,
     "showCompanyDetailsInPlatformMembers":false,
     "showExplorative": true,

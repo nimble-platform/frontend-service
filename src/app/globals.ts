@@ -131,6 +131,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 	* src: Link to the agreement document
 - showChat: Boolean flag if the chat is available on the instance
 - showAgent: Boolean flag if the agent configuration is available on the instance
+- showBusinessKeywordsInCompanyDetails: Boolean flag if the business keywords are visible in the company details page
 - showCompanyMembers: Boolean flag if all company members shall be eligible to see the list of company members
 - showCompanyDetailsInPlatformMembers: Boolean flag if the company details are shown when the company is selected in platform members page
 - showExplorative: Boolean flag if the explorative search feature is enabled on the instance
@@ -261,6 +262,7 @@ export const config = {
     ],
     "showChat": true,
     "showAgent": true,
+    "showBusinessKeywordsInCompanyDetails":true,
     "showCompanyMembers": false,
     "showCompanyDetailsInPlatformMembers":false,
     "showExplorative": true,

@@ -160,6 +160,7 @@ export const config = {
     ],
     "showChat": true,
     "showAgent": true,
+    "showBusinessKeywordsInCompanyDetails":true,
     "showCompanyMembers": false,
     "showCompanyDetailsInPlatformMembers":false,
     "showExplorative": true,
