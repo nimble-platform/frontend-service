@@ -172,7 +172,7 @@ export class SimpleSearchService {
             if(search_index == "Name"){
                 queryRes = this.buildQueryString(query, myGlobals.query_settings_comp, true, false);
             }
-            else if(search_index == "Business Keyword"){
+            else if(search_index == "Business Keywords"){
                 let querySettings = {
                     "fields": ["{LANG}_businessKeywords"],
                     "boosting": false,

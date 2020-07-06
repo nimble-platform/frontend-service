@@ -198,7 +198,7 @@ export class SimpleSearchFormComponent implements OnInit {
             else
                 this.searchTopic = null;
             if(this.searchTopic == "comp"){
-                this.searchIndexes = ["Name", "Business Keyword"];
+                this.searchIndexes = ["Name", "Business Keywords"];
             } else{
                 this.searchIndexes = ["Name", "Category"];
             }
@@ -426,7 +426,7 @@ export class SimpleSearchFormComponent implements OnInit {
             debounceTime(200),
             distinctUntilChanged(),
             switchMap(term =>
-                this.simpleSearchService.getCompSuggestions(term,  this.searchIndex == "Business Keyword" ? ["{LANG}_businessKeywords"] : [this.product_vendor_name, ("{LANG}_" + this.product_vendor_brand_name)],this.pageRef)
+                this.simpleSearchService.getCompSuggestions(term,  this.searchIndex == "Business Keywords" ? ["{LANG}_businessKeywords"] : [this.product_vendor_name, ("{LANG}_" + this.product_vendor_brand_name)],this.pageRef)
             )
         );
 
