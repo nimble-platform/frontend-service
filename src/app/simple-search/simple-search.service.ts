@@ -247,7 +247,7 @@ export class SimpleSearchService {
             "boosting": false,
             "boostingFactors": {}
         };
-        let queryRes = this.buildQueryString(query, querySettings, true, true,true);
+        let queryRes = this.buildQueryString(query, querySettings, true, true,search_index != "Category");
         let url = this.url + `/item/search`;
         if (this.delegated)
             url = this.delegate_url + `/item/search`;
@@ -400,13 +400,12 @@ export class SimpleSearchService {
         return suggestions;
     }
 
-    // forProduct indicates whether we are building the query string for a product or company.
-    // if it's for a product, we need to handle white/black lists of products
-    buildQueryString(query: string, qS: any, full: boolean, allLang: boolean,forProduct:boolean=false): any {
+    // considerWhiteBlackList indicates whether we handle white/black list functionality in the search
+    buildQueryString(query: string, qS: any, full: boolean, allLang: boolean,considerWhiteBlackList:boolean=false): any {
         let companyVAT = this.cookieService.get("vat");
         if (query == "*") {
             return {
-                "queryStr": forProduct ? `permittedParties:${companyVAT} OR (-permittedParties:[* TO *] AND (*:* -restrictedParties:${companyVAT} ) )`: "*",
+                "queryStr": considerWhiteBlackList ? `permittedParties:${companyVAT} OR (-permittedParties:[* TO *] AND (*:* -restrictedParties:${companyVAT} ) )`: "*",
                 "queryArr": [],
                 "queryFields": []
             };
@@ -498,7 +497,7 @@ export class SimpleSearchService {
                 queryStr += " ";
             }
         }
-        if(forProduct){
+        if(considerWhiteBlackList){
             queryStr = "(" +queryStr+")" + ` AND (permittedParties:${companyVAT} OR (-permittedParties:[* TO *] AND (*:* -restrictedParties:${companyVAT} ) ))`;
         }
         return {
