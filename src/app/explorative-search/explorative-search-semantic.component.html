@@ -379,7 +379,7 @@
     <div class="row" *ngIf="tableResult?.columns !== undefined && tableResult?.columns.length">
         <div class="table-responsive table-hover" style="overflow-y: scroll; height: 35vh">
             <table class="table table-sm table-bordered">
-                <caption><span [innerHTML]="'Available Results from NIMBLE' | translate"></span></caption>
+                <caption><span [innerHTML]="'Available Results from platform' | translate :{platformName:config.platformNameInMail}"></span></caption>
                 <thead>
                     <tr>
                         <!--<th>-->
