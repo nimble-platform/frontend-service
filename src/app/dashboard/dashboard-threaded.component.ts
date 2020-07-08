@@ -24,7 +24,7 @@ import { TABS } from "./constants";
 import { DashboardUser } from "./model/dashboard-user";
 import * as myGlobals from '../globals';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FEDERATION, FEDERATIONID } from '../catalogue/model/constants';
+import {DEFAULT_LANGUAGE, FEDERATION, FEDERATIONID} from '../catalogue/model/constants';
 import { Subject } from 'rxjs';
 import {NetworkCompanyListService} from '../user-mgmt/network-company-list.service';
 
@@ -48,6 +48,7 @@ export class DashboardThreadedComponent implements OnInit {
 
     TABS = TABS;
     public config = myGlobals.config;
+    welcomeMessage = null;
 
     constructor(
         private cookieService: CookieService,
@@ -61,6 +62,10 @@ export class DashboardThreadedComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        if (this.config.welcomeMessage[DEFAULT_LANGUAGE()])
+            this.welcomeMessage = this.config.welcomeMessage[DEFAULT_LANGUAGE()];
+        else
+            this.welcomeMessage = this.config.welcomeMessage["en"];
         this.computeUserFromCookies();
         this.getTabCounters();
         this.route.queryParams.subscribe(params => {

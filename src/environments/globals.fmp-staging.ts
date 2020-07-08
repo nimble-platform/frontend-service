@@ -454,7 +454,11 @@ export const config = {
     },
     "showLoginFederation": false,
     "unshippedOrdersTabEnabled": false,
-    "welcomeMessage":"Looks like you are new here",
+    "welcomeMessage":{
+        "en": "Looks like you are new here",
+        "es": "Parece que eres nuevo aquí",
+        "de": "Sieht aus, als seien Sie neu hier",
+    },
     "whiteBlackListForCatalogue":false,
     "federationClientID": "sample-client",
     "federationIDP": "sampleIDP",
