@@ -34,7 +34,7 @@
                 </div>
             </div>
             <!-- Trading term data type -->
-            <options-input label="Data Type" *ngIf="tradingTerm.value.valueQualifier != 'CODE'" [options]="DATA_TYPES" [(selected)]="tradingTerm.value.valueQualifier" rowClass="space-before">
+            <options-input [label]="'Data Type'|translate" *ngIf="tradingTerm.value.valueQualifier != 'CODE'" [options]="DATA_TYPES" [(selected)]="tradingTerm.value.valueQualifier" rowClass="space-before">
             </options-input>
             <!-- Trading term default values -->
             <div class="row space-before">

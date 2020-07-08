@@ -171,7 +171,7 @@ export class UserFormComponent implements OnInit {
                     this.cookieService.set(constants.chatUsername, res.rocketChatUsername, undefined, '/');
                     this.cookieService.set(constants.chatUserID, res.rocketChatUserID, undefined, '/');
                 }
-                this.submitCallStatus.callback("Login Successful");
+                this.submitCallStatus.callback(this.translate.instant("Login Successful"));
                 if (!res.companyID && myGlobals.config.companyRegistrationRequired)
                     this.appComponent.checkLogin("/user-mgmt/company-registration");
                 else

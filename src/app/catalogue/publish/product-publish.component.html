@@ -323,7 +323,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="form-group">
-                            <input type="text" class="form-control" name="inputCtrl" [(ngModel)]="categoryModalPropertyKeyword" placeholder="Filter Properties..." (input)="onFilterPropertiesInCategoryModal()" />
+                            <input type="text" class="form-control" name="inputCtrl" [(ngModel)]="categoryModalPropertyKeyword" [placeholder]="'Filter Properties...'|translate" (input)="onFilterPropertiesInCategoryModal()" />
                         </div>
                     </div>
                 </div>

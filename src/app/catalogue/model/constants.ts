@@ -74,7 +74,7 @@ export const PROPERTY_TYPES: Option[] = [
 
 export const PROCESSES = [
     { id: "Item_Information_Request", name: "Item Information Request", tooltip: "Allows buyers to request additional information regarding a product / service" },
-    { id: "Ppap", name: "PPAP", tooltip: "Prodution part approval process (specific sectors only)" },
+    { id: "Ppap", name: "PPAP", tooltip: "Production part approval process (specific sectors only)" },
     { id: "Negotiation", name: "Negotiation", tooltip: "Allows buyers to negotiate the terms of a product / service" },
     { id: "Order", name: "Order", tooltip: "Required to allow ordering of products" },
     { id: "Transport_Execution_Plan", name: "Transport Execution Plan", tooltip: "Covers the logistics-related step of the workflow" },

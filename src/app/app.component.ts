@@ -260,7 +260,7 @@ export class AppComponent implements OnInit {
                 .post(url, JSON.stringify({ 'code': code, 'redirect_URL': redirectURL[0] }), { headers: new Headers({ 'Content-Type': 'application/json' }) })
                 .toPromise()
                 .then(res => {
-                    this.submitCallStatus.callback("Login Successful!");
+                    this.submitCallStatus.callback(this.translate.instant("Login Successful"));
                     this.response = res.json();
                     this.setCookiesForFederatedLogin();
 

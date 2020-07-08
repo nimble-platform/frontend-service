@@ -118,7 +118,7 @@ export class CredentialsFormComponent implements OnInit {
                     this.cookieService.set(constants.chatUserID, res.rocketChatUserID, undefined, '/');
                 }
 
-                this.submitCallStatus.callback("Login Successful");
+                this.submitCallStatus.callback(this.translate.instant("Login Successful"));
                 if (this.redirect && this.redirect != "")
                     this.appComponent.checkLogin(this.redirect, true);
                 else if (!res.companyID && myGlobals.config.companyRegistrationRequired)

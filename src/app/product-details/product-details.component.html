@@ -23,10 +23,10 @@
             </div>
             <div class="col-xs-auto align-right">
                 <div class="float-right">
-                    <span *ngIf="!findPrefItem(line.hjid)" class="star star-b pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="addFavorites(line)" title="Add To Favorite">
+                    <span *ngIf="!findPrefItem(line.hjid)" class="star star-b pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="addFavorites(line)" [title]="'Add To Favorite' | translate">
                         <span class="half" style="width:0%">&#9733;</span>&#9733;
                     </span>
-                    <span *ngIf="findPrefItem(line.hjid)" class="star star-b full pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="removeFavorites(line)" title="Remove From Favorite">
+                    <span *ngIf="findPrefItem(line.hjid)" class="star star-b full pointer" [ngClass]="{'disabled':addFavoriteCategoryStatus.isLoading()}" (click)="removeFavorites(line)" [title]="'Remove From Favorite'">
                         <span class="half" style="width:100%">&#9733;</span>&#9733;
                     </span>
                 </div>
