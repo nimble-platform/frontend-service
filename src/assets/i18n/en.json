@@ -216,6 +216,7 @@
     "Code": "Code",
     "Collaboration cancelled": "Collaboration cancelled",
     "Collaboration finished": "Collaboration finished",
+    "Collaboration finished on": "Collaboration finished on {{date}}",
     "Collaboration stats": "Collaboration stats",
     "Comment": "Comment",
     "Common Terms": "Common Terms",

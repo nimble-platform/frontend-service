@@ -88,6 +88,7 @@
     "Code": "Code",
     "Collaboration cancelled": "Zusammenarbeit abgebrochen",
     "Collaboration finished": "Zusammenarbeit erfolgreich beendet",
+    "Collaboration finished on": "Die Zusammenarbeit wurde am beendet {{date}}",
     "Comment": "Kommentar",
     "Company": "Firma",
     "Company Certificates": "Firmenzertifikate",

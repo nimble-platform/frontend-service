@@ -216,6 +216,7 @@
     "Code": "Código",
     "Collaboration cancelled": "Colaboración Cancelada",
     "Collaboration finished": "Colaboración terminada",
+    "Collaboration finished on": "La colaboración terminó el {{date}}",
     "Collaboration stats": "Estadísticas de colaboración",
     "Comment": "Comentario",
     "Common Terms": "Términos Comunes",

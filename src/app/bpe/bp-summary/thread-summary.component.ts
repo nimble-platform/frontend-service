@@ -420,7 +420,7 @@ export class ThreadSummaryComponent implements OnInit {
 
     getCollaborationFinishedStatus(date: string): string {
         if (date) {
-            return this.translations["Collaboration finished"] + " " + this.translations["on"] + " " + date;
+            return this.translate.instant("Collaboration finished on", {date:date})
         }
         return this.translations["Collaboration finished"];
     }
