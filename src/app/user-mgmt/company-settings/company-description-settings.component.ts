@@ -26,8 +26,12 @@ import { UserService } from "../user.service";
 import { AppComponent } from "../../app.component";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { TranslateService } from '@ngx-translate/core';
-import { createTextObject, selectValueOfTextObject, getArrayOfTextObject, createTextObjectFromArray } from "../../common/utils";
-import { DEFAULT_LANGUAGE, LANGUAGES } from "../../catalogue/model/constants";
+import {
+    getArrayOfTextObject,
+    createTextObjectFromArray,
+    getSocialMediaClass
+} from '../../common/utils';
+import {DEFAULT_LANGUAGE, LANGUAGES} from '../../catalogue/model/constants';
 
 @Component({
     selector: "company-description-settings",
@@ -56,6 +60,7 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
     saveCallStatusImage: CallStatus = new CallStatus();
     @Output() onSaveEvent: EventEmitter<void> = new EventEmitter();
 
+    getSocialMediaClass = getSocialMediaClass;
     constructor(private appComponent: AppComponent,
         private modalService: NgbModal,
         private _fb: FormBuilder,

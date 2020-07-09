@@ -62,7 +62,8 @@
     <div class="col-10">
         <ng-container *ngFor="let socialMediaEntry of socialMediaList; let i = index; trackBy:trackFn">
             <div class="row mb-1">
-                <div class="col-10">
+                <div class="col-10 input-group">
+                    <i [class]="getSocialMediaClass(socialMediaList[i])"></i>
                     <input type="text" class="form-control" [(ngModel)]="socialMediaList[i]" (input)="flagSocialMediaChanged()" maxlength="255">
                 </div>
                 <div class="col-2">

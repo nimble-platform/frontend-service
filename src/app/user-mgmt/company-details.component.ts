@@ -23,7 +23,7 @@ import * as moment from "moment";
 import { CallStatus } from "../common/call-status";
 import { CompanySettings } from "./model/company-settings";
 import { AppComponent } from "../app.component";
-import { selectValueOfTextObject, sanitizeLink } from '../common/utils';
+import {selectValueOfTextObject, sanitizeLink, getSocialMediaClass} from '../common/utils';
 import { TranslateService } from '@ngx-translate/core';
 import { CredentialsService } from './credentials.service';
 import { FEDERATIONID } from '../catalogue/model/constants';
@@ -57,6 +57,7 @@ export class CompanyDetailsComponent implements OnInit {
     showEmptyPageSA = false;
     showEmptyPageBA = false;
 
+    getSocialMediaClass = getSocialMediaClass;
     constructor(private cookieService: CookieService,
         private agentService: AgentService,
         private userService: UserService,

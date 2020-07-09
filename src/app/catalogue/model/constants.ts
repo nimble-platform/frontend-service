@@ -72,6 +72,17 @@ export const PROPERTY_TYPES: Option[] = [
     { name: "Boolean", value: "BOOLEAN" },
 ]
 
+export const SOCIAL_MEDIA_CLASSES = [
+    { url: "facebook.com", class: "input-group-prepend input-group-text fab fa-facebook-f facebook-icon fa-1x" },
+    { url: "twitter.com", class: "input-group-prepend input-group-text fab fa-twitter twitter-icon fa-1x" },
+    { url: "instagram.com", class: "input-group-prepend input-group-text fab fa-instagram instagram-icon fa-1x" },
+    { url: "youtube.com", class: "input-group-prepend input-group-text fab fa-youtube youtube-icon fa-1x" },
+    { url: "pinterest.com", class: "input-group-prepend input-group-text fab fa-pinterest pinterest-icon fa-1x" },
+    { url: "linkedin.com", class: "input-group-prepend input-group-text fab fa-linkedin-in linkedin-icon fa-1x" },
+    { url: "tumblr.com", class: "input-group-prepend input-group-text fab fa-tumblr tumblr-icon fa-1x" },
+    { url: "reddit.com", class: "input-group-prepend input-group-text fab fa-reddit reddit-icon fa-1x" }
+]
+
 export const PROCESSES = [
     { id: "Item_Information_Request", name: "Item Information Request", tooltip: "Allows buyers to request additional information regarding a product / service" },
     { id: "Ppap", name: "PPAP", tooltip: "Production part approval process (specific sectors only)" },
