@@ -21,13 +21,14 @@ import { Text } from "../model/publish/text";
 import { DEFAULT_LANGUAGE } from '../model/constants';
 import {CompanyNegotiationSettings} from '../../user-mgmt/model/company-negotiation-settings';
 import {TranslateService} from '@ngx-translate/core';
-
+import {EmptyFormBase} from '../../common/validation/empty-form-base';
+const PRODUCT_DELIVERY_TRADING_INPUT = 'product_delivery_trading';
 @Component({
     selector: "product-delivery-trading",
     templateUrl: "./product-delivery-trading.component.html",
     styleUrls: ["./product-delivery-trading.component.css"]
 })
-export class ProductDeliveryTradingComponent implements OnInit {
+export class ProductDeliveryTradingComponent extends EmptyFormBase implements OnInit {
 
     @Input() wrapper: ProductWrapper;
     @Input() disabled: boolean;
@@ -38,9 +39,11 @@ export class ProductDeliveryTradingComponent implements OnInit {
     warrantyPeriodRangeDefinition:string = null;
     deliveryPeriodRangeDefinition:string = null;
     constructor(private translate: TranslateService) {
+        super(PRODUCT_DELIVERY_TRADING_INPUT);
     }
 
     ngOnInit() {
+        this.initViewFormAndAddToParentForm();
         if (this.wrapper.line.goodsItem.deliveryTerms.specialTerms == null || this.wrapper.line.goodsItem.deliveryTerms.specialTerms.length == 0) {
             this.wrapper.line.goodsItem.deliveryTerms.specialTerms = [new Text(null, DEFAULT_LANGUAGE())];
         }

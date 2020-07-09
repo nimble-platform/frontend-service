@@ -21,10 +21,11 @@ import { isCustomProperty, quantityToString } from "./utils";
 import { AbstractControl, FormControl, Validators } from '@angular/forms';
 import { ChildFormBase } from './validation/child-form-base';
 import { ValidatorFn } from '@angular/forms/src/directives/validators';
-import { stepValidator, ValidationService } from './validation/validators';
+import {periodValidator, stepValidator, ValidationService} from './validation/validators';
 import { ItemProperty } from '../catalogue/model/publish/item-property';
 import { PublishingPropertyService } from '../catalogue/publish/publishing-property.service';
 import { FIELD_NAME_QUANTITY_VALUE } from './constants';
+import {PeriodRange} from '../user-mgmt/model/period-range';
 
 const FIELD_NAME_QUANTITY_UNIT = 'quantity_unit';
 
@@ -63,6 +64,8 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
     // form validation inputs
     @Input() required = false;
     @Input() minimum: number;
+    @Input() periodRanges:  PeriodRange[];
+    @Input() periodUnits: string[];
 
     // target property for which this quantity holds value. it is used to get the associated units
     @Input() parentProperty: ItemProperty = null;
@@ -139,8 +142,8 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
      */
 
     initializeForm(): void {
-        this.initNumberInputFormControl();
         this.initUnitInputFormControl();
+        this.initNumberInputFormControl();
     }
 
     private initNumberInputFormControl(): void {
@@ -153,6 +156,9 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
             if (!this.minimum) {
                 validators.push(Validators.min(1));
             }
+        }
+        if(this.periodRanges && this.periodUnits){
+            validators.push(periodValidator(this.quantityUnitFormControl, this.periodUnits, this.periodRanges))
         }
 
         this.quantityValueFormControl = new FormControl(this.quantity.value, validators);
@@ -169,7 +175,11 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
             }
         }
 
-        this.quantityUnitFormControl = new FormControl(this.quantity.unitCode, validators);
+        if(this.quantityUnitFormControl){
+            this.quantityUnitFormControl.setValidators(validators);
+        } else{
+            this.quantityUnitFormControl = new FormControl(this.quantity.unitCode, validators);
+        }
         this.addToCurrentForm(FIELD_NAME_QUANTITY_UNIT, this.quantityUnitFormControl);
     }
 
@@ -179,11 +189,19 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
     onQuantityValueChanged(value: number) {
         // this.updateUnitFormControlOnValueUpdate(value);
         this.initUnitInputFormControl();
+        this.onQuantityChanged();
         this.onQuantityValueChange.emit(value);
     }
 
     onQuantityUnitChanged(unit: string) {
+        this.onQuantityChanged();
         this.onQuantityUnitChange.emit(unit);
+    }
+
+    onQuantityChanged(){
+        // since PeriodValidator uses both quantity value and unit for the validation,
+        // we need to check the validity of quantity value (i.e., calling PeriodValidator) when the unit is updated as well
+        this.quantityValueFormControl.updateValueAndValidity();
     }
 
     quantityToString(): string {
