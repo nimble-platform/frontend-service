@@ -361,7 +361,7 @@
                                 <div *ngFor="let facet of facetObj">
                                     <div *ngIf="facet.total > 0 && checkCompCat(facet.genName)" class="card mb-3">
                                         <div class="card-header" (click)="onFacetClicked(facet)">
-                                            {{ getName(facet.genName) }}
+                                            {{facet.realName}}
                                         </div>
                                         <div *ngIf="facet.showContent" class="card-body">
                                             <div *ngFor="let facetInner of facet.options; let i = index">
@@ -521,7 +521,7 @@
                                 <div *ngFor="let facet of facetObj">
                                     <div *ngIf="facet.total > 0 && checkCompMainCat(facet.genName)" class="card mb-3">
                                         <div class="card-header" (click)="onFacetClicked(facet)">
-                                            {{ getName(facet.genName,product_vendor) }}
+                                            {{facet.realName}}
                                         </div>
                                         <div *ngIf="facet.showContent" class="card-body">
                                             <div *ngFor="let facetInner of facet.options; let i = index">

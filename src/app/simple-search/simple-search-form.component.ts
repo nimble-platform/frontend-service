@@ -930,7 +930,6 @@ export class SimpleSearchFormComponent implements OnInit {
             let total = 0;
             let selected = false;
             let genName = "manufacturer.brandName";
-            let realName = "manufacturer." +DEFAULT_LANGUAGE() + "_brandName";
             let name =  "manufacturer." +DEFAULT_LANGUAGE() + "_brandName";
             let brandNameMap = companyFacetMap.get(DEFAULT_LANGUAGE() + "_brandName");
             let options: any[] = [];
@@ -955,26 +954,20 @@ export class SimpleSearchFormComponent implements OnInit {
                     }
                 }
             });
-            options.sort(function(a, b) {
-                var a_c = a.name;
-                var b_c = b.name;
-                return a_c.localeCompare(b_c);
-            });
-            options.sort(function(a, b) {
-                return b.count - a.count;
-            });
             if (total == 0)
                 total = 1;
             this.facetObj.push({
                 "name": name,
                 "genName": genName,
-                "realName": realName,
+                "realName": this.getName(genName,this.product_vendor),
                 "options": options,
                 "showContent":!this.collapsiblePropertyFacets || inFacetQuery,
                 "total": total,
                 "selected": selected,
                 "expanded": false
             });
+
+            this.sortFacetObj(this.facetObj[this.facetObj.length-1]);
         }
         for (let facet in res.facets) {
             if (this.simpleSearchService.checkField(facet,prefix)) {
@@ -983,7 +976,6 @@ export class SimpleSearchFormComponent implements OnInit {
                 let facetCount = 0;
 
                 let name = prefix + res.facets[facet].fieldName;
-                let realName = prefix + res.facets[facet].fieldName;
 
                 let genName = name;
                 if (genName.indexOf(DEFAULT_LANGUAGE() + "_") != -1)
@@ -1023,26 +1015,19 @@ export class SimpleSearchFormComponent implements OnInit {
                     }
                 }
 
-                options.sort(function(a, b) {
-                    var a_c = a.name;
-                    var b_c = b.name;
-                    return a_c.localeCompare(b_c);
-                });
-                options.sort(function(a, b) {
-                    return b.count - a.count;
-                });
                 if (total == 0)
                     total = 1;
                 this.facetObj.push({
                     "name": name,
                     "genName": genName,
-                    "realName": realName,
+                    "realName": this.getName(genName,this.product_vendor),
                     "options": options,
                     "showContent":!this.collapsiblePropertyFacets || facetQueries.indexOf(name) != -1,
                     "total": total,
                     "selected": selected,
                     "expanded": false
                 });
+                this.sortFacetObj(this.facetObj[this.facetObj.length-1]);
             }
         }
 
@@ -1260,12 +1245,9 @@ export class SimpleSearchFormComponent implements OnInit {
         });
 
         this.facetObj.sort(function(a, b) {
-            var a_c = a.name;
-            var b_c = b.name;
+            var a_c = a.realName;
+            var b_c = b.realName;
             return a_c.localeCompare(b_c);
-        });
-        this.facetObj.sort(function(a, b) {
-            return b.total - a.total;
         });
         this.facetObj.sort(function(a, b) {
             var ret = 0;
