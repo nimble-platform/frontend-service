@@ -258,7 +258,7 @@
         <!-- Delivery & Trading Tab -->
         <div class="row space-before" [hidden]="selectedTabSinglePublish != 'DELIVERY_TRADING'">
             <div class="col-12">
-                <product-delivery-trading [wrapper]="productWrapper" [disabled]="isLoading()">
+                <product-delivery-trading [wrapper]="productWrapper" [disabled]="isLoading()" [companyNegotiationSettings]="companyNegotiationSettings">
                 </product-delivery-trading>
             </div>
         </div>

@@ -15,7 +15,7 @@
  -->
 
 <!-- Warranty -->
-<quantity-input [label]="'Warranty Period' | translate" [disabled]="disabled" [quantityUnits]="wrapper.negotiationSettings.warrantyPeriodUnits" rowClass="space-before" [quantity]="wrapper.line.warrantyValidityPeriod.durationMeasure">
+<quantity-input [label]="'Warranty Period' | translate" [definition]="warrantyPeriodRangeDefinition" [disabled]="disabled" [quantityUnits]="wrapper.negotiationSettings.warrantyPeriodUnits" rowClass="space-before" [quantity]="wrapper.line.warrantyValidityPeriod.durationMeasure" (onQuantityUnitChange)="setWarrantyPeriodRangeDefinition()">
 </quantity-input>
 
 <hr>
@@ -25,7 +25,7 @@
 </options-input>
 
 <!-- Delivery Period -->
-<quantity-input [label]="'Delivery Period' | translate" [disabled]="disabled" [quantityUnits]="wrapper.negotiationSettings.deliveryPeriodUnits" rowClass="space-before" [quantity]="wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure">
+<quantity-input [label]="'Delivery Period' | translate" [definition]="deliveryPeriodRangeDefinition" [disabled]="disabled" [quantityUnits]="wrapper.negotiationSettings.deliveryPeriodUnits" rowClass="space-before" [quantity]="wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure" (onQuantityUnitChange)="setDeliveryPeriodRangeDefinition()">
 </quantity-input>
 
 <br />
