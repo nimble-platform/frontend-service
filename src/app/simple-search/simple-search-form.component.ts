@@ -1061,7 +1061,6 @@ export class SimpleSearchFormComponent implements OnInit {
         for (let facet in facets) {
             if (this.simpleSearchService.checkField(facet,"",facetMetadata[facet])) {
                 let facetMetadataExists: boolean = facetMetadata[facet] != null && facetMetadata[facet].label != null;
-                let propertyLabel = this.getName(facet);
                 let genName = facet;
                 if (genName.indexOf(DEFAULT_LANGUAGE() + "_") != -1)
                     genName = genName.replace(DEFAULT_LANGUAGE() + "_", "");
@@ -1069,6 +1068,12 @@ export class SimpleSearchFormComponent implements OnInit {
                     genName = genName.replace("{NULL}_", "");
                 else if (genName.indexOf("_") == 0)
                     genName = genName.replace("_", "");
+                let propertyLabel;
+                if(this.checkCompMainCat(genName)){
+                    propertyLabel = this.getName(genName,this.product_vendor);
+                } else{
+                    propertyLabel = this.getName(genName);
+                }
 
                 // we need to check decimal values separately since they might be the value of a quantity property
                 if(facet.endsWith("_dvalues")){
