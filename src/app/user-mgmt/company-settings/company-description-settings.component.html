@@ -263,9 +263,9 @@
             </button>
         </div>
         <div class="modal-body">
-            <date-input labelClass="col-2 col-form-label" labelMainClass="mb-0" valueClass="col-10" rowClass="form-group" label="Start Date" [disabled]="false" [(date)]="compEventFromDate">
+            <date-input labelClass="col-2 col-form-label" labelMainClass="mb-0" valueClass="col-10" rowClass="form-group" [label]="'Start Date'|translate" [disabled]="false" [(date)]="compEventFromDate">
             </date-input>
-            <date-input labelClass="col-2 col-form-label" labelMainClass="mb-0" valueClass="col-10" rowClass="form-group" label="End Date" [disabled]="false" [(date)]="compEventToDate">
+            <date-input labelClass="col-2 col-form-label" labelMainClass="mb-0" valueClass="col-10" rowClass="form-group" [label]="'End Date'|translate" [disabled]="false" [(date)]="compEventToDate">
             </date-input>
             <div class="form-group row">
                 <label class="col-2 col-form-label">
