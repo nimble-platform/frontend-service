@@ -117,6 +117,7 @@
 
         <!-- Product Details Tab -->
         <div class="row space-before" [hidden]="selectedTabSinglePublish != 'DETAILS'">
+            <!-- Dimensions -->
             <div class="col-12">
                 <button class='btn btn-outline-primary' (click)="toggleDimensionCard()"><span [innerHTML]="'Dimensions' | translate"></span></button>
                 <div [hidden]="!showDimensions">
@@ -149,6 +150,15 @@
                     </div>
                 </div>
             </div>
+            <!-- Additional Information-->
+            <div class="col-12 space-before">
+                <button class='btn btn-outline-primary' (click)="toggleAdditionalInformationCard()"><span [innerHTML]="'Additional Information' | translate"></span></button>
+                <div [hidden]="!showAdditionalInformation" class="row mx-auto border-bottom" style="padding:.75rem;padding-left:0;">
+                    <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event)" [binaryObjects]="getBinaryObjectsForAdditionalInformation()" (onClearFile)="onUnSelectFileForLogisticService($event)">
+                    </file-input>
+                </div>
+            </div>
+            <!-- Properties-->
             <div class="col-12">
                 <div class="row border-bottom m-0" *ngFor="let prop of getProductProperties()">
                     <div class="col-3" style="padding:.75rem;padding-left:0;">

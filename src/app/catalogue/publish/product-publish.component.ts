@@ -173,6 +173,8 @@ export class ProductPublishComponent implements OnInit {
     changePublishModeCreate: boolean = false;
     // whether we need to show dimensions or not
     showDimensions = false;
+    // whether we need to show additional information or not
+    showAdditionalInformation = false;
     // dimensions of the item
     multiValuedDimensions: MultiValuedDimension[] = null;
     // dimensions retrieved from the unit service
@@ -475,6 +477,10 @@ export class ProductPublishComponent implements OnInit {
 
     toggleDimensionCard() {
         this.showDimensions = !this.showDimensions;
+    }
+
+    toggleAdditionalInformationCard() {
+        this.showAdditionalInformation = !this.showAdditionalInformation;
     }
 
     onAddDimension(attributeId: string) {
@@ -1252,5 +1258,27 @@ export class ProductPublishComponent implements OnInit {
         }
         // return true if all inputs are valid
         return true;
+    }
+
+    // methods to handle files for additional information
+    onSelectFileForLogisticService(binaryObject: BinaryObject) {
+        const document: DocumentReference = new DocumentReference();
+        const attachment: Attachment = new Attachment();
+        attachment.embeddedDocumentBinaryObject = binaryObject;
+        document.attachment = attachment;
+        document.documentType = "Additional Information";
+
+        this.catalogueLine.goodsItem.item.itemSpecificationDocumentReference.push(document);
+    }
+
+    onUnSelectFileForLogisticService(binaryObject: BinaryObject) {
+        const i = this.catalogueLine.goodsItem.item.itemSpecificationDocumentReference.findIndex(doc => doc.attachment.embeddedDocumentBinaryObject === binaryObject);
+        if (i >= 0) {
+            this.catalogueLine.goodsItem.item.itemSpecificationDocumentReference.splice(i, 1);
+        }
+    }
+
+    getBinaryObjectsForAdditionalInformation() {
+        return this.catalogueLine.goodsItem.item.itemSpecificationDocumentReference.filter(doc => doc.documentType == "Additional Information").map(doc => doc.attachment.embeddedDocumentBinaryObject);
     }
 }
