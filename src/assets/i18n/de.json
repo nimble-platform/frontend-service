@@ -307,7 +307,7 @@
     "Offer Counter Terms": "Gegenangebot legen",
     "OK": "OK",
     "ON": "EIN",
-    "on": "am",
+    "on date": "am {{date}}",
     "on demand": "auf Nachfrage",
     "Once you received the verification e-mail, you need to logout and login again": "Sobald Sie eine Bestätigungsmail erhalten haben, müssen Sie sich ausloggen und wieder einloggen",
     "Only selected countries": "Nur ausgewählte Länder",
