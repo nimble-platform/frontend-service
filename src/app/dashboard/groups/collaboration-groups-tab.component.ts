@@ -93,6 +93,7 @@ export class CollaborationGroupsTabComponent {
     exportCallStatus: CallStatus = new CallStatus();
 
     categoryNames: string[] = null;
+    processStatus: string[] = null;
     facetQueryParameterNames: string[] = ['', '', '', ''];
     TABS = TABS;
     config = myGlobals.config;
@@ -398,6 +399,7 @@ export class CollaborationGroupsTabComponent {
     private executeOrdersFiltersQuery(query: DashboardQuery): void {
         this.filterQueryStatus.submit();
         this.categoryNames = null;
+        this.processStatus = null;
         if (this.queryParameters.tab === 'PROJECTS') {
             this.isProject = true;
         } else {
@@ -465,6 +467,12 @@ export class CollaborationGroupsTabComponent {
                     }
                 }
             });
+        }
+        if(this.filterSet.status && this.filterSet.status.length > 0){
+            this.processStatus = [];
+            for (let status of this.filterSet.status) {
+                this.processStatus.push(this.translate.instant(status));
+            }
         }
     }
 

@@ -106,7 +106,7 @@
                     </facet>
                     <facet [title]="'Trading Partner' | translate" [dataType]="'string'" [stringValues]="filterSet && filterSet.tradingPartnerNames" [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.tradingPartnerNames" [loading]="areFiltersLoading()" (triggerCriteriaChanged)="onFilterChange()">
                     </facet>
-                    <facet [title]="'Status' | translate" [dataType]="'string'" [stringValues]="filterSet && filterSet.status" [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.status" [loading]="areFiltersLoading()" (triggerCriteriaChanged)="onFilterChange()">
+                    <facet [title]="'Status' | translate" [dataType]="'string'" [stringValues]="filterSet && filterSet.status" [selectedStringValues]="modifiedFilterSet && modifiedFilterSet.status" [stringValuesToBeDisplayed]="processStatus" [loading]="areFiltersLoading() || processStatus == null" (triggerCriteriaChanged)="onFilterChange()">
                     </facet>
                 </div>
 

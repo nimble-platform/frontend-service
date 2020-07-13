@@ -53,15 +53,15 @@
         </div>
         <div class="row space-after">
             <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Incoterms' | translate"></span>:</strong></div>
-            <div class="col-3">{{ quotationWrapper.incotermsString}}</div>
+            <div class="col-3" [innerHTML]="quotationWrapper.incotermsString|translate"></div>
         </div>
         <div class="row space-after">
             <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Payment Terms' | translate"></span>:</strong></div>
-            <div class="col-3">{{ quotationWrapper.paymentTermsWrapper.paymentTerm}}</div>
+            <div class="col-3" [innerHTML]="quotationWrapper.paymentTermsWrapper.paymentTerm|translate"></div>
         </div>
         <div class="row space-after">
             <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Payment Means' | translate"></span>:</strong></div>
-            <div class="col-3">{{ quotationWrapper.paymentMeans}}</div>
+            <div class="col-3" [innerHTML]="quotationWrapper.paymentMeans|translate">}</div>
         </div>
         <div class="row space-after">
             <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Data monitoring service requested' | translate"></span>:</strong></div>
