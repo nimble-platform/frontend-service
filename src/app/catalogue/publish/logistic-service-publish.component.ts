@@ -136,7 +136,6 @@ export class LogisticServicePublishComponent implements OnInit {
                 // set furniture ontology logistic categories
                 this.furnitureOntologyLogisticCategories = furnitureOntologyLogisticCategories;
                 this.initView(party, catalogueResponse, settings, eClassLogisticCategories);
-                this.publishStateService.publishingStarted = true;
                 this.callStatus.callback("Successfully initialized.", true);
             })
                 .catch(error => {
@@ -205,13 +204,11 @@ export class LogisticServicePublishComponent implements OnInit {
     canDeactivate(): boolean|Promise<boolean> {
         if (this.changePublishModeCreate) {
             this.publishStateService.publishMode = 'create';
-            this.publishStateService.publishingStarted = false;
         }
         if (this.dialogBox) {
             return this.appComponent.confirmModalComponent.open('You will lose any changes you made, are you sure you want to quit ?').then(result => {
                 if(result){
                     this.publishStateService.publishMode = 'create';
-                    this.publishStateService.publishingStarted = false;
                 }
                 return result;
             });
@@ -256,11 +253,9 @@ export class LogisticServicePublishComponent implements OnInit {
         } else {
             // new publishing is the first entry to the publishing page
             // i.e. publishing from scratch
-            if (this.publishStateService.publishingStarted == false) {
-                this.logisticCatalogueLines = UBLModelUtils.createCatalogueLinesForLogistics(catalogueResponse.catalogueUuid, userParty, settings, this.logisticRelatedServices, eClassLogisticCategories, this.furnitureOntologyLogisticCategories);
-                this.getServiceTypesFromLogisticsCatalogueLines();
-                this.populateLogisticPublishMode();
-            }
+            this.logisticCatalogueLines = UBLModelUtils.createCatalogueLinesForLogistics(catalogueResponse.catalogueUuid, userParty, settings, this.logisticRelatedServices, eClassLogisticCategories, this.furnitureOntologyLogisticCategories);
+            this.getServiceTypesFromLogisticsCatalogueLines();
+            this.populateLogisticPublishMode();
         }
     }
 
