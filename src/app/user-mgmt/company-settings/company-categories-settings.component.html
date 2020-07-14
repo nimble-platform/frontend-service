@@ -28,7 +28,7 @@
                 <th class="col-3"><span [innerHTML]="'Actions' | translate"></span></th>
             </tr>
             <tr *ngIf="prefCats.length==0">
-                <td colspan="3">No favorite categories</td>
+                <td colspan="3" [innerHTML]="'No favorite categories'|translate"></td>
             </tr>
             <tr *ngFor="let prefCat of prefCats; let i = index">
                 <td>{{prefCat.split("::")[2]}}</td>

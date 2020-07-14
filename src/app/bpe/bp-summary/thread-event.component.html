@@ -16,7 +16,7 @@
 
 <div class="row thread-entry-row">
     <div class="col-2">
-        <p>{{event.presentableProcessType}}</p>
+        <p [innerHTML]="event.presentableProcessType|translate"></p>
     </div>
     <div class="col-3">
         <p>{{event.requestDate}}</p>

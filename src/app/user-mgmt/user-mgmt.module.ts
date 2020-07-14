@@ -45,6 +45,7 @@ import { UserProfileComponent } from './user-profile.component';
 import { AgentsComponent } from './agents.component';
 import { CompanyTermsAndConditions } from './company-settings/company-terms-and-conditions';
 import { EditTradingTermModalComponent } from './company-settings/edit-trading-term-modal.component';
+import {CompanyNetworkSettingsComponent} from './company-settings/company-network-settings.component';
 
 @NgModule({
     imports: [
@@ -74,6 +75,7 @@ import { EditTradingTermModalComponent } from './company-settings/edit-trading-t
         CompanyDeliveryTermsComponent,
         CompanyCategoriesSettingsComponent,
         CompanyTermsAndConditions,
+        CompanyNetworkSettingsComponent,
         EditTradingTermModalComponent,
         CompanyDetailsComponent,
         CompanyRatingComponent,

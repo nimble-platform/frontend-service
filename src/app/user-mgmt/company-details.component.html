@@ -35,7 +35,7 @@
         </text-input>
         <text-input presentationMode="view" [label]="'Activity Sectors' | translate" [text]="selectValueOfTextObject(details.details.industrySectors)" labelClass="col-4" valueClass="col-8">
         </text-input>
-        <text-input presentationMode="view" [label]="'Business Keywords' | translate" [text]="selectValueOfTextObject(details.details.businessKeywords)" labelClass="col-4" valueClass="col-8">
+        <text-input *ngIf="config.showBusinessKeywordsInCompanyDetails" presentationMode="view" [label]="'Business Keywords' | translate" [text]="selectValueOfTextObject(details.details.businessKeywords)" labelClass="col-4" valueClass="col-8">
         </text-input>
         <text-input presentationMode="view" [label]="'Year of Foundation' | translate" [text]="details.details.yearOfCompanyRegistration" labelClass="col-4" valueClass="col-8">
         </text-input>
@@ -113,8 +113,8 @@
             </tr>
             <tr *ngFor="let socialMedia of details.description.socialMediaList; let i = index">
                 <td *ngIf="socialMedia">
-                    <span *ngIf="getLink(socialMedia) != ''"><a [href]="getLink(socialMedia)" target="'blank'">{{socialMedia}}</a></span>
-                    <span *ngIf="getLink(socialMedia) == ''">{{socialMedia}}</span>
+                    <span *ngIf="getLink(socialMedia) != ''"><i [class]="getSocialMediaClass(socialMedia,true)"></i><a [href]="getLink(socialMedia)" target="'blank'">{{socialMedia}}</a></span>
+                    <span *ngIf="getLink(socialMedia) == ''"><i [class]="getSocialMediaClass(socialMedia,true)"></i>{{socialMedia}}</span>
                 </td>
                 <td *ngIf="!socialMedia"><span [innerHTML]="'n/A' | translate"></span></td>
             </tr>

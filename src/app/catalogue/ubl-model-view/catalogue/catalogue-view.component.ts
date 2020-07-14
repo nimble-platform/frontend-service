@@ -21,8 +21,7 @@ import { CallStatus } from "../../../common/call-status";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { PublishService } from "../../publish-and-aip.service";
 import { CategoryService } from "../../category/category.service";
-import { isLogisticsService, isTransportService } from '../../../common/utils';
-import { BPDataService } from "../../../bpe/bp-view/bp-data-service";
+import {copy, isLogisticsService} from '../../../common/utils';
 import { UserService } from "../../../user-mgmt/user.service";
 import { CompanySettings } from "../../../user-mgmt/model/company-settings";
 import { CataloguePaginationResponse } from '../../model/publish/catalogue-pagination-response';
@@ -36,19 +35,24 @@ import { Catalogue } from '../../model/publish/catalogue';
 import { CatalogueLine } from "../../model/publish/catalogue-line";
 import { TranslateService } from '@ngx-translate/core';
 import { DeleteExportCatalogueModalComponent } from "./delete-export-catalogue-modal.component";
+import {WhiteBlackListService} from '../../white-black-list.service';
+import {NetworkCompanyListService} from '../../../user-mgmt/network-company-list.service';
 import {AppComponent} from '../../../app.component';
 import * as myGlobals from '../../../globals';
+import {SimpleSearchService} from '../../../simple-search/simple-search.service';
+import {ProductOfferingDetails} from '../../model/publish/product-offering-details';
 
 @Component({
     selector: 'catalogue-view',
     templateUrl: './catalogue-view.component.html',
-    styles: ['.dropdown-toggle:after{content: initial}'],
+    styleUrls: ["./catalogue-view.component.css"],
     providers: [CookieService]
 })
 
 export class CatalogueViewComponent implements OnInit {
 
-    @Input() viewMode:"OwnerView"|"ContractView" = "OwnerView";
+    @Input() viewMode:"OwnerView"|"ContractView"|"OfferView" = "OwnerView";
+    product_vendor_name = myGlobals.product_vendor_name;
 
     catalogueResponse: CataloguePaginationResponse;
     settings: CompanySettings;
@@ -69,6 +73,21 @@ export class CatalogueViewComponent implements OnInit {
     pageSize = 10;
     addCatalogue = false;
 
+    // variables for white/black list functionality
+    // whether the white/black list panel is visible
+    whiteBlackListPanelVisible:boolean = false;
+    // selected companies for white list
+    whiteListCompanies:any[] = [];
+    // selected companies for black list
+    blackListCompanies:any[] = [];
+    // party name map for the ones included in white/black list
+    partyNameMap:Map<string,string> = null;
+    // call status for white/black list operations
+    whiteBlackListCallStatus:CallStatus = new CallStatus();
+    // the end of variables for white/black list functionality
+    // Flag indicating that the source page is the search page.
+    searchRef:boolean = false;
+
     // check whether catalogue-line-panel should be displayed for a specific catalogue line
     catalogueLineView = {};
 
@@ -85,6 +104,16 @@ export class CatalogueViewComponent implements OnInit {
     callStatus = new CallStatus();
     deleteStatuses: CallStatus[] = [];
 
+    // variables for product offering functionality
+    // whether the product selection is enabled for offering
+    productSelectionForOffering:boolean = false;
+    // call status for party names
+    getPartyNameCallStatus:CallStatus = new CallStatus();
+    // details of the product offer
+    productOfferingDetails:ProductOfferingDetails = null;
+    // whether the companies are selected from the network groups or not
+    companyListInput:boolean = true;
+    // the end of variables for product offering functionality
     public config = myGlobals.config;
 
     catalogueIdForContractCreation:string = null;
@@ -101,35 +130,120 @@ export class CatalogueViewComponent implements OnInit {
         private appComponent: AppComponent,
         private catalogueService: CatalogueService,
         private categoryService: CategoryService,
+        public networkCompanyListService: NetworkCompanyListService,
         private translate: TranslateService,
+        private simpleSearchService: SimpleSearchService,
+        private route: ActivatedRoute,
+        private whiteBlackListService: WhiteBlackListService,
         private userService: UserService,
         private router: Router) {
     }
 
     ngOnInit() {
-        this.searchText = "";
-        this.deleteStatuses = [];
-        this.catalogueText = "";
-        this.sortOption = null;
-        this.cataloguesIds = [];
-        this.catlogueId = "all";
-        this.selectedCatalogue = "all";
-        this.catalogueLinesWRTTypes = [];
-        this.catalogueLinesArray = [];
-        this.categoryNames = [];
-        this.selectedCategory = "All";
-        this.collectionSize = 0;
-        this.page = 1;
-        this.pageSize = 10;
-        this.addCatalogue = false;
-        this.catalogueLineView = {};
-        this.getCatagloueIdsForParty();
-        this.catalogueService.setEditMode(false);
-        this.sortOption = this.sortOption == null ? CATALOGUE_LINE_SORT_OPTIONS[0].name : this.sortOption;
-        this.requestCatalogue();
-        for (let i = 0; i < this.pageSize; i++) {
-            this.deleteStatuses.push(new CallStatus());
+        this.route.queryParams.subscribe((params: Params) => {
+            // searchRef is true if the source page is search page
+            this.searchRef = !!params['searchRef'];
+
+            this.searchText = "";
+            this.deleteStatuses = [];
+            this.catalogueText = "";
+            this.sortOption = null;
+            this.cataloguesIds = [];
+            this.catlogueId = this.searchRef && this.whiteBlackListService.catalogueId ? this.whiteBlackListService.catalogueId :"all";
+            this.selectedCatalogue = this.searchRef && this.whiteBlackListService.catalogueId ? this.whiteBlackListService.catalogueId :"all";
+            this.catalogueLinesWRTTypes = [];
+            this.catalogueLinesArray = [];
+            this.categoryNames = [];
+            this.selectedCategory = "All";
+            this.collectionSize = 0;
+            this.page = 1;
+            this.pageSize = 10;
+            this.addCatalogue = false;
+            this.whiteBlackListPanelVisible = this.searchRef && this.whiteBlackListService.catalogueId != null;
+            this.catalogueLineView = {};
+            this.getCatagloueIdsForParty();
+            this.catalogueService.setEditMode(false);
+            this.sortOption = this.sortOption == null ? CATALOGUE_LINE_SORT_OPTIONS[0].name : this.sortOption;
+            this.requestCatalogue();
+            for (let i = 0; i < this.pageSize; i++) {
+                this.deleteStatuses.push(new CallStatus());
+            }
+
+        });
+    }
+
+    setSelectedPartiesAndPopulatePartyNameMap(){
+        // retrieve selected company vat numbers
+        let selectedPartyVatNumbers: string[] = [];
+        if(this.settings.negotiationSettings.company.network && this.settings.negotiationSettings.company.network.length > 0){
+            for (let network of this.settings.negotiationSettings.company.network) {
+                for (let vatNumber of network.vatNumber) {
+                    if(selectedPartyVatNumbers.indexOf(vatNumber) == -1){
+                        selectedPartyVatNumbers.push(vatNumber);
+                    }
+                }
+            }
         }
+        if(this.productOfferingDetails.vatNumber.length > 0){
+            for (let vatNumber of this.productOfferingDetails.vatNumber) {
+                if(selectedPartyVatNumbers.indexOf(vatNumber) == -1){
+                    selectedPartyVatNumbers.push(vatNumber);
+                }
+            }
+        }
+
+        if(selectedPartyVatNumbers.length > 0){
+            this.getPartyNameCallStatus.submit();
+            this.simpleSearchService.getEFactoryCompanies(selectedPartyVatNumbers).then(parties => {
+                this.partyNameMap = new Map<string,string>();
+
+                for (let party of parties.result) {
+                    this.partyNameMap.set(party.vatNumber,party.legalName);
+                }
+
+                this.getPartyNameCallStatus.callback("Retrieved party names",true);
+            }).catch(error => {
+                this.getPartyNameCallStatus.error(this.translate.instant("Failed to get party names"),error);
+            })
+        }
+    }
+
+    setWhiteBlackListAndPopulatePartyNameMap(whiteListParties:any[],blackListParties:any[]){
+
+        let selectedParties = [].concat(whiteListParties).concat(blackListParties);
+        let vatNumbers = selectedParties.map(value => value.vatNumber);
+
+        if(vatNumbers.length > 0){
+            this.whiteBlackListCallStatus.submit();
+            this.simpleSearchService.getEFactoryCompanies(vatNumbers).then(response => {
+                let parties = response.result;
+                this.partyNameMap = new Map<string, string>();
+
+                for (let party of parties) {
+                    this.partyNameMap.set(party.vatNumber,party.legalName);
+                }
+
+                this.whiteListCompanies = [];
+                for (let whiteListParty of whiteListParties) {
+                    this.whiteListCompanies.push({"vatNumber":whiteListParty.vatNumber,"legalName":this.partyNameMap.get(whiteListParty.vatNumber)});
+                }
+                this.blackListCompanies = [];
+                for (let blackListParty of blackListParties) {
+                    this.blackListCompanies.push({"vatNumber":blackListParty.vatNumber,"legalName":this.partyNameMap.get(blackListParty.vatNumber)});
+                }
+
+                this.whiteBlackListCallStatus.callback("Retrieved party names",true);
+            }).catch(error => {
+                this.whiteBlackListCallStatus.error("Failed to get party names",error);
+            })
+        } else{
+            this.whiteListCompanies = [];
+            this.blackListCompanies = [];
+        }
+    }
+
+    isWhiteBlackListCallStatusLoading(): boolean {
+        return this.whiteBlackListCallStatus.fb_submitted;
     }
 
     selectName(ip: ItemProperty | Item) {
@@ -142,6 +256,7 @@ export class CatalogueViewComponent implements OnInit {
 
     changeCat() {
         this.catlogueId = this.selectedCatalogue;
+        this.whiteBlackListPanelVisible = false;
         this.requestCatalogue();
     }
 
@@ -190,23 +305,174 @@ export class CatalogueViewComponent implements OnInit {
         return this.userService.getSettingsForUser(userId);
     }
 
+    // called when the catalogue pagination response is retrieved to update the view
     private init(): void {
         let len = this.catalogueResponse.catalogueLines.length;
         this.categoryNames = this.catalogueResponse.categoryNames;
         this.collectionSize = this.catalogueResponse.size;
         this.catalogueLinesArray = [...this.catalogueResponse.catalogueLines];
         this.catalogueLinesWRTTypes = this.catalogueLinesArray;
+        // if the white/black list functionality is available,
+        // we need to set white/black lists using:
+        //  - either the ones in the catalogue pagination response if the source page is not the company search page or new catalogue is selected
+        //  - or the ones in the whiteBlackListService if the source page is the company search page
+        if(this.config.whiteBlackListForCatalogue){
+            // the source page is the company search page
+            if(this.searchRef && this.whiteBlackListService.catalogueId){
+                this.setWhiteBlackListAndPopulatePartyNameMap(this.whiteBlackListService.getSelectedCompanies('White'),this.whiteBlackListService.getSelectedCompanies('Black'));
+                // reset whiteBlackListService service
+                this.whiteBlackListService.reset()
+            }
+            else{
+                this.setWhiteBlackListAndPopulatePartyNameMap(this.catalogueResponse.permittedParties ? this.catalogueResponse.permittedParties.map(value =>  this.getVatNumberObject(value)):[],
+                    this.catalogueResponse.restrictedParties ? this.catalogueResponse.restrictedParties.map(value => this.getVatNumberObject(value)) : [])
+            }
+        }
         let i = 0;
         // Initialize catalogueLineView
         for (; i < len; i++) {
             this.catalogueLineView[this.catalogueResponse.catalogueLines[i].id] = false;
         }
+        if(this.viewMode == 'OfferView'){
+            this.productOfferingDetails = copy(this.networkCompanyListService.productOfferingDetails);
+            this.setSelectedPartiesAndPopulatePartyNameMap();
+        }
+    }
+
+    getVatNumberObject(vatNumber:string){
+        return {"vatNumber":vatNumber}
     }
 
     onDeleteCatalogue(): void {
         this.deleteCatalogueModal.open('delete');
     }
 
+    // methods for white/black list functionality
+    onAddWhiteBlackListToCatalogue(){
+        this.whiteBlackListPanelVisible = true;
+        this.productSelectionForOffering = false;
+    }
+
+    onRemoveCompanyFromWhiteBlackList(listMode:'White'|'Black', index:number) {
+        if(listMode=='White'){
+            this.whiteListCompanies.splice(index,1);
+        } else {
+            this.blackListCompanies.splice(index,1);
+        }
+    }
+
+    onAddCompanyToWhiteBlackList(listMode:'White'|'Black'): void {
+        this.whiteBlackListService.listMode = listMode;
+        this.whiteBlackListService.catalogueId = this.selectedCatalogue;
+
+        this.whiteBlackListService.setSelectedPartiesInSearchForWhiteList(this.whiteListCompanies);
+        this.whiteBlackListService.setSelectedPartiesInSearchForBlackList(this.blackListCompanies);
+
+        this.router.navigate(['/simple-search'], { queryParams: { sTop: 'comp', pageRef: 'catalogue' } });
+    }
+
+    onSaveBlackWhiteLists(){
+        let blackList = this.blackListCompanies.map(value => value.vatNumber);
+        let whiteList = this.whiteListCompanies.map(value => value.vatNumber);
+
+        this.whiteBlackListCallStatus.submit();
+        this.catalogueService.addBlackWhiteListToCatalog(this.selectedCatalogue,blackList,whiteList).then(() => {
+            this.whiteBlackListCallStatus.callback(this.translate.instant("Added black/white list to catalogue successfully"))
+        }).catch(error => {
+            this.whiteBlackListCallStatus.error("Failed to add black/white list to catalogue",error)
+        })
+    }
+    // the end of methods for white/black list functionality
+
+    // methods for product offering functionality
+    onOfferCatalogueButtonClicked(): void {
+        this.productSelectionForOffering = true;
+        this.whiteBlackListPanelVisible = false;
+    }
+
+    offerProduct(line){
+        this.viewMode = 'OfferView';
+
+        this.productOfferingDetails = new ProductOfferingDetails();
+        this.productOfferingDetails.selectedProduct = line;
+
+        // to retrieve party names for the ones in the network
+        this.setSelectedPartiesAndPopulatePartyNameMap();
+    }
+
+    offerCatalog(selectedCatalogueUuid:string){
+        this.productOfferingDetails = new ProductOfferingDetails();
+
+        if(selectedCatalogueUuid == 'all'){
+            this.productOfferingDetails.selectedCatalogueUuids = copy(this.catalogueIdsUUids);
+            this.productOfferingDetails.selectedCatalogIds = this.cataloguesIds.map(catalogueId => catalogueId == "default" ? "Main Catalogue":catalogueId).join();
+        } else{
+            let index = this.catalogueIdsUUids.findIndex(uuid => uuid == selectedCatalogueUuid);
+            this.productOfferingDetails.selectedCatalogueUuids = [selectedCatalogueUuid];
+            this.productOfferingDetails.selectedCatalogIds = this.cataloguesIds[index] == "default" ? "Main Catalogue": this.cataloguesIds[index];
+        }
+
+        this.viewMode = 'OfferView';
+
+        // to retrieve party names for the ones in the network
+        this.setSelectedPartiesAndPopulatePartyNameMap();
+    }
+
+    onRemoveCompanyFromList(companyIndex:number) {
+        this.productOfferingDetails.vatNumber.splice(companyIndex,1);
+    }
+
+    onAddCompanyToList(): void {
+        this.networkCompanyListService.reset();
+        this.networkCompanyListService.productOfferingDetails = this.productOfferingDetails;
+        this.router.navigate(['/simple-search'], { queryParams: { sTop: 'comp', pageRef: 'offering' } });
+    }
+
+    isPartyNamesLoading(): boolean {
+        return this.getPartyNameCallStatus.fb_submitted;
+    }
+
+    onSendOffer(){
+        this.callStatus.submit();
+
+        if(this.productOfferingDetails.vatNumber.length == 0){
+            this.callStatus.error(this.translate.instant("Select at least one company to send your offer!"));
+            return;
+        }
+
+        let catalogIds = this.productOfferingDetails.selectedCatalogueUuids;
+        let lineIds = null;
+        if(this.productOfferingDetails.selectedProduct){
+            catalogIds = [this.productOfferingDetails.selectedProduct.goodsItem.item.catalogueDocumentReference.id];
+            lineIds = [this.productOfferingDetails.selectedProduct.goodsItem.item.manufacturersItemIdentification.id]
+        }
+        this.catalogueService.offerCatalogsOrLines(catalogIds,lineIds,this.productOfferingDetails.vatNumber,this.productOfferingDetails.description).then(response => {
+            this.callStatus.callback(this.translate.instant("Offered the product details to specified companies successfully"));
+        }).catch(error => {
+            this.callStatus.error(this.translate.instant("Failed to offer your products"),error);
+        });
+    }
+
+    cancelProductOffering(){
+        this.viewMode = "OwnerView";
+        this.productSelectionForOffering = false;
+        // reset call status
+        this.callStatus.reset();
+    }
+
+    onListInputUpdated(){
+        this.companyListInput = !this.companyListInput;
+        this.productOfferingDetails.vatNumber = [];
+    }
+    onSelectedNetwork(networkId:string){
+        let network = this.settings.negotiationSettings.company.network.find(network => network.id == networkId);
+        if(network){
+            this.productOfferingDetails.vatNumber = copy(network.vatNumber);
+        } else{
+            this.productOfferingDetails.vatNumber = [];
+        }
+    }
+    // the end of methods for product offering functionality
     onDeleteCatalogueImages(): void {
         this.deleteCatalogueModal.open('delete-images');
     }
@@ -219,6 +485,8 @@ export class CatalogueViewComponent implements OnInit {
         this.catalogueUuidForContractCreation = this.selectedCatalogue;
         // change the view
         this.viewMode = "ContractView";
+
+        this.whiteBlackListPanelVisible = false;
     }
 
     onContractCreationCompleted(){

@@ -19,25 +19,53 @@ import { INCOTERMS } from "../model/constants";
 import { ProductWrapper } from "../../common/product-wrapper";
 import { Text } from "../model/publish/text";
 import { DEFAULT_LANGUAGE } from '../model/constants';
-
+import {CompanyNegotiationSettings} from '../../user-mgmt/model/company-negotiation-settings';
+import {TranslateService} from '@ngx-translate/core';
+import {EmptyFormBase} from '../../common/validation/empty-form-base';
+const PRODUCT_DELIVERY_TRADING_INPUT = 'product_delivery_trading';
 @Component({
     selector: "product-delivery-trading",
     templateUrl: "./product-delivery-trading.component.html",
     styleUrls: ["./product-delivery-trading.component.css"]
 })
-export class ProductDeliveryTradingComponent implements OnInit {
+export class ProductDeliveryTradingComponent extends EmptyFormBase implements OnInit {
 
     @Input() wrapper: ProductWrapper;
-    @Input() disabled: boolean
+    @Input() disabled: boolean;
+    @Input() companyNegotiationSettings: CompanyNegotiationSettings;
 
     INCOTERMS = INCOTERMS;
 
-    constructor() {
+    warrantyPeriodRangeDefinition:string = null;
+    deliveryPeriodRangeDefinition:string = null;
+    constructor(private translate: TranslateService) {
+        super(PRODUCT_DELIVERY_TRADING_INPUT);
     }
 
     ngOnInit() {
+        this.initViewFormAndAddToParentForm();
         if (this.wrapper.line.goodsItem.deliveryTerms.specialTerms == null || this.wrapper.line.goodsItem.deliveryTerms.specialTerms.length == 0) {
             this.wrapper.line.goodsItem.deliveryTerms.specialTerms = [new Text(null, DEFAULT_LANGUAGE())];
+        }
+        this.setWarrantyPeriodRangeDefinition();
+        this.setDeliveryPeriodRangeDefinition();
+    }
+
+    setWarrantyPeriodRangeDefinition(){
+        this.warrantyPeriodRangeDefinition = "";
+        const index = this.companyNegotiationSettings.warrantyPeriodUnits.indexOf(this.wrapper.line.warrantyValidityPeriod.durationMeasure.unitCode);
+        if(index != -1){
+            let range = this.companyNegotiationSettings.warrantyPeriodRanges[index];
+            this.warrantyPeriodRangeDefinition = this.translate.instant("min max range",{start:range.start,end:range.end,unit:this.wrapper.line.warrantyValidityPeriod.durationMeasure.unitCode});
+        }
+    }
+
+    setDeliveryPeriodRangeDefinition(){
+        this.deliveryPeriodRangeDefinition = "";
+        const index = this.companyNegotiationSettings.deliveryPeriodUnits.indexOf(this.wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.unitCode);
+        if(index != -1){
+            let range = this.companyNegotiationSettings.deliveryPeriodRanges[index];
+            this.deliveryPeriodRangeDefinition = this.translate.instant("min max range",{start:range.start,end:range.end,unit:this.wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.unitCode});
         }
     }
 

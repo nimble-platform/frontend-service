@@ -19,6 +19,8 @@ import { Address } from "./address";
 import { PartyIdentification } from './party-identification';
 import { PartyName } from './party-name';
 import { TradingPreferences } from './trading-preferences';
+import {Text} from './text';
+import {Network} from './network';
 
 export class Party {
     constructor(
@@ -33,7 +35,9 @@ export class Party {
         public salesTerms: TradingPreferences = null,
         public processID: string[] = [],
         public federationInstanceID: string = null,
-        public websiteURI:string = null
+        public websiteURI:string = null,
+        public network: Network[] = null,
+        public brandName: Text[] = null
     ) { }
 
 }

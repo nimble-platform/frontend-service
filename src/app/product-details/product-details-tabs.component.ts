@@ -96,11 +96,11 @@ export class ProductDetailsTabsComponent implements OnInit {
                 this.wrapper.line.goodsItem.item.transportationServiceDetails.estimatedDurationPeriod.durationMeasure.value == null &&
                 this.wrapper.line.goodsItem.item.transportationServiceDetails.scheduledServiceFrequency[0].weekDayCode.name == "" &&
                 this.wrapper.line.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportModeCode.name == "" &&
-                selectPartyName(this.wrapper.line.goodsItem.item.transportationServiceDetails.shipmentStage[0].carrierParty.partyName) == null &&
-                (this.wrapper.line.requiredItemLocationQuantity.applicableTerritoryAddress == null || this.wrapper.line.requiredItemLocationQuantity.applicableTerritoryAddress == [] || this.wrapper.line.requiredItemLocationQuantity.applicableTerritoryAddress == undefined) &&
+                selectPartyName(this.wrapper.line.goodsItem.item.transportationServiceDetails.shipmentStage[0].carrierParty.partyName) == "" &&
+                (this.wrapper.line.requiredItemLocationQuantity.applicableTerritoryAddress == null || this.wrapper.line.requiredItemLocationQuantity.applicableTerritoryAddress == undefined || this.wrapper.line.requiredItemLocationQuantity.applicableTerritoryAddress.length == 0) &&
                 this.wrapper.line.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportMeansTypeCode.name == "" &&
                 this.wrapper.line.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].humidityPercent == null &&
-                this.wrapper.line.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].refrigeratedIndicator == null &&
+                this.wrapper.line.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].refrigeratedIndicator == false &&
                 this.wrapper.line.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].characteristics == null &&
                 this.wrapper.line.goodsItem.item.transportationServiceDetails.shipmentStage[0].transportMeans.transportEquipment[0].transportEquipmentTypeCode.name == "" &&
                 this.wrapper.line.goodsItem.item.transportationServiceDetails.environmentalEmission[0].environmentalEmissionTypeCode.name == "" &&
@@ -110,7 +110,7 @@ export class ProductDetailsTabsComponent implements OnInit {
             }
         }
 
-        if (this.wrapper.getPricePerItem() == '' && this.wrapper.getFreeSample() == '') {
+        if (this.wrapper.getPricePerItem() == "On demand" && this.wrapper.getFreeSample() == 'No') {
             this.havePrice = false;
             this.selectedTab = this.getFirstTab();
         }
@@ -119,7 +119,7 @@ export class ProductDetailsTabsComponent implements OnInit {
             this.haveCertificates = false;
             this.selectedTab = this.getFirstTab();
         }
-        if (this.wrapper.line.goodsItem.item.lifeCyclePerformanceAssessmentDetails == null) {
+        if (this.wrapper.line.goodsItem.item.lifeCyclePerformanceAssessmentDetails == null || this.wrapper.line.goodsItem.item.lifeCyclePerformanceAssessmentDetails.lcpainput == null) {
             this.haveLCPA = false;
             this.selectedTab = this.getFirstTab();
         }

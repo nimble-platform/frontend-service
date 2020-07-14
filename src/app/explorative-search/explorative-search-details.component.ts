@@ -20,6 +20,7 @@ import * as d3 from 'd3';
 import { ExplorativeSearchService } from './explorative-search.service';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import * as myGlobals from '../globals';
 
 // Leaf class for Radial Tidy Tree
 export class Leaf {
@@ -44,6 +45,7 @@ export class Leaf {
 export class ExplorativeSearchDetailsComponent implements AfterViewInit, OnChanges {
     @Input() config = {}; // this comes from `explorative-search-form.component` (Parent)
     @Input() lang: string; // language selection which comes from the Parent
+    public globalConfig = myGlobals.config;
     hiddenElement = false; // to hide the graph or table
     /*Parameters that will be passed to `explorative-search-filter.component (Child)*/
     arrayPassedToChild: any[] = []; // this is passed to the child NOW

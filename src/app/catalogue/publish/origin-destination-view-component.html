@@ -34,7 +34,7 @@
             <div class="col-11">
                 <div class="row">
                     <input class="align-self-center custom-checkbox col-1" type="checkbox" [checked]="isRegionSelected(option)" (change)="onRegionChecked($event.target.checked,option,option)" [disabled]="!enableRegionSelection">
-                    <label class="form-check-label">{{option}}</label>
+                    <label class="form-check-label" [innerHTML]="option|translate"></label>
                 </div>
             </div>
         </div>

@@ -131,9 +131,9 @@ export class CatalogueService {
     }
 
     getCatalogueLine(catalogueId: string, lineId: string): Promise<CatalogueLine> {
-        let url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${lineId}`;
+        let url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${encodeURIComponent(lineId)}`;
         if (this.delegated) {
-            url = this.delegate_url + `/catalogue/${catalogueId}/catalogueline/${lineId}`;
+            url = this.delegate_url + `/catalogue/${catalogueId}/catalogueline/${encodeURIComponent(lineId)}`;
         }
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
@@ -173,7 +173,7 @@ export class CatalogueService {
         let size = lineIds.length;
         for (let i = 0; i < size; i++) {
 
-            lineIdsParam += lineIds[i];
+            lineIdsParam += encodeURIComponent(lineIds[i]);
             catalogueUuidsParam += catalogueIds[i];
 
             if (i != size - 1) {
@@ -206,7 +206,7 @@ export class CatalogueService {
         let size = lineIds.length;
         for (let i = 0; i < size; i++) {
 
-            lineIdsParam += lineIds[i];
+            lineIdsParam += encodeURIComponent(lineIds[i]);
             catalogueUuidsParam += catalogueIds[i];
 
             if (i != size - 1) {
@@ -231,7 +231,7 @@ export class CatalogueService {
                 url += "?lineIds=";
             }
 
-            url += lineIds[i];
+            url += encodeURIComponent(lineIds[i]);
 
             if (i != size - 1) {
                 url += ",";
@@ -256,10 +256,34 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
+    offerCatalogsOrLines(catalogueUuids:string[],lineIds:string[],vatNumbers:string[],offerDetails:string) {
+        let url = this.baseUrl + `/catalogue/cataloguelines/offer`;
+
+        let catalogueUuidsParam = "?catalogueUuids=" + catalogueUuids.join();
+        let vatNumbersParam = "&vats=" + vatNumbers.join();
+        url += catalogueUuidsParam  + vatNumbersParam;
+        if(lineIds && lineIds.length > 0){
+            let lineIdsParam = "&lineIds=" + lineIds.map(lineId => encodeURIComponent(lineId)).join();
+            url += lineIdsParam;
+        }
+        return this.http
+            .post(url, offerDetails, { headers: this.getAuthorizedHeaders() })
+            .toPromise()
+            .catch(this.handleError);
+    }
+
     updateCatalogueLine(catalogueId: string, catalogueLineJson: string) {
         const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline`;
         return this.http
             .put(url, catalogueLineJson, { headers: this.getAuthorizedHeaders() })
+            .toPromise()
+            .catch(this.handleError);
+    }
+
+    addBlackWhiteListToCatalog(catalogueId: string, blackList: string[], whiteList: string[]) {
+        const url = this.baseUrl + `/catalogue/${catalogueId}/white-black-list?blackList=${blackList.join(",")}&whiteList=${whiteList.join(",")}`;
+        return this.http
+            .put(url, null,{ headers: this.getAuthorizedHeaders() })
             .toPromise()
             .catch(this.handleError);
     }
@@ -456,7 +480,7 @@ export class CatalogueService {
 
     deleteCatalogueLine(catalogueId: string, lineId: string): Promise<any> {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${lineId}`;
+        const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${encodeURIComponent(lineId)}`;
         return this.http
             .delete(url, { headers: new Headers({ "Authorization": token }) })
             .toPromise()

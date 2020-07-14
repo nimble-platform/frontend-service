@@ -638,3 +638,51 @@ ngb-pagination .page-item.active .page-link {
 .td-pointer {
     cursor: pointer;
 }
+
+.facebook-icon {
+    background: #3B5998;
+    color: white;
+    width: 45px;
+}
+
+.twitter-icon {
+    background: #55ACEE;
+    color: white;
+    width: 45px;
+}
+
+.linkedin-icon {
+    background: #007bb5;
+    color: white;
+    width: 45px;
+}
+
+.youtube-icon {
+    background: #bb0000;
+    color: white;
+    width: 45px;
+}
+
+.instagram-icon {
+    background: #125688;
+    color: white;
+    width: 45px;
+}
+
+.pinterest-icon {
+    background: #cb2027;
+    color: white;
+    width: 45px;
+}
+
+.tumblr-icon {
+    background: #2c4762;
+    color: white;
+    width: 45px;
+}
+
+.reddit-icon {
+    background: #ff5700;
+    color: white;
+    width: 45px;
+}

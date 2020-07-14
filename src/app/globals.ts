@@ -58,6 +58,7 @@ export const agent_mgmt_endpoint = `http://159.69.214.42/agents`;
 export const collaboration_endpoint = `${collab_path}`;
 export const certificate_of_origin_endpoint = `http://161.156.70.125:7695`;
 export const legislation_endpoint = `http://77.230.101.223/nimsys`;
+export const eFactory_indexing_endpoint = "https://efactory-security-portal.salzburgresearch.at/api/index";
 
 
 // Explorative Search endpoints
@@ -118,9 +119,11 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - logoPath: Link to the logo disabled in the navbar
 - federationLogoPath: Link to the logo of the federated login
 - logoRequired: Boolean flag if the submission of a company logo is required upon registration
+- networkEnabled: Boolean flag if the network functionality is enabled
 - permanentWelcomeTab: Boolean flag if the welcome page is permanent
 - phoneNumberRequired: Boolean flag if the phone number of a user is required upon registration
 - productServiceFiltersEnabled: Boolean flag if there is a separate filter for the product/service properties
+- productOfferingEnabled: Boolean flag if the product offering functionality is enabled
 - vatEnabled: Boolean flag if VAT rates shall be included in price calculations
 - projectsEnabled: Boolean flag if project management is available on the dashboard
 - requiredAgreements: Array of JSON objects defining the terms a user has to agree to upon registration. Each entry uses the following structure:
@@ -128,6 +131,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 	* src: Link to the agreement document
 - showChat: Boolean flag if the chat is available on the instance
 - showAgent: Boolean flag if the agent configuration is available on the instance
+- showBusinessKeywordsInCompanyDetails: Boolean flag if the business keywords are visible in the company details page
 - showCompanyMembers: Boolean flag if all company members shall be eligible to see the list of company members
 - showCompanyDetailsInPlatformMembers: Boolean flag if the company details are shown when the company is selected in platform members page
 - showExplorative: Boolean flag if the explorative search feature is enabled on the instance
@@ -148,6 +152,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - showLoginFederation: Boolean flag if the federated login is available on the instance
 - unshippedOrdersTabEnabled: Boolean flag is the unshipped orders shall be shown on the dashboard
 - welcomeMessage: Message displayed in the welcome page
+- whiteBlackListForCatalogue: Boolean flag if the white list/ black list functionality is available
 - federationClientID: Keycloak client ID used for the federated login
 - federationIDP: Keycloak IDP used for the federated login
 - legislationSettings: Allows to toggle the legislation feature and define its relevant settings (furniture use case)
@@ -242,9 +247,11 @@ export const config = {
     "logoPath": "./assets/logo_mvp.png",
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": false,
+    "networkEnabled": false,
     "permanentWelcomeTab": false,
     "phoneNumberRequired": false,
     "productServiceFiltersEnabled":true,
+    "productOfferingEnabled":false,
     "vatEnabled": true,
     "projectsEnabled": true,
     "requiredAgreements": [
@@ -255,6 +262,7 @@ export const config = {
     ],
     "showChat": true,
     "showAgent": true,
+    "showBusinessKeywordsInCompanyDetails":true,
     "showCompanyMembers": false,
     "showCompanyDetailsInPlatformMembers":false,
     "showExplorative": true,
@@ -317,7 +325,12 @@ export const config = {
     },
     "showLoginFederation": true,
     "unshippedOrdersTabEnabled": true,
-    "welcomeMessage":"Looks like you are new here",
+    "welcomeMessage":{
+        "en": "Looks like you are new here",
+        "es": "Parece que eres nuevo aquí",
+        "de": "Sieht aus, als seien Sie neu hier",
+    },
+    "whiteBlackListForCatalogue":false,
     "federationClientID": "efact-test-client",
     "federationIDP": "EFS",
     "legislationSettings": {

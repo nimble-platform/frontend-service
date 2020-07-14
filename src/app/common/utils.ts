@@ -21,7 +21,7 @@ import { Price } from "../catalogue/model/publish/price";
 import { Category } from "../catalogue/model/category/category";
 import { Property } from "../catalogue/model/category/property";
 import { PropertyValueQualifier } from "../catalogue/model/publish/property-value-qualifier";
-import { CUSTOM_PROPERTY_LIST_ID, DEFAULT_LANGUAGE, LANGUAGES } from '../catalogue/model/constants';
+import {CUSTOM_PROPERTY_LIST_ID, DEFAULT_LANGUAGE, LANGUAGES, SOCIAL_MEDIA_CLASSES} from '../catalogue/model/constants';
 import { Item } from '../catalogue/model/publish/item';
 import { Text } from '../catalogue/model/publish/text';
 import { CatalogueLine } from "../catalogue/model/publish/catalogue-line";
@@ -329,6 +329,15 @@ export function selectName(ip: ItemProperty | Item, lang?: string) {
     return ip.name[0].value;
 }
 
+export function getSocialMediaClass(url:string, addRightSpace:boolean=false){
+    if(url != null){
+        let socialMedia = SOCIAL_MEDIA_CLASSES.filter(socialMedia => url.includes(socialMedia.url));
+        if(socialMedia.length > 0){
+            return socialMedia[0].class + (addRightSpace ? " space-right" : "");
+        }
+    }
+    return null;
+}
 // textObject represents an object which contains languageId-value pairs
 // this function is used to get value according to the default language of browser
 export function selectValueOfTextObject(textObject, lang?: string): string {

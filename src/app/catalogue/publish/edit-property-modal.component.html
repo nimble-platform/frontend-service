@@ -72,9 +72,9 @@
                     </table>
                 </div>
             </div>
-            <text-input label="Definition" [text]="getDefinition()" presentationMode="view" rowClass="space-before">
+            <text-input [label]="'Definition'|translate" [text]="getDefinition()" presentationMode="view" rowClass="space-before">
             </text-input>
-            <options-input #dataTypeOption label="Data Type" [presentationMode]="getPropertyPresentationMode()" [options]="PROPERTY_TYPES" rowClass="space-before" large="true" [(selected)]="property.valueQualifier" [selectedIndex]="propertyDataType == 'File' ? 3 : -1" (selectedChange)="resetValues()" (selectedOptionChange)="handleOptionChange($event)">
+            <options-input #dataTypeOption [label]="'Data Type'|translate" [presentationMode]="getPropertyPresentationMode()" [options]="PROPERTY_TYPES" rowClass="space-before" large="true" [(selected)]="property.valueQualifier" [selectedIndex]="propertyDataType == 'File' ? 3 : -1" (selectedChange)="resetValues()" (selectedOptionChange)="handleOptionChange($event)">
             </options-input>
             <div class="row space-before">
                 <div class="col-3">

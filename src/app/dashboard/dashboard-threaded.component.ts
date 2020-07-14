@@ -24,8 +24,9 @@ import { TABS } from "./constants";
 import { DashboardUser } from "./model/dashboard-user";
 import * as myGlobals from '../globals';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FEDERATION, FEDERATIONID } from '../catalogue/model/constants';
+import {DEFAULT_LANGUAGE, FEDERATION, FEDERATIONID} from '../catalogue/model/constants';
 import { Subject } from 'rxjs';
+import {NetworkCompanyListService} from '../user-mgmt/network-company-list.service';
 
 @Component({
     selector: "dashboard-threaded",
@@ -41,23 +42,30 @@ export class DashboardThreadedComponent implements OnInit {
     buyerCounter = 0;
     sellerCounter = 0;
 
+    catalogueViewMode:"OwnerView"|"ContractView"|"OfferView" = "OwnerView";
     ngUnsubscribe: Subject<void> = new Subject<void>();
     delegated = (FEDERATION() == "ON");
 
     TABS = TABS;
     public config = myGlobals.config;
+    welcomeMessage = null;
 
     constructor(
         private cookieService: CookieService,
         private modalService: NgbModal,
         private bpeService: BPEService,
         private userService: UserService,
+        private networkCompanyListService: NetworkCompanyListService,
         private router: Router,
         private route: ActivatedRoute,
         public appComponent: AppComponent
     ) { }
 
     ngOnInit() {
+        if (this.config.welcomeMessage[DEFAULT_LANGUAGE()])
+            this.welcomeMessage = this.config.welcomeMessage[DEFAULT_LANGUAGE()];
+        else
+            this.welcomeMessage = this.config.welcomeMessage["en"];
         this.computeUserFromCookies();
         this.getTabCounters();
         this.route.queryParams.subscribe(params => {
@@ -66,6 +74,13 @@ export class DashboardThreadedComponent implements OnInit {
             else
                 this.instance = FEDERATIONID();
             this.selectedTab = this.sanitizeTab(params['tab']);
+
+            // searchRef is true if the searchRef parameter is set
+            let searchRef = !!params['searchRef'];
+
+            if(searchRef && this.networkCompanyListService.productOfferingDetails != null){
+                this.catalogueViewMode = "OfferView";
+            }
         });
     }
 

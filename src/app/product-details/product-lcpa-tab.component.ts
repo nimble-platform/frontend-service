@@ -175,10 +175,10 @@ export class ProductLcpaTabComponent {
                 downloadLink.click();
                 document.body.removeChild(downloadLink);
 
-                this.downloadTemplateStatus.callback("Download completed");
+                this.downloadTemplateStatus.callback(this.translate.instant("Download completed"));
             },
                 error => {
-                    this.downloadTemplateStatus.error("Download failed");
+                    this.downloadTemplateStatus.error(this.translate.instant("Download failed"));
                 });
     }
 

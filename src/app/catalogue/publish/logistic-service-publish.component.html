@@ -286,12 +286,12 @@
             </div>
             <div class="col-3">
                 <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(false)">
-                    {{ getButtonLabel()  }}
+                    <span [innerHTML]="getButtonLabel()|translate"></span>
                 </button>
             </div>
             <div class="col-3">
                 <button class="btn btn-primary action" [disabled]="isLoading() || !isValidCatalogueLineForLogistics()" (click)="onPublish(true)">
-                    {{ getButtonLabel(true) }}
+                    <span [innerHTML]="getButtonLabel(true)|translate"></span>
                 </button>
             </div>
         </div>

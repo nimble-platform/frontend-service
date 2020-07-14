@@ -35,6 +35,8 @@ import { UBLModelUtils } from '../catalogue/model/ubl-model-utils';
 import { product_base_quantity, product_base_quantity_unit } from '../common/constants';
 import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from '../app.component';
+import {WhiteBlackListService} from '../catalogue/white-black-list.service';
+import {NetworkCompanyListService} from '../user-mgmt/network-company-list.service';
 
 @Component({
     selector: 'simple-search-form',
@@ -156,6 +158,8 @@ export class SimpleSearchFormComponent implements OnInit {
         private searchContextService: SearchContextService,
         private categoryService: CategoryService,
         private catalogueService: CatalogueService,
+        private whiteBlackListService: WhiteBlackListService,
+        public networkCompanyListService: NetworkCompanyListService,
         private publishService: PublishService,
         public shoppingCartDataService: ShoppingCartDataService,
         private translateService: TranslateService,
@@ -194,7 +198,7 @@ export class SimpleSearchFormComponent implements OnInit {
             else
                 this.searchTopic = null;
             if(this.searchTopic == "comp"){
-                this.searchIndexes = ["Name", "Business Keyword"];
+                this.searchIndexes = ["Name", "Business Keywords"];
             } else{
                 this.searchIndexes = ["Name", "Category"];
             }
@@ -262,6 +266,8 @@ export class SimpleSearchFormComponent implements OnInit {
                 this.catID = "";
             if (pageRef) {
                 this.pageRef = pageRef;
+            } else{
+                this.pageRef = null;
             }
             this.searchContext = searchContext ? true : false;
             if (q && sTop) {
@@ -420,7 +426,7 @@ export class SimpleSearchFormComponent implements OnInit {
             debounceTime(200),
             distinctUntilChanged(),
             switchMap(term =>
-                this.simpleSearchService.getCompSuggestions(term,  this.searchIndex == "Business Keyword" ? ["{LANG}_businessKeywords"] : [this.product_vendor_name, ("{LANG}_" + this.product_vendor_brand_name)])
+                this.simpleSearchService.getCompSuggestions(term,  this.searchIndex == "Business Keywords" ? ["{LANG}_businessKeywords"] : [this.product_vendor_name, ("{LANG}_" + this.product_vendor_brand_name)],this.pageRef)
             )
         );
 
@@ -781,7 +787,7 @@ export class SimpleSearchFormComponent implements OnInit {
         this.simpleSearchService.getCompFields()
             .then(res => {
                 let fieldLabels: string[] = this.getFieldNames(res);
-                this.simpleSearchService.getComp(q, Object.keys(fieldLabels), fq, p, rows, sort,this.searchIndex)
+                this.simpleSearchService.getComp(q, Object.keys(fieldLabels), fq, p, rows, sort,this.searchIndex,this.pageRef)
                     .then(res => {
                         if (res.result.length == 0) {
                             this.cat_loading = false;
@@ -924,7 +930,6 @@ export class SimpleSearchFormComponent implements OnInit {
             let total = 0;
             let selected = false;
             let genName = "manufacturer.brandName";
-            let realName = "manufacturer." +DEFAULT_LANGUAGE() + "_brandName";
             let name =  "manufacturer." +DEFAULT_LANGUAGE() + "_brandName";
             let brandNameMap = companyFacetMap.get(DEFAULT_LANGUAGE() + "_brandName");
             let options: any[] = [];
@@ -949,26 +954,20 @@ export class SimpleSearchFormComponent implements OnInit {
                     }
                 }
             });
-            options.sort(function(a, b) {
-                var a_c = a.name;
-                var b_c = b.name;
-                return a_c.localeCompare(b_c);
-            });
-            options.sort(function(a, b) {
-                return b.count - a.count;
-            });
             if (total == 0)
                 total = 1;
             this.facetObj.push({
                 "name": name,
                 "genName": genName,
-                "realName": realName,
+                "realName": this.getName(genName,this.product_vendor),
                 "options": options,
                 "showContent":!this.collapsiblePropertyFacets || inFacetQuery,
                 "total": total,
                 "selected": selected,
                 "expanded": false
             });
+
+            this.sortFacetObj(this.facetObj[this.facetObj.length-1]);
         }
         for (let facet in res.facets) {
             if (this.simpleSearchService.checkField(facet,prefix)) {
@@ -977,7 +976,6 @@ export class SimpleSearchFormComponent implements OnInit {
                 let facetCount = 0;
 
                 let name = prefix + res.facets[facet].fieldName;
-                let realName = prefix + res.facets[facet].fieldName;
 
                 let genName = name;
                 if (genName.indexOf(DEFAULT_LANGUAGE() + "_") != -1)
@@ -1017,26 +1015,19 @@ export class SimpleSearchFormComponent implements OnInit {
                     }
                 }
 
-                options.sort(function(a, b) {
-                    var a_c = a.name;
-                    var b_c = b.name;
-                    return a_c.localeCompare(b_c);
-                });
-                options.sort(function(a, b) {
-                    return b.count - a.count;
-                });
                 if (total == 0)
                     total = 1;
                 this.facetObj.push({
                     "name": name,
                     "genName": genName,
-                    "realName": realName,
+                    "realName": this.getName(genName,this.product_vendor),
                     "options": options,
                     "showContent":!this.collapsiblePropertyFacets || facetQueries.indexOf(name) != -1,
                     "total": total,
                     "selected": selected,
                     "expanded": false
                 });
+                this.sortFacetObj(this.facetObj[this.facetObj.length-1]);
             }
         }
 
@@ -1070,7 +1061,6 @@ export class SimpleSearchFormComponent implements OnInit {
         for (let facet in facets) {
             if (this.simpleSearchService.checkField(facet,"",facetMetadata[facet])) {
                 let facetMetadataExists: boolean = facetMetadata[facet] != null && facetMetadata[facet].label != null;
-                let propertyLabel = this.getName(facet);
                 let genName = facet;
                 if (genName.indexOf(DEFAULT_LANGUAGE() + "_") != -1)
                     genName = genName.replace(DEFAULT_LANGUAGE() + "_", "");
@@ -1078,6 +1068,12 @@ export class SimpleSearchFormComponent implements OnInit {
                     genName = genName.replace("{NULL}_", "");
                 else if (genName.indexOf("_") == 0)
                     genName = genName.replace("_", "");
+                let propertyLabel;
+                if(this.checkCompMainCat(genName)){
+                    propertyLabel = this.getName(genName,this.product_vendor);
+                } else{
+                    propertyLabel = this.getName(genName);
+                }
 
                 // we need to check decimal values separately since they might be the value of a quantity property
                 if(facet.endsWith("_dvalues")){
@@ -1254,12 +1250,9 @@ export class SimpleSearchFormComponent implements OnInit {
         });
 
         this.facetObj.sort(function(a, b) {
-            var a_c = a.name;
-            var b_c = b.name;
+            var a_c = a.realName;
+            var b_c = b.realName;
             return a_c.localeCompare(b_c);
-        });
-        this.facetObj.sort(function(a, b) {
-            return b.total - a.total;
         });
         this.facetObj.sort(function(a, b) {
             var ret = 0;
@@ -1313,7 +1306,8 @@ export class SimpleSearchFormComponent implements OnInit {
 
     onSearchResultClicked(event): void {
         // if the page reference is publish, we don't let users navigating to product details
-        if (this.pageRef === 'publish') {
+        // if the page reference is catalogue, we do not let users navigating to the company details
+        if (this.pageRef === 'publish' || this.pageRef === 'network' || this.pageRef === 'offering' || this.pageRef === 'catalogue') {
             event.preventDefault();
         }
     }
@@ -1902,6 +1896,62 @@ export class SimpleSearchFormComponent implements OnInit {
             return { hjid: product.uri, label: product.label };
         });
         this.router.navigate(['catalogue/publish'], { queryParams: { pg: 'single', productType: 'product', searchRef: 'true' } });
+    }
+
+    // methods for network functionality
+    isCompanySelectedForNetwork(vatNumber): boolean {
+        return this.networkCompanyListService.isCompanySelected(vatNumber);
+    }
+
+    onToggleCompanySelectForNetwork(toggledCompany: any, event): void {
+        event.preventDefault();
+        // set timeout is required since the default checkbox implementation prevents updating status of the checkbox
+        setTimeout(() => {
+            if(this.networkCompanyListService.isCompanySelected(toggledCompany.vatNumber)){
+                this.onRemoveSelectedCompanyFromNetwork(toggledCompany.vatNumber);
+            } else {
+                this.networkCompanyListService.onAddSelectedCompany(toggledCompany)
+            }
+        });
+    }
+
+    onRemoveSelectedCompanyFromNetwork(company: any): void {
+        this.networkCompanyListService.onRemoveSelectedCompany(company);
+    }
+    // the end of methods for network functionality
+
+    // methods for white list/black list functionality
+    isCompanySelected(vatNumber:string): boolean {
+        return this.whiteBlackListService.isCompanySelected(vatNumber);
+    }
+
+    onToggleCompanySelectForWhiteBlackList(toggledCompany: any, event): void {
+        event.preventDefault();
+        // set timeout is required since the default checkbox implementation prevents updating status of the checkbox
+        setTimeout(() => {
+            if(this.whiteBlackListService.isCompanySelected(toggledCompany.vatNumber)){
+                this.onRemoveSelectedCompany(toggledCompany.vatNumber);
+            } else {
+                this.whiteBlackListService.onAddSelectedCompany(toggledCompany)
+            }
+        });
+    }
+
+    onRemoveSelectedCompany(removedCompanyVatNumber: any): void {
+        this.whiteBlackListService.onRemoveSelectedCompany(removedCompanyVatNumber);
+    }
+
+    // the end of methods for white list/black list functionality
+    onNavigateToCatalogue(): void {
+        this.router.navigate(['dashboard'], { queryParams: { tab:"CATALOGUE", searchRef: 'true'} })
+    }
+
+    onNavigate(toNetwork:boolean){
+        if(toNetwork){
+            this.router.navigate(['/user-mgmt/company-settings'], { queryParams: { tab:"NETWORK", searchRef: 'true'} })
+        } else{
+            this.router.navigate(['/dashboard'], { queryParams: { tab:"CATALOGUE", searchRef: 'true'} })
+        }
     }
 
     onAddToCart(result: any, index: number, event: any): void {

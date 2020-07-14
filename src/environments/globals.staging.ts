@@ -32,7 +32,7 @@ export const agent_mgmt_endpoint = `http://159.69.214.42/agents`;
 export const collaboration_endpoint = `${collab_path}`;
 export const certificate_of_origin_endpoint = `http://161.156.70.125:7695`;
 export const legislation_endpoint = `http://77.230.101.223/nimsys`;
-
+export const eFactory_indexing_endpoint = "https://efactory-security-portal.salzburgresearch.at/api/index";
 
 // Explorative Search endpoints
 
@@ -145,9 +145,11 @@ export const config = {
     "logoPath": "./assets/logo_mvp.png",
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": false,
+    "networkEnabled": false,
     "permanentWelcomeTab": false,
     "phoneNumberRequired": false,
     "productServiceFiltersEnabled":true,
+    "productOfferingEnabled":false,
     "vatEnabled": true,
     "projectsEnabled": true,
     "requiredAgreements": [
@@ -158,6 +160,7 @@ export const config = {
     ],
     "showChat": true,
     "showAgent": true,
+    "showBusinessKeywordsInCompanyDetails":true,
     "showCompanyMembers": false,
     "showCompanyDetailsInPlatformMembers":false,
     "showExplorative": true,
@@ -220,7 +223,12 @@ export const config = {
     },
     "showLoginFederation": false,
     "unshippedOrdersTabEnabled": true,
-    "welcomeMessage":"Looks like you are new here",
+    "welcomeMessage":{
+        "en": "Looks like you are new here",
+        "es": "Parece que eres nuevo aquí",
+        "de": "Sieht aus, als seien Sie neu hier",
+    },
+    "whiteBlackListForCatalogue":false,
     "federationClientID": "sample-client",
     "federationIDP": "sampleIDP",
     "legislationSettings": {

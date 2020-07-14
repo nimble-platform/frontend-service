@@ -22,6 +22,7 @@ import { Observable } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 import { isNumeric } from 'rxjs/util/isNumeric';
 import { TranslateService } from '@ngx-translate/core';
+import * as myGlobals from '../globals';
 
 @Component({
     selector: 'explore-search-semantic',
@@ -43,6 +44,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
     @Input() configSPQ: Object;
     @Input() lang: string;
 
+    public config = myGlobals.config;
     // Negotiation Variables
     public negotiationEnable = false;
     private _negotiation_id: any;

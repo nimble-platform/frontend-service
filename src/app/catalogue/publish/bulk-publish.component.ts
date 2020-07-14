@@ -78,10 +78,10 @@ export class BulkPublishComponent {
                 downloadLink.click();
                 document.body.removeChild(downloadLink);
 
-                this.publishStatus.callback("Download completed");
+                this.publishStatus.callback(this.translate.instant("Download completed"));
             },
                 error => {
-                    this.publishStatus.error("Download failed");
+                    this.publishStatus.error(this.translate.instant("Download failed"));
                 });
     }
 

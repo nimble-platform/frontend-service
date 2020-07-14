@@ -144,7 +144,7 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.appComponent.translate.get(['Slow Response Time', 'Suspicious Company Information', 'Undervalued Offer', 'Rejected Delivery Terms', 'Other', 'Due to', 'Some reasons', 'Collaboration finished', 'on', 'Collaboration cancelled']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
+        this.appComponent.translate.get(['Slow Response Time', 'Suspicious Company Information', 'Undervalued Offer', 'Rejected Delivery Terms', 'Other', 'Due to', 'Some reasons', 'Collaboration finished', 'Collaboration cancelled']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
             this.translations = res;
         });
         this.route.params.subscribe(params => {
@@ -413,14 +413,14 @@ export class ThreadSummaryComponent implements OnInit {
             status += " " + this.translations["Due to"] + " " + this.translations[reason];
         }
         if (date) {
-            status += " " + this.translations["on"] + " " + date;
+            status += " " + this.translate.instant("on date", {date:date});
         }
         return status;
     }
 
     getCollaborationFinishedStatus(date: string): string {
         if (date) {
-            return this.translations["Collaboration finished"] + " " + this.translations["on"] + " " + date;
+            return this.translate.instant("Collaboration finished on", {date:date})
         }
         return this.translations["Collaboration finished"];
     }

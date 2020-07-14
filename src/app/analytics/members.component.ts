@@ -89,7 +89,7 @@ export class MembersComponent implements OnInit {
         if (this.model.q == "*") {
             this.model.q = "";
         }
-        this.simpleSearchService.getComp(this.q_submit, [], [], this.page, rows, this.sort,"Name", this.unverified, true)
+        this.simpleSearchService.getComp(this.q_submit, [], [], this.page, rows, this.sort,"Name", null,this.unverified, true)
             .then(res => {
                 this.companiesCallStatus.callback("Successfully loaded companies", true);
                 if (this.q_submit == "*")
@@ -126,7 +126,7 @@ export class MembersComponent implements OnInit {
             debounceTime(200),
             distinctUntilChanged(),
             switchMap(term =>
-                this.simpleSearchService.getCompSuggestions(term, [this.product_vendor_name, ("{LANG}_" + this.product_vendor_brand_name)], true)
+                this.simpleSearchService.getCompSuggestions(term, [this.product_vendor_name, ("{LANG}_" + this.product_vendor_brand_name)], null,true)
             )
         );
 

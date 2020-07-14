@@ -177,6 +177,7 @@ export class AppComponent implements OnInit {
             this.cookieService.set("show_welcome", "true");
         else
             this.cookieService.set("show_welcome", "false");
+        this.cookieService.set("vat", this.response.vat);
         this.cookieService.set("user_fullname", this.response.firstname + " " + this.response.lastname);
         this.cookieService.set("user_email", this.response.email);
         this.cookieService.set("bearer_token", this.response.accessToken);
@@ -259,7 +260,7 @@ export class AppComponent implements OnInit {
                 .post(url, JSON.stringify({ 'code': code, 'redirect_URL': redirectURL[0] }), { headers: new Headers({ 'Content-Type': 'application/json' }) })
                 .toPromise()
                 .then(res => {
-                    this.submitCallStatus.callback("Login Successful!");
+                    this.submitCallStatus.callback(this.translate.instant("Login Successful"));
                     this.response = res.json();
                     this.setCookiesForFederatedLogin();
 

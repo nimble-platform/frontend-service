@@ -132,7 +132,7 @@
                 <div class="form-control" [ngClass]="{'ng-valid required':rolesChangeSelected,'ng-invalid':!rolesChangeSelected}">
                     <div *ngFor="let role of userRoles">
                         <input [id]="role.identifier+'_2'" type="checkbox" class="form-check-input" (change)="setChangeRoles(role.identifier)" [checked]="invToChange.roleIDs && invToChange.roleIDs.indexOf(role.identifier)!=-1" [disabled]="checkDisable(role.identifier)">
-                        <label class="form-check-label" [for]="role.identifier+'_2'">{{role.name}}</label>
+                        <label class="form-check-label" [for]="role.identifier+'_2'"><span [innerHTML]="role.name|translate"></span></label>
                     </div>
                 </div>
             </div>
