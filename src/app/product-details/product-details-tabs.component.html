@@ -120,6 +120,9 @@
             <div *ngIf="config.vatEnabled && wrapper.getVat() != ''" class="p-1">
                 <strong><span [innerHTML]="'VAT:' | translate"></span></strong> {{ wrapper.getVat() }}%
             </div>
+            <div *ngIf="wrapper.getMinimumOrderQuantity() != 'Not specified'" class="p-1">
+                <strong><span [innerHTML]="'Minimum Order Quantity:' | translate"></span></strong> {{ wrapper.getMinimumOrderQuantity() }}
+            </div>
             <div *ngIf="wrapper.getFreeSample() != ''" class="p-1">
                 <strong><span [innerHTML]="'Free Sample:' | translate"></span></strong> {{ wrapper.getFreeSample() }}
             </div>

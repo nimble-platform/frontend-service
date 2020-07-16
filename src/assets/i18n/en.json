@@ -616,6 +616,7 @@
     "min": "min",
     "min max range": " (minimum: {{start}} {{unit}}, maximum: {{end}} {{unit}})",
     "Minimum Order Quantity": "Minimum Order Quantity",
+    "Minimum Order Quantity:": "Minimum Order Quantity:",
     "Monitor": "Monitor",
     "Monitor Row": "<tr><td>Monitor</td><td>Can observe sales, purchases and relevant business data on the {{platformName}} platform without executing the associated business processes</td></tr>",
     "More": "More",

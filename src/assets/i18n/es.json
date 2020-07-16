@@ -616,6 +616,7 @@
     "min": "min",
     "min max range": " (mínimo: {{start}} {{unit}}, máximo: {{end}} {{unit}})",
     "Minimum Order Quantity": "Cantidad Mínima de Pedido",
+    "Minimum Order Quantity:": "Cantidad Mínima de Pedido:",
     "Monitor": "Monitor",
     "Monitor Row": "<tr><td>Monitor</td><td>Puede observar ventas, compras y datos comerciales relevantes en la plataforma {{platformName}} sin ejecutar los procesos comerciales asociados</td></tr>",
     "More": "Más",

@@ -190,7 +190,7 @@
                 <div class="row">
                     <strong class="font-weight-500 col-5"><span [innerHTML]="'Quantity' | translate"></span>:</strong>
                     <div class="col-4 quantity-input">
-                        <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [formControl]="orderQuantityFormControl" [ngModel]="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value" (ngModelChange)="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value = $event; onOrderQuantityChange()" class="form-control form-control-sm" [disabled]="isLoading() || isReadOnly()" />
+                        <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [formControl]="orderQuantityFormControl" [ngModel]="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value" (ngModelChange)="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value = $event; onOrderQuantityChange()" class="form-control form-control-sm" [disabled]="isLoading() || isReadOnly()" [ngbTooltip]="validationService.getValidationErrorMessage(orderQuantityFormControl)"  />
                     </div>
                     <span class="col-3" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() }}</span>
                 </div>

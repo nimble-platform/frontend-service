@@ -33,6 +33,7 @@ import { ChildFormBase } from '../../common/validation/child-form-base';
 import { ValidatorFn } from '@angular/forms/src/directives/validators';
 import { priceValidator } from '../../common/validation/validators';
 import { FIELD_NAME_PRODUCT_PRICE_AMOUNT, FIELD_NAME_PRODUCT_PRICE_BASE_QUANTITY } from '../../common/constants';
+import {Quantity} from '../model/publish/quantity';
 const PRODUCT_PRICE_INPUT = 'product_price';
 @Component({
     selector: "product-price-tab",
@@ -68,6 +69,9 @@ export class ProductPriceTabComponent extends ChildFormBase implements OnInit {
 
     ngOnInit() {
 
+        if(this.catalogueLine.minimumOrderQuantity == null){
+            this.catalogueLine.minimumOrderQuantity = new Quantity(null,this.catalogueLine.requiredItemLocationQuantity.price.baseQuantity.unitCode);
+        }
         if (this.catalogueLine.requiredItemLocationQuantity.applicableTaxCategory == null || this.catalogueLine.requiredItemLocationQuantity.applicableTaxCategory.length == 0) {
             this.catalogueLine.requiredItemLocationQuantity.applicableTaxCategory = [new TaxCategory()];
         }
@@ -123,5 +127,9 @@ export class ProductPriceTabComponent extends ChildFormBase implements OnInit {
             }
         }
         return this.defaultVatRate;
+    }
+
+    onBaseQuantityUnitChanged(unit:string){
+        this.catalogueLine.minimumOrderQuantity.unitCode = unit;
     }
 }

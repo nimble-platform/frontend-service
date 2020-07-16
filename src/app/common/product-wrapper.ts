@@ -175,6 +175,14 @@ export class ProductWrapper {
         return this.line.requiredItemLocationQuantity.applicableTaxCategory[0] ? this.line.requiredItemLocationQuantity.applicableTaxCategory[0].percent + '' : '';
     }
 
+    getMinimumOrderQuantity():string{
+        if (!this.line.minimumOrderQuantity.value) {
+            return "Not specified";
+        }
+
+        return `${this.line.minimumOrderQuantity.value} ${this.line.minimumOrderQuantity.unitCode}`;
+    }
+
     getPropertyName(property: ItemProperty): string {
         return sanitizePropertyName(selectName(property));
     }
