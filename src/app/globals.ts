@@ -136,6 +136,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - showCompanyDetailsInPlatformMembers: Boolean flag if the company details are shown when the company is selected in platform members page
 - showExplorative: Boolean flag if the explorative search feature is enabled on the instance
 - showFullName: Boolean flag if the full name of a user is shown in the navbar
+- showGoogleTranslateOption: Boolean flag if google translate is shown in the navbar
 - showLCPA: Boolean flag if LCPA codes shall be linkable to products
 - showPPAP: Boolean flag if information regarding the PPAP process is enabled on the instance
 - showTrack: Boolean flag if the Track & Trace feature is enabled on the instance
@@ -267,6 +268,7 @@ export const config = {
     "showCompanyDetailsInPlatformMembers":false,
     "showExplorative": true,
     "showFullName": false,
+    "showGoogleTranslateOption": false,
     "showLCPA": true,
     "showPPAP": true,
     "showTrack": true,

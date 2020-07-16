@@ -132,6 +132,7 @@
                     <ng-container *ngFor="let lang of availableLanguages">
                         <a class="dropdown-item pointer" [ngClass]="{'active': lang==language}" (click)="setLang(lang)">{{lang.toUpperCase()}}</a>
                     </ng-container>
+                    <div *ngIf="config.showGoogleTranslateOption" #google_translate_element id="google_translate_element"></div>
                 </div>
             </li>
         </ul>

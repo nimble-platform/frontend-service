@@ -128,6 +128,7 @@ export const config = {
     "showCompanyDetailsInPlatformMembers":false,
     "showExplorative": false,
     "showFullName": false,
+    "showGoogleTranslateOption": false,
     "showLCPA": false,
     "showPPAP": true,
     "showTrack": false,
