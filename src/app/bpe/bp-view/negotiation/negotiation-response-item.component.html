@@ -240,14 +240,14 @@
                         </div>
                         <div class="col-3"></div>
                         <div class="col-3">
-                            <quantity-input [rowClass]="'space-before'" [label]="'Valid for'" [labelClass]="'col-5'" [valueClass]="'col-7'" [valueSizeClass]="'col-5'" [unitSizeClass]="'col-7'" [definition]="'The period within which the offered conditions will be valid upon confirmation by the seller.'" [quantity]="wrapper.rfqFrameContractDuration" [disabled]="true">
+                            <quantity-input [rowClass]="'space-before'" [label]="'Valid for'|translate" [labelClass]="'col-5'" [valueClass]="'col-7'" [valueSizeClass]="'col-5'" [unitSizeClass]="'col-7'" [definition]="'The period within which the offered conditions will be valid upon confirmation by the seller.'|translate" [quantity]="wrapper.rfqFrameContractDuration" [disabled]="true">
                             </quantity-input>
                         </div>
                         <div class="col-3">
                             <ng-container *ngIf="isSellerTermsVisible()">
-                                <quantity-input rowClass="space-before {{!wrapper.checkEqualForResponse('frameContract') ? 'bg-danger': ''}}" [label]="'Valid for'" [labelClass]="'col-5'" [valueClass]="'col-7'" [valueSizeClass]="'col-5'" [unitSizeClass]="'col-7'" [definition]="'The period within which the offered conditions will be valid upon confirmation by the seller.'" [quantity]="wrapper.newQuotationWrapper.frameContractDuration" [quantityType]="'frame_contract_period'" [disabled]="isReadOnly()">
+                                <quantity-input rowClass="space-before {{!wrapper.checkEqualForResponse('frameContract') ? 'bg-danger': ''}}" [label]="'Valid for'|translate" [labelClass]="'col-5'" [valueClass]="'col-7'" [valueSizeClass]="'col-5'" [unitSizeClass]="'col-7'" [definition]="'The period within which the offered conditions will be valid upon confirmation by the seller.'|translate" [quantity]="wrapper.newQuotationWrapper.frameContractDuration" [quantityType]="'frame_contract_period'" [disabled]="isReadOnly()">
                                 </quantity-input>
-                                <text-input [rowClass]="'space-before'" [rows]="1" [label]="'Until'" [labelClass]="'col-5'" [valueClass]="'col-7'" [definition]="'The date until which the frame contract will be valid.'" [disabled]="true" [text]="getContractEndDate()">
+                                <text-input [rowClass]="'space-before'" [rows]="1" [label]="'Until'|translate" [labelClass]="'col-5'" [valueClass]="'col-7'" [definition]="'The date until which the frame contract will be valid.'|translate" [disabled]="true" [text]="getContractEndDate()">
                                 </text-input>
                             </ng-container>
                         </div>

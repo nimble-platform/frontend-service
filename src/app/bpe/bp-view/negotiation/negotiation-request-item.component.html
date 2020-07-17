@@ -231,11 +231,11 @@
                     <div class="row">
                         <div class="col-2">
                             <strong class="font-weight-500"><span [innerHTML]="'Frame Contract' | translate"></span>:</strong>
-                            <span title="The period within which the offered conditions will be valid upon confirmation by the seller.">&#9432;</span>
+                            <span [title]="'The period within which the offered conditions will be valid upon confirmation by the seller.'|translate">&#9432;</span>
                         </div>
                         <div class="col-5"></div>
                         <div class="col-5">
-                            <negotiation-request-input label="Contract Duration" id="frameContractCb" [quantityUnits]="frameContractDurationUnits" (quantityChange)="onFrameContractDurationChanged($event); onTermsChange(FIXED_NEGOTIATION_TERMS.FRAME_CONTRACT_DURATION, false)" [quantity]="frameContractDuration" [disabled]="isFrameContractDisabled()" [parentForm]="formGroup" [formFieldName]="'frame_contract'">
+                            <negotiation-request-input [label]="'Contract Duration'|translate" id="frameContractCb" [quantityUnits]="frameContractDurationUnits" (quantityChange)="onFrameContractDurationChanged($event); onTermsChange(FIXED_NEGOTIATION_TERMS.FRAME_CONTRACT_DURATION, false)" [quantity]="frameContractDuration" [disabled]="isFrameContractDisabled()" [parentForm]="formGroup" [formFieldName]="'frame_contract'">
                             </negotiation-request-input>
                         </div>
                     </div>
