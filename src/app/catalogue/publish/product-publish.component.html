@@ -370,7 +370,7 @@
                 </div>
                 <div *ngIf="selectedCategories.length === 0" class="row">
                     <div class="col-12">
-                        <span [innerHTML]="'No categories to pick properties from.' | translate"></span> <br>
+                        <span [innerHTML]="'No categories to pick properties from' | translate"></span> <br>
                         <a href class="btn-link" (click)="onAddCategory($event, d)"><span [innerHTML]="'Add more categories to this product / service' | translate"></span></a>
                         <span [innerHTML]="'or' | translate"></span>
                         <a href class="btn-link" (click)="onAddCustomProperty($event, d)"><span [innerHTML]="'Create a custom property' | translate"></span></a>.
