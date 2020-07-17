@@ -82,7 +82,7 @@
                     </select>
                     <call-status [callStatus]="productCatalogueRetrievalStatus"></call-status>
                 </div>
-                <ng-container *ngIf="(config.contractForCatalogueEnabled || config.whiteBlackListForCatalogue || config.productOfferingEnabled) && !productSelectionForOffering">
+                <ng-container *ngIf="(config.productOfferingEnabled || (selectedCatalogue != 'all' && (config.contractForCatalogueEnabled || config.whiteBlackListForCatalogue))) && !productSelectionForOffering">
                     <div class="col-7"></div>
                     <div class="col-1 d-flex justify-content-center">
                         <ul class="nav navbar-nav">
