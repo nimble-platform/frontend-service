@@ -53,3 +53,12 @@
         <input type="checkbox" [(ngModel)]="wrapper.line.goodsItem.item.customizable">
     </div>
 </div>
+<!-- Spare Part -->
+<div *ngIf="product_filter_prod.indexOf('sparePart') != -1" class="row space-before">
+    <div class="col-3">
+        <strong><span [innerHTML]="'Spare Part' | translate"></span>:</strong>
+    </div>
+    <div class="col-9">
+        <input type="checkbox" [(ngModel)]="wrapper.line.goodsItem.item.sparePart">
+    </div>
+</div>

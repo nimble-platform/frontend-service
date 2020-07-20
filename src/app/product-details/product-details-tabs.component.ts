@@ -53,6 +53,7 @@ export class ProductDetailsTabsComponent implements OnInit {
         this.tabStatus.emit(false);
     }
 
+    product_filter_prod = myGlobals.product_filter_prod;
     @Output() tabStatus = new EventEmitter<boolean>();
 
     config = myGlobals.config;

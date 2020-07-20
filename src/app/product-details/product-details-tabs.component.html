@@ -160,6 +160,12 @@
                     <strong><span [innerHTML]="'Customizable' | translate"></span>: </strong> {{ wrapper.getCustomizable() }}
                 </div>
             </div>
+            <div *ngIf="product_filter_prod.indexOf('sparePart') != -1" style="flex-grow:1;">
+                <h3 class="pt-2 p-1"><span [innerHTML]="'Spare Part' | translate"></span></h3>
+                <div class="p-1">
+                    <strong><span [innerHTML]="'Spare Part' | translate"></span>: </strong> {{ wrapper.getSparePart() }}
+                </div>
+            </div>
         </div>
     </div>
 

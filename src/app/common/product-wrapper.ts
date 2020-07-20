@@ -167,6 +167,10 @@ export class ProductWrapper {
         return this.line.goodsItem.item.customizable ? "Yes" : "No";
     }
 
+    getSparePart(): string {
+        return this.line.goodsItem.item.sparePart ? "Yes" : "No";
+    }
+
     getPricePerItem(): string {
         return this.priceWrapper.discountedPricePerItemString;
     }
