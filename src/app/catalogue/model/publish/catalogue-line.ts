@@ -32,6 +32,7 @@ export class CatalogueLine {
         public requiredItemLocationQuantity: ItemLocationQuantity,
         public priceOption: PriceOption[] = null,
         public goodsItem: GoodsItem,
-        public minimumOrderQuantity:Quantity = new Quantity()
+        public minimumOrderQuantity:Quantity = new Quantity(),
+        public priceHidden:boolean = false
     ) { }
 }

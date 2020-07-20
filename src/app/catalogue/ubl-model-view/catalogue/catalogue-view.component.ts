@@ -347,6 +347,17 @@ export class CatalogueViewComponent implements OnInit {
         this.deleteCatalogueModal.open('delete');
     }
 
+    onHidePriceForCatalogue(){
+        let hidden = !this.catalogueResponse.priceHidden;
+        this.productCatalogueRetrievalStatus.submit();
+        this.catalogueService.hidePriceForCatalogue(this.catalogueResponse.catalogueUuid, hidden).then( () => {
+            this.catalogueResponse.priceHidden = hidden;
+            this.productCatalogueRetrievalStatus.callback(this.translate.instant(this.catalogueResponse.priceHidden ? "Hid prices for the catalogue successfully" :"Exposed prices for the catalogue successfully") ,false);
+        }).catch(error => {
+            this.productCatalogueRetrievalStatus.error(this.translate.instant(hidden ? "Failed to hide prices for the catalogue" : "Failed to expose prices for the catalogue"),error);
+        })
+    }
+
     // methods for white/black list functionality
     onAddWhiteBlackListToCatalogue(){
         this.whiteBlackListPanelVisible = true;

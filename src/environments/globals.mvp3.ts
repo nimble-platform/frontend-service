@@ -95,6 +95,7 @@ export const config = {
     "displayCategoryCounts":true,
     "docLink": "https://www.nimble-project.org/docs/",
     "frameContractTabEnabled": true,
+    "hidePriceFunctionality": false,
     "imprint": {
         "en": "<br/>E-Mail: <a href='mailto:nimble@il.ibm.com'>nimble@il.ibm.com</a><br/>",
         "es": "<br/>Correo electrónico: <a href='mailto:nimble@il.ibm.com'>nimble@il.ibm.com</a><br/>"

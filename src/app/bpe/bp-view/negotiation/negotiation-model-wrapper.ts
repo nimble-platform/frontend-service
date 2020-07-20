@@ -80,6 +80,7 @@ export class NegotiationModelWrapper {
                 rfq.requestForQuotationLine[this.lineIndex].lineItem.paymentMeans.paymentMeansCode.value,
                 rfq.requestForQuotationLine[this.lineIndex].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
                 rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address,
+                catalogueLine.priceHidden
                 //null,
                 //true // disable calculation of discounts
             );

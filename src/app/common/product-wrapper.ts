@@ -46,7 +46,9 @@ export class ProductWrapper {
             copy(line.requiredItemLocationQuantity.price),
             line.requiredItemLocationQuantity.applicableTaxCategory[0].percent,
             this.quantity,
-            this.line.priceOption);
+            this.line.priceOption,
+            [],
+            null,null,null,null,line.priceHidden);
     }
 
     get goodsItem() {

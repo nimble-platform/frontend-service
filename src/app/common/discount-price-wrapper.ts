@@ -46,10 +46,11 @@ export class DiscountPriceWrapper {
         public incoterm: string = null,
         public paymentMeans: string = null,
         public deliveryPeriod: Quantity = null,
-        public deliveryLocation: Address = null
+        public deliveryLocation: Address = null,
+        public hiddenPrice:boolean = false
     ) {
         this.immutableOriginalCatalogueLinePrice = copy(originalCatalogueLinePrice);
-        this.itemPrice = new ItemPriceWrapper(price);
+        this.itemPrice = new ItemPriceWrapper(price, hiddenPrice);
         this.getDiscountedTotalPrice(); // to initialize the applied discounts list
     }
 

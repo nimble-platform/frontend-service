@@ -288,6 +288,13 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
+    hidePriceForCatalogue(catalogueId: string, hidden:boolean) {
+        const url = this.baseUrl + `/catalogue/${catalogueId}/hide-price?hidden=${hidden}`;
+        return this.http
+            .put(url, null,{ headers: this.getAuthorizedHeaders() })
+            .toPromise()
+            .catch(this.handleError);
+    }
     postCatalogue(catalogue: Catalogue): Promise<Catalogue> {
         const url = this.baseUrl + `/catalogue/ubl`;
         return this.http
