@@ -38,7 +38,7 @@ import 'zone.js';
 import { Headers, Http } from "@angular/http";
 import { selectValueOfTextObject } from "./common/utils";
 import { CallStatus } from "./common/call-status";
-import { DomSanitizer } from '@angular/platform-browser';
+import {DomSanitizer, Title} from '@angular/platform-browser';
 import {ConfirmModalComponent} from './common/confirm-modal.component';
 
 @Component({
@@ -93,6 +93,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         private router: Router,
         private route: ActivatedRoute,
         private modalService: NgbModal,
+        private titleService: Title,
         public translate: TranslateService,
         public sanitizer: DomSanitizer
     ) {
@@ -146,6 +147,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.translate.get(['Chat', 'Federation', 'Language', 'ON', 'OFF']).subscribe((res: any) => {
             this.translations = res;
         });
+        // set title
+        this.titleService.setTitle(this.config.platformNameInMail)
         if (this.debug)
             console.log("Initialized platform with language: " + DEFAULT_LANGUAGE());
     }
