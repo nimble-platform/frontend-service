@@ -149,6 +149,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         });
         // set title
         this.titleService.setTitle(this.config.platformNameInMail)
+        // set icon
+        document.getElementById("appFavicon").setAttribute("href",this.config.faviconPath)
         if (this.debug)
             console.log("Initialized platform with language: " + DEFAULT_LANGUAGE());
     }

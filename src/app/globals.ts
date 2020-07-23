@@ -106,6 +106,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - delegationEnabled: Boolean flag if the federation feature is available for the instance
 - displayCategoryCounts: Boolean flag if the category counts are displayed in the category filter. If it's false, then we show the count only for the selected category.
 - docLink: Link to the documentation resources
+- faviconPath: Link to the favicon
 - frameContractEnabled: Boolean flag is frame contracts are applicable
 - hidePriceFunctionality: Boolean flag if the functionality of hiding prices for the catalogue is enabled
 - imprint: HTML string of the imprint information to be shown on the according subpage
@@ -191,6 +192,7 @@ export const config = {
     "delegationEnabled": true,
     "displayCategoryCounts":true,
     "docLink": "https://www.nimble-project.org/docs/",
+    "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
     "hidePriceFunctionality": false,
     "imprint": {

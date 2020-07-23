@@ -90,6 +90,7 @@ export const config = {
     "delegationEnabled": true,
     "displayCategoryCounts":true,
     "docLink": "https://www.nimble-project.org/docs/",
+    "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
     "hidePriceFunctionality": false,
     "imprint": {
