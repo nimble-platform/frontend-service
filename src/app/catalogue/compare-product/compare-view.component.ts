@@ -65,7 +65,7 @@ export class CompareViewComponent implements OnInit {
     // check whether catalogue-line-panel should be displayed for a specific catalogue line
     catalogueLineView = {};
     catalogueLineView_first = {};
-    searchIndex = myGlobals.config.defaultSearchIndex;
+    searchIndex = "Name";
 
     sortOption = null;
     model = new Search('');
