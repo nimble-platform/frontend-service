@@ -421,7 +421,7 @@ export class CompareViewComponent implements OnInit {
         this.simpleSearchService.getFields()
             .then(res => {
                 let fieldLabels: string[] = this.getFieldNames(res);
-                this.simpleSearchService.get(q, Object.keys(fieldLabels), [], this.page, 10, "score desc", "", this.sortOption, myGlobals.config.defaultSearchIndex)
+                this.simpleSearchService.get(q, Object.keys(fieldLabels), [], this.page, 10, "score desc", "", this.sortOption, this.searchIndex)
                     .then(res => {
                         if (res.result.length == 0) {
                             this.searchFavouriteCallStatus.callback("Search done.", true);
