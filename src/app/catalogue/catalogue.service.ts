@@ -57,7 +57,7 @@ export class CatalogueService {
     getCatalogueResponse(userId: string, categoryName: string = null, searchText: string = null, limit: number = 0, offset: number = 0, sortOption = null, catalogueId = "default"): Promise<CataloguePaginationResponse> {
         return this.userService.getUserParty(userId).then(party => {
 
-            let url = this.baseUrl + `/catalogue/${UBLModelUtils.getPartyId(party)}/pagination/${catalogueId}?limit=${limit}&offset=${offset}`;
+            let url = this.baseUrl + `/catalogue/${UBLModelUtils.getPartyId(party)}/pagination?catalogueId=${catalogueId}&limit=${limit}&offset=${offset}`;
             // if there is a selected category to filter the results, then add it to the url
             if (categoryName) {
                 url += `&categoryName=${categoryName}`;
@@ -131,9 +131,9 @@ export class CatalogueService {
     }
 
     getCatalogueLine(catalogueId: string, lineId: string): Promise<CatalogueLine> {
-        let url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${encodeURIComponent(lineId)}`;
+        let url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline?lineId=${lineId}`;
         if (this.delegated) {
-            url = this.delegate_url + `/catalogue/${catalogueId}/catalogueline/${encodeURIComponent(lineId)}`;
+            url = this.delegate_url + `/catalogue/${catalogueId}/catalogueline?lineId=${lineId}`;
         }
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
@@ -288,6 +288,13 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
+    hidePriceForCatalogue(catalogueId: string, hidden:boolean) {
+        const url = this.baseUrl + `/catalogue/${catalogueId}/hide-price?hidden=${hidden}`;
+        return this.http
+            .put(url, null,{ headers: this.getAuthorizedHeaders() })
+            .toPromise()
+            .catch(this.handleError);
+    }
     postCatalogue(catalogue: Catalogue): Promise<Catalogue> {
         const url = this.baseUrl + `/catalogue/ubl`;
         return this.http
@@ -480,7 +487,7 @@ export class CatalogueService {
 
     deleteCatalogueLine(catalogueId: string, lineId: string): Promise<any> {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${encodeURIComponent(lineId)}`;
+        const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline?lineId=${lineId}`;
         return this.http
             .delete(url, { headers: new Headers({ "Authorization": token }) })
             .toPromise()

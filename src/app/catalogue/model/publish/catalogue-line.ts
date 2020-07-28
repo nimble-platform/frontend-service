@@ -19,6 +19,7 @@ import { GoodsItem } from "./goods-item";
 import { ItemLocationQuantity } from "./item-location-quantity";
 import { Period } from "./period";
 import { PriceOption } from "./price-option";
+import {Quantity} from './quantity';
 
 export class CatalogueLine {
     constructor(
@@ -30,6 +31,8 @@ export class CatalogueLine {
         public warrantyInformation: string[],
         public requiredItemLocationQuantity: ItemLocationQuantity,
         public priceOption: PriceOption[] = null,
-        public goodsItem: GoodsItem
+        public goodsItem: GoodsItem,
+        public minimumOrderQuantity:Quantity = new Quantity(),
+        public priceHidden:boolean = false
     ) { }
 }

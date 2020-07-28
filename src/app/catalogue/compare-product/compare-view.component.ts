@@ -65,7 +65,7 @@ export class CompareViewComponent implements OnInit {
     // check whether catalogue-line-panel should be displayed for a specific catalogue line
     catalogueLineView = {};
     catalogueLineView_first = {};
-    searchIndex = myGlobals.config.defaultSearchIndex;
+    searchIndex = "Name";
 
     sortOption = null;
     model = new Search('');
@@ -421,7 +421,7 @@ export class CompareViewComponent implements OnInit {
         this.simpleSearchService.getFields()
             .then(res => {
                 let fieldLabels: string[] = this.getFieldNames(res);
-                this.simpleSearchService.get(q, Object.keys(fieldLabels), [], this.page, 10, "score desc", "", this.sortOption, myGlobals.config.defaultSearchIndex)
+                this.simpleSearchService.get(q, Object.keys(fieldLabels), [], this.page, 10, "score desc", "", this.sortOption, this.searchIndex)
                     .then(res => {
                         if (res.result.length == 0) {
                             this.searchFavouriteCallStatus.callback("Search done.", true);

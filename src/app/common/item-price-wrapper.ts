@@ -27,7 +27,8 @@ export class ItemPriceWrapper {
     /** hjid field from Quantity class */
     hjid: string = null;
 
-    constructor(public price: Price) {
+    constructor(public price: Price,
+                public hiddenPrice:boolean = false) {
 
     }
 
@@ -72,7 +73,7 @@ export class ItemPriceWrapper {
 
     hasPrice(): boolean {
         // != here gives "not null or undefined", which is the behaviour we want.
-        return this.price.priceAmount.value != null && !isNaN(this.price.priceAmount.value) && this.price.priceAmount.value != 0;
+        return !this.hiddenPrice && this.price.priceAmount.value != null && !isNaN(this.price.priceAmount.value) && this.price.priceAmount.value != 0;
     }
 
     /**

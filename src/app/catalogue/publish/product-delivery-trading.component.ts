@@ -22,6 +22,7 @@ import { DEFAULT_LANGUAGE } from '../model/constants';
 import {CompanyNegotiationSettings} from '../../user-mgmt/model/company-negotiation-settings';
 import {TranslateService} from '@ngx-translate/core';
 import {EmptyFormBase} from '../../common/validation/empty-form-base';
+import * as myGlobals from '../../globals';
 const PRODUCT_DELIVERY_TRADING_INPUT = 'product_delivery_trading';
 @Component({
     selector: "product-delivery-trading",
@@ -38,6 +39,7 @@ export class ProductDeliveryTradingComponent extends EmptyFormBase implements On
 
     warrantyPeriodRangeDefinition:string = null;
     deliveryPeriodRangeDefinition:string = null;
+    product_filter_prod = myGlobals.product_filter_prod;
     constructor(private translate: TranslateService) {
         super(PRODUCT_DELIVERY_TRADING_INPUT);
     }

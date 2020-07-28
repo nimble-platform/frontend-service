@@ -42,5 +42,6 @@ export class Item {
         public trackAndTraceDetails: TrackAndTraceDetails = new TrackAndTraceDetails(),
         public lifeCyclePerformanceAssessmentDetails: LifeCyclePerformanceAssessmentDetails = new LifeCyclePerformanceAssessmentDetails(),
         public customizable: boolean = null,
+        public sparePart: boolean = null
     ) { }
 }

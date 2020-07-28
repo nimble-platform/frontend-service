@@ -120,6 +120,9 @@
             <div *ngIf="config.vatEnabled && wrapper.getVat() != ''" class="p-1">
                 <strong><span [innerHTML]="'VAT:' | translate"></span></strong> {{ wrapper.getVat() }}%
             </div>
+            <div *ngIf="wrapper.getMinimumOrderQuantity() != 'Not specified'" class="p-1">
+                <strong><span [innerHTML]="'Minimum Order Quantity:' | translate"></span></strong> {{ wrapper.getMinimumOrderQuantity() }}
+            </div>
             <div *ngIf="wrapper.getFreeSample() != ''" class="p-1">
                 <strong><span [innerHTML]="'Free Sample:' | translate"></span></strong> {{ wrapper.getFreeSample() }}
             </div>
@@ -155,6 +158,12 @@
                 <h3 class="pt-2 p-1"><span [innerHTML]="'Customization' | translate"></span></h3>
                 <div class="p-1">
                     <strong><span [innerHTML]="'Customizable' | translate"></span>: </strong> {{ wrapper.getCustomizable() }}
+                </div>
+            </div>
+            <div *ngIf="product_filter_prod.indexOf('sparePart') != -1" style="flex-grow:1;">
+                <h3 class="pt-2 p-1"><span [innerHTML]="'Spare Part' | translate"></span></h3>
+                <div class="p-1">
+                    <strong><span [innerHTML]="'Spare Part' | translate"></span>: </strong> {{ wrapper.getSparePart() }}
                 </div>
             </div>
         </div>

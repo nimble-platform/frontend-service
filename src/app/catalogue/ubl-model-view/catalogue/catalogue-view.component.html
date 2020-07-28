@@ -82,7 +82,7 @@
                     </select>
                     <call-status [callStatus]="productCatalogueRetrievalStatus"></call-status>
                 </div>
-                <ng-container *ngIf="(config.contractForCatalogueEnabled || config.whiteBlackListForCatalogue || config.productOfferingEnabled) && !productSelectionForOffering">
+                <ng-container *ngIf="(config.productOfferingEnabled || (selectedCatalogue != 'all' && (config.contractForCatalogueEnabled || config.whiteBlackListForCatalogue || config.hidePriceFunctionality))) && !productSelectionForOffering">
                     <div class="col-7"></div>
                     <div class="col-1 d-flex justify-content-center">
                         <ul class="nav navbar-nav">
@@ -96,6 +96,9 @@
                                     </button>
                                     <button *ngIf="config.whiteBlackListForCatalogue && selectedCatalogue != 'all'" class="dropdown-item" (click)="onAddWhiteBlackListToCatalogue()">
                                         <span [innerHTML]="'Add White/Black List to Catalogue' | translate"></span>
+                                    </button>
+                                    <button *ngIf="config.hidePriceFunctionality && selectedCatalogue != 'all'" class="dropdown-item" (click)="onHidePriceForCatalogue()">
+                                        <span [innerHTML]="catalogueResponse.priceHidden ? 'Expose Prices for Catalog' :'Hide Prices for Catalog' | translate"></span>
                                     </button>
                                     <button *ngIf="config.productOfferingEnabled" class="dropdown-item" (click)="onOfferCatalogueButtonClicked()">
                                         <span [innerHTML]="'Offer Your Catalog/Product' | translate"></span>

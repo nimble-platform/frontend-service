@@ -94,7 +94,9 @@ export const config = {
     "delegationEnabled": true,
     "displayCategoryCounts":true,
     "docLink": "https://www.nimble-project.org/docs/",
+    "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
+    "hidePriceFunctionality": false,
     "imprint": {
         "en": "<br/>E-Mail: <a href='mailto:nimble@il.ibm.com'>nimble@il.ibm.com</a><br/>",
         "es": "<br/>Correo electrónico: <a href='mailto:nimble@il.ibm.com'>nimble@il.ibm.com</a><br/>"
@@ -128,6 +130,7 @@ export const config = {
     "showCompanyDetailsInPlatformMembers":false,
     "showExplorative": true,
     "showFullName": false,
+    "showGoogleTranslateOption": false,
     "showLCPA": true,
     "showPPAP": true,
     "showTrack": true,
@@ -254,7 +257,7 @@ export const product_filter_mappings = {
     "businessKeywords": "Business Keywords",
     "origin": "Vendor Origin"
 };
-export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "catalogueId", "doctype", "manufacturerId", "manufacturerItemId", "allLabels"];
+export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "catalogueId", "doctype", "manufacturerId", "manufacturerItemId", "allLabels", "sparePart"];
 export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
 export const product_nonfilter_data_type = []
 export const product_configurable = [];

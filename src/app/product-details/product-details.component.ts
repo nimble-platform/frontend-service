@@ -182,7 +182,9 @@ export class ProductDetailsComponent implements OnInit {
                             [],
                             this.line.goodsItem.deliveryTerms.incoterms,
                             settings.negotiationSettings.paymentMeans[0],
-                            this.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure);
+                            this.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure,
+                            null,
+                            this.line.priceHidden);
                         this.productWrapper = new ProductWrapper(this.line, settings.negotiationSettings, this.priceWrapper.orderedQuantity);
 
                         // get the business workflow of seller company

@@ -16,7 +16,7 @@
    limitations under the License.
  */
 
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import { CookieService } from 'ng2-cookies';
 import { CredentialsService } from './user-mgmt/credentials.service';
 import {
@@ -38,7 +38,7 @@ import 'zone.js';
 import { Headers, Http } from "@angular/http";
 import { selectValueOfTextObject } from "./common/utils";
 import { CallStatus } from "./common/call-status";
-import { DomSanitizer } from '@angular/platform-browser';
+import {DomSanitizer, Title} from '@angular/platform-browser';
 import {ConfirmModalComponent} from './common/confirm-modal.component';
 
 @Component({
@@ -48,7 +48,9 @@ import {ConfirmModalComponent} from './common/confirm-modal.component';
     styleUrls: ['./app.component.css']
 })
 
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
+
+    @ViewChild('google_translate_element') googleTranslateElementRef;
 
     public loading = false;
     public isLoggedIn = false;
@@ -91,6 +93,7 @@ export class AppComponent implements OnInit {
         private router: Router,
         private route: ActivatedRoute,
         private modalService: NgbModal,
+        private titleService: Title,
         public translate: TranslateService,
         public sanitizer: DomSanitizer
     ) {
@@ -144,8 +147,25 @@ export class AppComponent implements OnInit {
         this.translate.get(['Chat', 'Federation', 'Language', 'ON', 'OFF']).subscribe((res: any) => {
             this.translations = res;
         });
+        // set title
+        this.titleService.setTitle(this.config.platformNameInMail)
+        // set icon
+        document.getElementById("appFavicon").setAttribute("href",this.config.faviconPath)
         if (this.debug)
             console.log("Initialized platform with language: " + DEFAULT_LANGUAGE());
+    }
+
+    ngAfterViewInit() {
+        if(this.config.showGoogleTranslateOption){
+            var v = document.createElement("script");
+            v.type = "text/javascript";
+            v.innerHTML = "function googleTranslateElementInit() { new google.translate.TranslateElement({ pageLanguage: '"+DEFAULT_LANGUAGE()+"', layout: google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element'); } ";
+            this.googleTranslateElementRef.nativeElement.appendChild(v);
+            var s = document.createElement("script");
+            s.type = "text/javascript";
+            s.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+            this.googleTranslateElementRef.nativeElement.appendChild(s);
+        }
     }
 
     toggleChat(val) {

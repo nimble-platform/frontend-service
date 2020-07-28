@@ -106,7 +106,9 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - delegationEnabled: Boolean flag if the federation feature is available for the instance
 - displayCategoryCounts: Boolean flag if the category counts are displayed in the category filter. If it's false, then we show the count only for the selected category.
 - docLink: Link to the documentation resources
+- faviconPath: Link to the favicon
 - frameContractEnabled: Boolean flag is frame contracts are applicable
+- hidePriceFunctionality: Boolean flag if the functionality of hiding prices for the catalogue is enabled
 - imprint: HTML string of the imprint information to be shown on the according subpage
 - kibanaConfig: Allows configuring the titles and links to the Kibana dashboards. The keys are "companyDashboards" (Basic company information), "companyGraphs" (More complex company information) and "dashboards" (Platform information), this value is an array of JSON objects with the following entries:
 	* title: Title to be displayed on the UI
@@ -136,6 +138,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - showCompanyDetailsInPlatformMembers: Boolean flag if the company details are shown when the company is selected in platform members page
 - showExplorative: Boolean flag if the explorative search feature is enabled on the instance
 - showFullName: Boolean flag if the full name of a user is shown in the navbar
+- showGoogleTranslateOption: Boolean flag if google translate is shown in the navbar
 - showLCPA: Boolean flag if LCPA codes shall be linkable to products
 - showPPAP: Boolean flag if information regarding the PPAP process is enabled on the instance
 - showTrack: Boolean flag if the Track & Trace feature is enabled on the instance
@@ -189,7 +192,9 @@ export const config = {
     "delegationEnabled": true,
     "displayCategoryCounts":true,
     "docLink": "https://www.nimble-project.org/docs/",
+    "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
+    "hidePriceFunctionality": false,
     "imprint": {
         "en": "<u>Platform Owner & Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)",
         "es": "<u>Propietario de Plataforma y Proveedor</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salsburgo, Austria<br/>Teléfono: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>Correo electrónico: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Director Gerente: Siegfried Reich<br/>Numero de Registro: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Oficial de Contenido: Siegfried Reich<br/>Propietario: State of Salzburg (100%)"
@@ -267,6 +272,7 @@ export const config = {
     "showCompanyDetailsInPlatformMembers":false,
     "showExplorative": true,
     "showFullName": false,
+    "showGoogleTranslateOption": false,
     "showLCPA": true,
     "showPPAP": true,
     "showTrack": true,
@@ -401,7 +407,7 @@ export const product_filter_mappings = {
     "origin": "Vendor Origin"
 };
 // Facets removed from the UI by full name
-export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "catalogueId", "doctype", "manufacturerId", "manufacturerItemId", "allLabels"];
+export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "catalogueId", "doctype", "manufacturerId", "manufacturerItemId", "allLabels", "sparePart"];
 // Facets removed from the UI by regex
 export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
 // Facets removed from the UI by data type

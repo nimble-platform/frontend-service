@@ -30,7 +30,7 @@
         </select>
     </div>
     <div class="col-5">
-        <quantity-input label="per" labelClass="col-1" valueClass="col-11" [quantity]="catalogueLine.requiredItemLocationQuantity.price.baseQuantity" [formFieldName]="baseQuantityFieldName" [parentForm]="formGroup">
+        <quantity-input label="per" labelClass="col-1" valueClass="col-11" [quantity]="catalogueLine.requiredItemLocationQuantity.price.baseQuantity" [formFieldName]="baseQuantityFieldName" [parentForm]="formGroup" (onQuantityUnitChange)="onBaseQuantityUnitChanged($event)">
         </quantity-input>
     </div>
 </div>
@@ -42,6 +42,17 @@
     </div>
     <div class="col-3">
         <input type="number" class="form-control form-control-sm" [(ngModel)]="catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent" step="1">
+    </div>
+</div>
+
+<!-- Minimum Order Quantity -->
+<div class="row space-before">
+    <div class="col-3">
+        <strong><span [innerHTML]="'Minimum Order Quantity:' | translate"></span></strong>
+    </div>
+    <div class="col-9">
+        <quantity-input  valueClass="col-12" [quantity]="catalogueLine.minimumOrderQuantity" disableQuantityUnit="true">
+        </quantity-input>
     </div>
 </div>
 

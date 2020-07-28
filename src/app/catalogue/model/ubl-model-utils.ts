@@ -153,6 +153,7 @@ export class UBLModelUtils {
 
         // extra initialization
         catalogueLine.goodsItem.containingPackage.quantity.unitCode = "item(s)";
+        catalogueLine.minimumOrderQuantity.unitCode = "item(s)";
 
         return catalogueLine;
     }
