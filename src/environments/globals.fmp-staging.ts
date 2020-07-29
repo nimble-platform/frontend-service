@@ -61,7 +61,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 // Platform Configuration
 
 export const config = {
-    "federationInstanceId": "FMP",
+    "federationInstanceId": "STAGING",
     "platformName": "B2BMarket",
     "platformNameInMail":"B2BMarket",
     "envName": "fmp",
