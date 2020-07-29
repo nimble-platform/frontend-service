@@ -108,11 +108,13 @@ export class CompanyTermsAndConditions implements OnInit {
 
             // copy the terms and conditions
             // if T&Cs of catalog are available, then use them, otherwise, use the T&Cs of the company
-            let termsAndConditionsForCatalog = termsAndConditionsMap[this.catalogueUuid];
-            if(termsAndConditionsForCatalog && termsAndConditionsForCatalog.length > 0){
-                this.termsAndConditions = copy(termsAndConditionsForCatalog);
-            } else{
-                this.termsAndConditions = copy(this.settings.negotiationSettings.company.salesTerms.termOrCondition);
+            if(termsAndConditionsMap){
+                let termsAndConditionsForCatalog = termsAndConditionsMap[this.catalogueUuid];
+                if(termsAndConditionsForCatalog && termsAndConditionsForCatalog.length > 0){
+                    this.termsAndConditions = copy(termsAndConditionsForCatalog);
+                } else{
+                    this.termsAndConditions = copy(this.settings.negotiationSettings.company.salesTerms.termOrCondition);
+                }
             }
 
             // sort terms and conditions
