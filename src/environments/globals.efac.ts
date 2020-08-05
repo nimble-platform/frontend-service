@@ -76,6 +76,11 @@ export const config = {
             "hiddenCategories": ["Catalogue", "Company", "ContactPerson", "Guarantee", "Price", "Process", "Standard", "Style", "Technique"],
             "logisticsCategory": "LogisticsService",
             "ontologyPrefix": "http://www.aidimme.es/FurnitureSectorOntology.owl#"
+        },
+        "Aerospace": {
+            "hiddenCategories": [],
+            "logisticsCategory": "",
+            "ontologyPrefix": "http://www.nimble-project.org/resource/aerospace#"
         }
     },
     "contractForCatalogueEnabled":true,
