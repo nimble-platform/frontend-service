@@ -92,6 +92,10 @@ export class DashboardThreadedComponent implements OnInit {
     onChangeTab(event: any, id: any): void {
         event.preventDefault();
         this.selectedTab = id;
+        // the user should be logged in to switch between the dashboard tabs
+        if(!this.cookieService.get("user_id") && this.selectedTab != TABS.SALES && this.selectedTab != TABS.PURCHASES && this.selectedTab != TABS.PROJECTS){
+            this.appComponent.checkLogin("/user-mgmt/login");
+        }
     }
 
     onCloseWelcomeTab(event: any): void {
