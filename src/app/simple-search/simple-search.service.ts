@@ -110,10 +110,10 @@ export class SimpleSearchService {
             queryRes = this.buildQueryString(query, querySettings, true, true,true);
         } else {
             queryRes = this.buildQueryString(query, myGlobals.query_settings, true, true,true);
-            searchObject.sort = [];
-            sort = sort.replace("{LANG}", DEFAULT_LANGUAGE());
-            searchObject.sort.push(sort);
         }
+        searchObject.sort = [];
+        sort = sort.replace("{LANG}", DEFAULT_LANGUAGE());
+        searchObject.sort.push(sort);
         query = queryRes.queryStr;
         let url = this.url + `/item/search`;
         if (this.delegated)
