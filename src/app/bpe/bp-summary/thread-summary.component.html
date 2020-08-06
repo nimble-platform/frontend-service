@@ -304,7 +304,7 @@
                     </span>
                 </label>
                 <div class="col-6 align-right">
-                    <ngb-rating [(rate)]="compRating.DeliveryAndPackaging" max="5" (rateChange)="changeDeliveryRating()">
+                    <ngb-rating [(rate)]="compRating.DeliveryAndPackaging" max="5" (rateChange)="changeOverallRating()">
                         <ng-template let-fill="fill">
                             <span class="star star-c" [class.full]="fill === 100">
                                 <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;

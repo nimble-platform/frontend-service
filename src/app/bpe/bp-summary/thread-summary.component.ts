@@ -715,17 +715,56 @@ export class ThreadSummaryComponent implements OnInit {
     }
 
     changeCommunicationRating() {
-        this.ratingSeller = (this.compRating.QualityOfTheNegotiationProcess + this.compRating.ResponseTime) / 2;
-        this.ratingOverall = (this.ratingSeller + this.ratingFulfillment + this.compRating.DeliveryAndPackaging) / 3;
+        let totalStarts = 0;
+        let numberOfCriteria = 0;
+        if(this.responsetime){
+            totalStarts += this.compRating.ResponseTime;
+            numberOfCriteria++;
+        }
+        if(this.negotiationQuality){
+            totalStarts += this.compRating.QualityOfTheNegotiationProcess;
+            numberOfCriteria++;
+        }
+
+        this.ratingSeller = totalStarts/numberOfCriteria;
+        this.changeOverallRating()
     }
 
     changeFullfillmentRating() {
-        this.ratingFulfillment = (this.compRating.ProductListingAccuracy + this.compRating.ConformanceToOtherAgreedTerms + this.compRating.QualityOfTheOrderingProcess) / 3;
-        this.ratingOverall = (this.ratingSeller + this.ratingFulfillment + this.compRating.DeliveryAndPackaging) / 3;
+        let totalStarts = 0;
+        let numberOfCriteria = 0;
+        if(this.prodListingAccu){
+            totalStarts += this.compRating.ProductListingAccuracy;
+            numberOfCriteria++;
+        }
+        if(this.conformToOtherAggre){
+            totalStarts += this.compRating.ConformanceToOtherAgreedTerms;
+            numberOfCriteria++;
+        }
+        if(this.orderQuality){
+            totalStarts += this.compRating.QualityOfTheOrderingProcess;
+            numberOfCriteria++;
+        }
+        this.ratingFulfillment = totalStarts/numberOfCriteria;
+        this.changeOverallRating()
     }
 
-    changeDeliveryRating() {
-        this.ratingOverall = (this.ratingSeller + this.ratingFulfillment + this.compRating.DeliveryAndPackaging) / 3;
+    changeOverallRating(){
+        let totalStarts = 0;
+        let numberOfCriteria = 0;
+        if(this.deliveryPackage){
+            totalStarts += this.compRating.DeliveryAndPackaging;
+            numberOfCriteria++;
+        }
+        if(this.prodListingAccu || this.conformToOtherAggre || this.orderQuality){
+            totalStarts += this.ratingFulfillment;
+            numberOfCriteria++;
+        }
+        if(this.responsetime || this.negotiationQuality){
+            totalStarts += this.ratingSeller;
+            numberOfCriteria++;
+        }
+        this.ratingOverall = totalStarts/numberOfCriteria;
     }
 
     rateCollaborationSuccess(content) {
