@@ -192,9 +192,9 @@ export const config = {
     "showLoginFederation": false,
     "unshippedOrdersTabEnabled": true,
     "welcomeMessage":{
-        "en": "Looks like you are new here",
-        "es": "Parece que eres nuevo aquí",
-        "de": "Sieht aus, als seien Sie neu hier",
+        "en": "Looks like you are new here.",
+        "es": "Parece que eres nuevo aquí.",
+        "de": "Sieht aus, als seien Sie neu hier.",
     },
     "whiteBlackListForCatalogue":false,
     "federationClientID": "sample-client",

@@ -459,8 +459,8 @@ export const config = {
     "unshippedOrdersTabEnabled": false,
     "welcomeMessage":{
         "en": "Welcome to B2BMarket platform.",
-        "es": "Bienvenidos a la plataforma B2BMarket",
-        "de": "Sieht aus, als seien Sie neu hier",
+        "es": "Bienvenidos a la plataforma B2BMarket.",
+        "de": "Sieht aus, als seien Sie neu hier.",
     },
     "whiteBlackListForCatalogue":false,
     "federationClientID": "sample-client",

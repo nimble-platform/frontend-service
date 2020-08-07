@@ -459,9 +459,9 @@ export const config = {
     "showLoginFederation": true,
     "unshippedOrdersTabEnabled": true,
     "welcomeMessage":{
-        "en": "Looks like you are new here",
-        "es": "Parece que eres nuevo aquí",
-        "de": "Sieht aus, als seien Sie neu hier",
+        "en": "Looks like you are new here.",
+        "es": "Parece que eres nuevo aquí.",
+        "de": "Sieht aus, als seien Sie neu hier.",
     },
     "whiteBlackListForCatalogue":true,
     "federationClientID": "efact-test-client",
