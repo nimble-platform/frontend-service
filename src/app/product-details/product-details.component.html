@@ -56,7 +56,7 @@
                 <hr>
                 <span [innerHTML]="'Terms:' | translate"></span>
 
-                <select #termSelectBox class="btn btn-outline-secondary" [value]="termsSelectBoxValue" (change)="onTermsChange($event.target.value)">
+                <select #termSelectBox class="btn btn-outline-secondary" [(ngModel)]="termsSelectBoxValue" (change)="onTermsChange($event.target.value)">
                     <option value="product_defaults"><span [innerHTML]="'Product Defaults' | translate"></span></option>
                     <option value="frame_contract"><span [innerHTML]="'Frame Contract' | translate"></span></option>
                 </select>
