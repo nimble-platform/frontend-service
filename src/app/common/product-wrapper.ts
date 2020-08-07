@@ -182,7 +182,7 @@ export class ProductWrapper {
     }
 
     getMinimumOrderQuantity():string{
-        if (!this.line.minimumOrderQuantity.value) {
+        if (!this.line.minimumOrderQuantity || !this.line.minimumOrderQuantity.value) {
             return "Not specified";
         }
 
