@@ -28,6 +28,7 @@ import { isLogisticsService, isTransportService } from '../../../common/utils';
 import { CompanySettings } from "../../../user-mgmt/model/company-settings";
 import { Item } from '../../model/publish/item';
 import { selectDescription, selectName } from '../../../common/utils';
+import {AppComponent} from '../../../app.component';
 
 @Component({
     selector: 'catalogue-line-panel',
@@ -51,6 +52,7 @@ export class CatalogueLinePanelComponent {
 
     constructor(private catalogueService: CatalogueService,
         private categoryService: CategoryService,
+        private appComponent: AppComponent,
         private publishService: PublishService,
         private translate: TranslateService,
         private router: Router) {

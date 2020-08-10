@@ -38,7 +38,7 @@
                     <option *ngFor="let option of CATALOGUE_LINE_SORT_OPTIONS" [value]="option.name"><span [innerHTML]="option.value | translate"></span></option>
                 </select>
 
-                <div class="col-1 d-flex justify-content-center">
+                <div *ngIf="appComponent.checkRoles('catalogue')" class="col-1 d-flex justify-content-center">
                     <ul class="nav navbar-nav">
                         <li ngbDropdown class="nav-item dropdown">
                             <button class="navbar-toggler bordered" type="button" aria-controls="navbarNavAltMarkup" ngbDropdownToggle>
@@ -82,7 +82,7 @@
                     </select>
                     <call-status [callStatus]="productCatalogueRetrievalStatus"></call-status>
                 </div>
-                <ng-container *ngIf="(config.productOfferingEnabled || (selectedCatalogue != 'all' && (config.contractForCatalogueEnabled || config.whiteBlackListForCatalogue || config.hidePriceFunctionality))) && !productSelectionForOffering">
+                <ng-container *ngIf="appComponent.checkRoles('catalogue') && (config.productOfferingEnabled || (selectedCatalogue != 'all' && (config.contractForCatalogueEnabled || config.whiteBlackListForCatalogue || config.hidePriceFunctionality))) && !productSelectionForOffering">
                     <div class="col-7"></div>
                     <div class="col-1 d-flex justify-content-center">
                         <ul class="nav navbar-nav">
@@ -210,7 +210,7 @@
                                     <p>{{selectDescription(catLine.goodsItem.item)}}</p>
                                     <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" class="all-break">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p>
                                 </div>
-                                <div *ngIf="!productSelectionForOffering" class="col-2">
+                                <div *ngIf="!productSelectionForOffering && appComponent.checkRoles('catalogue')" class="col-2">
                                     <button type="button" class="btn btn-primary space-after col" (click)="redirectToEdit(catLine) ; $event.stopPropagation();" style="display: block">
                                         <span [innerHTML]="'Edit' | translate"></span>
                                     </button>
@@ -242,14 +242,16 @@
 
     <div class="jumbotron" *ngIf="catalogueResponse && catalogueResponse.categoryNames.length == 0 && cataloguesIds.length < 2">
         <h3><span [innerHTML]="'No published products / services.' | translate"></span></h3>
-        <h5 class="mt-3">
-            <span (click)="navigateToThePublishPage()" class="pointer"><span [innerHTML]="'Publish single product / service' | translate"></span></span>
-            <i class="fa fa-plus-circle pointer" (click)="navigateToThePublishPage()"></i>
-        </h5>
-        <h5 class="mt-3">
-            <span (click)="navigateToThePublishPage()" class="pointer"><span [innerHTML]="'Publish multiple products / services' | translate"></span></span>
-            <i class="fa fa-plus-circle pointer" (click)="navigateToBulkUploadPage()"></i>
-        </h5>
+        <ng-container *ngIf="appComponent.checkRoles('catalogue')">
+            <h5 class="mt-3">
+                <span (click)="navigateToThePublishPage()" class="pointer"><span [innerHTML]="'Publish single product / service' | translate"></span></span>
+                <i class="fa fa-plus-circle pointer" (click)="navigateToThePublishPage()"></i>
+            </h5>
+            <h5 class="mt-3">
+                <span (click)="navigateToThePublishPage()" class="pointer"><span [innerHTML]="'Publish multiple products / services' | translate"></span></span>
+                <i class="fa fa-plus-circle pointer" (click)="navigateToBulkUploadPage()"></i>
+            </h5>
+        </ng-container>
     </div>
 
     <div *ngIf="cataloguesIds.length > 1 && catalogueResponse && catalogueResponse.categoryNames.length == 0">
@@ -267,7 +269,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-1 d-flex justify-content-center" style="padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
+            <div *ngIf="appComponent.checkRoles('catalogue')" class="col-1 d-flex justify-content-center" style="padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
                 <ul class="nav navbar-nav">
                     <li ngbDropdown class="nav-item dropdown">
                         <button class="navbar-toggler bordered" type="button" aria-controls="navbarNavAltMarkup" ngbDropdownToggle>
@@ -289,14 +291,16 @@
         <br />
         <div class="jumbotron">
             <h3><span [innerHTML]="'No published products / services for the selected catalogue.' | translate"></span></h3>
-            <h5 class="mt-3">
-                <span (click)="navigateToThePublishPage()" class="pointer"><span [innerHTML]="'Publish single product / service' | translate"></span></span>
-                <i class="fa fa-plus-circle pointer" (click)="navigateToThePublishPage()"></i>
-            </h5>
-            <h5 class="mt-3">
-                <span (click)="navigateToThePublishPage()" class="pointer"><span [innerHTML]="'Publish multiple products / services' | translate"></span></span>
-                <i class="fa fa-plus-circle pointer" (click)="navigateToBulkUploadPage()"></i>
-            </h5>
+            <ng-container *ngIf="appComponent.checkRoles('catalogue')">
+                <h5 class="mt-3">
+                    <span (click)="navigateToThePublishPage()" class="pointer"><span [innerHTML]="'Publish single product / service' | translate"></span></span>
+                    <i class="fa fa-plus-circle pointer" (click)="navigateToThePublishPage()"></i>
+                </h5>
+                <h5 class="mt-3">
+                    <span (click)="navigateToThePublishPage()" class="pointer"><span [innerHTML]="'Publish multiple products / services' | translate"></span></span>
+                    <i class="fa fa-plus-circle pointer" (click)="navigateToBulkUploadPage()"></i>
+                </h5>
+            </ng-container>
         </div>
     </div>
 
