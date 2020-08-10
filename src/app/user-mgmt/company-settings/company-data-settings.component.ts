@@ -19,7 +19,12 @@ import { CompanySettings } from "../model/company-settings";
 import { AppComponent } from "../../app.component";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import * as myGlobals from '../../globals';
-import { selectValueOfTextObject, createTextObject, getArrayOfTextObject, createTextObjectFromArray } from '../../common/utils';
+import {
+    selectValueOfTextObject,
+    getArrayOfTextObject,
+    createTextObjectFromArray,
+    getArrayOfTextObjectForBusinessKeywords, createTextObjectFromArrayForBusinessKeywords
+} from '../../common/utils';
 import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 import { AddressSubForm } from "../subforms/address.component";
 import { CallStatus } from "../../common/call-status";
@@ -40,6 +45,7 @@ export class CompanyDataSettingsComponent implements OnInit {
     brandNameArr: any;
     industrySectorsArr: any;
     businessKeywordsArr: any;
+    businessKeywordsToBeAdded: string[] = [];
     dataForm: FormGroup;
     inputChanged = false;
     languages = LANGUAGES;
@@ -77,7 +83,8 @@ export class CompanyDataSettingsComponent implements OnInit {
         }
         else
             this.forceActText = true;
-        this.businessKeywordsArr = getArrayOfTextObject(this.settings.details.businessKeywords);
+        this.businessKeywordsArr = getArrayOfTextObjectForBusinessKeywords(this.settings.details.businessKeywords);
+        this.businessKeywordsToBeAdded = new Array(this.businessKeywordsArr.length).fill(null);
         this.dataForm = this._fb.group({
             vatNumber: new FormControl({ value: (this.settings.details.vatNumber || ""), disabled: !this.appComponent.checkRoles('pm') }),
             verificationInformation: new FormControl({ value: (this.settings.details.verificationInformation || ""), disabled: (!this.appComponent.checkRoles('pm') && this.settings.details.verificationInformation) }),
@@ -150,14 +157,15 @@ export class CompanyDataSettingsComponent implements OnInit {
     }
 
     addBusinessKeywords() {
-        this.businessKeywordsArr.push({ "text": "", "lang": "" });
+        this.businessKeywordsArr.push({ "text": [], "lang": "" });
+        this.businessKeywordsToBeAdded.push(null);
         this.flagChanged();
     }
 
     removeBusinessKeywords(index: number) {
         this.businessKeywordsArr.splice(index, 1);
         if (this.businessKeywordsArr.length == 0)
-            this.businessKeywordsArr = [{ "text": "", "lang": DEFAULT_LANGUAGE() }];
+            this.businessKeywordsArr = [{ "text": [""], "lang": DEFAULT_LANGUAGE() }];
         this.flagChanged();
     }
 
@@ -225,7 +233,7 @@ export class CompanyDataSettingsComponent implements OnInit {
         this.settings.details.verificationInformation = model.getRawValue()['verificationInformation'];
         this.settings.details.businessType = model.getRawValue()['businessType'];
         this.settings.details.industrySectors = createTextObjectFromArray(industrySectorWithMultilingualLabels);
-        this.settings.details.businessKeywords = createTextObjectFromArray(this.businessKeywordsArr);
+        this.settings.details.businessKeywords = createTextObjectFromArrayForBusinessKeywords(this.businessKeywordsArr);
         this.settings.details.yearOfCompanyRegistration = model.getRawValue()['yearOfReg'];
         this.settings.details.address = model.getRawValue()['address'];
         let compId = this.settings.companyID;
@@ -281,6 +289,19 @@ export class CompanyDataSettingsComponent implements OnInit {
     switchInput() {
         this.industrySectorsArr = [{ "text": "", "lang": DEFAULT_LANGUAGE() }];
         this.forceActText = !this.forceActText;
+    }
+
+    onBusinessKeywordAdded(index:number) {
+        if (this.businessKeywordsToBeAdded[index]) {
+            this.businessKeywordsArr[index].text.push(this.businessKeywordsToBeAdded[index]);
+            this.businessKeywordsToBeAdded[index] = null;
+            this.flagChanged();
+        }
+    }
+
+    onBusinessKeywordRemoved(index:number,valueIndex:number) {
+        this.businessKeywordsArr[index].text.splice(valueIndex,1);
+        this.flagChanged();
     }
 
     changeData(content) {

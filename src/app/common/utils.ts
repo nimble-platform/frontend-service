@@ -391,6 +391,27 @@ export function getArrayOfTextObject(textObject): any {
     return arr;
 }
 
+export function getArrayOfTextObjectForBusinessKeywords(textObject): any {
+    let arr = [];
+    let keys = Object.keys(textObject);
+    for (let key of keys) {
+        arr.push({ "text": textObject[key].split("\n"), "lang": key });
+    }
+    if (arr.length == 0)
+        arr = [{ "text": [], "lang": DEFAULT_LANGUAGE() }];
+    return arr;
+}
+
+export function createTextObjectFromArrayForBusinessKeywords(arr): Object {
+    let textObject = {};
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i].lang != "" && arr[i].text.length != 0) {
+            textObject[arr[i].lang] = arr[i].text.join("\n");
+        }
+    }
+    return textObject;
+}
+
 // Transform an array created using the getArrayOfTextObject function back to a TextObject
 export function createTextObjectFromArray(arr): Object {
     let textObject = {};
