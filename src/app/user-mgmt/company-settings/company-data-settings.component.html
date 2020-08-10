@@ -140,13 +140,26 @@
                 </select>
             </ng-container>
             <ng-container *ngIf="dataForm.getRawValue()['businessType'] != '' && (availableActivitySectorKeys.length == 0 || forceActText)">
-                <ng-container *ngFor="let industrySectorsEntry of industrySectorsArr; let i = index; trackBy:trackFn">
+                <ng-container *ngFor="let industrySectorsEntries of industrySectorsArr; let i = index; trackBy:trackFn">
                     <div class="row mb-1">
                         <div class="col-8">
-                            <textarea rows="3" class="form-control" [(ngModel)]="industrySectorsArr[i].text" [ngModelOptions]="{standalone: true}" (input)="flagChanged()" placeholder="Separate entries using new lines" required maxlength="255" [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('pm')"></textarea>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex flex-wrap without-left-padding">
+                                        <div *ngFor="let industrySector of industrySectorsEntries.text; let j = index; trackBy:trackFn" class="bordered my-1 mr-1">
+                                            <small class="p-0">{{industrySector}}</small>
+                                            <i *ngIf="!saveCallStatus.isLoading() && appComponent.checkRoles('pm')" class="fa fa-times-circle pl-1" placement="right" (click)="onIndustrySectorRemoved(i,j)"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="!saveCallStatus.isLoading() && appComponent.checkRoles('pm')" class="card-footer">
+                                    <input type="text" [(ngModel)]="industrySectorsToBeAdded[i]" [ngModelOptions]="{standalone: true}" [required]="isActivitySectorRequired()" [placeholder]="'Add activity sector'|translate">
+                                    <button class="btn btn-outline-primary space-left" type="button" (click)="onIndustrySectorAdded(i)"><span [innerHTML]="'Add' | translate"></span></button>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-2">
-                            <select class="form-control" [(ngModel)]="industrySectorsArr[i].lang" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" required [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('pm')">
+                            <select class="form-control" [(ngModel)]="industrySectorsEntries.lang" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" required [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('pm')">
                                 <option *ngFor='let language of languages' [value]="language">{{language}}</option>
                             </select>
                         </div>

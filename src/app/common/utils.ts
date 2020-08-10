@@ -391,7 +391,8 @@ export function getArrayOfTextObject(textObject): any {
     return arr;
 }
 
-export function getArrayOfTextObjectForBusinessKeywords(textObject): any {
+// For a given TextObject get an array of objects with text array and lang keys
+export function getArrayOfTextObjectArrays(textObject): any {
     let arr = [];
     let keys = Object.keys(textObject);
     for (let key of keys) {
@@ -402,7 +403,8 @@ export function getArrayOfTextObjectForBusinessKeywords(textObject): any {
     return arr;
 }
 
-export function createTextObjectFromArrayForBusinessKeywords(arr): Object {
+// Transform an array created using the getArrayOfTextObjectArrays function back to a TextObject
+export function createNewLineSeparatedTextObjectFromArray(arr): Object {
     let textObject = {};
     for (let i = 0; i < arr.length; i++) {
         if (arr[i].lang != "" && arr[i].text.length != 0) {
