@@ -115,14 +115,9 @@
                     <!-- Tabs -->
                     <div>
                         <ul class="nav nav-tabs pt-2 pl-1 pr-1">
-                            <li *ngIf="!isLogistics" class="nav-item">
+                            <li class="nav-item">
                                 <a href id="TREE" class="nav-link" [ngClass]="{ active: selectedTab === 'TREE', 'disabled': getCategoryDetailsStatus.isDisplayed()}" (click)="onSelectTab($event,'TREE')">
-                                    {{taxonomyId == "All" ? standardTaxonomy.replace("FurnitureOntology", "Furniture Sector"): taxonomyId.replace("FurnitureOntology", "Furniture Sector")}}
-                                </a>
-                            </li>
-                            <li *ngIf="isLogistics" class="nav-item">
-                                <a href id="TREE" class="nav-link" [ngClass]="{ active: selectedTab === 'TREE', 'disabled': getCategoryDetailsStatus.isDisplayed()}" (click)="onSelectTab($event,'TREE')">
-                                    {{taxonomyId == "All" ? standardTaxonomy.replace("FurnitureOntology", "Furniture Sector"): taxonomyId.replace("FurnitureOntology", "Furniture Sector")}}
+                                    {{taxonomyId.replace("FurnitureOntology", "Furniture Sector")}}
                                 </a>
                             </li>
                             <li class="nav-item">
