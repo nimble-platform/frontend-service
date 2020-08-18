@@ -156,6 +156,10 @@ export const config = {
             }
         },
         "Manufacturer": {
+            "Aerospace": {
+                "en": "Aerospace",
+                "es": "Aeroespacial"
+            },
             "Bathroom": {
                 "en": "Bathroom",
                 "es": "Baño"
@@ -240,6 +244,10 @@ export const config = {
             }
         },
         "Service Provider": {
+            "Aerospace": {
+                "en": "Aerospace",
+                "es": "Aeroespacial"
+            },
             "Architects": {
                 "en": "Architects",
                 "es": "Arquitectos"
@@ -313,6 +321,10 @@ export const config = {
             "Adhesives": {
                 "en": "Adhesives",
                 "es": "Adhesivos"
+            },
+            "Aerospace": {
+                "en": "Aerospace",
+                "es": "Aeroespacial"
             },
             "Board": {
                 "en": "Board",
