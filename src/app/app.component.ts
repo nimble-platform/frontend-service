@@ -213,13 +213,20 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (catalogueId != null && id != null) {
             let endpoint = encodeURI("?catalogueId=" + catalogueId + "_" + id);
             redirectURI = redirectURI + endpoint;
+        } else if (catalogueId == null && id != null) {
+            // company page redirect uri for efactory user's request
+            let endpoint = encodeURI("?id=" + id);
+            redirectURI = redirectURI + endpoint;
         }
-
         return identityURL + clientID + redirectURI + hint;
     }
 
     generateProductURL(catalogueId, id) {
         return myGlobals.frontendURL + "#/product-details?catalogueId=" + catalogueId + "&id=" + id;
+    }
+
+    generateCompanyURL(id) {
+        return myGlobals.frontendURL + "#/user-mgmt/company-details?id=" + id;
     }
 
     getChatText(): string {
@@ -294,6 +301,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
                     if (catalogueId != null && id != null) {
                         window.location.href = this.generateProductURL(catalogueId, id);
+                    } else if (catalogueId == null && id != null) {
+                        //company details page redirection
+                        window.location.href = this.generateCompanyURL(id);
                     } else if (!this.response.companyID && myGlobals.config.companyRegistrationRequired) {
                         this.checkLogin("/user-mgmt/company-registration");
                     } else
