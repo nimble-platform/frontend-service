@@ -132,7 +132,7 @@
                                 <tbody>
                                     <tr *ngFor="let quantity of multiValuedDimension.measure;let i=index">
                                         <td class="pb-0">
-                                            <quantity-input [quantity]="quantity" rowClass="quantity-input" [quantityUnits]="dimensionUnits" large="true" [step]="0.01">
+                                            <quantity-input [quantity]="quantity" rowClass="quantity-input" [quantityUnits]="multiValuedDimension.attributeID=='Weight' ? dimensionWeightUnits:dimensionLengthUnits" large="true" [step]="0.01">
                                             </quantity-input>
                                         </td>
                                         <td *ngIf="i>0" class="align-right pb-0">
