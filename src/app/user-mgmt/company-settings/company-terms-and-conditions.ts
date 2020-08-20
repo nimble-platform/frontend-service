@@ -85,7 +85,7 @@ export class CompanyTermsAndConditions implements OnInit {
             this.unitService.getCachedUnitList(warrantyPeriodUnitListId),
             this.bpeService.getTermsAndConditions(null, FEDERATIONID(), this.settings.companyID, null, null, this.settings.negotiationSettings.company.federationInstanceID),
             this.catalogueUuid ? this.catalogueService.getContractForCatalogue([this.catalogueUuid]):Promise.resolve(null)
-        ]).then(([deliveryPeriodUnits, warrantyPeriodUnits, defaultTermsAndConditions, termsAndConditionsMap]) => {
+        ]).then(([deliveryPeriodUnits, warrantyPeriodUnits, defaultTermsAndConditions, catalogTermsAndConditionsMap]) => {
 
             // populate available incoterms
             this.INCOTERMS = this.settings.negotiationSettings.incoterms;
@@ -108,13 +108,14 @@ export class CompanyTermsAndConditions implements OnInit {
 
             // copy the terms and conditions
             // if T&Cs of catalog are available, then use them, otherwise, use the T&Cs of the company
-            if(termsAndConditionsMap){
-                let termsAndConditionsForCatalog = termsAndConditionsMap[this.catalogueUuid];
-                if(termsAndConditionsForCatalog && termsAndConditionsForCatalog.length > 0){
-                    this.termsAndConditions = copy(termsAndConditionsForCatalog);
-                } else{
-                    this.termsAndConditions = copy(this.settings.negotiationSettings.company.salesTerms.termOrCondition);
-                }
+            let termsAndConditionsForCatalog = null;
+            if(catalogTermsAndConditionsMap){
+                termsAndConditionsForCatalog = catalogTermsAndConditionsMap[this.catalogueUuid];
+            }
+            if(termsAndConditionsForCatalog && termsAndConditionsForCatalog.length > 0){
+                this.termsAndConditions = copy(termsAndConditionsForCatalog);
+            } else{
+                this.termsAndConditions = copy(this.settings.negotiationSettings.company.salesTerms.termOrCondition);
             }
 
             // sort terms and conditions
