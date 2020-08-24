@@ -292,10 +292,13 @@ export class AppComponent implements OnInit, AfterViewInit {
                     this.setCookiesForFederatedLogin();
 
                     if (catalogueId != null) {
-                        let productDetails = catalogueId.split("_");
-                        if (productDetails.length == 2) {
-                            catalogueId = productDetails[0];
-                            id = productDetails[1];
+                        let separatorIndex = catalogueId.indexOf("_");
+                        if(separatorIndex != -1){
+                            let productDetails = [catalogueId.slice(0,separatorIndex),catalogueId.slice(separatorIndex+1)];
+                            if (productDetails.length == 2) {
+                                catalogueId = productDetails[0];
+                                id = productDetails[1];
+                            }
                         }
                     }
 
