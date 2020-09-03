@@ -333,28 +333,23 @@ export class CategorySearchComponent implements OnInit {
 
     private getRootCategories(): any {
         this.getCategoriesStatus.aggregatedSubmit();
+        let taxonomyIds = this.taxonomyId == "All" ? Object.keys(this.categoryFilter) : [this.taxonomyId];
         this.categoryService
-            .getRootCategories(this.taxonomyId)
+            .getRootCategories(taxonomyIds)
             .then(rootCategories => {
                 this.rootCategories = sortCategories(rootCategories);
                 this.getCategoriesStatus.aggregatedCallBack("Retrieved category details", true);
-                let taxonomies = [this.taxonomyId];
-                if(this.taxonomyId == "All"){
-                    taxonomies = Object.keys(this.categoryFilter);
-                }
-                for(let taxonomyId of taxonomies){
-                    if (this.categoryFilter[taxonomyId]) {
-                        this.logisticsCategory = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].logisticsCategory);
-                        if (this.logisticsCategory != null) {
-                            let searchIndex = this.findCategoryInArray(this.rootCategories, this.logisticsCategory);
+                for(let taxonomyId of taxonomyIds){
+                    this.logisticsCategory = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].logisticsCategory);
+                    if (this.logisticsCategory != null) {
+                        let searchIndex = this.findCategoryInArray(this.rootCategories, this.logisticsCategory);
+                        this.rootCategories.splice(searchIndex, 1);
+                    }
+                    for (var i = 0; i < this.categoryFilter[taxonomyId].hiddenCategories.length; i++) {
+                        let filterCat = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].hiddenCategories[i]);
+                        if (filterCat != null) {
+                            let searchIndex = this.findCategoryInArray(this.rootCategories, filterCat);
                             this.rootCategories.splice(searchIndex, 1);
-                        }
-                        for (var i = 0; i < this.categoryFilter[taxonomyId].hiddenCategories.length; i++) {
-                            let filterCat = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].hiddenCategories[i]);
-                            if (filterCat != null) {
-                                let searchIndex = this.findCategoryInArray(this.rootCategories, filterCat);
-                                this.rootCategories.splice(searchIndex, 1);
-                            }
                         }
                     }
                 }

@@ -68,11 +68,6 @@ export const config = {
     "addCartBehaviour": "single",
     "companyRegistrationRequired": true,
     "categoryFilter": {
-        "eClass": {
-            "hiddenCategories": [],
-            "logisticsCategory": "14000000",
-            "ontologyPrefix": "http://www.nimble-project.org/resource/eclass#"
-        },
         "FurnitureOntology": {
             "hiddenCategories": ["Catalogue", "Company", "ContactPerson", "Guarantee", "Price", "Process", "Standard", "Style", "Technique"],
             "logisticsCategory": "LogisticsService",

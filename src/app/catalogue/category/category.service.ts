@@ -16,14 +16,14 @@
    limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
-import { Http, Headers } from '@angular/http';
-import { Category } from "../model/category/category";
+import {Injectable} from '@angular/core';
+import {Http} from '@angular/http';
+import {Category} from '../model/category/category';
 import * as myGlobals from '../../globals';
-import { Code } from "../model/publish/code";
-import { ParentCategories } from '../model/category/parent-categories';
-import { sortCategories, getAuthorizedHeaders } from '../../common/utils';
-import { CookieService } from "ng2-cookies";
+import {Code} from '../model/publish/code';
+import {ParentCategories} from '../model/category/parent-categories';
+import {getAuthorizedHeaders, sortCategories} from '../../common/utils';
+import {CookieService} from 'ng2-cookies';
 
 @Injectable()
 export class CategoryService {
@@ -31,6 +31,7 @@ export class CategoryService {
     private indexingBaseUrl = myGlobals.indexing_service_endpoint;
     private serviceCategories: string[];
     selectedCategories: Category[] = [];
+    categoryFilter = myGlobals.config.categoryFilter;
 
     constructor(private http: Http,
         private cookieService: CookieService) {
@@ -167,8 +168,8 @@ export class CategoryService {
         }
     }
 
-    getRootCategories(taxonomyId: string): Promise<Category[]> {
-        const url = `${this.baseUrl}/taxonomies/${taxonomyId}/root-categories`;
+    getRootCategories(taxonomyIds: string[]): Promise<Category[]> {
+        const url = `${this.baseUrl}/taxonomies/root-categories?taxonomyIds=${taxonomyIds.join(',')}`;
         return this.http
             .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
@@ -195,7 +196,9 @@ export class CategoryService {
             .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
-                return res.json();
+                let availableTaxonomies = res.json();
+                // consider only the taxonomies specified in the globals.categoryFilter
+                return availableTaxonomies.filter(taxonomyId => this.categoryFilter[taxonomyId]);
             })
             .catch(this.handleError);
     }
