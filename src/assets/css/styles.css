@@ -148,6 +148,15 @@ a.nav-link {
     color: #2980b9;
 }
 
+i.boolean-type.fa-check {
+    text-decoration: none;
+    color: green;
+}
+i.boolean-type.fa-times {
+    text-decoration: none;
+    color: red;
+}
+
 a.nav-link:hover {
     color: #002e60;
 }

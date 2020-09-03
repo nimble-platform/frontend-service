@@ -331,11 +331,11 @@
                                             <div *ngFor="let facetInner of facet.options; let i=index">
                                                 <div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
                                                     <span *ngIf="facet.dataType != 'boolean'" class="clickable" (click)="setFacet(facet.name,facetInner.name,facet.genName)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span>
-                                                    <i *ngIf="facet.dataType == 'boolean'" (click)="setFacet(facet.name,facetInner.name,facet.genName)" class="fa {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable" [ngStyle]="{'color':facetInner.realName == 'true' ? 'green' : 'red'}" style="text-decoration: none" aria-hidden="true"></i> ({{ facetInner.count }})
+                                                    <i *ngIf="facet.dataType == 'boolean'" (click)="setFacet(facet.name,facetInner.name,facet.genName)" class="fa boolean-type {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable" aria-hidden="true"></i> ({{ facetInner.count }})
                                                 </div>
                                                 <div *ngIf="checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
                                                     <span *ngIf="facet.dataType != 'boolean'" class="clickable" (click)="setFacet(facet.name,facetInner.name,facet.genName)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span>
-                                                    <i *ngIf="facet.dataType == 'boolean'" (click)="setFacet(facet.name,facetInner.name,facet.genName)" class="fa {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable" [ngStyle]="{'color':facetInner.realName == 'true' ? 'green' : 'red'}" style="text-decoration: none" aria-hidden="true"></i> ({{ facetInner.count }})
+                                                    <i *ngIf="facet.dataType == 'boolean'" (click)="setFacet(facet.name,facetInner.name,facet.genName)" class="fa boolean-type {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable" aria-hidden="true"></i> ({{ facetInner.count }})
                                                 </div>
                                             </div>
                                             <div *ngIf="facet.options.length>maxFacets">
@@ -489,11 +489,11 @@
                                             <div *ngFor="let facetInner of facet.options; let i = index">
                                                 <div *ngIf="!checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
                                                     <span *ngIf="facet.dataType != 'boolean'" class="clickable" (click)="setFacet(facet.name,facetInner.name,facet.genName)" [title]="facetInner.realName">{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></span>
-                                                    <i *ngIf="facet.dataType == 'boolean'" (click)="setFacet(facet.name,facetInner.name,facet.genName)" class="fa {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable" [ngStyle]="{'color':facetInner.realName == 'true' ? 'green' : 'red'}" style="text-decoration: none" aria-hidden="true"></i> ({{ facetInner.count }})
+                                                    <i *ngIf="facet.dataType == 'boolean'" (click)="setFacet(facet.name,facetInner.name,facet.genName)" class="fa boolean-type {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable" aria-hidden="true"></i> ({{ facetInner.count }})
                                                 </div>
                                                 <div *ngIf="checkFacet(facet.name,facetInner.name) && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
                                                     <span *ngIf="facet.dataType != 'boolean'" class="clickable" (click)="setFacet(facet.name,facetInner.name,facet.genName)" [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0,30) }}<span *ngIf="facetInner.realName.length>30">...</span></b></span>
-                                                    <i *ngIf="facet.dataType == 'boolean'" (click)="setFacet(facet.name,facetInner.name,facet.genName)" class="fa {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable" [ngStyle]="{'color':facetInner.realName == 'true' ? 'green' : 'red'}" style="text-decoration: none" aria-hidden="true"></i> ({{ facetInner.count }})
+                                                    <i *ngIf="facet.dataType == 'boolean'" (click)="setFacet(facet.name,facetInner.name,facet.genName)" class="fa boolean-type {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable" aria-hidden="true"></i> ({{ facetInner.count }})
                                                 </div>
                                             </div>
                                             <div *ngIf="facet.options.length>maxFacets">
