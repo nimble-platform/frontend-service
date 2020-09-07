@@ -116,8 +116,8 @@
     <!-- Price Tab -->
     <div *ngIf="selectedTab === 'PRICE'" class="p-3 col-12">
         <div style="flex-grow:1;">
-            <h3 *ngIf="wrapper.getPricePerItem() != '' || wrapper.getFreeSample() != ''" class="p-1"><span [innerHTML]="'Price' | translate"></span></h3>
-            <div *ngIf="wrapper.getPricePerItem() != ''" class="p-1">
+            <h3 *ngIf="wrapper.getPricePerItem() != 'On demand' || wrapper.getFreeSample() != 'No'" class="p-1"><span [innerHTML]="'Price' | translate"></span></h3>
+            <div *ngIf="wrapper.getPricePerItem() != 'On demand'" class="p-1">
                 <strong><span [innerHTML]="'Price:' | translate"></span> </strong> {{ wrapper.getPricePerItem() }}
             </div>
             <div *ngIf="config.vatEnabled && wrapper.getVat() != ''" class="p-1">
@@ -126,7 +126,7 @@
             <div *ngIf="wrapper.getMinimumOrderQuantity() != 'Not specified'" class="p-1">
                 <strong><span [innerHTML]="'Minimum Order Quantity:' | translate"></span></strong> {{ wrapper.getMinimumOrderQuantity() }}
             </div>
-            <div *ngIf="wrapper.getFreeSample() != ''" class="p-1">
+            <div *ngIf="wrapper.getFreeSample() != 'No'" class="p-1">
                 <strong><span [innerHTML]="'Free Sample:' | translate"></span></strong>
                 <i class="fa boolean-type {{wrapper.getFreeSample() == 'Yes' ? 'fa-check': 'fa-times'}}" aria-hidden="true"></i>
             </div>
@@ -141,20 +141,20 @@
     <div *ngIf="selectedTab === 'DELIVERY_TRADING'" class="p-3 col-12">
         <div class="d-flex" *ngIf="isLogistics === false">
             <div style="flex-grow:1;">
-                <h3 *ngIf="wrapper.getIncoterms() != '' || wrapper.getSpecialTerms() != null || wrapper.getDeliveryPeriod() != ''" class="pt-2 p-1"><span [innerHTML]="'Delivery Terms' | translate"></span></h3>
-                <div *ngIf="wrapper.getIncoterms() != ''" class="p-1">
+                <h3 *ngIf="wrapper.getIncoterms() != 'None' || wrapper.getSpecialTerms() != 'None' || wrapper.getDeliveryPeriod() != 'None'" class="pt-2 p-1"><span [innerHTML]="'Delivery Terms' | translate"></span></h3>
+                <div *ngIf="wrapper.getIncoterms() != 'None'" class="p-1">
                     <strong><span [innerHTML]="'Incoterms:' | translate"></span></strong> {{ wrapper.getIncoterms() }}
                 </div>
-                <div *ngIf="wrapper.getSpecialTerms() != null" class="p-1">
+                <div *ngIf="wrapper.getSpecialTerms() != 'None'" class="p-1">
                     <strong><span [innerHTML]="'Special Terms:' | translate"></span></strong> {{ wrapper.getSpecialTerms() }}
                 </div>
-                <div *ngIf="wrapper.getDeliveryPeriod() != ''" class="p-1">
+                <div *ngIf="wrapper.getDeliveryPeriod() != 'None'" class="p-1">
                     <strong><span [innerHTML]="'Delivery Period:' | translate"></span></strong> {{ wrapper.getDeliveryPeriod() }}
                 </div>
             </div>
             <div style="flex-grow:1;">
-                <h3 *ngIf="wrapper.getPackaging() != ''" class="pt-2 p-1"><span [innerHTML]="'Packaging' | translate"></span></h3>
-                <div *ngIf="wrapper.getPackaging() != ''" class="p-1">
+                <h3 *ngIf="wrapper.getPackaging() != 'Not specified'" class="pt-2 p-1"><span [innerHTML]="'Packaging' | translate"></span></h3>
+                <div *ngIf="wrapper.getPackaging() != 'Not specified'" class="p-1">
                     <strong><span [innerHTML]="'Packaging' | translate"></span>: </strong> {{ wrapper.getPackaging() }}
                 </div>
             </div>
