@@ -83,7 +83,7 @@
                 <p class="p-1"><span [innerHTML]="'This product / service does not seem to have any details.' | translate"></span></p>
             </div>
             <div *ngFor="let multiValuedDimension of wrapper.getDimensionMultiValue(false)" class="p-1 col-6 d-flex">
-                <strong>{{ multiValuedDimension.attributeID }}: </strong>
+                <strong>{{ multiValuedDimension.attributeID | translate }}: </strong>
                 <span class="ml-2">
                     {{getMultiValuedDimensionAsString(multiValuedDimension.measure)}}
                 </span>

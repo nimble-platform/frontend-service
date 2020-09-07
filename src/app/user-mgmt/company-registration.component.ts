@@ -369,10 +369,7 @@ export class CompanyRegistrationComponent implements OnInit {
     }
 
     showKeywordsTT(content) {
-        var tooltip = "";
-        tooltip += "List some keywords that represent your business. Those will be used to improve the visibility of your company on the platform.<br/><br/>";
-        tooltip += "e.g.: Design, Bathroom Manufacturing, Home Accessories";
-        this.tooltipHTML = tooltip;
+        this.tooltipHTML = this.translate.instant("Business Keyword Tool Tip");
         this.modalService.open(content);
     }
 
