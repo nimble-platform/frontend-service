@@ -14,7 +14,7 @@
 
 <div *ngIf="defaultTermsAndConditions">
 
-    <h3 *ngIf="catalogueId" class="space-after"><span [innerHTML]="'You are editing terms and conditions for your catalog:' | translate"></span>{{catalogueId == 'default'? 'Main Catalogue': catalogueId}}</h3>
+    <h3 *ngIf="catalogueId" class="space-after"><span [innerHTML]="'You are editing terms and conditions for your catalog:' | translate"></span>{{catalogueId == 'default'? ('Main Catalogue'|translate): catalogueId}}</h3>
     <!-- Default Clauses -->
     <h5><span [innerHTML]="'Choose clauses:' | translate"></span></h5>
     <div class="row">
