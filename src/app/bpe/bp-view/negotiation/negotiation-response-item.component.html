@@ -54,7 +54,7 @@
     </ng-container>
     <div class="col-3">{{ wrapper.rfqIncoterms }}</div>
     <div class="col-3 {{wrapper.checkEqualForResponse('incoTerms') ? 'bg-white text-dark':'bg-danger'}}">
-        <options-input *ngIf="isSellerTermsVisible()" [presentationMode]="getPresentationMode()" [disabled]="isDisabled()" [options]="wrapper.sellerSettings.incoterms" [(selected)]="wrapper.newQuotationWrapper.incoterms">
+        <options-input *ngIf="isSellerTermsVisible()" [presentationMode]="getPresentationMode()" [disabled]="isDisabled()" [options]="wrapper.sellerSettings.incoterms" [(selected)]="wrapper.newQuotationWrapper.incoterms" [areOptionsMultilingual]="true">
         </options-input>
     </div>
 </div>
@@ -68,7 +68,7 @@
     </ng-container>
     <div class="col-3">{{ wrapper.rfqPaymentTerms.paymentTerm }}</div>
     <div class="col-3 {{wrapper.checkEqualForResponse('paymentTerms') ? 'bg-white text-dark':'bg-danger'}}">
-        <options-input *ngIf="isSellerTermsVisible()" [presentationMode]="getPresentationMode()" [disabled]="isDisabled()" [options]="wrapper.sellerSettings.paymentTerms" [(selected)]="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm">
+        <options-input *ngIf="isSellerTermsVisible()" [presentationMode]="getPresentationMode()" [disabled]="isDisabled()" [options]="wrapper.sellerSettings.paymentTerms" [(selected)]="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm" [areOptionsMultilingual]="true">
         </options-input>
     </div>
 </div>
@@ -82,7 +82,7 @@
     </ng-container>
     <div class="col-3">{{ wrapper.rfqPaymentMeans }}</div>
     <div class="col-3 {{wrapper.checkEqualForResponse('paymentMeans') ? 'bg-white text-dark':'bg-danger'}}">
-        <options-input *ngIf="isSellerTermsVisible()" [presentationMode]="getPresentationMode()" [disabled]="isDisabled()" [options]="wrapper.sellerSettings.paymentMeans" [(selected)]="wrapper.newQuotationWrapper.paymentMeans">
+        <options-input *ngIf="isSellerTermsVisible()" [presentationMode]="getPresentationMode()" [disabled]="isDisabled()" [options]="wrapper.sellerSettings.paymentMeans" [(selected)]="wrapper.newQuotationWrapper.paymentMeans" [areOptionsMultilingual]="true">
         </options-input>
     </div>
 </div>

@@ -143,7 +143,7 @@
             <div style="flex-grow:1;">
                 <h3 *ngIf="wrapper.getIncoterms() != 'None' || wrapper.getSpecialTerms() != 'None' || wrapper.getDeliveryPeriod() != 'None'" class="pt-2 p-1"><span [innerHTML]="'Delivery Terms' | translate"></span></h3>
                 <div *ngIf="wrapper.getIncoterms() != 'None'" class="p-1">
-                    <strong><span [innerHTML]="'Incoterms:' | translate"></span></strong> {{ wrapper.getIncoterms() }}
+                    <strong><span [innerHTML]="'Incoterms:' | translate"></span></strong> {{ wrapper.getIncoterms() | translate}}
                 </div>
                 <div *ngIf="wrapper.getSpecialTerms() != 'None'" class="p-1">
                     <strong><span [innerHTML]="'Special Terms:' | translate"></span></strong> {{ wrapper.getSpecialTerms() }}

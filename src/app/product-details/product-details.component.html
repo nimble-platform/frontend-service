@@ -222,7 +222,7 @@
                     <span [innerHTML]="'Payment Terms' | translate"></span>
                 </label>
                 <span class="order-value">
-                    {{ productWrapper.getPaymentTerms() }}
+                    {{ productWrapper.getPaymentTerms() | translate}}
                 </span>
             </div>
 
@@ -232,7 +232,7 @@
                     <span [innerHTML]="'Payment Means' | translate"></span>
                 </label>
                 <span class="order-value">
-                    {{ productWrapper.getPaymentMeans() }}
+                    {{ productWrapper.getPaymentMeans() |translate }}
                 </span>
             </div>
             <div class="inline-order-group">
