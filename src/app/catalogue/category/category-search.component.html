@@ -29,10 +29,10 @@
 
                 <div ngbDropdown class="d-inline-block input-group-prepend">
                     <button class="btn btn-outline-dark" type="button" id="allCategories" [disabled]="getCategoryDetailsStatus.isDisplayed()" ngbDropdownToggle>
-                        {{taxonomyId.replace("FurnitureOntology", "Furniture Sector")}} <span [innerHTML]="'Categories' | translate"></span>
+                        {{taxonomyId.replace("FurnitureOntology", "Furniture Sector" | translate)}} <span [innerHTML]="'Categories' | translate"></span>
                     </button>
                     <div ngbDropdownMenu aria-labelledby="allCategories">
-                        <a *ngFor="let taxonomyID of taxonomyIDs" class="dropdown-item" (click)="changeTaxonomyId(taxonomyID)">{{taxonomyID.replace("FurnitureOntology", "Furniture Sector")}} <span [innerHTML]="'Categories' | translate"></span></a>
+                        <a *ngFor="let taxonomyID of taxonomyIDs" class="dropdown-item" (click)="changeTaxonomyId(taxonomyID)">{{taxonomyID.replace("FurnitureOntology", "Furniture Sector"|translate)}} <span [innerHTML]="'Categories' | translate"></span></a>
                     </div>
                 </div>
 
@@ -80,7 +80,7 @@
                     </tr>
                     <ng-container *ngIf="!getCategoriesStatus.isDisplayed() && categories">
                         <tr *ngFor="let category of categories" (click)="getCategoryDetails(category,false)" class="pointer" [ngClass]="{'table-secondary': selectedCategory && category.code == selectedCategory.code, 'disabled': getCategoryDetailsStatus.isDisplayed()}">
-                            <td class="py-2 px-3 font-weight-light" [innerHTML]="category.taxonomyId == 'FurnitureOntology' ? 'Furniture Sector' : category.taxonomyId"></td>
+                            <td class="py-2 px-3 font-weight-light" [innerHTML]="category.taxonomyId == 'FurnitureOntology' ? ('Furniture Sector'|translate) : category.taxonomyId"></td>
                             <td class="py-2 px-3">{{selectPreferredName(category)}}</td>
                             <td></td>
                             <td class="py-2 px-3">
@@ -117,7 +117,7 @@
                         <ul class="nav nav-tabs pt-2 pl-1 pr-1">
                             <li class="nav-item">
                                 <a href id="TREE" class="nav-link" [ngClass]="{ active: selectedTab === 'TREE', 'disabled': getCategoryDetailsStatus.isDisplayed()}" (click)="onSelectTab($event,'TREE')">
-                                    {{taxonomyId.replace("FurnitureOntology", "Furniture Sector")}}
+                                    {{taxonomyId.replace("FurnitureOntology", "Furniture Sector" | translate)}}
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -247,7 +247,7 @@
             <!-- Details -->
             <div *ngIf="selectedCategoryWithDetails" class="p-2">
                 <div *ngFor="let propName of propertyNames" class="my-1">
-                    <text-input *ngIf="selectedCategoryWithDetails[propName]" [visible]="selectedCategoryWithDetails[propName]" presentationMode="view" [label]="propName | translate" labelClass="col-12 text-capitalize" labelMainClass="mb-0" valueClass="col-12" valueTextClass="mb-1 pl-3" [text]="getCategoryProperty(propName).replace('FurnitureOntology', 'Furniture Sector')"></text-input>
+                    <text-input *ngIf="selectedCategoryWithDetails[propName]" [visible]="selectedCategoryWithDetails[propName]" presentationMode="view" [label]="propName | translate" labelClass="col-12 text-capitalize" labelMainClass="mb-0" valueClass="col-12" valueTextClass="mb-1 pl-3" [text]="getCategoryProperty(propName).replace('FurnitureOntology', 'Furniture Sector'|translate)"></text-input>
                 </div>
                 <div class="row">
                     <div class="col-12 mb-0" *ngIf="selectedCategoryWithDetails.properties?.length > 0">
