@@ -143,23 +143,10 @@
                 <ng-container *ngFor="let industrySectorsEntries of industrySectorsArr; let i = index; trackBy:trackFn">
                     <div class="row mb-1">
                         <div class="col-8">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="d-flex flex-wrap without-left-padding">
-                                        <div *ngFor="let industrySector of industrySectorsEntries.text; let j = index; trackBy:trackFn" class="bordered my-1 mr-1">
-                                            <small class="p-0">{{industrySector}}</small>
-                                            <i *ngIf="!saveCallStatus.isLoading() && appComponent.checkRoles('pm')" class="fa fa-times-circle pl-1" placement="right" (click)="onIndustrySectorRemoved(i,j)"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div *ngIf="!saveCallStatus.isLoading() && appComponent.checkRoles('pm')" class="card-footer">
-                                    <input type="text" [(ngModel)]="industrySectorsToBeAdded[i]" [ngModelOptions]="{standalone: true}" [required]="isActivitySectorRequired()" [placeholder]="'Add activity sector'|translate">
-                                    <button class="btn btn-outline-primary space-left" type="button" (click)="onIndustrySectorAdded(i)"><span [innerHTML]="'Add' | translate"></span></button>
-                                </div>
-                            </div>
+                            <input type="text" class="form-control" [(ngModel)]="industrySectorsArr[i].text" [ngModelOptions]="{standalone: true}" (input)="flagChanged()" maxlength="255" [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('pm')">
                         </div>
                         <div class="col-2">
-                            <select class="form-control" [(ngModel)]="industrySectorsEntries.lang" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" required [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('pm')">
+                            <select class="form-control" [(ngModel)]="industrySectorsArr[i].lang" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" required [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('pm')">
                                 <option *ngFor='let language of languages' [value]="language">{{language}}</option>
                             </select>
                         </div>
@@ -182,32 +169,19 @@
     </div>
 
     <!-- Business Keywords -->
-    <div class="form-group row">
+    <div class="form-group row space-before">
         <label class="col-2 col-form-label">
             <strong><span [innerHTML]="'Business Keywords:' | translate"></span></strong>
             <span class="tooltip-icon" (click)="showKeywordsTT(tooltip)"><i class="fa fa-question-circle"></i></span>
         </label>
         <div class="col-10">
-            <ng-container *ngFor="let businessKeywordsEntries of businessKeywordsArr; let i = index; trackBy:trackFn">
+            <ng-container *ngFor="let businessKeywordEntry of businessKeywordsArr; let i = index; trackBy:trackFn">
                 <div class="row mb-1">
                     <div class="col-8">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex flex-wrap without-left-padding">
-                                    <div *ngFor="let businessKeyword of businessKeywordsEntries.text; let j = index; trackBy:trackFn" class="bordered my-1 mr-1">
-                                        <small class="p-0">{{businessKeyword}}</small>
-                                        <i class="fa fa-times-circle pl-1" placement="right" (click)="onBusinessKeywordRemoved(i,j)"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer">
-                                <input type="text" [(ngModel)]="businessKeywordsToBeAdded[i]" [ngModelOptions]="{standalone: true}" [placeholder]="'Add business keyword'|translate">
-                                <button class="btn btn-outline-primary space-left" type="button" (click)="onBusinessKeywordAdded(i)"><span [innerHTML]="'Add' | translate"></span></button>
-                            </div>
-                        </div>
+                        <input type="text" class="form-control" [(ngModel)]="businessKeywordsArr[i].text" [ngModelOptions]="{standalone: true}" (input)="flagChanged()" maxlength="255" [disabled]="saveCallStatus.isLoading()">
                     </div>
                     <div class="col-2">
-                        <select class="form-control" [(ngModel)]="businessKeywordsEntries.lang" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" [disabled]="saveCallStatus.isLoading()">
+                        <select class="form-control" [(ngModel)]="businessKeywordsArr[i].lang" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" [disabled]="saveCallStatus.isLoading()">
                             <option *ngFor='let language of languages' [value]="language">{{language}}</option>
                         </select>
                     </div>
