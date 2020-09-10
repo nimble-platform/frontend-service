@@ -20,6 +20,7 @@ export class Clause {
         public id: string = null,
         public type: string = null,
         public content: Text[] = [],
+        public clauseTitle: Text[] = [],
         public tradingTerms: TradingTerm[] = []
     ) { }
 }

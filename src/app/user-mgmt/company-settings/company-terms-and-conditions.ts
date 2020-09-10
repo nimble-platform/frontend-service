@@ -28,7 +28,7 @@ import { Text } from '../../catalogue/model/publish/text';
 import { TradingPreferences } from '../../catalogue/model/publish/trading-preferences';
 import { UserService } from '../user.service';
 import { TranslateService } from '@ngx-translate/core';
-import { FEDERATIONID } from '../../catalogue/model/constants';
+import {FEDERATIONID, LANGUAGES} from '../../catalogue/model/constants';
 import {CatalogueService} from '../../catalogue/catalogue.service';
 
 @Component({
@@ -60,6 +60,8 @@ export class CompanyTermsAndConditions implements OnInit {
     PAYMENT_TERMS: string[] = [];
     COUNTRY_NAMES = COUNTRY_NAMES;
     UNITS: string[] = [];
+
+    LANGUAGES = LANGUAGES;
 
     @ViewChild(EditTradingTermModalComponent)
     private editTradingTermModelComponent: EditTradingTermModalComponent;
@@ -98,7 +100,7 @@ export class CompanyTermsAndConditions implements OnInit {
             if (defaultTermsAndConditions) {
                 this.defaultTermsAndConditions = defaultTermsAndConditions;
                 // update the clause ids
-                this.removeOrderNumberFromClauseId(this.defaultTermsAndConditions);
+                this.processClausesForValidity(this.defaultTermsAndConditions);
             }
 
             // create sales terms if the company does not have any
@@ -121,7 +123,7 @@ export class CompanyTermsAndConditions implements OnInit {
                 return order1 - order2;
             });
             // update the clause ids
-            this.removeOrderNumberFromClauseId(this.termsAndConditions);
+            this.processClausesForValidity(this.termsAndConditions);
 
             this.initPageStatus.callback("Successfully initialized the page", true);
         }).catch(error => {
@@ -154,32 +156,34 @@ export class CompanyTermsAndConditions implements OnInit {
 
     // used to update clause content on UI
     setSectionText(clause: Clause) {
-        // get the clause content
-        let text = clause.content[0].value;
-        // get the element representing the clause content
-        let element = document.getElementById(clause.id);
-        // replace placeholders with spans
-        for (let tradingTerm of clause.tradingTerms) {
-            let id = tradingTerm.id;
+        clause.content.forEach(content => {
+            // get the clause content
+            let text = content.value;
+            // get the element representing the clause content
+            let element = document.getElementById(clause.id+'-'+content.languageID);
+            // replace placeholders with spans
+            for (let tradingTerm of clause.tradingTerms) {
+                let id = tradingTerm.id;
 
-            text = text.replace(new RegExp("\\" + id, 'g'), "<b><span id='" + clause.id + "-" + id + "'>" + id + "</span></b>");
+                text = text.replace(new RegExp("\\" + id, 'g'), "<b><span id='" + clause.id + "-" + id + "'>" + id + "</span></b>");
 
-        }
-        // update the element's innerHTML
-        element.innerHTML = text;
+            }
+            // update the element's innerHTML
+            element.innerHTML = text;
 
-        // make every trading term id non-editable
-        for (let tradingTerm of clause.tradingTerms) {
-            let id = tradingTerm.id;
+            // make every trading term id non-editable
+            for (let tradingTerm of clause.tradingTerms) {
+                let id = tradingTerm.id;
 
-            element = document.getElementById(clause.id + "-" + id);
+                element = document.getElementById(clause.id + "-" + id);
 
-            element.contentEditable = "false";
-        }
+                element.contentEditable = "false";
+            }
+        });
     }
 
     // this method is called when the user changes the content of clause
-    onContentUpdated(clause: Clause, event: any) {
+    onContentUpdated(clause: Clause, event: any, contentIndex:number) {
         // check whether the parameters are deleted or not
         for (let tradingTerm of clause.tradingTerms) {
             if (event.target.innerText.indexOf(tradingTerm.id) == -1) {
@@ -188,18 +192,20 @@ export class CompanyTermsAndConditions implements OnInit {
                 return;
             }
         }
-        clause.content[0].value = event.target.innerText;
+        clause.content[contentIndex].value = event.target.innerText;
     }
 
     // methods used to add/edit/remove trading terms
     onAddTradingTerm(clause: Clause) {
-        let element = document.getElementById(clause.id);
-        this.editTradingTermModelComponent.open(clause.tradingTerms, clause, element, this.getExistingTradingTermIds());
+        let elements = [];
+        clause.content.forEach(content => elements.push(document.getElementById(clause.id + "-" + content.languageID)));
+        this.editTradingTermModelComponent.open(clause.tradingTerms, clause, elements, this.getExistingTradingTermIds());
     }
 
     onEditTradingTerm(clause: Clause, tradingTerm: TradingTerm) {
-        let element = document.getElementById(clause.id);
-        this.editTradingTermModelComponent.open(clause.tradingTerms, clause, element, this.getExistingTradingTermIds(), tradingTerm);
+        let elements = [];
+        clause.content.forEach(content => elements.push(document.getElementById(clause.id + "-" + content.languageID)));
+        this.editTradingTermModelComponent.open(clause.tradingTerms, clause, elements, this.getExistingTradingTermIds(), tradingTerm);
     }
 
     getExistingTradingTermIds(): string[] {
@@ -230,7 +236,7 @@ export class CompanyTermsAndConditions implements OnInit {
     onAddClause() {
         let clause = new Clause();
         // generate an id for the clause
-        let id = "Title of clause";
+        let id = "Clause Id";
         let idExists = this.showSection.has(id);
         let number = 1;
         while (idExists) {
@@ -239,12 +245,25 @@ export class CompanyTermsAndConditions implements OnInit {
         }
         // set the id of clause
         clause.id = id;
-        // set the content of clause
-        clause.content[0] = new Text('');
+        // set the content and title of clause
+        let availableLanguages = this.getAvailableLanguagesForClauseContent(clause.content);
+        clause.content[0] = new Text(null,availableLanguages[0]);
+        clause.clauseTitle[0] = new Text(null,availableLanguages[0]);
         // add clause
         this.termsAndConditions.push(clause);
         // update the showSection map
         this.showSection.set(clause.id, false);
+    }
+
+    // method to add content for the given clause
+    onAddClauseContent(clause:Clause) {
+        let availableLanguages = this.getAvailableLanguagesForClauseContent(clause.content);
+        clause.content.push(new Text(null,availableLanguages[0]));
+        clause.clauseTitle.push(new Text(null,availableLanguages[0]));
+    }
+    onRemoveClauseContent(clause:Clause,contentIndex:number){
+        clause.content.splice(contentIndex,1);
+        clause.clauseTitle.splice(contentIndex,1);
     }
 
     onRemoveClause(clause: Clause) {
@@ -267,8 +286,9 @@ export class CompanyTermsAndConditions implements OnInit {
         // we use these numbers to sort clauses
         let termsAndConditions = copy(this.termsAndConditions);
         // check uniqueness of clauses
-        if (!this.checkUniquenessOfClauses(termsAndConditions)) {
-            this.callStatus.error("Each clause should have unique title.");
+        let errorMessage = this.checkValidityOfClauses(termsAndConditions);
+        if(errorMessage != null){
+            this.callStatus.error(errorMessage);
             return;
         }
         this.addOrderNumberForClauses(termsAndConditions);
@@ -305,29 +325,44 @@ export class CompanyTermsAndConditions implements OnInit {
         this.onContractCreationCompleted.emit(null);
     }
 
-    // each clause should have unique id
-    // this method checks the uniqueness of clauses and returns true if each clause has unique id
-    checkUniquenessOfClauses(clauses: Clause[]): boolean {
-        // clause id list
+    checkValidityOfClauses(clauses: Clause[]): string {
         let clauseIds = [];
-        for (let clause of clauses) {
-            if (clauseIds.indexOf(clause.id) != -1) {
-                return false;
+        for(let clause of clauses){
+            if(clause.id == null || clause.id == ""){
+                return "Each clause should have an id.";
+            }
+            else if (clauseIds.indexOf(clause.id) != -1) {
+                return "Each clause should have unique id.";
+            }
+            let contentsWithNoTitles = clause.clauseTitle.filter(title => title.value == null || title.value == '');
+            if(contentsWithNoTitles.length > 0){
+                return "Each clause content should have a title";
             }
             clauseIds.push(clause.id);
         }
-        return true;
+        return null;
     }
 
-    // update the clause id by removing the number at the beginning of id
-    // this number represents the order.
-    removeOrderNumberFromClauseId(clauses: Clause[]) {
+
+    processClausesForValidity(clauses: Clause[]) {
         for (let clause of clauses) {
+            // update the clause id by removing the number at the beginning of id
+            // this number represents the order.
             let startIndex = clause.id.indexOf("_");
             clause.id = clause.id.substring(startIndex + 1);
+            // make sure that content title has the same order with the content in terms of language ids
+            let contentTitles = [];
+            clause.content.forEach(content => {
+                contentTitles = contentTitles.concat(clause.clauseTitle.find(clauseTitle => clauseTitle.languageID == content.languageID));
+            });
+            clause.clauseTitle = contentTitles;
         }
     }
 
+    getAvailableLanguagesForClauseContent(contents:Text[]){
+        let languageIds = contents.map(content => content.languageID);
+        return this.LANGUAGES.filter(languageId => languageIds.indexOf(languageId) == -1);
+    }
     addOrderNumberForClauses(termsAndConditions: Clause[]) {
         let size = termsAndConditions.length;
         for (let index = 0; index < size; index++) {
@@ -343,5 +378,16 @@ export class CompanyTermsAndConditions implements OnInit {
             }
         }
         return false;
+    }
+
+    getClauseName(clause:Clause){
+        let titleIndex = clause.clauseTitle.findIndex(title => title.languageID == this.translate.currentLang);
+        if(titleIndex == -1){
+            titleIndex = clause.clauseTitle.findIndex(title => title.languageID == "en");
+            if(titleIndex == -1){
+                titleIndex = 0;
+            }
+        }
+        return clause.clauseTitle[titleIndex].value;
     }
 }
