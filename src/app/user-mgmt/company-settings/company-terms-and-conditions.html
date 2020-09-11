@@ -33,7 +33,7 @@
     <div *ngFor="let clause of termsAndConditions;let i=index" class="space-after">
         <!-- Clause Id-->
         <button [ngClass]="'btn btn-primary btn-outline-primary small-button'" (click)="showSection.set(clause.id,!showSection.get(clause.id));setSectionText(clause)">
-            {{clause.id}}
+            {{getClauseName(clause)}}
         </button>
         <!-- Button to delete clause -->
         <button class="btn btn-danger btn-sm" (click)="onRemoveClause(clause)">&times;</button>
@@ -41,7 +41,7 @@
         <div class="card" [hidden]="!showSection.get(clause.id)" style="font-size: 0.9rem">
             <!-- Clause Id-->
             <div class="card-header">
-                <input type="text" class="form-control" value="{{clause.id}}" (keyup)="onClauseIdUpdated(clause.id,i,$event.target.value)">
+                {{getClauseName(clause)}}
             </div>
             <!-- Clause Contents -->
             <div *ngFor="let clauseContent of clause.content;let j=index" style="display: flex">

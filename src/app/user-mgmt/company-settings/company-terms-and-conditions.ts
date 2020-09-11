@@ -30,6 +30,7 @@ import { UserService } from '../user.service';
 import { TranslateService } from '@ngx-translate/core';
 import {FEDERATIONID, LANGUAGES} from '../../catalogue/model/constants';
 import {CatalogueService} from '../../catalogue/catalogue.service';
+import {UBLModelUtils} from '../../catalogue/model/ubl-model-utils';
 
 @Component({
     selector: "company-terms-and-conditions",
@@ -145,15 +146,6 @@ export class CompanyTermsAndConditions implements OnInit {
         }
     }
 
-    // called when the user updated the id of clause
-    onClauseIdUpdated(oldId: string, index: number, newId: string) {
-        // update the showSection map
-        this.showSection.delete(oldId);
-        this.showSection.set(newId, true);
-        // update the clause id
-        this.termsAndConditions[index].id = newId;
-    }
-
     // used to update clause content on UI
     setSectionText(clause: Clause) {
         clause.content.forEach(content => {
@@ -235,20 +227,13 @@ export class CompanyTermsAndConditions implements OnInit {
     // methods used to add/remove clause
     onAddClause() {
         let clause = new Clause();
-        // generate an id for the clause
-        let id = "Clause Id";
-        let idExists = this.showSection.has(id);
-        let number = 1;
-        while (idExists) {
-            id += number;
-            idExists = this.showSection.has(id);
-        }
         // set the id of clause
-        clause.id = id;
+        clause.id = UBLModelUtils.generateUUID();
         // set the content and title of clause
         let availableLanguages = this.getAvailableLanguagesForClauseContent(clause.content);
+        let clauseLanguage = availableLanguages.indexOf(this.translate.currentLang) != -1 ? this.translate.currentLang : (availableLanguages.indexOf(this.translate.defaultLang) != -1 ? this.translate.defaultLang : availableLanguages[0]);
         clause.content[0] = new Text(null,availableLanguages[0]);
-        clause.clauseTitle[0] = new Text(null,availableLanguages[0]);
+        clause.clauseTitle[0] = new Text(this.translate.instant('Clause Title'),clauseLanguage);
         // add clause
         this.termsAndConditions.push(clause);
         // update the showSection map
@@ -258,8 +243,9 @@ export class CompanyTermsAndConditions implements OnInit {
     // method to add content for the given clause
     onAddClauseContent(clause:Clause) {
         let availableLanguages = this.getAvailableLanguagesForClauseContent(clause.content);
-        clause.content.push(new Text(null,availableLanguages[0]));
-        clause.clauseTitle.push(new Text(null,availableLanguages[0]));
+        let clauseLanguage = availableLanguages.indexOf(this.translate.currentLang) != -1 ? this.translate.currentLang : (availableLanguages.indexOf(this.translate.defaultLang) != -1 ? this.translate.defaultLang : availableLanguages[0]);
+        clause.content.push(new Text(null,clauseLanguage));
+        clause.clauseTitle.push(new Text(null,clauseLanguage));
     }
     onRemoveClauseContent(clause:Clause,contentIndex:number){
         clause.content.splice(contentIndex,1);
