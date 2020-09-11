@@ -140,14 +140,14 @@ export class NegotiationRequestInputComponent extends ChildFormBase implements O
 
     initializeForm(): void {
         if (this.quantityUnits && this.quantityUnits.length > 0) {
-            this.quantityUnitFormControl = new FormControl(this.quantityUnits[0]);
+            this.quantityUnitFormControl = new FormControl({value: this.quantityUnits[0], disabled: this.disabled});
             this.addToCurrentForm(FIELD_NAME_NEGOTIATION_REQUEST_QUANTITY_INPUT_UNIT, this.quantityUnitFormControl);
 
             let quantityValueValidators: ValidatorFn[] = [];
             if (this.periodRanges) {
                 quantityValueValidators.push(periodValidator(this.quantityUnitFormControl, this.quantityUnits, this.periodRanges));
             }
-            this.quantityValueFormControl = new FormControl(this.quantity.value, quantityValueValidators);
+            this.quantityValueFormControl = new FormControl({value: this.quantity.value, disabled: this.disabled},quantityValueValidators);
             this.addToCurrentForm(FIELD_NAME_NEGOTIATION_REQUEST_QUANTITY_INPUT_VALUE, this.quantityValueFormControl);
         }
     }

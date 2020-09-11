@@ -21,7 +21,7 @@
 <hr>
 
 <!-- Incoterms -->
-<options-input [label]="'Incoterms' | translate" [disabled]="disabled" rowClass="space-before" [options]="wrapper.negotiationSettings.incoterms" [(selected)]="wrapper.line.goodsItem.deliveryTerms.incoterms">
+<options-input [label]="'Incoterms' | translate" [disabled]="disabled" rowClass="space-before" [options]="wrapper.negotiationSettings.incoterms" [(selected)]="wrapper.line.goodsItem.deliveryTerms.incoterms" [areOptionsMultilingual]="true">
 </options-input>
 
 <!-- Delivery Period -->

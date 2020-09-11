@@ -171,7 +171,7 @@
                 </div>
             </li>
         </ul>
-        <ul *ngIf="checkCompMenu()" class="nav navbar-nav">
+        <ul *ngIf="isLoggedIn && checkCompMenu()" class="nav navbar-nav">
             <li ngbDropdown class="nav-item dropdown" routerLinkActive="active">
                 <a class="nav-link pointer" [title]="activeCompanyName?activeCompanyName:''" id="dropdownMenuComp" ngbDropdownToggle>
                     <i class="fa fa-building"></i> <span [innerHTML]="'Company' | translate"></span>

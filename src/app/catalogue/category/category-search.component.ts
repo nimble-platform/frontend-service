@@ -76,7 +76,6 @@ export class CategorySearchComponent implements OnInit {
     selectedCategoriesWRTLevels = [];
     propertyNames: string[] = ["code", "taxonomyId", "level", "definition", "note", "remark"];
     taxonomyId: string = myGlobals.config.standardTaxonomy;
-    standardTaxonomy: string = myGlobals.config.standardTaxonomy;
     categoryFilter = myGlobals.config.categoryFilter;
     taxonomyIDs: string[];
     prefCats: string[] = [];
@@ -108,8 +107,6 @@ export class CategorySearchComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        if (this.standardTaxonomy == "All")
-            this.standardTaxonomy = "eClass";
         this.route.queryParams.subscribe((params: Params) => {
             // current page regs considered: menu, publish, null
             this.pageRef = params["pageRef"];
@@ -140,7 +137,7 @@ export class CategorySearchComponent implements OnInit {
             for (let i = 0; i < taxonomyIDs.length; i++) {
                 this.taxonomyIDs.push(taxonomyIDs[i]);
             }
-            this.getRootCategories(this.taxonomyId == "All" ? this.standardTaxonomy : this.taxonomyId);
+            this.getRootCategories();
         })
     }
 
@@ -334,14 +331,15 @@ export class CategorySearchComponent implements OnInit {
         this.treeView = !this.treeView;
     }
 
-    private getRootCategories(taxonomyId: string): any {
-        this.getCategoriesStatus.submit();
+    private getRootCategories(): any {
+        this.getCategoriesStatus.aggregatedSubmit();
+        let taxonomyIds = this.taxonomyId == "All" ? Object.keys(this.categoryFilter) : [this.taxonomyId];
         this.categoryService
-            .getRootCategories(taxonomyId)
+            .getRootCategories(taxonomyIds)
             .then(rootCategories => {
                 this.rootCategories = sortCategories(rootCategories);
-                this.getCategoriesStatus.callback("Retrieved category details", true);
-                if (this.categoryFilter[taxonomyId]) {
+                this.getCategoriesStatus.aggregatedCallBack("Retrieved category details", true);
+                for(let taxonomyId of taxonomyIds){
                     this.logisticsCategory = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].logisticsCategory);
                     if (this.logisticsCategory != null) {
                         let searchIndex = this.findCategoryInArray(this.rootCategories, this.logisticsCategory);
@@ -357,7 +355,7 @@ export class CategorySearchComponent implements OnInit {
                 }
             })
             .catch(error => {
-                this.getCategoriesStatus.error("Failed to retrieve category details", error);
+                this.getCategoriesStatus.aggregatedError("Failed to retrieve category details", error);
             });
     }
 
@@ -370,24 +368,18 @@ export class CategorySearchComponent implements OnInit {
             )
         );
 
-    displayRootCategories(taxonomyId: string): void {
-        this.treeView = true;
-        this.taxonomyId = taxonomyId;
-        this.getRootCategories(this.taxonomyId == "All" ? this.standardTaxonomy : this.taxonomyId);
-    }
-
     private getCategories(): void {
-        this.getCategoriesStatus.submit();
+        this.getCategoriesStatus.aggregatedSubmit();
         this.categoryService
             .getCategoriesByName(this.categoryKeyword, this.taxonomyId, this.isLogistics)
             .then(categories => {
                 this.parentCategories = null;
                 this.pathToSelectedCategories = null;
                 this.categories = categories;
-                this.getCategoriesStatus.callback("Successfully got search results", true);
+                this.getCategoriesStatus.aggregatedCallBack("Successfully got search results", true);
             })
             .catch(error => {
-                this.getCategoriesStatus.error("Error while searching for categories", error);
+                this.getCategoriesStatus.aggregatedError("Error while searching for categories", error);
             });
     }
 
@@ -427,7 +419,7 @@ export class CategorySearchComponent implements OnInit {
         this.selectedCategoryWithDetails = null;
         this.treeView = true;
         this.taxonomyId = category.taxonomyId;
-        this.getCategoriesStatus.submit();
+        this.getCategoriesStatus.aggregatedSubmit();
         this.categoryService
             .getParentCategories(category)
             .then(categories => {
@@ -449,7 +441,7 @@ export class CategorySearchComponent implements OnInit {
                         for (let parent of this.parentCategories.parents) {
                             this.selectedCategoriesWRTLevels.push(parent.code);
                         }
-                        this.getCategoriesStatus.callback(null, true);
+                        this.getCategoriesStatus.aggregatedCallBack(null, true);
                         if (this.treeView) {
                             setTimeout(function() {
                                 scrollToDiv(category.code);
@@ -458,11 +450,11 @@ export class CategorySearchComponent implements OnInit {
                         }
                     })
                     .catch(error => {
-                        this.getCategoriesStatus.error("Error while fetching category.", error);
+                        this.getCategoriesStatus.aggregatedError("Error while fetching category.", error);
                     });
             })
             .catch(error => {
-                this.getCategoriesStatus.error("Error while fetching parrent category.", error);
+                this.getCategoriesStatus.aggregatedError("Error while fetching parrent category.", error);
             });
     }
 
@@ -553,7 +545,7 @@ export class CategorySearchComponent implements OnInit {
                 this.getCategories();
             }
             if (this.selectedTab == "TREE") {
-                this.getRootCategories(this.taxonomyId == "All" ? this.standardTaxonomy : this.taxonomyId);
+                this.getRootCategories();
             }
         }
     }

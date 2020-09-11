@@ -92,7 +92,7 @@
             <div *ngIf="isDisabled()">
                 <span [innerHTML]="quotation.quotationLine[0].lineItem.paymentMeans.paymentMeansCode.value|translate"></span>
             </div>
-            <options-input *ngIf="!isDisabled()" [(selected)]="quotation.quotationLine[0].lineItem.paymentMeans.paymentMeansCode.value" [options]="PAYMENT_MEANS">
+            <options-input *ngIf="!isDisabled()" [(selected)]="quotation.quotationLine[0].lineItem.paymentMeans.paymentMeansCode.value" [options]="PAYMENT_MEANS" [areOptionsMultilingual]="true">
             </options-input>
         </div>
     </div>
@@ -110,7 +110,7 @@
             <div *ngIf="isDisabled()">
                 <span [innerHTML]="quotationPaymentTerms.paymentTerm|translate"></span>
             </div>
-            <options-input *ngIf="!isDisabled()" [(selected)]="quotationPaymentTerms.paymentTerm" [options]="PAYMENT_TERMS">
+            <options-input *ngIf="!isDisabled()" [(selected)]="quotationPaymentTerms.paymentTerm" [options]="PAYMENT_TERMS" [areOptionsMultilingual]="true">
             </options-input>
         </div>
     </div>
@@ -128,7 +128,7 @@
             <div *ngIf="isDisabled()">
                 <span [innerHTML]="quotation.quotationLine[0].lineItem.deliveryTerms.incoterms|translate"></span>
             </div>
-            <options-input *ngIf="!isDisabled()" [(selected)]="quotation.quotationLine[0].lineItem.deliveryTerms.incoterms" [options]="INCOTERMS">
+            <options-input *ngIf="!isDisabled()" [(selected)]="quotation.quotationLine[0].lineItem.deliveryTerms.incoterms" [options]="INCOTERMS" [areOptionsMultilingual]="true">
             </options-input>
         </div>
     </div>

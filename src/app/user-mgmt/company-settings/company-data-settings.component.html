@@ -140,10 +140,10 @@
                 </select>
             </ng-container>
             <ng-container *ngIf="dataForm.getRawValue()['businessType'] != '' && (availableActivitySectorKeys.length == 0 || forceActText)">
-                <ng-container *ngFor="let industrySectorsEntry of industrySectorsArr; let i = index; trackBy:trackFn">
+                <ng-container *ngFor="let industrySectorsEntries of industrySectorsArr; let i = index; trackBy:trackFn">
                     <div class="row mb-1">
                         <div class="col-8">
-                            <textarea rows="3" class="form-control" [(ngModel)]="industrySectorsArr[i].text" [ngModelOptions]="{standalone: true}" (input)="flagChanged()" placeholder="Separate entries using new lines" required maxlength="255" [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('pm')"></textarea>
+                            <input type="text" class="form-control" [(ngModel)]="industrySectorsArr[i].text" [ngModelOptions]="{standalone: true}" (input)="flagChanged()" maxlength="255" [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('pm')">
                         </div>
                         <div class="col-2">
                             <select class="form-control" [(ngModel)]="industrySectorsArr[i].lang" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" required [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('pm')">
@@ -169,16 +169,16 @@
     </div>
 
     <!-- Business Keywords -->
-    <div class="form-group row">
+    <div class="form-group row space-before">
         <label class="col-2 col-form-label">
             <strong><span [innerHTML]="'Business Keywords:' | translate"></span></strong>
             <span class="tooltip-icon" (click)="showKeywordsTT(tooltip)"><i class="fa fa-question-circle"></i></span>
         </label>
         <div class="col-10">
-            <ng-container *ngFor="let businessKeywordsEntry of businessKeywordsArr; let i = index; trackBy:trackFn">
+            <ng-container *ngFor="let businessKeywordEntry of businessKeywordsArr; let i = index; trackBy:trackFn">
                 <div class="row mb-1">
                     <div class="col-8">
-                        <textarea rows="3" class="form-control" [(ngModel)]="businessKeywordsArr[i].text" [ngModelOptions]="{standalone: true}" (input)="flagChanged()" placeholder="Separate entries using new lines" maxlength="255" [disabled]="saveCallStatus.isLoading()"></textarea>
+                        <input type="text" class="form-control" [(ngModel)]="businessKeywordsArr[i].text" [ngModelOptions]="{standalone: true}" (input)="flagChanged()" maxlength="255" [disabled]="saveCallStatus.isLoading()">
                     </div>
                     <div class="col-2">
                         <select class="form-control" [(ngModel)]="businessKeywordsArr[i].lang" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" [disabled]="saveCallStatus.isLoading()">

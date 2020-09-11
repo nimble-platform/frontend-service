@@ -14,14 +14,14 @@
 
 <div *ngIf="defaultTermsAndConditions">
 
-    <h3 *ngIf="catalogueId" class="space-after"><span [innerHTML]="'You are editing terms and conditions for your catalog:' | translate"></span>{{catalogueId == 'default'? 'Main Catalogue': catalogueId}}</h3>
+    <h3 *ngIf="catalogueId" class="space-after"><span [innerHTML]="'You are editing terms and conditions for your catalog:' | translate"></span>{{catalogueId == 'default'? ('Main Catalogue'|translate): catalogueId}}</h3>
     <!-- Default Clauses -->
     <h5><span [innerHTML]="'Choose clauses:' | translate"></span></h5>
     <div class="row">
         <div class="col-3" *ngFor="let clause of defaultTermsAndConditions;let i=index">
             <label>
                 <input id="{{'default-'+clause.id}}" type="checkbox" (change)="onClauseSelection(clause,$event.target.checked)" [checked]="isClauseSelected(clause.id)">
-                {{clause.id}}
+                {{getClauseName(clause)}}
             </label>
         </div>
     </div>
@@ -33,7 +33,7 @@
     <div *ngFor="let clause of termsAndConditions;let i=index" class="space-after">
         <!-- Clause Id-->
         <button [ngClass]="'btn btn-primary btn-outline-primary small-button'" (click)="showSection.set(clause.id,!showSection.get(clause.id));setSectionText(clause)">
-            {{clause.id}}
+            {{getClauseName(clause)}}
         </button>
         <!-- Button to delete clause -->
         <button class="btn btn-danger btn-sm" (click)="onRemoveClause(clause)">&times;</button>
@@ -41,12 +41,29 @@
         <div class="card" [hidden]="!showSection.get(clause.id)" style="font-size: 0.9rem">
             <!-- Clause Id-->
             <div class="card-header">
-                <input type="text" class="form-control" value="{{clause.id}}" (keyup)="onClauseIdUpdated(clause.id,i,$event.target.value)">
+                {{getClauseName(clause)}}
             </div>
-            <!-- Clause Content -->
-            <span id="{{clause.id}}" class="card-body" contenteditable="true" (input)="onContentUpdated(clause,$event)">
+            <!-- Clause Contents -->
+            <div *ngFor="let clauseContent of clause.content;let j=index" style="display: flex">
+                <div class="card inner-card flex-fill">
+                    <!-- Content Title-->
+                    <div class="card-header">
+                        <text-input [label]="'Clause Title' | translate" [(text)]="clause.clauseTitle[j].value" [labelClass]="'col-2'" [rows]="1" [maxLength]="2047" [rowClass]="'m-0'" [valueClass]="'col-9'" [availableLanguages]="getAvailableLanguagesForClauseContent(clause.content)" [(languageId)]="clause.clauseTitle[j].languageID" [languageIdClass]="'col-1'" (languageIdChange)="clause.clauseTitle[j].languageID = $event;clauseContent.languageID = $event">
+                        </text-input>
+                    </div>
+                    <!-- Content-->
+                    <span id="{{clause.id + '-' + clauseContent.languageID}}" class="card-body" contenteditable="true" (input)="onContentUpdated(clause,$event,j)">
 
-            </span>
+                    </span>
+                </div>
+                <div style="margin: auto 10px auto auto;">
+                    <button class="btn btn-danger btn-sm" (click)="onRemoveClauseContent(clause,j)">{{'Delete'|translate}}</button>
+                </div>
+            </div>
+            <div *ngIf="LANGUAGES.length != clause.content.length" style="text-align: center;margin-bottom: 10px">
+                <!-- Button to add clause content -->
+                <button class="btn btn-danger btn-sm" (click)="onAddClauseContent(clause)">+</button>
+            </div>
             <!-- Trading Terms -->
             <div class="card-footer">
                 <div class="row" *ngFor="let tradingTerm of clause.tradingTerms">

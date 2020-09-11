@@ -441,11 +441,11 @@ export class CatalogueService {
                         var contentType = 'application/zip';
                         var blob = new Blob([xhr.response], { type: contentType });
                         // file name
-                        let fileName = catalogueIds[0];;
+                        let fileName = catalogueIds[0];
                         if (catalogueIds.length > 1) {
                             fileName = 'catalogues';
                         }
-                        fileName = fileName + '_' + new Date().toString();
+                        fileName = fileName + '_' + new Date().toString() + ".zip";
 
                         resolve({ fileName: fileName, content: blob });
                     } else {

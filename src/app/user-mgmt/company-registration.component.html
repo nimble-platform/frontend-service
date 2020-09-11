@@ -180,7 +180,7 @@
                     <ng-container *ngFor="let industrySectorsEntry of industrySectorsArr; let i = index; trackBy:trackFn">
                         <div class="row mb-1">
                             <div class="col-8">
-                                <textarea rows="3" class="form-control" [(ngModel)]="industrySectorsArr[i].text" [ngModelOptions]="{standalone: true}" placeholder="Separate entries using new lines" required maxlength="255"></textarea>
+                                <input type="text" class="form-control" [(ngModel)]="industrySectorsArr[i].text" [ngModelOptions]="{standalone: true}" maxlength="255">
                             </div>
                             <div class="col-2">
                                 <select class="form-control" [(ngModel)]="industrySectorsArr[i].lang" [ngModelOptions]="{standalone: true}" required>
@@ -212,10 +212,10 @@
                 <span class="tooltip-icon" (click)="showKeywordsTT(tooltip)"><i class="fa fa-question-circle"></i></span>
             </label>
             <div class="col-10">
-                <ng-container *ngFor="let businessKeywordsEntry of businessKeywordsArr; let i = index; trackBy:trackFn">
+                <ng-container *ngFor="let businessKeywordEntry of businessKeywordsArr; let i = index; trackBy:trackFn">
                     <div class="row mb-1">
                         <div class="col-8">
-                            <textarea rows="3" class="form-control" [(ngModel)]="businessKeywordsArr[i].text" [ngModelOptions]="{standalone: true}" placeholder="Separate entries using new lines" maxlength="255"></textarea>
+                            <input type="text" class="form-control" [(ngModel)]="businessKeywordsArr[i].text" [ngModelOptions]="{standalone: true}" maxlength="255">
                         </div>
                         <div class="col-2">
                             <select class="form-control" [(ngModel)]="businessKeywordsArr[i].lang" [ngModelOptions]="{standalone: true}">

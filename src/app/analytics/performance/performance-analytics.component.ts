@@ -112,11 +112,11 @@ export class PerformanceAnalyticsComponent implements OnInit {
     trade_red_perc_str_buy = "0%";
 
     // collab time
-    collab_time = 0;
-    collab_time_sell = 0;
-    collab_time_buy = 0;
+    collab_time = null;
+    collab_time_sell = null;
+    collab_time_buy = null;
 
-    avg_res_time = 0;
+    avg_res_time = null;
 
     single: any[];
 
@@ -430,13 +430,13 @@ export class PerformanceAnalyticsComponent implements OnInit {
                 this.trade_red_perc_str = this.trade_red_perc + "%";
 
                 //collab time
-                this.collab_time = Math.round(res.collaborationTime.averageCollabTime * 10 * 24) / 10;
-                this.collab_time_buy = Math.round(res.collaborationTime.averageCollabTimePurchases * 10 * 24) / 10;
-                this.collab_time_sell = Math.round(res.collaborationTime.averageCollabTimeSales * 10 * 24) / 10;
+                this.collab_time = this.getTimeLabel(res.collaborationTime.averageCollabTime);
+                this.collab_time_buy = this.getTimeLabel(res.collaborationTime.averageCollabTimePurchases);
+                this.collab_time_sell = this.getTimeLabel(res.collaborationTime.averageCollabTimeSales);
 
 
 
-                this.avg_res_time = Math.round(res.responseTime.averageTime * 10 * 10) / 10;
+                this.avg_res_time = this.getTimeLabel(res.responseTime.averageTime);
 
                 var map1 = res.responseTime.averageTimeForMonths;
                 var i = 0;
@@ -472,6 +472,18 @@ export class PerformanceAnalyticsComponent implements OnInit {
     }
 
 
+    getTimeLabel(timeInDays){
+        if(timeInDays <= 0){
+            return null;
+        }
+        if(timeInDays < 0.0417){
+            return Math.round(timeInDays * 10 * 1440) / 10 + " M";
+        }
+        else if(timeInDays < 1){
+            return Math.round(timeInDays * 10 * 24) / 10 + " H";
+        }
+        return Math.round(timeInDays * 10) / 10 + " D";
+    }
 
     onSelectTab(event: any, id: any): void {
         event.preventDefault();

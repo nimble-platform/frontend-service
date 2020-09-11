@@ -26,7 +26,7 @@
         <call-status [callStatus]="catalogueRetrievalCallStatus"></call-status>
         <div *ngFor="let id of catalogueIds" class="d-flex">
             <input class="id-checkbox" type="checkbox" [(ngModel)]="selectedIdMap[id]" (change)="onIdSelection(id)">
-            <span>{{id}}</span>
+            <span>{{id == 'default'? ('Main Catalogue'|translate): id}}</span>
         </div>
         <call-status [callStatus]="catalogueOperationCallStatus"></call-status>
     </div>

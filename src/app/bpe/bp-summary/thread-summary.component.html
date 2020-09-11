@@ -164,7 +164,7 @@
             <div class="form-group row">
                 <label class="col-6 col-form-label border border-dark">
                     <strong><span [innerHTML]="'Overall Rating' | translate"></span>
-                        <span title="Overall rating of the company based on 'Seller Communication','Fulfillment of Terms' and 'Delivery & Packaging'. See the subitems for more details.">
+                        <span [title]="'Overall Rating Title'|translate">
                             <i class="fa fa-exclamation-circle"></i>
                         </span>
                     </strong>
@@ -182,7 +182,7 @@
             <div *ngIf="responsetime || negotiationQuality" class="form-group row">
                 <label class="col-5 col-form-label offset-1 border border-dark">
                     <strong><span [innerHTML]="'Seller Communication' | translate"></span>
-                        <span title=' Overall rating of how well the seller communicated based on "Quality of Negotiation Process","Quality of Ordering Process" and "Response Time". See the subitems for more details.'>
+                        <span [title]="'Seller Communication Title'|translate">
                             <i class="fa fa-exclamation-circle"></i>
                         </span>
                     </strong>
@@ -199,7 +199,7 @@
             </div>
             <div *ngIf="negotiationQuality" class="form-group row">
                 <label class="col-6 col-form-label offset-2 border border-warning"><span [innerHTML]="'Quality of Negotiation Process' | translate"></span>
-                    <span title='Indicates how well the negotiation was executed; e.g. clear responses, flexibility on provided terms, supporting documentation, etc.'>
+                    <span [title]="'Quality of Negotiation Process Title'|translate">
                         <i class="fa fa-exclamation-circle"></i>
                     </span>
                 </label>
@@ -215,7 +215,7 @@
             </div>
             <div *ngIf="responsetime" class="form-group row">
                 <label class="col-6 col-form-label offset-2 border border-warning"><span [innerHTML]="'Response Time' | translate"></span>
-                    <span title="Indicates how the response times were perceived by the trading partner. This is a subjective value.">
+                    <span [title]="'Response Time Title'|translate">
                         <i class="fa fa-exclamation-circle"></i>
                     </span>
                 </label>
@@ -232,7 +232,7 @@
             <div *ngIf="conformToOtherAggre || prodListingAccu || orderQuality" class="form-group row">
                 <label class="col-5 col-form-label offset-1 border border-dark">
                     <strong><span [innerHTML]="'Fulfillment of Terms' | translate"></span>
-                        <span title='Overall rating of how accurately the seller fulfilled the agreed upon terms based on "Quality of Requested Information" and "Conformance to Contractual Terms". See the subitems for more details.'>
+                        <span [title]="'Fulfillment of Terms Title'|translate">
                             <i class="fa fa-exclamation-circle"></i>
                         </span>
                     </strong>
@@ -250,7 +250,7 @@
 
             <div *ngIf="prodListingAccu" class="form-group row">
                 <label class="col-6 col-form-label offset-2 border border-warning"><span [innerHTML]="'Quality of Requested Information' | translate"></span>
-                    <span title="Indicates how well the received product or service matches the listed details.">
+                    <span [title]="'Quality of Requested Information Title'|translate">
                         <i class="fa fa-exclamation-circle"></i>
                     </span>
                 </label>
@@ -266,7 +266,7 @@
             </div>
             <div *ngIf="orderQuality" class="form-group row">
                 <label class="col-6 col-form-label offset-2 border border-warning"><span [innerHTML]="'Quality of Ordering Process' | translate"></span>
-                    <span title=' Indicates how well the ordering was executed; e.g. clear responses, supporting documentation, transition to fulfillment, etc.'>
+                    <span [title]="'Quality of Ordering Process Title'|translate">
                         <i class="fa fa-exclamation-circle"></i>
                     </span>
                 </label>
@@ -282,7 +282,7 @@
             </div>
             <div *ngIf="conformToOtherAggre" class="form-group row">
                 <label class="col-6 col-form-label offset-2 border border-warning "><span [innerHTML]="'Conformance to Contractual Terms' | translate"></span>
-                    <span title="Indicates how accurately the seller conformed to the agreed upon contractual terms; e.g. dispatch date, payment method, additional services, etc.">
+                    <span [title]="'Conformance to Contractual Terms Title'|translate">
                         <i class="fa fa-exclamation-circle"></i>
                     </span>
                 </label>
@@ -299,12 +299,12 @@
             <div *ngIf="deliveryPackage" class="form-group row">
                 <label class="col-5 col-form-label offset-1 border border-warning">
                     <strong><span [innerHTML]="'Delivery & Packaging' | translate"></span></strong>
-                    <span title="Overall rating of the quality of delivery and packaging, e.g. delivery date, adequate packing, adequate delivery method, etc.">
+                    <span [title]="'Delivery & Packaging Title'|translate">
                         <i class="fa fa-exclamation-circle"></i>
                     </span>
                 </label>
                 <div class="col-6 align-right">
-                    <ngb-rating [(rate)]="compRating.DeliveryAndPackaging" max="5" (rateChange)="changeDeliveryRating()">
+                    <ngb-rating [(rate)]="compRating.DeliveryAndPackaging" max="5" (rateChange)="changeOverallRating()">
                         <ng-template let-fill="fill">
                             <span class="star star-c" [class.full]="fill === 100">
                                 <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;

@@ -76,6 +76,11 @@ export const config = {
             "hiddenCategories": ["Catalogue", "Company", "ContactPerson", "Guarantee", "Price", "Process", "Standard", "Style", "Technique"],
             "logisticsCategory": "LogisticsService",
             "ontologyPrefix": "http://www.aidimme.es/FurnitureSectorOntology.owl#"
+        },
+        "Aerospace": {
+            "hiddenCategories": [],
+            "logisticsCategory": "",
+            "ontologyPrefix": "http://www.nimble-project.org/resource/aerospace#"
         }
     },
     "contractForCatalogueEnabled":true,
@@ -187,6 +192,10 @@ export const config = {
             }
         },
         "Manufacturer": {
+            "Aerospace": {
+                "en": "Aerospace",
+                "es": "Aeroespacial"
+            },
             "Bathroom": {
                 "en": "Bathroom",
                 "es": "Baño"
@@ -271,6 +280,10 @@ export const config = {
             }
         },
         "Service Provider": {
+            "Aerospace": {
+                "en": "Aerospace",
+                "es": "Aeroespacial"
+            },
             "Architects": {
                 "en": "Architects",
                 "es": "Arquitectos"
@@ -344,6 +357,10 @@ export const config = {
             "Adhesives": {
                 "en": "Adhesives",
                 "es": "Adhesivos"
+            },
+            "Aerospace": {
+                "en": "Aerospace",
+                "es": "Aeroespacial"
             },
             "Board": {
                 "en": "Board",
@@ -454,9 +471,9 @@ export const config = {
     "showLoginFederation": true,
     "unshippedOrdersTabEnabled": true,
     "welcomeMessage":{
-        "en": "Looks like you are new here",
-        "es": "Parece que eres nuevo aquí",
-        "de": "Sieht aus, als seien Sie neu hier",
+        "en": "Looks like you are new here.",
+        "es": "Parece que eres nuevo aquí.",
+        "de": "Sieht aus, als seien Sie neu hier.",
     },
     "whiteBlackListForCatalogue":true,
     "federationClientID": "efact-test-client",

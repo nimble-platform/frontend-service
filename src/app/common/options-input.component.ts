@@ -15,6 +15,7 @@
  */
 
 import { Component, EventEmitter, OnInit, Input, Output, ViewChild, ElementRef } from "@angular/core";
+import {TranslateService} from '@ngx-translate/core';
 
 export interface Option {
     name: string
@@ -40,6 +41,10 @@ export class OptionsInputComponent implements OnInit {
     @Input() valueClass: string; // set based on label
 
     @Input() options: Array<string | Option>;
+    /*
+    * Whether the given options are multilingual or not.
+    * */
+    @Input() areOptionsMultilingual:boolean = false;
     @Input() selectedIndex: number = -1; // this is added just to initialize the selected properly in case there are multiple options with the same value
     private selectedValue: string;
     @Output() selectedChange = new EventEmitter<string>();
@@ -50,7 +55,7 @@ export class OptionsInputComponent implements OnInit {
     innerFormClass = "form-control-sm";
     @ViewChild('optionsInputSelect') optionsInputSelect;
 
-    constructor() {
+    constructor(public translateService:TranslateService) {
 
     }
 
@@ -101,7 +106,11 @@ export class OptionsInputComponent implements OnInit {
 
     getName(option: Option | string): string {
         if (option) {
-            return typeof option === "string" ? option : option.name;
+            let optionName = typeof option === "string" ? option : option.name;
+            if(this.areOptionsMultilingual){
+                optionName = this.translateService.instant(optionName);
+            }
+            return optionName;
         }
     }
 }

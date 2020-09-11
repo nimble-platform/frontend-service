@@ -7,27 +7,27 @@ export const debug = false;
 
 // Base path variables
 
-export const base_path = "http://b2bmarket.aidimme.es";
-export const ub_base = "http://b2bmarket.aidimme.es/ub-search";
-export const idpURL = "http://b2bmarket.aidimme.es:8080/auth/realms/master";
+export const base_path = "http://nimble-staging.salzburgresearch.at";
+export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
+export const idpURL = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master";
 export const collab_path = "http://nimble.eu-de.containers.appdomain.cloud/collaborations";
 export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client";
-export const frontendURL = base_path;
+export const frontendURL = base_path + "/frontend/";
 
 
 // Service endpoints
 
-export const user_mgmt_endpoint = `${base_path}/api/identity`;
-export const catalogue_endpoint = `${base_path}/api/catalog`;
-export const bpe_endpoint = `${base_path}/api/business-process`;
-export const data_channel_endpoint = `${base_path}/api/data-channel`;
-export const data_aggregation_endpoint = `${base_path}/api/data-aggregation`;
-export const trust_service_endpoint = `${base_path}/api/trust`;
-export const indexing_service_endpoint = `${base_path}/api/index`;
+export const user_mgmt_endpoint = `${base_path}/identity`;
+export const catalogue_endpoint = `${base_path}/catalog`;
+export const bpe_endpoint = `${base_path}/business-process`;
+export const data_channel_endpoint = `${base_path}/data-channel`;
+export const data_aggregation_endpoint = `${base_path}/data-aggregation`;
+export const trust_service_endpoint = `${base_path}/trust`;
+export const indexing_service_endpoint = `${base_path}/index`;
 export const rocketChatEndpoint = `${base_path}:3000`;
 export const logstash_endpoint = `${base_path}/logstash`;
 export const kibana_endpoint = `${base_path}/kibana/app/kibana`;
-export const delegate_endpoint = `${base_path}:9265`;
+export const delegate_endpoint = `${base_path}/delegate`;
 export const agent_mgmt_endpoint = `http://159.69.214.42/agents`;
 export const collaboration_endpoint = `${collab_path}`;
 export const certificate_of_origin_endpoint = `http://161.156.70.125:7695`;
@@ -61,18 +61,13 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 // Platform Configuration
 
 export const config = {
-    "federationInstanceId": "FMP",
+    "federationInstanceId": "STAGING",
     "platformName": "B2BMarket",
     "platformNameInMail":"B2BMarket",
     "envName": "fmp",
     "addCartBehaviour": "single",
     "companyRegistrationRequired": true,
     "categoryFilter": {
-        "eClass": {
-            "hiddenCategories": [],
-            "logisticsCategory": "14000000",
-            "ontologyPrefix": "http://www.nimble-project.org/resource/eclass#"
-        },
         "FurnitureOntology": {
             "hiddenCategories": ["Catalogue", "Company", "ContactPerson", "Guarantee", "Price", "Process", "Standard", "Style", "Technique"],
             "logisticsCategory": "LogisticsService",
@@ -103,41 +98,41 @@ export const config = {
         "companyDashboards": [
             {
                 "title": "Company Visits",
-                "url": "#/dashboard/6e450310-5ecb-11ea-a859-83b39107c38e?embed=true&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-90d,to:now))&_a=(description:'',filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'16950440-5e2f-11ea-a63d-ebb31fe7e4db',key:companyId,negate:!f,params:(query:'41915'),type:phrase),query:(match_phrase:(companyId:'41915')))),fullScreenMode:!f,options:(hidePanelTitles:!f,useMargins:!t),panels:!((embeddableConfig:(),gridData:(h:15,i:'4a15df25-80e4-48ef-9c0b-1601fb4c1815',w:24,x:0,y:0),id:'3f922e40-5e2f-11ea-a63d-ebb31fe7e4db',panelIndex:'4a15df25-80e4-48ef-9c0b-1601fb4c1815',type:visualization,version:'7.6.0'),(embeddableConfig:(),gridData:(h:15,i:'239583b6-eab9-455d-9233-e4549bf5b0a0',w:24,x:24,y:0),id:'6c695120-5ebe-11ea-a859-83b39107c38e',panelIndex:'239583b6-eab9-455d-9233-e4549bf5b0a0',type:visualization,version:'7.6.0')),query:(language:kuery,query:'activity:%20%22company_visit%22'),timeRestore:!f,title:'Company%20Visits',viewMode:view)"
+                "url": "#/dashboard/d1503680-e5bf-11e9-a14e-bde7739ac822?embed=true&_g=(refreshInterval:(pause:!t,value:0),time:(from:now-1y,mode:quick,to:now))&_a=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'7e688530-cd69-11e9-b5e8-e908493e1aa7',key:companyId,negate:!f,params:(query:'41915',type:phrase),type:phrase,value:'41915'),query:(match:(companyId:(query:'41915',type:phrase))))))"
             },
             {
                 "title": "Product / Service Visits",
-                "url": "#/dashboard/eeca54a0-5ecf-11ea-963f-17e4bedb41f4?embed=true&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-90d,to:now))&_a=(description:'',filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'16950440-5e2f-11ea-a63d-ebb31fe7e4db',key:manufactured_companyId.keyword,negate:!f,params:(query:'41915'),type:phrase),query:(match_phrase:(manufactured_companyId.keyword:'41915')))),fullScreenMode:!f,options:(hidePanelTitles:!f,useMargins:!t),panels:!((embeddableConfig:(),gridData:(h:15,i:'752bcd1f-5745-4286-b69c-954251638e42',w:24,x:0,y:0),id:bcc60870-5ec3-11ea-a859-83b39107c38e,panelIndex:'752bcd1f-5745-4286-b69c-954251638e42',type:visualization,version:'7.6.0'),(embeddableConfig:(),gridData:(h:15,i:'21102c94-618f-47c6-ab7b-810a9ecb31b8',w:24,x:24,y:0),id:'75753d00-5ec4-11ea-a859-83b39107c38e',panelIndex:'21102c94-618f-47c6-ab7b-810a9ecb31b8',type:visualization,version:'7.6.0')),query:(language:kuery,query:''),timeRestore:!f,title:'%20Product%20Visits',viewMode:view)"
+                "url": "#/dashboard/d7b241a0-e5d1-11e9-a14e-bde7739ac822?embed=true&_g=(refreshInterval:(pause:!t,value:0),time:(from:now-1y,mode:quick,to:now))&_a=(description:'',filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'7e688530-cd69-11e9-b5e8-e908493e1aa7',key:manufactured_companyId.keyword,negate:!f,params:(query:'41915',type:phrase),type:phrase,value:'41915'),query:(match:(manufactured_companyId.keyword:(query:'41915',type:phrase))))))"
             }
         ],
         "companyGraphs": [
             {
                 "title": "Product / Service Category",
-                "url": "#/dashboard/d5031910-5f94-11ea-94fc-37c6dea1ac9f?embed=true&_g=(refreshInterval:(pause:!t,value:0),time:(from:now-15m,to:now))&_a=(description:'',filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'16950440-5e2f-11ea-a63d-ebb31fe7e4db',key:manufactured_companyId,negate:!f,params:(query:'41915'),type:phrase),query:(match_phrase:(manufactured_companyId:'41915')))),fullScreenMode:!f,options:(hidePanelTitles:!f,useMargins:!t),panels:!((embeddableConfig:(),gridData:(h:15,i:'7fea8508-aaf9-4145-9c14-a6cdbe8889d5',w:17,x:0,y:0),id:'1e408fd0-5ec4-11ea-a859-83b39107c38e',panelIndex:'7fea8508-aaf9-4145-9c14-a6cdbe8889d5',type:visualization,version:'7.6.0')),query:(language:kuery,query:''),timeRestore:!f,title:'Product%2FService%20By%20Category',viewMode:view)"
+                "url": "#/visualize/edit/76aff780-e5d1-11e9-a14e-bde7739ac822?embed=true&_g=(refreshInterval:(pause:!t,value:0),time:(from:now-1y,mode:quick,to:now))&_a=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'7e688530-cd69-11e9-b5e8-e908493e1aa7',key:manufactured_companyId,negate:!f,params:(query:'41915',type:phrase),type:phrase,value:'41915'),query:(match:(manufactured_companyId:(query:'41915',type:phrase))))))"
             },
             {
                 "title": "Product / Service Category Filter",
-                "url": "#/dashboard/3f49fa00-5f95-11ea-94fc-37c6dea1ac9f?embed=true&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-30d,to:now))&_a=(description:'',filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'16950440-5e2f-11ea-a63d-ebb31fe7e4db',key:manufactured_companyId,negate:!f,params:(query:'41915'),type:phrase),query:(match_phrase:(manufactured_companyId:'41915')))),fullScreenMode:!f,options:(hidePanelTitles:!f,useMargins:!t),panels:!((embeddableConfig:(),gridData:(h:14,i:cfcdda34-160d-4f04-bfc0-cbde6b0e0f8a,w:16,x:0,y:0),id:f2de6930-5ec2-11ea-a859-83b39107c38e,panelIndex:cfcdda34-160d-4f04-bfc0-cbde6b0e0f8a,type:visualization,version:'7.6.0')),query:(language:kuery,query:''),timeRestore:!f,title:'Product%20%2F%20Service%20Category%20Filter',viewMode:view)"
+                "url": "#/visualize/edit/8d916fd0-e5de-11e9-a14e-bde7739ac822?embed=true&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-1y,mode:quick,to:now))&_a=(filters:!(('$state':(store:appState),meta:(alias:'Select+Category',disabled:!t,index:'7e688530-cd69-11e9-b5e8-e908493e1aa7',key:category.keyword,negate:!f,params:(query:'Auxiliary+supply,+additive,+cleaning+agent',type:phrase),type:phrase,value:'Auxiliary+supply,+additive,+cleaning+agent'),query:(match:(category.keyword:(query:'Auxiliary+supply,+additive,+cleaning+agent',type:phrase)))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'7e688530-cd69-11e9-b5e8-e908493e1aa7',key:manufactured_companyId,negate:!f,params:(query:'41915',type:phrase),type:phrase,value:'41915'),query:(match:(manufactured_companyId:(query:'41915',type:phrase))))),linked:!f,query:(language:lucene,query:'activity:+%22product_visit%22'),uiState:(vis:(params:(sort:(columnIndex:1,direction:!n)))),vis:(aggs:!((enabled:!t,id:'1',params:(),schema:metric,type:count),(enabled:!t,id:'2',params:(customLabel:'Company+Name',field:active_company.keyword,missingBucket:!f,missingBucketLabel:Missing,order:desc,orderBy:'1',otherBucket:!f,otherBucketLabel:Other,size:5),schema:bucket,type:terms),(enabled:!t,id:'3',params:(customLabel:Category,field:category.keyword,missingBucket:!f,missingBucketLabel:Missing,order:desc,orderBy:'1',otherBucket:!f,otherBucketLabel:Other,size:5),schema:bucket,type:terms)),params:(perPage:10,showMetricsAtAllLevels:!f,showPartialRows:!f,showTotal:!f,sort:(columnIndex:1,direction:!n),totalFunc:sum),title:'Product%2FService+By+Category',type:table))",
             }
         ],
         "dashboards": [
             {
                 "title": "User Logins & Registrations",
-                "url": "#/dashboard/0c6b7980-5ed0-11ea-963f-17e4bedb41f4?embed=true&_g=(refreshInterval:(pause:!t,value:0),time:(from:now-90d,to:now))&_a=(description:'',filters:!(),fullScreenMode:!f,options:(hidePanelTitles:!f,useMargins:!t),panels:!((embeddableConfig:(legendOpen:!f,vis:(legendOpen:!t)),gridData:(h:17,i:a2640542-3a79-4b33-9ea0-b086c8592bbe,w:23,x:0,y:0),id:'5401f3c0-5ebf-11ea-a859-83b39107c38e',panelIndex:a2640542-3a79-4b33-9ea0-b086c8592bbe,type:visualization,version:'7.6.0'),(embeddableConfig:(),gridData:(h:17,i:'8bf4cf4f-da76-465b-886d-a80426aa6d7f',w:12,x:23,y:0),id:f89af210-5ebf-11ea-a859-83b39107c38e,panelIndex:'8bf4cf4f-da76-465b-886d-a80426aa6d7f',type:visualization,version:'7.6.0'),(embeddableConfig:(),gridData:(h:17,i:'92fb3afb-ec60-40e0-a564-356ac807ebcb',w:13,x:35,y:0),id:'45dc03c0-5ec0-11ea-a859-83b39107c38e',panelIndex:'92fb3afb-ec60-40e0-a564-356ac807ebcb',type:visualization,version:'7.6.0')),query:(language:kuery,query:''),timeRestore:!f,title:'User%20Activities',viewMode:view)"
+                "url": "#/dashboard/5d41a2b0-cd6e-11e9-b5e8-e908493e1aa7?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2FM%2Cmode%3Aquick%2Cto%3Anow%2FM))"
             }, {
                 "title": "Business Process Activities",
-                "url": "#/dashboard/d3d93160-5ecb-11ea-a859-83b39107c38e?embed=true&_g=(refreshInterval:(pause:!t,value:0),time:(from:now-90d,to:now))&_a=(description:'',filters:!(),fullScreenMode:!f,options:(hidePanelTitles:!f,useMargins:!t),panels:!((embeddableConfig:(),gridData:(h:15,i:'3b244ee0-0e21-49b6-b6d7-a4bc60005e13',w:18,x:0,y:0),id:b0a09d00-5ebc-11ea-a859-83b39107c38e,panelIndex:'3b244ee0-0e21-49b6-b6d7-a4bc60005e13',type:visualization,version:'7.6.0'),(embeddableConfig:(),gridData:(h:15,i:e6b6b66a-866b-4a11-a6f7-3019e282c0d6,w:14,x:18,y:0),id:'829b1bc0-5ebb-11ea-a859-83b39107c38e',panelIndex:e6b6b66a-866b-4a11-a6f7-3019e282c0d6,type:visualization,version:'7.6.0'),(embeddableConfig:(),gridData:(h:15,i:'9d15824e-a1f1-488c-b53c-e113705db189',w:16,x:32,y:0),id:'9af76020-5ebb-11ea-a859-83b39107c38e',panelIndex:'9d15824e-a1f1-488c-b53c-e113705db189',type:visualization,version:'7.6.0')),query:(language:kuery,query:''),timeRestore:!f,title:'Business%20Processes',viewMode:view)"
+                "url": "#/dashboard/548c5e20-cd6f-11e9-b5e8-e908493e1aa7?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2FM%2Cmode%3Aquick%2Cto%3Anow%2FM))"
             }, {
                 "title": "Products Activities",
-                "url": "#/dashboard/b79de140-5ecf-11ea-963f-17e4bedb41f4?embed=true&_g=(refreshInterval:(pause:!t,value:0),time:(from:now-30d,to:now))&_a=(description:'',filters:!(),fullScreenMode:!f,options:(hidePanelTitles:!f,useMargins:!t),panels:!((embeddableConfig:(),gridData:(h:12,i:'05a6e2a6-e660-4d95-908c-838dbe3b9412',w:15,x:0,y:0),id:'86a32490-5ebd-11ea-a859-83b39107c38e',panelIndex:'05a6e2a6-e660-4d95-908c-838dbe3b9412',type:visualization,version:'7.6.0'),(embeddableConfig:(),gridData:(h:12,i:'014428fd-361e-47f4-8dc8-3ec127f13cab',w:16,x:15,y:0),id:'99dccec0-5ec3-11ea-a859-83b39107c38e',panelIndex:'014428fd-361e-47f4-8dc8-3ec127f13cab',type:visualization,version:'7.6.0'),(embeddableConfig:(),gridData:(h:12,i:f1416bbb-a6a9-4fad-a9ab-f52bca8b4260,w:17,x:31,y:0),id:'6b3bf7e0-5ec2-11ea-a859-83b39107c38e',panelIndex:f1416bbb-a6a9-4fad-a9ab-f52bca8b4260,type:visualization,version:'7.6.0')),query:(language:kuery,query:''),timeRestore:!f,title:'Product%20Activities',viewMode:view)"
+                "url": "#/dashboard/48ed8e30-cd70-11e9-b5e8-e908493e1aa7?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow%2FM%2Cmode%3Aquick%2Cto%3Anow%2FM))"
             },
             {
                 "title": "Product / Service Visits",
-                "url": "#/dashboard/741b31a0-5ecc-11ea-a859-83b39107c38e?embed=true&_g=(refreshInterval:(pause:!t,value:0),time:(from:now-30d,to:now))&_a=(description:'',filters:!(),fullScreenMode:!f,options:(hidePanelTitles:!f,useMargins:!t),panels:!((embeddableConfig:(),gridData:(h:16,i:'4ef00550-d7aa-4198-8f7c-a81ebcbad82e',w:13,x:0,y:0),id:'75753d00-5ec4-11ea-a859-83b39107c38e',panelIndex:'4ef00550-d7aa-4198-8f7c-a81ebcbad82e',type:visualization,version:'7.6.0'),(embeddableConfig:(),gridData:(h:16,i:f458d9ea-f8cc-4269-819a-3f4d8014df30,w:12,x:13,y:0),id:ae19b1c0-5ec1-11ea-a859-83b39107c38e,panelIndex:f458d9ea-f8cc-4269-819a-3f4d8014df30,type:visualization,version:'7.6.0'),(embeddableConfig:(),gridData:(h:16,i:'8b19dbbe-5124-4ca8-ac83-dbc343385f17',w:12,x:25,y:0),id:bcc60870-5ec3-11ea-a859-83b39107c38e,panelIndex:'8b19dbbe-5124-4ca8-ac83-dbc343385f17',type:visualization,version:'7.6.0'),(embeddableConfig:(),gridData:(h:16,i:'8c5f3736-5a42-4553-b218-80f250890c1a',w:11,x:37,y:0),id:afd84720-5ec0-11ea-a859-83b39107c38e,panelIndex:'8c5f3736-5a42-4553-b218-80f250890c1a',type:visualization,version:'7.6.0')),query:(language:kuery,query:''),timeRestore:!f,title:'Platform%20Visits%20Dashboard',viewMode:view)"
+                "url": "#/dashboard/3296ca60-ec07-11e9-a14e-bde7739ac822?embed=true&_g=(refreshInterval:(pause:!t,value:0),time:(from:now-1y,mode:quick,to:now))&_a=(description:'',filters:!(),fullScreenMode:!f,options:(darkTheme:!f,hidePanelTitles:!f,useMargins:!t),panels:!((embeddableConfig:(),gridData:(h:11,i:'1',w:14,x:0,y:0),id:b0b3cdd0-e5d1-11e9-a14e-bde7739ac822,panelIndex:'1',type:visualization,version:'6.7.1'),(embeddableConfig:(),gridData:(h:11,i:'4',w:10,x:14,y:0),id:'699fc8d0-e5c8-11e9-a14e-bde7739ac822',panelIndex:'4',type:visualization,version:'6.7.1'),(embeddableConfig:(),gridData:(h:11,i:'5',w:10,x:24,y:0),id:'680d45d0-ec06-11e9-a14e-bde7739ac822',panelIndex:'5',type:visualization,version:'6.7.1'),(embeddableConfig:(),gridData:(h:11,i:'6',w:14,x:34,y:0),id:'0d278210-ec07-11e9-a14e-bde7739ac822',panelIndex:'6',type:visualization,version:'6.7.1')),query:(language:lucene,query:''),timeRestore:!f,title:'Platform+Visits+Dashboard',viewMode:view)"
             },
             {
                 "title": "Company Visits",
-                "url": "#/dashboard/064584a0-5ecc-11ea-a859-83b39107c38e?embed=true&_g=(refreshInterval:(pause:!t,value:0),time:(from:now-30d,to:now))&_a=(description:'',filters:!(),fullScreenMode:!f,options:(hidePanelTitles:!f,useMargins:!t),panels:!((embeddableConfig:(),gridData:(h:15,i:d5d3d546-8e79-4bba-afa0-60894de883a2,w:24,x:0,y:0),id:'6c695120-5ebe-11ea-a859-83b39107c38e',panelIndex:d5d3d546-8e79-4bba-afa0-60894de883a2,type:visualization,version:'7.6.0'),(embeddableConfig:(),gridData:(h:15,i:'8fe78cb9-602b-4024-8beb-cd083365cc7b',w:24,x:24,y:0),id:'3f922e40-5e2f-11ea-a63d-ebb31fe7e4db',panelIndex:'8fe78cb9-602b-4024-8beb-cd083365cc7b',type:visualization,version:'7.6.0')),query:(language:kuery,query:''),timeRestore:!f,title:'Platform%20Company%20Visits',viewMode:view)"
+                "url": "#/dashboard/a6b560c0-ec0f-11e9-a14e-bde7739ac822?embed=true&_g=(refreshInterval:(pause:!t,value:0),time:(from:now-1y,mode:quick,to:now))&_a=(description:'',filters:!(),fullScreenMode:!f,options:(darkTheme:!f,hidePanelTitles:!f,useMargins:!t),panels:!((embeddableConfig:(),gridData:(h:11,i:'1',w:24,x:0,y:0),id:ef9d04f0-e520-11e9-a14e-bde7739ac822,panelIndex:'1',type:visualization,version:'6.7.1'),(embeddableConfig:(),gridData:(h:11,i:'2',w:24,x:24,y:0),id:ff5d3930-e5bd-11e9-a14e-bde7739ac822,panelIndex:'2',type:visualization,version:'6.7.1')),query:(language:lucene,query:''),timeRestore:!f,title:'Platform+Company+Visits',viewMode:view)"
             }
         ]
     },
@@ -459,8 +454,8 @@ export const config = {
     "unshippedOrdersTabEnabled": false,
     "welcomeMessage":{
         "en": "Welcome to B2BMarket platform.",
-        "es": "Bienvenidos a la plataforma B2BMarket",
-        "de": "Sieht aus, als seien Sie neu hier",
+        "es": "Bienvenidos a la plataforma B2BMarket.",
+        "de": "Sieht aus, als seien Sie neu hier.",
     },
     "whiteBlackListForCatalogue":false,
     "federationClientID": "sample-client",
@@ -548,7 +543,7 @@ export const query_settings_comp = {
     "boostingFactors": {
         "STANDARD": 4,
         "id": 4,
-        "{LANG}_brandName": 64,
+        "{LANG}_brandName": 32,
         "legalName": 64
     }
 };

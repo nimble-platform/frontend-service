@@ -104,7 +104,7 @@ export class DiscountPriceWrapper {
             return 0;
         }
 
-        return this.orderedQuantity.value * this.itemPrice.value;
+        return roundToTwoDecimals(this.orderedQuantity.value * this.itemPrice.value);
     }
 
     set totalPrice(price: number) {
@@ -116,7 +116,7 @@ export class DiscountPriceWrapper {
         if (!this.itemPrice.hasPrice()) {
             return "On demand";
         }
-        return `${roundToTwoDecimals(this.totalPrice)} ${this.currency}`;
+        return `${this.totalPrice} ${this.currency}`;
     }
 
     get vatTotal(): number {

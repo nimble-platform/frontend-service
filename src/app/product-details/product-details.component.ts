@@ -159,6 +159,7 @@ export class ProductDetailsComponent implements OnInit {
                                     // so we overwrite it with the options's quantity, which is by default 1
                                     this.frameContractQuotationWrapper.orderedQuantity.value = this.orderQuantity;
 
+                                    this.termsSelectBoxValue = "frame_contract";
                                     this.initCheckGetFrameContractStatus.callback(null, true);
                                 }).catch(error => {
                                     this.initCheckGetFrameContractStatus.callback(null, true);

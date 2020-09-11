@@ -430,9 +430,9 @@ export const config = {
     "showLoginFederation": false,
     "unshippedOrdersTabEnabled": false,
     "welcomeMessage":{
-        "en": "Looks like you are new here",
-        "es": "Parece que eres nuevo aquí",
-        "de": "Sieht aus, als seien Sie neu hier",
+        "en": "Looks like you are new here.",
+        "es": "Parece que eres nuevo aquí.",
+        "de": "Sieht aus, als seien Sie neu hier.",
     },
     "whiteBlackListForCatalogue":false,
     "federationClientID": "sample-client",
@@ -519,7 +519,7 @@ export const query_settings_comp = {
     "boostingFactors": {
         "STANDARD": 4,
         "id": 4,
-        "{LANG}_brandName": 64,
+        "{LANG}_brandName": 32,
         "legalName": 64
     }
 };

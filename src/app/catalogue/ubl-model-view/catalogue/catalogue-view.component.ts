@@ -416,11 +416,11 @@ export class CatalogueViewComponent implements OnInit {
 
         if(selectedCatalogueUuid == 'all'){
             this.productOfferingDetails.selectedCatalogueUuids = copy(this.catalogueIdsUUids);
-            this.productOfferingDetails.selectedCatalogIds = this.cataloguesIds.map(catalogueId => catalogueId == "default" ? "Main Catalogue":catalogueId).join();
+            this.productOfferingDetails.selectedCatalogIds = this.cataloguesIds.map(catalogueId => catalogueId == "default" ? this.translate.instant("Main Catalogue"):catalogueId).join();
         } else{
             let index = this.catalogueIdsUUids.findIndex(uuid => uuid == selectedCatalogueUuid);
             this.productOfferingDetails.selectedCatalogueUuids = [selectedCatalogueUuid];
-            this.productOfferingDetails.selectedCatalogIds = this.cataloguesIds[index] == "default" ? "Main Catalogue": this.cataloguesIds[index];
+            this.productOfferingDetails.selectedCatalogIds = this.cataloguesIds[index] == "default" ? this.translate.instant("Main Catalogue"): this.cataloguesIds[index];
         }
 
         this.viewMode = 'OfferView';
