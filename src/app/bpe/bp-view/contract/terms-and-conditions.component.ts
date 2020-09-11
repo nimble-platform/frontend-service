@@ -23,6 +23,7 @@ import { COUNTRY_NAMES } from '../../../common/utils';
 import { UnitService } from '../../../common/unit-service';
 import { deliveryPeriodUnitListId, warrantyPeriodUnitListId } from '../../../common/constants';
 import { TradingTerm } from '../../../catalogue/model/publish/trading-term';
+import {TranslateService} from '@ngx-translate/core';
 
 
 @Component({
@@ -69,8 +70,9 @@ export class TermsAndConditionsComponent implements OnInit {
     COUNTRY_NAMES = COUNTRY_NAMES;
 
     constructor(public bpeService: BPEService,
-        public userService: UserService,
-        public unitService: UnitService) {
+                public userService: UserService,
+                public translateService: TranslateService,
+                public unitService: UnitService) {
 
     }
 
@@ -101,13 +103,11 @@ export class TermsAndConditionsComponent implements OnInit {
     }
 
     setSectionText(index: number) {
+        let element = document.getElementById(this.generateIdForClause(index));
+        let clause = this._termsAndConditions[index];
+        let clauseContentIndex = this.getClauseContentIndex(clause);
+        let text = clause.content[clauseContentIndex].value;
         if (this.readOnly) {
-            let element = document.getElementById(this.generateIdForClause(index));
-
-            let clause = this._termsAndConditions[index];
-
-            let text = clause.content[0].value
-
             for (let tradingTerm of clause.tradingTerms) {
                 let id = tradingTerm.id;
                 let spanText = "";
@@ -126,10 +126,6 @@ export class TermsAndConditionsComponent implements OnInit {
             element.innerHTML = text;
 
         } else {
-            let element = document.getElementById(this.generateIdForClause(index));
-            let clause = this._termsAndConditions[index];
-            let text = clause.content[0].value;
-
             // replace placeholders with spans
             for (let tradingTerm of clause.tradingTerms) {
                 let id = tradingTerm.id;
@@ -271,9 +267,18 @@ export class TermsAndConditionsComponent implements OnInit {
     }
 
     getClauseName(clause: Clause) {
-        let startIndex = clause.id.indexOf("_");
+        return clause.clauseTitle[this.getClauseContentIndex(clause)].value;
+    }
 
-        return clause.id.substring(startIndex + 1);
+    getClauseContentIndex(clause:Clause):number{
+        let titleIndex = clause.clauseTitle.findIndex(title => title.languageID == this.translateService.currentLang);
+        if(titleIndex == -1){
+            titleIndex = clause.clauseTitle.findIndex(title => title.languageID == "en");
+            if(titleIndex == -1){
+                titleIndex = 0;
+            }
+        }
+        return titleIndex;
     }
 
     // returns the default value of the given trading term
@@ -346,6 +351,14 @@ export class TermsAndConditionsComponent implements OnInit {
             let order2 = Number(clause2.id.substring(0, clause2.id.indexOf("_")));
             return order1 - order2;
         });
+        for (let clause of this._originalTermAndConditionClauses) {
+            // make sure that content title has the same order with the content in terms of language ids
+            let contentTitles = [];
+            clause.content.forEach(content => {
+                contentTitles = contentTitles.concat(clause.clauseTitle.find(clauseTitle => clauseTitle.languageID == content.languageID));
+            });
+            clause.clauseTitle = contentTitles;
+        }
 
         this.originalTradingTerms = new Map<string, TradingTerm>();
         // create tradingTerms map using the original terms and conditions
@@ -379,6 +392,14 @@ export class TermsAndConditionsComponent implements OnInit {
             let order2 = Number(clause2.id.substring(0, clause2.id.indexOf("_")));
             return order1 - order2;
         });
+        for (let clause of this._termsAndConditions) {
+            // make sure that content title has the same order with the content in terms of language ids
+            let contentTitles = [];
+            clause.content.forEach(content => {
+                contentTitles = contentTitles.concat(clause.clauseTitle.find(clauseTitle => clauseTitle.languageID == content.languageID));
+            });
+            clause.clauseTitle = contentTitles;
+        }
 
         // create valuesOfParameters map
         this.tradingTerms = new Map<string, TradingTerm>();

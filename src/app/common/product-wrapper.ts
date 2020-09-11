@@ -139,7 +139,7 @@ export class ProductWrapper {
     }
 
     getSpecialTerms(): string {
-        return this.goodsItem.deliveryTerms.specialTerms.length > 0 ? this.goodsItem.deliveryTerms.specialTerms[0].value : "None";
+        return this.goodsItem.deliveryTerms.specialTerms.length > 0 && this.goodsItem.deliveryTerms.specialTerms[0].value ? this.goodsItem.deliveryTerms.specialTerms[0].value : "None";
     }
 
     getDeliveryPeriod(): string {

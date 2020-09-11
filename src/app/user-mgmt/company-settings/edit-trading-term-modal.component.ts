@@ -67,7 +67,7 @@ export class EditTradingTermModalComponent implements OnInit {
 
     }
 
-    open(tradingTerms: TradingTerm[], clause: Clause, element: any, _existingTradingTermIds: string[], tradingTerm: TradingTerm = null) {
+    open(tradingTerms: TradingTerm[], clause: Clause, elements: any, _existingTradingTermIds: string[], tradingTerm: TradingTerm = null) {
         // set existing trading term ids
         this.existingTradingTermIds = _existingTradingTermIds;
         // Edit the given trading term
@@ -93,20 +93,24 @@ export class EditTradingTermModalComponent implements OnInit {
                 // push the created trading term to the list
                 tradingTerms.push(this.tradingTerm);
                 // add the id of trading term to the end of clause content
-                clause.content[0].value += this.tradingTerm.id + " ";
+                clause.content.forEach(content =>  content.value += this.tradingTerm.id + " ");
                 // update the innerHTML
-                element.innerHTML = element.innerHTML.concat("<span id='" + clause.id + "-" + this.tradingTerm.id + "'><b>" + this.tradingTerm.id + " </b></span>");
-                // the span should be non-editable
-                element = document.getElementById(clause.id + "-" + this.tradingTerm.id);
-                element.contentEditable = "false";
+                for (let element of elements) {
+                    element.innerHTML = element.innerHTML.concat("<span id='" + clause.id + "-" + this.tradingTerm.id + "'><b>" + this.tradingTerm.id + " </b></span>");
+                    // the span should be non-editable
+                    element = document.getElementById(clause.id + "-" + this.tradingTerm.id);
+                    element.contentEditable = "false";
+                }
             }
             // update the trading term
             else {
                 // update the clause content
-                clause.content[0].value = clause.content[0].value.replace(tradingTerm.id, this.tradingTerm.id);
+                clause.content.forEach(content =>  content.value = content.value.replace(tradingTerm.id, this.tradingTerm.id));
                 // update the innerHTML
                 // we use regular expression to update the id of span as well.
-                element.innerHTML = element.innerHTML.replace(new RegExp(tradingTerm.id.substr(1), 'g'), this.tradingTerm.id.substr(1));
+                for(let element of elements){
+                    element.innerHTML = element.innerHTML.replace(new RegExp(tradingTerm.id.substr(1), 'g'), this.tradingTerm.id.substr(1));
+                }
             }
 
             // update the trading term

@@ -402,16 +402,40 @@ export function getArrayOfTextObjectArrays(textObject): any {
         arr = [{ "text": [], "lang": DEFAULT_LANGUAGE() }];
     return arr;
 }
+/**
+ *  Returns an array of TextObject for the given language map
+ *  @param languageMap the map containing the new line separated values for language ids
+ *  @return an array of TextObject
+ */
+export function getArrayOfTextObjectFromLanguageMap(languageMap): any {
+    let arr = [];
+    let keys = Object.keys(languageMap);
+    for (let key of keys) {
+        let values = languageMap[key].split("\n");
+        values.forEach(value => arr.push({ "text": value, "lang": key }));
+    }
+    if (arr.length == 0)
+        arr = [{ "text": "", "lang": DEFAULT_LANGUAGE() }];
+    return arr;
+}
 
-// Transform an array created using the getArrayOfTextObjectArrays function back to a TextObject
-export function createNewLineSeparatedTextObjectFromArray(arr): Object {
-    let textObject = {};
+/**
+ *  Returns the language map for the given TextObject array
+ *  @param arr TextObject array
+ *  @return a language map containing the new line separated values for language ids
+ */
+export function createLanguageMapFromArrayOfTextObject(arr): Object {
+    let languageMap = {};
     for (let i = 0; i < arr.length; i++) {
-        if (arr[i].lang != "" && arr[i].text.length != 0) {
-            textObject[arr[i].lang] = arr[i].text.join("\n");
+        if (arr[i].lang != "" && arr[i].text != "") {
+            if(languageMap[arr[i].lang]){
+                languageMap[arr[i].lang] = languageMap[arr[i].lang]+"\n"+arr[i].text;
+            } else{
+                languageMap[arr[i].lang] = arr[i].text;
+            }
         }
     }
-    return textObject;
+    return languageMap;
 }
 
 // Transform an array created using the getArrayOfTextObject function back to a TextObject

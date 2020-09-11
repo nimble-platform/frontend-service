@@ -521,7 +521,7 @@ export const query_settings_comp = {
     "boostingFactors": {
         "STANDARD": 4,
         "id": 4,
-        "{LANG}_brandName": 64,
+        "{LANG}_brandName": 32,
         "legalName": 64
     }
 };

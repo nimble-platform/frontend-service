@@ -33,7 +33,7 @@
     </div>
     <div class="col-4">
         <select class="custom-select" [(ngModel)]="selectedCatalogueId" (change)="changeCat();$event.stopPropagation()">
-            <option *ngFor="let catalogueId of cataloguesIds" [ngValue]="catalogueId" [innerHtml]="catalogueId == 'default'? 'Main Catalogue': catalogueId"></option>
+            <option *ngFor="let catalogueId of cataloguesIds" [ngValue]="catalogueId" [innerHtml]="catalogueId == 'default'? ('Main Catalogue'|translate): catalogueId"></option>
         </select>
     </div>
 </div>

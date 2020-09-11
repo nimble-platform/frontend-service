@@ -65,6 +65,7 @@ export class TextInputComponent extends ChildFormBase implements OnInit {
     getLink = sanitizeLink;
     textInputFormControl: FormControl;
 
+    // available options for the language selection of the text
     languages = LANGUAGES;
 
     constructor(private validationService: ValidationService,
@@ -113,6 +114,20 @@ export class TextInputComponent extends ChildFormBase implements OnInit {
     set languageId(languageId: string) {
         this.languageIdValue = languageId;
         this.languageIdChange.emit(languageId);
+    }
+
+    @Input()
+    get availableLanguages(): string[] {
+        return this.languages;
+    }
+
+    set availableLanguages(languageIds: string[]) {
+        // if available languages does not contain the selected language
+        // append it to the list
+        if(this.languageId && languageIds.indexOf(this.languageId) == -1){
+            languageIds.push(this.languageId);
+        }
+        this.languages = languageIds;
     }
 
     onAddTextInput() {
