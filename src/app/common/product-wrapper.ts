@@ -92,9 +92,10 @@ export class ProductWrapper {
     // if the item has no dimensions, then it creates them using the given list of dimension units.
     getDimensionMultiValue(includeDimensionsWithNullValues: boolean = true, dimensions: string[] = []): MultiValuedDimension[] {
         let multiValuedDimensions: MultiValuedDimension[] = [];
-        // each item should have dimensions
-        if (this.item.dimension.length == 0 && dimensions.length > 0) {
-            this.item.dimension = UBLModelUtils.createDimensions(dimensions);
+        // add the missing dimensions
+        let missingDimensions = dimensions.filter(unit => this.item.dimension.findIndex(dimension => dimension.attributeID == unit.charAt(0).toUpperCase() + unit.slice(1)) == -1);
+        if(missingDimensions.length > 0){
+            this.item.dimension = this.item.dimension.concat(UBLModelUtils.createDimensions(missingDimensions));
         }
         for (let dimension of this.item.dimension) {
             if (!includeDimensionsWithNullValues && !dimension.measure.value) {

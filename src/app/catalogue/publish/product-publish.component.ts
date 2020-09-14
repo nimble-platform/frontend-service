@@ -180,7 +180,8 @@ export class ProductPublishComponent implements OnInit {
     // dimensions retrieved from the unit service
     dimensions: string[] = [];
     // dimensions' units retrieved from the unit service
-    dimensionUnits: string[] = [];
+    dimensionLengthUnits: string[] = [];
+    dimensionWeightUnits: string[] = [];
     selectedTabSinglePublish: "DETAILS" | "DELIVERY_TRADING" | "PRICE" | "CERTIFICATES" | "LCPA" = "DETAILS";
 
     invalidCategoryCodes: Code[] = [];
@@ -236,12 +237,14 @@ export class ProductPublishComponent implements OnInit {
                     this.catalogueService.getCatalogueResponse(userId, null, null, 0, 0,  null, this.selectedCatalogueId),
                     this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party), party.federationInstanceID),
                     this.unitService.getCachedUnitList("dimensions"),
-                    this.unitService.getCachedUnitList("length_quantity")
+                    this.unitService.getCachedUnitList("length_quantity"),
+                    this.unitService.getCachedUnitList("weight_quantity"),
                 ])
-            }).then(([party, catalogueResponse, settings, dimensions, dimensionUnits]) => {
+            }).then(([party, catalogueResponse, settings, dimensions, lengthQuantities,weightQuantities]) => {
                 // set dimensions and units lists
                 this.dimensions = dimensions;
-                this.dimensionUnits = dimensionUnits;
+                this.dimensionLengthUnits = lengthQuantities;
+                this.dimensionWeightUnits = weightQuantities;
                 this.selectedCatalogueuuid = catalogueResponse.catalogueUuid;
                 this.initView(party, catalogueResponse, settings);
                 this.publishStateService.publishingStarted = true;

@@ -37,6 +37,7 @@ import { UnitService } from "../common/unit-service";
 import { deliveryPeriodUnitListId, warrantyPeriodUnitListId } from "../common/constants";
 import { Certificate } from "../catalogue/model/publish/certificate";
 import { copy } from '../common/utils';
+import {PeriodRange} from './model/period-range';
 
 @Injectable()
 export class UserService {
@@ -511,16 +512,18 @@ export class UserService {
     }
 
     private async sanitizeNegotiationSettings(settings: CompanyNegotiationSettings): Promise<CompanyNegotiationSettings> {
-        if (settings.deliveryPeriodUnits.length === 0) {
-            settings.deliveryPeriodUnits.push(...await this.unitService.getCachedUnitList(deliveryPeriodUnitListId));
-        }
-        if (settings.deliveryPeriodRanges.length === 0) {
-            settings.deliveryPeriodRanges.push({ start: 24, end: 1344 });
-            settings.deliveryPeriodRanges.push({ start: 1, end: 40 });
-            settings.deliveryPeriodRanges.push({ start: 1, end: 56 });
-            settings.deliveryPeriodRanges.push({ start: 0, end: 8 });
-            settings.deliveryPeriodRanges.push({ start: 1, end: 12 });
-        }
+        let deliveryPeriodUnits = await this.unitService.getCachedUnitList(deliveryPeriodUnitListId);
+        let deliveryPeriodRanges: PeriodRange[] = [];
+        deliveryPeriodUnits.forEach((unit, index) => {
+            let indexInSettings = settings.deliveryPeriodUnits.indexOf(unit);
+            if(indexInSettings == -1){
+                deliveryPeriodRanges.push(this.getDeliveryPeriodRange(index));
+            } else{
+                deliveryPeriodRanges.push(settings.deliveryPeriodRanges[indexInSettings]);
+            }
+        });
+        settings.deliveryPeriodUnits = copy(deliveryPeriodUnits);
+        settings.deliveryPeriodRanges = copy(deliveryPeriodRanges);
         while (settings.deliveryPeriodRanges.length > 5) {
             settings.deliveryPeriodRanges.pop();
         }
@@ -546,6 +549,21 @@ export class UserService {
         }
 
         return settings;
+    }
+
+    private getDeliveryPeriodRange(index:number){
+        switch (index) {
+            case 0:
+                return { start: 24, end: 1344 };
+            case 1:
+                return { start: 1, end: 40 };
+            case 2:
+                return { start: 1, end: 56 };
+            case 3:
+                return { start: 0, end: 8 };
+            case 4:
+                return { start: 1, end: 12 };
+        }
     }
 
     putCompanyNegotiationSettings(settings: CompanyNegotiationSettings, partyId: string): Promise<void> {
