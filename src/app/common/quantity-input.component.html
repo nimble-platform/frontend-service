@@ -19,9 +19,9 @@
         <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
         </input-label>
     </div>
-    <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible && quantityValueFormControl">
+    <div [class]="valueQuantityClass" *ngIf="presentationMode === 'edit' && visible && quantityValueFormControl">
         <div class="row">
-            <div class="{{valueSizeClass}} col-quantity-value">
+            <div class="{{valueSizeClass}} col-quantity-value {{valueClass}}">
                 <input type="number" class="form-control" [ngClass]="innerFormClass" [step]="step" [ngModel]="quantity.value" (ngModelChange)="quantity.value = $event; onQuantityValueChanged($event)" [disableControl]="disabled" [placeholder]="placeholder" [required]="required" [formControl]="quantityValueFormControl" [ngbTooltip]="getValidationErrorMessage(quantityValueFormControl)" [placement]="'auto'" title="">
             </div>
             <div *ngIf="!quantityUnits" class="{{unitSizeClass}} col-quantity-unit">
@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">
+    <div [class]="valueQuantityClass" *ngIf="presentationMode === 'view' && visible">
         <span [class]="valueTextClass">{{ quantityToString() }}</span>
     </div>
 </div>

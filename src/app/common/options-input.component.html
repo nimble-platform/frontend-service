@@ -19,13 +19,13 @@
         <input-label [class]="labelMainClass" [label]="label" [definition]="definition">
         </input-label>
     </div>
-    <div [class]="valueClass" *ngIf="presentationMode === 'edit' && visible">
-        <select #optionsInputSelect class="form-control" [ngClass]="innerFormClass" [(ngModel)]="selected" (change)="onChange($event)" [disabled]="disabled">
+    <div [class]="sizeClass" *ngIf="presentationMode === 'edit' && visible">
+        <select #optionsInputSelect class="form-control" [ngClass]="innerFormClass + ' ' + selectClass" [(ngModel)]="selected" (change)="onChange($event)" [disabled]="disabled">
             <option *ngFor="let option of options; let i = index" [value]="getValue(option)" [selected]="selectedIndex == i">{{ getName(option) }}</option>
         </select>
     </div>
 
-    <div [class]="valueClass" *ngIf="presentationMode === 'view' && visible">
+    <div [class]="sizeClass" *ngIf="presentationMode === 'view' && visible">
         <span>{{ getName(selected) }}</span>
     </div>
 </div>

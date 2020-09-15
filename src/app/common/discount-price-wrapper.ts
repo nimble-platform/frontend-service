@@ -104,7 +104,7 @@ export class DiscountPriceWrapper {
             return 0;
         }
 
-        return roundToTwoDecimals(this.orderedQuantity.value * this.itemPrice.value);
+        return roundToTwoDecimalsNumber(this.orderedQuantity.value * this.itemPrice.value);
     }
 
     set totalPrice(price: number) {

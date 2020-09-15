@@ -15,6 +15,12 @@
     padding-right: 0.1rem;
 }
 
+.col-quantity-value.warning input,
+select.warning {
+    background: #b93829;
+    color: white;
+}
+
 .col-quantity-unit {
     padding-left: 0.1rem;
     display: flex;

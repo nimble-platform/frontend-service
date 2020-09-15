@@ -40,7 +40,8 @@ export class NegotiationRequestInputComponent extends ChildFormBase implements O
     // @Output() cbModelChange = new EventEmitter<boolean>();
     // @Input() cbDisabled: boolean = false;
     @Input() disabled: boolean = false;
-    @Input() invalid: boolean = false;
+    // Variable showing that the input should be in warning mode
+    @Input() warning = false;
     @Input() id: string;
 
     // Set if the input should be of type text.
@@ -121,7 +122,7 @@ export class NegotiationRequestInputComponent extends ChildFormBase implements O
     }
 
     get formControlClass(): string {
-        return this.invalid ? "ng-invalid" : "ng-valid";
+        return this.warning ? 'warning' : '';
     }
 
     ngOnInit() {

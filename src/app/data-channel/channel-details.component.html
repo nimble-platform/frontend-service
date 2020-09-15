@@ -633,19 +633,22 @@
         <div *ngIf="pageNumber < 3" [ngClass]="{'col-6':pageNumber > 0,'col-12':pageNumber == 0}">
 
             <!-- Service Type -->
-            <options-input label="Server Type" [visible]="true" [presentationMode]="getPresentationModeLeft()" [disabled]="false" [options]="SERVER_TYPES" [(selected)]="sellerServerType" labelClass="col-4" valueClass="col-8">
+            <options-input label="Server Type" [visible]="true" [presentationMode]="getPresentationModeLeft()" [disabled]="false" [options]="SERVER_TYPES" [(selected)]="sellerServerType" labelClass="col-4"
+                           sizeClass="col-8">
             </options-input><br />
         </div>
         <div *ngIf="pageNumber > 0 && pageNumber < 3" class="col-6">
 
             <!-- Service Type -->
-            <options-input label="Server Type" [visible]="true" [presentationMode]="getPresentationModeRight()" [disabled]="false" [options]="SERVER_TYPES" [(selected)]="buyerServerType" labelClass="col-4" valueClass="col-8">
+            <options-input label="Server Type" [visible]="true" [presentationMode]="getPresentationModeRight()" [disabled]="false" [options]="SERVER_TYPES" [(selected)]="buyerServerType" labelClass="col-4"
+                           sizeClass="col-8">
             </options-input><br />
 
         </div>
         <div *ngIf="pageNumber == 3" class="col-12">
             <!-- Service Type -->
-            <options-input label="Server Type" [visible]="true" [presentationMode]="getPresentationModeLeft()" [disabled]="false" [options]="SERVER_TYPES" [(selected)]="buyerServerType" labelClass="col-4" valueClass="col-8">
+            <options-input label="Server Type" [visible]="true" [presentationMode]="getPresentationModeLeft()" [disabled]="false" [options]="SERVER_TYPES" [(selected)]="buyerServerType" labelClass="col-4"
+                           sizeClass="col-8">
             </options-input><br />
         </div>
 

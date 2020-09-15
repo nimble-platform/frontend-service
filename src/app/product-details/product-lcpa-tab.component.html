@@ -33,7 +33,8 @@
 <ng-container *ngIf="selectedTab == 'INPUT' && lcpaDetails.lcpainput">
     <!-- LCPA Inputs-->
     <div class="d-flex flex-wrap align-items-start fixed-info-container">
-        <quantity-input *ngIf="isVisible(lcpaDetails.lcpainput.lifeCycleLength, 'QUANTITY')" [disabled]="isDisabled()" class="col-6" [label]="'Average Life Cycle Length' | translate" [labelClass]="'col-6'" [valueClass]="'col-6'" [disableQuantityUnit]="true" [quantityUnits]="['month(s)']" [quantity]="lcpaDetails.lcpainput.lifeCycleLength">
+        <quantity-input *ngIf="isVisible(lcpaDetails.lcpainput.lifeCycleLength, 'QUANTITY')" [disabled]="isDisabled()" class="col-6" [label]="'Average Life Cycle Length' | translate" [labelClass]="'col-6'"
+                        [valueQuantityClass]="'col-6'" [disableQuantityUnit]="true" [quantityUnits]="['month(s)']" [quantity]="lcpaDetails.lcpainput.lifeCycleLength">
         </quantity-input>
         <amount-input *ngIf="isVisible(lcpaDetails.lcpainput.purchasingPrice)" class="col-6" [disabled]="isDisabled()" [label]="'Average Purchasing Price' | translate" [labelClass]="'col-6'" [valueClass]="'col-6'" [amount]="lcpaDetails.lcpainput.purchasingPrice" [amountType]="'lcpa_input_currency_quantity'">
         </amount-input>

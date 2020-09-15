@@ -45,9 +45,13 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
     @Input() labelClass: string = "col-3";
     @Input() labelMainClass: string = "";
     @Input() rowClass: string = "";
-    @Input() valueClass: string; // set based on label
+    // class(es) applied to to the container containing the value and unit
+    @Input() valueQuantityClass: string; // set based on label
     @Input() valueSizeClass: string = "col-7";
+    // class(es) applied to the value container
+    @Input() valueClass = '';
     @Input() unitSizeClass: string = "col-5";
+    @Input() inputClass = '';
     @Input() placeholder: string = "...";
     @Input() unitPlaceholder: string = "Unit";
     @Input() valueTextClass: string = "";
@@ -64,6 +68,9 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
     // form validation inputs
     @Input() required = false;
     @Input() minimum: number;
+
+    // the 3 fields below provide validation on a particular value range if needed
+    @Input() enforceRangeValidation = false;
     @Input() periodRanges:  PeriodRange[];
     @Input() periodUnits: string[];
 
@@ -98,8 +105,8 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
     }
 
     ngOnInit() {
-        if (!this.valueClass) {
-            this.valueClass = this.label ? "col-9" : "col-12";
+        if (!this.valueQuantityClass) {
+            this.valueQuantityClass = this.label ? "col-9" : "col-12";
         }
 
         if (this.large == "true")
@@ -157,7 +164,7 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
                 validators.push(Validators.min(1));
             }
         }
-        if(this.periodRanges && this.periodUnits){
+        if(this.enforceRangeValidation && this.periodRanges && this.periodUnits){
             validators.push(periodValidator(this.quantityUnitFormControl, this.periodUnits, this.periodRanges))
         }
 

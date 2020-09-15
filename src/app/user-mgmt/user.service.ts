@@ -56,6 +56,9 @@ export class UserService {
     // key of the inner map is user id
     private mapOfUsers: Map<string, Map<string, Person>> = new Map();
 
+
+    companyNegotiationSettings: Map<string, CompanyNegotiationSettings> = new Map<string, CompanyNegotiationSettings>();
+
     constructor(
         private unitService: UnitService,
         private http: Http,
@@ -497,6 +500,10 @@ export class UserService {
     // }
 
     getCompanyNegotiationSettingsForParty(partyId: string, delegateId: string): Promise<CompanyNegotiationSettings> {
+        if (this.companyNegotiationSettings.has(partyId)) {
+            return Promise.resolve(this.companyNegotiationSettings.get(partyId));
+        }
+
         let url = `${this.url}/company-settings/${partyId}/negotiation/`;
         if (this.delegated) {
             url = `${this.delegate_url}/company-settings/${partyId}/negotiation/?delegateId=${delegateId}`;
@@ -507,6 +514,9 @@ export class UserService {
             .toPromise()
             .then(res => {
                 return this.sanitizeNegotiationSettings(res.json());
+            }).then(settings => {
+                this.companyNegotiationSettings.set(partyId, settings);
+                return Promise.resolve(settings);
             })
             .catch(this.handleError);
     }
@@ -572,7 +582,7 @@ export class UserService {
         return this.http
             .put(url, settings, { headers: headers, withCredentials: true })
             .toPromise()
-            .then(() => { })
+            .then(() => this.companyNegotiationSettings.set(partyId, settings))
             .catch(this.handleError)
     }
 

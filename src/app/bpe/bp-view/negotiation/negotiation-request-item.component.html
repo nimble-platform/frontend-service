@@ -47,7 +47,7 @@
 <div class="row mb-3">
     <div class="{{showCounterOfferTerms ? 'col-12' : 'col-7'}}">
         <!-- Warranty -->
-        <div class="row content-row" [ngClass]="{'bg-danger text-white':!wrapper.checkEqualForRequest(manufacturersTermsSource, 'warranty')}">
+        <div class="row content-row">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500"><span [innerHTML]="'Warranty' | translate"></span>:</strong>
             </div>
@@ -64,19 +64,27 @@
                         {{ wrapper.lastOfferQuotationWrapper.warrantyString }}
                     </ng-container>
                 </ng-container>
-                <span [ngStyle]="getWarrantyPeriodStyle()">
-                    {{ getWarrantyPeriodText() }}
-                </span>
+<!--                <span [ngStyle]="getWarrantyPeriodStyle()">-->
+<!--                    {{ getWarrantyPeriodText() }}-->
+<!--                </span>-->
             </div>
             <!-- Customer's offer-->
             <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input [label]="'Request Warranty' | translate" [disabled]="isLoading() || isReadOnly()" id="warrantyCb" [quantity]="wrapper.rfqWarranty" (quantityChange)="onTermsChange(FIXED_NEGOTIATION_TERMS.WARRANTY_PERIOD)" [quantityUnits]="wrapper.sellerSettings.warrantyPeriodUnits" [periodRanges]="wrapper.sellerSettings.warrantyPeriodRanges" [parentForm]="formGroup" [formFieldName]="'negotiated_warranty_period'">
+                <negotiation-request-input [label]="'Request Warranty' | translate"
+                                           [disabled]="isLoading() || isReadOnly()" id="warrantyCb"
+                                           [warning]="!wrapper.checkEqualForRequest(manufacturersTermsSource, 'warranty')"
+                                           [quantity]="wrapper.rfqWarranty"
+                                           (quantityChange)="onTermsChange(FIXED_NEGOTIATION_TERMS.WARRANTY_PERIOD)"
+                                           [quantityUnits]="wrapper.sellerSettings.warrantyPeriodUnits"
+                                           [periodRanges]="wrapper.sellerSettings.warrantyPeriodRanges"
+                                           [parentForm]="formGroup"
+                                           [formFieldName]="'negotiated_warranty_period'">
                 </negotiation-request-input>
             </div>
         </div>
 
         <!-- Incoterms -->
-        <div class="row content-row" [ngClass]="{'bg-danger text-white':!wrapper.checkEqualForRequest(manufacturersTermsSource, 'incoTerms')}">
+        <div class="row content-row">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500"><span [innerHTML]="'Incoterms' | translate"></span>:</strong>
             </div>
@@ -94,13 +102,18 @@
                 </ng-container>
             </div>
             <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input [label]="'Request Incoterms' | translate" [disabled]="isLoading() || isReadOnly()" id="incotermsCb" [options]="wrapper.sellerSettings.incoterms" [selected]="wrapper.rfqIncoterms" (selectedChange)="wrapper.rfqIncoterms = $event; onTermsChange(FIXED_NEGOTIATION_TERMS.INCOTERMS)">
+                <negotiation-request-input [label]="'Request Incoterms' | translate"
+                                           [disabled]="isLoading() || isReadOnly()" id="incotermsCb"
+                                           [warning]="!wrapper.checkEqualForRequest(manufacturersTermsSource, 'incoTerms')"
+                                           [options]="wrapper.sellerSettings.incoterms"
+                                           [selected]="wrapper.rfqIncoterms"
+                                           (selectedChange)="wrapper.rfqIncoterms = $event; onTermsChange(FIXED_NEGOTIATION_TERMS.INCOTERMS)">
                 </negotiation-request-input>
             </div>
         </div>
 
         <!-- Payment Terms -->
-        <div class="row content-row" [ngClass]="{'bg-danger text-white':!wrapper.checkEqualForRequest(manufacturersTermsSource, 'paymentTerms')}">
+        <div class="row content-row">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500"><span [innerHTML]="'Payment Terms' | translate"></span>:</strong>
             </div>
@@ -118,13 +131,19 @@
                 </ng-container>
             </div>
             <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input [label]="'Request Payment Terms' | translate" id="paymentTermsCb" [options]="wrapper.sellerSettings.paymentTerms" [selected]="wrapper.rfqPaymentTerms.paymentTerm" (selectedChange)="wrapper.rfqPaymentTerms.paymentTerm = $event; onTermsChange(FIXED_NEGOTIATION_TERMS.PAYMENT_TERMS)" [disabled]="isLoading() || isReadOnly()">
+                <negotiation-request-input [label]="'Request Payment Terms' | translate" id="paymentTermsCb"
+                                           [options]="wrapper.sellerSettings.paymentTerms"
+                                           [selected]="wrapper.rfqPaymentTerms.paymentTerm"
+                                           (selectedChange)="wrapper.rfqPaymentTerms.paymentTerm = $event;
+                                           onTermsChange(FIXED_NEGOTIATION_TERMS.PAYMENT_TERMS)"
+                                           [disabled]="isLoading() || isReadOnly()"
+                                           [warning]="!wrapper.checkEqualForRequest(manufacturersTermsSource, 'paymentTerms')">
                 </negotiation-request-input>
             </div>
         </div>
 
         <!-- Payment Means -->
-        <div class="row content-row" [ngClass]="{'bg-danger text-white':!wrapper.checkEqualForRequest(manufacturersTermsSource, 'paymentMeans')}">
+        <div class="row content-row">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500"><span [innerHTML]="'Payment Means' | translate"></span>:</strong>
             </div>
@@ -142,13 +161,18 @@
                 </ng-container>
             </div>
             <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input [label]="'Request Payment Means'| translate" id="paymentMeansCb" [options]="wrapper.sellerSettings.paymentMeans" [selected]="wrapper.rfqPaymentMeans" (selectedChange)="wrapper.rfqPaymentMeans = $event; onTermsChange(FIXED_NEGOTIATION_TERMS.PAYMENT_MEANS)" [disabled]="isLoading() || isReadOnly()">
+                <negotiation-request-input [label]="'Request Payment Means'| translate" id="paymentMeansCb"
+                                           [options]="wrapper.sellerSettings.paymentMeans"
+                                           [selected]="wrapper.rfqPaymentMeans"
+                                           (selectedChange)="wrapper.rfqPaymentMeans = $event; onTermsChange(FIXED_NEGOTIATION_TERMS.PAYMENT_MEANS)"
+                                           [disabled]="isLoading() || isReadOnly()"
+                                           [warning]="!wrapper.checkEqualForRequest(manufacturersTermsSource, 'paymentMeans')">
                 </negotiation-request-input>
             </div>
         </div>
 
         <!-- Price -->
-        <div class="row content-row" [ngClass]="{'bg-danger text-white':!wrapper.checkEqualForRequest(manufacturersTermsSource, 'price')}">
+        <div class="row content-row">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
                 <strong class="font-weight-500">Price:</strong>
             </div>
@@ -171,7 +195,13 @@
             </div>
             <!-- Customer's offer -->
             <div *ngIf="showCounterOfferTerms" class="col-5">
-                <negotiation-request-input [label]="'Request Item Price'| translate" id="priceCb" [disabled]="isLoading() || isReadOnly()" [quantity]="wrapper.rfqDiscountPriceWrapper.itemPrice" [step]="0.01" (quantityChange)="onTermsChange(FIXED_NEGOTIATION_TERMS.PRICE, false)" [quantityUnits]="CURRENCIES" [disableQuantityUnit]="lineHasPrice()">
+                <negotiation-request-input [label]="'Request Item Price'| translate" id="priceCb"
+                                           [disabled]="isLoading() || isReadOnly()"
+                                           [warning]="!wrapper.checkEqualForRequest(manufacturersTermsSource, 'price')"
+                                           [quantity]="wrapper.rfqDiscountPriceWrapper.itemPrice"
+                                           [step]="0.01" (quantityChange)="onTermsChange(FIXED_NEGOTIATION_TERMS.PRICE, false)"
+                                           [quantityUnits]="CURRENCIES"
+                                           [disableQuantityUnit]="lineHasPrice()">
                 </negotiation-request-input>
             </div>
         </div>

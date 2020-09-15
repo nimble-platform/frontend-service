@@ -30,7 +30,7 @@
         </select>
     </div>
     <div class="col-5">
-        <quantity-input label="per" labelClass="col-1" valueClass="col-11" [quantity]="catalogueLine.requiredItemLocationQuantity.price.baseQuantity" [formFieldName]="baseQuantityFieldName" [parentForm]="formGroup" (onQuantityUnitChange)="onBaseQuantityUnitChanged($event)">
+        <quantity-input label="per" labelClass="col-1" valueQuantityClass="col-11" [quantity]="catalogueLine.requiredItemLocationQuantity.price.baseQuantity" [formFieldName]="baseQuantityFieldName" [parentForm]="formGroup" (onQuantityUnitChange)="onBaseQuantityUnitChanged($event)">
         </quantity-input>
     </div>
 </div>
@@ -51,7 +51,7 @@
         <strong><span [innerHTML]="'Minimum Order Quantity:' | translate"></span></strong>
     </div>
     <div class="col-9">
-        <quantity-input  valueClass="col-12" [quantity]="catalogueLine.minimumOrderQuantity" disableQuantityUnit="true">
+        <quantity-input valueQuantityClass="col-12" [quantity]="catalogueLine.minimumOrderQuantity" disableQuantityUnit="true">
         </quantity-input>
     </div>
 </div>

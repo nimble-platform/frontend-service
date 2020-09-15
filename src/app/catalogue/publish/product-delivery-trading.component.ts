@@ -23,6 +23,9 @@ import {CompanyNegotiationSettings} from '../../user-mgmt/model/company-negotiat
 import {TranslateService} from '@ngx-translate/core';
 import {EmptyFormBase} from '../../common/validation/empty-form-base';
 import * as myGlobals from '../../globals';
+import {UserService} from '../../user-mgmt/user.service';
+import {Quantity} from '../model/publish/quantity';
+import {TermsAndConditionUtils} from '../model/model-util/terms-and-condition-utils';
 const PRODUCT_DELIVERY_TRADING_INPUT = 'product_delivery_trading';
 @Component({
     selector: "product-delivery-trading",
@@ -40,7 +43,8 @@ export class ProductDeliveryTradingComponent extends EmptyFormBase implements On
     warrantyPeriodRangeDefinition:string = null;
     deliveryPeriodRangeDefinition:string = null;
     product_filter_prod = myGlobals.product_filter_prod;
-    constructor(private translate: TranslateService) {
+    constructor(private translate: TranslateService,
+                userService: UserService) {
         super(PRODUCT_DELIVERY_TRADING_INPUT);
     }
 
@@ -49,6 +53,11 @@ export class ProductDeliveryTradingComponent extends EmptyFormBase implements On
         if (this.wrapper.line.goodsItem.deliveryTerms.specialTerms == null || this.wrapper.line.goodsItem.deliveryTerms.specialTerms.length == 0) {
             this.wrapper.line.goodsItem.deliveryTerms.specialTerms = [new Text(null, DEFAULT_LANGUAGE())];
         }
+
+        // set initial value of warranty and delivery periods to the values defined in the company negotiation settings
+        this.wrapper.line.warrantyValidityPeriod.durationMeasure = TermsAndConditionUtils.getWarrantyPeriod(this.companyNegotiationSettings);
+        this.wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure = TermsAndConditionUtils.getDeliveryPeriod(this.companyNegotiationSettings);
+
         this.setWarrantyPeriodRangeDefinition();
         this.setDeliveryPeriodRangeDefinition();
     }
