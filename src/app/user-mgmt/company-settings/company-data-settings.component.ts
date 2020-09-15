@@ -178,7 +178,7 @@ export class CompanyDataSettingsComponent implements OnInit {
         // so that we can index the selected industry sectors for all available languages
         let industrySectorWithMultilingualLabels = [];
         // the case where industry sectors are selected from the predefined values
-        if (!this.forceActText) {
+        if (!this.forceActText && this.availableActivitySectorKeys.length > 0) {
             // retrieve the translation of each industry sector for the available languages
             for (let languageId of myGlobals.config.languageSettings.available) {
                 for (let industrySectorsArrKey of this.industrySectorsArr) {

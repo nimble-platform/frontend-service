@@ -120,7 +120,7 @@
             <strong><span [innerHTML]="'Business Type:' | translate"></span></strong>
         </label>
         <div class="col-10">
-            <select class="form-control" [formControl]="dataForm.controls['businessType']" (change)="setAvailableActivitySectorKeys();dataForm.controls['industrySectors'].setValue('')" required>
+            <select class="form-control" [formControl]="dataForm.controls['businessType']" (change)="setAvailableActivitySectorKeys();" required>
                 <option *ngFor="let type of config.supportedBusinessTypes" value="{{type}}">{{type}}</option>
             </select>
         </div>
@@ -133,7 +133,7 @@
             <span *ngIf="availableActivitySectorKeys.length>0 && !forceActText" class="tooltip-icon" (click)="showSectorTT(tooltip)"><i class="fa fa-question-circle"></i></span>
         </label>
         <div class="col-10">
-            <input *ngIf="dataForm.getRawValue()['businessType'] == ''" type="text" class="form-control" [formControl]="dataForm.controls['industrySectors']" placeholder="Select Business Type" required readonly maxlength="255">
+            <input *ngIf="dataForm.getRawValue()['businessType'] == ''" type="text" class="form-control" placeholder="Select Business Type" readonly maxlength="255">
             <ng-container *ngIf="availableActivitySectorKeys.length>0 && !forceActText">
                 <select class="form-control" [(ngModel)]="industrySectorsArr[0].text" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" multiple required [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('pm')">
                     <option *ngFor="let sector of availableActivitySectorKeys" [value]="sector">{{getMultilingualPredefinedIndustrySector(sector)}}</option>
