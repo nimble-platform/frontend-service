@@ -340,11 +340,13 @@ export class ShoppingCartComponent implements OnInit {
     private getDefaultPlatformTermsAndConditionsForAllCartLines(): void {
         this.initCallStatus.aggregatedSubmit();
 
+        let sellerSettingsAggregation: CompanySettings[] = [];
+
         this.contractService.getDefaultTermsAndConditions(this.shoppingCart.catalogueLine.map(value => value.goodsItem.item.catalogueDocumentReference.id),
             this.shoppingCart.catalogueLine.map(value => value.goodsItem.deliveryTerms.incoterms),
             this.cookieService.get('company_id'),
             FEDERATIONID(),
-            Array.from(this.sellersSettings.values())
+            this.shoppingCart.catalogueLine.map(value => this.sellersSettings.get(UBLModelUtils.getLinePartyId(value)))
         ).then(termsAndConditions => {
             this.productTermsAndConditions = termsAndConditions;
             // Check buyers terms and conditions also. Buyer terms are used in the common terms component as initial default values

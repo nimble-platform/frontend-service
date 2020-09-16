@@ -36,7 +36,7 @@
             <span [innerHTML]="'Add to Cart' | translate"></span>
         </button>
     </div>
-    <div *ngIf="inShoppingBasket" class="ml-auto">
+    <div *ngIf="inShoppingBasket && shoppingCartItemForm" class="ml-auto">
         <div class="btn btn-primary" (click)="onRemoveFromCartButtonClicked()">
             <span [innerHTML]="'Remove from Cart' | translate"></span>
         </div>
