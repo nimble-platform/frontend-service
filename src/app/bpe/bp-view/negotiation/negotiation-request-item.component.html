@@ -15,7 +15,7 @@
 <!-- Titles -->
 <div class="row">
     <div class="col-12">
-        <div class="row title-row">
+        <div class="row">
             <div class="col-2"></div>
             <div class="col-5">
                 <label class="column-title mr-2"><span [innerHTML]="'Manufacturers Terms' | translate"></span></label><br>
@@ -44,7 +44,9 @@
         </div>
     </div>
 </div>
-<div class="row mb-3">
+
+<!-- main terms-->
+<div class="row mb-3 pt-2 pb-2 panel">
     <div class="{{showCounterOfferTerms ? 'col-12' : 'col-7'}}">
         <!-- Warranty -->
         <div class="row content-row">
@@ -240,74 +242,26 @@
     </div>
 </div>
 
-<div class="row mb-2">
-    <div class="col-12">
-        <div class="btn align-self-start ml-2" [ngClass]="{'btn-outline-primary':!(clausesDiffer || custTermsDiffer),'btn-danger':(clausesDiffer || custTermsDiffer),'active':showTermsAndConditions}" (click)="showTermsAndConditions=showTab(showTermsAndConditions)"><span [innerHTML]="'Terms and Conditions' | translate"></span></div>
-        <div *ngIf="config.dataChannelsEnabled" class="btn align-self-start ml-2" [ngClass]="{'btn-outline-primary':wrapper.checkEqualForRequest(manufacturersTermsSource, 'dataMonitoring'),'btn-danger':!wrapper.checkEqualForRequest(manufacturersTermsSource, 'dataMonitoring'),'active':showDataMonitoring}" (click)="showDataMonitoring=showTab(showDataMonitoring)"><span [innerHTML]="'Data Monitoring' | translate"></span></div>
-        <ng-container *ngIf="isFrameContractVisible()">
-            <div class="btn {{wrapper.rfqFrameContractDuration == null ?'btn-outline-primary' : 'btn-danger'}} align-self-start ml-2" [ngClass]="{'active':showFrameContractDetails}" (click)="showFrameContractDetails=showTab(showFrameContractDetails)"><span [innerHTML]="'Frame Contract' | translate"></span></div>
-        </ng-container>
-        <div class="btn align-self-start ml-2 {{highlightDeliveryDetailsTab() ? 'btn-danger':'btn-outline-primary'}}" [ngClass]="{'active':showDeliveryDetails}" (click)="showDeliveryDetails=showTab(showDeliveryDetails)"><span [innerHTML]="'Delivery Details' | translate"></span></div>
-    </div>
-</div>
-
-<div class="row mb-2">
-    <div class="col-12">
-
-        <!-- Frame contract -->
-        <ng-container *ngIf="isFrameContractVisible()">
-            <ng-container *ngIf="showFrameContractDetails">
-                <div class="ml-2">
-                    <div class="row">
-                        <div class="col-2">
-                            <strong class="font-weight-500"><span [innerHTML]="'Frame Contract' | translate"></span>:</strong>
-                            <span [title]="'The period within which the offered conditions will be valid upon confirmation by the seller.'|translate">&#9432;</span>
-                        </div>
-                        <div class="col-5"></div>
-                        <div class="col-5">
-                            <negotiation-request-input [label]="'Contract Duration'|translate" id="frameContractCb" [quantityUnits]="frameContractDurationUnits" (quantityChange)="onFrameContractDurationChanged($event); onTermsChange(FIXED_NEGOTIATION_TERMS.FRAME_CONTRACT_DURATION, false)" [quantity]="frameContractDuration" [disabled]="isFrameContractDisabled()" [parentForm]="formGroup" [formFieldName]="'frame_contract'">
-                            </negotiation-request-input>
-                        </div>
-                    </div>
-                </div>
-            </ng-container>
-        </ng-container>
-
-        <!-- Data Monitoring -->
-        <ng-container *ngIf="config.dataChannelsEnabled">
-            <div *ngIf="showDataMonitoring" class="row mb-3">
-                <div class="col-12 ml-2">
-                    <!-- frame contract exists, so, indicate that the data monitoring request -->
-                    <ng-container *ngIf="((manufacturersTermsSource == 'frame_contract' &&
-                                    wrapper.frameContractQuotationWrapper.dataMonitoringPromised) ||
-                                    (manufacturersTermsSource == 'last_offer' &&
-                                    wrapper.lastOfferQuotationWrapper.dataMonitoringPromised)); else editDataMonitoringRequest">
-                        <input type="checkbox" checked="true" disabled="true"><label><span [innerHTML]="'Data monitoring promised' | translate"></span></label>
-                    </ng-container>
-                    <ng-template #editDataMonitoringRequest>
-                        <div class="input-group">
-                            <div class="d-flex align-items-center">
-                                <input type="checkbox" [(ngModel)]="wrapper.rfqDataMonitoringRequested" [disabled]="isLoading() || isReadOnly()">
-                            </div>
-                            <span class="form-control d-inline border-0">
-                                <strong class="font-weight-500"><span [innerHTML]="'Request data monitoring service' | translate"></span></strong>
-                            </span>
-                        </div>
-                    </ng-template>
-                </div>
-            </div>
-        </ng-container>
-
-        <!-- Delivery -->
-        <div [hidden]="!showDeliveryDetails" class="row mb-3 ml-1">
+<!-- Delivery -->
+<div class="row mb-2 pt-3 pb-3 panel">
+    <div class="col-12 ml-0 mr-0">
+        <div class="btn {{highlightDeliveryDetailsTab() ? 'btn-danger':'btn-outline-primary'}}"
+             [ngClass]="{'active':showDeliveryDetails}"
+             (click)="showDeliveryDetails=showTab(showDeliveryDetails)">
+            <i class="fa fa-truck"></i>
+            <span class="font-weight-bold" [innerHTML]="'Delivery Details' | translate"></span>
+        </div>
+        <div [hidden]="!showDeliveryDetails" class="mb-3">
             <ul class="nav nav-tabs space-after space-before">
                 <li class="nav-item">
                     <a href id="DELIVERY_ADDRESS" class="nav-link" [ngClass]="{ active: selectedDeliveryTab === 'DELIVERY_ADDRESS'}" (click)="onDeliveryTabSelect($event,'DELIVERY_ADDRESS')">
+                        <i class="fas fa-map-marker-alt"></i>
                         <span [innerHTML]="'Delivery Address' | translate"></span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href id="DELIVERY_DATE" class="nav-link" [ngClass]="{ active: selectedDeliveryTab === 'DELIVERY_DATE'}" (click)="onDeliveryTabSelect($event,'DELIVERY_DATE')">
+                        <i class="far fa-calendar-alt"></i>
                         <span [innerHTML]="'Delivery Date' | translate"></span>
                     </a>
                 </li>
@@ -320,7 +274,7 @@
 
             <div [hidden]="selectedDeliveryTab !== 'DELIVERY_DATE'" class="col-12">
                 <!-- Delivery Period -->
-                <div *ngIf="!isDeliveryDateSectionOpen" class="row content-row" [ngClass]="{'bg-danger text-white':!wrapper.checkEqualForRequest(manufacturersTermsSource, 'deliveryPeriod')}">
+                <div *ngIf="!isDeliveryDateSectionOpen" class="row content-row">
                     <div class="col-2">
                         <strong class="font-weight-500"><span [innerHTML]="'Delivery Period' | translate"></span>:</strong>
                     </div>
@@ -341,12 +295,20 @@
                             </ng-container>
                         </ng-container>
                         <span [ngStyle]="getDeliveryPeriodStyle()">
-                            {{ getDeliveryPeriodText() }}
-                        </span>
+                                    {{ getDeliveryPeriodText() }}
+                                </span>
                     </div>
                     <!-- Customer's offer-->
                     <div class="col-5">
-                        <negotiation-request-input [label]="'Request Delivery Period' | translate" [disabled]="isLoading() || isReadOnly()" id="deliveryCb" [quantity]="wrapper.rfqDeliveryPeriod" (quantityChange)="onTermsChange(FIXED_NEGOTIATION_TERMS.DELIVERY_PERIOD)" [quantityUnits]="wrapper.sellerSettings.deliveryPeriodUnits" [periodRanges]="wrapper.sellerSettings.deliveryPeriodRanges" [parentForm]="formGroup" [formFieldName]="'negotiated_delivery_period'">
+                        <negotiation-request-input [label]="'Request Delivery Period' | translate"
+                                                   [disabled]="isLoading() || isReadOnly()" id="deliveryCb"
+                                                   [warning]="!wrapper.checkEqualForRequest(manufacturersTermsSource, 'deliveryPeriod')"
+                                                   [quantity]="wrapper.rfqDeliveryPeriod"
+                                                   (quantityChange)="onTermsChange(FIXED_NEGOTIATION_TERMS.DELIVERY_PERIOD)"
+                                                   [quantityUnits]="wrapper.sellerSettings.deliveryPeriodUnits"
+                                                   [periodRanges]="wrapper.sellerSettings.deliveryPeriodRanges"
+                                                   [parentForm]="formGroup"
+                                                   [formFieldName]="'negotiated_delivery_period'">
                         </negotiation-request-input>
                     </div>
                 </div>
@@ -381,10 +343,19 @@
                 <div *ngIf="!isReadOnly()" class="btn btn-outline-primary mt-1 " (click)="onAddDeliveryDate()"><span [innerHTML]="'Add Delivery Date' | translate"></span></div>
             </div>
         </div>
+    </div>
+</div>
 
-        <!-- Terms and conditions -->
-        <div [hidden]="!showTermsAndConditions" class="ml-2">
-            <ul *ngIf="!isReadOnly() || getNonFrameContractTermNumber() > 0" class="nav nav-tabs space-after space-before">
+<!-- Terms and conditions -->
+<div class="row mb-2 pt-3 pb-3 panel space-before">
+    <div class="col-12 ml-0 mr-0">
+        <div class="btn" [ngClass]="{'btn-outline-primary':!(clausesDiffer || custTermsDiffer),'btn-danger':(clausesDiffer || custTermsDiffer),'active':showTermsAndConditions}"
+             (click)="showTermsAndConditions=showTab(showTermsAndConditions)">
+            <i class="fas fa-list"></i>
+            <span class="font-weight-bold" [innerHTML]="'Terms and Conditions' | translate"></span>
+        </div>
+        <div [hidden]="!showTermsAndConditions">
+            <ul *ngIf="!isReadOnly() || getNonFrameContractTermNumber() > 0" class="nav nav-tabs space-before space-after">
                 <li class="nav-item">
                     <a href id="CUSTOM_TERMS" class="nav-link" [ngClass]="{ active: selectedTCTab === 'CUSTOM_TERMS'}" (click)="onTCTabSelect($event,'CUSTOM_TERMS')">
                         <span [innerHTML]="'Custom Terms' | translate"></span>
@@ -442,13 +413,77 @@
                 </div>
                 <div class="col-5">
                     <terms-and-conditions [sellerPartyId]="sellerId" [sellerFederationId]="sellerFederationId" [selectedIncoterm]="wrapper.rfqIncoterms" [selectedTradingTerm]="wrapper.rfqPaymentTerms.paymentTerm" (onIncotermChanged)="wrapper.rfqIncoterms = $event; onTermsChange(FIXED_NEGOTIATION_TERMS.INCOTERMS);" (onPaymentMeansChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event; onTermsChange(FIXED_NEGOTIATION_TERMS.PAYMENT_MEANS);" (onClauseUpdated)="onClauseUpdate($event,wrapper);" [originalTermAndConditionClauses]="manufacturersTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause :
-                                              (manufacturersTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause :
-                                              defaultTermsAndConditions)" [termsAndConditions]="wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.clause" [readOnly]="isLoading() || isReadOnly()" [documentType]="'rfq'">
+                                                      (manufacturersTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause :
+                                                      defaultTermsAndConditions)" [termsAndConditions]="wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.clause" [readOnly]="isLoading() || isReadOnly()" [documentType]="'rfq'">
                     </terms-and-conditions>
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
+<!-- Frame contract and data monitoring -->
+<div class="row mb-2 pt-3 pb-3 panel space-before">
+    <div class="col-12">
+        <div class="d-flex">
+            <div *ngIf="config.dataChannelsEnabled" class="btn"
+                 [ngClass]="{'btn-outline-primary':wrapper.checkEqualForRequest(manufacturersTermsSource, 'dataMonitoring'),'btn-danger':!wrapper.checkEqualForRequest(manufacturersTermsSource, 'dataMonitoring'),'active':showDataMonitoring}" (click)="showDataMonitoring=showTab(showDataMonitoring)">
+                <i class="fas fa-chart-line"></i>
+                <span class="font-weight-bold" [innerHTML]="'Data Monitoring' | translate"></span>
+            </div>
+            <ng-container *ngIf="isFrameContractVisible()">
+                <div class="btn {{wrapper.rfqFrameContractDuration == null ?'btn-outline-primary' : 'btn-danger'}} align-self-start ml-2"
+                     [ngClass]="{'active':showFrameContractDetails}"
+                     (click)="showFrameContractDetails=showTab(showFrameContractDetails)">
+                    <i class="far fa-handshake"></i>
+                    <span class="font-weight-bold" [innerHTML]="'Frame Contract' | translate"></span>
+                </div>
+            </ng-container>
+        </div>
+
+        <!-- Frame contract -->
+        <ng-container *ngIf="isFrameContractVisible()">
+            <ng-container *ngIf="showFrameContractDetails">
+                <div class="ml-2 space-before">
+                    <div class="row">
+                        <div class="col-2">
+                            <strong class="font-weight-500"><span [innerHTML]="'Frame Contract' | translate"></span>:</strong>
+                            <span [title]="'The period within which the offered conditions will be valid upon confirmation by the seller.'|translate">&#9432;</span>
+                        </div>
+                        <div class="col-5"></div>
+                        <div class="col-5">
+                            <negotiation-request-input [label]="'Contract Duration'|translate" id="frameContractCb" [quantityUnits]="frameContractDurationUnits" (quantityChange)="onFrameContractDurationChanged($event); onTermsChange(FIXED_NEGOTIATION_TERMS.FRAME_CONTRACT_DURATION, false)" [quantity]="frameContractDuration" [disabled]="isFrameContractDisabled()" [parentForm]="formGroup" [formFieldName]="'frame_contract'">
+                            </negotiation-request-input>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </ng-container>
+
+        <!-- Data Monitoring -->
+        <ng-container *ngIf="config.dataChannelsEnabled">
+            <div *ngIf="showDataMonitoring" class="row space-before mb-3">
+                <div class="col-12 ml-2">
+                    <!-- frame contract exists, so, indicate that the data monitoring request -->
+                    <ng-container *ngIf="((manufacturersTermsSource == 'frame_contract' &&
+                                    wrapper.frameContractQuotationWrapper.dataMonitoringPromised) ||
+                                    (manufacturersTermsSource == 'last_offer' &&
+                                    wrapper.lastOfferQuotationWrapper.dataMonitoringPromised)); else editDataMonitoringRequest">
+                        <input type="checkbox" checked="true" disabled="true"><label><span [innerHTML]="'Data monitoring promised' | translate"></span></label>
+                    </ng-container>
+                    <ng-template #editDataMonitoringRequest>
+                        <div class="input-group">
+                            <div class="d-flex align-items-center">
+                                <input type="checkbox" [(ngModel)]="wrapper.rfqDataMonitoringRequested" [disabled]="isLoading() || isReadOnly()">
+                            </div>
+                            <span class="form-control d-inline border-0">
+                                <strong class="font-weight-500"><span [innerHTML]="'Request data monitoring service' | translate"></span></strong>
+                            </span>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </ng-container>
     </div>
 </div>
 
