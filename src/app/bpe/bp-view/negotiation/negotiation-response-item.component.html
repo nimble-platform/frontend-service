@@ -484,9 +484,9 @@
 </div>
 
 <!-- Frame contract -->
-<div class="row mb-3 pt-3 pb-3 panel">
+<div *ngIf="isFrameContractPanelVisible()" class="row mb-3 pt-3 pb-3 panel">
     <div class="col-12 ml-0 mr-0">
-        <ng-container *ngIf="isFrameContractPanelVisible()">
+        <ng-container>
             <div class="btn btn-danger" [ngClass]="{'active':showFrameContractDetails}"
                  (click)="showFrameContractDetails=showTab(showFrameContractDetails)">
                 <i class="far fa-handshake"></i>

@@ -63,8 +63,8 @@
                 </div>
             </div>
         </div>
-        <div *ngIf="wrapper.item.productImage.length > 1 && wrapper.item.productImage.length <=2" class="d-flex justify-content-center">
-            <div id="carousel-smaller" class="carousel slide carousel-inactive-resize inline">
+        <div *ngIf="wrapper.item.productImage.length > 1 && wrapper.item.productImage.length <=2">
+            <div id="carousel-smaller" class="carousel carousel-buttons carousel-inactive-resize">
                 <div class="inline border" [ngClass]="{'border-primary': selectedImage === 0}">
                     <img class="carousel-inactive" (click)="onSelectImage(selectedImage - 1)" src="data:{{wrapper.item.productImage[0].mimeCode}};base64,{{wrapper.item.productImage[0].value}}" />
                 </div>
