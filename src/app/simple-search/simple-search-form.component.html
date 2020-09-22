@@ -253,7 +253,7 @@
                                                         <!-- or for the deepest level entry when the Others entry is selected -->
                                                         <!-- cat_level here corresponds to the level of parent category -->
                                                         <ng-container *ngIf="(!excludingCategoryFacetQueryExists() && !lvl.other) || (excludingCategoryFacetQueryExists() && lvl.other)">
-                                                            <span class="clickable" (click)="setCat('','', lvl.other,i)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName"><b>{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></b></span> ({{ lvl.count }})
+                                                            <span class="clickable" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName"><b>{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></b></span> ({{ lvl.count }})
                                                         </ng-container>
                                                         <!-- the parent cateory having the same id with the child 'Others' entry -->
                                                         <ng-container *ngIf="(!excludingCategoryFacetQueryExists() && lvl.other) || (excludingCategoryFacetQueryExists() && !lvl.other)">
