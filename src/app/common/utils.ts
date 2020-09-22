@@ -311,7 +311,7 @@ export function selectName(ip: ItemProperty | Item, lang?: string) {
         defaultLanguage = lang;
     let englishName = null;
     for (let pName of ip.name) {
-        if (pName.languageID === defaultLanguage) {
+        if (pName.languageID === defaultLanguage && pName.value) {
             return pName.value;
         }
         else if (pName.languageID == "en") {
