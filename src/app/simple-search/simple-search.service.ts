@@ -272,7 +272,7 @@ export class SimpleSearchService {
             .post(url, searchObject, { headers: new Headers({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.cookieService.get("bearer_token") }) })
             .pipe(
                 map(response =>
-                    this.getSuggestionArray(response.json(), query, queryRes.queryArr, queryRes.queryFields)
+                    this.getSuggestionArray(response.json(), query, queryRes.queryArr, queryRes.queryFields,search_index)
                 )
             );
     }
@@ -352,7 +352,19 @@ export class SimpleSearchService {
             );
     }
 
-    getSuggestionArray(res: any, q: string, qA: string[], fields: string[]): string[] {
+    // the format for the field is "{LANG}_label"
+    getCategoryUris(categories:any,field:string,label:string){
+        let uris = [];
+        let languageId = field.substring(0,field.indexOf("_"));
+        for (let category of categories) {
+            if(category.label[languageId] && category.label[languageId] === label){
+                uris.push(category["uri"]);
+            }
+        }
+        return uris;
+    }
+
+    getSuggestionArray(res: any, q: string, qA: string[], fields: string[],search_index:string=null): string[] {
         var suggestions = [];
         var suggestionsTmp = [];
         var suggestionsCount = [];
@@ -367,7 +379,8 @@ export class SimpleSearchService {
                                 suggestionsTmp.push(label);
                                 suggestionsCount.push({
                                     "label": label,
-                                    "count": 0
+                                    "count": 0,
+                                    "uris": search_index === "Category" ? this.getCategoryUris(res.result,field,label) : null
                                 });
                             }
                         }
@@ -393,8 +406,18 @@ export class SimpleSearchService {
                 return b.count - a.count;
             });
             for (let i = 0; i < Math.min(suggestionsCount.length, 10); i++) {
-                if (suggestionsCount[i].count > 0)
-                    suggestions.push(suggestionsCount[i].label);
+                if (suggestionsCount[i].count > 0){
+                    // suggestion list contains labels and uris for category search
+                    if(search_index === "Category"){
+                        suggestions.push({
+                            "label":suggestionsCount[i].label,
+                            "uris":suggestionsCount[i].uris
+                        })
+                    }
+                    else{
+                        suggestions.push(suggestionsCount[i].label);
+                    }
+                }
             }
         }
         return suggestions;

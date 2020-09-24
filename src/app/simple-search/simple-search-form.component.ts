@@ -21,7 +21,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import * as myGlobals from '../globals';
 import {SearchContextService} from './search-context.service';
 import {Observable, Subject} from 'rxjs';
-import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, map, switchMap} from 'rxjs/operators';
 import {copy, roundToTwoDecimals, selectNameFromLabelObject} from '../common/utils';
 import {CallStatus} from '../common/call-status';
 import {CURRENCIES, DEFAULT_LANGUAGE} from '../catalogue/model/constants';
@@ -148,6 +148,8 @@ export class SimpleSearchFormComponent implements OnInit {
 
     ngUnsubscribe: Subject<void> = new Subject<void>();
     private translations: any;
+    // suggestions for the category search
+    categorySuggestions:any = [];
 
     constructor(private simpleSearchService: SimpleSearchService,
                 private searchContextService: SearchContextService,
@@ -409,7 +411,14 @@ export class SimpleSearchFormComponent implements OnInit {
             switchMap(term =>
                 this.simpleSearchService.getSuggestions(term, ('{LANG}_' + this.product_name), this.searchIndex)
             )
-        );
+        ).pipe(map(suggestions => {
+            // for the category search, suggestions include category label and uri
+            if(this.searchIndex === "Category"){
+                this.categorySuggestions = suggestions;
+                return suggestions.map(suggestion => suggestion["label"]);
+            }
+            return suggestions;
+        }));
 
     getCompSuggestions = (text$: Observable<string>) =>
         text$.pipe(
@@ -1295,6 +1304,16 @@ export class SimpleSearchFormComponent implements OnInit {
         // selectedItemEvent is the event emitted when a product/company is selected from the suggestion list
         if (selectedItemEvent) {
             this.model.q = selectedItemEvent.item;
+            // when the suggested value is selected for the category search,
+            // we set the selected category accordingly
+            if(this.searchIndex === "Category"){
+                // find the uri of selected category
+                let suggestion = this.categorySuggestions.filter(suggestion => suggestion.label === this.model.q);
+                if(suggestion[0].uris.length == 1){
+                    this.setCat(this.model.q,suggestion[0].uris[0],false,null);
+                    return;
+                }
+            }
         }
         if (this.model.q == '') {
             this.model.q = '*';
