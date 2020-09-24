@@ -58,47 +58,6 @@
         </div>
     </div>
 
-    <div *ngIf="false" [hidden]="searchDone">
-        <div class="card border-primary-nimble">
-            <div class="card-header text-white bg-primary-nimble">
-                <span [innerHTML]="'Categories' | translate"></span>
-            </div>
-            <div class="card-body">
-                <call-status [callStatus]="categoriesCallStatus" [large]="true"></call-status>
-                <ng-container *ngIf="!categoriesCallStatus.isLoading() && !cat_loading && cat_levels.length>0 && cat_levels[0].length>0">
-                    <div *ngFor="let lvl0 of cat_levels[0]; let idx = index;">
-                        <div *ngIf="idx%4==0" class="row">
-                            <div *ngIf="idx<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx].name,cat_levels[0][idx].id)">
-                                <div class="card-body p-2 text-center">
-                                    <h6 class="card-title clickable">{{ cat_levels[0][idx].preferredName }}</h6>
-                                    <h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx].count }} items</h6>
-                                </div>
-                            </div>
-                            <div *ngIf="idx+1<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx+1].name,cat_levels[0][idx+1].id)">
-                                <div class="card-body p-2 text-center">
-                                    <h6 class="card-title clickable">{{ cat_levels[0][idx+1].preferredName }}</h6>
-                                    <h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+1].count }} items</h6>
-                                </div>
-                            </div>
-                            <div *ngIf="idx+2<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx+2].name,cat_levels[0][idx+2].id)">
-                                <div class="card-body p-2 text-center">
-                                    <h6 class="card-title clickable">{{ cat_levels[0][idx+2].preferredName }}</h6>
-                                    <h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+2].count }} items</h6>
-                                </div>
-                            </div>
-                            <div *ngIf="idx+3<cat_levels[0].length" class="card col mr-3 ml-3 pl-0 pr-0 pointer" [ngClass]="{'mb-3':idx+4<cat_levels[0].length}" (click)="callCat(cat_levels[0][idx+3].name,cat_levels[0][idx+3].id)">
-                                <div class="card-body p-2 text-center">
-                                    <h6 class="card-title clickable">{{ cat_levels[0][idx+3].preferredName }}</h6>
-                                    <h6 class="card-subtitle text-muted font-italic">{{ cat_levels[0][idx+3].count }} items</h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </ng-container>
-            </div>
-        </div>
-    </div>
-
     <div [hidden]="!callback || searchCallStatus.isLoading() || searchCallStatus.isError()">
         <ng-container *ngIf="pageRef === 'publish'">
             <hr>
