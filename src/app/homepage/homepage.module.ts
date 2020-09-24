@@ -18,7 +18,6 @@ import {NgModule} from '@angular/core';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {HomepageComponent} from './homepage.component';
 import {HomepageRoutingModule} from './homepage-routing.module';
-import {CarouselModule} from 'ngx-owl-carousel-o';
 import {CommonModule} from '@angular/common';
 import {AppCommonModule} from '../common/common.module';
 
@@ -27,8 +26,7 @@ import {AppCommonModule} from '../common/common.module';
         NgbModule,
         AppCommonModule,
         CommonModule,
-        HomepageRoutingModule,
-        CarouselModule
+        HomepageRoutingModule
     ],
     declarations: [
         HomepageComponent
