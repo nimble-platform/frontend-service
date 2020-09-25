@@ -12,7 +12,7 @@ export const ub_base = "http://nimble-staging-neu.salzburgresearch.at/search";
 export const idpURL = "http://nimble-staging-neu.salzburgresearch.at:8080/auth/realms/master";
 export const collab_path = "http://nimble.eu-de.containers.appdomain.cloud/collaborations";
 export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client";
-export const frontendURL = base_path + "/efactory/frontend/";
+export const frontendURL = base_path + "/efpf/frontend/";
 
 
 // Service endpoints
