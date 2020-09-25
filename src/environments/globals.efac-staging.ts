@@ -32,7 +32,7 @@ export const agent_mgmt_endpoint = `http://159.69.214.42/agents`;
 export const collaboration_endpoint = `${collab_path}`;
 export const certificate_of_origin_endpoint = `http://161.156.70.125:7695`;
 export const legislation_endpoint = `http://77.230.101.223/nimsys`;
-export const eFactory_indexing_endpoint = "https://efactory-security-portal.salzburgresearch.at/api/index";
+export const eFactory_indexing_endpoint = "https://efpf-security-portal.salzburgresearch.at/api/index";
 
 // Explorative Search endpoints
 
