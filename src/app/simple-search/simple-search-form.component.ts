@@ -461,38 +461,7 @@ export class SimpleSearchFormComponent implements OnInit {
                 // set the level of the selected category, if any
                 this.cat_level = this.getCatLevel(this.catID, indexCategories.result);
                 this.cat_levels = [];
-                // ToDo: Remove manual distinction after search update
-                if (this.taxonomy == 'eClass') {
-                    for (let categoryUri of Object.keys(categoryDisplayInfo)) {
-                        let count = categoryDisplayInfo[categoryUri].count;
-                        if (categoryUri.startsWith(taxonomyPrefix)) {
-                            let eclass_idx = categoryDisplayInfo[categoryUri].code;
-                            let catLevel = 3;
-                            if (eclass_idx % 1000000 === 0) {
-                                catLevel = 0;
-                            } else if (eclass_idx % 10000 === 0) {
-                                catLevel = 1;
-                            } else if (eclass_idx % 100 === 0) {
-                                catLevel = 2;
-                            }
-
-                            if ((this.cat_level + 1) >= catLevel || (this.cat === '' && catLevel === 0)) {
-                                if (this.cat_levels[catLevel] == null) {
-                                    this.cat_levels[catLevel] = [];
-                                }
-                                this.cat_levels[catLevel].push({
-                                    'name': categoryUri,
-                                    'id': categoryUri,
-                                    'count': count,
-                                    'preferredName': selectNameFromLabelObject(categoryDisplayInfo[categoryUri].label)
-                                });
-                            }
-                        }
-                    }
-                } else {
-                    // this.cat === '' indicates that there is no category selected for filtering the results
-                    this.constructCategoryTree(indexCategories.result, categoryDisplayInfo, this.taxonomy, taxonomyPrefix);
-                }
+                this.constructCategoryTree(indexCategories.result, categoryDisplayInfo, this.taxonomy, taxonomyPrefix);
 
                 this.sortCatLevels();
                 this.populateOtherEntries();
