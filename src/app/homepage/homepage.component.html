@@ -11,7 +11,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  -->
-<img class="main-image" [src]="'../assets/homepage/main.png'">
+<img class="main-image" [src]="'assets/homepage/main.png'">
 <!-- main actions under the main image -->
 <div class="main-action-row shadow-border">
     <div class="main-action" (click)="scroll(categorySection)">
@@ -28,14 +28,14 @@
         </div>
         <div class="action-desc">{{'Perform and monitor B2B interactions with other companies.' | translate}}</div>
     </div>
-    <div class="main-action">
+    <div class="main-action" (click)="scroll(demandSection)">
         <div class="action-title">
             <i class="far fa-star"></i>
             <div class="align-self-end">{{'See Demands' | translate}}</div>
         </div>
         <div class="action-desc">{{'Express your interest on products and respond to others.' | translate}}</div>
     </div>
-    <div class="main-action">
+    <div class="main-action" (click)="scroll(membersSection)">
         <div class="action-title">
             <i class="fas fa-users"></i>
             <div class="align-self-end">{{'Platform Members' | translate}}</div>
@@ -61,7 +61,7 @@
         </div>
         <div class="half-column">
             <p>Increase your online visibility by publishing your products and services on B2BMarket.</p>
-            <div class="btn btn-outline-primary">{{'Publish Products' | translate}}</div>
+            <div class="btn btn-outline-primary" (click)="onPublishProductClicked()">{{'Publish Products' | translate}}</div>
         </div>
     </div>
 
