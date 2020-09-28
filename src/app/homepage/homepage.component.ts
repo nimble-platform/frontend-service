@@ -15,6 +15,7 @@
 import {Component} from '@angular/core';
 import {CookieService} from 'ng2-cookies';
 import * as myGlobals from '../globals';
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'homepage',
@@ -27,9 +28,17 @@ export class HomepageComponent {
 
     public config = myGlobals.config;
 
-    constructor() {}
+    constructor(private router: Router) {}
 
     ngOnInit(): void {
+    }
+
+    /**
+     * Template handlers
+     */
+
+    onPublishProductClicked(): void {
+        this.router.navigate(['catalogue/publish'], { queryParams: { pg: 'single' } });
     }
 
     scroll(el: HTMLElement) {
