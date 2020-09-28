@@ -149,7 +149,7 @@ export class SimpleSearchFormComponent implements OnInit {
     ngUnsubscribe: Subject<void> = new Subject<void>();
     private translations: any;
     // suggestions for the category search
-    categorySuggestions:any = [];
+    categorySuggestions: any = [];
 
     constructor(private simpleSearchService: SimpleSearchService,
                 private searchContextService: SearchContextService,
@@ -413,9 +413,9 @@ export class SimpleSearchFormComponent implements OnInit {
             )
         ).pipe(map(suggestions => {
             // for the category search, suggestions include category label and uri
-            if(this.searchIndex === "Category"){
+            if (this.searchIndex === 'Category') {
                 this.categorySuggestions = suggestions;
-                return suggestions.map(suggestion => suggestion["label"]);
+                return suggestions.map(suggestion => suggestion['label']);
             }
             return suggestions;
         }));
@@ -1304,15 +1304,16 @@ export class SimpleSearchFormComponent implements OnInit {
         // selectedItemEvent is the event emitted when a product/company is selected from the suggestion list
         if (selectedItemEvent) {
             this.model.q = selectedItemEvent.item;
-            // when the suggested value is selected for the category search,
-            // we set the selected category accordingly
-            if(this.searchIndex === "Category"){
-                // find the uri of selected category
-                let suggestion = this.categorySuggestions.filter(suggestion => suggestion.label === this.model.q);
-                if(suggestion[0].uris.length == 1){
-                    this.setCat(this.model.q,suggestion[0].uris[0],false,null);
-                    return;
-                }
+        }
+        // for the category search, set the selected category if possible
+        if (this.searchIndex === 'Category') {
+            // find the suggested category for the search term
+            let suggestion = this.categorySuggestions.filter(suggestion => suggestion.label === this.model.q);
+            // set the selected category if there is a suggested category for the search term
+            // and there is only one category with this label
+            if (suggestion.length > 0 && suggestion[0].uris.length == 1 && suggestion[0].label.localeCompare(this.model.q) == 0) {
+                this.setCat(this.model.q, suggestion[0].uris[0], false, null);
+                return;
             }
         }
         if (this.model.q == '') {
