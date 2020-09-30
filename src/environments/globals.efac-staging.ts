@@ -175,6 +175,7 @@ export const config = {
     "showExplorative": false,
     "showFullName": false,
     "showGoogleTranslateOption": true,
+    "showHomepage": false,
     "showLCPA": false,
     "showPPAP": false,
     "showTrack": false,
