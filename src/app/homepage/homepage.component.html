@@ -67,15 +67,28 @@
 
     <!-- categories -->
     <div #categoryRow class="category-row">
+<!--        <div *ngFor="let categoryData of categories" class="category-box">-->
+<!--            <img [src]="categoryData.img">-->
+<!--            <div class="w-100 text-center">-->
+<!--                <h4 class="mb-3">{{categoryData.title | translate | uppercase}}</h4>-->
+<!--                <div *ngFor="let category of categoryData.categories"-->
+<!--                     class="sub-category"-->
+<!--                     (click)="onCategoryClicked(category)">-->
+<!--                    {{getTranslatedCategoryLabel(category)}}-->
+<!--                </div>-->
+<!--                <div class="btn btn-outline-primary mt-4" (click)="onCategoryClicked(categoryData.rootCategory)">{{'See More' | translate}}</div>-->
+<!--            </div>-->
+<!--        </div>-->
+
         <div class="category-box">
             <img [src]="'assets/homepage/cradle.jpg'">
             <div class="w-100 text-center">
                 <h4 class="mb-3">{{'Furniture' | translate | uppercase}}</h4>
-                <div class="sub-category">{{'Seats' | translate}}</div>
-                <div class="sub-category">{{'Tables' | translate}}</div>
-                <div class="sub-category">{{'Compositions' | translate}}</div>
-                <div class="sub-category">{{'Complements' | translate}}</div>
-                <div class="btn btn-outline-primary mt-4">{{'See More' | translate}}</div>
+                <div class="sub-category" (click)="onCategoryClicked(null)">{{'Seats' | translate}}</div>
+                <div class="sub-category" (click)="onCategoryClicked(null)">{{'Tables' | translate}}</div>
+                <div class="sub-category" (click)="onCategoryClicked(null)">{{'Compositions' | translate}}</div>
+                <div class="sub-category" (click)="onCategoryClicked(null)">{{'Complements' | translate}}</div>
+                <div class="btn btn-outline-primary mt-4" (click)="onCategoryClicked(null)">{{'See More' | translate}}</div>
             </div>
         </div>
         <div class="category-box">
@@ -128,7 +141,7 @@
             <div class="pb-3 pt-3" style="background-color: white; ">
                 <p class="title-par">Identify the most suitable manufacturer or service provider meeting your criteria.</p>
                 <p>Contact them to inquire details about products and services; negotiate terms and conditions; establish an agreement before actual purchase.</p>
-                <div class="btn btn-outline-primary">{{'Search Products or Companies' | translate}}</div>
+                <div class="btn btn-outline-primary" (click)="onSearchClicked()">{{'Search Products or Companies' | translate}}</div>
             </div>
         </div>
         <div class="half-column shadow-border">
@@ -136,7 +149,7 @@
             <div class="pb-3 pt-3" style="background-color: white; ">
                 <p class="title-par">Monitor B2B interactions systematically.</p>
                 <p>Track your sales and purchase activities. Track history of communication.</p>
-                <div class="btn btn-outline-primary">{{'Go to Your Dashboard' | translate}}</div>
+                <div class="btn btn-outline-primary" (click)="onDashboardClicked()">{{'Go to Your Dashboard' | translate}}</div>
             </div>
         </div>
     </div>
@@ -179,21 +192,21 @@
         </div>
     </div>
     <div class="d-flex justify-content-around text-center">
-        <div class="p-4" style="background-color: #ecdad5; flex: 1 1 0; max-width: 20%">
-            <div style="font-size: 2rem; font-weight: bold">150</div>
-            Manufacturers
+        <div *ngIf="manufacturerCount" class="p-4" style="background-color: #ecdad5; flex: 1 1 0; max-width: 20%">
+            <div style="font-size: 2rem; font-weight: bold">{{manufacturerCount}}</div>
+            {{'Manufacturers' | translate}}
         </div>
-        <div class="p-4" style="background-color: #ecdad5; flex: 1 1 0; max-width: 20%">
-            <div style="font-size: 2rem; font-weight: bold">70</div>
-            Suppliers
+        <div *ngIf="supplierCount" class="p-4" style="background-color: #ecdad5; flex: 1 1 0; max-width: 20%">
+            <div style="font-size: 2rem; font-weight: bold">{{supplierCount}}</div>
+            {{'Suppliers' | translate}}
         </div>
-        <div class="p-4" style="background-color: #ecdad5; flex: 1 1 0; max-width: 20%">
-            <div style="font-size: 2rem; font-weight: bold">10</div>
-            Logistics service providers
+        <div *ngIf="logisticServiceProviderCount" class="p-4" style="background-color: #ecdad5; flex: 1 1 0; max-width: 20%">
+            <div style="font-size: 2rem; font-weight: bold">{{logisticServiceProviderCount}}</div>
+            {{'Logistics service providers' | translate}}
         </div>
-        <div class="p-4" style="background-color: #ecdad5; flex: 1 1 0; max-width: 20%">
-            <div style="font-size: 2rem; font-weight: bold">40</div>
-            Service providers
+        <div *ngIf="serviceProviderCount" class="p-4" style="background-color: #ecdad5; flex: 1 1 0; max-width: 20%">
+            <div style="font-size: 2rem; font-weight: bold">{{serviceProviderCount}}</div>
+            {{'Service providers' | translate}}
         </div>
     </div>
     <div class="d-flex justify-content-center mt-5 mb-3">
@@ -202,102 +215,14 @@
         </div>
     </div>
 
-    <div class="d-flex flex-wrap justify-content-center text-center">
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Childcare
+    <div *ngIf="activitySectors?.length > 0" class="d-flex flex-wrap justify-content-center text-center">
+        <div *ngFor="let sector of activitySectors | slice:0: (displayedActivitySectorCount); let i = index"
+             class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
+            {{sector.label}}({{sector.count}})
         </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Carpentry
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Panels
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Woods
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Lightings
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Doors
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Parquet floors
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Plywood
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Adhesives
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Carpentry
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Panels
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Woods
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Childcare
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Carpentry
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Panels
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Woods
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Childcare
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Carpentry
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Panels
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Woods
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Lightings
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Doors
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Parquet floors
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Plywood
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Adhesives
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Carpentry
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Panels
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Woods
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Childcare
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Carpentry
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Panels
-        </div>
-        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5">
-            Woods
+        <!-- show more button -->
+        <div class="p-4 mr-1 mb-1" style="background-color: #ecdad5" (click)="onShowMoreActivitySectors()">
+            {{'Show more' | translate}}
         </div>
     </div>
 
