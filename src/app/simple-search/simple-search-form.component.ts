@@ -569,8 +569,8 @@ export class SimpleSearchFormComponent implements OnInit {
     private sortCatLevels() {
         for (let i = 0; i < this.cat_levels.length; i++) {
             this.cat_levels[i].sort(function (a, b) {
-                const a_c: string = a.name;
-                const b_c: string = b.name;
+                const a_c: string = a.preferredName;
+                const b_c: string = b.preferredName;
                 return a_c.localeCompare(b_c);
             });
         }
