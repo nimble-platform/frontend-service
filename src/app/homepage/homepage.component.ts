@@ -22,6 +22,7 @@ import {CategoryBoxUiModel} from './model/category-box-ui.model';
 import {SimpleSearchService} from '../simple-search/simple-search.service';
 import {LANGUAGES} from '../catalogue/model/constants';
 import {TranslateService} from '@ngx-translate/core';
+import {CategoryService} from '../catalogue/category/category.service';
 
 @Component({
     selector: 'homepage',
@@ -39,6 +40,10 @@ export class HomepageComponent {
     serviceProviderCount: number;
     logisticServiceProviderCount: number;
 
+    catalogueCount: number;
+    productCount: number;
+    serviceCount: number;
+
     activitySectors: any[];
     displayedActivitySectorCount = 25;
 
@@ -46,11 +51,13 @@ export class HomepageComponent {
     public config = myGlobals.config;
 
     constructor(private searchService: SimpleSearchService,
+                private categoryService: CategoryService,
                 private translateService: TranslateService,
                 private router: Router) {}
 
     ngOnInit(): void {
         this.getCompanyCounts();
+        this.getCatalogueCount();
     }
 
     /**
@@ -87,12 +94,36 @@ export class HomepageComponent {
         this.router.navigate(['/dashboard']);
     }
 
+    onMemberCountClicked(businessType: string): void {
+        this.router.navigate(['/simple-search'], {
+            queryParams: {
+                q: '*',
+                fq: 'businessType:\"' + businessType + '\"',
+                p: 1,
+                sIdx: this.config.defaultSearchIndex,
+                sTop: 'comp'
+            }
+        });
+    }
+
+    onActivitySectorClicked(sector: string): void {
+        this.router.navigate(['/simple-search'], {
+            queryParams: {
+                q: '*',
+                fq: this.translateService.currentLang + '_activitySectors:\"' + sector + '\"',
+                p: 1,
+                sIdx: this.config.defaultSearchIndex,
+                sTop: 'comp'
+            }
+        });
+    }
+
     onShowMoreActivitySectors(): void {
         this.router.navigate(['/simple-search'], {
             queryParams: {
                 sTop: 'comp'
             }
-        })
+        });
     }
 
     scroll(el: HTMLElement) {
@@ -126,10 +157,58 @@ export class HomepageComponent {
         });
         // get activity sectors
         const activitySectorFields: string[] = LANGUAGES.map(lang => lang + '_activitySectors');
-        this.searchService.getComp('*', [...activitySectorFields], [], 1, 0, 'legalName asc', 'Name').then(res => {
+        this.searchService.getComp('*',
+            [...activitySectorFields],
+            [],
+            1,
+            0,
+            'legalName asc',
+            'Name').then(res => {
             // extract activity sectors for the current language
             const facet = this.translateService.currentLang + '_activitySectors';
             this.activitySectors = res.facets[facet].entry;
         });
+    }
+
+    private getCatalogueCount(): void {
+        // first get the categories to get the number of services
+        this.categoryService.getServiceCategoriesForAvailableTaxonomies().then(res => {
+
+            // catalogue count
+            const catalogPromise: Promise<any> = this.searchService.get(
+                '*',
+                ['catalogueId'],
+                [],
+                1,
+                0,
+                'score desc',
+                '',
+                '',
+                'Prod');
+
+            const facetQuery: string[] = [];
+            for (let cat of res) {
+                facetQuery.push(`-commodityClassficationUri:\"${cat}\"`);
+            }
+            const servicePromise: Promise<any> = this.searchService.get(
+                '*',
+                [],
+                facetQuery,
+                1,
+                0,
+                'score desc',
+                '',
+                '',
+                'Prod');
+
+            Promise.all([catalogPromise, servicePromise]).then(([catalogResult, notServiceResult]) => {
+                this.catalogueCount = catalogResult.facets.catalogueId.entry.length;
+                const totalItemCount: number = catalogResult.totalElements;
+                this.productCount = notServiceResult.totalElements;
+                this.serviceCount = totalItemCount - this.productCount;
+            });
+        });
+
+
     }
 }

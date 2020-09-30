@@ -131,6 +131,7 @@ export const config = {
     "showExplorative": false,
     "showFullName": false,
     "showGoogleTranslateOption": false,
+    "showHomepage": false,
     "showLCPA": false,
     "showPPAP": true,
     "showTrack": false,

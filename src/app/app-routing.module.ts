@@ -21,7 +21,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-    { path: '', redirectTo: '/user-mgmt/login', pathMatch: 'full' },
+    { path: '', redirectTo: '/homepage', pathMatch: 'full' },
     { path: 'homepage', loadChildren: './homepage/homepage.module#HomepageModule'},
     { path: 'user-mgmt', loadChildren: './user-mgmt/user-mgmt.module#UserMgmtModule' },
     { path: 'dashboard', loadChildren: './dashboard/dashboard.module#DashboardModule' },

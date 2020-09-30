@@ -20,13 +20,15 @@ import {HomepageComponent} from './homepage.component';
 import {HomepageRoutingModule} from './homepage-routing.module';
 import {CommonModule} from '@angular/common';
 import {AppCommonModule} from '../common/common.module';
+import {AnalyticsModule} from '../analytics/analytics.module';
 
 @NgModule({
     imports: [
         NgbModule,
         AppCommonModule,
         CommonModule,
-        HomepageRoutingModule
+        HomepageRoutingModule,
+        AnalyticsModule
     ],
     declarations: [
         HomepageComponent

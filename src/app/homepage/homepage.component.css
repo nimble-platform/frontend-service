@@ -11,6 +11,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
+.homepage {
+    --box-color: #ecdad5;
+    --light-box-color: #f9f3f1;
+}
+
 .main-image {
     width: 100%;
 }
@@ -117,7 +122,7 @@
 .category-box {
     flex: 1 1 0;
     height: 475px;
-    background-color: #f9f3f1;
+    background-color: var(--light-box-color);
 }
 .category-row .category-box:not(:last-child) {
     margin-right: 20px;
@@ -125,7 +130,7 @@
 
 .category-box:hover {
     border: solid 3px var(--main-color);
-    background-color: #ecdad5;
+    background-color: var(--box-color);
     transform: scale(1.03);
     transition: transform 0.2s ease-out;
 }
@@ -145,17 +150,105 @@
     font-weight: bold;
 }
 
+.product-stat {
+    padding: 1.5rem;
+    background-color: var(--box-color);
+    flex: 1 1 0;
+    max-width: 20%;
+    cursor: pointer;
+}
+
+.product-stat:hover {
+    border: solid 2px var(--main-color);
+    background-color: var(--box-color);
+    transform: scale(1.03);
+    transition: transform 0.2s ease-out;
+    margin-bottom: -0.5%;
+}
+
+.product-stat:not(:last-child) {
+    margin-right: 2rem;
+}
+
+.product-stat div {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+
 /**
  * B2B section
  */
 
 .b2b-section {
-    background-color: #f9f3f1;
+    background-color: var(--light-box-color);
     padding-top: 2rem;
     padding-bottom: 1rem;
+}
+
+.image-div {
+    height: 200px;
+    background-size: 100%;
+}
+
+.image-div.search-company {
+    background-image: url('../../assets/images/homepage/supplychain.jpg');
+}
+
+.image-div.dashboard {
+    background-image: url('../../assets/images/homepage/dashboard.png');
+}
+
+.content-div {
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+    background-color: white;
 }
 
 /**
  * Platform members section
  */
+
+.member-count {
+    padding: 1.5rem;
+    background-color: var(--box-color);
+    flex: 1 1 0;
+    max-width: 20%;
+    cursor: pointer;
+}
+.member-count:hover {
+    border: solid 2px var(--main-color);
+    background-color: var(--box-color);
+    transform: scale(1.03);
+    transition: transform 0.2s ease-out;
+    margin-bottom: -0.5%;
+}
+
+.member-count div {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.activity-sector {
+    padding: 1.5rem;
+    margin-right: 0.25rem;
+    margin-bottom: 0.25rem;
+    background-color: var(--box-color);
+    cursor: pointer;
+}
+.activity-sector:hover {
+    border: solid 1px var(--main-color);
+    background-color: var(--box-color);
+    transform: scale(1.03);
+    transition: transform 0.2s ease-out;
+    margin-bottom: -0.1%;
+}
+
+.members-container {
+    margin-top: 3rem;
+    padding: 20px;
+    background-color: var(--light-box-color);
+    max-height: 600px;
+    overflow-y: scroll;
+}
 

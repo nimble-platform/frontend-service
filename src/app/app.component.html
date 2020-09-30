@@ -24,7 +24,7 @@
     <a *ngIf="isLoggedIn && (!checkRoles('comp_req') && !checkRoles('wait_comp'))" class="navbar-brand" routerLink="/user-mgmt/company-registration" routerLinkActive="active" [title]="config.platformName">
         <img id="nav-logo" [src]="config.logoPath" height="30" class="d-inline-block align-top" alt="">
     </a>
-    <a *ngIf="!isLoggedIn" class="navbar-brand" routerLink="/user-mgmt/login" routerLinkActive="active" [title]="config.platformName">
+    <a *ngIf="!isLoggedIn" class="navbar-brand" routerLink="/homepage" routerLinkActive="active" [title]="config.platformName">
         <img id="nav-logo" [src]="config.logoPath" height="30" class="d-inline-block align-top" alt="">
     </a>
     <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" aria-controls="navbarNavAltMarkup" [attr.aria-expanded]="!isCollapsed">
@@ -44,6 +44,11 @@
             <li class="nav-item" routerLinkActive="active">
                 <a class="nav-link" routerLink="/user-mgmt/registration">
                     <i class="fa fa-edit"></i> <span [innerHTML]="'Registration' | translate"></span>
+                </a>
+            </li>
+            <li class="nav-item" routerLinkActive="active">
+                <a class="nav-link" routerLink="/simple-search">
+                    <i class="fa fa-search"></i> <span [innerHTML]="'Search' | translate"></span>
                 </a>
             </li>
         </ul>
@@ -66,7 +71,7 @@
                     </a>
                 </div>
             </li>
-            <li class="nav-item" *ngIf="checkRoles('comp_req')" routerLinkActive="active">
+            <li class="nav-item" routerLinkActive="active">
                 <a class="nav-link" routerLink="/simple-search">
                     <i class="fa fa-search"></i> <span [innerHTML]="'Search' | translate"></span>
                 </a>
