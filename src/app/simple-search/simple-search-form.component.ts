@@ -36,6 +36,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {AppComponent} from '../app.component';
 import {WhiteBlackListService} from '../catalogue/white-black-list.service';
 import {NetworkCompanyListService} from '../user-mgmt/network-company-list.service';
+import {RatingUi} from '../catalogue/model/ui/rating-ui';
 
 @Component({
     selector: 'simple-search-form',
@@ -90,11 +91,8 @@ export class SimpleSearchFormComponent implements OnInit {
     selectedPriceMin: any;
     selectedPriceMax: any;
 
-    ratingOverall = 0;
-    ratingSeller = 0;
-    ratingFulfillment = 0;
-    ratingDelivery = 0;
-    ratingTrust = 0;
+    // keeps ratings for the Rating & Trust filter
+    ratingTrustFilters: RatingUi[] = null;
 
     showCatSection = true;
     showProductSection = false;
@@ -300,6 +298,22 @@ export class SimpleSearchFormComponent implements OnInit {
         // populate shoppingCartCallStatuses
         for (let i = 0; i < this.rows; i++) {
             this.shoppingCartCallStatuses.push(new CallStatus());
+        }
+    }
+
+    initializeRatingAndTrustFilters() {
+        if (this.ratingTrustFilters === null) {
+            this.ratingTrustFilters = [];
+            this.ratingTrustFilters.push(new RatingUi(this.product_vendor_rating, this.getName(this.product_vendor_rating, this.product_vendor), 0))
+            this.ratingTrustFilters.push(new RatingUi(this.product_vendor_rating_seller, this.getName(this.product_vendor_rating_seller, this.product_vendor), 0))
+            this.ratingTrustFilters.push(new RatingUi(this.product_vendor_rating_fulfillment, this.getName(this.product_vendor_rating_fulfillment, this.product_vendor), 0))
+            this.ratingTrustFilters.push(new RatingUi(this.product_vendor_rating_delivery, this.getName(this.product_vendor_rating_delivery, this.product_vendor), 0))
+
+            this.ratingTrustFilters.sort(function (a, b) {
+                return a.displayName.localeCompare(b.displayName);
+            });
+
+            this.ratingTrustFilters.push(new RatingUi(this.product_vendor_trust, this.getName(this.product_vendor_trust, this.product_vendor), 0))
         }
     }
 
@@ -559,9 +573,6 @@ export class SimpleSearchFormComponent implements OnInit {
                 const b_c: string = b.name;
                 return a_c.localeCompare(b_c);
             });
-            this.cat_levels[i].sort(function (a, b) {
-                return b.count - a.count;
-            });
         }
     }
 
@@ -679,6 +690,8 @@ export class SimpleSearchFormComponent implements OnInit {
                                         this.categoryCounts = res.facets[this.product_cat_mix].entry;
                                         this.buildCatTree();
                                         this.handleFacets(fieldLabels, res.facets, p, response.result);
+                                        // initialize rating and trust filters
+                                        this.initializeRatingAndTrustFilters();
                                         break;
                                     }
                                 }
@@ -773,6 +786,8 @@ export class SimpleSearchFormComponent implements OnInit {
                                 this.temp = [];
                                 this.handleFacets(fieldLabels, res.facets, p, response.result);
                                 this.callback = true;
+                                // initialize rating and trust filters
+                                this.initializeRatingAndTrustFilters();
                                 this.searchCallStatus.callback('Company search done.', true);
 
                                 this.temp = res.result;
@@ -1222,7 +1237,7 @@ export class SimpleSearchFormComponent implements OnInit {
             return a_c.localeCompare(b_c);
         });
         facetObj.options.sort(function (a, b) {
-            return b.count - a.count;
+            return b.realName - a.realName;
         });
 
         this.facetObj.sort(function (a, b) {
@@ -1332,7 +1347,7 @@ export class SimpleSearchFormComponent implements OnInit {
 
     checkTrustFilter() {
         let check = false;
-        if (this.ratingOverall > 0 || this.ratingSeller > 0 || this.ratingFulfillment > 0 || this.ratingDelivery > 0 || this.ratingTrust > 0) {
+        if (this.ratingTrustFilters.filter(filter => filter.rating > 0).length > 0) {
             check = true;
         }
         return check;
@@ -1386,21 +1401,18 @@ export class SimpleSearchFormComponent implements OnInit {
         this.clearFacet(this.product_vendor_rating_fulfillment, this.product_vendor);
         this.clearFacet(this.product_vendor_rating_delivery, this.product_vendor);
         this.clearFacet(this.product_vendor_trust, this.product_vendor);
-        if (this.ratingOverall > 0) {
-            this.setRangeWithoutQuery(this.product_vendor_rating, this.ratingOverall, 5, this.product_vendor);
-        }
-        if (this.ratingSeller > 0) {
-            this.setRangeWithoutQuery(this.product_vendor_rating_seller, this.ratingSeller, 5, this.product_vendor);
-        }
-        if (this.ratingFulfillment > 0) {
-            this.setRangeWithoutQuery(this.product_vendor_rating_fulfillment, this.ratingFulfillment, 5, this.product_vendor);
-        }
-        if (this.ratingDelivery > 0) {
-            this.setRangeWithoutQuery(this.product_vendor_rating_delivery, this.ratingDelivery, 5, this.product_vendor);
-        }
-        if (this.ratingTrust > 0) {
-            this.setRangeWithoutQuery(this.product_vendor_trust, (this.ratingTrust / 5), 1, this.product_vendor);
-        }
+
+        this.ratingTrustFilters.forEach(filter => {
+            if (filter.rating > 0) {
+                let max = 5;
+                let rating = filter.rating;
+                if (filter.name === this.product_vendor_trust) {
+                    rating = (filter.rating / 5);
+                    max = 1;
+                }
+                this.setRangeWithoutQuery(filter.name, rating, max, this.product_vendor);
+            }
+        });
         this.get(this.objToSubmit);
     }
 
@@ -1410,21 +1422,17 @@ export class SimpleSearchFormComponent implements OnInit {
         this.clearFacet(this.product_vendor_rating_fulfillment);
         this.clearFacet(this.product_vendor_rating_delivery);
         this.clearFacet(this.product_vendor_trust);
-        if (this.ratingOverall > 0) {
-            this.setRangeWithoutQuery(this.product_vendor_rating, this.ratingOverall, 5);
-        }
-        if (this.ratingSeller > 0) {
-            this.setRangeWithoutQuery(this.product_vendor_rating_seller, this.ratingSeller, 5);
-        }
-        if (this.ratingFulfillment > 0) {
-            this.setRangeWithoutQuery(this.product_vendor_rating_fulfillment, this.ratingFulfillment, 5);
-        }
-        if (this.ratingDelivery > 0) {
-            this.setRangeWithoutQuery(this.product_vendor_rating_delivery, this.ratingDelivery, 5);
-        }
-        if (this.ratingTrust > 0) {
-            this.setRangeWithoutQuery(this.product_vendor_trust, (this.ratingTrust / 5), 1);
-        }
+        this.ratingTrustFilters.forEach(filter => {
+            if (filter.rating > 0) {
+                let max = 5;
+                let rating = filter.rating;
+                if (filter.name === this.product_vendor_trust) {
+                    rating = (filter.rating / 5);
+                    max = 1;
+                }
+                this.setRangeWithoutQuery(filter.name, rating, max);
+            }
+        });
         this.get(this.objToSubmit);
     }
 
@@ -1437,11 +1445,7 @@ export class SimpleSearchFormComponent implements OnInit {
     }
 
     resetTrustFilter() {
-        this.ratingOverall = 0;
-        this.ratingSeller = 0;
-        this.ratingFulfillment = 0;
-        this.ratingDelivery = 0;
-        this.ratingTrust = 0;
+        this.ratingTrustFilters.forEach(filter => filter.rating = 0);
         if (this.checkTrustFacet()) {
             this.clearFacet(this.product_vendor_rating, this.product_vendor);
             this.clearFacet(this.product_vendor_rating_seller, this.product_vendor);
@@ -1453,11 +1457,7 @@ export class SimpleSearchFormComponent implements OnInit {
     }
 
     resetCompTrustFilter() {
-        this.ratingOverall = 0;
-        this.ratingSeller = 0;
-        this.ratingFulfillment = 0;
-        this.ratingDelivery = 0;
-        this.ratingTrust = 0;
+        this.ratingTrustFilters.forEach(filter => filter.rating = 0);
         this.clearFacet(this.product_vendor_rating);
         this.clearFacet(this.product_vendor_rating_seller);
         this.clearFacet(this.product_vendor_rating_fulfillment);
@@ -1741,11 +1741,7 @@ export class SimpleSearchFormComponent implements OnInit {
         this.selectedCurrency = myGlobals.config.standardCurrency;
         this.selectedPriceMin = null;
         this.selectedPriceMax = null;
-        this.ratingOverall = 0;
-        this.ratingSeller = 0;
-        this.ratingFulfillment = 0;
-        this.ratingDelivery = 0;
-        this.ratingTrust = 0;
+        this.ratingTrustFilters.forEach(filter => filter.rating = 0);
         this.get(this.objToSubmit);
     }
 
