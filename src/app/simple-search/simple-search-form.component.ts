@@ -36,6 +36,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {AppComponent} from '../app.component';
 import {WhiteBlackListService} from '../catalogue/white-black-list.service';
 import {NetworkCompanyListService} from '../user-mgmt/network-company-list.service';
+import {RatingUi} from '../catalogue/model/ui/rating-ui';
 
 @Component({
     selector: 'simple-search-form',
@@ -90,11 +91,8 @@ export class SimpleSearchFormComponent implements OnInit {
     selectedPriceMin: any;
     selectedPriceMax: any;
 
-    ratingOverall = 0;
-    ratingSeller = 0;
-    ratingFulfillment = 0;
-    ratingDelivery = 0;
-    ratingTrust = 0;
+    // keeps ratings for the Rating & Trust filter
+    ratingTrustFilters: RatingUi[] = null;
 
     showCatSection = true;
     showProductSection = false;
@@ -149,7 +147,7 @@ export class SimpleSearchFormComponent implements OnInit {
     ngUnsubscribe: Subject<void> = new Subject<void>();
     private translations: any;
     // suggestions for the category search
-    categorySuggestions:any = [];
+    categorySuggestions: any = [];
 
     constructor(private simpleSearchService: SimpleSearchService,
                 private searchContextService: SearchContextService,
@@ -303,6 +301,22 @@ export class SimpleSearchFormComponent implements OnInit {
         }
     }
 
+    initializeRatingAndTrustFilters() {
+        if (this.ratingTrustFilters === null) {
+            this.ratingTrustFilters = [];
+            this.ratingTrustFilters.push(new RatingUi(this.product_vendor_rating, this.getName(this.product_vendor_rating, this.product_vendor), 0))
+            this.ratingTrustFilters.push(new RatingUi(this.product_vendor_rating_seller, this.getName(this.product_vendor_rating_seller, this.product_vendor), 0))
+            this.ratingTrustFilters.push(new RatingUi(this.product_vendor_rating_fulfillment, this.getName(this.product_vendor_rating_fulfillment, this.product_vendor), 0))
+            this.ratingTrustFilters.push(new RatingUi(this.product_vendor_rating_delivery, this.getName(this.product_vendor_rating_delivery, this.product_vendor), 0))
+
+            this.ratingTrustFilters.sort(function (a, b) {
+                return a.displayName.localeCompare(b.displayName);
+            });
+
+            this.ratingTrustFilters.push(new RatingUi(this.product_vendor_trust, this.getName(this.product_vendor_trust, this.product_vendor), 0))
+        }
+    }
+
     get(search: Search): void {
         this.router.navigate(['/simple-search'], {
             queryParams: {
@@ -413,9 +427,9 @@ export class SimpleSearchFormComponent implements OnInit {
             )
         ).pipe(map(suggestions => {
             // for the category search, suggestions include category label and uri
-            if(this.searchIndex === "Category"){
+            if (this.searchIndex === 'Category') {
                 this.categorySuggestions = suggestions;
-                return suggestions.map(suggestion => suggestion["label"]);
+                return suggestions.map(suggestion => suggestion['label']);
             }
             return suggestions;
         }));
@@ -461,38 +475,7 @@ export class SimpleSearchFormComponent implements OnInit {
                 // set the level of the selected category, if any
                 this.cat_level = this.getCatLevel(this.catID, indexCategories.result);
                 this.cat_levels = [];
-                // ToDo: Remove manual distinction after search update
-                if (this.taxonomy == 'eClass') {
-                    for (let categoryUri of Object.keys(categoryDisplayInfo)) {
-                        let count = categoryDisplayInfo[categoryUri].count;
-                        if (categoryUri.startsWith(taxonomyPrefix)) {
-                            let eclass_idx = categoryDisplayInfo[categoryUri].code;
-                            let catLevel = 3;
-                            if (eclass_idx % 1000000 === 0) {
-                                catLevel = 0;
-                            } else if (eclass_idx % 10000 === 0) {
-                                catLevel = 1;
-                            } else if (eclass_idx % 100 === 0) {
-                                catLevel = 2;
-                            }
-
-                            if ((this.cat_level + 1) >= catLevel || (this.cat === '' && catLevel === 0)) {
-                                if (this.cat_levels[catLevel] == null) {
-                                    this.cat_levels[catLevel] = [];
-                                }
-                                this.cat_levels[catLevel].push({
-                                    'name': categoryUri,
-                                    'id': categoryUri,
-                                    'count': count,
-                                    'preferredName': selectNameFromLabelObject(categoryDisplayInfo[categoryUri].label)
-                                });
-                            }
-                        }
-                    }
-                } else {
-                    // this.cat === '' indicates that there is no category selected for filtering the results
-                    this.constructCategoryTree(indexCategories.result, categoryDisplayInfo, this.taxonomy, taxonomyPrefix);
-                }
+                this.constructCategoryTree(indexCategories.result, categoryDisplayInfo, this.taxonomy, taxonomyPrefix);
 
                 this.sortCatLevels();
                 this.populateOtherEntries();
@@ -589,9 +572,6 @@ export class SimpleSearchFormComponent implements OnInit {
                 const a_c: string = a.name;
                 const b_c: string = b.name;
                 return a_c.localeCompare(b_c);
-            });
-            this.cat_levels[i].sort(function (a, b) {
-                return b.count - a.count;
             });
         }
     }
@@ -710,6 +690,8 @@ export class SimpleSearchFormComponent implements OnInit {
                                         this.categoryCounts = res.facets[this.product_cat_mix].entry;
                                         this.buildCatTree();
                                         this.handleFacets(fieldLabels, res.facets, p, response.result);
+                                        // initialize rating and trust filters
+                                        this.initializeRatingAndTrustFilters();
                                         break;
                                     }
                                 }
@@ -804,6 +786,8 @@ export class SimpleSearchFormComponent implements OnInit {
                                 this.temp = [];
                                 this.handleFacets(fieldLabels, res.facets, p, response.result);
                                 this.callback = true;
+                                // initialize rating and trust filters
+                                this.initializeRatingAndTrustFilters();
                                 this.searchCallStatus.callback('Company search done.', true);
 
                                 this.temp = res.result;
@@ -1253,7 +1237,7 @@ export class SimpleSearchFormComponent implements OnInit {
             return a_c.localeCompare(b_c);
         });
         facetObj.options.sort(function (a, b) {
-            return b.count - a.count;
+            return b.realName - a.realName;
         });
 
         this.facetObj.sort(function (a, b) {
@@ -1304,15 +1288,16 @@ export class SimpleSearchFormComponent implements OnInit {
         // selectedItemEvent is the event emitted when a product/company is selected from the suggestion list
         if (selectedItemEvent) {
             this.model.q = selectedItemEvent.item;
-            // when the suggested value is selected for the category search,
-            // we set the selected category accordingly
-            if(this.searchIndex === "Category"){
-                // find the uri of selected category
-                let suggestion = this.categorySuggestions.filter(suggestion => suggestion.label === this.model.q);
-                if(suggestion[0].uris.length == 1){
-                    this.setCat(this.model.q,suggestion[0].uris[0],false,null);
-                    return;
-                }
+        }
+        // for the category search, set the selected category if possible
+        if (this.searchIndex === 'Category') {
+            // find the suggested category for the search term
+            let suggestion = this.categorySuggestions.filter(suggestion => suggestion.label === this.model.q);
+            // set the selected category if there is a suggested category for the search term
+            // and there is only one category with this label
+            if (suggestion.length > 0 && suggestion[0].uris.length == 1 && suggestion[0].label.localeCompare(this.model.q) == 0) {
+                this.setCat(this.model.q, suggestion[0].uris[0], false, null);
+                return;
             }
         }
         if (this.model.q == '') {
@@ -1362,7 +1347,7 @@ export class SimpleSearchFormComponent implements OnInit {
 
     checkTrustFilter() {
         let check = false;
-        if (this.ratingOverall > 0 || this.ratingSeller > 0 || this.ratingFulfillment > 0 || this.ratingDelivery > 0 || this.ratingTrust > 0) {
+        if (this.ratingTrustFilters.filter(filter => filter.rating > 0).length > 0) {
             check = true;
         }
         return check;
@@ -1416,21 +1401,18 @@ export class SimpleSearchFormComponent implements OnInit {
         this.clearFacet(this.product_vendor_rating_fulfillment, this.product_vendor);
         this.clearFacet(this.product_vendor_rating_delivery, this.product_vendor);
         this.clearFacet(this.product_vendor_trust, this.product_vendor);
-        if (this.ratingOverall > 0) {
-            this.setRangeWithoutQuery(this.product_vendor_rating, this.ratingOverall, 5, this.product_vendor);
-        }
-        if (this.ratingSeller > 0) {
-            this.setRangeWithoutQuery(this.product_vendor_rating_seller, this.ratingSeller, 5, this.product_vendor);
-        }
-        if (this.ratingFulfillment > 0) {
-            this.setRangeWithoutQuery(this.product_vendor_rating_fulfillment, this.ratingFulfillment, 5, this.product_vendor);
-        }
-        if (this.ratingDelivery > 0) {
-            this.setRangeWithoutQuery(this.product_vendor_rating_delivery, this.ratingDelivery, 5, this.product_vendor);
-        }
-        if (this.ratingTrust > 0) {
-            this.setRangeWithoutQuery(this.product_vendor_trust, (this.ratingTrust / 5), 1, this.product_vendor);
-        }
+
+        this.ratingTrustFilters.forEach(filter => {
+            if (filter.rating > 0) {
+                let max = 5;
+                let rating = filter.rating;
+                if (filter.name === this.product_vendor_trust) {
+                    rating = (filter.rating / 5);
+                    max = 1;
+                }
+                this.setRangeWithoutQuery(filter.name, rating, max, this.product_vendor);
+            }
+        });
         this.get(this.objToSubmit);
     }
 
@@ -1440,21 +1422,17 @@ export class SimpleSearchFormComponent implements OnInit {
         this.clearFacet(this.product_vendor_rating_fulfillment);
         this.clearFacet(this.product_vendor_rating_delivery);
         this.clearFacet(this.product_vendor_trust);
-        if (this.ratingOverall > 0) {
-            this.setRangeWithoutQuery(this.product_vendor_rating, this.ratingOverall, 5);
-        }
-        if (this.ratingSeller > 0) {
-            this.setRangeWithoutQuery(this.product_vendor_rating_seller, this.ratingSeller, 5);
-        }
-        if (this.ratingFulfillment > 0) {
-            this.setRangeWithoutQuery(this.product_vendor_rating_fulfillment, this.ratingFulfillment, 5);
-        }
-        if (this.ratingDelivery > 0) {
-            this.setRangeWithoutQuery(this.product_vendor_rating_delivery, this.ratingDelivery, 5);
-        }
-        if (this.ratingTrust > 0) {
-            this.setRangeWithoutQuery(this.product_vendor_trust, (this.ratingTrust / 5), 1);
-        }
+        this.ratingTrustFilters.forEach(filter => {
+            if (filter.rating > 0) {
+                let max = 5;
+                let rating = filter.rating;
+                if (filter.name === this.product_vendor_trust) {
+                    rating = (filter.rating / 5);
+                    max = 1;
+                }
+                this.setRangeWithoutQuery(filter.name, rating, max);
+            }
+        });
         this.get(this.objToSubmit);
     }
 
@@ -1467,11 +1445,7 @@ export class SimpleSearchFormComponent implements OnInit {
     }
 
     resetTrustFilter() {
-        this.ratingOverall = 0;
-        this.ratingSeller = 0;
-        this.ratingFulfillment = 0;
-        this.ratingDelivery = 0;
-        this.ratingTrust = 0;
+        this.ratingTrustFilters.forEach(filter => filter.rating = 0);
         if (this.checkTrustFacet()) {
             this.clearFacet(this.product_vendor_rating, this.product_vendor);
             this.clearFacet(this.product_vendor_rating_seller, this.product_vendor);
@@ -1483,11 +1457,7 @@ export class SimpleSearchFormComponent implements OnInit {
     }
 
     resetCompTrustFilter() {
-        this.ratingOverall = 0;
-        this.ratingSeller = 0;
-        this.ratingFulfillment = 0;
-        this.ratingDelivery = 0;
-        this.ratingTrust = 0;
+        this.ratingTrustFilters.forEach(filter => filter.rating = 0);
         this.clearFacet(this.product_vendor_rating);
         this.clearFacet(this.product_vendor_rating_seller);
         this.clearFacet(this.product_vendor_rating_fulfillment);
@@ -1771,11 +1741,7 @@ export class SimpleSearchFormComponent implements OnInit {
         this.selectedCurrency = myGlobals.config.standardCurrency;
         this.selectedPriceMin = null;
         this.selectedPriceMax = null;
-        this.ratingOverall = 0;
-        this.ratingSeller = 0;
-        this.ratingFulfillment = 0;
-        this.ratingDelivery = 0;
-        this.ratingTrust = 0;
+        this.ratingTrustFilters.forEach(filter => filter.rating = 0);
         this.get(this.objToSubmit);
     }
 

@@ -357,51 +357,15 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="mb-2">
-                                            <div class="mb-2">
-                                                {{ getName(product_vendor_rating,product_vendor) }}<br />
-                                                <ngb-rating [(rate)]="ratingOverall" max="5">
+                                            <div class="mb-2" *ngFor="let filter of ratingTrustFilters">
+                                                {{ filter.displayName }}<br />
+                                                <ngb-rating [(rate)]="filter.rating" max="5">
                                                     <ng-template let-fill="fill">
-                                                        <span class="star star-b" [class.full]="fill === 100">
+                                                        <span *ngIf="filter.name !== product_vendor_trust" class="star star-b" [class.full]="fill === 100">
                                                             <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
                                                         </span>
-                                                    </ng-template>
-                                                </ngb-rating>
-                                            </div>
-                                            <div class="mb-2">
-                                                {{ getName(product_vendor_rating_seller,product_vendor) }}<br />
-                                                <ngb-rating [(rate)]="ratingSeller" max="5">
-                                                    <ng-template let-fill="fill">
-                                                        <span class="star star-b" [class.full]="fill === 100">
-                                                            <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-                                                        </span>
-                                                    </ng-template>
-                                                </ngb-rating>
-                                            </div>
-                                            <div class="mb-2">
-                                                {{ getName(product_vendor_rating_fulfillment,product_vendor) }}<br />
-                                                <ngb-rating [(rate)]="ratingFulfillment" max="5">
-                                                    <ng-template let-fill="fill">
-                                                        <span class="star star-b" [class.full]="fill === 100">
-                                                            <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-                                                        </span>
-                                                    </ng-template>
-                                                </ngb-rating>
-                                            </div>
-                                            <div class="mb-2">
-                                                {{ getName(product_vendor_rating_delivery,product_vendor) }}<br />
-                                                <ngb-rating [(rate)]="ratingDelivery" max="5">
-                                                    <ng-template let-fill="fill">
-                                                        <span class="star star-b" [class.full]="fill === 100">
-                                                            <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-                                                        </span>
-                                                    </ng-template>
-                                                </ngb-rating>
-                                            </div>
-                                            <div class="mb-2">
-                                                {{ getName(product_vendor_trust,product_vendor) }}<br />
-                                                <ngb-rating [(rate)]="ratingTrust" max="5">
-                                                    <ng-template let-fill="fill">
-                                                        <span class="heart heart-b" [class.full-heart]="fill === 100">
+
+                                                        <span *ngIf="filter.name === product_vendor_trust" class="heart heart-b" [class.full-heart]="fill === 100">
                                                             <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
                                                         </span>
                                                     </ng-template>
@@ -517,51 +481,15 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="mb-2">
-                                            <div class="mb-2">
-                                                {{ getName(product_vendor_rating,product_vendor) }}<br />
-                                                <ngb-rating [(rate)]="ratingOverall" max="5">
+                                            <div class="mb-2" *ngFor="let filter of ratingTrustFilters">
+                                                {{ filter.displayName }}<br />
+                                                <ngb-rating [(rate)]="filter.rating" max="5">
                                                     <ng-template let-fill="fill">
-                                                        <span class="star star-b" [class.full]="fill === 100">
+                                                        <span *ngIf="filter.name !== product_vendor_trust" class="star star-b" [class.full]="fill === 100">
                                                             <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
                                                         </span>
-                                                    </ng-template>
-                                                </ngb-rating>
-                                            </div>
-                                            <div class="mb-2">
-                                                {{ getName(product_vendor_rating_seller,product_vendor) }}<br />
-                                                <ngb-rating [(rate)]="ratingSeller" max="5">
-                                                    <ng-template let-fill="fill">
-                                                        <span class="star star-b" [class.full]="fill === 100">
-                                                            <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-                                                        </span>
-                                                    </ng-template>
-                                                </ngb-rating>
-                                            </div>
-                                            <div class="mb-2">
-                                                {{ getName(product_vendor_rating_fulfillment,product_vendor) }}<br />
-                                                <ngb-rating [(rate)]="ratingFulfillment" max="5">
-                                                    <ng-template let-fill="fill">
-                                                        <span class="star star-b" [class.full]="fill === 100">
-                                                            <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-                                                        </span>
-                                                    </ng-template>
-                                                </ngb-rating>
-                                            </div>
-                                            <div class="mb-2">
-                                                {{ getName(product_vendor_rating_delivery,product_vendor) }}<br />
-                                                <ngb-rating [(rate)]="ratingDelivery" max="5">
-                                                    <ng-template let-fill="fill">
-                                                        <span class="star star-b" [class.full]="fill === 100">
-                                                            <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
-                                                        </span>
-                                                    </ng-template>
-                                                </ngb-rating>
-                                            </div>
-                                            <div class="mb-2">
-                                                {{ getName(product_vendor_trust,product_vendor) }}<br />
-                                                <ngb-rating [(rate)]="ratingTrust" max="5">
-                                                    <ng-template let-fill="fill">
-                                                        <span class="heart heart-b" [class.full-heart]="fill === 100">
+
+                                                        <span *ngIf="filter.name === product_vendor_trust" class="heart heart-b" [class.full-heart]="fill === 100">
                                                             <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
                                                         </span>
                                                     </ng-template>

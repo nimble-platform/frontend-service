@@ -68,17 +68,17 @@
             <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Incoterms' | translate"></span>:</strong></div>
             <ng-container [ngSwitch]="primaryTermsSource">
                 <div *ngSwitchCase="'product_defaults'" class="col-3">
-                    <label>{{ isCatalogueLineDeleted ? "Not available": wrapper.lineIncoterms }}</label>
+                    <label>{{ (isCatalogueLineDeleted ? "Not available": wrapper.lineIncotermsString) | translate }}</label>
                 </div>
                 <div *ngSwitchCase="'frame_contract'" class="col-3">
-                    <label>{{ wrapper.frameContractQuotationWrapper.incotermsString}}</label>
+                    <label>{{ wrapper.frameContractQuotationWrapper.incotermsString | translate}}</label>
                 </div>
                 <div *ngSwitchCase="'last_offer'" class="col-3">
-                    <label>{{ wrapper.lastOfferQuotationWrapper.incotermsString}}</label>
+                    <label>{{ wrapper.lastOfferQuotationWrapper.incotermsString | translate}}</label>
                 </div>
             </ng-container>
             <div class="col-3">
-                <label>{{ wrapper.rfqIncoterms }}</label>
+                <label>{{ wrapper.rfqIncotermsString | translate}}</label>
             </div>
             <div class="col-3">
                 <options-input *ngIf="isSellerTermsVisible()"
@@ -97,17 +97,17 @@
             <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Payment Terms' | translate"></span>:</strong></div>
             <ng-container [ngSwitch]="primaryTermsSource">
                 <div *ngSwitchCase="'product_defaults'" class="col-3">
-                    <label>{{ wrapper.linePaymentTerms }}</label>
+                    <label>{{ wrapper.linePaymentTerms | translate}}</label>
                 </div>
                 <div *ngSwitchCase="'frame_contract'" class="col-3">
-                    <label>{{ wrapper.frameContractQuotationWrapper.paymentTermsWrapper.paymentTerm}}</label>
+                    <label>{{ wrapper.frameContractQuotationWrapper.paymentTermsWrapper.paymentTerm | translate}}</label>
                 </div>
                 <div *ngSwitchCase="'last_offer'" class="col-3">
-                    <label>{{ wrapper.lastOfferQuotationWrapper.paymentTermsWrapper.paymentTerm}}</label>
+                    <label>{{ wrapper.lastOfferQuotationWrapper.paymentTermsWrapper.paymentTerm | translate}}</label>
                 </div>
             </ng-container>
             <div class="col-3">
-                <label>{{ wrapper.rfqPaymentTerms.paymentTerm }}</label>
+                <label>{{ wrapper.rfqPaymentTerms.paymentTerm  | translate}}</label>
             </div>
             <div class="col-3">
                 <options-input *ngIf="isSellerTermsVisible()"
@@ -126,16 +126,16 @@
             <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Payment Means' | translate"></span>:</strong></div>
             <ng-container [ngSwitch]="primaryTermsSource">
                 <div *ngSwitchCase="'product_defaults'" class="col-3">
-                    <label>{{ wrapper.linePaymentMeans }}</label>
+                    <label>{{ wrapper.linePaymentMeans  | translate}}</label>
                 </div>
                 <div *ngSwitchCase="'frame_contract'" class="col-3">
-                    <label>{{ wrapper.frameContractQuotationWrapper.paymentMeans}}</label>
+                    <label>{{ wrapper.frameContractQuotationWrapper.paymentMeans | translate}}</label>
                 </div>
                 <div *ngSwitchCase="'last_offer'" class="col-3">
-                    <label>{{ wrapper.lastOfferQuotationWrapper.paymentMeans}}</label>
+                    <label>{{ wrapper.lastOfferQuotationWrapper.paymentMeans | translate}}</label>
                 </div>
             </ng-container>
-            <div class="col-3"><label>{{ wrapper.rfqPaymentMeans }}</label></div>
+            <div class="col-3"><label>{{ wrapper.rfqPaymentMeans  | translate}}</label></div>
             <div class="col-3">
                 <options-input *ngIf="isSellerTermsVisible()"
                                [selectClass]="!wrapper.checkEqualForResponse('paymentMeans') ? 'warning' : ''"

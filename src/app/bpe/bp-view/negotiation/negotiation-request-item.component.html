@@ -93,7 +93,7 @@
             <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
                 <ng-container [ngSwitch]="manufacturersTermsSource">
                     <ng-container *ngSwitchCase="'product_defaults'">
-                        <span [innerHTML]="wrapper.lineIncoterms | translate"></span>
+                        <span [innerHTML]="wrapper.lineIncotermsString | translate"></span>
                     </ng-container>
                     <ng-container *ngSwitchCase="'frame_contract'">
                         <span [innerHTML]="wrapper.frameContractQuotationWrapper.incoterms | translate"></span>
