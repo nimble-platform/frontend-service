@@ -265,11 +265,12 @@ export class SimpleSearchFormComponent implements OnInit {
                 this.pageRef = null;
             }
             this.searchContext = !!searchContext;
+            this.rows = rows;
             if (q && sTop) {
                 if (sTop == 'prod') {
-                    this.getCall(q, fq, p, rows, sort, cat, catID, sIdx, sTop);
+                    this.getCall(q, fq, p, sort, cat, catID, sIdx, sTop);
                 } else if (sTop == 'comp') {
-                    this.getCompCall(q, fq, p, rows, sort, sTop);
+                    this.getCompCall(q, fq, p, sort, sTop);
                 }
             } else if (sTop) {
                 this.callback = false;
@@ -278,7 +279,6 @@ export class SimpleSearchFormComponent implements OnInit {
                 this.objToSubmit.q = '*';
                 this.facetQuery = fq;
                 this.page = p;
-                this.rows = rows;
                 this.sort = sort;
                 this.objToSubmit = copy(this.model);
                 this.page = 1;
@@ -290,15 +290,16 @@ export class SimpleSearchFormComponent implements OnInit {
                 this.objToSubmit.q = '*';
                 this.facetQuery = fq;
                 this.page = p;
-                this.rows = rows;
                 this.sort = sort;
+            }
+
+            // populate shoppingCartCallStatuses
+            this.shoppingCartCallStatuses = [];
+            for (let i = 0; i < this.rows; i++) {
+                this.shoppingCartCallStatuses.push(new CallStatus());
             }
         });
 
-        // populate shoppingCartCallStatuses
-        for (let i = 0; i < this.rows; i++) {
-            this.shoppingCartCallStatuses.push(new CallStatus());
-        }
     }
 
     initializeRatingAndTrustFilters() {
@@ -645,7 +646,7 @@ export class SimpleSearchFormComponent implements OnInit {
         }
     }
 
-    private getCall(q: string, fq: any, p: number, rows: number, sort: string, cat: string, catID: string, sIdx: string, sTop: string) {
+    private getCall(q: string, fq: any, p: number, sort: string, cat: string, catID: string, sIdx: string, sTop: string) {
         this.cat_loading = true;
         if (q == '*') {
             this.model.q = '';
@@ -655,7 +656,6 @@ export class SimpleSearchFormComponent implements OnInit {
         this.objToSubmit.q = q;
         this.facetQuery = fq;
         this.page = p;
-        this.rows = rows;
         this.sort = sort;
         if (this.model.q == '' && this.sort == 'score desc') {
             sort = '{LANG}_label asc';
@@ -667,7 +667,7 @@ export class SimpleSearchFormComponent implements OnInit {
             .then(fields => {
                 let fieldLabels: string[] = this.getFieldNames(fields);
                 let idxFields: string[] = this.getIdxFields(fields);
-                this.simpleSearchService.get(q, Object.keys(fieldLabels), fq, p, rows, sort, cat, catID, this.searchIndex)
+                this.simpleSearchService.get(q, Object.keys(fieldLabels), fq, p, this.rows, sort, cat, catID, this.searchIndex)
                     .then(res => {
                         if (res.result.length == 0) {
                             this.cat_loading = false;
@@ -749,7 +749,7 @@ export class SimpleSearchFormComponent implements OnInit {
             });
     }
 
-    private getCompCall(q: string, fq: any, p: number, rows: number, sort: string, sTop: string) {
+    private getCompCall(q: string, fq: any, p: number, sort: string, sTop: string) {
         this.cat_loading = true;
         if (q == '*') {
             this.model.q = '';
@@ -759,7 +759,6 @@ export class SimpleSearchFormComponent implements OnInit {
         this.objToSubmit.q = q;
         this.facetQuery = fq;
         this.page = p;
-        this.rows = rows;
         this.sort = sort;
         if (this.model.q == '' && this.sort == 'score desc') {
             sort = 'legalName asc';
@@ -769,7 +768,7 @@ export class SimpleSearchFormComponent implements OnInit {
         this.simpleSearchService.getCompFields()
             .then(res => {
                 let fieldLabels: string[] = this.getFieldNames(res);
-                this.simpleSearchService.getComp(q, Object.keys(fieldLabels), fq, p, rows, sort, this.searchIndex, this.pageRef)
+                this.simpleSearchService.getComp(q, Object.keys(fieldLabels), fq, p, this.rows, sort, this.searchIndex, this.pageRef)
                     .then(res => {
                         if (res.result.length == 0) {
                             this.cat_loading = false;
