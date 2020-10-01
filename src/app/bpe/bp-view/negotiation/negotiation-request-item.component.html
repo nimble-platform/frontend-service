@@ -57,13 +57,13 @@
             <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}}">
                 <ng-container [ngSwitch]="manufacturersTermsSource">
                     <ng-container *ngSwitchCase="'product_defaults'">
-                        {{ wrapper.lineWarrantyString }}
+                        {{ wrapper.lineWarranty | quantityTranslatePipe }}
                     </ng-container>
                     <ng-container *ngSwitchCase="'frame_contract'">
-                        {{ wrapper.frameContractQuotationWrapper.warrantyString}}
+                        {{ wrapper.frameContractQuotationWrapper.warranty | quantityTranslatePipe}}
                     </ng-container>
                     <ng-container *ngSwitchCase="'last_offer'">
-                        {{ wrapper.lastOfferQuotationWrapper.warrantyString }}
+                        {{ wrapper.lastOfferQuotationWrapper.warranty | quantityTranslatePipe }}
                     </ng-container>
                 </ng-container>
 <!--                <span [ngStyle]="getWarrantyPeriodStyle()">-->
@@ -176,22 +176,22 @@
         <!-- Price -->
         <div class="row content-row">
             <div class="{{showCounterOfferTerms ? 'col-2' : 'col-3'}}">
-                <strong class="font-weight-500">Price:</strong>
+                <strong class="font-weight-500">{{'Price:'|translate}}</strong>
             </div>
             <!-- Manufacturer's offer -->
             <div class="{{showCounterOfferTerms ? 'col-5' : 'col-9'}} d-flex">
                 <ng-container [ngSwitch]="manufacturersTermsSource">
                     <ng-container *ngSwitchCase="'product_defaults'">
-                        {{ wrapper.lineDiscountPriceWrapper.discountedPricePerItemString }}
+                        {{ wrapper.lineDiscountPriceWrapper.discountedPriceAmountUI | amountUiTranslatePipe}}
                         <div *ngIf="wrapper.lineDiscountPriceWrapper.isDiscountApplied() > 0" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal(wrapper)" [title]="'Applied Discounts/Charges'|translate" style="cursor: pointer">
                             <i class="fa fa-search" aria-hidden="true"></i>
                         </div>
                     </ng-container>
                     <ng-container *ngSwitchCase="'frame_contract'">
-                        {{ wrapper.frameContractQuotationWrapper.priceWrapper.pricePerItemString}}
+                        {{ wrapper.frameContractQuotationWrapper.priceWrapper.priceAmountUI | amountUiTranslatePipe}}
                     </ng-container>
                     <ng-container *ngSwitchCase="'last_offer'">
-                        {{ wrapper.lastOfferQuotationWrapper.priceWrapper.pricePerItemString }}
+                        {{ wrapper.lastOfferQuotationWrapper.priceWrapper.priceAmountUI | amountUiTranslatePipe }}
                     </ng-container>
                 </ng-container>
             </div>
@@ -224,7 +224,7 @@
                     <div class="col-4 quantity-input">
                         <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [formControl]="orderQuantityFormControl" [ngModel]="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value" (ngModelChange)="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value = $event; onOrderQuantityChange()" class="form-control form-control-sm" [disabled]="isLoading() || isReadOnly()" [ngbTooltip]="validationService.getValidationErrorMessage(orderQuantityFormControl)"  />
                     </div>
-                    <span class="col-3" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() }}</span>
+                    <span class="col-3" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() | translate }}</span>
                 </div>
             </div>
         </div>
@@ -237,7 +237,7 @@
             <div class="col-4 quantity-input">
                 <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [step]="wrapper.lineDiscountPriceWrapper.price.baseQuantity.value || 1" [formControl]="orderQuantityFormControl" [ngModel]="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value" (ngModelChange)="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value = $event; onOrderQuantityChange()" class="form-control form-control-sm" [disabled]="isLoading() || isReadOnly()" [ngbTooltip]="getValidationErrorMessage(orderQuantityFormControl)" [placement]="'auto'" title="" />
             </div>
-            <span class="col-3" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() }}</span>
+            <span class="col-3" *ngIf="getQuantityUnit() !== ''">{{ getQuantityUnit() | translate}}</span>
         </div>
     </div>
 </div>

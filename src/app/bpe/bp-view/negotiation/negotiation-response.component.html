@@ -40,27 +40,27 @@
     <table class="table table-striped ml-2 space-before" *ngIf="showPurchaseOrder">
         <tr>
             <th><span [innerHTML]="'Ordered Product' | translate"></span></th>
-            <th><span [innerHTML]="'Product Id' | translate">Product Id</span></th>
-            <th><span [innerHTML]="'Quantity' | translate">Quantity</span></th>
-            <th><span [innerHTML]="'Net Price' | translate">Net Price</span></th>
-            <th *ngIf="config.vatEnabled" [innerHTML]="'VAT' | translate"><span>VAT</span></th>
-            <th *ngIf="config.vatEnabled" [innerHTML]="'Gross Total' | translate"><span>Gross Total</span></th>
+            <th><span [innerHTML]="'Product Id' | translate"></span></th>
+            <th><span [innerHTML]="'Quantity' | translate"></span></th>
+            <th><span [innerHTML]="'Net Price' | translate"></span></th>
+            <th *ngIf="config.vatEnabled" [innerHTML]="'VAT' | translate"><span></span></th>
+            <th *ngIf="config.vatEnabled" [innerHTML]="'Gross Total' | translate"><span></span></th>
         </tr>
         <tr *ngFor="let wrapper of wrappers;let i=index">
             <th scope="row"><span>{{wrapper.catalogueLine.goodsItem.item.name[0].value }}</span></th>
             <td><span>{{wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.item.manufacturersItemIdentification.id}}</span></td>
-            <td><span>{{wrapper.newQuotationWrapper.orderedQuantity.value}} {{wrapper.newQuotationWrapper.orderedQuantity.unitCode}}</span></td>
-            <td><span>{{wrapper.newQuotationWrapper.priceWrapper.totalPriceString}}</span></td>
-            <td *ngIf="config.vatEnabled"><span>{{ wrapper.newQuotationWrapper.priceWrapper.vatTotalString }}</span></td>
-            <td *ngIf="config.vatEnabled"><span>{{ wrapper.newQuotationWrapper.priceWrapper.grossTotalString}}</span></td>
+            <td><span>{{wrapper.newQuotationWrapper.orderedQuantity.value}} {{wrapper.newQuotationWrapper.orderedQuantity.unitCode | translate}}</span></td>
+            <td><span>{{wrapper.newQuotationWrapper.priceWrapper.totalPriceString | translate}}</span></td>
+            <td *ngIf="config.vatEnabled"><span>{{ wrapper.newQuotationWrapper.priceWrapper.vatTotalString | translate }}</span></td>
+            <td *ngIf="config.vatEnabled"><span>{{ wrapper.newQuotationWrapper.priceWrapper.grossTotalString | translate}}</span></td>
         </tr>
         <tr>
-            <th scope="row"><span>Total </span></th>
+            <th scope="row"><span>{{'Total'|translate}} </span></th>
             <td><span></span></td>
             <td><span></span></td>
-            <td><span>{{getTotalPriceString()}}</span></td>
-            <td *ngIf="config.vatEnabled"><span>{{getVatTotalString()}}</span></td>
-            <td *ngIf="config.vatEnabled"><span>{{getGrossTotalString()}}</span></td>
+            <td><span>{{getTotalPriceString() | translate}}</span></td>
+            <td *ngIf="config.vatEnabled"><span>{{getVatTotalString() | translate}}</span></td>
+            <td *ngIf="config.vatEnabled"><span>{{getGrossTotalString() | translate}}</span></td>
         </tr>
     </table>
 </div>

@@ -25,18 +25,20 @@
                 <input type="number" class="form-control" [ngClass]="innerFormClass" [step]="step" [ngModel]="quantity.value" (ngModelChange)="quantity.value = $event; onQuantityValueChanged($event)" [disableControl]="disabled" [placeholder]="placeholder" [required]="required" [formControl]="quantityValueFormControl" [ngbTooltip]="getValidationErrorMessage(quantityValueFormControl)" [placement]="'auto'" title="">
             </div>
             <div *ngIf="!quantityUnits" class="{{unitSizeClass}} col-quantity-unit">
-                <input type="text" class="form-control" [ngClass]="innerFormClass" [(ngModel)]="quantity.unitCode" (ngModelChange)="onQuantityUnitChanged($event)" [disableControl]="disabled || disableQuantityUnit" [placeholder]="unitPlaceholder | translate" [required]="required" [formControl]="quantityUnitFormControl" [ngbTooltip]="getValidationErrorMessage(quantityUnitFormControl)" [placement]="'auto'" title="">
+                <span *ngIf="disabled || disableQuantityUnit">{{quantity.unitCode|translate}}</span>
+                <input *ngIf="!disabled && !disableQuantityUnit" type="text" class="form-control" [ngClass]="innerFormClass" [(ngModel)]="quantity.unitCode" (ngModelChange)="onQuantityUnitChanged($event)" [placeholder]="unitPlaceholder | translate" [required]="required" [formControl]="quantityUnitFormControl" [ngbTooltip]="getValidationErrorMessage(quantityUnitFormControl)" [placement]="'auto'" title="">
             </div>
             <div *ngIf="quantityUnits" class="{{unitSizeClass}} col-quantity-unit">
-                <select class="form-control" [ngClass]="innerFormClass" [(ngModel)]="quantity.unitCode" [disableControl]="disabled || disableQuantityUnit" [required]="required" (ngModelChange)="onQuantityUnitChanged($event)" [formControl]="quantityUnitFormControl">
-                    <option *ngFor="let option of quantityUnits" [value]="option">{{option}}</option>
+                <span *ngIf="disabled || disableQuantityUnit">{{quantity.unitCode|translate}}</span>
+                <select *ngIf="!disabled && !disableQuantityUnit" class="form-control" [ngClass]="innerFormClass" [(ngModel)]="quantity.unitCode" [required]="required" (ngModelChange)="onQuantityUnitChanged($event)" [formControl]="quantityUnitFormControl">
+                    <option *ngFor="let option of quantityUnits" [value]="option">{{option | translate}}</option>
                 </select>
             </div>
         </div>
     </div>
 
     <div [class]="valueQuantityClass" *ngIf="presentationMode === 'view' && visible">
-        <span [class]="valueTextClass">{{ quantityToString() }}</span>
+        <span [class]="valueTextClass">{{ quantity | quantityTranslatePipe }}</span>
     </div>
 </div>
 

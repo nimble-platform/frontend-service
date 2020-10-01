@@ -14,12 +14,13 @@
    limitations under the License.
  */
 
-import { Price } from "../catalogue/model/publish/price";
-import { Quantity } from "../catalogue/model/publish/quantity";
-import { currencyToString, roundToTwoDecimals } from "./utils";
-import { ItemPriceWrapper } from "./item-price-wrapper";
-import { defaultVatRate } from "./constants";
-import { Item } from '../catalogue/model/publish/item';
+import {Price} from '../catalogue/model/publish/price';
+import {Quantity} from '../catalogue/model/publish/quantity';
+import {currencyToString, roundToTwoDecimals} from './utils';
+import {ItemPriceWrapper} from './item-price-wrapper';
+import {defaultVatRate} from './constants';
+import {Item} from '../catalogue/model/publish/item';
+import {AmountUI} from '../catalogue/model/ui/amount-ui';
 
 /**
  * Wrapper around a price and a quantity, contains convenience methods to get the total price,
@@ -29,14 +30,14 @@ import { Item } from '../catalogue/model/publish/item';
  */
 export class PriceWrapper {
     /** hjid field from Quantity class */
-    //hjid: string = null;
+        //hjid: string = null;
 
     itemPrice: ItemPriceWrapper;
 
     constructor(public price: Price,
-        public vatPercentage: number = defaultVatRate,
-        public orderedQuantity: Quantity = new Quantity(1, price.baseQuantity.unitCode),
-        public item: Item = null) {
+                public vatPercentage: number = defaultVatRate,
+                public orderedQuantity: Quantity = new Quantity(1, price.baseQuantity.unitCode),
+                public item: Item = null) {
         this.itemPrice = new ItemPriceWrapper(price);
     }
 
@@ -58,7 +59,7 @@ export class PriceWrapper {
 
     get totalPriceString(): string {
         if (!this.itemPrice.hasPrice()) {
-            return "On demand";
+            return 'On demand';
         }
         return `${roundToTwoDecimals(this.totalPrice)} ${this.currency}`;
     }
@@ -67,13 +68,28 @@ export class PriceWrapper {
         return this.price.priceAmount.value / this.price.baseQuantity.value;
     }
 
+    get priceAmountUI(): AmountUI {
+        let amountUI = new AmountUI();
+
+        const amount = this.price.priceAmount;
+        const qty = this.price.baseQuantity
+
+        if (!amount.value || amount.value == 0 || !this.isOrderedQuantityValid()) {
+            return amountUI;
+        }
+
+        amountUI.value = roundToTwoDecimals(this.pricePerItem);
+        amountUI.currencyID = currencyToString(this.price.priceAmount.currencyID);
+        amountUI.perUnit = qty.unitCode;
+        return amountUI;
+    }
+
     get pricePerItemString(): string {
         const amount = this.price.priceAmount;
         const qty = this.price.baseQuantity
-        const baseQuantity = qty.value ||  1;
 
         if (!amount.value || amount.value == 0 || !this.isOrderedQuantityValid()) {
-            return "On demand";
+            return 'On demand';
         }
 
         return `${roundToTwoDecimals(this.pricePerItem)} ${currencyToString(this.price.priceAmount.currencyID)} per ${qty.unitCode}`;
@@ -86,7 +102,7 @@ export class PriceWrapper {
     get vatTotalString(): string {
         let vatTotal = this.vatTotal;
         if (vatTotal == 0) {
-            return "On demand";
+            return 'On demand';
         }
         return `${roundToTwoDecimals(vatTotal)} ${this.currency}`
     }
@@ -98,7 +114,7 @@ export class PriceWrapper {
     get grossTotalString(): string {
         let grossTotal = this.grossTotal;
         if (grossTotal == 0) {
-            return "On demand";
+            return 'On demand';
         }
         return `${roundToTwoDecimals(grossTotal)} ${this.currency}`;
     }
@@ -133,4 +149,5 @@ export class PriceWrapper {
 
     set unitCode(unitCode: string) {
         this.currency = unitCode;
-*/}
+*/
+}
