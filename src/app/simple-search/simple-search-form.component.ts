@@ -37,6 +37,7 @@ import {AppComponent} from '../app.component';
 import {WhiteBlackListService} from '../catalogue/white-black-list.service';
 import {NetworkCompanyListService} from '../user-mgmt/network-company-list.service';
 import {RatingUi} from '../catalogue/model/ui/rating-ui';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'simple-search-form',
@@ -85,6 +86,8 @@ export class SimpleSearchFormComponent implements OnInit {
     companyInformationInSearchResult = myGlobals.config.companyInformationInSearchResult;
     searchIndexes = ['Name', 'Category'];
     searchTopic = null;
+    // content of the tooltip for product search
+    tooltipHTML: string;
 
     CURRENCIES = CURRENCIES;
     selectedCurrency: any = myGlobals.config.standardCurrency;
@@ -159,6 +162,7 @@ export class SimpleSearchFormComponent implements OnInit {
                 public shoppingCartDataService: ShoppingCartDataService,
                 private translateService: TranslateService,
                 private appComponent: AppComponent,
+                private modalService: NgbModal,
                 public route: ActivatedRoute,
                 private translate: TranslateService,
                 public router: Router) {
@@ -1991,5 +1995,10 @@ export class SimpleSearchFormComponent implements OnInit {
                 }
             }
         });
+    }
+
+    showProductSearchTT(content) {
+        this.tooltipHTML = this.translate.instant('Search Tooltip');
+        this.modalService.open(content);
     }
 }
