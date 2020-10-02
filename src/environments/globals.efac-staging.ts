@@ -147,7 +147,7 @@ export const config = {
         "fallback": "en"
     },
     "loggingEnabled": true,
-    "logoPath": "./assets/logo_efac.png",
+    "logoPath": "./assets/logo_efpf.png",
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": true,
     "networkEnabled": true,
