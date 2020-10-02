@@ -345,7 +345,7 @@ export const config = {
             },
             "Fitting": {
                 "en": "Fitting",
-                "es": "Adecuado"
+                "es": "Herrajes"
             },
             "Foam": {
                 "en": "Foam",
@@ -353,7 +353,7 @@ export const config = {
             },
             "Glass": {
                 "en": "Glass",
-                "es": "Vaso"
+                "es": "Cristal"
             },
             "Machinery": {
                 "en": "Machinery",
