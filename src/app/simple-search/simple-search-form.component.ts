@@ -662,7 +662,7 @@ export class SimpleSearchFormComponent implements OnInit {
         this.page = p;
         this.sort = sort;
         if (this.model.q == '' && this.sort == 'score desc') {
-            sort = '{LANG}_label asc';
+            sort = '{LANG}_lowercaseLabel asc';
         }
         this.searchIndex = sIdx;
         this.searchTopic = sTop;
@@ -765,7 +765,7 @@ export class SimpleSearchFormComponent implements OnInit {
         this.page = p;
         this.sort = sort;
         if (this.model.q == '' && this.sort == 'score desc') {
-            sort = 'legalName asc';
+            sort = 'lowercaseLegalName asc';
         }
         this.searchTopic = sTop;
         this.searchCallStatus.submit();
