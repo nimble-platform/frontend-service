@@ -126,9 +126,6 @@ export class BulkPublishComponent {
     private resetEventWhenUploadCompletes(currentCount: number, totalCount: number, errorCount: number, event: any): void {
         if (currentCount == totalCount) {
             event.target.value = "";
-            if (errorCount == 0) {
-                this.navigateToCatalogueTab();
-            }
         }
     }
 
