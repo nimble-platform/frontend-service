@@ -156,6 +156,7 @@
     flex: 1 1 0;
     max-width: 20%;
     cursor: pointer;
+    box-shadow: 0 0 8px 0 #ddd;
 }
 
 .product-stat:hover {
@@ -230,18 +231,11 @@
 }
 
 .activity-sector {
-    padding: 1.5rem;
-    margin-right: 0.25rem;
-    margin-bottom: 0.25rem;
-    background-color: var(--box-color);
     cursor: pointer;
 }
 .activity-sector:hover {
-    border: solid 1px var(--main-color);
+    border: solid 2px var(--main-color);
     background-color: var(--box-color);
-    transform: scale(1.03);
-    transition: transform 0.2s ease-out;
-    margin-bottom: -0.1%;
 }
 
 .members-container {
@@ -252,3 +246,51 @@
     overflow-y: scroll;
 }
 
+
+/**
+ * Carousel
+ */
+.carousel-container {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    height: 250px;
+    position: relative;
+}
+
+::ng-deep .owl-carousel {
+    overflow: hidden;
+}
+
+::ng-deep .owl-stage-outer {
+    padding-top: 0.5em;
+    position: relative;
+    width: 100%;
+    z-index: 1;
+}
+
+::ng-deep .owl-stage {
+    display: flex !important;
+}
+
+::ng-deep .owl-nav {
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    top: 25px;
+    width: 100%;
+}
+
+::ng-deep .owl-prev {
+    left: -60px;
+    cursor: pointer;
+    font-size: 60px;
+    position: absolute;
+}
+
+::ng-deep .owl-next {
+    right: -60px;
+    cursor: pointer;
+    font-size: 60px;
+    position: absolute;
+}

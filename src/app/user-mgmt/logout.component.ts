@@ -119,7 +119,7 @@ export class LogoutComponent implements OnInit {
 
         }
         this.userService.resetData();
-        this.appComponent.checkLogin("/user-mgmt/login");
+        this.appComponent.checkLogin("/homepage");
     }
 
 }

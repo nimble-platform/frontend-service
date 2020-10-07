@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Search} from './model/search';
 import {SimpleSearchService} from './simple-search.service';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -37,6 +37,7 @@ import {AppComponent} from '../app.component';
 import {WhiteBlackListService} from '../catalogue/white-black-list.service';
 import {NetworkCompanyListService} from '../user-mgmt/network-company-list.service';
 import {RatingUi} from '../catalogue/model/ui/rating-ui';
+import {CookieService} from 'ng2-cookies';
 
 @Component({
     selector: 'simple-search-form',
@@ -44,7 +45,7 @@ import {RatingUi} from '../catalogue/model/ui/rating-ui';
     styleUrls: ['./simple-search-form.component.css']
 })
 
-export class SimpleSearchFormComponent implements OnInit {
+export class SimpleSearchFormComponent implements OnInit, OnDestroy {
 
     product_vendor = myGlobals.product_vendor;
     product_vendor_id = myGlobals.product_vendor_id;
@@ -148,6 +149,8 @@ export class SimpleSearchFormComponent implements OnInit {
     private translations: any;
     // suggestions for the category search
     categorySuggestions: any = [];
+    // keeps the user's login state
+    private isLoggedIn: boolean;
 
     constructor(private simpleSearchService: SimpleSearchService,
                 private searchContextService: SearchContextService,
@@ -158,6 +161,7 @@ export class SimpleSearchFormComponent implements OnInit {
                 private publishService: PublishService,
                 public shoppingCartDataService: ShoppingCartDataService,
                 private translateService: TranslateService,
+                private cookieService: CookieService,
                 private appComponent: AppComponent,
                 public route: ActivatedRoute,
                 private translate: TranslateService,
@@ -299,6 +303,13 @@ export class SimpleSearchFormComponent implements OnInit {
         for (let i = 0; i < this.rows; i++) {
             this.shoppingCartCallStatuses.push(new CallStatus());
         }
+
+        this.isLoggedIn = !!this.cookieService.get('user_id');
+    }
+
+    ngOnDestroy(): void {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     initializeRatingAndTrustFilters() {
@@ -1978,6 +1989,10 @@ export class SimpleSearchFormComponent implements OnInit {
 
     // display a message for the products included in the shopping cart
     displayShoppingCartMessages() {
+        if (!this.isLoggedIn) {
+            return;
+        }
+
         this.shoppingCartDataService.getShoppingCart().then(shoppingCart => {
             // reset all call statuses
             for (let callStatus of this.shoppingCartCallStatuses) {

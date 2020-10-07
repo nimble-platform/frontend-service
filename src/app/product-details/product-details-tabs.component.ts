@@ -26,6 +26,8 @@ import { Quantity } from '../catalogue/model/publish/quantity';
 import { TranslateService } from '@ngx-translate/core';
 import { Item } from "../catalogue/model/publish/item";
 import { CatalogueLine } from '../catalogue/model/publish/catalogue-line';
+import {CookieService} from 'ng2-cookies';
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'product-details-tabs',
@@ -56,8 +58,6 @@ export class ProductDetailsTabsComponent implements OnInit {
     product_filter_prod = myGlobals.product_filter_prod;
     @Output() tabStatus = new EventEmitter<boolean>();
 
-    config = myGlobals.config;
-
     selectedTab: ProductDetailsTab;
 
     isLogistics: boolean = false;
@@ -70,15 +70,22 @@ export class ProductDetailsTabsComponent implements OnInit {
     havePrice = true;
     haveRating = false;
 
+    isLoggedIn: boolean;
+
+    config = myGlobals.config;
+
     constructor(
         private translate: TranslateService,
         private bpeService: BPEService,
+        private cookieService: CookieService,
+        private router: Router
     ) { }
 
     ngOnInit() {
         this.selectedTab = this.getFirstTab();
         this.isLogistics = this.wrapper.getLogisticsStatus();
         this.isTransportService = this.wrapper.isTransportService();
+        this.isLoggedIn = !!this.cookieService.get('user_id');
         if (this.wrapper.getDimensions().length == 0 && this.wrapper.getUniquePropertiesWithValue().length == 0 && this.wrapper.getAdditionalDocuments().length == 0) {
             this.haveDetails = false;
             this.selectedTab = this.getFirstTab();
@@ -145,6 +152,10 @@ export class ProductDetailsTabsComponent implements OnInit {
         event.preventDefault();
         this.selectedTab = id;
         this.tabStatus.emit(false);
+    }
+
+    onLoginClicked(): void {
+        this.router.navigate(['/user-mgmt/login'], { queryParams: { redirectURL: this.router.url } });
     }
 
     setTab(data) {

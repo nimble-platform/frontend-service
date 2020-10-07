@@ -41,7 +41,7 @@
                 <i class="fas fa-users"></i>
                 <div class="align-self-end">{{'Platform Members' | translate}}</div>
             </div>
-            <div class="action-desc">{{'Manufacturers, suppliers and service providers are on NIMBLE!' | translate}}</div>
+            <div class="action-desc">{{'Manufacturers, suppliers and service providers are on B2BMarket!' | translate}}</div>
         </div>
     </div>
 
@@ -84,61 +84,15 @@
 
         <!-- categories -->
         <div #categoryRow class="category-row">
-    <!--        <div *ngFor="let categoryData of categories" class="category-box">-->
-    <!--            <img [src]="categoryData.img">-->
-    <!--            <div class="w-100 text-center">-->
-    <!--                <h4 class="mb-3">{{categoryData.title | translate | uppercase}}</h4>-->
-    <!--                <div *ngFor="let category of categoryData.categories"-->
-    <!--                     class="sub-category"-->
-    <!--                     (click)="onCategoryClicked(category)">-->
-    <!--                    {{getTranslatedCategoryLabel(category)}}-->
-    <!--                </div>-->
-    <!--                <div class="btn btn-outline-primary mt-4" (click)="onCategoryClicked(categoryData.rootCategory)">{{'See More' | translate}}</div>-->
-    <!--            </div>-->
-    <!--        </div>-->
-
-            <div class="category-box">
-                <img [src]="'assets/homepage/furniture.jpeg'">
+            <div *ngFor="let categoryData of categoriesData"
+                 class="category-box">
+                <img [src]="categoryData.img">
                 <div class="w-100 text-center">
-                    <h4 class="mb-3">{{'Furniture' | translate | uppercase}}</h4>
-                    <div class="sub-category" (click)="onCategoryClicked(null)">{{'Seats' | translate}}</div>
-                    <div class="sub-category" (click)="onCategoryClicked(null)">{{'Tables' | translate}}</div>
-                    <div class="sub-category" (click)="onCategoryClicked(null)">{{'Compositions' | translate}}</div>
-                    <div class="sub-category" (click)="onCategoryClicked(null)">{{'Complements' | translate}}</div>
-                    <div class="btn btn-outline-primary mt-4" (click)="onCategoryClicked(null)">{{'See More' | translate}}</div>
-                </div>
-            </div>
-            <div class="category-box">
-                <img [src]="'assets/homepage/substance.jpeg'">
-                <div class="w-100 text-center">
-                    <h4 class="mb-3">{{'Substance' | translate | uppercase}}</h4>
-                    <div class="sub-category">{{'Varnishes' | translate}}</div>
-                    <div class="sub-category">{{'Dyes' | translate}}</div>
-                    <div class="sub-category">{{'Primers' | translate}}</div>
-                    <div class="sub-category">{{'Solvents' | translate}}</div>
-                    <div class="btn btn-outline-primary mt-4">{{'See More' | translate}}</div>
-                </div>
-            </div>
-            <div class="category-box">
-                <img [src]="'assets/homepage/component.jpeg'">
-                <div class="w-100 text-center">
-                    <h4 class="mb-3">{{'Component' | translate | uppercase}}</h4>
-                    <div class="sub-category">{{'Castors' | translate}}</div>
-                    <div class="sub-category">{{'Brackets' | translate}}</div>
-                    <div class="sub-category">{{'Mouldings' | translate}}</div>
-                    <div class="sub-category">{{'Frames' | translate}}</div>
-                    <div class="btn btn-outline-primary mt-4">{{'See More' | translate}}</div>
-                </div>
-            </div>
-            <div class="category-box">
-                <img [src]="'assets/homepage/material.jpeg'">
-                <div class="w-100 text-center">
-                    <h4 class="mb-3">{{'Material' | translate | uppercase}}</h4>
-                    <div class="sub-category">{{'Wooden materials' | translate}}</div>
-                    <div class="sub-category">{{'Coating materials' | translate}}</div>
-                    <div class="sub-category">{{'Auxiliary materials' | translate}}</div>
-                    <div class="sub-category">{{'Plastic materials' | translate}}</div>
-                    <div class="btn btn-outline-primary mt-4">{{'See More' | translate}}</div>
+                    <h4 class="mb-3">{{getTranslatedCategoryLabel(categoryData.rootCategory) | uppercase}}</h4>
+                    <div *ngFor="let subCategory of categoryData.categories"
+                         class="sub-category" (click)="onCategoryClicked(subCategory)">{{getTranslatedCategoryLabel(subCategory)}}
+                    </div>
+                    <div class="btn btn-outline-primary mt-4" (click)="onCategoryClicked(categoryData.rootCategory)">{{'See More' | translate}}</div>
                 </div>
             </div>
         </div>
@@ -184,13 +138,16 @@
             <div class="half-column">
                 <p class="title-par">Are you interested in a niche product?</p>
                 <p>State your interest on products and services so that B2BMarket members can provide a solution.</p>
-                <div class="btn btn-outline-primary">{{'Publish Your Demand' | translate}}</div>
+<!--                <div class="btn btn-outline-primary disabled">{{'Publish Your Demand' | translate}}</div>-->
             </div>
             <div class="half-column">
                 <p class="title-par">Can you address customer's demands?</p>
                 <p>See all demands on B2BMarket and respond them.</p>
-                <div class="btn btn-outline-primary">{{'See Demands' | translate}}</div>
+<!--                <div class="btn btn-outline-secondary disable">{{'See Demands' | translate}}</div>-->
             </div>
+        </div>
+        <div class="alert-danger alert w-50 text-center mr-auto ml-auto">
+            {{'Demands feature is coming soon!' | translate}}
         </div>
     </div>
 
@@ -209,47 +166,101 @@
             </div>
         </div>
         <div class="d-flex justify-content-around text-center">
-            <div *ngIf="manufacturerCount" class="member-count" (click)="onMemberCountClicked('Manufacturers')">
-                <div>{{manufacturerCount}}</div>
-                {{'Manufacturers' | translate}}
-            </div>
-            <div *ngIf="supplierCount" class="member-count" (click)="onMemberCountClicked('Supplier')">
-                <div>{{supplierCount}}</div>
-                {{'Suppliers' | translate}}
+            <div *ngIf="manufacturerCount && supplierCount" class="member-count" (click)="onMemberCountClicked('Manufacturers')">
+                <div>{{manufacturerCount + supplierCount}}</div>
+                {{'Industry' | translate}}
             </div>
             <div *ngIf="logisticServiceProviderCount" class="member-count" (click)="onMemberCountClicked('Logistics Provider')">
                 <div>{{logisticServiceProviderCount}}</div>
-                {{'Logistics service providers' | translate}}
+                {{'Logistics Service Providers' | translate}}
             </div>
             <div *ngIf="serviceProviderCount" class="member-count" (click)="onMemberCountClicked('Service Provider')">
                 <div>{{serviceProviderCount}}</div>
-                {{'Service providers' | translate}}
-            </div>
-        </div>
-        <div class="d-flex justify-content-center mt-5 mb-3">
-            <div class="w-75 text-center">
-                <p style="font-size: 1.2rem">in many activity sectors...</p>
+                {{'Service Providers' | translate}}
             </div>
         </div>
 
-        <div *ngIf="activitySectors?.length > 0" class="d-flex flex-wrap justify-content-center text-center">
-            <div *ngFor="let sector of activitySectors | slice:0: (displayedActivitySectorCount); let i = index"
-                 class="activity-sector" (click)="onActivitySectorClicked(sector.label)">
-                {{sector.label}}({{sector.count}})
-            </div>
-            <!-- show more button -->
-            <div class="activity-sector" (click)="onShowMoreActivitySectors()">
-                {{'Show more' | translate}}
+        <!-- activity sectors -->
+        <div class="d-flex justify-content-center mt-5 mb-3">
+            <div class="w-75 text-center">
+                <p style="font-size: 1.2rem">{{'in many activity sectors...' | translate}}</p>
             </div>
         </div>
+
+        <div class="w-100 justify-content-center">
+            <div class="carousel-container">
+                <owl-carousel-o [options]="activitySectorCarouselConfiguration" z>
+                    <ng-container *ngFor="let sector of activitySectorsData">
+                        <ng-template carouselSlide>
+                            <div class="activity-sector text-center" (click)="onActivitySectorClicked(sector.label)">
+                                <img style="width: 100%; height: 150px" [src]="sector.img">
+                                <div class="text-center p-1">
+                                    <div>{{sector.count}} {{'in' | translate}}</div>
+                                    <div>{{sector.label}}</div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </ng-container>
+                </owl-carousel-o>
+            </div>
+        </div>
+
+<!--        <div *ngIf="activitySectors?.length > 0" class="d-flex flex-wrap justify-content-center text-center">-->
+<!--            <div *ngFor="let sector of activitySectors | slice:0: (displayedActivitySectorCount); let i = index"-->
+<!--                 class="activity-sector" (click)="onActivitySectorClicked(sector.label)">-->
+<!--                {{sector.label}}({{sector.count}})-->
+<!--            </div>-->
+<!--            &lt;!&ndash; show more button &ndash;&gt;-->
+<!--            <div class="activity-sector" (click)="onShowMoreActivitySectors()">-->
+<!--                {{'Show more' | translate}}-->
+<!--            </div>-->
+<!--        </div>-->
 
 <!--        <div class="d-flex justify-content-center mt-4">-->
 <!--            <div class="btn btn-outline-primary mr-4" (click)="onSearchCompaniesClicked()" style="width: 20%">{{'Search Companies' | translate}}</div>-->
 <!--            <div class="btn btn-outline-primary" (click)="onSeePlatformMembersClicked()" style="width: 20%">{{'See All Platform Members' | translate}}</div>-->
 <!--        </div>-->
 
+        <!-- platform members -->
         <div class="members-container">
             <members-info [rows]="8" [unverified]="false" [mgmt_view]="false" [view]="'List'"></members-info>
+        </div>
+
+        <!-- tutorials -->
+        <div #tutorialsSection class="action-section p-5">
+            <div class="section-title">
+                <div class="d-flex">
+                    <h4 class="ml-auto mr-auto">{{'Tutorials' | translate | uppercase}}</h4>
+                </div>
+                <div class="line"></div>
+            </div>
+
+            <div class="d-flex flex-wrap justify-content-center">
+                <!-- company settings -->
+                <div class="mr-4 mb-4">
+                    <label class="d-block">{{'Company Settings' | translate}}</label>
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/WCdX3Ao488M" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <!-- search for a product -->
+                <div>
+                    <label class="d-block">{{'Search for Products' | translate}}</label>
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/q3RA_GyYj5o" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <!-- dashboard -->
+                <div class="mr-4">
+                    <label class="d-block">{{'Dashboard' | translate}}</label>
+                    <iframe class="mr-4" width="560" height="315" src="https://www.youtube.com/embed/U-GDZk2Sve0" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <!-- product publish-->
+                <div>
+                    <label class="d-block">{{'Publish Product' | translate}}</label>
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/MJX6-knK6Y4" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
         </div>
     </div>
 </section>

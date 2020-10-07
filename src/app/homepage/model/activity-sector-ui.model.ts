@@ -11,6 +11,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-.click-login-badge {
-    cursor: pointer;
+export class ActivitySectorUiModel {
+    img: string;
+    label: string;
+    count: number;
+
+    constructor(json?: any) {
+        this.img = json.img;
+        this.label = json.label;
+        this.count = json.count;
+    }
 }

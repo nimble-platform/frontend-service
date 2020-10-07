@@ -537,31 +537,33 @@
                                             </div>
                                         </div>
                                         <!-- Price -->
-                                        <div [ngClass]="{'col-2 border-right':display=='list','col-12 border-bottom pt-1 pb-2':display=='panel'}">
-                                            <!-- Price is available -->
-                                            <ng-container *ngIf="result[product_price] && !checkEmpty(result[product_price])">
-                                                <span class="badge badge-primary-nimble">
-                                                    <ng-container *ngIf="result[product_base_quantity] > 1">
-                                                        <span>{{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}</span>
-                                                        <span [innerHTML]="'per' | translate"></span>
-                                                        <span>{{result[product_base_quantity]}} {{result[product_base_quantity_unit]}}</span>
-                                                    </ng-container>
-                                                    <span *ngIf="!result[product_base_quantity] || result[product_base_quantity] === 1">
-                                                        {{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}
+                                        <ng-container *ngIf="isLoggedIn">
+                                            <div [ngClass]="{'col-2 border-right':display=='list','col-12 border-bottom pt-1 pb-2':display=='panel'}">
+                                                <!-- Price is available -->
+                                                <ng-container *ngIf="result[product_price] && !checkEmpty(result[product_price])">
+                                                    <span class="badge badge-primary-nimble">
+                                                        <ng-container *ngIf="result[product_base_quantity] > 1">
+                                                            <span>{{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}</span>
+                                                            <span [innerHTML]="'per' | translate"></span>
+                                                            <span>{{result[product_base_quantity]}} {{result[product_base_quantity_unit]}}</span>
+                                                        </ng-container>
+                                                        <span *ngIf="!result[product_base_quantity] || result[product_base_quantity] === 1">
+                                                            {{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}
+                                                        </span>
                                                     </span>
-                                                </span>
-                                            </ng-container>
-                                            <!-- Price is not available -->
-                                            <span class="badge badge-warning" *ngIf="!result[product_price] || checkEmpty(result[product_price])"><span [innerHTML]="'Upon request' | translate"></span></span><br />
-                                            <!-- Shopping cart buttons -->
-                                            <ng-container *ngIf="shoppingCartDataService.isShoppingCartButtonVisible(result.classificationUri)">
-                                                <button *ngIf="!getShoppingCartStatus(ind).fb_submitted" class="badge {{getShoppingCartStatus(ind).fb_callback ? 'badge-secondary disabled' : 'badge-primary pointer'}} mt-1" (click)="onAddToCart(result,ind, $event)">
-                                                    <span class="fas fa-shopping-cart mr-1"></span>
-                                                    <span [innerHTML]="'Add to Cart' | translate"></span>
-                                                </button>
-                                                <call-status [callStatus]="getShoppingCartStatus(ind)"></call-status>
-                                            </ng-container>
-                                        </div>
+                                                </ng-container>
+                                                <!-- Price is not available -->
+                                                <span class="badge badge-warning" *ngIf="!result[product_price] || checkEmpty(result[product_price])"><span [innerHTML]="'Upon request' | translate"></span></span><br />
+                                                <!-- Shopping cart buttons -->
+                                                <ng-container *ngIf="shoppingCartDataService.isShoppingCartButtonVisible(result.classificationUri)">
+                                                    <button *ngIf="!getShoppingCartStatus(ind).fb_submitted" class="badge {{getShoppingCartStatus(ind).fb_callback ? 'badge-secondary disabled' : 'badge-primary pointer'}} mt-1" (click)="onAddToCart(result,ind, $event)">
+                                                        <span class="fas fa-shopping-cart mr-1"></span>
+                                                        <span [innerHTML]="'Add to Cart' | translate"></span>
+                                                    </button>
+                                                    <call-status [callStatus]="getShoppingCartStatus(ind)"></call-status>
+                                                </ng-container>
+                                            </div>
+                                        </ng-container>
                                         <div *ngIf="result[product_vendor]" [ngClass]="{'col-2':display=='list','col-12 pt-2':display=='panel'}">
                                             <div style="overflow:hidden">
                                                 <span *ngIf="result[product_vendor][product_vendor_brand_name]" [title]="result[product_vendor][product_vendor_name]">{{ getMultilingualLabel(result[product_vendor][product_vendor_brand_name]) }}</span>

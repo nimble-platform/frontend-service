@@ -92,6 +92,8 @@ export class ProductDetailsComponent implements OnInit {
 
     // business workflow of seller company
     companyWorkflowMap = null;
+    // keeps the login status of the user
+    isLoggedIn: boolean;
 
     addFavoriteCategoryStatus: CallStatus = new CallStatus();
     callStatus: CallStatus = new CallStatus();
@@ -104,21 +106,22 @@ export class ProductDetailsComponent implements OnInit {
     onOrderQuantityKeyPressed = validateNumberInput;
 
     constructor(private bpeService: BPEService,
-        private bpDataService: BPDataService,
-        private catalogueService: CatalogueService,
-        private documentService: DocumentService,
-        private userService: UserService,
-        private route: ActivatedRoute,
-        private cookieService: CookieService,
-        private searchContextService: SearchContextService,
-        private unShippedOrdersTransitionService: UnshippedOrdersTransitionService,
-        private validationService: ValidationService,
-        private translate: TranslateService,
-        public appComponent: AppComponent) {
-
+                private bpDataService: BPDataService,
+                private catalogueService: CatalogueService,
+                private documentService: DocumentService,
+                private userService: UserService,
+                private route: ActivatedRoute,
+                private cookieService: CookieService,
+                private searchContextService: SearchContextService,
+                private unShippedOrdersTransitionService: UnshippedOrdersTransitionService,
+                private validationService: ValidationService,
+                private translate: TranslateService,
+                public appComponent: AppComponent,
+                private router: Router) {
     }
 
     ngOnInit() {
+        this.isLoggedIn = !!this.cookieService.get('user_id');
         this.route.queryParams.subscribe(params => {
             let id = params['id'];
             let catalogueId = params['catalogueId'];
@@ -146,27 +149,7 @@ export class ProductDetailsComponent implements OnInit {
                         this.orderQuantity = this.getMinimumOrderQuantity();
 
                         // check frame contract for the current line
-                        this.bpeService.getFrameContract(UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty),
-                            this.cookieService.get("company_id"),
-                            [this.line.id],
-                            FEDERATIONID(),
-                            this.line.goodsItem.item.manufacturerParty.federationInstanceID).then(contracts => {
-                                // contract exists, get the corresponding quotation including the terms
-                                this.documentService.getCachedDocument(contracts[0].quotationReference.id, this.line.goodsItem.item.manufacturerParty.federationInstanceID).then(document => {
-                                    this.frameContract = contracts[0];
-                                    this.frameContractQuotationWrapper = new QuotationWrapper(document, this.line, UBLModelUtils.getFrameContractQuotationLineIndexForProduct(document.quotationLine, catalogueId, id));
-                                    // quotation ordered quantity contains the actual ordered quantity in that business process,
-                                    // so we overwrite it with the options's quantity, which is by default 1
-                                    this.frameContractQuotationWrapper.orderedQuantity.value = this.orderQuantity;
-
-                                    this.termsSelectBoxValue = "frame_contract";
-                                    this.initCheckGetFrameContractStatus.callback(null, true);
-                                }).catch(error => {
-                                    this.initCheckGetFrameContractStatus.callback(null, true);
-                                });
-                            }).catch(error => {
-                                this.initCheckGetFrameContractStatus.callback(null, true);
-                            });
+                        this.checkFrameContractForLine(catalogueId, id);
 
                         return Promise.all([this.userService.getSettingsForProduct(line), this.retrieveAssociatedProductDetails()]);
                     })
@@ -209,16 +192,46 @@ export class ProductDetailsComponent implements OnInit {
         });
 
         // load favourite item ids for the person
-        let userId = this.cookieService.get("user_id");
-        this.callStatus.submit();
-        this.userService.getPerson(userId)
-            .then(person => {
-                this.callStatus.callback("Successfully loaded user profile", true);
-                this.favouriteItemIds = person.favouriteProductID;
-            })
-            .catch(error => {
-                this.callStatus.error("Invalid credentials", error);
+        if (this.isLoggedIn) {
+            let userId = this.cookieService.get("user_id");
+            this.callStatus.submit();
+            this.userService.getPerson(userId)
+                .then(person => {
+                    this.callStatus.callback("Successfully loaded user profile", true);
+                    this.favouriteItemIds = person.favouriteProductID;
+                })
+                .catch(error => {
+                    this.callStatus.error("Invalid credentials", error);
+                });
+        }
+    }
+
+    private checkFrameContractForLine(catalogueId: string, id: string): void {
+        if (!this.isLoggedIn) {
+            return;
+        }
+
+        this.bpeService.getFrameContract(UBLModelUtils.getPartyId(this.line.goodsItem.item.manufacturerParty),
+            this.cookieService.get("company_id"),
+            [this.line.id],
+            FEDERATIONID(),
+            this.line.goodsItem.item.manufacturerParty.federationInstanceID).then(contracts => {
+            // contract exists, get the corresponding quotation including the terms
+            this.documentService.getCachedDocument(contracts[0].quotationReference.id, this.line.goodsItem.item.manufacturerParty.federationInstanceID).then(document => {
+                this.frameContract = contracts[0];
+                this.frameContractQuotationWrapper = new QuotationWrapper(document, this.line, UBLModelUtils.getFrameContractQuotationLineIndexForProduct(document.quotationLine, catalogueId, id));
+                // quotation ordered quantity contains the actual ordered quantity in that business process,
+                // so we overwrite it with the options's quantity, which is by default 1
+                this.frameContractQuotationWrapper.orderedQuantity.value = this.orderQuantity;
+
+                this.termsSelectBoxValue = 'frame_contract';
+                this.initCheckGetFrameContractStatus.callback(null, true);
+            }).catch(error => {
+                this.initCheckGetFrameContractStatus.callback(null, true);
             });
+        }).catch(error => {
+            this.initCheckGetFrameContractStatus.callback(null, true);
+        });
     }
 
     ngOnDestroy() {
@@ -293,6 +306,10 @@ export class ProductDetailsComponent implements OnInit {
         }
     }
 
+    onLoginClicked(): void {
+        this.router.navigate(['/user-mgmt/login'], { queryParams: { redirectURL: this.router.url } });
+    }
+
     /*
      * Getters For Template
      */
@@ -336,6 +353,24 @@ export class ProductDetailsComponent implements OnInit {
 
     getValidationErrorMessage(formControl: AbstractControl): string {
         return this.validationService.getValidationErrorMessage(formControl);
+    }
+
+    getBpButtonTooltip(): string {
+        if (this.isLoggedIn) {
+            if (this.appComponent.checkRoles('bp')) {
+                return this.translate.instant('You don\'t have permission to initiate a business process');
+            }
+        }
+        return '';
+    }
+
+    isBpButtonDisabled(): boolean {
+        if (this.isLoggedIn) {
+            if (!this.appComponent.checkRoles('bp') || !this.quantityValueFormControl.valid) {
+                return false;
+            }
+        }
+        return false;
     }
 
     private openDiscountModal(): void {

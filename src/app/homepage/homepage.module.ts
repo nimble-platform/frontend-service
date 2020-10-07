@@ -21,6 +21,7 @@ import {HomepageRoutingModule} from './homepage-routing.module';
 import {CommonModule} from '@angular/common';
 import {AppCommonModule} from '../common/common.module';
 import {AnalyticsModule} from '../analytics/analytics.module';
+import {CarouselModule} from 'ngx-owl-carousel-o';
 
 @NgModule({
     imports: [
@@ -28,6 +29,7 @@ import {AnalyticsModule} from '../analytics/analytics.module';
         AppCommonModule,
         CommonModule,
         HomepageRoutingModule,
+        CarouselModule,
         AnalyticsModule
     ],
     declarations: [

@@ -23,6 +23,9 @@ import {SimpleSearchService} from '../simple-search/simple-search.service';
 import {LANGUAGES} from '../catalogue/model/constants';
 import {TranslateService} from '@ngx-translate/core';
 import {CategoryService} from '../catalogue/category/category.service';
+import {CategoryModelUtils} from '../catalogue/model/model-util/category-model-utils';
+import {OwlOptions} from 'ngx-owl-carousel-o';
+import {ActivitySectorUiModel} from './model/activity-sector-ui.model';
 
 @Component({
     selector: 'homepage',
@@ -33,7 +36,8 @@ import {CategoryService} from '../catalogue/category/category.service';
 
 export class HomepageComponent {
 
-    categories: CategoryBoxUiModel[];
+    categoriesData: CategoryBoxUiModel[];
+    activitySectorsData: ActivitySectorUiModel[];
 
     manufacturerCount: number;
     supplierCount: number;
@@ -50,12 +54,94 @@ export class HomepageComponent {
     getTranslatedCategoryLabel = selectPreferredName;
     public config = myGlobals.config;
 
+    images = [
+        'assets/homepage/furniture.jpeg',
+        'assets/homepage/substance.jpeg',
+        'assets/homepage/material.jpeg',
+        'assets/homepage/component.jpeg'
+    ];
+
+    categoryBoxConfiguration: any[] = [
+        {
+            'mainCategory': 'http://www.aidimme.es/FurnitureSectorOntology.owl#Furniture',
+            'subCategories': [
+                'http://www.aidimme.es/FurnitureSectorOntology.owl#Chair',
+                'http://www.aidimme.es/FurnitureSectorOntology.owl#Table',
+                'http://www.aidimme.es/FurnitureSectorOntology.owl#FurnitureComposition',
+                'http://www.aidimme.es/FurnitureSectorOntology.owl#FurnitureComplement'
+            ],
+            'img': 'assets/homepage/furniture.jpeg',
+            'title': 'Furniture'
+        },
+        {
+            'mainCategory': 'http://www.aidimme.es/FurnitureSectorOntology.owl#Substance',
+            'subCategories': [
+                'http://www.aidimme.es/FurnitureSectorOntology.owl#Varnish',
+                'http://www.aidimme.es/FurnitureSectorOntology.owl#Dye',
+                'http://www.aidimme.es/FurnitureSectorOntology.owl#Adhesive',
+                'http://www.aidimme.es/FurnitureSectorOntology.owl#Solvent'
+            ],
+            'img': 'assets/homepage/substance.jpeg',
+            'title': 'Substance'
+        },
+        {
+            'mainCategory': 'http://www.aidimme.es/FurnitureSectorOntology.owl#Material',
+            'subCategories': [
+                'http://www.aidimme.es/FurnitureSectorOntology.owl#WoodenMaterial',
+                'http://www.aidimme.es/FurnitureSectorOntology.owl#EdgeBanding',
+                'http://www.aidimme.es/FurnitureSectorOntology.owl#WoodenBoard',
+                'http://www.aidimme.es/FurnitureSectorOntology.owl#PlasticMaterial'
+            ],
+            'img': 'assets/homepage/material.jpeg',
+            'title': 'Material'
+        },
+        {
+            'mainCategory': 'http://www.aidimme.es/FurnitureSectorOntology.owl#Service',
+            'subCategories': [
+                'http://www.aidimme.es/FurnitureSectorOntology.owl#ConsultingService',
+                'http://www.aidimme.es/FurnitureSectorOntology.owl#CertificationService',
+                'http://www.aidimme.es/FurnitureSectorOntology.owl#EngineeringService',
+                'http://www.aidimme.es/FurnitureSectorOntology.owl#Training'
+            ],
+            'img': 'assets/homepage/component.jpeg',
+            'title': 'Service'
+        }
+    ];
+
+    activitySectorCarouselConfiguration: OwlOptions = {
+        loop: true,
+        mouseDrag: true,
+        touchDrag: false,
+        pullDrag: false,
+        dots: false,
+        navSpeed: 700,
+        navText: [ '<i class="fa fa-chevron-left"></i>', '<i class="fa fa-chevron-right"></i>' ],
+        margin: 20,
+        autoWidth: true,
+        responsive: {
+            0: {
+                items: 1
+            },
+            400: {
+                items: 2
+            },
+            740: {
+                items: 3
+            },
+            940: {
+                items: 5
+            }
+        },
+        nav: true
+    };
+
     constructor(private searchService: SimpleSearchService,
                 private categoryService: CategoryService,
                 private translateService: TranslateService,
                 private router: Router) {}
 
     ngOnInit(): void {
+        this.getCategories();
         this.getCompanyCounts();
         this.getCatalogueCount();
     }
@@ -69,17 +155,12 @@ export class HomepageComponent {
     }
 
     onCategoryClicked(category: Category): void {
-        category = new Category(
-            'http://www.nimble-project.org/resource/eclass#0173-1#01-AAC168#005',
-            [createText('Automotive technology')],
-            null, null, null, null, null, null, null, null, null);
-
         this.router.navigate(['/simple-search'], {
             queryParams: {
                 q: '*',
                 p: 1,
                 cat: selectPreferredName(category),
-                catID: category.id,
+                catID: category.categoryUri,
                 sIdx: this.config.defaultSearchIndex,
                 sTop: 'prod'
             }
@@ -167,6 +248,7 @@ export class HomepageComponent {
             // extract activity sectors for the current language
             const facet = this.translateService.currentLang + '_activitySectors';
             this.activitySectors = res.facets[facet].entry;
+            this.constructActivitySectorData();
         });
     }
 
@@ -208,7 +290,82 @@ export class HomepageComponent {
                 this.serviceCount = totalItemCount - this.productCount;
             });
         });
+    }
 
+    private getCategories(): void {
+        let allCategories: string[] = [];
+        this.categoryBoxConfiguration.forEach (currentConf => {
+            allCategories.push(...currentConf.subCategories);
+            allCategories.push(currentConf.mainCategory);
+        });
 
+        this.categoryService.getCategories(allCategories).then((categories: any) => {
+            // put all the categories to a map for easy reference
+            const categoryMap: Map<string, Category> = new Map<string, Category>();
+            for (let category of categories.result) {
+                categoryMap.set(category.uri, CategoryModelUtils.transformIndexCategoryToDbCategory(category));
+            }
+
+            this.categoriesData = [];
+            this.categoryBoxConfiguration.forEach (currentConf => {
+                const categoryData: CategoryBoxUiModel = this.constructCategoryBoxData(
+                    currentConf.img,
+                    currentConf.title,
+                    currentConf.mainCategory,
+                    currentConf.subCategories,
+                    categoryMap
+                );
+                this.categoriesData.push(categoryData);
+            });
+        });
+    }
+
+    /**
+     * Constructs data to be displayed inside a single category box on the template
+     * @param img
+     * @param title
+     * @param rootCategoryUri
+     * @param subCategoryUris
+     * @param categoryMap
+     */
+    private constructCategoryBoxData(img: string,
+                                     title: string,
+                                     rootCategoryUri: string,
+                                     subCategoryUris: string[],
+                                     categoryMap: Map<string, Category>): CategoryBoxUiModel {
+        return new CategoryBoxUiModel({
+            img: img,
+            title: this.translateService.instant(title),
+            categories: this.getSubcategoriesFromMap(categoryMap, subCategoryUris),
+            rootCategory: categoryMap.get(rootCategoryUri)
+        });
+    }
+
+    /**
+     * Just extracts the Categories, specified by the uri list, from the map
+     * @param categoryMap
+     * @param categoryUris
+     */
+    private getSubcategoriesFromMap(categoryMap: Map<string, Category>, categoryUris: string[]): Category[] {
+        const categories: Category[] = [];
+        for (const uri of categoryUris) {
+            categories.push(categoryMap.get(uri));
+        }
+        return categories;
+    }
+
+    private constructActivitySectorData(): void {
+        let count = 0;
+        const sectors: ActivitySectorUiModel[] = this.activitySectors
+            .filter(sector => sector.count >=  5)
+            .map(sector => {
+            return new ActivitySectorUiModel({
+                'img': this.images[count++ % 4],
+                'label': sector.label,
+                'count': sector.count
+            });
+        });
+        console.log("SECTOR DATA", sectors);
+        this.activitySectorsData = sectors;
     }
 }

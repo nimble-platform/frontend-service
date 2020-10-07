@@ -128,11 +128,17 @@
                 <label class="order-label">
                     <span [innerHTML]="'Price' | translate"></span>
                 </label>
-                <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
-                    {{ getPricePerItem() }}
-                </span>
-                <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
-                    {{ frameContractQuotationWrapper.priceWrapper.pricePerItemString}}
+                <!-- price values can only be seen if the user is logged in -->
+                <ng-container *ngIf="isLoggedIn">
+                    <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
+                        {{ getPricePerItem() }}
+                    </span>
+                    <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
+                        {{ frameContractQuotationWrapper.priceWrapper.pricePerItemString}}
+                    </span>
+                </ng-container>
+                <span *ngIf="!isLoggedIn" class="order-value">
+                    <div class="badge badge-danger click-login-badge" (click)="onLoginClicked()">{{'Log in to see price' | translate}}</div>
                 </span>
             </div>
 
@@ -153,45 +159,46 @@
                 </span>
             </div>
 
-            <ng-container *ngIf="getPricePerItem() !== 'On demand'">
-                <div *ngIf="config.vatEnabled" class="order-group mt-2">
-                    <label class="order-label">
-                        <span [innerHTML]="'VAT' | translate"></span>
-                    </label>
-                    <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
-                        {{priceWrapper.vatTotalString}}
-                    </span>
-                    <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
-                        {{frameContractQuotationWrapper.priceWrapper.vatTotalString}}
-                    </span>
-                </div>
-                <div *ngIf="priceWrapper.appliedDiscounts.length > 0" class="order-group">
-                    <label class="order-label">
-                        <span [innerHTML]="'Applied Discounts' | translate"></span>
-                    </label>
-                    <div class="inline-order-value">
-                        <span *ngIf="termsSelectBoxValue == 'product_defaults'">
-                            {{priceWrapper.calculateTotalDiscount()}} {{priceWrapper.currency}}
+            <ng-container *ngIf="isLoggedIn">
+                <ng-container *ngIf="getPricePerItem() !== 'On demand'">
+                    <div *ngIf="config.vatEnabled" class="order-group mt-2">
+                        <label class="order-label">
+                            <span [innerHTML]="'VAT' | translate"></span>
+                        </label>
+                        <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
+                            {{priceWrapper.vatTotalString}}
                         </span>
-                        <span class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" [title]="'Applied Discounts/Charges'|translate" style="cursor: pointer">
-                            <i class="fa fa-search" aria-hidden="true"></i>
+                        <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
+                            {{frameContractQuotationWrapper.priceWrapper.vatTotalString}}
                         </span>
                     </div>
-                </div>
-                <div class="order-group">
-                    <label class="order-label order-price">
-                        <span [innerHTML]="'Total Price:' | translate"></span>
-                    </label>
+                    <div *ngIf="priceWrapper.appliedDiscounts.length > 0" class="order-group">
+                        <label class="order-label">
+                            <span [innerHTML]="'Applied Discounts' | translate"></span>
+                        </label>
+                        <div class="inline-order-value">
+                            <span *ngIf="termsSelectBoxValue == 'product_defaults'">
+                                {{priceWrapper.calculateTotalDiscount()}} {{priceWrapper.currency}}
+                            </span>
+                            <span class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" [title]="'Applied Discounts/Charges'|translate" style="cursor: pointer">
+                                <i class="fa fa-search" aria-hidden="true"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="order-group">
+                        <label class="order-label order-price">
+                            <span [innerHTML]="'Total Price:' | translate"></span>
+                        </label>
 
-                    <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-price-value">
-                        {{priceWrapper.grossTotalString}}
-                    </span>
-                    <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-price-value">
-                        {{frameContractQuotationWrapper.priceWrapper.grossTotalString}}
-                    </span>
-                </div>
-            </ng-container>
-            <ng-container *ngIf="getPricePerItem() === 'On demand'">
+                        <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-price-value">
+                            {{priceWrapper.grossTotalString}}
+                        </span>
+                        <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-price-value">
+                            {{frameContractQuotationWrapper.priceWrapper.grossTotalString}}
+                        </span>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="getPricePerItem() === 'On demand'">
                 <div class="inline-order-group">
                     <label class="order-label order-price">
                         <span [innerHTML]="'Total Price:' | translate"></span>
@@ -201,9 +208,14 @@
                     </span>
                 </div>
             </ng-container>
+            </ng-container>
 
             <!-- Action Button -->
-            <button *ngIf="companyWorkflowMap.get('Negotiation')" class="btn btn-primary pt-2 w-100" (click)="onNegotiate(termsSelectBoxValue)" [disabled]="!this.appComponent.checkRoles('bp') || !quantityValueFormControl.valid">
+            <button *ngIf="companyWorkflowMap.get('Negotiation')"
+                    class="btn btn-primary pt-2 w-100"
+                    (click)="onNegotiate(termsSelectBoxValue)"
+                    [ngbTooltip]="getBpButtonTooltip()" [placement]="'auto'" title=""
+                    [disabled]="isBpButtonDisabled()">
                 <span [innerHTML]="(companyWorkflowMap.get('Order') ? 'Negotiate & Order' : 'Negotiate') | translate"></span>
             </button>
         </div>

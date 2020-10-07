@@ -77,64 +77,74 @@
 
     <!-- Product Details Tab -->
     <div *ngIf="selectedTab === 'DETAILS'" class="p-3 col-12">
-        <h3 class="p-1"><span [innerHTML]="'Details' | translate"></span></h3>
-        <div class="row mx-auto">
-            <div *ngIf="wrapper.getDimensions().length == 0 && wrapper.getUniquePropertiesWithValue().length === 0">
-                <p class="p-1"><span [innerHTML]="'This product / service does not seem to have any details.' | translate"></span></p>
-            </div>
-            <div *ngFor="let multiValuedDimension of wrapper.getDimensionMultiValue(false)" class="p-1 col-6 d-flex">
-                <strong>{{ multiValuedDimension.attributeID | translate }}: </strong>
-                <span class="ml-2">
-                    {{getMultiValuedDimensionAsString(multiValuedDimension.measure)}}
-                </span>
-            </div>
-            <div *ngFor="let property of wrapper.getUniquePropertiesWithValue()" class="p-1 col-6 d-flex">
-                <strong>{{ getHumanReadablePropertyName(wrapper.getPropertyName(property)) }}: </strong>
-                <span *ngIf="property.valueQualifier !== 'FILE' && property.valueQualifier !== 'BOOLEAN'" class="ml-2">
-                    {{ getValuesAsString(property).join(", ") }}
-                </span>
-                <span *ngIf="property.valueQualifier === 'BOOLEAN'" class="ml-2">
-                    <i class="fa boolean-type {{getValuesAsString(property)[0] == 'true' ? 'fa-check': 'fa-times'}}" aria-hidden="true"></i>
-                </span>
-                <ng-container *ngIf="property.valueQualifier === 'FILE'">
-                    <file-input presentationMode="view" [binaryObjects]="property.valueBinary" [multiple]="true" rowClass="ml-2" [small]="true"></file-input>
-                </ng-container>
-            </div>
-        </div>
-        <div *ngIf="wrapper.getAdditionalDocuments().length > 0">
-            <h3><span [innerHTML]="'Additional Information' | translate"></span></h3>
+        <ng-container *ngIf="isLoggedIn">
+            <h3 class="p-1"><span [innerHTML]="'Details' | translate"></span></h3>
             <div class="row mx-auto">
-                <div *ngFor="let documentReference of wrapper.getAdditionalDocuments()" class="p-1 col-6 d-flex">
-                    <ng-container>
-                        <file-input presentationMode="view" [binaryObjects]="[documentReference.attachment.embeddedDocumentBinaryObject]" [multiple]="true" [small]="true"></file-input>
+                <div *ngIf="wrapper.getDimensions().length == 0 && wrapper.getUniquePropertiesWithValue().length === 0">
+                    <p class="p-1"><span [innerHTML]="'This product / service does not seem to have any details.' | translate"></span></p>
+                </div>
+                <div *ngFor="let multiValuedDimension of wrapper.getDimensionMultiValue(false)" class="p-1 col-6 d-flex">
+                    <strong>{{ multiValuedDimension.attributeID | translate }}: </strong>
+                    <span class="ml-2">
+                        {{getMultiValuedDimensionAsString(multiValuedDimension.measure)}}
+                    </span>
+                </div>
+                <div *ngFor="let property of wrapper.getUniquePropertiesWithValue()" class="p-1 col-6 d-flex">
+                    <strong>{{ getHumanReadablePropertyName(wrapper.getPropertyName(property)) }}: </strong>
+                    <span *ngIf="property.valueQualifier !== 'FILE' && property.valueQualifier !== 'BOOLEAN'" class="ml-2">
+                        {{ getValuesAsString(property).join(", ") }}
+                    </span>
+                    <span *ngIf="property.valueQualifier === 'BOOLEAN'" class="ml-2">
+                        <i class="fa boolean-type {{getValuesAsString(property)[0] == 'true' ? 'fa-check': 'fa-times'}}" aria-hidden="true"></i>
+                    </span>
+                    <ng-container *ngIf="property.valueQualifier === 'FILE'">
+                        <file-input presentationMode="view" [binaryObjects]="property.valueBinary" [multiple]="true" rowClass="ml-2" [small]="true"></file-input>
                     </ng-container>
                 </div>
             </div>
-        </div>
+            <div *ngIf="wrapper.getAdditionalDocuments().length > 0">
+                <h3><span [innerHTML]="'Additional Information' | translate"></span></h3>
+                <div class="row mx-auto">
+                    <div *ngFor="let documentReference of wrapper.getAdditionalDocuments()" class="p-1 col-6 d-flex">
+                        <ng-container>
+                            <file-input presentationMode="view" [binaryObjects]="[documentReference.attachment.embeddedDocumentBinaryObject]" [multiple]="true" [small]="true"></file-input>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="!isLoggedIn">
+            <div class="badge badge-danger click-login-badge" (click)="onLoginClicked()">{{'Log in to see product details' | translate}}</div>
+        </ng-container>
     </div>
 
     <!-- Price Tab -->
     <div *ngIf="selectedTab === 'PRICE'" class="p-3 col-12">
-        <div style="flex-grow:1;">
-            <h3 *ngIf="wrapper.getPricePerItem() != 'On demand' || wrapper.getFreeSample() != 'No'" class="p-1"><span [innerHTML]="'Price' | translate"></span></h3>
-            <div *ngIf="wrapper.getPricePerItem() != 'On demand'" class="p-1">
-                <strong><span [innerHTML]="'Price:' | translate"></span> </strong> {{ wrapper.getPricePerItem() }}
+        <ng-container *ngIf="isLoggedIn">
+            <div style="flex-grow:1;">
+                <h3 *ngIf="wrapper.getPricePerItem() != 'On demand' || wrapper.getFreeSample() != 'No'" class="p-1"><span [innerHTML]="'Price' | translate"></span></h3>
+                <div *ngIf="wrapper.getPricePerItem() != 'On demand'" class="p-1">
+                    <strong><span [innerHTML]="'Price:' | translate"></span> </strong> {{ wrapper.getPricePerItem() }}
+                </div>
+                <div *ngIf="config.vatEnabled && wrapper.getVat() != ''" class="p-1">
+                    <strong><span [innerHTML]="'VAT:' | translate"></span></strong> {{ wrapper.getVat() }}%
+                </div>
+                <div *ngIf="wrapper.getMinimumOrderQuantity() != 'Not specified'" class="p-1">
+                    <strong><span [innerHTML]="'Minimum Order Quantity:' | translate"></span></strong> {{ wrapper.getMinimumOrderQuantity() }}
+                </div>
+                <div *ngIf="wrapper.getFreeSample() != 'No'" class="p-1">
+                    <strong><span [innerHTML]="'Free Sample:' | translate"></span></strong>
+                    <i class="fa boolean-type {{wrapper.getFreeSample() == 'Yes' ? 'fa-check': 'fa-times'}}" aria-hidden="true"></i>
+                </div>
+                <h3 *ngIf="wrapper.line.priceOption && wrapper.line.priceOption.length > 0" class="p-1"><span [innerHTML]="'Discounts/Charges' | translate"></span></h3>
+                <div class="p-1">
+                    <discount-details [catalogueLine]="wrapper.line" [companyNegotiationSettings]="settings.negotiationSettings" [readonly]="true"></discount-details>
+                </div>
             </div>
-            <div *ngIf="config.vatEnabled && wrapper.getVat() != ''" class="p-1">
-                <strong><span [innerHTML]="'VAT:' | translate"></span></strong> {{ wrapper.getVat() }}%
-            </div>
-            <div *ngIf="wrapper.getMinimumOrderQuantity() != 'Not specified'" class="p-1">
-                <strong><span [innerHTML]="'Minimum Order Quantity:' | translate"></span></strong> {{ wrapper.getMinimumOrderQuantity() }}
-            </div>
-            <div *ngIf="wrapper.getFreeSample() != 'No'" class="p-1">
-                <strong><span [innerHTML]="'Free Sample:' | translate"></span></strong>
-                <i class="fa boolean-type {{wrapper.getFreeSample() == 'Yes' ? 'fa-check': 'fa-times'}}" aria-hidden="true"></i>
-            </div>
-            <h3 *ngIf="wrapper.line.priceOption && wrapper.line.priceOption.length > 0" class="p-1"><span [innerHTML]="'Discounts/Charges' | translate"></span></h3>
-            <div class="p-1">
-                <discount-details [catalogueLine]="wrapper.line" [companyNegotiationSettings]="settings.negotiationSettings" [readonly]="true"></discount-details>
-            </div>
-        </div>
+        </ng-container>
+        <ng-container *ngIf="!isLoggedIn">
+            <div class="badge badge-danger click-login-badge" (click)="onLoginClicked()">{{'Log in to see price details' | translate}}</div>
+        </ng-container>
     </div>
 
     <!-- Delivery & Trading Tab -->
