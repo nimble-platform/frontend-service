@@ -18,9 +18,13 @@
 
     <div [hidden]="!searchTopic" class="form-group row">
         <div class="col-12">
-            <div class="input-group">
-                <input *ngIf="searchTopic=='prod'" type="text" class="form-control" id="searchTerm" [(ngModel)]="model.q" [disabled]="searchCallStatus.isLoading()" [ngbTypeahead]="getSuggestions" (selectItem)="onSubmit($event)" [focusFirst]=false name="searchTerm" #q="ngModel" [placeholder]="'Product / Service' | translate">
-                <input *ngIf="searchTopic=='comp'" type="text" class="form-control" id="searchTerm" [(ngModel)]="model.q" [disabled]="searchCallStatus.isLoading()" [ngbTypeahead]="getCompSuggestions" (selectItem)="onSubmit($event)" [focusFirst]=false name="searchTerm" #q="ngModel" [placeholder]="'Company' | translate">
+            <div class="input-group" >
+                <div class="search-term-input">
+                    <input *ngIf="searchTopic=='prod'" type="text" class="form-control" id="searchTerm" [(ngModel)]="model.q" [disabled]="searchCallStatus.isLoading()" [ngbTypeahead]="getSuggestions" (selectItem)="onSubmit($event)" [focusFirst]=false name="searchTerm" #q="ngModel" [placeholder]="'Product / Service' | translate">
+                    <input *ngIf="searchTopic=='comp'" type="text" class="form-control" id="searchTerm" [(ngModel)]="model.q" [disabled]="searchCallStatus.isLoading()" [ngbTypeahead]="getCompSuggestions" (selectItem)="onSubmit($event)" [focusFirst]=false name="searchTerm" #q="ngModel" [placeholder]="'Company' | translate">
+                    <!-- Tooltip Icon -->
+                    <span *ngIf="searchTopic=='prod'" class="tooltip-icon" (click)="showProductSearchTT(tooltip)"><i class="fa fa-question-circle"></i></span>
+                </div>
                 <div ngbDropdown class="d-inline-block input-group-append">
                     <button class="btn btn-outline-secondary" type="button" id="searchIndex" ngbDropdownToggle>
                         <span [innerHTML]="searchIndex | translate"></span>
@@ -142,12 +146,12 @@
                                 <option value="score desc" [selected]="sort=='score desc'"></option>
                                 <option *ngIf="searchTopic=='prod'" [value]="getCurrencySort('asc')" [selected]="sort==getCurrencySort('asc')"><span [innerHTML]="'Price: Asc.' | translate"></span></option>
                                 <option *ngIf="searchTopic=='prod'" [value]="getCurrencySort('desc')" [selected]="sort==getCurrencySort('desc')"><span [innerHTML]="'Price: Desc.' | translate"></span></option>
-                                <option *ngIf="searchTopic=='prod'" value="{LANG}_label asc" [selected]="sort=='{LANG}_label asc'"><span [innerHTML]="'A -> Z' | translate"></span></option>
-                                <option *ngIf="searchTopic=='prod'" value="{LANG}_label desc" [selected]="sort=='{LANG}_label desc'"><span [innerHTML]="'Z -> A' | translate"></span></option>
+                                <option *ngIf="searchTopic=='prod'" value="{LANG}_lowercaseLabel asc" [selected]="sort=='{LANG}_lowercaseLabel asc'"><span [innerHTML]="'A -> Z' | translate"></span></option>
+                                <option *ngIf="searchTopic=='prod'" value="{LANG}_lowercaseLabel desc" [selected]="sort=='{LANG}_lowercaseLabel desc'"><span [innerHTML]="'Z -> A' | translate"></span></option>
                                 <option *ngIf="searchTopic=='comp'" value="trustRating desc" [selected]="sort=='trustRating desc'"><span [innerHTML]="'Rating' | translate"></span></option>
                                 <option *ngIf="searchTopic=='comp'" value="trustScore desc" [selected]="sort=='trustScore desc'"><span [innerHTML]="'Trust' | translate"></span></option>
-                                <option *ngIf="searchTopic=='comp'" value="legalName asc" [selected]="sort=='legalName asc'"><span [innerHTML]="'A -> Z' | translate"></span></option>
-                                <option *ngIf="searchTopic=='comp'" value="legalName desc" [selected]="sort=='legalName desc'"><span [innerHTML]="'Z -> A' | translate"></span></option>
+                                <option *ngIf="searchTopic=='comp'" value="lowercaseLegalName asc" [selected]="sort=='lowercaseLegalName asc'"><span [innerHTML]="'A -> Z' | translate"></span></option>
+                                <option *ngIf="searchTopic=='comp'" value="lowercaseLegalName desc" [selected]="sort=='lowercaseLegalName desc'"><span [innerHTML]="'Z -> A' | translate"></span></option>
                             </select>
                         </div>
                     </div>
@@ -698,3 +702,15 @@
     </div>
 
 </form>
+
+<!-- Tooltip modal -->
+<ng-template #tooltip let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title"><span [innerHTML]="'Tooltip' | translate"></span></h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" [innerHTML]="tooltipHTML">
+    </div>
+</ng-template>

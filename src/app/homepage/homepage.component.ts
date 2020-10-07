@@ -218,22 +218,22 @@ export class HomepageComponent {
     private getCompanyCounts(): void {
         // get manufacturer counts
         let facetQueries = ['businessType:\"Manufacturer\"'];
-        this.searchService.getComp('*', [], facetQueries, 1, 0, 'legalName asc', 'Name').then(res => {
+        this.searchService.getComp('*', [], facetQueries, 1, 0, 'lowercaseLegalName asc', 'Name').then(res => {
             this.manufacturerCount = res.totalElements;
         });
         // get supplier counts
         facetQueries = ['businessType:\"Supplier\"'];
-        this.searchService.getComp('*', [], facetQueries, 1, 0, 'legalName asc', 'Name').then(res => {
+        this.searchService.getComp('*', [], facetQueries, 1, 0, 'lowercaseLegalName asc', 'Name').then(res => {
             this.supplierCount = res.totalElements;
         });
         // get logistics service provider counts
         facetQueries = ['businessType:\"Logistics Provider\"'];
-        this.searchService.getComp('*', [], facetQueries, 1, 0, 'legalName asc', 'Name').then(res => {
+        this.searchService.getComp('*', [], facetQueries, 1, 0, 'lowercaseLegalName asc', 'Name').then(res => {
             this.logisticServiceProviderCount = res.totalElements;
         });
         // get service provider counts
         facetQueries = ['businessType:\"Service Provider\"'];
-        this.searchService.getComp('*', [], facetQueries, 1, 0, 'legalName asc', 'Name').then(res => {
+        this.searchService.getComp('*', [], facetQueries, 1, 0, 'lowercaseLegalName asc', 'Name').then(res => {
             this.serviceProviderCount = res.totalElements;
         });
         // get activity sectors
@@ -243,7 +243,7 @@ export class HomepageComponent {
             [],
             1,
             0,
-            'legalName asc',
+            'lowercaseLegalName asc',
             'Name').then(res => {
             // extract activity sectors for the current language
             const facet = this.translateService.currentLang + '_activitySectors';

@@ -37,6 +37,7 @@ import {AppComponent} from '../app.component';
 import {WhiteBlackListService} from '../catalogue/white-black-list.service';
 import {NetworkCompanyListService} from '../user-mgmt/network-company-list.service';
 import {RatingUi} from '../catalogue/model/ui/rating-ui';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {CookieService} from 'ng2-cookies';
 
 @Component({
@@ -86,6 +87,8 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     companyInformationInSearchResult = myGlobals.config.companyInformationInSearchResult;
     searchIndexes = ['Name', 'Category'];
     searchTopic = null;
+    // content of the tooltip for product search
+    tooltipHTML: string;
 
     CURRENCIES = CURRENCIES;
     selectedCurrency: any = myGlobals.config.standardCurrency;
@@ -163,6 +166,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 private translateService: TranslateService,
                 private cookieService: CookieService,
                 private appComponent: AppComponent,
+                private modalService: NgbModal,
                 public route: ActivatedRoute,
                 private translate: TranslateService,
                 public router: Router) {
@@ -269,11 +273,12 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 this.pageRef = null;
             }
             this.searchContext = !!searchContext;
+            this.rows = rows;
             if (q && sTop) {
                 if (sTop == 'prod') {
-                    this.getCall(q, fq, p, rows, sort, cat, catID, sIdx, sTop);
+                    this.getCall(q, fq, p, sort, cat, catID, sIdx, sTop);
                 } else if (sTop == 'comp') {
-                    this.getCompCall(q, fq, p, rows, sort, sTop);
+                    this.getCompCall(q, fq, p, sort, sTop);
                 }
             } else if (sTop) {
                 this.callback = false;
@@ -282,7 +287,6 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 this.objToSubmit.q = '*';
                 this.facetQuery = fq;
                 this.page = p;
-                this.rows = rows;
                 this.sort = sort;
                 this.objToSubmit = copy(this.model);
                 this.page = 1;
@@ -294,15 +298,15 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 this.objToSubmit.q = '*';
                 this.facetQuery = fq;
                 this.page = p;
-                this.rows = rows;
                 this.sort = sort;
             }
-        });
 
-        // populate shoppingCartCallStatuses
-        for (let i = 0; i < this.rows; i++) {
-            this.shoppingCartCallStatuses.push(new CallStatus());
-        }
+            // populate shoppingCartCallStatuses
+            this.shoppingCartCallStatuses = [];
+            for (let i = 0; i < this.rows; i++) {
+                this.shoppingCartCallStatuses.push(new CallStatus());
+            }
+        });
 
         this.isLoggedIn = !!this.cookieService.get('user_id');
     }
@@ -580,8 +584,8 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     private sortCatLevels() {
         for (let i = 0; i < this.cat_levels.length; i++) {
             this.cat_levels[i].sort(function (a, b) {
-                const a_c: string = a.name;
-                const b_c: string = b.name;
+                const a_c: string = a.preferredName;
+                const b_c: string = b.preferredName;
                 return a_c.localeCompare(b_c);
             });
         }
@@ -656,7 +660,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         }
     }
 
-    private getCall(q: string, fq: any, p: number, rows: number, sort: string, cat: string, catID: string, sIdx: string, sTop: string) {
+    private getCall(q: string, fq: any, p: number, sort: string, cat: string, catID: string, sIdx: string, sTop: string) {
         this.cat_loading = true;
         if (q == '*') {
             this.model.q = '';
@@ -666,10 +670,9 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         this.objToSubmit.q = q;
         this.facetQuery = fq;
         this.page = p;
-        this.rows = rows;
         this.sort = sort;
         if (this.model.q == '' && this.sort == 'score desc') {
-            sort = '{LANG}_label asc';
+            sort = '{LANG}_lowercaseLabel asc';
         }
         this.searchIndex = sIdx;
         this.searchTopic = sTop;
@@ -678,7 +681,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             .then(fields => {
                 let fieldLabels: string[] = this.getFieldNames(fields);
                 let idxFields: string[] = this.getIdxFields(fields);
-                this.simpleSearchService.get(q, Object.keys(fieldLabels), fq, p, rows, sort, cat, catID, this.searchIndex)
+                this.simpleSearchService.get(q, Object.keys(fieldLabels), fq, p, this.rows, sort, cat, catID, this.searchIndex)
                     .then(res => {
                         if (res.result.length == 0) {
                             this.cat_loading = false;
@@ -760,7 +763,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             });
     }
 
-    private getCompCall(q: string, fq: any, p: number, rows: number, sort: string, sTop: string) {
+    private getCompCall(q: string, fq: any, p: number, sort: string, sTop: string) {
         this.cat_loading = true;
         if (q == '*') {
             this.model.q = '';
@@ -770,17 +773,16 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         this.objToSubmit.q = q;
         this.facetQuery = fq;
         this.page = p;
-        this.rows = rows;
         this.sort = sort;
         if (this.model.q == '' && this.sort == 'score desc') {
-            sort = 'legalName asc';
+            sort = 'lowercaseLegalName asc';
         }
         this.searchTopic = sTop;
         this.searchCallStatus.submit();
         this.simpleSearchService.getCompFields()
             .then(res => {
                 let fieldLabels: string[] = this.getFieldNames(res);
-                this.simpleSearchService.getComp(q, Object.keys(fieldLabels), fq, p, rows, sort, this.searchIndex, this.pageRef)
+                this.simpleSearchService.getComp(q, Object.keys(fieldLabels), fq, p, this.rows, sort, this.searchIndex, this.pageRef)
                     .then(res => {
                         if (res.result.length == 0) {
                             this.cat_loading = false;
@@ -2007,5 +2009,10 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 }
             }
         });
+    }
+
+    showProductSearchTT(content) {
+        this.tooltipHTML = this.translate.instant('Search Tooltip');
+        this.modalService.open(content);
     }
 }

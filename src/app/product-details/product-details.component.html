@@ -70,10 +70,10 @@
                     <span [innerHTML]="'Delivery Period' | translate"></span>
                 </label>
                 <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
-                    {{ productWrapper.getDeliveryPeriod() }}
+                    {{ productWrapper.getDeliveryPeriod() | quantityTranslatePipe }}
                 </span>
                 <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
-                    {{frameContractQuotationWrapper.deliveryPeriodString}}
+                    {{frameContractQuotationWrapper.deliveryPeriod | quantityTranslatePipe}}
                 </span>
             </div>
 
@@ -83,10 +83,10 @@
                     <span [innerHTML]="'Warranty' | translate"></span>
                 </label>
                 <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
-                    {{ productWrapper.getWarrantyPeriod() }}
+                    {{ productWrapper.getWarrantyPeriod() | quantityTranslatePipe }}
                 </span>
                 <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
-                    {{ frameContractQuotationWrapper.warrantyString}}
+                    {{ frameContractQuotationWrapper.warranty | quantityTranslatePipe}}
                 </span>
             </div>
 
@@ -131,10 +131,10 @@
                 <!-- price values can only be seen if the user is logged in -->
                 <ng-container *ngIf="isLoggedIn">
                     <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
-                        {{ getPricePerItem() }}
+                        {{ getPriceAmountUI() | amountUiTranslatePipe}}
                     </span>
                     <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
-                        {{ frameContractQuotationWrapper.priceWrapper.pricePerItemString}}
+                        {{ frameContractQuotationWrapper.priceWrapper.priceAmountUI | amountUiTranslatePipe}}
                     </span>
                 </ng-container>
                 <span *ngIf="!isLoggedIn" class="order-value">
@@ -150,7 +150,7 @@
                 </label>
                 <span class="order-qty-input">
                     <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [formControl]="quantityValueFormControl" [ngModel]="orderQuantity" (ngModelChange)="onOrderQuantityChange($event)" class="form-control form-control-sm w-75 px-1" [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()" [step]="priceWrapper.itemPrice.price.baseQuantity.value || 1" [ngbTooltip]="getValidationErrorMessage(quantityValueFormControl)" [placement]="'auto'" title="" />
-                    <span *ngIf="getQuantityUnit() !== ''" class="ml-2">{{ getQuantityUnit() }}</span>
+                    <span *ngIf="getQuantityUnit() !== ''" class="ml-2">{{ getQuantityUnit() | translate }}</span>
                 </span>
             </div>
             <div class="inline-order-group">
@@ -199,15 +199,15 @@
                     </div>
                 </ng-container>
                 <ng-container *ngIf="getPricePerItem() === 'On demand'">
-                <div class="inline-order-group">
-                    <label class="order-label order-price">
-                        <span [innerHTML]="'Total Price:' | translate"></span>
-                    </label>
-                    <span class="order-price-value">
-                        <span [innerHTML]="'on demand' | translate"></span>
-                    </span>
-                </div>
-            </ng-container>
+                    <div class="inline-order-group">
+                        <label class="order-label order-price">
+                            <span [innerHTML]="'Total Price:' | translate"></span>
+                        </label>
+                        <span class="order-price-value">
+                            <span [innerHTML]="'on demand' | translate"></span>
+                        </span>
+                    </div>
+                </ng-container>
             </ng-container>
 
             <!-- Action Button -->

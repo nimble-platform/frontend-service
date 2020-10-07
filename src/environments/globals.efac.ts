@@ -349,7 +349,7 @@ export const config = {
             },
             "Fitting": {
                 "en": "Fitting",
-                "es": "Adecuado"
+                "es": "Herrajes"
             },
             "Foam": {
                 "en": "Foam",
@@ -357,7 +357,7 @@ export const config = {
             },
             "Glass": {
                 "en": "Glass",
-                "es": "Vaso"
+                "es": "Cristal"
             },
             "Machinery": {
                 "en": "Machinery",
@@ -504,7 +504,7 @@ export const product_filter_mappings = {
     "origin": "Vendor Origin"
 };
 export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "catalogueId", "doctype", "manufacturerId", "manufacturerItemId", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType", "allLabels"];
-export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
+export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_lowercaseLabel", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
 export const product_nonfilter_data_type = []
 export const product_configurable = [];
 export const product_default = {};

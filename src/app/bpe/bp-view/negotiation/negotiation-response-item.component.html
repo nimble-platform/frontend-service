@@ -39,17 +39,17 @@
             <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Warranty' | translate"></span>:</strong></div>
             <ng-container [ngSwitch]="primaryTermsSource">
                 <div *ngSwitchCase="'product_defaults'" class="col-3">
-                    <label>{{ isCatalogueLineDeleted ? "Not available" : wrapper.lineWarrantyString }}</label>
+                    <label>{{ isCatalogueLineDeleted ? ("Not available"|translate) : (wrapper.lineWarranty | quantityTranslatePipe) }}</label>
                 </div>
                 <div *ngSwitchCase="'frame_contract'" class="col-3">
-                    <label>{{ wrapper.frameContractQuotationWrapper.warrantyString}}</label>
+                    <label>{{ wrapper.frameContractQuotationWrapper.warranty | quantityTranslatePipe}}</label>
                 </div>
-                <div *ngSwitchCase="'last_offer'" class="col-3"><label>{{ wrapper.lastOfferQuotationWrapper.warrantyString}}</label>
+                <div *ngSwitchCase="'last_offer'" class="col-3"><label>{{ wrapper.lastOfferQuotationWrapper.warranty | quantityTranslatePipe}}</label>
                 </div>
             </ng-container>
             <div class="col-3">
                 <label>
-                    {{ wrapper.rfqWarrantyString }}
+                    {{ wrapper.rfqWarranty | quantityTranslatePipe }}
                 </label>
             </div>
             <div class="col-3">
@@ -178,13 +178,13 @@
             <ng-container [ngSwitch]="primaryTermsSource">
                 <div *ngSwitchCase="'product_defaults'" class="col-3"></div>
                 <div *ngSwitchCase="'frame_contract'" class="col-3">
-                    {{ wrapper.frameContractQuotationWrapper.orderedQuantity.value }} {{wrapper.frameContractQuotationWrapper.orderedQuantity.unitCode}}
+                    {{ wrapper.frameContractQuotationWrapper.orderedQuantity.value }} {{wrapper.frameContractQuotationWrapper.orderedQuantity.unitCode | translate}}
                 </div>
                 <div *ngSwitchCase="'last_offer'" class="col-3">
-                    {{ wrapper.lastOfferQuotationWrapper.orderedQuantity.value }} {{wrapper.lastOfferQuotationWrapper.orderedQuantity.unitCode}}
+                    {{ wrapper.lastOfferQuotationWrapper.orderedQuantity.value }} {{wrapper.lastOfferQuotationWrapper.orderedQuantity.unitCode | translate}}
                 </div>
             </ng-container>
-            <div class="col-3">{{rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value}} {{rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.unitCode}}</div>
+            <div class="col-3">{{rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value}} {{rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.unitCode | translate}}</div>
             <div class="col-3" *ngIf="isSellerTermsVisible()">
                 <span class="order-qty-input">
                     <quantity-input [disableQuantityUnit]="true"
@@ -203,22 +203,22 @@
             <!-- Original terms -->
             <ng-container [ngSwitch]="primaryTermsSource">
                 <div *ngSwitchCase="'product_defaults'" class="col-3">
-                    <label>{{isCatalogueLineDeleted ? "Not available" : wrapper.lineDiscountPriceWrapper.totalPriceString }}</label>
-                    <small *ngIf="!isCatalogueLineDeleted">( {{ wrapper.lineDiscountPriceWrapper.discountedPricePerItemString }} )</small>
+                    <label>{{isCatalogueLineDeleted ? "Not available" : wrapper.lineDiscountPriceWrapper.totalPriceString | translate}}</label>
+                    <small *ngIf="!isCatalogueLineDeleted">( {{ wrapper.lineDiscountPriceWrapper.discountedPriceAmountUI | amountUiTranslatePipe }} )</small>
                 </div>
                 <div *ngSwitchCase="'frame_contract'" class="col-3">
-                    <label>{{ wrapper.frameContractQuotationWrapper.priceWrapper.totalPriceString }}</label>
-                    <small>( {{ wrapper.frameContractQuotationWrapper.priceWrapper.pricePerItemString }} )</small>
+                    <label>{{ wrapper.frameContractQuotationWrapper.priceWrapper.totalPriceString | translate}}</label>
+                    <small>( {{ wrapper.frameContractQuotationWrapper.priceWrapper.priceAmountUI | amountUiTranslatePipe }} )</small>
                 </div>
                 <div *ngSwitchCase="'last_offer'" class="col-3">
-                    <label>{{ wrapper.lastOfferQuotationWrapper.priceWrapper.totalPriceString }}</label>
-                    <small>( {{ wrapper.lastOfferQuotationWrapper.priceWrapper.pricePerItemString }} )</small>
+                    <label>{{ wrapper.lastOfferQuotationWrapper.priceWrapper.totalPriceString  | translate}}</label>
+                    <small>( {{ wrapper.lastOfferQuotationWrapper.priceWrapper.priceAmountUI | amountUiTranslatePipe }} )</small>
                 </div>
             </ng-container>
             <!-- Customer's request -->
             <div class="col-3">
-                <label>{{ wrapper.rfqTotalPriceString }}</label>
-                <small>( {{ wrapper.rfqPricePerItemString}} )</small>
+                <label>{{ wrapper.rfqTotalPriceString | translate}}</label>
+                <small>( {{ wrapper.rfqPriceAmountUI | amountUiTranslatePipe}} )</small>
             </div>
             <!-- Seller's response -->
             <!--<div class="col-3" [ngClass]="wrapper.quotationDiscountPriceWrapper.appliedDiscounts.length > 0 ? 'd-flex' : null">-->
@@ -239,12 +239,12 @@
                     </span>
                 </ng-container>
                 <ng-container *ngIf="getPresentationMode() == 'view' && isSellerTermsVisible()">
-                    {{ wrapper.newQuotationWrapper.priceWrapper.totalPriceString }}
+                    {{ wrapper.newQuotationWrapper.priceWrapper.totalPriceString | translate}}
                     <span *ngIf="isDiscountIconVisibleInCustomerRequestColumn()" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" [title]="'Applied Discounts/Charges'|translate" style="cursor: pointer">
                         <i class="fa fa-search" aria-hidden="true"></i>
                     </span>
                     <br />
-                    <small>( {{ wrapper.newQuotationWrapper.priceWrapper.pricePerItemString}} )</small>
+                    <small>( {{ wrapper.newQuotationWrapper.priceWrapper.priceAmountUI | amountUiTranslatePipe}} )</small>
                 </ng-container>
                 <!--{{ wrapper.newQuotationWrapper.priceWrapper.totalPriceString }}<br/>-->
                 <!--<small>( {{ wrapper.newQuotationWrapper.priceWrapper.pricePerItemString}} )</small>-->
@@ -278,18 +278,18 @@
             <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Gross Total' | translate"></span>:</strong></div>
             <ng-container [ngSwitch]="primaryTermsSource">
                 <div *ngSwitchCase="'product_defaults'" class="col-3">
-                    {{ isCatalogueLineDeleted ? "Not available" : wrapper.lineDiscountPriceWrapper.grossTotalString }}
+                    {{ isCatalogueLineDeleted ? ("Not available"|translate) : (wrapper.lineDiscountPriceWrapper.grossTotalString | translate) }}
                 </div>
                 <div *ngSwitchCase="'frame_contract'" class="col-3"></div>
                 <div *ngSwitchCase="'last_offer'" class="col-3">
-                    {{ wrapper.lastOfferQuotationWrapper.priceWrapper.grossTotalString }}
+                    {{ wrapper.lastOfferQuotationWrapper.priceWrapper.grossTotalString | translate }}
                 </div>
             </ng-container>
             <div class="col-3">
-                {{ wrapper.rfqGrossTotalString }}
+                {{ wrapper.rfqGrossTotalString | translate}}
             </div>
             <div class="col-3">
-                {{ wrapper.quotationDiscountPriceWrapper.grossTotalString}}
+                {{ wrapper.quotationDiscountPriceWrapper.grossTotalString | translate}}
             </div>
         </div>
     </div>

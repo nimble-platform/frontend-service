@@ -14,16 +14,17 @@
    limitations under the License.
  */
 
-import { Price } from "../catalogue/model/publish/price";
-import { Quantity } from "../catalogue/model/publish/quantity";
-import { copy, currencyToString, roundToTwoDecimals, roundToTwoDecimalsNumber } from "./utils";
-import { ItemPriceWrapper } from "./item-price-wrapper";
-import { PriceOption } from '../catalogue/model/publish/price-option';
-import { PRICE_OPTIONS } from '../catalogue/model/constants';
-import { ItemProperty } from '../catalogue/model/publish/item-property';
-import { Address } from '../catalogue/model/publish/address';
-import { Text } from '../catalogue/model/publish/text';
-import { Country } from '../catalogue/model/publish/country';
+import {Price} from '../catalogue/model/publish/price';
+import {Quantity} from '../catalogue/model/publish/quantity';
+import {copy, currencyToString, roundToTwoDecimals, roundToTwoDecimalsNumber} from './utils';
+import {ItemPriceWrapper} from './item-price-wrapper';
+import {PriceOption} from '../catalogue/model/publish/price-option';
+import {PRICE_OPTIONS} from '../catalogue/model/constants';
+import {ItemProperty} from '../catalogue/model/publish/item-property';
+import {Address} from '../catalogue/model/publish/address';
+import {Text} from '../catalogue/model/publish/text';
+import {Country} from '../catalogue/model/publish/country';
+import {AmountUI} from '../catalogue/model/ui/amount-ui';
 
 /**
  * Wrapper around a price and a quantity, contains convenience methods to get the total price,
@@ -38,16 +39,16 @@ export class DiscountPriceWrapper {
     appliedDiscounts: PriceOption[] = [];
 
     constructor(public originalCatalogueLinePrice: Price, // immutable initial price that to be used as the starting price while calculating the discount
-        public price: Price, // dynamically changing price upon the updates on the price
-        public vatPercentage: number,
-        public orderedQuantity: Quantity = new Quantity(1, price.baseQuantity.unitCode), // ordered quantity
-        public priceOptions: PriceOption[] = [],
-        public additionalItemProperties: ItemProperty[] = [],
-        public incoterm: string = null,
-        public paymentMeans: string = null,
-        public deliveryPeriod: Quantity = null,
-        public deliveryLocation: Address = null,
-        public hiddenPrice:boolean = false
+                public price: Price, // dynamically changing price upon the updates on the price
+                public vatPercentage: number,
+                public orderedQuantity: Quantity = new Quantity(1, price.baseQuantity.unitCode), // ordered quantity
+                public priceOptions: PriceOption[] = [],
+                public additionalItemProperties: ItemProperty[] = [],
+                public incoterm: string = null,
+                public paymentMeans: string = null,
+                public deliveryPeriod: Quantity = null,
+                public deliveryLocation: Address = null,
+                public hiddenPrice: boolean = false
     ) {
         this.immutableOriginalCatalogueLinePrice = copy(originalCatalogueLinePrice);
         this.itemPrice = new ItemPriceWrapper(price, hiddenPrice);
@@ -71,11 +72,25 @@ export class DiscountPriceWrapper {
         return roundToTwoDecimalsNumber(this.itemPrice.pricePerItem);
     }
 
+    get priceAmountUI(): AmountUI {
+        let amountUI = new AmountUI();
+        const qty = this.orderedQuantity;
+
+        if (!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
+            return amountUI;
+        }
+
+        amountUI.value = roundToTwoDecimals(this.pricePerItem);
+        amountUI.currencyID = currencyToString(this.price.priceAmount.currencyID);
+        amountUI.perUnit = qty.unitCode;
+        return amountUI;
+    }
+
     get pricePerItemString(): string {
         const qty = this.orderedQuantity;
 
         if (!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
-            return "On demand";
+            return 'On demand';
         }
 
         return `${roundToTwoDecimals(this.pricePerItem)} ${currencyToString(this.price.priceAmount.currencyID)} per ${qty.unitCode}`;
@@ -90,10 +105,23 @@ export class DiscountPriceWrapper {
         return roundToTwoDecimalsNumber(discountedTotalPrice / this.orderedQuantity.value);
     }
 
+    get discountedPriceAmountUI(): AmountUI {
+        let amountUI = new AmountUI();
+        const qty = this.orderedQuantity;
+        if (!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
+            return amountUI;
+        }
+
+        amountUI.value = roundToTwoDecimals(this.discountedPricePerItem);
+        amountUI.currencyID = currencyToString(this.price.priceAmount.currencyID);
+        amountUI.perUnit = qty.unitCode;
+        return amountUI;
+    }
+
     get discountedPricePerItemString(): string {
         const qty = this.orderedQuantity;
         if (!this.itemPrice.hasPrice() || !this.isOrderedQuantityValid()) {
-            return "On demand";
+            return 'On demand';
         }
 
         return `${roundToTwoDecimals(this.discountedPricePerItem)} ${currencyToString(this.price.priceAmount.currencyID)} per ${qty.unitCode}`;
@@ -114,7 +142,7 @@ export class DiscountPriceWrapper {
 
     get totalPriceString(): string {
         if (!this.itemPrice.hasPrice()) {
-            return "On demand";
+            return 'On demand';
         }
         return `${this.totalPrice} ${this.currency}`;
     }
@@ -134,7 +162,7 @@ export class DiscountPriceWrapper {
     get grossTotalString(): string {
         let grossTotal = this.grossTotal;
         if (grossTotal == 0) {
-            return "On demand";
+            return 'On demand';
         }
         return `${roundToTwoDecimals(grossTotal)} ${this.currency}`;
     }
@@ -244,19 +272,18 @@ export class DiscountPriceWrapper {
                         this.appliedDiscounts.push(priceOption);
                     }
                 }
-            }
-            else if (priceOption.typeID == PRICE_OPTIONS.DELIVERY_LOCATION.typeID && this.deliveryLocation) {
+            } else if (priceOption.typeID == PRICE_OPTIONS.DELIVERY_LOCATION.typeID && this.deliveryLocation) {
                 // check whether addresses are the same or not
-                let checkStreetName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].streetName != "";
-                let checkBuildingNumber = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber != "";
-                let checkPostalZone = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != "";
-                let checkCityName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName != "";
-                let checkRegion = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].region != "";
+                let checkStreetName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].streetName != '';
+                let checkBuildingNumber = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].buildingNumber != '';
+                let checkPostalZone = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].postalZone != '';
+                let checkCityName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName != '';
+                let checkRegion = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].region != '';
                 let country: Country = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country;
-                let checkCountryName = country && country.name.value && country.name.value != "";
+                let checkCountryName = country && country.name.value && country.name.value != '';
 
                 // if the address is not specified for this price option, skip it
-                if(checkStreetName || checkBuildingNumber || checkPostalZone || checkCityName || checkRegion || checkCountryName){
+                if (checkStreetName || checkBuildingNumber || checkPostalZone || checkCityName || checkRegion || checkCountryName) {
                     if (checkStreetName && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].streetName.toLocaleLowerCase() != this.deliveryLocation.streetName.toLocaleLowerCase()) {
                         continue;
                     }
@@ -277,9 +304,9 @@ export class DiscountPriceWrapper {
                     }
                     // the delivery location satisfies all conditions
                     // check the number of address fields available in this price option
-                    let numberOfAddressFieldsInPriceOption = [checkStreetName,checkBuildingNumber,checkPostalZone,checkCityName,checkRegion,checkCountryName].filter(value => value).length;
+                    let numberOfAddressFieldsInPriceOption = [checkStreetName, checkBuildingNumber, checkPostalZone, checkCityName, checkRegion, checkCountryName].filter(value => value).length;
                     // this price option has more address field,so we need to use it for delivery location
-                    if(numberOfAddressFieldsInPriceOption > numberOfAddressFieldsSatisfiedByPriceOptionForDeliveryLocation){
+                    if (numberOfAddressFieldsInPriceOption > numberOfAddressFieldsSatisfiedByPriceOptionForDeliveryLocation) {
                         numberOfAddressFieldsSatisfiedByPriceOptionForDeliveryLocation = numberOfAddressFieldsInPriceOption;
                         priceOptionForDeliveryLocation = priceOption;
                     }
@@ -309,7 +336,7 @@ export class DiscountPriceWrapper {
             deliveryPeriodPriceOptionForCharge.discount = minimumDeliveryPeriodCharge;
             this.appliedDiscounts.push(deliveryPeriodPriceOptionForCharge);
         }
-        if(priceOptionForDeliveryLocation){
+        if (priceOptionForDeliveryLocation) {
             priceOptionForDeliveryLocation.discount = this.calculateDiscountAmount(priceOptionForDeliveryLocation, totalPrice);
             totalDiscount += priceOptionForDeliveryLocation.discount;
             // add this discount to appliedDiscounts list
@@ -325,7 +352,7 @@ export class DiscountPriceWrapper {
         // total price
         if (priceOption.itemLocationQuantity.allowanceCharge[0].amount && priceOption.itemLocationQuantity.allowanceCharge[0].amount.value) {
             // unit is %
-            if (priceOption.itemLocationQuantity.allowanceCharge[0].amount.currencyID == "%") {
+            if (priceOption.itemLocationQuantity.allowanceCharge[0].amount.currencyID == '%') {
                 discount += totalPrice * priceOption.itemLocationQuantity.allowanceCharge[0].amount.value / 100.0;
             }
             // unit is not %
