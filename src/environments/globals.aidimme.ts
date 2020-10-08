@@ -149,8 +149,8 @@ export const config = {
         "": {},
         "Logistics Provider": {
             "General": {
-                "en": "General",
-                "es": "General"
+                "en": "Transportation and Logistics",
+                "es": "Transporte y Logística"
             }
         },
         "Manufacturer": {
@@ -175,8 +175,8 @@ export const config = {
                 "es": "Contrato"
             },
             "Doors / Windows": {
-                "en": "Doors / Windows",
-                "es": "Puertas / Ventanas"
+                "en": "Doors and Windows",
+                "es": "Puertas y Ventanas"
             },
             "Furniture for Retail": {
                 "en": "Furniture for Retail",
@@ -229,12 +229,16 @@ export const config = {
             "Wooden Packaging": {
                 "en": "Wooden Packaging",
                 "es": "Embalaje de madera"
+            },
+            "Wooden Structures": {
+                "en": "Wooden Structures",
+                "es": "Estructuras de madera"
             }
         },
         "Retailer": {
             "General": {
-                "en": "General",
-                "es": "General"
+                "en": "Retail and Distribution",
+                "es": "Retail y Distribución"
             }
         },
         "Service Provider": {
@@ -256,7 +260,7 @@ export const config = {
             },
             "Design / Decoration": {
                 "en": "Design / Decoration",
-                "es": "Diseño / Decoración"
+                "es": "Diseño / Interiorismo"
             },
             "Distributor": {
                 "en": "Distributor",
@@ -298,6 +302,10 @@ export const config = {
                 "en": "Sales Agent",
                 "es": "Agente de ventas"
             },
+            "Software": {
+                "en": "Software",
+                "es": "Software"
+            },
             "Training": {
                 "en": "Training",
                 "es": "Formación"
@@ -308,6 +316,10 @@ export const config = {
             }
         },
         "Supplier": {
+            "Abrasives": {
+                "en": "Abrasives",
+                "es": "Lijas y Abrasivos"
+            },
             "Adhesives": {
                 "en": "Adhesives",
                 "es": "Adhesivos"
@@ -331,6 +343,10 @@ export const config = {
             "Decorated Paper": {
                 "en": "Decorated Paper",
                 "es": "Papel decorado"
+            },
+            "Electronic Components": {
+                "en": "Electronic Components",
+                "es": "Componentes Electrónicos"
             },
             "Fitting": {
                 "en": "Fitting",
