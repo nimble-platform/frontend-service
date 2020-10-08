@@ -201,9 +201,21 @@
 }
 
 .content-div {
-    padding-bottom: 1rem;
-    padding-top: 1rem;
+    padding: 1rem 2rem;
     background-color: white;
+}
+
+/**
+ * Demand section
+ */
+
+.demand-section {
+    background-color: var(--light-box-color);
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+    width: 60%;
+    margin-right: auto;
+    margin-left: auto;
 }
 
 /**
