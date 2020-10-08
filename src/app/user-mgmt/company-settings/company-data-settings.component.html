@@ -120,7 +120,7 @@
             <strong><span [innerHTML]="'Business Type:' | translate"></span></strong>
         </label>
         <div class="col-10">
-            <select class="form-control" [formControl]="dataForm.controls['businessType']" (change)="setAvailableActivitySectorKeys();dataForm.controls['industrySectors'].setValue('')" required>
+            <select class="form-control" [formControl]="dataForm.controls['businessType']" (change)="setAvailableActivitySectorKeys();" required>
                 <option *ngFor="let type of config.supportedBusinessTypes" value="{{type}}">{{type}}</option>
             </select>
         </div>
@@ -133,9 +133,9 @@
             <span *ngIf="availableActivitySectorKeys.length>0 && !forceActText" class="tooltip-icon" (click)="showSectorTT(tooltip)"><i class="fa fa-question-circle"></i></span>
         </label>
         <div class="col-10">
-            <input *ngIf="dataForm.getRawValue()['businessType'] == ''" type="text" class="form-control" [formControl]="dataForm.controls['industrySectors']" placeholder="Select Business Type" required readonly maxlength="255">
+            <input *ngIf="dataForm.getRawValue()['businessType'] == ''" type="text" class="form-control" placeholder="Select Business Type" readonly maxlength="255">
             <ng-container *ngIf="availableActivitySectorKeys.length>0 && !forceActText">
-                <select class="form-control" [(ngModel)]="industrySectorsArr[0].text" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" multiple required [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('pm')">
+                <select class="form-control" [(ngModel)]="industrySectorsArr[0].text" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" multiple required [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('comp-data')">
                     <option *ngFor="let sector of availableActivitySectorKeys" [value]="sector">{{getMultilingualPredefinedIndustrySector(sector)}}</option>
                 </select>
             </ng-container>
@@ -143,22 +143,22 @@
                 <ng-container *ngFor="let industrySectorsEntries of industrySectorsArr; let i = index; trackBy:trackFn">
                     <div class="row mb-1">
                         <div class="col-8">
-                            <input type="text" class="form-control" [(ngModel)]="industrySectorsArr[i].text" [ngModelOptions]="{standalone: true}" (input)="flagChanged()" maxlength="255" [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('pm')">
+                            <input type="text" class="form-control" [(ngModel)]="industrySectorsArr[i].text" [ngModelOptions]="{standalone: true}" (input)="flagChanged()" maxlength="255" [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('comp-data')">
                         </div>
                         <div class="col-2">
-                            <select class="form-control" [(ngModel)]="industrySectorsArr[i].lang" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" required [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('pm')">
+                            <select class="form-control" [(ngModel)]="industrySectorsArr[i].lang" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" required [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('comp-data')">
                                 <option *ngFor='let language of languages' [value]="language">{{language}}</option>
                             </select>
                         </div>
                         <div class="col-2">
-                            <button class="btn btn-danger w-100" type="button" (click)="removeIndustrySectors(i)" [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('pm')"><span [innerHTML]="'Delete' | translate"></span></button>
+                            <button class="btn btn-danger w-100" type="button" (click)="removeIndustrySectors(i)" [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('comp-data')"><span [innerHTML]="'Delete' | translate"></span></button>
                         </div>
                     </div>
                 </ng-container>
                 <div class="row mt-2 mb-1">
                     <div class="col-10"></div>
                     <div class="col-2">
-                        <button class="btn btn-secondary w-100" type="button" (click)="addIndustrySectors()" [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('pm')">
+                        <button class="btn btn-secondary w-100" type="button" (click)="addIndustrySectors()" [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('comp-data')">
                             <span [innerHTML]="'Add' | translate"></span>
                         </button>
                     </div>
@@ -216,7 +216,7 @@
     <h3><span [innerHTML]="'Address' | translate"></span></h3>
 
     <!-- Address -->
-    <address-form [group]="dataForm.controls.address" [disabledFlag]="!appComponent.checkRoles('pm')"></address-form>
+    <address-form [group]="dataForm.controls.address" [disabledFlag]="!appComponent.checkRoles('comp-data')"></address-form>
 
     <!-- Submit -->
     <div class="row actions-row">

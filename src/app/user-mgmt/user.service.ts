@@ -37,6 +37,7 @@ import { UnitService } from "../common/unit-service";
 import { deliveryPeriodUnitListId, warrantyPeriodUnitListId } from "../common/constants";
 import { Certificate } from "../catalogue/model/publish/certificate";
 import { copy } from '../common/utils';
+import {PeriodRange} from './model/period-range';
 
 @Injectable()
 export class UserService {
@@ -54,6 +55,9 @@ export class UserService {
     // key of the outer map is federation id
     // key of the inner map is user id
     private mapOfUsers: Map<string, Map<string, Person>> = new Map();
+
+
+    companyNegotiationSettings: Map<string, CompanyNegotiationSettings> = new Map<string, CompanyNegotiationSettings>();
 
     constructor(
         private unitService: UnitService,
@@ -496,6 +500,10 @@ export class UserService {
     // }
 
     getCompanyNegotiationSettingsForParty(partyId: string, delegateId: string): Promise<CompanyNegotiationSettings> {
+        if (this.companyNegotiationSettings.has(partyId)) {
+            return Promise.resolve(this.companyNegotiationSettings.get(partyId));
+        }
+
         let url = `${this.url}/company-settings/${partyId}/negotiation/`;
         if (this.delegated) {
             url = `${this.delegate_url}/company-settings/${partyId}/negotiation/?delegateId=${delegateId}`;
@@ -506,21 +514,26 @@ export class UserService {
             .toPromise()
             .then(res => {
                 return this.sanitizeNegotiationSettings(res.json());
+            }).then(settings => {
+                this.companyNegotiationSettings.set(partyId, settings);
+                return Promise.resolve(settings);
             })
             .catch(this.handleError);
     }
 
     private async sanitizeNegotiationSettings(settings: CompanyNegotiationSettings): Promise<CompanyNegotiationSettings> {
-        if (settings.deliveryPeriodUnits.length === 0) {
-            settings.deliveryPeriodUnits.push(...await this.unitService.getCachedUnitList(deliveryPeriodUnitListId));
-        }
-        if (settings.deliveryPeriodRanges.length === 0) {
-            settings.deliveryPeriodRanges.push({ start: 24, end: 1344 });
-            settings.deliveryPeriodRanges.push({ start: 1, end: 40 });
-            settings.deliveryPeriodRanges.push({ start: 1, end: 56 });
-            settings.deliveryPeriodRanges.push({ start: 0, end: 8 });
-            settings.deliveryPeriodRanges.push({ start: 1, end: 12 });
-        }
+        let deliveryPeriodUnits = await this.unitService.getCachedUnitList(deliveryPeriodUnitListId);
+        let deliveryPeriodRanges: PeriodRange[] = [];
+        deliveryPeriodUnits.forEach((unit, index) => {
+            let indexInSettings = settings.deliveryPeriodUnits.indexOf(unit);
+            if(indexInSettings == -1){
+                deliveryPeriodRanges.push(this.getDeliveryPeriodRange(index));
+            } else{
+                deliveryPeriodRanges.push(settings.deliveryPeriodRanges[indexInSettings]);
+            }
+        });
+        settings.deliveryPeriodUnits = copy(deliveryPeriodUnits);
+        settings.deliveryPeriodRanges = copy(deliveryPeriodRanges);
         while (settings.deliveryPeriodRanges.length > 5) {
             settings.deliveryPeriodRanges.pop();
         }
@@ -548,13 +561,28 @@ export class UserService {
         return settings;
     }
 
+    private getDeliveryPeriodRange(index:number){
+        switch (index) {
+            case 0:
+                return { start: 24, end: 1344 };
+            case 1:
+                return { start: 1, end: 40 };
+            case 2:
+                return { start: 1, end: 56 };
+            case 3:
+                return { start: 0, end: 8 };
+            case 4:
+                return { start: 1, end: 12 };
+        }
+    }
+
     putCompanyNegotiationSettings(settings: CompanyNegotiationSettings, partyId: string): Promise<void> {
         const url = `${this.url}/company-settings/${partyId}/negotiation`;
         let headers = this.getAuthorizedHeaders();
         return this.http
             .put(url, settings, { headers: headers, withCredentials: true })
             .toPromise()
-            .then(() => { })
+            .then(() => this.companyNegotiationSettings.set(partyId, settings))
             .catch(this.handleError)
     }
 

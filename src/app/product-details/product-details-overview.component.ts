@@ -212,11 +212,13 @@ export class ProductDetailsOverviewComponent implements OnInit {
                     this.productCatalogueNameRetrievalStatus.error('Failed to get product catalogue');
                 })
             // display a message if the product is included in the shopping cart
-            this.shoppingCartDataService.getShoppingCart().then(catalogue => {
-                if (UBLModelUtils.isProductInCart(catalogue, this.catalogueId, this.productId)) {
-                    this.shoppingCartCallStatus.callback(this.translate.instant("Product is added to shopping cart."), false);
-                }
-            })
+            if (this.cookieService.get('user_id')) {
+                this.shoppingCartDataService.getShoppingCart().then(catalogue => {
+                    if (UBLModelUtils.isProductInCart(catalogue, this.catalogueId, this.productId)) {
+                        this.shoppingCartCallStatus.callback(this.translate.instant("Product is added to shopping cart."), false);
+                    }
+                })
+            }
         });
     }
 

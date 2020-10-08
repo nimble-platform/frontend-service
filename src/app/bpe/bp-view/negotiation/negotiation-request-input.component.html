@@ -37,7 +37,7 @@
     </div>
 
     <!-- Quantity -->
-    <div *ngIf="quantity !== undefined" class="col-4 col-quantity-value">
+    <div *ngIf="quantity !== undefined" class="col-4 col-quantity-value" [ngClass]="formControlClass">
         <input type="number" class="form-control form-control-sm" [ngModel]="quantity.value" (ngModelChange)="quantity.value = $event; onQuantityChanged()" [ngClass]="formControlClass" [disabled]="disabled" [step]="step" [formControl]="quantityValueFormControl" [ngbTooltip]="validationService.getValidationErrorMessage(quantityValueFormControl)" [placement]="'auto'" title="">
     </div>
     <div *ngIf="quantity !== undefined && !quantityUnits" class="col-3 col-quantity-unit">

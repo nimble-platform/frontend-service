@@ -7,9 +7,9 @@ export const debug = false;
 
 // Base path variables
 
-export const base_path = "http://nimble-staging.salzburgresearch.at";
-export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
-export const idpURL = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master";
+export const base_path = "http://nimble-staging-neu.salzburgresearch.at";
+export const ub_base = "http://nimble-staging-neu.salzburgresearch.at/search";
+export const idpURL = "http://nimble-staging-neu.salzburgresearch.at:8080/auth/realms/master";
 export const collab_path = "http://nimble.eu-de.containers.appdomain.cloud/collaborations";
 export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client";
 export const frontendURL = base_path + "/frontend/";
@@ -32,7 +32,7 @@ export const agent_mgmt_endpoint = `http://159.69.214.42/agents`;
 export const collaboration_endpoint = `${collab_path}`;
 export const certificate_of_origin_endpoint = `http://161.156.70.125:7695`;
 export const legislation_endpoint = `http://77.230.101.223/nimsys`;
-export const eFactory_indexing_endpoint = "https://efactory-security-portal.salzburgresearch.at/api/index";
+export const eFactory_indexing_endpoint = "https://efpf-security-portal.salzburgresearch.at/api/index";
 
 
 // Explorative Search endpoints
@@ -170,6 +170,7 @@ export const config = {
     "showExplorative": false,
     "showFullName": true,
     "showGoogleTranslateOption": false,
+    "showHomepage": true,
     "showLCPA": false,
     "showPPAP": false,
     "showTrack": false,
@@ -181,8 +182,8 @@ export const config = {
         "": {},
         "Logistics Provider": {
             "General": {
-                "en": "General",
-                "es": "General"
+                "en": "Transportation and Logistics",
+                "es": "Transporte y Logística"
             }
         },
         "Manufacturer": {
@@ -196,35 +197,35 @@ export const config = {
             },
             "Childcare": {
                 "en": "Childcare",
-                "es": "Cuidado de niños"
+                "es": "Mueble Infantil"
             },
             "Closet / Cupboard": {
                 "en": "Closet / Cupboard",
-                "es": "Armario / Armario"
+                "es": "Armarios"
             },
             "Contract": {
-                "en": "Contract",
-                "es": "Contrato"
+                "en": "CONTRACT (Others: institutional, educational, other installations, etc.)",
+                "es": "COLECTIVIDADES (Otros: institucional,educacional, otras instalaciones, etc.)"
             },
             "Doors / Windows": {
-                "en": "Doors / Windows",
-                "es": "Puertas / Ventanas"
+                "en": "Doors and Windows",
+                "es": "Puertas y Ventanas"
             },
             "Furniture for Retail": {
                 "en": "Furniture for Retail",
-                "es": "Muebles para venta minorista"
+                "es": "Muebles para Establecimientos Comerciales"
             },
             "Home": {
                 "en": "Home",
-                "es": "Casa"
+                "es": "Hogar"
             },
             "Hotels, Restaurants & Cafes": {
-                "en": "Hotels, Restaurants & Cafes",
-                "es": "Hoteles, restaurantes y cafeterías"
+                "en": "HORECA (HOTELS,RESTAURANTS & CAFÉS)",
+                "es": "HORECA (HOTELES, RESTAURACIÓN y CAFETERÍAS)"
             },
             "Kids": {
                 "en": "Kids",
-                "es": "Niños"
+                "es": "Mueble Juvenil"
             },
             "Kitchen": {
                 "en": "Kitchen",
@@ -232,7 +233,7 @@ export const config = {
             },
             "Lightings / Lamps": {
                 "en": "Lightings / Lamps",
-                "es": "Iluminaciones / Lámparas"
+                "es": "Iluminación / Lámparas"
             },
             "Mattresses": {
                 "en": "Mattresses",
@@ -244,7 +245,7 @@ export const config = {
             },
             "Outdoor Furniture": {
                 "en": "Outdoor Furniture",
-                "es": "Mueble para exteriores"
+                "es": "Mueble para Exteriores"
             },
             "Panels": {
                 "en": "Panels",
@@ -252,21 +253,25 @@ export const config = {
             },
             "Parquet Floors": {
                 "en": "Parquet Floors",
-                "es": "Suelos de parquet"
+                "es": "Parquet"
             },
             "Upholstered Furniture": {
                 "en": "Upholstered Furniture",
-                "es": "Muebles tapizados"
+                "es": "Mueble Tapizado"
             },
             "Wooden Packaging": {
                 "en": "Wooden Packaging",
-                "es": "Embalaje de madera"
+                "es": "Embalaje de Madera"
+            },
+            "Wooden Structures": {
+                "en": "Wooden Structures",
+                "es": "Estructuras de madera"
             }
         },
         "Retailer": {
             "General": {
-                "en": "General",
-                "es": "General"
+                "en": "Retail and Distribution",
+                "es": "Retail y Distribución"
             }
         },
         "Service Provider": {
@@ -276,7 +281,7 @@ export const config = {
             },
             "Buyer-Designer": {
                 "en": "Buyer-Designer",
-                "es": "Comprador-diseñador"
+                "es": "Prescriptor"
             },
             "Certification": {
                 "en": "Certification",
@@ -284,11 +289,11 @@ export const config = {
             },
             "Consulting": {
                 "en": "Consulting",
-                "es": "Consultante"
+                "es": "Consultoría"
             },
             "Design / Decoration": {
                 "en": "Design / Decoration",
-                "es": "Diseño / Decoración"
+                "es": "Diseño / Interiorismo"
             },
             "Distributor": {
                 "en": "Distributor",
@@ -300,35 +305,39 @@ export const config = {
             },
             "Facility Cleaning": {
                 "en": "Facility Cleaning",
-                "es": "Limpieza de instalaciones"
+                "es": "Limpieza Instalaciones"
             },
             "Facility Maintenance": {
                 "en": "Facility Maintenance",
-                "es": "Mantenimiento de instalaciones"
+                "es": "Mantenimiento Instalaciones"
             },
             "Furniture Installer": {
                 "en": "Furniture Installer",
-                "es": "Instalador de muebles"
+                "es": "Instalador de Muebles"
             },
             "Legal Services": {
                 "en": "Legal Services",
-                "es": "Servicios jurídicos"
+                "es": "Servicios Jurídicos"
             },
             "Outsourcing": {
                 "en": "Outsourcing",
-                "es": "Subcontratación"
+                "es": "Subcontratación de Procesos"
             },
             "Print Services": {
                 "en": "Print Services",
-                "es": "Servicios de impresión"
+                "es": "Servicios de Impresión"
             },
             "Quality Control / Tests": {
                 "en": "Quality Control / Tests",
-                "es": "Control de calidad / Pruebas"
+                "es": "Control de Calidad / Ensayos"
             },
             "Sales Agent": {
                 "en": "Sales Agent",
-                "es": "Agente de ventas"
+                "es": "Agente Comercial"
+            },
+            "Software": {
+                "en": "Software",
+                "es": "Software"
             },
             "Training": {
                 "en": "Training",
@@ -336,13 +345,17 @@ export const config = {
             },
             "Waste Management": {
                 "en": "Waste Management",
-                "es": "Gestión de residuos"
+                "es": "Gestión de Residuos"
             }
         },
         "Supplier": {
+            "Abrasives": {
+                "en": "Abrasives",
+                "es": "Lijas y Abrasivos"
+            },
             "Adhesives": {
                 "en": "Adhesives",
-                "es": "Adhesivos"
+                "es": "Colas y Adhesivos"
             },
             "Board": {
                 "en": "Board",
@@ -350,11 +363,11 @@ export const config = {
             },
             "Ceramic": {
                 "en": "Ceramic",
-                "es": "Cerámico"
+                "es": "Cerámica"
             },
             "Composites": {
                 "en": "Composites",
-                "es": "Composicion"
+                "es": "Materiales Compuestos"
             },
             "Cork": {
                 "en": "Cork",
@@ -362,11 +375,15 @@ export const config = {
             },
             "Decorated Paper": {
                 "en": "Decorated Paper",
-                "es": "Papel decorado"
+                "es": "Papel Decorado"
+            },
+            "Electronic Components": {
+                "en": "Electronic Components",
+                "es": "Componentes Electrónicos"
             },
             "Fitting": {
                 "en": "Fitting",
-                "es": "Adecuado"
+                "es": "Herrajes"
             },
             "Foam": {
                 "en": "Foam",
@@ -374,7 +391,7 @@ export const config = {
             },
             "Glass": {
                 "en": "Glass",
-                "es": "Vaso"
+                "es": "Cristal"
             },
             "Machinery": {
                 "en": "Machinery",
@@ -386,7 +403,7 @@ export const config = {
             },
             "Packaging Materials": {
                 "en": "Packaging Materials",
-                "es": "Materiales de embalaje"
+                "es": "Materiales de Embalaje"
             },
             "Paints & Varnishes": {
                 "en": "Paints & Varnishes",
@@ -398,11 +415,11 @@ export const config = {
             },
             "Plywood": {
                 "en": "Plywood",
-                "es": "Madera contrachapada"
+                "es": "Contrachapado"
             },
             "Straw": {
                 "en": "Straw",
-                "es": "Paja"
+                "es": "Mimbre"
             },
             "Textile": {
                 "en": "Textile",
@@ -501,7 +518,7 @@ export const product_currency = "currency";
 export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
 export const product_filter_prod = ["freeOfCharge", "certificateType", "applicableCountries", "customizable"];
-export const product_filter_comp = [ "manufacturer.brandName", "manufacturer.activitySectors", "manufacturer.origin"];
+export const product_filter_comp = [ "manufacturer.brandName", "manufacturer.origin"];
 export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "{NULL}_certificateType"];
 export const party_filter_main = ["activitySectors", "origin", "certificateType"];
 export const party_filter_trust = ["trustScore", "trustRating", "trustSellerCommunication", "trustFullfillmentOfTerms", "trustDeliveryPackaging", "trustNumberOfTransactions"];
@@ -521,7 +538,7 @@ export const product_filter_mappings = {
     "origin": "Vendor Origin"
 };
 export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "catalogueId", "doctype", "manufacturerId", "manufacturerItemId", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType", "allLabels"];
-export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass","baseQuantity","items_package","_deliveryTime"];
+export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_lowercaseLabel", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass","baseQuantity","items_package","_deliveryTime"];
 export const product_nonfilter_data_type = ["string","double","price"]
 export const product_configurable = [];
 export const product_default = {};

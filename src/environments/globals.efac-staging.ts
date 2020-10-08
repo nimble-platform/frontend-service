@@ -7,12 +7,12 @@ export const debug = false;
 
 // Base path variables
 
-export const base_path = "http://nimble-staging.salzburgresearch.at";
-export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
-export const idpURL = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master";
+export const base_path = "http://nimble-staging-neu.salzburgresearch.at";
+export const ub_base = "http://nimble-staging-neu.salzburgresearch.at/search";
+export const idpURL = "http://nimble-staging-neu.salzburgresearch.at:8080/auth/realms/master";
 export const collab_path = "http://nimble.eu-de.containers.appdomain.cloud/collaborations";
 export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client";
-export const frontendURL = base_path + "/efactory/frontend/";
+export const frontendURL = base_path + "/efpf/frontend/";
 
 
 // Service endpoints
@@ -32,7 +32,7 @@ export const agent_mgmt_endpoint = `http://159.69.214.42/agents`;
 export const collaboration_endpoint = `${collab_path}`;
 export const certificate_of_origin_endpoint = `http://161.156.70.125:7695`;
 export const legislation_endpoint = `http://77.230.101.223/nimsys`;
-export const eFactory_indexing_endpoint = "https://efactory-security-portal.salzburgresearch.at/api/index";
+export const eFactory_indexing_endpoint = "https://efpf-security-portal.salzburgresearch.at/api/index";
 
 // Explorative Search endpoints
 
@@ -147,7 +147,7 @@ export const config = {
         "fallback": "en"
     },
     "loggingEnabled": true,
-    "logoPath": "./assets/logo_efac.png",
+    "logoPath": "./assets/logo_efpf.png",
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": true,
     "networkEnabled": true,
@@ -175,6 +175,7 @@ export const config = {
     "showExplorative": false,
     "showFullName": false,
     "showGoogleTranslateOption": true,
+    "showHomepage": false,
     "showLCPA": false,
     "showPPAP": false,
     "showTrack": false,
@@ -384,7 +385,7 @@ export const config = {
             },
             "Fitting": {
                 "en": "Fitting",
-                "es": "Adecuado"
+                "es": "Herrajes"
             },
             "Foam": {
                 "en": "Foam",
@@ -392,7 +393,7 @@ export const config = {
             },
             "Glass": {
                 "en": "Glass",
-                "es": "Vaso"
+                "es": "Cristal"
             },
             "Machinery": {
                 "en": "Machinery",
@@ -539,7 +540,7 @@ export const product_filter_mappings = {
     "origin": "Vendor Origin"
 };
 export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "catalogueId", "doctype", "manufacturerId", "manufacturerItemId", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType", "allLabels"];
-export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
+export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_lowercaseLabel", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
 export const product_nonfilter_data_type = []
 export const product_configurable = [];
 export const product_default = {};

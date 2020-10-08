@@ -483,7 +483,8 @@ export class AppComponent implements OnInit, AfterViewInit {
                 console.log("Loading route " + link);
             if (!this.cookieService.get("user_id")) {
                 if (link != "/" && link != "/user-mgmt/login" && link != "/user-mgmt/registration" && link != "/analytics/info"
-                    && link != "/analytics/members" && link != "/user-mgmt/forgot" && link != "/user-mgmt/logout") {
+                    && link != "/analytics/members" && link != "/user-mgmt/forgot" && link != "/user-mgmt/logout" && link != "/homepage"
+                    && link !== '/simple-search' && link !== '/product-details') {
                     this.isLoggedIn = false;
                     this.router.navigate(["/user-mgmt/login"], { queryParams: { redirectURL: url } });
                 }
@@ -751,6 +752,10 @@ export class AppComponent implements OnInit, AfterViewInit {
                 break;
             case "view_comp":
                 if (this.companyID && !initial)
+                    this.allowed = true;
+                break;
+            case "comp-data":
+                if (manager || legal)
                     this.allowed = true;
                 break;
             case "comp-settings":

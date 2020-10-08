@@ -38,7 +38,8 @@ export class OptionsInputComponent implements OnInit {
     @Input() labelClass: string = "col-3";
     @Input() labelMainClass: string = "";
     @Input() rowClass: string = "";
-    @Input() valueClass: string; // set based on label
+    @Input() sizeClass: string; // set based on label
+    @Input() selectClass = ''; // class to set for select element
 
     @Input() options: Array<string | Option>;
     /*
@@ -60,8 +61,8 @@ export class OptionsInputComponent implements OnInit {
     }
 
     ngOnInit() {
-        if (!this.valueClass) {
-            this.valueClass = this.label ? "col-9" : "col-12";
+        if (!this.sizeClass) {
+            this.sizeClass = this.label ? "col-9" : "col-12";
         }
         if (this.large == "true")
             this.innerFormClass = "";

@@ -11,6 +11,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
+
+.panel {
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+}
+
 .title-row {
     padding: 0rem 0.3rem 0.3rem 0.3rem;
     border-bottom: 1px solid gray;
@@ -19,6 +26,24 @@
 .content-row {
     padding: 0.3rem;
     background-clip: content-box;
+}
+
+.old-different-term label {
+    background: #b938294f;
+    border-radius: 5px;
+    padding-left: 10px;
+    color: black;
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+}
+
+.col-quantity-value.warning input,
+select.warning,
+.data-monitoring-request.warning {
+    background: #b93829;
+    color: white;
 }
 
 .quantity-input {

@@ -28,11 +28,11 @@ export const debug = false;
 // Base path variables
 
 // Platform base path of backend services
-export const base_path = "http://nimble-staging.salzburgresearch.at";
+export const base_path = "http://nimble-staging-neu.salzburgresearch.at";
 // Base path of explorative search endpoints
-export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
+export const ub_base = "http://nimble-staging-neu.salzburgresearch.at/search";
 // Base path of Keycloak IDP
-export const idpURL = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master";
+export const idpURL = "http://nimble-staging-neu.salzburgresearch.at:8080/auth/realms/master";
 // Base path of collaboration tools endpoints
 export const collab_path = "http://nimble.eu-de.containers.appdomain.cloud/collaborations";
 // Link to Keycloak password reset
@@ -58,7 +58,7 @@ export const agent_mgmt_endpoint = `http://159.69.214.42/agents`;
 export const collaboration_endpoint = `${collab_path}`;
 export const certificate_of_origin_endpoint = `http://161.156.70.125:7695`;
 export const legislation_endpoint = `http://77.230.101.223/nimsys`;
-export const eFactory_indexing_endpoint = "https://efactory-security-portal.salzburgresearch.at/api/index";
+export const eFactory_indexing_endpoint = "https://efpf-security-portal.salzburgresearch.at/api/index";
 
 
 // Explorative Search endpoints
@@ -139,6 +139,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - showExplorative: Boolean flag if the explorative search feature is enabled on the instance
 - showFullName: Boolean flag if the full name of a user is shown in the navbar
 - showGoogleTranslateOption: Boolean flag if google translate is shown in the navbar
+- showHomepage: Boolean flag to show the homepage by default insteaf of the login page
 - showLCPA: Boolean flag if LCPA codes shall be linkable to products
 - showPPAP: Boolean flag if information regarding the PPAP process is enabled on the instance
 - showTrack: Boolean flag if the Track & Trace feature is enabled on the instance
@@ -273,6 +274,7 @@ export const config = {
     "showExplorative": true,
     "showFullName": false,
     "showGoogleTranslateOption": false,
+    "showHomepage": false,
     "showLCPA": true,
     "showPPAP": true,
     "showTrack": true,
@@ -409,7 +411,7 @@ export const product_filter_mappings = {
 // Facets removed from the UI by full name
 export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "catalogueId", "doctype", "manufacturerId", "manufacturerItemId", "allLabels", "sparePart"];
 // Facets removed from the UI by regex
-export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
+export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_lowercaseLabel","_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
 // Facets removed from the UI by data type
 export const product_nonfilter_data_type = []
 // Facets used for configuration

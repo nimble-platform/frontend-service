@@ -16,11 +16,10 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { Text } from '../model/publish/text';
-import { DEFAULT_LANGUAGE } from '../model/constants';
+import {LANGUAGES} from '../model/constants';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { BinaryObject } from '../model/publish/binary-object';
 import { TranslateService } from '@ngx-translate/core';
-import { ChildFormBase } from '../../common/validation/child-form-base';
 import { EmptyFormBase } from '../../common/validation/empty-form-base';
 const BASIC_PRODUCT_DETAILS = 'basic_product_details';
 @Component({
@@ -38,13 +37,16 @@ export class NameDescriptionPanelComponent extends EmptyFormBase implements OnIn
     @Input() catalogueLine;
     @Input() productIdEditable;
 
+    LANGUAGES = LANGUAGES;
+
     ngOnInit() {
         this.initViewFormAndAddToParentForm();
     }
 
     addItemNameDescription() {
-        let newItemName: Text = new Text("", DEFAULT_LANGUAGE());
-        let newItemDescription: Text = new Text("", DEFAULT_LANGUAGE());
+        let availableLanguages = this.getAvailableLanguagesForProductName();
+        let newItemName: Text = new Text("", availableLanguages[0]);
+        let newItemDescription: Text = new Text("", availableLanguages[0]);
         this.catalogueLine.goodsItem.item.name.push(newItemName);
         this.catalogueLine.goodsItem.item.description.push(newItemDescription);
     }
@@ -105,6 +107,14 @@ export class NameDescriptionPanelComponent extends EmptyFormBase implements OnIn
                 }
             }
         }
+    }
+
+    /**
+     * Method to find the language ids which are not used for the product names/descriptions
+     * */
+    getAvailableLanguagesForProductName(){
+        let languageIds = this.catalogueLine.goodsItem.item.name.map(name => name.languageID);
+        return this.LANGUAGES.filter(languageId => languageIds.indexOf(languageId) == -1);
     }
 
     /**

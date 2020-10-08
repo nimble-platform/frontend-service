@@ -92,3 +92,7 @@
 .full {
     color: #1e90ff;
 }
+
+.click-login-badge {
+    cursor: pointer;
+}

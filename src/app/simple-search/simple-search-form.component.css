@@ -81,3 +81,15 @@
     overflow: hidden;
     color: red;
 }
+
+.search-term-input{
+    flex-grow: 1;
+    position: relative
+}
+
+.tooltip-icon {
+    position: absolute;
+    right: 8px;
+    top: 6px;
+    cursor: pointer;
+}

@@ -14,21 +14,26 @@
    limitations under the License.
  */
 
-import { CatalogueLine } from "../catalogue/model/publish/catalogue-line";
-import { Predicate } from "@angular/core";
-import { ItemProperty } from "../catalogue/model/publish/item-property";
-import { PAYMENT_MEANS } from "../catalogue/model/constants";
-import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
+import {CatalogueLine} from '../catalogue/model/publish/catalogue-line';
+import {Predicate} from '@angular/core';
+import {ItemProperty} from '../catalogue/model/publish/item-property';
+import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {
-    sanitizePropertyName, getPropertyKey, periodToString, isCustomProperty, getPropertyValues, isTransportService, selectName,
-    isLogisticsService, copy
+    copy,
+    getPropertyKey,
+    getPropertyValues,
+    isCustomProperty,
+    isLogisticsService,
+    isTransportService,
+    periodToString,
+    sanitizePropertyName,
+    selectName
 } from './utils';
-import { PriceWrapper } from "./price-wrapper";
-import { CompanyNegotiationSettings } from "../user-mgmt/model/company-negotiation-settings";
-import { Quantity } from '../catalogue/model/publish/quantity';
-import { Dimension } from "../catalogue/model/publish/dimension";
-import { MultiValuedDimension } from '../catalogue/model/publish/multi-valued-dimension';
-import { DiscountPriceWrapper } from "./discount-price-wrapper";
+import {CompanyNegotiationSettings} from '../user-mgmt/model/company-negotiation-settings';
+import {Quantity} from '../catalogue/model/publish/quantity';
+import {Dimension} from '../catalogue/model/publish/dimension';
+import {MultiValuedDimension} from '../catalogue/model/publish/multi-valued-dimension';
+import {DiscountPriceWrapper} from './discount-price-wrapper';
 
 /**
  * Wrapper class for Catalogue line.
@@ -39,8 +44,8 @@ export class ProductWrapper {
     private priceWrapper: DiscountPriceWrapper;
 
     constructor(public line: CatalogueLine,
-        public negotiationSettings: CompanyNegotiationSettings,
-        public quantity: Quantity = new Quantity(1, line.requiredItemLocationQuantity.price.baseQuantity.unitCode)) {
+                public negotiationSettings: CompanyNegotiationSettings,
+                public quantity: Quantity = new Quantity(1, line.requiredItemLocationQuantity.price.baseQuantity.unitCode)) {
         this.priceWrapper = new DiscountPriceWrapper(
             line.requiredItemLocationQuantity.price,
             copy(line.requiredItemLocationQuantity.price),
@@ -48,7 +53,7 @@ export class ProductWrapper {
             this.quantity,
             this.line.priceOption,
             [],
-            null,null,null,null,line.priceHidden);
+            null, null, null, null, line.priceHidden);
     }
 
     get goodsItem() {
@@ -78,11 +83,13 @@ export class ProductWrapper {
         const ret = [];
         this.item.dimension.forEach(prop => {
             if (includingNullValues) {
-                if (prop.attributeID)
+                if (prop.attributeID) {
                     ret.push(prop);
+                }
             } else {
-                if (prop.attributeID && prop.measure.value)
+                if (prop.attributeID && prop.measure.value) {
                     ret.push(prop);
+                }
             }
         });
         return ret;
@@ -92,9 +99,10 @@ export class ProductWrapper {
     // if the item has no dimensions, then it creates them using the given list of dimension units.
     getDimensionMultiValue(includeDimensionsWithNullValues: boolean = true, dimensions: string[] = []): MultiValuedDimension[] {
         let multiValuedDimensions: MultiValuedDimension[] = [];
-        // each item should have dimensions
-        if (this.item.dimension.length == 0 && dimensions.length > 0) {
-            this.item.dimension = UBLModelUtils.createDimensions(dimensions);
+        // add the missing dimensions
+        let missingDimensions = dimensions.filter(unit => this.item.dimension.findIndex(dimension => dimension.attributeID == unit.charAt(0).toUpperCase() + unit.slice(1)) == -1);
+        if (missingDimensions.length > 0) {
+            this.item.dimension = this.item.dimension.concat(UBLModelUtils.createDimensions(missingDimensions));
         }
         for (let dimension of this.item.dimension) {
             if (!includeDimensionsWithNullValues && !dimension.measure.value) {
@@ -131,26 +139,30 @@ export class ProductWrapper {
         const qty = this.goodsItem.containingPackage.quantity;
         const type = this.goodsItem.containingPackage.packagingTypeCode;
         if (!qty.value || !type.value) {
-            return "Not specified";
+            return 'Not specified';
         }
 
         return `${qty.value} ${qty.unitCode} per ${type.value}`;
     }
 
     getSpecialTerms(): string {
-        return this.goodsItem.deliveryTerms.specialTerms.length > 0 && this.goodsItem.deliveryTerms.specialTerms[0].value ? this.goodsItem.deliveryTerms.specialTerms[0].value : "None";
+        return this.goodsItem.deliveryTerms.specialTerms.length > 0 && this.goodsItem.deliveryTerms.specialTerms[0].value ? this.goodsItem.deliveryTerms.specialTerms[0].value : 'None';
     }
 
-    getDeliveryPeriod(): string {
+    getDeliveryPeriod(): Quantity {
+        return this.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
+    }
+
+    getDeliveryPeriodString(): string {
         return periodToString(this.goodsItem.deliveryTerms.estimatedDeliveryPeriod);
     }
 
-    getWarrantyPeriod(): string {
-        return periodToString(this.line.warrantyValidityPeriod);
+    getWarrantyPeriod(): Quantity {
+        return this.line.warrantyValidityPeriod.durationMeasure;
     }
 
     getIncoterms(): string {
-        return this.goodsItem.deliveryTerms.incoterms || "None";
+        return this.goodsItem.deliveryTerms.incoterms || 'None';
     }
 
     getPaymentTerms(): string {
@@ -162,15 +174,15 @@ export class ProductWrapper {
     }
 
     getFreeSample(): string {
-        return this.line.freeOfChargeIndicator ? "Yes" : "No";
+        return this.line.freeOfChargeIndicator ? 'Yes' : 'No';
     }
 
     getCustomizable(): string {
-        return this.line.goodsItem.item.customizable ? "Yes" : "No";
+        return this.line.goodsItem.item.customizable ? 'Yes' : 'No';
     }
 
     getSparePart(): string {
-        return this.line.goodsItem.item.sparePart ? "Yes" : "No";
+        return this.line.goodsItem.item.sparePart ? 'Yes' : 'No';
     }
 
     getPricePerItem(): string {
@@ -181,9 +193,9 @@ export class ProductWrapper {
         return this.line.requiredItemLocationQuantity.applicableTaxCategory[0] ? this.line.requiredItemLocationQuantity.applicableTaxCategory[0].percent + '' : '';
     }
 
-    getMinimumOrderQuantity():string{
+    getMinimumOrderQuantity(): string {
         if (!this.line.minimumOrderQuantity || !this.line.minimumOrderQuantity.value) {
-            return "Not specified";
+            return 'Not specified';
         }
 
         return `${this.line.minimumOrderQuantity.value} ${this.line.minimumOrderQuantity.unitCode}`;

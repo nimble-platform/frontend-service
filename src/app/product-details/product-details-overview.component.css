@@ -55,6 +55,10 @@
     height: 80px;
 }
 
+.carousel-inactive-resize div {
+    width: 80px;
+}
+
 .btn-carousel {
     height: 80px;
     width: 30px;

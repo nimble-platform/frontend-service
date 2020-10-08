@@ -16,41 +16,54 @@
 
 <negotiation-request-item *ngFor="let wrapper of wrappers;let i=index" [rfq]="rfq" [processMetadata]="bpActivityEvent ? bpActivityEvent.processMetadata : null" [manufacturersTermsSource]="manufacturersTermsSources[i]" [lastOfferQuotation]="lastOfferQuotation" [frameContractQuotation]="frameContractQuotations[i]" [frameContractNegotiation]="frameContractNegotiations[i]" [frameContract]="frameContracts[i]" [defaultTermsAndConditions]="defaultTermsAndConditions[i]" [deliverytermsOfBuyer]="deliverytermsOfBuyer" [wrapper]="wrapper" [hidden]="selectedLineIndex != wrapper.lineIndex" [componentIndex]="i" [parentForm]="negotiationRequestForm" [formFieldName]="'negotiated_item'">
 </negotiation-request-item>
-<div class="btn align-self-start ml-2" [ngClass]="{'active':showNotesAndAdditionalFiles,'btn-outline-primary':!areNotesOrFilesAttachedToDocument(rfq),'btn-danger':areNotesOrFilesAttachedToDocument(rfq)}" (click)="showNotesAndAdditionalFiles= showTab(showNotesAndAdditionalFiles)"><span [innerHTML]="'Notes and Additional Files' | translate"></span></div>
-<div class="btn btn-outline-primary align-self-start ml-2" [ngClass]="{'active':showPurchaseOrder}" (click)="showPurchaseOrder = showTab(showPurchaseOrder)"><span [innerHTML]="'Purchase Order' | translate"></span></div>
 
 <!--Notes-->
-<div class="ml-2 space-before">
-    <note-file-view *ngIf="showNotesAndAdditionalFiles" class="mb-2" [notes]="rfq.note" [documents]="rfq.additionalDocumentReference" [label]="'Notes'|translate" [firstCol]="'col-2'" [secondCol]="'col-5'" [lastCol]="'col-5'" [readonly]="isLoading() || isReadOnly()"></note-file-view>
+<div class="row space-before panel">
+    <div class="col-12 pl-0 pr-0">
+        <button class="btn" [ngClass]="{'active':showNotesAndAdditionalFiles,'btn-outline-primary':!areNotesOrFilesAttachedToDocument(rfq),'btn-danger':areNotesOrFilesAttachedToDocument(rfq)}"
+                (click)="showNotesAndAdditionalFiles= showTab(showNotesAndAdditionalFiles)">
+            <i class="fas fa-edit"></i>
+            <span class="font-weight-bold" [innerHTML]="'Notes and Additional Files' | translate"></span>
+        </button>
+        <note-file-view *ngIf="showNotesAndAdditionalFiles" [notes]="rfq.note" [documents]="rfq.additionalDocumentReference" [label]="'Notes'|translate" [firstCol]="'col-2'" [secondCol]="'col-5'" [lastCol]="'col-5'" [readonly]="isLoading() || isReadOnly()"></note-file-view>
+    </div>
 </div>
 
 <!--Purchase Order-->
-<table class="table table-striped ml-2 space-before" *ngIf="showPurchaseOrder">
-    <tr>
-        <th><span [innerHTML]="'Ordered Product' | translate"></span></th>
-        <th><span [innerHTML]="'Product Id' | translate">Product Id</span></th>
-        <th><span [innerHTML]="'Quantity' | translate">Quantity</span></th>
-        <th><span [innerHTML]="'Net Price' | translate">Net Price</span></th>
-        <th *ngIf="config.vatEnabled" [innerHTML]="'VAT' | translate"><span>VAT</span></th>
-        <th *ngIf="config.vatEnabled" [innerHTML]="'Gross Total' | translate"><span>Gross Total</span></th>
-    </tr>
-    <tr *ngFor="let wrapper of wrappers;let i=index">
-        <th scope="row"><span>{{wrapper.catalogueLine.goodsItem.item.name[0].value }}</span></th>
-        <td><span>{{wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.item.manufacturersItemIdentification.id}}</span></td>
-        <td><span>{{rfq.requestForQuotationLine[i].lineItem.quantity.value}} {{getQuantityUnit(wrapper.catalogueLine)}}</span></td>
-        <td><span>{{wrapper.rfqTotalPriceString}}</span></td>
-        <td *ngIf="config.vatEnabled"><span>{{wrapper.rfqVatTotalString}}</span></td>
-        <td *ngIf="config.vatEnabled"><span>{{wrapper.rfqGrossTotalString}}</span></td>
-    </tr>
-    <tr>
-        <th scope="row"><span>Total </span></th>
-        <td><span></span></td>
-        <td><span></span></td>
-        <td><span>{{getTotalPriceString()}}</span></td>
-        <td *ngIf="config.vatEnabled"><span>{{getVatTotalString()}}</span></td>
-        <td *ngIf="config.vatEnabled"><span>{{getGrossTotalString()}}</span></td>
-    </tr>
-</table>
+<div class="row panel space-before">
+    <div class="btn btn-outline-primary"
+         [ngClass]="{'active':showPurchaseOrder}"
+         (click)="showPurchaseOrder = showTab(showPurchaseOrder)">
+        <i class="fas fa-cart-arrow-down"></i>
+        <span class="font-weight-bold" [innerHTML]="'Purchase Order' | translate"></span>
+    </div>
+    <table class="table table-striped bordered border-info space-before" *ngIf="showPurchaseOrder">
+        <tr>
+            <th><span [innerHTML]="'Ordered Product' | translate"></span></th>
+            <th><span [innerHTML]="'Product Id' | translate"></span></th>
+            <th><span [innerHTML]="'Quantity' | translate"></span></th>
+            <th><span [innerHTML]="'Net Price' | translate"></span></th>
+            <th *ngIf="config.vatEnabled" [innerHTML]="'VAT' | translate"><span></span></th>
+            <th *ngIf="config.vatEnabled" [innerHTML]="'Gross Total' | translate"><span></span></th>
+        </tr>
+        <tr *ngFor="let wrapper of wrappers;let i=index">
+            <th scope="row"><span>{{wrapper.catalogueLine.goodsItem.item.name[0].value }}</span></th>
+            <td><span>{{wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.item.manufacturersItemIdentification.id}}</span></td>
+            <td><span>{{rfq.requestForQuotationLine[i].lineItem.quantity.value}} {{getQuantityUnit(wrapper.catalogueLine)}}</span></td>
+            <td><span>{{wrapper.rfqTotalPriceString | translate}}</span></td>
+            <td *ngIf="config.vatEnabled"><span>{{wrapper.rfqVatTotalString | translate}}</span></td>
+            <td *ngIf="config.vatEnabled"><span>{{wrapper.rfqGrossTotalString | translate}}</span></td>
+        </tr>
+        <tr>
+            <th scope="row"><span>{{'Total' | translate}}</span></th>
+            <td><span></span></td>
+            <td><span></span></td>
+            <td><span>{{getTotalPriceString()}}</span></td>
+            <td *ngIf="config.vatEnabled"><span>{{getVatTotalString() | translate}}</span></td>
+            <td *ngIf="config.vatEnabled"><span>{{getGrossTotalString() | translate}}</span></td>
+        </tr>
+    </table>
+</div>
 
 <hr class="actions-hr">
 

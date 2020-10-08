@@ -48,7 +48,7 @@ export class MembersComponent implements OnInit {
     model = new Search('');
     q = "";
     q_submit = "";
-    sort = "legalName asc";
+    sort = "lowercaseLegalName asc";
     response: any;
     temp: any;
     product_vendor_img = myGlobals.product_vendor_img;
@@ -206,7 +206,7 @@ export class MembersComponent implements OnInit {
         this.expanded = false;
         this.sort = "score desc";
         if (this.model.q == "" || this.model.q == "*") {
-            this.sort = "legalName asc";
+            this.sort = "lowercaseLegalName asc";
         }
         this.getCompanies();
     }
@@ -217,7 +217,7 @@ export class MembersComponent implements OnInit {
         this.page = 1;
         this.start = 0;
         this.end = 0;
-        this.sort = "legalName asc";
+        this.sort = "lowercaseLegalName asc";
         this.getCompanies();
     }
 

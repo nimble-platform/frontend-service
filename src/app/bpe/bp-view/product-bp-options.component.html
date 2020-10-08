@@ -58,7 +58,7 @@
                 <product-bp-steps *ngIf="!serviceLines && ((currentStep !== 'Fulfilment' && selectedLines[i]) || (currentStep === 'Fulfilment' && i == lines.length-1))" [currentStep]="currentStep" [status]="getStepsStatus()" [statusText]="getStepsStatusText()" [displayMode]="stepsDisplayMode">
                 </product-bp-steps>
 
-                <hr class="mb-3">
+<!--                <hr class="mb-3">-->
 
                 <!-- Order Content -->
                 <ppap *ngIf="currentStep === 'Ppap'" [isCatalogueLineDeleted]="areCatalogueLinesDeleted[0]">

@@ -40,6 +40,8 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { DisableControlDirective } from './disable-control-directive';
 import { SingleClickDirective } from './single-click.directive';
 import {ConfirmModalComponent} from './confirm-modal.component';
+import {AmountUiTranslatePipe} from './pipe/amount-ui-translate.pipe';
+import {QuantityTranslatePipe} from './pipe/quantity-translate.pipe';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -71,6 +73,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         DateInputComponent,
         ConfirmModalComponent,
         AddressInputComponent,
+        AmountUiTranslatePipe,
+        QuantityTranslatePipe,
         BooleanInputComponent,
         MultiAddressInputComponent,
         InputLabelComponent,
@@ -97,6 +101,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         ExpandableFlexRow,
         MultiTypeInputComponent,
         TranslateModule,
+        AmountUiTranslatePipe,
+        QuantityTranslatePipe,
         SingleClickDirective
     ],
     providers: [

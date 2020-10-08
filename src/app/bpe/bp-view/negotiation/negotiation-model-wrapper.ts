@@ -14,22 +14,22 @@
    limitations under the License.
  */
 
-import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
-import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
-import { Quotation } from "../../../catalogue/model/publish/quotation";
-import { Quantity } from "../../../catalogue/model/publish/quantity";
-import { PaymentTermsWrapper } from "../payment-terms-wrapper";
-import { copy, durationToString, roundToTwoDecimals } from "../../../common/utils";
-import { Address } from "../../../catalogue/model/publish/address";
-import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
-import { TradingTerm } from "../../../catalogue/model/publish/trading-term";
-import { MultiTypeValue } from "../../../catalogue/model/publish/multi-type-value";
-import { DiscountPriceWrapper } from "../../../common/discount-price-wrapper";
-import { QuotationWrapper } from "./quotation-wrapper";
-import { Text } from "../../../catalogue/model/publish/text";
-import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
-import { FRAME_CONTRACT_DURATION_TERM_NAME } from '../../../common/constants';
-import { Delivery } from '../../../catalogue/model/publish/delivery';
+import {CatalogueLine} from '../../../catalogue/model/publish/catalogue-line';
+import {RequestForQuotation} from '../../../catalogue/model/publish/request-for-quotation';
+import {Quotation} from '../../../catalogue/model/publish/quotation';
+import {Quantity} from '../../../catalogue/model/publish/quantity';
+import {PaymentTermsWrapper} from '../payment-terms-wrapper';
+import {copy, durationToString, roundToTwoDecimals} from '../../../common/utils';
+import {Address} from '../../../catalogue/model/publish/address';
+import {CompanyNegotiationSettings} from '../../../user-mgmt/model/company-negotiation-settings';
+import {TradingTerm} from '../../../catalogue/model/publish/trading-term';
+import {MultiTypeValue} from '../../../catalogue/model/publish/multi-type-value';
+import {DiscountPriceWrapper} from '../../../common/discount-price-wrapper';
+import {QuotationWrapper} from './quotation-wrapper';
+import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
+import {FRAME_CONTRACT_DURATION_TERM_NAME} from '../../../common/constants';
+import {Delivery} from '../../../catalogue/model/publish/delivery';
+import {AmountUI} from '../../../catalogue/model/ui/amount-ui';
 
 /**
  * Convenient getters (and some setters) for catalogue line, request for quotations and quotations.
@@ -50,12 +50,12 @@ export class NegotiationModelWrapper {
     initialImmutableCatalogueLine: CatalogueLine; // immutable catalogue line
 
     constructor(public catalogueLine: CatalogueLine,
-        public rfq: RequestForQuotation,
-        public newQuotation: Quotation, // quotation object of the current negotiation step instantiated as a result of the rfq. It's supposed to be provided in the negotiation response phase
-        public frameContractQuotation: Quotation, // quotation object associated to a frame contract, if any
-        public lastOfferQuotation: Quotation, // in second or later steps of negotiation, this parameter keeps the quotation coming from the previous step
-        public sellerSettings: CompanyNegotiationSettings,
-        public lineIndex: number // line index is required in case the same product is included in the rfq multiple times
+                public rfq: RequestForQuotation,
+                public newQuotation: Quotation, // quotation object of the current negotiation step instantiated as a result of the rfq. It's supposed to be provided in the negotiation response phase
+                public frameContractQuotation: Quotation, // quotation object associated to a frame contract, if any
+                public lastOfferQuotation: Quotation, // in second or later steps of negotiation, this parameter keeps the quotation coming from the previous step
+                public sellerSettings: CompanyNegotiationSettings,
+                public lineIndex: number // line index is required in case the same product is included in the rfq multiple times
     ) {
 
         this.initialImmutableRfq = copy(rfq);
@@ -154,8 +154,8 @@ export class NegotiationModelWrapper {
 
     public get lineIncotermsString(): string {
         let incoterms = this.catalogueLine.goodsItem.deliveryTerms.incoterms;
-        if (incoterms == null || incoterms == "") {
-            return "None";
+        if (incoterms == null || incoterms == '') {
+            return 'None';
         }
         return incoterms;
     }
@@ -192,6 +192,10 @@ export class NegotiationModelWrapper {
      * Rfq methods
      */
 
+    public get rfqPriceAmountUI(): AmountUI {
+        return this.rfqDiscountPriceWrapper.priceAmountUI;
+    }
+
     public get rfqPricePerItemString(): string {
         return this.rfqDiscountPriceWrapper.pricePerItemString;
     }
@@ -207,7 +211,7 @@ export class NegotiationModelWrapper {
     public get rfqVatTotalString(): string {
         let rfqVatTotal = this.rfqVatTotal;
         if (rfqVatTotal == 0) {
-            return "On demand";
+            return 'On demand';
         }
         return `${roundToTwoDecimals(rfqVatTotal)} ${this.rfqDiscountPriceWrapper.itemPrice.currency}`
     }
@@ -227,7 +231,7 @@ export class NegotiationModelWrapper {
     public get rfqGrossTotalString(): string {
         let rfqGrossTotal = this.rfqGrossTotal;
         if (rfqGrossTotal == 0) {
-            return "On demand";
+            return 'On demand';
         }
         return `${roundToTwoDecimals(this.rfqGrossTotal)} ${this.rfqDiscountPriceWrapper.itemPrice.currency}`
     }
@@ -274,8 +278,8 @@ export class NegotiationModelWrapper {
 
     public get rfqIncotermsString(): string {
         let incoterms = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.incoterms;
-        if (incoterms == null || incoterms == "") {
-            return "None";
+        if (incoterms == null || incoterms == '') {
+            return 'None';
         }
         return incoterms;
     }
@@ -301,7 +305,7 @@ export class NegotiationModelWrapper {
     }
 
     public get rfqFrameContractDuration(): Quantity {
-        let tradingTerm: TradingTerm = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
+        let tradingTerm: TradingTerm = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == 'FRAME_CONTRACT_DURATION');
         if (tradingTerm != null) {
             return tradingTerm.value.valueQuantity[0];
         }
@@ -309,7 +313,7 @@ export class NegotiationModelWrapper {
     }
 
     public set rfqFrameContractDuration(duration: Quantity) {
-        let tradingTerm: TradingTerm = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
+        let tradingTerm: TradingTerm = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == 'FRAME_CONTRACT_DURATION');
         if (tradingTerm == null) {
             tradingTerm = new TradingTerm(FRAME_CONTRACT_DURATION_TERM_NAME, null, null, new MultiTypeValue());
             tradingTerm.value.valueQuantity.push(duration)
@@ -321,12 +325,12 @@ export class NegotiationModelWrapper {
 
     // get trading terms except the one representing frame contract duration
     public get rfqTradingTerms(): TradingTerm[] {
-        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.filter(tradingTerm => tradingTerm.id != "FRAME_CONTRACT_DURATION").map(tradingTerm => tradingTerm);
+        return this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.filter(tradingTerm => tradingTerm.id != 'FRAME_CONTRACT_DURATION').map(tradingTerm => tradingTerm);
     }
 
     // set trading terms except the one representing frame contract duration
     public set rfqTradingTerms(tradingTerms: TradingTerm[]) {
-        let frameContractDuration: TradingTerm = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == "FRAME_CONTRACT_DURATION");
+        let frameContractDuration: TradingTerm = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == 'FRAME_CONTRACT_DURATION');
         if (frameContractDuration) {
             tradingTerms.push(frameContractDuration);
         }
@@ -365,69 +369,77 @@ export class NegotiationModelWrapper {
     // compares the default terms of product and the terms specified in the request
     public checkEqualForRequest(termsSource: 'product_defaults' | 'frame_contract' | 'last_offer', part): boolean {
         switch (part) {
-            case "deliveryPeriod":
-                if (termsSource == "product_defaults")
+            case 'deliveryPeriod':
+                if (termsSource == 'product_defaults') {
                     return (this.rfqDeliveryPeriodString == this.lineDeliveryPeriodString);
-                else if (termsSource == "frame_contract")
+                } else if (termsSource == 'frame_contract') {
                     return (this.rfqDeliveryPeriodString == this.frameContractQuotationWrapper.deliveryPeriodString);
-                else if (termsSource == "last_offer")
+                } else if (termsSource == 'last_offer') {
                     return (this.rfqDeliveryPeriodString == this.lastOfferQuotationWrapper.deliveryPeriodString);
+                }
                 break;
-            case "warranty":
-                if (termsSource == "product_defaults")
+            case 'warranty':
+                if (termsSource == 'product_defaults') {
                     return (this.rfqWarrantyString == this.lineWarrantyString);
-                else if (termsSource == "frame_contract")
+                } else if (termsSource == 'frame_contract') {
                     return (this.rfqWarrantyString == this.frameContractQuotationWrapper.warrantyString);
-                else if (termsSource == "last_offer")
+                } else if (termsSource == 'last_offer') {
                     return (this.rfqWarrantyString == this.lastOfferQuotationWrapper.warrantyString);
+                }
                 break;
-            case "incoTerms":
-                if (termsSource == "product_defaults")
+            case 'incoTerms':
+                if (termsSource == 'product_defaults') {
                     return (this.rfqIncotermsString == this.lineIncotermsString);
-                else if (termsSource == "frame_contract")
+                } else if (termsSource == 'frame_contract') {
                     return (this.rfqIncotermsString == this.frameContractQuotationWrapper.incotermsString);
-                else if (termsSource == "last_offer")
+                } else if (termsSource == 'last_offer') {
                     return (this.rfqIncotermsString == this.lastOfferQuotationWrapper.incotermsString);
+                }
                 break;
-            case "paymentTerms":
-                if (termsSource == "product_defaults")
+            case 'paymentTerms':
+                if (termsSource == 'product_defaults') {
                     return (this.rfqPaymentTerms.paymentTerm == this.linePaymentTerms);
-                else if (termsSource == "frame_contract")
+                } else if (termsSource == 'frame_contract') {
                     return (this.rfqPaymentTerms.paymentTerm == this.frameContractQuotationWrapper.paymentTermsWrapper.paymentTerm);
-                else if (termsSource == "last_offer")
+                } else if (termsSource == 'last_offer') {
                     return (this.rfqPaymentTerms.paymentTerm == this.lastOfferQuotationWrapper.paymentTermsWrapper.paymentTerm);
+                }
                 break;
-            case "paymentMeans":
-                if (termsSource == "product_defaults")
+            case 'paymentMeans':
+                if (termsSource == 'product_defaults') {
                     return (this.rfqPaymentMeans == this.linePaymentMeans);
-                else if (termsSource == "frame_contract")
+                } else if (termsSource == 'frame_contract') {
                     return (this.rfqPaymentMeans == this.frameContractQuotationWrapper.paymentMeans);
-                else if (termsSource == "last_offer")
+                } else if (termsSource == 'last_offer') {
                     return (this.rfqPaymentMeans == this.lastOfferQuotationWrapper.paymentMeans);
+                }
                 break;
-            case "quantity":
-                if (termsSource == "product_defaults")
+            case 'quantity':
+                if (termsSource == 'product_defaults') {
                     return true;
-                else if (termsSource == "frame_contract")
+                } else if (termsSource == 'frame_contract') {
                     return (this.rfq.requestForQuotationLine[this.lineIndex].lineItem.quantity.value == this.frameContractQuotationWrapper.orderedQuantity.value);
-                else if (termsSource == "last_offer")
+                } else if (termsSource == 'last_offer') {
                     return (this.rfq.requestForQuotationLine[this.lineIndex].lineItem.quantity.value == this.lastOfferQuotationWrapper.orderedQuantity.value);
+                }
                 break;
-            case "price":
-                if (termsSource == "product_defaults")
+            case 'price':
+                if (termsSource == 'product_defaults') {
                     return (this.rfqPricePerItemString == this.lineDiscountPriceWrapper.discountedPricePerItemString);
-                else if (termsSource == "frame_contract")
+                } else if (termsSource == 'frame_contract') {
                     return (this.rfqPricePerItemString == this.frameContractQuotationWrapper.priceWrapper.pricePerItemString);
-                else if (termsSource == "last_offer")
+                } else if (termsSource == 'last_offer') {
                     return (this.rfqPricePerItemString == this.lastOfferQuotationWrapper.priceWrapper.pricePerItemString);
+                }
                 break;
-            case "dataMonitoring":
-                if (termsSource == "product_defaults")
+            case 'dataMonitoring':
+                if (termsSource == 'product_defaults') {
                     return !this.rfqDataMonitoringRequested;
-                else if (termsSource == "frame_contract")
+                } else if (termsSource == 'frame_contract') {
                     return (this.rfqDataMonitoringRequested == this.frameContractQuotationWrapper.dataMonitoringPromised);
-                else if (termsSource == "last_offer")
+                } else if (termsSource == 'last_offer') {
                     return (this.rfqDataMonitoringRequested == this.lastOfferQuotationWrapper.dataMonitoringPromised);
+                }
                 break;
             default:
                 return true;
@@ -437,21 +449,21 @@ export class NegotiationModelWrapper {
     // compares the terms specified in the request and the ones in the response
     public checkEqualForResponse(part): boolean {
         switch (part) {
-            case "deliveryPeriod":
+            case 'deliveryPeriod':
                 return (this.rfqDeliveryPeriodString == this.newQuotationWrapper.deliveryPeriodString);
-            case "warranty":
+            case 'warranty':
                 return (this.rfqWarrantyString == this.newQuotationWrapper.warrantyString);
-            case "incoTerms":
+            case 'incoTerms':
                 return (this.rfqIncotermsString == this.newQuotationWrapper.incotermsString);
-            case "paymentTerms":
+            case 'paymentTerms':
                 return (this.rfqPaymentTerms.paymentTerm == this.newQuotationWrapper.paymentTermsWrapper.paymentTerm);
-            case "paymentMeans":
+            case 'paymentMeans':
                 return (this.rfqPaymentMeans == this.newQuotationWrapper.paymentMeans);
-            case "price":
+            case 'price':
                 return (this.rfqPricePerItemString == this.newQuotationWrapper.priceWrapper.pricePerItemString);
-            case "dataMonitoring":
+            case 'dataMonitoring':
                 return this.rfqDataMonitoringRequested == this.newQuotationWrapper.dataMonitoringPromised;
-            case "frameContract":
+            case 'frameContract':
                 return UBLModelUtils.areQuantitiesEqual(this.rfqFrameContractDuration, this.newQuotationWrapper.frameContractDuration);
             case "quantity":
                 return UBLModelUtils.areQuantitiesEqual(this.rfqQuantity, this.newQuotationWrapper.orderedQuantity);

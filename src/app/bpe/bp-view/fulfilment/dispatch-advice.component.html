@@ -30,7 +30,8 @@
                     {{dispatchLine.item.name[0].value}}
                 </div>
                 <div class="col-9">
-                    <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true" [quantity]="dispatchLine.deliveredQuantity" labelClass="col-2" valueClass="col-10">
+                    <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true" [quantity]="dispatchLine.deliveredQuantity" labelClass="col-2"
+                                    valueQuantityClass="col-10">
                     </quantity-input>
                 </div>
             </div>

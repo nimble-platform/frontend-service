@@ -11,6 +11,18 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
+
+.header-mock {
+    height: 56px;
+}
+#header {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 3;
+}
+
 #footer {
     font-size: 0.8rem;
     text-align: center;

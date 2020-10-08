@@ -11,3 +11,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
+.panel {
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    padding: 1rem;
+}

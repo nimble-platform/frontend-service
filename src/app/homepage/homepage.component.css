@@ -1,0 +1,311 @@
+/*
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+.homepage {
+    --box-color: #ecdad5;
+    --light-box-color: #f9f3f1;
+}
+
+.main-image {
+    width: 100%;
+}
+
+.action-section {
+    margin-bottom: 3rem;
+    width: 100%;
+}
+
+.section-title .line {
+    position: relative;
+    height: 5px;
+    width: 600px;
+    background-color: var(--main-color);
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    bottom: 0;
+    margin-bottom: 50px;
+}
+
+.btn {
+    border-radius: 0;
+}
+
+.shadow-border {
+    box-shadow: 0 0 8px 0 #ddd;
+}
+
+/**
+ * Main actions
+ */
+
+.main-action-row {
+    display: flex;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px 10px 20px 10px;
+    width: 90%;
+    position: relative;
+    top: -50px;
+    background: white;
+}
+
+.main-action-row .main-action {
+    flex: 0 0 25%;
+    font-size: 1.3em;
+    padding: 0 1em 0; /*top, right, left, bottom*/
+    cursor: pointer;
+}
+
+.main-action-row .main-action:not(:last-child) {
+    border-right: solid 1px #3b3b3b;
+}
+
+.main-action i {
+    font-size: 1.5em;
+    margin-right: 10px;
+}
+
+.main-action:hover .action-title {
+    color: var(--main-color);
+    transform: scale(1.05);
+    transition: transform 0.2s ease-out;
+}
+
+.action-title {
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: center;
+}
+
+.action-desc {
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.action-description {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.half-column {
+    width: 40%;
+    height: 100%;
+}
+
+.title-par {
+    font-size: 1.5rem;
+}
+
+/**
+ * Product publish and discovery
+ */
+
+.category-row {
+    display: flex;
+    margin-top: 5rem;
+}
+
+.category-box {
+    flex: 1 1 0;
+    height: 475px;
+    background-color: var(--light-box-color);
+}
+.category-row .category-box:not(:last-child) {
+    margin-right: 20px;
+}
+
+.category-box:hover {
+    border: solid 3px var(--main-color);
+    background-color: var(--box-color);
+    transform: scale(1.03);
+    transition: transform 0.2s ease-out;
+}
+
+.category-box img {
+    width: 100%;
+    height: 200px;
+    margin-bottom: 20px;
+}
+
+.category-box .sub-category {
+    cursor: pointer;
+    margin-bottom: 5px;
+}
+.category-box .sub-category:hover {
+    color: var(--main-color);
+    font-weight: bold;
+}
+
+.product-stat {
+    padding: 1.5rem;
+    background-color: var(--box-color);
+    flex: 1 1 0;
+    max-width: 20%;
+    cursor: pointer;
+    box-shadow: 0 0 8px 0 #ddd;
+}
+
+.product-stat:hover {
+    border: solid 2px var(--main-color);
+    background-color: var(--box-color);
+    transform: scale(1.03);
+    transition: transform 0.2s ease-out;
+    margin-bottom: -0.5%;
+}
+
+.product-stat:not(:last-child) {
+    margin-right: 2rem;
+}
+
+.product-stat div {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+
+/**
+ * B2B section
+ */
+
+.b2b-section {
+    background-color: var(--light-box-color);
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+}
+
+.image-div {
+    height: 200px;
+    background-size: 100%;
+}
+
+.image-div.search-company {
+    background-image: url('../../assets/images/homepage/supplychain.jpg');
+}
+
+.image-div.dashboard {
+    background-image: url('../../assets/images/homepage/services.jpg');
+}
+
+.content-div {
+    padding: 1rem 2rem;
+    background-color: white;
+}
+
+/**
+ * Demand section
+ */
+
+.demand-section {
+    background-color: var(--light-box-color);
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+    width: 60%;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+/**
+ * Platform members section
+ */
+
+.member-count {
+    padding: 1.5rem;
+    background-color: var(--box-color);
+    flex: 1 1 0;
+    max-width: 20%;
+    cursor: pointer;
+}
+.member-count:hover {
+    border: solid 2px var(--main-color);
+    background-color: var(--box-color);
+    transform: scale(1.03);
+    transition: transform 0.2s ease-out;
+    margin-bottom: -0.5%;
+}
+.member-count:not(:last-child) {
+    margin-right: 2rem;
+}
+
+.member-count div {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.activity-sector {
+    cursor: pointer;
+}
+.activity-sector:hover {
+    border: solid 2px var(--main-color);
+    background-color: var(--box-color);
+}
+
+.members-container {
+    margin-top: 3rem;
+    padding: 20px;
+    background-color: var(--light-box-color);
+    max-height: 600px;
+    overflow-y: scroll;
+}
+
+
+/**
+ * Carousel
+ */
+.carousel-container {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    height: 250px;
+    position: relative;
+}
+
+::ng-deep .owl-carousel {
+    overflow: hidden;
+}
+
+::ng-deep .owl-stage-outer {
+    padding-top: 0.5em;
+    position: relative;
+    width: 100%;
+    z-index: 1;
+}
+
+::ng-deep .owl-stage {
+    display: flex !important;
+}
+
+::ng-deep .owl-nav {
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    top: 25px;
+    width: 100%;
+}
+
+::ng-deep .owl-prev {
+    left: -60px;
+    cursor: pointer;
+    font-size: 60px;
+    position: absolute;
+}
+
+::ng-deep .owl-next {
+    right: -60px;
+    cursor: pointer;
+    font-size: 60px;
+    position: absolute;
+}
