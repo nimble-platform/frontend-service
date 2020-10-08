@@ -182,8 +182,8 @@ export const config = {
         "": {},
         "Logistics Provider": {
             "General": {
-                "en": "General",
-                "es": "General"
+                "en": "Transportation and Logistics",
+                "es": "Transporte y Logística"
             }
         },
         "Manufacturer": {
@@ -197,35 +197,35 @@ export const config = {
             },
             "Childcare": {
                 "en": "Childcare",
-                "es": "Cuidado de niños"
+                "es": "Mueble Infantil"
             },
             "Closet / Cupboard": {
                 "en": "Closet / Cupboard",
-                "es": "Armario / Armario"
+                "es": "Armarios"
             },
             "Contract": {
-                "en": "Contract",
-                "es": "Contrato"
+                "en": "CONTRACT (Others: institutional, educational, other installations, etc.)",
+                "es": "COLECTIVIDADES (Otros: institucional,educacional, otras instalaciones, etc.)"
             },
             "Doors / Windows": {
-                "en": "Doors / Windows",
-                "es": "Puertas / Ventanas"
+                "en": "Doors and Windows",
+                "es": "Puertas y Ventanas"
             },
             "Furniture for Retail": {
                 "en": "Furniture for Retail",
-                "es": "Muebles para venta minorista"
+                "es": "Muebles para Establecimientos Comerciales"
             },
             "Home": {
                 "en": "Home",
-                "es": "Casa"
+                "es": "Hogar"
             },
             "Hotels, Restaurants & Cafes": {
-                "en": "Hotels, Restaurants & Cafes",
-                "es": "Hoteles, restaurantes y cafeterías"
+                "en": "HORECA (HOTELS,RESTAURANTS & CAFÉS)",
+                "es": "HORECA (HOTELES, RESTAURACIÓN y CAFETERÍAS)"
             },
             "Kids": {
                 "en": "Kids",
-                "es": "Niños"
+                "es": "Mueble Juvenil"
             },
             "Kitchen": {
                 "en": "Kitchen",
@@ -233,7 +233,7 @@ export const config = {
             },
             "Lightings / Lamps": {
                 "en": "Lightings / Lamps",
-                "es": "Iluminaciones / Lámparas"
+                "es": "Iluminación / Lámparas"
             },
             "Mattresses": {
                 "en": "Mattresses",
@@ -245,7 +245,7 @@ export const config = {
             },
             "Outdoor Furniture": {
                 "en": "Outdoor Furniture",
-                "es": "Mueble para exteriores"
+                "es": "Mueble para Exteriores"
             },
             "Panels": {
                 "en": "Panels",
@@ -253,21 +253,25 @@ export const config = {
             },
             "Parquet Floors": {
                 "en": "Parquet Floors",
-                "es": "Suelos de parquet"
+                "es": "Parquet"
             },
             "Upholstered Furniture": {
                 "en": "Upholstered Furniture",
-                "es": "Muebles tapizados"
+                "es": "Mueble Tapizado"
             },
             "Wooden Packaging": {
                 "en": "Wooden Packaging",
-                "es": "Embalaje de madera"
+                "es": "Embalaje de Madera"
+            },
+            "Wooden Structures": {
+                "en": "Wooden Structures",
+                "es": "Estructuras de madera"
             }
         },
         "Retailer": {
             "General": {
-                "en": "General",
-                "es": "General"
+                "en": "Retail and Distribution",
+                "es": "Retail y Distribución"
             }
         },
         "Service Provider": {
@@ -277,7 +281,7 @@ export const config = {
             },
             "Buyer-Designer": {
                 "en": "Buyer-Designer",
-                "es": "Comprador-diseñador"
+                "es": "Prescriptor"
             },
             "Certification": {
                 "en": "Certification",
@@ -285,11 +289,11 @@ export const config = {
             },
             "Consulting": {
                 "en": "Consulting",
-                "es": "Consultante"
+                "es": "Consultoría"
             },
             "Design / Decoration": {
                 "en": "Design / Decoration",
-                "es": "Diseño / Decoración"
+                "es": "Diseño / Interiorismo"
             },
             "Distributor": {
                 "en": "Distributor",
@@ -301,35 +305,39 @@ export const config = {
             },
             "Facility Cleaning": {
                 "en": "Facility Cleaning",
-                "es": "Limpieza de instalaciones"
+                "es": "Limpieza Instalaciones"
             },
             "Facility Maintenance": {
                 "en": "Facility Maintenance",
-                "es": "Mantenimiento de instalaciones"
+                "es": "Mantenimiento Instalaciones"
             },
             "Furniture Installer": {
                 "en": "Furniture Installer",
-                "es": "Instalador de muebles"
+                "es": "Instalador de Muebles"
             },
             "Legal Services": {
                 "en": "Legal Services",
-                "es": "Servicios jurídicos"
+                "es": "Servicios Jurídicos"
             },
             "Outsourcing": {
                 "en": "Outsourcing",
-                "es": "Subcontratación"
+                "es": "Subcontratación de Procesos"
             },
             "Print Services": {
                 "en": "Print Services",
-                "es": "Servicios de impresión"
+                "es": "Servicios de Impresión"
             },
             "Quality Control / Tests": {
                 "en": "Quality Control / Tests",
-                "es": "Control de calidad / Pruebas"
+                "es": "Control de Calidad / Ensayos"
             },
             "Sales Agent": {
                 "en": "Sales Agent",
-                "es": "Agente de ventas"
+                "es": "Agente Comercial"
+            },
+            "Software": {
+                "en": "Software",
+                "es": "Software"
             },
             "Training": {
                 "en": "Training",
@@ -337,13 +345,17 @@ export const config = {
             },
             "Waste Management": {
                 "en": "Waste Management",
-                "es": "Gestión de residuos"
+                "es": "Gestión de Residuos"
             }
         },
         "Supplier": {
+            "Abrasives": {
+                "en": "Abrasives",
+                "es": "Lijas y Abrasivos"
+            },
             "Adhesives": {
                 "en": "Adhesives",
-                "es": "Adhesivos"
+                "es": "Colas y Adhesivos"
             },
             "Board": {
                 "en": "Board",
@@ -351,11 +363,11 @@ export const config = {
             },
             "Ceramic": {
                 "en": "Ceramic",
-                "es": "Cerámico"
+                "es": "Cerámica"
             },
             "Composites": {
                 "en": "Composites",
-                "es": "Composicion"
+                "es": "Materiales Compuestos"
             },
             "Cork": {
                 "en": "Cork",
@@ -363,7 +375,11 @@ export const config = {
             },
             "Decorated Paper": {
                 "en": "Decorated Paper",
-                "es": "Papel decorado"
+                "es": "Papel Decorado"
+            },
+            "Electronic Components": {
+                "en": "Electronic Components",
+                "es": "Componentes Electrónicos"
             },
             "Fitting": {
                 "en": "Fitting",
@@ -387,7 +403,7 @@ export const config = {
             },
             "Packaging Materials": {
                 "en": "Packaging Materials",
-                "es": "Materiales de embalaje"
+                "es": "Materiales de Embalaje"
             },
             "Paints & Varnishes": {
                 "en": "Paints & Varnishes",
@@ -399,11 +415,11 @@ export const config = {
             },
             "Plywood": {
                 "en": "Plywood",
-                "es": "Madera contrachapada"
+                "es": "Contrachapado"
             },
             "Straw": {
                 "en": "Straw",
-                "es": "Paja"
+                "es": "Mimbre"
             },
             "Textile": {
                 "en": "Textile",

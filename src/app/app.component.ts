@@ -754,6 +754,10 @@ export class AppComponent implements OnInit, AfterViewInit {
                 if (this.companyID && !initial)
                     this.allowed = true;
                 break;
+            case "comp-data":
+                if (manager || legal)
+                    this.allowed = true;
+                break;
             case "comp-settings":
                 if (all_rights || initial)
                     this.allowed = true;
