@@ -12,6 +12,7 @@
    limitations under the License.
  -->
 <section class="homepage">
+    <div #beginning style="position: absolute; top: 0"></div>
     <img class="main-image" [src]="'assets/homepage/b2b-home.jpg'">
     <!-- main actions under the main image -->
     <div class="main-action-row shadow-border">
@@ -165,7 +166,7 @@
                 <p>Any supply chain entity as a producer or consumer of products or services can benefit from B2BMarket. Hundreds of companies are already B2BMarket!</p>
             </div>
         </div>
-        <div class="d-flex justify-content-around text-center">
+        <div class="d-flex justify-content-center text-center">
             <div *ngIf="manufacturerCount && supplierCount" class="member-count" (click)="onMemberCountClicked('Manufacturers')">
                 <div>{{manufacturerCount + supplierCount}}</div>
                 {{'Industry' | translate}}

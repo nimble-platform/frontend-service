@@ -12,7 +12,7 @@
    limitations under the License.
  */
 
-#dummy-header {
+.header-mock {
     height: 56px;
 }
 #header {

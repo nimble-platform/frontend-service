@@ -197,7 +197,7 @@
 }
 
 .image-div.dashboard {
-    background-image: url('../../assets/images/homepage/dashboard.png');
+    background-image: url('../../assets/images/homepage/services.jpg');
 }
 
 .content-div {
@@ -223,6 +223,9 @@
     transform: scale(1.03);
     transition: transform 0.2s ease-out;
     margin-bottom: -0.5%;
+}
+.member-count:not(:last-child) {
+    margin-right: 2rem;
 }
 
 .member-count div {
