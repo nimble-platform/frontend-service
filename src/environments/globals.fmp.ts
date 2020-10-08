@@ -148,7 +148,7 @@ export const config = {
     "showExplorative": false,
     "showFullName": true,
     "showGoogleTranslateOption": false,
-    "showHomepage": true,
+    "showHomepage": false,
     "showLCPA": false,
     "showPPAP": false,
     "showTrack": false,
