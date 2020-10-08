@@ -80,8 +80,8 @@ export class CompanyDataSettingsComponent implements OnInit {
         this.dataForm = this._fb.group({
             vatNumber: new FormControl({ value: (this.settings.details.vatNumber || ""), disabled: !this.appComponent.checkRoles('pm') }),
             verificationInformation: new FormControl({ value: (this.settings.details.verificationInformation || ""), disabled: (!this.appComponent.checkRoles('pm') && this.settings.details.verificationInformation) }),
-            businessType: new FormControl({ value: (this.settings.details.businessType || ""), disabled: !this.appComponent.checkRoles('pm') }),
-            yearOfReg: new FormControl({ value: (this.settings.details.yearOfCompanyRegistration || ""), disabled: (!this.appComponent.checkRoles('pm') && this.settings.details.yearOfCompanyRegistration) }),
+            businessType: new FormControl({ value: (this.settings.details.businessType || ""), disabled: !this.appComponent.checkRoles('comp-data') }),
+            yearOfReg: new FormControl({ value: (this.settings.details.yearOfCompanyRegistration || ""), disabled: (!this.appComponent.checkRoles('comp-data') && this.settings.details.yearOfCompanyRegistration) }),
             address: AddressSubForm.update(AddressSubForm.generateForm(this._fb), this.settings.details.address)
         });
         // set available activity sector keys
