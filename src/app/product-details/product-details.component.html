@@ -199,7 +199,7 @@
                     </div>
                 </ng-container>
                 <ng-container *ngIf="getPricePerItem() === 'On demand'">
-                    <div class="inline-order-group">
+                    <div class="order-group">
                         <label class="order-label order-price">
                             <span [innerHTML]="'Total Price:' | translate"></span>
                         </label>
@@ -247,7 +247,7 @@
                     {{ productWrapper.getPaymentMeans() |translate }}
                 </span>
             </div>
-            <div class="inline-order-group">
+            <div class="order-group">
                 <label class="order-label order-price">
                     <span [innerHTML]="'Total Price:' | translate"></span>
                 </label>
