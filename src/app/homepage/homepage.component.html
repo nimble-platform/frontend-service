@@ -12,6 +12,7 @@
    limitations under the License.
  -->
 <section class="homepage">
+    <div #beginning style="position: absolute; top: 0"></div>
     <img class="main-image" [src]="'assets/homepage/b2b-home.jpg'">
     <!-- main actions under the main image -->
     <div class="main-action-row shadow-border">
@@ -34,14 +35,14 @@
                 <i class="far fa-star"></i>
                 <div class="align-self-end">{{'See Demands' | translate}}</div>
             </div>
-            <div class="action-desc">{{'Express your interest on products and respond to others.' | translate}}</div>
+            <div class="action-desc">{{'Express your interest on products/services and respond to others.' | translate}}</div>
         </div>
         <div class="main-action" (click)="scroll(membersSection)">
             <div class="action-title">
                 <i class="fas fa-users"></i>
                 <div class="align-self-end">{{'Platform Members' | translate}}</div>
             </div>
-            <div class="action-desc">{{'Manufacturers, suppliers and service providers are on B2BMarket!' | translate}}</div>
+            <div class="action-desc">{{'Industrial Manufacturers, Suppliers, Logistics and Service Providers are on B2BMarket!' | translate}}</div>
         </div>
     </div>
 
@@ -56,12 +57,11 @@
 
         <div class="action-description">
             <div class="half-column">
-                <p>Discover hundreds of products and services that you need for your business.
-                They can easily be explored with well-defined product categories and detailed product characteristics.</p>
+                <p>{{'Discover hundreds of products and services you need for your business. They can be easily explored through the different categories and detailed characteristics.' | translate }}</p>
                 <div class="btn btn-outline-primary" (click)="scroll(categoryRow)">{{'Discover Products' | translate}}</div>
             </div>
             <div class="half-column">
-                <p>Increase your online visibility by publishing your products and services on B2BMarket.</p>
+                <p>{{'Increase your online visibility by publishing your products and services on B2BMarket.' | translate }}</p>
                 <div class="btn btn-outline-primary" (click)="onPublishProductClicked()">{{'Publish Products' | translate}}</div>
             </div>
         </div>
@@ -110,16 +110,16 @@
             <div class="half-column shadow-border">
                 <div class="image-div search-company"></div>
                 <div class="content-div">
-                    <p class="title-par">Identify the most suitable manufacturer or service provider meeting your criteria.</p>
-                    <p>Contact them to inquire details about products and services; negotiate terms and conditions; establish an agreement before actual purchase.</p>
-                    <div class="btn btn-outline-primary" (click)="onSearchClicked()">{{'Search Products or Companies' | translate}}</div>
+                    <p class="title-par">{{'Identify the most suitable industrial company or service provider' | translate }}</p>
+                    <p>{{'Contact them for information; negotiate terms and conditions and make an agreement before the actual purchase.' | translate }}</p>
+                    <div class="btn btn-outline-primary" (click)="onSearchClicked()">{{'Search Products/Services or Companies' | translate}}</div>
                 </div>
             </div>
             <div class="half-column shadow-border">
                 <div class="image-div dashboard"></div>
                 <div class="content-div">
-                    <p class="title-par">Monitor B2B interactions systematically.</p>
-                    <p>Track your sales and purchase activities. Track history of communication.</p>
+                    <p class="title-par">{{'Monitor your B2B collaborations' | translate }}</p>
+                    <p>{{'Track your communication history from buying and selling activities. Review your customer ratings and analyze your platform statistics.' | translate}}</p>
                     <div class="btn btn-outline-primary" (click)="onDashboardClicked()">{{'Go to Your Dashboard' | translate}}</div>
                 </div>
             </div>
@@ -127,7 +127,7 @@
     </div>
 
     <!-- Demands -->
-    <div #demandSection class="action-section b2b-section">
+    <div #demandSection class="action-section demand-section">
         <div class="section-title">
             <div class="d-flex">
                 <h4 class="ml-auto mr-auto">{{'Demands' | translate | uppercase}}</h4>
@@ -135,19 +135,19 @@
             <div class="line"></div>
         </div>
         <div class="action-description">
-            <div class="half-column">
-                <p class="title-par">Are you interested in a niche product?</p>
-                <p>State your interest on products and services so that B2BMarket members can provide a solution.</p>
+            <div class="half-column w-75">
+                <p class="title-par">{{'Do you have a specific need?' | translate }}</p>
+                <p>{{'State your interest in products and/or services so that B2BMarket users can provide a solution.' | translate }}</p>
 <!--                <div class="btn btn-outline-primary disabled">{{'Publish Your Demand' | translate}}</div>-->
             </div>
-            <div class="half-column">
-                <p class="title-par">Can you address customer's demands?</p>
-                <p>See all demands on B2BMarket and respond them.</p>
-<!--                <div class="btn btn-outline-secondary disable">{{'See Demands' | translate}}</div>-->
-            </div>
+<!--            <div class="half-column">-->
+<!--                <p class="title-par">Can you address customer's demands?</p>-->
+<!--                <p>See all demands on B2BMarket and respond them.</p>-->
+<!--&lt;!&ndash;                <div class="btn btn-outline-secondary disable">{{'See Demands' | translate}}</div>&ndash;&gt;-->
+<!--            </div>-->
         </div>
-        <div class="alert-danger alert w-50 text-center mr-auto ml-auto">
-            {{'Demands feature is coming soon!' | translate}}
+        <div class="alert-danger alert w-50 text-center mr-auto ml-auto w-75">
+            {{'Demand\'s panel is coming soon!' | translate}}
         </div>
     </div>
 
@@ -162,10 +162,10 @@
 
         <div class="d-flex justify-content-center mb-3">
             <div class="w-75 text-center">
-                <p>Any supply chain entity as a producer or consumer of products or services can benefit from B2BMarket. Hundreds of companies are already B2BMarket!</p>
+                <p>{{'Any company in the sector can benefit from B2Bmarket, both to buy and to sell. Hundreds of companies are already in B2BMarket!' | translate}}</p>
             </div>
         </div>
-        <div class="d-flex justify-content-around text-center">
+        <div class="d-flex justify-content-center text-center">
             <div *ngIf="manufacturerCount && supplierCount" class="member-count" (click)="onMemberCountClicked('Manufacturers')">
                 <div>{{manufacturerCount + supplierCount}}</div>
                 {{'Industry' | translate}}

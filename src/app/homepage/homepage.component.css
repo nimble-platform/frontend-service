@@ -197,13 +197,25 @@
 }
 
 .image-div.dashboard {
-    background-image: url('../../assets/images/homepage/dashboard.png');
+    background-image: url('../../assets/images/homepage/services.jpg');
 }
 
 .content-div {
-    padding-bottom: 1rem;
-    padding-top: 1rem;
+    padding: 1rem 2rem;
     background-color: white;
+}
+
+/**
+ * Demand section
+ */
+
+.demand-section {
+    background-color: var(--light-box-color);
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+    width: 60%;
+    margin-right: auto;
+    margin-left: auto;
 }
 
 /**
@@ -223,6 +235,9 @@
     transform: scale(1.03);
     transition: transform 0.2s ease-out;
     margin-bottom: -0.5%;
+}
+.member-count:not(:last-child) {
+    margin-right: 2rem;
 }
 
 .member-count div {

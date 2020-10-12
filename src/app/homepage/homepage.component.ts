@@ -12,7 +12,7 @@
    limitations under the License.
  */
 
-import {Component} from '@angular/core';
+import {Component, ElementRef, ViewChild} from '@angular/core';
 import {CookieService} from 'ng2-cookies';
 import * as myGlobals from '../globals';
 import {Router} from '@angular/router';
@@ -26,6 +26,7 @@ import {CategoryService} from '../catalogue/category/category.service';
 import {CategoryModelUtils} from '../catalogue/model/model-util/category-model-utils';
 import {OwlOptions} from 'ngx-owl-carousel-o';
 import {ActivitySectorUiModel} from './model/activity-sector-ui.model';
+import {Location} from '@angular/common';
 
 @Component({
     selector: 'homepage',
@@ -50,6 +51,8 @@ export class HomepageComponent {
 
     activitySectors: any[];
     displayedActivitySectorCount = 25;
+
+    @ViewChild('beginning') beginningElement: ElementRef;
 
     getTranslatedCategoryLabel = selectPreferredName;
     public config = myGlobals.config;
@@ -141,6 +144,8 @@ export class HomepageComponent {
                 private router: Router) {}
 
     ngOnInit(): void {
+        // document.querySelector('#beginning').scrollIntoView({block: 'start'});
+        this.scroll(this.beginningElement.nativeElement, null);
         this.getCategories();
         this.getCompanyCounts();
         this.getCatalogueCount();
@@ -151,7 +156,7 @@ export class HomepageComponent {
      */
 
     onPublishProductClicked(): void {
-        this.router.navigate(['catalogue/publish'], { queryParams: { pg: 'single' } });
+        this.router.navigate(['catalogue/categorysearch'], { queryParams: { pageRef: 'homepage', productType: 'product'} });
     }
 
     onCategoryClicked(category: Category): void {
@@ -207,8 +212,12 @@ export class HomepageComponent {
         });
     }
 
-    scroll(el: HTMLElement) {
-        el.scrollIntoView({behavior: 'smooth'});
+    scroll(el: HTMLElement, behavior: ScrollBehavior = 'smooth') {
+        if (behavior) {
+            el.scrollIntoView({block: 'nearest', behavior: behavior});
+        } else {
+            el.scrollIntoView(false);
+        }
     }
 
     /**
