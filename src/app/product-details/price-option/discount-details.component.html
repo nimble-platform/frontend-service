@@ -27,8 +27,11 @@
             </ng-container>
         </select>
     </div>
-    <button class="btn btn-outline-primary btn-sm" (click)="addPriceOption(priceOptions[priceOptionSelect.value].typeID)">
-        <span [innerHTML]="'Add discount / charge' | translate"></span>
+    <button class="btn btn-outline-primary btn-sm" (click)="addPriceOption(priceOptions[priceOptionSelect.value].typeID,false)">
+        <span [innerHTML]="'Add discount' | translate"></span>
+    </button>
+    <button class="btn btn-outline-primary btn-sm space-left" (click)="addPriceOption(priceOptions[priceOptionSelect.value].typeID,true)">
+        <span [innerHTML]="'Add charge' | translate"></span>
     </button>
 </div>
 

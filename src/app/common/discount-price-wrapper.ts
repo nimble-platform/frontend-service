@@ -213,7 +213,7 @@ export class DiscountPriceWrapper {
         for (let priceOption of this.priceOptions) {
             // check for incoterms
             if (this.incoterm && priceOption.typeID == PRICE_OPTIONS.INCOTERM.typeID && priceOption.incoterms.indexOf(this.incoterm) != -1) {
-                priceOption.discount = this.calculateDiscountAmount(priceOption, totalPrice);
+                priceOption.discount = this.calculateDiscountChargeAmount(priceOption, totalPrice);
                 totalDiscount += priceOption.discount;
                 // add this discount to appliedDiscounts list
 
@@ -221,7 +221,7 @@ export class DiscountPriceWrapper {
             }
             // check for paymentMeans
             else if (this.paymentMeans && priceOption.typeID == PRICE_OPTIONS.PAYMENT_MEAN.typeID && priceOption.paymentMeans[0].paymentMeansCode.value == this.paymentMeans) {
-                priceOption.discount = this.calculateDiscountAmount(priceOption, totalPrice);
+                priceOption.discount = this.calculateDiscountChargeAmount(priceOption, totalPrice);
                 totalDiscount += priceOption.discount;
                 // add this discount to appliedDiscounts list
                 this.appliedDiscounts.push(priceOption);
@@ -229,7 +229,7 @@ export class DiscountPriceWrapper {
             // check for minimum order quantity
             else if (priceOption.typeID == PRICE_OPTIONS.ORDERED_QUANTITY.typeID && priceOption.itemLocationQuantity.minimumQuantity.unitCode == this.orderedQuantity.unitCode
                 && this.orderedQuantity.value >= priceOption.itemLocationQuantity.minimumQuantity.value) {
-                let qDiscount = this.calculateDiscountAmount(priceOption, totalPrice);
+                let qDiscount = this.calculateDiscountChargeAmount(priceOption, totalPrice);
                 // discount
                 if (qDiscount > 0 && qDiscount > maximumMinimumOrderQuantityDiscount) {
                     maximumMinimumOrderQuantityDiscount = qDiscount;
@@ -246,7 +246,7 @@ export class DiscountPriceWrapper {
                 priceOption.estimatedDeliveryPeriod.durationMeasure.unitCode == this.deliveryPeriod.unitCode &&
                 priceOption.estimatedDeliveryPeriod.durationMeasure.value <= this.deliveryPeriod.value) {
 
-                let dpDiscount = this.calculateDiscountAmount(priceOption, totalPrice);
+                let dpDiscount = this.calculateDiscountChargeAmount(priceOption, totalPrice);
                 // discount
                 if (dpDiscount > 0 && dpDiscount > maximumDeliveryPeriodDiscount) {
                     maximumDeliveryPeriodDiscount = dpDiscount;
@@ -266,7 +266,7 @@ export class DiscountPriceWrapper {
                         continue;
                     }
                     if (property.id == priceOption.additionalItemProperty[0].id && this.existenceOfPriceOptionForPropertyValue(priceOption.additionalItemProperty[0].value, property.value[0])) {
-                        priceOption.discount = this.calculateDiscountAmount(priceOption, totalPrice);
+                        priceOption.discount = this.calculateDiscountChargeAmount(priceOption, totalPrice);
                         totalDiscount += priceOption.discount;
                         // add this discount to appliedDiscounts list
                         this.appliedDiscounts.push(priceOption);
@@ -337,7 +337,7 @@ export class DiscountPriceWrapper {
             this.appliedDiscounts.push(deliveryPeriodPriceOptionForCharge);
         }
         if (priceOptionForDeliveryLocation) {
-            priceOptionForDeliveryLocation.discount = this.calculateDiscountAmount(priceOptionForDeliveryLocation, totalPrice);
+            priceOptionForDeliveryLocation.discount = this.calculateDiscountChargeAmount(priceOptionForDeliveryLocation, totalPrice);
             totalDiscount += priceOptionForDeliveryLocation.discount;
             // add this discount to appliedDiscounts list
             this.appliedDiscounts.push(priceOptionForDeliveryLocation)
@@ -346,7 +346,11 @@ export class DiscountPriceWrapper {
         return totalPrice - totalDiscount;
     }
 
-    private calculateDiscountAmount(priceOption: PriceOption, totalPrice: number): number {
+    /**
+     * Calculates the discount/charge amount for the given price option.
+     * @return the discount/charge amount. It is positive for the discounts and negative for the charges
+     * */
+    private calculateDiscountChargeAmount(priceOption: PriceOption, totalPrice: number): number {
         let discount = 0;
 
         // total price
@@ -365,6 +369,10 @@ export class DiscountPriceWrapper {
             discount += priceOption.itemLocationQuantity.allowanceCharge[0].perUnitAmount.value * this.orderedQuantity.value;
         }
 
+        // for the charges, return negative values
+        if(discount !== 0 && priceOption.itemLocationQuantity.allowanceCharge[0].chargeIndicator){
+            discount *= -1;
+        }
         return discount;
     }
 

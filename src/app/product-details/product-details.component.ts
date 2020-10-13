@@ -106,6 +106,7 @@ export class ProductDetailsComponent implements OnInit {
     config = myGlobals.config;
     selectPreferredValue = selectPreferredValue;
     onOrderQuantityKeyPressed = validateNumberInput;
+    abs = Math.abs;
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,

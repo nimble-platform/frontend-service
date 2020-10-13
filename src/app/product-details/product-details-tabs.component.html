@@ -150,7 +150,7 @@
     <!-- Delivery & Trading Tab -->
     <div *ngIf="selectedTab === 'DELIVERY_TRADING'" class="p-3 col-12">
         <div class="d-flex" *ngIf="isLogistics === false">
-            <div style="flex-grow:1;">
+            <div class="flex-item">
                 <h3 *ngIf="wrapper.getIncoterms() != 'None' || wrapper.getSpecialTerms() != 'None' || wrapper.getDeliveryPeriodString() != 'None'" class="pt-2 p-1"><span [innerHTML]="'Delivery Terms' | translate"></span></h3>
                 <div *ngIf="wrapper.getIncoterms() != 'None'" class="p-1">
                     <strong><span [innerHTML]="'Incoterms:' | translate"></span></strong> {{ wrapper.getIncoterms() | translate}}
@@ -162,20 +162,20 @@
                     <strong><span [innerHTML]="'Delivery Period:' | translate"></span></strong> {{ wrapper.getDeliveryPeriodString() }}
                 </div>
             </div>
-            <div style="flex-grow:1;">
+            <div class="flex-item">
                 <h3 *ngIf="wrapper.getPackaging() != 'Not specified'" class="pt-2 p-1"><span [innerHTML]="'Packaging' | translate"></span></h3>
                 <div *ngIf="wrapper.getPackaging() != 'Not specified'" class="p-1">
                     <strong><span [innerHTML]="'Packaging' | translate"></span>: </strong> {{ wrapper.getPackaging() }}
                 </div>
             </div>
-            <div style="flex-grow:1;">
+            <div class="flex-item">
                 <h3 class="pt-2 p-1"><span [innerHTML]="'Customization' | translate"></span></h3>
                 <div class="p-1">
                     <strong><span [innerHTML]="'Customizable' | translate"></span>: </strong>
                     <i class="fa boolean-type {{wrapper.getCustomizable() == 'Yes' ? 'fa-check': 'fa-times'}}" aria-hidden="true"></i>
                 </div>
             </div>
-            <div *ngIf="product_filter_prod.indexOf('sparePart') != -1" style="flex-grow:1;">
+            <div *ngIf="product_filter_prod.indexOf('sparePart') != -1" class="flex-item">
                 <h3 class="pt-2 p-1"><span [innerHTML]="'Spare Part' | translate"></span></h3>
                 <div class="p-1">
                     <strong><span [innerHTML]="'Spare Part' | translate"></span>: </strong> {{ wrapper.getSparePart() }}
