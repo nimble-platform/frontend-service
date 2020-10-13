@@ -54,3 +54,17 @@
     min-width: 1.5rem;
     text-align: center;
 }
+
+.publish-menu-root {
+    position: relative;
+}
+.publish-menu-root:hover .publish-menu {
+    display: inline;
+    position: absolute;
+    top: -5px;
+    right: unset;
+    left: unset;
+}
+.publish-menu {
+    display: none;
+}

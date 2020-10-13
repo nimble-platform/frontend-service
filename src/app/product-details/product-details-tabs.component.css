@@ -14,3 +14,8 @@
 .click-login-badge {
     cursor: pointer;
 }
+
+.flex-item{
+    flex-grow:1;
+    min-width: 0
+}

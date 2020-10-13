@@ -14,7 +14,7 @@
 
 <div class=" mt-2 row d-flex align-items-center" *ngIf="!readonly">
     <div class="col-6">
-        <amount-input [label]="'Discount/Charge Amount'  | translate" [labelClass]="'col-5'" [placeholder]="'Discount/Charge Amount' |translate" [amountCurrencies]="discountUnits" [amount]="amount" [valueClass]="'col-7'" [required]="true" [parentForm]="parentForm" [formFieldName]="'discount_amount'">
+        <amount-input [label]="(priceOption.itemLocationQuantity.allowanceCharge[0].chargeIndicator ? 'Charge Amount' : 'Discount Amount') | translate" [labelClass]="'col-5'" [placeholder]="(priceOption.itemLocationQuantity.allowanceCharge[0].chargeIndicator ? 'Charge Amount' : 'Discount Amount') |translate" [amountCurrencies]="discountUnits" [amount]="amount" [min]="0" [valueClass]="'col-7'" [required]="true" [parentForm]="parentForm" [formFieldName]="'discount_amount'">
         </amount-input>
     </div>
 
@@ -39,7 +39,7 @@
     <div class="col-6">
         <div class="row">
             <div class="col-5">
-                <span [innerHTML]="(amount.value >= 0 ? 'Discount Amount': 'Charge Amount') | translate"></span>
+                <span [innerHTML]="(priceOption.itemLocationQuantity.allowanceCharge[0].chargeIndicator ? 'Charge Amount': 'Discount Amount') | translate"></span>
             </div>
             <div class="col-7">
                 {{amountToString()}} {{amount.currencyID !== '%' ? "on "+selectedDiscountTarget :""}}

@@ -48,7 +48,12 @@ export class DiscountDetailsComponent extends EmptyFormBase implements OnInit {
         this.initViewFormAndAddToParentForm();
     }
 
-    addPriceOption(priceOptionType: any): void {
+    /**
+     * Add price option for the given price option type
+     * @param priceOptionType the type of price option
+     * @param chargeIndicator whether the price option indicates a charge (i.e, it is true) or discount (i.e, it is false)
+     * */
+    addPriceOption(priceOptionType: any, chargeIndicator:boolean): void {
         let priceOption: PriceOption = new PriceOption();
 
         priceOption.typeID = priceOptionType;
@@ -68,6 +73,7 @@ export class DiscountDetailsComponent extends EmptyFormBase implements OnInit {
             priceOption.estimatedDeliveryPeriod = new Period();
         }
 
+        priceOption.itemLocationQuantity.allowanceCharge[0].chargeIndicator = chargeIndicator;
         this.catalogueLine.priceOption.push(priceOption);
         this.catalogueLine.priceOption = [].concat(this.catalogueLine.priceOption);
         // update discount unit list

@@ -27,6 +27,6 @@ export class PriceOption {
         public paymentMeans: PaymentMeans[] = null,
         public paymentTerms: PaymentTerms = null,
         public itemLocationQuantity: ItemLocationQuantity = new ItemLocationQuantity(),
-        public discount: number = 0
+        public discount: number = 0 // keeps the calculated discount/charge amount for the price option. It's positive for the discounts and negative for the charges
     ) { }
 }

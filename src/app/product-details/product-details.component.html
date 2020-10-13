@@ -174,11 +174,11 @@
                     </div>
                     <div *ngIf="priceWrapper.appliedDiscounts.length > 0" class="order-group">
                         <label class="order-label">
-                            <span [innerHTML]="'Applied Discounts' | translate"></span>
+                            <span [innerHTML]="(priceWrapper.calculateTotalDiscount() > 0 ? 'Applied Discounts': 'Applied Charges') | translate"></span>
                         </label>
                         <div class="inline-order-value">
                             <span *ngIf="termsSelectBoxValue == 'product_defaults'">
-                                {{priceWrapper.calculateTotalDiscount()}} {{priceWrapper.currency}}
+                                {{abs(priceWrapper.calculateTotalDiscount())}} {{priceWrapper.currency}}
                             </span>
                             <span class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" [title]="'Applied Discounts/Charges'|translate" style="cursor: pointer">
                                 <i class="fa fa-search" aria-hidden="true"></i>
@@ -199,7 +199,7 @@
                     </div>
                 </ng-container>
                 <ng-container *ngIf="getPricePerItem() === 'On demand'">
-                    <div class="inline-order-group">
+                    <div class="order-group">
                         <label class="order-label order-price">
                             <span [innerHTML]="'Total Price:' | translate"></span>
                         </label>
@@ -247,7 +247,7 @@
                     {{ productWrapper.getPaymentMeans() |translate }}
                 </span>
             </div>
-            <div class="inline-order-group">
+            <div class="order-group">
                 <label class="order-label order-price">
                     <span [innerHTML]="'Total Price:' | translate"></span>
                 </label>

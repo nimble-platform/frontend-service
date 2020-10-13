@@ -208,7 +208,7 @@
                 <h4 class="font-weight-bold" *ngIf="!selectedCategoryWithDetails"><span [innerHTML]="'Details' | translate"></span></h4>
                 <h4 class="font-weight-bold pr-2 mr-auto" *ngIf="selectedCategoryWithDetails"><span [innerHTML]="'Details for' | translate"></span> {{selectPreferredName(selectedCategoryWithDetails)}}</h4>
                 <div *ngIf="selectedCategoryWithDetails">
-                    <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) === -1" class="btn btn-outline-primary float-right" (click)="addCategoryToSelected(selectedCategoryWithDetails)">
+                    <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) === -1" class="btn btn-outline-primary float-right" (click)="addCategoryToSelected(selectedCategoryWithDetails)" [disabled]="disableCategorySelection()" [title]="(disableCategorySelection() ? 'You can not mix product and service categories for an item' : '')|translate">
                         <span [innerHTML]="'Select Category' | translate"></span>
                     </button>
                     <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) > -1" class="btn btn-danger float-right" (click)="removeCategoryFromSelected(selectedCategoryWithDetails)">

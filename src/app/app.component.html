@@ -65,8 +65,24 @@
                     <i class="fa fa-arrow-up"></i> <span [innerHTML]="'Publish' | translate"></span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuPublish" ngbDropdownMenu>
-                    <a class="dropdown-item" [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'product'}" routerLinkActive="active">
+                    <a class="dropdown-item publish-menu-root">
                         <i class="fa fa-shopping-cart dd-icon"></i> <span [innerHTML]="'Product / Service' | translate"></span>
+                        <div class="publish-menu dropdown-menu">
+                            <a class="dropdown-item pointer text-left"
+                                [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'product', pg: 'single'}">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-minus mr-3"></i>
+                                    <span>{{'Single item' | translate}}</span>
+                                </div>
+                            </a>
+                            <a class="dropdown-item pointer text-left"
+                               [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'product', pg: 'bulk'}">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-align-justify mr-3"></i>
+                                    <span>{{'Multiple items' | translate}}</span>
+                                </div>
+                            </a>
+                        </div>
                     </a>
                     <a *ngIf="enableLogisticServicePublishing" class="dropdown-item" [routerLink]="['/catalogue/publish-logistic']" [queryParams]="{pageRef: 'single', productType: 'transportation'}" routerLinkActive="active">
                         <i class="fa fa-truck dd-icon"></i> <span [innerHTML]="'Logistics Service' | translate"></span>

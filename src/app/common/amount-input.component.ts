@@ -52,6 +52,7 @@ export class AmountInputComponent extends ChildFormBase implements OnInit {
     @Input() disableAmountCurrency: boolean = false;
 
     @Input() required = false;
+    @Input() min = null;
 
     amountValueFormControl: FormControl;
 
@@ -110,6 +111,9 @@ export class AmountInputComponent extends ChildFormBase implements OnInit {
         let validators: ValidatorFn[] = [];
         if (this.required) {
             validators.push(Validators.required);
+        }
+        if(this.min !== null){
+            validators.push(Validators.min(this.min));
         }
 
         this.amountValueFormControl = new FormControl(this.amount.value, validators);
