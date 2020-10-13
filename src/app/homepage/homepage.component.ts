@@ -106,7 +106,7 @@ export class HomepageComponent {
                 'http://www.aidimme.es/FurnitureSectorOntology.owl#EngineeringService',
                 'http://www.aidimme.es/FurnitureSectorOntology.owl#Training'
             ],
-            'img': 'assets/homepage/component.jpeg',
+            'img': 'assets/homepage/services.jpeg',
             'title': 'Service'
         }
     ];
