@@ -135,18 +135,23 @@
         <div class="col-10">
             <input *ngIf="dataForm.getRawValue()['businessType'] == ''" type="text" class="form-control" placeholder="Select Business Type" readonly maxlength="255">
             <ng-container *ngIf="availableActivitySectorKeys.length>0 && !forceActText">
-                <select class="form-control" [(ngModel)]="industrySectorsArr[0].text" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" multiple required [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('comp-data')">
-                    <option *ngFor="let sector of availableActivitySectorKeys" [value]="sector">{{getMultilingualPredefinedIndustrySector(sector)}}</option>
-                </select>
+                <div class="industry-sector-container">
+                    <div *ngFor="let sectorKey of availableActivitySectorKeys" class="form-check industry-sector-item">
+                        <input class="form-check-input" type="checkbox" [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('comp-data')"
+                               (change)="industrySectorSelectedTerms.toggle(sectorKey);flagChanged()"
+                               [checked]="industrySectorSelectedTerms.isSelected(sectorKey)" >
+                        <label class="form-check-label">{{getMultilingualPredefinedIndustrySector(sectorKey)}}</label>
+                    </div>
+                </div>
             </ng-container>
             <ng-container *ngIf="dataForm.getRawValue()['businessType'] != '' && (availableActivitySectorKeys.length == 0 || forceActText)">
-                <ng-container *ngFor="let industrySectorsEntries of industrySectorsArr; let i = index; trackBy:trackFn">
+                <ng-container *ngFor="let industrySectorsEntries of customIndustrySectors; let i = index; trackBy:trackFn">
                     <div class="row mb-1">
                         <div class="col-8">
-                            <input type="text" class="form-control" [(ngModel)]="industrySectorsArr[i].text" [ngModelOptions]="{standalone: true}" (input)="flagChanged()" maxlength="255" [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('comp-data')">
+                            <input type="text" class="form-control" [(ngModel)]="customIndustrySectors[i].text" [ngModelOptions]="{standalone: true}" (input)="flagChanged()" maxlength="255" [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('comp-data')">
                         </div>
                         <div class="col-2">
-                            <select class="form-control" [(ngModel)]="industrySectorsArr[i].lang" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" required [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('comp-data')">
+                            <select class="form-control" [(ngModel)]="customIndustrySectors[i].lang" [ngModelOptions]="{standalone: true}" (change)="flagChanged()" required [disabled]="saveCallStatus.isLoading() || !appComponent.checkRoles('comp-data')">
                                 <option *ngFor='let language of languages' [value]="language">{{language}}</option>
                             </select>
                         </div>

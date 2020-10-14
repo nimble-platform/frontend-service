@@ -33,17 +33,18 @@ import { TranslateService } from '@ngx-translate/core';
 import { Router } from "@angular/router";
 import { LANGUAGES, DEFAULT_LANGUAGE } from "../../catalogue/model/constants";
 import { BPEService } from "../../bpe/bpe.service";
+import {SelectedTerms} from '../selected-terms';
 
 @Component({
     selector: "company-data-settings",
-    templateUrl: "./company-data-settings.component.html"
+    templateUrl: "./company-data-settings.component.html",
+    styleUrls: ["./company-data-settings.component.css"]
 })
 export class CompanyDataSettingsComponent implements OnInit {
 
     @Input() settings: CompanySettings;
     companyNameArr: any;
     brandNameArr: any;
-    industrySectorsArr: any;
     businessKeywordsArr: any;
     dataForm: FormGroup;
     inputChanged = false;
@@ -52,15 +53,28 @@ export class CompanyDataSettingsComponent implements OnInit {
     tooltipHTML: string;
     config = myGlobals.config;
     alertClosed = false;
-    forceActText = true;
     isAllCollaborationsFinished = false;
     saveCallStatus: CallStatus = new CallStatus();
     @Output() onSaveEvent: EventEmitter<void> = new EventEmitter();
 
     selectValueOfTextObject = selectValueOfTextObject;
+
+    // the start of fields to handle activity sectors
+
     // keeps the keys of available activity sector
     // it is updated when business type is changed
     availableActivitySectorKeys:string[] = null;
+    // object to manage the industry sector selection
+    industrySectorSelectedTerms: SelectedTerms;
+    // selected predefined industry sectors
+    // keeps the keys of selected industry sectors
+    selectedIndustrySectorKeys:string[] = [];
+    // keeps the custom industry sectors defined by the user
+    customIndustrySectors: any;
+    // whether the text inputs or checkboxes are displayed for the industry sectors
+    forceActText = true;
+
+    // the end of fields to handle activity sectors
 
     constructor(public appComponent: AppComponent,
         private _fb: FormBuilder,
@@ -75,7 +89,9 @@ export class CompanyDataSettingsComponent implements OnInit {
     ngOnInit() {
         this.companyNameArr = getArrayOfTextObject(this.settings.details.legalName);
         this.brandNameArr = getArrayOfTextObject(this.settings.details.brandName);
-        this.industrySectorsArr = getArrayOfTextObjectFromLanguageMap(this.settings.details.industrySectors);
+        // convert the industry sectors of company to text object array
+        // and store it in the custom industry sector array
+        this.customIndustrySectors = getArrayOfTextObjectFromLanguageMap(this.settings.details.industrySectors);
         this.businessKeywordsArr = getArrayOfTextObjectFromLanguageMap(this.settings.details.businessKeywords);
         this.dataForm = this._fb.group({
             vatNumber: new FormControl({ value: (this.settings.details.vatNumber || ""), disabled: !this.appComponent.checkRoles('pm') }),
@@ -102,6 +118,9 @@ export class CompanyDataSettingsComponent implements OnInit {
         } else{
             this.availableActivitySectorKeys = [];
         }
+        // construct the selected industry sectors array using the custom industry sectors
+        this.selectedIndustrySectorKeys = this.customIndustrySectors.map(industrySector => industrySector.text);
+        this.industrySectorSelectedTerms = new SelectedTerms(this.selectedIndustrySectorKeys, this.availableActivitySectorKeys);
     }
 
     trackFn(index, item) {
@@ -151,7 +170,7 @@ export class CompanyDataSettingsComponent implements OnInit {
     }
 
     isActivitySectorRequired(){
-        return Object.keys(createTextObjectFromArray(this.industrySectorsArr)).length == 0;
+        return Object.keys(createTextObjectFromArray(this.customIndustrySectors)).length == 0 && this.selectedIndustrySectorKeys.length == 0;
     }
 
     deleteCompany(): void {
@@ -174,24 +193,22 @@ export class CompanyDataSettingsComponent implements OnInit {
 
     save(model: FormGroup) {
         this.saveCallStatus.submit();
-        // retrieve the translations of each selected industry sector
-        // so that we can index the selected industry sectors for all available languages
         let industrySectorWithMultilingualLabels = [];
         // the case where industry sectors are selected from the predefined values
         if (!this.forceActText && this.availableActivitySectorKeys.length > 0) {
-            // retrieve the translation of each industry sector for the available languages
+            // retrieve the translations of each selected industry sector
+            // so that we can index the selected industry sectors for all available languages
             for (let languageId of myGlobals.config.languageSettings.available) {
-                for (let industrySectorsArrKey of this.industrySectorsArr) {
-                    for(let industrySector of industrySectorsArrKey.text){
-                        if(this.config.supportedActivitySectors[model.getRawValue()['businessType']][industrySector][languageId]){
-                            industrySectorWithMultilingualLabels.push({ "text": this.config.supportedActivitySectors[model.getRawValue()['businessType']][industrySector][languageId], "lang": languageId});
-                        }
+                for (let sectorKey of this.selectedIndustrySectorKeys) {
+                    if(this.config.supportedActivitySectors[model.getRawValue()['businessType']][sectorKey][languageId]){
+                        industrySectorWithMultilingualLabels.push({ "text": this.config.supportedActivitySectors[model.getRawValue()['businessType']][sectorKey][languageId], "lang": languageId});
                     }
                 }
             }
         }
+        // the case where the custom industry sectors are defined
         else{
-            industrySectorWithMultilingualLabels = this.industrySectorsArr;
+            industrySectorWithMultilingualLabels = this.customIndustrySectors;
         }
         this.settings.details.legalName = createTextObjectFromArray(this.companyNameArr);
         this.settings.details.brandName = createTextObjectFromArray(this.brandNameArr);
@@ -228,7 +245,10 @@ export class CompanyDataSettingsComponent implements OnInit {
     }
 
     switchInput() {
-        this.industrySectorsArr = [{ "text": [], "lang": DEFAULT_LANGUAGE() }];
+        // clear the custom and selected industry sectors
+        this.customIndustrySectors = [{ "text": [], "lang": DEFAULT_LANGUAGE() }];
+        this.selectedIndustrySectorKeys.forEach(industrySectorKey => this.industrySectorSelectedTerms.toggle(industrySectorKey));
+        // switch the input
         this.forceActText = !this.forceActText;
     }
 
@@ -341,14 +361,14 @@ export class CompanyDataSettingsComponent implements OnInit {
     * Helper methods for business keywords and industry sectors
     */
     addIndustrySectors() {
-        this.industrySectorsArr.push({ "text": "", "lang": DEFAULT_LANGUAGE() });
+        this.customIndustrySectors.push({ "text": "", "lang": DEFAULT_LANGUAGE() });
         this.flagChanged();
     }
 
     removeIndustrySectors(index: number) {
-        this.industrySectorsArr.splice(index, 1);
-        if (this.industrySectorsArr.length == 0)
-            this.industrySectorsArr = [{ "text": "", "lang": DEFAULT_LANGUAGE() }];
+        this.customIndustrySectors.splice(index, 1);
+        if (this.customIndustrySectors.length == 0)
+            this.customIndustrySectors = [{ "text": "", "lang": DEFAULT_LANGUAGE() }];
         this.flagChanged();
     }
 
