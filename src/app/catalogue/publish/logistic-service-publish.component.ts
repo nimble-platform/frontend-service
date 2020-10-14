@@ -88,8 +88,6 @@ export class LogisticServicePublishComponent implements OnInit {
 
     // selected tab
     selectedTabSinglePublish = "TRANSPORT";
-    // whether we need to show all tabs or not
-    singleTabForLogisticServices = false;
     // publish mode of each logistic services
     logisticPublishMode: Map<string, string> = null;
     // catalogue lines of each logistic services
@@ -102,7 +100,7 @@ export class LogisticServicePublishComponent implements OnInit {
     // furniture ontology categories which are used to represent Logistic Services
     furnitureOntologyLogisticCategories: Category[] = null;
 
-    showRoadTransportService: boolean = false;
+    showRoadTransportService: boolean = true;
     showMaritimeTransportService: boolean = false;
     showAirTransportService: boolean = false;
     showRailTransportService: boolean = false;
@@ -188,12 +186,16 @@ export class LogisticServicePublishComponent implements OnInit {
         this.selectedTabSinglePublish = id;
     }
 
-    onSelectTab(event: any, id: any) {
-        event.preventDefault();
-        if (id === "singleUpload") {
-            this.publishingGranularity = "single";
-        } else {
-            this.publishingGranularity = "bulk";
+    onTransportServiceCategorySelected(transportService: string): void {
+        this.showMaritimeTransportService = false;
+        this.showRoadTransportService = false;
+        this.showAirTransportService = false;
+        this.showRailTransportService = false;
+        switch (transportService) {
+            case 'ROADTRANSPORT': this.showRoadTransportService = true; break;
+            case 'AIRTRANSPORT': this.showAirTransportService = true; break;
+            case 'MARITIMETRANSPORT': this.showMaritimeTransportService = true; break;
+            case 'RAILTRANSPORT': this.showRailTransportService = true; break;
         }
     }
 
@@ -243,9 +245,6 @@ export class LogisticServicePublishComponent implements OnInit {
                 this.router.navigate(['catalogue/publish-logistic']);
                 return;
             }
-
-            // show only one tab
-            this.singleTabForLogisticServices = true;
 
             this.selectedTabSinglePublish = this.getSelectedTabForLogisticServices();
             this.availableLogisticsServices.push(this.selectedTabSinglePublish);
@@ -349,9 +348,9 @@ export class LogisticServicePublishComponent implements OnInit {
 
     }
 
-    getBinaryObjectsForLogisticService(serviceType: string) {
+    getBinaryObjectsForLogisticService() {
+        const serviceType: string = this.getSelectedTransportServiceType();
         let binaryObjects: BinaryObject[] = [];
-
 
         if (this.publishStateService.publishMode == 'create') {
             binaryObjects = this.logisticCatalogueLines.get(serviceType).goodsItem.item.itemSpecificationDocumentReference.map(doc => doc.attachment.embeddedDocumentBinaryObject)
@@ -362,7 +361,8 @@ export class LogisticServicePublishComponent implements OnInit {
         return binaryObjects;
     }
 
-    getProductTypeProperty(serviceType: string) {
+    getProductTypeProperty() {
+        const serviceType: string = this.getSelectedTransportServiceType();
         let item: Item = this.getLogisticCatalogueLine(serviceType).goodsItem.item;
         for (let property of item.additionalItemProperty) {
             if (property.uri == "http://www.aidimme.es/FurnitureSectorOntology.owl#managedProductType") {
@@ -371,7 +371,8 @@ export class LogisticServicePublishComponent implements OnInit {
         }
     }
 
-    getIndustrySpecializationProperty(serviceType: string) {
+    getIndustrySpecializationProperty() {
+        const serviceType: string = this.getSelectedTransportServiceType();
         let item: Item = this.getLogisticCatalogueLine(serviceType).goodsItem.item;
         for (let property of item.additionalItemProperty) {
             if (property.uri == "http://www.aidimme.es/FurnitureSectorOntology.owl#industrySpecialization") {
@@ -411,7 +412,8 @@ export class LogisticServicePublishComponent implements OnInit {
     }
 
     // methods to select/unselect files for Transport logistic services
-    onSelectFileForLogisticService(binaryObject: BinaryObject, serviceType: string) {
+    onSelectFileForLogisticService(binaryObject: BinaryObject) {
+        const serviceType: string = this.getSelectedTransportServiceType();
         const document: DocumentReference = new DocumentReference();
         const attachment: Attachment = new Attachment();
         attachment.embeddedDocumentBinaryObject = binaryObject;
@@ -424,7 +426,8 @@ export class LogisticServicePublishComponent implements OnInit {
         }
     }
 
-    onUnSelectFileForLogisticService(binaryObject: BinaryObject, serviceType: string) {
+    onUnSelectFileForLogisticService(binaryObject: BinaryObject) {
+        const serviceType: string = this.getSelectedTransportServiceType();
         if (this.publishStateService.publishMode == 'create') {
             const i = this.logisticCatalogueLines.get(serviceType).goodsItem.item.itemSpecificationDocumentReference.findIndex(doc => doc.attachment.embeddedDocumentBinaryObject === binaryObject);
             if (i >= 0) {
@@ -758,6 +761,23 @@ export class LogisticServicePublishComponent implements OnInit {
             .catch(error => {
                 this.publishStatus.error("Error while publishing product", error);
             });
+    }
+
+    private getSelectedTransportServiceType(): string {
+        if (this.selectedTabSinglePublish === 'TRANSPORT') {
+            if (this.showRoadTransportService) {
+                return 'ROADTRANSPORT';
+            }
+            if (this.showRailTransportService) {
+                return 'RAILTRANSPORT';
+            }
+            if (this.showMaritimeTransportService) {
+                return 'MARITIMETRANSPORT';
+            }
+            return 'AIRTRANSPORT';
+        } else {
+            return this.selectedTabSinglePublish;
+        }
     }
 
     onBack() {

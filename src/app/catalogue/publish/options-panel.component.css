@@ -18,3 +18,7 @@
 div.without-left-padding {
     padding-left: 0px;
 }
+
+.form-control {
+    width: 100%;
+}

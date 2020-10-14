@@ -14,26 +14,12 @@
    limitations under the License.
  -->
 
-<!-- Topmost navigation bar -->
-<ul class="nav nav-tabs" *ngIf="publishMode !== 'edit' && publishMode !== 'copy'">
-    <li class="nav-item">
-        <a href id="singleUpload" [ngClass]="{'nav-link': true, active: publishingGranularity === 'single'}" (click)="onSelectTab($event,'singleUpload')"><span [innerHTML]="'Single Upload' | translate"></span></a>
-    </li>
-
-    <li class="nav-item">
-        <a href id="bulkUpload" [ngClass]="{'nav-link': true, active: publishingGranularity == 'bulk'}" (click)="onSelectTab($event,'bulkUpload')"><span [innerHTML]="'Bulk Upload' | translate"></span></a>
-    </li>
-</ul>
-
-<div *ngIf="publishingGranularity === 'bulk'">
-    <bulk-publish></bulk-publish>
-</div>
-
 <ng-container *ngIf="publishingGranularity === 'single' && (logisticCatalogueLines || catalogueLine)">
     <!-- Logistics tabs -->
     <div>
-        <div *ngIf="!singleTabForLogisticServices" class="row space-before">
+        <div *ngIf="publishMode === 'create'" class="row space-before">
             <div class="col-12">
+                selectedTAbSinglePublish{{selectedTabSinglePublish}}
                 <ul class="nav nav-tabs">
                     <li *ngIf="availableLogisticsServices.indexOf('ROADTRANSPORT') != -1 || availableLogisticsServices.indexOf('MARITIMETRANSPORT') != -1 || availableLogisticsServices.indexOf('AIRTRANSPORT') != -1 || availableLogisticsServices.indexOf('RAILTRANSPORT') != -1" class="nav-item">
                         <a href id="TRANSPORT" class="nav-link" [ngClass]="{ active: selectedTabSinglePublish === 'TRANSPORT'}" (click)="onSelectTabSinglePublish($event,'TRANSPORT')">
@@ -73,203 +59,243 @@
                 </ul>
             </div>
         </div>
-        <div class="space-before" *ngIf="selectedTabSinglePublish == 'TRANSPORT' || singleTabForLogisticServices">
-            <button *ngIf="availableLogisticsServices.indexOf('ROADTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'ROADTRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showRoadTransportService = !showRoadTransportService"><span [innerHTML]="'Road Transport' | translate"></span></button>
-            <div class="well" *ngIf="showRoadTransportService">
-                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('ROADTRANSPORT')" [productIdEditable]="isProductIdEditable('ROADTRANSPORT')"></name-description-panel>
-                <div class="row space-before">
-                    <div class="col-3">
-                        <strong><span [innerHTML]="'Additional Information' | translate"></span></strong>
+
+        <!-- Transport services -->
+        <div *ngIf="selectedTabSinglePublish == 'TRANSPORT' || selectedTabSinglePublish == 'RAILTRANSPORT' || selectedTabSinglePublish == 'AIRTRANSPORT' || selectedTabSinglePublish == 'MARITIMETRANSPORT' || selectedTabSinglePublish == 'ROADTRANSPORT'"
+             class="space-before">
+            <!-- transport services buttons -->
+            <div *ngIf="publishMode === 'create'" class="w-75 ml-auto mr-auto d-flex justify-content-center mb-3">
+                <button *ngIf="availableLogisticsServices.indexOf('ROADTRANSPORT') != -1"
+                        class='btn btn-outline-primary button-block mr-2' style="width: 20%"
+                        [ngClass]="{'active': showRoadTransportService}"
+                        (click)="onTransportServiceCategorySelected('ROADTRANSPORT')">
+                    <i class="fas fa-road"></i>
+                    <span [innerHTML]="'Road Transport' | translate"></span>
+                </button>
+                <button *ngIf="availableLogisticsServices.indexOf('MARITIMETRANSPORT') != -1"
+                        class='btn btn-outline-primary button-block mr-2' style="width: 20%"
+                        [ngClass]="{'active': showMaritimeTransportService}"
+                        (click)="onTransportServiceCategorySelected('MARITIMETRANSPORT')">
+                    <i class="fas fa-ship"></i>
+                    <span [innerHTML]="'Maritime Transport' | translate"></span>
+                </button>
+                <button *ngIf="availableLogisticsServices.indexOf('AIRTRANSPORT') != -1"
+                        class='btn btn-outline-primary button-block mr-2' style="width: 20%"
+                        [ngClass]="{'active': showAirTransportService}"
+                        (click)="onTransportServiceCategorySelected('AIRTRANSPORT')">
+                    <i class="fas fa-plane"></i>
+                    <span [innerHTML]="'Air Transport' | translate"></span>
+                </button>
+                <button *ngIf="availableLogisticsServices.indexOf('RAILTRANSPORT') != -1"
+                        class='btn btn-outline-primary button-block' style="width: 20%"
+                        [ngClass]="{'active': showRailTransportService}"
+                        (click)="onTransportServiceCategorySelected('RAILTRANSPORT')">
+                    <i class="fas fa-train"></i>
+                    <span [innerHTML]="'Rail Transport' | translate"></span>
+                </button>
+            </div>
+
+            <ng-container *ngIf="showRoadTransportService">
+                <div class="well" >
+                    <name-description-panel [catalogueLine]="getLogisticCatalogueLine('ROADTRANSPORT')" [productIdEditable]="isProductIdEditable('ROADTRANSPORT')"></name-description-panel>
+                </div>
+                <div class="d-flex flex-wrap">
+                    <div *ngFor="let property of getLogisticProperties('ROADTRANSPORT'); let i = index"
+                         class="property-panel" [ngClass]="{'mr-3' : i%2 === 0}" >
+                        <options-panel [itemProperty]="property"></options-panel>
                     </div>
-                    <div class="div-padding-left">
-                        <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'ROADTRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('ROADTRANSPORT')" (onClearFile)="onUnSelectFileForLogisticService($event,'ROADTRANSPORT')">
-                        </file-input>
+                    <!-- empty panel is added in case the right column is empty to adjust the layout of the left column -->
+                    <div *ngIf="getLogisticProperties('ROADTRANSPORT').length % 2 !== 0"
+                         class="property-panel empty-panel">
                     </div>
                 </div>
-                <div class="space-before" *ngFor="let property of getLogisticProperties('ROADTRANSPORT')">
-                    <options-panel [itemProperty]="property"></options-panel>
+            </ng-container>
+
+            <ng-container *ngIf="showMaritimeTransportService">
+                <div class="well">
+                    <name-description-panel [catalogueLine]="getLogisticCatalogueLine('MARITIMETRANSPORT')" [productIdEditable]="isProductIdEditable('MARITIMETRANSPORT')"></name-description-panel>
                 </div>
-                <div class="space-before">
-                    <options-panel [itemProperty]="getProductTypeProperty('ROADTRANSPORT')" [checkboxOther]="false" [selectedOptionsWithExtraColumn]="false"></options-panel>
+                <div class="d-flex flex-wrap">
+                    <div *ngFor="let property of getLogisticProperties('MARITIMETRANSPORT'); let i = index"
+                         class="property-panel" [ngClass]="{'mr-3' : i%2 === 0}" >
+                        <options-panel [itemProperty]="property"></options-panel>
+                    </div>
+                    <div *ngIf="getLogisticProperties('MARITIMETRANSPORT').length % 2 !== 0"
+                         class="property-panel empty-panel">
+                    </div>
                 </div>
-                <div class="space-before">
-                    <options-panel [itemProperty]="getIndustrySpecializationProperty('ROADTRANSPORT')" [checkboxOther]="false" [selectedOptionsWithExtraColumn]="false"></options-panel>
+            </ng-container>
+
+            <ng-container *ngIf="showAirTransportService">
+                <div class="well">
+                    <name-description-panel [catalogueLine]="getLogisticCatalogueLine('AIRTRANSPORT')" [productIdEditable]="isProductIdEditable('AIRTRANSPORT')"></name-description-panel>
+                </div>
+                <div class="d-flex flex-wrap">
+                    <div *ngFor="let property of getLogisticProperties('AIRTRANSPORT'); let i = index"
+                         class="property-panel" [ngClass]="{'mr-3' : i%2 === 0}" >
+                        <options-panel [itemProperty]="property"></options-panel>
+                    </div>
+                    <div *ngIf="getLogisticProperties('AIRTRANSPORT').length % 2 !== 0"
+                         class="property-panel empty-panel">
+                    </div>
+                </div>
+            </ng-container>
+
+            <ng-container *ngIf="showRailTransportService">
+                <div class="well">
+                    <name-description-panel [catalogueLine]="getLogisticCatalogueLine('RAILTRANSPORT')" [productIdEditable]="isProductIdEditable('RAILTRANSPORT')"></name-description-panel>
+                </div>
+                <div class="d-flex flex-wrap">
+                    <div *ngFor="let property of getLogisticProperties('RAILTRANSPORT'); let i = index"
+                         class="property-panel" [ngClass]="{'mr-3' : i%2 === 0}" >
+                        <options-panel [itemProperty]="property"></options-panel>
+                    </div>
+                    <div *ngIf="getLogisticProperties('RAILTRANSPORT').length % 2 !== 0"
+                         class="property-panel empty-panel">
+                    </div>
+                </div>
+            </ng-container>
+
+            <!-- managed product type property -->
+            <div class="d-flex space-before">
+                <div class="mr-3 property-panel">
+                    <options-panel [itemProperty]="getProductTypeProperty()" [checkboxOther]="false" [selectedOptionsWithExtraColumn]="false"></options-panel>
+                </div>
+                <!-- industry specialization property -->
+                <div class="property-panel">
+                    <options-panel [itemProperty]="getIndustrySpecializationProperty()" [checkboxOther]="false" [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
             </div>
-            <button *ngIf="availableLogisticsServices.indexOf('MARITIMETRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'MARITIMETRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showMaritimeTransportService = !showMaritimeTransportService"><span [innerHTML]="'Maritime Transport' | translate"></span></button>
-            <div class="well" *ngIf="showMaritimeTransportService">
-                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('MARITIMETRANSPORT')" [productIdEditable]="isProductIdEditable('MARITIMETRANSPORT')"></name-description-panel>
-                <div class="row space-before">
-                    <div class="col-3">
-                        <strong><span [innerHTML]="'Additional Information' | translate"></span></strong>
-                    </div>
-                    <div class="div-padding-left">
-                        <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'MARITIMETRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('MARITIMETRANSPORT')" (onClearFile)="onUnSelectFileForLogisticService($event,'MARITIMETRANSPORT')">
-                        </file-input>
-                    </div>
-                </div>
-                <div class="space-before" *ngFor="let property of getLogisticProperties('MARITIMETRANSPORT')">
-                    <options-panel [itemProperty]="property"></options-panel>
-                </div>
-                <div class="space-before">
-                    <options-panel [itemProperty]="getProductTypeProperty('MARITIMETRANSPORT')" [checkboxOther]="false" [selectedOptionsWithExtraColumn]="false"></options-panel>
-                </div>
-                <div class="space-before">
-                    <options-panel [itemProperty]="getIndustrySpecializationProperty('MARITIMETRANSPORT')" [checkboxOther]="false" [selectedOptionsWithExtraColumn]="false"></options-panel>
-                </div>
-            </div>
-            <button *ngIf="availableLogisticsServices.indexOf('AIRTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'AIRTRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showAirTransportService = !showAirTransportService"><span [innerHTML]="'Air Transport' | translate"></span></button>
-            <div class="well" *ngIf="showAirTransportService">
-                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('AIRTRANSPORT')" [productIdEditable]="isProductIdEditable('AIRTRANSPORT')"></name-description-panel>
-                <div class="row space-before">
-                    <div class="col-3">
-                        <strong><span [innerHTML]="'Additional Information' | translate"></span></strong>
-                    </div>
-                    <div class="div-padding-left">
-                        <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'AIRTRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('AIRTRANSPORT')" (onClearFile)="onUnSelectFileForLogisticService($event,'AIRTRANSPORT')">
-                        </file-input>
-                    </div>
-                </div>
-                <div class="space-before" *ngFor="let property of getLogisticProperties('AIRTRANSPORT')">
-                    <options-panel [itemProperty]="property"></options-panel>
-                </div>
-                <div class="space-before">
-                    <options-panel [itemProperty]="getProductTypeProperty('AIRTRANSPORT')" [checkboxOther]="false" [selectedOptionsWithExtraColumn]="false"></options-panel>
-                </div>
-                <div class="space-before">
-                    <options-panel [itemProperty]="getIndustrySpecializationProperty('AIRTRANSPORT')" [checkboxOther]="false" [selectedOptionsWithExtraColumn]="false"></options-panel>
-                </div>
-            </div>
-            <button *ngIf="availableLogisticsServices.indexOf('RAILTRANSPORT') != -1 && (!singleTabForLogisticServices || selectedTabSinglePublish == 'RAILTRANSPORT')" class='btn btn-outline-primary button-block col-3' (click)="showRailTransportService = !showRailTransportService"><span [innerHTML]="'Rail Transport' | translate"></span></button>
-            <div class="well" *ngIf="showRailTransportService">
-                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('RAILTRANSPORT')" [productIdEditable]="isProductIdEditable('RAILTRANSPORT')"></name-description-panel>
-                <div class="row space-before">
-                    <div class="col-3">
-                        <strong><span [innerHTML]="'Additional Information' | translate"></span></strong>
-                    </div>
-                    <div class="div-padding-left">
-                        <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'RAILTRANSPORT')" [binaryObjects]="getBinaryObjectsForLogisticService('RAILTRANSPORT')" (onClearFile)="onUnSelectFileForLogisticService($event,'RAILTRANSPORT')">
-                        </file-input>
-                    </div>
-                </div>
-                <div class="space-before" *ngFor="let property of getLogisticProperties('RAILTRANSPORT')">
-                    <options-panel [itemProperty]="property"></options-panel>
-                </div>
-                <div class="space-before">
-                    <options-panel [itemProperty]="getProductTypeProperty('RAILTRANSPORT')" [checkboxOther]="false" [selectedOptionsWithExtraColumn]="false"></options-panel>
-                </div>
-                <div class="space-before">
-                    <options-panel [itemProperty]="getIndustrySpecializationProperty('RAILTRANSPORT')" [checkboxOther]="false" [selectedOptionsWithExtraColumn]="false"></options-panel>
-                </div>
-            </div>
-            <div *ngIf="selectedTabSinglePublish == 'TRANSPORT' || selectedTabSinglePublish == 'RAILTRANSPORT' || selectedTabSinglePublish == 'AIRTRANSPORT' || selectedTabSinglePublish == 'MARITIMETRANSPORT' || selectedTabSinglePublish == 'ROADTRANSPORT'">
-                <div class="space-before">
+
+<!--            <hr>-->
+
+            <!-- origin and destination fields -->
+            <div class="d-flex space-before">
+                <div class="mr-3 property-panel">
                     <origin-destination-view [itemProperty]="getDestinationAddressForLogistics('TRANSPORT')"></origin-destination-view>
                 </div>
-                <div class="space-before">
+                <div class="property-panel">
                     <origin-destination-view [itemProperty]="getOriginAddressForLogistics('TRANSPORT')"></origin-destination-view>
                 </div>
             </div>
         </div>
-        <div *ngIf="availableLogisticsServices.indexOf('WAREHOUSING') != -1 && selectedTabSinglePublish == 'WAREHOUSING'">
-            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('WAREHOUSING')" [productIdEditable]="isProductIdEditable('WAREHOUSING')"></name-description-panel>
 
-            <div class="row space-before">
-                <div class="col-3">
-                    <strong><span [innerHTML]="'Additional Information' | translate"></span></strong>
+        <!-- Warehousing services -->
+        <ng-container *ngIf="availableLogisticsServices.indexOf('WAREHOUSING') != -1 && selectedTabSinglePublish == 'WAREHOUSING'">
+            <div class="well space-before">
+                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('WAREHOUSING')" [productIdEditable]="isProductIdEditable('WAREHOUSING')"></name-description-panel>
+            </div>
+
+            <div class="d-flex flex-wrap property-row">
+                <div *ngFor="let property of getLogisticCatalogueLine('WAREHOUSING').goodsItem.item.additionalItemProperty; let i = index"
+                     class="property-panel" [ngClass]="{'mr-3' : i%2 === 0}" >
+                    <options-panel [itemProperty]="property"></options-panel>
                 </div>
-                <div class="div-padding-left">
-                    <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'WAREHOUSING')" [binaryObjects]="getBinaryObjectsForLogisticService('WAREHOUSING')" (onClearFile)="onUnSelectFileForLogisticService($event,'WAREHOUSING')">
+                <div *ngIf="getLogisticCatalogueLine('WAREHOUSING').goodsItem.item.additionalItemProperty.length % 2 !== 0"
+                     class="property-panel empty-panel">
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- Order picking -->
+        <ng-container *ngIf="availableLogisticsServices.indexOf('ORDERPICKING') != -1 && selectedTabSinglePublish == 'ORDERPICKING'">
+            <div class="well space-before">
+                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('ORDERPICKING')" [productIdEditable]="isProductIdEditable('ORDERPICKING')"></name-description-panel>
+            </div>
+            <div class="d-flex flex-wrap property-row">
+                <div *ngFor="let property of getLogisticCatalogueLine('ORDERPICKING').goodsItem.item.additionalItemProperty; let i = index"
+                     class="property-panel" [ngClass]="{'mr-3' : i%2 === 0}">
+                    <options-panel [itemProperty]="property"></options-panel>
+                </div>
+                <div *ngIf="getLogisticCatalogueLine('ORDERPICKING').goodsItem.item.additionalItemProperty.length % 2 !== 0"
+                     class="property-panel empty-panel">
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- Reverse logistics -->
+        <ng-container *ngIf="availableLogisticsServices.indexOf('REVERSELOGISTICS') != -1 && selectedTabSinglePublish == 'REVERSELOGISTICS'">
+            <div class="well space-before">
+                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('REVERSELOGISTICS')" [productIdEditable]="isProductIdEditable('REVERSELOGISTICS')"></name-description-panel>
+            </div>
+            <div class="d-flex flex-wrap property-row">
+                <div *ngFor="let property of getLogisticCatalogueLine('REVERSELOGISTICS').goodsItem.item.additionalItemProperty; let i = index"
+                     class="property-panel" [ngClass]="{'mr-3' : i%2 === 0}">
+                    <options-panel [itemProperty]="property"></options-panel>
+                </div>
+                <div *ngIf="getLogisticCatalogueLine('REVERSELOGISTICS').goodsItem.item.additionalItemProperty.length % 2 !== 0"
+                     class="property-panel empty-panel">
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- Inhouse services -->
+        <ng-container *ngIf="availableLogisticsServices.indexOf('INHOUSESERVICES') != -1 && selectedTabSinglePublish == 'INHOUSESERVICES'">
+            <div class="well space-before">
+                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('INHOUSESERVICES')" [productIdEditable]="isProductIdEditable('INHOUSESERVICES')"></name-description-panel>
+            </div>
+
+            <div class="d-flex flex-wrap property-row">
+                <div *ngFor="let property of getLogisticCatalogueLine('INHOUSESERVICES').goodsItem.item.additionalItemProperty; let i = index"
+                     class="property-panel" [ngClass]="{'mr-3' : i%2 === 0}">
+                    <options-panel [itemProperty]="property"></options-panel>
+                </div>
+                <div *ngIf="getLogisticCatalogueLine('INHOUSESERVICES').goodsItem.item.additionalItemProperty.length % 2 !== 0"
+                     class="property-panel empty-panel">
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- Customs management -->
+        <ng-container *ngIf="availableLogisticsServices.indexOf('CUSTOMSMANAGEMENT') != -1 && selectedTabSinglePublish == 'CUSTOMSMANAGEMENT'">
+            <div class="well space-before">
+                asdf
+                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('CUSTOMSMANAGEMENT')" [productIdEditable]="isProductIdEditable('CUSTOMSMANAGEMENT')"></name-description-panel>
+            </div>
+
+            <div class="d-flex flex-wrap property-row">
+                <div *ngFor="let property of getLogisticCatalogueLine('CUSTOMSMANAGEMENT').goodsItem.item.additionalItemProperty; let i = index"
+                     class="property-panel" [ngClass]="{'mr-3' : i%2 === 0}">
+                    <options-panel [itemProperty]="property"></options-panel>
+                </div>
+                <div *ngIf="getLogisticCatalogueLine('CUSTOMSMANAGEMENT').goodsItem.item.additionalItemProperty.length % 2 !== 0"
+                     class="property-panel empty-panel">
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- Logistics consultancy -->
+        <ng-container *ngIf="availableLogisticsServices.indexOf('LOGISTICSCONSULTANCY') != -1 && selectedTabSinglePublish == 'LOGISTICSCONSULTANCY'">
+            <div class="well space-before">
+                <name-description-panel [catalogueLine]="getLogisticCatalogueLine('LOGISTICSCONSULTANCY')" [productIdEditable]="isProductIdEditable('LOGISTICSCONSULTANCY')"></name-description-panel>
+            </div>
+            <div class="d-flex flex-wrap property-row">
+                <div *ngFor="let property of getLogisticCatalogueLine('LOGISTICSCONSULTANCY').goodsItem.item.additionalItemProperty; let i = index"
+                     class="property-panel" [ngClass]="{'mr-3' : i%2 === 0}">
+                    <options-panel [itemProperty]="property"></options-panel>
+                </div>
+                <div *ngIf="getLogisticCatalogueLine('LOGISTICSCONSULTANCY').goodsItem.item.additionalItemProperty.length % 2 !== 0"
+                     class="property-panel empty-panel">
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- additional information -->
+        <div class="d-flex space-before">
+            <div class="row no-gutters property-panel mr-3">
+                <div class="col-3">
+                    <label class="font-weight-bold"><span [innerHTML]="'Additional Information' | translate"></span></label>
+                </div>
+                <div class="div-padding-left col">
+                    <file-input [multiple]="true"
+                                [presentationMode]="'edit'"
+                                (onSelectFile)="onSelectFileForLogisticService($event)"
+                                [binaryObjects]="getBinaryObjectsForLogisticService()"
+                                (onClearFile)="onUnSelectFileForLogisticService($event)">
                     </file-input>
                 </div>
             </div>
-
-            <div class="space-before" *ngFor="let property of getLogisticCatalogueLine('WAREHOUSING').goodsItem.item.additionalItemProperty">
-                <options-panel [itemProperty]="property"></options-panel>
-            </div>
-        </div>
-        <div *ngIf="availableLogisticsServices.indexOf('ORDERPICKING') != -1 && selectedTabSinglePublish == 'ORDERPICKING'">
-            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('ORDERPICKING')" [productIdEditable]="isProductIdEditable('ORDERPICKING')"></name-description-panel>
-
-            <div class="row space-before">
-                <div class="col-3">
-                    <strong><span [innerHTML]="'Additional Information' | translate"></span></strong>
-                </div>
-                <div class="div-padding-left">
-                    <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'ORDERPICKING')" [binaryObjects]="getBinaryObjectsForLogisticService('ORDERPICKING')" (onClearFile)="onUnSelectFileForLogisticService($event,'ORDERPICKING')">
-                    </file-input>
-                </div>
-            </div>
-
-            <div class="space-before" *ngFor="let property of getLogisticCatalogueLine('ORDERPICKING').goodsItem.item.additionalItemProperty">
-                <options-panel [itemProperty]="property"></options-panel>
-            </div>
-        </div>
-        <div *ngIf="availableLogisticsServices.indexOf('REVERSELOGISTICS') != -1 && selectedTabSinglePublish == 'REVERSELOGISTICS'">
-            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('REVERSELOGISTICS')" [productIdEditable]="isProductIdEditable('REVERSELOGISTICS')"></name-description-panel>
-
-            <div class="row space-before">
-                <div class="col-3">
-                    <strong><span [innerHTML]="'Additional Information' | translate"></span></strong>
-                </div>
-                <div class="div-padding-left">
-                    <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'REVERSELOGISTICS')" [binaryObjects]="getBinaryObjectsForLogisticService('REVERSELOGISTICS')" (onClearFile)="onUnSelectFileForLogisticService($event,'REVERSELOGISTICS')">
-                    </file-input>
-                </div>
-            </div>
-
-            <div class="space-before" *ngFor="let property of getLogisticCatalogueLine('REVERSELOGISTICS').goodsItem.item.additionalItemProperty">
-                <options-panel [itemProperty]="property"></options-panel>
-            </div>
-        </div>
-        <div *ngIf="availableLogisticsServices.indexOf('INHOUSESERVICES') != -1 && selectedTabSinglePublish == 'INHOUSESERVICES'">
-            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('INHOUSESERVICES')" [productIdEditable]="isProductIdEditable('INHOUSESERVICES')"></name-description-panel>
-
-            <div class="row space-before">
-                <div class="col-3">
-                    <strong><span [innerHTML]="'Additional Information' | translate"></span></strong>
-                </div>
-                <div class="div-padding-left">
-                    <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'INHOUSESERVICES')" [binaryObjects]="getBinaryObjectsForLogisticService('INHOUSESERVICES')" (onClearFile)="onUnSelectFileForLogisticService($event,'INHOUSESERVICES')">
-                    </file-input>
-                </div>
-            </div>
-
-            <div class="space-before" *ngFor="let property of getLogisticCatalogueLine('INHOUSESERVICES').goodsItem.item.additionalItemProperty">
-                <options-panel [itemProperty]="property"></options-panel>
-            </div>
-        </div>
-        <div *ngIf="availableLogisticsServices.indexOf('CUSTOMSMANAGEMENT') != -1 && selectedTabSinglePublish == 'CUSTOMSMANAGEMENT'">
-            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('CUSTOMSMANAGEMENT')" [productIdEditable]="isProductIdEditable('CUSTOMSMANAGEMENT')"></name-description-panel>
-
-            <div class="row space-before">
-                <div class="col-3">
-                    <strong><span [innerHTML]="'Additional Information' | translate"></span></strong>
-                </div>
-                <div class="div-padding-left">
-                    <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'CUSTOMSMANAGEMENT')" [binaryObjects]="getBinaryObjectsForLogisticService('CUSTOMSMANAGEMENT')" (onClearFile)="onUnSelectFileForLogisticService($event,'CUSTOMSMANAGEMENT')">
-                    </file-input>
-                </div>
-            </div>
-            <div class="space-before" *ngFor="let property of getLogisticCatalogueLine('CUSTOMSMANAGEMENT').goodsItem.item.additionalItemProperty">
-                <options-panel [itemProperty]="property"></options-panel>
-            </div>
-        </div>
-        <div *ngIf="availableLogisticsServices.indexOf('LOGISTICSCONSULTANCY') != -1 && selectedTabSinglePublish == 'LOGISTICSCONSULTANCY'">
-            <name-description-panel [catalogueLine]="getLogisticCatalogueLine('LOGISTICSCONSULTANCY')" [productIdEditable]="isProductIdEditable('LOGISTICSCONSULTANCY')"></name-description-panel>
-
-            <div class="row space-before">
-                <div class="col-3">
-                    <strong><span [innerHTML]="'Additional Information' | translate"></span></strong>
-                </div>
-                <div class="div-padding-left">
-                    <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event,'LOGISTICSCONSULTANCY')" [binaryObjects]="getBinaryObjectsForLogisticService('LOGISTICSCONSULTANCY')" (onClearFile)="onUnSelectFileForLogisticService($event,'LOGISTICSCONSULTANCY')">
-                    </file-input>
-                </div>
-            </div>
-            <div class="space-before" *ngFor="let property of getLogisticCatalogueLine('LOGISTICSCONSULTANCY').goodsItem.item.additionalItemProperty">
-                <options-panel [itemProperty]="property"></options-panel>
-            </div>
+            <div class="property-panel empty-panel"></div>
         </div>
 
         <hr class="actions-hr">
