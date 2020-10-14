@@ -346,7 +346,7 @@ export class SimpleSearchService {
         searchObject.rows = 2147483647;
         searchObject.start = 0;
         searchObject.sort = ['score desc'];
-
+        searchObject.fq = [];
         if (verified) {
             searchObject.fq.push('verified:true');
         }
