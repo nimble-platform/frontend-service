@@ -454,7 +454,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             debounceTime(200),
             distinctUntilChanged(),
             switchMap(term =>
-                this.simpleSearchService.getCompSuggestions(term, this.searchIndex == 'Business Keywords' ? ['{LANG}_businessKeywords'] : [this.product_vendor_name, ('{LANG}_' + this.product_vendor_brand_name)], this.pageRef)
+                this.simpleSearchService.getCompSuggestions(term, this.searchIndex == 'Business Keywords' ? ['{LANG}_businessKeywords'] : [this.product_vendor_name, ('{LANG}_' + this.product_vendor_brand_name)], this.pageRef,false,true)
             )
         );
 
