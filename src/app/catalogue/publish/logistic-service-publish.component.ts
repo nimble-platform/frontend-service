@@ -72,9 +72,6 @@ export class LogisticServicePublishComponent implements OnInit {
     // represents the logistic service in 'edit' and 'copy' publish modes
     catalogueLine: CatalogueLine = null;
 
-    // check whether changing publish-mode to 'create' is necessary or not
-    changePublishModeCreate: boolean = false;
-
     publishMode: PublishMode;
     publishStatus: CallStatus = new CallStatus();
     publishingGranularity: "single" | "bulk" = "single";
@@ -200,9 +197,6 @@ export class LogisticServicePublishComponent implements OnInit {
     }
 
     canDeactivate(): boolean|Promise<boolean> {
-        if (this.changePublishModeCreate) {
-            this.publishStateService.publishMode = 'create';
-        }
         if (this.dialogBox) {
             return this.appComponent.confirmModalComponent.open('You will lose any changes you made, are you sure you want to quit ?').then(result => {
                 if(result){
@@ -210,9 +204,9 @@ export class LogisticServicePublishComponent implements OnInit {
                 }
                 return result;
             });
-        }
-        else{
-            this.dialogBox = true;
+
+        } else {
+            this.publishStateService.publishMode = 'create';
             return true;
         }
     }
@@ -648,9 +642,6 @@ export class LogisticServicePublishComponent implements OnInit {
 
     // Should be called on save
     private saveEditedProduct(exitThePage: boolean, catalogueLines: CatalogueLine[]): void {
-        // this.error_detc = false;
-        // this.callback = false;
-        // this.submitted = true;
 
         let splicedCatalogueLines: CatalogueLine[] = [];
         // remove unused properties from catalogueLine
@@ -663,16 +654,11 @@ export class LogisticServicePublishComponent implements OnInit {
             this.publishStatus.aggregatedSubmit();
             this.catalogueService.updateCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid, JSON.stringify(catalogueLine))
                 .then(() => this.onSuccessfulPublish(exitThePage, [catalogueLine]))
-                .then(() => this.changePublishModeToCreate())
+                // .then(() => this.changePublishModeToCreate())
                 .catch(err => {
                     this.onFailedPublish(err);
                 });
         }
-    }
-
-    // changes publishMode to create
-    private changePublishModeToCreate(): void {
-        this.changePublishModeCreate = true;
     }
 
     private onFailedPublish(err): void {
@@ -744,10 +730,6 @@ export class LogisticServicePublishComponent implements OnInit {
                     if (this.publishStatus.isAllSuccessful()) {
                         this.dialogBox = false;
                     }
-
-                    // this.submitted = false;
-                    // this.callback = true;
-                    // this.error_detc = false;
                 }).
                     catch(error => {
                         this.publishStatus.aggregatedError("Error while publishing product", error);
