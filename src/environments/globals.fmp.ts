@@ -160,14 +160,22 @@ export const config = {
         "": {},
         "Logistics Provider": {
             "General": {
-                "en": "Transportation and Logistics",
-                "es": "Transporte y Logística"
+                "en": "Transportation / Logistics",
+                "es": "Transporte / Logística"
             }
         },
         "Manufacturer": {
+            "Accessories": {
+                "en": "Accessories",
+                "es": "Complementos"
+            },
             "Bathroom": {
                 "en": "Bathroom",
                 "es": "Baño"
+            },
+            "Building": {
+                "en": "Building",
+                "es": "Construcción"
             },
             "Carpentry": {
                 "en": "Carpentry",
@@ -182,8 +190,8 @@ export const config = {
                 "es": "Armarios"
             },
             "Contract": {
-                "en": "CONTRACT (Others: institutional, educational, other installations, etc.)",
-                "es": "COLECTIVIDADES (Otros: institucional,educacional, otras instalaciones, etc.)"
+                "en": "Contract Channel",
+                "es": "Canal Contract"
             },
             "Doors / Windows": {
                 "en": "Doors and Windows",
@@ -198,8 +206,8 @@ export const config = {
                 "es": "Hogar"
             },
             "Hotels, Restaurants & Cafes": {
-                "en": "HORECA (HOTELS,RESTAURANTS & CAFÉS)",
-                "es": "HORECA (HOTELES, RESTAURACIÓN y CAFETERÍAS)"
+                "en": "Horeca Channel",
+                "es": "Canal Horeca"
             },
             "Kids": {
                 "en": "Kids",
@@ -248,8 +256,8 @@ export const config = {
         },
         "Retailer": {
             "General": {
-                "en": "Retail and Distribution",
-                "es": "Retail y Distribución"
+                "en": "Retail / Distribution",
+                "es": "Retail / Distribución"
             }
         },
         "Service Provider": {
@@ -299,11 +307,11 @@ export const config = {
             },
             "Outsourcing": {
                 "en": "Outsourcing",
-                "es": "Subcontratación de Procesos"
+                "es": "Subcontratación"
             },
             "Print Services": {
                 "en": "Print Services",
-                "es": "Servicios de Impresión"
+                "es": "Servicios de impresión"
             },
             "Quality Control / Tests": {
                 "en": "Quality Control / Tests",
@@ -328,12 +336,12 @@ export const config = {
         },
         "Supplier": {
             "Abrasives": {
-                "en": "Abrasives",
-                "es": "Lijas y Abrasivos"
+                "en": "Sandpapers / Abrasives",
+                "es": "Lijas / Abrasivos"
             },
             "Adhesives": {
-                "en": "Adhesives",
-                "es": "Colas y Adhesivos"
+                "en": "Glues / Adhesives",
+                "es": "Colas / Adhesivos"
             },
             "Board": {
                 "en": "Board",
@@ -384,8 +392,8 @@ export const config = {
                 "es": "Materiales de Embalaje"
             },
             "Paints & Varnishes": {
-                "en": "Paints & Varnishes",
-                "es": "Pinturas y Barnices"
+                "en": "Paints / Varnishes",
+                "es": "Pinturas / Barnices"
             },
             "Plastic": {
                 "en": "Plastic",
@@ -393,7 +401,11 @@ export const config = {
             },
             "Plywood": {
                 "en": "Plywood",
-                "es": "Contrachapado"
+                "es": "Madera contrachapada"
+            },
+            "Security elements": {
+                "en": "Security elements",
+                "es": "Elementos de seguridad"
             },
             "Straw": {
                 "en": "Straw",
