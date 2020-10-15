@@ -69,10 +69,6 @@ export class LogisticServicePublishComponent implements OnInit {
     // the value of the erroneousID
     erroneousID = "";
 
-    submitted = false;
-    callback = false;
-    error_detc = false;
-
     // represents the logistic service in 'edit' and 'copy' publish modes
     catalogueLine: CatalogueLine = null;
 
@@ -200,7 +196,7 @@ export class LogisticServicePublishComponent implements OnInit {
     }
 
     isLoading(): boolean {
-        return this.publishStatus.fb_submitted;
+        return !this.publishStatus.isAllComplete();
     }
 
     canDeactivate(): boolean|Promise<boolean> {
@@ -533,6 +529,7 @@ export class LogisticServicePublishComponent implements OnInit {
     // publish or save
 
     onPublish(exitThePage: boolean) {
+        this.publishStatus = new CallStatus();
         if (this.publishStateService.publishMode === 'edit' || this.publishStateService.publishMode === 'copy') {
 
             if (this.publishStateService.publishMode === 'edit') {
@@ -610,8 +607,6 @@ export class LogisticServicePublishComponent implements OnInit {
     }
 
     private publish(catalogueLines: CatalogueLine[], exitThePage: boolean) {
-        this.publishStatus.submit();
-
         let splicedCatalogueLines: CatalogueLine[] = [];
         // remove unused properties from catalogueLine
         for (let catalogueLine of catalogueLines) {
@@ -628,6 +623,7 @@ export class LogisticServicePublishComponent implements OnInit {
                     catalogue.catalogueLine.push(catalogueLine);
                 }
 
+                this.publishStatus.aggregatedSubmit();
                 this.catalogueService.postCatalogue(catalogue)
                     .then(() => this.onSuccessfulPublish(exitThePage, splicedCatalogueLines))
                     .catch(err => {
@@ -640,6 +636,7 @@ export class LogisticServicePublishComponent implements OnInit {
         } else {
             // TODO: create a service to add multiple catalogue lines
             for (let catalogueLine of splicedCatalogueLines) {
+                this.publishStatus.aggregatedSubmit();
                 this.catalogueService.addCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid, JSON.stringify(catalogueLine))
                     .then(() => {
                         this.onSuccessfulPublish(exitThePage, [catalogueLine]);
@@ -651,11 +648,9 @@ export class LogisticServicePublishComponent implements OnInit {
 
     // Should be called on save
     private saveEditedProduct(exitThePage: boolean, catalogueLines: CatalogueLine[]): void {
-        this.error_detc = false;
-        this.callback = false;
-        this.submitted = true;
-
-        this.publishStatus.submit();
+        // this.error_detc = false;
+        // this.callback = false;
+        // this.submitted = true;
 
         let splicedCatalogueLines: CatalogueLine[] = [];
         // remove unused properties from catalogueLine
@@ -665,6 +660,7 @@ export class LogisticServicePublishComponent implements OnInit {
 
         // TODO: create a service to update multiple catalogue lines
         for (let catalogueLine of splicedCatalogueLines) {
+            this.publishStatus.aggregatedSubmit();
             this.catalogueService.updateCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid, JSON.stringify(catalogueLine))
                 .then(() => this.onSuccessfulPublish(exitThePage, [catalogueLine]))
                 .then(() => this.changePublishModeToCreate())
@@ -680,9 +676,9 @@ export class LogisticServicePublishComponent implements OnInit {
     }
 
     private onFailedPublish(err): void {
-        this.publishStatus.error(err._body ? err._body : err);
-        this.submitted = false;
-        this.error_detc = true;
+        this.publishStatus.aggregatedError(err._body ? err._body : err);
+        // this.submitted = false;
+        // this.error_detc = true;
         if (err.status == 406) {
             this.sameIdError = true;
             this.erroneousID = this.catalogueLine.id;
@@ -744,22 +740,25 @@ export class LogisticServicePublishComponent implements OnInit {
                     }
                     this.catalogueService.draftCatalogueLine = this.catalogueLine;
 
-                    this.publishStatus.callback(this.translations["Successfully saved. You can now continue."], false);
+                    this.publishStatus.aggregatedCallBack(this.translations["Successfully saved. You can now continue."], false);
+                    if (this.publishStatus.isAllSuccessful()) {
+                        this.dialogBox = false;
+                    }
 
-                    this.submitted = false;
-                    this.callback = true;
-                    this.error_detc = false;
+                    // this.submitted = false;
+                    // this.callback = true;
+                    // this.error_detc = false;
                 }).
                     catch(error => {
-                        this.publishStatus.error("Error while publishing product", error);
+                        this.publishStatus.aggregatedError("Error while publishing product", error);
                     });
             })
                 .catch(error => {
-                    this.publishStatus.error("Error while publishing product", error);
+                    this.publishStatus.aggregatedError("Error while publishing product", error);
                 });
         })
             .catch(error => {
-                this.publishStatus.error("Error while publishing product", error);
+                this.publishStatus.aggregatedError("Error while publishing product", error);
             });
     }
 
