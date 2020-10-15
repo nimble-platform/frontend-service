@@ -157,15 +157,15 @@
                 <strong><span [innerHTML]="'Business Type:' | translate"></span></strong>
             </label>
             <div class="col-10">
-                <select class="form-control" [formControl]="registrationForm.controls['businessType']" (change)="setAvailableActivitySectorKeys();" required>
-                    <option *ngFor="let type of config.supportedBusinessTypes">{{type}}</option>
+                <select class="form-control" [formControl]="registrationForm.controls['businessType']" (change)="onBusinessTypeChanged();" required>
+                    <option *ngFor="let type of config.supportedBusinessTypes" value="{{type}}">{{type}}</option>
                 </select>
             </div>
         </div>
 
         <!-- Industry Sectors -->
         <div class="form-group row">
-            <label class="col-2 col-form-label">
+            <label class="col-2">
                 <strong><span [innerHTML]="'Activity Sectors:' | translate"></span></strong>
                 <span *ngIf="availableActivitySectorKeys.length>0 && !forceActText" class="tooltip-icon" (click)="showSectorTT(tooltip)"><i class="fa fa-question-circle"></i></span>
             </label>
@@ -206,12 +206,6 @@
                         </div>
                     </div>
                 </ng-container>
-                <div *ngIf="availableActivitySectorKeys.length>0">
-                    <button class="btn btn-link pl-0" type="button" (click)="switchInput()">
-                        <span *ngIf="!forceActText" [innerHTML]="'Nothing fitting your business? Switch to manual input.' | translate"></span>
-                        <span *ngIf="forceActText" [innerHTML]="'Want to make use of the predefined sectors? Switch to list input.' | translate"></span>
-                    </button>
-                </div>
             </div>
         </div>
 

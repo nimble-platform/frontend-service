@@ -89,9 +89,24 @@ export class CompanyDataSettingsComponent implements OnInit {
     ngOnInit() {
         this.companyNameArr = getArrayOfTextObject(this.settings.details.legalName);
         this.brandNameArr = getArrayOfTextObject(this.settings.details.brandName);
-        // convert the industry sectors of company to text object array
-        // and store it in the custom industry sector array
-        this.customIndustrySectors = getArrayOfTextObjectFromLanguageMap(this.settings.details.industrySectors);
+        // initialize selected and custom industry sectors
+        let companyIndustrySectors = getArrayOfTextObjectFromLanguageMap(this.settings.details.industrySectors);
+        this.customIndustrySectors = [];
+        this.selectedIndustrySectorKeys = [];
+        for(let companyIndustrySector of companyIndustrySectors){
+            if(this.settings.details.businessType && this.config.supportedActivitySectors[this.settings.details.businessType] && this.config.supportedActivitySectors[this.settings.details.businessType][companyIndustrySector.text]){
+                // company industry sectors includes the same key multiple times because of the multilinguality
+                if(this.selectedIndustrySectorKeys.indexOf(companyIndustrySector.text) == -1){
+                    this.selectedIndustrySectorKeys.push(companyIndustrySector.text);
+                }
+            } else{
+                this.customIndustrySectors.push(companyIndustrySector);
+            }
+        }
+        // append a dummy custom industry sector if there is no custom industry sector
+        if(this.customIndustrySectors.length == 0){
+            this.customIndustrySectors = [{ "text": [], "lang": DEFAULT_LANGUAGE() }];
+        }
         this.businessKeywordsArr = getArrayOfTextObjectFromLanguageMap(this.settings.details.businessKeywords);
         this.dataForm = this._fb.group({
             vatNumber: new FormControl({ value: (this.settings.details.vatNumber || ""), disabled: !this.appComponent.checkRoles('pm') }),
@@ -118,9 +133,19 @@ export class CompanyDataSettingsComponent implements OnInit {
         } else{
             this.availableActivitySectorKeys = [];
         }
-        // construct the selected industry sectors array using the custom industry sectors
-        this.selectedIndustrySectorKeys = this.customIndustrySectors.map(industrySector => industrySector.text);
+        // initialize industry sector SelectedTerms object accordingly
         this.industrySectorSelectedTerms = new SelectedTerms(this.selectedIndustrySectorKeys, this.availableActivitySectorKeys);
+        // set the input type based on the available industry sector keys
+        this.forceActText = this.availableActivitySectorKeys.length == 0;
+    }
+
+    onBusinessTypeChanged(){
+        //reset selected industry sector keys
+        this.selectedIndustrySectorKeys = [];
+        // set available activity sector keys
+        this.setAvailableActivitySectorKeys();
+        // reset the selected industry keys
+        this.selectedIndustrySectorKeys.forEach(industrySectorKey => this.industrySectorSelectedTerms.toggle(industrySectorKey));
     }
 
     trackFn(index, item) {
@@ -196,13 +221,10 @@ export class CompanyDataSettingsComponent implements OnInit {
         let industrySectorWithMultilingualLabels = [];
         // the case where industry sectors are selected from the predefined values
         if (!this.forceActText && this.availableActivitySectorKeys.length > 0) {
-            // retrieve the translations of each selected industry sector
-            // so that we can index the selected industry sectors for all available languages
+            // index the selected industry sector keys for all available languages
             for (let languageId of myGlobals.config.languageSettings.available) {
                 for (let sectorKey of this.selectedIndustrySectorKeys) {
-                    if(this.config.supportedActivitySectors[model.getRawValue()['businessType']][sectorKey][languageId]){
-                        industrySectorWithMultilingualLabels.push({ "text": this.config.supportedActivitySectors[model.getRawValue()['businessType']][sectorKey][languageId], "lang": languageId});
-                    }
+                    industrySectorWithMultilingualLabels.push({ "text": sectorKey, "lang": languageId});
                 }
             }
         }
@@ -242,14 +264,6 @@ export class CompanyDataSettingsComponent implements OnInit {
             label = this.config.supportedActivitySectors[this.dataForm.getRawValue()['businessType']][sector]['en'];
         }
         return label;
-    }
-
-    switchInput() {
-        // clear the custom and selected industry sectors
-        this.customIndustrySectors = [{ "text": [], "lang": DEFAULT_LANGUAGE() }];
-        this.selectedIndustrySectorKeys.forEach(industrySectorKey => this.industrySectorSelectedTerms.toggle(industrySectorKey));
-        // switch the input
-        this.forceActText = !this.forceActText;
     }
 
     changeData(content) {

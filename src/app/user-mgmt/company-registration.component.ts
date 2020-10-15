@@ -102,6 +102,7 @@ export class CompanyRegistrationComponent implements OnInit {
         this.companyNameArr = getArrayOfTextObject({});
         this.brandNameArr = getArrayOfTextObject({});
         this.customIndustrySectors = getArrayOfTextObjectFromLanguageMap({});
+        this.selectedIndustrySectorKeys = [];
         this.businessKeywordsArr = getArrayOfTextObjectFromLanguageMap({});
         // set available activity sector keys
         this.setAvailableActivitySectorKeys();
@@ -115,9 +116,19 @@ export class CompanyRegistrationComponent implements OnInit {
         } else{
             this.availableActivitySectorKeys = [];
         }
-        // construct the selected industry sectors array using the custom industry sectors
-        this.selectedIndustrySectorKeys = this.customIndustrySectors.map(industrySector => industrySector.text);
+        // initialize industry sector SelectedTerms object accordingly
         this.industrySectorSelectedTerms = new SelectedTerms(this.selectedIndustrySectorKeys, this.availableActivitySectorKeys);
+        // set the input type based on the available industry sector keys
+        this.forceActText = this.availableActivitySectorKeys.length == 0;
+    }
+
+    onBusinessTypeChanged(){
+        //reset selected industry sector keys
+        this.selectedIndustrySectorKeys = [];
+        // set available activity sector keys
+        this.setAvailableActivitySectorKeys();
+        // reset the selected industry keys
+        this.selectedIndustrySectorKeys.forEach(industrySectorKey => this.industrySectorSelectedTerms.toggle(industrySectorKey));
     }
 
     trackFn(index, item) {
@@ -208,13 +219,10 @@ export class CompanyRegistrationComponent implements OnInit {
         let industrySectorWithMultilingualLabels = [];
         // the case where industry sectors are selected from the predefined values
         if (!this.forceActText && this.availableActivitySectorKeys.length > 0) {
-            // retrieve the translations of each selected industry sector
-            // so that we can index the selected industry sectors for all available languages
+            // index the selected industry sector keys for all available languages
             for (let languageId of myGlobals.config.languageSettings.available) {
                 for (let sectorKey of this.selectedIndustrySectorKeys) {
-                    if(this.config.supportedActivitySectors[model.getRawValue()['businessType']][sectorKey][languageId]){
-                        industrySectorWithMultilingualLabels.push({ "text": this.config.supportedActivitySectors[model.getRawValue()['businessType']][sectorKey][languageId], "lang": languageId});
-                    }
+                    industrySectorWithMultilingualLabels.push({ "text": sectorKey, "lang": languageId});
                 }
             }
         }
@@ -298,14 +306,6 @@ export class CompanyRegistrationComponent implements OnInit {
             label = this.config.supportedActivitySectors[this.registrationForm.getRawValue()['businessType']][sector]['en'];
         }
         return label;
-    }
-
-    switchInput() {
-        // clear the custom and selected industry sectors
-        this.customIndustrySectors = [{ "text": [], "lang": DEFAULT_LANGUAGE() }];
-        this.selectedIndustrySectorKeys.forEach(industrySectorKey => this.industrySectorSelectedTerms.toggle(industrySectorKey));
-        // switch the input
-        this.forceActText = !this.forceActText;
     }
 
     onSetImageFile(event: any, model: FormGroup) {
