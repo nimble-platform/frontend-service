@@ -23,7 +23,7 @@
                     <input *ngIf="searchTopic=='prod'" type="text" class="form-control" id="searchTerm" [(ngModel)]="model.q" [disabled]="searchCallStatus.isLoading()" [ngbTypeahead]="getSuggestions" (selectItem)="onSubmit($event)" [focusFirst]=false name="searchTerm" #q="ngModel" [placeholder]="'Product / Service' | translate">
                     <input *ngIf="searchTopic=='comp'" type="text" class="form-control" id="searchTerm" [(ngModel)]="model.q" [disabled]="searchCallStatus.isLoading()" [ngbTypeahead]="getCompSuggestions" (selectItem)="onSubmit($event)" [focusFirst]=false name="searchTerm" #q="ngModel" [placeholder]="'Company' | translate">
                     <!-- Tooltip Icon -->
-                    <span *ngIf="searchTopic=='prod'" class="tooltip-icon" (click)="showProductSearchTT(tooltip)"><i class="fa fa-question-circle"></i></span>
+                    <span class="tooltip-icon" (click)="showSearchTT(tooltip)"><i class="fa fa-question-circle"></i></span>
                 </div>
                 <div ngbDropdown class="d-inline-block input-group-append">
                     <button class="btn btn-outline-secondary" type="button" id="searchIndex" ngbDropdownToggle>

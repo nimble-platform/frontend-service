@@ -2017,8 +2017,9 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         });
     }
 
-    showProductSearchTT(content) {
-        this.tooltipHTML = this.translate.instant('Search Tooltip');
+    showSearchTT(content) {
+        let translationKey = this.searchTopic == "prod" ? "Product Search Tooltip" : "Company Search Tooltip";
+        this.tooltipHTML = this.translate.instant(translationKey);
         this.modalService.open(content);
     }
 }
