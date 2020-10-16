@@ -28,7 +28,8 @@
 <ng-container *ngIf="initCallStatus.isAllSuccessful()">
     <div *ngIf = "shoppingCart.catalogueLine.length > 0" class="d-flex justify-content-end mb-2">
         <div class="btn btn-secondary" (click)="showCommonTerms = !showCommonTerms">
-            <i class="fas fa-chevron-down mr-2"></i>
+            <i *ngIf="!showCommonTerms" class="fas fa-chevron-down mr-2"></i>
+            <i *ngIf="showCommonTerms" class="fas fa-chevron-up mr-2"></i>
             <span [innerHTML]="'Show Common Cart Terms' | translate"></span>
         </div>
         <div>
@@ -44,15 +45,21 @@
     <common-cart-terms *ngIf="showCommonTerms && shoppingCart?.catalogueLine.length > 0" [buyerCompanySettings]="buyerCompanySettings" [doesBuyerCompanyHasItsOwnTerms]="doesBuyerCompanyHasItsOwnTerms" (onApplyTermsEvent)="onApplyTerms($event)">
     </common-cart-terms>
 
-    <div *ngFor="let cartLine of shoppingCart?.catalogueLine; let i = index" class="cart-item space-before">
+    <div *ngFor="let cartLine of shoppingCart?.catalogueLine; let i = index"
+         class="cart-item space-before"
+         [ngClass]="{'collapsed-item' : !expandedStatusesOfCartItems.get(cartLine.hjid)}">
         <div class="d-flex">
-            <div class="btn btn-primary btn-outline-primary" (click)="collapsedStatusesOfCartItems.set(cartLine.hjid, !collapsedStatusesOfCartItems.get(cartLine.hjid))">
+            <div class="btn btn-primary btn-outline-primary" (click)="expandedStatusesOfCartItems.set(cartLine.hjid, !expandedStatusesOfCartItems.get(cartLine.hjid))">
                 {{getProductName(cartLine.goodsItem.item.name)}}
+                <span [ngSwitch]="expandedStatusesOfCartItems.get(cartLine.hjid)" class="ml-3">
+                    <i *ngSwitchCase="true" class="fas fa-chevron-up fa-fw" aria-hidden="true"></i>
+                    <i *ngSwitchCase="false" class="fas fa-chevron-down fa-fw" aria-hidden="true"></i>
+                </span>
             </div>
-            <i *ngIf="!collapsedStatusesOfCartItems.get(cartLine.hjid) && !deleteCallStatuses.get(cartLine.hjid).isLoading()" class="far fa-trash-alt fa-2x ml-auto clickable" (click)="onRemoveFromCart(cartLine)" [title]="'Remove from Cart' | translate"></i>
+            <i *ngIf="!expandedStatusesOfCartItems.get(cartLine.hjid) && !deleteCallStatuses.get(cartLine.hjid).isLoading()" class="far fa-trash-alt fa-2x ml-auto clickable" (click)="onRemoveFromCart(cartLine)" [title]="'Remove from Cart' | translate"></i>
             <call-status *ngIf="deleteCallStatuses.get(cartLine.hjid).isLoading()" class="ml-auto" [callStatus]="deleteCallStatuses.get(cartLine.hjid)"></call-status>
         </div>
-        <div [hidden]="!collapsedStatusesOfCartItems.get(cartLine.hjid)" class="space-before">
+        <div [hidden]="!expandedStatusesOfCartItems.get(cartLine.hjid)" class="space-before">
             <product-details-overview [wrapper]="productWrappers.get(cartLine.hjid)"
                                       [itemWithSelectedProps]="modifiedCatalogueLines.get(cartLine.hjid).goodsItem.item"
                                       [associatedProducts]="associatedProducts.get(cartLine.hjid)"

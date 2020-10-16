@@ -38,7 +38,7 @@
                     <option *ngFor="let option of CATALOGUE_LINE_SORT_OPTIONS" [value]="option.name"><span [innerHTML]="option.value | translate"></span></option>
                 </select>
 
-                <div *ngIf="appComponent.checkRoles('catalogue')" class="col-1 d-flex justify-content-center">
+                <div *ngIf="appComponent.checkRoles('catalogue')" class="col-1 d-flex justify-content-center ml-auto">
                     <ul class="nav navbar-nav">
                         <li ngbDropdown class="nav-item dropdown">
                             <button class="navbar-toggler bordered" type="button" aria-controls="navbarNavAltMarkup" ngbDropdownToggle>

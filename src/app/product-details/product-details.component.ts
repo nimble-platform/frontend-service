@@ -365,7 +365,7 @@ export class ProductDetailsComponent implements OnInit {
 
     getBpButtonTooltip(): string {
         if (this.isLoggedIn) {
-            if (this.appComponent.checkRoles('bp')) {
+            if (!this.appComponent.checkRoles('bp')) {
                 return this.translate.instant('You don\'t have permission to initiate a business process');
             }
         }

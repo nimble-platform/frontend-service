@@ -58,7 +58,7 @@
         <div id="carousel-large" class="carousel slide carousel-resize mt-2 mb-4" data-ride="carousel" [ngClass]="{'empty-carousel': wrapper.item.productImage.length === 0}">
             <div class="carousel-inner">
                 <div class="carousel-item active carousel-active" [ngClass]="{'empty-carousel': wrapper.item.productImage.length === 0}">
-                    <img *ngIf="wrapper.item.productImage.length === 0" class="img-max" src="../../assets/images/empty_img.png">
+                    <img *ngIf="wrapper.item.productImage.length === 0" class="img-max" src="../../assets/images/placeholder.jpg">
                     <img *ngIf="wrapper.item.productImage.length > 0" class="img-selected d-block active" style="cursor:zoom-in" src="data:{{wrapper.item.productImage[selectedImage].mimeCode}};base64,{{wrapper.item.productImage[selectedImage].value}}" (click)="open(imgZoom)" />
                 </div>
             </div>

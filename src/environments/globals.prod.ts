@@ -140,11 +140,11 @@ export const config = {
     "standardCurrency": "EUR",
     "standardTaxonomy": "All",
     "supportedActivitySectors": {
-        "": {},
-        "Logistics Provider": {},
-        "Manufacturer": {},
-        "Service Provider": {},
-        "Other": {}
+        "": [],
+        "Logistics Provider": [],
+        "Manufacturer": [],
+        "Service Provider": [],
+        "Other": []
     },
     "supportedBusinessTypes": [
         "",

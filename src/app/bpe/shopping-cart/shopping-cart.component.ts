@@ -84,7 +84,8 @@ export class ShoppingCartComponent implements OnInit {
     rfqCatalogueLineMap: Map<string, number[]> = new Map<string, number[]>();
 
     shoppingCartForm: FormGroup = new FormGroup({});
-    collapsedStatusesOfCartItems: Map<number, boolean> = new Map<number, boolean>();
+    // map to keep expanded statuses of cart items. false value indicates collapsed state
+    expandedStatusesOfCartItems: Map<number, boolean> = new Map<number, boolean>();
     deleteCallStatuses: Map<number, CallStatus> = new Map<number, CallStatus>();
     showCommonTerms = true;
 
@@ -181,7 +182,7 @@ export class ShoppingCartComponent implements OnInit {
             let lines: CatalogueLine[] = this.shoppingCart.catalogueLine;
             if (lines.length > 0) {
                 for (let i = 0; i < lines.length; i++) {
-                    this.collapsedStatusesOfCartItems.set(lines[i].hjid, i === 0 ? true : false);
+                    this.expandedStatusesOfCartItems.set(lines[i].hjid, i === 0 ? true : false);
                     this.deleteCallStatuses.set(lines[i].hjid, new CallStatus());
                 }
             }

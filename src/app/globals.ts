@@ -147,7 +147,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - showVerification: Boolean flag if additional verification information can be submitted upon registration
 - standardCurrency: Default currency to use on the instance. Applicable values are "EUR", "SEK" and "USD"
 - standardTaxonomy: Default taxonomy to use during product publishing. Applicable values are "All" (search over all defined taxonomies) or any taxonomy name
-- supportedActivitySectors: Allows configuring a pre-defined selection of activity sectors for a company. The key is "" or any of the business types listed in "supportedBusinessTypes" and the value is a JSON object of usable strings and their translations. In case of an empty object free text is allowed as input
+- supportedActivitySectors: Allows configuring a pre-defined selection of activity sectors for a company. The key is "" or any of the business types listed in "supportedBusinessTypes" and the value is the key of activity sector and the translations should be provided in the translation files. In case of an empty object free text is allowed as input
 - supportedBusinessTypes: An array of pre-defined business types usable during company registration
 - supportedCertificates: An array of pre-defined certificate types usable during document upload
 - supportedRoles: An array of roles supported when inviting new company members. Applicable values are "company_admin", "external_representative", "legal_representative", "monitor", "publisher", "purchaser" and "sales_officer"
@@ -283,11 +283,11 @@ export const config = {
     "standardCurrency": "EUR",
     "standardTaxonomy": "All",
     "supportedActivitySectors": {
-        "": {},
-        "Logistics Provider": {},
-        "Manufacturer": {},
-        "Service Provider": {},
-        "Other": {}
+        "": [],
+        "Logistics Provider": [],
+        "Manufacturer": [],
+        "Service Provider": [],
+        "Other": []
     },
     "supportedBusinessTypes": [
         "",

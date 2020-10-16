@@ -69,15 +69,8 @@ export class LogisticServicePublishComponent implements OnInit {
     // the value of the erroneousID
     erroneousID = "";
 
-    submitted = false;
-    callback = false;
-    error_detc = false;
-
     // represents the logistic service in 'edit' and 'copy' publish modes
     catalogueLine: CatalogueLine = null;
-
-    // check whether changing publish-mode to 'create' is necessary or not
-    changePublishModeCreate: boolean = false;
 
     publishMode: PublishMode;
     publishStatus: CallStatus = new CallStatus();
@@ -88,8 +81,6 @@ export class LogisticServicePublishComponent implements OnInit {
 
     // selected tab
     selectedTabSinglePublish = "TRANSPORT";
-    // whether we need to show all tabs or not
-    singleTabForLogisticServices = false;
     // publish mode of each logistic services
     logisticPublishMode: Map<string, string> = null;
     // catalogue lines of each logistic services
@@ -102,7 +93,7 @@ export class LogisticServicePublishComponent implements OnInit {
     // furniture ontology categories which are used to represent Logistic Services
     furnitureOntologyLogisticCategories: Category[] = null;
 
-    showRoadTransportService: boolean = false;
+    showRoadTransportService: boolean = true;
     showMaritimeTransportService: boolean = false;
     showAirTransportService: boolean = false;
     showRailTransportService: boolean = false;
@@ -188,23 +179,24 @@ export class LogisticServicePublishComponent implements OnInit {
         this.selectedTabSinglePublish = id;
     }
 
-    onSelectTab(event: any, id: any) {
-        event.preventDefault();
-        if (id === "singleUpload") {
-            this.publishingGranularity = "single";
-        } else {
-            this.publishingGranularity = "bulk";
+    onTransportServiceCategorySelected(transportService: string): void {
+        this.showMaritimeTransportService = false;
+        this.showRoadTransportService = false;
+        this.showAirTransportService = false;
+        this.showRailTransportService = false;
+        switch (transportService) {
+            case 'ROADTRANSPORT': this.showRoadTransportService = true; break;
+            case 'AIRTRANSPORT': this.showAirTransportService = true; break;
+            case 'MARITIMETRANSPORT': this.showMaritimeTransportService = true; break;
+            case 'RAILTRANSPORT': this.showRailTransportService = true; break;
         }
     }
 
     isLoading(): boolean {
-        return this.publishStatus.fb_submitted;
+        return !this.publishStatus.isAllComplete();
     }
 
     canDeactivate(): boolean|Promise<boolean> {
-        if (this.changePublishModeCreate) {
-            this.publishStateService.publishMode = 'create';
-        }
         if (this.dialogBox) {
             return this.appComponent.confirmModalComponent.open('You will lose any changes you made, are you sure you want to quit ?').then(result => {
                 if(result){
@@ -212,9 +204,9 @@ export class LogisticServicePublishComponent implements OnInit {
                 }
                 return result;
             });
-        }
-        else{
-            this.dialogBox = true;
+
+        } else {
+            this.publishStateService.publishMode = 'create';
             return true;
         }
     }
@@ -243,9 +235,6 @@ export class LogisticServicePublishComponent implements OnInit {
                 this.router.navigate(['catalogue/publish-logistic']);
                 return;
             }
-
-            // show only one tab
-            this.singleTabForLogisticServices = true;
 
             this.selectedTabSinglePublish = this.getSelectedTabForLogisticServices();
             this.availableLogisticsServices.push(this.selectedTabSinglePublish);
@@ -349,9 +338,9 @@ export class LogisticServicePublishComponent implements OnInit {
 
     }
 
-    getBinaryObjectsForLogisticService(serviceType: string) {
+    getBinaryObjectsForLogisticService() {
+        const serviceType: string = this.getSelectedTransportServiceType();
         let binaryObjects: BinaryObject[] = [];
-
 
         if (this.publishStateService.publishMode == 'create') {
             binaryObjects = this.logisticCatalogueLines.get(serviceType).goodsItem.item.itemSpecificationDocumentReference.map(doc => doc.attachment.embeddedDocumentBinaryObject)
@@ -362,7 +351,8 @@ export class LogisticServicePublishComponent implements OnInit {
         return binaryObjects;
     }
 
-    getProductTypeProperty(serviceType: string) {
+    getProductTypeProperty() {
+        const serviceType: string = this.getSelectedTransportServiceType();
         let item: Item = this.getLogisticCatalogueLine(serviceType).goodsItem.item;
         for (let property of item.additionalItemProperty) {
             if (property.uri == "http://www.aidimme.es/FurnitureSectorOntology.owl#managedProductType") {
@@ -371,7 +361,8 @@ export class LogisticServicePublishComponent implements OnInit {
         }
     }
 
-    getIndustrySpecializationProperty(serviceType: string) {
+    getIndustrySpecializationProperty() {
+        const serviceType: string = this.getSelectedTransportServiceType();
         let item: Item = this.getLogisticCatalogueLine(serviceType).goodsItem.item;
         for (let property of item.additionalItemProperty) {
             if (property.uri == "http://www.aidimme.es/FurnitureSectorOntology.owl#industrySpecialization") {
@@ -411,7 +402,8 @@ export class LogisticServicePublishComponent implements OnInit {
     }
 
     // methods to select/unselect files for Transport logistic services
-    onSelectFileForLogisticService(binaryObject: BinaryObject, serviceType: string) {
+    onSelectFileForLogisticService(binaryObject: BinaryObject) {
+        const serviceType: string = this.getSelectedTransportServiceType();
         const document: DocumentReference = new DocumentReference();
         const attachment: Attachment = new Attachment();
         attachment.embeddedDocumentBinaryObject = binaryObject;
@@ -424,7 +416,8 @@ export class LogisticServicePublishComponent implements OnInit {
         }
     }
 
-    onUnSelectFileForLogisticService(binaryObject: BinaryObject, serviceType: string) {
+    onUnSelectFileForLogisticService(binaryObject: BinaryObject) {
+        const serviceType: string = this.getSelectedTransportServiceType();
         if (this.publishStateService.publishMode == 'create') {
             const i = this.logisticCatalogueLines.get(serviceType).goodsItem.item.itemSpecificationDocumentReference.findIndex(doc => doc.attachment.embeddedDocumentBinaryObject === binaryObject);
             if (i >= 0) {
@@ -530,6 +523,7 @@ export class LogisticServicePublishComponent implements OnInit {
     // publish or save
 
     onPublish(exitThePage: boolean) {
+        this.publishStatus = new CallStatus();
         if (this.publishStateService.publishMode === 'edit' || this.publishStateService.publishMode === 'copy') {
 
             if (this.publishStateService.publishMode === 'edit') {
@@ -607,8 +601,6 @@ export class LogisticServicePublishComponent implements OnInit {
     }
 
     private publish(catalogueLines: CatalogueLine[], exitThePage: boolean) {
-        this.publishStatus.submit();
-
         let splicedCatalogueLines: CatalogueLine[] = [];
         // remove unused properties from catalogueLine
         for (let catalogueLine of catalogueLines) {
@@ -625,6 +617,7 @@ export class LogisticServicePublishComponent implements OnInit {
                     catalogue.catalogueLine.push(catalogueLine);
                 }
 
+                this.publishStatus.aggregatedSubmit();
                 this.catalogueService.postCatalogue(catalogue)
                     .then(() => this.onSuccessfulPublish(exitThePage, splicedCatalogueLines))
                     .catch(err => {
@@ -637,6 +630,7 @@ export class LogisticServicePublishComponent implements OnInit {
         } else {
             // TODO: create a service to add multiple catalogue lines
             for (let catalogueLine of splicedCatalogueLines) {
+                this.publishStatus.aggregatedSubmit();
                 this.catalogueService.addCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid, JSON.stringify(catalogueLine))
                     .then(() => {
                         this.onSuccessfulPublish(exitThePage, [catalogueLine]);
@@ -648,11 +642,6 @@ export class LogisticServicePublishComponent implements OnInit {
 
     // Should be called on save
     private saveEditedProduct(exitThePage: boolean, catalogueLines: CatalogueLine[]): void {
-        this.error_detc = false;
-        this.callback = false;
-        this.submitted = true;
-
-        this.publishStatus.submit();
 
         let splicedCatalogueLines: CatalogueLine[] = [];
         // remove unused properties from catalogueLine
@@ -662,24 +651,20 @@ export class LogisticServicePublishComponent implements OnInit {
 
         // TODO: create a service to update multiple catalogue lines
         for (let catalogueLine of splicedCatalogueLines) {
+            this.publishStatus.aggregatedSubmit();
             this.catalogueService.updateCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid, JSON.stringify(catalogueLine))
                 .then(() => this.onSuccessfulPublish(exitThePage, [catalogueLine]))
-                .then(() => this.changePublishModeToCreate())
+                // .then(() => this.changePublishModeToCreate())
                 .catch(err => {
                     this.onFailedPublish(err);
                 });
         }
     }
 
-    // changes publishMode to create
-    private changePublishModeToCreate(): void {
-        this.changePublishModeCreate = true;
-    }
-
     private onFailedPublish(err): void {
-        this.publishStatus.error(err._body ? err._body : err);
-        this.submitted = false;
-        this.error_detc = true;
+        this.publishStatus.aggregatedError(err._body ? err._body : err);
+        // this.submitted = false;
+        // this.error_detc = true;
         if (err.status == 406) {
             this.sameIdError = true;
             this.erroneousID = this.catalogueLine.id;
@@ -741,23 +726,39 @@ export class LogisticServicePublishComponent implements OnInit {
                     }
                     this.catalogueService.draftCatalogueLine = this.catalogueLine;
 
-                    this.publishStatus.callback(this.translations["Successfully saved. You can now continue."], false);
-
-                    this.submitted = false;
-                    this.callback = true;
-                    this.error_detc = false;
+                    this.publishStatus.aggregatedCallBack(this.translations["Successfully saved. You can now continue."], false);
+                    if (this.publishStatus.isAllSuccessful()) {
+                        this.dialogBox = false;
+                    }
                 }).
                     catch(error => {
-                        this.publishStatus.error("Error while publishing product", error);
+                        this.publishStatus.aggregatedError("Error while publishing product", error);
                     });
             })
                 .catch(error => {
-                    this.publishStatus.error("Error while publishing product", error);
+                    this.publishStatus.aggregatedError("Error while publishing product", error);
                 });
         })
             .catch(error => {
-                this.publishStatus.error("Error while publishing product", error);
+                this.publishStatus.aggregatedError("Error while publishing product", error);
             });
+    }
+
+    private getSelectedTransportServiceType(): string {
+        if (this.selectedTabSinglePublish === 'TRANSPORT') {
+            if (this.showRoadTransportService) {
+                return 'ROADTRANSPORT';
+            }
+            if (this.showRailTransportService) {
+                return 'RAILTRANSPORT';
+            }
+            if (this.showMaritimeTransportService) {
+                return 'MARITIMETRANSPORT';
+            }
+            return 'AIRTRANSPORT';
+        } else {
+            return this.selectedTabSinglePublish;
+        }
     }
 
     onBack() {

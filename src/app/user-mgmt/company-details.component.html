@@ -33,7 +33,7 @@
         </text-input>
         <text-input presentationMode="view" [label]="'Business Type' | translate" [text]="details.details.businessType" labelClass="col-4" valueClass="col-8">
         </text-input>
-        <text-input presentationMode="view" [label]="'Activity Sectors' | translate" [text]="selectValueOfTextObject(details.details.industrySectors)" labelClass="col-4" valueClass="col-8">
+        <text-input presentationMode="view" [label]="'Activity Sectors' | translate" [text]="industrySectorTranslations" labelClass="col-4" valueClass="col-8">
         </text-input>
         <text-input *ngIf="config.showBusinessKeywordsInCompanyDetails" presentationMode="view" [label]="'Business Keywords' | translate" [text]="selectValueOfTextObject(details.details.businessKeywords)" labelClass="col-4" valueClass="col-8">
         </text-input>

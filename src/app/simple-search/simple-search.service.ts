@@ -315,7 +315,7 @@ export class SimpleSearchService {
             );
     }
 
-    getCompSuggestions(query: string, item_field: string[], pageRef?: string, forceLocal?: boolean) {
+    getCompSuggestions(query: string, item_field: string[], pageRef?: string, forceLocal?: boolean, verified?:boolean) {
         let querySettings = {
             'fields': item_field,
             'boosting': false,
@@ -346,6 +346,10 @@ export class SimpleSearchService {
         searchObject.rows = 2147483647;
         searchObject.start = 0;
         searchObject.sort = ['score desc'];
+        searchObject.fq = [];
+        if (verified) {
+            searchObject.fq.push('verified:true');
+        }
 
         for (let i = 0; i < queryRes.queryFields.length; i++) {
             searchObject.facet.field.push(queryRes.queryFields[i]);

@@ -86,7 +86,7 @@
         <div #categoryRow class="category-row">
             <div *ngFor="let categoryData of categoriesData"
                  class="category-box">
-                <img [src]="categoryData.img">
+                <img [src]="categoryData.img" >
                 <div class="w-100 text-center">
                     <h4 class="mb-3">{{getTranslatedCategoryLabel(categoryData.rootCategory) | uppercase}}</h4>
                     <div *ngFor="let subCategory of categoryData.categories"
@@ -196,7 +196,7 @@
                                 <img style="width: 100%; height: 150px" [src]="sector.img">
                                 <div class="text-center p-1">
                                     <div>{{sector.count}} {{'in' | translate}}</div>
-                                    <div>{{sector.label}}</div>
+                                    <div>{{sector.label | translate}}</div>
                                 </div>
                             </div>
                         </ng-template>
