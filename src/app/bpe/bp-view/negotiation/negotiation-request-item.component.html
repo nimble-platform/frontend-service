@@ -28,18 +28,27 @@
             <div class="col-5">
                 <label class="column-title"><span [innerHTML]="'Counter Offer' | translate"></span></label><br>
                 <ng-container *ngIf="showCounterOfferTerms && !isReadOnly()">
-                    <button *ngIf="manufacturersTermsSource == 'product_defaults'" class="btn btn-outline-secondary" (click)="onLoadCounterOfferTerms('product_defaults')"><span [innerHTML]="'Use product defaults' | translate"></span>
+                    <button *ngIf="manufacturersTermsSource == 'product_defaults'"
+                            class="btn btn-outline-secondary mb-2"
+                            (click)="onLoadCounterOfferTerms('product_defaults')">
+                        <span [innerHTML]="'Use product defaults' | translate"></span>
                     </button>
-                    <button *ngIf="manufacturersTermsSource == 'frame_contract'" class="btn btn-outline-secondary" (click)="onLoadCounterOfferTerms('frame_contract')"><span [innerHTML]="'Use frame contract terms' | translate"></span>
+                    <button *ngIf="manufacturersTermsSource == 'frame_contract'"
+                            class="btn btn-outline-secondary mb-2"
+                            (click)="onLoadCounterOfferTerms('frame_contract')">
+                        <span [innerHTML]="'Use frame contract terms' | translate"></span>
                     </button>
-                    <button *ngIf="manufacturersTermsSource == 'last_offer'" class="btn btn-outline-secondary" (click)="onLoadCounterOfferTerms('last_offer')"><span [innerHTML]="'Use terms of last offer' | translate"></span>
+                    <button *ngIf="manufacturersTermsSource == 'last_offer'"
+                            class="btn btn-outline-secondary mb-2"
+                            (click)="onLoadCounterOfferTerms('last_offer')">
+                        <span [innerHTML]="'Use terms of last offer' | translate"></span>
                     </button>
                     <ng-container>
                         <input class="ml-2" type="checkbox" [(ngModel)]="resetUpdatesChecked"><label class="ml-2"><span [innerHTML]="'Reset changes' | translate"></span></label>
                         <span title="Explicitly specified terms will also be reset with the ones from the selected source.">&#9432;</span>
                     </ng-container>
                 </ng-container>
-                <button *ngIf="!showCounterOfferTerms" class="btn btn-primary action" [disabled]="isLoading()" (click)="onShowCounterOfferTerms();"><span [innerHTML]="'Offer Counter Terms' | translate"></span></button>
+                <button *ngIf="!showCounterOfferTerms" class="btn btn-primary action mb-2" [disabled]="isLoading()" (click)="onShowCounterOfferTerms();"><span [innerHTML]="'Offer Counter Terms' | translate"></span></button>
             </div>
         </div>
     </div>
