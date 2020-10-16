@@ -106,10 +106,26 @@ export class HomepageComponent {
                 'http://www.aidimme.es/FurnitureSectorOntology.owl#EngineeringService',
                 'http://www.aidimme.es/FurnitureSectorOntology.owl#Training'
             ],
-            'img': 'assets/homepage/services.jpeg',
+            'img': 'assets/homepage/services.jpg',
             'title': 'Service'
         }
     ];
+
+    activitySectorImages: any = {
+        'Bathroom': 'assets/homepage/sectors/bathroom.jpg',
+        'Carpentry': 'assets/homepage/sectors/carpentry.jpg',
+        'Contract': 'assets/homepage/sectors/contract.jpg',
+        'Fitting': 'assets/homepage/sectors/fitting.jpg',
+        'Home': 'assets/homepage/sectors/home.jpg',
+        'Hotels, Restaurants & Cafes': 'assets/homepage/sectors/hotels-restaurants-cafes.jpg',
+        'Kitchen': 'assets/homepage/sectors/kitchen.jpg',
+        'Office': 'assets/homepage/sectors/office.jpg',
+        'Outdoor Furniture': 'assets/homepage/sectors/outdoor-furniture.jpg',
+        'Paints & Varnishes': 'assets/homepage/sectors/paints-and-varnishes.jpg',
+        'Panels': 'assets/homepage/sectors/panels.jpg',
+        'Upholstered Furniture': 'assets/homepage/sectors/upholstered-furniture.jpg',
+        'Veneer': 'assets/homepage/sectors/veneer.jpg'
+    };
 
     activitySectorCarouselConfiguration: OwlOptions = {
         loop: true,
@@ -364,17 +380,15 @@ export class HomepageComponent {
     }
 
     private constructActivitySectorData(): void {
-        let count = 0;
         const sectors: ActivitySectorUiModel[] = this.activitySectors
             .filter(sector => sector.count >=  5)
             .map(sector => {
             return new ActivitySectorUiModel({
-                'img': this.images[count++ % 4],
+                'img': !!this.activitySectorImages[sector.label] ? this.activitySectorImages[sector.label] : 'assets/placeholder.jpg',
                 'label': sector.label,
                 'count': sector.count
             });
         });
-        console.log("SECTOR DATA", sectors);
         this.activitySectorsData = sectors;
     }
 }
