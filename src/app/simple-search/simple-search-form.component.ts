@@ -1004,7 +1004,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                     if (facet_innerLabel != '' && facet_innerLabel != ':' && facet_innerLabel != ' ' && facet_innerLabel.indexOf('urn:oasis:names:specification:ubl:schema:xsd') == -1) {
                         options.push({
                             'name': facet_inner.label,
-                            'realName': facet_innerLabel,
+                            'realName': facet.endsWith("activitySectors") ? this.translate.instant(facet_innerLabel) : facet_innerLabel, // use the translation of activity sector
                             'count': facetCount
                         });
                         total += facetCount;
@@ -1228,7 +1228,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                     if (facet_innerLabel != '' && facet_innerLabel != ':' && facet_innerLabel != ' ' && facet_innerLabel.indexOf('urn:oasis:names:specification:ubl:schema:xsd') == -1) {
                         this.facetObj[index].options.push({
                             'name': facet_inner.label, // the label with the language id, if there is any
-                            'realName': facet_innerLabel, // the displayed label
+                            'realName': facet.endsWith("activitySectors") ? this.translate.instant(facet_innerLabel) : facet_innerLabel, // the displayed label,  use the translation of activity sector
                             'count': facet_innerCount
                         });
                         this.facetObj[index].total += facet_innerCount;
@@ -1658,9 +1658,15 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     }
 
     getFacetQueryValue(facet: string): string {
-        let value = facet.split(':')[1];
+        let facetNameValue = facet.split(':');
+        let facetName = facetNameValue[0];
+        let value = facetNameValue[1];
         value = value.split('@')[0];
         value = value.replace(/"/g, '');
+        // use the translation of activity sector
+        if(facetName.endsWith("activitySectors")){
+             return this.translate.instant(value);
+        }
         return value;
     }
 
@@ -2011,8 +2017,9 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         });
     }
 
-    showProductSearchTT(content) {
-        this.tooltipHTML = this.translate.instant('Search Tooltip');
+    showSearchTT(content) {
+        let translationKey = this.searchTopic == "prod" ? "Product Search Tooltip" : "Company Search Tooltip";
+        this.tooltipHTML = this.translate.instant(translationKey);
         this.modalService.open(content);
     }
 }

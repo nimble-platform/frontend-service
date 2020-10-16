@@ -157,277 +157,82 @@ export const config = {
     "standardCurrency": "EUR",
     "standardTaxonomy": "FurnitureOntology",
     "supportedActivitySectors": {
-        "": {},
-        "Logistics Provider": {
-            "General": {
-                "en": "Transportation / Logistics",
-                "es": "Transporte / Logística"
-            }
-        },
-        "Manufacturer": {
-            "Accessories": {
-                "en": "Accessories",
-                "es": "Complementos"
-            },
-            "Bathroom": {
-                "en": "Bathroom",
-                "es": "Baño"
-            },
-            "Building": {
-                "en": "Building",
-                "es": "Construcción"
-            },
-            "Carpentry": {
-                "en": "Carpentry",
-                "es": "Carpintería"
-            },
-            "Childcare": {
-                "en": "Childcare",
-                "es": "Mueble Infantil"
-            },
-            "Closet / Cupboard": {
-                "en": "Closet / Cupboard",
-                "es": "Armarios"
-            },
-            "Contract": {
-                "en": "Contract Channel",
-                "es": "Canal Contract"
-            },
-            "Doors / Windows": {
-                "en": "Doors and Windows",
-                "es": "Puertas y Ventanas"
-            },
-            "Furniture for Retail": {
-                "en": "Furniture for Retail",
-                "es": "Muebles para Establecimientos Comerciales"
-            },
-            "Home": {
-                "en": "Home",
-                "es": "Hogar"
-            },
-            "Hotels, Restaurants & Cafes": {
-                "en": "Horeca Channel",
-                "es": "Canal Horeca"
-            },
-            "Kids": {
-                "en": "Kids",
-                "es": "Mueble Juvenil"
-            },
-            "Kitchen": {
-                "en": "Kitchen",
-                "es": "Cocina"
-            },
-            "Lightings / Lamps": {
-                "en": "Lightings / Lamps",
-                "es": "Iluminación / Lámparas"
-            },
-            "Mattresses": {
-                "en": "Mattresses",
-                "es": "Colchones"
-            },
-            "Office": {
-                "en": "Office",
-                "es": "Oficina"
-            },
-            "Outdoor Furniture": {
-                "en": "Outdoor Furniture",
-                "es": "Mueble para Exteriores"
-            },
-            "Panels": {
-                "en": "Panels",
-                "es": "Paneles"
-            },
-            "Parquet Floors": {
-                "en": "Parquet Floors",
-                "es": "Parquet"
-            },
-            "Upholstered Furniture": {
-                "en": "Upholstered Furniture",
-                "es": "Mueble Tapizado"
-            },
-            "Wooden Packaging": {
-                "en": "Wooden Packaging",
-                "es": "Embalaje de Madera"
-            },
-            "Wooden Structures": {
-                "en": "Wooden Structures",
-                "es": "Estructuras de madera"
-            }
-        },
-        "Retailer": {
-            "General": {
-                "en": "Retail / Distribution",
-                "es": "Retail / Distribución"
-            }
-        },
-        "Service Provider": {
-            "Architects": {
-                "en": "Architects",
-                "es": "Arquitectos"
-            },
-            "Buyer-Designer": {
-                "en": "Buyer-Designer",
-                "es": "Prescriptor"
-            },
-            "Certification": {
-                "en": "Certification",
-                "es": "Certificación"
-            },
-            "Consulting": {
-                "en": "Consulting",
-                "es": "Consultoría"
-            },
-            "Design / Decoration": {
-                "en": "Design / Decoration",
-                "es": "Diseño / Interiorismo"
-            },
-            "Distributor": {
-                "en": "Distributor",
-                "es": "Distribuidor"
-            },
-            "Engineering": {
-                "en": "Engineering",
-                "es": "Ingenieria"
-            },
-            "Facility Cleaning": {
-                "en": "Facility Cleaning",
-                "es": "Limpieza Instalaciones"
-            },
-            "Facility Maintenance": {
-                "en": "Facility Maintenance",
-                "es": "Mantenimiento Instalaciones"
-            },
-            "Furniture Installer": {
-                "en": "Furniture Installer",
-                "es": "Instalador de Muebles"
-            },
-            "Legal Services": {
-                "en": "Legal Services",
-                "es": "Servicios Jurídicos"
-            },
-            "Outsourcing": {
-                "en": "Outsourcing",
-                "es": "Subcontratación"
-            },
-            "Print Services": {
-                "en": "Print Services",
-                "es": "Servicios de impresión"
-            },
-            "Quality Control / Tests": {
-                "en": "Quality Control / Tests",
-                "es": "Control de Calidad / Ensayos"
-            },
-            "Sales Agent": {
-                "en": "Sales Agent",
-                "es": "Agente Comercial"
-            },
-            "Software": {
-                "en": "Software",
-                "es": "Software"
-            },
-            "Training": {
-                "en": "Training",
-                "es": "Formación"
-            },
-            "Waste Management": {
-                "en": "Waste Management",
-                "es": "Gestión de Residuos"
-            }
-        },
-        "Supplier": {
-            "Abrasives": {
-                "en": "Sandpapers / Abrasives",
-                "es": "Lijas / Abrasivos"
-            },
-            "Adhesives": {
-                "en": "Glues / Adhesives",
-                "es": "Colas / Adhesivos"
-            },
-            "Board": {
-                "en": "Board",
-                "es": "Tablero"
-            },
-            "Ceramic": {
-                "en": "Ceramic",
-                "es": "Cerámica"
-            },
-            "Composites": {
-                "en": "Composites",
-                "es": "Materiales Compuestos"
-            },
-            "Cork": {
-                "en": "Cork",
-                "es": "Corcho"
-            },
-            "Decorated Paper": {
-                "en": "Decorated Paper",
-                "es": "Papel Decorado"
-            },
-            "Electronic Components": {
-                "en": "Electronic Components",
-                "es": "Componentes Electrónicos"
-            },
-            "Fitting": {
-                "en": "Fitting",
-                "es": "Herrajes"
-            },
-            "Foam": {
-                "en": "Foam",
-                "es": "Espuma"
-            },
-            "Glass": {
-                "en": "Glass",
-                "es": "Cristal"
-            },
-            "Machinery": {
-                "en": "Machinery",
-                "es": "Maquinaria"
-            },
-            "Metal": {
-                "en": "Metal",
-                "es": "Metal"
-            },
-            "Packaging Materials": {
-                "en": "Packaging Materials",
-                "es": "Materiales de Embalaje"
-            },
-            "Paints & Varnishes": {
-                "en": "Paints / Varnishes",
-                "es": "Pinturas / Barnices"
-            },
-            "Plastic": {
-                "en": "Plastic",
-                "es": "Plástico"
-            },
-            "Plywood": {
-                "en": "Plywood",
-                "es": "Madera contrachapada"
-            },
-            "Security elements": {
-                "en": "Security elements",
-                "es": "Elementos de seguridad"
-            },
-            "Straw": {
-                "en": "Straw",
-                "es": "Mimbre"
-            },
-            "Textile": {
-                "en": "Textile",
-                "es": "Textil"
-            },
-            "Tools": {
-                "en": "Tools",
-                "es": "Herramientas"
-            },
-            "Veneer": {
-                "en": "Veneer",
-                "es": "Chapa"
-            },
-            "Wood": {
-                "en": "Wood",
-                "es": "Madera"
-            }
-        }
+        "": [],
+        "Logistics Provider": [
+            "Logistics Provider-General"
+        ],
+        "Manufacturer": [
+            "Accessories",
+            "Bathroom",
+            "Building",
+            "Carpentry",
+            "Childcare",
+            "Closet / Cupboard",
+            "Manufacturer-Contract",
+            "Doors / Windows",
+            "Furniture for Retail",
+            "Home",
+            "Hotels, Restaurants & Cafes",
+            "Kids",
+            "Kitchen",
+            "Lightings / Lamps",
+            "Mattresses",
+            "Office",
+            "Outdoor Furniture",
+            "Panels",
+            "Parquet Floors",
+            "Upholstered Furniture",
+            "Wooden Packaging",
+            "Wooden Structures"
+        ],
+        "Retailer": [
+            "Retailer-General"
+        ],
+        "Service Provider": [
+            "Architects",
+            "Buyer-Designer",
+            "Certification",
+            "Consulting",
+            "Design / Decoration",
+            "Distributor",
+            "Engineering",
+            "Facility Cleaning",
+            "Facility Maintenance",
+            "Furniture Installer",
+            "Legal Services",
+            "Outsourcing",
+            "Print Services",
+            "Quality Control / Tests",
+            "Sales Agent",
+            "Software",
+            "Training",
+            "Waste Management"
+        ],
+        "Supplier": [
+            "Abrasives",
+            "Adhesives",
+            "Board",
+            "Ceramic",
+            "Composites",
+            "Cork",
+            "Decorated Paper",
+            "Electronic Components",
+            "Fitting",
+            "Foam",
+            "Glass",
+            "Machinery",
+            "Metal",
+            "Packaging Materials",
+            "Paints & Varnishes",
+            "Plastic",
+            "Plywood",
+            "Security elements",
+            "Straw",
+            "Textile",
+            "Tools",
+            "Veneer",
+            "Wood"
+        ]
     },
     "supportedBusinessTypes": [
         "",
