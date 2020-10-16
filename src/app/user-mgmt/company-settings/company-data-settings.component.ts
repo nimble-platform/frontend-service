@@ -94,7 +94,7 @@ export class CompanyDataSettingsComponent implements OnInit {
         this.customIndustrySectors = [];
         this.selectedIndustrySectorKeys = [];
         for(let companyIndustrySector of companyIndustrySectors){
-            if(this.settings.details.businessType && this.config.supportedActivitySectors[this.settings.details.businessType] && this.config.supportedActivitySectors[this.settings.details.businessType][companyIndustrySector.text]){
+            if(this.settings.details.businessType && this.config.supportedActivitySectors[this.settings.details.businessType] && this.config.supportedActivitySectors[this.settings.details.businessType].indexOf(companyIndustrySector.text) != -1){
                 // company industry sectors includes the same key multiple times because of the multilinguality
                 if(this.selectedIndustrySectorKeys.indexOf(companyIndustrySector.text) == -1){
                     this.selectedIndustrySectorKeys.push(companyIndustrySector.text);
@@ -129,7 +129,7 @@ export class CompanyDataSettingsComponent implements OnInit {
         // get activity sectors for the selected business type
         let activitySectors = this.config.supportedActivitySectors[this.dataForm.getRawValue()['businessType']];
         if(activitySectors){
-            this.availableActivitySectorKeys = Object.keys(activitySectors);
+            this.availableActivitySectorKeys = activitySectors;
         } else{
             this.availableActivitySectorKeys = [];
         }
@@ -258,14 +258,6 @@ export class CompanyDataSettingsComponent implements OnInit {
             });
     }
 
-    getMultilingualPredefinedIndustrySector(sector:string){
-        let label = this.config.supportedActivitySectors[this.dataForm.getRawValue()['businessType']][sector][DEFAULT_LANGUAGE()];
-        if(!label){
-            label = this.config.supportedActivitySectors[this.dataForm.getRawValue()['businessType']][sector]['en'];
-        }
-        return label;
-    }
-
     changeData(content) {
         this.mailto = "mailto:" + this.config.supportMail;
         var subject = this.translate.instant("Company Data Change Request",{platformName:this.config.platformNameInMail})+" ("+this.translate.instant("UserID")+": " + this.appComponent.userID + ", "+this.translate.instant("Platform")+": " +
@@ -292,7 +284,10 @@ export class CompanyDataSettingsComponent implements OnInit {
         body += this.settings.details.businessType + "\n\n";
         body += this.translate.instant("Activity Sectors:");
         body += "\n";
-        body += this.selectValueOfTextObject(this.settings.details.industrySectors) + "\n\n";
+        // retrieve the translations of industry sectors
+        let industrySectors = selectValueOfTextObject(this.settings.details.industrySectors).split("\n");
+        let industrySectorTranslations = industrySectors.map(industrySector => this.translate.instant(industrySector)).join("\n");
+        body += industrySectorTranslations + "\n\n";
         body += this.translate.instant("Business Keywords:");
         body += "\n";
         body += this.selectValueOfTextObject(this.settings.details.businessKeywords) + "\n\n";

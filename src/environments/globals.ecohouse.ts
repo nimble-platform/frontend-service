@@ -143,11 +143,11 @@ export const config = {
     "standardCurrency": "SEK",
     "standardTaxonomy": "FurnitureOntology",
     "supportedActivitySectors": {
-        "": {},
-        "Logistics Provider": {},
-        "Manufacturer": {},
-        "Service Provider": {},
-        "Other": {}
+        "": [],
+        "Logistics Provider": [],
+        "Manufacturer": [],
+        "Service Provider": [],
+        "Other": []
     },
     "supportedBusinessTypes": [
         "",

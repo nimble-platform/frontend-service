@@ -112,7 +112,7 @@ export class CompanyRegistrationComponent implements OnInit {
         // get activity sectors for the selected business type
         let activitySectors = this.config.supportedActivitySectors[this.registrationForm.getRawValue()['businessType']];
         if(activitySectors){
-            this.availableActivitySectorKeys = Object.keys(activitySectors);
+            this.availableActivitySectorKeys = activitySectors;
         } else{
             this.availableActivitySectorKeys = [];
         }
@@ -298,14 +298,6 @@ export class CompanyRegistrationComponent implements OnInit {
             });
 
         return false;
-    }
-
-    getMultilingualPredefinedIndustrySector(sector:string){
-        let label = this.config.supportedActivitySectors[this.registrationForm.getRawValue()['businessType']][sector][DEFAULT_LANGUAGE()];
-        if(!label){
-            label = this.config.supportedActivitySectors[this.registrationForm.getRawValue()['businessType']][sector]['en'];
-        }
-        return label;
     }
 
     onSetImageFile(event: any, model: FormGroup) {

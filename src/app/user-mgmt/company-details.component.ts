@@ -58,6 +58,8 @@ export class CompanyDetailsComponent implements OnInit {
     showEmptyPageBA = false;
 
     getSocialMediaClass = getSocialMediaClass;
+    // the industry sectors translations to be displayed on the UI
+    industrySectorTranslations:string;
     constructor(private cookieService: CookieService,
         private agentService: AgentService,
         private userService: UserService,
@@ -111,6 +113,10 @@ export class CompanyDetailsComponent implements OnInit {
                             console.log("Fetched details: " + JSON.stringify(details));
                         }
                         this.details = details;
+                        // retrieve the translations of industry sectors
+                        let industrySectors = selectValueOfTextObject(details.details.industrySectors).split("\n");
+                        this.industrySectorTranslations = industrySectors.map(industrySector => this.translate.instant(industrySector)).join("\n");
+
                         this.initCallStatus.callback("Details successfully fetched", true);
                     })
                         .catch(error => {

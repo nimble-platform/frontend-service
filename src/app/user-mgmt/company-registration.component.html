@@ -177,7 +177,7 @@
                             <input class="form-check-input" type="checkbox"
                                    (change)="industrySectorSelectedTerms.toggle(sectorKey)"
                                    [checked]="industrySectorSelectedTerms.isSelected(sectorKey)" >
-                            <label class="form-check-label">{{getMultilingualPredefinedIndustrySector(sectorKey)}}</label>
+                            <label class="form-check-label">{{sectorKey | translate}}</label>
                         </div>
                     </div>
                 </ng-container>
