@@ -17,3 +17,8 @@
     padding: 1.5rem !important;
     background: rgba(0, 0, 0, 0.03);
 }
+
+.collapsed-item {
+    background-color: #c9e6d050;
+    border: 1px solid #93dca450;
+}

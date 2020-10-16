@@ -426,13 +426,13 @@
 <div class="row mb-2 pt-3 pb-3 panel space-before">
     <div class="col-12">
         <div class="d-flex">
-            <div *ngIf="config.dataChannelsEnabled" class="btn"
+            <div *ngIf="config.dataChannelsEnabled" class="btn mr-2"
                  [ngClass]="{'btn-outline-primary':wrapper.checkEqualForRequest(manufacturersTermsSource, 'dataMonitoring'),'btn-danger':!wrapper.checkEqualForRequest(manufacturersTermsSource, 'dataMonitoring'),'active':showDataMonitoring}" (click)="showDataMonitoring=showTab(showDataMonitoring)">
                 <i class="fas fa-chart-line"></i>
                 <span class="font-weight-bold" [innerHTML]="'Data Monitoring' | translate"></span>
             </div>
             <ng-container *ngIf="isFrameContractVisible()">
-                <div class="btn {{wrapper.rfqFrameContractDuration == null ?'btn-outline-primary' : 'btn-danger'}} align-self-start ml-2"
+                <div class="btn {{wrapper.rfqFrameContractDuration == null ?'btn-outline-primary' : 'btn-danger'}} align-self-start"
                      [ngClass]="{'active':showFrameContractDetails}"
                      (click)="showFrameContractDetails=showTab(showFrameContractDetails)">
                     <i class="far fa-handshake"></i>

@@ -19,17 +19,27 @@
         <!-- Products -->
         <div>
             <!-- Title -->
-            <h2 class="nimble-title">
-                <span [innerHTML]="'Order for' | translate"></span>:
-            </h2>
+            <div class="row">
+                <h2 class="nimble-title">
+                    <span [innerHTML]="'Order for' | translate"></span>:
+                </h2>
+            </div>
             <ng-container *ngFor="let line of lines;let i=index">
-                <h2>
-                    <div class="btn btn-outline-primary btn-light inline" [ngClass]="{'active':selectedLines[i]}" (click)="viewedProcessDetails[i]=true;onToggleSelectedLine(i)">{{ line.goodsItem.item.name[0].value }}</div>
-                    <button class="btn btn-outline-dark inline ml-2" (click)="onToggleProductExpanded(i)">
-                        <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="productsExpanded[i]"></i>
-                        <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!productsExpanded[i]"></i>
+                <div class="row panel align-items-center">
+                    <div class="btn btn-outline-primary btn-light inline"
+                         [ngClass]="{'active': selectedLines[i]}"
+                         (click)="viewedProcessDetails[i]=true;onToggleSelectedLine(i)">
+                        {{ line.goodsItem.item.name[0].value }}
+                        <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!selectedLines[i]"></i>
+                        <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="selectedLines[i]"></i>
+                    </div>
+                    <button class="btn btn-outline-primary inline ml-2"
+                            [ngClass]="{'active': productsExpanded[i]}"
+                            (click)="onToggleProductExpanded(i)">
                         <span class="inline" *ngIf="!productsExpanded[i]"><small><span [innerHTML]="'Show Details' | translate"></span></small></span>
                         <span class="inline" *ngIf="productsExpanded[i]"><small><span [innerHTML]="'Hide Details' | translate"></span></small></span>
+                        <i class="fas fa-chevron-up fa-fw inline" aria-hidden="true" *ngIf="productsExpanded[i]"></i>
+                        <i class="fas fa-chevron-down fa-fw inline" aria-hidden="true" *ngIf="!productsExpanded[i]"></i>
                     </button>
                     <ng-template #content let-modal>
                         <div class="modal-body">
@@ -44,11 +54,11 @@
                     <button class="btn btn-outline-dark inline" *ngIf="agentDiscount"><span> {{agentDiscountProp}}</span></button>
                     <button class="btn btn-outline-dark inline" *ngIf="buyingAgentInitiated"><span [innerHTML]="'Agent Initiated' | translate"></span></button>
                     <button class="btn btn-outline-dark inline" *ngIf="sellingAgentInitiated"><span [innerHTML]="'Agent Approved' | translate"></span></button>
-                    <span *ngIf="(currentStep == 'Negotiation' || currentStep == 'Order')">
+                    <span class="ml-2" *ngIf="(currentStep == 'Negotiation' || currentStep == 'Order')">
                         <i *ngIf="viewedProcessDetails[i]" class="fas fa-check small-icon" [title]="getTitleForCheckIcon()"></i>
                         <i *ngIf="!viewedProcessDetails[i]" class="fas fa-times small-icon" [title]="getTitleForTimesIcon()"></i>
                     </span>
-                </h2>
+                </div>
 
                 <!-- Product Details Panel -->
                 <product-details-tabs *ngIf="productsExpanded[i]" [wrapper]="wrappers[i]" [showOverview]="true" [isCatalogueLineDeleted]="areCatalogueLinesDeleted[i]" [settings]="settings" [itemWithSelectedProps]="productsWithSelectedProperties[i]" [readonly]="true">
