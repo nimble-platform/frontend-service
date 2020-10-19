@@ -27,15 +27,15 @@
     <div class="row content-row">
         <div class="col-6">
             <div>
-                <text-input presentationMode="view" [label]="'Warranty' | translate" [text]="getWarrantyPeriodText()" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" [label]="'Warranty' | translate" [text]="getWarrantyPeriod()|quantityTranslatePipe" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
             <div>
-                <text-input presentationMode="view" [label]="'Incoterms' | translate" [text]="getIncoterm()" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" [label]="'Incoterms' | translate" [text]="getIncoterm()|translate" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
             <div>
-                <text-input presentationMode="view" [label]="'Quantity' | translate" [text]="getQuantityText()" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" [label]="'Quantity' | translate" [text]="getQuantity()|quantityTranslatePipe" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
             <div>
@@ -62,17 +62,17 @@
                 </div>
             </div>
             <div>
-                <text-input presentationMode="view" [label]="'Payment Means' | translate" [text]="getPaymentMeans()" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" [label]="'Payment Means' | translate" [text]="getPaymentMeans()|translate" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
             <div>
-                <text-input presentationMode="view" [label]="'Payment Terms' | translate" [text]="paymentTermsWrapper.paymentTerm" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" [label]="'Payment Terms' | translate" [text]="paymentTermsWrapper.paymentTerm|translate" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
         </div>
         <div class="col-6">
             <div *ngIf="!areDeliveryDatesAvailable">
-                <text-input presentationMode="view" [label]="'Delivery Period' | translate" *ngIf="isDeliveryPeriodSpecified()" [text]="getDeliveryPeriodText()" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" [label]="'Delivery Period' | translate" *ngIf="isDeliveryPeriodSpecified()" [text]="getDeliveryPeriod()|quantityTranslatePipe" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
             <div>

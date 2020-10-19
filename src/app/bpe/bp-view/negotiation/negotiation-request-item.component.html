@@ -290,16 +290,13 @@
                     <div class="col-5">
                         <ng-container [ngSwitch]="manufacturersTermsSource">
                             <ng-container *ngSwitchCase="'product_defaults'">
-                                {{ wrapper.lineDeliveryPeriod.value }}
-                                {{ wrapper.lineDeliveryPeriod.unitCode }}
+                                {{wrapper.lineDeliveryPeriod | quantityTranslatePipe}}
                             </ng-container>
                             <ng-container *ngSwitchCase="'frame_contract'">
-                                {{ wrapper.frameContractQuotationWrapper.deliveryPeriod.value }}
-                                {{ wrapper.frameContractQuotationWrapper.deliveryPeriod.unitCode }}
+                                {{wrapper.frameContractQuotationWrapper.deliveryPeriod | quantityTranslatePipe}}
                             </ng-container>
                             <ng-container *ngSwitchCase="'last_offer'">
-                                {{ wrapper.lastOfferQuotationWrapper.deliveryPeriod.value }}
-                                {{ wrapper.lastOfferQuotationWrapper.deliveryPeriod.unitCode }}
+                                {{wrapper.lastOfferQuotationWrapper.deliveryPeriod | quantityTranslatePipe}}
                             </ng-container>
                         </ng-container>
                         <span [ngStyle]="getDeliveryPeriodStyle()">

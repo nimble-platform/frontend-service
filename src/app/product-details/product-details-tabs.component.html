@@ -159,7 +159,7 @@
                     <strong><span [innerHTML]="'Special Terms:' | translate"></span></strong> {{ wrapper.getSpecialTerms() }}
                 </div>
                 <div *ngIf="wrapper.getDeliveryPeriodString() != 'None'" class="p-1">
-                    <strong><span [innerHTML]="'Delivery Period:' | translate"></span></strong> {{ wrapper.getDeliveryPeriodString() }}
+                    <strong><span [innerHTML]="'Delivery Period:' | translate"></span></strong> {{ wrapper.getDeliveryPeriod() | quantityTranslatePipe}}
                 </div>
             </div>
             <div class="flex-item">

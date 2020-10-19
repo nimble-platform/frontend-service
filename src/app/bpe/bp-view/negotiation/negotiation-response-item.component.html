@@ -333,9 +333,9 @@
                     <div *ngIf="!isDeliveryDateSectionOpen" class="row content-row" [ngClass]="{'bg-danger text-white':!wrapper.checkEqualForRequest(primaryTermsSource, 'deliveryPeriod')}">
                         <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Delivery Period' | translate"></span>:</strong></div>
                         <ng-container [ngSwitch]="primaryTermsSource">
-                            <div *ngSwitchCase="'product_defaults'" class="col-3">{{ isCatalogueLineDeleted ? "Not available" : wrapper.lineDeliveryPeriodString}}</div>
-                            <div *ngSwitchCase="'frame_contract'" class="col-3">{{ wrapper.frameContractQuotationWrapper.deliveryPeriodString}}</div>
-                            <div *ngSwitchCase="'last_offer'" class="col-3">{{ wrapper.lastOfferQuotationWrapper.deliveryPeriodString}}</div>
+                            <div *ngSwitchCase="'product_defaults'" class="col-3">{{ isCatalogueLineDeleted ? "Not available" : (wrapper.lineDeliveryPeriod | quantityTranslatePipe)}}</div>
+                            <div *ngSwitchCase="'frame_contract'" class="col-3">{{ wrapper.frameContractQuotationWrapper.deliveryPeriod | quantityTranslatePipe}}</div>
+                            <div *ngSwitchCase="'last_offer'" class="col-3">{{ wrapper.lastOfferQuotationWrapper.deliveryPeriod | quantityTranslatePipe}}</div>
                         </ng-container>
                         <div class="col-3">{{ wrapper.rfqDeliveryPeriodString }}</div>
                         <div class="col-3">

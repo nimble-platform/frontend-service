@@ -42,6 +42,7 @@ import { Clause } from '../../../catalogue/model/publish/clause';
 import { TranslateService } from '@ngx-translate/core';
 import { CatalogueLine } from '../../../catalogue/model/publish/catalogue-line';
 import { Delivery } from '../../../catalogue/model/publish/delivery';
+import {Quantity} from '../../../catalogue/model/publish/quantity';
 
 @Component({
     selector: "order-item",
@@ -206,13 +207,12 @@ export class OrderItemComponent implements OnInit {
         return this.isOrderCompleted();
     }
 
-    getQuantityText(): string {
-        return quantityToString(this.priceWrapper.orderedQuantity);
+    getQuantity(): Quantity{
+        return this.priceWrapper.orderedQuantity;
     }
 
-    getDeliveryPeriodText(): string {
-        const qty = this.getLineItem().delivery[0].requestedDeliveryPeriod.durationMeasure;
-        return `${qty.value} ${qty.unitCode}`;
+    getDeliveryPeriod():Quantity{
+        return this.getLineItem().delivery[0].requestedDeliveryPeriod.durationMeasure;
     }
 
     isDeliveryPeriodSpecified(): boolean {
@@ -223,12 +223,8 @@ export class OrderItemComponent implements OnInit {
         return this.getLineItem().delivery;
     }
 
-    getWarrantyPeriodText(): string {
-        const warranty = this.getLineItem().warrantyValidityPeriod.durationMeasure;
-        if (!warranty || !warranty.unitCode || !warranty.value) {
-            return "None";
-        }
-        return `${warranty.value} ${warranty.unitCode}`;
+    getWarrantyPeriod(): Quantity {
+        return this.getLineItem().warrantyValidityPeriod.durationMeasure;
     }
 
     getIncoterm(): string {
