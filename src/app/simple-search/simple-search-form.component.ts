@@ -1245,12 +1245,9 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
 
     private sortFacetObj(facetObj: any) {
         facetObj.options.sort(function (a, b) {
-            const a_c = a.name;
-            const b_c = b.name;
+            const a_c = a.realName;
+            const b_c = b.realName;
             return a_c.localeCompare(b_c);
-        });
-        facetObj.options.sort(function (a, b) {
-            return b.realName - a.realName;
         });
 
         this.facetObj.sort(function (a, b) {
