@@ -30,7 +30,7 @@
         </select>
     </div>
     <div class="col-5">
-        <quantity-input label="per" labelClass="col-1" valueQuantityClass="col-11" [quantity]="catalogueLine.requiredItemLocationQuantity.price.baseQuantity" [formFieldName]="baseQuantityFieldName" [parentForm]="formGroup" (onQuantityUnitChange)="onBaseQuantityUnitChanged($event)">
+        <quantity-input label="{{'per'|translate}}" labelClass="col-1" valueQuantityClass="col-11" [quantity]="catalogueLine.requiredItemLocationQuantity.price.baseQuantity" [formFieldName]="baseQuantityFieldName" [parentForm]="formGroup" (onQuantityUnitChange)="onBaseQuantityUnitChanged($event)">
         </quantity-input>
     </div>
 </div>
