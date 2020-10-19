@@ -50,10 +50,14 @@
                         <!--</div>-->
                     </ng-template>
 
-                    <button class="btn btn-outline-dark inline" (click)="open(content,line.goodsItem.item.name[0].value)" *ngIf="config.showChat"><span [innerHTML]="'Start chat' | translate"></span></button>
-                    <button class="btn btn-outline-dark inline" *ngIf="agentDiscount"><span> {{agentDiscountProp}}</span></button>
-                    <button class="btn btn-outline-dark inline" *ngIf="buyingAgentInitiated"><span [innerHTML]="'Agent Initiated' | translate"></span></button>
-                    <button class="btn btn-outline-dark inline" *ngIf="sellingAgentInitiated"><span [innerHTML]="'Agent Approved' | translate"></span></button>
+                    <button class="btn btn-outline-primary inline ml-2"
+                            (click)="open(content,line.goodsItem.item.name[0].value)"
+                            *ngIf="config.showChat">
+                        <span [innerHTML]="'Start chat' | translate"></span>
+                    </button>
+                    <button class="btn btn-outline-primary inline" *ngIf="agentDiscount"><span> {{agentDiscountProp}}</span></button>
+                    <button class="btn btn-outline-primary inline" *ngIf="buyingAgentInitiated"><span [innerHTML]="'Agent Initiated' | translate"></span></button>
+                    <button class="btn btn-outline-primary inline" *ngIf="sellingAgentInitiated"><span [innerHTML]="'Agent Approved' | translate"></span></button>
                     <span class="ml-2" *ngIf="(currentStep == 'Negotiation' || currentStep == 'Order')">
                         <i *ngIf="viewedProcessDetails[i]" class="fas fa-check small-icon" [title]="getTitleForCheckIcon()"></i>
                         <i *ngIf="!viewedProcessDetails[i]" class="fas fa-times small-icon" [title]="getTitleForTimesIcon()"></i>

@@ -26,6 +26,7 @@ import * as myGlobals from '../../globals';
 import {UserService} from '../../user-mgmt/user.service';
 import {Quantity} from '../model/publish/quantity';
 import {TermsAndConditionUtils} from '../model/model-util/terms-and-condition-utils';
+import {copy} from '../../common/utils';
 const PRODUCT_DELIVERY_TRADING_INPUT = 'product_delivery_trading';
 @Component({
     selector: "product-delivery-trading",
@@ -55,8 +56,13 @@ export class ProductDeliveryTradingComponent extends EmptyFormBase implements On
         }
 
         // set initial value of warranty and delivery periods to the values defined in the company negotiation settings
-        this.wrapper.line.warrantyValidityPeriod.durationMeasure = TermsAndConditionUtils.getWarrantyPeriod(this.companyNegotiationSettings);
-        this.wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure = TermsAndConditionUtils.getDeliveryPeriod(this.companyNegotiationSettings);
+        if (this.wrapper.line.warrantyValidityPeriod.durationMeasure && !this.wrapper.line.warrantyValidityPeriod.durationMeasure.value) {
+            this.wrapper.line.warrantyValidityPeriod.durationMeasure = TermsAndConditionUtils.getWarrantyPeriod(this.companyNegotiationSettings);
+        }
+        if (this.wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure &&
+            !this.wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.value) {
+            this.wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure = TermsAndConditionUtils.getDeliveryPeriod(this.companyNegotiationSettings);
+        }
 
         this.setWarrantyPeriodRangeDefinition();
         this.setDeliveryPeriodRangeDefinition();

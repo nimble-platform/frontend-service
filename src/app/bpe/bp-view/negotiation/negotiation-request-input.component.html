@@ -45,7 +45,7 @@
     </div>
     <div *ngIf="quantity !== undefined && quantityUnits" class="col-3 col-quantity-unit">
         <select class="form-control form-control-sm" [ngModel]="quantity.unitCode" (ngModelChange)="quantity.unitCode = $event; onQuantityChanged()" [disabled]="disabled || disableQuantityUnit" [formControl]="quantityUnitFormControl">
-            <option *ngFor="let option of quantityUnits" [value]="option">{{option}}</option>
+            <option *ngFor="let option of quantityUnits" [value]="option">{{option | translate}}</option>
         </select>
     </div>
 

@@ -479,6 +479,10 @@ export class SimpleSearchService {
     // considerWhiteBlackList indicates whether we handle white/black list functionality in the search
     buildQueryString(query: string, qS: any, full: boolean, allLang: boolean, considerWhiteBlackList: boolean = false): any {
         let companyVAT = this.cookieService.get('vat');
+        // if the VAT number is equal to the empty string, change it to "undefined", otherwise, the backend assumes that it as a real VAT number which is not true.
+        if(companyVAT === ""){
+            companyVAT = undefined;
+        }
         if (query == '*') {
             return {
                 'queryStr': considerWhiteBlackList ? `permittedParties:${companyVAT} OR (-permittedParties:[* TO *] AND (*:* -restrictedParties:${companyVAT} ) )` : '*',
