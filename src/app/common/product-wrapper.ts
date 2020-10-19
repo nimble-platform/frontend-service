@@ -34,6 +34,7 @@ import {Quantity} from '../catalogue/model/publish/quantity';
 import {Dimension} from '../catalogue/model/publish/dimension';
 import {MultiValuedDimension} from '../catalogue/model/publish/multi-valued-dimension';
 import {DiscountPriceWrapper} from './discount-price-wrapper';
+import {AmountUI} from '../catalogue/model/ui/amount-ui';
 
 /**
  * Wrapper class for Catalogue line.
@@ -145,6 +146,18 @@ export class ProductWrapper {
         return `${qty.value} ${qty.unitCode} per ${type.value}`;
     }
 
+    // TODO: find another solution to display a proper string value for the packaging. AmuontUI is used for the prices
+    getPackagingAmountUI(): AmountUI {
+        let amountUI = new AmountUI();
+        const qty = this.goodsItem.containingPackage.quantity;
+        const type = this.goodsItem.containingPackage.packagingTypeCode;
+
+        amountUI.value = qty.value;
+        amountUI.currencyID = qty.unitCode;
+        amountUI.perUnit = type.value;
+        return amountUI;
+    }
+
     getSpecialTerms(): string {
         return this.goodsItem.deliveryTerms.specialTerms.length > 0 && this.goodsItem.deliveryTerms.specialTerms[0].value ? this.goodsItem.deliveryTerms.specialTerms[0].value : 'None';
     }
@@ -189,16 +202,24 @@ export class ProductWrapper {
         return this.priceWrapper.discountedPricePerItemString;
     }
 
+    getPricePerItemAmountUI():AmountUI{
+        return this.priceWrapper.discountedPriceAmountUI;
+    }
+
     getVat(): string {
         return this.line.requiredItemLocationQuantity.applicableTaxCategory[0] ? this.line.requiredItemLocationQuantity.applicableTaxCategory[0].percent + '' : '';
     }
 
-    getMinimumOrderQuantity(): string {
+    getMinimumOrderQuantityString(): string {
         if (!this.line.minimumOrderQuantity || !this.line.minimumOrderQuantity.value) {
             return 'Not specified';
         }
 
         return `${this.line.minimumOrderQuantity.value} ${this.line.minimumOrderQuantity.unitCode}`;
+    }
+
+    getMinimumOrderQuantity(): Quantity {
+        return this.line.minimumOrderQuantity;
     }
 
     getPropertyName(property: ItemProperty): string {

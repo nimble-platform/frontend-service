@@ -124,13 +124,13 @@
             <div style="flex-grow:1;">
                 <h3 *ngIf="wrapper.getPricePerItem() != 'On demand' || wrapper.getFreeSample() != 'No'" class="p-1"><span [innerHTML]="'Price' | translate"></span></h3>
                 <div *ngIf="wrapper.getPricePerItem() != 'On demand'" class="p-1">
-                    <strong><span [innerHTML]="'Price:' | translate"></span> </strong> {{ wrapper.getPricePerItem() }}
+                    <strong><span [innerHTML]="'Price:' | translate"></span> </strong> {{ wrapper.getPricePerItemAmountUI()|amountUiTranslatePipe }}
                 </div>
                 <div *ngIf="config.vatEnabled && wrapper.getVat() != ''" class="p-1">
                     <strong><span [innerHTML]="'VAT:' | translate"></span></strong> {{ wrapper.getVat() }}%
                 </div>
-                <div *ngIf="wrapper.getMinimumOrderQuantity() != 'Not specified'" class="p-1">
-                    <strong><span [innerHTML]="'Minimum Order Quantity:' | translate"></span></strong> {{ wrapper.getMinimumOrderQuantity() }}
+                <div *ngIf="wrapper.getMinimumOrderQuantityString() != 'Not specified'" class="p-1">
+                    <strong><span [innerHTML]="'Minimum Order Quantity:' | translate"></span></strong> {{ wrapper.getMinimumOrderQuantity()|quantityTranslatePipe }}
                 </div>
                 <div *ngIf="wrapper.getFreeSample() != 'No'" class="p-1">
                     <strong><span [innerHTML]="'Free Sample:' | translate"></span></strong>
@@ -165,7 +165,7 @@
             <div class="flex-item">
                 <h3 *ngIf="wrapper.getPackaging() != 'Not specified'" class="pt-2 p-1"><span [innerHTML]="'Packaging' | translate"></span></h3>
                 <div *ngIf="wrapper.getPackaging() != 'Not specified'" class="p-1">
-                    <strong><span [innerHTML]="'Packaging' | translate"></span>: </strong> {{ wrapper.getPackaging() }}
+                    <strong><span [innerHTML]="'Packaging' | translate"></span>: </strong> {{ wrapper.getPackagingAmountUI()|amountUiTranslatePipe }}
                 </div>
             </div>
             <div class="flex-item">

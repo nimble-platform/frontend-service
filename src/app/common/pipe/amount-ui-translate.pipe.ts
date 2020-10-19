@@ -25,7 +25,7 @@ export class AmountUiTranslatePipe implements PipeTransform {
 
     transform(amount: AmountUI): string {
         if (amount.value) {
-            return `${amount.value} ${amount.currencyID} ${this.translateService.instant('per')} ${this.translateService.instant(amount.perUnit)}`;
+            return `${amount.value} ${this.translateService.instant(amount.currencyID)} ${this.translateService.instant('per')} ${this.translateService.instant(amount.perUnit)}`;
         }
         return this.translateService.instant('On demand');
     }
