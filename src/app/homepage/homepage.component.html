@@ -166,9 +166,17 @@
             </div>
         </div>
         <div class="d-flex justify-content-center text-center">
-            <div *ngIf="manufacturerCount && supplierCount" class="member-count" (click)="onMemberCountClicked('Manufacturer')">
-                <div>{{manufacturerCount + supplierCount}}</div>
-                {{'Industry' | translate}}
+<!--            <div *ngIf="manufacturerCount && supplierCount" class="member-count" (click)="onMemberCountClicked('Manufacturer')">-->
+<!--                <div>{{manufacturerCount + supplierCount}}</div>-->
+<!--                {{'Industry' | translate}}-->
+<!--            </div>-->
+            <div *ngIf="manufacturerCount" class="member-count" (click)="onMemberCountClicked('Manufacturer')">
+                <div>{{manufacturerCount}}</div>
+                {{'Manufacturers' | translate}}
+            </div>
+            <div *ngIf="supplierCount" class="member-count" (click)="onMemberCountClicked('Supplier')">
+                <div>{{supplierCount}}</div>
+                {{'Suppliers' | translate}}
             </div>
             <div *ngIf="logisticServiceProviderCount" class="member-count" (click)="onMemberCountClicked('Logistics Provider')">
                 <div>{{logisticServiceProviderCount}}</div>
