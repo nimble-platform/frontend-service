@@ -1859,7 +1859,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             // however, since we do not clear searchContextService, need to check whether its context is valid or not and pass this info as query param to product-details page
             // to check its validity, we use this.searchContext variable which is not null iff the seller is navigated to the search page to find a transport service provider
             let isSearchContextValid = this.searchContext && this.searchContext == 'orderbp';
-            link += '#/product-details?catalogueId=' + res.catalogueId + '&id=' + res.manufactuerItemId + '&contextValid=' + isSearchContextValid;
+            link += '#/product-details?catalogueId=' + res.catalogueId + '&id=' + encodeURIComponent(res.manufactuerItemId) + '&contextValid=' + isSearchContextValid;
         }
         return link;
     }

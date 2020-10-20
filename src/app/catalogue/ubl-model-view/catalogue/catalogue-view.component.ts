@@ -125,6 +125,8 @@ export class CatalogueViewComponent implements OnInit {
 
     private searchText: string = "";
 
+    encodeURIComponent = encodeURIComponent;
+
     constructor(private cookieService: CookieService,
         private publishService: PublishService,
         private appComponent: AppComponent,

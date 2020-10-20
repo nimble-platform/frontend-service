@@ -131,9 +131,9 @@ export class CatalogueService {
     }
 
     getCatalogueLine(catalogueId: string, lineId: string): Promise<CatalogueLine> {
-        let url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline?lineId=${lineId}`;
+        let url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline?lineId=${encodeURIComponent(lineId)}`;
         if (this.delegated) {
-            url = this.delegate_url + `/catalogue/${catalogueId}/catalogueline?lineId=${lineId}`;
+            url = this.delegate_url + `/catalogue/${catalogueId}/catalogueline?lineId=${encodeURIComponent(lineId)}`;
         }
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
@@ -487,7 +487,7 @@ export class CatalogueService {
 
     deleteCatalogueLine(catalogueId: string, lineId: string): Promise<any> {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline?lineId=${lineId}`;
+        const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline?lineId=${encodeURIComponent(lineId)}`;
         return this.http
             .delete(url, { headers: new Headers({ "Authorization": token }) })
             .toPromise()
