@@ -31,17 +31,37 @@
         <call-status [callStatus]="catalogueOperationCallStatus"></call-status>
     </div>
     <div class="modal-footer">
-        <button *ngIf="mode == 'delete'" type="button" class="btn btn-primary" (click)="onDeleteClicked(d);">
+        <button *ngIf="mode == 'delete'"
+                type="button"
+                class="btn btn-primary"
+                (click)="onDeleteClicked(d);"
+                [disabled]="!catalogueOperationCallStatus.isAllComplete()"
+                singleClick>
             <span><span [innerHTML]="'Delete Selected Catalogues' | translate"></span></span>
         </button>
-        <button *ngIf="mode == 'export'" type="button" class="btn btn-primary" (click)="onExportClicked(d);">
+        <button *ngIf="mode == 'export'"
+                type="button"
+                class="btn btn-primary"
+                (click)="onExportClicked(d);"
+                [disabled]="!catalogueOperationCallStatus.isAllComplete()"
+                singleClick>
             <span><span [innerHTML]="'Export Selected Catalogues' | translate"></span></span>
         </button>
-        <button *ngIf="mode == 'delete-images'" type="button" class="btn btn-primary" (click)="onDeleteImagesClicked(d);">
+        <button *ngIf="mode == 'delete-images'"
+                type="button"
+                class="btn btn-primary"
+                [disabled]="!catalogueOperationCallStatus.isAllComplete()"
+                (click)="onDeleteImagesClicked(d);"
+                singleClick>
             <span><span [innerHTML]="'Delete All Product Images of Selected Catalogues' | translate"></span></span>
         </button>
         <input #imagePackage type="file" (change)="uploadImagePackage($event,d)" accept="application/zip" style="display: none">
-        <button *ngIf="mode == 'upload-image'" type="button" class="btn btn-primary" (click)="imagePackage.click()">
+        <button *ngIf="mode == 'upload-image'"
+                type="button"
+                class="btn btn-primary"
+                (click)="imagePackage.click()"
+                [disabled]="!catalogueOperationCallStatus.isAllComplete()"
+                singleClick>
             <span><span [innerHTML]="'Upload Image Package for the Selected Catalogue' | translate"></span></span>
         </button>
     </div>
