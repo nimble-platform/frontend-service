@@ -141,7 +141,7 @@ export class BulkPublishComponent {
             reader.onload = function(e) {
                 // reset the target value so that the same file could be chosen more than once
                 event.target.value = "";
-                catalogueService.uploadZipPackage(file).then(res => {
+                catalogueService.uploadImageZipPackage(file).then(res => {
                     self.publishStatus.callback(res.message);
                 },
                     error => {

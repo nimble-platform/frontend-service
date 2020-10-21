@@ -383,10 +383,12 @@ export class CatalogueService {
         });
     }
 
-    uploadZipPackage(pck: File, catalogueId: string = this.catalogueResponse.catalogueId): Promise<any> {
+    uploadImageZipPackage(pck: File, catalogueId: string = this.catalogueResponse.catalogueId): Promise<any> {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const partyId = this.cookieService.get("company_id");
-        const url = this.baseUrl + `/catalogue/${catalogueId}/image/upload?partyId=${partyId}`;
+        // adding zuul prefix to be able to upload large files by bypassing the Spring DispatcherServlet
+        // https://projects.spring.io/spring-cloud/spring-cloud.html#_uploading_files_through_zuul
+        const url = this.baseUrl + `/zuul/catalogue/${catalogueId}/image/upload?partyId=${partyId}`;
         return new Promise<any>((resolve, reject) => {
             let formData: FormData = new FormData();
             formData.append("package", pck, pck.name);
@@ -412,6 +414,7 @@ export class CatalogueService {
 
             xhr.open('POST', url, true);
             xhr.setRequestHeader('Authorization', token);
+            xhr.setRequestHeader('Transfer-Encoding', 'chunked');
             xhr.send(formData);
         });
     }
