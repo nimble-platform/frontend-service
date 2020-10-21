@@ -42,6 +42,7 @@ import { SingleClickDirective } from './single-click.directive';
 import {ConfirmModalComponent} from './confirm-modal.component';
 import {AmountUiTranslatePipe} from './pipe/amount-ui-translate.pipe';
 import {QuantityTranslatePipe} from './pipe/quantity-translate.pipe';
+import {WordByWordTranslatePipe} from './pipe/word-by-word-translate.pipe';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -75,6 +76,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         AddressInputComponent,
         AmountUiTranslatePipe,
         QuantityTranslatePipe,
+        WordByWordTranslatePipe,
         BooleanInputComponent,
         MultiAddressInputComponent,
         InputLabelComponent,
@@ -103,6 +105,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         TranslateModule,
         AmountUiTranslatePipe,
         QuantityTranslatePipe,
+        WordByWordTranslatePipe,
         SingleClickDirective
     ],
     providers: [
