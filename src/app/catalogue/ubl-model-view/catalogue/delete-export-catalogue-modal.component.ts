@@ -43,6 +43,9 @@ export class DeleteExportCatalogueModalComponent {
     }
 
     open(mode: 'delete' | 'export' | 'delete-images' | 'upload-image'): void {
+        // initialize CallStatus object to remove the error messages occured in previous activities
+        this.catalogueRetrievalCallStatus = new CallStatus();
+        this.catalogueOperationCallStatus = new CallStatus();
         this.mode = mode;
         this.enableMultipleSelection = this.mode != 'upload-image';
         this.catalogueRetrievalCallStatus.submit();
