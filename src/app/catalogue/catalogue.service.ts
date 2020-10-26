@@ -18,7 +18,7 @@
 
 import { Injectable } from "@angular/core";
 import { Headers, Http } from "@angular/http";
-import { catalogue_endpoint, delegate_endpoint, config } from '../globals';
+import {catalogue_endpoint, delegate_endpoint, config, catalogue_endpoint_with_zuul} from '../globals';
 import { Catalogue } from "./model/publish/catalogue";
 import { UserService } from "../user-mgmt/user.service";
 import { CatalogueLine } from "./model/publish/catalogue-line";
@@ -388,7 +388,7 @@ export class CatalogueService {
         const partyId = this.cookieService.get("company_id");
         // adding zuul prefix to be able to upload large files by bypassing the Spring DispatcherServlet
         // https://projects.spring.io/spring-cloud/spring-cloud.html#_uploading_files_through_zuul
-        const url = this.baseUrl + `/zuul/catalogue/${catalogueId}/image/upload?partyId=${partyId}`;
+        const url = catalogue_endpoint_with_zuul + `/catalogue/${catalogueId}/image/upload?partyId=${partyId}`;
         return new Promise<any>((resolve, reject) => {
             let formData: FormData = new FormData();
             formData.append("package", pck, pck.name);
