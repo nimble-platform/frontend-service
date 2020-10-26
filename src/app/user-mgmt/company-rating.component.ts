@@ -171,18 +171,17 @@ export class CompanyRatingComponent implements OnInit {
     }
 
     calcRatings() {
-        this.ratings.qualityOfNegotiationProcess /= this.ratings.totalNumberOfRatings;
-        this.ratings.qualityOfOrderingProcess /= this.ratings.totalNumberOfRatings;
-        this.ratings.responseTimeRating /= this.ratings.totalNumberOfRatings;
-        this.ratings.listingAccuracy /= this.ratings.totalNumberOfRatings;
-        this.ratings.conformanceToContractualTerms /= this.ratings.totalNumberOfRatings;
-        this.ratings.deliveryAndPackaging /= this.ratings.totalNumberOfRatings;
-        this.ratingSeller = (this.ratings.qualityOfNegotiationProcess + this.ratings.qualityOfOrderingProcess + this.ratings.responseTimeRating) / 3;
-        this.ratingFulfillment = (this.ratings.listingAccuracy + this.ratings.conformanceToContractualTerms) / 2;
-        if (this.ratings.deliveryAndPackaging > 0) {
-            this.ratingOverall = (this.ratingSeller + this.ratingFulfillment + this.ratings.deliveryAndPackaging) / 3;
-        } else {
-            this.ratingOverall = (this.ratingSeller + this.ratingFulfillment) / 2;
+        // calculate seller rating
+        let nonZeroSellerRating = [this.ratings.qualityOfNegotiationProcess,this.ratings.qualityOfOrderingProcess,this.ratings.responseTimeRating].filter(value => value != 0);
+        this.ratingSeller = nonZeroSellerRating.reduce((previousValue, currentValue) => previousValue+currentValue,0)/nonZeroSellerRating.length;
+        // calculate fulfilment rating
+        let nonZeroFulfilmentRating = [this.ratings.listingAccuracy,this.ratings.conformanceToContractualTerms].filter(value => value != 0);
+        this.ratingFulfillment = nonZeroFulfilmentRating.reduce((previousValue, currentValue) => previousValue+currentValue,0)/nonZeroFulfilmentRating.length;
+        // calculate overall company rating
+        let nonZeroOverallRating = [this.ratingSeller,this.ratingFulfillment,this.ratings.deliveryAndPackaging].filter(value => value != 0);
+        this.ratingOverall = nonZeroOverallRating.reduce((previousValue, currentValue) => previousValue+currentValue,0)/nonZeroOverallRating.length;
+        // do not show delivery packaging rating if it is not available
+        if (this.ratings.deliveryAndPackaging == 0) {
             this.deliveryPackage = false;
         }
     }

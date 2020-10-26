@@ -646,7 +646,7 @@
                                             </div>
                                         </div>
                                         <div [ngClass]="{'col-2':display=='list','col-12 pt-2':display=='panel'}">
-                                            <div *ngIf="!checkNaN(result[product_vendor_rating])" [title]="getName(product_vendor_rating,product_vendor)+':\n'+calcRating(result[product_vendor_rating],1)+'/5\n\n'+getName(product_vendor_rating_seller,product_vendor)+':\n'+calcRating(result[product_vendor_rating_seller],1)+'/5\n\n'+getName(product_vendor_rating_fulfillment,product_vendor)+':\n'+calcRating(result[product_vendor_rating_fulfillment],1)+'/5\n\n'+getName(product_vendor_rating_delivery,product_vendor)+':\n'+calcRating(result[product_vendor_rating_delivery],1)+'/5'">
+                                            <div *ngIf="!checkNaN(result[product_vendor_rating])" [title]="getRatingSummary(result)">
                                                 <ngb-rating [rate]="calcRating(result[product_vendor_rating],1)" [readonly]="true" max="5">
                                                     <ng-template let-fill="fill">
                                                         <span class="star" [class.full]="fill === 100">
