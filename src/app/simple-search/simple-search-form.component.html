@@ -573,7 +573,7 @@
                                                 <span *ngIf="result[product_vendor][product_vendor_brand_name]" [title]="result[product_vendor][product_vendor_name]">{{ getMultilingualLabel(result[product_vendor][product_vendor_brand_name]) }}</span>
                                                 <span *ngIf="!result[product_vendor][product_vendor_brand_name]" [title]="result[product_vendor][product_vendor_name]">{{ result[product_vendor][product_vendor_name] }}</span>
                                             </div>
-                                            <div *ngIf="!checkNaN(result[product_vendor][product_vendor_rating])" [title]="getName(product_vendor_rating,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating],1)+'/5\n\n'+getName(product_vendor_rating_seller,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating_seller],1)+'/5\n\n'+getName(product_vendor_rating_fulfillment,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating_fulfillment],1)+'/5\n\n'+getName(product_vendor_rating_delivery,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_rating_delivery],1)+'/5\n\n' + 'Total No OF Trust Evaluations' +':\n'+calcRating(result[product_vendor][product_vendor_evaluation],1)+''">
+                                            <div *ngIf="!checkNaN(result[product_vendor][product_vendor_rating])" [title]="getRatingsSummaryForProduct(result)">
                                                 <ngb-rating [rate]="calcRating(result[product_vendor][product_vendor_rating],1)" [readonly]="true" max="5">
                                                     <ng-template let-fill="fill">
                                                         <span class="star" [class.full]="fill === 100">
@@ -646,7 +646,7 @@
                                             </div>
                                         </div>
                                         <div [ngClass]="{'col-2':display=='list','col-12 pt-2':display=='panel'}">
-                                            <div *ngIf="!checkNaN(result[product_vendor_rating])" [title]="getRatingSummary(result)">
+                                            <div *ngIf="!checkNaN(result[product_vendor_rating])" [title]="getRatingSummaryForCompany(result)">
                                                 <ngb-rating [rate]="calcRating(result[product_vendor_rating],1)" [readonly]="true" max="5">
                                                     <ng-template let-fill="fill">
                                                         <span class="star" [class.full]="fill === 100">

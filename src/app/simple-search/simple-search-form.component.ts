@@ -2021,26 +2021,45 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Returns the rating summary for the given search result
+     * Returns the rating summary for the given company search result
      * */
-    getRatingSummary(result){
+    getRatingSummaryForCompany(result){
         let summary = this.getName(this.product_vendor_rating,this.product_vendor)+':\n'+
             this.calcRating(result[this.product_vendor_rating],1)+'/5\n\n';
         let ratingSeller = this.calcRating(result[this.product_vendor_rating_seller],1);
         let ratingFulfilment = this.calcRating(result[this.product_vendor_rating_fulfillment],1);
         let ratingDelivery = this.calcRating(result[this.product_vendor_rating_delivery],1);
         if(ratingSeller){
-            summary += this.getName(this.product_vendor_rating_seller,this.product_vendor)+':\n'+
-            this.calcRating(result[this.product_vendor_rating_seller],1)+'/5\n\n';
+            summary += this.getName(this.product_vendor_rating_seller,this.product_vendor)+':\n'+ ratingSeller+'/5\n\n';
         }
         if(ratingFulfilment){
-            summary += this.getName(this.product_vendor_rating_fulfillment,this.product_vendor)+':\n'+
-            this.calcRating(result[this.product_vendor_rating_fulfillment],1)+'/5\n\n';
+            summary += this.getName(this.product_vendor_rating_fulfillment,this.product_vendor)+':\n'+ ratingFulfilment +'/5\n\n';
         }
         if(ratingDelivery){
-            summary += this.getName(this.product_vendor_rating_delivery,this.product_vendor)+':\n'+
-            this.calcRating(result[this.product_vendor_rating_delivery],1)+'/5';
+            summary += this.getName(this.product_vendor_rating_delivery,this.product_vendor)+':\n'+ ratingDelivery +'/5';
         }
+        return summary;
+    }
+
+    /**
+     * Returns the rating summary for the given product search result
+     * */
+    getRatingsSummaryForProduct(result){
+        let summary = this.getName(this.product_vendor_rating,this.product_vendor)+':\n'+
+            this.calcRating(result[this.product_vendor][this.product_vendor_rating],1)+'/5\n\n';
+        let ratingSeller = this.calcRating(result[this.product_vendor][this.product_vendor_rating_seller],1);
+        let ratingFulfilment = this.calcRating(result[this.product_vendor][this.product_vendor_rating_fulfillment],1);
+        let ratingDelivery = this.calcRating(result[this.product_vendor][this.product_vendor_rating_delivery],1);
+        if(ratingSeller){
+            summary += this.getName(this.product_vendor_rating_seller,this.product_vendor)+':\n'+ ratingSeller +'/5\n\n';
+        }
+        if(ratingFulfilment){
+            summary += this.getName(this.product_vendor_rating_fulfillment,this.product_vendor)+':\n'+ ratingFulfilment +'/5\n\n';
+        }
+        if(ratingDelivery){
+            summary += this.getName(this.product_vendor_rating_delivery,this.product_vendor)+':\n'+ ratingDelivery +'/5';
+        }
+        summary += 'Total No OF Trust Evaluations' +':\n'+ this.calcRating(result[this.product_vendor][this.product_vendor_evaluation],1)+'';
         return summary;
     }
 }
