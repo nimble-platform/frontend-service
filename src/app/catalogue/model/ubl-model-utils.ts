@@ -107,7 +107,7 @@ export class UBLModelUtils {
 
         let itemProperty = new ItemProperty(property.id, [],
             property.dataType === "BOOLEAN" ? [new Text("false", "en")] : [], [], [],
-            new Array<BinaryObject>(), property.dataType, code, property.uri, []);
+            new Array<BinaryObject>(), property.dataType, code, property.uri, [], property.required);
 
         itemProperty.name = [].concat(property.preferredName);
         return itemProperty;

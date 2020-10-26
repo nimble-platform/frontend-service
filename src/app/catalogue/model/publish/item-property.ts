@@ -31,6 +31,8 @@ export class ItemProperty {
         public valueQualifier: PropertyValueQualifier,
         public itemClassificationCode: Code,
         public uri: string,
-        public associatedCatalogueLineID: number[] // hjids of catalogue lines
+        public associatedCatalogueLineID: number[], // hjids of catalogue lines
+        public required:boolean = false, // whether this property is required or not (does not exist in the backend data model and used only in the UI)
+        public options:Text[] = [] // available options to be selected as a value for the item property (does not exist in the backend data model and used only in the UI)
     ) { }
 }

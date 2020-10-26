@@ -152,7 +152,7 @@
             </div>
             <!-- Additional Information-->
             <div class="col-12 space-before">
-                <button class='btn btn-outline-primary' (click)="toggleAdditionalInformationCard()"><span [innerHTML]="'Additional Information' | translate"></span></button>
+                <button class='btn btn-outline-primary' (click)="toggleAdditionalInformationCard()"><span [innerHTML]="'Upload Additional Information' | translate"></span></button>
                 <div [hidden]="!showAdditionalInformation" class="row mx-auto border-bottom" style="padding:.75rem;padding-left:0;">
                     <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event)" [binaryObjects]="getBinaryObjectsForAdditionalInformation()" (onClearFile)="onUnSelectFileForLogisticService($event)">
                     </file-input>
@@ -179,13 +179,22 @@
                         </table>
                         <table *ngIf="prop.valueQualifier !== 'FILE'" class="table table-borderless" style="margin-bottom:.75rem;">
                             <tbody>
-                                <tr *ngFor="let value of getValues(prop); let i = index">
-                                    <td *ngIf="prop.valueQualifier === 'STRING'" style="vertical-align:middle" class="pb-0">
+                            <tr *ngFor="let value of getValues(prop); let i = index">
+                                <!-- String properties with no options -->
+                                <ng-container *ngIf="prop.valueQualifier === 'STRING' && (!prop.options || prop.options.length == 0)">
+                                    <td style="vertical-align:middle" class="pb-0">
                                         <input [(ngModel)]="value.value" class="form-control" type="text" name="{{value.value}}" />
                                     </td>
-                                    <td *ngIf="prop.valueQualifier === 'STRING'" style="vertical-align:middle" class="pb-0">
+                                    <td style="vertical-align:middle" class="pb-0">
                                         <select [(ngModel)]="value.languageID" class="form-control" type="text" name="{{value.languageID}}">
                                             <option *ngFor='let language of languages' [value]="language" [selected]="language === value.languageID">{{language}}</option>
+                                        </select>
+                                    </td>
+                                </ng-container>
+                                    <!-- String properties with predefined options -->
+                                    <td *ngIf="prop.valueQualifier === 'STRING' && (prop.options && prop.options.length > 0)" style="vertical-align:middle" class="pb-0">
+                                        <select [(ngModel)]="value.value" class="form-control" type="text">
+                                            <option *ngFor='let option of prop.options' [value]="option.value" [selected]="value.value === option.value">{{option.value}}</option>
                                         </select>
                                     </td>
                                     <td *ngIf="prop.valueQualifier === 'QUANTITY'" style="vertical-align:middle" class="pb-0">
@@ -238,11 +247,13 @@
                         -->
                     </div>
                     <div class="col-3 align-right" style="padding:.75rem;padding-right:0;">
-                        <button class="btn btn-outline-primary" (click)="onAddValue(prop)" *ngIf="prop.valueQualifier !== 'BOOLEAN' && prop.valueQualifier !== 'FILE'">
-                            <span [innerHTML]="'Add' | translate"></span>
-                        </button>
-                        <button class="btn btn-outline-primary ml-1" (click)="onEditProperty(prop)"><span [innerHTML]="'Edit' | translate"></span></button>
-                        <button class="btn btn-danger ml-1" (click)="onRemoveProperty(prop)"><span [innerHTML]="'Delete' | translate"></span></button>
+                        <ng-container *ngIf="!prop.required">
+                            <button class="btn btn-outline-primary" (click)="onAddValue(prop)" *ngIf="prop.valueQualifier !== 'BOOLEAN' && prop.valueQualifier !== 'FILE'">
+                                <span [innerHTML]="'Add' | translate"></span>
+                            </button>
+                            <button class="btn btn-outline-primary ml-1" (click)="onEditProperty(prop)"><span [innerHTML]="'Edit' | translate"></span></button>
+                            <button class="btn btn-danger ml-1" (click)="onRemoveProperty(prop)"><span [innerHTML]="'Delete' | translate"></span></button>
+                        </ng-container>
                     </div>
                 </div>
                 <div *ngIf="!hasSelectedProperties()" class="space-before">
