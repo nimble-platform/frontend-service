@@ -172,13 +172,13 @@ export class CompanyRatingComponent implements OnInit {
 
     calcRatings() {
         // calculate seller rating
-        let nonZeroSellerRating = [this.ratings.qualityOfNegotiationProcess,this.ratings.qualityOfOrderingProcess,this.ratings.responseTimeRating].filter(value => value != 0);
+        let nonZeroSellerRating = [this.ratings.qualityOfNegotiationProcess,this.ratings.qualityOfOrderingProcess,this.ratings.responseTimeRating].filter(value => value);
         this.ratingSeller = nonZeroSellerRating.reduce((previousValue, currentValue) => previousValue+currentValue,0)/nonZeroSellerRating.length;
         // calculate fulfilment rating
-        let nonZeroFulfilmentRating = [this.ratings.listingAccuracy,this.ratings.conformanceToContractualTerms].filter(value => value != 0);
+        let nonZeroFulfilmentRating = [this.ratings.listingAccuracy,this.ratings.conformanceToContractualTerms].filter(value => value);
         this.ratingFulfillment = nonZeroFulfilmentRating.reduce((previousValue, currentValue) => previousValue+currentValue,0)/nonZeroFulfilmentRating.length;
         // calculate overall company rating
-        let nonZeroOverallRating = [this.ratingSeller,this.ratingFulfillment,this.ratings.deliveryAndPackaging].filter(value => value != 0);
+        let nonZeroOverallRating = [this.ratingSeller,this.ratingFulfillment,this.ratings.deliveryAndPackaging].filter(value => value);
         this.ratingOverall = nonZeroOverallRating.reduce((previousValue, currentValue) => previousValue+currentValue,0)/nonZeroOverallRating.length;
         // do not show delivery packaging rating if it is not available
         if (this.ratings.deliveryAndPackaging == 0) {
