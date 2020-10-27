@@ -35,6 +35,7 @@ export class Property {
         public dataType: PropertyValueQualifier,
         public synonyms: KeywordSynonym[],
         public values: Value[],
-        public uri: string
+        public uri: string,
+        public required:boolean
     ) { }
 }

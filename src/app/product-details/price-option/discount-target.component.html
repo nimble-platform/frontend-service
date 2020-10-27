@@ -22,14 +22,14 @@
         <div class="col-3">
             <div class="d-flex align-items-center">
                 <div>
-                    <label> on </label>
+                    <label>{{'on'|translate}}</label>
                 </div>
                 <div class="ml-3 mr-3">
                     <select class="form-control form-control-sm" #discountTargetSelect (change)="changeDiscountTarget(discountTargetSelect.value, priceOption.itemLocationQuantity.allowanceCharge[0])" [(ngModel)]="selectedDiscountTarget">
-                        <option *ngFor="let option of object.keys(discountTargets)" [value]="discountTargets[option]">{{discountTargets[option]}}</option>
+                        <option *ngFor="let option of object.keys(discountTargets)" [value]="discountTargets[option]">{{discountTargets[option] | translate}}</option>
                     </select>
                 </div>
-                <span class="definition" title="The discount/charge is applied on the total price for the total price option. Otherwise, per unit indicates the base quantity of the order. For example, if the order quantity is 10 units then the discount/charge is applied to each unit'; if the order quantity is 10 tons then the discount/charge is applied to each ton">&#9432;</span>
+                <span class="definition" title="{{'The discount/charge is applied on the total price for the total price option. Otherwise, per unit indicates the base quantity of the order. For example, if the order quantity is 10 units then the discount/charge is applied to each unit\'; if the order quantity is 10 tons then the discount/charge is applied to each ton'|translate}}">&#9432;</span>
             </div>
         </div>
     </ng-container>
@@ -43,7 +43,7 @@
             </div>
             <div class="col-7">
                 {{amountToString()}} {{amount.currencyID !== '%' ? "on "+selectedDiscountTarget :""}}
-                <span class="definition" title="The discount/charge is applied on the total price for the total price option. Otherwise, per unit indicates the base quantity of the order. For example, if the order quantity is 10 units then the discount/charge is applied to each unit'; if the order quantity is 10 tons then the discount/charge is applied to each ton">&#9432;</span>
+                <span class="definition" title="{{'The discount/charge is applied on the total price for the total price option. Otherwise, per unit indicates the base quantity of the order. For example, if the order quantity is 10 units then the discount/charge is applied to each unit\'; if the order quantity is 10 tons then the discount/charge is applied to each ton'|translate}}">&#9432;</span>
             </div>
         </div>
     </div>

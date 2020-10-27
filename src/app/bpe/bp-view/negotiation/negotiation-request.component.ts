@@ -403,7 +403,7 @@ export class NegotiationRequestComponent implements OnInit {
             totalPrice += wrapper.rfqTotal;
         }
         if (totalPrice == 0) {
-            return "On demand";
+            return this.translate.instant("On demand");
         }
         return roundToTwoDecimals(totalPrice) + " " + this.wrappers[0].currency;
     }
@@ -414,7 +414,7 @@ export class NegotiationRequestComponent implements OnInit {
             vatTotal += wrapper.rfqVatTotal
         }
         if (vatTotal == 0) {
-            return "On demand";
+            return this.translate.instant("On demand");
         }
         return roundToTwoDecimals(vatTotal) + " " + this.wrappers[0].currency;
     }
@@ -425,7 +425,7 @@ export class NegotiationRequestComponent implements OnInit {
             grossTotal += wrapper.rfqGrossTotal;
         }
         if (grossTotal == 0) {
-            return "On demand";
+            return this.translate.instant("On demand");
         }
         return roundToTwoDecimals(grossTotal) + " " + this.wrappers[0].currency;
     }

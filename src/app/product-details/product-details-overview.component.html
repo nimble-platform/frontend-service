@@ -26,7 +26,7 @@
     <div class="col-2">
         <strong><span [innerHTML]="'Catalogue:' | translate"></span></strong><br />
         <span>
-            {{catalogueName}}
+            {{catalogueName == 'default'? ('Main Catalogue'|translate): catalogueName}}
         </span>
     </div>
     <div *ngIf="showAddToCartButton && shoppingCartDataService.isShoppingCartButtonVisible(categoryUris)" class="ml-auto">
