@@ -33,6 +33,8 @@ import { TranslateService } from '@ngx-translate/core';
 export class BulkPublishComponent {
     @Input() selectCategories: Category[];
 
+    // identifier of the catalogue two which the images will be added. For now, it's not configurable but set to 'default'
+    activeCatalogueId: string = 'default';
     publishStatus: CallStatus = new CallStatus();
     showCategoryWarning: boolean = false;
     uploadPublishStatus: CallStatus[] = [];
@@ -132,7 +134,7 @@ export class BulkPublishComponent {
     uploadImagePackage(event: any): void {
         this.publishStatus.submit();
         let catalogueService = this.catalogueService;
-        let userId: string = this.cookieService.get("user_id");
+        let catalogueId = this.activeCatalogueId;
         let fileList: FileList = event.target.files;
         if (fileList.length > 0) {
             let file: File = fileList[0];
@@ -141,7 +143,7 @@ export class BulkPublishComponent {
             reader.onload = function(e) {
                 // reset the target value so that the same file could be chosen more than once
                 event.target.value = "";
-                catalogueService.uploadImageZipPackage(file).then(res => {
+                catalogueService.uploadImageZipPackage(file, catalogueId).then(res => {
                     self.publishStatus.callback(res.message);
                 },
                     error => {
