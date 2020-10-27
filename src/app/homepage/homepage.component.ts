@@ -171,6 +171,19 @@ export class HomepageComponent {
      * Template handlers
      */
 
+    onDiscoverProductsClicked(): void {
+        this.router.navigate(['/simple-search'], {
+            queryParams: {
+                q: '*',
+                p: 1,
+                cat: '',
+                catID: '',
+                sIdx: this.config.defaultSearchIndex,
+                sTop: 'prod'
+            }
+        });
+    }
+
     onPublishProductClicked(): void {
         this.router.navigate(['catalogue/categorysearch'], { queryParams: { pageRef: 'homepage', productType: 'product'} });
     }
