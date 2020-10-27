@@ -73,7 +73,7 @@ export class ProductDeliveryTradingComponent extends EmptyFormBase implements On
         const index = this.companyNegotiationSettings.warrantyPeriodUnits.indexOf(this.wrapper.line.warrantyValidityPeriod.durationMeasure.unitCode);
         if(index != -1){
             let range = this.companyNegotiationSettings.warrantyPeriodRanges[index];
-            this.warrantyPeriodRangeDefinition = this.translate.instant("min max range",{start:range.start,end:range.end,unit:this.wrapper.line.warrantyValidityPeriod.durationMeasure.unitCode});
+            this.warrantyPeriodRangeDefinition = this.translate.instant("min max range",{start:range.start,end:range.end,unit:this.translate.instant(this.wrapper.line.warrantyValidityPeriod.durationMeasure.unitCode)});
         }
     }
 
@@ -82,7 +82,7 @@ export class ProductDeliveryTradingComponent extends EmptyFormBase implements On
         const index = this.companyNegotiationSettings.deliveryPeriodUnits.indexOf(this.wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.unitCode);
         if(index != -1){
             let range = this.companyNegotiationSettings.deliveryPeriodRanges[index];
-            this.deliveryPeriodRangeDefinition = this.translate.instant("min max range",{start:range.start,end:range.end,unit:this.wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.unitCode});
+            this.deliveryPeriodRangeDefinition = this.translate.instant("min max range",{start:range.start,end:range.end,unit:this.translate.instant(this.wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.unitCode)});
         }
     }
 

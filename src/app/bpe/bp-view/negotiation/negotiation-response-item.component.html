@@ -337,7 +337,7 @@
                             <div *ngSwitchCase="'frame_contract'" class="col-3">{{ wrapper.frameContractQuotationWrapper.deliveryPeriod | quantityTranslatePipe}}</div>
                             <div *ngSwitchCase="'last_offer'" class="col-3">{{ wrapper.lastOfferQuotationWrapper.deliveryPeriod | quantityTranslatePipe}}</div>
                         </ng-container>
-                        <div class="col-3">{{ wrapper.rfqDeliveryPeriodString }}</div>
+                        <div class="col-3">{{ wrapper.rfqDeliveryPeriod | quantityTranslatePipe}}</div>
                         <div class="col-3">
                             <!-- don't show any term if the customer offer was rejected -->
                             <quantity-input *ngIf="isSellerTermsVisible()"
