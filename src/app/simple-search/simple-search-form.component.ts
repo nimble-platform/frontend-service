@@ -125,7 +125,8 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     facetObj: any;
     facetQuery: any[];
     temp: any;
-    response: any;
+    // results of product/company search
+    searchResults: any;
     imageMap: any = {}; // keeps the images if exists for the search results
     maxFacets = 5;
     manufacturerIdCountMap: any;
@@ -687,7 +688,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                             this.cat_loading = false;
                             this.callback = true;
                             this.searchCallStatus.callback('Search done.', true);
-                            this.response = res.result;
+                            this.searchResults = res.result;
                             this.size = res.totalElements;
                             this.page = p;
                             this.start = this.page * this.rows - this.rows + 1;
@@ -734,7 +735,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                                                 }
                                             }
 
-                                            this.response = copy(this.temp);
+                                            this.searchResults = copy(this.temp);
                                             this.size = res.totalElements;
                                             this.page = p;
                                             this.start = this.page * this.rows - this.rows + 1;
@@ -788,7 +789,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                             this.cat_loading = false;
                             this.callback = true;
                             this.searchCallStatus.callback('Company search done.', true);
-                            this.response = res.result;
+                            this.searchResults = res.result;
                             this.size = res.totalElements;
                             this.page = p;
                             this.start = this.page * this.rows - this.rows + 1;
@@ -813,7 +814,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                                     }
                                 }
 
-                                this.response = copy(this.temp);
+                                this.searchResults = copy(this.temp);
                                 this.size = res.totalElements;
                                 this.page = p;
                                 this.start = this.page * this.rows - this.rows + 1;
@@ -2004,9 +2005,9 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 callStatus.reset();
             }
 
-            let size = this.response.length;
+            let size = this.searchResults.length;
             for (let i = 0; i < size; i++) {
-                let result = this.response[i];
+                let result = this.searchResults[i];
                 if (UBLModelUtils.isProductInCart(shoppingCart, result.catalogueId, result.manufactuerItemId)) {
                     this.getShoppingCartStatus(i).callback(this.translate.instant('Product is added to shopping cart.'), false);
                 }
