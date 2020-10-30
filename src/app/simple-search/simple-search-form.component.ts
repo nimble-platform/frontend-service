@@ -39,6 +39,7 @@ import {NetworkCompanyListService} from '../user-mgmt/network-company-list.servi
 import {RatingUi} from '../catalogue/model/ui/rating-ui';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {CookieService} from 'ng2-cookies';
+import {Filter} from './model/filter';
 
 @Component({
     selector: 'simple-search-form',
@@ -99,10 +100,18 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     ratingTrustFilters: RatingUi[] = null;
 
     showCatSection = true;
-    showProductSection = false;
-    showCompSection = false;
     showTrustSection = false;
-    showOtherSection = false;
+
+    // filters for product and company search
+    // product/service filters
+    productFilter:Filter = null;
+    // vendor filters for product search
+    productVendorFilter:Filter = null;
+    // other filters for product search
+    productOtherFilter:Filter = null;
+    // filters for company search
+    companyFilter:Filter = null;
+    // end of filters for product and company search
 
     shoppingCartCallStatuses: CallStatus[] = [];
     searchCallStatus: CallStatus = new CallStatus();
@@ -122,7 +131,8 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     searchContext = null;
     model = new Search('');
     objToSubmit = new Search('');
-    facetObj: any;
+    // keeps the facet list set when the product/company results are received
+    facetList: any;
     facetQuery: any[];
     temp: any;
     // results of product/company search
@@ -696,7 +706,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                             this.displayShoppingCartMessages();
                         } else {
                             this.simpleSearchService.getUblAndQuantityProperties(idxFields).then(response => {
-                                this.facetObj = [];
+                                this.facetList = [];
                                 this.temp = [];
                                 this.manufacturerIdCountMap = new Map();
 
@@ -796,7 +806,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                             this.end = this.start + res.result.length - 1;
                         } else {
                             this.simpleSearchService.getUblAndQuantityProperties(Object.keys(fieldLabels)).then(response => {
-                                this.facetObj = [];
+                                this.facetList = [];
                                 this.temp = [];
                                 this.handleFacets(fieldLabels, res.facets, p, response.result);
                                 this.callback = true;
@@ -865,7 +875,6 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     }
 
     handleCompanyFacets(res, prefix: string, manufacturerIdCountMap: any) {
-        //this.facetObj = [];
         this.temp = [];
         // map for keeping the value counts for each company facet
         // the facet name is the key of the map
@@ -954,7 +963,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             if (total == 0) {
                 total = 1;
             }
-            this.facetObj.push({
+            this.facetList.push({
                 'name': name,
                 'genName': genName,
                 'realName': this.getName(genName, this.product_vendor),
@@ -965,7 +974,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 'expanded': false
             });
 
-            this.sortFacetObj(this.facetObj[this.facetObj.length - 1]);
+            this.sortFacetObj(this.facetList[this.facetList.length - 1]);
         }
         for (let facet in res.facets) {
             if (this.simpleSearchService.checkField(facet, prefix)) {
@@ -1018,7 +1027,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 if (total == 0) {
                     total = 1;
                 }
-                this.facetObj.push({
+                this.facetList.push({
                     'name': name,
                     'genName': genName,
                     'realName': this.getName(genName, this.product_vendor),
@@ -1028,10 +1037,11 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                     'selected': selected,
                     'expanded': false
                 });
-                this.sortFacetObj(this.facetObj[this.facetObj.length - 1]);
+                this.sortFacetObj(this.facetList[this.facetList.length - 1]);
             }
         }
-
+        // create filters
+        this.createFilters();
     }
 
     onFacetClicked(facet: any) {
@@ -1055,7 +1065,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             }
         }
 
-        this.facetObj = [];
+        this.facetList = [];
         this.temp = [];
         let index = 0;
         let facetQueries = this.facetQuery.map(facet => facet.split(':')[0]);
@@ -1086,14 +1096,14 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                         // quantity property
                         let localName = quantityPropertiesLocalNameMap.get(fieldName);
                         // get corresponding facet
-                        let facetObj = this.facetObj.filter(facet => facet.localName == localName);
+                        let facetObj = this.facetList.filter(facet => facet.localName == localName);
                         // quantity unit
                         let unit = fieldName.substring(fieldName.lastIndexOf(localName) + localName.length).toLocaleLowerCase();
                         // we have already created a facet for this property
                         if (facetObj.length > 0) {
                             // get facet
                             facetObj = facetObj[0];
-                            // add unit to the facetObj
+                            // add unit to the facetList
                             facetObj.units.push(unit);
                             for (let facet_inner of facets[facet].entry) {
                                 let facet_innerLabel = facet_inner.label;
@@ -1124,7 +1134,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                         }
                         // create a facet for this quantity property
                         else {
-                            this.facetObj.push({
+                            this.facetList.push({
                                 'name': facet,
                                 'genName': genName,
                                 'realName': facetMetadataExists ? selectNameFromLabelObject(facetMetadata[facet].label) : propertyLabel,
@@ -1148,28 +1158,28 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                                 }
 
                                 if (facet_innerLabel != '' && facet_innerLabel != ':' && facet_innerLabel != ' ' && facet_innerLabel.indexOf('urn:oasis:names:specification:ubl:schema:xsd') == -1) {
-                                    this.facetObj[index].options.push({
+                                    this.facetList[index].options.push({
                                         'name': facet_inner.label, // the label with the language id, if there is any
                                         'realName': facet_innerLabel + ' ' + unit, // the displayed label
                                         'count': facet_innerCount,
                                         'unit': unit
                                     });
-                                    this.facetObj[index].total += facet_innerCount;
-                                    if (this.checkFacet(this.facetObj[index].name, facet_inner.label)) {
-                                        this.facetObj[index].selected = true;
+                                    this.facetList[index].total += facet_innerCount;
+                                    if (this.checkFacet(this.facetList[index].name, facet_inner.label)) {
+                                        this.facetList[index].selected = true;
                                     }
                                 }
                             }
 
 
-                            this.sortFacetObj(this.facetObj[index]);
+                            this.sortFacetObj(this.facetList[index]);
                             index++;
                         }
                         continue;
                     }
                 }
 
-                this.facetObj.push({
+                this.facetList.push({
                     'name': facet,
                     'genName': genName,
                     'realName': facetMetadataExists ? selectNameFromLabelObject(facetMetadata[facet].label) : propertyLabel,
@@ -1227,21 +1237,23 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                     }
 
                     if (facet_innerLabel != '' && facet_innerLabel != ':' && facet_innerLabel != ' ' && facet_innerLabel.indexOf('urn:oasis:names:specification:ubl:schema:xsd') == -1) {
-                        this.facetObj[index].options.push({
+                        this.facetList[index].options.push({
                             'name': facet_inner.label, // the label with the language id, if there is any
                             'realName': facet.endsWith("activitySectors") ? this.translate.instant(facet_innerLabel) : facet_innerLabel, // the displayed label,  use the translation of activity sector
                             'count': facet_innerCount
                         });
-                        this.facetObj[index].total += facet_innerCount;
-                        if (this.checkFacet(this.facetObj[index].name, facet_inner.label)) {
-                            this.facetObj[index].selected = true;
+                        this.facetList[index].total += facet_innerCount;
+                        if (this.checkFacet(this.facetList[index].name, facet_inner.label)) {
+                            this.facetList[index].selected = true;
                         }
                     }
                 }
-                this.sortFacetObj(this.facetObj[index]);
+                this.sortFacetObj(this.facetList[index]);
                 index++;
             }
         }
+        // create filters
+        this.createFilters();
     }
 
     private sortFacetObj(facetObj: any) {
@@ -1251,12 +1263,12 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             return a_c.localeCompare(b_c);
         });
 
-        this.facetObj.sort(function (a, b) {
+        this.facetList.sort(function (a, b) {
             const a_c = a.realName;
             const b_c = b.realName;
             return a_c.localeCompare(b_c);
         });
-        this.facetObj.sort(function (a, b) {
+        this.facetList.sort(function (a, b) {
             let ret = 0;
             if (a.selected && !b.selected) {
                 ret = -1;
@@ -1497,9 +1509,9 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     checkProdCatCount() {
         // if product/service filters are enabled, we have the price filter by default
         let count = this.productServiceFiltersEnabled ? 1 : 0;
-        if (this.facetObj) {
-            for (let i = 0; i < this.facetObj.length; i++) {
-                if (this.checkProdCat(this.facetObj[i].name)) {
+        if (this.facetList) {
+            for (let i = 0; i < this.facetList.length; i++) {
+                if (this.checkProdCat(this.facetList[i].name)) {
                     count++;
                 }
             }
@@ -1517,9 +1529,9 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
 
     checkCompCatCount() {
         let count = 0;
-        if (this.facetObj) {
-            for (let i = 0; i < this.facetObj.length; i++) {
-                if (this.checkCompCat(this.facetObj[i].genName)) {
+        if (this.facetList) {
+            for (let i = 0; i < this.facetList.length; i++) {
+                if (this.checkCompCat(this.facetList[i].genName)) {
                     count++;
                 }
             }
@@ -1549,9 +1561,9 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             return 0;
         }
         let count = 0;
-        if (this.facetObj) {
-            for (let i = 0; i < this.facetObj.length; i++) {
-                if (this.checkOtherCat(this.facetObj[i].name)) {
+        if (this.facetList) {
+            for (let i = 0; i < this.facetList.length; i++) {
+                if (this.checkOtherCat(this.facetList[i].name)) {
                     count++;
                 }
             }
@@ -1569,9 +1581,9 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
 
     checkCompMainCatCount() {
         let count = 0;
-        if (this.facetObj) {
-            for (let i = 0; i < this.facetObj.length; i++) {
-                if (this.checkCompMainCat(this.facetObj[i].genName)) {
+        if (this.facetList) {
+            for (let i = 0; i < this.facetList.length; i++) {
+                if (this.checkCompMainCat(this.facetList[i].genName)) {
                     count++;
                 }
             }
@@ -1589,9 +1601,9 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
 
     checkCompTrustCatCount() {
         let count = 0;
-        if (this.facetObj) {
-            for (let i = 0; i < this.facetObj.length; i++) {
-                if (this.checkCompTrustCat(this.facetObj[i].name)) {
+        if (this.facetList) {
+            for (let i = 0; i < this.facetList.length; i++) {
+                if (this.checkCompTrustCat(this.facetList[i].name)) {
                     count++;
                 }
             }
@@ -1623,10 +1635,10 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
 
     getFacetName(facet: string): string {
         let name = facet;
-        for (let i = 0; i < this.facetObj.length; i++) {
-            const comp = this.facetObj[i].name;
+        for (let i = 0; i < this.facetList.length; i++) {
+            const comp = this.facetList[i].name;
             if (comp.localeCompare(facet) == 0) {
-                name = this.facetObj[i].realName;
+                name = this.facetList[i].realName;
             }
         }
         return this.getName(name);
@@ -2062,5 +2074,54 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         }
         summary += 'Total No OF Trust Evaluations' +':\n'+ this.calcRating(result[this.product_vendor][this.product_vendor_evaluation],1)+'';
         return summary;
+    }
+
+    /**
+     * Creates the filters based on the product/company facets
+     * It's called when the facet list is populated
+     * */
+    createFilters(){
+        // initialize filters
+        this.productFilter = new Filter();
+        this.productVendorFilter = new Filter();
+        this.productOtherFilter = new Filter();
+        this.companyFilter = new Filter();
+        // add each facet to proper filter
+        for(let facet of this.facetList){
+            if(facet.total > 0){
+                if(this.checkProdCat(facet.name)){
+                    // add facet
+                    this.productFilter.facets.push(facet);
+                    // uncollapse the filter if it has selected facets
+                    if(facet.selected){
+                        this.productFilter.isCollapsed = false;
+                    }
+                }
+                if(this.checkCompCat(facet.genName)){
+                    // add facet
+                    this.productVendorFilter.facets.push(facet);
+                    // uncollapse the filter if it has selected facets
+                    if(facet.selected){
+                        this.productVendorFilter.isCollapsed = false;
+                    }
+                }
+                if(this.checkCompMainCat(facet.genName)){
+                    // add facet
+                    this.companyFilter.facets.push(facet);
+                    // uncollapse the filter if it has selected facets
+                    if(facet.selected){
+                        this.companyFilter.isCollapsed = false;
+                    }
+                }
+                if (this.checkOtherCat(facet.name)){
+                    // add facet
+                    this.productOtherFilter.facets.push(facet);
+                    // uncollapse the filter if it has selected facets
+                    if(facet.selected){
+                        this.productOtherFilter.isCollapsed = false;
+                    }
+                }
+            }
+        }
     }
 }

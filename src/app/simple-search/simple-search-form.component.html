@@ -239,13 +239,13 @@
                         <hr />
 
                         <!-- Product / Service Filters -->
-                        <div *ngIf="checkProdCatCount()>0">
+                        <div *ngIf="checkProdCatCount()>0 && productFilter">
 
-                            <div class="pointer" (click)="showProductSection=!showProductSection">
-                                <h5><span [innerHTML]="'Product / Service' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showProductSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showProductSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+                            <div class="pointer" (click)="productFilter.isCollapsed=!productFilter.isCollapsed">
+                                <h5><span [innerHTML]="'Product / Service' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="productFilter.isCollapsed"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="!productFilter.isCollapsed"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
                             </div>
 
-                            <div *ngIf="showProductSection">
+                            <div *ngIf="!productFilter.isCollapsed">
                                 <!-- Do not show price if it is excluded in the configs -->
                                 <div *ngIf="product_nonfilter_data_type.indexOf('price') == -1" class="card mb-3">
                                     <div class="card-header">
@@ -274,8 +274,8 @@
                                         <button class="btn btn-secondary ml-2" (click)="resetPriceFilter()" [hidden]="!checkPriceFacet()"><span [innerHTML]="'Reset' | translate"></span></button>
                                     </div>
                                 </div>
-                                <div *ngFor="let facet of facetObj">
-                                    <div *ngIf="facet.total > 0 && checkProdCat(facet.name)" class="card mb-3">
+                                <div *ngFor="let facet of productFilter.facets">
+                                    <div class="card mb-3">
                                         <!-- Display the units for quantity properties -->
                                         <div *ngIf="facet.showContent && facet.units && facet.units.length > 1" class="card-header" (click)="onFacetClicked(facet)">
                                             <div  class="row">
@@ -319,13 +319,13 @@
                         <!-- Vendor Filters -->
                         <div *ngIf="checkCompCatCount()>0">
 
-                            <div class="pointer" (click)="showCompSection=!showCompSection">
-                                <h5><span [innerHTML]="'Vendor Filters' | translate"></span> <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+                            <div class="pointer" (click)="productVendorFilter.isCollapsed=!productVendorFilter.isCollapsed">
+                                <h5><span [innerHTML]="'Vendor Filters' | translate"></span> <span *ngIf="productVendorFilter.isCollapsed"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="!productVendorFilter.isCollapsed"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
                             </div>
 
-                            <div *ngIf="showCompSection">
-                                <div *ngFor="let facet of facetObj">
-                                    <div *ngIf="facet.total > 0 && checkCompCat(facet.genName)" class="card mb-3">
+                            <div *ngIf="!productVendorFilter.isCollapsed">
+                                <div *ngFor="let facet of productVendorFilter.facets">
+                                    <div class="card mb-3">
                                         <div class="card-header" (click)="onFacetClicked(facet)">
                                             {{facet.realName}}
                                         </div>
@@ -392,13 +392,13 @@
                         <!-- Other Filters -->
                         <div *ngIf="checkOtherCatCount()>0">
 
-                            <div class="pointer" (click)="showOtherSection=!showOtherSection">
-                                <h5><span [innerHTML]="'Other' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showOtherSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showOtherSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+                            <div class="pointer" (click)="productOtherFilter.isCollapsed=!productOtherFilter.isCollapsed">
+                                <h5><span [innerHTML]="'Other' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="productOtherFilter.isCollapsed"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="!productOtherFilter.isCollapsed"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
                             </div>
 
-                            <div *ngIf="showOtherSection">
-                                <div *ngFor="let facet of facetObj">
-                                    <div *ngIf="facet.total > 0 && checkOtherCat(facet.name)" class="card mb-3">
+                            <div *ngIf="!productOtherFilter.isCollapsed">
+                                <div *ngFor="let facet of productOtherFilter.facets">
+                                    <div class="card mb-3">
                                         <!-- Display the units for quantity properties -->
                                         <div *ngIf="facet.showContent && facet.units && facet.units.length > 1" class="card-header" (click)="onFacetClicked(facet)">
                                             <div  class="row">
@@ -445,13 +445,13 @@
                         <!-- Company Filters -->
                         <div *ngIf="checkCompMainCatCount()>0">
 
-                            <div class="pointer" (click)="showCompSection=!showCompSection">
-                                <h5><span [innerHTML]="'Company' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+                            <div class="pointer" (click)="companyFilter.isCollapsed=!companyFilter.isCollapsed">
+                                <h5><span [innerHTML]="'Company' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="companyFilter.isCollapsed"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="!companyFilter.isCollapsed"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
                             </div>
 
-                            <div *ngIf="showCompSection">
-                                <div *ngFor="let facet of facetObj">
-                                    <div *ngIf="facet.total > 0 && checkCompMainCat(facet.genName)" class="card mb-3">
+                            <div *ngIf="!companyFilter.isCollapsed">
+                                <div *ngFor="let facet of companyFilter.facets">
+                                    <div class="card mb-3">
                                         <div class="card-header" (click)="onFacetClicked(facet)">
                                             {{facet.realName}}
                                         </div>
