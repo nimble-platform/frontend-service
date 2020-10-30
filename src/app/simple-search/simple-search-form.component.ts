@@ -136,7 +136,8 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     facetQuery: any[];
     // results of product/company search
     searchResults: any;
-    imageMap: any = {}; // keeps the images if exists for the search results
+    // keeps the images if exists for the product search results
+    productImageMap: any = {};
     maxFacets = 5;
     manufacturerIdCountMap: any;
 
@@ -733,17 +734,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                                             this.callback = true;
                                             this.searchCallStatus.callback('Search done.', true);
 
-                                            let searchResults = res.result;
-                                            for (let doc in searchResults) {
-                                                if (searchResults[doc][this.product_img]) {
-                                                    const img = searchResults[doc][this.product_img];
-                                                    if (Array.isArray(img)) {
-                                                        searchResults[doc][this.product_img] = img[0];
-                                                    }
-                                                }
-                                            }
-
-                                            this.searchResults = copy(searchResults);
+                                            this.searchResults = res.result;
                                             this.size = res.totalElements;
                                             this.page = p;
                                             this.start = this.page * this.rows - this.rows + 1;
@@ -759,7 +750,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                             }).catch(error => {
                                 this.searchCallStatus.error('Error while running search.', error);
                             });
-                            this.fetchImages(res.result, this.product_img);
+                            this.fetchProductImages(res.result);
                         }
 
                     })
@@ -811,17 +802,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                                 this.initializeRatingAndTrustFilters();
                                 this.searchCallStatus.callback('Company search done.', true);
 
-                                let searchResults = res.result;
-                                for (let doc in searchResults) {
-                                    if (searchResults[doc][this.product_vendor_img]) {
-                                        const img = searchResults[doc][this.product_vendor_img];
-                                        if (Array.isArray(img)) {
-                                            searchResults[doc][this.product_vendor_img] = img[0];
-                                        }
-                                    }
-                                }
-
-                                this.searchResults = copy(searchResults);
+                                this.searchResults = copy(res.result);
                                 this.size = res.totalElements;
                                 this.page = p;
                                 this.start = this.page * this.rows - this.rows + 1;
@@ -841,13 +822,16 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             });
     }
 
-    fetchImages(searchResults: any[], field): void {
+    /**
+     * Fetches images for the given product search results
+     * */
+    fetchProductImages(searchResults: any[]): void {
         // fetch images asynchronously
-        this.imageMap = {};
+        this.productImageMap = {};
 
         let imageMap: any = {};
         for (let result of searchResults) {
-            let productImages: string[] = result[field];
+            let productImages: string[] = result[this.product_img];
             if (productImages != null && productImages.length > 0) {
                 imageMap[result.uri] = productImages[0];
             }
@@ -862,7 +846,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 for (let image of images) {
                     for (let productUri in imageMap) {
                         if (imageMap[productUri] == image.uri) {
-                            this.imageMap[productUri] = 'data:' + image.mimeCode + ';base64,' + image.value
+                            this.productImageMap[productUri] = 'data:' + image.mimeCode + ';base64,' + image.value
                         }
                     }
                 }

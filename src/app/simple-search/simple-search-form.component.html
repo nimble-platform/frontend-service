@@ -536,7 +536,7 @@
                                             <input type="checkbox" [checked]="productSelected(result.uri)" (click)="$event.preventDefault();  $event.stopPropagation(); productSelect.click();">
                                         </div>
                                         <div class="align-center" [ngClass]="{'col-2':display=='list','col-12 pb-1':display=='panel'}">
-                                            <img src="{{imageMap[result.uri]}}" class="thumb" onerror="this.src='assets/empty_img.png';" />
+                                            <img src="{{productImageMap[result.uri]}}" class="thumb" onerror="this.src='assets/empty_img.png';" />
                                         </div>
                                         <div [ngClass]="{'col-6':display=='list'&&pageRef!=='publish','col-5':display=='list'&&pageRef==='publish','col-12 pt-1 pb-1':display=='panel'}">
                                             <div style="max-height:1.5rem;overflow:hidden">
