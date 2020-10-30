@@ -134,7 +134,6 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     // keeps the facet list set when the product/company results are received
     facetList: any;
     facetQuery: any[];
-    temp: any;
     // results of product/company search
     searchResults: any;
     imageMap: any = {}; // keeps the images if exists for the search results
@@ -707,7 +706,6 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                         } else {
                             this.simpleSearchService.getUblAndQuantityProperties(idxFields).then(response => {
                                 this.facetList = [];
-                                this.temp = [];
                                 this.manufacturerIdCountMap = new Map();
 
                                 for (let facet in res.facets) {
@@ -735,17 +733,17 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                                             this.callback = true;
                                             this.searchCallStatus.callback('Search done.', true);
 
-                                            this.temp = res.result;
-                                            for (let doc in this.temp) {
-                                                if (this.temp[doc][this.product_img]) {
-                                                    const img = this.temp[doc][this.product_img];
+                                            let searchResults = res.result;
+                                            for (let doc in searchResults) {
+                                                if (searchResults[doc][this.product_img]) {
+                                                    const img = searchResults[doc][this.product_img];
                                                     if (Array.isArray(img)) {
-                                                        this.temp[doc][this.product_img] = img[0];
+                                                        searchResults[doc][this.product_img] = img[0];
                                                     }
                                                 }
                                             }
 
-                                            this.searchResults = copy(this.temp);
+                                            this.searchResults = copy(searchResults);
                                             this.size = res.totalElements;
                                             this.page = p;
                                             this.start = this.page * this.rows - this.rows + 1;
@@ -807,24 +805,23 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                         } else {
                             this.simpleSearchService.getUblAndQuantityProperties(Object.keys(fieldLabels)).then(response => {
                                 this.facetList = [];
-                                this.temp = [];
                                 this.handleFacets(fieldLabels, res.facets, p, response.result);
                                 this.callback = true;
                                 // initialize rating and trust filters
                                 this.initializeRatingAndTrustFilters();
                                 this.searchCallStatus.callback('Company search done.', true);
 
-                                this.temp = res.result;
-                                for (let doc in this.temp) {
-                                    if (this.temp[doc][this.product_vendor_img]) {
-                                        const img = this.temp[doc][this.product_vendor_img];
+                                let searchResults = res.result;
+                                for (let doc in searchResults) {
+                                    if (searchResults[doc][this.product_vendor_img]) {
+                                        const img = searchResults[doc][this.product_vendor_img];
                                         if (Array.isArray(img)) {
-                                            this.temp[doc][this.product_vendor_img] = img[0];
+                                            searchResults[doc][this.product_vendor_img] = img[0];
                                         }
                                     }
                                 }
 
-                                this.searchResults = copy(this.temp);
+                                this.searchResults = copy(searchResults);
                                 this.size = res.totalElements;
                                 this.page = p;
                                 this.start = this.page * this.rows - this.rows + 1;
@@ -875,7 +872,6 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     }
 
     handleCompanyFacets(res, prefix: string, manufacturerIdCountMap: any) {
-        this.temp = [];
         // map for keeping the value counts for each company facet
         // the facet name is the key of the map
         // The value of the map is another map which store the counts for each facet value
@@ -1066,7 +1062,6 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         }
 
         this.facetList = [];
-        this.temp = [];
         let index = 0;
         let facetQueries = this.facetQuery.map(facet => facet.split(':')[0]);
         for (let facet in facets) {
