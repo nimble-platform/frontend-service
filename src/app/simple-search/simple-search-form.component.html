@@ -177,6 +177,7 @@
                         </div>
                     </div>
 
+                    <!-- Product Search Facets -->
                     <div *ngIf="size>0 && searchTopic=='prod'">
 
                         <!-- category facet panel -->
@@ -237,13 +238,14 @@
 
                         <hr />
 
-                        <div *ngIf="checkProdCatCount()>0">
+                        <!-- Product / Service Filters -->
+                        <div *ngIf="checkProdCatCount()>0 && productFilter">
 
-                            <div class="pointer" (click)="showProductSection=!showProductSection">
-                                <h5><span [innerHTML]="'Product / Service' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showProductSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showProductSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+                            <div class="pointer" (click)="productFilter.isCollapsed=!productFilter.isCollapsed">
+                                <h5><span [innerHTML]="'Product / Service' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="productFilter.isCollapsed"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="!productFilter.isCollapsed"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
                             </div>
 
-                            <div *ngIf="showProductSection">
+                            <div *ngIf="!productFilter.isCollapsed">
                                 <!-- Do not show price if it is excluded in the configs -->
                                 <div *ngIf="product_nonfilter_data_type.indexOf('price') == -1" class="card mb-3">
                                     <div class="card-header">
@@ -272,8 +274,8 @@
                                         <button class="btn btn-secondary ml-2" (click)="resetPriceFilter()" [hidden]="!checkPriceFacet()"><span [innerHTML]="'Reset' | translate"></span></button>
                                     </div>
                                 </div>
-                                <div *ngFor="let facet of facetObj">
-                                    <div *ngIf="facet.total > 0 && checkProdCat(facet.name)" class="card mb-3">
+                                <div *ngFor="let facet of productFilter.facets">
+                                    <div class="card mb-3">
                                         <!-- Display the units for quantity properties -->
                                         <div *ngIf="facet.showContent && facet.units && facet.units.length > 1" class="card-header" (click)="onFacetClicked(facet)">
                                             <div  class="row">
@@ -314,15 +316,16 @@
 
                         </div>
 
+                        <!-- Vendor Filters -->
                         <div *ngIf="checkCompCatCount()>0">
 
-                            <div class="pointer" (click)="showCompSection=!showCompSection">
-                                <h5><span [innerHTML]="'Vendor Filters' | translate"></span> <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+                            <div class="pointer" (click)="productVendorFilter.isCollapsed=!productVendorFilter.isCollapsed">
+                                <h5><span [innerHTML]="'Vendor Filters' | translate"></span> <span *ngIf="productVendorFilter.isCollapsed"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="!productVendorFilter.isCollapsed"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
                             </div>
 
-                            <div *ngIf="showCompSection">
-                                <div *ngFor="let facet of facetObj">
-                                    <div *ngIf="facet.total > 0 && checkCompCat(facet.genName)" class="card mb-3">
+                            <div *ngIf="!productVendorFilter.isCollapsed">
+                                <div *ngFor="let facet of productVendorFilter.facets">
+                                    <div class="card mb-3">
                                         <div class="card-header" (click)="onFacetClicked(facet)">
                                             {{facet.realName}}
                                         </div>
@@ -347,7 +350,7 @@
                             <hr />
 
                         </div>
-
+                        <!-- Rating/Trust Filters -->
                         <div *ngIf="checkCompCatCount()>0">
 
                             <div class="pointer" (click)="showTrustSection=!showTrustSection">
@@ -386,16 +389,16 @@
                             <hr />
 
                         </div>
-
+                        <!-- Other Filters -->
                         <div *ngIf="checkOtherCatCount()>0">
 
-                            <div class="pointer" (click)="showOtherSection=!showOtherSection">
-                                <h5><span [innerHTML]="'Other' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showOtherSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showOtherSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+                            <div class="pointer" (click)="productOtherFilter.isCollapsed=!productOtherFilter.isCollapsed">
+                                <h5><span [innerHTML]="'Other' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="productOtherFilter.isCollapsed"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="!productOtherFilter.isCollapsed"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
                             </div>
 
-                            <div *ngIf="showOtherSection">
-                                <div *ngFor="let facet of facetObj">
-                                    <div *ngIf="facet.total > 0 && checkOtherCat(facet.name)" class="card mb-3">
+                            <div *ngIf="!productOtherFilter.isCollapsed">
+                                <div *ngFor="let facet of productOtherFilter.facets">
+                                    <div class="card mb-3">
                                         <!-- Display the units for quantity properties -->
                                         <div *ngIf="facet.showContent && facet.units && facet.units.length > 1" class="card-header" (click)="onFacetClicked(facet)">
                                             <div  class="row">
@@ -436,17 +439,19 @@
 
                     </div>
 
+                    <!-- Company Search Facets -->
                     <div *ngIf="size>0 && searchTopic=='comp'">
 
+                        <!-- Company Filters -->
                         <div *ngIf="checkCompMainCatCount()>0">
 
-                            <div class="pointer" (click)="showCompSection=!showCompSection">
-                                <h5><span [innerHTML]="'Company' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showCompSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showCompSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+                            <div class="pointer" (click)="companyFilter.isCollapsed=!companyFilter.isCollapsed">
+                                <h5><span [innerHTML]="'Company' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="companyFilter.isCollapsed"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="!companyFilter.isCollapsed"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
                             </div>
 
-                            <div *ngIf="showCompSection">
-                                <div *ngFor="let facet of facetObj">
-                                    <div *ngIf="facet.total > 0 && checkCompMainCat(facet.genName)" class="card mb-3">
+                            <div *ngIf="!companyFilter.isCollapsed">
+                                <div *ngFor="let facet of companyFilter.facets">
+                                    <div class="card mb-3">
                                         <div class="card-header" (click)="onFacetClicked(facet)">
                                             {{facet.realName}}
                                         </div>
@@ -471,7 +476,7 @@
                             <hr />
 
                         </div>
-
+                        <!-- Rating/Trust Filters -->
                         <div *ngIf="checkCompTrustCatCount()>0">
 
                             <div class="pointer" (click)="showTrustSection=!showTrustSection">
@@ -516,8 +521,9 @@
                 <!-- Results -->
                 <div class="col-8 row pr-0">
 
-                    <!-- Product results -->
-                    <div *ngFor="let result of response;let ind=index" class="pr-0" [ngClass]="{'col-12':display=='list','col-4':display=='panel'}">
+                    <!-- Search results -->
+                    <div *ngFor="let result of searchResults;let ind=index" class="pr-0" [ngClass]="{'col-12':display=='list','col-4':display=='panel'}">
+                        <!-- Product results -->
                         <div *ngIf="result.uri != null && searchTopic=='prod'" class="card pointer mb-3">
                             <a class="text-std" [href]="getProdLink(result)" (click)="onSearchResultClicked($event)">
                                 <!--<a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: result.catalogueId, id: result.manufactuerItemId}">-->
@@ -530,7 +536,7 @@
                                             <input type="checkbox" [checked]="productSelected(result.uri)" (click)="$event.preventDefault();  $event.stopPropagation(); productSelect.click();">
                                         </div>
                                         <div class="align-center" [ngClass]="{'col-2':display=='list','col-12 pb-1':display=='panel'}">
-                                            <img src="{{imageMap[result.uri]}}" class="thumb" onerror="this.src='assets/empty_img.png';" />
+                                            <img src="{{productImageMap[result.uri]}}" class="thumb" onerror="this.src='assets/empty_img.png';" />
                                         </div>
                                         <div [ngClass]="{'col-6':display=='list'&&pageRef!=='publish','col-5':display=='list'&&pageRef==='publish','col-12 pt-1 pb-1':display=='panel'}">
                                             <div style="max-height:1.5rem;overflow:hidden">
@@ -540,7 +546,7 @@
                                                 <span *ngIf="result.description" [title]="getMultilingualLabel(result[product_description])"><small>{{getMultilingualLabel(result[product_description])}}</small></span>
                                             </div>
                                         </div>
-                                        <!-- Price -->
+                                        <!-- Price and Add Shopping Cart button-->
                                         <ng-container *ngIf="isLoggedIn">
                                             <div [ngClass]="{'col-2 border-right':display=='list','col-12 border-bottom pt-1 pb-2':display=='panel'}">
                                                 <!-- Price is available -->
@@ -568,6 +574,7 @@
                                                 </ng-container>
                                             </div>
                                         </ng-container>
+                                        <!--  Vendor name and ratings-->
                                         <div *ngIf="result[product_vendor]" [ngClass]="{'col-2':display=='list','col-12 pt-2':display=='panel'}">
                                             <div style="overflow:hidden">
                                                 <span *ngIf="result[product_vendor][product_vendor_brand_name]" [title]="result[product_vendor][product_vendor_name]">{{ getMultilingualLabel(result[product_vendor][product_vendor_brand_name]) }}</span>
@@ -645,6 +652,7 @@
                                                 <span *ngIf="companyInformationInSearchResult == 'BusinessKeywords' && result.businessKeywords" [title]="getMultilingualLabel(result.businessKeywords)"><small>{{getMultilingualLabel(result.businessKeywords)}}</small></span>
                                             </div>
                                         </div>
+                                        <!-- Ratings -->
                                         <div [ngClass]="{'col-2':display=='list','col-12 pt-2':display=='panel'}">
                                             <div *ngIf="!checkNaN(result[product_vendor_rating])" [title]="getRatingSummaryForCompany(result)">
                                                 <ngb-rating [rate]="calcRating(result[product_vendor_rating],1)" [readonly]="true" max="5">
@@ -690,6 +698,7 @@
 
                     </div>
 
+                    <!-- Pagination -->
                     <div *ngIf="size>0" class="justify-content-center pagination col-12 pr-0">
                         <ngb-pagination [(collectionSize)]="size" [(page)]="page" [pageSize]="rows" [maxSize]="5" [boundaryLinks]="true" (pageChange)="get(objToSubmit)"></ngb-pagination>
                     </div>
