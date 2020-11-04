@@ -68,15 +68,15 @@
 
         <!-- catalogue, product service counts -->
         <div *ngIf="catalogueCount && productCount" class="d-flex justify-content-center text-center">
-            <div class="product-stat" (click)="scroll(categoryRow)">
+            <div class="product-stat">
                 <div>{{catalogueCount}}</div>
                 {{'Catalogues' | translate}}
             </div>
-            <div class="product-stat" (click)="scroll(categoryRow)">
+            <div class="product-stat">
                 <div>{{productCount}}</div>
                 {{'Products' | translate}}
             </div>
-            <div class="product-stat" (click)="scroll(categoryRow)">
+            <div class="product-stat">
                 <div>{{serviceCount}}</div>
                 {{'Services' | translate}}
             </div>
