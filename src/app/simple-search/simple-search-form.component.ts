@@ -184,6 +184,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        window.scrollTo(0, 0);
         this.appComponent.translate.get(['Other']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
             this.translations = res;
         });
