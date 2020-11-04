@@ -148,6 +148,45 @@ export const config = {
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": true,
     "networkEnabled": false,
+    "paymentMeans": [
+        "Credit Card",
+        "ACH Transfer",
+        "Transfer",
+        "Direct debit",
+        "Bank check",
+        "Check / Promissory note",
+        "Confirming",
+        "Cash",
+        "Paypal",
+        "Bizum"
+    ],
+    "paymentTerms": [
+        {
+            id: "Payment_In_Advance",
+            name: "Payment in advance",
+            abbreviation: "PIA"
+        },
+        {
+            id: "End_of_month",
+            name: "End of month",
+            abbreviation: "EOM"
+        },
+        {
+            id: "Cash_on_delivery",
+            name: "Cash on delivery",
+            abbreviation: "COD"
+        },
+        {
+            id: "Payment_in_cash",
+            name: "Payment in cash",
+            abbreviation: "PIC"
+        },
+        {
+            id: "Deferred_payment",
+            name: "Deferred payment",
+            abbreviation: ""
+        },
+    ],
     "permanentWelcomeTab": true,
     "phoneNumberRequired": true,
     "productServiceFiltersEnabled":false,

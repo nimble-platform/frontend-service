@@ -78,6 +78,7 @@ import { Contract } from './publish/contract';
 import { Address as UserMgmtAddress } from '../../user-mgmt/model/address';
 import { OrderLineReference } from './publish/order-line-reference';
 import { Catalogue } from './publish/catalogue';
+import {config} from '../../globals';
 
 export class UBLModelUtils {
 
@@ -387,18 +388,16 @@ export class UBLModelUtils {
     }
 
     public static getDefaultPaymentTerms(settings?: CompanyNegotiationSettings): PaymentTerms {
-        const terms = new PaymentTerms([
-            new TradingTerm("Payment_In_Advance", [new Text("Payment in advance")], "PIA", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
-            // new TradingTerm("Values_Net","e.g.,NET 10,payment 10 days after invoice date","Net %s",[null]),
-            new TradingTerm("End_of_month", [new Text("End of month")], "EOM", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
-            new TradingTerm("Cash_next_delivery", [new Text("Cash next delivery")], "CND", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
-            new TradingTerm("Cash_before_shipment", [new Text("Cash before shipment")], "CBS", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
-            // new TradingTerm("Values_MFI","e.g.,21 MFI,21st of the month following invoice date","%s MFI", [null]),
-            // new TradingTerm("Values_/NET","e.g.,1/10 NET 30,1% discount if payment received within 10 days otherwise payment 30 days after invoice date","%s/%s NET %s",[null,null,null]),
-            new TradingTerm("Cash_on_delivery", [new Text("Cash on delivery")], "COD", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
-            new TradingTerm("Cash_with_order", [new Text("Cash with order")], "CWO", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
-            new TradingTerm("Cash_in_advance", [new Text("Cash in advance")], "CIA", new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)),
-        ]);
+        // available payment terms from the global config
+        let availablePaymentTerms = config.paymentTerms;
+        // trading terms to be created using the available payment terms
+        let tradingTerms:TradingTerm[] = [];
+
+        for(let paymentTerm of availablePaymentTerms){
+            tradingTerms.push(new TradingTerm(paymentTerm.id, [new Text(paymentTerm.name)], paymentTerm.abbreviation, new MultiTypeValue(null, 'STRING', [new Text("false")], null, null)))
+        }
+        // default payment terms
+        const terms = new PaymentTerms(tradingTerms);
 
         if (settings) {
             for (const term of terms.tradingTerms) {
@@ -416,7 +415,9 @@ export class UBLModelUtils {
     }
 
     private static tradingTermToString(term: TradingTerm): string {
-        return term.tradingTermFormat + " - " + term.description[0].value;
+        if(term.tradingTermFormat)
+            return term.tradingTermFormat + " - " + term.description[0].value;
+        return term.description[0].value;
     }
 
     private static getDefaultPaymentMeans(settings: CompanyNegotiationSettings): PaymentMeans {
