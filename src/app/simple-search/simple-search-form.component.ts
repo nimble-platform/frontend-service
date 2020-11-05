@@ -924,21 +924,24 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                     let delimiterIndex = brandName.indexOf('@');
                     let languageId = brandName.substring(0, delimiterIndex);
                     brandName = brandName.substring(delimiterIndex + 1);
-                    options.push({
-                        'name': brandName,
-                        'realName': brandName,
-                        'count': count,
-                        'languageId': languageId
-                    });
                     total += count;
                     let name = 'manufacturer.' + languageId + '_brandName';
+                    let isValueSelected = false;
                     if (this.checkFacet(name, brandName)) {
                         selected = true;
+                        isValueSelected = true;
                     }
                     let fq = 'manufacturer.' + languageId + '_brandName';
                     if (facetQueries.indexOf(fq) != -1) {
                         inFacetQuery = true;
                     }
+                    options.push({
+                        'name': brandName,
+                        'realName': brandName,
+                        'count': count,
+                        'languageId': languageId,
+                        "selected": isValueSelected
+                    });
                 }
             });
             if (total == 0) {
@@ -993,15 +996,18 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                     }
 
                     if (facet_innerLabel != '' && facet_innerLabel != ':' && facet_innerLabel != ' ' && facet_innerLabel.indexOf('urn:oasis:names:specification:ubl:schema:xsd') == -1) {
+                        total += facetCount;
+                        let isValueSelected = false;
+                        if (this.checkFacet(name, facet_inner.label)) {
+                            selected = true;
+                            isValueSelected = true;
+                        }
                         options.push({
                             'name': facet_inner.label,
                             'realName': facet.endsWith("activitySectors") ? this.translate.instant(facet_innerLabel) : facet_innerLabel, // use the translation of activity sector
-                            'count': facetCount
+                            'count': facetCount,
+                            'selected': isValueSelected
                         });
-                        total += facetCount;
-                        if (this.checkFacet(name, facet_inner.label)) {
-                            selected = true;
-                        }
                     }
                 }
 
@@ -1095,16 +1101,19 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                                 }
 
                                 if (facet_innerLabel != '' && facet_innerLabel != ':' && facet_innerLabel != ' ' && facet_innerLabel.indexOf('urn:oasis:names:specification:ubl:schema:xsd') == -1) {
+                                    facetObj.total += facet_innerCount;
+                                    let isValueSelected = false;
+                                    if (this.checkFacet(facetObj.name, facet_inner.label)) {
+                                        facetObj.selected = true;
+                                        isValueSelected = true;
+                                    }
                                     facetObj.options.push({
                                         'name': facet_inner.label, // the label with the language id, if there is any
                                         'realName': facet_innerLabel + ' ' + unit, // the displayed label
                                         'count': facet_innerCount,
-                                        'unit': unit // unit
+                                        'unit': unit, // unit
+                                        'selected': isValueSelected
                                     });
-                                    facetObj.total += facet_innerCount;
-                                    if (this.checkFacet(facetObj.name, facet_inner.label)) {
-                                        facetObj.selected = true;
-                                    }
                                 }
                             }
 
@@ -1138,16 +1147,19 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                                 }
 
                                 if (facet_innerLabel != '' && facet_innerLabel != ':' && facet_innerLabel != ' ' && facet_innerLabel.indexOf('urn:oasis:names:specification:ubl:schema:xsd') == -1) {
+                                    this.facetList[index].total += facet_innerCount;
+                                    let isValueSelected = false;
+                                    if (this.checkFacet(this.facetList[index].name, facet_inner.label)) {
+                                        this.facetList[index].selected = true;
+                                        isValueSelected = true;
+                                    }
                                     this.facetList[index].options.push({
                                         'name': facet_inner.label, // the label with the language id, if there is any
                                         'realName': facet_innerLabel + ' ' + unit, // the displayed label
                                         'count': facet_innerCount,
-                                        'unit': unit
+                                        'unit': unit,
+                                        'selected': isValueSelected
                                     });
-                                    this.facetList[index].total += facet_innerCount;
-                                    if (this.checkFacet(this.facetList[index].name, facet_inner.label)) {
-                                        this.facetList[index].selected = true;
-                                    }
                                 }
                             }
 
@@ -1217,15 +1229,18 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                     }
 
                     if (facet_innerLabel != '' && facet_innerLabel != ':' && facet_innerLabel != ' ' && facet_innerLabel.indexOf('urn:oasis:names:specification:ubl:schema:xsd') == -1) {
+                        this.facetList[index].total += facet_innerCount;
+                        let isValueSelected = false;
+                        if (this.checkFacet(this.facetList[index].name, facet_inner.label)) {
+                            this.facetList[index].selected = true;
+                            isValueSelected = true;
+                        }
                         this.facetList[index].options.push({
                             'name': facet_inner.label, // the label with the language id, if there is any
                             'realName': facet.endsWith("activitySectors") ? this.translate.instant(facet_innerLabel) : facet_innerLabel, // the displayed label,  use the translation of activity sector
-                            'count': facet_innerCount
+                            'count': facet_innerCount,
+                            'selected': isValueSelected
                         });
-                        this.facetList[index].total += facet_innerCount;
-                        if (this.checkFacet(this.facetList[index].name, facet_inner.label)) {
-                            this.facetList[index].selected = true;
-                        }
                     }
                 }
                 this.sortFacetObj(this.facetList[index]);
@@ -1760,13 +1775,9 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         this.get(this.objToSubmit);
     }
 
-    checkFacet(outer: string, inner: string, languageId?: string): boolean {
+    checkFacet(outer: string, inner: string): boolean {
         let match = false;
         let fq = outer + ':"' + inner + '"';
-        // language id is available only for the brand name facet
-        if (languageId) {
-            fq = 'manufacturer.' + languageId + '_brandName:"' + inner + '"';
-        }
         if (this.facetQuery.indexOf(fq) != -1) {
             match = true;
         }
@@ -2099,6 +2110,19 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                     // uncollapse the filter if it has selected facets
                     if(facet.selected){
                         this.productOtherFilter.isCollapsed = false;
+                    }
+                }
+
+                // each facet displays the first "maxFacets" values and then it shows the rest if it is expanded
+                // make it expanded if the selected value is not at the top "maxFacets" results
+                if(facet.selected){
+                    // find the last index of selected value
+                    var index = facet.options.slice().reverse().findIndex(value => value.selected == true);
+                    var count = facet.options.length - 1;
+                    var finalIndex = index >= 0 ? count - index : index;
+                    // expand the facet if required
+                    if(finalIndex >= this.maxFacets){
+                        facet.expanded = true;
                     }
                 }
             }
