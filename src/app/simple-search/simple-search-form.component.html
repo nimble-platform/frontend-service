@@ -555,7 +555,7 @@
                                                         <ng-container *ngIf="result[product_base_quantity] > 1">
                                                             <span>{{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}</span>
                                                             <span [innerHTML]="'per' | translate"></span>
-                                                            <span>{{result[product_base_quantity]}} {{result[product_base_quantity_unit]}}</span>
+                                                            <span>{{result[product_base_quantity]}} {{result[product_base_quantity_unit] | translate}}</span>
                                                         </ng-container>
                                                         <span *ngIf="!result[product_base_quantity] || result[product_base_quantity] === 1">
                                                             {{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}
