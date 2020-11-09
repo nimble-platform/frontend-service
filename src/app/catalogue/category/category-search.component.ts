@@ -20,9 +20,7 @@ import { Category } from "../model/category/category";
 import { CategoryService } from "./category.service";
 import { CookieService } from "ng2-cookies";
 import { UserService } from "../../user-mgmt/user.service";
-import { CatalogueService } from "../catalogue.service";
 import { PublishService } from "../publish-and-aip.service";
-import { ProductPublishComponent } from "../publish/product-publish.component";
 import { CallStatus } from "../../common/call-status";
 import { sanitizeDataTypeName, selectPreferredName, selectPreferredValues } from '../../common/utils';
 import { ParentCategories } from "../model/category/parent-categories";
@@ -92,10 +90,6 @@ export class CategorySearchComponent implements OnInit {
     scrollToDivId = null;
     // stores the parents of the selected category. We need this since changing parentCategories in tree view results in some problems.
     pathToSelectedCategories:ParentCategories = null;
-    // service root category uris for the taxonomies
-    serviceRootCategories: string[];
-    // whether the item to be published has any service categories
-    hasServiceCategories:boolean = null;
 
     constructor(
         private router: Router,
@@ -143,10 +137,6 @@ export class CategorySearchComponent implements OnInit {
             }
             this.getRootCategories();
         });
-        // get service categories for available taxonomies
-        this.categoryService.getServiceCategoriesForAvailableTaxonomies().then(result => {
-            this.serviceRootCategories = result;
-        })
     }
 
     /**
@@ -155,15 +145,9 @@ export class CategorySearchComponent implements OnInit {
     disableCategorySelection(){
         // if there are some selected categories, enable the selection iff the type of category (i.e, Product or Service) is the same with the others
         if(this.categoryService.selectedCategories.length !== 0){
-            let isServiceCategory = false;
-            for(let parentCategory of this.pathToSelectedCategories.parents){
-                if(this.serviceRootCategories.indexOf(parentCategory.id) != -1){
-                    isServiceCategory = true;
-                    break;
-                }
-            }
+            let isServiceCategory = this.categoryService.isServiceCategory(this.pathToSelectedCategories.parents);
 
-            return !((this.hasServiceCategories && isServiceCategory) || (!this.hasServiceCategories && !isServiceCategory));
+            return !((this.categoryService.hasServiceCategories && isServiceCategory) || (!this.categoryService.hasServiceCategories && !isServiceCategory));
         }
         // if no category is selected, enable the selection
         return false;
@@ -422,18 +406,7 @@ export class CategorySearchComponent implements OnInit {
             throw new Error("Inconsistent state: can only select the details category.");
         }
 
-        // set hasServiceCategories field properly when the first category is selected
-        if(this.categoryService.selectedCategories.length == 0){
-            this.hasServiceCategories = false;
-            for(let parentCategory of this.pathToSelectedCategories.parents){
-                if(this.serviceRootCategories.indexOf(parentCategory.id) != -1){
-                    this.hasServiceCategories = true;
-                    break;
-                }
-            }
-        }
-
-        this.categoryService.addSelectedCategory(category);
+        this.categoryService.addSelectedCategory(category,this.pathToSelectedCategories.parents);
         this.selectedCategories.push(category);
     }
 
