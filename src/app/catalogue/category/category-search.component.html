@@ -172,7 +172,7 @@
                         <div *ngIf="isLogistics">
                             <!--<h4 class="p-2">Logistics Categories</h4>-->
                             <ng-container *ngIf="logisticsCategory && !getCategoriesStatus.isDisplayed()">
-                                <category-tree [category]="logisticsCategory" [border]="false" [parentCategories]="parentCategories" [numberOfSteps]="parentCategories ? parentCategories.parents.length-1 : 0" (detailsEvent)="getCategoryDetails($event,false)" [selectedCategory]="selectedCategory" [selectedCategories]="selectedCategories" [scrollToDivId]="scrollToDivId" [selectedPath]="pathToSelectedCategories" [loadingStatus]="getCategoryDetailsStatus.isDisplayed()"></category-tree>
+                                <category-tree [category]="logisticsCategory" [border]="false" [parentCategories]="parentCategories" [numberOfSteps]="parentCategories ? parentCategories.parents.length-1 : 0" (detailsEvent)="getCategoryDetails($event,false)" [selectedCategory]="selectedCategory" [selectedCategories]="categoryService.selectedCategories" [scrollToDivId]="scrollToDivId" [selectedPath]="pathToSelectedCategories" [loadingStatus]="getCategoryDetailsStatus.isDisplayed()"></category-tree>
                             </ng-container>
                             <div *ngIf="!logisticsCategory && !getCategoriesStatus.isDisplayed()" class="py-2 d-flex" style="padding-left:1rem"><span [innerHTML]="'No available category' | translate"></span></div>
                         </div>
@@ -182,7 +182,7 @@
                             <!--<h4 class="p-2">Product Categories</h4>-->
                             <ng-container *ngIf="rootCategories && !getCategoriesStatus.isDisplayed()">
                                 <div *ngFor="let rootCategory of rootCategories">
-                                    <category-tree [category]="rootCategory" [parentCategories]="parentCategories" [numberOfSteps]="parentCategories ? parentCategories.parents.length-1 : 0" (detailsEvent)="getCategoryDetails($event,false)" [selectedCategory]="selectedCategory" [selectedCategories]="selectedCategories" [scrollToDivId]="scrollToDivId" [selectedPath]="pathToSelectedCategories" [loadingStatus]="getCategoryDetailsStatus.isDisplayed()"></category-tree>
+                                    <category-tree [category]="rootCategory" [parentCategories]="parentCategories" [numberOfSteps]="parentCategories ? parentCategories.parents.length-1 : 0" (detailsEvent)="getCategoryDetails($event,false)" [selectedCategory]="selectedCategory" [selectedCategories]="categoryService.selectedCategories" [scrollToDivId]="scrollToDivId" [selectedPath]="pathToSelectedCategories" [loadingStatus]="getCategoryDetailsStatus.isDisplayed()"></category-tree>
                                 </div>
                             </ng-container>
                             <div *ngIf="!rootCategories && !getCategoriesStatus.isDisplayed()" class="py-2 d-flex" style="padding-left:1rem"><span [innerHTML]="'No available category' | translate"></span></div>
@@ -208,10 +208,10 @@
                 <h4 class="font-weight-bold" *ngIf="!selectedCategoryWithDetails"><span [innerHTML]="'Details' | translate"></span></h4>
                 <h4 class="font-weight-bold pr-2 mr-auto" *ngIf="selectedCategoryWithDetails"><span [innerHTML]="'Details for' | translate"></span> {{selectPreferredName(selectedCategoryWithDetails)}}</h4>
                 <div *ngIf="selectedCategoryWithDetails">
-                    <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) === -1" class="btn btn-outline-primary float-right" (click)="addCategoryToSelected(selectedCategoryWithDetails)" [disabled]="disableCategorySelection()" [title]="(disableCategorySelection() ? 'You can not mix product and service categories for an item' : '')|translate">
+                    <button *ngIf="findCategoryInArray(categoryService.selectedCategories, selectedCategoryWithDetails) === -1" class="btn btn-outline-primary float-right" (click)="addCategoryToSelected(selectedCategoryWithDetails)" [disabled]="disableCategorySelection()" [title]="(disableCategorySelection() ? 'You can not mix product and service categories for an item' : '')|translate">
                         <span [innerHTML]="'Select Category' | translate"></span>
                     </button>
-                    <button *ngIf="findCategoryInArray(selectedCategories, selectedCategoryWithDetails) > -1" class="btn btn-danger float-right" (click)="removeCategoryFromSelected(selectedCategoryWithDetails)">
+                    <button *ngIf="findCategoryInArray(categoryService.selectedCategories, selectedCategoryWithDetails) > -1" class="btn btn-danger float-right" (click)="removeCategoryFromSelected(selectedCategoryWithDetails)">
                         <span [innerHTML]="'Unselect Category' | translate"></span>
                     </button>
                     <br />

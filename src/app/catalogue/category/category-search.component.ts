@@ -69,7 +69,6 @@ export class CategorySearchComponent implements OnInit {
     rootCategories: Category[];
 
     selectedCategory: Category = null;
-    selectedCategories: Category[] = [];
     selectedCategoryWithDetails: Category = null;
     selectedCategoriesWRTLevels = [];
     propertyNames: string[] = ["code", "taxonomyId", "level", "definition", "note", "remark"];
@@ -407,22 +406,17 @@ export class CategorySearchComponent implements OnInit {
         }
 
         this.categoryService.addSelectedCategory(category,this.pathToSelectedCategories.parents);
-        this.selectedCategories.push(category);
     }
 
     removeCategoryFromSelected(category: Category): void {
         let index = this.findCategoryInArray(this.categoryService.selectedCategories, category);
         if (index > -1) {
             this.categoryService.selectedCategories.splice(index, 1);
-            let searchIndex = this.findCategoryInArray(this.selectedCategories, category);
-            if (searchIndex > -1) {
-                this.selectedCategories.splice(searchIndex, 1);
-            }
         }
     }
 
     navigateToPublishingPage(): void {
-        this.addRecentCategories(this.selectedCategories);
+        this.addRecentCategories(this.categoryService.selectedCategories);
         // ProductPublishComponent.dialogBox = true;
         this.router.navigate(["catalogue/publish"], { queryParams: { pg: this.publishingGranularity, productType: this.productType } });
     }
