@@ -616,6 +616,24 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
+    /**
+     * Retrieves the catalogue identifiers for the catalogue filter using the catalogue uuids
+     * @param uuids
+     */
+    getCatalogueIds(uuids: string[]): Promise<any> {
+        let url = this.baseUrl + `/catalogue/ids?catalogueUuids=${encodeURIComponent(uuids.join(','))}`;
+        return this.http
+            .get(url, { headers: this.getAuthorizedHeaders() })
+            .toPromise()
+            .then(res => {
+                // transform the result in the form of [{'uuid':'x', 'id':'y'}] to {'x':'y'}
+                const resp = {};
+                res.json().forEach(pair => resp[pair.uuid] = pair.id);
+                return resp;
+            })
+            .catch(this.handleError);
+    }
+
     getTaxRates(): Promise<any> {
         const url = `https://raw.githubusercontent.com/ibericode/vat-rates/master/vat-rates.json`;
         return this.http

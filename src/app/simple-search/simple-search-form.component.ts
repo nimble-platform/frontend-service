@@ -103,6 +103,10 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     showTrustSection = false;
 
     // filters for product and company search
+    // catalogue filter
+    catalogueFilter: Filter = null;
+    // catalogue uuid - id pairs in the form of {'uuid':'id', 'uuid2':'id2'}
+    catalogueIds: any = null;
     // product/service filters
     productFilter:Filter = null;
     // vendor filters for product search
@@ -932,7 +936,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                     });
                     total += count;
                     let name = 'manufacturer.' + languageId + '_brandName';
-                    if (this.checkFacet(name, brandName)) {
+                    if (this.isFacetValueSelected(name, brandName)) {
                         selected = true;
                     }
                     let fq = 'manufacturer.' + languageId + '_brandName';
@@ -999,7 +1003,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                             'count': facetCount
                         });
                         total += facetCount;
-                        if (this.checkFacet(name, facet_inner.label)) {
+                        if (this.isFacetValueSelected(name, facet_inner.label)) {
                             selected = true;
                         }
                     }
@@ -1102,7 +1106,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                                         'unit': unit // unit
                                     });
                                     facetObj.total += facet_innerCount;
-                                    if (this.checkFacet(facetObj.name, facet_inner.label)) {
+                                    if (this.isFacetValueSelected(facetObj.name, facet_inner.label)) {
                                         facetObj.selected = true;
                                     }
                                 }
@@ -1145,7 +1149,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                                         'unit': unit
                                     });
                                     this.facetList[index].total += facet_innerCount;
-                                    if (this.checkFacet(this.facetList[index].name, facet_inner.label)) {
+                                    if (this.isFacetValueSelected(this.facetList[index].name, facet_inner.label)) {
                                         this.facetList[index].selected = true;
                                     }
                                 }
@@ -1223,7 +1227,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                             'count': facet_innerCount
                         });
                         this.facetList[index].total += facet_innerCount;
-                        if (this.checkFacet(this.facetList[index].name, facet_inner.label)) {
+                        if (this.isFacetValueSelected(this.facetList[index].name, facet_inner.label)) {
                             this.facetList[index].selected = true;
                         }
                     }
@@ -1760,7 +1764,13 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         this.get(this.objToSubmit);
     }
 
-    checkFacet(outer: string, inner: string, languageId?: string): boolean {
+    /**
+     * Checks the given facet value is selected (i.e. included in the facet query)
+     * @param outer corresponds to facet name
+     * @param inner corresponds to facet value
+     * @param languageId
+     */
+    isFacetValueSelected(outer: string, inner: string, languageId?: string): boolean {
         let match = false;
         let fq = outer + ':"' + inner + '"';
         // language id is available only for the brand name facet
@@ -2066,9 +2076,19 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         this.productVendorFilter = new Filter();
         this.productOtherFilter = new Filter();
         this.companyFilter = new Filter();
+        this.catalogueFilter = new Filter();
         // add each facet to proper filter
         for(let facet of this.facetList){
             if(facet.total > 0){
+                if (facet.name === 'catalogueId') {
+                    this.catalogueFilter.facets.push(facet);
+                    this.catalogueService.getCatalogueIds(facet.options.map(opt => opt.name)).then(ids => {
+                        this.catalogueIds = ids;
+                    });
+                    if(facet.selected){
+                        this.catalogueFilter.isCollapsed = false;
+                    }
+                }
                 if(this.checkProdCat(facet.name)){
                     // add facet
                     this.productFilter.facets.push(facet);
@@ -2103,5 +2123,20 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 }
             }
         }
+    }
+
+    /**
+     * Checks whether a facet identifying a specific company such brand name or legal name is selected
+     */
+    isCompanySpecificFacetSelected(): boolean {
+        for (let fq of this.facetQuery) {
+            for (let companyFacet of myGlobals.party_identifying_regex_filters) {
+                const facet: string = fq;
+                if (facet.search(companyFacet) === 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
