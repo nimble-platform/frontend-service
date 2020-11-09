@@ -66,6 +66,7 @@ export const config = {
     "platformNameInMail":"NIMBLE",
     "envName": "k8s",
     "addCartBehaviour": "single",
+    "catalogExchangeEnabled": false,
     "companyRegistrationRequired": false,
     "categoryFilter": {
         "eClass": {

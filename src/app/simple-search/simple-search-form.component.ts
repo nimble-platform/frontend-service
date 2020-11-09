@@ -22,7 +22,7 @@ import * as myGlobals from '../globals';
 import {SearchContextService} from './search-context.service';
 import {Observable, Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map, switchMap} from 'rxjs/operators';
-import {copy, roundToTwoDecimals, selectNameFromLabelObject} from '../common/utils';
+import {copy, getPropertyKey, roundToTwoDecimals, selectNameFromLabelObject} from '../common/utils';
 import {CallStatus} from '../common/call-status';
 import {CURRENCIES, DEFAULT_LANGUAGE} from '../catalogue/model/constants';
 import {CategoryService} from '../catalogue/category/category.service';
@@ -170,6 +170,14 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     // keeps the user's login state
     private isLoggedIn: boolean;
 
+    // fields for catalogue exchange functionality
+    catalogueExchangeEnabled = myGlobals.config.catalogExchangeEnabled;
+    // keeps the uuid of catalogue selected from the catalogue id filter
+    selectedCatalogueUuidFromCatalogIdFilter:string = null;
+    requestForCatalogExchangeDetails:string;
+    requestForCatalogExchangeCallStatus:CallStatus = new CallStatus();
+    // end of fields for catalogue exchange functionality
+
     constructor(private simpleSearchService: SimpleSearchService,
                 private searchContextService: SearchContextService,
                 private categoryService: CategoryService,
@@ -290,6 +298,13 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             }
             this.searchContext = !!searchContext;
             this.rows = rows;
+            // set the uuid of catalogue selected from the catalogue id filter if catalogue id query exists
+            if(fq){
+                let catalogueIdFilterQuery = fq.find(fq => fq.startsWith("catalogueId:"));
+                if(catalogueIdFilterQuery){
+                    this.selectedCatalogueUuidFromCatalogIdFilter = catalogueIdFilterQuery.substring("catalogueId:".length).replace(new RegExp("\"", 'g'), "");
+                }
+            }
             if (q && sTop) {
                 if (sTop == 'prod') {
                     this.getCall(q, fq, p, sort, cat, catID, sIdx, sTop);
@@ -2163,4 +2178,26 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         }
         return false;
     }
+
+    // methods for catalogue exchange functionality
+
+    /**
+     * Opens the modal for catalogue exchange request
+     * */
+    showRequestCatalogueExchangeModal(modal: any) {
+        this.modalService.open(modal);
+    }
+
+    /**
+     * Sends the request for catalogue exchange
+     * */
+    requestCatalogueExchange(){
+        this.requestForCatalogExchangeCallStatus.submit();
+        this.catalogueService.requestCatalogueExchange(this.selectedCatalogueUuidFromCatalogIdFilter,this.requestForCatalogExchangeDetails).then(() => {
+            this.requestForCatalogExchangeCallStatus.callback(this.translate.instant("Requested catalogue exchange successfully"))
+        }).catch(error => {
+            this.requestForCatalogExchangeCallStatus.error(this.translate.instant("Failed to request catalogue exchange"),error);
+        })
+    }
+    // end of methods for catalogue exchange functionality
 }

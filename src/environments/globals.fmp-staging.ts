@@ -67,6 +67,7 @@ export const config = {
     "platformNameInMail":"B2BMarket",
     "envName": "fmp",
     "addCartBehaviour": "single",
+    "catalogExchangeEnabled": false,
     "companyRegistrationRequired": true,
     "categoryFilter": {
         "FurnitureOntology": {

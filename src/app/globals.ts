@@ -92,6 +92,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - platformNameInMail: Name of the instance - to be used in the mail subject/body
 - envName: Short name of the current environment
 - addCartBehaviour: If "single" a product can be added to the shopping cart once, if "multiple" it can be added multiple times
+- catalogExchangeEnabled: Boolean flag if the catalogue exchange functionality is enabled. If so, you can request catalogue exchange in the product search page when the catalogue is selected from the corresponding filter.
 - companyRegistrationRequired: Boolean flag if users need to register (or be assigned to) a company before using any platform feature
 - categoryFilter: Allows configuring the usage of different ontologies. The key is the ontology name, the value is a JSON object with the following entries:
 	* hiddenCategories: An array of top-level category IDs that will be hidden from the UI
@@ -173,6 +174,7 @@ export const config = {
     "platformNameInMail":"NIMBLE",
     "envName": "local",
     "addCartBehaviour": "single",
+    "catalogExchangeEnabled": false,
     "companyRegistrationRequired": false,
     "categoryFilter": {
         "eClass": {
