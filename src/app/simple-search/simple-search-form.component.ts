@@ -299,6 +299,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             this.searchContext = !!searchContext;
             this.rows = rows;
             // set the uuid of catalogue selected from the catalogue id filter if catalogue id query exists
+            this.selectedCatalogueUuidFromCatalogIdFilter = null;
             if(fq){
                 let catalogueIdFilterQuery = fq.find(fq => fq.startsWith("catalogueId:"));
                 if(catalogueIdFilterQuery){
@@ -2113,6 +2114,11 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                     });
                     if(facet.selected){
                         this.catalogueFilter.isCollapsed = false;
+                    }
+                    // when a company specific facet is selected and the company has only one catalogue,
+                    // set selectedCatalogueUuidFromCatalogIdFilter to its catalogue id
+                    if(this.isCompanySpecificFacetSelected() && facet.options && facet.options.length == 1){
+                        this.selectedCatalogueUuidFromCatalogIdFilter = facet.options[0].realName;
                     }
                 }
                 if(this.checkProdCat(facet.name)){
