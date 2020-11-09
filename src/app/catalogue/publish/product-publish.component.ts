@@ -103,7 +103,6 @@ export class ProductPublishComponent implements OnInit {
      */
 
     publishMode: PublishMode;
-    selectedCategories: Category[];
     publishStatus: CallStatus = new CallStatus();
     publishingGranularity: "single" | "bulk" = "single";
     productCategoryRetrievalStatus: CallStatus = new CallStatus();
@@ -210,7 +209,6 @@ export class ProductPublishComponent implements OnInit {
             this.translations = res;
         });
         ProductPublishComponent.dialogBox = true;
-        this.selectedCategories = this.categoryService.selectedCategories;
         // TODO: asych calls like below should have proper chain.
         // E.g. the below line is expected to be called upon a change in the query params.
         this.getCatagloueIdsForParty();
@@ -406,7 +404,7 @@ export class ProductPublishComponent implements OnInit {
      * */
     handleRequiredProperties(){
         // traverse the selected categories to find out the mandatory properties
-        for(let category of this.selectedCategories){
+        for(let category of this.categoryService.selectedCategories){
             for(let property of category.properties){
                 if(property.required){
                     // if the catalogue line does not include the required property, add it
@@ -485,7 +483,7 @@ export class ProductPublishComponent implements OnInit {
         this.selectedProperties = {};
         const newSelectedProps = this.selectedProperties;
 
-        for (const category of this.selectedCategories) {
+        for (const category of this.categoryService.selectedCategories) {
             if (category.properties) {
                 for (const property of category.properties) {
                     const key = getPropertyKey(property);

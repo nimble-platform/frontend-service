@@ -47,7 +47,7 @@
     </div>
     <div class="col-10 ">
         <div class="object-list">
-            <div *ngFor="let selectedCategory of selectedCategories" class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
+            <div *ngFor="let selectedCategory of categoryService.selectedCategories" class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
                 <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
                 <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
             </div>
@@ -71,7 +71,7 @@
 </div>
 
 <div *ngIf="publishingGranularity === 'bulk'">
-    <bulk-publish [selectCategories]="selectedCategories">
+    <bulk-publish [selectCategories]="categoryService.selectedCategories">
     </bulk-publish>
 </div>
 
@@ -348,7 +348,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-category" *ngFor="let category of selectedCategories; let i = index">
+                <div class="modal-category" *ngFor="let category of categoryService.selectedCategories; let i = index">
                     <hr *ngIf="i > 0">
                     <h5>{{ selectPreferredName(category) }}</h5>
                     <div class="row">
@@ -368,7 +368,7 @@
                         </ng-container>
                     </div>
                 </div>
-                <div *ngIf="selectedCategories.length > 0" class="row">
+                <div *ngIf="categoryService.selectedCategories.length > 0" class="row">
                     <div class="col-12">
                         <hr>
                     </div>
@@ -379,7 +379,7 @@
                         <a href class="btn-link" (click)="onAddCustomProperty($event, d)"><span [innerHTML]="'Create a custom property' | translate"></span></a>.
                     </div>
                 </div>
-                <div *ngIf="selectedCategories.length === 0" class="row">
+                <div *ngIf="categoryService.selectedCategories.length === 0" class="row">
                     <div class="col-12">
                         <span [innerHTML]="'No categories to pick properties from' | translate"></span> <br>
                         <a href class="btn-link" (click)="onAddCategory($event, d)"><span [innerHTML]="'Add more categories to this product / service' | translate"></span></a>
