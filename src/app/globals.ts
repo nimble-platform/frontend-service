@@ -124,6 +124,8 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - federationLogoPath: Link to the logo of the federated login
 - logoRequired: Boolean flag if the submission of a company logo is required upon registration
 - networkEnabled: Boolean flag if the network functionality is enabled
+- paymentMeans: Array of payment means
+- paymentTerms: Array of payment terms
 - permanentWelcomeTab: Boolean flag if the welcome page is permanent
 - phoneNumberRequired: Boolean flag if the phone number of a user is required upon registration
 - productServiceFiltersEnabled: Boolean flag if there is a separate filter for the product/service properties
@@ -257,6 +259,49 @@ export const config = {
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": false,
     "networkEnabled": false,
+    "paymentMeans": [
+        "Credit Card",
+        "ACH Transfer",
+        "Wire Transfer",
+        "Cash On Delivery"
+    ],
+    "paymentTerms": [
+        {
+            id: "Payment_In_Advance",
+            name: "Payment in advance",
+            abbreviation: "PIA"
+        },
+        {
+            id: "End_of_month",
+            name: "End of month",
+            abbreviation: "EOM"
+        },
+        {
+            id: "Cash_next_delivery",
+            name: "Cash next delivery",
+            abbreviation: "CND"
+        },
+        {
+            id: "Cash_before_shipment",
+            name: "Cash before shipment",
+            abbreviation: "CBS"
+        },
+        {
+            id: "Cash_on_delivery",
+            name: "Cash on delivery",
+            abbreviation: "COD"
+        },
+        {
+            id: "Cash_with_order",
+            name: "Cash with order",
+            abbreviation: "CWO"
+        },
+        {
+            id: "Cash_in_advance",
+            name: "Cash in advance",
+            abbreviation: "CIA"
+        },
+    ],
     "permanentWelcomeTab": false,
     "phoneNumberRequired": false,
     "productServiceFiltersEnabled":true,

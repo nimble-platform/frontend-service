@@ -55,6 +55,9 @@ export class ShoppingCartSummaryModalComponent {
         for (let negotiationModelWrapper of this.negotiationModelWrappers) {
             totalPrice += negotiationModelWrapper.rfqTotal;
         }
+        if (totalPrice == 0) {
+            return this.translate.instant("On demand");
+        }
         return roundToTwoDecimals(totalPrice) + " " + this.negotiationModelWrappers[0].currency;
     }
 
@@ -63,6 +66,9 @@ export class ShoppingCartSummaryModalComponent {
         for (let negotiationModelWrapper of this.negotiationModelWrappers) {
             vatTotal += negotiationModelWrapper.rfqVatTotal;
         }
+        if (vatTotal == 0) {
+            return this.translate.instant("On demand");
+        }
         return roundToTwoDecimals(vatTotal) + " " + this.negotiationModelWrappers[0].currency;
     }
 
@@ -70,6 +76,9 @@ export class ShoppingCartSummaryModalComponent {
         let grossTotal = 0;
         for (let negotiationModelWrapper of this.negotiationModelWrappers) {
             grossTotal += negotiationModelWrapper.rfqGrossTotal;
+        }
+        if (grossTotal == 0) {
+            return this.translate.instant("On demand");
         }
         return roundToTwoDecimals(grossTotal) + " " + this.negotiationModelWrappers[0].currency;
     }

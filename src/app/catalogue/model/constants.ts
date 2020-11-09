@@ -32,12 +32,7 @@ export const INCOTERMS: string[] = [
     "FOB (Free on Board)"
 ];
 
-export const PAYMENT_MEANS: string[] = [
-    "Credit Card",
-    "ACH Transfer",
-    "Wire Transfer",
-    "Cash On Delivery"
-]
+export const PAYMENT_MEANS = myGlobals.config.paymentMeans;
 
 export const NEGOTIATION_RESPONSES = {
     ACCEPTED: "Accepted",
