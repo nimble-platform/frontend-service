@@ -2191,6 +2191,10 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
      * Opens the modal for catalogue exchange request
      * */
     showRequestCatalogueExchangeModal(modal: any) {
+        // clear the request details and reset the call status
+        this.requestForCatalogExchangeDetails = null;
+        this.requestForCatalogExchangeCallStatus.reset();
+        // open the modal
         this.modalService.open(modal);
     }
 
