@@ -635,6 +635,19 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
+    /**
+     * Sends a request (as a mail) for catalogue exchange to the catalog provider
+     * @param uuid the uuid of catalogue to be requested for the exchange
+     * @param requestDetails the details of catalogue exchange request as text
+     */
+    requestCatalogueExchange(uuid: string,requestDetails:string): Promise<any> {
+        let url = this.baseUrl + `/catalogue/exchange?catalogueUuid=${encodeURIComponent(uuid)}`;
+        return this.http
+            .post(url, requestDetails, { headers: this.getAuthorizedHeaders() })
+            .toPromise()
+            .catch(this.handleError);
+    }
+
     getTaxRates(): Promise<any> {
         const url = `https://raw.githubusercontent.com/ibericode/vat-rates/master/vat-rates.json`;
         return this.http

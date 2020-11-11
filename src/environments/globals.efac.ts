@@ -66,6 +66,7 @@ export const config = {
     "platformNameInMail":"NIMBLE",
     "envName": "efac",
     "addCartBehaviour": "single",
+    "catalogExchangeEnabled": true,
     "companyRegistrationRequired": true,
     "categoryFilter": {
         "eClass": {

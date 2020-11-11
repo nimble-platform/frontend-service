@@ -67,6 +67,7 @@ export const config = {
     "platformNameInMail":"NIMBLE",
     "envName": "ecohouse",
     "addCartBehaviour": "single",
+    "catalogExchangeEnabled": false,
     "companyRegistrationRequired": false,
     "categoryFilter": {
         "eClass": {

@@ -66,6 +66,7 @@ export const config = {
     "platformNameInMail":"NIMBLE",
     "envName": "mvp2",
     "addCartBehaviour": "single",
+    "catalogExchangeEnabled": false,
     "companyRegistrationRequired": false,
     "categoryFilter": {
         "eClass": {

@@ -122,6 +122,16 @@
                     <div class="justify-content-center pagination">
                         <ngb-pagination [(collectionSize)]="size" [(page)]="page" [pageSize]="rows" [maxSize]="5" [boundaryLinks]="true" (pageChange)="get(objToSubmit)"></ngb-pagination>
                     </div>
+                    <!-- Button for catalogue exchange request -->
+                    <ng-container *ngIf="catalogueExchangeEnabled && catalogueIds && selectedCatalogueUuidFromCatalogIdFilter">
+                        <div class="row space-after">
+                            <div class="col-8" [innerHTML]="'Would like to request catalogue exchange for'|translate:{catalogueName:catalogueIds[selectedCatalogueUuidFromCatalogIdFilter]}">
+                            </div>
+                            <div class="col-4">
+                                <div class="btn btn-primary float-right" (click)="showRequestCatalogueExchangeModal(catalogueExchangeModal)"><span [innerHTML]="'Request Catalog Exchange' | translate"></span></div>
+                            </div>
+                        </div>
+                    </ng-container>
                     <!-- Display options -->
                     <div class="form-group row">
                         <label class="col-sm-2 col-form-label"><span [innerHTML]="'Per page' | translate"></span>:</label>
@@ -755,5 +765,36 @@
         </button>
     </div>
     <div class="modal-body" [innerHTML]="tooltipHTML">
+    </div>
+</ng-template>
+
+<!-- Catalogue Exchange Request Modal -->
+<ng-template #catalogueExchangeModal let-c="close" let-d="dismiss">
+    <div class="card" style="font-size: 0.9rem">
+        <!-- Catalogue name -->
+        <div class="card-header">
+            <text-input [label]="'Catalogue Name' | translate" [text]="catalogueIds[selectedCatalogueUuidFromCatalogIdFilter]" [rows]="6" [maxLength]="2047" [rowClass]="'m-0 space-before'" [valueClass]="'col-8'" [presentationMode]="'view'">
+            </text-input>
+        </div>
+        <!-- Request Details -->
+        <div class="card-body" >
+            <!-- Description -->
+            <text-input [label]="'Request Details' | translate" [(text)]="requestForCatalogExchangeDetails" [rows]="6" [maxLength]="2047" [rowClass]="'m-0 space-before'" [valueClass]="'col-8'" [placeholder]="'Please, explain the details of your request here.'|translate" [required]="true">
+            </text-input>
+        </div>
+    </div>
+    <div class="space-after">
+        <!-- Actions -->
+        <div class="row actions-row space-before">
+            <div class="col-8 call-status-col">
+                <call-status [callStatus]="requestForCatalogExchangeCallStatus"></call-status>
+            </div>
+            <div class="col-1">
+                <button type="button" class="btn btn-secondary" (click)="d()"><span [innerHTML]="'Back' | translate"></span></button>
+            </div>
+            <div class="col-3">
+                <button class="btn btn-primary action" (click)="requestCatalogueExchange()" [disabled]="!requestForCatalogExchangeDetails || requestForCatalogExchangeCallStatus.fb_callback"><span [innerHTML]="'Send Request' | translate"></span></button>
+            </div>
+        </div>
     </div>
 </ng-template>

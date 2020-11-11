@@ -66,6 +66,7 @@ export const config = {
     "platformNameInMail":"NIMBLE",
     "envName": "fmp",
     "addCartBehaviour": "single",
+    "catalogExchangeEnabled": false,
     "companyRegistrationRequired": true,
     "categoryFilter": {
         "eClass": {
