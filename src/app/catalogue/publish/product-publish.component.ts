@@ -24,7 +24,7 @@ import { ItemProperty } from "../model/publish/item-property";
 import { FormGroup } from "@angular/forms";
 import { UBLModelUtils } from "../model/ubl-model-utils";
 import { CallStatus } from "../../common/call-status";
-import { isValidPrice } from "../../common/utils";
+import {isValidPrice, selectNameFromLabelObject} from '../../common/utils';
 import { Quantity } from "../model/publish/quantity";
 import { CategoryService } from "../category/category.service";
 import { CatalogueService } from "../catalogue.service";
@@ -76,6 +76,7 @@ import { Country } from '../model/publish/country';
 import { ValidationService } from '../../common/validation/validators';
 import { AppComponent } from "../../app.component";
 import { TranslateService } from "@ngx-translate/core";
+import {PublishingPropertyService} from './publishing-property.service';
 
 interface SelectedProperties {
     [key: string]: SelectedProperty;
@@ -102,7 +103,6 @@ export class ProductPublishComponent implements OnInit {
      */
 
     publishMode: PublishMode;
-    selectedCategories: Category[];
     publishStatus: CallStatus = new CallStatus();
     publishingGranularity: "single" | "bulk" = "single";
     productCategoryRetrievalStatus: CallStatus = new CallStatus();
@@ -193,6 +193,7 @@ export class ProductPublishComponent implements OnInit {
         public publishStateService: PublishService,
         private userService: UserService,
         private validationService: ValidationService,
+        public publishingPropertyService: PublishingPropertyService,
         private route: ActivatedRoute,
         private router: Router,
         private location: Location,
@@ -208,7 +209,6 @@ export class ProductPublishComponent implements OnInit {
             this.translations = res;
         });
         ProductPublishComponent.dialogBox = true;
-        this.selectedCategories = this.categoryService.selectedCategories;
         // TODO: asych calls like below should have proper chain.
         // E.g. the below line is expected to be called upon a change in the query params.
         this.getCatagloueIdsForParty();
@@ -398,6 +398,47 @@ export class ProductPublishComponent implements OnInit {
         return this.categoryProperties[code];
     }
 
+    /**
+     * This method handles the required properties for the selected categories.
+     * It adds the required properties as additional item properties if they do not exist in the catalogue line.
+     * */
+    handleRequiredProperties(){
+        // traverse the selected categories to find out the mandatory properties
+        for(let category of this.categoryService.selectedCategories){
+            for(let property of category.properties){
+                if(property.required){
+                    // if the catalogue line does not include the required property, add it
+                    let additionalItemProperty = this.catalogueLine.goodsItem.item.additionalItemProperty.find(selectedProperty => selectedProperty.id === property.id);
+                    if(!additionalItemProperty){
+                        additionalItemProperty = UBLModelUtils.createAdditionalItemProperty(property, category);
+                        this.catalogueLine.goodsItem.item.additionalItemProperty.push(additionalItemProperty);
+                    }
+                    // mark this property as required
+                    additionalItemProperty.required = true;
+                    // if the item property has the predefined options, continue with the next property
+                    if(additionalItemProperty.options && additionalItemProperty.options.length > 0){
+                        continue;
+                    }
+                    // get property details
+                    this.publishingPropertyService.getCachedProperty(property.uri).then(indexedProperty => {
+                        // retrieve options
+                        this.publishingPropertyService.getCachedPropertyCodeList(indexedProperty.codeListId).then(codeListResult => {
+                            // populate options for the property
+                            additionalItemProperty.options = [];
+                            for (let result of codeListResult.result) {
+                                let label = selectNameFromLabelObject(result.label);
+                                additionalItemProperty.options.push(new Text(label));
+                            }
+                            // if no value is specified for the item property, use the first option
+                            if(additionalItemProperty.value.length == 0 || !additionalItemProperty.value[0].value){
+                                additionalItemProperty.value = [copy(additionalItemProperty.options[0])];
+                            }
+                        });
+                    });
+                }
+            }
+        }
+    }
     isCategoryPropertySelected(category: Category, property: Property): boolean {
         const key = getPropertyKey(property);
         const selectedProp = this.selectedProperties[key];
@@ -442,7 +483,7 @@ export class ProductPublishComponent implements OnInit {
         this.selectedProperties = {};
         const newSelectedProps = this.selectedProperties;
 
-        for (const category of this.selectedCategories) {
+        for (const category of this.categoryService.selectedCategories) {
             if (category.properties) {
                 for (const property of category.properties) {
                     const key = getPropertyKey(property);
@@ -750,6 +791,8 @@ export class ProductPublishComponent implements OnInit {
                             }
 
                             this.recomputeSelectedProperties();
+                            // handle required properties
+                            this.handleRequiredProperties();
 
                             // populate invalidCategoryCodes array
                             let validCategoryUris = categories.map(category => category.categoryUri);
@@ -796,6 +839,8 @@ export class ProductPublishComponent implements OnInit {
         // call this function with dimension unit list to be sure that item will have some dimension
         this.multiValuedDimensions = this.productWrapper.getDimensionMultiValue(true, this.dimensions);
         this.recomputeSelectedProperties();
+        // handle required properties
+        this.handleRequiredProperties();
     }
 
     private removeInvalidCategories() {

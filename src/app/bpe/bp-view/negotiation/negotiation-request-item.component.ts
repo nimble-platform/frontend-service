@@ -556,7 +556,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
 
         if (range) {
             const unit = this.wrapper.rfqDeliveryPeriod.unitCode;
-            return this.translate.instant("min max range",{start:range.start,end:range.end,unit:unit});
+            return this.translate.instant("min max range",{start:range.start,end:range.end,unit:this.translate.instant(unit)});
         }
 
         return "";

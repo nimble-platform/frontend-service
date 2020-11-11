@@ -354,13 +354,6 @@ export class CompanyDataSettingsComponent implements OnInit {
         this.modalService.open(content);
     }
 
-    showSectorTT(content) {
-        var tooltip = "";
-        tooltip += "Hold down the Ctrl key in order to select multiple sectors";
-        this.tooltipHTML = tooltip;
-        this.modalService.open(content);
-    }
-
     showKeywordsTT(content) {
         this.tooltipHTML = this.translate.instant("Business Keyword Tool Tip");
         this.modalService.open(content);

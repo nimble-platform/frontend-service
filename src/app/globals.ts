@@ -45,6 +45,7 @@ export const frontendURL = base_path + "/frontend/";
 
 export const user_mgmt_endpoint = `${base_path}/identity`;
 export const catalogue_endpoint = `${base_path}/catalog`;
+export const catalogue_endpoint_with_zuul = `${base_path}/zuul/catalog`;
 export const bpe_endpoint = `${base_path}/business-process`;
 export const data_channel_endpoint = `${base_path}/data-channel`;
 export const data_aggregation_endpoint = `${base_path}/data-aggregation`;
@@ -91,6 +92,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - platformNameInMail: Name of the instance - to be used in the mail subject/body
 - envName: Short name of the current environment
 - addCartBehaviour: If "single" a product can be added to the shopping cart once, if "multiple" it can be added multiple times
+- catalogExchangeEnabled: Boolean flag if the catalogue exchange functionality is enabled. If so, you can request catalogue exchange in the product search page when the catalogue is selected from the corresponding filter.
 - companyRegistrationRequired: Boolean flag if users need to register (or be assigned to) a company before using any platform feature
 - categoryFilter: Allows configuring the usage of different ontologies. The key is the ontology name, the value is a JSON object with the following entries:
 	* hiddenCategories: An array of top-level category IDs that will be hidden from the UI
@@ -109,6 +111,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - faviconPath: Link to the favicon
 - frameContractEnabled: Boolean flag is frame contracts are applicable
 - hidePriceFunctionality: Boolean flag if the functionality of hiding prices for the catalogue is enabled
+- hideTradeDetailsTab: Boolean flag whether to hide the trade details in the company settings page
 - imprint: HTML string of the imprint information to be shown on the according subpage
 - kibanaConfig: Allows configuring the titles and links to the Kibana dashboards. The keys are "companyDashboards" (Basic company information), "companyGraphs" (More complex company information) and "dashboards" (Platform information), this value is an array of JSON objects with the following entries:
 	* title: Title to be displayed on the UI
@@ -122,6 +125,8 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - federationLogoPath: Link to the logo of the federated login
 - logoRequired: Boolean flag if the submission of a company logo is required upon registration
 - networkEnabled: Boolean flag if the network functionality is enabled
+- paymentMeans: Array of payment means
+- paymentTerms: Array of payment terms
 - permanentWelcomeTab: Boolean flag if the welcome page is permanent
 - phoneNumberRequired: Boolean flag if the phone number of a user is required upon registration
 - productServiceFiltersEnabled: Boolean flag if there is a separate filter for the product/service properties
@@ -169,6 +174,7 @@ export const config = {
     "platformNameInMail":"NIMBLE",
     "envName": "local",
     "addCartBehaviour": "single",
+    "catalogExchangeEnabled": false,
     "companyRegistrationRequired": false,
     "categoryFilter": {
         "eClass": {
@@ -196,6 +202,7 @@ export const config = {
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
     "hidePriceFunctionality": false,
+    "hideTradeDetailsTab": true,
     "imprint": {
         "en": "<u>Platform Owner & Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)",
         "es": "<u>Propietario de Plataforma y Proveedor</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salsburgo, Austria<br/>Teléfono: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>Correo electrónico: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Director Gerente: Siegfried Reich<br/>Numero de Registro: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Oficial de Contenido: Siegfried Reich<br/>Propietario: State of Salzburg (100%)"
@@ -254,6 +261,49 @@ export const config = {
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": false,
     "networkEnabled": false,
+    "paymentMeans": [
+        "Credit Card",
+        "ACH Transfer",
+        "Wire Transfer",
+        "Cash On Delivery"
+    ],
+    "paymentTerms": [
+        {
+            id: "Payment_In_Advance",
+            name: "Payment in advance",
+            abbreviation: "PIA"
+        },
+        {
+            id: "End_of_month",
+            name: "End of month",
+            abbreviation: "EOM"
+        },
+        {
+            id: "Cash_next_delivery",
+            name: "Cash next delivery",
+            abbreviation: "CND"
+        },
+        {
+            id: "Cash_before_shipment",
+            name: "Cash before shipment",
+            abbreviation: "CBS"
+        },
+        {
+            id: "Cash_on_delivery",
+            name: "Cash on delivery",
+            abbreviation: "COD"
+        },
+        {
+            id: "Cash_with_order",
+            name: "Cash with order",
+            abbreviation: "CWO"
+        },
+        {
+            id: "Cash_in_advance",
+            name: "Cash in advance",
+            abbreviation: "CIA"
+        },
+    ],
     "permanentWelcomeTab": false,
     "phoneNumberRequired": false,
     "productServiceFiltersEnabled":true,
@@ -390,6 +440,7 @@ export const item_manufacturer_id = "manufacturerId";
 export const product_filter_prod = ["freeOfCharge", "certificateType", "applicableCountries", "customizable"];
 export const product_filter_comp = ["manufacturer.legalName", "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin", "manufacturer.certificateType", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType"];
 export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "{NULL}_certificateType", "ppapComplianceLevel", "ppapDocumentType"];
+export const party_identifying_regex_filters = ['manufacturer.*legalName', 'manufacturer.*brandName', 'manufacturer.id'];
 export const party_filter_main = ["businessType", "activitySectors", "businessKeywords", "origin", "certificateType", "ppapComplianceLevel", "ppapDocumentType"];
 export const party_filter_trust = ["trustScore", "trustRating", "trustSellerCommunication", "trustFullfillmentOfTerms", "trustDeliveryPackaging", "trustNumberOfTransactions"];
 export const product_filter_trust = ["manufacturer.trustScore", "manufacturer.trustRating", "manufacturer.trustSellerCommunication", "manufacturer.trustFullfillmentOfTerms", "manufacturer.trustDeliveryPackaging", "manufacturer.trustNumberOfTransactions"];
@@ -409,7 +460,7 @@ export const product_filter_mappings = {
     "origin": "Vendor Origin"
 };
 // Facets removed from the UI by full name
-export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "catalogueId", "doctype", "manufacturerId", "manufacturerItemId", "allLabels", "sparePart"];
+export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "doctype", "manufacturerId", "manufacturerItemId", "allLabels", "sparePart"];
 // Facets removed from the UI by regex
 export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_lowercaseLabel","_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
 // Facets removed from the UI by data type

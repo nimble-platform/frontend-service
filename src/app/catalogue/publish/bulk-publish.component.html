@@ -22,9 +22,9 @@
     <div class="col-3 p-0">
         <button class="btn btn-secondary btn-download-template" [disabled]="!selectCategories" (click)="downloadTemplate()"><span [innerHTML]="'Download template' | translate"></span>
         </button>
-        <div *ngIf="showCategoryWarning" class="alert-danger rounded align-self-center mt-2 pl-3 pr-2">
+        <div *ngIf="showCategoryWarning" class="alert-danger rounded d-flex align-items-center justify-content-between mt-2 p-2">
             <small><span [innerHTML]="'At least one category should be selected!' | translate"></span></small>
-            <button type="button" class="close" aria-label="Close" (click)="closeCategoryWarning()">
+            <button type="button" class="close regular-font-size" aria-label="Close" (click)="closeCategoryWarning()">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -45,14 +45,45 @@
 </div>
 <div class="d-flex mb-4">
     <div class="col-9">
-        <label><span [innerHTML]="'3. Fill in the template' | translate"></span>
-        </label>
+        <label><span [innerHTML]="'3. Fill in the template' | translate"></span></label>
+        <!-- catalogue ids when there are some existing catalogues -->
+        <ng-container *ngIf="catalogueIds && catalogueIds.length > 0">
+            <div class="mb-3">
+                <input type="checkbox" [checked]="selectExistingCatalogue" (change)="selectExistingCatalogue = !selectExistingCatalogue">
+                <span>{{'Select Existing Catalogue:' | translate}} </span>
+                <select class="btn btn-outline-secondary" [(ngModel)]="dropdownCatalogueId" [disabled]="!selectExistingCatalogue">
+                    <option *ngFor="let catalogue of catalogueIds ; let i = index"
+                            [value]=catalogueIds[i]
+                            [innerHtml]="catalogue == 'default'? ('Main Catalogue'|translate): catalogue">
+                    </option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <input type="checkbox" [checked]="!selectExistingCatalogue" (change)="selectExistingCatalogue = !selectExistingCatalogue">
+                <span>{{'Create New Catalogue:' | translate}} </span>
+                <input class="form-control new-catalogue-input" [disabled]="selectExistingCatalogue" [(ngModel)]="newCatalogueId">
+            </div>
+        </ng-container>
+        <!-- there is no existing catalogues. So, expect a new name -->
+        <div *ngIf="!catalogueIds || catalogueIds.length === 0" class="mb-3">
+            <span>{{'Catalogue Name:' | translate}} </span>
+            <input class="form-control new-catalogue-input" [(ngModel)]="newCatalogueId">
+        </div>
         <label><span [innerHTML]="'4. Upload the template after filling it with your product / service information' | translate"></span>
         </label>
     </div>
-    <input #template type="file" (change)="uploadTemplate($event, uploadModeSelect.value)" multiple="true" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display: none">
-    <button class="btn btn-secondary col-3 align-self-start" (click)="template.click()"><span [innerHTML]="'Upload template(s)' | translate"></span>
-    </button>
+    <input #template type="file" (change)="uploadTemplateCallback($event, uploadModeSelect.value)" multiple="true" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display: none">
+    <div class="col-3 p-0">
+        <button class="btn btn-secondary w-100" (click)="uploadTemplateClicked()">
+            <span [innerHTML]="'Upload template(s)' | translate"></span>
+        </button>
+        <div *ngIf="showCatalogueUploadWarning" class="alert-danger rounded d-flex align-items-center justify-content-between mt-2 p-2">
+            <small><span [innerHTML]="'A non-empty catalogue ID should be specified' | translate"></span></small>
+            <button type="button" class="close regular-font-size" aria-label="Close" (click)="closeUploadWarning()">
+                <span aria-hidden="true" class="font-weight-300">&times;</span>
+            </button>
+        </div>
+    </div>
 </div>
 <!-- upload statuses -->
 <div *ngIf="selectedFileList?.length > 0" class="col-9 mb-4">

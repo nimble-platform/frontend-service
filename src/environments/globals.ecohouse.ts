@@ -20,6 +20,7 @@ export const frontendURL = base_path + "/frontend/";
 
 export const user_mgmt_endpoint = `${base_path}/identity`;
 export const catalogue_endpoint = `${base_path}/catalog`;
+export const catalogue_endpoint_with_zuul = `${base_path}/zuul/catalog`;
 export const bpe_endpoint = `${base_path}/business-process`;
 export const data_channel_endpoint = `${base_path}/data-channel`;
 export const data_aggregation_endpoint = `${base_path}/data-aggregation`;
@@ -66,6 +67,7 @@ export const config = {
     "platformNameInMail":"NIMBLE",
     "envName": "ecohouse",
     "addCartBehaviour": "single",
+    "catalogExchangeEnabled": false,
     "companyRegistrationRequired": false,
     "categoryFilter": {
         "eClass": {
@@ -93,6 +95,7 @@ export const config = {
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
     "hidePriceFunctionality": false,
+    "hideTradeDetailsTab": false,
     "imprint": {
         "en": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Platform Owner</u><br/><b>Lindbäcks Bygg Aktiebolag</b><br/>Hammarvägen 21<br/>94336 Öjebyn<br/>Sweden<br/></td><td class='w-50 p-0 pl-3'><u>Platform Provider</u><br/><b>Universität Bremen</b><br/>Bibliothekstraße 1<br/>28359 Bremen, Germany<br/>Phone: +49 421 218-1<br/>Internet: <a href='https://www.uni-bremen.de' target='_blank'>www.uni-bremen.de</a><br/>Die Universität Bremen ist eine Körperschaft des Öffentlichen Rechts. Sie wird durch den Rektor Prof. Dr.-Ing. Bernd Scholz-Reiter gesetzlich vertreten.\n" +
             "Zuständige Aufsichtsbehörde ist die Senatorin für Wissenschaft, Gesundheit und Verbraucherschutz, Rembertiring 8 – 12, 28195 Bremen.<br/>DE 811 245 070 (gemäß § 27 a UStG)<br/></td></tr></table>",
@@ -114,6 +117,49 @@ export const config = {
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": false,
     "networkEnabled": false,
+    "paymentMeans": [
+        "Credit Card",
+        "ACH Transfer",
+        "Wire Transfer",
+        "Cash On Delivery"
+    ],
+    "paymentTerms": [
+        {
+            id: "Payment_In_Advance",
+            name: "Payment in advance",
+            abbreviation: "PIA"
+        },
+        {
+            id: "End_of_month",
+            name: "End of month",
+            abbreviation: "EOM"
+        },
+        {
+            id: "Cash_next_delivery",
+            name: "Cash next delivery",
+            abbreviation: "CND"
+        },
+        {
+            id: "Cash_before_shipment",
+            name: "Cash before shipment",
+            abbreviation: "CBS"
+        },
+        {
+            id: "Cash_on_delivery",
+            name: "Cash on delivery",
+            abbreviation: "COD"
+        },
+        {
+            id: "Cash_with_order",
+            name: "Cash with order",
+            abbreviation: "CWO"
+        },
+        {
+            id: "Cash_in_advance",
+            name: "Cash in advance",
+            abbreviation: "CIA"
+        },
+    ],
     "permanentWelcomeTab": false,
     "phoneNumberRequired": false,
     "productServiceFiltersEnabled":true,
@@ -242,6 +288,7 @@ export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
 export const product_filter_prod = ["freeOfCharge", "certificateType", "applicableCountries", "customizable"];
 export const product_filter_comp = ["manufacturer.legalName", "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin", "manufacturer.certificateType", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType"];
+export const party_identifying_regex_filters = ['manufacturer.*legalName', 'manufacturer.*brandName', 'manufacturer.id'];
 export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "{NULL}_certificateType", "ppapComplianceLevel", "ppapDocumentType"];
 export const party_filter_main = ["businessType", "activitySectors", "businessKeywords", "origin", "certificateType", "ppapComplianceLevel", "ppapDocumentType"];
 export const party_filter_trust = ["trustScore", "trustRating", "trustSellerCommunication", "trustFullfillmentOfTerms", "trustDeliveryPackaging", "trustNumberOfTransactions"];
@@ -260,7 +307,7 @@ export const product_filter_mappings = {
     "businessKeywords": "Business Keywords",
     "origin": "Vendor Origin"
 };
-export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "catalogueId", "doctype", "manufacturerId", "manufacturerItemId", "allLabels", "sparePart"];
+export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "doctype", "manufacturerId", "manufacturerItemId", "allLabels", "sparePart"];
 export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_lowercaseLabel", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
 export const product_nonfilter_data_type = []
 export const product_configurable = [];

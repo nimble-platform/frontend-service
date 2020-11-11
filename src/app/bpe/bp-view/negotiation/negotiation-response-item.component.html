@@ -233,7 +233,7 @@
                                     [step]="0.01"
                                     [disableQuantityUnit]="wrapper.lineDiscountPriceWrapper.itemPrice.hasPrice()">
                     </quantity-input>
-                    <small>( {{ wrapper.newQuotationWrapper.priceWrapper.pricePerItemString}} )</small>
+                    <small>( {{ wrapper.newQuotationWrapper.priceWrapper.pricePerItemString | wordByWordTranslate}} )</small>
                     <span *ngIf="isDiscountIconVisibleInCustomerRequestColumn()" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" [title]="'Applied Discounts/Charges'|translate" style="cursor: pointer">
                         <i class="fa fa-search" aria-hidden="true"></i>
                     </span>
@@ -337,7 +337,7 @@
                             <div *ngSwitchCase="'frame_contract'" class="col-3">{{ wrapper.frameContractQuotationWrapper.deliveryPeriod | quantityTranslatePipe}}</div>
                             <div *ngSwitchCase="'last_offer'" class="col-3">{{ wrapper.lastOfferQuotationWrapper.deliveryPeriod | quantityTranslatePipe}}</div>
                         </ng-container>
-                        <div class="col-3">{{ wrapper.rfqDeliveryPeriodString }}</div>
+                        <div class="col-3">{{ wrapper.rfqDeliveryPeriod | quantityTranslatePipe}}</div>
                         <div class="col-3">
                             <!-- don't show any term if the customer offer was rejected -->
                             <quantity-input *ngIf="isSellerTermsVisible()"

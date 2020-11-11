@@ -30,11 +30,17 @@ export class CategoryService {
     private baseUrl = myGlobals.catalogue_endpoint;
     private indexingBaseUrl = myGlobals.indexing_service_endpoint;
     private serviceCategories: string[];
+    // whether any service categories are selected
+    hasServiceCategories:boolean = null;
     selectedCategories: Category[] = [];
     categoryFilter = myGlobals.config.categoryFilter;
 
     constructor(private http: Http,
         private cookieService: CookieService) {
+        // get service categories for available taxonomies
+        this.getServiceCategoriesForAvailableTaxonomies().then(result => {
+            this.serviceCategories = result;
+        })
     }
 
     getCategoriesByName(keyword: string, taxonomyId: string, isLogistics: boolean): Promise<Category[]> {
@@ -160,12 +166,32 @@ export class CategoryService {
             .catch(this.handleError);
     }
 
-    addSelectedCategory(category: Category): void {
+    addSelectedCategory(category: Category,parentCategories): void {
         // Only add if category is not null and doesn't exist in selected categories
         if (category != null && this.selectedCategories.findIndex(c => c.id == category.id) == -1) {
+            // check the first selected category is service or not
+            if(this.selectedCategories.length == 0){
+                this.hasServiceCategories = this.isServiceCategory(parentCategories);
+            }
             this.selectedCategories.push(category);
             sortCategories(this.selectedCategories);
         }
+    }
+
+    /**
+     * Returns whether the category is a service category or not for the given parent categories
+     * @param parentCategories the parent categories
+     * @return true if the category whose parents are given is a service category, otherwise, returns false
+     * */
+    isServiceCategory(parentCategories){
+        let isServiceCategory = false;
+        for(let parentCategory of parentCategories){
+            if(this.serviceCategories.indexOf(parentCategory.id) != -1){
+                isServiceCategory = true;
+                break;
+            }
+        }
+        return isServiceCategory;
     }
 
     getRootCategories(taxonomyIds: string[]): Promise<Category[]> {

@@ -121,7 +121,7 @@
         </label>
         <div class="col-10">
             <select class="form-control" [formControl]="dataForm.controls['businessType']" (change)="onBusinessTypeChanged();" required>
-                <option *ngFor="let type of config.supportedBusinessTypes" value="{{type}}">{{type}}</option>
+                <option *ngFor="let type of config.supportedBusinessTypes" value="{{type}}">{{type | translate}}</option>
             </select>
         </div>
     </div>
@@ -130,7 +130,6 @@
     <div class="form-group row">
         <label class="col-2">
             <strong><span [innerHTML]="'Activity Sectors:' | translate"></span></strong>
-            <span *ngIf="availableActivitySectorKeys.length>0 && !forceActText" class="tooltip-icon" (click)="showSectorTT(tooltip)"><i class="fa fa-question-circle"></i></span>
         </label>
         <div class="col-10">
             <input *ngIf="dataForm.getRawValue()['businessType'] == ''" type="text" class="form-control" placeholder="Select Business Type" readonly maxlength="255">

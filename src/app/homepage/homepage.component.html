@@ -58,7 +58,7 @@
         <div class="action-description">
             <div class="half-column">
                 <p>{{'Discover hundreds of products and services you need for your business. They can be easily explored through the different categories and detailed characteristics.' | translate }}</p>
-                <div class="btn btn-outline-primary" (click)="scroll(categoryRow)">{{'Discover Products' | translate}}</div>
+                <div class="btn btn-outline-primary" (click)="onDiscoverProductsClicked()">{{'Discover Products' | translate}}</div>
             </div>
             <div class="half-column">
                 <p>{{'Increase your online visibility by publishing your products and services on B2BMarket.' | translate }}</p>
@@ -68,15 +68,15 @@
 
         <!-- catalogue, product service counts -->
         <div *ngIf="catalogueCount && productCount" class="d-flex justify-content-center text-center">
-            <div class="product-stat" (click)="scroll(categoryRow)">
+            <div class="product-stat">
                 <div>{{catalogueCount}}</div>
                 {{'Catalogues' | translate}}
             </div>
-            <div class="product-stat" (click)="scroll(categoryRow)">
+            <div class="product-stat">
                 <div>{{productCount}}</div>
                 {{'Products' | translate}}
             </div>
-            <div class="product-stat" (click)="scroll(categoryRow)">
+            <div class="product-stat">
                 <div>{{serviceCount}}</div>
                 {{'Services' | translate}}
             </div>

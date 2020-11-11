@@ -19,6 +19,7 @@ export const frontendURL = base_path + "/frontend/";
 
 export const user_mgmt_endpoint = `${base_path}/identity`;
 export const catalogue_endpoint = `${base_path}/catalog`;
+export const catalogue_endpoint_with_zuul = `${base_path}/zuul/catalog`;
 export const bpe_endpoint = `${base_path}/business-process`;
 export const data_channel_endpoint = `${base_path}/data-channel`;
 export const data_aggregation_endpoint = `${base_path}/data-aggregation`;
@@ -66,6 +67,7 @@ export const config = {
     "platformNameInMail":"B2BMarket",
     "envName": "fmp",
     "addCartBehaviour": "single",
+    "catalogExchangeEnabled": false,
     "companyRegistrationRequired": true,
     "categoryFilter": {
         "FurnitureOntology": {
@@ -90,6 +92,7 @@ export const config = {
     "faviconPath": "./assets/B2B_favicon.ico",
     "frameContractTabEnabled": true,
     "hidePriceFunctionality": false,
+    "hideTradeDetailsTab": true,
     "imprint": {
         "en": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Platform Owner</u><br/><b>AIDIMME - Technological Institute of Metalworking, Furniture, Wood, Packaging and Related sectors</b><br/>Technological Park, Benjamín Franklin Street 13<br/>46980 Paterna (Valencia), Spain<br/>Phone: +34.961.366.070<br/>E-Mail: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>CIF: G46261590<br/><br/><b>FEVAMA-Wood and Furniture Business Federation of Valencian Community</b><br/>Technological Park, Benjamín Franklin Street 13<br/>46980 Paterna (Valencia), Spain<br/>Phone: +34 96 121 16 00<br/>Fax: +34 96 121 19 31<br/>E-Mail: <a href='mailto:fevama@fevama.es'>fevama@fevama.es</a><br/>E-Mail: <a href='http://fevama.es'>http://fevama.es</a></td><td class='w-50 p-0 pl-3'><u>Platform Provider</u><br/><b>AIDIMME</b><br/>Technological Park, Benjamin Franklin, 13<br/>46980 Paterna, Valencia, Spain<br/>Phone: +34 961366070<br/>Fax: +34961366185<br/>E-Mail: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>Internet: <a href='http://www.aidimme.es' target='_blank'>http://www.aidimme.es</a><br/>CIF: ESG 46261590</td></tr></table>",
         "es": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Dueño de la Plataforma</u><br/><b>AIDIMME - Instituto Tecnológico de la Metalmecánica, Muebles, Madera, Empaques y sectores relacionados</b><br/>Parque Tecnológico, Calle Benjamín Franklin 13<br/>46980 Paterna (Valencia), España<br/>Teléfono: +34.961.366.070<br/>Correo electrónico: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>CIF: G46261590<br/><br/><b>FEVAMA-Federación Empresarial de la Madera y Mueble de la Comunidad Valenciana</b><br/>Parque Tecnológico, Calle Benjamín Franklin 13<br/>46980 Paterna (Valencia), España<br/>Teléfono: +34 96 121 16 00<br/>Fax: +34 96 121 19 31<br/>E-Mail: <a href='mailto:fevama@fevama.es'>fevama@fevama.es</a><br/>E-Mail: <a href='http://fevama.es'>http://fevama.es</a></td><td class='w-50 p-0 pl-3'><u>Proveedor de plataforma</u><br/><b>AIDIMME</b><br/>Parque Tecnológico, Calle Benjamín Franklin, 13 <br/>46980 Paterna, Valencia, España<br/>Teléfono: +34 961366070<br/>Fax: +34961366185<br/>E-Mail: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>Internet: <a href='http://www.aidimme.es' target='_blank'>http://www.aidimme.es</a><br/>CIF: ESG 46261590</td></tr></table>"
@@ -146,6 +149,45 @@ export const config = {
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": true,
     "networkEnabled": false,
+    "paymentMeans": [
+        "Credit Card",
+        "ACH Transfer",
+        "Transfer",
+        "Direct debit",
+        "Bank check",
+        "Check / Promissory note",
+        "Confirming",
+        "Cash",
+        "Paypal",
+        "Bizum"
+    ],
+    "paymentTerms": [
+        {
+            id: "Payment_In_Advance",
+            name: "Payment in advance",
+            abbreviation: "PIA"
+        },
+        {
+            id: "End_of_month",
+            name: "End of month",
+            abbreviation: "EOM"
+        },
+        {
+            id: "Cash_on_delivery",
+            name: "Cash on delivery",
+            abbreviation: "COD"
+        },
+        {
+            id: "Payment_in_cash",
+            name: "Payment in cash",
+            abbreviation: "PIC"
+        },
+        {
+            id: "Deferred_payment",
+            name: "Deferred payment",
+            abbreviation: ""
+        },
+    ],
     "permanentWelcomeTab": true,
     "phoneNumberRequired": true,
     "productServiceFiltersEnabled":false,
@@ -336,6 +378,7 @@ export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
 export const product_filter_prod = ["freeOfCharge", "certificateType", "applicableCountries", "customizable"];
 export const product_filter_comp = [ "manufacturer.brandName", "manufacturer.origin"];
+export const party_identifying_regex_filters = ['manufacturer.*legalName', 'manufacturer.*brandName', 'manufacturer.id'];
 export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "{NULL}_certificateType"];
 export const party_filter_main = ["activitySectors", "origin", "certificateType"];
 export const party_filter_trust = ["trustScore", "trustRating", "trustSellerCommunication", "trustFullfillmentOfTerms", "trustDeliveryPackaging", "trustNumberOfTransactions"];
@@ -354,7 +397,7 @@ export const product_filter_mappings = {
     "businessKeywords": "Business Keywords",
     "origin": "Vendor Origin"
 };
-export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "catalogueId", "doctype", "manufacturerId", "manufacturerItemId", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType", "allLabels"];
+export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "doctype", "manufacturerId", "manufacturerItemId", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType", "allLabels"];
 export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_lowercaseLabel", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass","baseQuantity","items_package","_deliveryTime"];
 export const product_nonfilter_data_type = ["string","double","price"]
 export const product_configurable = [];

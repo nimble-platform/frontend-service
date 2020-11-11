@@ -115,7 +115,7 @@
                 <div class="col-10">
                     <select class="form-control" [formControl]="addCertForm.controls['type']" required>
                         <option></option>
-                        <option *ngFor="let certType of config.supportedCertificates" [selected]="certType == addCertForm.controls['type'].value">{{certType}}</option>
+                        <option *ngFor="let certType of config.supportedCertificates" [selected]="certType == addCertForm.controls['type'].value">{{certType | translate}}</option>
                     </select>
                 </div>
             </div>

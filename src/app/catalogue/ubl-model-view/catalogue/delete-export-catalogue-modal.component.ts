@@ -43,6 +43,9 @@ export class DeleteExportCatalogueModalComponent {
     }
 
     open(mode: 'delete' | 'export' | 'delete-images' | 'upload-image'): void {
+        // initialize CallStatus object to remove the error messages occured in previous activities
+        this.catalogueRetrievalCallStatus = new CallStatus();
+        this.catalogueOperationCallStatus = new CallStatus();
         this.mode = mode;
         this.enableMultipleSelection = this.mode != 'upload-image';
         this.catalogueRetrievalCallStatus.submit();
@@ -122,7 +125,7 @@ export class DeleteExportCatalogueModalComponent {
             reader.onload = function(e) {
                 // reset the target value so that the same file could be chosen more than once
                 event.target.value = "";
-                catalogueService.uploadZipPackage(file, catalogueIdsToDelete[0]).then(res => {
+                catalogueService.uploadImageZipPackage(file, catalogueIdsToDelete[0]).then(res => {
                     if (res.status == 200) {
                         self.catalogueOperationCallStatus.callback(null, true);
                         self.onSuccessfulDelete.emit(true);

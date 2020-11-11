@@ -11,15 +11,20 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-.btn-download-template {
-    width: 100%;
-}
 
-.new-catalogue-input {
-    width: unset;
-    display: unset;
-}
+import {Pipe, PipeTransform} from '@angular/core';
+import {TranslateService} from '@ngx-translate/core';
 
-.regular-font-size {
-    font-size: 1rem;
+@Pipe({name: 'wordByWordTranslate'})
+export class WordByWordTranslatePipe implements PipeTransform {
+
+    constructor(private translateService: TranslateService) {
+
+    }
+
+    transform(sentence: string): string {
+        const words: string[] = sentence.split(' ');
+        const translatedSentence: string = words.map(word => this.translateService.instant(word)).join(' ');
+        return translatedSentence;
+    }
 }

@@ -18,7 +18,7 @@
 
 import { Injectable } from "@angular/core";
 import { Headers, Http } from "@angular/http";
-import { catalogue_endpoint, delegate_endpoint, config } from '../globals';
+import {catalogue_endpoint, delegate_endpoint, config, catalogue_endpoint_with_zuul} from '../globals';
 import { Catalogue } from "./model/publish/catalogue";
 import { UserService } from "../user-mgmt/user.service";
 import { CatalogueLine } from "./model/publish/catalogue-line";
@@ -131,9 +131,9 @@ export class CatalogueService {
     }
 
     getCatalogueLine(catalogueId: string, lineId: string): Promise<CatalogueLine> {
-        let url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline?lineId=${lineId}`;
+        let url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline?lineId=${encodeURIComponent(lineId)}`;
         if (this.delegated) {
-            url = this.delegate_url + `/catalogue/${catalogueId}/catalogueline?lineId=${lineId}`;
+            url = this.delegate_url + `/catalogue/${catalogueId}/catalogueline?lineId=${encodeURIComponent(lineId)}`;
         }
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
@@ -355,11 +355,12 @@ export class CatalogueService {
         });
     }
 
-    uploadTemplate(userId: string, template: File, uploadMode: string): Promise<any> {
+    uploadTemplate(userId: string, template: File, uploadMode: string, catalogueId: string): Promise<any> {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
 
         return this.userService.getUserParty(userId).then(party => {
-            const url = this.baseUrl + `/catalogue/template/upload?partyId=${UBLModelUtils.getPartyId(party)}&uploadMode=${uploadMode}&includeVat=${config.vatEnabled}`;
+            let url = this.baseUrl + `/catalogue/template/upload?partyId=${UBLModelUtils.getPartyId(party)}&uploadMode=${uploadMode}&includeVat=${config.vatEnabled}`;
+            url += `&catalogueId=${catalogueId}`;
             return new Promise<any>((resolve, reject) => {
                 let formData: FormData = new FormData();
                 formData.append("file", template, template.name);
@@ -383,10 +384,12 @@ export class CatalogueService {
         });
     }
 
-    uploadZipPackage(pck: File, catalogueId: string = this.catalogueResponse.catalogueId): Promise<any> {
+    uploadImageZipPackage(pck: File, catalogueId: string = this.catalogueResponse.catalogueId): Promise<any> {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const partyId = this.cookieService.get("company_id");
-        const url = this.baseUrl + `/catalogue/${catalogueId}/image/upload?partyId=${partyId}`;
+        // adding zuul prefix to be able to upload large files by bypassing the Spring DispatcherServlet
+        // https://projects.spring.io/spring-cloud/spring-cloud.html#_uploading_files_through_zuul
+        const url = catalogue_endpoint_with_zuul + `/catalogue/${catalogueId}/image/upload?partyId=${partyId}`;
         return new Promise<any>((resolve, reject) => {
             let formData: FormData = new FormData();
             formData.append("package", pck, pck.name);
@@ -412,6 +415,7 @@ export class CatalogueService {
 
             xhr.open('POST', url, true);
             xhr.setRequestHeader('Authorization', token);
+            xhr.setRequestHeader('Transfer-Encoding', 'chunked');
             xhr.send(formData);
         });
     }
@@ -487,7 +491,7 @@ export class CatalogueService {
 
     deleteCatalogueLine(catalogueId: string, lineId: string): Promise<any> {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline?lineId=${lineId}`;
+        const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline?lineId=${encodeURIComponent(lineId)}`;
         return this.http
             .delete(url, { headers: new Headers({ "Authorization": token }) })
             .toPromise()
@@ -610,6 +614,37 @@ export class CatalogueService {
                 return sorted;
                 //return res.json();
             })
+            .catch(this.handleError);
+    }
+
+    /**
+     * Retrieves the catalogue identifiers for the catalogue filter using the catalogue uuids
+     * @param uuids
+     */
+    getCatalogueIds(uuids: string[]): Promise<any> {
+        let url = this.baseUrl + `/catalogue/ids?catalogueUuids=${encodeURIComponent(uuids.join(','))}`;
+        return this.http
+            .get(url, { headers: this.getAuthorizedHeaders() })
+            .toPromise()
+            .then(res => {
+                // transform the result in the form of [{'uuid':'x', 'id':'y'}] to {'x':'y'}
+                const resp = {};
+                res.json().forEach(pair => resp[pair.uuid] = pair.id);
+                return resp;
+            })
+            .catch(this.handleError);
+    }
+
+    /**
+     * Sends a request (as a mail) for catalogue exchange to the catalog provider
+     * @param uuid the uuid of catalogue to be requested for the exchange
+     * @param requestDetails the details of catalogue exchange request as text
+     */
+    requestCatalogueExchange(uuid: string,requestDetails:string): Promise<any> {
+        let url = this.baseUrl + `/catalogue/exchange?catalogueUuid=${encodeURIComponent(uuid)}`;
+        return this.http
+            .post(url, requestDetails, { headers: this.getAuthorizedHeaders() })
+            .toPromise()
             .catch(this.handleError);
     }
 

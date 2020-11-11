@@ -155,17 +155,9 @@
     background-color: var(--box-color);
     flex: 1 1 0;
     max-width: 20%;
-    cursor: pointer;
     box-shadow: 0 0 8px 0 #ddd;
 }
 
-.product-stat:hover {
-    border: solid 2px var(--main-color);
-    background-color: var(--box-color);
-    transform: scale(1.03);
-    transition: transform 0.2s ease-out;
-    margin-bottom: -0.5%;
-}
 
 .product-stat:not(:last-child) {
     margin-right: 2rem;
