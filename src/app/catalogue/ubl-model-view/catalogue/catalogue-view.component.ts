@@ -288,11 +288,14 @@ export class CatalogueViewComponent implements OnInit {
         // check whether the user chose a category to filter the catalogue lines
         let categoryName = this.selectedCategory == "All" ? null : this.selectedCategory;
         // get selected catalogue id
-        let catalogueUuid = this.catalogueUuid;
-        if (catalogueUuid !== 'all') {
-            let index = this.catalogueUuids.indexOf(catalogueUuid);
+        let catalogueId = this.catalogueUuid;
+        if (catalogueId !== 'all') {
+            let index = this.catalogueUuids.indexOf(catalogueId);
             if (index !== -1) {
-                catalogueUuid = this.cataloguesIds[index];
+                catalogueId = this.cataloguesIds[index];
+                this.location.replaceState(
+                    this.router.createUrlTree(['/dashboard'], {queryParams: {tab: 'CATALOGUE', 'cUuid': this.catalogueUuid}}).toString()
+                );
             } else {
                 this.location.replaceState(
                     this.router.createUrlTree(['/dashboard'], {queryParams: {tab: 'CATALOGUE'}}).toString()
@@ -303,7 +306,7 @@ export class CatalogueViewComponent implements OnInit {
 
         this.getCatalogueStatus.submit();
         Promise.all([
-            this.catalogueService.getCatalogueResponse(userId, categoryName, this.searchText, this.pageSize, (this.page - 1) * this.pageSize, this.sortOption, catalogueUuid),
+            this.catalogueService.getCatalogueResponse(userId, categoryName, this.searchText, this.pageSize, (this.page - 1) * this.pageSize, this.sortOption, catalogueId),
             this.getCompanySettings(userId)
         ])
             .then(([catalogueResponse, settings]) => {
