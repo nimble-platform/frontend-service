@@ -355,11 +355,12 @@ export class CatalogueService {
         });
     }
 
-    uploadTemplate(userId: string, template: File, uploadMode: string): Promise<any> {
+    uploadTemplate(userId: string, template: File, uploadMode: string, catalogueId: string): Promise<any> {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
 
         return this.userService.getUserParty(userId).then(party => {
-            const url = this.baseUrl + `/catalogue/template/upload?partyId=${UBLModelUtils.getPartyId(party)}&uploadMode=${uploadMode}&includeVat=${config.vatEnabled}`;
+            let url = this.baseUrl + `/catalogue/template/upload?partyId=${UBLModelUtils.getPartyId(party)}&uploadMode=${uploadMode}&includeVat=${config.vatEnabled}`;
+            url += `&catalogueId=${catalogueId}`;
             return new Promise<any>((resolve, reject) => {
                 let formData: FormData = new FormData();
                 formData.append("file", template, template.name);

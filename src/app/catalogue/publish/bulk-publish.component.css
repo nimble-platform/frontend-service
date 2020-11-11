@@ -14,3 +14,12 @@
 .btn-download-template {
     width: 100%;
 }
+
+.new-catalogue-input {
+    width: unset;
+    display: unset;
+}
+
+.regular-font-size {
+    font-size: 1rem;
+}

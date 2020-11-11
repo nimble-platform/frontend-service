@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import { Component, Input } from "@angular/core";
+import {Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import { CallStatus } from "../../common/call-status";
 import { DEFAULT_LANGUAGE } from "../model/constants";
 import { CategoryService } from "../category/category.service";
@@ -30,15 +30,28 @@ import { TranslateService } from '@ngx-translate/core';
     templateUrl: "./bulk-publish.component.html",
     styleUrls: ["./bulk-publish.component.css"]
 })
-export class BulkPublishComponent {
+export class BulkPublishComponent implements OnInit, OnChanges {
     @Input() selectCategories: Category[];
+    @Input() catalogueIds: string[];
+    @Input() catalogueUuids: string[];
 
     // identifier of the catalogue two which the images will be added. For now, it's not configurable but set to 'default'
-    activeCatalogueId: string = 'default';
-    publishStatus: CallStatus = new CallStatus();
-    showCategoryWarning: boolean = false;
-    uploadPublishStatus: CallStatus[] = [];
+    dropdownCatalogueId = 'default';
+    // catalogue id specified by the user
+    newCatalogueId = '';
+    // flag keeping the state to use an existing catalogue or create a new one
+    selectExistingCatalogue = true;
     selectedFileList: File[];
+
+    // flags to show validation errors
+    showCategoryWarning = false;
+    showCatalogueUploadWarning = false;
+
+    publishStatus: CallStatus;
+    catalogueIdCallStatus: CallStatus;
+    uploadPublishStatus: CallStatus[] = [];
+
+    @ViewChild('template') uploadTemplateElement: ElementRef;
 
     constructor(private categoryService: CategoryService,
         private catalogueService: CatalogueService,
@@ -47,8 +60,31 @@ export class BulkPublishComponent {
         private translate: TranslateService) {
     }
 
+    ngOnInit(): void {
+        this.publishStatus = new CallStatus();
+        this.catalogueIdCallStatus = new CallStatus();
+        this.uploadPublishStatus = [];
+
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.catalogueIds) {
+            // if there is no catalogue for the party, change the catalogue selection mode i.e. create new one
+            if (!this.catalogueIds || this.catalogueIds.length === 0) {
+                this.selectExistingCatalogue = false;
+            } else {
+                this.selectExistingCatalogue = true;
+                this.dropdownCatalogueId = this.catalogueIds[0];
+            }
+        }
+    }
+
     closeCategoryWarning(): void {
         this.showCategoryWarning = false;
+    }
+
+    closeUploadWarning(): void {
+        this.showCatalogueUploadWarning = false;
     }
 
     checkMode(mode: string) {
@@ -87,7 +123,17 @@ export class BulkPublishComponent {
                 });
     }
 
-    uploadTemplate(event: any, uploadMode: string) {
+    uploadTemplateClicked(): void {
+        console.log("CID UPLOAD", this.catalogueUuids);
+        if (!this.validateCatalogueUpload()) {
+            return;
+        }
+
+        const event = new MouseEvent('click', {bubbles: true});
+        this.uploadTemplateElement.nativeElement.dispatchEvent(event);
+    }
+
+    uploadTemplateCallback(event: any, uploadMode: string) {
         let catalogueService = this.catalogueService;
         let userId: string = this.cookieService.get("user_id");
         let fileList: FileList = event.target.files;
@@ -108,17 +154,21 @@ export class BulkPublishComponent {
                 this.uploadPublishStatus[i].submit();
                 let file: File = self.selectedFileList[i];
                 var reader = new FileReader();
-                reader.onload = function(e) {
-                    catalogueService.uploadTemplate(userId, file, uploadMode).then(res => {
+                reader.onload = (e) => {
+                    let catalogueId = this.dropdownCatalogueId;
+                    if (!this.selectExistingCatalogue) {
+                        catalogueId = this.newCatalogueId;
+                    }
+                    catalogueService.uploadTemplate(userId, file, uploadMode, catalogueId).then(res => {
                         self.uploadPublishStatus[i].callback("Uploaded " + file.name + " successfully");
                         ProductPublishComponent.dialogBox = false;
                         self.resetEventWhenUploadCompletes(++callbackCount, self.selectedFileList.length, errorCount, event);
                     },
-                        error => {
-                            errorCount++;
-                            self.uploadPublishStatus[i].error("Failed to upload: " + file.name, error);
-                            self.resetEventWhenUploadCompletes(++callbackCount, self.selectedFileList.length, errorCount, event);
-                        });
+                    error => {
+                        errorCount++;
+                        self.uploadPublishStatus[i].error("Failed to upload: " + file.name, error);
+                        self.resetEventWhenUploadCompletes(++callbackCount, self.selectedFileList.length, errorCount, event);
+                    });
                 };
                 reader.readAsDataURL(self.selectedFileList[i]);
             }
@@ -134,7 +184,7 @@ export class BulkPublishComponent {
     uploadImagePackage(event: any): void {
         this.publishStatus.submit();
         let catalogueService = this.catalogueService;
-        let catalogueId = this.activeCatalogueId;
+        let catalogueId = this.dropdownCatalogueId;
         let fileList: FileList = event.target.files;
         if (fileList.length > 0) {
             let file: File = fileList[0];
@@ -155,6 +205,45 @@ export class BulkPublishComponent {
     }
 
     public navigateToCatalogueTab(): void {
-        this.router.navigate(['dashboard'], { queryParams: { tab: "CATALOGUE" } });
+        let catalogueUuid;
+        if (!this.selectExistingCatalogue) {
+            // retrieve the catalogue uuids again for the uuid of the new catalogue
+            this.catalogueService.getCatalogueIdsUUidsForParty().then(catalogueIdsUuids => {
+                for (let idUuid of catalogueIdsUuids) {
+                    if (idUuid[0] === this.newCatalogueId) {
+                        catalogueUuid = idUuid [1];
+                        this.router.navigate(['dashboard'], {queryParams: {tab: 'CATALOGUE', cUuid: catalogueUuid}});
+                    }
+                }
+            });
+            return;
+
+        } else {
+            catalogueUuid = this.catalogueUuids[this.catalogueIds.findIndex(cId => cId === this.dropdownCatalogueId)];
+            this.router.navigate(['dashboard'], {queryParams: {tab: 'CATALOGUE', cUuid: catalogueUuid}});
+            return;
+        }
+
+        this.router.navigate(['dashboard'], {queryParams: {tab: 'CATALOGUE'}});
+    }
+
+    private validateCatalogueUpload(): boolean {
+        let catalogueIdValid = true;
+        if (!this.selectExistingCatalogue) {
+            if (!this.newCatalogueId) {
+                catalogueIdValid = false;
+            }
+        } else {
+            if (!this.dropdownCatalogueId) {
+                catalogueIdValid = false;
+            }
+        }
+
+        if (!catalogueIdValid) {
+            this.showCatalogueUploadWarning = true;
+        } else {
+            this.showCatalogueUploadWarning = false;
+        }
+        return catalogueIdValid;
     }
 }

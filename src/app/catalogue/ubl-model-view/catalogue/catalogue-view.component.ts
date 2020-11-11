@@ -15,6 +15,7 @@
  */
 
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import { Location } from '@angular/common';
 import { CookieService } from 'ng2-cookies';
 import { CatalogueService } from "../../catalogue.service";
 import { CallStatus } from "../../../common/call-status";
@@ -92,9 +93,9 @@ export class CatalogueViewComponent implements OnInit {
     catalogueLineView = {};
 
     selectedCatalogue: string = "all";
-    catlogueId: string = "all";
-    cataloguesIds: any = [];
-    catalogueIdsUUids: any = [];
+    catalogueUuid: string = 'all';
+    cataloguesIds: string[] = [];
+    catalogueUuids: string[] = [];
 
     sortOption = null;
     catalogueText: string = "";
@@ -138,7 +139,8 @@ export class CatalogueViewComponent implements OnInit {
         private route: ActivatedRoute,
         private whiteBlackListService: WhiteBlackListService,
         private userService: UserService,
-        private router: Router) {
+        private router: Router,
+        private location: Location) {
     }
 
     ngOnInit() {
@@ -151,8 +153,18 @@ export class CatalogueViewComponent implements OnInit {
             this.catalogueText = "";
             this.sortOption = null;
             this.cataloguesIds = [];
-            this.catlogueId = this.searchRef && this.whiteBlackListService.catalogueId ? this.whiteBlackListService.catalogueId :"all";
-            this.selectedCatalogue = this.searchRef && this.whiteBlackListService.catalogueId ? this.whiteBlackListService.catalogueId :"all";
+            this.catalogueUuid = this.searchRef && this.whiteBlackListService.catalogueId ? this.whiteBlackListService.catalogueId :"all";
+            // if the user is coming from the search page and a catalogue id is set, set the catalogue id again
+            if (this.searchRef && this.whiteBlackListService.catalogueId) {
+                this.catalogueUuid = this.whiteBlackListService.catalogueId;
+
+            // if a specific catalogue id is available in the query parameters, set it to the active catalogue name
+            } else if (params['cUuid']) {
+                this.catalogueUuid = params['cUuid'];
+            } else {
+                this.catalogueUuid = 'all';
+            }
+            this.selectedCatalogue = this.catalogueUuid;
             this.catalogueLinesWRTTypes = [];
             this.catalogueLinesArray = [];
             this.categoryNames = [];
@@ -163,10 +175,9 @@ export class CatalogueViewComponent implements OnInit {
             this.addCatalogue = false;
             this.whiteBlackListPanelVisible = this.searchRef && this.whiteBlackListService.catalogueId != null;
             this.catalogueLineView = {};
-            this.getCatagloueIdsForParty();
             this.catalogueService.setEditMode(false);
             this.sortOption = this.sortOption == null ? CATALOGUE_LINE_SORT_OPTIONS[0].name : this.sortOption;
-            this.requestCatalogue();
+            this.initDataRetrieval();
             for (let i = 0; i < this.pageSize; i++) {
                 this.deleteStatuses.push(new CallStatus());
             }
@@ -257,7 +268,7 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     changeCat() {
-        this.catlogueId = this.selectedCatalogue;
+        this.catalogueUuid = this.selectedCatalogue;
         this.whiteBlackListPanelVisible = false;
         this.requestCatalogue();
     }
@@ -273,24 +284,32 @@ export class CatalogueViewComponent implements OnInit {
         );
 
     requestCatalogue(): void {
-        this.getCatalogueStatus.submit();
         const userId = this.cookieService.get("user_id");
         // check whether the user chose a category to filter the catalogue lines
         let categoryName = this.selectedCategory == "All" ? null : this.selectedCategory;
         // get selected catalogue id
-        let catalogueId = this.catlogueId;
-        if(catalogueId != "all"){
-            let index = this.catalogueIdsUUids.indexOf(catalogueId);
-            catalogueId = this.cataloguesIds[index];
+        let catalogueUuid = this.catalogueUuid;
+        if (catalogueUuid !== 'all') {
+            let index = this.catalogueUuids.indexOf(catalogueUuid);
+            if (index !== -1) {
+                catalogueUuid = this.cataloguesIds[index];
+            } else {
+                this.location.replaceState(
+                    this.router.createUrlTree(['/dashboard'], {queryParams: {tab: 'CATALOGUE'}}).toString()
+                );
+                return;
+            }
         }
+
+        this.getCatalogueStatus.submit();
         Promise.all([
-            this.catalogueService.getCatalogueResponse(userId, categoryName, this.searchText, this.pageSize, (this.page - 1) * this.pageSize, this.sortOption,catalogueId),
+            this.catalogueService.getCatalogueResponse(userId, categoryName, this.searchText, this.pageSize, (this.page - 1) * this.pageSize, this.sortOption, catalogueUuid),
             this.getCompanySettings(userId)
         ])
             .then(([catalogueResponse, settings]) => {
                 this.catalogueResponse = catalogueResponse;
                 this.settings = settings;
-                this.init();
+                this.updateView();
                 this.getCatalogueStatus.callback(null, true);
             },
                 error => {
@@ -308,7 +327,7 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     // called when the catalogue pagination response is retrieved to update the view
-    private init(): void {
+    private updateView(): void {
         let len = this.catalogueResponse.catalogueLines.length;
         this.categoryNames = this.catalogueResponse.categoryNames;
         this.collectionSize = this.catalogueResponse.size;
@@ -417,10 +436,10 @@ export class CatalogueViewComponent implements OnInit {
         this.productOfferingDetails = new ProductOfferingDetails();
 
         if(selectedCatalogueUuid == 'all'){
-            this.productOfferingDetails.selectedCatalogueUuids = copy(this.catalogueIdsUUids);
+            this.productOfferingDetails.selectedCatalogueUuids = copy(this.catalogueUuids);
             this.productOfferingDetails.selectedCatalogIds = this.cataloguesIds.map(catalogueId => catalogueId == "default" ? this.translate.instant("Main Catalogue"):catalogueId).join();
         } else{
-            let index = this.catalogueIdsUUids.findIndex(uuid => uuid == selectedCatalogueUuid);
+            let index = this.catalogueUuids.findIndex(uuid => uuid == selectedCatalogueUuid);
             this.productOfferingDetails.selectedCatalogueUuids = [selectedCatalogueUuid];
             this.productOfferingDetails.selectedCatalogIds = this.cataloguesIds[index] == "default" ? this.translate.instant("Main Catalogue"): this.cataloguesIds[index];
         }
@@ -491,7 +510,7 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     onGenerateContractForCatalogue(): void {
-        const index = this.catalogueIdsUUids.findIndex(uuid => uuid == this.selectedCatalogue);
+        const index = this.catalogueUuids.findIndex(uuid => uuid == this.selectedCatalogue);
         // save the selected catalogue id
         this.catalogueIdForContractCreation = this.cataloguesIds[index];
         // save the selected catalogue uuid
@@ -574,7 +593,7 @@ export class CatalogueViewComponent implements OnInit {
         this.publishService.publishMode = 'copy';
         this.publishService.publishingStarted = false;
         this.categoryService.resetSelectedCategories();
-        if (this.catlogueId == "all") {
+        if (this.catalogueUuid == "all") {
             this.catalogueService.getCatalogueFromUuid(catalogueLine.goodsItem.item.catalogueDocumentReference.id)
                 .then(res => {
                     if (isLogisticsService(catalogueLine))
@@ -590,9 +609,9 @@ export class CatalogueViewComponent implements OnInit {
                 });;
         } else {
             if (isLogisticsService(catalogueLine))
-                this.router.navigate(['catalogue/publish-logistic'], { queryParams: { cat: this.catlogueId, pg: "single" } });
+                this.router.navigate(['catalogue/publish-logistic'], { queryParams: { cat: this.catalogueUuid, pg: "single" } });
             else
-                this.router.navigate(['catalogue/publish'], { queryParams: { cat: this.catlogueId, pg: "single" } });
+                this.router.navigate(['catalogue/publish'], { queryParams: { cat: this.catalogueUuid, pg: "single" } });
         }
 
     }
@@ -642,8 +661,9 @@ export class CatalogueViewComponent implements OnInit {
         this.router.navigate(["/catalogue/publish"], { queryParams: { pg: 'bulk', productType: 'product' } });
     }
 
-    getCatagloueIdsForParty() {
+    initDataRetrieval() {
         this.productCatalogueRetrievalStatus.submit();
+        // first retrieve the identifiers
         this.catalogueService.getCatalogueIdsUUidsForParty().then((catalogueIds) => {
             var idList = [];
             var uuidList = [];
@@ -654,7 +674,10 @@ export class CatalogueViewComponent implements OnInit {
             }
 
             this.cataloguesIds = idList;
-            this.catalogueIdsUUids = uuidList;
+            this.catalogueUuids = uuidList;
+
+            // once the ids are available, get the actual data
+            this.requestCatalogue();
             this.productCatalogueRetrievalStatus.callback("Successfully loaded catalogueId list", true);
         }).catch((error) => {
             this.productCatalogueRetrievalStatus.error('Failed to get product catalogues');
