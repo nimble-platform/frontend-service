@@ -25,6 +25,7 @@
     </li>
 </ul>
 
+<!--Catalogue selection for single upload-->
 <div *ngIf="cataloguesIds.length > 1 && publishingGranularity !== 'bulk'" class="row space-before">
     <div class="col-2 category-list-label">
         <strong *ngIf="!productCatalogueRetrievalStatus.isLoading()"><span [innerHTML]="'Catalogue:' | translate"></span></strong>
@@ -69,15 +70,15 @@
         </div>
     </div>
 </div>
-
+<!--Bulk upload-->
 <div *ngIf="publishingGranularity === 'bulk'">
     <bulk-publish [selectCategories]="categoryService.selectedCategories" [catalogueIds]="cataloguesIds" [catalogueUuids]="catalogueUUids">
     </bulk-publish>
 </div>
-
+<!--Single upload-->
 <ng-container *ngIf="publishingGranularity === 'single' && catalogueLine">
     <hr>
-    <name-description-panel [catalogueLine]="catalogueLine" [productIdEditable]="isProductIdEditable()" [productIdEditable]="isProductIdEditable()" [parentForm]="publishForm">
+    <name-description-panel [catalogueLine]="catalogueLine" [productIdEditable]="isProductIdEditable()" [parentForm]="publishForm">
     </name-description-panel>
     <hr>
 
@@ -154,7 +155,7 @@
             <div class="col-12 space-before">
                 <button class='btn btn-outline-primary' (click)="toggleAdditionalInformationCard()"><span [innerHTML]="'Upload Additional Information' | translate"></span></button>
                 <div [hidden]="!showAdditionalInformation" class="row mx-auto border-bottom" style="padding:.75rem;padding-left:0;">
-                    <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFileForLogisticService($event)" [binaryObjects]="getBinaryObjectsForAdditionalInformation()" (onClearFile)="onUnSelectFileForLogisticService($event)">
+                    <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFile($event)" [binaryObjects]="getBinaryObjectsForAdditionalInformation()" (onClearFile)="onUnSelectFile($event)">
                     </file-input>
                 </div>
             </div>
@@ -213,38 +214,6 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <!--
-                        <ng-container *ngFor="let value of getValues(prop); let i = index">
-                            <div *ngIf="prop.valueQualifier !== 'BINARY' && prop.valueQualifier !== 'STRING'" [ngSwitch]="prop.valueQualifier">
-                                <ng-container *ngSwitchCase="'QUANTITY'">
-                                  <quantity-input [quantity]="prop.valueQuantity[i]"
-                                      rowClass="quantity-input">
-                                  </quantity-input><br/>
-                                </ng-container>
-                                <ng-container *ngSwitchDefault>
-                                    <input *ngIf="prop.valueQualifier !== 'BOOLEAN'" type="number"
-                                    class="form-control form-control value-input"
-                                        [ngModel]="prop.valueDecimal[i]" (change)="setValueDecimal(prop, i, $event)"><br/>
-                                    <input *ngIf="prop.valueQualifier === 'BOOLEAN'" type="checkbox"
-                                        [checked]="prop.value[i].value == 'true'" (change)="setBooleanValue(prop, i, $event)"><br/>
-                                </ng-container>
-                                <div *ngIf="prop.valueQualifier !== 'BOOLEAN' && prop.valueQualifier !== 'BINARY'">
-                                    <button class="btn btn-danger" [disabled]="i==0" (click)="onRemoveValue(prop,i)">&times;</button>
-                                </div>
-                            </div>
-                        </ng-container>
-                        <input type="checkbox" class="form-check-input boolean-value-input"
-                            [checked]="prop.value[0].value == 'true'" *ngIf="prop.valueQualifier === 'BOOLEAN'"
-                            (change)="prop.value[0].value == 'true' ? prop.value[0].value = 'false' : prop.value[0].value = 'true'">
-                        <ng-container *ngIf="prop.valueQualifier !== 'BOOLEAN'">
-                            <div *ngFor="let value of getValuesAsString(prop); let i = index">
-                                <div *ngIf="value!=''" class="bordered value-pill" title="{{ value }}">
-                                  <span>{{ value }}</span>
-                                </div>
-                            </div>
-                            <button class="btn btn-outline-primary btn-add-category" (click)="onEditProperty(prop)">Edit Value(s)</button>
-                        </ng-container>
-                        -->
                     </div>
                     <div class="col-3 align-right" style="padding:.75rem;padding-right:0;">
                         <ng-container *ngIf="!prop.required">
