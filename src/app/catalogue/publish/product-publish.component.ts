@@ -135,9 +135,9 @@ export class ProductPublishComponent implements OnInit {
     cataloguesIds: any[] = [];
     catalogueUUids: any = [];
     // uuid of the catalogue containing the product to be published / edited
-    selectedCatalogueuuid = "";
+    selectedCatalogueuuid: string;
     // id of the catalogue containing the product to be published / edited
-    selectedCatalogueId: string = "default";
+    selectedCatalogueId: string;
     callStatus: CallStatus = new CallStatus();
 
     /*
@@ -220,28 +220,32 @@ export class ProductPublishComponent implements OnInit {
 
 
             // fetch various information required for initialization
-            this.userService.getUserParty(userId).then(party => {
-                return Promise.all([
-                    Promise.resolve(party),
-                    this.catalogueService.getCatalogueResponse(userId, null, null, 0, 0,  null, this.selectedCatalogueId),
-                    this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party), party.federationInstanceID),
-                    this.unitService.getCachedUnitList("dimensions"),
-                    this.unitService.getCachedUnitList("length_quantity"),
-                    this.unitService.getCachedUnitList("weight_quantity"),
-                ])
-            }).then(([party, catalogueResponse, settings, dimensions, lengthQuantities,weightQuantities]) => {
-                // set dimensions and units lists
-                this.dimensions = dimensions;
-                this.dimensionLengthUnits = lengthQuantities;
-                this.dimensionWeightUnits = weightQuantities;
-                this.selectedCatalogueuuid = catalogueResponse.catalogueUuid;
-                this.initView(party, catalogueResponse, settings);
-                this.publishStateService.publishingStarted = true;
-                this.callStatus.callback("Successfully initialized.", true);
-            })
-                .catch(error => {
-                    this.callStatus.error("Error while initializing the publish view.", error);
+            // first retrieve the available catalogue ids
+            this.catalogueService.getCatalogueIdsUUidsForParty().then(idsUuids => {
+                this.setCatalogueUuidsOnInit(idsUuids);
+
+                // then retrieve all other data
+            }).then(() => {
+                this.userService.getUserParty(userId).then(party => {
+                    return Promise.all([
+                        Promise.resolve(party),
+                        this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party), party.federationInstanceID),
+                        this.unitService.getCachedUnitList('dimensions'),
+                        this.unitService.getCachedUnitList('length_quantity'),
+                        this.unitService.getCachedUnitList('weight_quantity')
+                    ])
+                }).then(([party, settings, dimensions, lengthQuantities, weightQuantities]) => {
+                    // set dimensions and units lists
+                    this.dimensions = dimensions;
+                    this.dimensionLengthUnits = lengthQuantities;
+                    this.dimensionWeightUnits = weightQuantities;
+                    this.initView(party, settings);
+                    this.publishStateService.publishingStarted = true;
+                    this.callStatus.callback('Successfully initialized.', true);
+                }).catch(error => {
+                    this.callStatus.error('Error while initializing the publish view.', error);
                 });
+            });
         });
     }
 
@@ -269,7 +273,7 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
-    private initView(userParty, catalogueResponse: CataloguePaginationResponse, settings): void {
+    private initView(userParty, settings): void {
         this.companyNegotiationSettings = settings;
         this.catalogueService.setEditMode(true);
         this.publishStateService.resetData();
@@ -361,7 +365,7 @@ export class ProductPublishComponent implements OnInit {
             // new publishing is the first entry to the publishing page
             // i.e. publishing from scratch
             if (this.publishStateService.publishingStarted == false) {
-                this.catalogueLine = UBLModelUtils.createCatalogueLine(catalogueResponse.catalogueUuid, userParty, settings, this.dimensions);
+                this.catalogueLine = UBLModelUtils.createCatalogueLine(this.selectedCatalogueuuid, userParty, settings, this.dimensions);
                 this.catalogueService.draftCatalogueLine = this.catalogueLine;
             } else {
                 this.catalogueLine = this.catalogueService.draftCatalogueLine;
@@ -397,17 +401,14 @@ export class ProductPublishComponent implements OnInit {
         this.userService.getUserParty(userId).then(party => {
             // get catalogue id-uuid pairs for the party to find the uuid of catalogue
             this.catalogueService.getCatalogueIdsUUidsForParty().then(catalogueIdsUuids => {
-                // get the uuid of catalogue
-                let uuid = null;
-                for (let idUuid of catalogueIdsUuids) {
-                    if (idUuid[0] == this.selectedCatalogueId) {
-                        uuid = idUuid[1];
-                        break;
-                    }
+
+                // if there is no selected uuid yet (e.g. when a product is published when there is no catalogue),
+                // choose the first catalogue id pair
+                if (!this.selectedCatalogueuuid) {
+                    this.selectedCatalogueId = catalogueIdsUuids[0][0];
+                    this.selectedCatalogueuuid = catalogueIdsUuids[0][1];
                 }
 
-                // update the id of selected catalogue
-                this.selectedCatalogueuuid = uuid;
                 this.catalogueService.getCatalogueLine(this.selectedCatalogueuuid, catalogueLine.id).then(catalogueLine => {
                     // go to the dashboard - catalogue tab
                     if (exitThePage) {
@@ -508,7 +509,7 @@ export class ProductPublishComponent implements OnInit {
 
     private publish(catalogueLine: CatalogueLine, exitThePage: boolean) {
         this.publishStatus.submit();
-        if (this.catalogueService.catalogueResponse.catalogueUuid == null) {
+        if (this.selectedCatalogueuuid == null) {
             const userId = this.cookieService.get("user_id");
             this.userService.getUserParty(userId).then(userParty => {
                 // create the catalogue
@@ -1135,5 +1136,39 @@ export class ProductPublishComponent implements OnInit {
         let newItemDescription: Text = new Text("", DEFAULT_LANGUAGE());
         this.catalogueLine.goodsItem.item.name.push(newItemName);
         this.catalogueLine.goodsItem.item.description.push(newItemDescription);
+    }
+
+    private setCatalogueUuidsOnInit(catalogueIdsUuids: string[][]): void {
+        // check whether there exists a catalogue at all (there might not be one yet)
+        if (catalogueIdsUuids.length > 0) {
+            // if there is a provided catalogue id specified already, find the corredponsing uuid for that
+            if (this.selectedCatalogueId) {
+                for (let idUuid of catalogueIdsUuids) {
+                    if (idUuid[0] === this.selectedCatalogueId) {
+                        this.selectedCatalogueuuid = idUuid[1];
+                        break;
+                    }
+                }
+            } else {
+                // catalogue response might be null when the publish page is loaded directly by providing the complete url
+                if (this.catalogueService.catalogueResponse) {
+
+                    // if the navigation is from catalogue view component, we should use the catalogue pagination response including
+                    // the catalogue id of the recent active catalogue
+                    if (this.catalogueService.catalogueResponse.catalogueId === 'all') {
+                        this.selectedCatalogueId = catalogueIdsUuids[0][0];
+                        this.selectedCatalogueuuid = catalogueIdsUuids[0][1];
+
+                    } else {
+                        this.selectedCatalogueId = this.catalogueService.catalogueResponse.catalogueId;
+                        this.selectedCatalogueuuid = this.catalogueService.catalogueResponse.catalogueUuid;
+                    }
+
+                } else {
+                    this.selectedCatalogueId = catalogueIdsUuids[0][0];
+                    this.selectedCatalogueuuid = catalogueIdsUuids[0][1];
+                }
+            }
+        }
     }
 }
