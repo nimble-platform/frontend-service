@@ -124,7 +124,6 @@ export class BulkPublishComponent implements OnInit, OnChanges {
     }
 
     uploadTemplateClicked(): void {
-        console.log("CID UPLOAD", this.catalogueUuids);
         if (!this.validateCatalogueUpload()) {
             return;
         }

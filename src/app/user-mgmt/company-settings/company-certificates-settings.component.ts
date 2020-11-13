@@ -45,7 +45,9 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
     savePpapLevelCallStatus: CallStatus = new CallStatus();
 
     certFile = null;
-    certificateFilesProvided = false;
+    // whether a certificate file is provided or not
+    // it is false while editing the certificate until the exiting file is replaced by a new file
+    certificateFileProvided = false;
     selectedFiles: BinaryObject[] = [];
     editCert = null;
     addCertForm: FormGroup;
@@ -70,7 +72,7 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
     }
 
     onAddCertificate(content) {
-        this.certificateFilesProvided = false;
+        this.certificateFileProvided = false;
         this.selectedFiles = [];
         this.addCertForm = this._fb.group({
             file: [""],
@@ -85,12 +87,14 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
     onSaveCertificate(model: FormGroup, close: any) {
         this.saveCertCallStatus.submit();
         const fields = model.getRawValue();
-        this.selectedFiles;
-
-        var parts = [new Blob([this.selectedFiles[0].value], { type: this.selectedFiles[0].mimeCode })];
-        this.certFile = new File(parts, this.selectedFiles[0].fileName, {
-            type: this.selectedFiles[0].mimeCode
-        });
+        // set the certificate file if it is provided
+        this.certFile = null;
+        if(this.certificateFileProvided){
+            var parts = [new Blob([this.selectedFiles[0].value], { type: this.selectedFiles[0].mimeCode })];
+            this.certFile = new File(parts, this.selectedFiles[0].fileName, {
+                type: this.selectedFiles[0].mimeCode
+            });
+        }
 
         this.userService
             .saveCert(this.certFile, encodeURIComponent(fields.name), encodeURIComponent(fields.description), encodeURIComponent(fields.type), this.settings.companyID, this.editCert, this.selectedFiles[0].languageID)
@@ -123,13 +127,13 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
     }
 
     onSetCertificateFile(event: any) {
-        this.certificateFilesProvided = true;
+        this.certificateFileProvided = true;
     }
 
     removedFile(event: boolean) {
         if (event) {
             if (this.selectedFiles.length == 0) {
-                this.certificateFilesProvided = false;
+                this.certificateFileProvided = false;
             }
         }
     }
@@ -151,7 +155,7 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
 
     onEditCertificate(popup, i: number): void {
         let cert = this.certificates[i];
-        this.certificateFilesProvided = true;
+        this.certificateFileProvided = false;
         this.editCert = cert.id;
         this.userService.downloadCertObject(cert.id).then(certObj => {
             let binaryObject: BinaryObject = certObj.documentReference[0].attachment.embeddedDocumentBinaryObject;
