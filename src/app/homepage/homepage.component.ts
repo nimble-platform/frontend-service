@@ -91,7 +91,7 @@ export class HomepageComponent {
             'mainCategory': 'http://www.aidimme.es/FurnitureSectorOntology.owl#Material',
             'subCategories': [
                 'http://www.aidimme.es/FurnitureSectorOntology.owl#WoodenMaterial',
-                'http://www.aidimme.es/FurnitureSectorOntology.owl#EdgeBanding',
+                'http://www.aidimme.es/FurnitureSectorOntology.owl#EdgeBand',
                 'http://www.aidimme.es/FurnitureSectorOntology.owl#WoodenBoard',
                 'http://www.aidimme.es/FurnitureSectorOntology.owl#PlasticMaterial'
             ],
