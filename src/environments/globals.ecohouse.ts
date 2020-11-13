@@ -185,6 +185,7 @@ export const config = {
     "showPPAP": true,
     "showTrack": true,
     "showTrade": true,
+    "showTrustScore": true,
     "showVerification": true,
     "standardCurrency": "SEK",
     "standardTaxonomy": "FurnitureOntology",

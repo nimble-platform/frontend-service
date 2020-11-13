@@ -149,6 +149,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - showPPAP: Boolean flag if information regarding the PPAP process is enabled on the instance
 - showTrack: Boolean flag if the Track & Trace feature is enabled on the instance
 - showTrade: Boolean flag if advanced trade detail information shall be configurable in the company settings
+- showTrustScore: Boolean flag if the trust score is enabled in the search
 - showVerification: Boolean flag if additional verification information can be submitted upon registration
 - standardCurrency: Default currency to use on the instance. Applicable values are "EUR", "SEK" and "USD"
 - standardTaxonomy: Default taxonomy to use during product publishing. Applicable values are "All" (search over all defined taxonomies) or any taxonomy name
@@ -329,6 +330,7 @@ export const config = {
     "showPPAP": true,
     "showTrack": true,
     "showTrade": true,
+    "showTrustScore": true,
     "showVerification": true,
     "standardCurrency": "EUR",
     "standardTaxonomy": "All",

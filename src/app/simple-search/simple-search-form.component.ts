@@ -86,6 +86,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     collapsiblePropertyFacets = myGlobals.config.collapsiblePropertyFacets;
     displayCategoryCounts = myGlobals.config.displayCategoryCounts;
     companyInformationInSearchResult = myGlobals.config.companyInformationInSearchResult;
+    showTrustScore = myGlobals.config.showTrustScore;
     searchIndexes = ['Name', 'Category'];
     searchTopic = null;
     // content of the tooltip for product search

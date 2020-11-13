@@ -182,6 +182,7 @@ export const config = {
     "showPPAP": true,
     "showTrack": false,
     "showTrade": true,
+    "showTrustScore": true,
     "showVerification": true,
     "standardCurrency": "EUR",
     "standardTaxonomy": "All",
