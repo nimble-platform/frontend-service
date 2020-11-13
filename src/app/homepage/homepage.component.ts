@@ -117,7 +117,7 @@ export class HomepageComponent {
         'Childcare': 'assets/homepage/sectors/childcare.jpeg',
         'Closet / Cupboard': 'assets/homepage/sectors/closet-cupboard.jpg',
         'Consulting': 'assets/homepage/sectors/consulting.jpeg',
-        'Contract': 'assets/homepage/sectors/contract.jpeg',
+        'Manufacturer-Contract': 'assets/homepage/sectors/contract.jpeg',
         'Design / Decoration': 'assets/homepage/sectors/design-decoration.jpeg',
         'Doors / Windows': 'assets/homepage/sectors/doors-windows.jpeg',
         'Fitting': 'assets/homepage/sectors/fitting.jpg',
