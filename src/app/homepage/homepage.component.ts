@@ -114,17 +114,28 @@ export class HomepageComponent {
     activitySectorImages: any = {
         'Bathroom': 'assets/homepage/sectors/bathroom.jpg',
         'Carpentry': 'assets/homepage/sectors/carpentry.jpg',
-        'Contract': 'assets/homepage/sectors/contract.jpg',
+        'Childcare': 'assets/homepage/sectors/childcare.jpeg',
+        'Closet / Cupboard': 'assets/homepage/sectors/closet-cupboard.jpg',
+        'Consulting': 'assets/homepage/sectors/consulting.jpeg',
+        'Contract': 'assets/homepage/sectors/contract.jpeg',
+        'Design / Decoration': 'assets/homepage/sectors/design-decoration.jpeg',
+        'Doors / Windows': 'assets/homepage/sectors/doors-windows.jpeg',
         'Fitting': 'assets/homepage/sectors/fitting.jpg',
         'Home': 'assets/homepage/sectors/home.jpg',
-        'Hotels, Restaurants & Cafes': 'assets/homepage/sectors/hotels-restaurants-cafes.jpg',
+        'Hotels, Restaurants & Cafes': 'assets/homepage/sectors/hotels-restaurants-cafes.jpeg',
+        'Kids': 'assets/homepage/sectors/kids.jpeg',
         'Kitchen': 'assets/homepage/sectors/kitchen.jpg',
+        'Lightings / Lamps': 'assets/homepage/sectors/lightings-lamps.jpeg',
         'Office': 'assets/homepage/sectors/office.jpg',
         'Outdoor Furniture': 'assets/homepage/sectors/outdoor-furniture.jpg',
         'Paints & Varnishes': 'assets/homepage/sectors/paints-and-varnishes.jpg',
         'Panels': 'assets/homepage/sectors/panels.jpg',
+        'Parquet Floors': 'assets/homepage/sectors/parquet-floors.jpeg',
+        'Sales Agent': 'assets/homepage/sectors/sales-agent.jpeg',
+        'Training': 'assets/homepage/sectors/training.jpeg',
         'Upholstered Furniture': 'assets/homepage/sectors/upholstered-furniture.jpg',
-        'Veneer': 'assets/homepage/sectors/veneer.jpg'
+        'Veneer': 'assets/homepage/sectors/veneer.jpg',
+        'Wood': 'assets/homepage/sectors/wood.jpeg',
     };
 
     activitySectorCarouselConfiguration: OwlOptions = {
