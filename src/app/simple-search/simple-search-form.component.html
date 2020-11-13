@@ -159,7 +159,7 @@
                                 <option *ngIf="searchTopic=='prod'" value="{LANG}_lowercaseLabel asc" [selected]="sort=='{LANG}_lowercaseLabel asc'"><span [innerHTML]="'A -> Z' | translate"></span></option>
                                 <option *ngIf="searchTopic=='prod'" value="{LANG}_lowercaseLabel desc" [selected]="sort=='{LANG}_lowercaseLabel desc'"><span [innerHTML]="'Z -> A' | translate"></span></option>
                                 <option *ngIf="searchTopic=='comp'" value="trustRating desc" [selected]="sort=='trustRating desc'"><span [innerHTML]="'Rating' | translate"></span></option>
-                                <option *ngIf="searchTopic=='comp'" value="trustScore desc" [selected]="sort=='trustScore desc'"><span [innerHTML]="'Trust' | translate"></span></option>
+                                <option *ngIf="searchTopic=='comp' && showTrustScore" value="trustScore desc" [selected]="sort=='trustScore desc'"><span [innerHTML]="'Trust' | translate"></span></option>
                                 <option *ngIf="searchTopic=='comp'" value="lowercaseLegalName asc" [selected]="sort=='lowercaseLegalName asc'"><span [innerHTML]="'A -> Z' | translate"></span></option>
                                 <option *ngIf="searchTopic=='comp'" value="lowercaseLegalName desc" [selected]="sort=='lowercaseLegalName desc'"><span [innerHTML]="'Z -> A' | translate"></span></option>
                             </select>
@@ -398,20 +398,21 @@
                         <div *ngIf="checkCompCatCount()>0">
 
                             <div class="pointer" (click)="showTrustSection=!showTrustSection">
-                                <h5><span [innerHTML]="'Rating / Trust' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showTrustSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showTrustSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+                                <h5><span [innerHTML]="(showTrustScore ? 'Rating / Trust': 'Rating') | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showTrustSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showTrustSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
                             </div>
 
                             <div *ngIf="showTrustSection">
                                 <div class="card mb-3">
                                     <div class="card-header">
-                                        <span [innerHTML]="'Rating / Trust' | translate"></span>
+                                        <span [innerHTML]="(showTrustScore ? 'Rating / Trust': 'Rating') | translate"></span>
                                     </div>
                                     <div class="card-body">
                                         <div class="mb-2">
-                                            <div class="mb-2" *ngFor="let filter of ratingTrustFilters">
-                                                {{ filter.displayName }}<br />
-                                                <ngb-rating [(rate)]="filter.rating" max="5">
-                                                    <ng-template let-fill="fill">
+                                            <ng-container *ngFor="let filter of ratingTrustFilters">
+                                                <div class="mb-2" *ngIf="filter.name !== product_vendor_trust || showTrustScore" >
+                                                    {{ filter.displayName }}<br />
+                                                    <ngb-rating [(rate)]="filter.rating" max="5">
+                                                        <ng-template let-fill="fill">
                                                         <span *ngIf="filter.name !== product_vendor_trust" class="star star-b" [class.full]="fill === 100">
                                                             <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
                                                         </span>
@@ -419,9 +420,10 @@
                                                         <span *ngIf="filter.name === product_vendor_trust" class="heart heart-b" [class.full-heart]="fill === 100">
                                                             <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
                                                         </span>
-                                                    </ng-template>
-                                                </ngb-rating>
-                                            </div>
+                                                        </ng-template>
+                                                    </ngb-rating>
+                                                </div>
+                                            </ng-container>
                                         </div>
                                         <button class="btn btn-primary" (click)="setTrustFilter()" [disabled]="!checkTrustFilter()"><span [innerHTML]="'Apply' | translate"></span></button>
                                         <button class="btn btn-secondary ml-2" (click)="resetTrustFilter()" [disabled]="!checkTrustFilter()"><span [innerHTML]="'Reset' | translate"></span></button>
@@ -524,20 +526,21 @@
                         <div *ngIf="checkCompTrustCatCount()>0">
 
                             <div class="pointer" (click)="showTrustSection=!showTrustSection">
-                                <h5><span [innerHTML]="'Rating / Trust' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showTrustSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showTrustSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
+                                <h5><span [innerHTML]="(showTrustScore ? 'Rating / Trust': 'Rating') | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="!showTrustSection"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="showTrustSection"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
                             </div>
 
                             <div *ngIf="showTrustSection">
                                 <div class="card mb-3">
                                     <div class="card-header">
-                                        <span [innerHTML]="'Rating / Trust' | translate"></span>
+                                        <span [innerHTML]="(showTrustScore ? 'Rating / Trust': 'Rating') | translate"></span>
                                     </div>
                                     <div class="card-body">
                                         <div class="mb-2">
-                                            <div class="mb-2" *ngFor="let filter of ratingTrustFilters">
-                                                {{ filter.displayName }}<br />
-                                                <ngb-rating [(rate)]="filter.rating" max="5">
-                                                    <ng-template let-fill="fill">
+                                            <ng-container *ngFor="let filter of ratingTrustFilters">
+                                                <div class="mb-2" *ngIf="filter.name !== product_vendor_trust || showTrustScore">
+                                                    {{ filter.displayName }}<br />
+                                                    <ngb-rating [(rate)]="filter.rating" max="5">
+                                                        <ng-template let-fill="fill">
                                                         <span *ngIf="filter.name !== product_vendor_trust" class="star star-b" [class.full]="fill === 100">
                                                             <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
                                                         </span>
@@ -545,9 +548,11 @@
                                                         <span *ngIf="filter.name === product_vendor_trust" class="heart heart-b" [class.full-heart]="fill === 100">
                                                             <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
                                                         </span>
-                                                    </ng-template>
-                                                </ngb-rating>
-                                            </div>
+                                                        </ng-template>
+                                                    </ngb-rating>
+                                                </div>
+                                            </ng-container>
+
                                         </div>
                                         <button class="btn btn-primary" (click)="setCompTrustFilter()" [disabled]="!checkTrustFilter()"><span [innerHTML]="'Apply' | translate"></span></button>
                                         <button class="btn btn-secondary ml-2" (click)="resetCompTrustFilter()" [hidden]="!checkCompTrustFacet()"><span [innerHTML]="'Reset' | translate"></span></button>
@@ -642,24 +647,26 @@
                                                     </ng-template>
                                                 </ngb-rating>
                                             </div>
-                                            <div *ngIf="!checkNaN(result[product_vendor][product_vendor_trust])" [title]="getName(product_vendor_trust,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_trust],5)+'/5'">
-                                                <ngb-rating [rate]="calcRating(result[product_vendor][product_vendor_trust],5)" [readonly]="true" max="5">
-                                                    <ng-template let-fill="fill">
+                                            <ng-container *ngIf="showTrustScore">
+                                                <div *ngIf="!checkNaN(result[product_vendor][product_vendor_trust])" [title]="getName(product_vendor_trust,product_vendor)+':\n'+calcRating(result[product_vendor][product_vendor_trust],5)+'/5'">
+                                                    <ngb-rating [rate]="calcRating(result[product_vendor][product_vendor_trust],5)" [readonly]="true" max="5">
+                                                        <ng-template let-fill="fill">
                                                         <span class="heart" [class.full-heart]="fill === 100">
                                                             <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
                                                         </span>
-                                                    </ng-template>
-                                                </ngb-rating>
-                                            </div>
-                                            <div *ngIf="checkNaN(result[product_vendor][product_vendor_trust])" [title]="getName(product_vendor_trust,product_vendor)+':\n-'">
-                                                <ngb-rating [rate]="0" [readonly]="true" max="5">
-                                                    <ng-template let-fill="fill">
+                                                        </ng-template>
+                                                    </ngb-rating>
+                                                </div>
+                                                <div *ngIf="checkNaN(result[product_vendor][product_vendor_trust])" [title]="getName(product_vendor_trust,product_vendor)+':\n-'">
+                                                    <ngb-rating [rate]="0" [readonly]="true" max="5">
+                                                        <ng-template let-fill="fill">
                                                         <span class="heart" [class.full-heart]="fill === 100">
                                                             <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
                                                         </span>
-                                                    </ng-template>
-                                                </ngb-rating>
-                                            </div>
+                                                        </ng-template>
+                                                    </ngb-rating>
+                                                </div>
+                                            </ng-container>
                                         </div>
                                         <div *ngIf="!result[product_vendor]" [ngClass]="{'col-2':display=='list','col-12':display=='panel'}">
                                             <span [innerHTML]="'Unknown' | translate"></span>
@@ -716,24 +723,26 @@
                                                     </ng-template>
                                                 </ngb-rating>
                                             </div>
-                                            <div *ngIf="!checkNaN(result[product_vendor_trust])" [title]="getName(product_vendor_trust,product_vendor)+':\n'+calcRating(result[product_vendor_trust],5)+'/5'">
-                                                <ngb-rating [rate]="calcRating(result[product_vendor_trust],5)" [readonly]="true" max="5">
-                                                    <ng-template let-fill="fill">
+                                            <ng-container *ngIf="showTrustScore">
+                                                <div *ngIf="!checkNaN(result[product_vendor_trust])" [title]="getName(product_vendor_trust,product_vendor)+':\n'+calcRating(result[product_vendor_trust],5)+'/5'">
+                                                    <ngb-rating [rate]="calcRating(result[product_vendor_trust],5)" [readonly]="true" max="5">
+                                                        <ng-template let-fill="fill">
                                                         <span class="heart" [class.full-heart]="fill === 100">
                                                             <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
                                                         </span>
-                                                    </ng-template>
-                                                </ngb-rating>
-                                            </div>
-                                            <div *ngIf="checkNaN(result[product_vendor_trust])" [title]="getName(product_vendor_trust,product_vendor)+':\n-'">
-                                                <ngb-rating [rate]="0" [readonly]="true" max="5">
-                                                    <ng-template let-fill="fill">
+                                                        </ng-template>
+                                                    </ngb-rating>
+                                                </div>
+                                                <div *ngIf="checkNaN(result[product_vendor_trust])" [title]="getName(product_vendor_trust,product_vendor)+':\n-'">
+                                                    <ngb-rating [rate]="0" [readonly]="true" max="5">
+                                                        <ng-template let-fill="fill">
                                                         <span class="heart" [class.full-heart]="fill === 100">
                                                             <span class="half-heart" [style.width.%]="fill">&#10084;</span>&#10084;
                                                         </span>
-                                                    </ng-template>
-                                                </ngb-rating>
-                                            </div>
+                                                        </ng-template>
+                                                    </ngb-rating>
+                                                </div>
+                                            </ng-container>
                                         </div>
                                     </div>
                                 </div>

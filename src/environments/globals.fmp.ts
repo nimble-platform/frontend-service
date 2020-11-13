@@ -195,6 +195,7 @@ export const config = {
     "showPPAP": false,
     "showTrack": false,
     "showTrade": false,
+    "showTrustScore": false,
     "showVerification": false,
     "standardCurrency": "EUR",
     "standardTaxonomy": "FurnitureOntology",
