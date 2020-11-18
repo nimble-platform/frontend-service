@@ -117,11 +117,11 @@ export class ProductPublishComponent implements OnInit {
     catalogueLine: CatalogueLine = null;
     productWrapper: ProductWrapper = null;
     companyNegotiationSettings: CompanyNegotiationSettings;
-    private selectedProperties: SelectedProperties = {};
+    private selectedCategoryProperties: SelectedProperties = {};
+    private selectedCategoryPropertiesUpdates: SelectedPropertiesUpdate = {};
     private categoryProperties: CategoryProperties = {};
     private lunrIndex: lunr.Index;
     private currentLunrSearchId: string;
-    private selectedPropertiesUpdates: SelectedPropertiesUpdate = {};
     categoryModalPropertyKeyword: string = "";
     // Flag indicating that the source page is the search page.
     // This is passed true when the user has searched products associated to a property
@@ -340,7 +340,7 @@ export class ProductPublishComponent implements OnInit {
                                 }
                             }
 
-                            this.recomputeSelectedProperties();
+                            this.recomputeSelectedCategoryProperties();
                             // handle required properties
                             this.handleRequiredProperties();
 
@@ -388,7 +388,7 @@ export class ProductPublishComponent implements OnInit {
 
         // call this function with dimension unit list to be sure that item will have some dimension
         this.multiValuedDimensions = this.productWrapper.getDimensionMultiValue(true, this.dimensions);
-        this.recomputeSelectedProperties();
+        this.recomputeSelectedCategoryProperties();
         // handle required properties
         this.handleRequiredProperties();
     }
@@ -632,29 +632,32 @@ export class ProductPublishComponent implements OnInit {
         return catalogueLineCopy;
     }
 
-    private recomputeSelectedProperties() {
-        const oldSelectedProps = this.selectedProperties;
-        this.selectedProperties = {};
-        const newSelectedProps = this.selectedProperties;
+    /**
+     * Recomputes {@link selectedCategoryProperties} and creates a {@link lunr} index for the category properties
+     * */
+    private recomputeSelectedCategoryProperties() {
+        this.selectedCategoryProperties = {};
+        const newSelectedProps = this.selectedCategoryProperties;
 
         for (const category of this.categoryService.selectedCategories) {
             if (category.properties) {
                 for (const property of category.properties) {
                     const key = getPropertyKey(property);
-                    if (!this.selectedProperties[key]) {
-                        const oldProp = oldSelectedProps[key];
-                        this.selectedProperties[key] = {
+                    if (!this.selectedCategoryProperties[key]) {
+                        // index of the property in the catalogue line's item properties
+                        const index = this.catalogueLine.goodsItem.item.additionalItemProperty.findIndex(itemProperty => getPropertyKey(itemProperty) == key);
+                        this.selectedCategoryProperties[key] = {
                             categories: [],
                             properties: [],
                             lunrSearchId: null,
                             key,
-                            selected: oldProp && oldProp.selected,
+                            selected: index != -1,
                             preferredName: property.preferredName,
                             shortName: property.shortName
                         };
                     }
 
-                    const newProp = this.selectedProperties[key];
+                    const newProp = this.selectedCategoryProperties[key];
                     newProp.properties.push(property);
                     newProp.categories.push(category);
                 }
@@ -780,7 +783,7 @@ export class ProductPublishComponent implements OnInit {
 
     getDefinition(property: ItemProperty): string {
         const key = getPropertyKey(property);
-        let selProp = this.selectedProperties[key];
+        let selProp = this.selectedCategoryProperties[key];
         if (!selProp) {
             return "No definition."
         }
@@ -815,7 +818,7 @@ export class ProductPublishComponent implements OnInit {
 
     onEditProperty(property: ItemProperty) {
         const key = getPropertyKey(property);
-        this.editPropertyModal.open(property, this.selectedProperties[key], null);
+        this.editPropertyModal.open(property, this.selectedCategoryProperties[key], null);
     }
 
     getProductProperties(): ItemProperty[] {
@@ -874,26 +877,26 @@ export class ProductPublishComponent implements OnInit {
         }
 
         const key = getPropertyKey(property);
-        return this.selectedProperties[key].lunrSearchId === this.currentLunrSearchId;
+        return this.selectedCategoryProperties[key].lunrSearchId === this.currentLunrSearchId;
     }
 
     onToggleCategoryPropertySelected(category: Category, property: Property) {
         const key = getPropertyKey(property);
-        const selectedProp = this.selectedProperties[key];
+        const selectedProp = this.selectedCategoryProperties[key];
         selectedProp.selected = !selectedProp.selected;
-        this.selectedPropertiesUpdates[key] = selectedProp.selected;
+        this.selectedCategoryPropertiesUpdates[key] = selectedProp.selected;
     }
 
     onFilterPropertiesInCategoryModal() {
         this.currentLunrSearchId = UBLModelUtils.generateUUID();
         this.lunrIndex.search("*" + this.categoryModalPropertyKeyword + "*").forEach(result => {
-            this.selectedProperties[result.ref].lunrSearchId = this.currentLunrSearchId;
+            this.selectedCategoryProperties[result.ref].lunrSearchId = this.currentLunrSearchId;
         });
     }
 
     isCategoryPropertySelected(category: Category, property: Property): boolean {
         const key = getPropertyKey(property);
-        const selectedProp = this.selectedProperties[key];
+        const selectedProp = this.selectedCategoryProperties[key];
         return selectedProp.selected;
     }
     // the end of methods to handle properties
@@ -956,7 +959,7 @@ export class ProductPublishComponent implements OnInit {
             });
 
             this.categoryService.selectedCategories.splice(index, 1);
-            this.recomputeSelectedProperties();
+            this.recomputeSelectedCategoryProperties();
         }
 
         let i = this.catalogueLine.goodsItem.item.commodityClassification.findIndex(c => c.itemClassificationCode.value === category.id);
@@ -1043,15 +1046,18 @@ export class ProductPublishComponent implements OnInit {
         this.modalService.open(categoriesModal).result.then(() => {
             let properties = this.catalogueLine.goodsItem.item.additionalItemProperty;
 
-            Object.keys(this.selectedPropertiesUpdates).forEach(key => {
-                const selected = this.selectedPropertiesUpdates[key];
-                const property = this.selectedProperties[key];
+            Object.keys(this.selectedCategoryPropertiesUpdates).forEach(key => {
+                const selected = this.selectedCategoryPropertiesUpdates[key];
+                const property = this.selectedCategoryProperties[key];
 
                 if (selected) {
-                    // add property if not there
-                    for (let i = 0; i < property.properties.length; i++) {
-                        const prop = property.properties[i];
-                        const category = property.categories[i];
+                    // add property iff the catalogue line does not already have this property
+                    let index = properties.findIndex(property => getPropertyKey(property) == key);
+                    if(index == -1){
+                        // use the first property/category information to create an additional item property
+                        // since all properties are the same (that is, they have the same id but they belong to different categories)
+                        const prop = property.properties[0];
+                        const category = property.categories[0];
 
                         properties.push(UBLModelUtils.createAdditionalItemProperty(prop, category));
                     }
@@ -1064,9 +1070,9 @@ export class ProductPublishComponent implements OnInit {
                     this.catalogueLine.goodsItem.item.additionalItemProperty = properties;
                 }
             });
-            this.selectedPropertiesUpdates = {};
+            this.selectedCategoryPropertiesUpdates = {};
         }, () => {
-            this.selectedPropertiesUpdates = {};
+            this.selectedCategoryPropertiesUpdates = {};
         });
     }
 
