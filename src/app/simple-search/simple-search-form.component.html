@@ -612,7 +612,7 @@
                                                     </span>
                                                 </ng-container>
                                                 <!-- Price is not available -->
-                                                <span class="badge badge-warning" *ngIf="!result[product_price] || checkEmpty(result[product_price])"><span [innerHTML]="'Upon request' | translate"></span></span><br />
+                                                <span class="badge badge-warning" *ngIf="!result[product_price] || checkEmpty(result[product_price])"><span [innerHTML]="'Price: Upon request' | translate"></span></span><br />
                                                 <!-- Shopping cart buttons -->
                                                 <ng-container *ngIf="shoppingCartDataService.isShoppingCartButtonVisible(result.classificationUri)">
                                                     <button *ngIf="!getShoppingCartStatus(ind).fb_submitted" class="badge {{getShoppingCartStatus(ind).fb_callback ? 'badge-secondary disabled' : 'badge-primary pointer'}} mt-1" (click)="onAddToCart(result,ind, $event)">
