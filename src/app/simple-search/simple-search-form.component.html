@@ -361,7 +361,7 @@
                         </div>
 
                         <!-- Vendor Filters -->
-                        <div *ngIf="checkCompCatCount()>0">
+                        <div *ngIf="productVendorFilter && productVendorFilter.facets.length > 0">
 
                             <div class="pointer" (click)="productVendorFilter.isCollapsed=!productVendorFilter.isCollapsed">
                                 <h5><span [innerHTML]="'Vendor Filters' | translate"></span> <span *ngIf="productVendorFilter.isCollapsed"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="!productVendorFilter.isCollapsed"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
@@ -489,7 +489,7 @@
                     <div *ngIf="size>0 && searchTopic=='comp'">
 
                         <!-- Company Filters -->
-                        <div *ngIf="checkCompMainCatCount()>0">
+                        <div *ngIf="companyFilter && companyFilter.facets.length > 0">
 
                             <div class="pointer" (click)="companyFilter.isCollapsed=!companyFilter.isCollapsed">
                                 <h5><span [innerHTML]="'Company' | translate"></span> <span [innerHTML]="'Filters' | translate"></span> <span *ngIf="companyFilter.isCollapsed"><i class="fa fa-angle-double-down pl-1"></i></span><span *ngIf="!companyFilter.isCollapsed"><i class="fa fa-angle-double-up pl-1"></i></span></h5>
