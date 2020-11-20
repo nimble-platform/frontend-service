@@ -141,6 +141,7 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
     private initQuantityUnit(): void {
         if (this.quantity.unitCode == null && this.quantityUnits != null) {
             this.quantity.unitCode = this.quantityUnits[0];
+            this.onQuantityUnitChanged(this.quantity.unitCode);
         }
     }
 
