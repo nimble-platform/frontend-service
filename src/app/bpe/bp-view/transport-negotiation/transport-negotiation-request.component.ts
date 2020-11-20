@@ -34,7 +34,8 @@ import { DiscountPriceWrapper } from "../../../common/discount-price-wrapper";
 import { Text } from '../../../catalogue/model/publish/text';
 import { TranslateService } from '@ngx-translate/core';
 import { DocumentService } from "../document-service";
-import { TransportServiceDetailsComponent } from './transport-service-details.component';
+import {ValidationService} from '../../../common/validation/validators';
+import {FormGroup} from '@angular/forms';
 
 @Component({
     selector: "transport-negotiation-request",
@@ -63,12 +64,15 @@ export class TransportNegotiationRequestComponent implements OnInit {
     @Input() isTransportService: boolean;
     // save the default delivery period unit so that we can understand whether the delivery period is updated by the buyer or not
     defaultDeliveryPeriodUnit: string = null;
+    // negotiation request form
+    negotiationRequestForm: FormGroup = new FormGroup({});
 
     constructor(private bpDataService: BPDataService,
         private bpeService: BPEService,
         private documentService: DocumentService,
         private cookieService: CookieService,
         private userService: UserService,
+        private validationService: ValidationService,
         private location: Location,
         private translate: TranslateService,
         private router: Router) {
@@ -139,17 +143,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
         if (!this.isTransportService) {
             return true;
         }
-        let shipment = this.rfq.requestForQuotationLine[0].lineItem.delivery[0].shipment;
-
-        for (let goodsItem of shipment.goodsItem) {
-            if (UBLModelUtils.isEmptyOrIncompleteQuantity(goodsItem.quantity) || goodsItem.item.name[0].value == "" || goodsItem.item.name[0].value == null
-                || UBLModelUtils.isEmptyOrIncompleteQuantity(goodsItem.grossVolumeMeasure) || UBLModelUtils.isEmptyOrIncompleteQuantity(goodsItem.grossWeightMeasure)) {
-                return false;
-            }
-        }
-        return !UBLModelUtils.isEmptyOrIncompleteQuantity(shipment.transportHandlingUnit[0].measurementDimension[1].measure) &&
-            !UBLModelUtils.isEmptyOrIncompleteQuantity(shipment.transportHandlingUnit[0].measurementDimension[0].measure) &&
-            (shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name != null && shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name != "");
+        return this.negotiationRequestForm.valid;
     }
 
     onSendRequest(): void {
@@ -236,5 +230,9 @@ export class TransportNegotiationRequestComponent implements OnInit {
             default:
                 return true;
         }
+    }
+
+    getValidationError(): string {
+        return this.validationService.extractErrorMessage(this.negotiationRequestForm);
     }
 }

@@ -21,21 +21,25 @@
             <h4 [innerHTML]="'Shipped Products' | translate"></h4>
             <div *ngFor="let goodsItem of goodsItems;let i=index">
 
-                <text-input [label]="'Goods Item'|translate" [definition]="'The goods item included in this shipment'|translate" [rows]="1" [(text)]="goodsItem.item.name[0].value" [disabled]="disabled" labelClass="col-2" valueClass="col-10" rowClass="space-before" [required]="true">
+                <text-input [label]="'Goods Item'|translate" [definition]="'The goods item included in this shipment'|translate" [rows]="1" [(text)]="goodsItem.item.name[0].value" [disabled]="disabled" labelClass="col-2" valueClass="col-10"
+                            rowClass="space-before" [required]="true" [parentForm]="formGroup" [formFieldName]="'goods_item'" [componentIndex]="i">
                 </text-input>
 
                 <!-- Quantity -->
                 <quantity-input [label]="'Quantity'|translate" [definition]="'The quantity to transport.'|translate" [quantity]="goodsItem.quantity" [disabled]="disabled" rowClass="space-before" labelClass="col-2"
-                                valueQuantityClass="col-10" [required]="true">
+                                valueQuantityClass="col-10" [required]="true" [parentForm]="formGroup" [formFieldName]="'quantity'" [componentIndex]="i">
                 </quantity-input>
 
                 <!-- Gross Volume -->
-                <quantity-input [label]="'Gross Volume'|translate" [definition]="'The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L'|translate" [quantity]="goodsItem.grossVolumeMeasure" [disabled]="disabled" rowClass="space-before" (onQuantityValueChange)="onGrossVolumeAndWeightUpdated('volume')" (onQuantityUnitChange)="onGrossVolumeAndWeightUnitUpdated('volume',$event)" quantityType="volume_quantity" labelClass="col-2"
-                                valueQuantityClass="col-10" [required]="true">
+                <quantity-input [label]="'Gross Volume'|translate" [definition]="'The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L'|translate" [quantity]="goodsItem.grossVolumeMeasure" [disabled]="disabled"
+                                rowClass="space-before" (onQuantityValueChange)="onGrossVolumeAndWeightUpdated('volume')" (onQuantityUnitChange)="onGrossVolumeAndWeightUnitUpdated('volume',$event)" quantityType="volume_quantity" labelClass="col-2"
+                                valueQuantityClass="col-10" [required]="true" [parentForm]="formGroup" [formFieldName]="'gross_volume'" [componentIndex]="i">
                 </quantity-input>
 
                 <!-- Gross Weight -->
-                <quantity-input [label]="'Gross Weight'|translate" [definition]="'The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg'|translate" [quantity]="goodsItem.grossWeightMeasure" [disabled]="disabled" (onQuantityValueChange)="onGrossVolumeAndWeightUpdated('weight')" (onQuantityUnitChange)="onGrossVolumeAndWeightUnitUpdated('weight',$event)" quantityType="weight_quantity" rowClass="space-before" labelClass="col-2"
+                <quantity-input [label]="'Gross Weight'|translate" [definition]="'The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg'|translate"
+                                [quantity]="goodsItem.grossWeightMeasure" [disabled]="disabled" (onQuantityValueChange)="onGrossVolumeAndWeightUpdated('weight')" (onQuantityUnitChange)="onGrossVolumeAndWeightUnitUpdated('weight',$event)"
+                                quantityType="weight_quantity" rowClass="space-before" labelClass="col-2" [parentForm]="formGroup" [formFieldName]="'gross_weight'" [componentIndex]="i"
                                 valueQuantityClass="col-10" [required]="true">
                 </quantity-input>
 
@@ -68,16 +72,19 @@
 
         <h4><span [innerHTML]="'Transport Handling' | translate"></span></h4>
         <!-- Transport Handling Unit -->
-        <text-input [label]="'Transport Handling Unit' | translate" [definition]="'The transport handling unit used'|translate" [rows]="1" [(text)]="shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name" [disabled]="disabled" rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true">
+        <text-input [label]="'Transport Handling Unit' | translate" [definition]="'The transport handling unit used'|translate" [rows]="1" [(text)]="shipment.transportHandlingUnit[0].transportHandlingUnitTypeCode.name" [disabled]="disabled"
+                    rowClass="space-before" labelClass="col-2" valueClass="col-10" [required]="true" [parentForm]="formGroup" [formFieldName]="'transport_handling_unit'">
         </text-input>
 
         <!-- Dimension 1 -->
-        <quantity-input [label]="shipment.transportHandlingUnit[0].measurementDimension[0].attributeID | translate" [quantity]="shipment.transportHandlingUnit[0].measurementDimension[0].measure" [disabled]="disabled" quantityType="length_quantity" rowClass="space-before" labelClass="col-2"
+        <quantity-input [label]="shipment.transportHandlingUnit[0].measurementDimension[0].attributeID | translate" [quantity]="shipment.transportHandlingUnit[0].measurementDimension[0].measure" [disabled]="disabled"
+                        quantityType="length_quantity" rowClass="space-before" labelClass="col-2" [parentForm]="formGroup" [formFieldName]="shipment.transportHandlingUnit[0].measurementDimension[0].attributeID"
                         valueQuantityClass="col-10" [required]="true">
         </quantity-input>
 
         <!-- Dimension 2 -->
-        <quantity-input [label]="shipment.transportHandlingUnit[0].measurementDimension[1].attributeID | translate" [quantity]="shipment.transportHandlingUnit[0].measurementDimension[1].measure" [disabled]="disabled" quantityType="length_quantity" rowClass="space-before" labelClass="col-2"
+        <quantity-input [label]="shipment.transportHandlingUnit[0].measurementDimension[1].attributeID | translate" [quantity]="shipment.transportHandlingUnit[0].measurementDimension[1].measure" [disabled]="disabled" quantityType="length_quantity"
+                        rowClass="space-before" labelClass="col-2" [parentForm]="formGroup" [formFieldName]="shipment.transportHandlingUnit[0].measurementDimension[1].attributeID"
                         valueQuantityClass="col-10" [required]="true">
         </quantity-input>
 
