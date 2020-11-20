@@ -32,6 +32,7 @@ export class MultiAddressInputComponent extends EmptyFormBase implements OnInit 
     @Input() address: Address;
     @Input() disabled: boolean;
     @Input() deliveryTerms: DeliveryTerms[];
+    @Input() required:boolean = true;
 
     selectedAddressValue = '';
 
