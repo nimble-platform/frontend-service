@@ -207,9 +207,11 @@ export class QuantityInputComponent extends ChildFormBase implements OnInit {
     }
 
     onQuantityChanged(){
-        // since PeriodValidator uses both quantity value and unit for the validation,
-        // we need to check the validity of quantity value (i.e., calling PeriodValidator) when the unit is updated as well
-        this.quantityValueFormControl.updateValueAndValidity();
+        if(this.quantityValueFormControl){
+            // since PeriodValidator uses both quantity value and unit for the validation,
+            // we need to check the validity of quantity value (i.e., calling PeriodValidator) when the unit is updated as well
+            this.quantityValueFormControl.updateValueAndValidity();
+        }
     }
 
     quantityToString(): string {
