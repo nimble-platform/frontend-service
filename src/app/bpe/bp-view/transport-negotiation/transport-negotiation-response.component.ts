@@ -177,7 +177,7 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
     hasUpdatedTerms(): boolean {
         return this.isDeliveryPeriodUpdated() || this.isSpecialTermsUpdated() || this.isStartDateUpdated() || this.isEndDateUpdated() || this.isIncotermsUpdated() || this.isPaymentTermsUpdated() ||
-            this.isPaymentMeansUpdated() || this.isPriceUpdated() || this.isNoteUpdated();
+            this.isPaymentMeansUpdated() || this.isPriceUpdated() || this.isNoteUpdated() || this.isTransportServiceDetailsNoteUpdated();
     }
 
     isDeliveryPeriodUpdated() {
@@ -213,7 +213,16 @@ export class TransportNegotiationResponseComponent implements OnInit {
         return (this.rfqPrice.itemPrice.value != this.quotationPrice.itemPrice.value) || (this.rfqPrice.itemPrice.currency != this.quotationPrice.itemPrice.currency);
     }
 
+    // check whether the notes are updated for negotiable terms
     isNoteUpdated() {
         return ((this.quotation.note.length == 1 && this.quotation.note[0] != "") || this.quotation.note.length > 1 || this.quotation.additionalDocumentReference.length > 0);
+    }
+
+    // check whether the notes are updated for transport service details
+    isTransportServiceDetailsNoteUpdated(){
+        const shipment = this.quotation.quotationLine[0].lineItem.delivery[0].shipment;
+        return ((shipment.specialInstructions.length == 1 && shipment.specialInstructions[0] != "")
+            || shipment.specialInstructions.length > 1
+            || shipment.additionalDocumentReference.length > 0);
     }
 }
