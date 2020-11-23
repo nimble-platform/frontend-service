@@ -211,7 +211,7 @@
                     <button *ngIf="findCategoryInArray(categoryService.selectedCategories, selectedCategoryWithDetails) === -1" class="btn btn-outline-primary float-right" (click)="addCategoryToSelected(selectedCategoryWithDetails)" [disabled]="disableCategorySelection()" [title]="(disableCategorySelection() ? 'You can not mix product and service categories for an item' : '')|translate">
                         <span [innerHTML]="'Select Category' | translate"></span>
                     </button>
-                    <button *ngIf="findCategoryInArray(categoryService.selectedCategories, selectedCategoryWithDetails) > -1" class="btn btn-danger float-right" (click)="removeCategoryFromSelected(selectedCategoryWithDetails)">
+                    <button *ngIf="findCategoryInArray(categoryService.selectedCategories, selectedCategoryWithDetails) > -1" class="btn btn-danger float-right" (click)="categoryService.removeSelectedCategory(selectedCategoryWithDetails)">
                         <span [innerHTML]="'Unselect Category' | translate"></span>
                     </button>
                     <br />
@@ -300,7 +300,7 @@
             <div class="d-flex flex-wrap">
                 <div *ngFor="let selectedCategory of categoryService.selectedCategories" class="bordered d-flex align-items-center mx-1 my-1" title="{{selectedCategory.taxonomyId}}">
                     <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
-                    <i class="fa fa-times-circle pl-1 text-red" placement="right" (click)="removeCategoryFromSelected(selectedCategory)"></i>
+                    <i class="fa fa-times-circle pl-1 text-red" placement="right" (click)="categoryService.removeSelectedCategory(selectedCategory)"></i>
                 </div>
             </div>
         </div>

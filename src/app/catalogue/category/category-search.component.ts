@@ -22,7 +22,7 @@ import { CookieService } from "ng2-cookies";
 import { UserService } from "../../user-mgmt/user.service";
 import { PublishService } from "../publish-and-aip.service";
 import { CallStatus } from "../../common/call-status";
-import { sanitizeDataTypeName, selectPreferredName, selectPreferredValues } from '../../common/utils';
+import {findCategoryInArray, sanitizeDataTypeName, selectPreferredName, selectPreferredValues} from '../../common/utils';
 import { ParentCategories } from "../model/category/parent-categories";
 import { sortCategories, scrollToDiv } from "../../common/utils";
 import { Property } from "../model/category/property";
@@ -90,6 +90,7 @@ export class CategorySearchComponent implements OnInit {
     // stores the parents of the selected category. We need this since changing parentCategories in tree view results in some problems.
     pathToSelectedCategories:ParentCategories = null;
 
+    findCategoryInArray = findCategoryInArray;
     constructor(
         private router: Router,
         private route: ActivatedRoute,
@@ -353,13 +354,13 @@ export class CategorySearchComponent implements OnInit {
                 for(let taxonomyId of taxonomyIds){
                     this.logisticsCategory = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].logisticsCategory);
                     if (this.logisticsCategory != null) {
-                        let searchIndex = this.findCategoryInArray(this.rootCategories, this.logisticsCategory);
+                        let searchIndex = findCategoryInArray(this.rootCategories, this.logisticsCategory);
                         this.rootCategories.splice(searchIndex, 1);
                     }
                     for (var i = 0; i < this.categoryFilter[taxonomyId].hiddenCategories.length; i++) {
                         let filterCat = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].hiddenCategories[i]);
                         if (filterCat != null) {
-                            let searchIndex = this.findCategoryInArray(this.rootCategories, filterCat);
+                            let searchIndex = findCategoryInArray(this.rootCategories, filterCat);
                             this.rootCategories.splice(searchIndex, 1);
                         }
                     }
@@ -397,7 +398,7 @@ export class CategorySearchComponent implements OnInit {
     addCategoryToSelected(category: Category): void {
         // if no category is selected or if the selected category is already selected
         // do nothing
-        if (category == null || this.findCategoryInArray(this.categoryService.selectedCategories, category) > -1) {
+        if (category == null || findCategoryInArray(this.categoryService.selectedCategories, category) > -1) {
             return;
         }
 
@@ -406,13 +407,6 @@ export class CategorySearchComponent implements OnInit {
         }
 
         this.categoryService.addSelectedCategory(category,this.pathToSelectedCategories.parents);
-    }
-
-    removeCategoryFromSelected(category: Category): void {
-        let index = this.findCategoryInArray(this.categoryService.selectedCategories, category);
-        if (index > -1) {
-            this.categoryService.selectedCategories.splice(index, 1);
-        }
     }
 
     navigateToPublishingPage(): void {
@@ -534,10 +528,6 @@ export class CategorySearchComponent implements OnInit {
 
     getPropertyType(property: Property): string {
         return sanitizeDataTypeName(property.dataType);
-    }
-
-    private findCategoryInArray(categoryArray: Category[], category: Category): number {
-        return categoryArray.findIndex(c => c.id == category.id);
     }
 
     private changeTaxonomyId(taxonomyId) {

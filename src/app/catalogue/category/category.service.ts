@@ -22,7 +22,7 @@ import {Category} from '../model/category/category';
 import * as myGlobals from '../../globals';
 import {Code} from '../model/publish/code';
 import {ParentCategories} from '../model/category/parent-categories';
-import {getAuthorizedHeaders, sortCategories} from '../../common/utils';
+import {findCategoryInArray, getAuthorizedHeaders, sortCategories} from '../../common/utils';
 import {CookieService} from 'ng2-cookies';
 
 @Injectable()
@@ -32,15 +32,14 @@ export class CategoryService {
     private serviceCategories: string[];
     // whether any service categories are selected
     hasServiceCategories:boolean = null;
+    // keeps the list of selected categories
     selectedCategories: Category[] = [];
     categoryFilter = myGlobals.config.categoryFilter;
 
     constructor(private http: Http,
         private cookieService: CookieService) {
         // get service categories for available taxonomies
-        this.getServiceCategoriesForAvailableTaxonomies().then(result => {
-            this.serviceCategories = result;
-        })
+        this.getServiceCategoriesForAvailableTaxonomies();
     }
 
     getCategoriesByName(keyword: string, taxonomyId: string, isLogistics: boolean): Promise<Category[]> {
@@ -166,18 +165,6 @@ export class CategoryService {
             .catch(this.handleError);
     }
 
-    addSelectedCategory(category: Category,parentCategories): void {
-        // Only add if category is not null and doesn't exist in selected categories
-        if (category != null && this.selectedCategories.findIndex(c => c.id == category.id) == -1) {
-            // check the first selected category is service or not
-            if(this.selectedCategories.length == 0){
-                this.hasServiceCategories = this.isServiceCategory(parentCategories);
-            }
-            this.selectedCategories.push(category);
-            sortCategories(this.selectedCategories);
-        }
-    }
-
     /**
      * Returns whether the category is a service category or not for the given parent categories
      * @param parentCategories the parent categories
@@ -252,9 +239,36 @@ export class CategoryService {
         })
     }
 
+    // methods to handle selected categories
+    addSelectedCategory(category: Category,parentCategories): void {
+        // Only add if category is not null and doesn't exist in selected categories
+        if (category != null && this.selectedCategories.findIndex(c => c.id == category.id) == -1) {
+            // check the first selected category is service or not
+            if(this.selectedCategories.length == 0){
+                this.hasServiceCategories = this.isServiceCategory(parentCategories);
+            }
+            this.selectedCategories.push(category);
+            sortCategories(this.selectedCategories);
+        }
+    }
+
+    removeSelectedCategory(category: Category): void {
+        let index = findCategoryInArray(this.selectedCategories, category);
+        if (index > -1) {
+            this.selectedCategories.splice(index, 1);
+        }
+        // if there is no selected categories, reset hasServiceCategories field
+        if(this.selectedCategories.length == 0){
+            this.hasServiceCategories = false;
+        }
+    }
+
     resetSelectedCategories(): void {
         this.selectedCategories.splice(0, this.selectedCategories.length);
+        // since there is no selected categories, reset hasServiceCategories field
+        this.hasServiceCategories = false;
     }
+    // the end of methods to handle selected categories
 
     resetData(): void {
         this.resetSelectedCategories();

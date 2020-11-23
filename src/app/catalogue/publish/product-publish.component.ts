@@ -958,7 +958,7 @@ export class ProductPublishComponent implements OnInit {
                 return el.itemClassificationCode.value !== category.id;
             });
 
-            this.categoryService.selectedCategories.splice(index, 1);
+            this.categoryService.removeSelectedCategory(category);
             this.recomputeSelectedCategoryProperties();
         }
 
