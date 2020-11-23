@@ -98,8 +98,10 @@ export const config = {
     "docLink": "https://www.nimble-project.org/docs/",
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
+    "hideLogAnalytics": false,
     "hidePriceFunctionality": false,
     "hideTradeDetailsTab": false,
+    "hideVisitStats": false,
     "imprint": {
         "en": "<br/>E-Mail: <a href='mailto:nimble@il.ibm.com'>nimble@il.ibm.com</a><br/>",
         "es": "<br/>Correo electrónico: <a href='mailto:nimble@il.ibm.com'>nimble@il.ibm.com</a><br/>"

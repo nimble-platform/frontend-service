@@ -18,7 +18,7 @@
     <div class="col-12">
         <!-- Product Tabs -->
         <ul class="nav nav-tabs">
-            <ng-container *ngIf="config.kibanaEnabled">
+            <ng-container *ngIf="config.kibanaEnabled && !hideLogAnalytics">
                 <li class="nav-item">
                     <a href id="LOG" class="nav-link" [ngClass]="{ active: selectedTab === 'LOG'}" (click)="onSelectTab($event,'LOG')">
                         <span [innerHTML]="'Log Analytics' | translate"></span>
