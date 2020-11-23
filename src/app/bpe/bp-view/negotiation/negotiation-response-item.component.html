@@ -203,7 +203,7 @@
             <!-- Original terms -->
             <ng-container [ngSwitch]="primaryTermsSource">
                 <div *ngSwitchCase="'product_defaults'" class="col-3">
-                    <label>{{isCatalogueLineDeleted ? "Not available" : wrapper.lineDiscountPriceWrapper.totalPriceString | translate}}</label>
+                    <label>{{(isCatalogueLineDeleted ? "Not available" : wrapper.lineDiscountPriceWrapper.totalPriceString) | translate}}</label>
                     <small *ngIf="!isCatalogueLineDeleted">( {{ wrapper.lineDiscountPriceWrapper.discountedPriceAmountUI | amountUiTranslatePipe }} )</small>
                 </div>
                 <div *ngSwitchCase="'frame_contract'" class="col-3">
@@ -233,7 +233,7 @@
                                     [step]="0.01"
                                     [disableQuantityUnit]="wrapper.lineDiscountPriceWrapper.itemPrice.hasPrice()">
                     </quantity-input>
-                    <small>( {{ wrapper.newQuotationWrapper.priceWrapper.pricePerItemString | wordByWordTranslate}} )</small>
+                    <small>( {{ wrapper.newQuotationWrapper.priceWrapper.priceAmountUI | amountUiTranslatePipe}} )</small>
                     <span *ngIf="isDiscountIconVisibleInCustomerRequestColumn()" class="space-left" data-toggle="tooltip" data-placement="top" (click)="openDiscountModal()" [title]="'Applied Discounts/Charges'|translate" style="cursor: pointer">
                         <i class="fa fa-search" aria-hidden="true"></i>
                     </span>
@@ -333,7 +333,7 @@
                     <div *ngIf="!isDeliveryDateSectionOpen" class="row content-row" [ngClass]="{'bg-danger text-white':!wrapper.checkEqualForRequest(primaryTermsSource, 'deliveryPeriod')}">
                         <div class="col-3"><strong class="font-weight-500"><span [innerHTML]="'Delivery Period' | translate"></span>:</strong></div>
                         <ng-container [ngSwitch]="primaryTermsSource">
-                            <div *ngSwitchCase="'product_defaults'" class="col-3">{{ isCatalogueLineDeleted ? "Not available" : (wrapper.lineDeliveryPeriod | quantityTranslatePipe)}}</div>
+                            <div *ngSwitchCase="'product_defaults'" class="col-3">{{ isCatalogueLineDeleted ? ("Not available" | translate) : (wrapper.lineDeliveryPeriod | quantityTranslatePipe)}}</div>
                             <div *ngSwitchCase="'frame_contract'" class="col-3">{{ wrapper.frameContractQuotationWrapper.deliveryPeriod | quantityTranslatePipe}}</div>
                             <div *ngSwitchCase="'last_offer'" class="col-3">{{ wrapper.lastOfferQuotationWrapper.deliveryPeriod | quantityTranslatePipe}}</div>
                         </ng-container>
