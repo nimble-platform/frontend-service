@@ -78,13 +78,19 @@
 <!--Single upload-->
 <ng-container *ngIf="publishingGranularity === 'single' && catalogueLine">
     <hr>
-    <name-description-panel [catalogueLine]="catalogueLine" [productIdEditable]="isProductIdEditable()" [parentForm]="publishForm">
-    </name-description-panel>
-    <hr>
+    <!-- Single Upload Publishing Steps -->
+    <product-publish-steps [currentStep]="singleUploadPublishingStep"></product-publish-steps>
+
+    <!-- Name/Description panel-->
+    <ng-container *ngIf="singleUploadPublishingStep == 'ID/Name/Image' || singleUploadPublishingStep == 'Review'">
+        <name-description-panel [catalogueLine]="catalogueLine" [productIdEditable]="isProductIdEditable()" [parentForm]="publishForm">
+        </name-description-panel>
+    </ng-container>
 
     <!-- Tabs for Product -->
     <ng-container>
-        <div class="row space-before">
+        <!-- Navigation bar for the product tabs -->
+        <div *ngIf="singleUploadPublishingStep == 'Review'"  class="row space-before">
             <div class="col-12">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
@@ -117,7 +123,7 @@
         </div>
 
         <!-- Product Details Tab -->
-        <div class="row space-before" [hidden]="selectedTabSinglePublish != 'DETAILS'">
+        <div class="row space-before" [hidden]="(singleUploadPublishingStep != 'Review' && singleUploadPublishingStep != 'Details') || (singleUploadPublishingStep == 'Review' && selectedTabSinglePublish != 'DETAILS')">
             <!-- Dimensions -->
             <div class="col-12">
                 <button class='btn btn-outline-primary' (click)="toggleDimensionCard()"><span [innerHTML]="'Dimensions' | translate"></span></button>
@@ -238,7 +244,7 @@
         </div>
 
         <!-- Price Tab -->
-        <div class="row space-before" [hidden]="selectedTabSinglePublish != 'PRICE'">
+        <div class="row space-before" [hidden]="(singleUploadPublishingStep != 'Review' && singleUploadPublishingStep != 'Price')  || (singleUploadPublishingStep == 'Review' && selectedTabSinglePublish != 'PRICE')">
             <div class="col-12">
                 <product-price-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()" [companyNegotiationSettings]="companyNegotiationSettings" [parentForm]="publishForm">
                 </product-price-tab>
@@ -246,7 +252,7 @@
         </div>
 
         <!-- Delivery & Trading Tab -->
-        <div class="row space-before" [hidden]="selectedTabSinglePublish != 'DELIVERY_TRADING'">
+        <div class="row space-before" [hidden]="(singleUploadPublishingStep != 'Review' && singleUploadPublishingStep != 'Delivery&Trading')  || (singleUploadPublishingStep == 'Review' && selectedTabSinglePublish != 'DELIVERY_TRADING')">
             <div class="col-12">
                 <product-delivery-trading [wrapper]="productWrapper" [disabled]="isLoading()" [companyNegotiationSettings]="companyNegotiationSettings" [parentForm]="publishForm">
                 </product-delivery-trading>
@@ -254,7 +260,7 @@
         </div>
 
         <!-- Certificates -->
-        <div class="row space-before" [hidden]="selectedTabSinglePublish != 'CERTIFICATES'">
+        <div class="row space-before" [hidden]="(singleUploadPublishingStep != 'Review' && singleUploadPublishingStep != 'Certificates')  || (singleUploadPublishingStep == 'Review' && selectedTabSinglePublish != 'CERTIFICATES')">
             <div class="col-12">
                 <product-certificates-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()">
                 </product-certificates-tab>
@@ -262,7 +268,7 @@
         </div>
 
         <!-- Life Cycle Performance Analysis -->
-        <div class="row space-before" [hidden]="selectedTabSinglePublish != 'LCPA'">
+        <div class="row space-before" [hidden]="(singleUploadPublishingStep != 'Review' && singleUploadPublishingStep != 'LCPA') || (singleUploadPublishingStep == 'Review' && selectedTabSinglePublish != 'LCPA')">
             <div class="col-12">
                 <product-lcpa-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()" [presentationMode]="'edit'">
                 </product-lcpa-tab>
@@ -274,30 +280,46 @@
 
     <!-- Actions -->
     <div class="row actions-row pr-0">
-        <div class="col-4">
-            <call-status [callStatus]="publishStatus"></call-status>
-        </div>
-        <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
-                <span [innerHTML]="'Cancel' | translate"></span>
-            </button>
-        </div>
-        <div class="col-3">
+        <ng-container *ngIf="singleUploadPublishingStep != 'Review'">
+            <div *ngIf="singleUploadPublishingStep != 'ID/Name/Image'" class="col-2">
+                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onPreviousStep()">
+                    <span [innerHTML]="'Back' | translate"></span>
+                </button>
+            </div>
+            <div class="col-3">
+            <span [ngbTooltip]="validationService.extractErrorMessage(publishForm)" [placement]="'auto'" title="">
+                <button class="btn btn-primary action" [disabled]="isLoading() || !areInputNumbersValid() || !publishForm.valid" (click)="onNextStep()">
+                    <span  [innerHTML]="'Next' | translate"></span>
+                </button>
+            </span>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="singleUploadPublishingStep == 'Review'">
+            <div class="col-4">
+                <call-status [callStatus]="publishStatus"></call-status>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
+                    <span [innerHTML]="'Cancel' | translate"></span>
+                </button>
+            </div>
+            <div class="col-3">
             <span [ngbTooltip]="validationService.extractErrorMessage(publishForm)" [placement]="'auto'" title="">
                 <button class="btn btn-primary action" [disabled]="isLoading() || !areInputNumbersValid() || !publishForm.valid" (click)="onPublish(false)">
                     <span *ngIf="publishStateService.publishMode === 'edit'" [innerHTML]="'Save & Continue' | translate"></span>
                     <span *ngIf="publishStateService.publishMode !== 'edit'" [innerHTML]="'Publish & Continue' | translate"></span>
                 </button>
             </span>
-        </div>
-        <div class="col-3">
+            </div>
+            <div class="col-3">
             <span [ngbTooltip]="validationService.extractErrorMessage(publishForm)" [placement]="'auto'" title="">
                 <button class="btn btn-primary action" [disabled]="isLoading() || !areInputNumbersValid() || !publishForm.valid" (click)="onPublish(true)">
                     <span *ngIf="publishStateService.publishMode === 'edit'" [innerHTML]="'Save & Exit' | translate"></span>
                     <span *ngIf="publishStateService.publishMode !== 'edit'" [innerHTML]="'Publish & Exit' | translate"></span>
                 </button>
             </span>
-        </div>
+            </div>
+        </ng-container>
     </div>
 
     <!-- Category's Attributes Modal -->

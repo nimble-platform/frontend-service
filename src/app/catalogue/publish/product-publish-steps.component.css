@@ -1,0 +1,118 @@
+/*
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+.panel {
+    border: #e3e3e3 solid 1px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+}
+
+.steps {
+    display: flex;
+    display: -ms-flexbox;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    margin: 0.2rem 0;
+    width: 100%;
+}
+
+.steps .step {
+    -ms-flex: 1 1 0;
+    flex: 1 1 0;
+    margin-top: 0;
+    min-height: 1rem;
+    position: relative;
+    text-align: center;
+}
+
+/**
+ * Before the active step
+ */
+.steps .step:not(:first-child)::before {
+    background: #007706;
+    content: "";
+    height: 0.2rem;
+    left: -50%;
+    position: absolute;
+    top: 0.4rem;
+    width: 100%;
+}
+
+.steps .step span {
+    color: #007706;
+    display: inline-block;
+    padding: 20px 10px 0;
+    text-decoration: none;
+}
+
+.steps .step span::before {
+    background: #007706;
+    border: 0.1rem solid #007706;
+    border-radius: 50%;
+    content: "";
+    display: block;
+    height: 0.6rem;
+    left: 50%;
+    position: absolute;
+    top: 0.2rem;
+    transform: translateX(-50%);
+    width: 0.6rem;
+    z-index: 1;
+}
+
+/**
+ * The current step
+ */
+/* General */
+.steps .step.current span::before {
+    background: #ffffff;
+    border: 0.1rem solid #000000;
+}
+
+.steps .step.current span::after {
+    content: attr(data-after);
+    display: block;
+    position: absolute;
+    width: 100%;
+    left: 10px;
+    top: -40px;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.steps .step.current {
+    font-size: 1.2rem;
+}
+
+.steps .step.current span {
+    color: #000000;
+    font-weight: 600;
+}
+
+/**
+ * After the active step
+ */
+.steps .step.current~.step::before {
+    background: #b3b3b3;
+}
+
+.steps .step.current~.step span::before {
+    background: #b3b3b3;
+    border: 0.1rem solid #ffffff;
+}
+
+.steps .step.current~.step span {
+    color: #b3b3b3;
+}

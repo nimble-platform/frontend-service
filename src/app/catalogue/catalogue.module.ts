@@ -44,6 +44,7 @@ import { NameDescriptionPanelComponent } from './publish/name-description-panel.
 import { LogisticServicePublishComponent } from './publish/logistic-service-publish.component';
 import { LogisticPublishDeactivateGuardService } from './logistic-publish-deactivate-guard.service';
 import { DeleteExportCatalogueModalComponent } from "./ubl-model-view/catalogue/delete-export-catalogue-modal.component";
+import {ProductPublishStepsComponent} from './publish/product-publish-steps.component';
 
 @NgModule({
     imports: [CommonModule,
@@ -60,6 +61,7 @@ import { DeleteExportCatalogueModalComponent } from "./ubl-model-view/catalogue/
         CategorySearchComponent,
         CategoryTreeComponent,
         ProductPublishComponent,
+        ProductPublishStepsComponent,
         LogisticServicePublishComponent,
         EditPropertyModalComponent,
         BulkPublishComponent,

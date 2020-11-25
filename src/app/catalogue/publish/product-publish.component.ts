@@ -74,6 +74,7 @@ import {ValidationService} from '../../common/validation/validators';
 import {AppComponent} from '../../app.component';
 import {TranslateService} from '@ngx-translate/core';
 import {PublishingPropertyService} from './publishing-property.service';
+import {ProductPublishStep} from './product-publish-step';
 
 
 type ProductType = "product" | "transportation";
@@ -176,6 +177,9 @@ export class ProductPublishComponent implements OnInit {
     invalidCategoryCodes: Code[] = [];
 
     private translations: any;
+
+    // the current step in single upload publishing
+    public singleUploadPublishingStep:ProductPublishStep = "ID/Name/Image";
 
     constructor(public categoryService: CategoryService,
         private catalogueService: CatalogueService,
@@ -1177,4 +1181,49 @@ export class ProductPublishComponent implements OnInit {
             }
         }
     }
+
+    // methods to handle guided publishing
+    onPreviousStep(){
+        switch (this.singleUploadPublishingStep) {
+            case 'ID/Name/Image':
+                break;
+            case 'Details':
+                this.singleUploadPublishingStep = "ID/Name/Image";
+                break;
+            case 'Price':
+                this.singleUploadPublishingStep = "Details";
+                break;
+            case 'Delivery&Trading':
+                this.singleUploadPublishingStep = "Price";
+                break;
+            case 'Certificates':
+                this.singleUploadPublishingStep = "Delivery&Trading";
+                break;
+            case 'LCPA':
+                this.singleUploadPublishingStep = "Certificates"
+        }
+    }
+
+    onNextStep(){
+        switch (this.singleUploadPublishingStep) {
+            case 'ID/Name/Image':
+                this.singleUploadPublishingStep = "Details";
+                break;
+            case 'Details':
+                this.singleUploadPublishingStep = "Price";
+                break;
+            case 'Price':
+                this.singleUploadPublishingStep = "Delivery&Trading";
+                break;
+            case 'Delivery&Trading':
+                this.singleUploadPublishingStep = "Certificates";
+                break;
+            case 'Certificates':
+                this.singleUploadPublishingStep = this.config.showLCPA ? "LCPA" : "Review";
+                break;
+            case 'LCPA':
+                this.singleUploadPublishingStep = "Review";
+        }
+    }
+    // the end of methods to handle guided publishing
 }
