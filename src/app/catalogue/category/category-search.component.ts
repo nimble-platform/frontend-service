@@ -78,11 +78,8 @@ export class CategorySearchComponent implements OnInit {
     prefCats: string[] = [];
     recCats: string[] = [];
 
-    isLogistics: boolean;
-    logisticsCategory: Category = null;
-
     showOtherProperties = null;
-    productType: ProductType;
+    productType: ProductType = "product";
 
     favSelected: boolean;
 
@@ -112,10 +109,6 @@ export class CategorySearchComponent implements OnInit {
             if (this.originalPageRef == null) {
                 this.originalPageRef = this.pageRef;
             }
-
-            //set product type
-            this.productType = params["productType"] === "transportation" ? "transportation" : "product";
-            this.isLogistics = this.productType === "transportation";
 
             if (this.pageRef === 'menu' && this.originalPageRef === 'publish') {
                 // This part is necessary since only the params has changes,canDeactivate method will not be called.
@@ -352,9 +345,9 @@ export class CategorySearchComponent implements OnInit {
                 this.rootCategories = sortCategories(rootCategories);
                 this.getCategoriesStatus.aggregatedCallBack("Retrieved category details", true);
                 for(let taxonomyId of taxonomyIds){
-                    this.logisticsCategory = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].logisticsCategory);
-                    if (this.logisticsCategory != null) {
-                        let searchIndex = findCategoryInArray(this.rootCategories, this.logisticsCategory);
+                    let logisticsCategory = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].logisticsCategory);
+                    if (logisticsCategory != null) {
+                        let searchIndex = findCategoryInArray(this.rootCategories, logisticsCategory);
                         this.rootCategories.splice(searchIndex, 1);
                     }
                     for (var i = 0; i < this.categoryFilter[taxonomyId].hiddenCategories.length; i++) {
@@ -383,7 +376,7 @@ export class CategorySearchComponent implements OnInit {
     private getCategories(): void {
         this.getCategoriesStatus.aggregatedSubmit();
         this.categoryService
-            .getCategoriesByName(this.categoryKeyword, this.taxonomyId, this.isLogistics)
+            .getCategoriesByName(this.categoryKeyword, this.taxonomyId, false)
             .then(categories => {
                 this.parentCategories = null;
                 this.pathToSelectedCategories = null;
