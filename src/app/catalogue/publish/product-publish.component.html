@@ -25,20 +25,6 @@
     </li>
 </ul>
 
-<!--Catalogue selection for single upload-->
-<div *ngIf="cataloguesIds.length > 1 && publishingGranularity !== 'bulk'" class="row space-before">
-    <div class="col-2 category-list-label">
-        <strong *ngIf="!productCatalogueRetrievalStatus.isLoading()"><span [innerHTML]="'Catalogue:' | translate"></span></strong>
-        <strong class="mr-2" *ngIf="productCatalogueRetrievalStatus.isLoading()"><span [innerHTML]="'Fetching Catalogues' | translate"></span></strong>
-        <call-status [callStatus]="productCatalogueRetrievalStatus"></call-status>
-    </div>
-    <div class="col-4">
-        <select class="custom-select" [(ngModel)]="selectedCatalogueId" (change)="changeCat();$event.stopPropagation()">
-            <option *ngFor="let catalogueId of cataloguesIds" [ngValue]="catalogueId" [innerHtml]="catalogueId == 'default'? ('Main Catalogue'|translate): catalogueId"></option>
-        </select>
-    </div>
-</div>
-
 <!-- Selected Categories -->
 <div class="row space-before">
     <div class="col-2 category-list-label">
@@ -79,7 +65,21 @@
 <ng-container *ngIf="publishingGranularity === 'single' && catalogueLine">
     <hr>
     <!-- Single Upload Publishing Steps -->
-    <product-publish-steps [currentStep]="singleUploadPublishingStep"></product-publish-steps>
+    <product-publish-steps [currentStep]="singleUploadPublishingStep" [catalogueStepEnabled]="cataloguesIds.length > 1"></product-publish-steps>
+
+    <!--Catalogue selection-->
+    <div *ngIf="cataloguesIds.length > 1 && singleUploadPublishingStep == 'Catalogue'" class="row space-before">
+        <div class="col-2 category-list-label">
+            <strong *ngIf="!productCatalogueRetrievalStatus.isLoading()"><span [innerHTML]="'Catalogue:' | translate"></span></strong>
+            <strong class="mr-2" *ngIf="productCatalogueRetrievalStatus.isLoading()"><span [innerHTML]="'Fetching Catalogues' | translate"></span></strong>
+            <call-status [callStatus]="productCatalogueRetrievalStatus"></call-status>
+        </div>
+        <div class="col-4">
+            <select class="custom-select" [(ngModel)]="selectedCatalogueId" (change)="changeCat();$event.stopPropagation()">
+                <option *ngFor="let catalogueId of cataloguesIds" [ngValue]="catalogueId" [innerHtml]="catalogueId == 'default'? ('Main Catalogue'|translate): catalogueId"></option>
+            </select>
+        </div>
+    </div>
 
     <!-- Name/Description panel-->
     <ng-container *ngIf="singleUploadPublishingStep == 'ID/Name/Image' || singleUploadPublishingStep == 'Review'">
@@ -281,7 +281,7 @@
     <!-- Actions -->
     <div class="row actions-row pr-0">
         <ng-container *ngIf="singleUploadPublishingStep != 'Review'">
-            <div *ngIf="singleUploadPublishingStep != 'ID/Name/Image'" class="col-2">
+            <div *ngIf="(cataloguesIds.length > 1 && singleUploadPublishingStep != 'Catalogue') || (cataloguesIds.length <= 1 && singleUploadPublishingStep != 'ID/Name/Image')" class="col-2">
                 <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onPreviousStep()">
                     <span [innerHTML]="'Back' | translate"></span>
                 </button>

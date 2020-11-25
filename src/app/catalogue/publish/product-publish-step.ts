@@ -15,6 +15,7 @@
  */
 
 export type ProductPublishStep =
+    | "Catalogue"
     | "ID/Name/Image"
     | "Details"
     | "Price"

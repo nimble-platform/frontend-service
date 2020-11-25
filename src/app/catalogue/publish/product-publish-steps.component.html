@@ -17,6 +17,9 @@
 <div class="row mt-3 mb-5 pt-5 panel">
     <div class="col-12">
         <div class="steps">
+            <div *ngIf="catalogueStepEnabled" [ngClass]="getStepClasses('Catalogue')">
+                <span><span [innerHTML]="'Catalogue' | translate"></span></span>
+            </div>
             <div [ngClass]="getStepClasses('ID/Name/Image')">
                 <span><span [innerHTML]="'Name & Description' | translate"></span></span>
             </div>

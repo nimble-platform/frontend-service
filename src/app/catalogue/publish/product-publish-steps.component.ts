@@ -26,6 +26,7 @@ import * as myGlobals from '../../globals';
 export class ProductPublishStepsComponent {
 
     @Input() currentStep: ProductPublishStep;
+    @Input() catalogueStepEnabled:boolean = false;
 
     config = myGlobals.config;
 

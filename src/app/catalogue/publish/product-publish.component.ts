@@ -1130,6 +1130,10 @@ export class ProductPublishComponent implements OnInit {
 
             this.cataloguesIds = idList;
             this.catalogueUUids = uuidList;
+            // if there are more than one catalogue, the first step of product publishing should be catalogue selection
+            if(this.cataloguesIds.length > 1){
+                this.singleUploadPublishingStep = 'Catalogue';
+            }
             this.productCatalogueRetrievalStatus.callback("Successfully loaded catalogueId list", true);
         }).catch((error) => {
             this.productCatalogueRetrievalStatus.error('Failed to get product catalogues');
@@ -1185,7 +1189,10 @@ export class ProductPublishComponent implements OnInit {
     // methods to handle guided publishing
     onPreviousStep(){
         switch (this.singleUploadPublishingStep) {
+            case 'Catalogue':
+                break;
             case 'ID/Name/Image':
+                this.singleUploadPublishingStep = "Catalogue";
                 break;
             case 'Details':
                 this.singleUploadPublishingStep = "ID/Name/Image";
@@ -1206,6 +1213,9 @@ export class ProductPublishComponent implements OnInit {
 
     onNextStep(){
         switch (this.singleUploadPublishingStep) {
+            case 'Catalogue':
+                this.singleUploadPublishingStep = "ID/Name/Image";
+                break;
             case 'ID/Name/Image':
                 this.singleUploadPublishingStep = "Details";
                 break;
