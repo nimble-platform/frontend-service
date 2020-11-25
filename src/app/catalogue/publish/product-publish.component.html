@@ -14,17 +14,6 @@
    limitations under the License.
  -->
 
-<!-- Topmost navigation bar -->
-<ul class="nav nav-tabs" *ngIf="publishMode !== 'edit' && publishMode !== 'copy'">
-    <li class="nav-item">
-        <a href id="singleUpload" [ngClass]="{'nav-link': true, active: publishingGranularity === 'single'}" (click)="onSelectTab($event,'singleUpload')"><span [innerHTML]="'Single Upload' | translate"></span></a>
-    </li>
-
-    <li class="nav-item">
-        <a href id="bulkUpload" [ngClass]="{'nav-link': true, active: publishingGranularity == 'bulk'}" (click)="onSelectTab($event,'bulkUpload')"><span [innerHTML]="'Bulk Upload' | translate"></span></a>
-    </li>
-</ul>
-
 <!-- Selected Categories -->
 <div class="row space-before">
     <div class="col-2 category-list-label">
