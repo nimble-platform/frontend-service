@@ -14,37 +14,6 @@
    limitations under the License.
  -->
 
-<!-- Selected Categories -->
-<div *ngIf="publishingStep == 'Review' || publishingStep == 'BulkUpload'" class="row space-before">
-    <div class="col-2 category-list-label">
-        <strong *ngIf="!isProductCategoriesLoading()"><span [innerHTML]="'Categories:' | translate"></span></strong>
-        <strong class="mr-2" *ngIf="isProductCategoriesLoading()"><span [innerHTML]="'Fetching Categories' | translate"></span> </strong>
-        <call-status [callStatus]="productCategoryRetrievalStatus"></call-status>
-    </div>
-    <div class="col-10 ">
-        <div class="object-list">
-            <div *ngFor="let selectedCategory of categoryService.selectedCategories" class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
-                <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
-                <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
-            </div>
-            <button class="btn btn-outline-primary btn-add-category" (click)="onAddCategory()" [disabled]="isLoading()">
-                <span [innerHTML]="'Add Category' | translate"></span>
-            </button>
-        </div>
-        <!-- Invalid categories-->
-        <div *ngIf="invalidCategoryCodes.length > 0" class="alert-danger">
-            <strong><span [innerHTML]="'Following categories are not valid any more:' | translate"></span></strong>
-            <ul>
-                <strong>
-                    <li *ngFor="let invalidCategoryCode of invalidCategoryCodes">{{invalidCategoryCode.name}}</li>
-                </strong>
-            </ul>
-            <div class="d-flex justify-content-end">
-                <button class="btn btn-outline-primary justify-content-end space-right" (click)="removeInvalidCategories()"><span [innerHTML]="'Remove them from the product' | translate"></span></button>
-            </div>
-        </div>
-    </div>
-</div>
 <!--Bulk upload-->
 <div *ngIf="publishingGranularity === 'bulk'">
     <!-- Bulk Upload Publishing Steps -->
@@ -61,8 +30,43 @@
         ></category-search>
     </div>
 
-    <bulk-publish *ngIf="publishingStep == 'BulkUpload'" [selectCategories]="categoryService.selectedCategories" [catalogueIds]="cataloguesIds" [catalogueUuids]="catalogueUUids">
-    </bulk-publish>
+    <ng-container *ngIf="publishingStep == 'BulkUpload'">
+        <!-- Selected Categories -->
+        <div class="row space-before">
+            <div class="col-2 category-list-label">
+                <strong *ngIf="!isProductCategoriesLoading()"><span [innerHTML]="'Categories:' | translate"></span></strong>
+                <strong class="mr-2" *ngIf="isProductCategoriesLoading()"><span [innerHTML]="'Fetching Categories' | translate"></span> </strong>
+                <call-status [callStatus]="productCategoryRetrievalStatus"></call-status>
+            </div>
+            <div class="col-10 ">
+                <div class="object-list">
+                    <div *ngFor="let selectedCategory of categoryService.selectedCategories" class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
+                        <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
+                        <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
+                    </div>
+                    <button class="btn btn-outline-primary btn-add-category" (click)="onAddCategory()" [disabled]="isLoading()">
+                        <span [innerHTML]="'Add Category' | translate"></span>
+                    </button>
+                </div>
+                <!-- Invalid categories-->
+                <div *ngIf="invalidCategoryCodes.length > 0" class="alert-danger">
+                    <strong><span [innerHTML]="'Following categories are not valid any more:' | translate"></span></strong>
+                    <ul>
+                        <strong>
+                            <li *ngFor="let invalidCategoryCode of invalidCategoryCodes">{{invalidCategoryCode.name}}</li>
+                        </strong>
+                    </ul>
+                    <div class="d-flex justify-content-end">
+                        <button class="btn btn-outline-primary justify-content-end space-right" (click)="removeInvalidCategories()"><span [innerHTML]="'Remove them from the product' | translate"></span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <bulk-publish [selectCategories]="categoryService.selectedCategories" [catalogueIds]="cataloguesIds" [catalogueUuids]="catalogueUUids">
+        </bulk-publish>
+    </ng-container>
+
 
     <hr class="actions-hr">
 
@@ -82,13 +86,44 @@
 </div>
 <!--Single upload-->
 <ng-container *ngIf="publishingGranularity === 'single' && catalogueLine">
-    <hr>
     <!-- Single Upload Publishing Steps -->
     <product-publish-steps
             [currentStep]="publishingStep"
             [catalogueStepEnabled]="cataloguesIds.length > 1"
             [publishingGranularity]="'single'"
     ></product-publish-steps>
+
+    <!-- Selected Categories -->
+    <div *ngIf="publishingStep == 'Review'" class="row space-before space-after">
+        <div class="col-2 category-list-label">
+            <strong *ngIf="!isProductCategoriesLoading()"><span [innerHTML]="'Categories:' | translate"></span></strong>
+            <strong class="mr-2" *ngIf="isProductCategoriesLoading()"><span [innerHTML]="'Fetching Categories' | translate"></span> </strong>
+            <call-status [callStatus]="productCategoryRetrievalStatus"></call-status>
+        </div>
+        <div class="col-10 ">
+            <div class="object-list">
+                <div *ngFor="let selectedCategory of categoryService.selectedCategories" class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
+                    <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
+                    <i class="fa fa-times-circle pl-1" placement="right" (click)="onRemoveCategory(selectedCategory)"></i>
+                </div>
+                <button class="btn btn-outline-primary btn-add-category" (click)="onAddCategory()" [disabled]="isLoading()">
+                    <span [innerHTML]="'Add Category' | translate"></span>
+                </button>
+            </div>
+            <!-- Invalid categories-->
+            <div *ngIf="invalidCategoryCodes.length > 0" class="alert-danger">
+                <strong><span [innerHTML]="'Following categories are not valid any more:' | translate"></span></strong>
+                <ul>
+                    <strong>
+                        <li *ngFor="let invalidCategoryCode of invalidCategoryCodes">{{invalidCategoryCode.name}}</li>
+                    </strong>
+                </ul>
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-outline-primary justify-content-end space-right" (click)="removeInvalidCategories()"><span [innerHTML]="'Remove them from the product' | translate"></span></button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!--Category selection-->
     <div *ngIf="publishingStep == 'Category'" class="space-before">
