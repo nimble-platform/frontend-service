@@ -70,7 +70,7 @@
     <div class="row actions-row pr-0">
         <div *ngIf="publishingStep != 'Category'" class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onPreviousStep()">
-                <span [innerHTML]="'Back' | translate"></span>
+                <span [innerHTML]="'Previous' | translate"></span>
             </button>
         </div>
         <div *ngIf="publishingStep != 'BulkUpload'" class="col-3">
@@ -314,7 +314,7 @@
         <ng-container *ngIf="publishingStep != 'Review'">
             <div *ngIf="publishingStep != 'Category'" class="col-2">
                 <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onPreviousStep()">
-                    <span [innerHTML]="'Back' | translate"></span>
+                    <span [innerHTML]="'Previous' | translate"></span>
                 </button>
             </div>
             <div class="col-3">
@@ -326,8 +326,13 @@
             </div>
         </ng-container>
         <ng-container *ngIf="publishingStep == 'Review'">
-            <div class="col-4">
+            <div class="col-2">
                 <call-status [callStatus]="publishStatus"></call-status>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onPreviousStep()">
+                    <span [innerHTML]="'Previous' | translate"></span>
+                </button>
             </div>
             <div class="col-2">
                 <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">

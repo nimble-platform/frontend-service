@@ -1228,7 +1228,10 @@ export class ProductPublishComponent implements OnInit {
                 this.publishingStep = "Delivery&Trading";
                 break;
             case 'LCPA':
-                this.publishingStep = "Certificates"
+                this.publishingStep = "Certificates";
+                break;
+            case 'Review':
+                this.publishingStep = this.config.showLCPA ? "LCPA" : "Certificates";
         }
     }
 
