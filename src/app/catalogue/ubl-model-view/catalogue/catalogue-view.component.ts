@@ -657,7 +657,7 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     navigateToThePublishPage() {
-        this.router.navigate(['/catalogue/categorysearch']);
+        this.router.navigate(['/catalogue/publish']);
     }
 
     navigateToBulkUploadPage() {

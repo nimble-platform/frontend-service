@@ -14,8 +14,8 @@
    limitations under the License.
  */
 
-import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute, Params, Router, RouterStateSnapshot } from "@angular/router";
+import {Component, Input, OnInit} from '@angular/core';
+import { ActivatedRoute, Router } from "@angular/router";
 import { Category } from "../model/category/category";
 import { CategoryService } from "./category.service";
 import { CookieService } from "ng2-cookies";
@@ -45,7 +45,8 @@ type SelectedTab = "TREE"
     styleUrls: ["./category-search.component.css"]
 })
 export class CategorySearchComponent implements OnInit {
-
+    // whether the categories are selected for the publishing
+    @Input() categoriesSelected:boolean = false;
     selectedTab: SelectedTab = "TREE";
 
     getCategoriesStatus: CallStatus = new CallStatus();
@@ -56,9 +57,8 @@ export class CategorySearchComponent implements OnInit {
     getCategoryDetailsStatus: CallStatus = new CallStatus();
 
     categories: Category[];
-    originalPageRef: string = null; // keeps the source page, which was the initial page before navigating to this page
     pageRef: string = null;
-    publishingGranularity: string;
+    @Input() publishingGranularity: string;
 
 
     // keeps the query term
@@ -102,26 +102,7 @@ export class CategorySearchComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.route.queryParams.subscribe((params: Params) => {
-            // current page regs considered: menu, publish, null
-            this.pageRef = params["pageRef"];
-            // original page ref is set once only if it is null
-            if (this.originalPageRef == null) {
-                this.originalPageRef = this.pageRef;
-            }
-
-            if (this.pageRef === 'menu' && this.originalPageRef === 'publish') {
-                // This part is necessary since only the params has changes,canDeactivate method will not be called.
-                // This situation occurs when the user clicks on the Publish button in the top menu during the publication process.
-                this.appComponent.confirmModalComponent.open('You will lose any changes you made, are you sure you want to quit ?').then(result => {
-                    if(result){
-                        this.initCategories(params);
-                    }
-                });
-            } else{
-                this.initCategories(params);
-            }
-        });
+        this.initCategories();
         // get available taxonomy ids
         this.categoryService.getAvailableTaxonomies().then(taxonomyIDs => {
             this.taxonomyIDs = ["All"];
@@ -146,8 +127,8 @@ export class CategorySearchComponent implements OnInit {
         return false;
     }
 
-    initCategories(params){
-        if (this.pageRef == null || this.pageRef == "menu") {
+    initCategories(categoryKeyword:string = null){
+        if (!this.categoriesSelected) {
             // reset categories
             this.categoryService.resetSelectedCategories();
             this.selectedCategory = null;
@@ -164,14 +145,8 @@ export class CategorySearchComponent implements OnInit {
         // get the recently used categories
         this.getRecentCategories();
 
-        // publishing granularity: single, bulk, null
-        this.publishingGranularity = params["pg"];
-        if (this.publishingGranularity == null) {
-            this.publishingGranularity = "single";
-        }
-
         // handle category query term
-        this.categoryKeyword = params["cat"];
+        this.categoryKeyword = categoryKeyword;
         if (this.categoryKeyword != null) {
             this.getCategories();
         }
@@ -307,29 +282,12 @@ export class CategorySearchComponent implements OnInit {
         return "";
     }
 
-    canDeactivate(nextState: RouterStateSnapshot): boolean | Promise<boolean>{
-        if (this.originalPageRef === 'publish' && !nextState.url.startsWith('/catalogue/publish')) {
-            return this.appComponent.confirmModalComponent.open('You will lose any changes you made, are you sure you want to quit ?').then(result => {
-                return result;
-            });
-        } else{
-            return true;
-        }
-    }
-
     onSearchCategory(): void {
         this.parentCategories = null;
         this.pathToSelectedCategories = null;
         this.selectedCategoryWithDetails = null;
         this.treeView = false;
-        this.router.navigate(["/catalogue/categorysearch"], {
-            queryParams: {
-                pg: this.publishingGranularity,
-                pageRef: this.pageRef,
-                cat: this.categoryKeyword,
-                productType: this.productType
-            }
-        });
+        this.initCategories(this.categoryKeyword)
     }
 
     toggleTreeView(): void {

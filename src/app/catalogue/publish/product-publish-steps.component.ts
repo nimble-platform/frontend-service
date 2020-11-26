@@ -27,6 +27,8 @@ export class ProductPublishStepsComponent {
 
     @Input() currentStep: ProductPublishStep;
     @Input() catalogueStepEnabled:boolean = false;
+    // single upload or bulk upload
+    @Input() publishingGranularity:string = null;
 
     config = myGlobals.config;
 

@@ -28,7 +28,6 @@ import { FavouriteViewComponent } from "./favourite/favourite-view.component";
 import { CompareViewComponent } from "./compare-product/compare-view.component";
 import { CatalogueLinePanelComponent } from "./ubl-model-view/catalogue/catalogue-line-panel.component";
 import { PublishDeactivateGuardService } from "./publish-deactivate-guard.service";
-import { CategoryDeactivateGuardService } from "./category/category-deactivate-guard.service";
 import { CategoryTreeComponent } from "./category/category-tree.component";
 import { EditPropertyModalComponent } from "./publish/edit-property-modal.component";
 import { ProductDeliveryTradingComponent } from "./publish/product-delivery-trading.component";
@@ -86,6 +85,6 @@ import {ProductPublishStepsComponent} from './publish/product-publish-steps.comp
         FavouriteViewComponent,
         CompareViewComponent
     ],
-    providers: [PublishDeactivateGuardService, CategoryDeactivateGuardService, LogisticPublishDeactivateGuardService]
+    providers: [PublishDeactivateGuardService, LogisticPublishDeactivateGuardService]
 })
 export class CatalogueModule { }

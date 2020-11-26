@@ -15,6 +15,7 @@
  */
 
 export type ProductPublishStep =
+    | "Category"
     | "Catalogue"
     | "ID/Name/Image"
     | "Details"
@@ -23,3 +24,4 @@ export type ProductPublishStep =
     | "Certificates"
     | "LCPA"
     | "Review"
+    | "BulkUpload"

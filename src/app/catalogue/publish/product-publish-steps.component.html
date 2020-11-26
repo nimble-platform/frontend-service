@@ -16,7 +16,10 @@
 
 <div class="row mt-3 mb-5 pt-5 panel">
     <div class="col-12">
-        <div class="steps">
+        <div *ngIf="publishingGranularity == 'single'" class="steps">
+            <div [ngClass]="getStepClasses('Category')">
+                <span><span [innerHTML]="'Category' | translate"></span></span>
+            </div>
             <div *ngIf="catalogueStepEnabled" [ngClass]="getStepClasses('Catalogue')">
                 <span><span [innerHTML]="'Catalogue' | translate"></span></span>
             </div>
@@ -40,6 +43,14 @@
             </div>
             <div [ngClass]="getStepClasses('Review')">
                 <span><span [innerHTML]="'Review' | translate"></span></span>
+            </div>
+        </div>
+        <div *ngIf="publishingGranularity == 'bulk'" class="steps">
+            <div [ngClass]="getStepClasses('Category')">
+                <span><span [innerHTML]="'Category' | translate"></span></span>
+            </div>
+            <div [ngClass]="getStepClasses('BulkUpload')">
+                <span><span [innerHTML]="'Bulk Upload' | translate"></span></span>
             </div>
         </div>
     </div>

@@ -14,9 +14,6 @@
    limitations under the License.
  -->
 
-<div>
-    <p class="pb-3 nimble-title"><span [innerHTML]="'Publish Product / Service' | translate"></span></p>
-</div>
 <p><span [innerHTML]="'All published products / services must belong to at least one category, which will describe the product / service and help customers find your offering.' | translate"></span></p>
 <div class="form-group row d-flex">
     <div class="col-12 inline">
@@ -292,12 +289,5 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-3 align-self-center">
-        <button class="btn btn-primary w-100 inline" [disabled]="categoryService.selectedCategories.length === 0" (click)="navigateToPublishingPage()">
-            <span>
-                <span [innerHTML]="'Continue With Selected Categories' | translate"></span>
-            </span>
-        </button>
     </div>
 </div>

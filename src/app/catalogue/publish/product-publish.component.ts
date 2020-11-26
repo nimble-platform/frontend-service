@@ -105,7 +105,7 @@ export class ProductPublishComponent implements OnInit {
 
     publishMode: PublishMode;
     publishStatus: CallStatus = new CallStatus();
-    publishingGranularity: "single" | "bulk" = "single";
+    publishingGranularity: "single" | "bulk" = null;
     productCategoryRetrievalStatus: CallStatus = new CallStatus();
     productCatalogueRetrievalStatus: CallStatus = new CallStatus();
     ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -178,8 +178,10 @@ export class ProductPublishComponent implements OnInit {
 
     private translations: any;
 
-    // the current step in single upload publishing
-    public singleUploadPublishingStep:ProductPublishStep = "ID/Name/Image";
+    // the current step in single/bulk upload publishing
+    public publishingStep:ProductPublishStep = "Category";
+    // whether the categories are selected for the publishing
+    public categorySelectedForPublishing:boolean = false;
 
     constructor(public categoryService: CategoryService,
         private catalogueService: CatalogueService,
@@ -206,14 +208,33 @@ export class ProductPublishComponent implements OnInit {
         // E.g. the below line is expected to be called upon a change in the query params.
         this.getCatalogueIdsForParty();
         const userId = this.cookieService.get("user_id");
-        this.callStatus.submit();
-
         this.route.queryParams.subscribe((params: Params) => {
             // read the query parameters
             // handle publishing granularity: single, bulk, null
-            this.publishingGranularity = params['pg'];
-            if (this.publishingGranularity == null) {
-                this.publishingGranularity = 'single';
+            let publishingGranularity = params['pg'] ? params['pg'] : 'single';
+            if (this.publishingGranularity && this.publishingGranularity != publishingGranularity) {
+                // This part is necessary since only the params has changes,canDeactivate method will not be called.
+                // This situation occurs when the user switches between Single Upload and Bulk Upload through the Publish buttons
+                // in the top menu during the publication process.
+                this.appComponent.confirmModalComponent.open('You will lose any changes you made, are you sure you want to quit ?').then(result => {
+                    if (result) {
+                        this.publishingStep = 'Category';
+                        this.categorySelectedForPublishing = false;
+                        this.publishingGranularity = publishingGranularity;
+                    } else{
+                        let queryParams = copy(params);
+                        queryParams['pg'] = this.publishingGranularity;
+                        this.router.navigate(
+                            [],
+                            {
+                                relativeTo: this.route,
+                                queryParams: {pg:this.publishingGranularity},
+                                queryParamsHandling: 'merge', // remove to replace all query params by provided
+                            });
+                    }
+                });
+            } else{
+                this.publishingGranularity = publishingGranularity;
             }
             let catalogueId = params['cat'];
             if (catalogueId != null) {
@@ -221,34 +242,33 @@ export class ProductPublishComponent implements OnInit {
             }
             // searchRef is true if the searchRef parameter is set
             this.searchRef = !!params['searchRef'];
+        });
+        // fetch various information required for initialization
+        // first retrieve the available catalogue ids
+        this.callStatus.submit();
+        this.catalogueService.getCatalogueIdsUUidsForParty().then(idsUuids => {
+            this.setCatalogueUuidsOnInit(idsUuids);
 
-
-            // fetch various information required for initialization
-            // first retrieve the available catalogue ids
-            this.catalogueService.getCatalogueIdsUUidsForParty().then(idsUuids => {
-                this.setCatalogueUuidsOnInit(idsUuids);
-
-                // then retrieve all other data
-            }).then(() => {
-                this.userService.getUserParty(userId).then(party => {
-                    return Promise.all([
-                        Promise.resolve(party),
-                        this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party), party.federationInstanceID),
-                        this.unitService.getCachedUnitList('dimensions'),
-                        this.unitService.getCachedUnitList('length_quantity'),
-                        this.unitService.getCachedUnitList('weight_quantity')
-                    ])
-                }).then(([party, settings, dimensions, lengthQuantities, weightQuantities]) => {
-                    // set dimensions and units lists
-                    this.dimensions = dimensions;
-                    this.dimensionLengthUnits = lengthQuantities;
-                    this.dimensionWeightUnits = weightQuantities;
-                    this.initView(party, settings);
-                    this.publishStateService.publishingStarted = true;
-                    this.callStatus.callback('Successfully initialized.', true);
-                }).catch(error => {
-                    this.callStatus.error('Error while initializing the publish view.', error);
-                });
+            // then retrieve all other data
+        }).then(() => {
+            this.userService.getUserParty(userId).then(party => {
+                return Promise.all([
+                    Promise.resolve(party),
+                    this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party), party.federationInstanceID),
+                    this.unitService.getCachedUnitList('dimensions'),
+                    this.unitService.getCachedUnitList('length_quantity'),
+                    this.unitService.getCachedUnitList('weight_quantity')
+                ])
+            }).then(([party, settings, dimensions, lengthQuantities, weightQuantities]) => {
+                // set dimensions and units lists
+                this.dimensions = dimensions;
+                this.dimensionLengthUnits = lengthQuantities;
+                this.dimensionWeightUnits = weightQuantities;
+                this.initView(party, settings);
+                this.publishStateService.publishingStarted = true;
+                this.callStatus.callback('Successfully initialized.', true);
+            }).catch(error => {
+                this.callStatus.error('Error while initializing the publish view.', error);
             });
         });
     }
@@ -286,6 +306,8 @@ export class ProductPublishComponent implements OnInit {
         this.publishMode = this.publishStateService.publishMode;
 
         if (this.publishMode == 'edit' || this.publishMode == 'copy') {
+            // each product should have some categories if they are being edited or copied
+            this.categorySelectedForPublishing = true;
             if (this.publishMode == 'copy') {
                 // clear the ids
                 this.catalogueService.draftCatalogueLine.id = null;
@@ -980,7 +1002,6 @@ export class ProductPublishComponent implements OnInit {
             dismissModal("add category");
         }
         ProductPublishComponent.dialogBox = false;
-        this.router.navigate(['catalogue/categorysearch'], { queryParams: { pageRef: "publish", pg: this.publishingGranularity, productType: this.productType } });
     }
 
     isProductCategoriesLoading(): boolean {
@@ -1130,10 +1151,6 @@ export class ProductPublishComponent implements OnInit {
 
             this.cataloguesIds = idList;
             this.catalogueUUids = uuidList;
-            // if there are more than one catalogue, the first step of product publishing should be catalogue selection
-            if(this.cataloguesIds.length > 1){
-                this.singleUploadPublishingStep = 'Catalogue';
-            }
             this.productCatalogueRetrievalStatus.callback("Successfully loaded catalogueId list", true);
         }).catch((error) => {
             this.productCatalogueRetrievalStatus.error('Failed to get product catalogues');
@@ -1188,51 +1205,64 @@ export class ProductPublishComponent implements OnInit {
 
     // methods to handle guided publishing
     onPreviousStep(){
-        switch (this.singleUploadPublishingStep) {
+        switch (this.publishingStep) {
+            case 'Category':
+                break;
+            case 'BulkUpload':
             case 'Catalogue':
+                this.publishingStep = "Category";
                 break;
             case 'ID/Name/Image':
-                this.singleUploadPublishingStep = "Catalogue";
+                this.publishingStep = this.cataloguesIds.length > 1 ? "Catalogue" : 'Category';
                 break;
             case 'Details':
-                this.singleUploadPublishingStep = "ID/Name/Image";
+                this.publishingStep = "ID/Name/Image";
                 break;
             case 'Price':
-                this.singleUploadPublishingStep = "Details";
+                this.publishingStep = "Details";
                 break;
             case 'Delivery&Trading':
-                this.singleUploadPublishingStep = "Price";
+                this.publishingStep = "Price";
                 break;
             case 'Certificates':
-                this.singleUploadPublishingStep = "Delivery&Trading";
+                this.publishingStep = "Delivery&Trading";
                 break;
             case 'LCPA':
-                this.singleUploadPublishingStep = "Certificates"
+                this.publishingStep = "Certificates"
         }
     }
 
     onNextStep(){
-        switch (this.singleUploadPublishingStep) {
+        switch (this.publishingStep) {
+            case 'Category':
+                if(this.publishingGranularity == 'single'){
+                    this.publishingStep = this.cataloguesIds.length > 1 ? "Catalogue" : "ID/Name/Image";
+                } else{
+                    this.publishingStep = "BulkUpload";
+                }
+                // the category selection is completed, so the product has some categories
+                this.categorySelectedForPublishing = true;
+                break;
             case 'Catalogue':
-                this.singleUploadPublishingStep = "ID/Name/Image";
+                this.publishingStep = "ID/Name/Image";
                 break;
             case 'ID/Name/Image':
-                this.singleUploadPublishingStep = "Details";
+                this.publishingStep = "Details";
                 break;
             case 'Details':
-                this.singleUploadPublishingStep = "Price";
+                this.publishingStep = "Price";
                 break;
             case 'Price':
-                this.singleUploadPublishingStep = "Delivery&Trading";
+                this.publishingStep = "Delivery&Trading";
                 break;
             case 'Delivery&Trading':
-                this.singleUploadPublishingStep = "Certificates";
+                this.publishingStep = "Certificates";
                 break;
             case 'Certificates':
-                this.singleUploadPublishingStep = this.config.showLCPA ? "LCPA" : "Review";
+                this.publishingStep = this.config.showLCPA ? "LCPA" : "Review";
                 break;
             case 'LCPA':
-                this.singleUploadPublishingStep = "Review";
+                this.publishingStep = "Review";
         }
     }
     // the end of methods to handle guided publishing

@@ -69,14 +69,14 @@
                         <i class="fa fa-shopping-cart dd-icon"></i> <span [innerHTML]="'Product / Service' | translate"></span>
                         <div class="publish-menu dropdown-menu">
                             <a class="dropdown-item pointer text-left"
-                                [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'product', pg: 'single'}">
+                                [routerLink]="['/catalogue/publish']" [queryParams]="{pageRef: 'menu', productType: 'product', pg: 'single'}">
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-minus mr-3"></i>
                                     <span>{{'Single Item' | translate}}</span>
                                 </div>
                             </a>
                             <a class="dropdown-item pointer text-left"
-                               [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'product', pg: 'bulk'}">
+                               [routerLink]="['/catalogue/publish']" [queryParams]="{pageRef: 'menu', productType: 'product', pg: 'bulk'}">
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-align-justify mr-3"></i>
                                     <span>{{'Multiple Items' | translate}}</span>
