@@ -306,6 +306,8 @@ export class ProductPublishComponent implements OnInit {
         this.publishMode = this.publishStateService.publishMode;
 
         if (this.publishMode == 'edit' || this.publishMode == 'copy') {
+            // for the products which are being edited or copied, display the 'Review' step
+            this.publishingStep = 'Review';
             // each product should have some categories if they are being edited or copied
             this.categorySelectedForPublishing = true;
             if (this.publishMode == 'copy') {
