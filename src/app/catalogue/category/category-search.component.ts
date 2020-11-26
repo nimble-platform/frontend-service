@@ -241,29 +241,6 @@ export class CategorySearchComponent implements OnInit {
         }
     }
 
-    addRecentCategories(cat: Category[]) {
-        this.addRecentCategoryStatus.submit();
-        var recCatPost = [];
-        var timeStamp = new Date().getTime();
-        for (var i = 0; i < cat.length; i++) {
-            const cat_str = cat[i].id + "::" + cat[i].taxonomyId + "::" + selectPreferredName(cat[i]) + "::" + this.productType + "::" + timeStamp;
-            recCatPost.push(cat_str);
-        }
-        const userId = this.cookieService.get("user_id");
-        this.userService.addRecCat(userId, recCatPost).then(res => {
-            var recCats_tmp = [];
-            for (var i = 0; i < res.length; i++) {
-                if (res[i].split("::")[3] == this.productType) recCats_tmp.push(res[i]);
-            }
-            recCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
-            this.recCats = recCats_tmp;
-            this.addRecentCategoryStatus.callback("Categories added to recently used", true);
-        })
-            .catch(error => {
-                this.addRecentCategoryStatus.error("Error while adding categories to recently used", error);
-            });
-    }
-
     selectPreferredName(cp: Category | Property) {
         return selectPreferredName(cp);
     }
@@ -358,12 +335,6 @@ export class CategorySearchComponent implements OnInit {
         }
 
         this.categoryService.addSelectedCategory(category,this.pathToSelectedCategories.parents);
-    }
-
-    navigateToPublishingPage(): void {
-        this.addRecentCategories(this.categoryService.selectedCategories);
-        // ProductPublishComponent.dialogBox = true;
-        this.router.navigate(["catalogue/publish"], { queryParams: { pg: this.publishingGranularity, productType: this.productType } });
     }
 
     getCategoryTree(category: Category, scrollToDivId = null) {

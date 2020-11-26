@@ -1242,6 +1242,8 @@ export class ProductPublishComponent implements OnInit {
                 }
                 // the category selection is completed, so the product has some categories
                 this.categorySelectedForPublishing = true;
+                // add the selected categories to the recent categories list of company
+                this.categoryService.addRecentCategories(this.categoryService.selectedCategories);
                 break;
             case 'Catalogue':
                 this.publishingStep = "ID/Name/Image";
