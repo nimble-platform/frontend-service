@@ -20,6 +20,7 @@
     <product-publish-steps
             [currentStep]="publishingStep"
             [publishingGranularity]="'bulk'"
+            (onStepChanged)="onStepChanged($event)"
     ></product-publish-steps>
 
     <!--Category selection-->
@@ -75,6 +76,7 @@
             [currentStep]="publishingStep"
             [catalogueStepEnabled]="cataloguesIds.length > 1"
             [publishingGranularity]="'single'"
+            (onStepChanged)="onStepChanged($event)"
     ></product-publish-steps>
 
     <!--Category selection-->

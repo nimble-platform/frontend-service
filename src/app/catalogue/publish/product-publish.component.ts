@@ -1256,5 +1256,21 @@ export class ProductPublishComponent implements OnInit {
                 this.publishingStep = "Review";
         }
     }
+
+    onStepChanged(step:ProductPublishStep){
+        // handle the case where the publishing step is Category
+        if(this.publishingStep == "Category"){
+            // the category selection is completed, so the product has some categories
+            this.categorySelectedForPublishing = true;
+            // add the selected categories to the recent categories list of company
+            this.categoryService.addRecentCategories(this.categoryService.selectedCategories);
+            // recompute selected category properties
+            this.recomputeSelectedCategoryProperties();
+            // handle required properties
+            this.handleRequiredProperties();
+        }
+        // set the current publishing step
+        this.publishingStep = step;
+    }
     // the end of methods to handle guided publishing
 }

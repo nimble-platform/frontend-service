@@ -18,39 +18,39 @@
     <div class="col-12">
         <div *ngIf="publishingGranularity == 'single'" class="steps">
             <div [ngClass]="getStepClasses('Category')">
-                <span><span [innerHTML]="'Category' | translate"></span></span>
+                <span (click)="onStepClicked('Category')"><span [innerHTML]="'Category' | translate"></span></span>
             </div>
             <div *ngIf="catalogueStepEnabled" [ngClass]="getStepClasses('Catalogue')">
-                <span><span [innerHTML]="'Catalogue' | translate"></span></span>
+                <span (click)="onStepClicked('Catalogue')"><span [innerHTML]="'Catalogue' | translate"></span></span>
             </div>
             <div [ngClass]="getStepClasses('ID/Name/Image')">
-                <span><span [innerHTML]="'Name & Description' | translate"></span></span>
+                <span (click)="onStepClicked('ID/Name/Image')"><span [innerHTML]="'Name & Description' | translate"></span></span>
             </div>
             <div [ngClass]="getStepClasses('Details')">
-                <span><span [innerHTML]="'Details' | translate"></span></span>
+                <span (click)="onStepClicked('Details')"><span [innerHTML]="'Details' | translate"></span></span>
             </div>
             <div [ngClass]="getStepClasses('Price')">
-                <span><span [innerHTML]="'Price' | translate"></span></span>
+                <span (click)="onStepClicked('Price')"><span [innerHTML]="'Price' | translate"></span></span>
             </div>
             <div [ngClass]="getStepClasses('Delivery&Trading')">
-                <span><span [innerHTML]="'Delivery & Trading' | translate"></span></span>
+                <span (click)="onStepClicked('Delivery&Trading')"><span [innerHTML]="'Delivery & Trading' | translate"></span></span>
             </div>
             <div [ngClass]="getStepClasses('Certificates')">
-                <span><span [innerHTML]="'Certificates' | translate"></span></span>
+                <span (click)="onStepClicked('Certificates')"><span [innerHTML]="'Certificates' | translate"></span></span>
             </div>
             <div *ngIf="config.showLCPA" [ngClass]="getStepClasses('LCPA')">
-                <span><span [innerHTML]="'LCPA' | translate"></span></span>
+                <span (click)="onStepClicked('LCPA')"><span [innerHTML]="'LCPA' | translate"></span></span>
             </div>
             <div [ngClass]="getStepClasses('Review')">
-                <span><span [innerHTML]="'Review' | translate"></span></span>
+                <span (click)="onStepClicked('Review')"><span [innerHTML]="'Review' | translate"></span></span>
             </div>
         </div>
         <div *ngIf="publishingGranularity == 'bulk'" class="steps">
             <div [ngClass]="getStepClasses('Category')">
-                <span><span [innerHTML]="'Category' | translate"></span></span>
+                <span (click)="onStepClicked('Category')"><span [innerHTML]="'Category' | translate"></span></span>
             </div>
             <div [ngClass]="getStepClasses('BulkUpload')">
-                <span><span [innerHTML]="'Bulk Upload' | translate"></span></span>
+                <span (click)="onStepClicked('BulkUpload')"><span [innerHTML]="'Bulk Upload' | translate"></span></span>
             </div>
         </div>
     </div>

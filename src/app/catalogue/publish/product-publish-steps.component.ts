@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ProductPublishStep} from './product-publish-step';
 import * as myGlobals from '../../globals';
 
@@ -41,6 +41,7 @@ export class ProductPublishStepsComponent {
     @Input() catalogueStepEnabled:boolean = false;
     // single upload or bulk upload
     @Input() publishingGranularity:string = null;
+    @Output() onStepChanged = new EventEmitter<ProductPublishStep>();
     // the visited step with the max order
     visitedStepWithMaxOrder:ProductPublishStep = "Category";
 
@@ -61,6 +62,10 @@ export class ProductPublishStepsComponent {
             step: true,
             visited: ProductPublishStepsComponent.getStepOrder(step) <= ProductPublishStepsComponent.getStepOrder(this.visitedStepWithMaxOrder)
         };
+    }
+
+    public onStepClicked(step: ProductPublishStep){
+        this.onStepChanged.next(step);
     }
 
     /**

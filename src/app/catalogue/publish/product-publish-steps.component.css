@@ -55,6 +55,7 @@
     display: inline-block;
     padding: 20px 10px 0;
     text-decoration: none;
+    pointer-events: none;
 }
 
 .steps .step span::before {
@@ -115,6 +116,12 @@
 
 .steps .step.current~.step span {
     color: #b3b3b3;
+}
+
+.steps .step.visited span {
+    pointer-events: auto;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .steps .step.current~.step.visited::before {
