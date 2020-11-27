@@ -25,10 +25,24 @@ import * as myGlobals from '../../globals';
 })
 export class ProductPublishStepsComponent {
 
-    @Input() currentStep: ProductPublishStep;
+    _currentStep: ProductPublishStep;
+    @Input()
+    set currentStep(currectStep: ProductPublishStep) {
+        this._currentStep = currectStep;
+        // set the visited step with max order
+        if(ProductPublishStepsComponent.getStepOrder(currectStep) > ProductPublishStepsComponent.getStepOrder(this.visitedStepWithMaxOrder)){
+            this.visitedStepWithMaxOrder = currectStep;
+        }
+    }
+
+    get currentStep(): ProductPublishStep {
+        return this._currentStep;
+    }
     @Input() catalogueStepEnabled:boolean = false;
     // single upload or bulk upload
     @Input() publishingGranularity:string = null;
+    // the visited step with the max order
+    visitedStepWithMaxOrder:ProductPublishStep = "Category";
 
     config = myGlobals.config;
 
@@ -43,7 +57,35 @@ export class ProductPublishStepsComponent {
             };
         }
 
-        return {step: true}
+        return {
+            step: true,
+            visited: ProductPublishStepsComponent.getStepOrder(step) <= ProductPublishStepsComponent.getStepOrder(this.visitedStepWithMaxOrder)
+        };
     }
 
+    /**
+     * Returns the order for the given step
+     * */
+    private static getStepOrder(step: ProductPublishStep){
+        switch (step) {
+            case 'Category':
+                return 0;
+            case 'Catalogue':
+                return 1;
+            case 'ID/Name/Image':
+                return 2;
+            case 'Details':
+                return 3;
+            case 'Price':
+                return 4;
+            case 'Delivery&Trading':
+                return 5;
+            case 'Certificates':
+                return 6;
+            case 'LCPA':
+                return 7;
+            default:
+                return 8;
+        }
+    }
 }

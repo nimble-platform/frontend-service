@@ -116,3 +116,16 @@
 .steps .step.current~.step span {
     color: #b3b3b3;
 }
+
+.steps .step.current~.step.visited::before {
+    background: #007706;
+}
+
+.steps .step.current~.step.visited span::before {
+    background: #007706;
+    border: 0.1rem solid #007706;
+}
+
+.steps .step.current~.step.visited span {
+    color: #007706;
+}
