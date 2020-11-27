@@ -148,48 +148,15 @@
     </div>
 
     <!-- Name/Description panel-->
-    <ng-container *ngIf="publishingStep == 'ID/Name/Image' || publishingStep == 'Review'">
+    <ng-container *ngIf="publishingStep == 'ID/Name/Image'">
         <name-description-panel [catalogueLine]="catalogueLine" [productIdEditable]="isProductIdEditable()" [parentForm]="publishForm">
         </name-description-panel>
     </ng-container>
 
     <!-- Tabs for Product -->
-    <ng-container>
-        <!-- Navigation bar for the product tabs -->
-        <div *ngIf="publishingStep == 'Review'" class="row space-before">
-            <div class="col-12">
-                <ul class="nav nav-tabs">
-                    <li class="nav-item">
-                        <a href id="DETAILS" class="nav-link" [ngClass]="{ active: selectedTabSinglePublish === 'DETAILS'}" (click)="onSelectTabSinglePublish($event,'DETAILS')">
-                            <span [innerHTML]="'Details' | translate"></span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href id="PRICE" class="nav-link" [ngClass]="{ active: selectedTabSinglePublish === 'PRICE'}" (click)="onSelectTabSinglePublish($event,'PRICE')">
-                            <span [innerHTML]="'Price' | translate"></span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href id="DELIVERY_TRADING" class="nav-link" [ngClass]="{ active: selectedTabSinglePublish === 'DELIVERY_TRADING'}" (click)="onSelectTabSinglePublish($event,'DELIVERY_TRADING')">
-                            <span [innerHTML]="'Delivery' | translate"></span> &amp; <span [innerHTML]="'Trading' | translate"></span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href id="CERTIFICATES" class="nav-link" [ngClass]="{ active: selectedTabSinglePublish === 'CERTIFICATES'}" (click)="onSelectTabSinglePublish($event,'CERTIFICATES')">
-                            <span [innerHTML]="'Certificates' | translate"></span>
-                        </a>
-                    </li>
-                    <li *ngIf="config.showLCPA" class="nav-item">
-                        <a href id="LCPA" class="nav-link" [ngClass]="{ active: selectedTabSinglePublish === 'LCPA'}" (click)="onSelectTabSinglePublish($event,'LCPA')">
-                            <span [innerHTML]="'LCPA' | translate"></span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
+    <ng-container *ngIf="publishingStep != 'Review'">
         <!-- Product Details Tab -->
-        <div class="row space-before" [hidden]="(publishingStep != 'Review' && publishingStep != 'Details') || (publishingStep == 'Review' && selectedTabSinglePublish != 'DETAILS')">
+        <div class="row space-before" [hidden]="publishingStep != 'Details'">
             <!-- Dimensions -->
             <div class="col-12">
                 <button class='btn btn-outline-primary' (click)="toggleDimensionCard()"><span [innerHTML]="'Dimensions' | translate"></span></button>
@@ -310,23 +277,23 @@
         </div>
 
         <!-- Price Tab -->
-        <div class="row space-before" [hidden]="(publishingStep != 'Review' && publishingStep != 'Price')  || (publishingStep == 'Review' && selectedTabSinglePublish != 'PRICE')">
+        <div class="row space-before" [hidden]="publishingStep != 'Price'">
             <div class="col-12">
-                <product-price-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()" [companyNegotiationSettings]="companyNegotiationSettings" [parentForm]="publishForm">
+                <product-price-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()" [companyNegotiationSettings]="companySettings.negotiationSettings" [parentForm]="publishForm">
                 </product-price-tab>
             </div>
         </div>
 
         <!-- Delivery & Trading Tab -->
-        <div class="row space-before" [hidden]="(publishingStep != 'Review' && publishingStep != 'Delivery&Trading')  || (publishingStep == 'Review' && selectedTabSinglePublish != 'DELIVERY_TRADING')">
+        <div class="row space-before" [hidden]="publishingStep != 'Delivery&Trading'">
             <div class="col-12">
-                <product-delivery-trading [wrapper]="productWrapper" [disabled]="isLoading()" [companyNegotiationSettings]="companyNegotiationSettings" [parentForm]="publishForm">
+                <product-delivery-trading [wrapper]="productWrapper" [disabled]="isLoading()" [companyNegotiationSettings]="companySettings.negotiationSettings" [parentForm]="publishForm">
                 </product-delivery-trading>
             </div>
         </div>
 
         <!-- Certificates -->
-        <div class="row space-before" [hidden]="(publishingStep != 'Review' && publishingStep != 'Certificates')  || (publishingStep == 'Review' && selectedTabSinglePublish != 'CERTIFICATES')">
+        <div class="row space-before" [hidden]="publishingStep != 'Certificates'">
             <div class="col-12">
                 <product-certificates-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()">
                 </product-certificates-tab>
@@ -334,13 +301,23 @@
         </div>
 
         <!-- Life Cycle Performance Analysis -->
-        <div class="row space-before" [hidden]="(publishingStep != 'Review' && publishingStep != 'LCPA') || (publishingStep == 'Review' && selectedTabSinglePublish != 'LCPA')">
+        <div class="row space-before" [hidden]="publishingStep != 'LCPA'">
             <div class="col-12">
                 <product-lcpa-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()" [presentationMode]="'edit'">
                 </product-lcpa-tab>
             </div>
         </div>
     </ng-container>
+
+    <!-- Review step -->
+    <catalogue-line-panel
+            *ngIf="publishingStep == 'Review'"
+            [catalogueLine]="catalogueLine"
+            [show]="true"
+            [settings]="companySettings"
+            [linePanelInPublishingPage]="true"
+            [presentationMode]="'view'">
+    </catalogue-line-panel>
 
     <hr class="actions-hr">
 

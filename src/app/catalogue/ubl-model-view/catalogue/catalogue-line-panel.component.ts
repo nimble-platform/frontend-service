@@ -41,6 +41,8 @@ export class CatalogueLinePanelComponent {
     @Input() settings: CompanySettings;
     @Input() presentationMode: string;
     @Input() offeringProduct:boolean = false;
+    // whether the line panel is used in the publishing page
+    @Input() linePanelInPublishingPage:boolean = false;
 
     // check whether catalogue-line-panel should be displayed
     @Input() show = false;
@@ -84,5 +86,12 @@ export class CatalogueLinePanelComponent {
 
     deleteCatalogueLine(): void {
         this.catalogueLineDeleted.next(null);
+    }
+
+    onLinePanelClicked(){
+        if(!this.linePanelInPublishingPage){
+            this.show = false;
+            this.showChange.emit(false)
+        }
     }
 }

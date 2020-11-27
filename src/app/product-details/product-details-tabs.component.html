@@ -71,7 +71,7 @@
     <!-- Overview Tab -->
     <div *ngIf="selectedTab === 'OVERVIEW'" class="p-3 col-12">
         <h3 class="p-1"><span [innerHTML]="'Overview' | translate"></span></h3>
-        <product-details-overview [wrapper]="wrapper" [itemWithSelectedProps]="itemWithSelectedProps" [associatedProducts]="associatedProducts" [readonly]="readonly" (compStatus)="setTab($event)">
+        <product-details-overview [wrapper]="wrapper" [itemWithSelectedProps]="itemWithSelectedProps" [associatedProducts]="associatedProducts" [readonly]="readonly" (compStatus)="setTab($event)" [overviewInProductPublishing]="productDetailsTabInProductPublishing">
         </product-details-overview>
     </div>
 

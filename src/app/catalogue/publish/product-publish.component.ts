@@ -54,7 +54,6 @@ import {ProductWrapper} from '../../common/product-wrapper';
 import {EditPropertyModalComponent} from './edit-property-modal.component';
 import {Location} from '@angular/common';
 import {SelectedProperty} from '../model/publish/selected-property';
-import {CompanyNegotiationSettings} from '../../user-mgmt/model/company-negotiation-settings';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/observable/fromPromise'
@@ -62,7 +61,6 @@ import 'rxjs/add/observable/interval';
 import 'rxjs/add/operator/takeUntil';
 import {DEFAULT_LANGUAGE, LANGUAGES} from '../model/constants';
 import * as myGlobals from '../../globals';
-import {CataloguePaginationResponse} from '../model/publish/catalogue-pagination-response';
 import {Text} from '../model/publish/text';
 import {Catalogue} from '../model/publish/catalogue';
 import {MultiValuedDimension} from '../model/publish/multi-valued-dimension';
@@ -75,6 +73,7 @@ import {AppComponent} from '../../app.component';
 import {TranslateService} from '@ngx-translate/core';
 import {PublishingPropertyService} from './publishing-property.service';
 import {ProductPublishStep} from './product-publish-step';
+import {CompanySettings} from '../../user-mgmt/model/company-settings';
 
 
 type ProductType = "product" | "transportation";
@@ -117,7 +116,7 @@ export class ProductPublishComponent implements OnInit {
 
     catalogueLine: CatalogueLine = null;
     productWrapper: ProductWrapper = null;
-    companyNegotiationSettings: CompanyNegotiationSettings;
+    companySettings: CompanySettings;
     private selectedCategoryProperties: SelectedProperties = {};
     private selectedCategoryPropertiesUpdates: SelectedPropertiesUpdate = {};
     private categoryProperties: CategoryProperties = {};
@@ -172,7 +171,6 @@ export class ProductPublishComponent implements OnInit {
     // dimensions' units retrieved from the unit service
     dimensionLengthUnits: string[] = [];
     dimensionWeightUnits: string[] = [];
-    selectedTabSinglePublish: "DETAILS" | "DELIVERY_TRADING" | "PRICE" | "CERTIFICATES" | "LCPA" = "DETAILS";
 
     invalidCategoryCodes: Code[] = [];
 
@@ -254,7 +252,7 @@ export class ProductPublishComponent implements OnInit {
             this.userService.getUserParty(userId).then(party => {
                 return Promise.all([
                     Promise.resolve(party),
-                    this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party), party.federationInstanceID),
+                    this.userService.getSettingsForParty(UBLModelUtils.getPartyId(party), party.federationInstanceID),
                     this.unitService.getCachedUnitList('dimensions'),
                     this.unitService.getCachedUnitList('length_quantity'),
                     this.unitService.getCachedUnitList('weight_quantity')
@@ -298,7 +296,7 @@ export class ProductPublishComponent implements OnInit {
     }
 
     private initView(userParty, settings): void {
-        this.companyNegotiationSettings = settings;
+        this.companySettings = settings;
         this.catalogueService.setEditMode(true);
         this.publishStateService.resetData();
         // Following "if" block is executed when redirected by an "edit" button
@@ -324,7 +322,7 @@ export class ProductPublishComponent implements OnInit {
                 return;
             }
 
-            this.productWrapper = new ProductWrapper(this.catalogueLine, settings);
+            this.productWrapper = new ProductWrapper(this.catalogueLine, settings.negotiationSettings);
 
             // Get categories of item to edit
             if (this.publishStateService.publishingStarted == false) {
@@ -393,7 +391,7 @@ export class ProductPublishComponent implements OnInit {
             // new publishing is the first entry to the publishing page
             // i.e. publishing from scratch
             if (this.publishStateService.publishingStarted == false) {
-                this.catalogueLine = UBLModelUtils.createCatalogueLine(this.selectedCatalogueuuid, userParty, settings, this.dimensions);
+                this.catalogueLine = UBLModelUtils.createCatalogueLine(this.selectedCatalogueuuid, userParty, settings.negotiationSettings, this.dimensions);
                 this.catalogueService.draftCatalogueLine = this.catalogueLine;
             } else {
                 this.catalogueLine = this.catalogueService.draftCatalogueLine;
@@ -401,7 +399,7 @@ export class ProductPublishComponent implements OnInit {
             if (this.catalogueLine) {
                 if (this.catalogueLine.goodsItem.item.name.length == 0)
                     this.addItemNameDescription();
-                this.productWrapper = new ProductWrapper(this.catalogueLine, settings);
+                this.productWrapper = new ProductWrapper(this.catalogueLine, settings.negotiationSettings);
                 for (let category of this.categoryService.selectedCategories) {
                     let newCategory = this.isNewCategory(category);
                     if (newCategory) {
@@ -441,7 +439,7 @@ export class ProductPublishComponent implements OnInit {
                     // go to the dashboard - catalogue tab
                     if (exitThePage) {
                         this.catalogueLine = UBLModelUtils.createCatalogueLine(this.selectedCatalogueuuid,
-                            party, this.companyNegotiationSettings, this.dimensions);
+                            party, this.companySettings.negotiationSettings, this.dimensions);
 
                         // since every changes is saved,we do not need a dialog box
                         ProductPublishComponent.dialogBox = false;
@@ -1046,11 +1044,6 @@ export class ProductPublishComponent implements OnInit {
         } else {
             this.publishingGranularity = "bulk";
         }
-    }
-
-    onSelectTabSinglePublish(event: any, id: any) {
-        event.preventDefault();
-        this.selectedTabSinglePublish = id;
     }
 
     changeCat() {
