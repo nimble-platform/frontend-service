@@ -400,12 +400,6 @@ export class ProductPublishComponent implements OnInit {
                 if (this.catalogueLine.goodsItem.item.name.length == 0)
                     this.addItemNameDescription();
                 this.productWrapper = new ProductWrapper(this.catalogueLine, settings.negotiationSettings);
-                for (let category of this.categoryService.selectedCategories) {
-                    let newCategory = this.isNewCategory(category);
-                    if (newCategory) {
-                        this.updateItemWithNewCategory(category);
-                    }
-                }
             }
         }
 
@@ -414,9 +408,6 @@ export class ProductPublishComponent implements OnInit {
 
         // call this function with dimension unit list to be sure that item will have some dimension
         this.multiValuedDimensions = this.productWrapper.getDimensionMultiValue(true, this.dimensions);
-        this.recomputeSelectedCategoryProperties();
-        // handle required properties
-        this.handleRequiredProperties();
     }
 
     // methods to handle publishing of products
@@ -974,21 +965,16 @@ export class ProductPublishComponent implements OnInit {
     /**
      * deselect a category
      * 1) remove the property from additional item properties
-     * 2) remove the category from the selected categories
-     * 3) remove the corresponding commodity classification from the item
+     * 2) remove the corresponding commodity classification from the item
      */
-    onRemoveCategory(category: Category) {
-        let index = this.categoryService.selectedCategories.findIndex(c => c.id === category.id);
-        if (index > -1) {
-            this.catalogueLine.goodsItem.item.additionalItemProperty = this.catalogueLine.goodsItem.item.additionalItemProperty.filter(function(el) {
-                return el.itemClassificationCode.value !== category.id;
-            });
+    onRemoveCategory(categoryId:string) {
+        this.catalogueLine.goodsItem.item.additionalItemProperty = this.catalogueLine.goodsItem.item.additionalItemProperty.filter(function(el) {
+            return el.itemClassificationCode.value !== categoryId;
+        });
 
-            this.categoryService.removeSelectedCategory(category);
-            this.recomputeSelectedCategoryProperties();
-        }
+        this.recomputeSelectedCategoryProperties();
 
-        let i = this.catalogueLine.goodsItem.item.commodityClassification.findIndex(c => c.itemClassificationCode.value === category.id);
+        let i = this.catalogueLine.goodsItem.item.commodityClassification.findIndex(c => c.itemClassificationCode.value === categoryId);
         if (i > -1) {
             this.catalogueLine.goodsItem.item.commodityClassification.splice(i, 1);
         }
@@ -1001,7 +987,8 @@ export class ProductPublishComponent implements OnInit {
         if (dismissModal) {
             dismissModal("add category");
         }
-        ProductPublishComponent.dialogBox = false;
+        // change publishing step to Category
+        this.publishingStep = "Category";
     }
 
     isProductCategoriesLoading(): boolean {
@@ -1242,6 +1229,10 @@ export class ProductPublishComponent implements OnInit {
                 this.categorySelectedForPublishing = true;
                 // add the selected categories to the recent categories list of company
                 this.categoryService.addRecentCategories(this.categoryService.selectedCategories);
+                // recompute selected category properties
+                this.recomputeSelectedCategoryProperties();
+                // handle required properties
+                this.handleRequiredProperties();
                 break;
             case 'Catalogue':
                 this.publishingStep = "ID/Name/Image";

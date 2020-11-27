@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
 import { Category } from "../model/category/category";
 import { CategoryService } from "./category.service";
@@ -47,6 +47,7 @@ type SelectedTab = "TREE"
 export class CategorySearchComponent implements OnInit {
     // whether the categories are selected for the publishing
     @Input() categoriesSelected:boolean = false;
+    @Output() onCategoryRemoved = new EventEmitter<string>();
     selectedTab: SelectedTab = "TREE";
 
     getCategoriesStatus: CallStatus = new CallStatus();
@@ -480,5 +481,10 @@ export class CategorySearchComponent implements OnInit {
                 document.getElementById("scrollDiv").scrollTop -= 57;
             }
         }
+    }
+
+    public removeSelectedCategory(selectedCategory:Category){
+        this.categoryService.removeSelectedCategory(selectedCategory);
+        this.onCategoryRemoved.next(selectedCategory.id);
     }
 }

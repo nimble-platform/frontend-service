@@ -285,7 +285,7 @@
             <div class="d-flex flex-wrap">
                 <div *ngFor="let selectedCategory of categoryService.selectedCategories" class="bordered d-flex align-items-center mx-1 my-1" title="{{selectedCategory.taxonomyId}}">
                     <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
-                    <i class="fa fa-times-circle pl-1 text-red" placement="right" (click)="categoryService.removeSelectedCategory(selectedCategory)"></i>
+                    <i class="fa fa-times-circle pl-1 text-red" placement="right" (click)="removeSelectedCategory(selectedCategory)"></i>
                 </div>
             </div>
         </div>

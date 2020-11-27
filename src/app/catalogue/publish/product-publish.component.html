@@ -82,6 +82,7 @@
         <category-search
                 [categoriesSelected]="categorySelectedForPublishing"
                 [publishingGranularity]="'single'"
+                (onCategoryRemoved)="onRemoveCategory($event)"
         ></category-search>
     </div>
 
