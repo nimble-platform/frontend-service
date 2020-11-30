@@ -142,8 +142,7 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
         this.savePpapLevelCallStatus.submit();
 
         this.settings.tradeDetails.ppapCompatibilityLevel = this.ppapLevel;
-        const userId = this.cookieService.get("user_id");
-        this.userService.putSettings(this.settings, userId)
+        this.userService.putSettingsForParty(this.settings, this.settings.companyID)
             .then(() => {
                 this.savePpapLevelCallStatus.callback("Ppap level saved.", true);
                 this.onSaveEvent.emit();
