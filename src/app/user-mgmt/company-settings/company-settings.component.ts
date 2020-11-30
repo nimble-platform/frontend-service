@@ -73,7 +73,12 @@ export class CompanySettingsComponent implements OnInit {
                 this.viewMode = params['viewMode'];
             else
                 this.viewMode = "full";
-            if (this.companyId && this.appComponent.checkRoles("pm"))
+            // platform manager should be able to see  all details of the company
+            let isPlatformManager = this.appComponent.checkRoles("pm");
+            if(isPlatformManager){
+                this.viewMode = "full";
+            }
+            if (this.companyId && isPlatformManager)
                 this.getCompanySettings(this.companyId, this.federationId);
         });
         const userId = this.cookieService.get("user_id");
