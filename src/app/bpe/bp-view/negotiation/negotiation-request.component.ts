@@ -50,6 +50,7 @@ import { BpActivityEvent } from '../../../catalogue/model/publish/bp-start-event
 import { CompanySettings } from '../../../user-mgmt/model/company-settings';
 import { FormGroup } from '@angular/forms';
 import { ValidationService } from '../../../common/validation/validators';
+import {CancelCollaborationModalComponent} from '../../../common/cancel-collaboration-modal.component';
 
 @Component({
     selector: "negotiation-request",
@@ -108,6 +109,10 @@ export class NegotiationRequestComponent implements OnInit {
     areNotesOrFilesAttachedToDocument = UBLModelUtils.areNotesOrFilesAttachedToDocument;
 
     VALIDATION_ERROR_FOR_FRAME_CONTRACT="validation_provide_valid_input_for_frame_contract";
+
+    // cancel collaboration modal
+    @ViewChild(CancelCollaborationModalComponent)
+    public cancelCollaborationModal: CancelCollaborationModalComponent;
 
     constructor(private bpDataService: BPDataService,
         private bpeService: BPEService,
@@ -437,6 +442,16 @@ export class NegotiationRequestComponent implements OnInit {
         this.showNotesAndAdditionalFiles = false;
         this.showPurchaseOrder = false;
         return ret;
+    }
+
+    cancelCollaboration() {
+        this.cancelCollaborationModal.open(this.bpActivityEvent.containerGroupId,this.processMetadata.sellerFederationId).then(response => {
+            // response is true when the collaboration is cancelled
+            if(response){
+                // change the collaboration status
+                this.processMetadata.collaborationStatus = "CANCELLED"
+            }
+        });
     }
 
 }

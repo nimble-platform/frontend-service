@@ -101,23 +101,54 @@
     </div>
 
     <div class="row actions-row" *ngIf="userRole === 'buyer' && !readonly">
-        <div class="{{!bpDataService.isProcessPresentInTheWorkflow('Order') ? 'col-7':'col-5'}} call-status-col">
-            <call-status [callStatus]="callStatus"></call-status>
-        </div>
-        <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
-        </div>
-        <div class="col-3">
-            <button class="btn btn-secondary action" [disabled]="isRequestNewQuotationDisabled()" (click)="onRequestNewQuotation()">
-                <span [innerHTML]="'Request new Quotation' | translate"></span>
-            </button>
-        </div>
-        <div *ngIf="bpDataService.isProcessPresentInTheWorkflow('Order')" class="col-2">
-            <span [ngbTooltip]="getAcceptAndOrderButtonValidationMessages()" [placement]="'auto'"  title="">
-                <button class="btn btn-primary action" [disabled]="isAcceptAndOrderDisabled()" (click)="onAcceptAndOrder()">
-                    <span [innerHTML]="'Accept & Order' | translate"></span>
+        <!-- Order is the next step -->
+        <ng-container *ngIf="bpDataService.isProcessPresentInTheWorkflow('Order')">
+            <div class="col-5 call-status-col">
+                <call-status [callStatus]="callStatus"></call-status>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
+            </div>
+            <div class="col-3">
+                <button class="btn btn-secondary action" [disabled]="isRequestNewQuotationDisabled()" (click)="onRequestNewQuotation()">
+                    <span [innerHTML]="'Request new Quotation' | translate"></span>
                 </button>
-            </span>
-        </div>
+            </div>
+            <div class="col-2">
+                <span [ngbTooltip]="getAcceptAndOrderButtonValidationMessages()" [placement]="'auto'"  title="">
+                    <button class="btn btn-primary action" [disabled]="isAcceptAndOrderDisabled()" (click)="onAcceptAndOrder()">
+                        <span [innerHTML]="'Accept & Order' | translate"></span>
+                    </button>
+                </span>
+            </div>
+        </ng-container>
+        <!-- Negotiation is the last step -->
+        <ng-container *ngIf="!bpDataService.isProcessPresentInTheWorkflow('Order')">
+            <div class="{{quotation.documentStatusCode.name !== NEGOTIATION_RESPONSES.ACCEPTED ? 'col-1': 'col-4'}} call-status-col">
+                <call-status [callStatus]="callStatus"></call-status>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
+            </div>
+            <div *ngIf="quotation.documentStatusCode.name !== NEGOTIATION_RESPONSES.ACCEPTED" class="col-3">
+                <button class="btn btn-secondary action" [disabled]="isRequestNewQuotationDisabled()" (click)="onRequestNewQuotation()">
+                    <span [innerHTML]="'Request new Quotation' | translate"></span>
+                </button>
+            </div>
+            <div class="col-3">
+                <button class="btn btn-secondary action" (click)="cancelCollaboration()" [disabled]="processMetadata.collaborationStatus === 'COMPLETED' || processMetadata.collaborationStatus === 'CANCELLED'">
+                    <span [innerHTML]="'Cancel collaboration' | translate"></span>
+                </button>
+            </div>
+            <div class="col-3">
+                <button class="btn btn-secondary action" (click)="finishCollaboration()" [disabled]="processMetadata.collaborationStatus === 'COMPLETED' || processMetadata.collaborationStatus === 'CANCELLED'">
+                    <span [innerHTML]="'Finish collaboration' | translate"></span>
+                </button>
+            </div>
+        </ng-container>
     </div>
 </ng-container>
+
+<!--Cancel Collaboration Modal-->
+<cancel-collaboration-modal>
+</cancel-collaboration-modal>
