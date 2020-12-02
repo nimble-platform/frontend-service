@@ -11,14 +11,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
-import { Text } from "./text";
-import { DEFAULT_LANGUAGE } from '../constants';
-import {Code} from './code';
-
-export class Country {
-    constructor(
-        public name: Text = new Text(null, DEFAULT_LANGUAGE()),
-        public identificationCode: Code = null
-    ) { }
+.delete-description-btn {
+    height: fit-content;
 }

@@ -115,9 +115,13 @@ export class UBLModelUtils {
     }
 
     public static createCommodityClassification(category: Category): CommodityClassification {
-        const code: Code = new Code(category.id, selectPreferredName(category), category.categoryUri, category.taxonomyId, null);
+        const code: Code = this.createCodeFromCategory(category);
         const commodityClassification = new CommodityClassification(code, null, null, "");
         return commodityClassification;
+    }
+
+    public static createCodeFromCategory(category: Category): Code {
+        return new Code(category.id, selectPreferredName(category), category.categoryUri, category.taxonomyId, null);
     }
 
     public static createItemLocationQuantity(amount: string): ItemLocationQuantity {

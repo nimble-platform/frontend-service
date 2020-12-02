@@ -55,9 +55,19 @@ export class CategorySearchComponent implements OnInit {
     addRecentCategoryStatus: CallStatus = new CallStatus();
     getCategoryDetailsStatus: CallStatus = new CallStatus();
 
-    categories: Category[];
-    originalPageRef: string = null; // keeps the source page, which was the initial page before navigating to this page
+    /*
+    query parameters
+     */
+    // indicates the app section that was used to trigger the router
     pageRef: string = null;
+    // indicates whether only one category can be selected or multiple categories can be selected
+    categoryCount: 'single' | 'multiple' = 'multiple';
+
+    categories: Category[];
+    // keeps the source page, which was the initial page before navigating to this page. Differs from the pageRef in the case where
+    // the user opened this page during publishing but clicked the publish button in the menu. In that case, the originalPageRef still indicates
+    // the publishing page as the reference
+    originalPageRef: string = null;
     publishingGranularity: string;
 
 
@@ -106,6 +116,7 @@ export class CategorySearchComponent implements OnInit {
 
     ngOnInit(): void {
         this.route.queryParams.subscribe((params: Params) => {
+            this.categoryCount = params['categoryCount'];
             // current page regs considered: menu, publish, null
             this.pageRef = params["pageRef"];
             // original page ref is set once only if it is null
@@ -396,23 +407,32 @@ export class CategorySearchComponent implements OnInit {
     }
 
     addCategoryToSelected(category: Category): void {
-        // if no category is selected or if the selected category is already selected
-        // do nothing
-        if (category == null || findCategoryInArray(this.categoryService.selectedCategories, category) > -1) {
-            return;
-        }
+        if (this.categoryCount === 'multiple') {
+            // if no category is selected or if the selected category is already selected
+            // do nothing
+            if (category == null || findCategoryInArray(this.categoryService.selectedCategories, category) > -1) {
+                return;
+            }
 
-        if (this.selectedCategoryWithDetails !== category) {
-            throw new Error("Inconsistent state: can only select the details category.");
+            if (this.selectedCategoryWithDetails !== category) {
+                throw new Error("Inconsistent state: can only select the details category.");
+            }
+        } else {
+            // if single category is allowed, clear the already selected category
+            this.categoryService.selectedCategories = [];
         }
 
         this.categoryService.addSelectedCategory(category,this.pathToSelectedCategories.parents);
     }
 
     navigateToPublishingPage(): void {
-        this.addRecentCategories(this.categoryService.selectedCategories);
-        // ProductPublishComponent.dialogBox = true;
-        this.router.navigate(["catalogue/publish"], { queryParams: { pg: this.publishingGranularity, productType: this.productType } });
+        if (this.pageRef !== 'demand-publish') {
+            this.addRecentCategories(this.categoryService.selectedCategories);
+            // ProductPublishComponent.dialogBox = true;
+            this.router.navigate(['catalogue/publish'], {queryParams: {pg: this.publishingGranularity, productType: this.productType}});
+        } else {
+            this.router.navigate(['demand/publish']);
+        }
     }
 
     getCategoryTree(category: Category, scrollToDivId = null) {

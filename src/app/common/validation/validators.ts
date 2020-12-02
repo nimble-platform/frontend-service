@@ -17,6 +17,7 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { FIELD_NAME_PRODUCT_PRICE_AMOUNT, FIELD_NAME_PRODUCT_PRICE_BASE_QUANTITY, FIELD_NAME_QUANTITY_VALUE } from '../constants';
 import { PeriodRange } from '../../user-mgmt/model/period-range';
+import {COUNTRY_NAMES} from '../utils';
 
 // validator constants
 export const VALIDATION_ERROR_MULTIPLE = 'multiple';
@@ -25,6 +26,7 @@ export const VALIDATION_ERROR_MAX = 'max';
 export const VALIDATION_INVALID_PERIOD = 'invalid_period';
 export const VALIDATION_INVALID_SPACE = 'invalid_space';
 export const VALIDATION_REQUIRED = 'required';
+export const VALIDATION_INVALID_COUNTRY = 'invalid_country';
 const VALIDATION_ERROR_PREFIX = 'validation_error_';
 const FORM_FIELD_PREFIX = 'form_field_';
 
@@ -96,6 +98,16 @@ export function spaceValidator(): ValidatorFn {
     };
 }
 
+export function countryValidator(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: boolean } | null => {
+        let value: string = control.value;
+        if (COUNTRY_NAMES.indexOf(value) === -1) {
+            return { 'invalid_country': true };
+        }
+        return null;
+    };
+}
+
 function deleteError(formControl: AbstractControl, errorToDelete: string): void {
     let errors: any = formControl.errors;
     // if errors is not null or empty
@@ -147,6 +159,9 @@ export class ValidationService {
                 }
                 case VALIDATION_INVALID_SPACE: {
                     return this.translateService.instant(VALIDATION_ERROR_PREFIX + VALIDATION_INVALID_SPACE);
+                }
+                case VALIDATION_INVALID_COUNTRY: {
+                    return this.translateService.instant('Invalid country');
                 }
             }
         }

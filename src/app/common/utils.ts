@@ -93,7 +93,15 @@ export function getISObyCountry(term: string): string {
 }
 
 export function getCountrySuggestions(term: string): string[] {
-    var suggestionList = [];
+    const suggestions = getCountrySuggestionsWithMetadata(term);
+    return suggestions.map(suggestion => suggestion.text);
+}
+
+/**
+ * Returns suggestions for the given query term. A suggestion includes country name, iso code and match probability
+ * @param term
+ */
+export function getCountrySuggestionsWithMetadata(term: string): any[] {
     var suggestions = [];
     if (term != "") {
         for (var i = 0; i < COUNTRY_JSON.length; i++) {
@@ -119,7 +127,8 @@ export function getCountrySuggestions(term: string): string[] {
             if (prob > 0) {
                 suggestions.push({
                     "prob": prob,
-                    "text": COUNTRY_JSON[i].name
+                    "text": COUNTRY_JSON[i].name,
+                    "iso": COUNTRY_JSON[i].iso
                 });
             }
         }
@@ -128,11 +137,9 @@ export function getCountrySuggestions(term: string): string[] {
             let b_comp = b.prob;
             return b_comp - a_comp;
         });
-        for (var i = 0; i < Math.min(suggestions.length, 10); i++) {
-            suggestionList.push(suggestions[i].text);
-        }
+        suggestions = suggestions.slice(0, Math.min(suggestions.length, 10));
     }
-    return suggestionList;
+    return suggestions;
 }
 
 export function validateCountry(control: AbstractControl): any {
@@ -228,7 +235,10 @@ export function selectNameFromLabelObject(label: any, lang?: string): string {
     }
 }
 
-export function selectPreferredName(cp: Category | Property, lang?: string) {
+export function selectPreferredName(cp: Category | Property, lang?: string): string {
+    if (!cp) {
+        return '';
+    }
     let defaultLanguage = DEFAULT_LANGUAGE();
     if (lang)
         defaultLanguage = lang;

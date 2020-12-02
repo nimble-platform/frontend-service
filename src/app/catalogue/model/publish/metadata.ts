@@ -16,9 +16,18 @@ import { Text } from "./text";
 import { DEFAULT_LANGUAGE } from '../constants';
 import {Code} from './code';
 
-export class Country {
-    constructor(
-        public name: Text = new Text(null, DEFAULT_LANGUAGE()),
-        public identificationCode: Code = null
-    ) { }
+export class Metadata {
+    public hjid: number;
+    public creationDate: string;
+    public modificationDate: string;
+    public ownerUser: string;
+    public ownerCompany: string[];
+
+    constructor(json: any) {
+        this.hjid = json.hjid;
+        this.creationDate = json.creationDate;
+        this.modificationDate = json.modificationDate;
+        this.ownerUser = json.ownerUser;
+        this.ownerCompany = json.ownerCompany;
+    }
 }

@@ -82,7 +82,7 @@ export class FileInputComponent implements OnInit {
                 const self = this;
                 reader.onload = function() {
                     const base64String = (reader.result as string).split(',').pop();
-                    const binaryObject = new BinaryObject(base64String, file.type, file.name, "", self.selectedLanguage, "");
+                    const binaryObject = new BinaryObject(base64String, file.type, file.name, "", self.selectedLanguage);
                     self.binaryObjects.push(binaryObject);
                     self.onSelectFile.emit(binaryObject);
                 };

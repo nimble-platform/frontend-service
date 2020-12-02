@@ -61,6 +61,8 @@ import { ValidationService } from './common/validation/validators';
 import {ContractService} from './bpe/bp-view/contract-service';
 import {WhiteBlackListService} from './catalogue/white-black-list.service';
 import {NetworkCompanyListService} from './user-mgmt/network-company-list.service';
+import {DemandPublishService} from './demand/demand-publish-service';
+import {DemandService} from './demand/demand-service';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -101,6 +103,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         CategoryService,
         PublishingPropertyService,
         PublishService,
+        DemandPublishService,
+        DemandService,
         WhiteBlackListService,
         NetworkCompanyListService,
         ExplorativeSearchService,
