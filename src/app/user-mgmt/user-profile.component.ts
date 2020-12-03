@@ -39,6 +39,8 @@ export class UserProfileComponent implements OnInit {
     newPasswordRepeated: string = null;
     pw_val_class: string = "ng-invalid";
     passwords_matching: boolean = false;
+    // the list of user roles which must not be shown on the UI
+    public NON_DISPLAYED_ROLES = ["nimble_user","eFactoryUser"];
 
     constructor(private userService: UserService,
         private translate: TranslateService,

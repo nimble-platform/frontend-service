@@ -182,14 +182,16 @@ export class SimpleSearchService {
         searchObject.start = page - 1;
         searchObject.sort = [];
         sort = sort.replace('{LANG}', DEFAULT_LANGUAGE());
-        searchObject.sort.push(sort);
         let url = null;
         // when the page reference is catalogue, we retrieve eFactory companies for white/black list
         if (pageRef == 'catalogue' || pageRef == 'network' || pageRef == 'offering') {
             url = this.eFactoryIndexingEndpoint + `/party/search`;
             searchObject.q = 'hasRegisteredUser:true';
             searchObject.fq = [];
-        } else {
+            // EFPF companies might not have lowercaseLegalName field, so, replace it with legalName
+            sort = sort.replace("lowercaseLegalName","legalName");
+        }
+        else {
             let queryRes;
             if (search_index == 'Name') {
                 queryRes = this.buildQueryString(query, myGlobals.query_settings_comp, true, false);
@@ -238,6 +240,7 @@ export class SimpleSearchService {
                 searchObject.fq.push('verified:true');
             }
         }
+        searchObject.sort.push(sort);
         return this.http
             .post(url, searchObject, {
                 headers: new Headers({
@@ -322,6 +325,14 @@ export class SimpleSearchService {
             'boostingFactors': {}
         };
         let searchObject: any = {};
+        searchObject.facet = {};
+        searchObject.facet.field = [];
+        searchObject.facet.limit = -1;
+        searchObject.facet.minCount = 1;
+        searchObject.rows = 2147483647;
+        searchObject.start = 0;
+        searchObject.sort = ['score desc'];
+        searchObject.fq = [];
         let url = null;
         let queryRes = this.buildQueryString(query, querySettings, true, true);
         // when the page reference is catalogue, we retrieve suggestions for eFactory companies
@@ -338,17 +349,9 @@ export class SimpleSearchService {
                 url = this.delegate_url + `/party/search`;
             }
             searchObject.q = queryRes.queryStr;
-        }
-        searchObject.facet = {};
-        searchObject.facet.field = [];
-        searchObject.facet.limit = -1;
-        searchObject.facet.minCount = 1;
-        searchObject.rows = 2147483647;
-        searchObject.start = 0;
-        searchObject.sort = ['score desc'];
-        searchObject.fq = [];
-        if (verified) {
-            searchObject.fq.push('verified:true');
+            if (verified) {
+                searchObject.fq.push('verified:true');
+            }
         }
 
         for (let i = 0; i < queryRes.queryFields.length; i++) {

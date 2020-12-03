@@ -34,7 +34,8 @@
         <div class="d-flex">
             <div class="custom-file" *ngIf="isShowingInput()">
                 <input type="file" class="custom-file-input" [accept]="accept" (change)="onChooseFile($event)" [disabled]="disabled">
-                <label class="custom-file-label" [ngClass]="getFileClasses()">
+                <!-- lang attribute is used to translate Browse label of file input-->
+                <label class="custom-file-label" [ngClass]="getFileClasses()" lang="{{translate.currentLang}}">
                     {{ placeholder }}
                 </label>
             </div>

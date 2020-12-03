@@ -60,7 +60,6 @@ export class CompanySettingsComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.initCallStatus.submit();
         this.route.queryParams.subscribe(params => {
             this.companyId = params['id'];
             this.federationId = params['delegateId'];
@@ -74,16 +73,23 @@ export class CompanySettingsComponent implements OnInit {
                 this.viewMode = params['viewMode'];
             else
                 this.viewMode = "full";
-            if (this.companyId && this.appComponent.checkRoles("pm"))
+            // platform manager should be able to see  all details of the company
+            let isPlatformManager = this.appComponent.checkRoles("pm");
+            if(isPlatformManager){
+                this.viewMode = "full";
+            }
+            if (this.companyId && isPlatformManager)
                 this.getCompanySettings(this.companyId, this.federationId);
         });
         const userId = this.cookieService.get("user_id");
         if (!this.companyId) {
+            this.initCallStatus.aggregatedSubmit();
             this.userService.getSettingsForUser(userId).then(settings => {
                 this.processSettings(settings);
+                this.initCallStatus.aggregatedCallBack("Settings successfully fetched",true)
             })
                 .catch(error => {
-                    this.initCallStatus.error("Error while fetching company settings", error);
+                    this.initCallStatus.aggregatedError("Error while fetching company settings", error);
                 });
         }
         else {
@@ -92,20 +98,21 @@ export class CompanySettingsComponent implements OnInit {
     }
 
     getCompanySettings(id, federationId) {
+        this.initCallStatus.aggregatedSubmit();
         this.userService.getSettingsForParty(id, federationId).then(settings => {
             this.processSettings(settings);
+            this.initCallStatus.aggregatedCallBack("Settings successfully fetched",true)
         })
-            .catch(error => {
-                this.initCallStatus.error("Error while fetching company settings", error);
-            });
+        .catch(error => {
+            this.initCallStatus.aggregatedError("Error while fetching company settings", error);
+        });
     }
 
     processSettings(settings) {
         if (myGlobals.debug) {
             console.log("Fetched settings: " + JSON.stringify(settings));
         }
-        this.initCallStatus.callback("Settings successfully fetched", true);
-        this.initCallStatus.submit();
+        this.initCallStatus.aggregatedSubmit();
         this.userService.getProfileCompleteness(settings.companyID).then(completeness => {
             this.profile_completeness = 0;
             this.profile_completeness_str = "0%";
@@ -119,10 +126,10 @@ export class CompanySettingsComponent implements OnInit {
                     }
                 }
             }
-            this.initCallStatus.callback("Profile completeness successfully fetched", true);
+            this.initCallStatus.aggregatedCallBack("Profile completeness successfully fetched", true);
         })
             .catch(error => {
-                this.initCallStatus.error("Error while fetching profile completeness", error);
+                this.initCallStatus.aggregatedError("Error while fetching profile completeness", error);
             });
         this.settings = settings;
         this.certificates = this.settings.certificates;

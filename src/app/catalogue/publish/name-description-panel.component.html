@@ -25,7 +25,7 @@
 
         <div class="col-9">
             <!-- product ID -->
-            <text-input [label]="'ID' | translate" [(text)]="catalogueLine.goodsItem.item.manufacturersItemIdentification.id" [rows]="1" [maxLength]="256" [rowClass]="'m-0'" [textGeneratorClass]="'col-1'" [valueClass]="'col-8'" (textChange)="onLineIdChange()" [disabled]="!productIdEditable" [required]="true" [forbiddenPrecedingTrailingSpace]="true" [formFieldName]="'product_id'" [parentForm]="formGroup">
+            <text-input [label]="'ID' | translate" [(text)]="catalogueLine.goodsItem.item.manufacturersItemIdentification.id" [rows]="1" [maxLength]="256" [rowClass]="'m-0'" [valueClass]="'col-8'" (textChange)="onLineIdChange()" [disabled]="!productIdEditable" [required]="true" [forbiddenPrecedingTrailingSpace]="true" [formFieldName]="'product_id'" [parentForm]="formGroup">
             </text-input>
 <!--            <div class="div-padding-left">-->
                 <hr style="margin-left: 15px">

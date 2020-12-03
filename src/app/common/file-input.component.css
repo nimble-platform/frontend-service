@@ -31,6 +31,15 @@
     background-color: #e9ecef;
 }
 
+/*the translations of Browse label based on the lang attribute*/
+.custom-file-input~.custom-file-label[lang=en]::after {
+    content: "Browse";
+}
+
+.custom-file-input~.custom-file-label[lang=es]::after {
+    content: "Elegir";
+}
+/*the end of translations of Browse label based on the lang attribute*/
 .file-link-row {
     display: flex;
     margin-bottom: 0.5rem;

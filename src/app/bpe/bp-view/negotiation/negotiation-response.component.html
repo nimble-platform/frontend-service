@@ -70,22 +70,27 @@
 <!-- Action buttons are only displayed for the last product -->
 <ng-container *ngIf="selectedLineIndex == lines.length-1">
     <div class="row actions-row" *ngIf="userRole === 'seller' && !isReadOnly()">
-        <div class="col-6 call-status-col">
+        <div class="{{!bpDataService.isProcessPresentInTheWorkflow('Order') ? 'col-3' : 'col-6'}} call-status-col">
             <call-status [callStatus]="callStatus"></call-status>
         </div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
+        <div *ngIf="!bpDataService.isProcessPresentInTheWorkflow('Order')" class="col-3">
+            <button class="btn btn-secondary action" (click)="openCancelCollaborationModal()" [disabled]="callStatus.isLoading() || processMetadata.collaborationStatus === 'COMPLETED' || processMetadata.collaborationStatus === 'CANCELLED'">
+                <span [innerHTML]="'Cancel collaboration' | translate"></span>
+            </button>
+        </div>
         <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading() || isThereADeletedProduct()" (click)="onRespondToQuotation(false)" singleClick>
+            <button class="btn btn-secondary action" [disabled]="callStatus.isLoading() ||isLoading() || isThereADeletedProduct()" (click)="onRespondToQuotation(false)" singleClick>
                 <span [innerHTML]="'Reject Offer' | translate"></span>
             </button>
         </div>
         <div class="col-2">
-            <button *ngIf="!hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading() || !isFormValid() || isThereADeletedProduct()" (click)="onRespondToQuotation(true)" singleClick>
+            <button *ngIf="!hasUpdatedTerms()" class="btn btn-primary action" [disabled]="callStatus.isLoading() ||isLoading() || !isFormValid() || isThereADeletedProduct()" (click)="onRespondToQuotation(true)" singleClick>
                 <span [innerHTML]="'Accept Offer' | translate"></span>
             </button>
-            <button *ngIf="hasUpdatedTerms()" class="btn btn-primary action" [disabled]="isLoading() || !isFormValid() || isThereADeletedProduct()" (click)="onRespondToQuotation(true)" singleClick>
+            <button *ngIf="hasUpdatedTerms()" class="btn btn-primary action" [disabled]="callStatus.isLoading() ||isLoading() || !isFormValid() || isThereADeletedProduct()" (click)="onRespondToQuotation(true)" singleClick>
                 <span [innerHTML]="'Submit Response' | translate"></span>
             </button>
         </div>
@@ -101,23 +106,54 @@
     </div>
 
     <div class="row actions-row" *ngIf="userRole === 'buyer' && !readonly">
-        <div class="{{!bpDataService.isProcessPresentInTheWorkflow('Order') ? 'col-7':'col-5'}} call-status-col">
-            <call-status [callStatus]="callStatus"></call-status>
-        </div>
-        <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
-        </div>
-        <div class="col-3">
-            <button class="btn btn-secondary action" [disabled]="isRequestNewQuotationDisabled()" (click)="onRequestNewQuotation()">
-                <span [innerHTML]="'Request new Quotation' | translate"></span>
-            </button>
-        </div>
-        <div *ngIf="bpDataService.isProcessPresentInTheWorkflow('Order')" class="col-2">
-            <span [ngbTooltip]="getAcceptAndOrderButtonValidationMessages()" [placement]="'auto'"  title="">
-                <button class="btn btn-primary action" [disabled]="isAcceptAndOrderDisabled()" (click)="onAcceptAndOrder()">
-                    <span [innerHTML]="'Accept & Order' | translate"></span>
+        <!-- Order is the next step -->
+        <ng-container *ngIf="bpDataService.isProcessPresentInTheWorkflow('Order')">
+            <div class="col-5 call-status-col">
+                <call-status [callStatus]="callStatus"></call-status>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
+            </div>
+            <div class="col-3">
+                <button class="btn btn-secondary action" [disabled]="isRequestNewQuotationDisabled()" (click)="onRequestNewQuotation()">
+                    <span [innerHTML]="'Request new Quotation' | translate"></span>
                 </button>
-            </span>
-        </div>
+            </div>
+            <div class="col-2">
+                <span [ngbTooltip]="getAcceptAndOrderButtonValidationMessages()" [placement]="'auto'"  title="">
+                    <button class="btn btn-primary action" [disabled]="isAcceptAndOrderDisabled()" (click)="onAcceptAndOrder()">
+                        <span [innerHTML]="'Accept & Order' | translate"></span>
+                    </button>
+                </span>
+            </div>
+        </ng-container>
+        <!-- Negotiation is the last step -->
+        <ng-container *ngIf="!bpDataService.isProcessPresentInTheWorkflow('Order')">
+            <div class="{{quotation.documentStatusCode.name !== NEGOTIATION_RESPONSES.ACCEPTED ? 'col-1': 'col-4'}} call-status-col">
+                <call-status [callStatus]="callStatus"></call-status>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
+            </div>
+            <div *ngIf="quotation.documentStatusCode.name !== NEGOTIATION_RESPONSES.ACCEPTED" class="col-3">
+                <button class="btn btn-secondary action" [disabled]="callStatus.isLoading() || isRequestNewQuotationDisabled()" (click)="onRequestNewQuotation()">
+                    <span [innerHTML]="'Request new Quotation' | translate"></span>
+                </button>
+            </div>
+            <div class="col-3">
+                <button class="btn btn-secondary action" (click)="openCancelCollaborationModal()" [disabled]="callStatus.isLoading() || processMetadata.collaborationStatus === 'COMPLETED' || processMetadata.collaborationStatus === 'CANCELLED'">
+                    <span [innerHTML]="'Cancel collaboration' | translate"></span>
+                </button>
+            </div>
+            <div class="col-3">
+                <button class="btn btn-secondary action" (click)="finishCollaboration()" [disabled]="callStatus.isLoading() || processMetadata.collaborationStatus === 'COMPLETED' || processMetadata.collaborationStatus === 'CANCELLED'">
+                    <span [innerHTML]="'Finish collaboration' | translate"></span>
+                </button>
+            </div>
+        </ng-container>
     </div>
 </ng-container>
+
+<!--Cancel Collaboration Modal-->
+<cancel-collaboration-modal (onCollaborationCancelStatusUpdated)="onCollaborationCancelStatusUpdated($event)">
+</cancel-collaboration-modal>

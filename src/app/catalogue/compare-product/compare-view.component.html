@@ -54,7 +54,7 @@
                                         <p *ngIf="catLine[product_description] != null">{{getMultilingualLabel(catLine[product_description])}}</p>
                                         <!-- <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" class="all-break">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p> -->
                                         <p *ngIf="catLine[product_price] && !checkEmpty(catLine[product_price])" class="all-break">{{roundToTwoDecimals(catLine[product_price][getCurrency(catLine[product_price])])}} {{getCurrency(catLine[product_price])}}</p>
-                                        <p *ngIf="!catLine[product_price] || checkEmpty(catLine[product_price])" class="all-break"><span [innerHTML]="'Upon request' | translate"></span></p>
+                                        <p *ngIf="!catLine[product_price] || checkEmpty(catLine[product_price])" class="all-break"><span [innerHTML]="'Price: Upon request' | translate"></span></p>
                                     </div>
                                     <div class="col-3">
                                         <div class="float-right">
@@ -125,7 +125,7 @@
                                         <p *ngIf="catLine[product_description] != null">{{getMultilingualLabel(catLine[product_description])}}</p>
                                         <!-- <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" class="all-break">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p> -->
                                         <p *ngIf="catLine[product_price] && !checkEmpty(catLine[product_price])" class="all-break">{{roundToTwoDecimals(catLine[product_price][getCurrency(catLine[product_price])])}} {{getCurrency(catLine[product_price])}}</p>
-                                        <p *ngIf="!catLine[product_price] || checkEmpty(catLine[product_price])" class="all-break"><span [innerHTML]="'Upon request' | translate"></span></p>
+                                        <p *ngIf="!catLine[product_price] || checkEmpty(catLine[product_price])" class="all-break"><span [innerHTML]="'Price: Upon request' | translate"></span></p>
                                     </div>
                                     <div class="col-3">
                                         <div>
@@ -140,7 +140,7 @@
                                             <call-status [callStatus]="addFavoriteCategoryStatus"></call-status>
                                         </div>
                                         <a href="#" role="button" class="btn btn-primary btn-sm col" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.catalogueId, id: catLine.manufactuerItemId}">
-                                            <span [innerHTML]="'Order' | translate"></span>
+                                            <span [innerHTML]="'Negotiate' | translate"></span>
                                         </a>
                                         <call-status [callStatus]="getDeleteStatus(i)"></call-status>
                                     </div>

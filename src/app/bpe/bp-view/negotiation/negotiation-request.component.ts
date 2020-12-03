@@ -50,6 +50,8 @@ import { BpActivityEvent } from '../../../catalogue/model/publish/bp-start-event
 import { CompanySettings } from '../../../user-mgmt/model/company-settings';
 import { FormGroup } from '@angular/forms';
 import { ValidationService } from '../../../common/validation/validators';
+import {CancelCollaborationModalComponent} from '../../../common/cancel-collaboration-modal.component';
+import {CancelCollaborationStatus} from '../../../common/model/cancel-collaboration-status';
 
 @Component({
     selector: "negotiation-request",
@@ -108,6 +110,10 @@ export class NegotiationRequestComponent implements OnInit {
     areNotesOrFilesAttachedToDocument = UBLModelUtils.areNotesOrFilesAttachedToDocument;
 
     VALIDATION_ERROR_FOR_FRAME_CONTRACT="validation_provide_valid_input_for_frame_contract";
+
+    // cancel collaboration modal
+    @ViewChild(CancelCollaborationModalComponent)
+    public cancelCollaborationModal: CancelCollaborationModalComponent;
 
     constructor(private bpDataService: BPDataService,
         private bpeService: BPEService,
@@ -437,6 +443,32 @@ export class NegotiationRequestComponent implements OnInit {
         this.showNotesAndAdditionalFiles = false;
         this.showPurchaseOrder = false;
         return ret;
+    }
+
+    /**
+     * Opens the cancel collaboration modal
+     * */
+    openCancelCollaborationModal() {
+        this.cancelCollaborationModal.open(this.bpActivityEvent.containerGroupId,this.processMetadata.sellerFederationId);
+    }
+
+    /**
+     * This method handles the status of collaboration cancelling emitted by {@link CancelCollaborationModalComponent}.
+     * @param cancelCollaborationStatus the status of collaboration cancelling process
+     * */
+    onCollaborationCancelStatusUpdated(cancelCollaborationStatus:CancelCollaborationStatus){
+        switch (cancelCollaborationStatus.status) {
+            case 'STARTED':
+                this.callStatus.submit();
+                break;
+            case 'COMPLETED':
+                // change collaboration status
+                this.processMetadata.collaborationStatus = "CANCELLED";
+                this.callStatus.callback("Cancelled collaboration successfully");
+                break;
+            case 'FAILED':
+                this.callStatus.error(cancelCollaborationStatus.errorMessage,cancelCollaborationStatus.error);
+        }
     }
 
 }

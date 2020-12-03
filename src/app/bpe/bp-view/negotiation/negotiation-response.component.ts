@@ -36,6 +36,9 @@ import { DigitalAgreement } from "../../../catalogue/model/publish/digital-agree
 import { Clause } from '../../../catalogue/model/publish/clause';
 import { TranslateService } from '@ngx-translate/core';
 import { Item } from '../../../catalogue/model/publish/item';
+import {AppComponent} from '../../../app.component';
+import {CancelCollaborationModalComponent} from '../../../common/cancel-collaboration-modal.component';
+import {CancelCollaborationStatus} from '../../../common/model/cancel-collaboration-status';
 
 @Component({
     selector: "negotiation-response",
@@ -73,16 +76,24 @@ export class NegotiationResponseComponent implements OnInit {
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
+    // identifier of the business process instance group which contains the negotiation process
+    containerGroupId:string;
 
     @ViewChild(DiscountModalComponent)
     private discountModal: DiscountModalComponent;
+    // cancel collaboration modal
+    @ViewChild(CancelCollaborationModalComponent)
+    public cancelCollaborationModal: CancelCollaborationModalComponent;
 
     getPartyId = UBLModelUtils.getPartyId;
+
+    NEGOTIATION_RESPONSES = NEGOTIATION_RESPONSES;
 
     constructor(private bpeService: BPEService,
         private bpDataService: BPDataService,
         private location: Location,
         private cookieService: CookieService,
+        private appComponent: AppComponent,
         private translate: TranslateService,
         private router: Router) {
     }
@@ -90,6 +101,7 @@ export class NegotiationResponseComponent implements OnInit {
     ngOnInit() {
         // get copy of ThreadEventMetadata of the current business process
         this.processMetadata = this.bpDataService.bpActivityEvent.processMetadata;
+        this.containerGroupId = this.bpDataService.bpActivityEvent.containerGroupId;
         this.lines = this.bpDataService.getCatalogueLines();
         if (this.rfq == null) {
             this.rfq = this.bpDataService.requestForQuotation;
@@ -391,5 +403,48 @@ export class NegotiationResponseComponent implements OnInit {
 
     highlightNotesAndFilesSection() {
         return UBLModelUtils.areNotesOrFilesAttachedToDocument(this.rfq) || UBLModelUtils.areNotesOrFilesAttachedToDocument(this.quotation);
+    }
+
+    finishCollaboration() {
+        this.appComponent.confirmModalComponent.open("Are you sure that you want to finish this collaboration?").then(result => {
+            if(result){
+                this.callStatus.submit();
+                this.bpeService.finishCollaboration(this.containerGroupId, this.processMetadata.sellerFederationId)
+                    .then(() => {
+                        // change collaboration status
+                        this.processMetadata.collaborationStatus = "COMPLETED";
+                        this.callStatus.callback("Finished collaboration successfully");
+                    })
+                    .catch(err => {
+                        this.callStatus.error("Failed to finish collaboration", err);
+                    });
+            }
+        })
+    }
+
+    /**
+     * Opens the cancel collaboration modal
+     * */
+    openCancelCollaborationModal() {
+        this.cancelCollaborationModal.open(this.containerGroupId,this.processMetadata.sellerFederationId);
+    }
+
+    /**
+     * This method handles the status of collaboration cancelling emitted by {@link CancelCollaborationModalComponent}.
+     * @param cancelCollaborationStatus the status of collaboration cancelling process
+     * */
+    onCollaborationCancelStatusUpdated(cancelCollaborationStatus:CancelCollaborationStatus){
+        switch (cancelCollaborationStatus.status) {
+            case 'STARTED':
+                this.callStatus.submit();
+                break;
+            case 'COMPLETED':
+                // change collaboration status
+                this.processMetadata.collaborationStatus = "CANCELLED";
+                this.callStatus.callback("Cancelled collaboration successfully");
+                break;
+            case 'FAILED':
+                this.callStatus.error(cancelCollaborationStatus.errorMessage,cancelCollaborationStatus.error);
+        }
     }
 }

@@ -100,10 +100,23 @@
     </div>
 
     <div *ngIf="showRequestedPrice()" class="row actions-row">
-        <div class="col-6"></div>
+        <div *ngIf="bpDataService.isProcessPresentInTheWorkflow('Order')" class="col-6"></div>
+        <div *ngIf="!bpDataService.isProcessPresentInTheWorkflow('Order')" class="col-3 call-status-col">
+            <call-status [callStatus]="callStatus"></call-status>
+        </div>
         <div class="col-4 price-col"><span [innerHTML]="'Requested Price' | translate"></span>: {{ getGrossTotalString() }}</div>
         <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">{{'Back'|translate}}</button>
+        </div>
+        <!-- Buyer can cancel the collaboration when Negotiation is the last step in the business workflow-->
+        <div *ngIf="!bpDataService.isProcessPresentInTheWorkflow('Order')" class="col-3">
+            <button class="btn btn-secondary action" (click)="openCancelCollaborationModal()" [disabled]="isLoading() || processMetadata.collaborationStatus === 'COMPLETED' || processMetadata.collaborationStatus === 'CANCELLED'">
+                <span [innerHTML]="'Cancel collaboration' | translate"></span>
+            </button>
         </div>
     </div>
 </ng-container>
+
+<!--Cancel Collaboration Modal-->
+<cancel-collaboration-modal (onCollaborationCancelStatusUpdated)="onCollaborationCancelStatusUpdated($event)">
+</cancel-collaboration-modal>

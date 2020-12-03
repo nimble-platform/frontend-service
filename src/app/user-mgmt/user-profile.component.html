@@ -46,9 +46,11 @@
                 </tr>
                 <tr *ngIf="userProfile.role">
                     <th><span><span [innerHTML]="'Platform Roles' | translate"></span></span></th>
-                    <div style="border-top: 1px solid #dee2e6" *ngFor="let role of userProfile.role">
-                        <td style="border-top: 0px solid">{{role}}</td>
-                    </div>
+                    <ng-container *ngFor="let role of userProfile.role">
+                        <div style="border-top: 1px solid #dee2e6" *ngIf="NON_DISPLAYED_ROLES.indexOf(role) == -1" >
+                            <td style="border-top: 0px solid">{{role | translate}}</td>
+                        </div>
+                    </ng-container>
                 </tr>
                 <!--
                 <tr>

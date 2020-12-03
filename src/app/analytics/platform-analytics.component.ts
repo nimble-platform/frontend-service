@@ -31,6 +31,7 @@ import { TranslateService } from '@ngx-translate/core';
     styleUrls: ["./platform-analytics.component.css"]
 })
 export class PlatformAnalyticsComponent implements OnInit {
+    hideLogAnalytics = myGlobals.config.hideLogAnalytics;
     user_count = -1;
     comp_count = -1;
     bp_count = -1;
@@ -112,7 +113,7 @@ export class PlatformAnalyticsComponent implements OnInit {
 
     ngOnInit(): void {
 
-        this.selectedTab = this.config.kibanaEnabled ? "LOG" : "DB";
+        this.selectedTab = this.config.kibanaEnabled && !this.hideLogAnalytics? "LOG" : "DB";
         if (this.config.kibanaEnabled) {
             let tmpDashboards = this.config.kibanaConfig.dashboards;
             for (let i = 0; i < tmpDashboards.length; i++) {

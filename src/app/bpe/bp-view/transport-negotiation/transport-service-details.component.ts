@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import { Component, OnInit, Input } from "@angular/core";
+import {Component, OnInit, Input, OnDestroy} from '@angular/core';
 import { BPDataService } from "../bp-data-service";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
 import { Shipment } from "../../../catalogue/model/publish/shipment";
@@ -23,12 +23,14 @@ import { copy, selectPreferredValue } from '../../../common/utils';
 import { TranslateService } from '@ngx-translate/core';
 import { GoodsItem } from '../../../catalogue/model/publish/goods-item';
 import { Text } from '../../../catalogue/model/publish/text';
+import {EmptyFormBase} from '../../../common/validation/empty-form-base';
 
+const TRANSPORT_SERVICE_DETAILS_FIELD_NAME = 'transport_service_details';
 @Component({
     selector: "transport-service-details",
     templateUrl: "./transport-service-details.component.html"
 })
-export class TransportServiceDetailsComponent implements OnInit {
+export class TransportServiceDetailsComponent extends EmptyFormBase implements OnInit, OnDestroy {
 
     @Input() rfq: RequestForQuotation;
     @Input() quotationShipment: Shipment = null;
@@ -47,6 +49,7 @@ export class TransportServiceDetailsComponent implements OnInit {
     disableAddProductButton: boolean = false;
     constructor(private bpDataService: BPDataService,
         private translate: TranslateService) {
+        super(TRANSPORT_SERVICE_DETAILS_FIELD_NAME);
     }
 
     ngOnInit() {
@@ -65,6 +68,11 @@ export class TransportServiceDetailsComponent implements OnInit {
         for (let i = 0; i < size; i++) {
             this.goodsItems[i].sequenceNumberID = i.toString();
         }
+        this.addViewFormToParentForm();
+    }
+
+    ngOnDestroy() {
+        this.removeViewFormFromParentForm();
     }
 
     addGoodsItemToBeShipped() {

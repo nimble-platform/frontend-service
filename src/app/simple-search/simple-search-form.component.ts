@@ -1595,18 +1595,6 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         return found;
     }
 
-    checkCompMainCatCount() {
-        let count = 0;
-        if (this.facetList) {
-            for (let i = 0; i < this.facetList.length; i++) {
-                if (this.checkCompMainCat(this.facetList[i].genName)) {
-                    count++;
-                }
-            }
-        }
-        return count;
-    }
-
     checkCompTrustCat(name: string) {
         let found = false;
         if (this.party_filter_trust.indexOf(name) != -1) {

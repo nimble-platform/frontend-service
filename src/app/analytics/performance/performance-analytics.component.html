@@ -28,7 +28,7 @@
                     <span [innerHTML]="'Collaboration stats' | translate"></span>
                 </a>
             </li>
-            <li class="nav-item">
+            <li *ngIf="!hideVisitStats" class="nav-item">
                 <a href id="Visits" class="nav-link" [ngClass]="{ active: selectedTab === 'Visits'}" (click)="onSelectTab($event,'Visits')">
                     <span [innerHTML]="'Visit stats' | translate"></span>
                 </a>

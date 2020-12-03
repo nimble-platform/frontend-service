@@ -31,6 +31,7 @@ import { DomSanitizer } from "@angular/platform-browser";
     styleUrls: ["./performance-analytics.component.css"]
 })
 export class PerformanceAnalyticsComponent implements OnInit {
+    hideVisitStats = myGlobals.config.hideVisitStats;
     user_count = -1;
     comp_count = -1;
     bp_count = -1;

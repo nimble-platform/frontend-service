@@ -80,12 +80,11 @@ export class CompanyDeliveryTermsComponent implements OnInit {
         // update settings
         this.saveCallStatus.submit();
         this.settings.tradeDetails.deliveryTerms = this.generateSpecialTermsMap(model.getRawValue()['deliveryTerms']);
-        let userId = this.cookieService.get("user_id");
         this.userService
-            .putSettings(this.settings, userId)
+            .putSettingsForParty(this.settings, this.settings.companyID)
             .then(response => {
                 if (myGlobals.debug) {
-                    console.log(`Saved Company Settings for user ${userId}. Response: ${response}`);
+                    console.log(`Saved Company Settings for party ${this.settings.companyID}. Response: ${response}`);
                 }
                 this.saveCallStatus.callback("Successfully saved", true);
                 this.settingsForm.markAsPristine();

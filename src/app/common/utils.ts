@@ -867,3 +867,7 @@ export function getAuthorizedHeaders(cookieService: CookieService): Headers {
     const headers = new Headers({ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': token });
     return headers;
 }
+
+export function findCategoryInArray(categoryArray: Category[], category: Category): number {
+    return categoryArray.findIndex(c => c.id == category.id);
+}
