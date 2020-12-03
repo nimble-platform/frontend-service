@@ -1,8 +1,6 @@
 /*
  * Copyright 2020
  * SRDC - Software Research & Development Consultancy; Ankara; Turkey
-   In collaboration with
- * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
@@ -36,6 +34,7 @@ import {countryValidator, ValidationService} from '../common/validation/validato
 import {ChildFormBase} from '../common/validation/child-form-base';
 import {DemandService} from './demand-service';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
+import {CallStatus} from '../common/call-status';
 
 @Component({
     selector: 'demand-publish',
@@ -50,6 +49,8 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
 
     countryFormControl: FormControl;
     categoryFormControl: FormControl;
+
+    callStatus: CallStatus = new CallStatus();
 
     selectPreferredName = selectPreferredName;
     LANGUAGES = LANGUAGES;
@@ -118,16 +119,25 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
 
     onFileSelected(binaryObject: BinaryObject): void {
         this.demand.additionalDocumentReference = UBLModelUtils.createDocumentReferenceWithBinaryObject(binaryObject);
-        console.log('SELECTED', this.demand.additionalDocumentReference);
     }
 
     onFileDeleted(): void {
         this.demand.additionalDocumentReference = null;
-        console.log('CLEARED', this.demand.additionalDocumentReference);
     }
 
     onPublishDemand(): void {
-        this.demandService.publishDemand(this.demand);
+        this.callStatus.submit();
+        this.demandService.publishDemand(this.demand).then(resp => {
+            this.callStatus.callback(null, true);
+            alert(this.translate.instant('Successfully published. You are now getting redirected.'));
+            this.router.navigate(['dashboard'], {
+                queryParams: {
+                    tab: 'DEMANDS',
+                }
+            });
+        }).catch(e => {
+            this.callStatus.error(this.translate.instant('Failed to publish demand'), e);
+        });
     }
 
     getSuggestions = (text$: Observable<string>) =>

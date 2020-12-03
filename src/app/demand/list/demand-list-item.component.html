@@ -1,0 +1,64 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+<div class="card">
+    <div class="card-body d-flex">
+            <div class="col-2">
+                <div style="text-align:center">
+                    <img *ngIf="!demand.image || demand.image.length === 0" style="max-height:150px; max-width:100%" src="../../../assets/images/empty_img.png">
+                    <img *ngIf="demand.image?.length > 0" style="max-height:150px; max-width:100%" src="data:{{demand.image[0].mimeCode}};base64,{{demand.image[0].value}}" />
+                </div>
+            </div>
+            <div class="col-10 d-flex justify-content-between">
+                <div class="col">
+                    <h5>{{demand.title[0].value}}</h5>
+                    <label class="d-block"> {{demand.description[0].value}}</label>
+                    <div class="row no-gutters">
+                        <div class="col-7">
+                            <div class="row no-gutters">
+                                <div class="col-5">
+                                    <div>{{'Product/Service Category:' | translate}} </div>
+                                </div>
+                                <div class="col-7">
+                                    <div>{{demand.itemClassificationCode.name}}</div>
+                                </div>
+                            </div>
+                            <div class="row no-gutters">
+                                <div class="col-5">
+                                    <div>{{'Due Date:' | translate}}</div>
+                                </div>
+                                <div class="col-7">
+                                    <div>{{demand.dueDate}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            <div>{{'Buyer Country:' | translate}} {{demand.buyerCountry.value}}</div>
+                            <div>{{'Delivery Country:' | translate}} {{demand.deliveryCountry.value}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary space-after col d-block">
+                        <span [innerHTML]="'Edit' | translate"></span>
+                    </button>
+                    <button type="button" class="btn btn-primary space-after col d-block">
+                        <span [innerHTML]="'Copy' | translate"></span>
+                    </button>
+                    <button type="button" class="btn btn-danger col d-block">
+                        <span [innerHTML]="'Delete' | translate"></span>
+                    </button>
+                </div>
+            </div>
+    </div>
+</div>

@@ -17,6 +17,7 @@ import {DocumentReference} from './document-reference';
 import {Metadata} from './metadata';
 import {Text} from './text';
 import {Code} from './code';
+import {BinaryObject} from './binary-object';
 
 export class Demand {
     public hjid: number;
@@ -28,6 +29,7 @@ export class Demand {
     public buyerCountry: Code;
     public deliveryCountry: Code;
     public additionalDocumentReference: DocumentReference;
+    public image: BinaryObject[];
     constructor(json?: any) {
         if (json) {
             this.hjid = json.hjid;
@@ -39,6 +41,7 @@ export class Demand {
             this.buyerCountry = json.buyerCountry;
             this.deliveryCountry = json.deliveryCountry;
             this.additionalDocumentReference = json.additionalDocumentReference;
+            this.image = json.image;
         }
     }
 }

@@ -21,6 +21,8 @@ import {DemandPublishComponent} from './demand-publish.component';
 import {DemandRoutingModule} from './demand-routing.module';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {DemandListComponent} from './list/demand-list.component';
+import {DemandListItemComponent} from './list/demand-list-item.component';
 
 @NgModule({
     imports: [
@@ -31,7 +33,12 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
         DemandRoutingModule,
         ReactiveFormsModule
     ],
+    exports: [
+        DemandListComponent
+    ],
     declarations: [
+        DemandListComponent,
+        DemandListItemComponent,
         DemandPublishComponent
     ]
 })

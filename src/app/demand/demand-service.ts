@@ -5,6 +5,8 @@ import {getAuthorizedHeaders} from '../common/utils';
 import {Http} from '@angular/http';
 import {UserService} from '../user-mgmt/user.service';
 import {CookieService} from 'ng2-cookies';
+import {CatalogueLine} from '../catalogue/model/publish/catalogue-line';
+import {DemandPaginationResponse} from './model/demand-pagination-response';
 
 @Injectable()
 export class DemandService {
@@ -18,6 +20,15 @@ export class DemandService {
         return this.http
             .post(url, demand, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
+            .catch(this.handleError);
+    }
+
+    public getDemands(partyId: string, page: number, pageSize: number): Promise<DemandPaginationResponse> {
+        const url = catalogue_endpoint + `/demands?companyId=${partyId}&pageNo=${page}&limit=${pageSize}`;
+        return this.http
+            .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
+            .toPromise()
+            .then(res => new DemandPaginationResponse(res.json()))
             .catch(this.handleError);
     }
 

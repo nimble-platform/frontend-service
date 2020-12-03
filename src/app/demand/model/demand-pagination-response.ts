@@ -12,19 +12,13 @@
    limitations under the License.
  */
 
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-import {DemandPublishComponent} from './demand-publish.component';
-import {DemandListComponent} from './list/demand-list.component';
+import {Demand} from '../../catalogue/model/publish/demand';
 
-const routes: Routes = [
-    { path: 'publish', component: DemandPublishComponent },
-    { path: 'demands', component: DemandListComponent }
-];
-
-@NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
-})
-
-export class DemandRoutingModule { }
+export class DemandPaginationResponse {
+    public totalCount: number;
+    public demands: Demand[];
+    constructor(json: any) {
+        this.totalCount = json.totalCount;
+        this.demands = json.demands.map(demand => new Demand(demand));
+    }
+}

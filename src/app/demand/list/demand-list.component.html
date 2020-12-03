@@ -1,4 +1,4 @@
-/*
+<!--
  * Copyright 2020
  * SRDC - Software Research & Development Consultancy; Ankara; Turkey
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -10,21 +10,17 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- */
+ -->
+<div class="d-flex mt-3">
+    <input type="text" class="form-control mr-3">
+    <button class="btn btn-primary">Search</button>
+</div>
 
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-import {DemandPublishComponent} from './demand-publish.component';
-import {DemandListComponent} from './list/demand-list.component';
-
-const routes: Routes = [
-    { path: 'publish', component: DemandPublishComponent },
-    { path: 'demands', component: DemandListComponent }
-];
-
-@NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
-})
-
-export class DemandRoutingModule { }
+<hr>
+<div class="justify-content-center pagination">
+    <ngb-pagination [collectionSize]="totalCount" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="onPageChange($event)"></ngb-pagination>
+</div>
+<div *ngFor="let demand of demands" class="space-before">
+    <demand-list-item [demand]="demand">
+    </demand-list-item>
+</div>
