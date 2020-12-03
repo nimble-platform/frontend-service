@@ -51,6 +51,7 @@ import { CompanySettings } from '../../../user-mgmt/model/company-settings';
 import { FormGroup } from '@angular/forms';
 import { ValidationService } from '../../../common/validation/validators';
 import {CancelCollaborationModalComponent} from '../../../common/cancel-collaboration-modal.component';
+import {CancelCollaborationStatus} from '../../../common/model/cancel-collaboration-status';
 
 @Component({
     selector: "negotiation-request",
@@ -444,14 +445,30 @@ export class NegotiationRequestComponent implements OnInit {
         return ret;
     }
 
-    cancelCollaboration() {
-        this.cancelCollaborationModal.open(this.bpActivityEvent.containerGroupId,this.processMetadata.sellerFederationId).then(response => {
-            // response is true when the collaboration is cancelled
-            if(response){
-                // change the collaboration status
-                this.processMetadata.collaborationStatus = "CANCELLED"
-            }
-        });
+    /**
+     * Opens the cancel collaboration modal
+     * */
+    openCancelCollaborationModal() {
+        this.cancelCollaborationModal.open(this.bpActivityEvent.containerGroupId,this.processMetadata.sellerFederationId);
+    }
+
+    /**
+     * This method handles the status of collaboration cancelling emitted by {@link CancelCollaborationModalComponent}.
+     * @param cancelCollaborationStatus the status of collaboration cancelling process
+     * */
+    onCollaborationCancelStatusUpdated(cancelCollaborationStatus:CancelCollaborationStatus){
+        switch (cancelCollaborationStatus.status) {
+            case 'STARTED':
+                this.callStatus.submit();
+                break;
+            case 'COMPLETED':
+                // change collaboration status
+                this.processMetadata.collaborationStatus = "CANCELLED";
+                this.callStatus.callback("Cancelled collaboration successfully");
+                break;
+            case 'FAILED':
+                this.callStatus.error(cancelCollaborationStatus.errorMessage,cancelCollaborationStatus.error);
+        }
     }
 
 }

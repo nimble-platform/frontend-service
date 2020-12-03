@@ -73,7 +73,7 @@
                             <div *ngIf="titleEvent && showFinishCollaborationButton" class="inline" (click)="finishCollaboration()" data-toggle="tooltip" data-placement="top" [title]="'Finish the collaboration' | translate">
                                 <i class="far fa-check-circle p-1 pointer" aria-hidden="true"></i>
                             </div>
-                            <div *ngIf="titleEvent && showCancelCollaborationButton" class="inline" (click)="rateCollaborationCancelled()" data-toggle="tooltip" data-placement="top" [title]="'Cancel the collaboration' | translate">
+                            <div *ngIf="titleEvent && showCancelCollaborationButton" class="inline" (click)="openCancelCollaborationModal()" data-toggle="tooltip" data-placement="top" [title]="'Cancel the collaboration' | translate">
                                 <i class="fa fa-times p-1 pointer" aria-hidden="true"></i>
                             </div>
                             <div *ngIf="!expanded" class="inline" (click)="expanded = !expanded" data-toggle="tooltip" data-placement="top" [title]="'Show details' | translate">
@@ -98,7 +98,7 @@
                 <div *ngIf="titleEvent && showRateCollaborationButton" (click)="rateCollaboration(addSuccessRatingModal,addCancelRatingModal)" data-toggle="tooltip" data-placement="top" title="Rate this collaboration">
                     <i class="fa fa-star p-2 pointer" aria-hidden="true"></i>
                 </div>
-                <div *ngIf="titleEvent && showCancelCollaborationButton" (click)="cancelCollaboration()" data-toggle="tooltip" data-placement="top" title="Cancel the collaboration">
+                <div *ngIf="titleEvent && showCancelCollaborationButton" (click)="openCancelCollaborationModal()" data-toggle="tooltip" data-placement="top" title="Cancel the collaboration">
                     <i class="fa fa-times p-2 pointer" aria-hidden="true"></i>
                 </div>
                 <div *ngIf="!expanded" (click)="expanded = !expanded" data-toggle="tooltip" data-placement="top" title="Show details">
@@ -336,5 +336,5 @@
 <call-status [callStatus]="collaborationGroupRetrievalCallStatus" [large]="true"></call-status>
 
 <!--Cancel Collaboration Modal-->
-<cancel-collaboration-modal>
+<cancel-collaboration-modal (onCollaborationCancelStatusUpdated)="onCollaborationCancelStatusUpdated($event)">
 </cancel-collaboration-modal>

@@ -45,6 +45,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { Subject } from 'rxjs';
 import { CatalogueService } from '../../catalogue/catalogue.service';
 import {CancelCollaborationModalComponent} from '../../common/cancel-collaboration-modal.component';
+import {CancelCollaborationStatus} from '../../common/model/cancel-collaboration-status';
 
 @Component({
     selector: 'thread-summary',
@@ -811,14 +812,28 @@ export class ThreadSummaryComponent implements OnInit {
         this.modalService.open(content);
     }
 
-    rateCollaborationCancelled() {
+    /**
+     * Opens the cancel collaboration modal
+     * */
+    openCancelCollaborationModal() {
         this.compComment = "";
-        this.cancelCollaborationModal.open(this.processInstanceGroup.id, this.processInstanceGroup.sellerFederationId).then(response => {
-            // response is true when the collaboration is cancelled
-            if(response){
+        this.cancelCollaborationModal.open(this.processInstanceGroup.id, this.processInstanceGroup.sellerFederationId);
+    }
+
+    /**
+     * This method handles the status of collaboration cancelling emitted by {@link CancelCollaborationModalComponent}.
+     * @param cancelCollaborationStatus the status of collaboration cancelling process
+     * */
+    onCollaborationCancelStatusUpdated(cancelCollaborationStatus:CancelCollaborationStatus){
+        switch (cancelCollaborationStatus.status) {
+            case 'STARTED':
+                break;
+            case 'COMPLETED':
+                // reload the thread state
                 this.threadStateUpdatedNoChange.next();
-            }
-        });
+                break;
+            case 'FAILED':
+        }
     }
 
     onSaveSuccessRating(close: any) {

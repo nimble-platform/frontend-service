@@ -13,11 +13,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-import {Component, ElementRef, Injectable, ViewChild} from '@angular/core'
+import {Component, ElementRef, EventEmitter, Injectable, Output, ViewChild} from '@angular/core'
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap'
 import {CallStatus} from './call-status';
 import {AppComponent} from '../app.component';
 import {BPEService} from '../bpe/bpe.service';
+import {CancelCollaborationStatus} from './model/cancel-collaboration-status';
 
 @Component({
     selector: 'cancel-collaboration-modal',
@@ -38,6 +39,8 @@ export class CancelCollaborationModalComponent {
 
     @ViewChild('modal') modal: ElementRef;
 
+    @Output() onCollaborationCancelStatusUpdated = new EventEmitter<CancelCollaborationStatus>();
+
     constructor(private modalService: NgbModal,
                 private bpeService: BPEService,
                 private appComponent: AppComponent) {
@@ -47,36 +50,36 @@ export class CancelCollaborationModalComponent {
      * Opens the modal
      * @param processInstanceGroupId identifier of the process instance group representing the collaboration
      * @param sellerFederationId seller federation id
-     * @return true if the collaboration is canceled successfully or return false if the modal is closed
      * */
-    open(processInstanceGroupId: string, sellerFederationId: string): Promise<boolean> {
+    open(processInstanceGroupId: string, sellerFederationId: string) {
         // set the given fields
         this.sellerFederationId = sellerFederationId;
         this.processInstanceGroupId = processInstanceGroupId;
         // reset the company comment
         this.compComment = '';
-        return this.modalService.open(this.modal, {windowClass: 'high-z-index'}).result.then(() => {
-            return true;
-        }).catch(() => {
-            return false;
-        });
+        this.modalService.open(this.modal, {windowClass: 'high-z-index'});
     }
 
     checkCompComment(): boolean {
         return this.compComment == '';
     }
 
-    cancelCollaboration(close) {
+    cancelCollaboration() {
         this.appComponent.confirmModalComponent.open('Are you sure that you want to cancel this collaboration?').then(result => {
             if (result) {
                 this.cancelCollaborationCallStatus.submit();
+                // emit the status
+                this.onCollaborationCancelStatusUpdated.next(new CancelCollaborationStatus('STARTED'));
                 this.bpeService.cancelCollaboration(this.processInstanceGroupId, this.compComment, this.sellerFederationId)
                     .then(() => {
                         this.cancelCollaborationCallStatus.callback('Cancelled collaboration successfully');
-                        close();
+                        // emit the status
+                        this.onCollaborationCancelStatusUpdated.next(new CancelCollaborationStatus('COMPLETED'));
                     })
                     .catch(err => {
                         this.cancelCollaborationCallStatus.error('Failed to cancel collaboration', err);
+                        // emit the status
+                        this.onCollaborationCancelStatusUpdated.next(new CancelCollaborationStatus('FAILED','Failed to cancel collaboration',err));
                     });
             }
         });

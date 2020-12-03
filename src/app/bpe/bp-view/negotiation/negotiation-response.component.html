@@ -131,17 +131,17 @@
                 <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
             </div>
             <div *ngIf="quotation.documentStatusCode.name !== NEGOTIATION_RESPONSES.ACCEPTED" class="col-3">
-                <button class="btn btn-secondary action" [disabled]="isRequestNewQuotationDisabled()" (click)="onRequestNewQuotation()">
+                <button class="btn btn-secondary action" [disabled]="callStatus.isLoading() || isRequestNewQuotationDisabled()" (click)="onRequestNewQuotation()">
                     <span [innerHTML]="'Request new Quotation' | translate"></span>
                 </button>
             </div>
             <div class="col-3">
-                <button class="btn btn-secondary action" (click)="cancelCollaboration()" [disabled]="processMetadata.collaborationStatus === 'COMPLETED' || processMetadata.collaborationStatus === 'CANCELLED'">
+                <button class="btn btn-secondary action" (click)="openCancelCollaborationModal()" [disabled]="callStatus.isLoading() || processMetadata.collaborationStatus === 'COMPLETED' || processMetadata.collaborationStatus === 'CANCELLED'">
                     <span [innerHTML]="'Cancel collaboration' | translate"></span>
                 </button>
             </div>
             <div class="col-3">
-                <button class="btn btn-secondary action" (click)="finishCollaboration()" [disabled]="processMetadata.collaborationStatus === 'COMPLETED' || processMetadata.collaborationStatus === 'CANCELLED'">
+                <button class="btn btn-secondary action" (click)="finishCollaboration()" [disabled]="callStatus.isLoading() || processMetadata.collaborationStatus === 'COMPLETED' || processMetadata.collaborationStatus === 'CANCELLED'">
                     <span [innerHTML]="'Finish collaboration' | translate"></span>
                 </button>
             </div>
@@ -150,5 +150,5 @@
 </ng-container>
 
 <!--Cancel Collaboration Modal-->
-<cancel-collaboration-modal>
+<cancel-collaboration-modal (onCollaborationCancelStatusUpdated)="onCollaborationCancelStatusUpdated($event)">
 </cancel-collaboration-modal>

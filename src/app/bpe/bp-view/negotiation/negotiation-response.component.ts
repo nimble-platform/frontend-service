@@ -38,6 +38,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Item } from '../../../catalogue/model/publish/item';
 import {AppComponent} from '../../../app.component';
 import {CancelCollaborationModalComponent} from '../../../common/cancel-collaboration-modal.component';
+import {CancelCollaborationStatus} from '../../../common/model/cancel-collaboration-status';
 
 @Component({
     selector: "negotiation-response",
@@ -421,13 +422,29 @@ export class NegotiationResponseComponent implements OnInit {
         })
     }
 
-    cancelCollaboration() {
-        this.cancelCollaborationModal.open(this.containerGroupId,this.processMetadata.sellerFederationId).then(response => {
-            // response is true when the collaboration is cancelled
-            if(response){
+    /**
+     * Opens the cancel collaboration modal
+     * */
+    openCancelCollaborationModal() {
+        this.cancelCollaborationModal.open(this.containerGroupId,this.processMetadata.sellerFederationId);
+    }
+
+    /**
+     * This method handles the status of collaboration cancelling emitted by {@link CancelCollaborationModalComponent}.
+     * @param cancelCollaborationStatus the status of collaboration cancelling process
+     * */
+    onCollaborationCancelStatusUpdated(cancelCollaborationStatus:CancelCollaborationStatus){
+        switch (cancelCollaborationStatus.status) {
+            case 'STARTED':
+                this.callStatus.submit();
+                break;
+            case 'COMPLETED':
                 // change collaboration status
-                this.processMetadata.collaborationStatus = "CANCELLED"
-            }
-        });
+                this.processMetadata.collaborationStatus = "CANCELLED";
+                this.callStatus.callback("Cancelled collaboration successfully");
+                break;
+            case 'FAILED':
+                this.callStatus.error(cancelCollaborationStatus.errorMessage,cancelCollaborationStatus.error);
+        }
     }
 }
