@@ -151,9 +151,9 @@ export class TransportNegotiationResponseComponent implements OnInit {
 
         //this.callStatus.submit();
         this.bpeService.startProcessWithDocument(this.quotation, this.quotation.sellerSupplierParty.party.federationInstanceID)
-            .then(res => {
+            .then(() => {
                 this.callStatus.callback("Quotation sent", true);
-                var tab = "PURCHASES";
+                let tab = 'PURCHASES';
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                     tab = "SALES";
                 this.router.navigate(['dashboard'], { queryParams: { tab: tab, ins: this.quotation.sellerSupplierParty.party.federationInstanceID } });

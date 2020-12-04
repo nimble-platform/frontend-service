@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit} from '@angular/core';
 import { Location } from "@angular/common";
 import { Router } from "@angular/router";
 import { CookieService } from "ng2-cookies";
@@ -180,7 +180,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
             })
             .then(() => {
                 this.callStatus.callback("Terms sent", true);
-                var tab = "PURCHASES";
+                let tab = 'PURCHASES';
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                     tab = "SALES";
                 this.router.navigate(['dashboard'], { queryParams: { tab: tab, ins: rfq.sellerSupplierParty.party.federationInstanceID } });
@@ -197,7 +197,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
             .then(() => {
                 this.documentService.updateCachedDocument(rfq.id, rfq);
                 this.callStatus.callback("Terms updated", true);
-                var tab = "PURCHASES";
+                let tab = 'PURCHASES';
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                     tab = "SALES";
                 this.router.navigate(['dashboard'], { queryParams: { tab: tab } });
@@ -226,7 +226,7 @@ export class TransportNegotiationRequestComponent implements OnInit {
             case "drop-off":
                 return this.rfq.delivery.requestedDeliveryPeriod.endDate != null && this.rfq.delivery.requestedDeliveryPeriod.endDate != "";
             case "notes":
-                return UBLModelUtils.areNotesOrFilesAttachedToDocument(this.rfq)
+                return UBLModelUtils.areNotesOrFilesAttachedToDocument(this.rfq);
             default:
                 return true;
         }
