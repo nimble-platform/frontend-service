@@ -33,7 +33,6 @@ import { UBLModelUtils } from '../../../catalogue/model/ubl-model-utils';
 import * as myGlobals from '../../../globals';
 import { isValidPrice, roundToTwoDecimals } from '../../../common/utils';
 import { DigitalAgreement } from "../../../catalogue/model/publish/digital-agreement";
-import { Clause } from '../../../catalogue/model/publish/clause';
 import { TranslateService } from '@ngx-translate/core';
 import { Item } from '../../../catalogue/model/publish/item';
 import {AppComponent} from '../../../app.component';
@@ -173,11 +172,9 @@ export class NegotiationResponseComponent implements OnInit {
             this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.REJECTED;
         }
 
-        //this.callStatus.submit();
-
         this.bpeService.startProcessWithDocument(this.quotation, this.quotation.sellerSupplierParty.party.federationInstanceID).then(() => {
             this.callStatus.callback("Quotation sent", true);
-            var tab = "PURCHASES";
+            let tab = 'PURCHASES';
             if (this.bpDataService.bpActivityEvent.userRole == "seller")
                 tab = "SALES";
             this.router.navigate(['dashboard'], { queryParams: { tab: tab, ins: this.quotation.sellerSupplierParty.party.federationInstanceID } });
@@ -215,10 +212,6 @@ export class NegotiationResponseComponent implements OnInit {
 
     isDisabled(): boolean {
         return this.isLoading() || this.readonly;
-    }
-
-    getPresentationMode(): "edit" | "view" {
-        return this.isReadOnly() ? "view" : "edit";
     }
 
     isReadOnly(): boolean {

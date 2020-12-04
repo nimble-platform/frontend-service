@@ -18,7 +18,6 @@ import { Component, ElementRef, EventEmitter, Output, ViewChild } from "@angular
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "custom-term-modal",
@@ -38,7 +37,7 @@ export class CustomTermModalComponent {
 
     @ViewChild("modal") modal: ElementRef;
 
-    constructor(private modalService: NgbModal, private translate: TranslateService) {
+    constructor(private modalService: NgbModal) {
     }
 
 
