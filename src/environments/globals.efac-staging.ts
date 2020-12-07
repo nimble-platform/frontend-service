@@ -198,6 +198,61 @@ export const config = {
             name: "Cash in advance",
             abbreviation: "CIA"
         },
+        {
+            id: "30_eom_10",
+            name: "30 EOM 10",
+            abbreviation: "E"
+        },
+        {
+            id: "100_down_payment_with_po",
+            name: "100% down payment with P/O",
+            abbreviation: "E0"
+        },
+        {
+            id: "30_days_net",
+            name: "30 days net",
+            abbreviation: "E1"
+        },
+        {
+            id: "30_days_net_14_days_2_discount",
+            name: "30 days net, 14 days 2% discount",
+            abbreviation: "E2"
+        },
+        {
+            id: "45_days_net",
+            name: "45 days net",
+            abbreviation: "E3"
+        },
+        {
+            id: "prior_to_delivery",
+            name: "Prior to delivery",
+            abbreviation: "E4"
+        },
+        {
+            id: "immediately_net",
+            name: "Immediately net",
+            abbreviation: "E5"
+        },
+        {
+            id: "60_days_net",
+            name: "60 days net",
+            abbreviation: "E6"
+        },
+        {
+            id: "confirmed_letter_of_credit",
+            name: "Confirmed letter of credit",
+            abbreviation: "E7"
+        },
+        {
+            id: "50_down_payment_with_po",
+            name: "50% down payment with P/O",
+            abbreviation: "E8"
+        },
+        {
+            id: "for_customs_purpose_only",
+            name: "For customs purpose only",
+            abbreviation: "E9"
+        },
     ],
     "permanentWelcomeTab": false,
     "phoneNumberRequired": true,
