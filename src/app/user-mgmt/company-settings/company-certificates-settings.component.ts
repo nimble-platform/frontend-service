@@ -27,6 +27,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { BinaryObject } from "../../catalogue/model/publish/binary-object";
 import { UBLModelUtils } from "../../catalogue/model/ubl-model-utils";
 import {AppComponent} from '../../app.component';
+import {Certificate} from '../model/certificate';
 
 @Component({
     selector: "company-certificates-settings",
@@ -35,7 +36,7 @@ import {AppComponent} from '../../app.component';
 export class CompanyCertificatesSettingsComponent implements OnInit {
 
     @Input() settings: CompanySettings;
-    @Input() certificates: any;
+    @Input() certificates: Certificate[];
     @Input() ppapLevel: any;
 
     @Output() onSaveEvent: EventEmitter<void> = new EventEmitter();
@@ -49,7 +50,8 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
     // it is false while editing the certificate until the exiting file is replaced by a new file
     certificateFileProvided = false;
     selectedFiles: BinaryObject[] = [];
-    editCert = null;
+    // identifier of the certificate to be edited
+    certificateIdToBeEdited = null;
     addCertForm: FormGroup;
     saveCertCallStatus: CallStatus = new CallStatus();
     certificatesCallStatus: CallStatus = new CallStatus();
@@ -72,6 +74,8 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
     }
 
     onAddCertificate(content) {
+        // reset certificate id since we create a new certificate
+        this.certificateIdToBeEdited = null;
         this.certificateFileProvided = false;
         this.selectedFiles = [];
         this.addCertForm = this._fb.group({
@@ -89,19 +93,22 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
         const fields = model.getRawValue();
         // set the certificate file if it is provided
         this.certFile = null;
+        let certFileLanguageId = null;
         if(this.certificateFileProvided){
             var parts = [new Blob([this.selectedFiles[0].value], { type: this.selectedFiles[0].mimeCode })];
             this.certFile = new File(parts, this.selectedFiles[0].fileName, {
                 type: this.selectedFiles[0].mimeCode
             });
+            // set language id
+            certFileLanguageId = this.selectedFiles[0].languageID;
         }
 
         this.userService
-            .saveCert(this.certFile, encodeURIComponent(fields.name), encodeURIComponent(fields.description), encodeURIComponent(fields.type), this.settings.companyID, this.editCert, this.selectedFiles[0].languageID)
+            .saveCert(this.certFile, encodeURIComponent(fields.name), encodeURIComponent(fields.description), encodeURIComponent(fields.type), this.settings.companyID, this.certificateIdToBeEdited, certFileLanguageId)
             .then(() => {
                 close();
                 this.saveCertCallStatus.callback("Certificate saved", true);
-                this.editCert = null;
+                this.certificateIdToBeEdited = null;
                 this.onSaveEvent.emit();
             })
             .catch(error => {
@@ -155,7 +162,7 @@ export class CompanyCertificatesSettingsComponent implements OnInit {
     onEditCertificate(popup, i: number): void {
         let cert = this.certificates[i];
         this.certificateFileProvided = false;
-        this.editCert = cert.id;
+        this.certificateIdToBeEdited = cert.id;
         this.userService.downloadCertObject(cert.id).then(certObj => {
             let binaryObject: BinaryObject = certObj.documentReference[0].attachment.embeddedDocumentBinaryObject;
             var parts = [new Blob([binaryObject.value], { type: binaryObject.mimeCode })];
