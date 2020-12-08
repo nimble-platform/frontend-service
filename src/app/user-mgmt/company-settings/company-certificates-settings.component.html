@@ -73,7 +73,7 @@
                 <td>{{certificate.name}}</td>
                 <td>{{certificate.description}}</td>
                 <td>
-                    <button class="btn btn-primary btn-sm" [disabled]="certificatesCallStatus.isLoading()" (click)="onDownloadCertificate(certificate.id)"><span [innerHTML]="'Download' | translate"></span></button>
+                    <button *ngIf="certificate.hasFile" class="btn btn-primary btn-sm" [disabled]="certificatesCallStatus.isLoading()" (click)="onDownloadCertificate(certificate.id)"><span [innerHTML]="'Download' | translate"></span></button>
                     <button class="btn btn-primary btn-sm" [disabled]="certificatesCallStatus.isLoading()" (click)="onEditCertificate(addCertModal, i)"><span [innerHTML]="'Edit' | translate"></span></button>
                     <button class="btn btn-danger btn-sm ml-1" [disabled]="certificatesCallStatus.isLoading()" (click)="onRemoveCertificate(certificate.id, i)"><span [innerHTML]="'Delete' | translate"></span></button>
                 </td>

@@ -12,36 +12,34 @@
    limitations under the License.
  */
 
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { BPDataService } from '../bp-data-service';
-import { CURRENCIES } from '../../../catalogue/model/constants';
-import { RequestForQuotation } from '../../../catalogue/model/publish/request-for-quotation';
-import { CallStatus } from '../../../common/call-status';
-import { UBLModelUtils } from '../../../catalogue/model/ubl-model-utils';
-import { CookieService } from 'ng2-cookies';
-import { NegotiationModelWrapper } from './negotiation-model-wrapper';
-import { copy, durationToString, roundToTwoDecimals, validateNumberInput } from '../../../common/utils';
-import { PeriodRange } from '../../../user-mgmt/model/period-range';
-import { Option } from '../../../common/options-input.component';
-import { addressToString } from '../../../user-mgmt/utils';
-import { DiscountModalComponent } from '../../../product-details/discount-modal.component';
-import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {BPDataService} from '../bp-data-service';
+import {CURRENCIES} from '../../../catalogue/model/constants';
+import {RequestForQuotation} from '../../../catalogue/model/publish/request-for-quotation';
+import {CallStatus} from '../../../common/call-status';
+import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
+import {CookieService} from 'ng2-cookies';
+import {NegotiationModelWrapper} from './negotiation-model-wrapper';
+import {copy, durationToString, roundToTwoDecimals, validateNumberInput} from '../../../common/utils';
+import {PeriodRange} from '../../../user-mgmt/model/period-range';
+import {DiscountModalComponent} from '../../../product-details/discount-modal.component';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
 import * as myGlobals from '../../../globals';
-import { DigitalAgreement } from '../../../catalogue/model/publish/digital-agreement';
-import { UnitService } from '../../../common/unit-service';
-import { FRAME_CONTRACT_DURATION_TERM_NAME, frameContractDurationUnitListId } from '../../../common/constants';
-import { Quantity } from '../../../catalogue/model/publish/quantity';
-import { Quotation } from '../../../catalogue/model/publish/quotation';
-import { Clause } from '../../../catalogue/model/publish/clause';
-import { CustomTermModalComponent } from './custom-term-modal.component';
-import { TranslateService } from '@ngx-translate/core';
-import { DeliveryTerms } from '../../../user-mgmt/model/delivery-terms';
-import { Delivery } from '../../../catalogue/model/publish/delivery';
-import { QuotationWrapper } from './quotation-wrapper';
-import { AbstractControl, Form, FormControl, Validators } from '@angular/forms';
-import { ChildFormBase } from '../../../common/validation/child-form-base';
-import { ValidatorFn } from '@angular/forms/src/directives/validators';
-import { stepValidator, ValidationService } from '../../../common/validation/validators';
+import {DigitalAgreement} from '../../../catalogue/model/publish/digital-agreement';
+import {UnitService} from '../../../common/unit-service';
+import {FRAME_CONTRACT_DURATION_TERM_NAME, frameContractDurationUnitListId} from '../../../common/constants';
+import {Quantity} from '../../../catalogue/model/publish/quantity';
+import {Quotation} from '../../../catalogue/model/publish/quotation';
+import {Clause} from '../../../catalogue/model/publish/clause';
+import {CustomTermModalComponent} from './custom-term-modal.component';
+import {TranslateService} from '@ngx-translate/core';
+import {DeliveryTerms} from '../../../user-mgmt/model/delivery-terms';
+import {Delivery} from '../../../catalogue/model/publish/delivery';
+import {QuotationWrapper} from './quotation-wrapper';
+import {AbstractControl, FormControl, Validators} from '@angular/forms';
+import {ChildFormBase} from '../../../common/validation/child-form-base';
+import {ValidatorFn} from '@angular/forms/src/directives/validators';
+import {stepValidator, ValidationService} from '../../../common/validation/validators';
 
 enum FIXED_NEGOTIATION_TERMS {
     DELIVERY_PERIOD = 'deliveryPeriod',
@@ -497,7 +495,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
             // although the product default terms are selected, the following two conditions are calculated using the rfq itself
             frameContractDurationDiffers = this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.FRAME_CONTRACT_DURATION] &&
                 !UBLModelUtils.areQuantitiesEqual(this.frameContractDuration, UBLModelUtils.getFrameContractDurationFromRfqLine(this.wrapper.initialImmutableRfq.requestForQuotationLine[this.wrapper.lineIndex]));
-            customTermsDiffer = this.wrapper.rfqTradingTerms.length > 0 ? true : false;
+            customTermsDiffer = this.wrapper.rfqTradingTerms.length > 0;
             clausesDiffer = UBLModelUtils.areTermsAndConditionListsDifferent(this.wrapper.initialImmutableRfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.clause, this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.clause);
             dataDataMonitoringRequestDiffers = this.wrapper.rfqDataMonitoringRequested;
         }
@@ -555,15 +553,14 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
         const range = this.getDeliveryPeriodRange();
 
         if (range) {
-            const unit = this.wrapper.rfqDeliveryPeriod.unitCode;
-            return this.translate.instant("min max range",{start:range.start,end:range.end,unit:this.translate.instant(unit)});
+            return this.translate.instant("min max range",{start:range.start,end:range.end,unit:this.translate.instant(this.wrapper.rfqDeliveryPeriod.unitCode)});
         }
 
         return "";
     }
 
     getDeliveryPeriodStyle(): any {
-        const result: any = {}
+        const result: any = {};
 
         if (!this.isDeliveryPeriodValid()) {
             result["color"] = "red";
@@ -575,32 +572,6 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     isDeliveryPeriodValid(): boolean {
         const range = this.getDeliveryPeriodRange();
         return !range || this.isPeriodValid(this.wrapper.rfqDeliveryPeriod.value, range);
-    }
-
-    getWarrantyPeriodText(): string {
-        const range = this.getWarrantyPeriodRange();
-
-        if (range) {
-            const unit = this.wrapper.rfqWarranty.unitCode;
-            return this.translate.instant("min max range",{start:range.start,end:range.end,unit:unit});
-        }
-
-        return "";
-    }
-
-    getWarrantyPeriodStyle(): any {
-        const result: any = {}
-
-        if (!this.isWarrantyPeriodValid()) {
-            result["color"] = "red";
-        }
-
-        return result;
-    }
-
-    isWarrantyPeriodValid(): boolean {
-        const range = this.getWarrantyPeriodRange();
-        return !range || this.isPeriodValid(this.wrapper.rfqWarranty.value, range);
     }
 
     isManufacturersTermsSelectBoxVisible(): boolean {
@@ -639,14 +610,6 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
 
         const index = settings.deliveryPeriodUnits.indexOf(unit);
         return index >= 0 ? settings.deliveryPeriodRanges[index] : null;
-    }
-
-    private getWarrantyPeriodRange(): PeriodRange | null {
-        const unit = this.wrapper.rfqWarranty.unitCode;
-        const settings = this.wrapper.sellerSettings;
-
-        const index = settings.warrantyPeriodUnits.indexOf(unit);
-        return index >= 0 ? settings.warrantyPeriodRanges[index] : null;
     }
 
     private isPeriodValid(value: number, range: PeriodRange): boolean {

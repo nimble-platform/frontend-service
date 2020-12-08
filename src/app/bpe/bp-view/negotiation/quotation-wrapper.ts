@@ -116,7 +116,7 @@ export class QuotationWrapper {
         let tradingTerm: TradingTerm = this.quotation.quotationLine[this.quotationLineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == FRAME_CONTRACT_TERM_ID);
         if (tradingTerm == null) {
             tradingTerm = new TradingTerm(FRAME_CONTRACT_TERM_ID, null, null, new MultiTypeValue());
-            tradingTerm.value.valueQuantity.push(duration)
+            tradingTerm.value.valueQuantity.push(duration);
             this.quotation.quotationLine[this.quotationLineIndex].lineItem.tradingTerms.push(tradingTerm);
         } else {
             tradingTerm.value.valueQuantity[0] = duration;

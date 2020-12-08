@@ -43,6 +43,7 @@ import {ConfirmModalComponent} from './confirm-modal.component';
 import {AmountUiTranslatePipe} from './pipe/amount-ui-translate.pipe';
 import {QuantityTranslatePipe} from './pipe/quantity-translate.pipe';
 import {WordByWordTranslatePipe} from './pipe/word-by-word-translate.pipe';
+import {CancelCollaborationModalComponent} from './cancel-collaboration-modal.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -84,6 +85,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         ExpandableFlexRow,
         MultiTypeInputComponent,
         DisableControlDirective,
+        CancelCollaborationModalComponent,
         SingleClickDirective
     ],
     exports: [
@@ -96,6 +98,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         DateInputComponent,
         AddressInputComponent,
         BooleanInputComponent,
+        CancelCollaborationModalComponent,
         ConfirmModalComponent,
         MultiAddressInputComponent,
         InputLabelComponent,
