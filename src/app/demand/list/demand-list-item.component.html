@@ -15,14 +15,15 @@
     <div class="card-body d-flex">
             <div class="col-2">
                 <div style="text-align:center">
-                    <img *ngIf="!demand.image || demand.image.length === 0" style="max-height:150px; max-width:100%" src="../../../assets/images/empty_img.png">
-                    <img *ngIf="demand.image?.length > 0" style="max-height:150px; max-width:100%" src="data:{{demand.image[0].mimeCode}};base64,{{demand.image[0].value}}" />
+                    <img *ngIf="!demand.image" style="max-height:150px; max-width:100%" src="../../../assets/images/empty_img.png">
+                    <img *ngIf="demand.image" style="max-height:150px; max-width:100%" src="data:{{demand.image.mimeCode}};base64,{{demand.image.value}}" />
                 </div>
             </div>
             <div class="col-10 d-flex justify-content-between">
                 <div class="col">
-                    <h5>{{demand.title[0].value}}</h5>
-                    <label class="d-block"> {{demand.description[0].value}}</label>
+                    <!-- TODO -->
+                    <h5>{{selectPreferredValue(demand.title)}}</h5>
+                    <label class="d-block"> {{selectPreferredValue(demand.description)}}</label>
                     <div class="row no-gutters">
                         <div class="col-7">
                             <div class="row no-gutters">
@@ -30,7 +31,7 @@
                                     <div>{{'Product/Service Category:' | translate}} </div>
                                 </div>
                                 <div class="col-7">
-                                    <div>{{demand.itemClassificationCode.name}}</div>
+                                    <div>{{selectNameFromLabelObject(leafCategory.label)}}</div>
                                 </div>
                             </div>
                             <div class="row no-gutters">

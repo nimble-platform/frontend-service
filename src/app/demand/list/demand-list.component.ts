@@ -30,7 +30,15 @@ import {FEDERATIONID} from '../../catalogue/model/constants';
     templateUrl: './demand-list.component.html'
 })
 export class DemandListComponent implements OnInit {
-    demands: Demand[] = [];
+    /*
+    data object to be presented contains the original demand entity and also the associated leaf category details to be presented in the form of
+    [
+     {
+       demand: ...,
+       leafCategory: ...
+     }]
+    */
+    demands: any[] = [];
 
     page = 0;
     pageSize = 10;
@@ -55,21 +63,27 @@ export class DemandListComponent implements OnInit {
             }
 
             this.demandService.getDemands(this.cookieService.get('company_id'), this.page, this.pageSize).then(demands => {
-                this.demands = demands.demands;
+                this.demands = [];
                 this.totalCount = demands.totalCount;
 
                 // fetch the labels for the categories included in the demands and update the demans with the fetched labels
-                const categoryUris: string[] = this.demands.map(demand => demand.itemClassificationCode.value);
+                const categoryUris: string[] = []
+                demands.demands.forEach(demand => {
+                    demand.itemClassificationCode.filter(cat => categoryUris.indexOf(cat.uri) === -1).forEach(cat => categoryUris.push(cat.uri));
+                });
+
                 this.categoryService.getCategories(categoryUris).then(categoriesResp => {
                     const categoriesJson: any[] = categoriesResp.result;
-                    for (const demand of this.demands) {
-                        for (const indexCategory of categoriesJson) {
-                            const preferredName: Text[] = LanguageUtils.transformIndexLabelsToTextArray(indexCategory.label);
-                            if (demand.itemClassificationCode.value === indexCategory.uri) {
-                                demand.itemClassificationCode.name = preferredName[0].value;
-                                break;
-                            }
-                        }
+                    for (const demand of demands.demands) {
+                        // find the index categories for the current demand
+                        const demandCatUris: string[] = demand.itemClassificationCode.map(code => code.uri);
+                        const demandCategories: any[] = categoriesJson.filter(cat => demandCatUris.findIndex(uri => uri === cat.uri) !== -1);
+                        // find the category at the bottom-most level
+                        const leafCategory: any = demandCategories.find(cat => !!cat.allParents && cat.allParents.length === demandCategories.length - 1);
+                        this.demands.push({
+                            'demand': demand,
+                            'leafCategory': leafCategory
+                        });
                     }
                 });
             });

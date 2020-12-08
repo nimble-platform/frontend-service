@@ -24,12 +24,12 @@ export class Demand {
     public metadata: Metadata;
     public title: Text[];
     public description: Text[];
-    public itemClassificationCode: Code;
+    public itemClassificationCode: Code[];
     public dueDate: string;
     public buyerCountry: Code;
     public deliveryCountry: Code;
     public additionalDocumentReference: DocumentReference;
-    public image: BinaryObject[];
+    public image: BinaryObject;
     constructor(json?: any) {
         if (json) {
             this.hjid = json.hjid;

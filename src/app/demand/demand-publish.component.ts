@@ -75,7 +75,8 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
         if (this.demandPublishService.modifiedDemand) {
             this.demand = this.demandPublishService.modifiedDemand;
             this.selectedCategory = this.categoryService.selectedCategories[0];
-            this.demand.itemClassificationCode.value = this.selectedCategory.categoryUri;
+            this.demand.itemClassificationCode[0] = UBLModelUtils.createCodeFromCategory(this.categoryService.selectedCategories[0]);
+
             if (this.demand.deliveryCountry.value) {
                 this.countryFormControl.setValue(getCountryByISO(this.demand.deliveryCountry.value));
             }
@@ -91,7 +92,7 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
         } else {
             this.demand.title = [new Text('', DEFAULT_LANGUAGE())];
             this.demand.description = [new Text('', DEFAULT_LANGUAGE())];
-            this.demand.itemClassificationCode = new Code();
+            this.demand.itemClassificationCode = [new Code()];
             this.demand.deliveryCountry = new Code();
             this.demand.buyerCountry = new Code();
             this.userService.getSettingsForParty(this.cookieService.get('company_id')).then(res => {

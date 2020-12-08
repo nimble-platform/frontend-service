@@ -21,6 +21,6 @@
     <ngb-pagination [collectionSize]="totalCount" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="onPageChange($event)"></ngb-pagination>
 </div>
 <div *ngFor="let demand of demands" class="space-before">
-    <demand-list-item [demand]="demand">
+    <demand-list-item [demand]="demand.demand" [leafCategory]="demand.leafCategory">
     </demand-list-item>
 </div>

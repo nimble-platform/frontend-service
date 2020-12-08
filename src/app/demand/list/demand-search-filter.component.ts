@@ -12,19 +12,14 @@
    limitations under the License.
  */
 
-import {Component, Input} from '@angular/core';
-import {Demand} from '../../catalogue/model/publish/demand';
-import {selectNameFromLabelObject, selectPreferredValue} from '../../common/utils';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
-    selector: 'demand-list-item',
-    templateUrl: './demand-list-item.component.html'
+    selector: 'demand-search-filter',
+    templateUrl: './demand-search-filter.component.html'
 })
-export class DemandListItemComponent {
-    @Input() demand: Demand;
-    @Input() leafCategory: any;
+export class DemandSearchFilterComponent implements OnInit {
 
-    selectNameFromLabelObject = selectNameFromLabelObject;
-    selectPreferredValue = selectPreferredValue;
-
+    ngOnInit() {
+    }
 }
