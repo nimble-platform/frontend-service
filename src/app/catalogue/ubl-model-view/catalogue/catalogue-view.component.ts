@@ -280,7 +280,7 @@ export class CatalogueViewComponent implements OnInit {
         text$.pipe(
             debounceTime(200),
             distinctUntilChanged(),
-            switchMap(term => {
+            switchMap(() => {
                 this.requestCatalogue();
                 return [];
             })
@@ -486,7 +486,7 @@ export class CatalogueViewComponent implements OnInit {
             catalogIds = [this.productOfferingDetails.selectedProduct.goodsItem.item.catalogueDocumentReference.id];
             lineIds = [this.productOfferingDetails.selectedProduct.goodsItem.item.manufacturersItemIdentification.id]
         }
-        this.catalogueService.offerCatalogsOrLines(catalogIds,lineIds,this.productOfferingDetails.vatNumber,this.productOfferingDetails.description).then(response => {
+        this.catalogueService.offerCatalogsOrLines(catalogIds,lineIds,this.productOfferingDetails.vatNumber,this.productOfferingDetails.description).then(() => {
             this.callStatus.callback(this.translate.instant("Offered the product details to specified companies successfully"));
         }).catch(error => {
             this.callStatus.error(this.translate.instant("Failed to offer your products"),error);
@@ -550,9 +550,9 @@ export class CatalogueViewComponent implements OnInit {
                     this.ngOnInit();
 
                 })
-                .catch(err => {
+                .catch(() => {
                 })
-        }).catch(err => {
+        }).catch(() => {
         });
     }
 
@@ -581,13 +581,12 @@ export class CatalogueViewComponent implements OnInit {
                 else
                     this.router.navigate(['catalogue/publish'], { queryParams: { cat: res.id, pg: "single" } });
             })
-            .catch(error => {
+            .catch(() => {
                 if (isLogisticsService(catalogueLine))
                     this.router.navigate(['catalogue/publish-logistic'], { queryParams: { cat: 'default', pg: "single" } });
                 else
                     this.router.navigate(['catalogue/publish'], { queryParams: { cat: 'default', pg: "single" } });
-            });;
-
+            });
         // }else{
         //     if(isLogisticsService(catalogueLine))
         //         this.router.navigate(['catalogue/publish-logistic'], {queryParams: {cat:this.catlogueId, pg: "single"}});
@@ -609,12 +608,12 @@ export class CatalogueViewComponent implements OnInit {
                     else
                         this.router.navigate(['catalogue/publish'], { queryParams: { cat: res.id, pg: "single" } });
                 })
-                .catch(error => {
+                .catch(() => {
                     if (isLogisticsService(catalogueLine))
                         this.router.navigate(['catalogue/publish-logistic'], { queryParams: { cat: 'default', pg: "single" } });
                     else
                         this.router.navigate(['catalogue/publish'], { queryParams: { cat: 'default', pg: "single" } });
-                });;
+                });
         } else {
             if (isLogisticsService(catalogueLine))
                 this.router.navigate(['catalogue/publish-logistic'], { queryParams: { cat: this.catalogueUuid, pg: "single" } });
@@ -638,11 +637,11 @@ export class CatalogueViewComponent implements OnInit {
                 }
 
                 this.catalogueService.deleteCatalogueLine(catalogue_uuid, catalogueLine.id)
-                    .then(res => {
+                    .then(() => {
                         this.requestCatalogue();
                         status.callback("Catalogue line deleted", true);
                     })
-                    .catch(error => {
+                    .catch(() => {
                         status.error("Error while deleting catalogue line");
                     });
             }
@@ -687,7 +686,7 @@ export class CatalogueViewComponent implements OnInit {
             // once the ids are available, get the actual data
             this.requestCatalogue();
             this.productCatalogueRetrievalStatus.callback("Successfully loaded catalogueId list", true);
-        }).catch((error) => {
+        }).catch(() => {
             this.productCatalogueRetrievalStatus.error('Failed to get product catalogues');
         });
     }
