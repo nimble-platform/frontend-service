@@ -22,23 +22,31 @@
 
     <div *ngIf="catalogueResponse && catalogueResponse.categoryNames.length > 0">
         <div>
+            <!-- Product Filtering and Sorting-->
             <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
-                <input class="form-control col-3" type="text" [(ngModel)]="searchText" [ngbTypeahead]="search" [placeholder]="'Search ...' | translate">
+                <div class="col-3 mt-auto">
+                    <input class="form-control" type="text" [(ngModel)]="searchText" [ngbTypeahead]="search" [placeholder]="'Search ...' | translate">
+                </div>
 
-                <label class="space-left space-right"><strong></strong>
-                </label>
-                <select class="custom-select col-3 space-right" [(ngModel)]="selectedCategory" (change)="requestCatalogue()">
-                    <option><span [innerHTML]="'All' | translate"></span></option>
-                    <option *ngFor="let type of categoryNames">{{type}}</option>
-                </select>
+                <div class="col-3">
+                    <select class="custom-select " [(ngModel)]="selectedCategory" (change)="requestCatalogue()">
+                        <option [value]="'All'"><span [innerHTML]="'Category: All' | translate"></span></option>
+                        <option *ngFor="let type of categoryNames">{{type}}</option>
+                    </select>
+                </div>
+                <div class="col-2">
+                    <select class="custom-select" [(ngModel)]="productStatus" (change)="requestCatalogue()">
+                        <option [value]="'All'"><span [innerHTML]="'Publish Status: All' | translate"></span></option>
+                        <option *ngFor="let status of CATALOGUE_LINE_STATUS" [value]="status">{{status | translate}}</option>
+                    </select>
+                </div>
+                <div class="col-3">
+                    <select class="custom-select" [(ngModel)]="sortOption" (change)="requestCatalogue()">
+                        <option *ngFor="let option of CATALOGUE_LINE_SORT_OPTIONS" [value]="option.name"><span [innerHTML]="option.value | translate"></span></option>
+                    </select>
+                </div>
 
-                <label class="space-right"><strong></strong>
-                </label>
-                <select class="custom-select col-3 space-right" [(ngModel)]="sortOption" (change)="requestCatalogue()">
-                    <option *ngFor="let option of CATALOGUE_LINE_SORT_OPTIONS" [value]="option.name"><span [innerHTML]="option.value | translate"></span></option>
-                </select>
-
-                <div *ngIf="appComponent.checkRoles('catalogue')" class="col-1 d-flex justify-content-center ml-auto">
+                <div *ngIf="appComponent.checkRoles('catalogue')" class="col-1 d-flex justify-content-center m-auto">
                     <ul class="nav navbar-nav">
                         <li ngbDropdown class="nav-item dropdown">
                             <button class="navbar-toggler bordered" type="button" aria-controls="navbarNavAltMarkup" ngbDropdownToggle>
@@ -190,6 +198,7 @@
 
             <div *ngFor="let catLine of catalogueLinesArray; let i = index" class="space-before">
                 <div class="card pointer">
+                    <span *ngIf="catLine.productStatusType == 'DRAFT'" class="badge badge-primary draft-badge">{{'DRAFT'|translate}}</span>
                     <div class="card-body">
                         <div class="row" *ngIf="!catalogueLineView[catLine.id]" (click)="catalogueLineView[catLine.id]=true">
                             <div class="col-2">

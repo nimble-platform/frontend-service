@@ -31,7 +31,7 @@ import { selectDescription, selectName } from '../../../common/utils';
 import { ItemProperty } from '../../model/publish/item-property';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs/Observable';
-import { CATALOGUE_LINE_SORT_OPTIONS } from '../../model/constants';
+import { CATALOGUE_LINE_SORT_OPTIONS, CATALOGUE_LINE_STATUS } from '../../model/constants';
 import { Catalogue } from '../../model/publish/catalogue';
 import { CatalogueLine } from "../../model/publish/catalogue-line";
 import { TranslateService } from '@ngx-translate/core';
@@ -61,7 +61,7 @@ export class CatalogueViewComponent implements OnInit {
     // available catalogue lines with respect to the selected category
     catalogueLinesWRTTypes: any = [];
     // catalogue lines which are available to the user after search operation
-    catalogueLinesArray: any = [];
+    catalogueLinesArray: CatalogueLine[] = [];
 
     // categories
     categoryNames: any = [];
@@ -97,6 +97,7 @@ export class CatalogueViewComponent implements OnInit {
     cataloguesIds: string[] = [];
     catalogueUuids: string[] = [];
 
+    productStatus = "All";
     sortOption = null;
     catalogueText: string = "";
     getCatalogueStatus = new CallStatus();
@@ -123,6 +124,7 @@ export class CatalogueViewComponent implements OnInit {
     private deleteCatalogueModal: DeleteExportCatalogueModalComponent;
 
     CATALOGUE_LINE_SORT_OPTIONS = CATALOGUE_LINE_SORT_OPTIONS;
+    CATALOGUE_LINE_STATUS = CATALOGUE_LINE_STATUS;
 
     private searchText: string = "";
 
@@ -169,6 +171,7 @@ export class CatalogueViewComponent implements OnInit {
             this.catalogueLinesArray = [];
             this.categoryNames = [];
             this.selectedCategory = "All";
+            this.productStatus = "All";
             this.collectionSize = 0;
             this.page = 1;
             this.pageSize = 10;
@@ -287,6 +290,8 @@ export class CatalogueViewComponent implements OnInit {
         const userId = this.cookieService.get("user_id");
         // check whether the user chose a category to filter the catalogue lines
         let categoryName = this.selectedCategory == "All" ? null : this.selectedCategory;
+        // do not need to pass a request param for 'All' option of status
+        let productStatus = this.productStatus == "All" ? null : this.productStatus;
         // get selected catalogue id
         let catalogueId = this.catalogueUuid;
         if (catalogueId !== 'all') {
@@ -306,7 +311,7 @@ export class CatalogueViewComponent implements OnInit {
 
         this.getCatalogueStatus.submit();
         Promise.all([
-            this.catalogueService.getCatalogueResponse(userId, categoryName, this.searchText, this.pageSize, (this.page - 1) * this.pageSize, this.sortOption, catalogueId),
+            this.catalogueService.getCatalogueResponse(userId, categoryName, this.searchText, this.pageSize, (this.page - 1) * this.pageSize, this.sortOption, catalogueId, productStatus),
             this.getCompanySettings(userId)
         ])
             .then(([catalogueResponse, settings]) => {

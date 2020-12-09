@@ -54,7 +54,7 @@ export class CatalogueService {
         private cookieService: CookieService) {
     }
 
-    getCatalogueResponse(userId: string, categoryName: string = null, searchText: string = null, limit: number = 0, offset: number = 0, sortOption = null, catalogueId = "default"): Promise<CataloguePaginationResponse> {
+    getCatalogueResponse(userId: string, categoryName: string = null, searchText: string = null, limit: number = 0, offset: number = 0, sortOption = null, catalogueId = "default",productStatus=null): Promise<CataloguePaginationResponse> {
         return this.userService.getUserParty(userId).then(party => {
 
             let url = this.baseUrl + `/catalogue/${UBLModelUtils.getPartyId(party)}/pagination?catalogueId=${catalogueId}&limit=${limit}&offset=${offset}`;
@@ -68,6 +68,9 @@ export class CatalogueService {
             }
             if (sortOption) {
                 url += `&sortOption=${sortOption}`;
+            }
+            if (productStatus) {
+                url += `&status=${productStatus}`;
             }
             return this.http
                 .get(url, { headers: this.getAuthorizedHeaders() })
