@@ -51,6 +51,11 @@ export const CATALOGUE_LINE_SORT_OPTIONS = [
     { name: "PRICE_HIGH_TO_LOW", value: "Price:High to Low" }
 ]
 
+export const CATALOGUE_LINE_STATUS = [
+    "PUBLISHED",
+    "DRAFT"
+];
+
 export const FAVOURITE_LINEITEM_PUT_OPTIONS = [
     { name: "ITEM_PUT", value: 1 },
     { name: "LIST_REMOVE", value: 2 }

@@ -73,7 +73,7 @@
                             <div *ngIf="titleEvent && showFinishCollaborationButton" class="inline" (click)="finishCollaboration()" data-toggle="tooltip" data-placement="top" [title]="'Finish the collaboration' | translate">
                                 <i class="far fa-check-circle p-1 pointer" aria-hidden="true"></i>
                             </div>
-                            <div *ngIf="titleEvent && showCancelCollaborationButton" class="inline" (click)="rateCollaborationCancelled(addCancelRatingModal)" data-toggle="tooltip" data-placement="top" [title]="'Cancel the collaboration' | translate">
+                            <div *ngIf="titleEvent && showCancelCollaborationButton" class="inline" (click)="openCancelCollaborationModal()" data-toggle="tooltip" data-placement="top" [title]="'Cancel the collaboration' | translate">
                                 <i class="fa fa-times p-1 pointer" aria-hidden="true"></i>
                             </div>
                             <div *ngIf="!expanded" class="inline" (click)="expanded = !expanded" data-toggle="tooltip" data-placement="top" [title]="'Show details' | translate">
@@ -98,7 +98,7 @@
                 <div *ngIf="titleEvent && showRateCollaborationButton" (click)="rateCollaboration(addSuccessRatingModal,addCancelRatingModal)" data-toggle="tooltip" data-placement="top" title="Rate this collaboration">
                     <i class="fa fa-star p-2 pointer" aria-hidden="true"></i>
                 </div>
-                <div *ngIf="titleEvent && showCancelCollaborationButton" (click)="cancelCollaboration()" data-toggle="tooltip" data-placement="top" title="Cancel the collaboration">
+                <div *ngIf="titleEvent && showCancelCollaborationButton" (click)="openCancelCollaborationModal()" data-toggle="tooltip" data-placement="top" title="Cancel the collaboration">
                     <i class="fa fa-times p-2 pointer" aria-hidden="true"></i>
                 </div>
                 <div *ngIf="!expanded" (click)="expanded = !expanded" data-toggle="tooltip" data-placement="top" title="Show details">
@@ -332,41 +332,9 @@
     </form>
 </ng-template>
 
-<!-- Rating Cancel Modal -->
-<ng-template #addCancelRatingModal let-d="dismiss">
-    <form novalidate>
-        <div class="modal-header">
-            <h4 class="modal-title"><span [innerHTML]="'Cancellation Reasons' | translate"></span></h4>
-            <button type="button" class="close" aria-label="Close" (click)="d('')">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <div class="form-group row">
-                <label class="col-2 col-form-label">
-                    <strong> <span [innerHTML]="'Reason' | translate"></span>:</strong>
-                </label>
-                <div class="col-10">
-                    <select class="form-control" [(ngModel)]="compComment" name="compCommentCancel">
-                        <option></option>
-                        <!--  We store english labels of cancellation reasons -->
-                        <option value="Slow Response Time"><span [innerHTML]="'Slow Response Time' | translate"></span></option>
-                        <option value="Suspicious Company Information"><span [innerHTML]="'Suspicious Company Information' | translate"></span></option>
-                        <option value="Undervalued Offer"><span [innerHTML]="'Undervalued Offer' | translate"></span></option>
-                        <option value="Rejected Delivery Terms"><span [innerHTML]="'Rejected Delivery Terms' | translate"></span></option>
-                        <option value="Other"><span [innerHTML]="'Other' | translate"></span></option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <call-status [callStatus]="saveCallStatusRating"></call-status>
-            <button type="button" class="btn btn-primary save-cert-btn" [disabled]="saveCallStatusRating.isLoading() || checkCompComment()" (click)="cancelCollaboration(d)">
-                <span [innerHTML]="'Cancel collaboration' | translate"></span>
-            </button>
-        </div>
-    </form>
-</ng-template>
-
 <call-status [callStatus]="archiveCallStatus" [large]="true"></call-status>
 <call-status [callStatus]="collaborationGroupRetrievalCallStatus" [large]="true"></call-status>
+
+<!--Cancel Collaboration Modal-->
+<cancel-collaboration-modal (onCollaborationCancelStatusUpdated)="onCollaborationCancelStatusUpdated($event)">
+</cancel-collaboration-modal>

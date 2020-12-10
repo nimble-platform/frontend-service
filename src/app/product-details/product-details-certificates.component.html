@@ -22,7 +22,7 @@
             {{ certificate.name }} (type: {{ certificate.type }})
         </div>
         <div class="col-2">
-            <button *ngIf="certificate.documentReference?.length !== 0" class="btn btn-primary btn-sm w-100" (click)="downloadCertificate(certificate.id)"><span [innerHTML]="'Download' | translate"></span></button>
+            <button *ngIf="certificate.hasFile" class="btn btn-primary btn-sm w-100" (click)="downloadCertificate(certificate.id)"><span [innerHTML]="'Download' | translate"></span></button>
         </div>
     </div>
 

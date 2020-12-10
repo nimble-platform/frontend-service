@@ -14,26 +14,22 @@
    limitations under the License.
  */
 
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { BPDataService } from "../bp-data-service";
-import { CallStatus } from "../../../common/call-status";
-import { ThreadEventMetadata } from "../../../catalogue/model/publish/thread-event-metadata";
-import { DocumentService } from "../document-service";
-import { BpActivityEvent } from "../../../catalogue/model/publish/bp-start-event";
-import { Subscription } from "rxjs/Subscription";
-import { DigitalAgreement } from "../../../catalogue/model/publish/digital-agreement";
-import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
-import { Quotation } from "../../../catalogue/model/publish/quotation";
-import { ActivatedRoute } from "@angular/router";
-import { BPEService } from "../../bpe.service";
-import { CookieService } from "ng2-cookies";
-import { Clause } from "../../../catalogue/model/publish/clause";
-import { frameContractDurationUnitListId } from "../../../common/constants";
-import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
-import { Quantity } from "../../../catalogue/model/publish/quantity";
-import { CatalogueLine } from '../../../catalogue/model/publish/catalogue-line';
-import { FEDERATIONID } from '../../../catalogue/model/constants';
-import { copy } from '../../../common/utils';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {BPDataService} from '../bp-data-service';
+import {CallStatus} from '../../../common/call-status';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
+import {DocumentService} from '../document-service';
+import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {Subscription} from 'rxjs/Subscription';
+import {DigitalAgreement} from '../../../catalogue/model/publish/digital-agreement';
+import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
+import {Quotation} from '../../../catalogue/model/publish/quotation';
+import {BPEService} from '../../bpe.service';
+import {CookieService} from 'ng2-cookies';
+import {RequestForQuotation} from '../../../catalogue/model/publish/request-for-quotation';
+import {Quantity} from '../../../catalogue/model/publish/quantity';
+import {FEDERATIONID} from '../../../catalogue/model/constants';
+import {copy} from '../../../common/utils';
 import {ContractService} from '../contract-service';
 
 @Component({
@@ -75,8 +71,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
                 private bpeService: BPEService,
                 private documentService: DocumentService,
                 private contractService: ContractService,
-                private cookieService: CookieService,
-                private route: ActivatedRoute) {
+                private cookieService: CookieService) {
     }
 
     ngOnInit() {
@@ -221,10 +216,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
     private getPrimaryTermsSourceForProduct(catalogueId: string, lineId: string) {
         let size = this.bpDataService.getCatalogueLines().length;
         for (let i = 0; i < size; i++) {
-            const catalogueUuid = this.bpDataService.getCatalogueLines()[i].goodsItem.item.catalogueDocumentReference.id;
-            const catalogueLineId = this.bpDataService.getCatalogueLines()[i].goodsItem.item.manufacturersItemIdentification.id;
-
-            if (catalogueUuid == catalogueId && catalogueLineId == lineId) {
+            if (this.bpDataService.getCatalogueLines()[i].goodsItem.item.catalogueDocumentReference.id == catalogueId && this.bpDataService.getCatalogueLines()[i].goodsItem.item.manufacturersItemIdentification.id == lineId) {
                 return i;
             }
         }
@@ -415,10 +407,9 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         // update this.isFrameContractBeingNegotiatedInThisNegotiation array according to the productsFrameContractsBeingNegotiatedFor array
         let size = requestForQuotation.requestForQuotationLine.length;
         for (let i = 0; i < size; i++) {
-            let catalogueId = requestForQuotation.requestForQuotationLine[i].lineItem.item.catalogueDocumentReference.id;
-            let lineId = requestForQuotation.requestForQuotationLine[i].lineItem.item.manufacturersItemIdentification.id;
             for (let productFrameContractsBeingNegotiatedFor of productsFrameContractsBeingNegotiatedFor) {
-                if (catalogueId == productFrameContractsBeingNegotiatedFor.catalogueId && lineId == productFrameContractsBeingNegotiatedFor.lineId) {
+                if (requestForQuotation.requestForQuotationLine[i].lineItem.item.catalogueDocumentReference.id == productFrameContractsBeingNegotiatedFor.catalogueId
+                    && requestForQuotation.requestForQuotationLine[i].lineItem.item.manufacturersItemIdentification.id == productFrameContractsBeingNegotiatedFor.lineId) {
                     this.isFrameContractBeingNegotiatedInThisNegotiation[i] = true;
                     break;
                 }
@@ -438,11 +429,9 @@ export class NegotiationComponent implements OnInit, OnDestroy {
             checkIndex = 1;
         }
 
-        if (bpActivityEvent.processHistory.length > checkIndex &&
-            bpActivityEvent.processHistory[checkIndex].processType == 'Negotiation') {
-            return true;
-        }
-        return false;
+        return bpActivityEvent.processHistory.length > checkIndex &&
+            bpActivityEvent.processHistory[checkIndex].processType == 'Negotiation';
+
     }
 
     showNegotiationResponse() {

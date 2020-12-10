@@ -13,38 +13,3 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-.object-list {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.company-list-label {
-    display: flex;
-    align-items: center;
-}
-
-.dropdown-toggle:after{
-    content: initial
-}
-
-.call-status-col{
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-}
-
-.white-black-list-panel{
-    background-color:#F2F2F2;
-    padding-left: 25px;
-    padding-top: 20px;
-    padding-bottom: 20px;
-}
-
-.draft-badge{
-    position: absolute;
-    left:2px;
-    top:5px;
-    border-radius: 30px 30px 30px 30px;
-    padding:5px 10px;
-    font-size:10px;
-}

@@ -15,6 +15,7 @@
  */
 
 import { Address } from './address';
+import {Person} from '../../catalogue/model/publish/person';
 
 export class CompanyDetails {
     constructor(
@@ -27,6 +28,7 @@ export class CompanyDetails {
         public vatNumber: string,
         public verificationInformation: string,
         public yearOfCompanyRegistration: number,
-        public processIds: string[]
+        public processIds: string[],
+        public person:Person[] = null
     ) { }
 }

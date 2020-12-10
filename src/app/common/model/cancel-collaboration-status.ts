@@ -3,6 +3,8 @@
  * SRDC - Software Research & Development Consultancy; Ankara; Turkey
    In collaboration with
  * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+ * UB - University of Bremen, Faculty of Production Engineering; Bremen; Germany
+ * BIBA - Bremer Institut für Produktion und Logistik GmbH; Bremen; Germany
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
@@ -13,38 +15,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-.object-list {
-    display: flex;
-    flex-wrap: wrap;
-}
 
-.company-list-label {
-    display: flex;
-    align-items: center;
-}
-
-.dropdown-toggle:after{
-    content: initial
-}
-
-.call-status-col{
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-}
-
-.white-black-list-panel{
-    background-color:#F2F2F2;
-    padding-left: 25px;
-    padding-top: 20px;
-    padding-bottom: 20px;
-}
-
-.draft-badge{
-    position: absolute;
-    left:2px;
-    top:5px;
-    border-radius: 30px 30px 30px 30px;
-    padding:5px 10px;
-    font-size:10px;
+export class CancelCollaborationStatus {
+    constructor(
+        public status: 'STARTED' | 'COMPLETED' | 'FAILED' = null,
+        public errorMessage: string = null, // available when the status is FAILED
+        public error: any = null // available when the status is FAILED
+    ) {
+    }
 }

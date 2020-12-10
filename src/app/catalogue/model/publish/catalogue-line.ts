@@ -33,6 +33,7 @@ export class CatalogueLine {
         public priceOption: PriceOption[] = null,
         public goodsItem: GoodsItem,
         public minimumOrderQuantity:Quantity = new Quantity(),
-        public priceHidden:boolean = false
+        public priceHidden:boolean = false,
+        public productStatusType:string = "PUBLISHED"
     ) { }
 }

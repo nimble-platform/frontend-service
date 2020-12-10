@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import { ProcessInstanceGroup } from "../model/process-instance-group";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BPDataService } from "../bp-view/bp-data-service";
@@ -28,7 +28,6 @@ import { ProcessType } from "../model/process-type";
 import { ThreadEventMetadata } from "../../catalogue/model/publish/thread-event-metadata";
 import { ThreadEventStatus } from "../../catalogue/model/publish/thread-event-status";
 import { SearchContextService } from "../../simple-search/search-context.service";
-import { DocumentService } from "../bp-view/document-service";
 import { EvidenceSupplied } from "../../catalogue/model/publish/evidence-supplied";
 import { Comment } from "../../catalogue/model/publish/comment";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
@@ -38,15 +37,15 @@ import { BpActivityEvent } from '../../catalogue/model/publish/bp-start-event';
 import { UBLModelUtils } from '../../catalogue/model/ubl-model-utils';
 import { selectPreferredValue } from '../../common/utils';
 import { DashboardProcessInstanceDetails } from '../model/dashboard-process-instance-details';
-import { Item } from '../../catalogue/model/publish/item';
 import { NEGOTIATION_RESPONSES } from "../../catalogue/model/constants";
-import { DataChannel } from '../../data-channel/model/datachannel';
 import * as myGlobals from "../../globals";
 import { UserService } from '../../user-mgmt/user.service';
 import { AppComponent } from "../../app.component";
 import { TranslateService } from "@ngx-translate/core";
 import { Subject } from 'rxjs';
 import { CatalogueService } from '../../catalogue/catalogue.service';
+import {CancelCollaborationModalComponent} from '../../common/cancel-collaboration-modal.component';
+import {CancelCollaborationStatus} from '../../common/model/cancel-collaboration-status';
 
 @Component({
     selector: 'thread-summary',
@@ -128,6 +127,10 @@ export class ThreadSummaryComponent implements OnInit {
 
     ngUnsubscribe: Subject<void> = new Subject<void>();
     private translations: any;
+
+    // cancel collaboration modal
+    @ViewChild(CancelCollaborationModalComponent)
+    public cancelCollaborationModal: CancelCollaborationModalComponent;
 
     constructor(private bpeService: BPEService,
         private cookieService: CookieService,
@@ -697,23 +700,6 @@ export class ThreadSummaryComponent implements OnInit {
         })
     }
 
-    cancelCollaboration(close) {
-        this.appComponent.confirmModalComponent.open("Are you sure that you want to cancel this collaboration?").then(result => {
-            if(result){
-                this.archiveCallStatus.submit();
-                this.bpeService.cancelCollaboration(this.processInstanceGroup.id, this.compComment, this.processInstanceGroup.sellerFederationId)
-                    .then(() => {
-                        this.archiveCallStatus.callback("Cancelled collaboration successfully");
-                        close();
-                        this.threadStateUpdatedNoChange.next();
-                    })
-                    .catch(err => {
-                        this.archiveCallStatus.error("Failed to cancel collaboration", err);
-                    });
-            }
-        });
-    }
-
     changeCommunicationRating() {
         let totalStarts = 0;
         let numberOfCriteria = 0;
@@ -826,9 +812,28 @@ export class ThreadSummaryComponent implements OnInit {
         this.modalService.open(content);
     }
 
-    rateCollaborationCancelled(content) {
+    /**
+     * Opens the cancel collaboration modal
+     * */
+    openCancelCollaborationModal() {
         this.compComment = "";
-        this.modalService.open(content);
+        this.cancelCollaborationModal.open(this.processInstanceGroup.id, this.processInstanceGroup.sellerFederationId);
+    }
+
+    /**
+     * This method handles the status of collaboration cancelling emitted by {@link CancelCollaborationModalComponent}.
+     * @param cancelCollaborationStatus the status of collaboration cancelling process
+     * */
+    onCollaborationCancelStatusUpdated(cancelCollaborationStatus:CancelCollaborationStatus){
+        switch (cancelCollaborationStatus.status) {
+            case 'STARTED':
+                break;
+            case 'COMPLETED':
+                // reload the thread state
+                this.threadStateUpdatedNoChange.next();
+                break;
+            case 'FAILED':
+        }
     }
 
     onSaveSuccessRating(close: any) {
@@ -861,10 +866,6 @@ export class ThreadSummaryComponent implements OnInit {
                 filled = false;
         }
         return !filled;
-    }
-
-    checkCompComment(): boolean {
-        return this.compComment == "";
     }
 
     alertWait() {

@@ -78,37 +78,54 @@
     <!-- Product Details Tab -->
     <div *ngIf="selectedTab === 'DETAILS'" class="p-3 col-12">
         <ng-container *ngIf="isLoggedIn">
-            <h3 class="p-1"><span [innerHTML]="'Details' | translate"></span></h3>
-            <div class="row mx-auto">
-                <div *ngIf="wrapper.getDimensions().length == 0 && wrapper.getUniquePropertiesWithValue().length === 0">
-                    <p class="p-1"><span [innerHTML]="'This product / service does not seem to have any details.' | translate"></span></p>
-                </div>
-                <div *ngFor="let multiValuedDimension of wrapper.getDimensionMultiValue(false)" class="p-1 col-6 d-flex">
-                    <strong>{{ multiValuedDimension.attributeID | translate }}: </strong>
-                    <span class="ml-2">
-                        {{getMultiValuedDimensionAsString(multiValuedDimension.measure)}}
-                    </span>
-                </div>
-                <div *ngFor="let property of wrapper.getUniquePropertiesWithValue()" class="p-1 col-6 d-flex">
-                    <strong>{{ getHumanReadablePropertyName(wrapper.getPropertyName(property)) }}: </strong>
-                    <span *ngIf="property.valueQualifier !== 'FILE' && property.valueQualifier !== 'BOOLEAN'" class="ml-2">
-                        {{ getValuesAsString(property).join(", ") }}
-                    </span>
-                    <span *ngIf="property.valueQualifier === 'BOOLEAN'" class="ml-2">
-                        <i class="fa boolean-type {{getValuesAsString(property)[0] == 'true' ? 'fa-check': 'fa-times'}}" aria-hidden="true"></i>
-                    </span>
-                    <ng-container *ngIf="property.valueQualifier === 'FILE'">
-                        <file-input presentationMode="view" [binaryObjects]="property.valueBinary" [multiple]="true" rowClass="ml-2" [small]="true"></file-input>
-                    </ng-container>
-                </div>
+            <!-- The product/service does not have any details -->
+            <div *ngIf="wrapper.getDimensions(false).length == 0 && wrapper.getUniquePropertiesWithValue().length === 0 && wrapper.getAdditionalDocuments().length === 0">
+                <p class="p-1"><span [innerHTML]="'This product / service does not seem to have any details.' | translate"></span></p>
             </div>
-            <div *ngIf="wrapper.getAdditionalDocuments().length > 0">
-                <h3><span [innerHTML]="'Additional Information' | translate"></span></h3>
-                <div class="row mx-auto">
-                    <div *ngFor="let documentReference of wrapper.getAdditionalDocuments()" class="p-1 col-6 d-flex">
-                        <ng-container>
-                            <file-input presentationMode="view" [binaryObjects]="[documentReference.attachment.embeddedDocumentBinaryObject]" [multiple]="true" [small]="true"></file-input>
-                        </ng-container>
+
+            <div class="row p-1" >
+                <!-- Properties including dimensions -->
+                <div class="col-6" *ngIf="wrapper.getDimensions(false).length > 0 || wrapper.getUniquePropertiesWithValue().length > 0">
+                    <h3><span [innerHTML]="'Properties' | translate"></span></h3>
+
+                    <table class="table table-sm">
+                        <tbody>
+                            <!-- Dimensions -->
+                            <ng-container *ngIf="wrapper.getDimensions(false).length > 0">
+                                <tr *ngFor="let multiValuedDimension of wrapper.getDimensionMultiValue(false)">
+                                    <td><b>{{ multiValuedDimension.attributeID | translate }}: </b></td>
+                                    <td>{{getMultiValuedDimensionAsString(multiValuedDimension.measure)}}</td>
+                                </tr>
+                            </ng-container>
+                            <!-- Properties -->
+                            <ng-container *ngIf=" wrapper.getUniquePropertiesWithValue().length > 0">
+                                <tr *ngFor="let property of wrapper.getUniquePropertiesWithValue()">
+                                    <td><b>{{ getHumanReadablePropertyName(wrapper.getPropertyName(property)) }}: </b></td>
+                                    <td>
+                                        <span *ngIf="property.valueQualifier !== 'FILE' && property.valueQualifier !== 'BOOLEAN'">
+                                            {{ getValuesAsString(property).join(", ") }}
+                                        </span>
+                                            <span *ngIf="property.valueQualifier === 'BOOLEAN'">
+                                            <i class="fa boolean-type {{getValuesAsString(property)[0] == 'true' ? 'fa-check': 'fa-times'}}" aria-hidden="true"></i>
+                                        </span>
+                                        <ng-container *ngIf="property.valueQualifier === 'FILE'">
+                                            <file-input presentationMode="view" [binaryObjects]="property.valueBinary" [multiple]="true" [small]="true"></file-input>
+                                        </ng-container>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Additional Information-->
+                <div class="col-6" *ngIf="wrapper.getAdditionalDocuments().length > 0">
+                    <h3><span [innerHTML]="'Additional Information' | translate"></span></h3>
+                    <div class="row mx-auto">
+                        <div *ngFor="let documentReference of wrapper.getAdditionalDocuments()" class="p-1 col-6 d-flex">
+                            <ng-container>
+                                <file-input presentationMode="view" [binaryObjects]="[documentReference.attachment.embeddedDocumentBinaryObject]" [multiple]="true" [small]="true"></file-input>
+                            </ng-container>
+                        </div>
                     </div>
                 </div>
             </div>

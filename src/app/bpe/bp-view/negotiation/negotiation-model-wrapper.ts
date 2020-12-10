@@ -81,8 +81,6 @@ export class NegotiationModelWrapper {
                 rfq.requestForQuotationLine[this.lineIndex].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
                 rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address,
                 catalogueLine.priceHidden
-                //null,
-                //true // disable calculation of discounts
             );
             this.rfqDiscountPriceWrapper = new DiscountPriceWrapper(
                 catalogueLine.requiredItemLocationQuantity.price,
@@ -146,10 +144,6 @@ export class NegotiationModelWrapper {
 
     public get lineWarrantyString(): string {
         return durationToString(this.lineWarranty);
-    }
-
-    public get lineIncoterms(): string {
-        return this.catalogueLine.goodsItem.deliveryTerms.incoterms;
     }
 
     public get lineIncotermsString(): string {
@@ -316,7 +310,7 @@ export class NegotiationModelWrapper {
         let tradingTerm: TradingTerm = this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.find(tradingTerm => tradingTerm.id == 'FRAME_CONTRACT_DURATION');
         if (tradingTerm == null) {
             tradingTerm = new TradingTerm(FRAME_CONTRACT_DURATION_TERM_NAME, null, null, new MultiTypeValue());
-            tradingTerm.value.valueQuantity.push(duration)
+            tradingTerm.value.valueQuantity.push(duration);
             this.rfq.requestForQuotationLine[this.lineIndex].lineItem.tradingTerms.push(tradingTerm);
         } else {
             tradingTerm.value.valueQuantity[0] = duration;

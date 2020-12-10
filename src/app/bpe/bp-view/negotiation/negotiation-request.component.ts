@@ -14,42 +14,38 @@
    limitations under the License.
  */
 
-import { Component, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
-import { BPDataService } from "../bp-data-service";
-import { CURRENCIES } from "../../../catalogue/model/constants";
-import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
-import { RequestForQuotationLine } from "../../../catalogue/model/publish/request-for-quotation-line";
-import { Location } from "@angular/common";
-import { CallStatus } from "../../../common/call-status";
-import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
-import { BPEService } from "../../bpe.service";
-import { UserService } from "../../../user-mgmt/user.service";
-import { CookieService } from "ng2-cookies";
-import { Router } from "@angular/router";
-import { CustomerParty } from "../../../catalogue/model/publish/customer-party";
-import { SupplierParty } from "../../../catalogue/model/publish/supplier-party";
-import { NegotiationModelWrapper } from "./negotiation-model-wrapper";
-import { copy, isValidPrice, roundToTwoDecimals } from "../../../common/utils";
-import { PeriodRange } from "../../../user-mgmt/model/period-range";
-import { DocumentService } from "../document-service";
-import { DiscountModalComponent } from "../../../product-details/discount-modal.component";
-import { ThreadEventMetadata } from "../../../catalogue/model/publish/thread-event-metadata";
-import * as myGlobals from "../../../globals";
-import { DigitalAgreement } from "../../../catalogue/model/publish/digital-agreement";
-import { UnitService } from "../../../common/unit-service";
-import { Party } from "../../../catalogue/model/publish/party";
-import { Quantity } from "../../../catalogue/model/publish/quantity";
-import { Quotation } from "../../../catalogue/model/publish/quotation";
-import { Clause } from "../../../catalogue/model/publish/clause";
-import { CustomTermModalComponent } from "./custom-term-modal.component";
-import { TranslateService } from '@ngx-translate/core';
-import { Item } from '../../../catalogue/model/publish/item';
-import { NegotiationRequestItemComponent } from './negotiation-request-item.component';
-import { BpActivityEvent } from '../../../catalogue/model/publish/bp-start-event';
-import { CompanySettings } from '../../../user-mgmt/model/company-settings';
-import { FormGroup } from '@angular/forms';
-import { ValidationService } from '../../../common/validation/validators';
+import {Component, Input, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {CatalogueLine} from '../../../catalogue/model/publish/catalogue-line';
+import {BPDataService} from '../bp-data-service';
+import {CURRENCIES} from '../../../catalogue/model/constants';
+import {RequestForQuotation} from '../../../catalogue/model/publish/request-for-quotation';
+import {Location} from '@angular/common';
+import {CallStatus} from '../../../common/call-status';
+import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
+import {BPEService} from '../../bpe.service';
+import {UserService} from '../../../user-mgmt/user.service';
+import {CookieService} from 'ng2-cookies';
+import {Router} from '@angular/router';
+import {CustomerParty} from '../../../catalogue/model/publish/customer-party';
+import {SupplierParty} from '../../../catalogue/model/publish/supplier-party';
+import {NegotiationModelWrapper} from './negotiation-model-wrapper';
+import {isValidPrice, roundToTwoDecimals} from '../../../common/utils';
+import {DocumentService} from '../document-service';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
+import * as myGlobals from '../../../globals';
+import {DigitalAgreement} from '../../../catalogue/model/publish/digital-agreement';
+import {UnitService} from '../../../common/unit-service';
+import {Party} from '../../../catalogue/model/publish/party';
+import {Quotation} from '../../../catalogue/model/publish/quotation';
+import {TranslateService} from '@ngx-translate/core';
+import {Item} from '../../../catalogue/model/publish/item';
+import {NegotiationRequestItemComponent} from './negotiation-request-item.component';
+import {BpActivityEvent} from '../../../catalogue/model/publish/bp-start-event';
+import {CompanySettings} from '../../../user-mgmt/model/company-settings';
+import {FormGroup} from '@angular/forms';
+import {ValidationService} from '../../../common/validation/validators';
+import {CancelCollaborationModalComponent} from '../../../common/cancel-collaboration-modal.component';
+import {CancelCollaborationStatus} from '../../../common/model/cancel-collaboration-status';
 
 @Component({
     selector: "negotiation-request",
@@ -108,6 +104,10 @@ export class NegotiationRequestComponent implements OnInit {
     areNotesOrFilesAttachedToDocument = UBLModelUtils.areNotesOrFilesAttachedToDocument;
 
     VALIDATION_ERROR_FOR_FRAME_CONTRACT="validation_provide_valid_input_for_frame_contract";
+
+    // cancel collaboration modal
+    @ViewChild(CancelCollaborationModalComponent)
+    public cancelCollaborationModal: CancelCollaborationModalComponent;
 
     constructor(private bpDataService: BPDataService,
         private bpeService: BPEService,
@@ -200,7 +200,7 @@ export class NegotiationRequestComponent implements OnInit {
 
             }).then(() => {
                 this.callStatus.callback("Terms sent", true);
-                var tab = "PURCHASES";
+                let tab = 'PURCHASES';
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                     tab = "SALES";
                 this.router.navigate(['dashboard'], { queryParams: { tab: tab, ins: sellerParty.federationInstanceID } });
@@ -235,7 +235,7 @@ export class NegotiationRequestComponent implements OnInit {
         this.bpeService.updateBusinessProcess(JSON.stringify(rfq), "REQUESTFORQUOTATION", this.processMetadata.processInstanceId, this.processMetadata.sellerFederationId).then(() => {
             this.documentService.updateCachedDocument(rfq.id, rfq);
             this.callStatus.callback("Terms updated", true);
-            var tab = "PURCHASES";
+            let tab = 'PURCHASES';
             if (this.bpDataService.bpActivityEvent.userRole == "seller")
                 tab = "SALES";
             this.router.navigate(['dashboard'], { queryParams: { tab: tab } });
@@ -273,8 +273,7 @@ export class NegotiationRequestComponent implements OnInit {
     }
 
     isFormValid(): boolean {
-        let formValid = this.isFrameContractValid() && this.negotiationRequestForm.valid;
-        return formValid;
+        return this.isFrameContractValid() && this.negotiationRequestForm.valid;
     }
 
     isFrameContractValid(): boolean {
@@ -283,71 +282,13 @@ export class NegotiationRequestComponent implements OnInit {
         if (this.viewChildren) {
             let negotiationRequestItemComponents = this.viewChildren.toArray();
             for (let negotiationRequestItemComponent of negotiationRequestItemComponents) {
-                let frameContractDuration = negotiationRequestItemComponent.getFrameContractDuration()
+                let frameContractDuration = negotiationRequestItemComponent.getFrameContractDuration();
                 if (!(UBLModelUtils.isEmptyQuantity(frameContractDuration) || !UBLModelUtils.isEmptyOrIncompleteQuantity(frameContractDuration))) {
                     return false;
                 }
             }
         }
         return true;
-    }
-
-    /*isWarrantyPeriodValid(): boolean {
-        for(let wrapper of this.wrappers){
-            const range = this.getWarrantyPeriodRange(wrapper);
-            if(range && !this.isPeriodValid(wrapper.rfqWarranty.value, range)){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private getWarrantyPeriodRange(wrapper:NegotiationModelWrapper): PeriodRange | null {
-        const unit = wrapper.rfqWarranty.unitCode;
-        const settings = wrapper.sellerSettings;
-
-        const index = settings.warrantyPeriodUnits.indexOf(unit);
-        return index >= 0 ? settings.warrantyPeriodRanges[index] : null;
-    }
-
-    isDeliveryPeriodValid(): boolean {
-        for(let wrapper of this.wrappers){
-            const range = this.getDeliveryPeriodRange(wrapper);
-            if(range && !this.isPeriodValid(wrapper.rfqDeliveryPeriod.value, range)){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    areDeliveryDatesValid(): boolean{
-        for(let wrapper of this.wrappers){
-            for(let delivery of wrapper.rfqDelivery){
-                let date = delivery.requestedDeliveryPeriod.endDate;
-                let quantity = delivery.shipment.goodsItem[0].quantity;
-
-                if(!(date == null && UBLModelUtils.isEmptyQuantity(quantity)) && !(date != null && !UBLModelUtils.isEmptyOrIncompleteQuantity(quantity))){
-                    return false;
-                }
-            }
-        }
-        return true;
-    }*/
-
-    private isPeriodValid(value: number, range: PeriodRange): boolean {
-        if (typeof value !== "number") {
-            return true;
-        }
-
-        return value >= range.start && value <= range.end;
-    }
-
-    private getDeliveryPeriodRange(wrapper: NegotiationModelWrapper): PeriodRange | null {
-        const unit = wrapper.rfqDeliveryPeriod.unitCode;
-        const settings = wrapper.sellerSettings;
-
-        const index = settings.deliveryPeriodUnits.indexOf(unit);
-        return index >= 0 ? settings.deliveryPeriodRanges[index] : null;
     }
 
     doesManufacturerOfferHasPrice(): boolean {
@@ -437,6 +378,32 @@ export class NegotiationRequestComponent implements OnInit {
         this.showNotesAndAdditionalFiles = false;
         this.showPurchaseOrder = false;
         return ret;
+    }
+
+    /**
+     * Opens the cancel collaboration modal
+     * */
+    openCancelCollaborationModal() {
+        this.cancelCollaborationModal.open(this.bpActivityEvent.containerGroupId,this.processMetadata.sellerFederationId);
+    }
+
+    /**
+     * This method handles the status of collaboration cancelling emitted by {@link CancelCollaborationModalComponent}.
+     * @param cancelCollaborationStatus the status of collaboration cancelling process
+     * */
+    onCollaborationCancelStatusUpdated(cancelCollaborationStatus:CancelCollaborationStatus){
+        switch (cancelCollaborationStatus.status) {
+            case 'STARTED':
+                this.callStatus.submit();
+                break;
+            case 'COMPLETED':
+                // change collaboration status
+                this.processMetadata.collaborationStatus = "CANCELLED";
+                this.callStatus.callback("Cancelled collaboration successfully");
+                break;
+            case 'FAILED':
+                this.callStatus.error(cancelCollaborationStatus.errorMessage,cancelCollaborationStatus.error);
+        }
     }
 
 }
