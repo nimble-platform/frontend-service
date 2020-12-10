@@ -39,3 +39,12 @@
     padding-top: 20px;
     padding-bottom: 20px;
 }
+
+.draft-badge{
+    position: absolute;
+    left:2px;
+    top:5px;
+    border-radius: 30px 30px 30px 30px;
+    padding:5px 10px;
+    font-size:10px;
+}

@@ -60,6 +60,12 @@ export class CompanyDetailsComponent implements OnInit {
     getSocialMediaClass = getSocialMediaClass;
     // the industry sectors translations to be displayed on the UI
     industrySectorTranslations:string;
+    // company contacts in the following form:
+    // [
+    //  {name:...,email:...,telephone:...,role:...}
+    // ]
+    companyContacts:any[] = [];
+
     constructor(private cookieService: CookieService,
         private agentService: AgentService,
         private userService: UserService,
@@ -113,6 +119,7 @@ export class CompanyDetailsComponent implements OnInit {
                             console.log("Fetched details: " + JSON.stringify(details));
                         }
                         this.details = details;
+                        this.setCompanyContacts();
                         // retrieve the translations of industry sectors
                         let industrySectors = selectValueOfTextObject(details.details.industrySectors).split("\n");
                         this.industrySectorTranslations = industrySectors.map(industrySector => this.translate.instant(industrySector)).join("\n");
@@ -127,10 +134,25 @@ export class CompanyDetailsComponent implements OnInit {
         }
         else {
             this.party.partyId = this.details.companyID;
+            this.setCompanyContacts();
         }
 
         this.getAllSellingAgents(this.party.partyId);
         this.getAllBuyingAgents(this.party.partyId);
+    }
+
+    /**
+     * Set {@link companyContacts} based on the company details
+     * */
+    setCompanyContacts(){
+        for(let person of this.details.details.person){
+            if(person.role.indexOf("legal_representative") != -1){
+                this.companyContacts.push({name:person.firstName+" "+person.familyName,email:person.contact.electronicMail,telephone:person.contact.telephone,role:"legal_representative"});
+            }
+            else if(person.role.indexOf("external_representative") != -1){
+                this.companyContacts.push({name:person.firstName+" "+person.familyName,email:person.contact.electronicMail,telephone:person.contact.telephone,role:"external_representative"});
+            }
+        }
     }
 
     validateVAT() {

@@ -25,6 +25,7 @@ export class Person {
         public familyName: string = null,
         public contact: Contact = new Contact(),
         public favouriteProductID: string[] = [''],
+        public role:string[] = null
     ) {
     }
 }

@@ -217,6 +217,33 @@
             </div>
         </div>
     </div>
+    <!-- Company Contacts -->
+    <div *ngIf="companyContacts.length > 0" class="col-12">
+        <hr>
+        <h4 [innerHTML]="'Company Contact'|translate" class="space-after"></h4>
+        <table class="table table-striped table-bordered mb-1 mt-0">
+            <thead>
+                <tr>
+                    <th scope="col" [innerHTML]="'Name'|translate"></th>
+                    <th scope="col" [innerHTML]="'Role'|translate"></th>
+                    <th scope="col" [innerHTML]="'Email'|translate"></th>
+                    <th scope="col" [innerHTML]="'Telephone'|translate"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let companyContact of companyContacts">
+                    <td>{{companyContact.name}}</td>
+                    <td>{{companyContact.role | translate}}</td>
+                    <td>
+                        <a [href]="'mailto:'+companyContact.email">
+                            {{companyContact.email}}
+                        </a>
+                    </td>
+                    <td>{{companyContact.telephone && companyContact.telephone != "" ? companyContact.telephone : "Not available"|translate}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <div *ngIf="config.showAgent && appComponent.checkRoles('pm') && !initCallStatus.isLoading()">
