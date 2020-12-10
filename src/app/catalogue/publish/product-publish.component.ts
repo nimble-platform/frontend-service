@@ -273,14 +273,12 @@ export class ProductPublishComponent implements OnInit {
 
     canDeactivate(): boolean | Promise<boolean>{
         if (this.changePublishModeCreate) {
-            this.publishStateService.publishMode = 'create';
-            this.publishStateService.publishingStarted = false;
+            this.publishStateService.resetData();
         }
         if (ProductPublishComponent.dialogBox) {
             return this.appComponent.confirmModalComponent.open('You will lose any changes you made, are you sure you want to quit ?').then(result => {
                 if(result){
-                    this.publishStateService.publishMode = 'create';
-                    this.publishStateService.publishingStarted = false;
+                    this.publishStateService.resetData();
                 }
                 return result;
             });
@@ -293,7 +291,6 @@ export class ProductPublishComponent implements OnInit {
     private initView(userParty, settings): void {
         this.companySettings = settings;
         this.catalogueService.setEditMode(true);
-        this.publishStateService.resetData();
         // Following "if" block is executed when redirected by an "edit" button
         // "else" block is executed when redirected by "publish" tab
         this.publishMode = this.publishStateService.publishMode;
@@ -421,7 +418,6 @@ export class ProductPublishComponent implements OnInit {
                         ProductPublishComponent.dialogBox = false;
                         // avoid category duplication
                         this.categoryService.resetSelectedCategories();
-                        this.publishStateService.resetData();
                         alert(this.translations["Successfully saved. You are now getting redirected."]);
                         this.router.navigate(['dashboard'], {
                             queryParams: {
@@ -479,8 +475,8 @@ export class ProductPublishComponent implements OnInit {
 
         // remove unused properties from catalogueLine
         let splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
-        // nullify the transportation service details if a regular product is being published
-        this.checkProductNature(splicedCatalogueLine);
+        // nullify the transportation service details since a regular product is being published
+        splicedCatalogueLine.goodsItem.item.transportationServiceDetails = null;
 
         this.publish(splicedCatalogueLine, exitThePage);
     }
@@ -500,8 +496,8 @@ export class ProductPublishComponent implements OnInit {
         } else {
             // remove unused properties from catalogueLine
             const splicedCatalogueLine: CatalogueLine = this.removeEmptyProperties(this.catalogueLine);
-            // nullify the transportation service details if a regular product is being published
-            this.checkProductNature(splicedCatalogueLine);
+            // nullify the transportation service details since a regular product is being published
+            splicedCatalogueLine.goodsItem.item.transportationServiceDetails = null;
 
             // update existing product
             this.saveEditedProduct(exitThePage, splicedCatalogueLine);
@@ -1095,12 +1091,6 @@ export class ProductPublishComponent implements OnInit {
                 }
                 this.editPropertyModal.open(targetItemProperty, null, this.catalogueLine.goodsItem.item.additionalItemProperty);
             });
-        }
-    }
-
-    private checkProductNature(catalogueLine: CatalogueLine) {
-        if (this.publishStateService.publishedProductNature == 'Regular product') {
-            catalogueLine.goodsItem.item.transportationServiceDetails = null;
         }
     }
 
