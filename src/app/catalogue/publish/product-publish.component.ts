@@ -358,12 +358,7 @@ export class ProductPublishComponent implements OnInit {
                             sortCategories(this.categoryService.selectedCategories);
 
                             if (this.categoryService.selectedCategories != []) {
-                                for (let category of this.categoryService.selectedCategories) {
-                                    let newCategory = this.isNewCategory(category);
-                                    if (newCategory) {
-                                        this.updateItemWithNewCategory(category);
-                                    }
-                                }
+                                this.populateCommodityClassificationForCategories();
                             }
 
                             this.recomputeSelectedCategoryProperties();
@@ -379,12 +374,7 @@ export class ProductPublishComponent implements OnInit {
                 }
 
             } else {
-                for (let category of this.categoryService.selectedCategories) {
-                    let newCategory = this.isNewCategory(category);
-                    if (newCategory) {
-                        this.updateItemWithNewCategory(category);
-                    }
-                }
+                this.populateCommodityClassificationForCategories();
             }
 
         } else {
@@ -937,6 +927,13 @@ export class ProductPublishComponent implements OnInit {
     // the end of methods to handle dimensions
 
     // methods to handle categories
+    private populateCommodityClassificationForCategories(){
+        for (let category of this.categoryService.selectedCategories) {
+            if (this.isNewCategory(category)) {
+                this.updateItemWithNewCategory(category);
+            }
+        }
+    }
     private removeInvalidCategories() {
         let invalidCategoryIds: string[] = this.invalidCategoryCodes.map(code => code.uri);
         let invalidCommodityClassifications: CommodityClassification[] = this.catalogueLine.goodsItem.item.commodityClassification.filter(commodityClassification => invalidCategoryIds.indexOf(commodityClassification.itemClassificationCode.uri) != -1);
@@ -1225,14 +1222,7 @@ export class ProductPublishComponent implements OnInit {
                 } else{
                     this.publishingStep = "BulkUpload";
                 }
-                // the category selection is completed, so the product has some categories
-                this.categorySelectedForPublishing = true;
-                // add the selected categories to the recent categories list of company
-                this.categoryService.addRecentCategories(this.categoryService.selectedCategories);
-                // recompute selected category properties
-                this.recomputeSelectedCategoryProperties();
-                // handle required properties
-                this.handleRequiredProperties();
+                this.onCategorySelectionCompleted();
                 break;
             case 'Catalogue':
                 this.publishingStep = "ID/Name/Image";
@@ -1260,17 +1250,23 @@ export class ProductPublishComponent implements OnInit {
     onStepChanged(step:ProductPublishStep){
         // handle the case where the publishing step is Category
         if(this.publishingStep == "Category"){
-            // the category selection is completed, so the product has some categories
-            this.categorySelectedForPublishing = true;
-            // add the selected categories to the recent categories list of company
-            this.categoryService.addRecentCategories(this.categoryService.selectedCategories);
-            // recompute selected category properties
-            this.recomputeSelectedCategoryProperties();
-            // handle required properties
-            this.handleRequiredProperties();
+            this.onCategorySelectionCompleted();
         }
         // set the current publishing step
         this.publishingStep = step;
+    }
+
+    private onCategorySelectionCompleted(){
+        // the category selection is completed, so the product has some categories
+        this.categorySelectedForPublishing = true;
+        // populate commodity classification for selected categories
+        this.populateCommodityClassificationForCategories();
+        // add the selected categories to the recent categories list of company
+        this.categoryService.addRecentCategories(this.categoryService.selectedCategories);
+        // recompute selected category properties
+        this.recomputeSelectedCategoryProperties();
+        // handle required properties
+        this.handleRequiredProperties();
     }
     // the end of methods to handle guided publishing
 }
