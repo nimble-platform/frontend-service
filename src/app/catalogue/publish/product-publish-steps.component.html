@@ -21,13 +21,13 @@
                 <span (click)="onStepClicked('Category')"><span [innerHTML]="'Category' | translate"></span></span>
             </div>
             <div *ngIf="catalogueStepEnabled" [ngClass]="getStepClasses('Catalogue')">
-                <span (click)="onStepClicked('Catalogue')"><span [innerHTML]="'Catalogue' | translate"></span></span>
+                <span (click)="onStepClicked('Catalogue')"><span [innerHTML]="'Catalogue Selection' | translate"></span></span>
             </div>
             <div [ngClass]="getStepClasses('ID/Name/Image')">
-                <span (click)="onStepClicked('ID/Name/Image')"><span [innerHTML]="'Name & Description' | translate"></span></span>
+                <span (click)="onStepClicked('ID/Name/Image')"><span [innerHTML]="'Basic Information' | translate"></span></span>
             </div>
             <div [ngClass]="getStepClasses('Details')">
-                <span (click)="onStepClicked('Details')"><span [innerHTML]="'Details' | translate"></span></span>
+                <span (click)="onStepClicked('Details')"><span [innerHTML]="'Detailed Information' | translate"></span></span>
             </div>
             <div [ngClass]="getStepClasses('Price')">
                 <span (click)="onStepClicked('Price')"><span [innerHTML]="'Price' | translate"></span></span>
