@@ -70,13 +70,10 @@ import {DocumentReference} from '../model/publish/document-reference';
 import {Attachment} from '../model/publish/attachment';
 import {ValidationService} from '../../common/validation/validators';
 import {AppComponent} from '../../app.component';
-import {TranslateService} from '@ngx-translate/core';
 import {PublishingPropertyService} from './publishing-property.service';
 import {ProductPublishStep} from './product-publish-step';
 import {CompanySettings} from '../../user-mgmt/model/company-settings';
 
-
-type ProductType = "product" | "transportation";
 
 interface SelectedProperties {
     [key: string]: SelectedProperty;
@@ -108,7 +105,6 @@ export class ProductPublishComponent implements OnInit {
     productCategoryRetrievalStatus: CallStatus = new CallStatus();
     productCatalogueRetrievalStatus: CallStatus = new CallStatus();
     ngUnsubscribe: Subject<void> = new Subject<void>();
-    productType: ProductType;
 
     /*
      * Values for Single only
@@ -193,8 +189,7 @@ export class ProductPublishComponent implements OnInit {
         private cookieService: CookieService,
         private unitService: UnitService,
         private modalService: NgbModal,
-        private appComponent: AppComponent,
-        private translate: TranslateService) {
+        private appComponent: AppComponent) {
     }
 
     ngOnInit() {
@@ -1131,7 +1126,7 @@ export class ProductPublishComponent implements OnInit {
             this.cataloguesIds = idList;
             this.catalogueUUids = uuidList;
             this.productCatalogueRetrievalStatus.callback("Successfully loaded catalogueId list", true);
-        }).catch((error) => {
+        }).catch(() => {
             this.productCatalogueRetrievalStatus.error('Failed to get product catalogues');
         });
 

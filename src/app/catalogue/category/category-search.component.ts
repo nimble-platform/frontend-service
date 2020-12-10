@@ -32,7 +32,6 @@ import { Text } from '../model/publish/text';
 import { Observable } from "rxjs/Observable";
 import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
 import { SimpleSearchService } from "../../simple-search/simple-search.service";
-import { TranslateService } from '@ngx-translate/core';
 
 type ProductType = "product" | "transportation";
 type SelectedTab = "TREE"
@@ -54,7 +53,6 @@ export class CategorySearchComponent implements OnInit {
     favoriteCategoriesStatus: CallStatus = new CallStatus();
     recentCategoriesStatus: CallStatus = new CallStatus();
     addFavoriteCategoryStatus: CallStatus = new CallStatus();
-    addRecentCategoryStatus: CallStatus = new CallStatus();
     getCategoryDetailsStatus: CallStatus = new CallStatus();
 
     categories: Category[];
@@ -97,8 +95,7 @@ export class CategorySearchComponent implements OnInit {
         public categoryService: CategoryService,
         private simpleSearchService: SimpleSearchService,
         private publishService: PublishService,
-        public appComponent: AppComponent,
-        private translate: TranslateService
+        public appComponent: AppComponent
     ) {
     }
 
@@ -469,7 +466,7 @@ export class CategorySearchComponent implements OnInit {
         }
     }
 
-    private scrollToDiv(divId: string, event: any) {
+    private scrollToDiv(divId: string) {
         //this.scrollToDivId = divId;
         // if treeView is false,firstly we have to switch to tree view
         if (!this.getCategoryDetailsStatus.isDisplayed()) {

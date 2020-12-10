@@ -47,7 +47,7 @@
 </div>
 <div *ngIf="pathToSelectedCategories">
     <span *ngFor="let parentCat of pathToSelectedCategories.parents;let l=last">
-        <span class="btn-link pointer" [ngClass]="{'disabled text-muted': getCategoryDetailsStatus.isDisplayed()}" (click)="scrollToDiv(parentCat.code,$event)">{{selectPreferredName(parentCat)}}</span>
+        <span class="btn-link pointer" [ngClass]="{'disabled text-muted': getCategoryDetailsStatus.isDisplayed()}" (click)="scrollToDiv(parentCat.code)">{{selectPreferredName(parentCat)}}</span>
         <span *ngIf="!l">
             >>
         </span>
