@@ -161,8 +161,7 @@ export class CategorySearchComponent implements OnInit {
             this.selectedCategoryWithDetails = null;
             this.pathToSelectedCategories = null;
             // reset draft catalogue line
-            this.publishService.publishingStarted = false;
-            this.publishService.publishMode = "create";
+            this.publishService.resetData();
         }
 
         // get the favorite categories
