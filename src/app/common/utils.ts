@@ -14,121 +14,117 @@
    limitations under the License.
  */
 
-import { ItemProperty } from "../catalogue/model/publish/item-property";
-import { Quantity } from "../catalogue/model/publish/quantity";
-import { Period } from "../catalogue/model/publish/period";
-import { Price } from "../catalogue/model/publish/price";
-import { Category } from "../catalogue/model/category/category";
-import { Property } from "../catalogue/model/category/property";
-import { PropertyValueQualifier } from "../catalogue/model/publish/property-value-qualifier";
-import {CUSTOM_PROPERTY_LIST_ID, DEFAULT_LANGUAGE, LANGUAGES, SOCIAL_MEDIA_CLASSES} from '../catalogue/model/constants';
-import { Item } from '../catalogue/model/publish/item';
-import { Text } from '../catalogue/model/publish/text';
-import { CatalogueLine } from "../catalogue/model/publish/catalogue-line";
-import { Amount } from "../catalogue/model/publish/amount";
-import { CookieService } from "ng2-cookies";
-import { Headers } from "@angular/http";
-import { AbstractControl } from "@angular/forms";
+import {ItemProperty} from '../catalogue/model/publish/item-property';
+import {Quantity} from '../catalogue/model/publish/quantity';
+import {Period} from '../catalogue/model/publish/period';
+import {Price} from '../catalogue/model/publish/price';
+import {Category} from '../catalogue/model/category/category';
+import {Property} from '../catalogue/model/category/property';
+import {PropertyValueQualifier} from '../catalogue/model/publish/property-value-qualifier';
+import {CUSTOM_PROPERTY_LIST_ID, DEFAULT_LANGUAGE, SOCIAL_MEDIA_CLASSES} from '../catalogue/model/constants';
+import {Item} from '../catalogue/model/publish/item';
+import {Text} from '../catalogue/model/publish/text';
+import {CatalogueLine} from '../catalogue/model/publish/catalogue-line';
+import {Amount} from '../catalogue/model/publish/amount';
+import {CookieService} from 'ng2-cookies';
+import {Headers} from '@angular/http';
+import {AbstractControl} from '@angular/forms';
+import {PartyName} from '../catalogue/model/publish/party-name';
+import {maximumDecimalsForPrice} from './constants'
+
 declare var Countries: any;
-import { PartyName } from '../catalogue/model/publish/party-name';
-import {
-    defaultLogisticsServiceCategoryUri,
-    defaultTransportServiceCategoryUri,
-    deliveryPeriodUnitListId,
-    maximumDecimalsForPrice,
-    warrantyPeriodUnitListId
-} from './constants'
-import { UnitService } from "./unit-service";
-import { CompanyNegotiationSettings } from "../user-mgmt/model/company-negotiation-settings";
-import { isNumber } from '@ng-bootstrap/ng-bootstrap/util/util';
 
 const UI_NAMES: any = {
-    STRING: "TEXT"
-}
+    STRING: 'TEXT'
+};
 
 export const COUNTRY_NAMES = getCountryNames();
 const COUNTRY_JSON = getCountryJSON();
 
 function getCountryNames(): string[] {
-    var countriesFull = Countries.countries;
-    var countryList = [];
+    const countriesFull = Countries.countries;
+    const countryList = [];
     for (let country in countriesFull) {
-        countryList.push(countriesFull[country]["name"]);
+        countryList.push(countriesFull[country]['name']);
     }
     countryList.sort();
     return countryList;
 }
 
 function getCountryJSON(): any[] {
-    var countriesFull = Countries.countries;
-    var countryList = [];
+    const countriesFull = Countries.countries;
+    const countryList = [];
     for (let country in countriesFull) {
         countryList.push({
-            "iso": country,
-            "name": countriesFull[country]["name"],
-            "alt": countriesFull[country]["native"]
+            'iso': country,
+            'name': countriesFull[country]['name'],
+            'alt': countriesFull[country]['native']
         });
     }
     return countryList;
 }
 
 export function getCountryByISO(term: string): string {
-    var country = "";
+    let country = '';
     if (term.length == 2) {
-        for (var i = 0; i < COUNTRY_JSON.length; i++) {
-            if (COUNTRY_JSON[i].iso.toLowerCase() == term.toLowerCase())
+        for (let i = 0; i < COUNTRY_JSON.length; i++) {
+            if (COUNTRY_JSON[i].iso.toLowerCase() == term.toLowerCase()) {
                 country = COUNTRY_JSON[i].name;
+            }
         }
     }
     return country;
 }
 
 export function getISObyCountry(term: string): string {
-    var iso = "";
-    for (var i = 0; i < COUNTRY_JSON.length; i++) {
-        if (COUNTRY_JSON[i].name.toLowerCase() == term.toLowerCase())
+    let iso = '';
+    for (let i = 0; i < COUNTRY_JSON.length; i++) {
+        if (COUNTRY_JSON[i].name.toLowerCase() == term.toLowerCase()) {
             iso = COUNTRY_JSON[i].iso.toUpperCase();
+        }
     }
     return iso;
 }
 
 export function getCountrySuggestions(term: string): string[] {
-    var suggestionList = [];
-    var suggestions = [];
-    if (term != "") {
-        for (var i = 0; i < COUNTRY_JSON.length; i++) {
-            var prob = 0;
+    const suggestionList = [];
+    let suggestions = [];
+    if (term != '') {
+        for (let i = 0; i < COUNTRY_JSON.length; i++) {
+            let prob = 0;
             if (term.length == 2) {
-                if (COUNTRY_JSON[i].iso.toLowerCase() == term.toLowerCase())
+                if (COUNTRY_JSON[i].iso.toLowerCase() == term.toLowerCase()) {
                     prob = 1;
+                }
             }
             if (prob < 1) {
-                if (COUNTRY_JSON[i].name.toLowerCase() == term.toLowerCase())
+                if (COUNTRY_JSON[i].name.toLowerCase() == term.toLowerCase()) {
                     prob = 1;
-                else if (COUNTRY_JSON[i].alt.toLowerCase() == term.toLowerCase())
+                } else if (COUNTRY_JSON[i].alt.toLowerCase() == term.toLowerCase()) {
                     prob = 1;
-                else if (COUNTRY_JSON[i].name.toLowerCase().indexOf(term.toLowerCase()) == 0)
+                } else if (COUNTRY_JSON[i].name.toLowerCase().indexOf(term.toLowerCase()) == 0) {
                     prob = 0.9;
-                else if (COUNTRY_JSON[i].alt.toLowerCase().indexOf(term.toLowerCase()) == 0)
+                } else if (COUNTRY_JSON[i].alt.toLowerCase().indexOf(term.toLowerCase()) == 0) {
                     prob = 0.8;
-                else if (COUNTRY_JSON[i].name.toLowerCase().indexOf(term.toLowerCase()) != -1)
+                } else if (COUNTRY_JSON[i].name.toLowerCase().indexOf(term.toLowerCase()) != -1) {
                     prob = 0.7;
-                else if (COUNTRY_JSON[i].alt.toLowerCase().indexOf(term.toLowerCase()) != -1)
+                } else if (COUNTRY_JSON[i].alt.toLowerCase().indexOf(term.toLowerCase()) != -1) {
                     prob = 0.6;
+                }
             }
             if (prob > 0) {
                 suggestions.push({
-                    "prob": prob,
-                    "text": COUNTRY_JSON[i].name
+                    'prob': prob,
+                    'text': COUNTRY_JSON[i].name
                 });
             }
         }
-        suggestions = suggestions.sort(function(a, b) {
+        suggestions = suggestions.sort(function (a, b) {
             let a_comp = a.prob;
             let b_comp = b.prob;
             return b_comp - a_comp;
         });
-        for (var i = 0; i < Math.min(suggestions.length, 10); i++) {
+        for (let i = 0; i < Math.min(suggestions.length, 10); i++) {
             suggestionList.push(suggestions[i].text);
         }
     }
@@ -136,41 +132,39 @@ export function getCountrySuggestions(term: string): string[] {
 }
 
 export function validateCountry(control: AbstractControl): any {
-    var match = (COUNTRY_NAMES.indexOf(control.value) != -1);
+    const match = (COUNTRY_NAMES.indexOf(control.value) != -1);
     if (!match) {
-        return { invalidCountry: true };
+        return {invalidCountry: true};
     }
     return null;
 }
 
 export function validateCountrySimple(countryName: string): boolean {
-    if (COUNTRY_NAMES.indexOf(countryName) != -1)
-        return true;
-    else
-        return false;
+    return COUNTRY_NAMES.indexOf(countryName) != -1;
 }
 
 export function sanitizeLink(link: any): any {
-    let parsed_link = "";
-    if (link && link != "") {
-        if (link.indexOf("http://") == -1 && link.indexOf("https://") == -1) {
-            parsed_link = "http://" + link;
-        }
-        else {
+    let parsed_link = '';
+    if (link && link != '') {
+        if (link.indexOf('http://') == -1 && link.indexOf('https://') == -1) {
+            parsed_link = 'http://' + link;
+        } else {
             parsed_link = link;
         }
-        if (!checkURL(parsed_link))
-            parsed_link = "";
+        if (!checkURL(parsed_link)) {
+            parsed_link = '';
+        }
     }
     return parsed_link;
 }
 
 function checkURL(url: string): boolean {
-    var expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
-    var regex = new RegExp(expression);
-    var match = false;
-    if (url.match(regex))
+    const expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+    const regex = new RegExp(expression);
+    let match = false;
+    if (url.match(regex)) {
         match = true;
+    }
     return match;
 }
 
@@ -182,8 +176,8 @@ export function sanitizeDataTypeName(dataType: PropertyValueQualifier): string {
 }
 
 export function sanitizePropertyName(name: string): string {
-    if (!name ||  name.length === 0) {
-        return "(no name)";
+    if (!name || name.length === 0) {
+        return '(no name)';
     }
     const result = name.replace(/([a-z])([A-Z])/g, '$1 $2');
     return result.substr(0, 1).toUpperCase() + result.substr(1);
@@ -207,19 +201,21 @@ function isItemProperty(property: any): property is ItemProperty {
  * tries first to get label in the preferred language, then English label, then the first label.
  * If the label is not a json object, then the label itself is returned
  * @param label
+ * @param lang
  */
 export function selectNameFromLabelObject(label: any, lang?: string): string {
     if (label == null) {
-        return "";
+        return '';
     }
     let defaultLanguage = DEFAULT_LANGUAGE();
-    if (lang)
+    if (lang) {
         defaultLanguage = lang;
+    }
     if (label[defaultLanguage] != null) {
         return label[defaultLanguage];
     }
-    if (label["en"] != null) {
-        return label["en"];
+    if (label['en'] != null) {
+        return label['en'];
     }
     if (Object.keys.length > 0) {
         return label[Object.keys(label)[0]];
@@ -230,14 +226,14 @@ export function selectNameFromLabelObject(label: any, lang?: string): string {
 
 export function selectPreferredName(cp: Category | Property, lang?: string) {
     let defaultLanguage = DEFAULT_LANGUAGE();
-    if (lang)
+    if (lang) {
         defaultLanguage = lang;
+    }
     let englishName = null;
     for (let pName of cp.preferredName) {
         if (pName.languageID === defaultLanguage) {
             return pName.value;
-        }
-        else if (pName.languageID == "en") {
+        } else if (pName.languageID == 'en') {
             englishName = pName.value;
         }
     }
@@ -250,18 +246,18 @@ export function selectPreferredName(cp: Category | Property, lang?: string) {
 }
 
 // returns the all values for the default language of the browser
-// if there's no value for the defualt language of the browser, then returns english values if possible
+// if there's no value for the default language of the browser, then returns english values if possible
 export function selectPreferredValues(texts: Text[], lang?: string): string[] {
     let values = [];
     let defaultLanguage = DEFAULT_LANGUAGE();
-    if (lang)
+    if (lang) {
         defaultLanguage = lang;
+    }
     let englishValues = [];
     for (let text of texts) {
         if (text.languageID === defaultLanguage) {
             values.push(text.value);
-        }
-        else if (text.languageID == "en") {
+        } else if (text.languageID == 'en') {
             englishValues.push(text.value);
         }
     }
@@ -274,23 +270,24 @@ export function selectPreferredValues(texts: Text[], lang?: string): string[] {
         return englishValues;
     }
 
-    if (texts.length > 0 && texts[0].value)
+    if (texts.length > 0 && texts[0].value) {
         return [texts[0].value];
-    else
+    } else {
         return [''];
+    }
 }
 
 // return the value for the default language of the browser
 export function selectPreferredValue(texts: Text[], lang?: string): string {
     let defaultLanguage = DEFAULT_LANGUAGE();
-    if (lang)
+    if (lang) {
         defaultLanguage = lang;
+    }
     let englishValue = null;
     for (let text of texts) {
         if (text.languageID === defaultLanguage) {
             return text.value;
-        }
-        else if (text.languageID == "en") {
+        } else if (text.languageID == 'en') {
             englishValue = text.value;
         }
     }
@@ -299,22 +296,23 @@ export function selectPreferredValue(texts: Text[], lang?: string): string {
         return englishValue;
     }
 
-    if (texts.length > 0 && texts[0].value)
+    if (texts.length > 0 && texts[0].value) {
         return texts[0].value;
-    else
+    } else {
         return '';
+    }
 }
 
 export function selectName(ip: ItemProperty | Item, lang?: string) {
     let defaultLanguage = DEFAULT_LANGUAGE();
-    if (lang)
+    if (lang) {
         defaultLanguage = lang;
+    }
     let englishName = null;
     for (let pName of ip.name) {
         if (pName.languageID === defaultLanguage && pName.value) {
             return pName.value;
-        }
-        else if (pName.languageID == "en") {
+        } else if (pName.languageID == 'en') {
             englishName = pName.value;
         }
     }
@@ -323,27 +321,30 @@ export function selectName(ip: ItemProperty | Item, lang?: string) {
         return englishName;
     }
 
-    if (ip.name.length === 0)
+    if (ip.name.length === 0) {
         return '';
+    }
 
     return ip.name[0].value;
 }
 
-export function getSocialMediaClass(url:string, addRightSpace:boolean=false){
-    if(url != null){
+export function getSocialMediaClass(url: string, addRightSpace: boolean = false) {
+    if (url != null) {
         let socialMedia = SOCIAL_MEDIA_CLASSES.filter(socialMedia => url.includes(socialMedia.url));
-        if(socialMedia.length > 0){
-            return socialMedia[0].class + (addRightSpace ? " space-right" : "");
+        if (socialMedia.length > 0) {
+            return socialMedia[0].class + (addRightSpace ? ' space-right' : '');
         }
     }
     return null;
 }
+
 // textObject represents an object which contains languageId-value pairs
 // this function is used to get value according to the default language of browser
 export function selectValueOfTextObject(textObject, lang?: string): string {
     let defaultLanguage = DEFAULT_LANGUAGE();
-    if (lang)
+    if (lang) {
         defaultLanguage = lang;
+    }
     let englishName = null;
     // get the keys
     let keys = Object.keys(textObject);
@@ -351,8 +352,7 @@ export function selectValueOfTextObject(textObject, lang?: string): string {
         // if there is a value for the default language, simply return it
         if (key == defaultLanguage) {
             return textObject[defaultLanguage];
-        }
-        else if (key == "en") {
+        } else if (key == 'en') {
             englishName = textObject[key];
         }
     }
@@ -365,15 +365,16 @@ export function selectValueOfTextObject(textObject, lang?: string): string {
         return textObject[keys[0]];
     }
     // if it is an empty object, return empty string.
-    return "";
+    return '';
 }
 
 // for the given value, it creates a languageId-value pair.
 // for now, languageId is the default language of the browser
 export function createTextObject(value: string, lang?: string): Object {
     let defaultLanguage = DEFAULT_LANGUAGE();
-    if (lang)
+    if (lang) {
         defaultLanguage = lang;
+    }
     let textObject = {};
     textObject[defaultLanguage] = value;
     return textObject;
@@ -384,24 +385,14 @@ export function getArrayOfTextObject(textObject): any {
     let arr = [];
     let keys = Object.keys(textObject);
     for (let key of keys) {
-        arr.push({ "text": textObject[key], "lang": key });
+        arr.push({'text': textObject[key], 'lang': key});
     }
-    if (arr.length == 0)
-        arr = [{ "text": "", "lang": DEFAULT_LANGUAGE() }];
+    if (arr.length == 0) {
+        arr = [{'text': '', 'lang': DEFAULT_LANGUAGE()}];
+    }
     return arr;
 }
 
-// For a given TextObject get an array of objects with text array and lang keys
-export function getArrayOfTextObjectArrays(textObject): any {
-    let arr = [];
-    let keys = Object.keys(textObject);
-    for (let key of keys) {
-        arr.push({ "text": textObject[key].split("\n"), "lang": key });
-    }
-    if (arr.length == 0)
-        arr = [{ "text": [], "lang": DEFAULT_LANGUAGE() }];
-    return arr;
-}
 /**
  *  Returns an array of TextObject for the given language map
  *  @param languageMap the map containing the new line separated values for language ids
@@ -411,11 +402,12 @@ export function getArrayOfTextObjectFromLanguageMap(languageMap): any {
     let arr = [];
     let keys = Object.keys(languageMap);
     for (let key of keys) {
-        let values = languageMap[key].split("\n");
-        values.forEach(value => arr.push({ "text": value, "lang": key }));
+        let values = languageMap[key].split('\n');
+        values.forEach(value => arr.push({'text': value, 'lang': key}));
     }
-    if (arr.length == 0)
-        arr = [{ "text": "", "lang": DEFAULT_LANGUAGE() }];
+    if (arr.length == 0) {
+        arr = [{'text': '', 'lang': DEFAULT_LANGUAGE()}];
+    }
     return arr;
 }
 
@@ -427,10 +419,10 @@ export function getArrayOfTextObjectFromLanguageMap(languageMap): any {
 export function createLanguageMapFromArrayOfTextObject(arr): Object {
     let languageMap = {};
     for (let i = 0; i < arr.length; i++) {
-        if (arr[i].lang != "" && arr[i].text != "") {
-            if(languageMap[arr[i].lang]){
-                languageMap[arr[i].lang] = languageMap[arr[i].lang]+"\n"+arr[i].text;
-            } else{
+        if (arr[i].lang != '' && arr[i].text != '') {
+            if (languageMap[arr[i].lang]) {
+                languageMap[arr[i].lang] = languageMap[arr[i].lang] + '\n' + arr[i].text;
+            } else {
                 languageMap[arr[i].lang] = arr[i].text;
             }
         }
@@ -442,7 +434,7 @@ export function createLanguageMapFromArrayOfTextObject(arr): Object {
 export function createTextObjectFromArray(arr): Object {
     let textObject = {};
     for (let i = 0; i < arr.length; i++) {
-        if (arr[i].lang != "" && arr[i].text != "") {
+        if (arr[i].lang != '' && arr[i].text != '') {
             textObject[arr[i].lang] = arr[i].text;
         }
     }
@@ -452,15 +444,15 @@ export function createTextObjectFromArray(arr): Object {
 // For the given PartyName array, it finds the correct name of the party according to the default language of the browser.
 export function selectPartyName(partyNames: PartyName[], lang?: string): string {
     let defaultLanguage = DEFAULT_LANGUAGE();
-    if (lang)
+    if (lang) {
         defaultLanguage = lang;
+    }
     let englishName = null;
     for (let partyName of partyNames) {
         // if the party has a name for the default language of the browser, return it
         if (partyName.name.languageID == defaultLanguage) {
             return partyName.name.value;
-        }
-        else if (partyName.name.languageID == "en") {
+        } else if (partyName.name.languageID == 'en') {
             englishName = partyName.name.value;
         }
     }
@@ -473,13 +465,14 @@ export function selectPartyName(partyNames: PartyName[], lang?: string): string 
         return partyNames[0].name.value;
     }
     // if the party has no names, return empty string
-    return "";
+    return '';
 }
 
 export function createText(value: string, lang?: string): Text {
     let defaultLanguage = DEFAULT_LANGUAGE();
-    if (lang)
+    if (lang) {
         defaultLanguage = lang;
+    }
     return new Text(value, defaultLanguage);
 }
 
@@ -488,58 +481,44 @@ export function selectDescription(item: Item, lang?: string) {
         return null;
     }
     let defaultLanguage = DEFAULT_LANGUAGE();
-    if (lang)
+    if (lang) {
         defaultLanguage = lang;
+    }
     let englishName = null;
     for (let pName of item.description) {
         if (pName.languageID === defaultLanguage) {
             return pName.value;
-        }
-        else if (pName.languageID == "en") {
+        } else if (pName.languageID == 'en') {
             englishName = pName.value;
         }
     }
 
-    if (englishName)
+    if (englishName) {
         return englishName;
+    }
 
     return item.description[0].value;
 }
 
-export function selectItemPropertyValuesAsString(ip: ItemProperty, lang?: string): string[] {
-    let defaultLanguage = DEFAULT_LANGUAGE();
-    if (lang)
-        defaultLanguage = lang;
-    let result: string[] = [];
-    for (let pValue of ip.value) {
-        if (pValue.languageID === defaultLanguage) {
-            result.push(pValue.value);
-        }
-    }
-
-    return result;
-}
-
 export function getPropertyKey(property: Property | ItemProperty): string {
     if (isItemProperty(property)) {
-        return selectName(property) + "___" + property.valueQualifier;
+        return selectName(property) + '___' + property.valueQualifier;
     }
-    //console.log(' Property: ', property);
-    return selectPreferredName(property) + "___" + property.dataType;
+    return selectPreferredName(property) + '___' + property.dataType;
 }
 
 export function quantityToString(quantity: Quantity): string {
     if (quantity.value) {
         return `${quantity.value} ${quantity.unitCode}`;
     }
-    return "";
+    return '';
 }
 
 export function amountToString(amount: Amount): string {
     if (amount.value) {
         return `${amount.value} ${amount.currencyID}`;
     }
-    return "";
+    return '';
 }
 
 export function durationToString(duration: Quantity): string {
@@ -547,9 +526,9 @@ export function durationToString(duration: Quantity): string {
         return quantityToString(duration);
     }
     if (duration.value === 0) {
-        return "None";
+        return 'None';
     }
-    return "None";
+    return 'None';
 }
 
 export function periodToString(period: Period): string {
@@ -558,11 +537,11 @@ export function periodToString(period: Period): string {
 
 // this method converts the date (YYYY-MM-DD) to MM/DD/YYYY format
 export function dateToString(date: string): string {
-    if (date && date != "") {
-        let dateParts = date.split("-");
-        return dateParts[1] + "/" + dateParts[2] + "/" + dateParts[0];
+    if (date && date != '') {
+        let dateParts = date.split('-');
+        return dateParts[1] + '/' + dateParts[2] + '/' + dateParts[0];
     }
-    return "";
+    return '';
 }
 
 const MAX_PRICE = 100000;
@@ -574,9 +553,7 @@ export function getMaximumQuantityForPrice(price: Price): number {
         return 100;
     }
 
-    let result = Math.round(Math.ceil(MAX_PRICE / price.priceAmount.value) * price.baseQuantity.value);
-    // return roundFirstDigit(result) * getMagnitude(result)
-    return result;
+    return Math.round(Math.ceil(MAX_PRICE / price.priceAmount.value) * price.baseQuantity.value);
 }
 
 export function getStepRangeForPrice(price: Price): number {
@@ -594,23 +571,6 @@ export function getStepRangeForPrice(price: Price): number {
     return step;
 }
 
-function getMagnitude(value: number): number {
-    return Math.pow(10, Math.floor(Math.log10(value)));
-}
-
-function round5(value: number): number {
-    return Math.round(value / 5) * 5;
-}
-
-// rounds the first digit of a number to the nearest 5 or 10
-function roundFirstDigit(value: number): number {
-    let roundedDigit = round5(value / getMagnitude(value));
-    if (roundedDigit == 0) {
-        roundedDigit = 1;
-    }
-    return roundedDigit;
-}
-
 interface CurrenciesStringValues {
     [currencyId: string]: string
 }
@@ -619,11 +579,11 @@ const CURRENCIES_STRING_VALUES: CurrenciesStringValues = {
     // EUR: "€", // disabled for now
     // USD: "$",
     // GBP: "₤"
-}
+};
 
 export function getFileExtension(filename: string): string {
     let ext = /^.+\.([^.]+)$/.exec(filename);
-    return ext == null ? "" : ext[1];
+    return ext == null ? '' : ext[1];
 }
 
 export function roundToTwoDecimals(value): any {
@@ -646,14 +606,12 @@ export function roundToTwoDecimalsNumber(value: number): number {
 }
 
 export function isNaNNullAware(number: number): boolean {
-    if (isNaN(number) || number == null) {
-        return true;
-    }
-    return false;
+    return isNaN(number) || number == null;
+
 }
 
 export function isValidPrice(value: any, maximumDecimals: number = maximumDecimalsForPrice) {
-    if (value != null && !isNaN(value) && value !== "") {
+    if (value != null && !isNaN(value) && value !== '') {
         let decimals = countDecimals(value);
         return (decimals <= maximumDecimals);
     } else {
@@ -662,8 +620,10 @@ export function isValidPrice(value: any, maximumDecimals: number = maximumDecima
 }
 
 export function countDecimals(value: any): number {
-    if (Math.floor(value) === value) return 0;
-    return value.toString().split(".")[1].length || 0;
+    if (Math.floor(value) === value) {
+        return 0;
+    }
+    return value.toString().split('.')[1].length || 0;
 }
 
 export function currencyToString(currencyId: string): string {
@@ -679,8 +639,9 @@ export function sortProperties(properties: Property[]): Property[] {
 }
 
 export function scrollToDiv(divId: string): void {
-    if (document.getElementById(divId))
+    if (document.getElementById(divId)) {
         document.getElementById(divId).scrollIntoView();
+    }
 }
 
 export function isCustomProperty(property: ItemProperty): boolean {
@@ -689,53 +650,54 @@ export function isCustomProperty(property: ItemProperty): boolean {
 
 export function getPropertyValues(property: ItemProperty): any[] {
     switch (property.valueQualifier) {
-        case "INT":
-        case "DOUBLE":
-        case "NUMBER":
+        case 'INT':
+        case 'DOUBLE':
+        case 'NUMBER':
             return property.valueDecimal;
-        case "FILE":
+        case 'FILE':
             return property.valueBinary;
-        case "QUANTITY":
+        case 'QUANTITY':
             return property.valueQuantity;
-        case "STRING":
-        case "BOOLEAN":
+        case 'STRING':
+        case 'BOOLEAN':
             return property.value;
     }
 }
 
 export function getPropertyValuesAsStrings(property: ItemProperty): string[] {
     switch (property.valueQualifier) {
-        case "INT":
-        case "DOUBLE":
-        case "NUMBER":
+        case 'INT':
+        case 'DOUBLE':
+        case 'NUMBER':
             return property.valueDecimal.map(num => String(num));
-        case "FILE":
+        case 'FILE':
             return property.valueBinary.map(bin => bin.fileName);
-        case "QUANTITY":
+        case 'QUANTITY':
             return property.valueQuantity.map(qty => `${qty.value} ${qty.unitCode}`);
-        case "STRING":
+        case 'STRING':
             return selectPreferredValues(property.value);
-        case "BOOLEAN":
-            if (property.value.length === 0)
+        case 'BOOLEAN':
+            if (property.value.length === 0) {
                 return ['false'];
-            else
+            } else {
                 return [property.value[0].value];
+            }
     }
 }
 
-export function getPropertyValueAsString(value:any,valueQualifier:string): string {
-    switch(valueQualifier) {
-        case "INT":
-        case "DOUBLE":
-        case "NUMBER":
+export function getPropertyValueAsString(value: any, valueQualifier: string): string {
+    switch (valueQualifier) {
+        case 'INT':
+        case 'DOUBLE':
+        case 'NUMBER':
             return String(value);
-        case "FILE":
+        case 'FILE':
             return value.fileName;
-        case "QUANTITY":
+        case 'QUANTITY':
             return `${value.value} ${value.unitCode}`;
-        case "STRING":
+        case 'STRING':
             return value.value;
-        case "BOOLEAN":
+        case 'BOOLEAN':
             return value[0].value;
     }
 }
@@ -754,7 +716,7 @@ export function areTransportServices(products: CatalogueLine[]): boolean {
 export function isTransportService(product: CatalogueLine): boolean {
     if (product) {
         for (let commodityClassification of product.goodsItem.item.commodityClassification) {
-            if (commodityClassification.itemClassificationCode.listID == "Default" && commodityClassification.itemClassificationCode.value == "Transport Service") {
+            if (commodityClassification.itemClassificationCode.listID == 'Default' && commodityClassification.itemClassificationCode.value == 'Transport Service') {
                 return true;
             }
         }
@@ -776,8 +738,8 @@ export function areLogisticsService(products: CatalogueLine[]): boolean {
 export function isLogisticsService(product: CatalogueLine): boolean {
     if (product) {
         for (let commodityClassification of product.goodsItem.item.commodityClassification) {
-            if (commodityClassification.itemClassificationCode.listID == "Default") {
-                if (commodityClassification.itemClassificationCode.value == "Logistics Service" || commodityClassification.itemClassificationCode.value == "Transport Service") {
+            if (commodityClassification.itemClassificationCode.listID == 'Default') {
+                if (commodityClassification.itemClassificationCode.value == 'Logistics Service' || commodityClassification.itemClassificationCode.value == 'Transport Service') {
                     return true;
                 }
             }
@@ -789,10 +751,11 @@ export function isLogisticsService(product: CatalogueLine): boolean {
 
 export function deepEquals(obj1: any, obj2: any): boolean {
 
-    if (obj1 == null && obj2 == null)
+    if (obj1 == null && obj2 == null) {
         return true;
-    else if (obj1 == null || obj2 == null)
+    } else if (obj1 == null || obj2 == null) {
         return false;
+    }
 
     if (obj1 === obj2) {
         return true;
@@ -800,7 +763,7 @@ export function deepEquals(obj1: any, obj2: any): boolean {
 
     // simple cases should be compared with obj1 === obj2
     // let's consider functions immutable here...
-    if (typeof obj1 !== "object") {
+    if (typeof obj1 !== 'object') {
         return false;
     }
 
@@ -841,31 +804,28 @@ export function deepEquals(obj1: any, obj2: any): boolean {
 
 export function validateNumberInput(event: any): boolean {
     const charCode = (event.which) ? event.which : event.keyCode;
-    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-        return false;
-    }
-    return true;
+    return !(charCode > 31 && (charCode < 48 || charCode > 57));
 }
 
 export function removeHjids(json): any {
     let ret = JSON.parse(JSON.stringify(json));
     let keys = Object.keys(ret);
     for (let i = 0; i < keys.length; i++) {
-        if (keys[i] == "hjid")
+        if (keys[i] == 'hjid') {
             ret[keys[i]] = null;
-        else if (ret[keys[i]] && typeof (ret[keys[i]]) === "object") {
+        } else if (ret[keys[i]] && typeof (ret[keys[i]]) === 'object') {
             let keys_inner = Object.keys(ret[keys[i]]);
-            if (keys_inner.length > 0)
+            if (keys_inner.length > 0) {
                 ret[keys[i]] = this.removeHjids(ret[keys[i]]);
+            }
         }
     }
     return ret;
 }
 
 export function getAuthorizedHeaders(cookieService: CookieService): Headers {
-    const token = 'Bearer ' + cookieService.get("bearer_token");
-    const headers = new Headers({ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': token });
-    return headers;
+    const token = 'Bearer ' + cookieService.get('bearer_token');
+    return new Headers({'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': token});
 }
 
 export function findCategoryInArray(categoryArray: Category[], category: Category): number {
