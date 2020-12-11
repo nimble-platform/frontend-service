@@ -76,8 +76,6 @@ import {TranslateService} from '@ngx-translate/core';
 import {PublishingPropertyService} from './publishing-property.service';
 
 
-type ProductType = "product" | "transportation";
-
 interface SelectedProperties {
     [key: string]: SelectedProperty;
 }
@@ -108,7 +106,6 @@ export class ProductPublishComponent implements OnInit {
     productCategoryRetrievalStatus: CallStatus = new CallStatus();
     productCatalogueRetrievalStatus: CallStatus = new CallStatus();
     ngUnsubscribe: Subject<void> = new Subject<void>();
-    productType: ProductType;
 
     /*
      * Values for Single only
@@ -972,7 +969,7 @@ export class ProductPublishComponent implements OnInit {
             dismissModal("add category");
         }
         ProductPublishComponent.dialogBox = false;
-        this.router.navigate(['catalogue/categorysearch'], { queryParams: { pageRef: "publish", pg: this.publishingGranularity, productType: this.productType } });
+        this.router.navigate(['catalogue/categorysearch'], { queryParams: { pageRef: "publish", pg: this.publishingGranularity } });
     }
 
     isProductCategoriesLoading(): boolean {

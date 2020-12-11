@@ -34,7 +34,7 @@ import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
 import { SimpleSearchService } from "../../simple-search/simple-search.service";
 import { TranslateService } from '@ngx-translate/core';
 
-type ProductType = "product" | "transportation";
+const productType = "product";
 type SelectedTab = "TREE"
     | "FAVORITE"
     | "RECENT";
@@ -82,7 +82,6 @@ export class CategorySearchComponent implements OnInit {
     logisticsCategory: Category = null;
 
     showOtherProperties = null;
-    productType: ProductType;
 
     favSelected: boolean;
 
@@ -114,8 +113,7 @@ export class CategorySearchComponent implements OnInit {
             }
 
             //set product type
-            this.productType = params["productType"] === "transportation" ? "transportation" : "product";
-            this.isLogistics = this.productType === "transportation";
+            this.isLogistics = false;
 
             if (this.pageRef === 'menu' && this.originalPageRef === 'publish') {
                 // This part is necessary since only the params has changes,canDeactivate method will not be called.
@@ -196,7 +194,7 @@ export class CategorySearchComponent implements OnInit {
         this.userService.getPrefCat(userId).then(res => {
             var prefCats_tmp = [];
             for (var i = 0; i < res.length; i++) {
-                if (res[i].split("::")[3] == this.productType) prefCats_tmp.push(res[i]);
+                if (res[i].split("::")[3] == productType) prefCats_tmp.push(res[i]);
             }
             prefCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
             this.prefCats = prefCats_tmp;
@@ -214,7 +212,7 @@ export class CategorySearchComponent implements OnInit {
         this.userService.getRecCat(userId).then(res => {
             var recCats_tmp = [];
             for (var i = 0; i < res.length; i++) {
-                if (res[i].split("::")[3] == this.productType) recCats_tmp.push(res[i]);
+                if (res[i].split("::")[3] == productType) recCats_tmp.push(res[i]);
             }
             recCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
             this.recCats = recCats_tmp;
@@ -226,7 +224,7 @@ export class CategorySearchComponent implements OnInit {
     }
 
     findPrefCat(cat: Category): boolean {
-        var cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + this.productType;
+        var cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + productType;
         var found = false;
         if (this.prefCats.indexOf(cat_str) != -1) found = true;
         return found;
@@ -235,12 +233,12 @@ export class CategorySearchComponent implements OnInit {
     removeCategoryFromFavorites(cat: Category) {
         if (!this.addFavoriteCategoryStatus.isLoading()) {
             this.addFavoriteCategoryStatus.submit();
-            const cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + this.productType;
+            const cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + productType;
             const userId = this.cookieService.get("user_id");
             this.userService.togglePrefCat(userId, cat_str).then(res => {
                 const prefCats_tmp = [];
                 for (var i = 0; i < res.length; i++) {
-                    if (res[i].split("::")[3] == this.productType) prefCats_tmp.push(res[i]);
+                    if (res[i].split("::")[3] == productType) prefCats_tmp.push(res[i]);
                 }
                 prefCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
                 this.prefCats = prefCats_tmp;
@@ -255,12 +253,12 @@ export class CategorySearchComponent implements OnInit {
     addCategoryToFavorites(cat: Category) {
         if (!this.addFavoriteCategoryStatus.isLoading()) {
             this.addFavoriteCategoryStatus.submit();
-            const cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + this.productType;
+            const cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + productType;
             const userId = this.cookieService.get("user_id");
             this.userService.togglePrefCat(userId, cat_str).then(res => {
                 const prefCats_tmp = [];
                 for (var i = 0; i < res.length; i++) {
-                    if (res[i].split("::")[3] == this.productType) prefCats_tmp.push(res[i]);
+                    if (res[i].split("::")[3] == productType) prefCats_tmp.push(res[i]);
                 }
                 prefCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
                 this.prefCats = prefCats_tmp;
@@ -277,14 +275,14 @@ export class CategorySearchComponent implements OnInit {
         var recCatPost = [];
         var timeStamp = new Date().getTime();
         for (var i = 0; i < cat.length; i++) {
-            const cat_str = cat[i].id + "::" + cat[i].taxonomyId + "::" + selectPreferredName(cat[i]) + "::" + this.productType + "::" + timeStamp;
+            const cat_str = cat[i].id + "::" + cat[i].taxonomyId + "::" + selectPreferredName(cat[i]) + "::" + productType + "::" + timeStamp;
             recCatPost.push(cat_str);
         }
         const userId = this.cookieService.get("user_id");
         this.userService.addRecCat(userId, recCatPost).then(res => {
             var recCats_tmp = [];
             for (var i = 0; i < res.length; i++) {
-                if (res[i].split("::")[3] == this.productType) recCats_tmp.push(res[i]);
+                if (res[i].split("::")[3] == productType) recCats_tmp.push(res[i]);
             }
             recCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
             this.recCats = recCats_tmp;
@@ -332,8 +330,7 @@ export class CategorySearchComponent implements OnInit {
             queryParams: {
                 pg: this.publishingGranularity,
                 pageRef: this.pageRef,
-                cat: this.categoryKeyword,
-                productType: this.productType
+                cat: this.categoryKeyword
             }
         });
     }
@@ -411,7 +408,7 @@ export class CategorySearchComponent implements OnInit {
     navigateToPublishingPage(): void {
         this.addRecentCategories(this.categoryService.selectedCategories);
         // ProductPublishComponent.dialogBox = true;
-        this.router.navigate(["catalogue/publish"], { queryParams: { pg: this.publishingGranularity, productType: this.productType } });
+        this.router.navigate(["catalogue/publish"], { queryParams: { pg: this.publishingGranularity } });
     }
 
     getCategoryTree(category: Category, scrollToDivId = null) {
