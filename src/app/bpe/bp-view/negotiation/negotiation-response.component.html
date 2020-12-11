@@ -40,7 +40,6 @@
     <table class="table table-striped ml-2 space-before" *ngIf="showPurchaseOrder">
         <tr>
             <th><span [innerHTML]="'Ordered Product' | translate"></span></th>
-            <th><span [innerHTML]="'Product Id' | translate"></span></th>
             <th><span [innerHTML]="'Quantity' | translate"></span></th>
             <th><span [innerHTML]="'Net Price' | translate"></span></th>
             <th *ngIf="config.vatEnabled" [innerHTML]="'VAT' | translate"><span></span></th>
@@ -48,7 +47,6 @@
         </tr>
         <tr *ngFor="let wrapper of wrappers;let i=index">
             <th scope="row"><span>{{wrapper.catalogueLine.goodsItem.item.name[0].value }}</span></th>
-            <td><span>{{wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.item.manufacturersItemIdentification.id}}</span></td>
             <td><span>{{wrapper.newQuotationWrapper.orderedQuantity | quantityTranslatePipe}}</span></td>
             <td><span>{{wrapper.newQuotationWrapper.priceWrapper.totalPriceString | translate}}</span></td>
             <td *ngIf="config.vatEnabled"><span>{{ wrapper.newQuotationWrapper.priceWrapper.vatTotalString | translate }}</span></td>
@@ -56,7 +54,6 @@
         </tr>
         <tr>
             <th scope="row"><span>{{'Total'|translate}} </span></th>
-            <td><span></span></td>
             <td><span></span></td>
             <td><span>{{getTotalPriceString() | translate}}</span></td>
             <td *ngIf="config.vatEnabled"><span>{{getVatTotalString() | translate}}</span></td>
