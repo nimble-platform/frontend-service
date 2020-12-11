@@ -33,7 +33,7 @@ import { Observable } from "rxjs/Observable";
 import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
 import { SimpleSearchService } from "../../simple-search/simple-search.service";
 
-type ProductType = "product" | "transportation";
+const productType = "product";
 type SelectedTab = "TREE"
     | "FAVORITE"
     | "RECENT";
@@ -78,7 +78,6 @@ export class CategorySearchComponent implements OnInit {
     recCats: string[] = [];
 
     showOtherProperties = null;
-    productType: ProductType = "product";
 
     favSelected: boolean;
 
@@ -162,7 +161,7 @@ export class CategorySearchComponent implements OnInit {
         this.userService.getPrefCat(userId).then(res => {
             var prefCats_tmp = [];
             for (var i = 0; i < res.length; i++) {
-                if (res[i].split("::")[3] == this.productType) prefCats_tmp.push(res[i]);
+                if (res[i].split("::")[3] == productType) prefCats_tmp.push(res[i]);
             }
             prefCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
             this.prefCats = prefCats_tmp;
@@ -180,7 +179,7 @@ export class CategorySearchComponent implements OnInit {
         this.userService.getRecCat(userId).then(res => {
             var recCats_tmp = [];
             for (var i = 0; i < res.length; i++) {
-                if (res[i].split("::")[3] == this.productType) recCats_tmp.push(res[i]);
+                if (res[i].split("::")[3] == productType) recCats_tmp.push(res[i]);
             }
             recCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
             this.recCats = recCats_tmp;
@@ -192,7 +191,7 @@ export class CategorySearchComponent implements OnInit {
     }
 
     findPrefCat(cat: Category): boolean {
-        var cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + this.productType;
+        var cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + productType;
         var found = false;
         if (this.prefCats.indexOf(cat_str) != -1) found = true;
         return found;
@@ -201,12 +200,12 @@ export class CategorySearchComponent implements OnInit {
     removeCategoryFromFavorites(cat: Category) {
         if (!this.addFavoriteCategoryStatus.isLoading()) {
             this.addFavoriteCategoryStatus.submit();
-            const cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + this.productType;
+            const cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + productType;
             const userId = this.cookieService.get("user_id");
             this.userService.togglePrefCat(userId, cat_str).then(res => {
                 const prefCats_tmp = [];
                 for (var i = 0; i < res.length; i++) {
-                    if (res[i].split("::")[3] == this.productType) prefCats_tmp.push(res[i]);
+                    if (res[i].split("::")[3] == productType) prefCats_tmp.push(res[i]);
                 }
                 prefCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
                 this.prefCats = prefCats_tmp;
@@ -221,12 +220,12 @@ export class CategorySearchComponent implements OnInit {
     addCategoryToFavorites(cat: Category) {
         if (!this.addFavoriteCategoryStatus.isLoading()) {
             this.addFavoriteCategoryStatus.submit();
-            const cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + this.productType;
+            const cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + productType;
             const userId = this.cookieService.get("user_id");
             this.userService.togglePrefCat(userId, cat_str).then(res => {
                 const prefCats_tmp = [];
                 for (var i = 0; i < res.length; i++) {
-                    if (res[i].split("::")[3] == this.productType) prefCats_tmp.push(res[i]);
+                    if (res[i].split("::")[3] == productType) prefCats_tmp.push(res[i]);
                 }
                 prefCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
                 this.prefCats = prefCats_tmp;

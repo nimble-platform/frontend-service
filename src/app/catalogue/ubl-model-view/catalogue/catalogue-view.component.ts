@@ -656,7 +656,7 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     navigateToBulkUploadPage() {
-        this.router.navigate(["/catalogue/publish"], { queryParams: { pg: 'bulk', productType: 'product' } });
+        this.router.navigate(["/catalogue/publish"], { queryParams: { pg: 'bulk' } });
     }
 
     initDataRetrieval() {

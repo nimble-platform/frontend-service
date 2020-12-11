@@ -196,7 +196,7 @@ export class HomepageComponent {
     }
 
     onPublishProductClicked(): void {
-        this.router.navigate(['catalogue/publish'], { queryParams: { pageRef: 'homepage', productType: 'product'} });
+        this.router.navigate(['catalogue/publish'], { queryParams: { pageRef: 'homepage'} });
     }
 
     onCategoryClicked(category: Category): void {
