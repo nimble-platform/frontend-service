@@ -113,8 +113,14 @@
         <!-- Product Details Tab -->
         <div class="row space-before" [hidden]="publishingStep != 'Details'">
             <!-- Dimensions -->
-            <div class="col-12">
-                <button class='btn btn-outline-primary' (click)="toggleDimensionCard()"><span [innerHTML]="'Dimensions' | translate"></span></button>
+            <div class="col-8 section">
+                <div (click)="toggleDimensionCard()" class="d-flex justify-content-between">
+                    <span [innerHTML]="'Dimensions' | translate" ></span>
+                    <i>
+                        <span *ngIf="!showDimensions" [innerHTML]="(getMultiValuedDimensionCount() > 0 ? getMultiValuedDimensionCount() + ' dimensions defined' : 'No dimensions defined')|translate">
+                        </span>
+                    </i>
+                </div>
                 <div [hidden]="!showDimensions">
                     <div class="row border-bottom m-0" *ngFor="let multiValuedDimension of multiValuedDimensions">
                         <div class="col-3" style="padding:.75rem;padding-left:0;">
@@ -146,46 +152,60 @@
                 </div>
             </div>
             <!-- Additional Information-->
-            <div class="col-12 space-before">
-                <button class='btn btn-outline-primary' (click)="toggleAdditionalInformationCard()"><span [innerHTML]="'Upload Additional Information' | translate"></span></button>
+            <div class="col-8 space-before section">
+                <div (click)="toggleAdditionalInformationCard()" class="d-flex justify-content-between">
+                    <span [innerHTML]="'Upload Additional Information' | translate" ></span>
+                    <i>
+                        <span *ngIf="!showAdditionalInformation" [innerHTML]="getBinaryObjectsForAdditionalInformation().length > 0 ? getBinaryObjectsForAdditionalInformation().length + ' files added' : 'No file added'">
+                        </span>
+                    </i>
+                </div>
                 <div [hidden]="!showAdditionalInformation" class="row mx-auto border-bottom" style="padding:.75rem;padding-left:0;">
                     <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFile($event)" [binaryObjects]="getBinaryObjectsForAdditionalInformation()" (onClearFile)="onUnSelectFile($event)">
                     </file-input>
                 </div>
             </div>
             <!-- Properties-->
-            <div class="col-12">
-                <div class="row border-bottom m-0" *ngFor="let prop of getProductProperties()">
-                    <div class="col-3" style="padding:.75rem;padding-left:0;">
-                        <div class="col-form-label">
-                            <strong [title]="getDefinition(prop)">{{ getPrettyName(prop) }}: </strong>
+            <div class="col-8 space-before section">
+                <div (click)="toggleProperties()" class="d-flex justify-content-between">
+                    <span [innerHTML]="'Properties' | translate" ></span>
+                    <i>
+                        <span *ngIf="!showProperties" [innerHTML]="getSelectedPropertiesCount() > 0 ? getSelectedPropertiesCount() + ' properties selected' : 'No properties selected'">
+                        </span>
+                    </i>
+                </div>
+                <div [hidden]="!showProperties">
+                    <div class="row border-bottom m-0" *ngFor="let prop of getProductProperties()">
+                        <div class="col-3" style="padding:.75rem;padding-left:0;">
+                            <div class="col-form-label">
+                                <strong [title]="getDefinition(prop)">{{ getPrettyName(prop) }}: </strong>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-6">
-                        <table *ngIf="prop.valueQualifier === 'FILE'" class="table table-borderless" style="margin-bottom:.75rem;">
-                            <tbody>
+                        <div class="col-6">
+                            <table *ngIf="prop.valueQualifier === 'FILE'" class="table table-borderless" style="margin-bottom:.75rem;">
+                                <tbody>
                                 <tr>
                                     <td class="pb-0">
                                         <file-input [binaryObjects]="prop.valueBinary" [multiple]="true" [maxSize]=1>
                                         </file-input>
                                     </td>
                                 </tr>
-                            </tbody>
-                        </table>
-                        <table *ngIf="prop.valueQualifier !== 'FILE'" class="table table-borderless" style="margin-bottom:.75rem;">
-                            <tbody>
-                            <tr *ngFor="let value of getValues(prop); let i = index">
-                                <!-- String properties with no options -->
-                                <ng-container *ngIf="prop.valueQualifier === 'STRING' && (!prop.options || prop.options.length == 0)">
-                                    <td style="vertical-align:middle" class="pb-0">
-                                        <input [(ngModel)]="value.value" class="form-control" type="text" name="{{value.value}}" />
-                                    </td>
-                                    <td style="vertical-align:middle" class="pb-0">
-                                        <select [(ngModel)]="value.languageID" class="form-control" type="text" name="{{value.languageID}}">
-                                            <option *ngFor='let language of languages' [value]="language" [selected]="language === value.languageID">{{language}}</option>
-                                        </select>
-                                    </td>
-                                </ng-container>
+                                </tbody>
+                            </table>
+                            <table *ngIf="prop.valueQualifier !== 'FILE'" class="table table-borderless" style="margin-bottom:.75rem;">
+                                <tbody>
+                                <tr *ngFor="let value of getValues(prop); let i = index">
+                                    <!-- String properties with no options -->
+                                    <ng-container *ngIf="prop.valueQualifier === 'STRING' && (!prop.options || prop.options.length == 0)">
+                                        <td style="vertical-align:middle" class="pb-0">
+                                            <input [(ngModel)]="value.value" class="form-control" type="text" name="{{value.value}}" />
+                                        </td>
+                                        <td style="vertical-align:middle" class="pb-0">
+                                            <select [(ngModel)]="value.languageID" class="form-control" type="text" name="{{value.languageID}}">
+                                                <option *ngFor='let language of languages' [value]="language" [selected]="language === value.languageID">{{language}}</option>
+                                            </select>
+                                        </td>
+                                    </ng-container>
                                     <!-- String properties with predefined options -->
                                     <td *ngIf="prop.valueQualifier === 'STRING' && (prop.options && prop.options.length > 0)" style="vertical-align:middle" class="pb-0">
                                         <select [(ngModel)]="value.value" class="form-control" type="text">
@@ -206,27 +226,25 @@
                                         <button class="btn btn-danger" type="button" (click)="onRemoveValue(prop,i)">&times;</button>
                                     </td>
                                 </tr>
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-3 align-right" style="padding:.75rem;padding-right:0;">
+                            <ng-container *ngIf="!prop.required">
+                                <button class="btn btn-outline-primary" (click)="onAddValue(prop)" *ngIf="prop.valueQualifier !== 'BOOLEAN' && prop.valueQualifier !== 'FILE'">
+                                    <span [innerHTML]="'Add' | translate"></span>
+                                </button>
+                                <button class="btn btn-outline-primary ml-1" (click)="onEditProperty(prop)"><span [innerHTML]="'Edit' | translate"></span></button>
+                                <button class="btn btn-danger ml-1" (click)="onRemoveProperty(prop)"><span [innerHTML]="'Delete' | translate"></span></button>
+                            </ng-container>
+                        </div>
                     </div>
-                    <div class="col-3 align-right" style="padding:.75rem;padding-right:0;">
-                        <ng-container *ngIf="!prop.required">
-                            <button class="btn btn-outline-primary" (click)="onAddValue(prop)" *ngIf="prop.valueQualifier !== 'BOOLEAN' && prop.valueQualifier !== 'FILE'">
-                                <span [innerHTML]="'Add' | translate"></span>
-                            </button>
-                            <button class="btn btn-outline-primary ml-1" (click)="onEditProperty(prop)"><span [innerHTML]="'Edit' | translate"></span></button>
-                            <button class="btn btn-danger ml-1" (click)="onRemoveProperty(prop)"><span [innerHTML]="'Delete' | translate"></span></button>
-                        </ng-container>
+                    <div class="space-before">
+                        <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)">
+                            <span [innerHTML]="(getSelectedPropertiesCount() > 0 ? 'Add more properties from product / service categories.': 'Select properties from product / service categories.')| translate">
+                            </span>
+                        </a>
                     </div>
-                </div>
-                <div *ngIf="!hasSelectedProperties()" class="space-before">
-                    <span [innerHTML]="'No selected properties.' | translate"></span>
-                    <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)">
-                        <span [innerHTML]="'Select properties from product / service categories.' | translate"></span>
-                    </a>
-                </div>
-                <div *ngIf="hasSelectedProperties()" class="space-before">
-                    <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)"><span [innerHTML]="'Add more properties from product / service categories.' | translate"></span></a>
                 </div>
             </div>
         </div>

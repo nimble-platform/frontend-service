@@ -160,6 +160,8 @@ export class ProductPublishComponent implements OnInit {
     showDimensions = false;
     // whether we need to show additional information or not
     showAdditionalInformation = false;
+    // whether we need to show properties or not
+    showProperties = false;
     // dimensions of the item
     multiValuedDimensions: MultiValuedDimension[] = null;
     // dimensions retrieved from the unit service
@@ -723,8 +725,12 @@ export class ProductPublishComponent implements OnInit {
         }
     }
 
-    hasSelectedProperties(): boolean {
-        return this.catalogueLine.goodsItem.item.additionalItemProperty.length > 0;
+    getSelectedPropertiesCount(): number{
+        return this.catalogueLine.goodsItem.item.additionalItemProperty.length;
+    }
+
+    toggleProperties() {
+        this.showProperties = !this.showProperties;
     }
 
     onAddValue(property: ItemProperty) {
@@ -914,6 +920,10 @@ export class ProductPublishComponent implements OnInit {
         this.productWrapper.removeDimension(attributeId, quantity);
         // update dimensions
         this.multiValuedDimensions = this.productWrapper.getDimensionMultiValue();
+    }
+
+    public getMultiValuedDimensionCount():number{
+        return this.productWrapper.getDimensionMultiValue(false,this.dimensions).length;
     }
     // the end of methods to handle dimensions
 

@@ -50,3 +50,15 @@
 .well {
     padding-top: 0px;
 }
+
+.section{
+    background-image: none;
+    background-color: transparent;
+    border: 2px solid #2980b9;
+    margin-left: 15px;
+    padding: 10px;
+}
+
+.section > div:first-child{
+    color:#2980b9;
+}
