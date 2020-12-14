@@ -131,29 +131,9 @@
     </ng-container>
 
     <!--Purchase Order-->
-    <table class="table table-striped" *ngIf="selectedPanel == 'PURCHASE_ORDER'">
-        <tr>
-            <th><span [innerHTML]="'Ordered Product' | translate"></span></th>
-            <th><span [innerHTML]="'Quantity' | translate"></span></th>
-            <th><span [innerHTML]="'Net Price' | translate"></span></th>
-            <th *ngIf="config.vatEnabled" [innerHTML]="'VAT' | translate"><span>VAT</span></th>
-            <th *ngIf="config.vatEnabled" [innerHTML]="'Gross Total' | translate"><span>Gross Total</span></th>
-        </tr>
-        <tr *ngFor="let priceWrapper of priceWrappers;let i=index">
-            <th scope="row"><span>{{priceWrapper.item.name[0].value }}</span></th>
-            <td><span>{{priceWrapper.orderedQuantity | quantityTranslatePipe}}</span></td>
-            <td><span>{{priceWrapper.totalPriceString}}</span></td>
-            <td *ngIf="config.vatEnabled"><span>{{priceWrapper.vatTotalString}}</span></td>
-            <td *ngIf="config.vatEnabled"><span>{{priceWrapper.grossTotalString}}</span></td>
-        </tr>
-        <tr>
-            <th scope="row"><span>{{'Total' | translate}}</span></th>
-            <td><span></span></td>
-            <td><span>{{getTotalPriceString()}}</span></td>
-            <td *ngIf="config.vatEnabled"><span>{{getVatTotalString()}}</span></td>
-            <td *ngIf="config.vatEnabled"><span>{{getGrossTotalString()}}</span></td>
-        </tr>
-    </table>
+    <div *ngIf="selectedPanel == 'PURCHASE_ORDER'" class="col-12 purchase-order">
+        <purchase-order [priceWrappers]="priceWrappers"></purchase-order>
+    </div>
 
     <hr class="actions-hr">
     <!-- Actions -->

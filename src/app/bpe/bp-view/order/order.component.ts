@@ -600,30 +600,6 @@ export class OrderComponent implements OnInit {
         return roundToTwoDecimals(totalPrice);
     }
 
-    getTotalPriceString() {
-        let totalPrice = 0;
-        for (let priceWrapper of this.priceWrappers) {
-            totalPrice += priceWrapper.totalPrice;
-        }
-        return roundToTwoDecimals(totalPrice) + " " + this.priceWrappers[0].currency;
-    }
-
-    getVatTotalString() {
-        let vatTotal = 0;
-        for (let priceWrapper of this.priceWrappers) {
-            vatTotal += priceWrapper.vatTotal
-        }
-        return roundToTwoDecimals(vatTotal) + " " + this.priceWrappers[0].currency;
-    }
-
-    getGrossTotalString() {
-        let grossTotal = 0;
-        for (let priceWrapper of this.priceWrappers) {
-            grossTotal += priceWrapper.grossTotal;
-        }
-        return roundToTwoDecimals(grossTotal) + " " + this.priceWrappers[0].currency;
-    }
-
     isThereADeletedProduct(): boolean {
         for (let isProductDeleted of this.processMetadata.areProductsDeleted) {
             if (isProductDeleted) {

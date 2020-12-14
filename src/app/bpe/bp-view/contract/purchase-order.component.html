@@ -1,0 +1,58 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+<table class="table table-striped bordered border-info">
+    <tr>
+        <th><span [innerHTML]="'Ordered Product' | translate"></span></th>
+        <th><span [innerHTML]="'Quantity' | translate"></span></th>
+        <th><span [innerHTML]="'Net Price' | translate"></span></th>
+        <th *ngIf="config.vatEnabled" [innerHTML]="'VAT' | translate"><span></span></th>
+        <th *ngIf="config.vatEnabled" [innerHTML]="'Gross Total' | translate"><span></span></th>
+    </tr>
+    <ng-container *ngIf="negotiationModelWrappers">
+        <tr *ngFor="let wrapper of negotiationModelWrappers;let i=index">
+            <th scope="row">
+                <span>{{(useQuotationWrapper ? wrapper.catalogueLine.goodsItem.item.name[0].value : wrapper.catalogueLine.goodsItem.item.name[0].value)|translate}}</span>
+            </th>
+            <td>
+                <span *ngIf="!useQuotationWrapper">{{wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value}} {{wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.unitCode | translate}}</span>
+                <span *ngIf="useQuotationWrapper">{{wrapper.newQuotationWrapper.orderedQuantity.value}} {{wrapper.newQuotationWrapper.orderedQuantity.unitCode | translate}}</span>
+            </td>
+            <td>
+                <span>{{(useQuotationWrapper ? wrapper.newQuotationWrapper.priceWrapper.totalPriceString : wrapper.rfqTotalPriceString)|translate}}</span>
+            </td>
+            <td *ngIf="config.vatEnabled">
+                <span>{{(useQuotationWrapper ? wrapper.newQuotationWrapper.priceWrapper.vatTotalString : wrapper.rfqVatTotalString)|translate}}</span>
+            </td>
+            <td *ngIf="config.vatEnabled">
+                <span>{{(useQuotationWrapper ? wrapper.newQuotationWrapper.priceWrapper.grossTotalString : wrapper.rfqGrossTotalString)|translate}}</span>
+            </td>
+        </tr>
+    </ng-container>
+    <ng-container *ngIf="priceWrappers">
+        <tr *ngFor="let priceWrapper of priceWrappers;let i=index">
+            <th scope="row"><span>{{priceWrapper.item.name[0].value }}</span></th>
+            <td><span>{{priceWrapper.orderedQuantity | quantityTranslatePipe}}</span></td>
+            <td><span>{{priceWrapper.totalPriceString}}</span></td>
+            <td *ngIf="config.vatEnabled"><span>{{priceWrapper.vatTotalString}}</span></td>
+            <td *ngIf="config.vatEnabled"><span>{{priceWrapper.grossTotalString}}</span></td>
+        </tr>
+    </ng-container>
+    <tr>
+        <th scope="row"><span>{{'Total' | translate}}</span></th>
+        <td><span></span></td>
+        <td><span>{{getTotalPriceString() | translate}}</span></td>
+        <td *ngIf="config.vatEnabled"><span>{{getVatTotalString() | translate}}</span></td>
+        <td *ngIf="config.vatEnabled"><span>{{getGrossTotalString() | translate}}</span></td>
+    </tr>
+</table>
