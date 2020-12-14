@@ -47,7 +47,7 @@
         </tr>
         <tr *ngFor="let wrapper of wrappers;let i=index">
             <th scope="row"><span>{{wrapper.catalogueLine.goodsItem.item.name[0].value }}</span></th>
-            <td><span>{{rfq.requestForQuotationLine[i].lineItem.quantity.value}} {{getQuantityUnit(wrapper.catalogueLine) | translate}}</span></td>
+            <td><span>{{rfq.requestForQuotationLine[i].lineItem.quantity.value}} {{rfq.requestForQuotationLine[i].lineItem.quantity.unitCode | translate}}</span></td>
             <td><span>{{wrapper.rfqTotalPriceString | translate}}</span></td>
             <td *ngIf="config.vatEnabled"><span>{{wrapper.rfqVatTotalString | translate}}</span></td>
             <td *ngIf="config.vatEnabled"><span>{{wrapper.rfqGrossTotalString | translate}}</span></td>

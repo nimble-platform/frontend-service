@@ -323,13 +323,6 @@ export class NegotiationRequestComponent implements OnInit {
      * Internal methods
      */
 
-    getQuantityUnit(catalogueLine: CatalogueLine): string {
-        if (!catalogueLine) {
-            return "";
-        }
-        return catalogueLine.requiredItemLocationQuantity.price.baseQuantity.unitCode || "";
-    }
-
     isWaitingForReply(): boolean {
         return this.processMetadata && this.processMetadata.processStatus === "Started";
     }
