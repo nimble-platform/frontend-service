@@ -14,6 +14,7 @@
 <table class="table table-striped bordered border-info">
     <tr>
         <th><span [innerHTML]="'Ordered Product' | translate"></span></th>
+        <th class="description-table-header"><span [innerHTML]="'Description' | translate"></span></th>
         <th><span [innerHTML]="'Quantity' | translate"></span></th>
         <th><span [innerHTML]="'Net Price' | translate"></span></th>
         <th *ngIf="config.vatEnabled" [innerHTML]="'VAT' | translate"><span></span></th>
@@ -24,6 +25,23 @@
             <th scope="row">
                 <span>{{(useQuotationWrapper ? wrapper.catalogueLine.goodsItem.item.name[0].value : wrapper.catalogueLine.goodsItem.item.name[0].value)|translate}}</span>
             </th>
+            <td>
+                <div *ngIf="descriptions[i].length > 0" class="description-cell">
+                    <span *ngIf="descriptions[i].length <= 250">
+                        {{descriptions[i]}}
+                    </span>
+                    <div *ngIf="descriptions[i].length > 250">
+                        {{descriptionShowMore[i] ? descriptions[i].substring(0, 250) + "..." : descriptions[i]}}
+                        <div class="d-flex justify-content-end show-more"
+                             (click)="descriptionShowMore[i]=!descriptionShowMore[i]">
+                            {{(descriptionShowMore[i] ? "Show more" : "Show less")|translate}}
+                        </div>
+                    </div>
+                </div>
+                <span *ngIf="descriptions[i].length == 0">
+                    {{'No description provided.' | translate}}
+                </span>
+            </td>
             <td>
                 <span *ngIf="!useQuotationWrapper">{{wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value}} {{wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.unitCode | translate}}</span>
                 <span *ngIf="useQuotationWrapper">{{wrapper.newQuotationWrapper.orderedQuantity.value}} {{wrapper.newQuotationWrapper.orderedQuantity.unitCode | translate}}</span>
@@ -42,6 +60,23 @@
     <ng-container *ngIf="priceWrappers">
         <tr *ngFor="let priceWrapper of priceWrappers;let i=index">
             <th scope="row"><span>{{priceWrapper.item.name[0].value }}</span></th>
+            <td>
+                <div *ngIf="descriptions[i].length > 0" class="description-cell">
+                    <span *ngIf="descriptions[i].length <= 250">
+                        {{descriptions[i]}}
+                    </span>
+                    <div *ngIf="descriptions[i].length > 250">
+                        {{descriptionShowMore[i] ? descriptions[i].substring(0, 250) + "..." : descriptions[i]}}
+                        <div class="d-flex justify-content-end show-more"
+                             (click)="descriptionShowMore[i]=!descriptionShowMore[i]">
+                            {{(descriptionShowMore[i] ? "Show more" : "Show less")|translate}}
+                        </div>
+                    </div>
+                </div>
+                <span *ngIf="descriptions[i].length == 0">
+                    {{'No description provided.' | translate}}
+                </span>
+            </td>
             <td><span>{{priceWrapper.orderedQuantity | quantityTranslatePipe}}</span></td>
             <td><span>{{priceWrapper.totalPriceString}}</span></td>
             <td *ngIf="config.vatEnabled"><span>{{priceWrapper.vatTotalString}}</span></td>
@@ -50,6 +85,7 @@
     </ng-container>
     <tr>
         <th scope="row"><span>{{'Total' | translate}}</span></th>
+        <td><span></span></td>
         <td><span></span></td>
         <td><span>{{getTotalPriceString() | translate}}</span></td>
         <td *ngIf="config.vatEnabled"><span>{{getVatTotalString() | translate}}</span></td>

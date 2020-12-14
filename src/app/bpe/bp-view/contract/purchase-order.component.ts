@@ -14,9 +14,9 @@
    limitations under the License.
  */
 
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import * as myGlobals from '../../../globals';
-import {roundToTwoDecimals} from '../../../common/utils';
+import {roundToTwoDecimals, selectPreferredValue} from '../../../common/utils';
 import {TranslateService} from '@ngx-translate/core';
 import {NegotiationModelWrapper} from '../negotiation/negotiation-model-wrapper';
 import {PriceWrapper} from '../../../common/price-wrapper';
@@ -24,8 +24,9 @@ import {PriceWrapper} from '../../../common/price-wrapper';
 @Component({
     selector: 'purchase-order',
     templateUrl: './purchase-order.component.html',
+    styleUrls: ['./purchase-order.component.css']
 })
-export class PurchaseOrderComponent {
+export class PurchaseOrderComponent implements OnInit {
 
     config = myGlobals.config;
 
@@ -36,8 +37,32 @@ export class PurchaseOrderComponent {
     // it is used when the negotiation model wrappers are provided
     @Input() useQuotationWrapper: boolean = false;
 
+    // list of boolean flags if show more text is displayed or not
+    descriptionShowMore: boolean[] = [];
+    // keeps the descriptions of products
+    descriptions: string[] = [];
+
+    selectPreferredValue = selectPreferredValue;
+
     constructor(private translate: TranslateService) {
 
+    }
+
+    ngOnInit(): void {
+        // populate description and show more arrays
+        if (this.negotiationModelWrappers) {
+            for (let wrapper of this.negotiationModelWrappers) {
+                let description = selectPreferredValue(wrapper.catalogueLine.goodsItem.item.description);
+                this.descriptions.push(description);
+                this.descriptionShowMore.push(true);
+            }
+        } else {
+            for (let wrapper of this.priceWrappers) {
+                let description = selectPreferredValue(wrapper.item.description);
+                this.descriptions.push(description);
+                this.descriptionShowMore.push(true);
+            }
+        }
     }
 
     // methods to calculate total prices
