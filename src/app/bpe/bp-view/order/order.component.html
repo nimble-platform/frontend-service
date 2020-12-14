@@ -141,7 +141,7 @@
         </tr>
         <tr *ngFor="let priceWrapper of priceWrappers;let i=index">
             <th scope="row"><span>{{priceWrapper.item.name[0].value }}</span></th>
-            <td><span>{{order.orderLine[i].lineItem.quantity | quantityTranslatePipe}}</span></td>
+            <td><span>{{priceWrapper.orderedQuantity | quantityTranslatePipe}}</span></td>
             <td><span>{{priceWrapper.totalPriceString}}</span></td>
             <td *ngIf="config.vatEnabled"><span>{{priceWrapper.vatTotalString}}</span></td>
             <td *ngIf="config.vatEnabled"><span>{{priceWrapper.grossTotalString}}</span></td>
