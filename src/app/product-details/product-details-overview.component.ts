@@ -44,6 +44,7 @@ import { UserService } from '../user-mgmt/user.service';
 import { ShoppingCartDataService } from '../bpe/shopping-cart/shopping-cart-data-service';
 import { ValidationService } from '../common/validation/validators';
 import { FormGroup } from '@angular/forms';
+import {AEROSPACE_TAXONOMY_PART_NUMBER_PROPERTY_URI} from '../common/constants';
 
 @Component({
     selector: 'product-details-overview',
@@ -81,6 +82,7 @@ export class ProductDetailsOverviewComponent implements OnInit {
 
     classificationNames = [];
     productId = "";
+    productPartNumberProperty:ItemProperty = null;
     selectPreferredValue = selectPreferredValue;
     catalogueId = "";
     catalogueName = "";
@@ -124,6 +126,8 @@ export class ProductDetailsOverviewComponent implements OnInit {
             // do not show Add to Cart button for logistics services
             this.showAddToCartButton = this.showAddToCartButton && !isLogisticsService(this.wrapper.line);
         }
+        // set product part number
+        this.setProductPartNumberProperty();
         /*
             Cache FurnitureOntology categories. Then, use cached categories to get correct category label according
             to the default language of the browser.
@@ -390,5 +394,10 @@ export class ProductDetailsOverviewComponent implements OnInit {
         else if (index >= length) {
             return 0;
         }
+    }
+
+    private setProductPartNumberProperty(){
+        const properties = this.wrapper.getAllUniqueProperties();
+        this.productPartNumberProperty = properties.find(property => property.uri === AEROSPACE_TAXONOMY_PART_NUMBER_PROPERTY_URI);
     }
 }

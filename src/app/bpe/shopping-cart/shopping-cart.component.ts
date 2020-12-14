@@ -16,8 +16,7 @@ import { Catalogue } from '../../catalogue/model/publish/catalogue';
 import { Router } from '@angular/router';
 import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { ShoppingCartDataService } from './shopping-cart-data-service';
-import { copy, selectDescription, selectName, selectPreferredValues } from '../../common/utils';
-import { ItemPriceWrapper } from '../../common/item-price-wrapper';
+import { copy, selectPreferredValues } from '../../common/utils';
 import { CatalogueLine } from '../../catalogue/model/publish/catalogue-line';
 import { Item } from '../../catalogue/model/publish/item';
 import { CompanySettings } from '../../user-mgmt/model/company-settings';
@@ -95,7 +94,6 @@ export class ShoppingCartComponent implements OnInit {
 
     getProductName = selectPreferredValues;
     getPartyId = UBLModelUtils.getPartyId;
-    getLinePartyId = UBLModelUtils.getLinePartyId;
 
     @ViewChild(ShoppingCartSummaryModalComponent)
     private shoppingCartSummaryModal: ShoppingCartSummaryModalComponent;
@@ -182,7 +180,7 @@ export class ShoppingCartComponent implements OnInit {
             let lines: CatalogueLine[] = this.shoppingCart.catalogueLine;
             if (lines.length > 0) {
                 for (let i = 0; i < lines.length; i++) {
-                    this.expandedStatusesOfCartItems.set(lines[i].hjid, i === 0 ? true : false);
+                    this.expandedStatusesOfCartItems.set(lines[i].hjid, i === 0);
                     this.deleteCallStatuses.set(lines[i].hjid, new CallStatus());
                 }
             }
@@ -341,8 +339,6 @@ export class ShoppingCartComponent implements OnInit {
     private getDefaultPlatformTermsAndConditionsForAllCartLines(): void {
         this.initCallStatus.aggregatedSubmit();
 
-        let sellerSettingsAggregation: CompanySettings[] = [];
-
         this.contractService.getDefaultTermsAndConditions(this.shoppingCart.catalogueLine.map(value => value.goodsItem.item.catalogueDocumentReference.id),
             this.shoppingCart.catalogueLine.map(value => value.goodsItem.deliveryTerms.incoterms),
             this.cookieService.get('company_id'),
@@ -404,11 +400,6 @@ export class ShoppingCartComponent implements OnInit {
      * getters for the template
      */
 
-    getPriceString(cartLine: CatalogueLine): string {
-        let priceWrapper: ItemPriceWrapper = new ItemPriceWrapper(cartLine.requiredItemLocationQuantity.price);
-        return priceWrapper.pricePerItemString;
-    }
-
     getRfq(cartLine: CatalogueLine): RequestForQuotation {
         let sellerId: string = UBLModelUtils.getPartyId(cartLine.goodsItem.item.manufacturerParty);
         return this.rfqs.get(sellerId);
@@ -417,10 +408,6 @@ export class ShoppingCartComponent implements OnInit {
     /**
      * event handlers
      */
-
-    onOrderQuantityChange(): void {
-        // nothing for now
-    }
 
     onApplyTerms(commonTerms: CommonTerms): void {
         if (commonTerms) {
@@ -513,7 +500,7 @@ export class ShoppingCartComponent implements OnInit {
                         callStatus.callback(null, true);
                         this.deleteCallStatuses.delete(cartLine.hjid);
                     })
-                }).catch(error => {
+                }).catch(() => {
                     callStatus.error('Failed to delete product from the shopping cart');
                 })
             }
@@ -553,8 +540,7 @@ export class ShoppingCartComponent implements OnInit {
                 const rfq: RequestForQuotation = copy(this.rfqs.get(sellerId));
                 // in the final rfq, there should be a single rfq line relating to selected catalogue line
                 // find this rfq line and remove the rest
-                let index = this.negotiationModelWrappers.get(cartLine.hjid).lineIndex;
-                rfq.requestForQuotationLine = [rfq.requestForQuotationLine[index]];
+                rfq.requestForQuotationLine = [rfq.requestForQuotationLine[this.negotiationModelWrappers.get(cartLine.hjid).lineIndex]];
                 // replace properties of rfq line with the selected ones
                 rfq.requestForQuotationLine[0].lineItem.item.additionalItemProperty = this.modifiedCatalogueLines.get(cartLine.hjid).goodsItem.item.additionalItemProperty;
 
@@ -653,7 +639,7 @@ export class ShoppingCartComponent implements OnInit {
                         let document: RequestForQuotation | Order = areNegotiationConditionsSatisfiedForAtLeastOneProduct ? copyRfq : this.createOrderWithRfq(copyRfq, lineHjids);
                         promises.push(this.bpeService.startProcessWithDocument(document, document.sellerSupplierParty.party.federationInstanceID));
                     });
-                    Promise.all(promises).then(response => {
+                    Promise.all(promises).then(() => {
                         // started the negotiation for all products successfully,so remove them from the shopping cart
                         let hjids: number[] = [];
                         for (let cartLine of this.shoppingCart.catalogueLine) {

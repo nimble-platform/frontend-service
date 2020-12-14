@@ -15,7 +15,6 @@
  */
 
 import { Price } from "../catalogue/model/publish/price";
-import { Quantity } from "../catalogue/model/publish/quantity";
 import { currencyToString, roundToTwoDecimals } from "./utils";
 
 /**
@@ -34,8 +33,7 @@ export class ItemPriceWrapper {
 
     get pricePerItem(): number {
         const amount = this.price.priceAmount;
-        const qty = this.price.baseQuantity
-        const baseQuantity = qty.value ||  1;
+        const qty = this.price.baseQuantity;
 
         if (!amount.value || !qty.value) {
             return 0;
@@ -46,7 +44,7 @@ export class ItemPriceWrapper {
 
     get pricePerItemString(): string {
         const amount = this.price.priceAmount;
-        const qty = this.price.baseQuantity
+        const qty = this.price.baseQuantity;
         const baseQuantity = qty.value ||  1;
 
         if (!amount.value || amount.value == 0 || !qty.value) {
