@@ -68,8 +68,7 @@ export class CatalogueLinePanelComponent {
 
     redirectToEdit() {
         this.catalogueService.editCatalogueLine(this.catalogueLine);
-        this.publishService.publishMode = 'edit';
-        this.publishService.publishingStarted = false;
+        this.publishService.resetData("edit");
         this.categoryService.resetSelectedCategories();
 
         if (isLogisticsService(this.catalogueLine))

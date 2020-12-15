@@ -69,6 +69,7 @@ import { NegotiationResponseItemComponent } from './bp-view/negotiation/negotiat
 import { OrderItemComponent } from './bp-view/order/order-item.component';
 import { CommonCartTermsComponent } from './shopping-cart/common-cart-terms.component';
 import { ShoppingCartSummaryModalComponent } from './shopping-cart/shopping-cart-summary-modal.component';
+import {PurchaseOrderComponent} from './bp-view/contract/purchase-order.component';
 
 @NgModule({
     imports: [
@@ -117,6 +118,7 @@ import { ShoppingCartSummaryModalComponent } from './shopping-cart/shopping-cart
         ContractComponent,
         ClauseComponent,
         PpapClauseComponent,
+        PurchaseOrderComponent,
         ShipmentInputComponent,
         ThreadSummaryComponent,
         ThreadEventComponent,

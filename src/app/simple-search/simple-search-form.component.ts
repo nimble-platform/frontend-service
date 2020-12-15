@@ -1922,7 +1922,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         this.publishService.selectedProductsInSearch = this.productsSelectedForPublish.map(product => {
             return {hjid: product.uri, label: product.label};
         });
-        this.router.navigate(['catalogue/publish'], {queryParams: {pg: 'single', productType: 'product', searchRef: 'true'}});
+        this.router.navigate(['catalogue/publish'], {queryParams: {pg: 'single', searchRef: 'true'}});
     }
 
     // methods for network functionality

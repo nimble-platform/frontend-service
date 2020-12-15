@@ -570,10 +570,8 @@ export class CatalogueViewComponent implements OnInit {
 
     redirectToEdit(catalogueLine) {
         this.catalogueService.editCatalogueLine(catalogueLine);
-        this.publishService.publishMode = 'edit';
-        this.publishService.publishingStarted = false;
+        this.publishService.resetData("edit");
         this.categoryService.resetSelectedCategories();
-        // if(this.catlogueId == "all"){
         this.catalogueService.getCatalogueFromUuid(catalogueLine.goodsItem.item.catalogueDocumentReference.id)
             .then(res => {
                 if (isLogisticsService(catalogueLine))
@@ -587,18 +585,11 @@ export class CatalogueViewComponent implements OnInit {
                 else
                     this.router.navigate(['catalogue/publish'], { queryParams: { cat: 'default', pg: "single" } });
             });
-        // }else{
-        //     if(isLogisticsService(catalogueLine))
-        //         this.router.navigate(['catalogue/publish-logistic'], {queryParams: {cat:this.catlogueId, pg: "single"}});
-        //     else
-        //         this.router.navigate(['catalogue/publish'], {queryParams: {cat:this.catlogueId, pg: "single"}});
-        // }
     }
 
     redirectToCopy(catalogueLine) {
         this.catalogueService.editCatalogueLine(catalogueLine);
-        this.publishService.publishMode = 'copy';
-        this.publishService.publishingStarted = false;
+        this.publishService.resetData("copy");
         this.categoryService.resetSelectedCategories();
         if (this.catalogueUuid == "all") {
             this.catalogueService.getCatalogueFromUuid(catalogueLine.goodsItem.item.catalogueDocumentReference.id)
@@ -665,7 +656,7 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     navigateToBulkUploadPage() {
-        this.router.navigate(["/catalogue/publish"], { queryParams: { pg: 'bulk', productType: 'product' } });
+        this.router.navigate(["/catalogue/publish"], { queryParams: { pg: 'bulk' } });
     }
 
     initDataRetrieval() {

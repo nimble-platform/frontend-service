@@ -695,3 +695,8 @@ ngb-pagination .page-item.active .page-link {
     color: white;
     width: 45px;
 }
+
+.purchase-order {
+    padding-left: 0;
+    padding-right: 0
+}

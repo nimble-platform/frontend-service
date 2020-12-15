@@ -214,7 +214,6 @@ export class LogisticServicePublishComponent implements OnInit {
     private initView(userParty, catalogueResponse: CataloguePaginationResponse, settings, eClassLogisticCategories): void {
         this.companyNegotiationSettings = settings;
         this.catalogueService.setEditMode(true);
-        this.publishStateService.resetData();
         // Following "if" block is executed when redirected by an "edit" button
         // "else" block is executed when redirected by "publish" tab
         this.publishMode = this.publishStateService.publishMode;
