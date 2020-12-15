@@ -7,6 +7,7 @@ import {UserService} from '../user-mgmt/user.service';
 import {CookieService} from 'ng2-cookies';
 import {CatalogueLine} from '../catalogue/model/publish/catalogue-line';
 import {DemandPaginationResponse} from './model/demand-pagination-response';
+import {DEFAULT_LANGUAGE} from '../catalogue/model/constants';
 
 @Injectable()
 export class DemandService {
@@ -23,8 +24,28 @@ export class DemandService {
             .catch(this.handleError);
     }
 
-    public getDemands(partyId: string, page: number, pageSize: number): Promise<DemandPaginationResponse> {
-        const url = catalogue_endpoint + `/demands?companyId=${partyId}&pageNo=${page}&limit=${pageSize}`;
+    public getDemands(searchTerm: string = null, partyId: string = null, categoryUri: string = null, dueDate: string = null, buyerCountry: string = null, deliveryCountry: string = null,
+                      page = 1, pageSize = 10): Promise<DemandPaginationResponse> {
+
+        let url = catalogue_endpoint + `/demands?pageNo=${page}&limit=${pageSize}`;
+        if (!!searchTerm) {
+           url += `&query=${encodeURIComponent(searchTerm)}&lang=${DEFAULT_LANGUAGE()}`;
+        }
+        if (partyId) {
+            url += `&companyId=${partyId}`;
+        }
+        if (categoryUri) {
+            url += `&categoryUri=${encodeURIComponent(categoryUri)}`;
+        }
+        if (dueDate) {
+            url += `&dueDate=${dueDate}`;
+        }
+        if (buyerCountry) {
+            url += `&buyerCountry=${buyerCountry}`;
+        }
+        if (deliveryCountry) {
+            url += `&deliveryCountry=${deliveryCountry}`;
+        }
         return this.http
             .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()

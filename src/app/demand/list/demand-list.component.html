@@ -11,15 +11,17 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  -->
+<!-- search bar -->
 <div class="d-flex mt-3">
-    <input type="text" class="form-control mr-3">
-    <button class="btn btn-primary">Search</button>
+    <input type="text" class="form-control mr-3" [(ngModel)]="searchTerm" (keyup.enter)="onSearchClicked()">
+    <button class="btn btn-primary" (click)="onSearchClicked()">Search</button>
 </div>
-
-<hr>
-<div class="justify-content-center pagination">
+<call-status [large]="true" [callStatus]="searchCallStatus"></call-status>
+<!-- pagination -->
+<div *ngIf="demands?.length > 0" class="justify-content-center pagination space-before">
     <ngb-pagination [collectionSize]="totalCount" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="onPageChange($event)"></ngb-pagination>
 </div>
+<!-- demand list -->
 <div *ngFor="let demand of demands" class="space-before">
     <demand-list-item [demand]="demand.demand" [leafCategory]="demand.leafCategory">
     </demand-list-item>
