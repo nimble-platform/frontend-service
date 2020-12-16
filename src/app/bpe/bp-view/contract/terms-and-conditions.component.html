@@ -15,13 +15,21 @@
 <call-status [callStatus]="callStatus"></call-status>
 <div class="col-12 section" *ngIf="_termsAndConditions">
     <div *ngFor="let clause of _termsAndConditions;let i=index" class="mb-1">
-        <button [ngClass]="isSameWithTheOriginalClause(clause) ? 'btn btn-primary btn-outline-primary small-button' : 'btn btn-danger small-button'" (click)="showSection[i] = !showSection[i]; setSectionText(i)">
-            {{getClauseName(clause)}}
-        </button>
+        <div class="d-flex">
+            <button *ngIf="showActionButton && !readOnly"  class="btn btn-danger btn-sm space-right {{actionButtonClass}}" (click)="emitCollapseClause(i)">
+                {{(clause.tradingTerms.length > 0 ? "Update": "View")|translate}}
+            </button>
+            <!-- Button to open/close clause content-->
+            <button [ngClass]="isSameWithTheOriginalClause(clause) ? 'btn btn-primary btn-outline-primary small-button' : 'btn btn-danger small-button'" (click)="collapseClause(i)">
+                {{getClauseName(clause)}}
+            </button>
+        </div>
+        <!-- Clause content and trading terms-->
         <div class="card" [hidden]="!showSection[i]" style="font-size: 0.9rem">
             <div class="card-header">{{getClauseName(clause)}}</div>
             <div id="{{generateIdForClause(i)}}" class="card-body" style="white-space: pre-wrap">
             </div>
+            <!-- Trading terms -->
             <div *ngIf="clause.tradingTerms.length > 0 && !readOnly" class="card-footer">
                 <div *ngFor="let tradingTerm of clause.tradingTerms; let j=index" class="row">
                     <div class="col-4">

@@ -70,6 +70,7 @@ import { OrderItemComponent } from './bp-view/order/order-item.component';
 import { CommonCartTermsComponent } from './shopping-cart/common-cart-terms.component';
 import { ShoppingCartSummaryModalComponent } from './shopping-cart/shopping-cart-summary-modal.component';
 import {PurchaseOrderComponent} from './bp-view/contract/purchase-order.component';
+import {NegotiationClauseService} from './bp-view/negotiation/negotiation-clause-service';
 
 @NgModule({
     imports: [
@@ -142,6 +143,8 @@ import {PurchaseOrderComponent} from './bp-view/contract/purchase-order.componen
         PpapClauseComponent,
         ThreadSummaryComponent
     ],
-    providers: []
+    providers: [
+        NegotiationClauseService
+    ]
 })
 export class BPEModule { }

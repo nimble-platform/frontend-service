@@ -438,11 +438,19 @@
             <div [hidden]="selectedTCTab != 'CLAUSES'" class="row content-row">
                 <div class="col-3"></div>
                 <div class="col-3">
-                    <terms-and-conditions [hidden]="primaryTermsSource != 'product_defaults'" [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer-product-defaults'" [sellerFederationId]="rfq.sellerSupplierParty.party.federationInstanceID" [termsAndConditions]="defaultTermsAndConditions" [originalTermAndConditionClauses]="defaultTermsAndConditions">
+                    <terms-and-conditions [hidden]="primaryTermsSource != 'product_defaults'" [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer-product-defaults'"
+                                          [sellerFederationId]="rfq.sellerSupplierParty.party.federationInstanceID" [termsAndConditions]="defaultTermsAndConditions"
+                                          [originalTermAndConditionClauses]="defaultTermsAndConditions" [componentIndex]="wrapper.lineIndex">
                     </terms-and-conditions>
-                    <terms-and-conditions *ngIf="wrapper.frameContractQuotation" [hidden]="primaryTermsSource != 'frame_contract'" [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer-frame-contract'" [sellerFederationId]="rfq.sellerSupplierParty.party.federationInstanceID" [termsAndConditions]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause" [originalTermAndConditionClauses]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause">
+                    <terms-and-conditions *ngIf="wrapper.frameContractQuotation" [hidden]="primaryTermsSource != 'frame_contract'" [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true"
+                                          [documentType]="'rfq-manufacturer-frame-contract'" [sellerFederationId]="rfq.sellerSupplierParty.party.federationInstanceID"
+                                          [termsAndConditions]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause"
+                                          [originalTermAndConditionClauses]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause" [componentIndex]="wrapper.lineIndex">
                     </terms-and-conditions>
-                    <terms-and-conditions *ngIf="wrapper.lastOfferQuotation" [hidden]="primaryTermsSource != 'last_offer'" [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true" [documentType]="'rfq-manufacturer-last-offer'" [sellerFederationId]="rfq.sellerSupplierParty.party.federationInstanceID" [termsAndConditions]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause" [originalTermAndConditionClauses]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause">
+                    <terms-and-conditions *ngIf="wrapper.lastOfferQuotation" [hidden]="primaryTermsSource != 'last_offer'" [sellerPartyId]="getPartyId(rfq.sellerSupplierParty.party)" [readOnly]="true"
+                                          [documentType]="'rfq-manufacturer-last-offer'" [sellerFederationId]="rfq.sellerSupplierParty.party.federationInstanceID"
+                                          [termsAndConditions]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause"
+                                          [originalTermAndConditionClauses]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause" [componentIndex]="wrapper.lineIndex">
                     </terms-and-conditions>
                 </div>
                 <div class="col-3">
@@ -453,7 +461,8 @@
                                           [readOnly]="true"
                                           [documentType]="'rfq'"
                                           [sellerFederationId]="rfq.sellerSupplierParty.party.federationInstanceID"
-                                          [termsAndConditions]="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.clause"></terms-and-conditions>
+                                          [termsAndConditions]="rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.clause"
+                                          [componentIndex]="wrapper.lineIndex"></terms-and-conditions>
                 </div>
                 <div class="col-3">
                     <terms-and-conditions *ngIf="isSellerTermsVisible()" [selectedIncoterm]="wrapper.newQuotationWrapper.incoterms" [selectedTradingTerm]="wrapper.newQuotationWrapper.paymentTermsWrapper.paymentTerm"
@@ -466,7 +475,9 @@
                                           [readOnly]="isLoading() || isReadOnly()"
                                           [sellerFederationId]="quotation.sellerSupplierParty.party.federationInstanceID"
                                           [documentType]="'quotation'"
-                                          [termsAndConditions]="quotation.quotationLine[wrapper.lineIndex].lineItem.clause"></terms-and-conditions>
+                                          [termsAndConditions]="quotation.quotationLine[wrapper.lineIndex].lineItem.clause"
+                                          [showActionButton]="true" [actionButtonClass]="'col-3'"
+                                          [componentIndex]="wrapper.lineIndex"></terms-and-conditions>
                 </div>
             </div>
         </div>
