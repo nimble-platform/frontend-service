@@ -1,0 +1,63 @@
+<!--
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   In collaboration with
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
+<div class="card border-primary-nimble mb-3">
+    <!-- Category facet with combobox -->
+    <div *ngIf="taxonomyIDs" class="card-header bg-primary-nimble input-group">
+        <div ngbDropdown class="d-inline-block input-group-prepend">
+            <button class="btn text-white bg-primary-nimble " type="button" id="allCategories" ngbDropdownToggle>
+                {{taxonomy.replace("FurnitureOntology", "Furniture Sector"|translate)}} <span [innerHTML]="'Categories' | translate"></span>
+            </button>
+            <div ngbDropdownMenu aria-labelledby="allCategories">
+                <a *ngFor="let taxonomyID of taxonomyIDs" class="dropdown-item" (click)="changeTaxonomyId(taxonomyID)">{{taxonomyID.replace("FurnitureOntology", "Furniture Sector"|translate)}} <span [innerHTML]="'Categories' | translate"></span></a>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="!taxonomyIDs" class="card-header text-white bg-primary-nimble">
+        <span [innerHTML]="'Category' | translate"></span>
+    </div>
+    <div class="card-body">
+        <div *ngIf="loading">
+            <img src="../../../assets/images/form_loader.gif" />
+        </div>
+        <div *ngIf="!loading">
+            <div *ngFor="let c of cat_levels; let i = index">
+                <!-- if there is not a selected category, render only the root level-->
+                <!-- if a category is selected, render the one more finer level than the level of selected category -->
+                <ng-container>
+                    <div *ngFor="let lvl of c">
+                        <!-- selected category -->
+                        <div *ngIf="catId == lvl.id">
+                            <!-- bolded entry, rendered when there is no excluding category facets -->
+                            <!-- or for the deepest level entry when the Others entry is selected -->
+                            <!-- cat_level here corresponds to the level of parent category -->
+                            <span class="clickable" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">
+                                <b>{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></b>
+                            </span> ({{ lvl.count }})
+                        </div>
+                        <!-- other categories in the hierarchy -->
+                        <div *ngIf="catId!=lvl.id">
+                            <span class="clickable" (click)="onSelectCategory(lvl.name, lvl.id, i)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">{{ lvl.preferredName.substring(0,30) }}
+                                <span *ngIf="lvl.preferredName.length>30">...</span>
+                            </span>
+                            <span>({{ lvl.count }})</span>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>

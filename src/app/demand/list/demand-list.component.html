@@ -14,15 +14,32 @@
 <!-- search bar -->
 <div class="d-flex mt-3">
     <input type="text" class="form-control mr-3" [(ngModel)]="searchTerm" (keyup.enter)="onSearchClicked()">
-    <button class="btn btn-primary" (click)="onSearchClicked()">Search</button>
+    <button singleClick class="btn btn-primary" (click)="onSearchClicked()">Search</button>
 </div>
 <call-status [large]="true" [callStatus]="searchCallStatus"></call-status>
-<!-- pagination -->
-<div *ngIf="demands?.length > 0" class="justify-content-center pagination space-before">
-    <ngb-pagination [collectionSize]="totalCount" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="onPageChange($event)"></ngb-pagination>
+<div *ngIf="demands?.length > 0" class="row no-gutters">
+    <!-- pagination -->
+    <div class="offset-3 col-9 justify-content-center pagination space-before">
+        <ngb-pagination [collectionSize]="totalCount" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="onPageChange($event)"></ngb-pagination>
+    </div>
 </div>
-<!-- demand list -->
-<div *ngFor="let demand of demands" class="space-before">
-    <demand-list-item [demand]="demand.demand" [leafCategory]="demand.leafCategory">
-    </demand-list-item>
+<div class="d-flex no-gutters">
+    <div class="facet-column">
+        <div *ngIf="demands.length > 0">
+            <button class="btn btn-secondary mb-2" (click)="onResetSearch()"><span [innerHTML]="'Reset Search' | translate"></span></button>
+        </div>
+        <ng-container *ngIf="demandCategories">
+            <category-facet [categoryCounts]="demandCategories" (categorySelected)="onCategorySelected($event)"></category-facet>
+        </ng-container>
+    </div>
+    <div class="result-column ml-3">
+        <!-- demand list -->
+        <div *ngFor="let demand of demands" class="space-after">
+            <demand-list-item [demand]="demand.demand" [leafCategory]="demand.leafCategory">
+            </demand-list-item>
+        </div>
+        <!-- no demands -->
+        <h5 *ngIf="!demands || demands.length === 0">No demands available.</h5>
+    </div>
 </div>
+

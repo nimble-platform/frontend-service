@@ -8,6 +8,7 @@ import {CookieService} from 'ng2-cookies';
 import {CatalogueLine} from '../catalogue/model/publish/catalogue-line';
 import {DemandPaginationResponse} from './model/demand-pagination-response';
 import {DEFAULT_LANGUAGE} from '../catalogue/model/constants';
+import {DemandCategoryResult} from './model/demand-category-result';
 
 @Injectable()
 export class DemandService {
@@ -50,6 +51,63 @@ export class DemandService {
             .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => new DemandPaginationResponse(res.json()))
+            .catch(this.handleError);
+    }
+
+    public getDemandCategories(searchTerm: string = null, partyId: string = null, categoryUri: string = null,
+                               dueDate: string = null, buyerCountry: string = null, deliveryCountry: string = null): Promise<DemandCategoryResult[]> {
+        let url = catalogue_endpoint + `/demand-categories`;
+        let conditionExist = false;
+        if (!!searchTerm) {
+            url += `?query=${encodeURIComponent(searchTerm)}&lang=${DEFAULT_LANGUAGE()}`;
+            conditionExist = true;
+        }
+        if (partyId) {
+            let operator = '&';
+            if (!conditionExist) {
+                operator = '?';
+                conditionExist = true;
+            }
+            url += `${operator}companyId=${partyId}`;
+        }
+        if (categoryUri) {
+            let operator = '&';
+            if (!conditionExist) {
+                operator = '?';
+                conditionExist = true;
+            }
+            url += `${operator}categoryUri=${encodeURIComponent(categoryUri)}`;
+        }
+        if (dueDate) {
+            let operator = '&';
+            if (!conditionExist) {
+                operator = '?';
+                conditionExist = true;
+            }
+            url += `${operator}dueDate=${dueDate}`;
+        }
+        if (buyerCountry) {
+            let operator = '&';
+            if (!conditionExist) {
+                operator = '?';
+                conditionExist = true;
+            }
+            url += `${operator}buyerCountry=${buyerCountry}`;
+        }
+        if (deliveryCountry) {
+            let operator = '&';
+            if (!conditionExist) {
+                operator = '?';
+            }
+            url += `${operator}deliveryCountry=${deliveryCountry}`;
+        }
+        return this.http
+            .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
+            .toPromise()
+            .then(res => {
+                const resultJson: any[] = res.json();
+                return resultJson.map(singleResult => new DemandCategoryResult(singleResult));
+            })
             .catch(this.handleError);
     }
 

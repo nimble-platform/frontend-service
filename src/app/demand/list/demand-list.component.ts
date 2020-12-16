@@ -21,10 +21,12 @@ import {DemandService} from '../demand-service';
 import {CategoryService} from '../../catalogue/category/category.service';
 import {Subscription} from 'rxjs';
 import {CallStatus} from '../../common/call-status';
+import {DemandCategoryResult} from '../model/demand-category-result';
 
 @Component({
     selector: 'demand-list',
-    templateUrl: './demand-list.component.html'
+    templateUrl: './demand-list.component.html',
+    styleUrls: ['./demand-list.component.css']
 })
 export class DemandListComponent implements OnInit, OnDestroy {
     /*
@@ -36,7 +38,10 @@ export class DemandListComponent implements OnInit, OnDestroy {
      }]
     */
     demands: any[] = [];
+    demandCategories: DemandCategoryResult[];
+
     searchTerm = '';
+    selectedCategory;
     page = 0;
     pageSize = 10;
     totalCount: number;
@@ -75,6 +80,14 @@ export class DemandListComponent implements OnInit, OnDestroy {
 
             if (params['query']) {
                 this.searchTerm = params['query'];
+            } else {
+                this.searchTerm = null;
+            }
+
+            if (params['category']) {
+                this.selectedCategory = params['category'];
+            } else {
+                this.selectedCategory = null;
             }
 
             this.getDemands();
@@ -108,10 +121,31 @@ export class DemandListComponent implements OnInit, OnDestroy {
             });
     }
 
+    onCategorySelected(categoryUri: string): void {
+        let queryParams: any = {page: 1, tab: 'DEMANDS', category: categoryUri};
+        if (this.searchTerm) {
+            queryParams.query = this.searchTerm;
+        }
+        this.router
+            .navigate([], {
+                relativeTo: this.route,
+                queryParams: queryParams
+            });
+    }
+
+    onResetSearch(): void {
+        let queryParams: any = {page: 1, tab: 'DEMANDS'};
+        this.router
+            .navigate([], {
+                relativeTo: this.route,
+                queryParams: queryParams
+            });
+    }
+
     private getDemands(): void {
         this.searchCallStatus.submit();
         this.demands = [];
-        this.demandService.getDemands(this.searchTerm, this.cookieService.get('company_id'), null, null, null, null, this.page - 1, this.pageSize)
+        this.demandService.getDemands(this.searchTerm, this.cookieService.get('company_id'), this.selectedCategory, null, null, null, this.page - 1, this.pageSize)
             .then(demands => {
                 this.totalCount = demands.totalCount;
                 if (this.totalCount === 0) {
@@ -153,5 +187,9 @@ export class DemandListComponent implements OnInit, OnDestroy {
             }).catch(e => {
             this.searchCallStatus.error(this.translate.instant('Failed to get demands'), e);
         });
+        this.demandService.getDemandCategories(this.searchTerm, this.cookieService.get('company_id'), this.selectedCategory, null, null, null)
+            .then(categoryCounts => {
+                this.demandCategories = categoryCounts;
+            });
     }
 }

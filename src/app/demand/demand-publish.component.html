@@ -89,7 +89,7 @@
 <!-- publish button -->
 <div class="d-flex flex-row-reverse w-75 space-before">
     <div class="ml-4" [ngbTooltip]="getValidationError()" [placement]="'auto'" title="">
-        <button class="btn btn-primary" [disabled]="!formGroup.valid || callStatus.isLoading()" (click)="onPublishDemand()">
+        <button singleClick class="btn btn-primary" [disabled]="!formGroup.valid || callStatus.isLoading()" (click)="onPublishDemand()">
             {{'Publish Demand' | translate}}
         </button>
     </div>
