@@ -56,6 +56,7 @@ export class PurchaseOrderComponent implements OnInit {
     productPartNumberPropertyName = null;
 
     selectPreferredValue = selectPreferredValue;
+    getPropertyValuesAsStrings = getPropertyValuesAsStrings;
 
     constructor(private translate: TranslateService) {
 
@@ -156,9 +157,5 @@ export class PurchaseOrderComponent implements OnInit {
             return this.translate.instant('On demand');
         }
         return roundToTwoDecimals(grossTotal) + ' ' + currency;
-    }
-
-    getValuesAsString(property: ItemProperty): string[] {
-        return getPropertyValuesAsStrings(property);
     }
 }

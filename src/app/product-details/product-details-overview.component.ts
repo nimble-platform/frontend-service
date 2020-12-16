@@ -82,6 +82,7 @@ export class ProductDetailsOverviewComponent implements OnInit {
     productId = "";
     productPartNumberProperty:ItemProperty = null;
     selectPreferredValue = selectPreferredValue;
+    getPropertyValuesAsStrings = getPropertyValuesAsStrings;
     catalogueId = "";
     catalogueName = "";
     debug = myGlobals.debug;
@@ -356,10 +357,6 @@ export class ProductDetailsOverviewComponent implements OnInit {
 
     isDisabled(): boolean {
         return this.readonly || this.associatedProductsRetrievalCallStatus.isLoading();
-    }
-
-    getValuesAsString(property: ItemProperty): string[] {
-        return getPropertyValuesAsStrings(property);
     }
 
     openCompTab() {

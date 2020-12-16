@@ -75,6 +75,7 @@ export class ProductDetailsTabsComponent implements OnInit {
 
     config = myGlobals.config;
 
+    getPropertyValuesAsStrings = getPropertyValuesAsStrings;
     constructor(
         private translate: TranslateService,
         private bpeService: BPEService,
@@ -156,10 +157,6 @@ export class ProductDetailsTabsComponent implements OnInit {
             this.selectedTab = 'COMPANY';
             this.tabStatus.emit(false);
         }
-    }
-
-    getValuesAsString(property: ItemProperty): string[] {
-        return getPropertyValuesAsStrings(property);
     }
 
     getMultiValuedDimensionAsString(quantities: Quantity[]) {

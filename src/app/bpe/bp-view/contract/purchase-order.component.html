@@ -44,7 +44,7 @@
                 </span>
             </td>
             <td *ngIf="productPartNumberPropertyName">
-                <span *ngIf="productPartNumberProperties[i]">{{getValuesAsString(productPartNumberProperties[i]).join(", ")}}</span>
+                <span *ngIf="productPartNumberProperties[i]">{{getPropertyValuesAsStrings(productPartNumberProperties[i]).join(", ")}}</span>
             </td>
             <td>
                 <span *ngIf="!useQuotationWrapper">{{wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value}} {{wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.unitCode | translate}}</span>
