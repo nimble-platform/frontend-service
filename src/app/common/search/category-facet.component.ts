@@ -16,6 +16,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as myGlobals from '../../globals';
 import {selectNameFromLabelObject} from '../utils';
 import {CategoryService} from '../../catalogue/category/category.service';
+import {FacetValue} from '../model/facet-value';
 
 @Component({
     selector: 'category-facet',
@@ -34,16 +35,13 @@ export class CategoryFacetComponent implements OnInit {
      *  ...
      * ]
      */
-    @Input() categoryCounts: any[];
+    @Input() categoryCounts: FacetValue[];
     @Output() categorySelected: EventEmitter<string> = new EventEmitter<string>();
 
     cat_level;
     cat_levels;
-    // // category counts which are needed to build category tree
-    // categoryCounts: any[] = null;
 
-    cat: string;
-    catId: string;
+    selectedCategory: string;
     taxonomy: string;
     taxonomyIDs: string[];
 
@@ -62,6 +60,13 @@ export class CategoryFacetComponent implements OnInit {
         } else {
             this.taxonomy = myGlobals.config.standardTaxonomy;
         }
+        if (!this.categoryCounts || this.categoryCounts.length === 0) {
+            return;
+        }
+        const selectedFacetValue = this.categoryCounts.find(facetValue => facetValue.selected);
+        if (selectedFacetValue) {
+            this.selectedCategory = selectedFacetValue.value;
+        }
         this.buildCatTree();
     }
 
@@ -74,7 +79,6 @@ export class CategoryFacetComponent implements OnInit {
 
     public onSelectCategory(name: string, id: string, level: number) {
         this.categorySelected.emit(id);
-        console.log('SELECT CAT', name, id, level);
     }
 
     private async buildCatTree() {
@@ -89,20 +93,19 @@ export class CategoryFacetComponent implements OnInit {
 
         this.loading = true;
         // here, all the information about the categories are fetched from the indexing service
-        const indexCategories = await this.categoryService.getCategories(this.categoryCounts.map(cat => cat.categoryUri));
+        const indexCategories = await this.categoryService.getCategories(this.categoryCounts.map(cat => cat.value));
         // extract only the required information in UI from the complete category information
         let categoryDisplayInfo: any = this.getCategoryDisplayInfo(indexCategories, this.categoryCounts);
         if (taxonomyPrefix !== '') {
             // save the selected category
-            let originalSelectedCategoryID = this.catId;
-            let originalSelectedCategoryName = this.cat;
+            let originalSelectedCategoryID = this.selectedCategory;
             // build the category tree until the latest level contains more than one category or
             // the category at the latest level does not have any children categories
             let previouslySelectedCategoryId = '';
             do {
-                previouslySelectedCategoryId = this.catId;
+                previouslySelectedCategoryId = this.selectedCategory;
                 // set the level of the selected category, if any
-                this.cat_level = this.getCatLevel(this.catId, indexCategories.result);
+                this.cat_level = this.getCatLevel(this.selectedCategory, indexCategories.result);
                 this.cat_levels = [];
                 this.constructCategoryTree(indexCategories.result, categoryDisplayInfo, this.taxonomy, taxonomyPrefix);
 
@@ -111,17 +114,15 @@ export class CategoryFacetComponent implements OnInit {
                 // and populate category tree again
                 let catLevelSize = this.cat_levels.length;
                 if (catLevelSize > 0 && this.cat_levels[catLevelSize - 1].length === 1) {
-                    this.catId = this.cat_levels[catLevelSize - 1][0].id;
-                    this.cat = this.cat_levels[catLevelSize - 1][0].name;
+                    this.selectedCategory = this.cat_levels[catLevelSize - 1][0].id;
                 }
 
-            } while (this.catId !== previouslySelectedCategoryId);
+            } while (this.selectedCategory !== previouslySelectedCategoryId);
             // set the selected category
-            this.catId = originalSelectedCategoryID;
-            this.cat = originalSelectedCategoryName;
+            this.selectedCategory = originalSelectedCategoryID;
         } else {
             // set the level of the selected category, if any
-            this.cat_level = this.getCatLevel(this.catId, indexCategories.result);
+            this.cat_level = this.getCatLevel(this.selectedCategory, indexCategories.result);
             this.cat_levels = [];
         }
         this.loading = false;
@@ -147,7 +148,7 @@ export class CategoryFacetComponent implements OnInit {
             this.cat_levels.push(rootCategories);
 
         } else {
-            let selectedIndexCategory: any = indexCategories.find(indexCategory => indexCategory.uri === this.catId);
+            let selectedIndexCategory: any = indexCategories.find(indexCategory => indexCategory.uri === this.selectedCategory);
             for (let indexCategory of indexCategories) {
                 // check whether the category belongs to the active taxonomy and not hidden
                 if (!this.isCategoryDisplayable(indexCategory.uri, categoryDisplayInfo, taxonomy, taxonomyPrefix)) {
@@ -187,7 +188,7 @@ export class CategoryFacetComponent implements OnInit {
             labelMap[category.uri].label = category.label;
             labelMap[category.uri].code = category.code;
             labelMap[category.uri].isRoot = category.allParents == null;
-            let searchCategory: any = categoryCounts.find(categoryCount => category.uri === categoryCount.categoryUri);
+            let searchCategory: any = categoryCounts.find(categoryCount => category.uri === categoryCount.value);
             if (searchCategory) {
                 labelMap[category.uri].count = searchCategory.count;
             }

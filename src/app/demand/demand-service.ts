@@ -5,10 +5,9 @@ import {getAuthorizedHeaders} from '../common/utils';
 import {Http} from '@angular/http';
 import {UserService} from '../user-mgmt/user.service';
 import {CookieService} from 'ng2-cookies';
-import {CatalogueLine} from '../catalogue/model/publish/catalogue-line';
 import {DemandPaginationResponse} from './model/demand-pagination-response';
 import {DEFAULT_LANGUAGE} from '../catalogue/model/constants';
-import {DemandCategoryResult} from './model/demand-category-result';
+import {Facet} from '../common/model/facet';
 
 @Injectable()
 export class DemandService {
@@ -54,9 +53,9 @@ export class DemandService {
             .catch(this.handleError);
     }
 
-    public getDemandCategories(searchTerm: string = null, partyId: string = null, categoryUri: string = null,
-                               dueDate: string = null, buyerCountry: string = null, deliveryCountry: string = null): Promise<DemandCategoryResult[]> {
-        let url = catalogue_endpoint + `/demand-categories`;
+    public getDemandFacets(searchTerm: string = null, partyId: string = null, categoryUri: string = null,
+                           dueDate: string = null, buyerCountry: string = null, deliveryCountry: string = null): Promise<Facet[]> {
+        let url = catalogue_endpoint + `/demand-facets`;
         let conditionExist = false;
         if (!!searchTerm) {
             url += `?query=${encodeURIComponent(searchTerm)}&lang=${DEFAULT_LANGUAGE()}`;
@@ -106,7 +105,7 @@ export class DemandService {
             .toPromise()
             .then(res => {
                 const resultJson: any[] = res.json();
-                return resultJson.map(singleResult => new DemandCategoryResult(singleResult));
+                return resultJson.map(facetResponse => new Facet(facetResponse));
             })
             .catch(this.handleError);
     }

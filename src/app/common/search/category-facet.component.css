@@ -18,3 +18,9 @@
 .border-primary-nimble {
     border-color: var(--main-color);
 }
+
+.value {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}

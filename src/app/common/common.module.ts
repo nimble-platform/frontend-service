@@ -45,6 +45,7 @@ import {QuantityTranslatePipe} from './pipe/quantity-translate.pipe';
 import {WordByWordTranslatePipe} from './pipe/word-by-word-translate.pipe';
 import {CancelCollaborationModalComponent} from './cancel-collaboration-modal.component';
 import {CategoryFacetComponent} from './search/category-facet.component';
+import {SearchFacetComponent} from './search/search-facet.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -88,7 +89,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         DisableControlDirective,
         CancelCollaborationModalComponent,
         SingleClickDirective,
-        CategoryFacetComponent
+        CategoryFacetComponent,
+        SearchFacetComponent
     ],
     exports: [
         CallStatusComponent,
@@ -112,7 +114,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         QuantityTranslatePipe,
         WordByWordTranslatePipe,
         SingleClickDirective,
-        CategoryFacetComponent
+        CategoryFacetComponent,
+        SearchFacetComponent
     ],
     providers: [
     ]

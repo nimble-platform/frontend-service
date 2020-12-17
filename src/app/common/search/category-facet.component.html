@@ -40,20 +40,21 @@
                 <ng-container>
                     <div *ngFor="let lvl of c">
                         <!-- selected category -->
-                        <div *ngIf="catId == lvl.id">
+                        <div *ngIf="selectedCategory == lvl.id" class="d-flex">
                             <!-- bolded entry, rendered when there is no excluding category facets -->
                             <!-- or for the deepest level entry when the Others entry is selected -->
                             <!-- cat_level here corresponds to the level of parent category -->
-                            <span class="clickable" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">
-                                <b>{{ lvl.preferredName.substring(0,30) }}<span *ngIf="lvl.preferredName.length>30">...</span></b>
-                            </span> ({{ lvl.count }})
+                            <span class="clickable value" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">
+                                <b>{{ lvl.preferredName }}</b>
+                            </span>
+                            <span class="ml-auto">({{ lvl.count }})</span>
                         </div>
                         <!-- other categories in the hierarchy -->
-                        <div *ngIf="catId!=lvl.id">
-                            <span class="clickable" (click)="onSelectCategory(lvl.name, lvl.id, i)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">{{ lvl.preferredName.substring(0,30) }}
-                                <span *ngIf="lvl.preferredName.length>30">...</span>
+                        <div *ngIf="selectedCategory!=lvl.id" class="d-flex">
+                            <span class="clickable value"
+                                  (click)="onSelectCategory(lvl.name, lvl.id, i)" [style.padding-left.rem]="(i * 1)" [title]="lvl.preferredName">{{ lvl.preferredName }}
                             </span>
-                            <span>({{ lvl.count }})</span>
+                            <span class="ml-auto">({{ lvl.count }})</span>
                         </div>
                     </div>
                 </ng-container>

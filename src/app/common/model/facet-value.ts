@@ -12,11 +12,12 @@
    limitations under the License.
  */
 
-export class DemandCategoryResult {
-    public categoryUri: string;
+export class FacetValue {
+    public value: string;
     public count: number;
+    public selected: boolean;
     constructor(json: any) {
-        this.categoryUri = json.categoryUri;
+        this.value = json.value;
         this.count = json.count;
     }
 }

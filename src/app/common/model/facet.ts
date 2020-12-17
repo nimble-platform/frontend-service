@@ -11,12 +11,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-.facet-column {
-    flex: 1 1 0;
-    max-width: 25%;
-}
 
-.result-column {
-    flex: 3 3 0;
-    max-width: 75%;
+import {FacetValue} from './facet-value';
+
+export class Facet {
+    public facetName: string;
+    public facetValues: FacetValue[];
+    constructor(json: any) {
+        this.facetName = json.facetName;
+        if (json.facetValues) {
+            this.facetValues = json.facetValues.map(facetValue => new FacetValue(facetValue));
+        }
+    }
 }

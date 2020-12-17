@@ -17,20 +17,23 @@
     <button singleClick class="btn btn-primary" (click)="onSearchClicked()">Search</button>
 </div>
 <call-status [large]="true" [callStatus]="searchCallStatus"></call-status>
-<div *ngIf="demands?.length > 0" class="row no-gutters">
+<div *ngIf="demands?.length > 0" class="row no-gutters space-before">
     <!-- pagination -->
-    <div class="offset-3 col-9 justify-content-center pagination space-before">
+    <div class="offset-3 col-9 justify-content-center pagination">
         <ngb-pagination [collectionSize]="totalCount" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="onPageChange($event)"></ngb-pagination>
     </div>
 </div>
-<div class="d-flex no-gutters">
+<div class="d-flex no-gutters space-before">
     <div class="facet-column">
         <div *ngIf="demands.length > 0">
             <button class="btn btn-secondary mb-2" (click)="onResetSearch()"><span [innerHTML]="'Reset Search' | translate"></span></button>
         </div>
-        <ng-container *ngIf="demandCategories">
+        <!-- category facet -->
+        <ng-container *ngIf="demandCategories?.length > 0">
             <category-facet [categoryCounts]="demandCategories" (categorySelected)="onCategorySelected($event)"></category-facet>
         </ng-container>
+        <search-facet *ngIf="buyerCountryFacet" [facet]="buyerCountryFacet" (facetOptionSelected)="onFacetSelected($event)"></search-facet>
+        <search-facet *ngIf="deliveryCountryFacet" [facet]="deliveryCountryFacet" (facetOptionSelected)="onFacetSelected($event)"></search-facet>
     </div>
     <div class="result-column ml-3">
         <!-- demand list -->

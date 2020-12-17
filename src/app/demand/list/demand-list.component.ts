@@ -21,7 +21,8 @@ import {DemandService} from '../demand-service';
 import {CategoryService} from '../../catalogue/category/category.service';
 import {Subscription} from 'rxjs';
 import {CallStatus} from '../../common/call-status';
-import {DemandCategoryResult} from '../model/demand-category-result';
+import {Facet} from '../../common/model/facet';
+import {FacetValue} from '../../common/model/facet-value';
 
 @Component({
     selector: 'demand-list',
@@ -38,10 +39,17 @@ export class DemandListComponent implements OnInit, OnDestroy {
      }]
     */
     demands: any[] = [];
-    demandCategories: DemandCategoryResult[];
+    demandCategories: FacetValue[];
+    buyerCountryFacet: Facet = null;
+    deliveryCountryFacet: Facet = null;
 
+    /*
+     query parameters
+     */
     searchTerm = '';
-    selectedCategory;
+    selectedCategory: string;
+    deliveryCountry: string;
+    buyerCountry: string;
     page = 0;
     pageSize = 10;
     totalCount: number;
@@ -80,14 +88,18 @@ export class DemandListComponent implements OnInit, OnDestroy {
 
             if (params['query']) {
                 this.searchTerm = params['query'];
-            } else {
-                this.searchTerm = null;
             }
 
             if (params['category']) {
                 this.selectedCategory = params['category'];
-            } else {
-                this.selectedCategory = null;
+            }
+
+            if (params['buyerCountry']) {
+                this.buyerCountry = params['buyerCountry'];
+            }
+
+            if (params['deliveryCountry']) {
+                this.deliveryCountry = params['deliveryCountry'];
             }
 
             this.getDemands();
@@ -129,11 +141,32 @@ export class DemandListComponent implements OnInit, OnDestroy {
         this.router
             .navigate([], {
                 relativeTo: this.route,
-                queryParams: queryParams
+                queryParams: queryParams,
+                queryParamsHandling: 'merge'
+            });
+    }
+
+    onFacetSelected(facetSelection: any): void {
+        let queryParams: any = {page: 1, tab: 'DEMANDS'}
+        if (facetSelection.facet === 'Delivery Country') {
+            queryParams.deliveryCountry = facetSelection.selectedValue;
+        } else if (facetSelection.facet === 'Buyer Country') {
+            queryParams.buyerCountry = facetSelection.selectedValue;
+        }
+        this.router
+            .navigate([], {
+                relativeTo: this.route,
+                queryParams: queryParams,
+                queryParamsHandling: 'merge'
             });
     }
 
     onResetSearch(): void {
+        this.buyerCountry = null;
+        this.deliveryCountry = null;
+        this.selectedCategory = null;
+        this.searchTerm = null;
+
         let queryParams: any = {page: 1, tab: 'DEMANDS'};
         this.router
             .navigate([], {
@@ -145,7 +178,8 @@ export class DemandListComponent implements OnInit, OnDestroy {
     private getDemands(): void {
         this.searchCallStatus.submit();
         this.demands = [];
-        this.demandService.getDemands(this.searchTerm, this.cookieService.get('company_id'), this.selectedCategory, null, null, null, this.page - 1, this.pageSize)
+        this.demandCategories = [];
+        this.demandService.getDemands(this.searchTerm, this.cookieService.get('company_id'), this.selectedCategory, null, this.buyerCountry, this.deliveryCountry, this.page - 1, this.pageSize)
             .then(demands => {
                 this.totalCount = demands.totalCount;
                 if (this.totalCount === 0) {
@@ -187,9 +221,36 @@ export class DemandListComponent implements OnInit, OnDestroy {
             }).catch(e => {
             this.searchCallStatus.error(this.translate.instant('Failed to get demands'), e);
         });
-        this.demandService.getDemandCategories(this.searchTerm, this.cookieService.get('company_id'), this.selectedCategory, null, null, null)
-            .then(categoryCounts => {
-                this.demandCategories = categoryCounts;
+        this.demandService.getDemandFacets(this.searchTerm, this.cookieService.get('company_id'), this.selectedCategory, null, this.buyerCountry, this.deliveryCountry)
+            .then(facets => {
+                this.setFacetData(facets);
             });
+    }
+
+    /**
+     * Constructs facet data to be provided to the facet components
+     * @param facets
+     */
+    private setFacetData(facets: Facet[]): void {
+        // category facet
+        const categoryResponse: Facet = facets.find(facetResponse => facetResponse.facetName === 'Category');
+        if (this.selectedCategory) {
+            categoryResponse.facetValues.find(facetValue => facetValue.value === this.selectedCategory).selected = true;
+        }
+        this.demandCategories = categoryResponse.facetValues;
+
+        // delivery country
+        const deliveryCountryFacet = facets.find(facetResponse => facetResponse.facetName === 'Delivery Country');
+        if (this.deliveryCountry) {
+            deliveryCountryFacet.facetValues.find(facetValue => facetValue.value === this.deliveryCountry).selected = true;
+        }
+        this.deliveryCountryFacet = deliveryCountryFacet;
+
+        // buyer country
+        const buyerCountryFacet: Facet = this.buyerCountryFacet = facets.find(facetResponse => facetResponse.facetName === 'Buyer Country');
+        if (this.buyerCountry) {
+            buyerCountryFacet.facetValues.find(facetValue => facetValue.value === this.buyerCountry).selected = true;
+        }
+        this.buyerCountryFacet = buyerCountryFacet;
     }
 }
