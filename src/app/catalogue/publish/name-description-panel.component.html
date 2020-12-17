@@ -35,8 +35,8 @@
                 </div>
                 <div class="col-8">
                     <select [(ngModel)]="catalogueLine.productStatusType" id="productStatus" class="custom-select">
-                        <option><span [innerHTML]="'PUBLISHED' | translate"></span></option>
-                        <option><span [innerHTML]="'DRAFT' | translate"></span></option>
+                        <option value="PUBLISHED"><span [innerHTML]="'PUBLISHED' | translate"></span></option>
+                        <option value="DRAFT"><span [innerHTML]="'DRAFT' | translate"></span></option>
                     </select>
                 </div>
             </div>

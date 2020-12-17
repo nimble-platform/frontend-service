@@ -16,10 +16,18 @@
 
 import {Component, Input, OnInit} from '@angular/core';
 import * as myGlobals from '../../../globals';
-import {roundToTwoDecimals, selectPreferredValue} from '../../../common/utils';
+import {
+    getPropertyValuesAsStrings,
+    roundToTwoDecimals,
+    sanitizePropertyName,
+    selectName,
+    selectPreferredValue
+} from '../../../common/utils';
 import {TranslateService} from '@ngx-translate/core';
 import {NegotiationModelWrapper} from '../negotiation/negotiation-model-wrapper';
 import {PriceWrapper} from '../../../common/price-wrapper';
+import {AEROSPACE_TAXONOMY_PART_NUMBER_PROPERTY_URI} from '../../../common/constants';
+import {ItemProperty} from '../../../catalogue/model/publish/item-property';
 
 @Component({
     selector: 'purchase-order',
@@ -41,8 +49,14 @@ export class PurchaseOrderComponent implements OnInit {
     descriptionShowMore: boolean[] = [];
     // keeps the descriptions of products
     descriptions: string[] = [];
+    // keeps the part numbers of products if any
+    productPartNumberProperties: ItemProperty[] = [];
+    // the name of product part number property to be displayed on the UI
+    // it is set when at least one product has this property
+    productPartNumberPropertyName = null;
 
     selectPreferredValue = selectPreferredValue;
+    getPropertyValuesAsStrings = getPropertyValuesAsStrings;
 
     constructor(private translate: TranslateService) {
 
@@ -55,13 +69,20 @@ export class PurchaseOrderComponent implements OnInit {
                 let description = selectPreferredValue(wrapper.catalogueLine.goodsItem.item.description);
                 this.descriptions.push(description);
                 this.descriptionShowMore.push(true);
+                this.productPartNumberProperties.push(wrapper.catalogueLine.goodsItem.item.additionalItemProperty.find(property => property.uri === AEROSPACE_TAXONOMY_PART_NUMBER_PROPERTY_URI));
             }
         } else {
             for (let wrapper of this.priceWrappers) {
                 let description = selectPreferredValue(wrapper.item.description);
                 this.descriptions.push(description);
                 this.descriptionShowMore.push(true);
+                this.productPartNumberProperties.push(wrapper.item.additionalItemProperty.find(property => property.uri === AEROSPACE_TAXONOMY_PART_NUMBER_PROPERTY_URI));
             }
+        }
+        // set product part number property name
+        let productPartNumbers = this.productPartNumberProperties.filter(property => property);
+        if (productPartNumbers.length > 0) {
+            this.productPartNumberPropertyName = sanitizePropertyName(selectName(productPartNumbers[0]));
         }
     }
 

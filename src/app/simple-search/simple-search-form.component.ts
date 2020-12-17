@@ -31,7 +31,7 @@ import {CatalogueService} from '../catalogue/catalogue.service';
 import {PublishService} from '../catalogue/publish-and-aip.service';
 import {ShoppingCartDataService} from '../bpe/shopping-cart/shopping-cart-data-service';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
-import {product_base_quantity, product_base_quantity_unit} from '../common/constants';
+import {deliveryPeriodUnitListId, product_base_quantity, product_base_quantity_unit} from '../common/constants';
 import {TranslateService} from '@ngx-translate/core';
 import {AppComponent} from '../app.component';
 import {WhiteBlackListService} from '../catalogue/white-black-list.service';
@@ -40,6 +40,7 @@ import {RatingUi} from '../catalogue/model/ui/rating-ui';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {CookieService} from 'ng2-cookies';
 import {Filter} from './model/filter';
+import {UnitService} from '../common/unit-service';
 
 @Component({
     selector: 'simple-search-form',
@@ -66,6 +67,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     product_base_quantity = product_base_quantity;
     product_base_quantity_unit = product_base_quantity_unit;
     product_price = myGlobals.product_price;
+    product_delivery_time = myGlobals.product_delivery_time;
     product_currency = myGlobals.product_currency;
     product_filter_prod = myGlobals.product_filter_prod;
     product_filter_comp = myGlobals.product_filter_comp;
@@ -92,10 +94,16 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     // content of the tooltip for product search
     tooltipHTML: string;
 
+    // fields for price range
     CURRENCIES = CURRENCIES;
     selectedCurrency: any = myGlobals.config.standardCurrency;
     selectedPriceMin: any;
     selectedPriceMax: any;
+    // fields for delivery period range
+    deliveryPeriodUnits:any;
+    selectedDeliveryTimeUnit: string;
+    selectedDeliveryTimeMin: any;
+    selectedDeliveryTimeMax: any;
 
     // keeps ratings for the Rating & Trust filter
     ratingTrustFilters: RatingUi[] = null;
@@ -190,6 +198,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 private translateService: TranslateService,
                 private cookieService: CookieService,
                 private appComponent: AppComponent,
+                private unitService:UnitService,
                 private modalService: NgbModal,
                 public route: ActivatedRoute,
                 private translate: TranslateService,
@@ -201,7 +210,11 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         this.appComponent.translate.get(['Other']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
             this.translations = res;
         });
-
+        this.unitService.getCachedUnitList(deliveryPeriodUnitListId).then(list =>{
+            this.deliveryPeriodUnits = list;
+            // select the first one
+            this.selectedDeliveryTimeUnit = this.deliveryPeriodUnits[0]
+        });
         this.route.queryParams.subscribe(params => {
             let q = params['q'];
             let fq = params['fq'];
@@ -1384,6 +1397,14 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         return check;
     }
 
+    checkDeliveryTimeFilter() {
+        let check = false;
+        if (this.selectedDeliveryTimeUnit && (this.selectedDeliveryTimeMin || this.selectedDeliveryTimeMax)) {
+            check = !(this.selectedDeliveryTimeMin && this.selectedDeliveryTimeMax && this.selectedDeliveryTimeMin > this.selectedDeliveryTimeMax);
+        }
+        return check;
+    }
+
     checkTrustFilter() {
         let check = false;
         if (this.ratingTrustFilters.filter(filter => filter.rating > 0).length > 0) {
@@ -1434,6 +1455,14 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         this.get(this.objToSubmit);
     }
 
+    setDeliveryTimeFilter() {
+        let deliveryTimeMin = this.selectedDeliveryTimeMin ? this.selectedDeliveryTimeMin : 0;
+        let deliveryTimeMax = this.selectedDeliveryTimeMax ? this.selectedDeliveryTimeMax : Number.MAX_SAFE_INTEGER;
+        this.clearFacet(this.camelize(this.selectedDeliveryTimeUnit) + '_' + this.product_delivery_time);
+        this.setRangeWithoutQuery(this.camelize(this.selectedDeliveryTimeUnit) + '_' + this.product_delivery_time, deliveryTimeMin, deliveryTimeMax);
+        this.get(this.objToSubmit);
+    }
+
     setTrustFilter() {
         this.clearFacet(this.product_vendor_rating, this.product_vendor);
         this.clearFacet(this.product_vendor_rating_seller, this.product_vendor);
@@ -1480,6 +1509,14 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         this.selectedPriceMin = null;
         this.selectedPriceMax = null;
         this.clearFacet(this.lowerFirstLetter(this.selectedCurrency) + '_' + this.product_price);
+        this.get(this.objToSubmit);
+    }
+
+    resetDeliveryTimeFilter() {
+        this.selectedDeliveryTimeUnit = null;
+        this.selectedDeliveryTimeMin = null;
+        this.selectedDeliveryTimeMax = null;
+        this.clearFacet(this.camelize(this.selectedDeliveryTimeUnit) + '_' + this.product_delivery_time);
         this.get(this.objToSubmit);
     }
 
@@ -1774,6 +1811,9 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         this.selectedCurrency = myGlobals.config.standardCurrency;
         this.selectedPriceMin = null;
         this.selectedPriceMax = null;
+        this.selectedDeliveryTimeUnit = this.deliveryPeriodUnits[0];
+        this.selectedDeliveryTimeMin = null;
+        this.selectedDeliveryTimeMax = null;
         this.ratingTrustFilters.forEach(filter => filter.rating = 0);
         this.get(this.objToSubmit);
     }
@@ -2199,4 +2239,15 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         })
     }
     // end of methods for catalogue exchange functionality
+
+    /**
+     * Camelizes the given string
+     * */
+    camelize(str) {
+        str = str.replace(new RegExp("[()]", 'g'),"")
+        return str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function(match, index) {
+            if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
+            return index === 0 ? match.toLowerCase() : match.toUpperCase();
+        });
+    }
 }
