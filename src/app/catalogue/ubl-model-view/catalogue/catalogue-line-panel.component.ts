@@ -74,9 +74,9 @@ export class CatalogueLinePanelComponent {
         this.categoryService.resetSelectedCategories();
 
         if (isLogisticsService(this.catalogueLine))
-            this.router.navigate(['catalogue/publish-logistic'], { queryParams: { pg: "single" } });
+            this.router.navigate(['catalogue/publish-logistic']);
         else
-            this.router.navigate(['catalogue/publish'], { queryParams: { pg: "single" } });
+            this.router.navigate(['catalogue/publish-single']);
     }
 
     offerProduct(){

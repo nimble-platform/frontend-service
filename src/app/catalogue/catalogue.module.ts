@@ -22,7 +22,6 @@ import { AppCommonModule } from "../common/common.module";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { CatalogueRoutingModule } from "./catalogue-routing.module";
 import { CategorySearchComponent } from "./category/category-search.component";
-import { ProductPublishComponent } from "./publish/product-publish.component";
 import { CatalogueViewComponent } from "./ubl-model-view/catalogue/catalogue-view.component";
 import { FavouriteViewComponent } from "./favourite/favourite-view.component";
 import { CompareViewComponent } from "./compare-product/compare-view.component";
@@ -44,6 +43,7 @@ import { LogisticServicePublishComponent } from './publish/logistic-service-publ
 import { LogisticPublishDeactivateGuardService } from './logistic-publish-deactivate-guard.service';
 import { DeleteExportCatalogueModalComponent } from "./ubl-model-view/catalogue/delete-export-catalogue-modal.component";
 import {ProductPublishStepsComponent} from './publish/product-publish-steps.component';
+import {SinglePublishComponent} from './publish/single-publish.component';
 
 @NgModule({
     imports: [CommonModule,
@@ -59,11 +59,11 @@ import {ProductPublishStepsComponent} from './publish/product-publish-steps.comp
     declarations: [
         CategorySearchComponent,
         CategoryTreeComponent,
-        ProductPublishComponent,
         ProductPublishStepsComponent,
         LogisticServicePublishComponent,
         EditPropertyModalComponent,
         BulkPublishComponent,
+        SinglePublishComponent,
         OptionsPanelComponent,
         OriginDestinationViewComponent,
         NameDescriptionPanelComponent,

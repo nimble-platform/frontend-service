@@ -1,0 +1,370 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+<ng-container *ngIf="catalogueLine">
+    <!-- Single Upload Publishing Steps -->
+    <product-publish-steps
+            [currentStep]="publishingStep"
+            [catalogueStepEnabled]="cataloguesIds.length > 1"
+            [publishingGranularity]="'single'"
+            (onStepChanged)="onStepChanged($event)"
+    ></product-publish-steps>
+
+    <!--Category selection-->
+    <div *ngIf="publishingStep == 'Category'" class="space-before">
+        <category-search
+                [categoriesSelected]="categorySelectedForPublishing"
+                [publishingGranularity]="'single'"
+                (onCategoryRemoved)="onRemoveCategory($event)"
+        ></category-search>
+    </div>
+
+    <!--Catalogue selection-->
+    <div *ngIf="cataloguesIds.length > 1 && publishingStep == 'Catalogue'" class="row space-before">
+        <div class="col-2 category-list-label">
+            <strong *ngIf="!productCatalogueRetrievalStatus.isLoading()"><span [innerHTML]="'Catalogue:' | translate"></span></strong>
+            <strong class="mr-2" *ngIf="productCatalogueRetrievalStatus.isLoading()"><span [innerHTML]="'Fetching Catalogues' | translate"></span></strong>
+            <call-status [callStatus]="productCatalogueRetrievalStatus"></call-status>
+        </div>
+        <div class="col-4">
+            <select class="custom-select" [(ngModel)]="selectedCatalogueId" (change)="changeCat();$event.stopPropagation()">
+                <option *ngFor="let catalogueId of cataloguesIds" [ngValue]="catalogueId" [innerHtml]="catalogueId == 'default'? ('Main Catalogue'|translate): catalogueId"></option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Name/Description panel-->
+    <ng-container *ngIf="publishingStep == 'ID/Name/Image'">
+        <name-description-panel [catalogueLine]="catalogueLine" [productIdEditable]="isProductIdEditable()" [parentForm]="publishForm">
+        </name-description-panel>
+    </ng-container>
+
+    <!-- Tabs for Product -->
+    <ng-container *ngIf="publishingStep != 'Review'">
+        <!-- Product Details Tab -->
+        <div class="row space-before" [hidden]="publishingStep != 'Details'">
+            <!-- Dimensions -->
+            <div class="col-8 section">
+                <div (click)="toggleDimensionCard()" class="d-flex justify-content-between">
+                    <span [innerHTML]="'Dimensions' | translate" ></span>
+                    <i>
+                        <span *ngIf="!showDimensions" [innerHTML]="(getMultiValuedDimensionCount() > 0 ? getMultiValuedDimensionCount() + ' dimensions defined' : 'No dimensions defined')|translate">
+                        </span>
+                    </i>
+                </div>
+                <div [hidden]="!showDimensions">
+                    <div class="row border-bottom m-0" *ngFor="let multiValuedDimension of multiValuedDimensions">
+                        <div class="col-3" style="padding:.75rem;padding-left:0;">
+                            <div class="col-form-label">
+                                <strong><span [innerHTML]="multiValuedDimension.attributeID | translate"></span> : </strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <table class="table table-borderless" style="margin-bottom:.75rem;">
+                                <tbody>
+                                <tr *ngFor="let quantity of multiValuedDimension.measure;let i=index">
+                                    <td class="pb-0">
+                                        <quantity-input [quantity]="quantity" rowClass="quantity-input" [quantityUnits]="multiValuedDimension.attributeID=='Weight' ? dimensionWeightUnits:dimensionLengthUnits" large="true" [step]="0.01">
+                                        </quantity-input>
+                                    </td>
+                                    <td *ngIf="i>0" class="align-right pb-0">
+                                        <button class="btn btn-danger" type="button" (click)="onRemoveDimension(multiValuedDimension.attributeID,quantity)">&times;</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-3 align-right" style="padding:.75rem;padding-right:0;">
+                            <button class="btn btn-outline-primary" (click)="onAddDimension(multiValuedDimension.attributeID)">
+                                <span [innerHTML]="'Add' | translate"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Additional Information-->
+            <div class="col-8 space-before section">
+                <div (click)="toggleAdditionalInformationCard()" class="d-flex justify-content-between">
+                    <span [innerHTML]="'Upload Additional Information' | translate" ></span>
+                    <i>
+                        <span *ngIf="!showAdditionalInformation" [innerHTML]="getBinaryObjectsForAdditionalInformation().length > 0 ? getBinaryObjectsForAdditionalInformation().length + ' files added' : 'No file added'">
+                        </span>
+                    </i>
+                </div>
+                <div [hidden]="!showAdditionalInformation" class="row mx-auto border-bottom" style="padding:.75rem;padding-left:0;">
+                    <file-input [multiple]="true" [presentationMode]="'edit'" (onSelectFile)="onSelectFile($event)" [binaryObjects]="getBinaryObjectsForAdditionalInformation()" (onClearFile)="onUnSelectFile($event)">
+                    </file-input>
+                </div>
+            </div>
+            <!-- Properties-->
+            <div class="col-8 space-before section">
+                <div (click)="toggleProperties()" class="d-flex justify-content-between">
+                    <span [innerHTML]="'Properties' | translate" ></span>
+                    <i>
+                        <span *ngIf="!showProperties" [innerHTML]="getSelectedPropertiesCount() > 0 ? getSelectedPropertiesCount() + ' properties selected' : 'No properties selected'">
+                        </span>
+                    </i>
+                </div>
+                <div [hidden]="!showProperties">
+                    <div class="row border-bottom m-0" *ngFor="let prop of getProductProperties()">
+                        <div class="col-3" style="padding:.75rem;padding-left:0;">
+                            <div class="col-form-label">
+                                <strong [title]="getDefinition(prop)">{{ getPrettyName(prop) }}: </strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <table *ngIf="prop.valueQualifier === 'FILE'" class="table table-borderless" style="margin-bottom:.75rem;">
+                                <tbody>
+                                <tr>
+                                    <td class="pb-0">
+                                        <file-input [binaryObjects]="prop.valueBinary" [multiple]="true" [maxSize]=1>
+                                        </file-input>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <table *ngIf="prop.valueQualifier !== 'FILE'" class="table table-borderless" style="margin-bottom:.75rem;">
+                                <tbody>
+                                <tr *ngFor="let value of getValues(prop); let i = index">
+                                    <!-- String properties with no options -->
+                                    <ng-container *ngIf="prop.valueQualifier === 'STRING' && (!prop.options || prop.options.length == 0)">
+                                        <td style="vertical-align:middle" class="pb-0">
+                                            <input [(ngModel)]="value.value" class="form-control" type="text" name="{{value.value}}" />
+                                        </td>
+                                        <td style="vertical-align:middle" class="pb-0">
+                                            <select [(ngModel)]="value.languageID" class="form-control" type="text" name="{{value.languageID}}">
+                                                <option *ngFor='let language of languages' [value]="language" [selected]="language === value.languageID">{{language}}</option>
+                                            </select>
+                                        </td>
+                                    </ng-container>
+                                    <!-- String properties with predefined options -->
+                                    <td *ngIf="prop.valueQualifier === 'STRING' && (prop.options && prop.options.length > 0)" style="vertical-align:middle" class="pb-0">
+                                        <select [(ngModel)]="value.value" class="form-control" type="text">
+                                            <option *ngFor='let option of prop.options' [value]="option.value" [selected]="value.value === option.value">{{option.value}}</option>
+                                        </select>
+                                    </td>
+                                    <td *ngIf="prop.valueQualifier === 'QUANTITY'" style="vertical-align:middle" class="pb-0">
+                                        <quantity-input [parentProperty]="prop" [quantity]="prop.valueQuantity[i]" rowClass="quantity-input" large="true" [step]="0.01">
+                                        </quantity-input>
+                                    </td>
+                                    <td *ngIf="prop.valueQualifier === 'BOOLEAN'" style="vertical-align:middle;line-height:2.375rem;" class="pb-0">
+                                        <input type="checkbox" [checked]="prop.value[i].value == 'true'" (change)="setBooleanValue(prop, i, $event)">
+                                    </td>
+                                    <td *ngIf="prop.valueQualifier !== 'STRING' && prop.valueQualifier !== 'QUANTITY' && prop.valueQualifier !== 'BOOLEAN'" style="vertical-align:middle" class="pb-0">
+                                        <input type="number" class="form-control value-input" [ngModel]="prop.valueDecimal[i]" (change)="setValueDecimal(prop, i, $event)" step="0.01">
+                                    </td>
+                                    <td *ngIf="i>0 && prop.valueQualifier !== 'BOOLEAN'" class="align-right" style="vertical-align:middle" class="pb-0 align-right">
+                                        <button class="btn btn-danger" type="button" (click)="onRemoveValue(prop,i)">&times;</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-3 align-right" style="padding:.75rem;padding-right:0;">
+                            <ng-container *ngIf="!prop.required">
+                                <button class="btn btn-outline-primary" (click)="onAddValue(prop)" *ngIf="prop.valueQualifier !== 'BOOLEAN' && prop.valueQualifier !== 'FILE'">
+                                    <span [innerHTML]="'Add' | translate"></span>
+                                </button>
+                                <button class="btn btn-outline-primary ml-1" (click)="onEditProperty(prop)"><span [innerHTML]="'Edit' | translate"></span></button>
+                                <button class="btn btn-danger ml-1" (click)="onRemoveProperty(prop)"><span [innerHTML]="'Delete' | translate"></span></button>
+                            </ng-container>
+                        </div>
+                    </div>
+                    <div class="space-before">
+                        <a href class="btn-link" (click)="showCategoriesModal(categoriesModal, $event)">
+                            <span [innerHTML]="(getSelectedPropertiesCount() > 0 ? 'Add more properties from product / service categories.': 'Select properties from product / service categories.')| translate">
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Price Tab -->
+        <div class="row space-before" [hidden]="publishingStep != 'Price'">
+            <div class="col-12">
+                <product-price-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()" [companyNegotiationSettings]="companySettings.negotiationSettings" [parentForm]="publishForm">
+                </product-price-tab>
+            </div>
+        </div>
+
+        <!-- Delivery & Trading Tab -->
+        <div class="row space-before" [hidden]="publishingStep != 'Delivery&Trading'">
+            <div class="col-12">
+                <product-delivery-trading [wrapper]="productWrapper" [disabled]="isLoading()" [companyNegotiationSettings]="companySettings.negotiationSettings" [parentForm]="publishForm">
+                </product-delivery-trading>
+            </div>
+        </div>
+
+        <!-- Certificates -->
+        <div class="row space-before" [hidden]="publishingStep != 'Certificates'">
+            <div class="col-12">
+                <product-certificates-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()">
+                </product-certificates-tab>
+            </div>
+        </div>
+
+        <!-- Life Cycle Performance Analysis -->
+        <div class="row space-before" [hidden]="publishingStep != 'LCPA'">
+            <div class="col-12">
+                <product-lcpa-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()" [presentationMode]="'edit'">
+                </product-lcpa-tab>
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Review step -->
+    <catalogue-line-panel
+            *ngIf="publishingStep == 'Review'"
+            [catalogueLine]="catalogueLine"
+            [show]="true"
+            [settings]="companySettings"
+            [linePanelInPublishingPage]="true"
+            [presentationMode]="'view'">
+    </catalogue-line-panel>
+
+    <!-- Invalid categories-->
+    <div *ngIf="publishingStep == 'Review' && invalidCategoryCodes.length > 0" class="space-before alert-danger">
+        <strong><span [innerHTML]="'Following categories are not valid any more:' | translate"></span></strong>
+        <ul>
+            <strong>
+                <li *ngFor="let invalidCategoryCode of invalidCategoryCodes">{{invalidCategoryCode.name}}</li>
+            </strong>
+        </ul>
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-outline-primary justify-content-end space-right space-after" (click)="removeInvalidCategories()"><span [innerHTML]="'Remove them from the product' | translate"></span></button>
+        </div>
+    </div>
+
+    <hr class="actions-hr">
+
+    <!-- Actions -->
+    <div class="row actions-row pr-0">
+        <ng-container *ngIf="publishingStep != 'Review'">
+            <div *ngIf="publishingStep != 'Category'" class="col-2">
+                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onPreviousStep()">
+                    <span [innerHTML]="'Previous' | translate"></span>
+                </button>
+            </div>
+            <div class="col-3">
+            <span [ngbTooltip]="validationService.extractErrorMessage(publishForm)" [placement]="'auto'" title="">
+                <button class="btn btn-primary action" [disabled]="isLoading() || !areInputNumbersValid() || !publishForm.valid || categoryService.selectedCategories.length == 0" (click)="onNextStep()">
+                    <span  [innerHTML]="'Next' | translate"></span>
+                </button>
+            </span>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="publishingStep == 'Review'">
+            <div class="col-2">
+                <call-status [callStatus]="publishStatus"></call-status>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onPreviousStep()">
+                    <span [innerHTML]="'Previous' | translate"></span>
+                </button>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
+                    <span [innerHTML]="'Cancel' | translate"></span>
+                </button>
+            </div>
+            <div class="col-3">
+            <span [ngbTooltip]="validationService.extractErrorMessage(publishForm)" [placement]="'auto'" title="">
+                <button class="btn btn-primary action" [disabled]="isLoading() || !areInputNumbersValid() || !publishForm.valid" (click)="onPublish(false)">
+                    <span *ngIf="publishStateService.publishMode === 'edit'" [innerHTML]="'Save & Continue' | translate"></span>
+                    <span *ngIf="publishStateService.publishMode !== 'edit'" [innerHTML]="'Publish & Continue' | translate"></span>
+                </button>
+            </span>
+            </div>
+            <div class="col-3">
+            <span [ngbTooltip]="validationService.extractErrorMessage(publishForm)" [placement]="'auto'" title="">
+                <button class="btn btn-primary action" [disabled]="isLoading() || !areInputNumbersValid() || !publishForm.valid" (click)="onPublish(true)">
+                    <span *ngIf="publishStateService.publishMode === 'edit'" [innerHTML]="'Save & Exit' | translate"></span>
+                    <span *ngIf="publishStateService.publishMode !== 'edit'" [innerHTML]="'Publish & Exit' | translate"></span>
+                </button>
+            </span>
+            </div>
+        </ng-container>
+    </div>
+
+    <!-- Category's Attributes Modal -->
+    <ng-template #categoriesModal let-c="close" let-d="dismiss">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modal-basic-title"><span [innerHTML]="'Please select the attributes to be displayed from each category' | translate"></span></h5>
+            <button type="button" class="close" aria-label="Close" (click)="d('cross')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="inputCtrl" [(ngModel)]="categoryModalPropertyKeyword" [placeholder]="'Filter Properties...'|translate" (input)="onFilterPropertiesInCategoryModal()" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-category" *ngFor="let category of categoryService.selectedCategories; let i = index">
+                    <hr *ngIf="i > 0">
+                    <h5>{{ selectPreferredName(category) }}</h5>
+                    <div class="row">
+                        <div class="col-12">
+                            <a href class="btn-link" (click)="selectAllProperties(category,$event)"><span [innerHTML]="'Select all' | translate"></span></a>
+                            <span [innerHTML]="'or' | translate"></span>
+                            <a href class="btn-link" (click)="selectNoProperties(category,$event)"><span [innerHTML]="'Select none' | translate"></span></a>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <ng-container *ngFor="let property of getCategoryProperties(category)">
+                            <div class="col-6 form-check modal-category-property" *ngIf="isPropertyFilteredIn(property)">
+                                <input type="checkbox" class="form-check-input" [ngModel]="isCategoryPropertySelected(category, property)" (change)="onToggleCategoryPropertySelected(category, property)">
+                                <label class="form-check-label">{{ selectPreferredName(property) }} ({{ getPropertyType(property) }})</label>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+                <div *ngIf="categoryService.selectedCategories.length > 0" class="row">
+                    <div class="col-12">
+                        <hr>
+                    </div>
+                    <div class="col-12">
+                        <span [innerHTML]="'No property matching your search?' | translate"></span><br>
+                        <a href class="btn-link" (click)="onAddCategory($event, d)"><span [innerHTML]="'Add more categories to this product / service' | translate"></span></a>
+                        <span [innerHTML]="'or' | translate"></span>
+                        <a href class="btn-link" (click)="onAddCustomProperty($event, d)"><span [innerHTML]="'Create a custom property' | translate"></span></a>.
+                    </div>
+                </div>
+                <div *ngIf="categoryService.selectedCategories.length === 0" class="row">
+                    <div class="col-12">
+                        <span [innerHTML]="'No categories to pick properties from' | translate"></span> <br>
+                        <a href class="btn-link" (click)="onAddCategory($event, d)"><span [innerHTML]="'Add more categories to this product / service' | translate"></span></a>
+                        <span [innerHTML]="'or' | translate"></span>
+                        <a href class="btn-link" (click)="onAddCustomProperty($event, d)"><span [innerHTML]="'Create a custom property' | translate"></span></a>.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="d('cancel')"><span [innerHTML]="'Cancel' | translate"></span></button>
+            <button type="button" class="btn btn-primary" (click)="c('ok')"><span [innerHTML]="'OK' | translate"></span></button>
+        </div>
+    </ng-template>
+
+    <!-- Edit Property Value(s) Modal -->
+    <edit-property-modal>
+    </edit-property-modal>
+
+</ng-container>

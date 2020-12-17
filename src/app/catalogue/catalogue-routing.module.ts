@@ -17,14 +17,16 @@
 import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
 
-import { ProductPublishComponent } from "./publish/product-publish.component";
 import { CatalogueViewComponent } from "./ubl-model-view/catalogue/catalogue-view.component";
 import { PublishDeactivateGuardService } from "./publish-deactivate-guard.service";
 import { LogisticServicePublishComponent } from './publish/logistic-service-publish.component';
 import { LogisticPublishDeactivateGuardService } from './logistic-publish-deactivate-guard.service';
+import {SinglePublishComponent} from './publish/single-publish.component';
+import {BulkPublishComponent} from './publish/bulk-publish.component';
 
 const routes: Routes = [
-    { path: "publish", component: ProductPublishComponent, canDeactivate: [PublishDeactivateGuardService] },
+    { path: "publish-single", component: SinglePublishComponent, canDeactivate: [PublishDeactivateGuardService] },
+    { path: "publish-bulk", component: BulkPublishComponent, canDeactivate: [PublishDeactivateGuardService] },
     { path: "publish-logistic", component: LogisticServicePublishComponent, canDeactivate: [LogisticPublishDeactivateGuardService] },
     { path: "catalogue", component: CatalogueViewComponent }
 ];

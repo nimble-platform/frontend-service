@@ -122,7 +122,7 @@
 
                 <div *ngIf="this.appComponent.checkRoles('sales')" class="col-6">
                     <p><span [innerHTML]="'If you are looking to' | translate"></span> <b><span [innerHTML]="'sell' | translate"></span></b> <span [innerHTML]="'Products / Services Click Here' | translate"></span> </p>
-                    <a *ngIf="this.appComponent.checkRoles('catalogue')" class="btn btn-primary btn-lg" href="#/catalogue/publish" role="button"><span [innerHTML]="'Publish a Product / Service' | translate"></span></a>
+                    <a *ngIf="this.appComponent.checkRoles('catalogue')" class="btn btn-primary btn-lg" href="#/catalogue/publish-single" role="button"><span [innerHTML]="'Publish a Product / Service' | translate"></span></a>
                     <p *ngIf="!this.appComponent.checkRoles('catalogue')"><span [innerHTML]="'Please refer to the company manager or a legal representative to get permission to publish products / services in the Platform' | translate :{platformName:config.platformNameInMail}"></span>.</p>
                 </div>
 
