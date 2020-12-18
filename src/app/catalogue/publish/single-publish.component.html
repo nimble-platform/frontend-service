@@ -60,7 +60,8 @@
                 <div (click)="toggleDimensionCard()" class="d-flex justify-content-between">
                     <span [innerHTML]="'Dimensions' | translate" ></span>
                     <i>
-                        <span *ngIf="!showDimensions" [innerHTML]="(getMultiValuedDimensionCount() > 0 ? getMultiValuedDimensionCount() + ' dimensions defined' : 'No dimensions defined')|translate">
+                        <span *ngIf="!showDimensions">
+                            {{getMultiValuedDimensionCount() > 0 ? ('selectedDimensionsCount'|translate: {count: getMultiValuedDimensionCount()})  : ('No dimensions defined'|translate)}}
                         </span>
                     </i>
                 </div>
@@ -99,7 +100,8 @@
                 <div (click)="toggleAdditionalInformationCard()" class="d-flex justify-content-between">
                     <span [innerHTML]="'Upload Additional Information' | translate" ></span>
                     <i>
-                        <span *ngIf="!showAdditionalInformation" [innerHTML]="getBinaryObjectsForAdditionalInformation().length > 0 ? getBinaryObjectsForAdditionalInformation().length + ' files added' : 'No file added'">
+                        <span *ngIf="!showAdditionalInformation">
+                            {{getBinaryObjectsForAdditionalInformation().length > 0 ? ('addedFileCount'|translate: {count: getBinaryObjectsForAdditionalInformation().length})  : ('No file added'|translate)}}
                         </span>
                     </i>
                 </div>
@@ -113,7 +115,8 @@
                 <div (click)="toggleProperties()" class="d-flex justify-content-between">
                     <span [innerHTML]="'Properties' | translate" ></span>
                     <i>
-                        <span *ngIf="!showProperties" [innerHTML]="getSelectedPropertiesCount() > 0 ? getSelectedPropertiesCount() + ' properties selected' : 'No properties selected'">
+                        <span *ngIf="!showProperties">
+                            {{getSelectedPropertiesCount() > 0 ? ('selectedPropertiesCount'|translate: {count: getSelectedPropertiesCount()})  : ('No properties selected'|translate)}}
                         </span>
                     </i>
                 </div>
