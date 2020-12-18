@@ -61,6 +61,9 @@ import {Property} from '../model/category/property';
 import {Quantity} from '../model/publish/quantity';
 import {CommodityClassification} from '../model/publish/commodity-classification';
 import {SelectedProperty} from '../model/publish/selected-property';
+import 'rxjs/add/observable/fromPromise'
+import 'rxjs/add/observable/interval';
+import 'rxjs/add/operator/takeUntil';
 
 interface SelectedProperties {
     [key: string]: SelectedProperty;
