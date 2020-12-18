@@ -242,7 +242,6 @@ export class SinglePublishComponent implements OnInit {
 
     private initView(userParty, settings): void {
         this.companySettings = settings;
-        this.catalogueService.setEditMode(true);
         // Following "if" block is executed when redirected by an "edit" button
         // "else" block is executed when redirected by "publish" tab
         this.publishMode = this.publishStateService.publishMode;
