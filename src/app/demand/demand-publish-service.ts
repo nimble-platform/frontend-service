@@ -5,4 +5,10 @@ import {Injectable} from '@angular/core';
 export class DemandPublishService {
     // demand being published
     public modifiedDemand: Demand;
+    public publishMode: 'create' | 'edit';
+
+    public resetData(): void {
+        this.modifiedDemand = null;
+        this.publishMode = null;
+    }
 }

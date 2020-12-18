@@ -26,7 +26,7 @@ import {Code} from '../catalogue/model/publish/code';
 import {UserService} from '../user-mgmt/user.service';
 import {CookieService} from 'ng2-cookies';
 import {BinaryObject} from '../catalogue/model/publish/binary-object';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {NgbTypeaheadSelectItemEvent} from '@ng-bootstrap/ng-bootstrap';
 import {CategoryService} from '../catalogue/category/category.service';
 import {DemandPublishService} from './demand-publish-service';
@@ -42,6 +42,8 @@ import {CallStatus} from '../common/call-status';
     styleUrls: ['./demand-publish.component.css']
 })
 export class DemandPublishComponent extends ChildFormBase implements OnInit {
+    publishMode: 'create' | 'edit' = 'create';
+
     // demand object being updated
     demand: Demand = new Demand();
     selectedCategory: Category;
@@ -63,19 +65,37 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
         private userService: UserService,
         private cookieService: CookieService,
         private translate: TranslateService,
-        private router: Router
+        private router: Router,
+        private route: ActivatedRoute
     ) {
         super();
     }
 
     ngOnInit() {
+        this.route.queryParams.subscribe(params => {
+            if (params['publishMode']) {
+                this.publishMode = params['publishMode'];
+
+            } else {
+                // if the publish mode is not specified in the query parameter, first check if it is available in the publish service.
+                // it might have been initialized for a publish activity started earlier
+                if (this.demandPublishService.publishMode) {
+                    this.publishMode = this.demandPublishService.publishMode;
+                } else {
+                    this.publishMode = 'create';
+                }
+            }
+        });
+
         this.formGroup = new FormGroup({});
         this.initViewFormAndAddToParentForm();
         // if there is already a demand being edited, set it to the current demand
+        // it could be a brand new demand being created for the first time or an existing one being edited
         if (this.demandPublishService.modifiedDemand) {
             this.demand = this.demandPublishService.modifiedDemand;
+            // category service is expected to have selectedCategory set in case a demand is being edited
             this.selectedCategory = this.categoryService.selectedCategories[0];
-            this.demand.itemClassificationCode[0] = UBLModelUtils.createCodeFromCategory(this.categoryService.selectedCategories[0]);
+            this.demand.itemClassificationCode = [UBLModelUtils.createCodeFromCategory(this.categoryService.selectedCategories[0])];
 
             if (this.demand.deliveryCountry.value) {
                 this.countryFormControl.setValue(getCountryByISO(this.demand.deliveryCountry.value));
@@ -85,7 +105,7 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
             }
 
             // clear the data in the services to prevent incorrect states considering the availability of the data in the service
-            this.demandPublishService.modifiedDemand = null;
+            this.demandPublishService.resetData();
             this.categoryService.selectedCategories = [];
 
             // create a new demand
@@ -141,6 +161,21 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
         });
     }
 
+    onEditDemand(): void {
+        this.callStatus.submit();
+        this.demandService.updateDemand(this.demand).then(resp => {
+            this.callStatus.callback(null, true);
+            alert(this.translate.instant('Successfully saved. You are now getting redirected.'));
+            this.router.navigate(['dashboard'], {
+                queryParams: {
+                    tab: 'DEMANDS',
+                }
+            });
+        }).catch(e => {
+            this.callStatus.error(this.translate.instant('Failed to save demand'), e);
+        });
+    }
+
     getSuggestions = (text$: Observable<string>) =>
         text$.pipe(
             debounceTime(50),
@@ -169,6 +204,8 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
 
     onSelectCategory(): void {
         this.demandPublishService.modifiedDemand = this.demand;
+        this.demandPublishService.publishMode = this.publishMode;
+
         if (this.selectedCategory) {
             this.categoryService.selectedCategories = [this.selectedCategory];
         }

@@ -145,7 +145,7 @@
     <!-- Demands tab -->
     <div *ngIf="selectedTab === TABS.DEMANDS" class="row">
         <div class="col-12">
-            <demand-list></demand-list>
+            <demand-list [companyDemands]="true"></demand-list>
         </div>
     </div>
 

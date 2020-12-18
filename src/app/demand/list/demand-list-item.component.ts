@@ -12,9 +12,16 @@
    limitations under the License.
  */
 
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Demand} from '../../catalogue/model/publish/demand';
 import {selectNameFromLabelObject, selectPreferredValue} from '../../common/utils';
+import {Router} from '@angular/router';
+import {DemandService} from '../demand-service';
+import {CallStatus} from '../../common/call-status';
+import {DemandPublishService} from '../demand-publish-service';
+import {CategoryService} from '../../catalogue/category/category.service';
+import {CategoryModelUtils} from '../../catalogue/model/model-util/category-model-utils';
+import {Category} from '../../catalogue/model/category/category';
 
 @Component({
     selector: 'demand-list-item',
@@ -23,8 +30,39 @@ import {selectNameFromLabelObject, selectPreferredValue} from '../../common/util
 export class DemandListItemComponent {
     @Input() demand: Demand;
     @Input() leafCategory: any;
+    @Output() onDemandDeleted: EventEmitter<void> = new EventEmitter<void>();
+
+    callStatus: CallStatus;
 
     selectNameFromLabelObject = selectNameFromLabelObject;
     selectPreferredValue = selectPreferredValue;
 
+    constructor(
+        private demandService: DemandService,
+        private demandPublishService: DemandPublishService,
+        private categoryService: CategoryService,
+        private router: Router
+    ) {
+    }
+
+    onEditClicked(): void {
+        this.demandPublishService.modifiedDemand = this.demand;
+        // TODO we can get the taxonomy details from the backend
+        // taxonomy id is explicitly set for the category as it is not available in the category information obtained from the index.
+        const selectedCategory: Category = CategoryModelUtils.transformIndexCategoryToDbCategory(this.leafCategory);
+        selectedCategory.taxonomyId = this.demand.itemClassificationCode.find(cat => cat.uri === selectedCategory.categoryUri).listID;
+        this.categoryService.selectedCategories = [selectedCategory];
+        this.router.navigate(['/demand/publish'], {queryParams: {publishMode: 'edit'}});
+    }
+
+    onDeleteClicked(): void {
+        this.callStatus = new CallStatus();
+        this.callStatus.submit();
+        this.demandService.deleteDemand(this.demand.hjid).then(() => {
+            this.onDemandDeleted.emit();
+            this.callStatus.callback(null, true);
+        }).catch(e => {
+            this.callStatus.error('Failed to delete demand', e);
+        })
+    }
 }

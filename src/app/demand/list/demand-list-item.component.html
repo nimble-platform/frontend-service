@@ -50,13 +50,10 @@
                     </div>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-primary space-after col d-block">
+                    <button type="button" class="btn btn-primary space-after col d-block" (click)="onEditClicked()">
                         <span [innerHTML]="'Edit' | translate"></span>
                     </button>
-                    <button type="button" class="btn btn-primary space-after col d-block">
-                        <span [innerHTML]="'Copy' | translate"></span>
-                    </button>
-                    <button type="button" class="btn btn-danger col d-block">
+                    <button type="button" class="btn btn-danger col d-block" (click)="onDeleteClicked()">
                         <span [innerHTML]="'Delete' | translate"></span>
                     </button>
                 </div>

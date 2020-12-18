@@ -25,8 +25,9 @@ export class CategoryModelUtils {
         const uri: string = indexCategory.uri;
         const preferredName: Text[] = LanguageUtils.transformIndexLabelsToTextArray(indexCategory.label);
         // for now these fields are sufficient, add the others if needed
+        const categoryId:  string = uri.substring(uri.indexOf('#') + 1);
         const category: Category = new Category(
-            null,
+            categoryId,
             preferredName,
             null,
             null,

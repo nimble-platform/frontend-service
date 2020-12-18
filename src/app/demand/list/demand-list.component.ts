@@ -12,7 +12,7 @@
    limitations under the License.
  */
 
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import { Location } from '@angular/common';
 import {TranslateService} from '@ngx-translate/core';
 import {CookieService} from 'ng2-cookies';
@@ -30,6 +30,8 @@ import {FacetValue} from '../../common/model/facet-value';
     styleUrls: ['./demand-list.component.css']
 })
 export class DemandListComponent implements OnInit, OnDestroy {
+    @Input() companyDemands = false;
+
     /*
     data object to be presented contains the original demand entity and also the associated leaf category details to be presented in the form of
     [
@@ -175,11 +177,17 @@ export class DemandListComponent implements OnInit, OnDestroy {
             });
     }
 
+    onDemandDeleted(): void {
+        this.getDemands();
+    }
+
     private getDemands(): void {
         this.searchCallStatus.submit();
         this.demands = [];
         this.demandCategories = [];
-        this.demandService.getDemands(this.searchTerm, this.cookieService.get('company_id'), this.selectedCategory, null, this.buyerCountry, this.deliveryCountry, this.page - 1, this.pageSize)
+
+        const companyId = this.companyDemands ? this.cookieService.get('company_id') : null;
+        this.demandService.getDemands(this.searchTerm, companyId, this.selectedCategory, null, this.buyerCountry, this.deliveryCountry, this.page - 1, this.pageSize)
             .then(demands => {
                 this.totalCount = demands.totalCount;
                 if (this.totalCount === 0) {
@@ -221,7 +229,7 @@ export class DemandListComponent implements OnInit, OnDestroy {
             }).catch(e => {
             this.searchCallStatus.error(this.translate.instant('Failed to get demands'), e);
         });
-        this.demandService.getDemandFacets(this.searchTerm, this.cookieService.get('company_id'), this.selectedCategory, null, this.buyerCountry, this.deliveryCountry)
+        this.demandService.getDemandFacets(this.searchTerm, companyId, this.selectedCategory, null, this.buyerCountry, this.deliveryCountry)
             .then(facets => {
                 this.setFacetData(facets);
             });

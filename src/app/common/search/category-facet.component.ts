@@ -118,8 +118,7 @@ export class CategoryFacetComponent implements OnInit {
                 }
 
             } while (this.selectedCategory !== previouslySelectedCategoryId);
-            // set the selected category
-            this.selectedCategory = originalSelectedCategoryID;
+
         } else {
             // set the level of the selected category, if any
             this.cat_level = this.getCatLevel(this.selectedCategory, indexCategories.result);
@@ -128,6 +127,17 @@ export class CategoryFacetComponent implements OnInit {
         this.loading = false;
     }
 
+    /**
+     * Selects the categories from the current category level (cat_level) and construct the next level of the category tree for the
+     * current selected category (selectedCategory).
+     *
+     * If there is no selected category, constructs only the first level of the category tree.
+     *
+     * @param indexCategories
+     * @param categoryDisplayInfo
+     * @param taxonomy
+     * @param taxonomyPrefix
+     */
     private constructCategoryTree(indexCategories: any[],
                                   categoryDisplayInfo: any,
                                   taxonomy: string,
@@ -160,7 +170,7 @@ export class CategoryFacetComponent implements OnInit {
                         .concat(selectedIndexCategory.allParents != null ? selectedIndexCategory.allParents : []);
                 let catLevel = indexCategory.allParents != null ? indexCategory.allParents.length : 0;
                 if (indexCategory.uri !== selectedIndexCategory.uri && // include the taxonomy itself no matter what
-                    // do not include the category if it is not include in the hierarchy of the selected category
+                    // do not include the category if it is not included in the hierarchy of the selected category
                     // or it is located on a two or more levels deeper in the hierarchy
                     parentsAndChildren.findIndex(uri => uri === indexCategory.uri) === -1 || (catLevel - this.cat_level > 1)) {
                     continue;

@@ -8,6 +8,7 @@ import {CookieService} from 'ng2-cookies';
 import {DemandPaginationResponse} from './model/demand-pagination-response';
 import {DEFAULT_LANGUAGE} from '../catalogue/model/constants';
 import {Facet} from '../common/model/facet';
+import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 
 @Injectable()
 export class DemandService {
@@ -107,6 +108,22 @@ export class DemandService {
                 const resultJson: any[] = res.json();
                 return resultJson.map(facetResponse => new Facet(facetResponse));
             })
+            .catch(this.handleError);
+    }
+
+    public updateDemand(demand: Demand): Promise<any> {
+        const url = catalogue_endpoint + `/demands/${demand.hjid}`;
+        return this.http
+            .put(url, demand, { headers: getAuthorizedHeaders(this.cookieService) })
+            .toPromise()
+            .catch(this.handleError)
+    }
+
+    public deleteDemand(demandHjid: number): Promise<any> {
+        let url = catalogue_endpoint + `/demands/${demandHjid}`;
+        return this.http
+            .delete(url, { headers: getAuthorizedHeaders(this.cookieService) })
+            .toPromise()
             .catch(this.handleError);
     }
 

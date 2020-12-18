@@ -16,7 +16,6 @@
     <input type="text" class="form-control mr-3" [(ngModel)]="searchTerm" (keyup.enter)="onSearchClicked()">
     <button singleClick class="btn btn-primary" (click)="onSearchClicked()">Search</button>
 </div>
-<call-status [large]="true" [callStatus]="searchCallStatus"></call-status>
 <div *ngIf="demands?.length > 0" class="row no-gutters space-before">
     <!-- pagination -->
     <div class="offset-3 col-9 justify-content-center pagination">
@@ -32,17 +31,18 @@
         <ng-container *ngIf="demandCategories?.length > 0">
             <category-facet [categoryCounts]="demandCategories" (categorySelected)="onCategorySelected($event)"></category-facet>
         </ng-container>
-        <search-facet *ngIf="buyerCountryFacet" [facet]="buyerCountryFacet" (facetOptionSelected)="onFacetSelected($event)"></search-facet>
+        <search-facet *ngIf="!companyDemands && buyerCountryFacet" [facet]="buyerCountryFacet" (facetOptionSelected)="onFacetSelected($event)"></search-facet>
         <search-facet *ngIf="deliveryCountryFacet" [facet]="deliveryCountryFacet" (facetOptionSelected)="onFacetSelected($event)"></search-facet>
     </div>
     <div class="result-column ml-3">
+        <call-status *ngIf="searchCallStatus" [large]="true" [callStatus]="searchCallStatus"></call-status>
         <!-- demand list -->
         <div *ngFor="let demand of demands" class="space-after">
-            <demand-list-item [demand]="demand.demand" [leafCategory]="demand.leafCategory">
+            <demand-list-item [demand]="demand.demand" [leafCategory]="demand.leafCategory" (onDemandDeleted)="onDemandDeleted()">
             </demand-list-item>
         </div>
         <!-- no demands -->
-        <h5 *ngIf="!demands || demands.length === 0">No demands available.</h5>
+        <h5 *ngIf="(!demands || demands.length === 0) && !searchCallStatus.isLoading()">No demands available.</h5>
     </div>
 </div>
 
