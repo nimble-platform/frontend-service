@@ -646,6 +646,10 @@ export class CatalogueViewComponent implements OnInit {
         this.deleteCatalogueModal.open('export');
     }
 
+    onChangeProductStatus(): void {
+        this.deleteCatalogueModal.open('product-status');
+    }
+
     onUploadImage(): void {
         this.deleteCatalogueModal.open('upload-image');
     }

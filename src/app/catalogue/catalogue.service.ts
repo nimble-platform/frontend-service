@@ -490,6 +490,21 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
+    changeProductStatusForCatalogues(catalogueIds: string[],productStatus:string): Promise<any> {
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const partyId = this.cookieService.get("company_id");
+        let ids: string = '';
+        for (let id of catalogueIds) {
+            ids += id + ","
+        }
+        ids = ids.substr(0, ids.length - 1);
+        const url = this.baseUrl + `/catalogue/product-status?ids=${ids}&partyId=${partyId}&status=${productStatus}`;
+        return this.http
+            .put(url, null,{ headers: new Headers({ "Authorization": token }) })
+            .toPromise()
+            .catch(this.handleError);
+    }
+
     getContractForCatalogue(catalogueUuids: string[]): Promise<Map<string,Clause[]>> {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         let url = this.baseUrl + `/catalogue/contract?catalogueUuids=${catalogueUuids.join()}`;

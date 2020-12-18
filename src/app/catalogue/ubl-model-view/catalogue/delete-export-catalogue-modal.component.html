@@ -18,6 +18,7 @@
         <h5 *ngIf="mode == 'export'" class="modal-title"><span [innerHTML]="'Export Catalogues' | translate"></span></h5>
         <h5 *ngIf="mode == 'delete-images'" class="modal-title"><span [innerHTML]="'Delete All Product Images' | translate"></span></h5>
         <h5 *ngIf="mode == 'upload-image'" class="modal-title"><span [innerHTML]="'Upload Image Package' | translate"></span></h5>
+        <h5 *ngIf="mode == 'product-status'" class="modal-title"><span [innerHTML]="'Catalogues' | translate"></span></h5>
         <button type="button" class="close" aria-label="Close" (click)="d('cross')">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -30,7 +31,7 @@
         </div>
         <call-status [callStatus]="catalogueOperationCallStatus"></call-status>
     </div>
-    <div class="modal-footer">
+    <div class="modal-footer" [style.justify-content]="mode == 'product-status' ? 'space-between': 'flex-end' ">
         <button *ngIf="mode == 'delete'"
                 type="button"
                 class="btn btn-primary"
@@ -47,6 +48,27 @@
                 singleClick>
             <span><span [innerHTML]="'Export Selected Catalogues' | translate"></span></span>
         </button>
+        <ng-container *ngIf="mode == 'product-status'" class="d-flex justify-content-between">
+            <!-- Product Status-->
+            <div class="row m-0 form-group">
+                <div class="col-3">
+                    <label for="productStatus" class="mt-2"><strong><span [innerHTML]="'Status' | translate"></span>:</strong></label>
+                </div>
+                <div class="col-8">
+                    <select [(ngModel)]="productStatusType" id="productStatus" class="custom-select">
+                        <option value="PUBLISHED"><span [innerHTML]="'PUBLISHED' | translate"></span></option>
+                        <option value="DRAFT"><span [innerHTML]="'DRAFT' | translate"></span></option>
+                    </select>
+                </div>
+            </div>
+            <button type="button"
+                    class="btn btn-primary"
+                    [disabled]="!catalogueOperationCallStatus.isAllComplete()"
+                    (click)="onChangeProductStatusClicked(d);"
+                    singleClick>
+                <span><span [innerHTML]="'Change Product Status for Selected Catalogues' | translate"></span></span>
+            </button>
+        </ng-container>
         <button *ngIf="mode == 'delete-images'"
                 type="button"
                 class="btn btn-primary"
