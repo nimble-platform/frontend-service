@@ -118,7 +118,6 @@ export class FavouriteViewComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.catalogueService.setEditMode(false);
         for (let i = 0; i < this.pageSize; i++) {
             this.deleteStatuses.push(new CallStatus());
             this.shoppingCartCallStatuses.push(new CallStatus());

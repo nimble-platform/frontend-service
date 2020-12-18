@@ -178,7 +178,6 @@ export class CatalogueViewComponent implements OnInit {
             this.addCatalogue = false;
             this.whiteBlackListPanelVisible = this.searchRef && this.whiteBlackListService.catalogueId != null;
             this.catalogueLineView = {};
-            this.catalogueService.setEditMode(false);
             this.sortOption = this.sortOption == null ? CATALOGUE_LINE_SORT_OPTIONS[0].name : this.sortOption;
             this.initDataRetrieval();
             for (let i = 0; i < this.pageSize; i++) {
