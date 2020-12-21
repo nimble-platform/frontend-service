@@ -61,6 +61,8 @@ export class ProductDetailsOverviewComponent implements OnInit {
     @Input() inShoppingBasket: boolean;
     @Input() isNegotiateOrderButtonDisabled: boolean = false;
     @Input() shoppingCartItemForm: FormGroup;
+    // whether the product details overview is used in publishing page
+    @Input() overviewInProductPublishing:boolean = false;
     // flag to adjust the name of the negotiate or order button,
     // true means the there are some negotiated terms and a negotiation process should be started. otherwise an order process is started
     @Input() isNegotiatingAnyTerm: boolean;
@@ -131,12 +133,22 @@ export class ProductDetailsOverviewComponent implements OnInit {
             Cache FurnitureOntology categories. Then, use cached categories to get correct category label according
             to the default language of the browser.
          */
-        this.getClassificationNamesStatus.submit();
-        let classifications = this.getClassifications();
-        if (classifications.length > 0) {
-            for (let classification of this.wrapper.item.commodityClassification) {
-                this.categoryUris.push(classification.itemClassificationCode.uri);
+        // if the overview is shown in the product publishing page, we will make use of the selected categories from the category service
+        // otherwise, use the commodity classifications available in the item
+        if(this.overviewInProductPublishing){
+            for(let category of this.categoryService.selectedCategories){
+                this.categoryUris.push(category.categoryUri);
             }
+        } else{
+            let classifications = this.getClassifications();
+            if(classifications.length > 0){
+                for (let classification of this.wrapper.item.commodityClassification) {
+                    this.categoryUris.push(classification.itemClassificationCode.uri);
+                }
+            }
+        }
+        if (this.categoryUris.length > 0) {
+            this.getClassificationNamesStatus.submit();
             this.classificationNames = [];
             let manPartyId = UBLModelUtils.getPartyId(this.wrapper.goodsItem.item.manufacturerParty);
             let userId = this.cookieService.get('user_id');

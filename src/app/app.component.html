@@ -69,14 +69,14 @@
                         <i class="fa fa-shopping-cart dd-icon"></i> <span [innerHTML]="'Product / Service' | translate"></span>
                         <div class="publish-menu dropdown-menu">
                             <a class="dropdown-item pointer text-left"
-                                [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', pg: 'single'}">
+                                [routerLink]="['/catalogue/publish-single']" [queryParams]="{pageRef: 'menu'}">
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-minus mr-3"></i>
                                     <span>{{'Single Item' | translate}}</span>
                                 </div>
                             </a>
                             <a class="dropdown-item pointer text-left"
-                               [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', pg: 'bulk'}">
+                               [routerLink]="['/catalogue/publish-bulk']" [queryParams]="{pageRef: 'menu'}">
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-align-justify mr-3"></i>
                                     <span>{{'Multiple Items' | translate}}</span>
@@ -84,7 +84,7 @@
                             </a>
                         </div>
                     </a>
-                    <a *ngIf="enableLogisticServicePublishing" class="dropdown-item" [routerLink]="['/catalogue/publish-logistic']" [queryParams]="{pageRef: 'single'}" routerLinkActive="active">
+                    <a *ngIf="enableLogisticServicePublishing" class="dropdown-item" [routerLink]="['/catalogue/publish-logistic']" routerLinkActive="active">
                         <i class="fa fa-truck dd-icon"></i> <span [innerHTML]="'Logistics Service' | translate"></span>
                     </a>
                 </div>

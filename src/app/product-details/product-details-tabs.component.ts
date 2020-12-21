@@ -41,6 +41,8 @@ export class ProductDetailsTabsComponent implements OnInit {
     @Input() itemWithSelectedProps: Item;
     @Input() associatedProducts: CatalogueLine[];
     @Input() settings: CompanySettings;
+    // whether this component is used in publishing page
+    @Input() productDetailsTabInProductPublishing:boolean = false;
 
     @Input() showOverview: boolean = false;
     @Input() readonly: boolean = false;
