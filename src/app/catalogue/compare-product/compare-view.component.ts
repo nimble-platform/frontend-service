@@ -116,7 +116,6 @@ export class CompareViewComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.catalogueService.setEditMode(false);
         this.hasFavourite = false;
         this.hasFavourite_first = false;
         for (let i = 0; i < this.pageSize; i++) {

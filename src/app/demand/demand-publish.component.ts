@@ -56,6 +56,8 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
 
     selectPreferredName = selectPreferredName;
     LANGUAGES = LANGUAGES;
+    // flag whether the category search page is displayed
+    categorySearchPage:boolean = false;
 
     constructor(
         private demandPublishService: DemandPublishService,
@@ -209,7 +211,12 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
         if (this.selectedCategory) {
             this.categoryService.selectedCategories = [this.selectedCategory];
         }
-        this.router.navigate(['catalogue/categorysearch'], {queryParams: {pageRef: 'demand-publish', categoryCount: 'single'}});
+        this.categorySearchPage = true;
+    }
+
+    onCategorySelected():void{
+        this.categorySearchPage = !this.categorySearchPage;
+        this.selectedCategory = this.categoryService.selectedCategories[0];
     }
 
     onCountrySelected(event: NgbTypeaheadSelectItemEvent): void {

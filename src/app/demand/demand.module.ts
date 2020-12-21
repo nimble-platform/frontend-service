@@ -24,6 +24,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {DemandListComponent} from './list/demand-list.component';
 import {DemandListItemComponent} from './list/demand-list-item.component';
 import {DemandSearchFilterComponent} from './list/demand-search-filter.component';
+import {CatalogueModule} from '../catalogue/catalogue.module';
 
 @NgModule({
     imports: [
@@ -32,7 +33,8 @@ import {DemandSearchFilterComponent} from './list/demand-search-filter.component
         AppCommonModule,
         NgbModule,
         DemandRoutingModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        CatalogueModule
     ],
     exports: [
         DemandListComponent

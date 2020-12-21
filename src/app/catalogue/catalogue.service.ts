@@ -16,20 +16,19 @@
    limitations under the License.
  */
 
-import { Injectable } from "@angular/core";
-import { Headers, Http } from "@angular/http";
-import {catalogue_endpoint, delegate_endpoint, config, catalogue_endpoint_with_zuul} from '../globals';
-import { Catalogue } from "./model/publish/catalogue";
-import { UserService } from "../user-mgmt/user.service";
-import { CatalogueLine } from "./model/publish/catalogue-line";
-import { Category } from "./model/category/category";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
-import { CookieService } from "ng2-cookies";
-import { copy, getAuthorizedHeaders } from "../common/utils";
-import { BinaryObject } from './model/publish/binary-object';
-import { CataloguePaginationResponse } from './model/publish/catalogue-pagination-response';
-import { UBLModelUtils } from './model/ubl-model-utils';
-import { DEFAULT_LANGUAGE, FEDERATION } from './model/constants';
+import {Injectable} from '@angular/core';
+import {Headers, Http} from '@angular/http';
+import {catalogue_endpoint, catalogue_endpoint_with_zuul, config, delegate_endpoint} from '../globals';
+import {Catalogue} from './model/publish/catalogue';
+import {UserService} from '../user-mgmt/user.service';
+import {CatalogueLine} from './model/publish/catalogue-line';
+import {Category} from './model/category/category';
+import {CookieService} from 'ng2-cookies';
+import {copy} from '../common/utils';
+import {BinaryObject} from './model/publish/binary-object';
+import {CataloguePaginationResponse} from './model/publish/catalogue-pagination-response';
+import {UBLModelUtils} from './model/ubl-model-utils';
+import {DEFAULT_LANGUAGE, FEDERATION} from './model/constants';
 import {Clause} from './model/publish/clause';
 
 @Injectable()
@@ -45,9 +44,6 @@ export class CatalogueService {
     draftCatalogueLine: CatalogueLine;
     // To save a reference to the original version of the item being edited
     originalCatalogueLine: CatalogueLine;
-    // edit mode switch (observable as it is provided by parent to its grandchild components)
-    private editMode = new BehaviorSubject<boolean>(false);
-    editModeObs = this.editMode.asObservable();
 
     constructor(private http: Http,
         private userService: UserService,
@@ -111,26 +107,6 @@ export class CatalogueService {
             .catch(res => {
                 this.handleError(res.getBody());
             });
-    }
-
-    getFavouriteResponse(userId: string, limit: number = 0, offset: number = 0, sortOption = null): Promise<any> {
-        return this.userService.getPerson(userId).then(person => {
-            if (!person) {
-                return Promise.resolve([]);
-            }
-
-            return this.getCatalogueLinesByHjids(person.favouriteProductID.map(id => Number.parseInt(id)), limit, offset, sortOption).then(res => {
-                let sorted = this.sortImages(res, null, true);
-                return sorted as Array<CatalogueLine>;
-                //return res.json() as Array<CatalogueLine>;
-            })
-                .catch(res => {
-                    if (res.status == 500) {
-                        return [];
-                    }
-                    this.handleError(res.getBody());
-                });
-        });
     }
 
     getCatalogueLine(catalogueId: string, lineId: string): Promise<CatalogueLine> {
@@ -329,32 +305,30 @@ export class CatalogueService {
         categoryIds = categoryIds.substr(0, categoryIds.length - 1);
         taxonomyIds = taxonomyIds.substr(0, taxonomyIds.length - 1);
 
-        return this.userService.getUserParty(userId).then(party => {
-            const token = 'Bearer ' + this.cookieService.get("bearer_token");
-            const url = this.baseUrl + `/catalogue/template?categoryIds=${encodeURIComponent(categoryIds)}&taxonomyIds=${encodeURIComponent(taxonomyIds)}&templateLanguage=${templateLanguage}`;
-            return new Promise<any>((resolve, reject) => {
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const url = this.baseUrl + `/catalogue/template?categoryIds=${encodeURIComponent(categoryIds)}&taxonomyIds=${encodeURIComponent(taxonomyIds)}&templateLanguage=${templateLanguage}`;
+        return new Promise<any>((resolve, reject) => {
 
-                let xhr = new XMLHttpRequest();
-                xhr.open('GET', url, true);
-                xhr.setRequestHeader('Accept', 'application/octet-stream');
-                xhr.setRequestHeader('Authorization', token);
-                xhr.responseType = 'blob';
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.setRequestHeader('Accept', 'application/octet-stream');
+            xhr.setRequestHeader('Authorization', token);
+            xhr.responseType = 'blob';
 
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === 4) {
-                        if (xhr.status === 200) {
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
 
-                            var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-                            var blob = new Blob([xhr.response], { type: contentType });
-                            let fileName = xhr.getResponseHeader("Content-Disposition").split("=")[1];
-                            resolve({ fileName: fileName, content: blob });
-                        } else {
-                            reject(xhr.status);
-                        }
+                        var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                        var blob = new Blob([xhr.response], { type: contentType });
+                        let fileName = xhr.getResponseHeader("Content-Disposition").split("=")[1];
+                        resolve({ fileName: fileName, content: blob });
+                    } else {
+                        reject(xhr.status);
                     }
                 }
-                xhr.send();
-            });
+            }
+            xhr.send();
         });
     }
 
@@ -516,6 +490,21 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
+    changeProductStatusForCatalogues(catalogueIds: string[],productStatus:string): Promise<any> {
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const partyId = this.cookieService.get("company_id");
+        let ids: string = '';
+        for (let id of catalogueIds) {
+            ids += id + ","
+        }
+        ids = ids.substr(0, ids.length - 1);
+        const url = this.baseUrl + `/catalogue/product-status?ids=${ids}&partyId=${partyId}&status=${productStatus}`;
+        return this.http
+            .put(url, null,{ headers: new Headers({ "Authorization": token }) })
+            .toPromise()
+            .catch(this.handleError);
+    }
+
     getContractForCatalogue(catalogueUuids: string[]): Promise<Map<string,Clause[]>> {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         let url = this.baseUrl + `/catalogue/contract?catalogueUuids=${catalogueUuids.join()}`;
@@ -577,7 +566,6 @@ export class CatalogueService {
     }
 
     getCatalogueIdsForParty() {
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const partyId = this.cookieService.get("company_id");
         const url = this.baseUrl + `/catalogue/ids/${partyId}`;
         return this.http
@@ -591,7 +579,6 @@ export class CatalogueService {
     }
 
     getCatalogueIdsUUidsForParty() {
-        const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const partyId = this.cookieService.get("company_id");
         const url = this.baseUrl + `/catalogue/idsuuids/${partyId}`;
         return this.http
@@ -613,9 +600,7 @@ export class CatalogueService {
             .get(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
             .then(res => {
-                let sorted = this.sortImages(res, "catalogueLine", true);
-                return sorted;
-                //return res.json();
+                return this.sortImages(res, "catalogueLine", true);
             })
             .catch(this.handleError);
     }
@@ -683,10 +668,6 @@ export class CatalogueService {
         this.draftCatalogueLine = copy(catalogueLine);
         // save reference to original
         this.originalCatalogueLine = catalogueLine;
-    }
-
-    setEditMode(editMode: boolean): void {
-        this.editMode.next(editMode);
     }
 
     sortImages(data: any, start: string, array: boolean): any {

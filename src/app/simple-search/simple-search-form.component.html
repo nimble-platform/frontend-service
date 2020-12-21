@@ -318,6 +318,34 @@
                                         <button class="btn btn-secondary ml-2" (click)="resetPriceFilter()" [hidden]="!checkPriceFacet()"><span [innerHTML]="'Reset' | translate"></span></button>
                                     </div>
                                 </div>
+                                <!-- Do not show delivery period if it is excluded in the configs -->
+                                <div *ngIf="product_nonfilter_data_type.indexOf('deliveryPeriod') == -1" class="card mb-3">
+                                    <div class="card-header">
+                                        {{ "Delivery Period" | translate }}
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row mb-2">
+                                            <div class="col-3">
+                                                <input class="form-control form-control-sm" [(ngModel)]="selectedDeliveryTimeMin" [ngModelOptions]="{standalone: true}" type="number">
+                                            </div>
+                                            <div class="col-1">
+                                                -
+                                            </div>
+                                            <div class="col-3">
+                                                <input class="form-control form-control-sm" [(ngModel)]="selectedDeliveryTimeMax" [ngModelOptions]="{standalone: true}" type="number">
+                                            </div>
+                                            <div class="col-5">
+                                                <select class="form-control form-control-sm" [(ngModel)]="selectedDeliveryTimeUnit" [ngModelOptions]="{standalone: true}">
+                                                    <option *ngFor="let unit of deliveryPeriodUnits" [value]="unit">
+                                                        {{ unit }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-primary" (click)="setDeliveryTimeFilter()" [disabled]="!checkDeliveryTimeFilter()"><span [innerHTML]="'Apply' | translate"></span></button>
+                                        <button class="btn btn-secondary ml-2" (click)="resetDeliveryTimeFilter()" [hidden]="!checkDeliveryTimeFilter()"><span [innerHTML]="'Reset' | translate"></span></button>
+                                    </div>
+                                </div>
                                 <div *ngFor="let facet of productFilter.facets">
                                     <div class="card mb-3">
                                         <!-- Display the units for quantity properties -->

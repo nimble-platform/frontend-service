@@ -22,13 +22,11 @@ import { AppCommonModule } from "../common/common.module";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { CatalogueRoutingModule } from "./catalogue-routing.module";
 import { CategorySearchComponent } from "./category/category-search.component";
-import { ProductPublishComponent } from "./publish/product-publish.component";
 import { CatalogueViewComponent } from "./ubl-model-view/catalogue/catalogue-view.component";
 import { FavouriteViewComponent } from "./favourite/favourite-view.component";
 import { CompareViewComponent } from "./compare-product/compare-view.component";
 import { CatalogueLinePanelComponent } from "./ubl-model-view/catalogue/catalogue-line-panel.component";
 import { PublishDeactivateGuardService } from "./publish-deactivate-guard.service";
-import { CategoryDeactivateGuardService } from "./category/category-deactivate-guard.service";
 import { CategoryTreeComponent } from "./category/category-tree.component";
 import { EditPropertyModalComponent } from "./publish/edit-property-modal.component";
 import { ProductDeliveryTradingComponent } from "./publish/product-delivery-trading.component";
@@ -44,6 +42,8 @@ import { NameDescriptionPanelComponent } from './publish/name-description-panel.
 import { LogisticServicePublishComponent } from './publish/logistic-service-publish.component';
 import { LogisticPublishDeactivateGuardService } from './logistic-publish-deactivate-guard.service';
 import { DeleteExportCatalogueModalComponent } from "./ubl-model-view/catalogue/delete-export-catalogue-modal.component";
+import {ProductPublishStepsComponent} from './publish/product-publish-steps.component';
+import {SinglePublishComponent} from './publish/single-publish.component';
 
 @NgModule({
     imports: [CommonModule,
@@ -59,10 +59,11 @@ import { DeleteExportCatalogueModalComponent } from "./ubl-model-view/catalogue/
     declarations: [
         CategorySearchComponent,
         CategoryTreeComponent,
-        ProductPublishComponent,
+        ProductPublishStepsComponent,
         LogisticServicePublishComponent,
         EditPropertyModalComponent,
         BulkPublishComponent,
+        SinglePublishComponent,
         OptionsPanelComponent,
         OriginDestinationViewComponent,
         NameDescriptionPanelComponent,
@@ -84,6 +85,6 @@ import { DeleteExportCatalogueModalComponent } from "./ubl-model-view/catalogue/
         FavouriteViewComponent,
         CompareViewComponent
     ],
-    providers: [PublishDeactivateGuardService, CategoryDeactivateGuardService, LogisticPublishDeactivateGuardService]
+    providers: [PublishDeactivateGuardService, LogisticPublishDeactivateGuardService]
 })
 export class CatalogueModule { }

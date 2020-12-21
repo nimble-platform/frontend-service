@@ -22,9 +22,13 @@ import {Category} from '../model/category/category';
 import * as myGlobals from '../../globals';
 import {Code} from '../model/publish/code';
 import {ParentCategories} from '../model/category/parent-categories';
-import {findCategoryInArray, getAuthorizedHeaders, sortCategories} from '../../common/utils';
+import {findCategoryInArray, getAuthorizedHeaders, selectPreferredName, sortCategories} from '../../common/utils';
 import {CookieService} from 'ng2-cookies';
+import {UserService} from '../../user-mgmt/user.service';
 
+/**
+ * This service manages the categories to be selected for the product publishing.
+ * */
 @Injectable()
 export class CategoryService {
     private baseUrl = myGlobals.catalogue_endpoint;
@@ -37,6 +41,7 @@ export class CategoryService {
     categoryFilter = myGlobals.config.categoryFilter;
 
     constructor(private http: Http,
+        private userService: UserService,
         private cookieService: CookieService) {
         // get service categories for available taxonomies
         this.getServiceCategoriesForAvailableTaxonomies();
@@ -276,5 +281,16 @@ export class CategoryService {
 
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);
+    }
+
+    public addRecentCategories(cat: Category[]) {
+        var recCatPost = [];
+        var timeStamp = new Date().getTime();
+        for (var i = 0; i < cat.length; i++) {
+            const cat_str = cat[i].id + "::" + cat[i].taxonomyId + "::" + selectPreferredName(cat[i]) + "::product::" + timeStamp;
+            recCatPost.push(cat_str);
+        }
+        const userId = this.cookieService.get("user_id");
+        this.userService.addRecCat(userId, recCatPost);
     }
 }

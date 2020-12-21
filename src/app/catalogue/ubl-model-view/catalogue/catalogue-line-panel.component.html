@@ -16,11 +16,11 @@
 
 <div class="well" *ngIf="show">
 
-    <div class="d-flex mt-3 mb-3" (click)="show = false;showChange.emit(false)">
+    <div class="d-flex mt-3 mb-3" (click)="onLinePanelClicked()">
         <h4 class="mr-auto"><u>{{selectItemName(catalogueLine.goodsItem.item)}}</u></h4>
         <!-- catalogue lines are in view mode in catalogue view -->
         <ng-container *ngIf="presentationMode == 'view' && appComponent.checkRoles('catalogue')">
-            <ng-container *ngIf="!offeringProduct">
+            <ng-container *ngIf="!offeringProduct && !linePanelInPublishingPage">
                 <div class="mr-1"><button type="button" class="btn btn-danger" (click)="deleteCatalogueLine()"><span [innerHTML]="'Delete' | translate"></span></button></div>
                 <div><button type="button" class="btn btn-primary" (click)="redirectToEdit()"><span [innerHTML]="'Edit' | translate"></span></button></div>
             </ng-container>
@@ -32,6 +32,6 @@
         </ng-container>
     </div>
 
-    <product-details-tabs [wrapper]="productWrapper" [showOverview]="true" [settings]="settings" [readonly]="true">
+    <product-details-tabs [wrapper]="productWrapper" [showOverview]="true" [settings]="settings" [readonly]="true" [productDetailsTabInProductPublishing]="linePanelInPublishingPage">
     </product-details-tabs>
 </div>

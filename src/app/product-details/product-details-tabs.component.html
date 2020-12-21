@@ -71,7 +71,7 @@
     <!-- Overview Tab -->
     <div *ngIf="selectedTab === 'OVERVIEW'" class="p-3 col-12">
         <h3 class="p-1"><span [innerHTML]="'Overview' | translate"></span></h3>
-        <product-details-overview [wrapper]="wrapper" [itemWithSelectedProps]="itemWithSelectedProps" [associatedProducts]="associatedProducts" [readonly]="readonly" (compStatus)="setTab($event)">
+        <product-details-overview [wrapper]="wrapper" [itemWithSelectedProps]="itemWithSelectedProps" [associatedProducts]="associatedProducts" [readonly]="readonly" (compStatus)="setTab($event)" [overviewInProductPublishing]="productDetailsTabInProductPublishing">
         </product-details-overview>
     </div>
 
@@ -103,10 +103,10 @@
                                     <td><b>{{ getHumanReadablePropertyName(wrapper.getPropertyName(property)) }}: </b></td>
                                     <td>
                                         <span *ngIf="property.valueQualifier !== 'FILE' && property.valueQualifier !== 'BOOLEAN'">
-                                            {{ getValuesAsString(property).join(", ") }}
+                                            {{ getPropertyValuesAsStrings(property).join(", ") }}
                                         </span>
                                             <span *ngIf="property.valueQualifier === 'BOOLEAN'">
-                                            <i class="fa boolean-type {{getValuesAsString(property)[0] == 'true' ? 'fa-check': 'fa-times'}}" aria-hidden="true"></i>
+                                            <i class="fa boolean-type {{getPropertyValuesAsStrings(property)[0] == 'true' ? 'fa-check': 'fa-times'}}" aria-hidden="true"></i>
                                         </span>
                                         <ng-container *ngIf="property.valueQualifier === 'FILE'">
                                             <file-input presentationMode="view" [binaryObjects]="property.valueBinary" [multiple]="true" [small]="true"></file-input>
