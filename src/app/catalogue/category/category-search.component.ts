@@ -59,9 +59,6 @@ export class CategorySearchComponent implements OnInit {
     /*
     query parameters
      */
-    // indicates the app section that was used to trigger the router
-    pageRef: string = null;
-    @Input() publishingGranularity: string;
     // indicates whether only one category can be selected or multiple categories can be selected
     @Input() categoryCount: 'single' | 'multiple' = 'multiple';
 
