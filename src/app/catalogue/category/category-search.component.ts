@@ -56,9 +56,6 @@ export class CategorySearchComponent implements OnInit {
     getCategoryDetailsStatus: CallStatus = new CallStatus();
 
     categories: Category[];
-    pageRef: string = null;
-    @Input() publishingGranularity: string;
-
 
     // keeps the query term
     categoryKeyword: string;
