@@ -14,7 +14,7 @@
 
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Demand} from '../../catalogue/model/publish/demand';
-import {selectNameFromLabelObject, selectPreferredValue} from '../../common/utils';
+import {selectNameFromLabelObject, selectPartyName, selectPreferredValue} from '../../common/utils';
 import {Router} from '@angular/router';
 import {DemandService} from '../demand-service';
 import {CallStatus} from '../../common/call-status';
@@ -22,6 +22,11 @@ import {DemandPublishService} from '../demand-publish-service';
 import {CategoryService} from '../../catalogue/category/category.service';
 import {CategoryModelUtils} from '../../catalogue/model/model-util/category-model-utils';
 import {Category} from '../../catalogue/model/category/category';
+import {BPEService} from '../../bpe/bpe.service';
+import {UserService} from '../../user-mgmt/user.service';
+import {FEDERATIONID} from '../../catalogue/model/constants';
+import {CookieService} from 'ng2-cookies';
+import {Party} from '../../catalogue/model/publish/party';
 
 @Component({
     selector: 'demand-list-item',
@@ -30,19 +35,37 @@ import {Category} from '../../catalogue/model/category/category';
 export class DemandListItemComponent {
     @Input() demand: Demand;
     @Input() leafCategory: any;
+    @Input() showActionButtons = false;
+    @Input() companyData: any;
     @Output() onDemandDeleted: EventEmitter<void> = new EventEmitter<void>();
+
+    isLoggedIn: boolean;
+    buyerParty: Party;
+    userCompanyId: string;
 
     callStatus: CallStatus;
 
     selectNameFromLabelObject = selectNameFromLabelObject;
     selectPreferredValue = selectPreferredValue;
+    selectPartyName = selectPartyName;
 
     constructor(
         private demandService: DemandService,
         private demandPublishService: DemandPublishService,
         private categoryService: CategoryService,
+        private bpeService: BPEService,
+        private userService: UserService,
+        private cookieService: CookieService,
         private router: Router
     ) {
+    }
+
+    ngOnInit(): void {
+        this.isLoggedIn = !!this.cookieService.get('user_id')
+        this.userCompanyId = this.cookieService.get('company_id');
+        if (this.isLoggedIn) {
+            this.getOwnerCompanyDetails();
+        }
     }
 
     onEditClicked(): void {
@@ -64,5 +87,20 @@ export class DemandListItemComponent {
         }).catch(e => {
             this.callStatus.error('Failed to delete demand', e);
         })
+    }
+
+    onLoginClicked(): void {
+        this.router.navigate(['/user-mgmt/login'], { queryParams: { redirectURL: this.router.url } });
+    }
+
+
+    private getOwnerCompanyDetails(): void {
+        this.userService.getParty(this.demand.metadata.ownerCompany[0]).then(party => {
+            this.buyerParty = party;
+        });
+    }
+
+    onContactClicked(): void {
+        this.router.navigate(['/user-mgmt/company-details'], {queryParams: {id: this.companyData.id}})
     }
 }

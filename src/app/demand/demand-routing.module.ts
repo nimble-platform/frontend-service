@@ -18,8 +18,8 @@ import {DemandPublishComponent} from './demand-publish.component';
 import {DemandListComponent} from './list/demand-list.component';
 
 const routes: Routes = [
-    { path: 'publish', component: DemandPublishComponent },
-    { path: 'demands', component: DemandListComponent }
+    { path: '', component: DemandListComponent },
+    { path: 'publish', component: DemandPublishComponent }
 ];
 
 @NgModule({

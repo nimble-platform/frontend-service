@@ -23,8 +23,8 @@
     </div>
 </div>
 <div class="d-flex no-gutters space-before">
-    <div class="facet-column">
-        <div *ngIf="demands.length > 0">
+    <div *ngIf="demands.length > 0" class="facet-column">
+        <div>
             <button class="btn btn-secondary mb-2" (click)="onResetSearch()"><span [innerHTML]="'Reset Search' | translate"></span></button>
         </div>
         <!-- category facet -->
@@ -38,7 +38,9 @@
         <call-status *ngIf="searchCallStatus" [large]="true" [callStatus]="searchCallStatus"></call-status>
         <!-- demand list -->
         <div *ngFor="let demand of demands" class="space-after">
-            <demand-list-item [demand]="demand.demand" [leafCategory]="demand.leafCategory" (onDemandDeleted)="onDemandDeleted()">
+            <demand-list-item [demand]="demand.demand" [leafCategory]="demand.leafCategory" [showActionButtons]="companyDemands"
+                              [companyData]="companyData.get(demand.demand.metadata.ownerCompany[0])"
+                              (onDemandDeleted)="onDemandDeleted()">
             </demand-list-item>
         </div>
         <!-- no demands -->

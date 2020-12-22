@@ -657,7 +657,7 @@ export class SimpleSearchService {
         return Promise.reject(error.message || error);
     }
 
-    getCompanies(query: string, facets: string[], facetQueries: string[]): Promise<any> {
+    getCompanies(query: string, facets: string[], rowCount: number): Promise<any> {
         query = query.replace(/[!'()]/g, '');
         // var start = page*10-10;
         let url = this.url + `/party/search`;
@@ -666,7 +666,7 @@ export class SimpleSearchService {
         }
 
         let searchObject: any = {};
-        searchObject.rows = facetQueries.length;
+        searchObject.rows = rowCount;
 
         searchObject.q = query;
 

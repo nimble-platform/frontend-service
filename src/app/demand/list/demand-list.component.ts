@@ -23,6 +23,8 @@ import {Subscription} from 'rxjs';
 import {CallStatus} from '../../common/call-status';
 import {Facet} from '../../common/model/facet';
 import {FacetValue} from '../../common/model/facet-value';
+import {DEFAULT_LANGUAGE} from '../../catalogue/model/constants';
+import {SimpleSearchService} from '../../simple-search/simple-search.service';
 
 @Component({
     selector: 'demand-list',
@@ -41,6 +43,7 @@ export class DemandListComponent implements OnInit, OnDestroy {
      }]
     */
     demands: any[] = [];
+    companyData: Map<string, any> = new Map<string, any>();
     demandCategories: FacetValue[];
     buyerCountryFacet: Facet = null;
     deliveryCountryFacet: Facet = null;
@@ -64,6 +67,7 @@ export class DemandListComponent implements OnInit, OnDestroy {
     constructor(
         private demandService: DemandService,
         private categoryService: CategoryService,
+        private searchService: SimpleSearchService,
         private cookieService: CookieService,
         private translate: TranslateService,
         private router: Router,
@@ -222,6 +226,8 @@ export class DemandListComponent implements OnInit, OnDestroy {
                             'leafCategory': leafCategory
                         });
                     }
+
+                    this.getCompanyNameFromIds();
                     this.searchCallStatus.callback(null, true);
                 }).catch(e => {
                     this.searchCallStatus.error(this.translate.instant('Failed to get demand categories'), e);
@@ -260,5 +266,14 @@ export class DemandListComponent implements OnInit, OnDestroy {
             buyerCountryFacet.facetValues.find(facetValue => facetValue.value === this.buyerCountry).selected = true;
         }
         this.buyerCountryFacet = buyerCountryFacet;
+    }
+
+    private getCompanyNameFromIds(): void {
+        const companyQuery: string = this.demands.map(demand => 'id:' + demand.demand.metadata.ownerCompany[0]).join(' OR ');
+        this.searchService.getCompanies(companyQuery, [], this.demands.length).then(companies => {
+            companies.result.forEach(company => {
+                this.companyData.set(company.id, company);
+            });
+        });
     }
 }
