@@ -27,12 +27,13 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 })
 export class DeleteExportCatalogueModalComponent {
 
-    @Input() mode: 'delete' | 'export' | 'delete-images' | 'upload-image' = 'delete';
+    @Input() mode: 'delete' | 'export' | 'delete-images' | 'upload-image' | 'product-status' = 'delete';
     private catalogueIds: string[] = []; // keeps list of identifiers of catalogues associated to the user party
     selectedIdMap: any = {}; // keeps catalogue id / boolean pairs as selected indicators
     catalogueRetrievalCallStatus: CallStatus = new CallStatus();
     catalogueOperationCallStatus: CallStatus = new CallStatus();
     enableMultipleSelection: boolean = true;
+    productStatusType:string = "PUBLISHED";
     @ViewChild("modal") modal: ElementRef;
 
     @Output() onSuccessfulDelete: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -42,7 +43,7 @@ export class DeleteExportCatalogueModalComponent {
         private translate: TranslateService) {
     }
 
-    open(mode: 'delete' | 'export' | 'delete-images' | 'upload-image'): void {
+    open(mode: 'delete' | 'export' | 'delete-images' | 'upload-image' | 'product-status'): void {
         // initialize CallStatus object to remove the error messages occured in previous activities
         this.catalogueRetrievalCallStatus = new CallStatus();
         this.catalogueOperationCallStatus = new CallStatus();
@@ -106,6 +107,24 @@ export class DeleteExportCatalogueModalComponent {
 
         }).catch(error => {
             this.catalogueOperationCallStatus.error("Failed to delete catalogue images", error);
+        });
+    }
+
+    onChangeProductStatusClicked(close: any) {
+        let catalogueIdsToUpdate: string[] = this.getSelectedCatalogueIds();
+        if (catalogueIdsToUpdate.length == 0) {
+            this.resetModalAndClose(close);
+            return;
+        }
+
+        this.catalogueOperationCallStatus.submit();
+        this.catalogueService.changeProductStatusForCatalogues(catalogueIdsToUpdate,this.productStatusType).then(() => {
+            this.onSuccessfulDelete.emit(true);
+            this.catalogueOperationCallStatus.callback("Changed product status successfully", true);
+            this.resetModalAndClose(close);
+
+        }).catch(error => {
+            this.catalogueOperationCallStatus.error("Failed to change product status", error);
         });
     }
 

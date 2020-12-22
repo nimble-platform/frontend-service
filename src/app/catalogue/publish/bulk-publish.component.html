@@ -14,101 +14,151 @@
    limitations under the License.
  -->
 
-<div class="d-flex align-items-stretch mt-3 mb-4">
-    <label class="col-9"><span [innerHTML]="'1. Download the product / service category template' | translate"></span></label>
-    <!--<select [(ngModel)]="templateLanguage" class="form-control col-1" type="text" style="margin-right: 1px">-->
-    <!--<option *ngFor='let language of languages' [value]="language" [selected]="templateLanguage === language">{{language}}</option>-->
-    <!--</select>-->
-    <div class="col-3 p-0">
-        <button class="btn btn-secondary btn-download-template" [disabled]="!selectCategories" (click)="downloadTemplate()"><span [innerHTML]="'Download template' | translate"></span>
-        </button>
-        <div *ngIf="showCategoryWarning" class="alert-danger rounded d-flex align-items-center justify-content-between mt-2 p-2">
-            <small><span [innerHTML]="'At least one category should be selected!' | translate"></span></small>
-            <button type="button" class="close regular-font-size" aria-label="Close" (click)="closeCategoryWarning()">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    </div>
-</div>
-<div class="d-flex mb-4">
-    <label class="col-9"><span [innerHTML]="'2. Select upload mode.' | translate"></span>
-        <ul>
-            <li><span [innerHTML]="'Append mode: Already published products / services are updated if newer versions are provided in the template, new products / services are appended to the current catalogue.' | translate"></span>
-            </li>
-            <li><span [innerHTML]="'Replace mode: All previously published items having the same categories specified in the template are deleted; and only the new ones are added to the catalogue.' | translate"></span></li>
-        </ul>
-    </label>
-    <select #uploadModeSelect class="col-3 btn btn-outline-secondary align-self-start" style="text-align-last:center;" (change)="checkMode(uploadModeSelect.value)">
-        <option value="append"><span [innerHTML]="'Append' | translate"></span></option>
-        <option value="replace"><span [innerHTML]="'Replace' | translate"></span></option>
-    </select>
-</div>
-<div class="d-flex mb-4">
-    <div class="col-9">
-        <label><span [innerHTML]="'3. Fill in the template' | translate"></span></label>
-        <!-- catalogue ids when there are some existing catalogues -->
-        <ng-container *ngIf="catalogueIds && catalogueIds.length > 0">
-            <div class="mb-3">
-                <input type="checkbox" [checked]="selectExistingCatalogue" (change)="selectExistingCatalogue = !selectExistingCatalogue">
-                <span>{{'Select Existing Catalogue:' | translate}} </span>
-                <select class="btn btn-outline-secondary" [(ngModel)]="dropdownCatalogueId" [disabled]="!selectExistingCatalogue">
-                    <option *ngFor="let catalogue of catalogueIds ; let i = index"
-                            [value]=catalogueIds[i]
-                            [innerHtml]="catalogue == 'default'? ('Main Catalogue'|translate): catalogue">
-                    </option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <input type="checkbox" [checked]="!selectExistingCatalogue" (change)="selectExistingCatalogue = !selectExistingCatalogue">
-                <span>{{'Create New Catalogue:' | translate}} </span>
-                <input class="form-control new-catalogue-input" [disabled]="selectExistingCatalogue" [(ngModel)]="newCatalogueId">
-            </div>
-        </ng-container>
-        <!-- there is no existing catalogues. So, expect a new name -->
-        <div *ngIf="!catalogueIds || catalogueIds.length === 0" class="mb-3">
-            <span>{{'Catalogue Name:' | translate}} </span>
-            <input class="form-control new-catalogue-input" [(ngModel)]="newCatalogueId">
-        </div>
-        <label><span [innerHTML]="'4. Upload the template after filling it with your product / service information' | translate"></span>
-        </label>
-    </div>
-    <input #template type="file" (change)="uploadTemplateCallback($event, uploadModeSelect.value)" multiple="true" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display: none">
-    <div class="col-3 p-0">
-        <button class="btn btn-secondary w-100" (click)="uploadTemplateClicked()">
-            <span [innerHTML]="'Upload template(s)' | translate"></span>
-        </button>
-        <div *ngIf="showCatalogueUploadWarning" class="alert-danger rounded d-flex align-items-center justify-content-between mt-2 p-2">
-            <small><span [innerHTML]="'A non-empty catalogue ID should be specified' | translate"></span></small>
-            <button type="button" class="close regular-font-size" aria-label="Close" (click)="closeUploadWarning()">
-                <span aria-hidden="true" class="font-weight-300">&times;</span>
-            </button>
-        </div>
-    </div>
-</div>
-<!-- upload statuses -->
-<div *ngIf="selectedFileList?.length > 0" class="col-9 mb-4">
-    <ng-container *ngFor="let selectedFile of selectedFileList; let i = index">
-        <div class="mt-1 position-relative" [ngClass]="{'d-flex justify-content-between alert-danger rounded align-self-center p-2' : uploadPublishStatus[i].isLoading()}">
-            <span *ngIf="uploadPublishStatus[i].isLoading()">{{selectedFile.name}}</span>
-            <call-status [callStatus]="uploadPublishStatus[i]">
-            </call-status>
-        </div>
-    </ng-container>
-</div>
-<div class="d-flex mb-4">
-    <label class="col-9"><span [innerHTML]="'5. Upload a zip package' | translate"></span>
-    </label>
-    <input #imagePackage type="file" (change)="uploadImagePackage($event)" accept="application/zip" style="display: none">
-    <button class="btn btn-secondary col-3 align-self-start" (click)="imagePackage.click()"><span [innerHTML]="'Upload Image Package' | translate"></span>
-    </button>
+<!-- Bulk Upload Publishing Steps -->
+<product-publish-steps
+        [currentStep]="publishingStep"
+        [publishingGranularity]="'bulk'"
+        (onStepChanged)="onStepChanged($event)"
+></product-publish-steps>
+
+<!--Category selection-->
+<div *ngIf="publishingStep == 'Category'" class="space-before">
+    <category-search
+            [categoriesSelected]="categorySelectedForPublishing"
+    ></category-search>
 </div>
 
-<div class="d-flex mb-4">
+<div *ngIf="publishingStep == 'BulkUpload'">
+    <!-- Selected Categories -->
+    <div class="row space-before">
+        <div class="col-2 category-list-label">
+            <strong *ngIf="!isProductCategoriesLoading()"><span [innerHTML]="'Categories:' | translate"></span></strong>
+            <strong class="mr-2" *ngIf="isProductCategoriesLoading()"><span [innerHTML]="'Fetching Categories' | translate"></span> </strong>
+            <call-status [callStatus]="productCategoryRetrievalStatus"></call-status>
+        </div>
+        <div class="col-10 ">
+            <div class="object-list">
+                <div *ngFor="let selectedCategory of categoryService.selectedCategories" class="bordered my-1 ml-1" title="{{selectedCategory.taxonomyId}}">
+                    <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="d-flex align-items-stretch mt-3 mb-4">
+            <label class="col-9"><span [innerHTML]="'1. Download the product / service category template' | translate"></span></label>
+            <!--<select [(ngModel)]="templateLanguage" class="form-control col-1" type="text" style="margin-right: 1px">-->
+            <!--<option *ngFor='let language of languages' [value]="language" [selected]="templateLanguage === language">{{language}}</option>-->
+            <!--</select>-->
+            <div class="col-3 p-0">
+                <button class="btn btn-secondary btn-download-template" [disabled]="!categoryService.selectedCategories" (click)="downloadTemplate()"><span [innerHTML]="'Download template' | translate"></span>
+                </button>
+                <div *ngIf="showCategoryWarning" class="alert-danger rounded d-flex align-items-center justify-content-between mt-2 p-2">
+                    <small><span [innerHTML]="'At least one category should be selected!' | translate"></span></small>
+                    <button type="button" class="close regular-font-size" aria-label="Close" (click)="closeCategoryWarning()">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex mb-4">
+            <label class="col-9"><span [innerHTML]="'2. Select upload mode.' | translate"></span>
+                <ul>
+                    <li><span [innerHTML]="'Append mode: Already published products / services are updated if newer versions are provided in the template, new products / services are appended to the current catalogue.' | translate"></span>
+                    </li>
+                    <li><span [innerHTML]="'Replace mode: All previously published items having the same categories specified in the template are deleted; and only the new ones are added to the catalogue.' | translate"></span></li>
+                </ul>
+            </label>
+            <select #uploadModeSelect class="col-3 btn btn-outline-secondary align-self-start" style="text-align-last:center;" (change)="checkMode(uploadModeSelect.value)">
+                <option value="append"><span [innerHTML]="'Append' | translate"></span></option>
+                <option value="replace"><span [innerHTML]="'Replace' | translate"></span></option>
+            </select>
+        </div>
+        <div class="d-flex mb-4">
+            <div class="col-9">
+                <label><span [innerHTML]="'3. Fill in the template' | translate"></span></label>
+                <!-- catalogue ids when there are some existing catalogues -->
+                <ng-container *ngIf="catalogueIds && catalogueIds.length > 0">
+                    <div class="mb-3">
+                        <input type="checkbox" [checked]="selectExistingCatalogue" (change)="selectExistingCatalogue = !selectExistingCatalogue">
+                        <span>{{'Select Existing Catalogue:' | translate}} </span>
+                        <select class="btn btn-outline-secondary" [(ngModel)]="dropdownCatalogueId" [disabled]="!selectExistingCatalogue">
+                            <option *ngFor="let catalogue of catalogueIds ; let i = index"
+                                    [value]=catalogueIds[i]
+                                    [innerHtml]="catalogue == 'default'? ('Main Catalogue'|translate): catalogue">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <input type="checkbox" [checked]="!selectExistingCatalogue" (change)="selectExistingCatalogue = !selectExistingCatalogue">
+                        <span>{{'Create New Catalogue:' | translate}} </span>
+                        <input class="form-control new-catalogue-input" [disabled]="selectExistingCatalogue" [(ngModel)]="newCatalogueId">
+                    </div>
+                </ng-container>
+                <!-- there is no existing catalogues. So, expect a new name -->
+                <div *ngIf="!catalogueIds || catalogueIds.length === 0" class="mb-3">
+                    <span>{{'Catalogue Name:' | translate}} </span>
+                    <input class="form-control new-catalogue-input" [(ngModel)]="newCatalogueId">
+                </div>
+                <label><span [innerHTML]="'4. Upload the template after filling it with your product / service information' | translate"></span>
+                </label>
+            </div>
+            <input #template type="file" (change)="uploadTemplateCallback($event, uploadModeSelect.value)" multiple="true" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display: none">
+            <div class="col-3 p-0">
+                <button class="btn btn-secondary w-100" (click)="uploadTemplateClicked()">
+                    <span [innerHTML]="'Upload template(s)' | translate"></span>
+                </button>
+                <div *ngIf="showCatalogueUploadWarning" class="alert-danger rounded d-flex align-items-center justify-content-between mt-2 p-2">
+                    <small><span [innerHTML]="'A non-empty catalogue ID should be specified' | translate"></span></small>
+                    <button type="button" class="close regular-font-size" aria-label="Close" (click)="closeUploadWarning()">
+                        <span aria-hidden="true" class="font-weight-300">&times;</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- upload statuses -->
+        <div *ngIf="selectedFileList?.length > 0" class="col-9 mb-4">
+            <ng-container *ngFor="let selectedFile of selectedFileList; let i = index">
+                <div class="mt-1 position-relative" [ngClass]="{'d-flex justify-content-between alert-danger rounded align-self-center p-2' : uploadPublishStatus[i].isLoading()}">
+                    <span *ngIf="uploadPublishStatus[i].isLoading()">{{selectedFile.name}}</span>
+                    <call-status [callStatus]="uploadPublishStatus[i]">
+                    </call-status>
+                </div>
+            </ng-container>
+        </div>
+        <div class="d-flex mb-4">
+            <label class="col-9"><span [innerHTML]="'5. Upload a zip package' | translate"></span>
+            </label>
+            <input #imagePackage type="file" (change)="uploadImagePackage($event)" accept="application/zip" style="display: none">
+            <button class="btn btn-secondary col-3 align-self-start" (click)="imagePackage.click()"><span [innerHTML]="'Upload Image Package' | translate"></span>
+            </button>
+        </div>
+
+        <div class="d-flex mb-4">
     <span class="col-9" [innerHTML]="'6. See catalogue'|translate">
     </span>
-    <button class="btn btn-secondary col-3 align-self-start" (click)="navigateToCatalogueTab()"><span [innerHTML]="'See Catalogue' | translate"></span>
-    </button>
+            <button class="btn btn-secondary col-3 align-self-start" (click)="navigateToCatalogueTab()"><span [innerHTML]="'See Catalogue' | translate"></span>
+            </button>
+        </div>
+
+        <call-status [callStatus]="publishStatus" [large]="true">
+        </call-status>
+    </div>
 </div>
 
-<call-status [callStatus]="publishStatus" [large]="true">
-</call-status>
+<hr class="actions-hr">
+
+<!-- Actions -->
+<div class="row actions-row pr-0">
+    <div *ngIf="publishingStep != 'Category'" class="col-2">
+        <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onPreviousStep()">
+            <span [innerHTML]="'Previous' | translate"></span>
+        </button>
+    </div>
+    <div *ngIf="publishingStep != 'BulkUpload'" class="col-3">
+        <button class="btn btn-primary action" [disabled]="isLoading() || categoryService.selectedCategories.length == 0" (click)="onNextStep()">
+            <span  [innerHTML]="'Next' | translate"></span>
+        </button>
+    </div>
+</div>

@@ -318,6 +318,34 @@
                                         <button class="btn btn-secondary ml-2" (click)="resetPriceFilter()" [hidden]="!checkPriceFacet()"><span [innerHTML]="'Reset' | translate"></span></button>
                                     </div>
                                 </div>
+                                <!-- Do not show delivery period if it is excluded in the configs -->
+                                <div *ngIf="product_nonfilter_data_type.indexOf('deliveryPeriod') == -1" class="card mb-3">
+                                    <div class="card-header">
+                                        {{ "Delivery Period" | translate }}
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row mb-2">
+                                            <div class="col-3">
+                                                <input class="form-control form-control-sm" [(ngModel)]="selectedDeliveryTimeMin" [ngModelOptions]="{standalone: true}" type="number">
+                                            </div>
+                                            <div class="col-1">
+                                                -
+                                            </div>
+                                            <div class="col-3">
+                                                <input class="form-control form-control-sm" [(ngModel)]="selectedDeliveryTimeMax" [ngModelOptions]="{standalone: true}" type="number">
+                                            </div>
+                                            <div class="col-5">
+                                                <select class="form-control form-control-sm" [(ngModel)]="selectedDeliveryTimeUnit" [ngModelOptions]="{standalone: true}">
+                                                    <option *ngFor="let unit of deliveryPeriodUnits" [value]="unit">
+                                                        {{ unit }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-primary" (click)="setDeliveryTimeFilter()" [disabled]="!checkDeliveryTimeFilter()"><span [innerHTML]="'Apply' | translate"></span></button>
+                                        <button class="btn btn-secondary ml-2" (click)="resetDeliveryTimeFilter()" [hidden]="!checkDeliveryTimeFilter()"><span [innerHTML]="'Reset' | translate"></span></button>
+                                    </div>
+                                </div>
                                 <div *ngFor="let facet of productFilter.facets">
                                     <div class="card mb-3">
                                         <!-- Display the units for quantity properties -->
@@ -596,10 +624,11 @@
                                             </div>
                                         </div>
                                         <!-- Price and Add Shopping Cart button-->
-                                        <ng-container *ngIf="isLoggedIn">
+                                        <ng-container>
                                             <div [ngClass]="{'col-2 border-right':display=='list','col-12 border-bottom pt-1 pb-2':display=='panel'}">
-                                                <!-- Price is available -->
-                                                <ng-container *ngIf="result[product_price] && !checkEmpty(result[product_price])">
+                                                <ng-container *ngIf="isLoggedIn">
+                                                    <!-- Price is available -->
+                                                    <ng-container *ngIf="result[product_price] && !checkEmpty(result[product_price])">
                                                     <span class="badge badge-primary-nimble">
                                                         <ng-container *ngIf="result[product_base_quantity] > 1">
                                                             <span>{{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}</span>
@@ -610,16 +639,17 @@
                                                             {{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}
                                                         </span>
                                                     </span>
-                                                </ng-container>
-                                                <!-- Price is not available -->
-                                                <span class="badge badge-warning" *ngIf="!result[product_price] || checkEmpty(result[product_price])"><span [innerHTML]="'Price: Upon request' | translate"></span></span><br />
-                                                <!-- Shopping cart buttons -->
-                                                <ng-container *ngIf="shoppingCartDataService.isShoppingCartButtonVisible(result.classificationUri)">
-                                                    <button *ngIf="!getShoppingCartStatus(ind).fb_submitted" class="badge {{getShoppingCartStatus(ind).fb_callback ? 'badge-secondary disabled' : 'badge-primary pointer'}} mt-1" (click)="onAddToCart(result,ind, $event)">
-                                                        <span class="fas fa-shopping-cart mr-1"></span>
-                                                        <span [innerHTML]="'Add to Cart' | translate"></span>
-                                                    </button>
-                                                    <call-status [callStatus]="getShoppingCartStatus(ind)"></call-status>
+                                                    </ng-container>
+                                                    <!-- Price is not available -->
+                                                    <span class="badge badge-warning" *ngIf="!result[product_price] || checkEmpty(result[product_price])"><span [innerHTML]="'Price: Upon request' | translate"></span></span><br />
+                                                    <!-- Shopping cart buttons -->
+                                                    <ng-container *ngIf="shoppingCartDataService.isShoppingCartButtonVisible(result.classificationUri)">
+                                                        <button *ngIf="!getShoppingCartStatus(ind).fb_submitted" class="badge {{getShoppingCartStatus(ind).fb_callback ? 'badge-secondary disabled' : 'badge-primary pointer'}} mt-1" (click)="onAddToCart(result,ind, $event)">
+                                                            <span class="fas fa-shopping-cart mr-1"></span>
+                                                            <span [innerHTML]="'Add to Cart' | translate"></span>
+                                                        </button>
+                                                        <call-status [callStatus]="getShoppingCartStatus(ind)"></call-status>
+                                                    </ng-container>
                                                 </ng-container>
                                             </div>
                                         </ng-container>

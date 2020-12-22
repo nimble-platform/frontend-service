@@ -42,6 +42,7 @@ import { PublishingPropertyService } from './publishing-property.service';
 import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from "../../app.component";
 import { Subject } from 'rxjs';
+import 'rxjs/add/operator/takeUntil';
 
 @Component({
     selector: "logistic-service-publish",
@@ -74,7 +75,6 @@ export class LogisticServicePublishComponent implements OnInit {
 
     publishMode: PublishMode;
     publishStatus: CallStatus = new CallStatus();
-    publishingGranularity: "single" | "bulk" = "single";
     companyNegotiationSettings: CompanyNegotiationSettings;
 
     callStatus: CallStatus = new CallStatus();
@@ -132,14 +132,6 @@ export class LogisticServicePublishComponent implements OnInit {
                 .catch(error => {
                     this.callStatus.error("Error while initializing the publish view.", error);
                 });
-        });
-
-        this.route.queryParams.subscribe((params: Params) => {
-            // handle publishing granularity: single, bulk, null
-            this.publishingGranularity = params['pg'];
-            if (this.publishingGranularity == null) {
-                this.publishingGranularity = 'single';
-            }
         });
     }
 
@@ -213,7 +205,6 @@ export class LogisticServicePublishComponent implements OnInit {
 
     private initView(userParty, catalogueResponse: CataloguePaginationResponse, settings, eClassLogisticCategories): void {
         this.companyNegotiationSettings = settings;
-        this.catalogueService.setEditMode(true);
         // Following "if" block is executed when redirected by an "edit" button
         // "else" block is executed when redirected by "publish" tab
         this.publishMode = this.publishStateService.publishMode;

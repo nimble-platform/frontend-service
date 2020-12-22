@@ -1,0 +1,57 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
+<div class="row mt-3 mb-5 pt-5 panel">
+    <div class="col-12">
+        <div *ngIf="publishingGranularity == 'single'" class="steps">
+            <div [ngClass]="getStepClasses('Category')">
+                <span (click)="onStepClicked('Category')"><span [innerHTML]="'Category' | translate"></span></span>
+            </div>
+            <div *ngIf="catalogueStepEnabled" [ngClass]="getStepClasses('Catalogue')">
+                <span (click)="onStepClicked('Catalogue')"><span [innerHTML]="'Catalogue Selection' | translate"></span></span>
+            </div>
+            <div [ngClass]="getStepClasses('ID/Name/Image')">
+                <span (click)="onStepClicked('ID/Name/Image')"><span [innerHTML]="'Basic Information' | translate"></span></span>
+            </div>
+            <div [ngClass]="getStepClasses('Details')">
+                <span (click)="onStepClicked('Details')"><span [innerHTML]="'Detailed Information' | translate"></span></span>
+            </div>
+            <div [ngClass]="getStepClasses('Price')">
+                <span (click)="onStepClicked('Price')"><span [innerHTML]="'Price' | translate"></span></span>
+            </div>
+            <div [ngClass]="getStepClasses('Delivery&Trading')">
+                <span (click)="onStepClicked('Delivery&Trading')"><span [innerHTML]="'Delivery & Trading' | translate"></span></span>
+            </div>
+            <div [ngClass]="getStepClasses('Certificates')">
+                <span (click)="onStepClicked('Certificates')"><span [innerHTML]="'Certificates' | translate"></span></span>
+            </div>
+            <div *ngIf="config.showLCPA" [ngClass]="getStepClasses('LCPA')">
+                <span (click)="onStepClicked('LCPA')"><span [innerHTML]="'LCPA' | translate"></span></span>
+            </div>
+            <div [ngClass]="getStepClasses('Review')">
+                <span (click)="onStepClicked('Review')"><span [innerHTML]="'Review' | translate"></span></span>
+            </div>
+        </div>
+        <div *ngIf="publishingGranularity == 'bulk'" class="steps">
+            <div [ngClass]="getStepClasses('Category')">
+                <span (click)="onStepClicked('Category')"><span [innerHTML]="'Category' | translate"></span></span>
+            </div>
+            <div [ngClass]="getStepClasses('BulkUpload')">
+                <span (click)="onStepClicked('BulkUpload')"><span [innerHTML]="'Bulk Upload' | translate"></span></span>
+            </div>
+        </div>
+    </div>
+</div>

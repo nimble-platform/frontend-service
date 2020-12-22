@@ -25,8 +25,8 @@ import { Item } from '../model/publish/item';
 import { LANGUAGES } from '../model/constants';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from "@angular/router";
-import { ProductPublishComponent } from "./product-publish.component";
 import { PublishService } from "../publish-and-aip.service";
+import {SinglePublishComponent} from './single-publish.component';
 
 @Component({
     selector: "edit-property-modal",
@@ -224,7 +224,7 @@ export class EditPropertyModalComponent implements OnInit {
     }
 
     onAssociateProduct(): void {
-        ProductPublishComponent.dialogBox = false;
+        SinglePublishComponent.dialogBox = false;
         this.publishService.itemPropertyLinkedToOtherProducts = this.property;
         this.router.navigate(['/simple-search'], { queryParams: { sTop: 'prod', pageRef: 'publish' } });
     }

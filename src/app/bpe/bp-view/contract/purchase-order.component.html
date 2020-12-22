@@ -15,6 +15,7 @@
     <tr>
         <th><span [innerHTML]="'Ordered Product' | translate"></span></th>
         <th class="description-table-header"><span [innerHTML]="'Description' | translate"></span></th>
+        <th *ngIf="productPartNumberPropertyName"><span>{{productPartNumberPropertyName}}</span></th>
         <th><span [innerHTML]="'Quantity' | translate"></span></th>
         <th><span [innerHTML]="'Net Price' | translate"></span></th>
         <th *ngIf="config.vatEnabled" [innerHTML]="'VAT' | translate"><span></span></th>
@@ -41,6 +42,9 @@
                 <span *ngIf="descriptions[i].length == 0">
                     {{'No description provided.' | translate}}
                 </span>
+            </td>
+            <td *ngIf="productPartNumberPropertyName">
+                <span *ngIf="productPartNumberProperties[i]">{{getPropertyValuesAsStrings(productPartNumberProperties[i]).join(", ")}}</span>
             </td>
             <td>
                 <span *ngIf="!useQuotationWrapper">{{wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.value}} {{wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.quantity.unitCode | translate}}</span>
@@ -86,6 +90,7 @@
     <tr>
         <th scope="row"><span>{{'Total' | translate}}</span></th>
         <td><span></span></td>
+        <td *ngIf="productPartNumberPropertyName"><span></span></td>
         <td><span></span></td>
         <td><span>{{getTotalPriceString() | translate}}</span></td>
         <td *ngIf="config.vatEnabled"><span>{{getVatTotalString() | translate}}</span></td>
