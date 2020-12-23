@@ -1348,6 +1348,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             // set the selected category if there is a suggested category for the search term
             // and there is only one category with this label
             if (suggestion.length > 0 && suggestion[0].uris.length == 1 && suggestion[0].label.localeCompare(this.model.q) == 0) {
+                this.objToSubmit = copy(this.model);
                 this.setCat(this.model.q, suggestion[0].uris[0], false, null);
                 return;
             }
