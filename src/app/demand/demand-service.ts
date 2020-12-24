@@ -127,6 +127,14 @@ export class DemandService {
             .catch(this.handleError);
     }
 
+    public createInterestActivity(demandHjid: number): Promise<any> {
+        let url = catalogue_endpoint + `/demands/${demandHjid}/visit?visitorCompanyId=${this.cookieService.get('company_id')}`;
+        return this.http
+            .post(url, null, { headers: getAuthorizedHeaders(this.cookieService) })
+            .toPromise()
+            .catch(this.handleError);
+    }
+
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);
     }

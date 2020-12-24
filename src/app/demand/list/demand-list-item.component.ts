@@ -101,6 +101,7 @@ export class DemandListItemComponent {
     }
 
     onContactClicked(): void {
+        this.demandService.createInterestActivity(this.demand.hjid);
         this.router.navigate(['/user-mgmt/company-details'], {queryParams: {id: this.companyData.id}})
     }
 }
