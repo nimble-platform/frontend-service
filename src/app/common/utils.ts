@@ -57,8 +57,7 @@ function getCountryJSON(): any[] {
     for (let country in countriesFull) {
         countryList.push({
             'iso': country,
-            'name': countriesFull[country]['name'],
-            'alt': countriesFull[country]['native']
+            'name': countriesFull[country]['name']
         });
     }
     return countryList;
@@ -108,16 +107,10 @@ export function getCountrySuggestionsWithMetadata(term: string): any[] {
             if (prob < 1) {
                 if (COUNTRY_JSON[i].name.toLowerCase() === term.toLowerCase()) {
                     prob = 1;
-                } else if (COUNTRY_JSON[i].alt.toLowerCase() === term.toLowerCase()) {
-                    prob = 1;
                 } else if (COUNTRY_JSON[i].name.toLowerCase().indexOf(term.toLowerCase()) === 0) {
                     prob = 0.9;
-                } else if (COUNTRY_JSON[i].alt.toLowerCase().indexOf(term.toLowerCase()) === 0) {
-                    prob = 0.8;
                 } else if (COUNTRY_JSON[i].name.toLowerCase().indexOf(term.toLowerCase()) !== -1) {
                     prob = 0.7;
-                } else if (COUNTRY_JSON[i].alt.toLowerCase().indexOf(term.toLowerCase()) !== -1) {
-                    prob = 0.6;
                 }
             }
             if (prob > 0) {
