@@ -87,6 +87,17 @@
         </file-input>
     </div>
 
+    <!-- image button -->
+    <div class="w-75 space-before">
+        <file-input [label]="'Image' | translate " [rowClass]="'no-gutters'" [binaryObjects]="image"
+                    (onSelectFile)="onImageSelected($event)" (onClearFile)="onImageDeleted()">
+        </file-input>
+    </div>
+
+    <div class="d-flex w-75 no-gutters space-before">
+        <img *ngIf="demand.image" src="data:{{demand.image.mimeCode}};base64,{{demand.image.value}}" class="offset-3 image"/>
+    </div>
+
     <!-- publish button -->
     <div class="d-flex flex-row-reverse w-75 space-before">
         <div class="ml-4" [ngbTooltip]="getValidationError()" [placement]="'auto'" title="">

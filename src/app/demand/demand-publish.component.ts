@@ -48,6 +48,7 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
     demand: Demand = new Demand();
     selectedCategory: Category;
     additionalFiles: BinaryObject[] = [];
+    image: BinaryObject[] = [];
 
     countryFormControl: FormControl;
     categoryFormControl: FormControl;
@@ -105,6 +106,9 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
             if (this.demand.additionalDocumentReference) {
                 this.additionalFiles = [this.demand.additionalDocumentReference.attachment.embeddedDocumentBinaryObject];
             }
+            if (this.demand.image) {
+                this.image = [this.demand.image];
+            }
 
             // clear the data in the services to prevent incorrect states considering the availability of the data in the service
             this.demandPublishService.resetData();
@@ -146,6 +150,14 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
 
     onFileDeleted(): void {
         this.demand.additionalDocumentReference = null;
+    }
+
+    onImageSelected(binaryObject: BinaryObject): void {
+        this.demand.image = binaryObject;
+    }
+
+    onImageDeleted(): void {
+        this.demand.image = null;
     }
 
     onPublishDemand(): void {
@@ -214,9 +226,10 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
         this.categorySearchPage = true;
     }
 
-    onCategorySelected():void{
+    onCategorySelected(): void {
         this.categorySearchPage = !this.categorySearchPage;
         this.selectedCategory = this.categoryService.selectedCategories[0];
+        this.demand.itemClassificationCode = [UBLModelUtils.createCodeFromCategory(this.categoryService.selectedCategories[0])];
     }
 
     onCountrySelected(event: NgbTypeaheadSelectItemEvent): void {
