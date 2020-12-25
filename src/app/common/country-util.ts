@@ -70,6 +70,10 @@ export class CountryUtil {
     }
 
     static getISObyCountry(term: string): string {
+        let countries = this.COUNTRY_JSON.filter(country => country.name == term);
+        if (countries.length > 0) {
+            return countries[0].iso;
+        }
         return '';
     }
 
