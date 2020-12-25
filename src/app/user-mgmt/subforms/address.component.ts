@@ -18,10 +18,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Address } from '../model/address';
-import { validateCountry, getCountrySuggestions } from '../../common/utils';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
+import {CountryUtil} from '../../common/country-util';
 
 @Component({
     moduleId: module.id,
@@ -48,7 +48,7 @@ export class AddressSubForm {
         text$.pipe(
             debounceTime(50),
             distinctUntilChanged(),
-            map(term => getCountrySuggestions(term))
+            map(term => CountryUtil.getCountrySuggestions(term))
         );
 
     public static get(addressForm): Address {
@@ -82,7 +82,7 @@ export class AddressSubForm {
             cityName: formDef,
             postalCode: formDef,
             region: formDef,
-            country: ['', [validateCountry]]
+            country: ['', [CountryUtil.validateCountry]]
         });
     }
 }

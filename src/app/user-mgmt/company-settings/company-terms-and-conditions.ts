@@ -20,7 +20,7 @@ import { TradingTerm } from '../../catalogue/model/publish/trading-term';
 import { deliveryPeriodUnitListId, warrantyPeriodUnitListId } from '../../common/constants';
 import { Clause } from '../../catalogue/model/publish/clause';
 import { CallStatus } from '../../common/call-status';
-import { copy, COUNTRY_NAMES } from '../../common/utils';
+import { copy } from '../../common/utils';
 import { UnitService } from '../../common/unit-service';
 import { BPEService } from '../../bpe/bpe.service';
 import { EditTradingTermModalComponent } from './edit-trading-term-modal.component';
@@ -31,6 +31,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {FEDERATIONID, LANGUAGES} from '../../catalogue/model/constants';
 import {CatalogueService} from '../../catalogue/catalogue.service';
 import {UBLModelUtils} from '../../catalogue/model/ubl-model-utils';
+import {CountryUtil} from '../../common/country-util';
 
 @Component({
     selector: "company-terms-and-conditions",
@@ -59,7 +60,7 @@ export class CompanyTermsAndConditions implements OnInit {
     // options
     INCOTERMS: string[] = [];
     PAYMENT_TERMS: string[] = [];
-    COUNTRY_NAMES = COUNTRY_NAMES;
+    COUNTRY_NAMES = CountryUtil.COUNTRY_NAMES;
     UNITS: string[] = [];
 
     LANGUAGES = LANGUAGES;

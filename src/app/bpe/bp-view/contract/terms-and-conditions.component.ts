@@ -19,13 +19,13 @@ import { CallStatus } from "../../../common/call-status";
 import { BPEService } from "../../bpe.service";
 import { Clause } from '../../../catalogue/model/publish/clause';
 import { UserService } from '../../../user-mgmt/user.service';
-import { COUNTRY_NAMES } from '../../../common/utils';
 import { UnitService } from '../../../common/unit-service';
 import { deliveryPeriodUnitListId, warrantyPeriodUnitListId } from '../../../common/constants';
 import { TradingTerm } from '../../../catalogue/model/publish/trading-term';
 import {TranslateService} from '@ngx-translate/core';
 import {NegotiationClauseService} from '../negotiation/negotiation-clause-service';
 import {Subject} from 'rxjs';
+import {CountryUtil} from '../../../common/country-util';
 
 
 @Component({
@@ -72,7 +72,7 @@ export class TermsAndConditionsComponent implements OnInit {
     // options
     @Input() availableIncoTerms: string[] = [];
     @Input() availablePaymentTerms: string[] = [];
-    COUNTRY_NAMES = COUNTRY_NAMES;
+    COUNTRY_NAMES = CountryUtil.COUNTRY_NAMES;
 
     ngUnsubscribe: Subject<void> = new Subject<void>();
 

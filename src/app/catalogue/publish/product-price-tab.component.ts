@@ -26,7 +26,6 @@ import { UserService } from "../../user-mgmt/user.service";
 import { CookieService } from "ng2-cookies";
 import { Party } from "../model/publish/party";
 import { TranslateService } from '@ngx-translate/core';
-import { getISObyCountry } from "../../common/utils";
 import * as myGlobals from '../../globals';
 import { FormControl, Validators } from '@angular/forms';
 import { ChildFormBase } from '../../common/validation/child-form-base';
@@ -34,6 +33,7 @@ import { ValidatorFn } from '@angular/forms/src/directives/validators';
 import { priceValidator } from '../../common/validation/validators';
 import { FIELD_NAME_PRODUCT_PRICE_AMOUNT, FIELD_NAME_PRODUCT_PRICE_BASE_QUANTITY } from '../../common/constants';
 import {Quantity} from '../model/publish/quantity';
+import {CountryUtil} from '../../common/country-util';
 const PRODUCT_PRICE_INPUT = 'product_price';
 @Component({
     selector: "product-price-tab",
@@ -121,7 +121,7 @@ export class ProductPriceTabComponent extends ChildFormBase implements OnInit {
     private getVatRateForCountry(userParty: Party): number {
         if (ProductPriceTabComponent.vatRates != null) {
             for (let countryCode of Object.keys(ProductPriceTabComponent.vatRates.items)) {
-                if (countryCode == getISObyCountry(userParty.postalAddress.country.name.value)) {
+                if (countryCode == CountryUtil.getISObyCountry(userParty.postalAddress.country.name.value)) {
                     return ProductPriceTabComponent.vatRates.items[countryCode][0].rates.standard;
                 }
             }

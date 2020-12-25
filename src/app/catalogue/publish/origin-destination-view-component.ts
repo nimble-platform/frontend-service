@@ -15,11 +15,12 @@
  */
 
 import { Component, Input, OnInit } from '@angular/core';
-import { COUNTRY_NAMES, selectPreferredValue } from '../../common/utils';
+import { selectPreferredValue } from '../../common/utils';
 import { Text } from '../model/publish/text';
 import { ItemProperty } from '../model/publish/item-property';
 import { REGIONS } from '../model/constants';
 import { TranslateService } from '@ngx-translate/core';
+import {CountryUtil} from '../../common/country-util';
 
 @Component({
     selector: "origin-destination-view",
@@ -34,7 +35,7 @@ export class OriginDestinationViewComponent implements OnInit {
     @Input() itemProperty: ItemProperty;
 
     regionOptions = REGIONS;
-    countryNames = COUNTRY_NAMES;
+    countryNames = CountryUtil.COUNTRY_NAMES;
 
     isAllOverTheWorldOptionSelected: boolean = false;
     enableRegionSelection: boolean = false;

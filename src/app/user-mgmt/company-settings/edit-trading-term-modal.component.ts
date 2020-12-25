@@ -16,7 +16,7 @@
 
 import { Component, OnInit, Input, ViewChild, ElementRef } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { copy, COUNTRY_NAMES, createText } from '../../common/utils';
+import { copy, createText } from '../../common/utils';
 import { TradingTerm } from '../../catalogue/model/publish/trading-term';
 import { Quantity } from '../../catalogue/model/publish/quantity';
 import { MultiTypeValue } from '../../catalogue/model/publish/multi-type-value';
@@ -25,6 +25,7 @@ import { Clause } from '../../catalogue/model/publish/clause';
 import { CompanySettings } from '../model/company-settings';
 import { Code } from '../../catalogue/model/publish/code';
 import { TranslateService } from '@ngx-translate/core';
+import {CountryUtil} from '../../common/country-util';
 
 @Component({
     selector: "edit-trading-term-modal",
@@ -46,7 +47,7 @@ export class EditTradingTermModalComponent implements OnInit {
     // options
     INCOTERMS: string[] = [];
     PAYMENT_TERMS: string[] = [];
-    COUNTRY_NAMES = COUNTRY_NAMES;
+    COUNTRY_NAMES = CountryUtil.COUNTRY_NAMES;
 
     // available data types for trading term
     DATA_TYPES: Option[] = [

@@ -17,7 +17,6 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { FIELD_NAME_PRODUCT_PRICE_AMOUNT, FIELD_NAME_PRODUCT_PRICE_BASE_QUANTITY, FIELD_NAME_QUANTITY_VALUE } from '../constants';
 import { PeriodRange } from '../../user-mgmt/model/period-range';
-import {COUNTRY_NAMES} from '../utils';
 
 // validator constants
 export const VALIDATION_ERROR_MULTIPLE = 'multiple';
@@ -93,16 +92,6 @@ export function spaceValidator(): ValidatorFn {
             return { 'required': true };
         } else if (value.length !== value.trim().length) {
             return { 'invalid_space': true };
-        }
-        return null;
-    };
-}
-
-export function countryValidator(): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: boolean } | null => {
-        let value: string = control.value;
-        if (COUNTRY_NAMES.indexOf(value) === -1) {
-            return { 'invalid_country': true };
         }
         return null;
     };

@@ -24,12 +24,12 @@ import { DocumentReference } from "../model/publish/document-reference";
 import { Attachment } from "../model/publish/attachment";
 import { BinaryObject } from "../model/publish/binary-object";
 import { UBLModelUtils } from "../model/ubl-model-utils";
-import { COUNTRY_NAMES, getCountrySuggestions, validateCountrySimple } from "../../common/utils";
 import { Country } from "../model/publish/country";
 import { Text } from "../model/publish/text";
 import { Observable } from "rxjs";
 import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
 import { TranslateService } from '@ngx-translate/core';
+import {CountryUtil} from '../../common/country-util';
 
 @Component({
     selector: "product-certificates-tab",
@@ -137,7 +137,7 @@ export class ProductCertificatesTabComponent implements OnInit {
     }
 
     validateCountry(): boolean {
-        return validateCountrySimple(this.countryFormControl.value);
+        return CountryUtil.validateCountrySimple(this.countryFormControl.value);
     }
 
     onCountrySelected() {
@@ -154,7 +154,7 @@ export class ProductCertificatesTabComponent implements OnInit {
         text$.pipe(
             debounceTime(50),
             distinctUntilChanged(),
-            map(term => getCountrySuggestions(term))
+            map(term => CountryUtil.getCountrySuggestions(term))
         );
 
     getCertificateCountryNames(certificate: Certificate): string[] {
