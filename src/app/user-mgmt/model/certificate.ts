@@ -18,6 +18,7 @@ export class Certificate {
         public name: string,
         public type: string,
         public description: string,
-        public hasFile: boolean
+        public hasFile: boolean,
+        public uri: string
     ) { }
 }
