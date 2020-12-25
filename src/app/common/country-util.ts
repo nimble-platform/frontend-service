@@ -15,15 +15,25 @@
 import {TranslateService} from '@ngx-translate/core';
 import * as COUNTRY_CODES from '../../assets/countries/country_code_list.json';
 import {AbstractControl, ValidatorFn} from '@angular/forms';
+import {Subject} from 'rxjs';
+import {OnDestroy} from '@angular/core';
+import 'rxjs/add/operator/takeUntil';
 
-export class CountryUtil {
+export class CountryUtil implements OnDestroy {
 
     static COUNTRY_CODES = null; // iso code of countries
     static COUNTRY_NAMES = null; // country names (translated and sorted)
     static COUNTRY_JSON = null; // country name-iso pairs
 
+    static ngUnsubscribe: Subject<void> = new Subject<void>();
+
+    ngOnDestroy() {
+        CountryUtil.ngUnsubscribe.next();
+        CountryUtil.ngUnsubscribe.complete();
+    }
+
     static initialize(translateService: TranslateService) {
-        translateService.get(COUNTRY_CODES).subscribe(translations => {
+        translateService.get(COUNTRY_CODES).takeUntil(CountryUtil.ngUnsubscribe).subscribe(translations => {
             const countryJson = [];
             const countryList = [];
             for (let country of COUNTRY_CODES) {
