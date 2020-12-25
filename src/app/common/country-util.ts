@@ -56,7 +56,7 @@ export class CountryUtil {
     static validateCountry(control: AbstractControl): any {
         const match = (CountryUtil.COUNTRY_NAMES.indexOf(control.value) != -1);
         if (!match) {
-            return {invalidCountry: true};
+            return {invalid_country: true};
         }
         return null;
     }
