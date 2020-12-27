@@ -43,13 +43,8 @@
             <input class="align-self-center custom-checkbox col-1" type="checkbox" [(ngModel)]="enableCountrySelection" (change)="onCountrySelectionChanged($event.target.value)">
             <label class="form-check-label"><span [innerHTML]="'Only selected countries' | translate"></span></label>
             <div class="col">
-                <input id="country" list="countries" name="Country" class="form-control" [placeholder]="'Select country'|translate" (change)="onCountrySelected($event)" [disabled]="!enableCountrySelection">
+                <input id="country" name="Country" class="form-control" [placeholder]="'Select country'|translate" (change)="onCountrySelected($event)" [disabled]="!enableCountrySelection" [ngbTypeahead]="getSuggestions">
             </div>
-            <datalist id="countries">
-                <ng-container *ngFor="let country of countryNames">
-                    <option>{{country}}</option>
-                </ng-container>
-            </datalist>
         </div>
         <div class="row d-flex flex-wrap">
             <div class="col-12 d-flex flex-wrap">
