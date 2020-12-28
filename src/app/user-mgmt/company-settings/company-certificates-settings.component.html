@@ -90,7 +90,7 @@
 </div>
 
 <!-- Certificates -->
-<h4 class="space-after mt-5" [ngClass]="{'space-before':!config.showPPAP}"><span [innerHTML]="'Certificates' | translate"></span></h4>
+<h4 class="space-after mt-5" [ngClass]="{'space-before':!config.showPPAP}"><span [innerHTML]="'Other Certificates' | translate"></span></h4>
 
 <div class="form-group row">
     <div class="col-12">
@@ -107,10 +107,10 @@
                 <th><span [innerHTML]="'Certificate Description' | translate"></span></th>
                 <th class="col-3"><span [innerHTML]="'Actions' | translate"></span></th>
             </tr>
-            <tr *ngIf="arbitraryCertificate.length==0">
+            <tr *ngIf="arbitraryCertificates.length==0">
                 <td colspan="4"><span [innerHTML]="'No data' | translate"></span></td>
             </tr>
-            <tr *ngFor="let certificate of arbitraryCertificate; let i = index">
+            <tr *ngFor="let certificate of arbitraryCertificates; let i = index">
                 <td>{{certificate.type}}</td>
                 <td>{{certificate.name}}</td>
                 <td>{{certificate.description}}</td>

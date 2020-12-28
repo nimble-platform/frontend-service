@@ -15,16 +15,29 @@
  -->
 
 <div class="p-1">
-    <h3 *ngIf="settings.certificates.length !== 0"><span [innerHTML]="'Company Certificates' | translate"></span></h3>
+    <ng-container *ngIf="settings.certificates.length !== 0">
+        <h3 *ngIf="circularEconomyCertificates.length !== 0"><span [innerHTML]="'Circular Economy (Environment / Sustainability)' | translate"></span></h3>
 
-    <div *ngFor="let certificate of settings.certificates" class="row mt-1">
-        <div class="col-10">
-            {{ certificate.name }} (type: {{ certificate.type }})
+        <div *ngFor="let certificate of circularEconomyCertificates" class="row mt-1">
+            <div class="col-10">
+                {{ certificate.name }}
+            </div>
+            <div class="col-2">
+                <button *ngIf="certificate.hasFile" class="btn btn-primary btn-sm w-100" (click)="downloadCertificate(certificate.id)"><span [innerHTML]="'Download' | translate"></span></button>
+            </div>
         </div>
-        <div class="col-2">
-            <button *ngIf="certificate.hasFile" class="btn btn-primary btn-sm w-100" (click)="downloadCertificate(certificate.id)"><span [innerHTML]="'Download' | translate"></span></button>
+
+        <h3 *ngIf="arbitraryCertificates.length !== 0" class="space-before"><span [innerHTML]="'Other Certificates' | translate"></span></h3>
+
+        <div *ngFor="let certificate of arbitraryCertificates" class="row mt-1">
+            <div class="col-10">
+                {{ certificate.name }} (type: {{ certificate.type }})
+            </div>
+            <div class="col-2">
+                <button *ngIf="certificate.hasFile" class="btn btn-primary btn-sm w-100" (click)="downloadCertificate(certificate.id)"><span [innerHTML]="'Download' | translate"></span></button>
+            </div>
         </div>
-    </div>
+    </ng-container>
 
     <h3 *ngIf="wrapper.line.goodsItem.item.certificate.length !== 0" class="space-before"><span [innerHTML]="'Product / Service Certificates' | translate"></span></h3>
 

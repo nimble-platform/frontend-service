@@ -41,7 +41,7 @@
                     <span [innerHTML]="'Delivery' | translate"></span> &amp; <span [innerHTML]="'Trading' | translate"></span>
                 </a>
             </li>
-            <li *ngIf="haveCertificates" class="nav-item">
+            <li *ngIf="haveCertificates && (settings.certificates.length || wrapper.line.goodsItem.item.certificate.length)" class="nav-item">
                 <a href id="CERTIFICATES" class="nav-link" [ngClass]="{ active: selectedTab === 'CERTIFICATES'}" (click)="onSelectTab($event,'CERTIFICATES')">
                     <span [innerHTML]="'Certificates' | translate"></span>
                 </a>

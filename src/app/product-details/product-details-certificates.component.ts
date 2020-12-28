@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import { Component, Input, EventEmitter, Output } from "@angular/core";
+import {Component, Input, EventEmitter, Output, OnInit} from '@angular/core';
 import { ProductWrapper } from "../common/product-wrapper";
 import { CompanySettings } from "../user-mgmt/model/company-settings";
 import { UserService } from "../user-mgmt/user.service";
@@ -23,26 +23,38 @@ import { Certificate } from "../catalogue/model/publish/certificate";
 import { Country } from '../catalogue/model/publish/country';
 import { DEFAULT_LANGUAGE } from "../catalogue/model/constants";
 import { TranslateService } from '@ngx-translate/core';
+import {config} from '../globals';
+import {Certificate as UserMgmtCertificate} from '../user-mgmt/model/certificate';
 
 @Component({
     selector: 'product-details-certificates',
     templateUrl: './product-details-certificates.component.html'
 })
-export class ProductDetailsCertificatesComponent {
+export class ProductDetailsCertificatesComponent implements OnInit {
 
     @Input() wrapper: ProductWrapper;
     @Input() settings: CompanySettings;
     @Output() certificateStatus = new EventEmitter<boolean>();
+
+    circularEconomyCertificates: UserMgmtCertificate[];
+    arbitraryCertificates: UserMgmtCertificate[];
 
     constructor(private translate: TranslateService,
         private userService: UserService,
         private catalogueService: CatalogueService) {
 
     }
-    ngOnInit() {
-        if (this.settings.certificates.length == 0 && this.wrapper.line.goodsItem.item.certificate.length == 0) {
-            this.certificateStatus.emit(true);
-        }
+
+    ngOnInit(): void {
+        this.circularEconomyCertificates = [];
+        this.arbitraryCertificates = [];
+        this.settings.certificates.forEach(cert => {
+            if (cert.type === config.circularEconomy.certificateGroup) {
+                this.circularEconomyCertificates.push(cert);
+            } else {
+                this.arbitraryCertificates.push(cert);
+            }
+        });
     }
 
     downloadCertificate(id: string) {

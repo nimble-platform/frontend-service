@@ -46,7 +46,7 @@ export class CompanyCertificatesSettingsComponent {
         return this._certificates;
     }
     circularEconomyCertificates: Certificate[];
-    arbitraryCertificate: Certificate[];
+    arbitraryCertificates: Certificate[];
     @Input() ppapLevel: any;
 
     @Output() onSaveEvent: EventEmitter<void> = new EventEmitter();
@@ -79,14 +79,14 @@ export class CompanyCertificatesSettingsComponent {
     onCertificatesChange(): void {
         // split circular economy and other certificates into dedicated arrays
         this.circularEconomyCertificates = [];
-        this.arbitraryCertificate = [];
+        this.arbitraryCertificates = [];
         this.certificates.forEach(cert => {
             if (cert.type === this.config.circularEconomy.certificateGroup) {
                 this.circularEconomyCertificates.push(cert);
             } else {
-                this.arbitraryCertificate.push(cert);
+                this.arbitraryCertificates.push(cert);
             }
-        })
+        });
     }
 
     isPpapLevelDirty(): boolean {
