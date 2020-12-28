@@ -27,7 +27,7 @@
                 <span>{{(useQuotationWrapper ? wrapper.catalogueLine.goodsItem.item.name[0].value : wrapper.catalogueLine.goodsItem.item.name[0].value)|translate}}</span>
             </th>
             <td>
-                <div *ngIf="descriptions[i].length > 0" class="description-cell">
+                <div *ngIf="descriptions[i] && descriptions[i].length > 0" class="description-cell">
                     <span *ngIf="descriptions[i].length <= 250">
                         {{descriptions[i]}}
                     </span>
@@ -39,7 +39,7 @@
                         </div>
                     </div>
                 </div>
-                <span *ngIf="descriptions[i].length == 0">
+                <span *ngIf="!descriptions[i] || descriptions[i].length == 0">
                     {{'No description provided.' | translate}}
                 </span>
             </td>
@@ -65,7 +65,7 @@
         <tr *ngFor="let priceWrapper of priceWrappers;let i=index">
             <th scope="row"><span>{{priceWrapper.item.name[0].value }}</span></th>
             <td>
-                <div *ngIf="descriptions[i].length > 0" class="description-cell">
+                <div *ngIf="descriptions[i] && descriptions[i].length > 0" class="description-cell">
                     <span *ngIf="descriptions[i].length <= 250">
                         {{descriptions[i]}}
                     </span>
@@ -77,7 +77,7 @@
                         </div>
                     </div>
                 </div>
-                <span *ngIf="descriptions[i].length == 0">
+                <span *ngIf="!descriptions[i] || descriptions[i].length == 0">
                     {{'No description provided.' | translate}}
                 </span>
             </td>
