@@ -214,6 +214,6 @@ export class CompanyCertificatesSettingsComponent {
      template getters
      */
     public getCircularCertificateTypes(): string[] {
-        return this.config.circularEconomy.certificates;
+        return this.config.circularEconomy.companyCertificates;
     }
 }
