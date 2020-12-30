@@ -364,6 +364,7 @@
                                         <div *ngIf="!facet.showContent || !facet.units || facet.units.length == 1" class="card-header" (click)="onFacetClicked(facet)">
                                             {{ getName(facet.realName) }}
                                         </div>
+                                        <!-- Facet values... Show them when the facet is expanded -->
                                         <div class="card-body" *ngIf="facet.showContent">
                                             <div *ngFor="let facetInner of facet.options; let i=index">
                                                 <div *ngIf="!facetInner.selected && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
