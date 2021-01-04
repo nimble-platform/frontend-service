@@ -28,6 +28,7 @@ import {FEDERATIONID} from '../../catalogue/model/constants';
 import {CookieService} from 'ng2-cookies';
 import {Party} from '../../catalogue/model/publish/party';
 import {CountryUtil} from '../../common/country-util';
+import {AppComponent} from '../../app.component';
 
 @Component({
     selector: 'demand-list-item',
@@ -58,6 +59,7 @@ export class DemandListItemComponent {
         private bpeService: BPEService,
         private userService: UserService,
         private cookieService: CookieService,
+        private appComponent:AppComponent,
         private router: Router
     ) {
     }
@@ -81,13 +83,17 @@ export class DemandListItemComponent {
     }
 
     onDeleteClicked(): void {
-        this.callStatus = new CallStatus();
-        this.callStatus.submit();
-        this.demandService.deleteDemand(this.demand.hjid).then(() => {
-            this.onDemandDeleted.emit();
-            this.callStatus.callback(null, true);
-        }).catch(e => {
-            this.callStatus.error('Failed to delete demand', e);
+        this.appComponent.confirmModalComponent.open(this.appComponent.translate.instant("Are you sure that you want to delete this demand ?")).then(response => {
+            if(response){
+                this.callStatus = new CallStatus();
+                this.callStatus.submit();
+                this.demandService.deleteDemand(this.demand.hjid).then(() => {
+                    this.onDemandDeleted.emit();
+                    this.callStatus.callback(null, true);
+                }).catch(e => {
+                    this.callStatus.error('Failed to delete demand', e);
+                })
+            }
         })
     }
 
