@@ -71,7 +71,7 @@ export class AddressSubForm {
             addressForm.controls.postalCode.setValue(address.postalCode || "");
             addressForm.controls.country.setValue(address.country || "");
         }
-        this.countryName = addressForm.getRawValue()["country"];
+        this.countryName = CountryUtil.getCountryByISO(addressForm.getRawValue()["country"]);
         return addressForm;
     }
 
