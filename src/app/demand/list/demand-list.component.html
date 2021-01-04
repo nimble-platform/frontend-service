@@ -14,7 +14,7 @@
 <!-- search bar -->
 <div class="d-flex mt-3">
     <input type="text" class="form-control mr-3" [(ngModel)]="searchTerm" (keyup.enter)="onSearchClicked()">
-    <button singleClick class="btn btn-primary" (click)="onSearchClicked()">Search</button>
+    <button singleClick class="btn btn-primary" (click)="onSearchClicked()">{{'Search'|translate}}</button>
 </div>
 <div *ngIf="demands?.length > 0" class="row no-gutters space-before">
     <!-- pagination -->
@@ -44,7 +44,7 @@
             </demand-list-item>
         </div>
         <!-- no demands -->
-        <h5 *ngIf="(!demands || demands.length === 0) && !searchCallStatus.isLoading()">No demands available.</h5>
+        <h5 *ngIf="(!demands || demands.length === 0) && !searchCallStatus.isLoading()">{{'No demands available.'|translate}}</h5>
     </div>
 </div>
 

@@ -14,7 +14,7 @@
 
 <div class="card mb-3">
     <div class="card-header" (click)="onFacetTitleClicked(facet)">
-        {{ facet.facetName }}
+        {{ facet.facetName | translate }}
     </div>
     <div *ngIf="showContent" class="card-body" >
         <div *ngFor="let value of facet.facetValues; let i = index">
