@@ -44,8 +44,8 @@
                             </div>
                         </div>
                         <div class="col-5">
-                            <div>{{'Buyer Country:' | translate}} {{demand.buyerCountry.value}}</div>
-                            <div>{{'Delivery Country:' | translate}} {{demand.deliveryCountry.value}}</div>
+                            <div>{{'Buyer Country:' | translate}} {{getCountryByISO(demand.buyerCountry.value)}}</div>
+                            <div>{{'Delivery Country:' | translate}} {{getCountryByISO(demand.deliveryCountry.value)}}</div>
                         </div>
                     </div>
                 </ng-container>

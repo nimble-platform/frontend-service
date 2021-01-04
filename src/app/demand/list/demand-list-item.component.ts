@@ -27,6 +27,7 @@ import {UserService} from '../../user-mgmt/user.service';
 import {FEDERATIONID} from '../../catalogue/model/constants';
 import {CookieService} from 'ng2-cookies';
 import {Party} from '../../catalogue/model/publish/party';
+import {CountryUtil} from '../../common/country-util';
 
 @Component({
     selector: 'demand-list-item',
@@ -48,6 +49,7 @@ export class DemandListItemComponent {
     selectNameFromLabelObject = selectNameFromLabelObject;
     selectPreferredValue = selectPreferredValue;
     selectPartyName = selectPartyName;
+    getCountryByISO = CountryUtil.getCountryByISO;
 
     constructor(
         private demandService: DemandService,

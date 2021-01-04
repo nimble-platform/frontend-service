@@ -19,6 +19,6 @@ import {Code} from './code';
 export class Country {
     constructor(
         public name: Text = new Text(null, DEFAULT_LANGUAGE()),
-        public identificationCode: Code = null
+        public identificationCode: Code = new Code()
     ) { }
 }

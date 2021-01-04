@@ -47,7 +47,7 @@ export class EditTradingTermModalComponent implements OnInit {
     // options
     INCOTERMS: string[] = [];
     PAYMENT_TERMS: string[] = [];
-    COUNTRY_NAMES = CountryUtil.COUNTRY_NAMES;
+    COUNTRY_JSON = CountryUtil.COUNTRY_JSON;
 
     // available data types for trading term
     DATA_TYPES: Option[] = [

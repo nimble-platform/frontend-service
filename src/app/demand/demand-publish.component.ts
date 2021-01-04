@@ -123,8 +123,7 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
             this.demand.deliveryCountry = new Code();
             this.demand.buyerCountry = new Code();
             this.userService.getSettingsForParty(this.cookieService.get('company_id')).then(res => {
-                // FIXME fix this when the country names are changed to codes
-                this.demand.buyerCountry.value = res.negotiationSettings.company.postalAddress.country.name.value;
+                this.demand.buyerCountry.value = res.negotiationSettings.company.postalAddress.country.identificationCode.value;
             });
         }
     }

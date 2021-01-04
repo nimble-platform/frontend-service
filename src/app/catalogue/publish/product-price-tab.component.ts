@@ -121,7 +121,7 @@ export class ProductPriceTabComponent extends ChildFormBase implements OnInit {
     private getVatRateForCountry(userParty: Party): number {
         if (ProductPriceTabComponent.vatRates != null) {
             for (let countryCode of Object.keys(ProductPriceTabComponent.vatRates.items)) {
-                if (countryCode == CountryUtil.getISObyCountry(userParty.postalAddress.country.name.value)) {
+                if (countryCode == userParty.postalAddress.country.identificationCode.value) {
                     return ProductPriceTabComponent.vatRates.items[countryCode][0].rates.standard;
                 }
             }

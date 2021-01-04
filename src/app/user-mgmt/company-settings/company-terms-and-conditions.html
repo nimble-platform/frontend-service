@@ -98,7 +98,7 @@
                                         <option *ngFor="let option of PAYMENT_TERMS" [value]="option">{{option | translate}}</option>
                                     </select>
                                     <select *ngIf="tradingTerm.value.valueCode[0].listID == 'COUNTRY_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value">
-                                        <option *ngFor="let option of COUNTRY_NAMES" [value]="option">{{option}}</option>
+                                        <option *ngFor="let option of COUNTRY_JSON" [value]="option.iso">{{option.name}}</option>
                                     </select>
                                 </td>
                                 <!-- Button to delete trading term-->

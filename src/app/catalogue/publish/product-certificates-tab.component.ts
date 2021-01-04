@@ -30,6 +30,7 @@ import { Observable } from "rxjs";
 import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
 import { TranslateService } from '@ngx-translate/core';
 import {CountryUtil} from '../../common/country-util';
+import {Code} from '../model/publish/code';
 
 @Component({
     selector: "product-certificates-tab",
@@ -76,7 +77,7 @@ export class ProductCertificatesTabComponent implements OnInit {
         this.countryFormControl = new FormControl('');
         this.selectedCountries = [];
         for (let country of this.editedCertificate.country) {
-            this.selectedCountries.push(country.name.value);
+            this.selectedCountries.push(CountryUtil.getCountryByISO(country.identificationCode.value));
         }
 
         this.modalService.open(popup);
@@ -126,7 +127,11 @@ export class ProductCertificatesTabComponent implements OnInit {
         }
         certificate.country = [];
         for (let countryName of this.selectedCountries) {
-            let country: Country = new Country(new Text(countryName, 'en'));
+            const countryIso = CountryUtil.getISObyCountry(countryName);
+
+            let country: Country = new Country();
+            country.identificationCode = new Code();
+            country.identificationCode.value = countryIso;
             certificate.country.push(country);
         }
 
@@ -164,7 +169,7 @@ export class ProductCertificatesTabComponent implements OnInit {
         }
 
         for (let country of certificate.country) {
-            countryNames.push(country.name.value);
+            countryNames.push(CountryUtil.getCountryByISO(country.identificationCode.value));
         }
         return countryNames;
     }

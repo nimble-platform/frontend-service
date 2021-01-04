@@ -280,7 +280,7 @@ export class DiscountPriceWrapper {
                 let checkCityName = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].cityName != '';
                 let checkRegion = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].region != '';
                 let country: Country = priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country;
-                let checkCountryName = country && country.name.value && country.name.value != '';
+                let checkCountryName = country && country.identificationCode.value && country.identificationCode.value != '';
 
                 // if the address is not specified for this price option, skip it
                 if (checkStreetName || checkBuildingNumber || checkPostalZone || checkCityName || checkRegion || checkCountryName) {
@@ -299,7 +299,7 @@ export class DiscountPriceWrapper {
                     if (checkRegion && priceOption.itemLocationQuantity.applicableTerritoryAddress[0].region.toLocaleLowerCase() != this.deliveryLocation.region.toLocaleLowerCase()) {
                         continue;
                     }
-                    if (checkCountryName && (this.deliveryLocation.country.name.value == null || (priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.name.value.toLocaleLowerCase() != this.deliveryLocation.country.name.value.toLocaleLowerCase()))) {
+                    if (checkCountryName && (this.deliveryLocation.country.identificationCode.value == null || (priceOption.itemLocationQuantity.applicableTerritoryAddress[0].country.identificationCode.value.toLocaleLowerCase() != this.deliveryLocation.country.identificationCode.value.toLocaleLowerCase()))) {
                         continue;
                     }
                     // the delivery location satisfies all conditions

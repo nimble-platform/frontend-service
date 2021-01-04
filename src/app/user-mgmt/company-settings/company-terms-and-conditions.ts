@@ -60,7 +60,7 @@ export class CompanyTermsAndConditions implements OnInit {
     // options
     INCOTERMS: string[] = [];
     PAYMENT_TERMS: string[] = [];
-    COUNTRY_NAMES = CountryUtil.COUNTRY_NAMES;
+    COUNTRY_JSON = CountryUtil.COUNTRY_JSON;
     UNITS: string[] = [];
 
     LANGUAGES = LANGUAGES;

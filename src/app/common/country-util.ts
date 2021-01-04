@@ -42,6 +42,7 @@ export class CountryUtil implements OnDestroy {
                 countryJson.push({'name': name, 'iso': country});
             }
             countryList.sort();
+            countryJson.sort((a, b) => a.name.localeCompare(b.name));
 
             CountryUtil.COUNTRY_NAMES = countryList;
             CountryUtil.COUNTRY_JSON = countryJson;
@@ -71,8 +72,16 @@ export class CountryUtil implements OnDestroy {
         return null;
     }
 
+    static validateCountryISOCode(control: AbstractControl): any {
+        const match = (CountryUtil.COUNTRY_CODES.indexOf(control.value) != -1);
+        if (!match) {
+            return {invalid_country: true};
+        }
+        return null;
+    }
+
     static getCountryByISO(term: string): string {
-        let countries = this.COUNTRY_JSON.filter(country => country.iso == term);
+        let countries = CountryUtil.COUNTRY_JSON.filter(country => country.iso == term);
         if (countries.length > 0) {
             return countries[0].name;
         }
@@ -80,7 +89,7 @@ export class CountryUtil implements OnDestroy {
     }
 
     static getISObyCountry(term: string): string {
-        let countries = this.COUNTRY_JSON.filter(country => country.name == term);
+        let countries = CountryUtil.COUNTRY_JSON.filter(country => country.name == term);
         if (countries.length > 0) {
             return countries[0].iso;
         }

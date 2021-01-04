@@ -33,19 +33,21 @@ export class CountryInputComponent extends ChildFormBase implements OnInit, OnDe
     @Input() readonly: boolean = false;
     @Input() formGroup: FormGroup;
     @Input() controlName: string;
-    countryNameValue: string;
+    countryISOCodeValue: string;
+    countryNameValue:string;
 
     @Input()
-    get countryName(): string {
-        return this.countryNameValue;
+    get countryISOCode(): string {
+        return this.countryISOCodeValue;
     }
 
-    set countryName(text: string) {
-        this.countryNameValue = text;
-        this.countryNameChange.emit(text);
+    set countryISOCode(text: string) {
+        this.countryISOCodeValue = text;
+        // set the country name
+        this.countryName = CountryUtil.getCountryByISO(text);
     }
 
-    @Output() countryNameChange = new EventEmitter<string>();
+    @Output() countryISOCodeChange = new EventEmitter<string>();
 
     control: FormControl;
 
@@ -80,5 +82,15 @@ export class CountryInputComponent extends ChildFormBase implements OnInit, OnDe
 
     getValidationErrorMessage(formControl: AbstractControl): string {
         return this.validationService.getValidationErrorMessage(formControl);
+    }
+
+    get countryName(): string {
+        return this.countryNameValue;
+    }
+
+    set countryName(text: string) {
+        this.countryNameValue = text;
+        // emit the new country iso code
+        this.countryISOCodeChange.emit(CountryUtil.getISObyCountry(text));
     }
 }
