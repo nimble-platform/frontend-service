@@ -21,7 +21,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { CommonModule } from '@angular/common';
+import {CommonModule, DatePipe} from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -123,7 +123,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         ShoppingCartDataService,
         CollaborationService,
         ValidationService,
-        AgentService
+        AgentService,
+        DatePipe
     ],
     bootstrap: [
         AppComponent
