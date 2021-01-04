@@ -90,6 +90,10 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
                 }
             }
         });
+        // reset demand publishing service data when we publish a new demand
+        if(this.publishMode == 'create'){
+            this.demandPublishService.resetData();
+        }
 
         this.formGroup = new FormGroup({});
         this.initViewFormAndAddToParentForm();
