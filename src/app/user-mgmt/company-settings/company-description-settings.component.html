@@ -138,7 +138,7 @@
                 <td>{{ev.name}}</td>
                 <td *ngIf="ev.description">{{ev.description}}</td>
                 <td *ngIf="!ev.description"><span [innerHTML]="'n/A' | translate"></span></td>
-                <td *ngIf="ev.place.streetName">{{ev.place.streetName}}<span *ngIf="ev.place.buildingNumber"> {{ev.place.buildingNumber}}</span><br />{{ev.place.postalCode}} {{ev.place.cityName}}<br />{{ev.place.country}}</td>
+                <td *ngIf="ev.place.streetName">{{ev.place.streetName}}<span *ngIf="ev.place.buildingNumber"> {{ev.place.buildingNumber}}</span><br />{{ev.place.postalCode}} {{ev.place.cityName}}<br />{{ev.place.country | translate}}</td>
                 <td *ngIf="!ev.place.streetName"><span [innerHTML]="'n/A' | translate"></span></td>
                 <td>
                     <button class="btn btn-danger btn-sm" (click)="removeCompEventEntry(i)"><span [innerHTML]="'Delete' | translate"></span></button>
