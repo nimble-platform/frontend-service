@@ -40,6 +40,7 @@ import { selectValueOfTextObject } from "./common/utils";
 import { CallStatus } from "./common/call-status";
 import {DomSanitizer, Title} from '@angular/platform-browser';
 import {ConfirmModalComponent} from './common/confirm-modal.component';
+import {CountryUtil} from './common/country-util';
 
 @Component({
     selector: 'nimble-app',
@@ -144,6 +145,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
         translate.setDefaultLang(FALLBACK_LANGUAGE);
         translate.use(DEFAULT_LANGUAGE());
+        // initialize country service after setting the default language of platform
+        CountryUtil.initialize(this.translate);
         this.translate.get(['Chat', 'Federation', 'Language', 'ON', 'OFF']).subscribe((res: any) => {
             this.translations = res;
         });
@@ -484,7 +487,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             if (!this.cookieService.get("user_id")) {
                 if (link != "/" && link != "/user-mgmt/login" && link != "/user-mgmt/registration" && link != "/analytics/info"
                     && link != "/analytics/members" && link != "/user-mgmt/forgot" && link != "/user-mgmt/logout" && link != "/homepage"
-                    && link !== '/simple-search' && link !== '/product-details' && link !== '/user-mgmt/company-details') {
+                    && link !== '/simple-search' && link !== '/product-details' && link !== '/user-mgmt/company-details' && link !== '/demand') {
                     this.isLoggedIn = false;
                     this.router.navigate(["/user-mgmt/login"], { queryParams: { redirectURL: url } });
                 }

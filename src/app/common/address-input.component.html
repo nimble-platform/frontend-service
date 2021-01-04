@@ -42,7 +42,8 @@
         </text-input>
     </div>
     <div class="col-6">
-        <text-input [label]="'Country' | translate" [(text)]="address.country.name.value" [presentationMode]="presentationMode" [disabled]="disabled" [required]="required" [formFieldName]="'country_name'" [parentForm]="formGroup" labelClass="col-4" valueClass="col-8">
-        </text-input>
+        <country-input [(countryISOCode)]="address.country.identificationCode.value" [readonly]="disabled || presentationMode == 'view'"
+                       labelClass="col-4" valueClass="col-8" [parentForm]="formGroup"
+                       [required]="required" [formFieldName]="'country_name'"></country-input>
     </div>
 </div>

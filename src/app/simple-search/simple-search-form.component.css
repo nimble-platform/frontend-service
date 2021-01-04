@@ -38,50 +38,6 @@
     color: #fff;
 }
 
-.star {
-    position: relative;
-    display: inline-block;
-    color: #b0c4de;
-    font-size: 130%;
-}
-
-.star-b {
-    font-size: 170% !important;
-}
-
-.full {
-    color: #1e90ff;
-}
-
-.half {
-    position: absolute;
-    display: inline-block;
-    overflow: hidden;
-    color: #1e90ff;
-}
-
-.heart {
-    position: relative;
-    display: inline-block;
-    color: #d3d3d3;
-    font-size: 112%;
-}
-
-.heart-b {
-    font-size: 145% !important;
-}
-
-.full-heart {
-    color: red;
-}
-
-.half-heart {
-    position: absolute;
-    display: inline-block;
-    overflow: hidden;
-    color: red;
-}
-
 .search-term-input{
     flex-grow: 1;
     position: relative

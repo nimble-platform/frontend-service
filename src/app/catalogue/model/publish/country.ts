@@ -14,9 +14,11 @@
 
 import { Text } from "./text";
 import { DEFAULT_LANGUAGE } from '../constants';
+import {Code} from './code';
 
 export class Country {
     constructor(
-        public name: Text = new Text(null, DEFAULT_LANGUAGE())
+        public name: Text = new Text(null, DEFAULT_LANGUAGE()),
+        public identificationCode: Code = new Code()
     ) { }
 }

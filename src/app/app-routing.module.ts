@@ -26,6 +26,7 @@ const routes: Routes = [
     { path: 'user-mgmt', loadChildren: './user-mgmt/user-mgmt.module#UserMgmtModule' },
     { path: 'dashboard', loadChildren: './dashboard/dashboard.module#DashboardModule' },
     { path: 'catalogue', loadChildren: './catalogue/catalogue.module#CatalogueModule' },
+    { path: 'demand', loadChildren: './demand/demand.module#DemandModule' },
     { path: 'simple-search', loadChildren: './simple-search/simple-search.module#SimpleSearchModule' },
     { path: 'explore-search', loadChildren: './explorative-search/explorative-search.module#ExplorativeSearchModule' },
     { path: 'bpe', loadChildren: './bpe/bpe.module#BPEModule' },

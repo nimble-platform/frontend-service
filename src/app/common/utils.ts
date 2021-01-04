@@ -28,120 +28,12 @@ import {CatalogueLine} from '../catalogue/model/publish/catalogue-line';
 import {Amount} from '../catalogue/model/publish/amount';
 import {CookieService} from 'ng2-cookies';
 import {Headers} from '@angular/http';
-import {AbstractControl} from '@angular/forms';
 import {PartyName} from '../catalogue/model/publish/party-name';
 import {maximumDecimalsForPrice} from './constants'
-
-declare var Countries: any;
 
 const UI_NAMES: any = {
     STRING: 'TEXT'
 };
-
-export const COUNTRY_NAMES = getCountryNames();
-const COUNTRY_JSON = getCountryJSON();
-
-function getCountryNames(): string[] {
-    const countriesFull = Countries.countries;
-    const countryList = [];
-    for (let country in countriesFull) {
-        countryList.push(countriesFull[country]['name']);
-    }
-    countryList.sort();
-    return countryList;
-}
-
-function getCountryJSON(): any[] {
-    const countriesFull = Countries.countries;
-    const countryList = [];
-    for (let country in countriesFull) {
-        countryList.push({
-            'iso': country,
-            'name': countriesFull[country]['name'],
-            'alt': countriesFull[country]['native']
-        });
-    }
-    return countryList;
-}
-
-export function getCountryByISO(term: string): string {
-    let country = '';
-    if (term.length == 2) {
-        for (let i = 0; i < COUNTRY_JSON.length; i++) {
-            if (COUNTRY_JSON[i].iso.toLowerCase() == term.toLowerCase()) {
-                country = COUNTRY_JSON[i].name;
-            }
-        }
-    }
-    return country;
-}
-
-export function getISObyCountry(term: string): string {
-    let iso = '';
-    for (let i = 0; i < COUNTRY_JSON.length; i++) {
-        if (COUNTRY_JSON[i].name.toLowerCase() == term.toLowerCase()) {
-            iso = COUNTRY_JSON[i].iso.toUpperCase();
-        }
-    }
-    return iso;
-}
-
-export function getCountrySuggestions(term: string): string[] {
-    const suggestionList = [];
-    let suggestions = [];
-    if (term != '') {
-        for (let i = 0; i < COUNTRY_JSON.length; i++) {
-            let prob = 0;
-            if (term.length == 2) {
-                if (COUNTRY_JSON[i].iso.toLowerCase() == term.toLowerCase()) {
-                    prob = 1;
-                }
-            }
-            if (prob < 1) {
-                if (COUNTRY_JSON[i].name.toLowerCase() == term.toLowerCase()) {
-                    prob = 1;
-                } else if (COUNTRY_JSON[i].alt.toLowerCase() == term.toLowerCase()) {
-                    prob = 1;
-                } else if (COUNTRY_JSON[i].name.toLowerCase().indexOf(term.toLowerCase()) == 0) {
-                    prob = 0.9;
-                } else if (COUNTRY_JSON[i].alt.toLowerCase().indexOf(term.toLowerCase()) == 0) {
-                    prob = 0.8;
-                } else if (COUNTRY_JSON[i].name.toLowerCase().indexOf(term.toLowerCase()) != -1) {
-                    prob = 0.7;
-                } else if (COUNTRY_JSON[i].alt.toLowerCase().indexOf(term.toLowerCase()) != -1) {
-                    prob = 0.6;
-                }
-            }
-            if (prob > 0) {
-                suggestions.push({
-                    'prob': prob,
-                    'text': COUNTRY_JSON[i].name
-                });
-            }
-        }
-        suggestions = suggestions.sort(function (a, b) {
-            let a_comp = a.prob;
-            let b_comp = b.prob;
-            return b_comp - a_comp;
-        });
-        for (let i = 0; i < Math.min(suggestions.length, 10); i++) {
-            suggestionList.push(suggestions[i].text);
-        }
-    }
-    return suggestionList;
-}
-
-export function validateCountry(control: AbstractControl): any {
-    const match = (COUNTRY_NAMES.indexOf(control.value) != -1);
-    if (!match) {
-        return {invalidCountry: true};
-    }
-    return null;
-}
-
-export function validateCountrySimple(countryName: string): boolean {
-    return COUNTRY_NAMES.indexOf(countryName) != -1;
-}
 
 export function sanitizeLink(link: any): any {
     let parsed_link = '';
@@ -224,7 +116,10 @@ export function selectNameFromLabelObject(label: any, lang?: string): string {
     }
 }
 
-export function selectPreferredName(cp: Category | Property, lang?: string) {
+export function selectPreferredName(cp: Category | Property, lang?: string): string {
+    if (!cp) {
+        return '';
+    }
     let defaultLanguage = DEFAULT_LANGUAGE();
     if (lang) {
         defaultLanguage = lang;

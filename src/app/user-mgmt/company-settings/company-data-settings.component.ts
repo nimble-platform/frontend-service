@@ -34,6 +34,7 @@ import { Router } from "@angular/router";
 import { LANGUAGES, DEFAULT_LANGUAGE } from "../../catalogue/model/constants";
 import { BPEService } from "../../bpe/bpe.service";
 import {SelectedTerms} from '../selected-terms';
+import {CountryUtil} from '../../common/country-util';
 
 @Component({
     selector: "company-data-settings",
@@ -311,7 +312,7 @@ export class CompanyDataSettingsComponent implements OnInit {
         body += this.settings.details.address.postalCode + "\n\n";
         body += this.translate.instant("Country:");
         body += "\n";
-        body += this.settings.details.address.country;
+        body += CountryUtil.getCountryByISO(this.settings.details.address.country);
         body += "\n\n\n";
         body += this.translate.instant("Best regards,");
         body += "\n\n";

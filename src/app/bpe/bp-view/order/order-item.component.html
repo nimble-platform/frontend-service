@@ -96,7 +96,7 @@
                 </text-input>
             </div>
             <div>
-                <text-input presentationMode="view" [label]="'Country' | translate" [text]="address.country.name.value" labelClass="col-4" valueClass="col-8">
+                <text-input presentationMode="view" [label]="'Country' | translate" [text]="address.country.identificationCode.value|translate" labelClass="col-4" valueClass="col-8">
                 </text-input>
             </div>
             <div *ngIf="areDeliveryDatesAvailable">

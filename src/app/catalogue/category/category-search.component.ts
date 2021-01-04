@@ -56,6 +56,11 @@ export class CategorySearchComponent implements OnInit {
     getCategoryDetailsStatus: CallStatus = new CallStatus();
 
     categories: Category[];
+    /*
+    query parameters
+     */
+    // indicates whether only one category can be selected or multiple categories can be selected
+    @Input() categoryCount: 'single' | 'multiple' = 'multiple';
 
     // keeps the query term
     categoryKeyword: string;
@@ -73,7 +78,6 @@ export class CategorySearchComponent implements OnInit {
     taxonomyIDs: string[];
     prefCats: string[] = [];
     recCats: string[] = [];
-
     showOtherProperties = null;
 
     favSelected: boolean;
@@ -317,14 +321,19 @@ export class CategorySearchComponent implements OnInit {
     }
 
     addCategoryToSelected(category: Category): void {
-        // if no category is selected or if the selected category is already selected
-        // do nothing
-        if (category == null || findCategoryInArray(this.categoryService.selectedCategories, category) > -1) {
-            return;
-        }
+        if (this.categoryCount === 'multiple') {
+            // if no category is selected or if the selected category is already selected
+            // do nothing
+            if (category == null || findCategoryInArray(this.categoryService.selectedCategories, category) > -1) {
+                return;
+            }
 
-        if (this.selectedCategoryWithDetails !== category) {
-            throw new Error("Inconsistent state: can only select the details category.");
+            if (this.selectedCategoryWithDetails !== category) {
+                throw new Error("Inconsistent state: can only select the details category.");
+            }
+        } else {
+            // if single category is allowed, clear the already selected category
+            this.categoryService.selectedCategories = [];
         }
 
         this.categoryService.addSelectedCategory(category,this.pathToSelectedCategories.parents);

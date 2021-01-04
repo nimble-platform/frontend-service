@@ -1909,7 +1909,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 query = query + ' OR ';
             }
         }
-        return this.simpleSearchService.getCompanies(query, facets, idList);
+        return this.simpleSearchService.getCompanies(query, facets, idList.length);
     }
 
     getProdLink(res: any): string {

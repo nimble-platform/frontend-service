@@ -97,7 +97,7 @@ export class NameDescriptionPanelComponent extends EmptyFormBase implements OnIn
 
                     reader.onload = function(e: any) {
                         let base64String = (reader.result as string).split(',').pop();
-                        let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "", "");
+                        let binaryObject = new BinaryObject(base64String, file.type, file.name, "", "");
                         images.push(binaryObject);
                     };
                     reader.readAsDataURL(file);
