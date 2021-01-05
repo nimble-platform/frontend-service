@@ -41,6 +41,9 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {CookieService} from 'ng2-cookies';
 import {Filter} from './model/filter';
 import {UnitService} from '../common/unit-service';
+import * as L from 'leaflet';
+import 'style-loader!leaflet/dist/leaflet.css';
+
 
 @Component({
     selector: 'simple-search-form',
@@ -186,6 +189,8 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     requestForCatalogExchangeDetails:string;
     requestForCatalogExchangeCallStatus:CallStatus = new CallStatus();
     // end of fields for catalogue exchange functionality
+
+    mapView = false;
 
     constructor(private simpleSearchService: SimpleSearchService,
                 private searchContextService: SearchContextService,
