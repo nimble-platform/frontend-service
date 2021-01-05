@@ -31,7 +31,8 @@ type SelectedTab = "COMPANY_DATA"
     | "NEGOTIATION_SETTINGS"
     | "DELIVERY_TERMS"
     | "CERTIFICATES"
-    | "CATEGORIES";
+    | "CATEGORIES"
+    | "PAYMENT";
 
 @Component({
     selector: "company-settings",

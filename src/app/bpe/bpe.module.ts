@@ -71,6 +71,10 @@ import { CommonCartTermsComponent } from './shopping-cart/common-cart-terms.comp
 import { ShoppingCartSummaryModalComponent } from './shopping-cart/shopping-cart-summary-modal.component';
 import {PurchaseOrderComponent} from './bp-view/contract/purchase-order.component';
 import {NegotiationClauseService} from './bp-view/negotiation/negotiation-clause-service';
+import {StripeComponent} from './payment/stripe.component';
+import {NgxStripeModule} from 'ngx-stripe';
+import {UserMgmtModule} from '../user-mgmt/user-mgmt.module';
+import {stripe_publishable_key} from '../globals';
 
 @NgModule({
     imports: [
@@ -82,7 +86,9 @@ import {NegotiationClauseService} from './bp-view/negotiation/negotiation-clause
         BPERoutingModule,
         CatalogueModule,
         ProductDetailsModule,
-        NgbModule.forRoot()
+        NgbModule.forRoot(),
+        NgxStripeModule.forRoot(stripe_publishable_key),
+        UserMgmtModule
     ],
     declarations: [
         BPConfigureComponent,
@@ -105,6 +111,7 @@ import {NegotiationClauseService} from './bp-view/negotiation/negotiation-clause
         NegotiationRequestInputComponent,
         NegotiationRequestItemComponent,
         NegotiationResponseComponent,
+        StripeComponent,
         NegotiationResponseItemComponent,
         TransportExecutionPlanComponent,
         TransportNegotiationRequestComponent,

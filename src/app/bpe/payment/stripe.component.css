@@ -1,0 +1,79 @@
+/*
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
+form.checkout {
+    max-width: 500px;
+    margin: 2rem auto;
+    text-align: center;
+    border: 2px solid #eee;
+    border-radius: 8px;
+    padding: 1rem 2rem;
+    background: white;
+
+    font-family: monospace;
+    color: #525252;
+    font-size: 1.1rem;
+}
+
+form.checkout button {
+    padding: 0.5rem 1rem;
+    color: white;
+    background: coral;
+    border: none;
+    border-radius: 4px;
+    margin-top: 1rem;
+}
+
+.StripeElement {
+    margin: 1rem 0 1rem;
+    background-color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    box-shadow: 0 1px 3px 0 #e6ebf1;
+    -webkit-transition: box-shadow 150ms ease;
+    transition: box-shadow 150ms ease;
+}
+
+.StripeElement--focus {
+    box-shadow: 0 1px 3px 0 #cfd7df;
+}
+
+.StripeElement--invalid {
+    border-color: #fa755a;
+}
+
+.StripeElement--webkit-autofill {
+    background-color: #fefde5 !important;
+}
+
+.card-info{
+    border: 1px solid rgba(0,0,0,0.15);padding: 20px;border-radius: 0.25rem;background-color: transparent
+}
+
+.stripe-card-div{
+    padding: 10px
+}
+
+.stripe-card-error {
+    color: red
+}
+
+.successful-payment{
+    position:absolute;left:40%;padding-top: 20px;font-size: large
+}
+
+.successful-payment-icon{
+    color:green
+}

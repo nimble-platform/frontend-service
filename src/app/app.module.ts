@@ -64,6 +64,7 @@ import {NetworkCompanyListService} from './user-mgmt/network-company-list.servic
 import {DemandPublishService} from './demand/demand-publish-service';
 import {DemandService} from './demand/demand-service';
 
+import {PaymentService} from './bpe/payment/payment-service';
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -106,6 +107,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         DemandPublishService,
         DemandService,
         WhiteBlackListService,
+        PaymentService,
         NetworkCompanyListService,
         ExplorativeSearchService,
         SimpleSearchService,
