@@ -38,6 +38,7 @@ import { deliveryPeriodUnitListId, warrantyPeriodUnitListId } from "../common/co
 import { Certificate } from "../catalogue/model/publish/certificate";
 import { copy } from '../common/utils';
 import {PeriodRange} from './model/period-range';
+import {AccountLink} from './model/account-link';
 
 @Injectable()
 export class UserService {
@@ -148,6 +149,36 @@ export class UserService {
             .toPromise()
             .then(res => res)
             .catch(this.handleError);
+    }
+
+    connectStripe(accountId:string,partyId:string):Promise<AccountLink> {
+        let url = `${this.url}/account?partyId=${partyId}`;
+        if(accountId)
+            url += `&id=${accountId}`;
+        let headers = this.getAuthorizedHeaders();
+        return this.http.post(url, {}, {headers: headers})
+            .toPromise()
+            .then(resp => {
+                return resp.json();
+            })
+    }
+
+    deleteAccount(accountId:string):Promise<string> {
+        let headers = this.getAuthorizedHeaders();
+        return this.http.delete(`${this.url}/account?id=${accountId}`,  {headers: headers})
+            .toPromise()
+            .then(resp => {
+                return resp.text();
+            })
+    }
+
+    getAccountLoginLink(accountId:string):Promise<string> {
+        let headers = this.getAuthorizedHeaders();
+        return this.http.get(`${this.url}/account/login-link?id=${accountId}`, {headers: headers})
+            .toPromise()
+            .then(resp => {
+                return resp.text();
+            })
     }
 
     getParty(partyId: string, delegateId: string = FEDERATIONID()): Promise<Party> {
