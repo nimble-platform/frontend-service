@@ -42,10 +42,6 @@ export class DeliveryTermsSubForm {
         AddressSubForm.update(deliveryTermsForm.controls.deliveryAddress, address);
     }
 
-    public static getAddress(deliveryTermsForm): Address {
-        return AddressSubForm.get(deliveryTermsForm.controls.deliveryAddress)
-    }
-
     public static update(deliveryTermsForm: FormGroup, deliveryTerms: DeliveryTerms): FormGroup {
         this.updateSpecialTerms(deliveryTermsForm, deliveryTerms.specialTerms);
         AddressSubForm.update(deliveryTermsForm.controls["deliveryAddress"] as FormGroup, deliveryTerms.deliveryAddress);

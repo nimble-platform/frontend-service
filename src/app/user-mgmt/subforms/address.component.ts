@@ -51,17 +51,6 @@ export class AddressSubForm {
             map(term => CountryUtil.getCountrySuggestions(term))
         );
 
-    public static get(addressForm): Address {
-        return {
-            streetName: addressForm.controls.streetName.value,
-            buildingNumber: addressForm.controls.buildingNumber.value,
-            cityName: addressForm.controls.cityName.value,
-            postalCode: addressForm.controls.postalCode.value,
-            region: addressForm.controls.region.value,
-            country: addressForm.controls.country.value
-        };
-    }
-
     public static update(addressForm: FormGroup, address: Address): FormGroup {
         if (address) {
             addressForm.controls.streetName.setValue(address.streetName || "");
