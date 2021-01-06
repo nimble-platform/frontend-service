@@ -12,7 +12,7 @@
    limitations under the License.
  */
 
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import * as L from 'leaflet';
 import 'style-loader!leaflet/dist/leaflet.css';
 import {Router} from '@angular/router';
@@ -25,7 +25,11 @@ import {selectNameFromLabelObject} from '../common/utils';
 
 export class SearchMapComponent {
 
-    @Input() companyData: any[];
+    // search results could be either product search results or company search results. They are differentiated by checking the
+    // manufacturer field of a result
+    @Input() searchResults: any[];
+    @Output() companyResultClicked: EventEmitter<any> = new EventEmitter<any>();
+    @Output() productResultClicked: EventEmitter<any> = new EventEmitter<any>();
 
     options = {
         layers: [
@@ -48,28 +52,65 @@ export class SearchMapComponent {
         // this.markers.push(marker([55, 55], {icon: icon}));
         // this.markers.push(marker([6, 6], {icon: icon}));
         this.map = map;
-        this.companyData.forEach(c => {
-            // TODO check search result
-            const m = L.marker([c.coordinate.longitude, c.coordinate.latitude], {icon: icon});
-            m.bindPopup(this.getPopupContent(c));
-            m.on('mouseover', function (e) {
-                this.openPopup();
-            });
-            m.on('mouseout', function (e) {
-                this.closePopup();
-            });
-            m.on('click', function (e) {
-                this.router.navigate(['/user-mgmt/company-details'], {queryParams: {id: c.id}})
-            });
-            m.addTo(this.map);
-        });
+        if (this.searchResults && this.searchResults.length > 0) {
+            // product results
+            if (this.searchResults[0].manufacturer) {
+                this.searchResults.forEach(product => {
+                    // TODO check search result
+                    if (product.manufacturer.coordinate) {
+                        const m = L.marker([product.manufacturer.coordinate.longitude, product.manufacturer.coordinate.latitude], {icon: icon});
+                        m.bindPopup(this.getPopupContentForProduct(product));
+                        m.on('mouseover', function (e) {
+                            this.openPopup();
+                        });
+                        m.on('mouseout', function (e) {
+                            this.closePopup();
+                        });
+                        m.on('click', (e) => {
+                            this.productResultClicked.emit(product);
+                        });
+                        m.addTo(this.map);
+                    }
+                });
+
+                // company results
+            } else {
+                this.searchResults.forEach(company => {
+                    // TODO check search result
+                    if (company.coordinate) {
+                        const m = L.marker([company.coordinate.longitude, company.coordinate.latitude], {icon: icon});
+                        m.bindPopup(this.getPopupContentForParty(company));
+                        m.on('mouseover', function (e) {
+                            this.openPopup();
+                        });
+                        m.on('mouseout', function (e) {
+                            this.closePopup();
+                        });
+                        m.on('click', (e) => {
+                            this.productResultClicked.emit(company);
+                        });
+                        m.addTo(this.map);
+                    }
+                });
+            }
+
+        } else {
+
+        }
     }
 
-    private getPopupContent(partySearchResult: any): string {
+    private getPopupContentForParty(partySearchResult: any): string {
         let name: string = selectNameFromLabelObject(partySearchResult.brandName);
         if (!name) {
-            name = partySearchResult = partySearchResult.legalName;
+            name = partySearchResult.legalName;
         }
-        return partySearchResult;
+        return name;
+    }
+
+    private getPopupContentForProduct(productSearchResult: any): string {
+        let content: string = selectNameFromLabelObject(productSearchResult.label);
+        content += '<br>'
+        content += this.getPopupContentForParty(productSearchResult.manufacturer);
+        return content;
     }
 }

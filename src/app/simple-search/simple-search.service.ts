@@ -128,6 +128,11 @@ export class SimpleSearchService {
         } else {
             queryRes = this.buildQueryString(query, myGlobals.query_settings, true, true, true);
         }
+
+        const facetIndex: number = facets.findIndex(f => f === 'certificateCode');
+        if (facetIndex) {
+            facets.splice(facetIndex, 1);
+        }
         searchObject.sort = [];
         sort = sort.replace('{LANG}', DEFAULT_LANGUAGE());
         searchObject.sort.push(sort);
@@ -182,6 +187,12 @@ export class SimpleSearchService {
         searchObject.start = page - 1;
         searchObject.sort = [];
         sort = sort.replace('{LANG}', DEFAULT_LANGUAGE());
+
+        const facetIndex: number = facets.findIndex(f => f === 'certificateCode');
+        if (facetIndex) {
+            facets.splice(facetIndex, 1);
+        }
+
         let url = null;
         // when the page reference is catalogue, we retrieve eFactory companies for white/black list
         if (pageRef == 'catalogue' || pageRef == 'network' || pageRef == 'offering') {
@@ -669,6 +680,11 @@ export class SimpleSearchService {
         let url = this.url + `/party/search`;
         if (this.delegated) {
             url = this.delegate_url + `/party/search`;
+        }
+
+        const facetIndex: number = facets.findIndex(f => f === 'certificateCode');
+        if (facetIndex) {
+            facets.splice(facetIndex, 1);
         }
 
         let searchObject: any = {};

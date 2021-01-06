@@ -2046,6 +2046,16 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         });
     }
 
+    onProductMarkerClicked(productResult: any): void {
+        const url: string = this.getProdLink(productResult);
+        this.router.navigate([url]);
+    }
+
+    onCompanyMarkerClicked(companyResult: any): void {
+        const url: string = this.getProdLink(companyResult);
+        this.router.navigate([url]);
+    }
+
     getShoppingCartStatus(index: number): CallStatus {
         return this.shoppingCartCallStatuses[index % this.rows];
     }

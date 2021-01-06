@@ -789,7 +789,8 @@
                     </ng-container>
                     <ng-container *ngIf="mapView">
                         <div class="w-100">
-                            <search-map [companyData]="searchResults"></search-map>
+                            <search-map [searchResults]="searchResults"
+                                        (productResultClicked)="onProductMarkerClicked($event)" (companyResultClicked)="onCompanyMarkerClicked($event)"></search-map>
                         </div>
                     </ng-container>
                     <!-- Pagination -->
