@@ -20,7 +20,6 @@ import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/fo
 import { Address } from '../model/address';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { TranslateService } from '@ngx-translate/core';
 import {CountryUtil} from '../../common/country-util';
 
 @Component({
@@ -37,10 +36,8 @@ export class AddressSubForm {
     public addressForm: FormGroup;
     @Input() disabledFlag: boolean = false;
     @Input() requiredFlag: boolean = true;
-    public static countryName:string = null;
 
     constructor(
-        private translate: TranslateService
     ) {
     }
 
@@ -60,7 +57,6 @@ export class AddressSubForm {
             addressForm.controls.postalCode.setValue(address.postalCode || "");
             addressForm.controls.country.setValue(address.country || "");
         }
-        this.countryName = CountryUtil.getCountryByISO(addressForm.getRawValue()["country"]);
         return addressForm;
     }
 
@@ -76,13 +72,8 @@ export class AddressSubForm {
         });
     }
 
-    getCountryName(){
-        return AddressSubForm.countryName;
-    }
-
     onCountrySelected(event) {
         if(CountryUtil.validateCountrySimple(event.target.value)){
-            AddressSubForm.countryName = event.target.value;
             // update the country form control
             this.addressForm.controls.country.setValue(CountryUtil.getISObyCountry(event.target.value));
             this.addressForm.markAsDirty();

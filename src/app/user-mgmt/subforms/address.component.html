@@ -63,7 +63,7 @@
         </strong>
         <div class="col-10">
             <input type="text" class="form-control" name="country" [ngModelOptions]="{standalone: true}"
-                    [ngModel]="getCountryName()" [required]="!disabledFlag && requiredFlag" (change)="onCountrySelected($event)" [readonly]="disabledFlag" [ngbTypeahead]="getSuggestions" placeholder="e.g. United States">
+                    [ngModel]="addressForm.controls.country.value | translate" [required]="!disabledFlag && requiredFlag" (change)="onCountrySelected($event)" [readonly]="disabledFlag" [ngbTypeahead]="getSuggestions" placeholder="e.g. United States">
         </div>
     </div>
 </div>
