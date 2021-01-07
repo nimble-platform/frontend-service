@@ -787,9 +787,9 @@
 
                     </div>
                     </ng-container>
-                    <ng-container *ngIf="mapView">
+                    <ng-container *ngIf="mapView && companyAddress">
                         <div class="w-100">
-                            <search-map [companyData]="searchResults"></search-map>
+                            <search-map [companyData]="companyData" [companyAddress]="companyAddress"></search-map>
                         </div>
                     </ng-container>
                     <!-- Pagination -->

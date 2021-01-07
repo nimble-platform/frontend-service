@@ -43,6 +43,8 @@ import {Filter} from './model/filter';
 import {UnitService} from '../common/unit-service';
 import * as L from 'leaflet';
 import 'style-loader!leaflet/dist/leaflet.css';
+import {UserService} from '../user-mgmt/user.service';
+import {Address} from '../user-mgmt/model/address';
 
 
 @Component({
@@ -152,6 +154,14 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     facetQuery: any[];
     // results of product/company search
     searchResults: any;
+
+    // fields for map view
+    // solr company data to be used in the map view
+    companyData:any;
+    // the address of active company
+    companyAddress:Address;
+    // end of fields for map view
+
     // keeps the images if exists for the product search results
     productImageMap: any = {};
     maxFacets = 5;
@@ -207,10 +217,16 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 private modalService: NgbModal,
                 public route: ActivatedRoute,
                 private translate: TranslateService,
+                private userService:UserService,
                 public router: Router) {
     }
 
     ngOnInit(): void {
+        // get the address of active company
+        const userId = this.cookieService.get("user_id");
+        this.userService.getSettingsForUser(userId).then(settings => {
+            this.companyAddress = settings.details.address;
+        });
         window.scrollTo(0, 0);
         this.appComponent.translate.get(['Other']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
             this.translations = res;
@@ -833,6 +849,8 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                             this.callback = true;
                             this.searchCallStatus.callback('Company search done.', true);
                             this.searchResults = res.result;
+                            // set company data
+                            this.companyData = copy(this.searchResults);
                             this.size = res.totalElements;
                             this.page = p;
                             this.start = this.page * this.rows - this.rows + 1;
@@ -847,6 +865,8 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                                 this.searchCallStatus.callback('Company search done.', true);
 
                                 this.searchResults = copy(res.result);
+                                // set company data
+                                this.companyData = copy(this.searchResults);
                                 this.size = res.totalElements;
                                 this.page = p;
                                 this.start = this.page * this.rows - this.rows + 1;
@@ -899,7 +919,12 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         }
     }
 
+    /**
+     * Creates the company facets for the product search
+     * */
     handleCompanyFacets(res, prefix: string, manufacturerIdCountMap: any) {
+        // set company data
+        this.companyData = copy(res.result);
         // map for keeping the value counts for each company facet
         // the facet name is the key of the map
         // The value of the map is another map which store the counts for each facet value

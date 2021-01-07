@@ -12,11 +12,14 @@
    limitations under the License.
  */
 
-import {Component, Input} from '@angular/core';
+import {Component, Input, NgZone} from '@angular/core';
 import * as L from 'leaflet';
 import 'style-loader!leaflet/dist/leaflet.css';
 import {Router} from '@angular/router';
 import {selectNameFromLabelObject} from '../common/utils';
+import {UserService} from '../user-mgmt/user.service';
+import {Address} from '../user-mgmt/model/address';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'search-map',
@@ -26,7 +29,9 @@ import {selectNameFromLabelObject} from '../common/utils';
 export class SearchMapComponent {
 
     @Input() companyData: any[];
+    @Input() companyAddress: Address;
 
+    // map options
     options = {
         layers: [
             L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18}),
@@ -34,42 +39,71 @@ export class SearchMapComponent {
         zoom: 5,
         center: L.latLng(39.4078968, -0.4317229)
     };
+    // marker icon
+    markerIcon = {
+        icon: L.icon({
+            iconSize: [25, 41],
+            iconAnchor: [10, 41],
+            popupAnchor: [2, -40],
+            // specify the path here
+            iconUrl: 'https://unpkg.com/leaflet@1.5.1/dist/images/marker-icon.png',
+            shadowUrl: 'https://unpkg.com/leaflet@1.5.1/dist/images/marker-shadow.png'
+        })
+    };
 
+    // map
     map: L.Map;
 
-    constructor(router: Router) {
+    constructor(public router: Router,
+                public translateService: TranslateService,
+                private zone: NgZone,
+                public userService: UserService) {
     }
 
     onMapReady(map: L.Map): void {
-        const icon = new L.Icon.Default();
-        icon.options.shadowSize = [0, 0];
-
-        // this.markers = [];
-        // this.markers.push(marker([55, 55], {icon: icon}));
-        // this.markers.push(marker([6, 6], {icon: icon}));
+        // set the map
         this.map = map;
+        // mark the location of each company on the map
         this.companyData.forEach(c => {
-            // TODO check search result
-            const m = L.marker([c.coordinate.longitude, c.coordinate.latitude], {icon: icon});
-            m.bindPopup(this.getPopupContent(c));
-            m.on('mouseover', function (e) {
-                this.openPopup();
-            });
-            m.on('mouseout', function (e) {
-                this.closePopup();
-            });
-            m.on('click', function (e) {
-                this.router.navigate(['/user-mgmt/company-details'], {queryParams: {id: c.id}})
-            });
-            m.addTo(this.map);
+            if (c.locationLatitude !== null && c.locationLongitude !== null) {
+                // create marker
+                const m = L.marker([c.locationLatitude, c.locationLongitude], this.markerIcon);
+                m.bindPopup(this.getPopupContent(c, m));
+                m.on('mouseover', function (e) {
+                    this.openPopup();
+                });
+                m.on('mouseout', function (e) {
+                    this.closePopup();
+                });
+                m.addEventListener('click', evt => {
+                    // Make changes inside Angular's zone using the run() function, otherwise, it does not detect the navigation
+                    // for more information, refer to https://github.com/Asymmetrik/ngx-leaflet#a-note-about-change-detection
+                    this.zone.run(() => {
+                        this.router.navigate(['/user-mgmt/company-details'], {queryParams: {id: c.id}});
+                    });
+
+                });
+                m.addTo(this.map);
+            }
         });
     }
 
-    private getPopupContent(partySearchResult: any): string {
-        let name: string = selectNameFromLabelObject(partySearchResult.brandName);
-        if (!name) {
-            name = partySearchResult = partySearchResult.legalName;
+
+    /**
+     * Returns the marker popup content including the company name and the distance between the location of active company and the company marker
+     * */
+    private getPopupContent(partySearchResult: any, marker): string {
+        // company name
+        let content: string = selectNameFromLabelObject(partySearchResult.brandName);
+        if (!content) {
+            content = partySearchResult.legalName;
         }
-        return partySearchResult;
+        // distance
+        if (this.companyAddress.locationLatitude !== null && this.companyAddress.locationLongitude !== null) {
+            const companyMarker = L.marker([this.companyAddress.locationLatitude, this.companyAddress.locationLongitude]);
+            content += '<br>' + this.translateService.instant('Distance') + ': ' + (companyMarker._latlng.distanceTo(marker._latlng)).toFixed(0) / 1000 + ' km';
+        }
+
+        return content;
     }
 }

@@ -64,6 +64,7 @@ import {NetworkCompanyListService} from './user-mgmt/network-company-list.servic
 import {DemandPublishService} from './demand/demand-publish-service';
 import {DemandService} from './demand/demand-service';
 import {LeafletModule} from '@asymmetrik/ngx-leaflet';
+import {AddressMapService} from './common/address-map.service';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -115,6 +116,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         UserService,
         CredentialsService,
         UnitService,
+        AddressMapService,
         PrecedingBPDataService,
         TnTService,
         AnalyticsService,

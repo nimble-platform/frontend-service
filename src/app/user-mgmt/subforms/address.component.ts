@@ -22,6 +22,7 @@ import { validateCountry, getCountrySuggestions } from '../../common/utils';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
+import {Coordinate} from '../../catalogue/model/publish/coordinate';
 
 @Component({
     moduleId: module.id,
@@ -31,17 +32,24 @@ import { TranslateService } from '@ngx-translate/core';
 })
 
 
-export class AddressSubForm {
+export class AddressSubForm implements OnInit{
 
     @Input('group')
     public addressForm: FormGroup;
     @Input() disabledFlag: boolean = false;
     @Input() requiredFlag: boolean = true;
-
+    @Input() mapView: boolean = false;
+    // location coordinate used in the address map
+    coordinate:Coordinate;
 
     constructor(
         private translate: TranslateService
     ) {
+    }
+
+    ngOnInit(): void {
+        // set coordinate using the form data
+        this.coordinate = new Coordinate(this.addressForm.controls.locationLongitude.value,this.addressForm.controls.locationLatitude.value);
     }
 
     getSuggestions = (text$: Observable<string>) =>
@@ -51,6 +59,14 @@ export class AddressSubForm {
             map(term => getCountrySuggestions(term))
         );
 
+    public onCoordinateChange(coordinate:Coordinate){
+        // update form data
+        this.addressForm.controls.locationLatitude.setValue(coordinate.latitude);
+        this.addressForm.controls.locationLongitude.setValue(coordinate.longitude);
+        this.addressForm.updateValueAndValidity();
+        this.addressForm.markAsDirty();
+    }
+
     public static get(addressForm): Address {
         return {
             streetName: addressForm.controls.streetName.value,
@@ -58,7 +74,9 @@ export class AddressSubForm {
             cityName: addressForm.controls.cityName.value,
             postalCode: addressForm.controls.postalCode.value,
             region: addressForm.controls.region.value,
-            country: addressForm.controls.country.value
+            country: addressForm.controls.country.value,
+            locationLatitude: addressForm.controls.locationLatitude.value,
+            locationLongitude: addressForm.controls.locationLongitude.value
         };
     }
 
@@ -70,6 +88,8 @@ export class AddressSubForm {
             addressForm.controls.region.setValue(address.region || "");
             addressForm.controls.postalCode.setValue(address.postalCode || "");
             addressForm.controls.country.setValue(address.country || "");
+            addressForm.controls.locationLatitude.setValue(address.locationLatitude || null);
+            addressForm.controls.locationLongitude.setValue(address.locationLongitude || null);
         }
         return addressForm;
     }
@@ -82,7 +102,9 @@ export class AddressSubForm {
             cityName: formDef,
             postalCode: formDef,
             region: formDef,
-            country: ['', [validateCountry]]
+            country: ['', [validateCountry]],
+            locationLatitude: [null],
+            locationLongitude: [null]
         });
     }
 }
