@@ -467,7 +467,7 @@ export const product_filter_prod = ["freeOfCharge", "circularEconomyCertificates
 export const product_filter_comp = ["manufacturer.legalName", "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType", "manufacturer.circularEconomyCertificates"];
 export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "circularEconomyCertificates", "ppapComplianceLevel", "ppapDocumentType"];
 export const party_identifying_regex_filters = ['manufacturer.*legalName', 'manufacturer.*brandName', 'manufacturer.id'];
-export const party_filter_main = ["businessType", "activitySectors", "businessKeywords", "origin", "ppapComplianceLevel", "ppapDocumentType"];
+export const party_filter_main = ["businessType", "activitySectors", "businessKeywords", "origin","circularEconomyCertificates", "ppapComplianceLevel", "ppapDocumentType"];
 export const party_filter_trust = ["trustScore", "trustRating", "trustSellerCommunication", "trustFullfillmentOfTerms", "trustDeliveryPackaging", "trustNumberOfTransactions"];
 export const product_filter_trust = ["manufacturer.trustScore", "manufacturer.trustRating", "manufacturer.trustSellerCommunication", "manufacturer.trustFullfillmentOfTerms", "manufacturer.trustDeliveryPackaging", "manufacturer.trustNumberOfTransactions"];
 // <<<
