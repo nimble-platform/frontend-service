@@ -1380,6 +1380,8 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             ret = this.product_filter_mappings[prefName];
         } else if (this.product_filter_mappings[name]) {
             ret = this.product_filter_mappings[name];
+        } else{
+            ret = this.translateService.instant(prefName);
         }
         return ret;
     }
