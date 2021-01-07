@@ -156,8 +156,6 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     searchResults: any;
 
     // fields for map view
-    // solr company data to be used in the map view
-    companyData:any;
     // the address of active company
     companyAddress:Address;
     // end of fields for map view
@@ -849,8 +847,6 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                             this.callback = true;
                             this.searchCallStatus.callback('Company search done.', true);
                             this.searchResults = res.result;
-                            // set company data
-                            this.companyData = copy(this.searchResults);
                             this.size = res.totalElements;
                             this.page = p;
                             this.start = this.page * this.rows - this.rows + 1;
@@ -865,8 +861,6 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                                 this.searchCallStatus.callback('Company search done.', true);
 
                                 this.searchResults = copy(res.result);
-                                // set company data
-                                this.companyData = copy(this.searchResults);
                                 this.size = res.totalElements;
                                 this.page = p;
                                 this.start = this.page * this.rows - this.rows + 1;
@@ -923,8 +917,6 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
      * Creates the company facets for the product search
      * */
     handleCompanyFacets(res, prefix: string, manufacturerIdCountMap: any) {
-        // set company data
-        this.companyData = copy(res.result);
         // map for keeping the value counts for each company facet
         // the facet name is the key of the map
         // The value of the map is another map which store the counts for each facet value

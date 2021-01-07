@@ -28,7 +28,9 @@ import {TranslateService} from '@ngx-translate/core';
 
 export class SearchMapComponent {
 
-    @Input() companyData: any[];
+    // search results could be either product search results or company search results. They are differentiated by checking the
+    // manufacturer field of a result
+    @Input() searchResults: any[];
     @Input() companyAddress: Address;
 
     // map options
@@ -63,29 +65,31 @@ export class SearchMapComponent {
     onMapReady(map: L.Map): void {
         // set the map
         this.map = map;
-        // mark the location of each company on the map
-        this.companyData.forEach(c => {
-            if (c.locationLatitude !== null && c.locationLongitude !== null) {
-                // create marker
-                const m = L.marker([c.locationLatitude, c.locationLongitude], this.markerIcon);
-                m.bindPopup(this.getPopupContent(c, m));
-                m.on('mouseover', function (e) {
-                    this.openPopup();
-                });
-                m.on('mouseout', function (e) {
-                    this.closePopup();
-                });
-                m.addEventListener('click', evt => {
-                    // Make changes inside Angular's zone using the run() function, otherwise, it does not detect the navigation
-                    // for more information, refer to https://github.com/Asymmetrik/ngx-leaflet#a-note-about-change-detection
-                    this.zone.run(() => {
-                        this.router.navigate(['/user-mgmt/company-details'], {queryParams: {id: c.id}});
+        if(this.searchResults && this.searchResults.length > 0){
+            // mark the location of each company on the map
+            this.searchResults.forEach(searchResult => {
+                let company = searchResult.manufacturer ? searchResult.manufacturer :searchResult;
+                if (company.locationLatitude !== null && company.locationLongitude !== null) {
+                    // create marker
+                    const m = L.marker([company.locationLatitude, company.locationLongitude], this.markerIcon);
+                    m.bindPopup(this.getPopupContent(company, m));
+                    m.on('mouseover', function (e) {
+                        this.openPopup();
                     });
-
-                });
-                m.addTo(this.map);
-            }
-        });
+                    m.on('mouseout', function (e) {
+                        this.closePopup();
+                    });
+                    m.addEventListener('click', evt => {
+                        // Make changes inside Angular's zone using the run() function, otherwise, it does not detect the navigation
+                        // for more information, refer to https://github.com/Asymmetrik/ngx-leaflet#a-note-about-change-detection
+                        this.zone.run(() => {
+                            this.router.navigate(['/user-mgmt/company-details'], {queryParams: {id: company.id}});
+                        });
+                    });
+                    m.addTo(this.map);
+                }
+            });
+        }
     }
 
 
