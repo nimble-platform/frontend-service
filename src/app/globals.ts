@@ -463,9 +463,9 @@ export const item_manufacturer_id = "manufacturerId";
 // <<<
 // Grouping of facets into categories (Product / Service, Vendor, Trust / Rating, Other)
 // >>>
-export const product_filter_prod = ["freeOfCharge", "certificateCode", "applicableCountries", "customizable"];
-export const product_filter_comp = ["manufacturer.legalName", "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType", "manufacturer.certificateCode"];
-export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "certificateCode", "ppapComplianceLevel", "ppapDocumentType"];
+export const product_filter_prod = ["freeOfCharge", "circularEconomyCertificates", "applicableCountries", "customizable"];
+export const product_filter_comp = ["manufacturer.legalName", "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType", "manufacturer.circularEconomyCertificates"];
+export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "circularEconomyCertificates", "ppapComplianceLevel", "ppapDocumentType"];
 export const party_identifying_regex_filters = ['manufacturer.*legalName', 'manufacturer.*brandName', 'manufacturer.id'];
 export const party_filter_main = ["businessType", "activitySectors", "businessKeywords", "origin", "ppapComplianceLevel", "ppapDocumentType"];
 export const party_filter_trust = ["trustScore", "trustRating", "trustSellerCommunication", "trustFullfillmentOfTerms", "trustDeliveryPackaging", "trustNumberOfTransactions"];
