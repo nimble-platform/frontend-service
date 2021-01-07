@@ -41,8 +41,8 @@
                 </td>
             </tr>
             <tr *ngFor="let certificate of circularEconomyCertificates; let i = index">
-                <td>{{certificate.certificateType}}</td>
-                <td>{{certificate.certificateTypeCode.name}}</td>
+                <td>{{certificate.certificateType | translate}}</td>
+                <td>{{certificate.certificateTypeCode.name | translate}}</td>
                 <td>{{certificate.remarks}}</td>
                 <td>
                     <expandable-flex-row [content]="getCertificateCountryNames(certificate)" [shrinkElementSize]="2"></expandable-flex-row>
@@ -50,7 +50,7 @@
                 <td>
                     <button class="btn btn-primary btn-sm ml-1" [disabled]="disabled" (click)="onEdit(addCertModal, i, 'circularEconomy')"><span [innerHTML]="'Edit' | translate"></span>
                     </button>
-                    <button class="btn btn-danger btn-sm ml-1" [disabled]="disabled" (click)="onDelete(i)"><span [innerHTML]="'Delete' | translate"></span>
+                    <button class="btn btn-danger btn-sm ml-1" [disabled]="disabled" (click)="onDelete(certificate)"><span [innerHTML]="'Delete' | translate"></span>
                     </button>
                 </td>
             </tr>
@@ -102,7 +102,7 @@
                 <td>
                     <button class="btn btn-primary btn-sm ml-1" [disabled]="disabled" (click)="onEdit(addCertModal, i, 'arbitrary')"><span [innerHTML]="'Edit' | translate"></span>
                     </button>
-                    <button class="btn btn-danger btn-sm ml-1" [disabled]="disabled" (click)="onDelete(i)"><span [innerHTML]="'Delete' | translate"></span>
+                    <button class="btn btn-danger btn-sm ml-1" [disabled]="disabled" (click)="onDelete(certificate)"><span [innerHTML]="'Delete' | translate"></span>
                     </button>
                 </td>
             </tr>
@@ -147,13 +147,13 @@
                 <div class="col-9">
                     <ng-container *ngIf="certificateGroup === 'circularEconomy'">
                         <!-- this input is just to update the form -->
-                        <input class="d-none" [formControl]="addCertForm.controls['type']" [ngModel]="config.circularEconomy.certificateGroup">
+                        <input class="d-none" formControlName="type" [ngModel]="config.circularEconomy.certificateGroup">
                         <!-- this input is to show the translated value -->
                         <input class="form-control" [attr.disabled]="true" [ngModel]="config.circularEconomy.certificateGroup" [ngModelOptions]="{standalone: true}">
                     </ng-container>
-                    <select *ngIf="certificateGroup === 'arbitrary'" class="form-control" [formControl]="addCertForm.controls['type']" required>
+                    <select *ngIf="certificateGroup === 'arbitrary'" class="form-control" formControlName="type" required>
                         <option></option>
-                        <option *ngFor="let certType of config.supportedCertificates" [selected]="certType == addCertForm.controls['type'].value">{{certType | translate}}</option>
+                        <option *ngFor="let certType of config.supportedCertificates" [value]="certType" [selected]="certType == addCertForm.controls['type'].value">{{certType | translate}}</option>
                     </select>
                 </div>
             </div>
@@ -161,11 +161,11 @@
                 <label class="col-3 col-form-label"><span [innerHTML]="'Name' | translate"></span>
                 </label>
                 <div class="col-9">
-                    <input *ngIf="certificateGroup === 'arbitrary'" type="text" class="form-control" [formControl]="addCertForm.controls['name']" required>
+                    <input *ngIf="certificateGroup === 'arbitrary'" type="text" class="form-control" formControlName="name" required>
                     <!-- predefined names for the circular economy certificates -->
-                    <select *ngIf="certificateGroup === 'circularEconomy'" class="form-control" [formControl]="addCertForm.controls['name']" required>
+                    <select *ngIf="certificateGroup === 'circularEconomy'" class="form-control" formControlName="name" required>
                         <option></option>
-                        <option *ngFor="let certType of getCircularCertificateTypes()" [selected]="certType == addCertForm.controls['type'].value">{{certType | translate}}</option>
+                        <option *ngFor="let certType of getCircularCertificateTypes()" [value]="certType" [selected]="certType == addCertForm.controls['name'].value">{{certType | translate}}</option>
                     </select>
                 </div>
             </div>
@@ -173,7 +173,7 @@
                 <label class="col-3 col-form-label"><span [innerHTML]="'Description' | translate"></span>
                 </label>
                 <div class="col-9">
-                    <input type="text" class="form-control" [formControl]="addCertForm.controls['description']">
+                    <input type="text" class="form-control" formControlName="description">
                 </div>
             </div>
             <div class="form-group row">

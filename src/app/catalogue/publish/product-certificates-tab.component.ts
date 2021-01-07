@@ -69,7 +69,9 @@ export class ProductCertificatesTabComponent implements OnInit {
     onEdit(popup, i: number, certificateGroup: 'arbitrary' | 'circularEconomy') {
         this.updateMode = 'edit';
         this.certificateGroup = certificateGroup;
-        this.editedCertificate = this.catalogueLine.goodsItem.item.certificate[i];
+        let certificate = certificateGroup == 'arbitrary' ? this.arbitraryCertificates[i]: this.circularEconomyCertificates[i];
+        const index = this.catalogueLine.goodsItem.item.certificate.indexOf(certificate);
+        this.editedCertificate = this.catalogueLine.goodsItem.item.certificate[index];
         this.certificateFilesProvided = true;
         this.addCertForm = this._fb.group({
             name: [this.editedCertificate.certificateTypeCode.name],
@@ -90,8 +92,9 @@ export class ProductCertificatesTabComponent implements OnInit {
         this.modalService.open(popup);
     }
 
-    onDelete(i: number) {
-        this.catalogueLine.goodsItem.item.certificate.splice(i, 1);
+    onDelete(certificate) {
+        let index = this.catalogueLine.goodsItem.item.certificate.indexOf(certificate);
+        this.catalogueLine.goodsItem.item.certificate.splice(index, 1);
         this.updateCertificateLists();
     }
 
