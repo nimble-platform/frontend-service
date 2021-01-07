@@ -23,6 +23,7 @@ import { Certificate } from "../catalogue/model/publish/certificate";
 import { Country } from '../catalogue/model/publish/country';
 import { DEFAULT_LANGUAGE } from "../catalogue/model/constants";
 import { TranslateService } from '@ngx-translate/core';
+import {CountryUtil} from '../common/country-util';
 import {config} from '../globals';
 import {Certificate as UserMgmtCertificate} from '../user-mgmt/model/certificate';
 import {User} from '../user-mgmt/model/user';
@@ -82,10 +83,10 @@ export class ProductDetailsCertificatesComponent implements OnInit {
 
         for (let country of countries) {
             if (countryNames == null) {
-                countryNames = country.name.value;
+                countryNames = CountryUtil.getCountryByISO(country.identificationCode.value);
             }
             else {
-                countryNames += "," + country.name.value;
+                countryNames += "," + CountryUtil.getCountryByISO(country.identificationCode.value);
             }
         }
         return countryNames;

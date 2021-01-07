@@ -25,6 +25,7 @@ import {Facet} from '../../common/model/facet';
 import {FacetValue} from '../../common/model/facet-value';
 import {DEFAULT_LANGUAGE} from '../../catalogue/model/constants';
 import {SimpleSearchService} from '../../simple-search/simple-search.service';
+import {CountryUtil} from '../../common/country-util';
 
 @Component({
     selector: 'demand-list',
@@ -155,9 +156,9 @@ export class DemandListComponent implements OnInit, OnDestroy {
     onFacetSelected(facetSelection: any): void {
         let queryParams: any = {page: 1, tab: 'DEMANDS'}
         if (facetSelection.facet === 'Delivery Country') {
-            queryParams.deliveryCountry = facetSelection.selectedValue;
+            queryParams.deliveryCountry = CountryUtil.getISObyCountry(facetSelection.selectedValue);
         } else if (facetSelection.facet === 'Buyer Country') {
-            queryParams.buyerCountry = facetSelection.selectedValue;
+            queryParams.buyerCountry = CountryUtil.getISObyCountry(facetSelection.selectedValue);
         }
         this.router
             .navigate([], {
@@ -191,7 +192,7 @@ export class DemandListComponent implements OnInit, OnDestroy {
         this.demandCategories = [];
 
         const companyId = this.companyDemands ? this.cookieService.get('company_id') : null;
-        this.demandService.getDemands(this.searchTerm, companyId, this.selectedCategory, null, this.buyerCountry, this.deliveryCountry, this.page - 1, this.pageSize)
+        this.demandService.getDemands(this.searchTerm, companyId, this.selectedCategory, this.buyerCountry, this.deliveryCountry, this.page - 1, this.pageSize)
             .then(demands => {
                 this.totalCount = demands.totalCount;
                 if (this.totalCount === 0) {
@@ -235,7 +236,7 @@ export class DemandListComponent implements OnInit, OnDestroy {
             }).catch(e => {
             this.searchCallStatus.error(this.translate.instant('Failed to get demands'), e);
         });
-        this.demandService.getDemandFacets(this.searchTerm, companyId, this.selectedCategory, null, this.buyerCountry, this.deliveryCountry)
+        this.demandService.getDemandFacets(this.searchTerm, companyId, this.selectedCategory, this.buyerCountry, this.deliveryCountry)
             .then(facets => {
                 this.setFacetData(facets);
             });
@@ -259,6 +260,8 @@ export class DemandListComponent implements OnInit, OnDestroy {
             deliveryCountryFacet.facetValues.find(facetValue => facetValue.value === this.deliveryCountry).selected = true;
         }
         this.deliveryCountryFacet = deliveryCountryFacet;
+        // replace country iso codes with country names
+        this.deliveryCountryFacet.facetValues.forEach(value => value.value = CountryUtil.getCountryByISO(value.value));
 
         // buyer country
         const buyerCountryFacet: Facet = this.buyerCountryFacet = facets.find(facetResponse => facetResponse.facetName === 'Buyer Country');
@@ -266,6 +269,8 @@ export class DemandListComponent implements OnInit, OnDestroy {
             buyerCountryFacet.facetValues.find(facetValue => facetValue.value === this.buyerCountry).selected = true;
         }
         this.buyerCountryFacet = buyerCountryFacet;
+        // replace country iso codes with country names
+        this.buyerCountryFacet.facetValues.forEach(value => value.value = CountryUtil.getCountryByISO(value.value));
     }
 
     private getCompanyNameFromIds(): void {

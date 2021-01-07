@@ -172,12 +172,17 @@
             </div>
 
             <div class="row actions-row" *ngIf="isReadOnly() && isOrderCompleted()">
-                <div class="col-5 call-status-col">
+                <div class="{{isCheckoutButtonVisible() ? 'col-3': 'col-5'}} call-status-col">
                     <call-status [callStatus]="submitCallStatus"></call-status>
                 </div>
                 <div class="col-2">
                     <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">
                         <span [innerHTML]="'Back' | translate"></span>
+                    </button>
+                </div>
+                <div *ngIf="isCheckoutButtonVisible()" class="col-2">
+                    <button class="btn btn-primary action" [disabled]="isLoading() || isPaymentButtonDisabled()" (click)="checkout()">
+                        <span [innerHTML]="'Checkout' | translate"></span>
                     </button>
                 </div>
                 <div class="col-2">

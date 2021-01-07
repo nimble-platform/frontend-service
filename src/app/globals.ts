@@ -108,6 +108,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - delegationEnabled: Boolean flag if the federation feature is available for the instance
 - displayCategoryCounts: Boolean flag if the category counts are displayed in the category filter. If it's false, then we show the count only for the selected category.
 - docLink: Link to the documentation resources
+- enableStripePayment: Boolean flag if the stripe payment is enabled or not
 - faviconPath: Link to the favicon
 - frameContractEnabled: Boolean flag is frame contracts are applicable
 - hideLogAnalytics: Boolean flag if the log analytics tab in platform analytics is hidden
@@ -219,6 +220,7 @@ export const config = {
     "delegationEnabled": true,
     "displayCategoryCounts":true,
     "docLink": "https://www.nimble-project.org/docs/",
+    "enableStripePayment": false,
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
     "hideLogAnalytics": false,
@@ -524,3 +526,6 @@ export const query_settings_comp = {
         "legalName": 64
     }
 };
+
+// Stripe publishable key
+export const stripe_publishable_key = "pk_test_51Hqz4nIhfTtDDuPhnPfIRfdb7Wzg5ouRuKNxkxT90NlFSnFwNTKSUDAAXMSw15MLyk4LFJW5IJeFVAZ5biB1ksdB00a6ibmD7C";

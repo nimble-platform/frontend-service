@@ -106,6 +106,7 @@ export const config = {
     "delegationEnabled": false,
     "displayCategoryCounts":false,
     "docLink": "http://b2bm.aidimme.es/manual-de-usuario/",
+    "enableStripePayment": false,
     "faviconPath": "./assets/B2B_favicon.ico",
     "frameContractTabEnabled": true,
     "hideLogAnalytics": true,
@@ -445,3 +446,6 @@ export const query_settings_comp = {
         "legalName": 64
     }
 };
+
+// Stripe publishable key
+export const stripe_publishable_key = "pk_test_51Hqz4nIhfTtDDuPhnPfIRfdb7Wzg5ouRuKNxkxT90NlFSnFwNTKSUDAAXMSw15MLyk4LFJW5IJeFVAZ5biB1ksdB00a6ibmD7C";

@@ -24,13 +24,14 @@ import { DocumentReference } from "../model/publish/document-reference";
 import { Attachment } from "../model/publish/attachment";
 import { BinaryObject } from "../model/publish/binary-object";
 import { UBLModelUtils } from "../model/ubl-model-utils";
-import { COUNTRY_NAMES, getCountrySuggestions, validateCountrySimple } from "../../common/utils";
 import { Country } from "../model/publish/country";
 import { Text } from "../model/publish/text";
 import { Observable } from "rxjs";
 import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
 import { TranslateService } from '@ngx-translate/core';
 import {config} from '../../globals';
+import {CountryUtil} from '../../common/country-util';
+import {Code} from '../model/publish/code';
 
 @Component({
     selector: "product-certificates-tab",
@@ -83,7 +84,7 @@ export class ProductCertificatesTabComponent implements OnInit {
         this.countryFormControl = new FormControl('');
         this.selectedCountries = [];
         for (let country of this.editedCertificate.country) {
-            this.selectedCountries.push(country.name.value);
+            this.selectedCountries.push(CountryUtil.getCountryByISO(country.identificationCode.value));
         }
 
         this.modalService.open(popup);
@@ -135,7 +136,11 @@ export class ProductCertificatesTabComponent implements OnInit {
         }
         certificate.country = [];
         for (let countryName of this.selectedCountries) {
-            let country: Country = new Country(new Text(countryName, 'en'));
+            const countryIso = CountryUtil.getISObyCountry(countryName);
+
+            let country: Country = new Country();
+            country.identificationCode = new Code();
+            country.identificationCode.value = countryIso;
             certificate.country.push(country);
         }
 
@@ -166,7 +171,7 @@ export class ProductCertificatesTabComponent implements OnInit {
         text$.pipe(
             debounceTime(50),
             distinctUntilChanged(),
-            map(term => getCountrySuggestions(term))
+            map(term => CountryUtil.getCountrySuggestions(term))
         );
 
     getCertificateCountryNames(certificate: Certificate): string[] {
@@ -176,7 +181,7 @@ export class ProductCertificatesTabComponent implements OnInit {
         }
 
         for (let country of certificate.country) {
-            countryNames.push(country.name.value);
+            countryNames.push(CountryUtil.getCountryByISO(country.identificationCode.value));
         }
         return countryNames;
     }

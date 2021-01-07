@@ -20,7 +20,7 @@ import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/form
 import {DEFAULT_LANGUAGE, LANGUAGES} from '../catalogue/model/constants';
 import {Observable} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
-import {getCountryByISO, getCountrySuggestionsWithMetadata, selectPreferredName} from '../common/utils';
+import {selectPreferredName} from '../common/utils';
 import {Category} from '../catalogue/model/category/category';
 import {Code} from '../catalogue/model/publish/code';
 import {UserService} from '../user-mgmt/user.service';
@@ -30,11 +30,12 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {NgbTypeaheadSelectItemEvent} from '@ng-bootstrap/ng-bootstrap';
 import {CategoryService} from '../catalogue/category/category.service';
 import {DemandPublishService} from './demand-publish-service';
-import {countryValidator, ValidationService} from '../common/validation/validators';
+import {ValidationService} from '../common/validation/validators';
 import {ChildFormBase} from '../common/validation/child-form-base';
 import {DemandService} from './demand-service';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {CallStatus} from '../common/call-status';
+import {CountryUtil} from '../common/country-util';
 
 @Component({
     selector: 'demand-publish',
@@ -89,6 +90,10 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
                 }
             }
         });
+        // reset demand publishing service data when we publish a new demand
+        if(this.publishMode == 'create'){
+            this.demandPublishService.resetData();
+        }
 
         this.formGroup = new FormGroup({});
         this.initViewFormAndAddToParentForm();
@@ -101,7 +106,7 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
             this.demand.itemClassificationCode = [UBLModelUtils.createCodeFromCategory(this.categoryService.selectedCategories[0])];
 
             if (this.demand.deliveryCountry.value) {
-                this.countryFormControl.setValue(getCountryByISO(this.demand.deliveryCountry.value));
+                this.countryFormControl.setValue(CountryUtil.getCountryByISO(this.demand.deliveryCountry.value));
             }
             if (this.demand.additionalDocumentReference) {
                 this.additionalFiles = [this.demand.additionalDocumentReference.attachment.embeddedDocumentBinaryObject];
@@ -122,8 +127,7 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
             this.demand.deliveryCountry = new Code();
             this.demand.buyerCountry = new Code();
             this.userService.getSettingsForParty(this.cookieService.get('company_id')).then(res => {
-                // FIXME fix this when the country names are changed to codes
-                this.demand.buyerCountry.value = res.negotiationSettings.company.postalAddress.country.name.value;
+                this.demand.buyerCountry.value = res.negotiationSettings.company.postalAddress.country.identificationCode.value;
             });
         }
     }
@@ -194,7 +198,7 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
         text$.pipe(
             debounceTime(50),
             distinctUntilChanged(),
-            map(term => getCountrySuggestionsWithMetadata(term))
+            map(term => CountryUtil.getCountrySuggestionsWithMetadata(term))
         );
 
     countrySuggestionFormatter = function (suggestion: any): string {
@@ -252,7 +256,7 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
     }
 
     private initCountryFormControl(): void {
-        this.countryFormControl = new FormControl('', [countryValidator()]);
+        this.countryFormControl = new FormControl('', [CountryUtil.countryValidator()]);
         this.addToCurrentForm('delivery_country', this.countryFormControl);
         this.categoryFormControl = new FormControl('', [Validators.required]);
         this.addToCurrentForm('category', this.categoryFormControl);

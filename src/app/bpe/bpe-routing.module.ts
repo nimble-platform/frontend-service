@@ -24,6 +24,8 @@ import { ProductBpOptionsComponent } from "./bp-view/product-bp-options.componen
 import { FrameContractDetailsComponent } from "./bp-view/contract/frame-contract-details.component";
 import { ThreadSummaryComponent } from "./bp-summary/thread-summary.component";
 import { ShoppingCartComponent } from './shopping-cart/shopping-cart.component';
+import {StripeComponent} from './payment/stripe.component';
+import {PaymentActivateService} from './payment/payment-activate.service';
 
 const routes: Routes = [
     { path: 'bpe-design/detail/:processID', component: BPDetailComponent },
@@ -33,7 +35,8 @@ const routes: Routes = [
     { path: 'bpe-exec/:processInstanceId/:delegateId', component: ProductBpOptionsComponent },
     { path: 'bpe-sum/:processInstanceId/:delegateId', component: ThreadSummaryComponent },
     { path: 'frame-contract/:id/:delegateId', component: FrameContractDetailsComponent },
-    { path: 'shopping-cart', component: ShoppingCartComponent }
+    { path: 'shopping-cart', component: ShoppingCartComponent },
+    { path: "payment", component: StripeComponent, canActivate: [PaymentActivateService]}
 ];
 
 @NgModule({

@@ -12,7 +12,7 @@
    limitations under the License.
  -->
 <ng-container *ngIf="!categorySearchPage">
-    <h3 class="mb-4">Publish Demand</h3>
+    <h3 class="mb-4">{{'Publish Demand'|translate}}</h3>
     <hr>
 
     <!-- title -->
@@ -24,10 +24,10 @@
                         [forbiddenPrecedingTrailingSpace]="true"
                         [required]="true" [parentForm]="formGroup" [formFieldName]="'demand_title'" [componentIndex]="i">
             </text-input>
-            <div *ngIf="i > 0" class="btn btn-outline-danger ml-3" (click)="onDeleteTitle(i)">Delete Title</div>
+            <div *ngIf="i > 0" class="btn btn-outline-danger ml-3" (click)="onDeleteTitle(i)">{{'Delete Title'|translate}}</div>
         </div>
         <div class="d-flex flex-row-reverse w-75">
-            <div *ngIf="i === demand.title.length - 1" class="btn btn-outline-primary mt-3" (click)="onAddTitle()">Add Title</div>
+            <div *ngIf="i === demand.title.length - 1" class="btn btn-outline-primary mt-3" (click)="onAddTitle()">{{'Add Title'|translate}}</div>
         </div>
     </div>
 
@@ -118,6 +118,6 @@
     </category-search>
     <hr class="actions-hr">
     <div class="col-3">
-        <button class="btn btn-primary" (click)="onCategorySelected()" [disabled]="categoryService.selectedCategories.length == 0">Continue</button>
+        <button class="btn btn-primary" (click)="onCategorySelected()" [disabled]="categoryService.selectedCategories.length == 0">{{'Continue'|translate}}</button>
     </div>
 </ng-container>

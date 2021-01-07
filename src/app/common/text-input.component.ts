@@ -23,7 +23,7 @@ import { ValidatorFn } from '@angular/forms/src/directives/validators';
 import { spaceValidator, ValidationService } from './validation/validators';
 import {sanitizeLink} from './utils';
 
-const TEXT_INPUT_FIELD_NAME = 'text';
+export const TEXT_INPUT_FIELD_NAME = 'text';
 @Component({
     selector: "text-input",
     templateUrl: "./text-input.component.html",

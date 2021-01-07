@@ -37,7 +37,8 @@ export class Party {
         public federationInstanceID: string = null,
         public websiteURI:string = null,
         public network: Network[] = null,
-        public brandName: Text[] = null
+        public brandName: Text[] = null,
+        public stripeAccountId:string = null
     ) { }
 
 }

@@ -45,6 +45,7 @@ import { CatalogueLine } from '../../../catalogue/model/publish/catalogue-line';
 import { Item } from '../../../catalogue/model/publish/item';
 import { Invoice } from '../../../catalogue/model/publish/invoice';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {PaymentService} from '../../payment/payment-service';
 
 @Component({
     selector: "order",
@@ -107,6 +108,7 @@ export class OrderComponent implements OnInit {
         private epcService: EpcService,
         private location: Location,
         private router: Router,
+        private paymentService: PaymentService,
         private translate: TranslateService,
         private modalService: NgbModal,
         private documentService: DocumentService) {
@@ -361,6 +363,14 @@ export class OrderComponent implements OnInit {
         })
     }
 
+    checkout() {
+        this.paymentService.orderId = this.order.id;
+        this.paymentService.priceWrappers = this.priceWrappers;
+        this.paymentService.sellerStripeAccountId = this.sellerParty.stripeAccountId;
+
+        this.router.navigate(['bpe/payment']);
+    }
+
     onDispatchOrder() {
         this.bpDataService.setCopyDocuments(false, false, true, false);
         this.bpDataService.proceedNextBpStep(this.userRole, "Fulfilment");
@@ -588,5 +598,9 @@ export class OrderComponent implements OnInit {
 
     showOrderResponseNotes() {
         return this.isOrderCompleted() || (this.orderResponse && this.processMetadata.collaborationStatus != 'CANCELLED');
+    }
+
+    isCheckoutButtonVisible(){
+        return this.config.enableStripePayment && this.sellerParty.stripeAccountId;
     }
 }

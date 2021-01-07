@@ -112,6 +112,7 @@ export const config = {
     "delegationEnabled": true,
     "displayCategoryCounts":true,
     "docLink": "https://www.nimble-project.org/docs/",
+    "enableStripePayment": true,
     "faviconPath": "./assets/favicon.ico",
     "hideLogAnalytics": false,
     "hidePriceFunctionality": true,
@@ -506,3 +507,6 @@ export const query_settings_comp = {
         "legalName": 64
     }
 };
+
+// Stripe publishable key
+export const stripe_publishable_key = "pk_test_51Hqz4nIhfTtDDuPhnPfIRfdb7Wzg5ouRuKNxkxT90NlFSnFwNTKSUDAAXMSw15MLyk4LFJW5IJeFVAZ5biB1ksdB00a6ibmD7C";

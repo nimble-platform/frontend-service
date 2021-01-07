@@ -46,6 +46,7 @@ import {WordByWordTranslatePipe} from './pipe/word-by-word-translate.pipe';
 import {CancelCollaborationModalComponent} from './cancel-collaboration-modal.component';
 import {CategoryFacetComponent} from './search/category-facet.component';
 import {SearchFacetComponent} from './search/search-facet.component';
+import {CountryInputComponent} from './country-input-component';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -81,6 +82,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         QuantityTranslatePipe,
         WordByWordTranslatePipe,
         BooleanInputComponent,
+        CountryInputComponent,
         MultiAddressInputComponent,
         InputLabelComponent,
         AmountInputComponent,
@@ -115,7 +117,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         WordByWordTranslatePipe,
         SingleClickDirective,
         CategoryFacetComponent,
-        SearchFacetComponent
+        SearchFacetComponent,
+        CountryInputComponent
     ],
     providers: [
     ]
