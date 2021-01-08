@@ -19,13 +19,13 @@ import { CallStatus } from "../../../common/call-status";
 import { BPEService } from "../../bpe.service";
 import { Clause } from '../../../catalogue/model/publish/clause';
 import { UserService } from '../../../user-mgmt/user.service';
-import { COUNTRY_NAMES } from '../../../common/utils';
 import { UnitService } from '../../../common/unit-service';
 import { deliveryPeriodUnitListId, warrantyPeriodUnitListId } from '../../../common/constants';
 import { TradingTerm } from '../../../catalogue/model/publish/trading-term';
 import {TranslateService} from '@ngx-translate/core';
 import {NegotiationClauseService} from '../negotiation/negotiation-clause-service';
 import {Subject} from 'rxjs';
+import {CountryUtil} from '../../../common/country-util';
 
 
 @Component({
@@ -72,7 +72,7 @@ export class TermsAndConditionsComponent implements OnInit {
     // options
     @Input() availableIncoTerms: string[] = [];
     @Input() availablePaymentTerms: string[] = [];
-    COUNTRY_NAMES = COUNTRY_NAMES;
+    COUNTRY_JSON = CountryUtil.COUNTRY_JSON;
 
     ngUnsubscribe: Subject<void> = new Subject<void>();
 
@@ -179,8 +179,6 @@ export class TermsAndConditionsComponent implements OnInit {
 
             for (let tradingTerm of clause.tradingTerms) {
                 if (tradingTerm.id == id) {
-                    let defaultValue = this.getDefaultValue(tradingTerm);
-
                     let defaultTradingTerm = this.originalTradingTerms.get(id);
 
                     if (tradingTerm.value.valueQualifier == "STRING") {
@@ -198,7 +196,7 @@ export class TermsAndConditionsComponent implements OnInit {
                     if (elements && elements.length > 0) {
                         for (let i = 0; i < elements.length; i++) {
                             let element: HTMLElement = <HTMLElement>elements[i];
-                            element.innerText = defaultValue;
+                            element.innerText =  this.getDefaultValue(tradingTerm);
 
                             this.setElementColor(element, id);
                         }
@@ -233,6 +231,9 @@ export class TermsAndConditionsComponent implements OnInit {
                     tradingTerm.value.valueQuantity[0].value = Number(value);
                 } else if (tradingTerm.value.valueQualifier == "CODE") {
                     tradingTerm.value.valueCode[0].value = value;
+                    if(tradingTerm.value.valueCode[0].listID == 'COUNTRY_LIST'){
+                        value = CountryUtil.getCountryByISO(value);
+                    }
                 }
 
                 let elements = document.getElementsByClassName(this.generateClassForParameter(id));
@@ -327,6 +328,9 @@ export class TermsAndConditionsComponent implements OnInit {
             defaultValue = tradingTerm.value.valueDecimal[0];
         } else if (tradingTerm.value.valueQualifier == "CODE") {
             defaultValue = tradingTerm.value.valueCode[0].value;
+            if(tradingTerm.value.valueCode[0].listID == 'COUNTRY_LIST'){
+                defaultValue = CountryUtil.getCountryByISO(tradingTerm.value.valueCode[0].value);
+            }
         }
 
         // if there is no default value, return its id

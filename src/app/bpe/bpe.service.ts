@@ -16,29 +16,29 @@
    limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import {Injectable} from '@angular/core';
+import {Headers, Http} from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
-import { ProcessInstance } from "./model/process-instance";
-import { BPDataService } from "./bp-view/bp-data-service";
-import { ProcessInstanceGroupResponse } from './model/process-instance-group-response';
-import { ProcessInstanceGroupFilter } from "./model/process-instance-group-filter";
-import { CookieService } from "ng2-cookies";
-import { Contract } from "../catalogue/model/publish/contract";
-import { Clause } from "../catalogue/model/publish/clause";
-import { CollaborationRole } from "./model/collaboration-role";
-import { Order } from '../catalogue/model/publish/order';
-import { EvidenceSupplied } from '../catalogue/model/publish/evidence-supplied';
-import { Comment } from '../catalogue/model/publish/comment';
-import { DashboardProcessInstanceDetails } from './model/dashboard-process-instance-details';
-import { DigitalAgreement } from "../catalogue/model/publish/digital-agreement";
-import { CollaborationGroup } from "./model/collaboration-group";
-import { DocumentReference } from '../catalogue/model/publish/document-reference';
-import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
+import {ProcessInstance} from './model/process-instance';
+import {BPDataService} from './bp-view/bp-data-service';
+import {ProcessInstanceGroupResponse} from './model/process-instance-group-response';
+import {ProcessInstanceGroupFilter} from './model/process-instance-group-filter';
+import {CookieService} from 'ng2-cookies';
+import {Contract} from '../catalogue/model/publish/contract';
+import {Clause} from '../catalogue/model/publish/clause';
+import {CollaborationRole} from './model/collaboration-role';
+import {Order} from '../catalogue/model/publish/order';
+import {EvidenceSupplied} from '../catalogue/model/publish/evidence-supplied';
+import {Comment} from '../catalogue/model/publish/comment';
+import {DashboardProcessInstanceDetails} from './model/dashboard-process-instance-details';
+import {DigitalAgreement} from '../catalogue/model/publish/digital-agreement';
+import {CollaborationGroup} from './model/collaboration-group';
+import {DocumentReference} from '../catalogue/model/publish/document-reference';
+import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {DEFAULT_LANGUAGE, FEDERATION, FEDERATIONID} from '../catalogue/model/constants';
-import { FederatedCollaborationGroupMetadata } from './model/federated-collaboration-group-metadata';
-import { CollaborationGroupResponse } from './model/collaboration-group-response';
+import {FederatedCollaborationGroupMetadata} from './model/federated-collaboration-group-metadata';
+import {CollaborationGroupResponse} from './model/collaboration-group-response';
 
 @Injectable()
 export class BPEService {
@@ -816,6 +816,15 @@ export class BPEService {
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
+    }
+
+    createPaymentIntent(orderId:string):Promise<string> {
+        let headers = this.getAuthorizedHeaders();
+        return this.http.post(`${this.url}/payment-intent/${orderId}`, {}, {headers: headers})
+            .toPromise()
+            .then(resp => {
+                return resp.text();
+            })
     }
 
     private getAuthorizedHeaders(): Headers {

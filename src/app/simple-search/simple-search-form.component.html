@@ -654,7 +654,7 @@
                                                         <call-status [callStatus]="getShoppingCartStatus(ind)"></call-status>
                                                     </ng-container>
                                                 </ng-container>
-                                                <img *ngIf="result.certificateCode" [src]="'assets/eco_label.png'" style="max-width: 25px">
+                                                <img *ngIf="result.circularEconomyCertificates" [src]="'assets/eco_label.png'" style="max-width: 25px">
                                             </div>
                                         </ng-container>
                                         <!--  Vendor name and ratings-->
@@ -701,7 +701,7 @@
                                                     </ngb-rating>
                                                 </div>
                                             </ng-container>
-                                            <img *ngIf="result[product_vendor].certificateCode" [src]="'assets/eco_label.png'" style="max-width: 25px">
+                                            <img *ngIf="result[product_vendor].circularEconomyCertificates" [src]="'assets/eco_label.png'" style="max-width: 25px">
                                         </div>
                                         <div *ngIf="!result[product_vendor]" [ngClass]="{'col-2':display=='list','col-12':display=='panel'}">
                                             <span [innerHTML]="'Unknown' | translate"></span>
@@ -778,7 +778,7 @@
                                                     </ngb-rating>
                                                 </div>
                                             </ng-container>
-                                            <img *ngIf="result.certificateCode" [src]="'assets/eco_label.png'" style="max-width: 25px">
+                                            <img *ngIf="result.circularEconomyCertificates" [src]="'assets/eco_label.png'" style="max-width: 25px">
                                         </div>
                                     </div>
                                 </div>

@@ -18,9 +18,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Address } from '../model/address';
-import { validateCountry, getCountrySuggestions } from '../../common/utils';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import {CountryUtil} from '../../common/country-util';
 import { TranslateService } from '@ngx-translate/core';
 import {Coordinate} from '../../catalogue/model/publish/coordinate';
 
@@ -43,7 +43,6 @@ export class AddressSubForm implements OnInit{
     coordinate:Coordinate;
 
     constructor(
-        private translate: TranslateService
     ) {
     }
 
@@ -56,7 +55,7 @@ export class AddressSubForm implements OnInit{
         text$.pipe(
             debounceTime(50),
             distinctUntilChanged(),
-            map(term => getCountrySuggestions(term))
+            map(term => CountryUtil.getCountrySuggestions(term))
         );
 
     public onCoordinateChange(coordinate:Coordinate){
@@ -65,19 +64,6 @@ export class AddressSubForm implements OnInit{
         this.addressForm.controls.locationLongitude.setValue(coordinate.longitude);
         this.addressForm.updateValueAndValidity();
         this.addressForm.markAsDirty();
-    }
-
-    public static get(addressForm): Address {
-        return {
-            streetName: addressForm.controls.streetName.value,
-            buildingNumber: addressForm.controls.buildingNumber.value,
-            cityName: addressForm.controls.cityName.value,
-            postalCode: addressForm.controls.postalCode.value,
-            region: addressForm.controls.region.value,
-            country: addressForm.controls.country.value,
-            locationLatitude: addressForm.controls.locationLatitude.value,
-            locationLongitude: addressForm.controls.locationLongitude.value
-        };
     }
 
     public static update(addressForm: FormGroup, address: Address): FormGroup {
@@ -102,9 +88,18 @@ export class AddressSubForm implements OnInit{
             cityName: formDef,
             postalCode: formDef,
             region: formDef,
-            country: ['', [validateCountry]],
+            country: ['', [CountryUtil.validateCountryISOCode]],
             locationLatitude: [null],
             locationLongitude: [null]
         });
     }
+
+    onCountrySelected(event) {
+        if(CountryUtil.validateCountrySimple(event.target.value)){
+            // update the country form control
+            this.addressForm.controls.country.setValue(CountryUtil.getISObyCountry(event.target.value));
+            this.addressForm.markAsDirty();
+        }
+    }
+
 }

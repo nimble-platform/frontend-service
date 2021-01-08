@@ -76,7 +76,7 @@
                                         <span *ngIf="!showCompanyDetailsOnClicked && (!result.website || getLink(result.website) == '')" [title]="result[product_vendor_name]">{{result[product_vendor_name]}}</span>
                                     </div>
                                     <div class="d-flex justify-content-center">
-                                        <img *ngIf="result.certificateCode" [src]="'assets/eco_label.png'" style="max-width: 25px">
+                                        <img *ngIf="result.circularEconomyCertificates" [src]="'assets/eco_label.png'" style="max-width: 25px">
                                     </div>
                                 </div>
                                 <div *ngIf="mgmt_view" class="col-12 pt-2">

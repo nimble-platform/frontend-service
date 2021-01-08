@@ -15,11 +15,14 @@
  */
 
 import { Component, Input, OnInit } from '@angular/core';
-import { COUNTRY_NAMES, selectPreferredValue } from '../../common/utils';
+import { selectPreferredValue } from '../../common/utils';
 import { Text } from '../model/publish/text';
 import { ItemProperty } from '../model/publish/item-property';
 import { REGIONS } from '../model/constants';
 import { TranslateService } from '@ngx-translate/core';
+import {CountryUtil} from '../../common/country-util';
+import {Observable} from 'rxjs';
+import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
 
 @Component({
     selector: "origin-destination-view",
@@ -34,7 +37,6 @@ export class OriginDestinationViewComponent implements OnInit {
     @Input() itemProperty: ItemProperty;
 
     regionOptions = REGIONS;
-    countryNames = COUNTRY_NAMES;
 
     isAllOverTheWorldOptionSelected: boolean = false;
     enableRegionSelection: boolean = false;
@@ -59,10 +61,19 @@ export class OriginDestinationViewComponent implements OnInit {
         }
     }
 
+    getSuggestions = (text$: Observable<string>) =>
+        text$.pipe(
+            debounceTime(50),
+            distinctUntilChanged(),
+            map(term => CountryUtil.getCountrySuggestions(term))
+        );
+
     onCountrySelected(event) {
-        this.itemProperty.value.push(new Text(event.target.value));
-        // set input value to null
-        event.target.value = null;
+        if(CountryUtil.validateCountrySimple(event.target.value)){
+            this.itemProperty.value.push(new Text(event.target.value));
+            // set input value to null
+            event.target.value = null;
+        }
     }
 
     onCountryRemoved(country: string) {

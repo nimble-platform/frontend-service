@@ -21,7 +21,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { CommonModule } from '@angular/common';
+import {CommonModule, DatePipe} from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -66,6 +66,7 @@ import {DemandService} from './demand/demand-service';
 import {LeafletModule} from '@asymmetrik/ngx-leaflet';
 import {AddressMapService} from './common/address-map.service';
 
+import {PaymentService} from './bpe/payment/payment-service';
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -108,6 +109,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         DemandPublishService,
         DemandService,
         WhiteBlackListService,
+        PaymentService,
         NetworkCompanyListService,
         ExplorativeSearchService,
         SimpleSearchService,
@@ -126,7 +128,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         ShoppingCartDataService,
         CollaborationService,
         ValidationService,
-        AgentService
+        AgentService,
+        DatePipe
     ],
     bootstrap: [
         AppComponent

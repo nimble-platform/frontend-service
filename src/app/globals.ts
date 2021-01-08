@@ -108,6 +108,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - delegationEnabled: Boolean flag if the federation feature is available for the instance
 - displayCategoryCounts: Boolean flag if the category counts are displayed in the category filter. If it's false, then we show the count only for the selected category.
 - docLink: Link to the documentation resources
+- enableStripePayment: Boolean flag if the stripe payment is enabled or not
 - faviconPath: Link to the favicon
 - frameContractEnabled: Boolean flag is frame contracts are applicable
 - hideLogAnalytics: Boolean flag if the log analytics tab in platform analytics is hidden
@@ -219,6 +220,7 @@ export const config = {
     "delegationEnabled": true,
     "displayCategoryCounts":true,
     "docLink": "https://www.nimble-project.org/docs/",
+    "enableStripePayment": false,
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
     "hideLogAnalytics": false,
@@ -461,11 +463,11 @@ export const item_manufacturer_id = "manufacturerId";
 // <<<
 // Grouping of facets into categories (Product / Service, Vendor, Trust / Rating, Other)
 // >>>
-export const product_filter_prod = ["freeOfCharge", "certificateCode", "applicableCountries", "customizable"];
-export const product_filter_comp = ["manufacturer.legalName", "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType", "manufacturer.certificateCode"];
-export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "certificateCode", "ppapComplianceLevel", "ppapDocumentType"];
+export const product_filter_prod = ["freeOfCharge", "circularEconomyCertificates","certificateType", "applicableCountries", "customizable"];
+export const product_filter_comp = ["manufacturer.legalName", "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType", "manufacturer.circularEconomyCertificates","manufacturer.certificateType"];
+export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "circularEconomyCertificates","certificateType", "ppapComplianceLevel", "ppapDocumentType"];
 export const party_identifying_regex_filters = ['manufacturer.*legalName', 'manufacturer.*brandName', 'manufacturer.id'];
-export const party_filter_main = ["businessType", "activitySectors", "businessKeywords", "origin", "ppapComplianceLevel", "ppapDocumentType"];
+export const party_filter_main = ["businessType", "activitySectors", "businessKeywords", "origin","circularEconomyCertificates","certificateType", "ppapComplianceLevel", "ppapDocumentType"];
 export const party_filter_trust = ["trustScore", "trustRating", "trustSellerCommunication", "trustFullfillmentOfTerms", "trustDeliveryPackaging", "trustNumberOfTransactions"];
 export const product_filter_trust = ["manufacturer.trustScore", "manufacturer.trustRating", "manufacturer.trustSellerCommunication", "manufacturer.trustFullfillmentOfTerms", "manufacturer.trustDeliveryPackaging", "manufacturer.trustNumberOfTransactions"];
 // <<<
@@ -524,3 +526,6 @@ export const query_settings_comp = {
         "legalName": 64
     }
 };
+
+// Stripe publishable key
+export const stripe_publishable_key = "pk_test_51Hqz4nIhfTtDDuPhnPfIRfdb7Wzg5ouRuKNxkxT90NlFSnFwNTKSUDAAXMSw15MLyk4LFJW5IJeFVAZ5biB1ksdB00a6ibmD7C";

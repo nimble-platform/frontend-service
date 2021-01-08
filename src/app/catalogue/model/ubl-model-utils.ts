@@ -634,7 +634,7 @@ export class UBLModelUtils {
         ublAddress.postalZone = userMgmtAddress.postalCode;
         ublAddress.buildingNumber = userMgmtAddress.buildingNumber;
         ublAddress.streetName = userMgmtAddress.streetName;
-        ublAddress.country.name.value = userMgmtAddress.country;
+        ublAddress.country.identificationCode.value = userMgmtAddress.country;
     }
 
     public static createCountry(): Country {
@@ -1059,7 +1059,7 @@ export class UBLModelUtils {
     }
 
     private static isNotEmptyCountry(country: Country) {
-        return country && country.name && this.isNotEmptyString(country.name.value);
+        return country && country.identificationCode && this.isNotEmptyString(country.identificationCode.value);
     }
 
     public static areNotesOrFilesAttachedToDocument(document: RequestForQuotation | Quotation) {

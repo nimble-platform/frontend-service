@@ -9,11 +9,13 @@ import {DemandPaginationResponse} from './model/demand-pagination-response';
 import {DEFAULT_LANGUAGE} from '../catalogue/model/constants';
 import {Facet} from '../common/model/facet';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
+import {DatePipe} from '@angular/common';
 
 @Injectable()
 export class DemandService {
     constructor(private http: Http,
                 private userService: UserService,
+                public datePipe: DatePipe,
                 private cookieService: CookieService) {
     }
 
@@ -25,7 +27,7 @@ export class DemandService {
             .catch(this.handleError);
     }
 
-    public getDemands(searchTerm: string = null, partyId: string = null, categoryUri: string = null, dueDate: string = null, buyerCountry: string = null, deliveryCountry: string = null,
+    public getDemands(searchTerm: string = null, partyId: string = null, categoryUri: string = null, buyerCountry: string = null, deliveryCountry: string = null,
                       page = 1, pageSize = 10): Promise<DemandPaginationResponse> {
 
         let url = catalogue_endpoint + `/demands?pageNo=${page}&limit=${pageSize}`;
@@ -38,15 +40,13 @@ export class DemandService {
         if (categoryUri) {
             url += `&categoryUri=${encodeURIComponent(categoryUri)}`;
         }
-        if (dueDate) {
-            url += `&dueDate=${dueDate}`;
-        }
         if (buyerCountry) {
             url += `&buyerCountry=${buyerCountry}`;
         }
         if (deliveryCountry) {
             url += `&deliveryCountry=${deliveryCountry}`;
         }
+        url += `&dueDate=${this.datePipe.transform(new Date(),'yyyy-MM-dd')}`;
         return this.http
             .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
@@ -55,7 +55,7 @@ export class DemandService {
     }
 
     public getDemandFacets(searchTerm: string = null, partyId: string = null, categoryUri: string = null,
-                           dueDate: string = null, buyerCountry: string = null, deliveryCountry: string = null): Promise<Facet[]> {
+                           buyerCountry: string = null, deliveryCountry: string = null): Promise<Facet[]> {
         let url = catalogue_endpoint + `/demand-facets`;
         let conditionExist = false;
         if (!!searchTerm) {
@@ -78,14 +78,6 @@ export class DemandService {
             }
             url += `${operator}categoryUri=${encodeURIComponent(categoryUri)}`;
         }
-        if (dueDate) {
-            let operator = '&';
-            if (!conditionExist) {
-                operator = '?';
-                conditionExist = true;
-            }
-            url += `${operator}dueDate=${dueDate}`;
-        }
         if (buyerCountry) {
             let operator = '&';
             if (!conditionExist) {
@@ -101,6 +93,9 @@ export class DemandService {
             }
             url += `${operator}deliveryCountry=${deliveryCountry}`;
         }
+        // due date
+        let operator = conditionExist ? '&' : "?";
+        url += `${operator}dueDate=${this.datePipe.transform(new Date(),'yyyy-MM-dd')}`;
         return this.http
             .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()

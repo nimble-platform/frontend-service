@@ -19,7 +19,7 @@ export class Address {
         public cityName: string,
         public postalCode: string,
         public region: string,
-        public country: string,
+        public country: string, // keeps country iso code
         public locationLongitude: number = null,
         public locationLatitude: number = null
     ) { }
