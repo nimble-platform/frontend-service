@@ -62,8 +62,7 @@
         <strong class="col-2 col-form-label"><span [innerHTML]="'Country:' | translate"></span>
         </strong>
         <div class="col-10">
-            <input type="text" class="form-control" name="country" [ngModelOptions]="{standalone: true}"
-                    [ngModel]="addressForm.controls.country.value | translate" [required]="!disabledFlag && requiredFlag" (change)="onCountrySelected($event)" [readonly]="disabledFlag" [ngbTypeahead]="getSuggestions" placeholder="e.g. United States">
+            <address-country [disabledFlag]="disabledFlag" [requiredFlag]="requiredFlag" [countryISOCode]="addressForm.controls.country.value" (onCountryISOCodeChange)="onCountryChanged($event)"></address-country>
         </div>
     </div>
 </div>

@@ -85,7 +85,7 @@ export class CountryUtil implements OnDestroy {
         if (countries.length > 0) {
             return countries[0].name;
         }
-        return '';
+        return term;
     }
 
     static getISObyCountry(term: string): string {
@@ -93,7 +93,7 @@ export class CountryUtil implements OnDestroy {
         if (countries.length > 0) {
             return countries[0].iso;
         }
-        return '';
+        return term;
     }
 
     static getCountrySuggestions(term: string): string[] {

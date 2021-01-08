@@ -21,7 +21,6 @@ import { Address } from '../model/address';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import {CountryUtil} from '../../common/country-util';
-import { TranslateService } from '@ngx-translate/core';
 import {Coordinate} from '../../catalogue/model/publish/coordinate';
 
 @Component({
@@ -94,12 +93,10 @@ export class AddressSubForm implements OnInit{
         });
     }
 
-    onCountrySelected(event) {
-        if(CountryUtil.validateCountrySimple(event.target.value)){
-            // update the country form control
-            this.addressForm.controls.country.setValue(CountryUtil.getISObyCountry(event.target.value));
-            this.addressForm.markAsDirty();
-        }
+    onCountryChanged(event) {
+        // update the country form control
+        this.addressForm.controls.country.setValue(event);
+        this.addressForm.markAsDirty();
     }
 
 }
