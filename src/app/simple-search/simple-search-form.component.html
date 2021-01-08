@@ -133,9 +133,9 @@
                         </div>
                     </ng-container>
                     <!-- Display options -->
-                    <div class="form-group row">
-                        <label class="col-sm-2 col-form-label"><span [innerHTML]="'Per page' | translate"></span>:</label>
-                        <div class="col-sm-2">
+                    <div class="form-group row no-gutters">
+                        <div class="display-option">
+                            <label class="col-form-label"><span [innerHTML]="'Per page' | translate"></span>:</label>
                             <select class="form-control" (change)="setRows($event.target.value)">
                                 <option value="9" [selected]="rows==9">9</option>
                                 <option value="12" [selected]="rows==12">12</option>
@@ -143,15 +143,15 @@
                                 <option value="24" [selected]="rows==24">24</option>
                             </select>
                         </div>
-                        <label class="col-sm-2 col-form-label"><span [innerHTML]="'Style' | translate"></span>:</label>
-                        <div class="col-sm-2">
+                        <div class="display-option">
+                            <label class="col-form-label"><span [innerHTML]="'Style' | translate"></span>:</label>
                             <select class="form-control" (change)="setDisplay($event.target.value)">
                                 <option value="list" [selected]="display=='list'"><span [innerHTML]="'List' | translate"></span></option>
                                 <option value="panel" [selected]="display=='panel'"><span [innerHTML]="'Panel' | translate"></span></option>
                             </select>
                         </div>
-                        <label class="col-sm-2 col-form-label"><span [innerHTML]="'Sorting' | translate"></span>:</label>
-                        <div class="col-sm-2">
+                        <div class="display-option">
+                            <label class="col-form-label"><span [innerHTML]="'Sorting' | translate"></span>:</label>
                             <select class="form-control" (change)="setSort($event.target.value)">
                                 <option value="score desc" [selected]="sort=='score desc'"></option>
                                 <option *ngIf="searchTopic=='prod'" [value]="getCurrencySort('asc')" [selected]="sort==getCurrencySort('asc')"><span [innerHTML]="'Price: Asc.' | translate"></span></option>
@@ -164,6 +164,7 @@
                                 <option *ngIf="searchTopic=='comp'" value="lowercaseLegalName desc" [selected]="sort=='lowercaseLegalName desc'"><span [innerHTML]="'Z -> A' | translate"></span></option>
                             </select>
                         </div>
+                        <div class="btn btn-primary ml-auto" (click)="mapView = !mapView">{{'Map View' | translate}}</div>
                     </div>
                     <div *ngIf="ublProperties">
                         <span *ngFor="let fq of facetQuery">
@@ -600,7 +601,8 @@
                 <div class="col-8 row pr-0">
 
                     <!-- Search results -->
-                    <div *ngFor="let result of searchResults;let ind=index" class="pr-0" [ngClass]="{'col-12':display=='list','col-4':display=='panel'}">
+                    <ng-container *ngIf="!mapView">
+                        <div *ngFor="let result of searchResults;let ind=index" class="pr-0" [ngClass]="{'col-12':display=='list','col-4':display=='panel'}">
                         <!-- Product results -->
                         <div *ngIf="result.uri != null && searchTopic=='prod'" class="card pointer mb-3">
                             <a class="text-std" [href]="getProdLink(result)" (click)="onSearchResultClicked($event)">
@@ -784,7 +786,12 @@
                         </div>
 
                     </div>
-
+                    </ng-container>
+                    <ng-container *ngIf="mapView && companyAddress">
+                        <div class="w-100">
+                            <search-map [searchResults]="searchResults" [companyAddress]="companyAddress"></search-map>
+                        </div>
+                    </ng-container>
                     <!-- Pagination -->
                     <div *ngIf="size>0" class="justify-content-center pagination col-12 pr-0">
                         <ngb-pagination [(collectionSize)]="size" [(page)]="page" [pageSize]="rows" [maxSize]="5" [boundaryLinks]="true" (pageChange)="get(objToSubmit)"></ngb-pagination>

@@ -63,6 +63,8 @@ import {WhiteBlackListService} from './catalogue/white-black-list.service';
 import {NetworkCompanyListService} from './user-mgmt/network-company-list.service';
 import {DemandPublishService} from './demand/demand-publish-service';
 import {DemandService} from './demand/demand-service';
+import {LeafletModule} from '@asymmetrik/ngx-leaflet';
+import {AddressMapService} from './common/address-map.service';
 
 import {PaymentService} from './bpe/payment/payment-service';
 export function HttpLoaderFactory(http: HttpClient) {
@@ -116,6 +118,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         UserService,
         CredentialsService,
         UnitService,
+        AddressMapService,
         PrecedingBPDataService,
         TnTService,
         AnalyticsService,

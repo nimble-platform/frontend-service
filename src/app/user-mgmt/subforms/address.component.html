@@ -67,3 +67,7 @@
         </div>
     </div>
 </div>
+<!-- Address map -->
+<div *ngIf="mapView" class="w-100">
+    <address-map [coordinate]="coordinate" (coordinateChange)="onCoordinateChange($event)" [disabled]="disabledFlag"></address-map>
+</div>

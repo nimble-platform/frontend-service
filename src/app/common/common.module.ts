@@ -47,6 +47,8 @@ import {CancelCollaborationModalComponent} from './cancel-collaboration-modal.co
 import {CategoryFacetComponent} from './search/category-facet.component';
 import {SearchFacetComponent} from './search/search-facet.component';
 import {CountryInputComponent} from './country-input-component';
+import {AddressMapComponent} from './address-map.component';
+import {LeafletModule} from '@asymmetrik/ngx-leaflet';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -66,7 +68,8 @@ export function HttpLoaderFactory(http: HttpClient) {
                 deps: [HttpClient]
             },
             isolate: false
-        })
+        }),
+        LeafletModule.forRoot(),
     ],
     declarations: [
         CallStatusComponent,
@@ -78,6 +81,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         DateInputComponent,
         ConfirmModalComponent,
         AddressInputComponent,
+        AddressMapComponent,
         AmountUiTranslatePipe,
         QuantityTranslatePipe,
         WordByWordTranslatePipe,
@@ -103,6 +107,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         FileInputComponent,
         DateInputComponent,
         AddressInputComponent,
+        AddressMapComponent,
+        LeafletModule,
         BooleanInputComponent,
         CancelCollaborationModalComponent,
         ConfirmModalComponent,
