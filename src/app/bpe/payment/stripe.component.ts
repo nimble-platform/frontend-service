@@ -88,15 +88,8 @@ export class StripeComponent implements OnInit {
             this.formGroup = this.fb.group({
                 name: [userFullName, [Validators.required]],
                 email: [userEmail, [Validators.required]],
-                streetName: ['', [Validators.required]],
-                buildingNumber: [''],
-                cityName: ['', [Validators.required]],
-                postalCode: ['', [Validators.required]],
-                region: ['', [Validators.required]],
-                country: ['', [Validators.required]],
+                address: AddressSubForm.update(AddressSubForm.generateForm(this.fb), settings.details.address)
             });
-
-            AddressSubForm.update(this.formGroup, settings.details.address);
 
             this.initCallStatus.callback('Settings successfully fetched', true)
         })
@@ -111,7 +104,7 @@ export class StripeComponent implements OnInit {
             // create payment intent
             this.bpeService.createPaymentIntent(this.orderId).then(clientSecret => {
                 // confirm card payment
-                const address = (this.formGroup.get('streetName').value ? this.formGroup.get('streetName').value : '') + (this.formGroup.get('buildingNumber').value ? this.formGroup.get('buildingNumber').value : '');
+                const address = (this.formGroup.get('address.streetName').value ? this.formGroup.get('address.streetName').value : '') + (this.formGroup.get('address.buildingNumber').value ? this.formGroup.get('address.buildingNumber').value : '');
                 this.stripeService.confirmCardPayment(clientSecret, {
                     payment_method: {
                         card: this.card.element,
@@ -119,11 +112,11 @@ export class StripeComponent implements OnInit {
                             name: this.formGroup.get('name').value,
                             email: this.formGroup.get('email').value,
                             address: {
-                                city: this.formGroup.get('cityName').value,
-                                country: this.formGroup.get('country').value,
+                                city: this.formGroup.get('address.cityName').value,
+                                country: this.formGroup.get('address.country').value,
                                 line1: address,
-                                postal_code: this.formGroup.get('postalCode').value,
-                                state: this.formGroup.get('region').value
+                                postal_code: this.formGroup.get('address.postalCode').value,
+                                state: this.formGroup.get('address.region').value
                             }
                         }
                     }
