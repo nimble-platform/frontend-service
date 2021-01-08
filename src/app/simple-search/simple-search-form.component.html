@@ -364,6 +364,7 @@
                                         <div *ngIf="!facet.showContent || !facet.units || facet.units.length == 1" class="card-header" (click)="onFacetClicked(facet)">
                                             {{ getName(facet.realName) }}
                                         </div>
+                                        <!-- Facet values... Show them when the facet is expanded -->
                                         <div class="card-body" *ngIf="facet.showContent">
                                             <div *ngFor="let facetInner of facet.options; let i=index">
                                                 <div *ngIf="!facetInner.selected && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
@@ -651,6 +652,7 @@
                                                         <call-status [callStatus]="getShoppingCartStatus(ind)"></call-status>
                                                     </ng-container>
                                                 </ng-container>
+                                                <img *ngIf="result.circularEconomyCertificates" [src]="'assets/eco_label.png'" style="max-width: 25px">
                                             </div>
                                         </ng-container>
                                         <!--  Vendor name and ratings-->
@@ -697,6 +699,7 @@
                                                     </ngb-rating>
                                                 </div>
                                             </ng-container>
+                                            <img *ngIf="result[product_vendor].circularEconomyCertificates" [src]="'assets/eco_label.png'" style="max-width: 25px">
                                         </div>
                                         <div *ngIf="!result[product_vendor]" [ngClass]="{'col-2':display=='list','col-12':display=='panel'}">
                                             <span [innerHTML]="'Unknown' | translate"></span>
@@ -773,6 +776,7 @@
                                                     </ngb-rating>
                                                 </div>
                                             </ng-container>
+                                            <img *ngIf="result.circularEconomyCertificates" [src]="'assets/eco_label.png'" style="max-width: 25px">
                                         </div>
                                     </div>
                                 </div>

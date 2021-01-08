@@ -85,6 +85,23 @@ export const config = {
             "ontologyPrefix": "http://www.nimble-project.org/resource/aerospace#"
         }
     },
+    circularEconomy: {
+        certificateGroup: 'Circular Economy (Environment / Sustainability)',
+        companyCertificates: [
+            'ISO 14001 Environmental Management System',
+            'ISO 14006 Eco Design',
+            'ISO 50001 Energy Efficiency',
+            'Sustainability Report',
+            'Corporate Carbon Footprint'
+        ],
+        productCertificates: [
+            'PEFC Certificate',
+            'FSC Certificate',
+            'Type I Ecolabel (ECO LABEL, NF Environment, Blue Angel, etc)',
+            'Type III Ecolabel (Environmental Product Declaration / Product Footprint)',
+            'Free of Hazardous Substances'
+        ]
+    },
     "contractForCatalogueEnabled":true,
     "collaborationEnabled": false,
     "collapsiblePropertyFacets": false,
@@ -406,11 +423,11 @@ export const product_delivery_time = "deliveryTime";
 export const product_currency = "currency";
 export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
-export const product_filter_prod = ["freeOfCharge", "certificateType", "applicableCountries", "customizable", "sparePart"];
-export const product_filter_comp = ["manufacturer.legalName", "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin", "manufacturer.certificateType"];
+export const product_filter_prod = ["freeOfCharge", "circularEconomyCertificates","certificateType", "applicableCountries", "customizable", "sparePart"];
+export const product_filter_comp = ["manufacturer.legalName", "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin", "manufacturer.circularEconomyCertificates","manufacturer.certificateType"];
 export const party_identifying_regex_filters = ['manufacturer.*legalName', 'manufacturer.*brandName', 'manufacturer.id'];
-export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "{NULL}_certificateType"];
-export const party_filter_main = ["businessType", "activitySectors", "businessKeywords", "origin", "certificateType"];
+export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "circularEconomyCertificates","certificateType"];
+export const party_filter_main = ["businessType", "activitySectors", "businessKeywords", "origin", "circularEconomyCertificates","certificateType"];
 export const party_filter_trust = ["trustScore", "trustRating", "trustSellerCommunication", "trustFullfillmentOfTerms", "trustDeliveryPackaging", "trustNumberOfTransactions"];
 export const item_manufacturer_id = "manufacturerId";
 export const product_filter_trust = ["manufacturer.trustScore", "manufacturer.trustRating", "manufacturer.trustSellerCommunication", "manufacturer.trustFullfillmentOfTerms", "manufacturer.trustDeliveryPackaging", "manufacturer.trustNumberOfTransactions"];

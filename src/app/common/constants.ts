@@ -45,3 +45,5 @@ export const product_base_quantity_unit = "baseQuantityUnit";
 
 export const AEROSPACE_TAXONOMY_PART_NUMBER_PROPERTY_URI = "http://www.nimble-project.org/resource/aerospace#PartNumber";
 export const MAX_INT = 2147483647;
+
+export const CIRCULER_ECONOMY_CERTIFICATE_GROUP = '';

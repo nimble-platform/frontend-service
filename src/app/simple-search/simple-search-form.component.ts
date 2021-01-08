@@ -723,10 +723,13 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         this.searchIndex = sIdx;
         this.searchTopic = sTop;
         this.searchCallStatus.submit();
+        // get all fields available in the index
         this.simpleSearchService.getFields()
             .then(fields => {
-                let fieldLabels: string[] = this.getFieldNames(fields);
+                // extract fields' (i.e. facets') labels and types
+                let fieldLabels: any[] = this.getFieldNames(fields);
                 let idxFields: string[] = this.getIdxFields(fields);
+                // execute the query such that it includes facet results in addition to the actual results
                 this.simpleSearchService.get(q, Object.keys(fieldLabels), fq, p, this.rows, sort, cat, catID, this.searchIndex)
                     .then(res => {
                         if (res.result.length == 0) {
@@ -740,6 +743,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                             this.end = this.start + res.result.length - 1;
                             this.displayShoppingCartMessages();
                         } else {
+                            // when there are some products in the search result, get details of fields to construct facet objects
                             this.simpleSearchService.getUblAndQuantityProperties(idxFields).then(response => {
                                 this.facetList = [];
                                 this.manufacturerIdCountMap = new Map();
@@ -748,7 +752,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                                     if (facet == this.product_cat_mix) {
                                         this.categoryCounts = res.facets[this.product_cat_mix].entry;
                                         this.buildCatTree();
-                                        this.handleFacets(fieldLabels, res.facets, p, response.result);
+                                        this.handleFacets(fieldLabels, res.facets, response.result);
                                         // initialize rating and trust filters
                                         this.initializeRatingAndTrustFilters();
                                         break;
@@ -831,7 +835,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                         } else {
                             this.simpleSearchService.getUblAndQuantityProperties(Object.keys(fieldLabels)).then(response => {
                                 this.facetList = [];
-                                this.handleFacets(fieldLabels, res.facets, p, response.result);
+                                this.handleFacets(fieldLabels, res.facets, response.result);
                                 this.callback = true;
                                 // initialize rating and trust filters
                                 this.initializeRatingAndTrustFilters();
@@ -995,7 +999,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             this.sortFacetObj(this.facetList[this.facetList.length - 1]);
         }
         for (let facet in res.facets) {
-            if (this.simpleSearchService.checkField(facet, prefix)) {
+            if (this.simpleSearchService.isFieldDisplayed(facet, prefix)) {
                 let facet_innerLabel;
                 let facet_innerCount;
                 let facetCount = 0;
@@ -1071,7 +1075,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         }
     }
 
-    handleFacets(facetMetadata, facets, p, allProperties) {
+    handleFacets(facetMetadata: any[], facets: any, allProperties) {
         this.ublProperties = [];
         let quantityPropertiesLocalNameMap = new Map();
         // populate ublProperties and quantityPropertiesLocalNameMap
@@ -1090,8 +1094,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         let index = 0;
         let facetQueries = this.facetQuery.map(facet => facet.split(':')[0]);
         for (let facet in facets) {
-            if (this.simpleSearchService.checkField(facet, '', facetMetadata[facet])) {
-                let facetMetadataExists: boolean = facetMetadata[facet] != null && facetMetadata[facet].label != null;
+            if (this.simpleSearchService.isFieldDisplayed(facet, '', facetMetadata[facet])) {
                 let genName = facet;
                 if (genName.indexOf(DEFAULT_LANGUAGE() + '_') != -1) {
                     genName = genName.replace(DEFAULT_LANGUAGE() + '_', '');
@@ -1107,6 +1110,13 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                     propertyLabel = this.getName(genName);
                 }
 
+                // facet's translated label
+                const facetTranslatedLabel: string =
+                    (facetMetadata[facet] != null && facetMetadata[facet].label != null) ? selectNameFromLabelObject(facetMetadata[facet].label) : propertyLabel;
+
+                // flag to show facet's content
+                const showContent: boolean = !this.collapsiblePropertyFacets || facetQueries.indexOf(facet) !== -1;
+
                 // we need to check decimal values separately since they might be the value of a quantity property
                 if (facet.endsWith('_dvalues')) {
                     let fieldName = facet.substring(0, facet.length - 8);
@@ -1116,173 +1126,157 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                         // quantity property
                         let localName = quantityPropertiesLocalNameMap.get(fieldName);
                         // get corresponding facet
-                        let facetObj = this.facetList.filter(facet => facet.localName == localName);
+                        let facetObj = this.facetList.find(f => f.localName === localName);
                         // quantity unit
                         let unit = fieldName.substring(fieldName.lastIndexOf(localName) + localName.length).toLocaleLowerCase();
                         // we have already created a facet for this property
-                        if (facetObj.length > 0) {
-                            // get facet
-                            facetObj = facetObj[0];
-                            // add unit to the facetList
+                        if (facetObj) {
                             facetObj.units.push(unit);
-                            for (let facet_inner of facets[facet].entry) {
-                                let facet_innerLabel = facet_inner.label;
-                                let facet_innerCount = facet_inner.count;
-
-                                // remove '.0' parts of numerical facets
-                                if (facetMetadata[facet] != null && facetMetadata[facet].dataType == 'double' && facet_innerLabel.endsWith('.0')) {
-                                    facet_innerLabel = facet_innerLabel.substring(0, facet_innerLabel.length - 2)
-                                }
-
-                                if (facet_innerLabel != '' && facet_innerLabel != ':' && facet_innerLabel != ' ' && facet_innerLabel.indexOf('urn:oasis:names:specification:ubl:schema:xsd') == -1) {
-                                    facetObj.total += facet_innerCount;
-                                    let isValueSelected = false;
-                                    if (this.isFacetValueSelected(facetObj.name, facet_inner.label)) {
-                                        facetObj.selected = true;
-                                        isValueSelected = true;
-                                    }
-                                    facetObj.options.push({
-                                        'name': facet_inner.label, // the label with the language id, if there is any
-                                        'realName': facet_innerLabel + ' ' + unit, // the displayed label
-                                        'count': facet_innerCount,
-                                        'unit': unit, // unit
-                                        'selected': isValueSelected
-                                    });
-                                }
-                            }
-
-                            this.sortFacetObj(facetObj);
-
-
+                            this.setFacetValues(facets, facetObj, facet, unit, facetMetadata);
                         }
                         // create a facet for this quantity property
                         else {
-                            this.facetList.push({
-                                'name': facet,
-                                'genName': genName,
-                                'realName': facetMetadataExists ? selectNameFromLabelObject(facetMetadata[facet].label) : propertyLabel,
-                                'options': [],
-                                'units': [unit], // available units for this quantity properties
-                                'selectedUnit': unit, // selected unit in the facet
-                                'total': 0,
-                                'showContent': !this.collapsiblePropertyFacets || facetQueries.indexOf(facet) != -1,
-                                'selected': false,
-                                'expanded': false,
-                                'localName': localName
-                            });
-
-                            for (let facet_inner of facets[facet].entry) {
-                                let facet_innerLabel = facet_inner.label;
-                                let facet_innerCount = facet_inner.count;
-
-                                // remove '.0' parts of numerical facets
-                                if (facetMetadata[facet] != null && facetMetadata[facet].dataType == 'double' && facet_innerLabel.endsWith('.0')) {
-                                    facet_innerLabel = facet_innerLabel.substring(0, facet_innerLabel.length - 2)
-                                }
-
-                                if (facet_innerLabel != '' && facet_innerLabel != ':' && facet_innerLabel != ' ' && facet_innerLabel.indexOf('urn:oasis:names:specification:ubl:schema:xsd') == -1) {
-                                    this.facetList[index].total += facet_innerCount;
-                                    let isValueSelected = false;
-                                    if (this.isFacetValueSelected(this.facetList[index].name, facet_inner.label)) {
-                                        this.facetList[index].selected = true;
-                                        isValueSelected = true;
-                                    }
-                                    this.facetList[index].options.push({
-                                        'name': facet_inner.label, // the label with the language id, if there is any
-                                        'realName': facet_innerLabel + ' ' + unit, // the displayed label
-                                        'count': facet_innerCount,
-                                        'unit': unit,
-                                        'selected': isValueSelected
-                                    });
-                                }
-                            }
-
-
-                            this.sortFacetObj(this.facetList[index]);
-                            index++;
+                            this.createNewFacetObject(facet, genName, facetTranslatedLabel, unit, showContent, localName, facets, facetMetadata);
                         }
+                    } else {
                         continue;
                     }
+                } else {
+                    this.createNewFacetObject(facet, genName, facetTranslatedLabel, null, showContent, null, facets, facetMetadata);
                 }
-
-                this.facetList.push({
-                    'name': facet,
-                    'genName': genName,
-                    'realName': facetMetadataExists ? selectNameFromLabelObject(facetMetadata[facet].label) : propertyLabel,
-                    'options': [],
-                    'total': 0,
-                    'showContent': !this.collapsiblePropertyFacets || facetQueries.indexOf(facet) != -1,
-                    'selected': false,
-                    'expanded': false,
-                    'dataType': facetMetadata[facet] ? facetMetadata[facet].dataType : null,
-                    'localName': null // used for identification of quantity properties
-                });
-
-                let label;
-                let facet_innerLabel;
-                let facet_innerCount;
-                let tmp_lang = DEFAULT_LANGUAGE();
-                let atLeastOneMultilingualLabel: number = facets[facet].entry.findIndex(facetInner => {
-                    const idx = facetInner.label.lastIndexOf('@' + DEFAULT_LANGUAGE());
-                    return (idx != -1 && idx + 3 == facetInner.label.length);
-                });
-                if (atLeastOneMultilingualLabel == -1) {
-                    atLeastOneMultilingualLabel = facets[facet].entry.findIndex(facetInner => {
-                        const idx = facetInner.label.lastIndexOf('@en');
-                        return (idx != -1 && idx + 3 == facetInner.label.length);
-                    });
-                }
-                if (atLeastOneMultilingualLabel == -1) {
-                    atLeastOneMultilingualLabel = facets[facet].entry.findIndex(facetInner => {
-                        const idx = facetInner.label.lastIndexOf('@');
-                        return (idx != -1 && idx + 3 == facetInner.label.length);
-                    });
-                }
-                if (atLeastOneMultilingualLabel != -1) {
-                    const idx = facets[facet].entry[atLeastOneMultilingualLabel].label.lastIndexOf('@');
-                    tmp_lang = facets[facet].entry[atLeastOneMultilingualLabel].label.substring(idx + 1);
-                }
-                for (let facet_inner of facets[facet].entry) {
-                    facet_innerLabel = facet_inner.label;
-                    facet_innerCount = facet_inner.count;
-                    //if(facetMetadataExists && facetMetadata[facet].dataType == 'string') {
-                    if (atLeastOneMultilingualLabel != -1) {
-                        let idx = facet_innerLabel.lastIndexOf('@' + tmp_lang);
-                        if (idx != -1) {
-                            facet_innerLabel = label = facet_innerLabel.substring(0, idx);
-                        } else {
-                            // there is at least one label in the preferred language but this is not one of them
-                            continue;
-                        }
-                    }
-                    //}
-
-                    // remove '.0' parts of numerical facets
-                    if (facetMetadata[facet] != null && facetMetadata[facet].dataType == 'double' && facet_innerLabel.endsWith('.0')) {
-                        facet_innerLabel = facet_innerLabel.substring(0, facet_innerLabel.length - 2)
-                    }
-
-                    if (facet_innerLabel != '' && facet_innerLabel != ':' && facet_innerLabel != ' ' && facet_innerLabel.indexOf('urn:oasis:names:specification:ubl:schema:xsd') == -1) {
-                        this.facetList[index].total += facet_innerCount;
-                        let isValueSelected = false;
-                        if (this.isFacetValueSelected(this.facetList[index].name, facet_inner.label)) {
-                            this.facetList[index].selected = true;
-                            isValueSelected = true;
-                        }
-                        this.facetList[index].options.push({
-                            'name': facet_inner.label, // the label with the language id, if there is any
-                            'realName': facet.endsWith("activitySectors") ? this.translate.instant(facet_innerLabel) : facet_innerLabel, // the displayed label,  use the translation of activity sector
-                            'count': facet_innerCount,
-                            'selected': isValueSelected
-                        });
-                    }
-                }
-                this.sortFacetObj(this.facetList[index]);
-                index++;
             }
         }
         // create filters
         this.createFilters();
+    }
+
+    private createNewFacetObject(facet: string, genName: string, facetTranslatedLabel: string, unit: string, showContent: boolean, localName: string,
+                                 facets: any, facetMetadata: any[]): void {
+        const facetObj: any = {
+            'name': facet,
+            'genName': genName,
+            'realName': facetTranslatedLabel,
+            'options': [],
+            'units': unit ? [unit] : null, // available units for this quantity properties
+            'selectedUnit': unit, // selected unit in the facet
+            'total': 0,
+            'showContent': showContent,
+            'selected': false,
+            'expanded': false,
+            'localName': localName,
+            'dataType': facetMetadata[facet] ? facetMetadata[facet].dataType : null
+        };
+        this.facetList.push(facetObj);
+
+        this.setFacetValues(facets, facetObj, facet, unit, facetMetadata);
+    }
+
+    /**
+     * Updates an existing facet object with values from a new facet having the same local name. This is valid for facets representing
+     * same property with different units.
+     * @param facets
+     * @param facetObj
+     * @param facet
+     * @param unit
+     * @param facetMetadata
+     */
+    private setFacetValues(facets: any, facetObj: any, facet: string, unit: string, facetMetadata: any[]): void {
+        for (let facet_inner of facets[facet].entry) {
+            let displayedFacetValue = this.getDisplayedFacetValue(facet_inner.label, facets, facet, facetMetadata, unit);
+            if (!displayedFacetValue) {
+                continue;
+            }
+            let facet_innerCount = facet_inner.count;
+
+            if (displayedFacetValue !== '' && displayedFacetValue !== ':' && displayedFacetValue !== ' ' && displayedFacetValue.indexOf('urn:oasis:names:specification:ubl:schema:xsd') === -1) {
+                facetObj.total += facet_innerCount;
+                let isValueSelected = false;
+                if (this.isFacetValueSelected(facetObj.name, facet_inner.label)) {
+                    facetObj.selected = true;
+                    isValueSelected = true;
+                }
+                facetObj.options.push({
+                    'name': facet_inner.label, // the label with the language id, if there is any
+                    'realName': displayedFacetValue, // the displayed label
+                    'count': facet_innerCount,
+                    'unit': unit, // unit
+                    'selected': isValueSelected
+                });
+            }
+        }
+        this.sortFacetObj(facetObj);
+    }
+
+    /**
+     * Normalizes the facet value considering the most relevant language
+     * @param facet_innerLabel
+     * @param facetMetadata
+     * @param facet
+     */
+    private getDisplayedFacetValue(facet_innerLabel: string, facets: any, facet: string, facetMetadata: any[], unit): string {
+        const lang = this.getMostRelevantLang(facets, facet);
+        if (lang) {
+            let idx = facet_innerLabel.lastIndexOf('@' + lang);
+            if (idx !== -1) {
+                facet_innerLabel = facet_innerLabel.substring(0, idx);
+                return facet_innerLabel;
+            } else {
+                return null;
+            }
+        }
+
+        // remove '.0' parts of numerical facets
+        if (facetMetadata[facet] != null && facetMetadata[facet].dataType === 'double' && facet_innerLabel.endsWith('.0')) {
+            facet_innerLabel = facet_innerLabel.substring(0, facet_innerLabel.length - 2)
+        }
+
+        if (unit) {
+            return facet_innerLabel + ' ' + unit;
+        }
+
+        // special check for activity sector labels
+        if (facet.endsWith('activitySectors')) {
+            return this.translate.instant(facet_innerLabel) // return translated activity sector
+        }
+
+        return facet_innerLabel;
+    }
+
+    /**
+     * Checks whether the facet has a value annotated with the current language, english or any other language respectively.
+     * Returns the index of that label among the facet values
+     * @param facets
+     * @param facet
+     */
+    private getMostRelevantLang(facets, facet: string): string {
+        // current language
+        let labelExists: boolean = facets[facet].entry.some(facetInner => {
+            const idx = facetInner.label.lastIndexOf('@' + DEFAULT_LANGUAGE());
+            return (idx !== -1 && idx + 3 === facetInner.label.length);
+        });
+        if (labelExists) {
+            return DEFAULT_LANGUAGE();
+        }
+
+        // english
+        labelExists = facets[facet].entry.some(facetInner => {
+            const idx = facetInner.label.lastIndexOf('@en');
+            return (idx !== -1 && idx + 3 === facetInner.label.length);
+        });
+        if (labelExists) {
+            return 'en';
+        }
+
+        // any other language
+        const label: any = facets[facet].entry.find(facetInner => {
+            const idx = facetInner.label.lastIndexOf('@');
+            return (idx !== -1 && idx + 3 === facetInner.label.length);
+        });
+        if (label) {
+            return label.label.substring(label.label.lastIndexOf('@') + 1);
+        }
+
+        return null;
     }
 
     private sortFacetObj(facetObj: any) {
@@ -1386,6 +1380,8 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             ret = this.product_filter_mappings[prefName];
         } else if (this.product_filter_mappings[name]) {
             ret = this.product_filter_mappings[name];
+        } else{
+            ret = this.translateService.instant(prefName);
         }
         return ret;
     }

@@ -29,6 +29,7 @@ import { Text } from "../model/publish/text";
 import { Observable } from "rxjs";
 import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
 import { TranslateService } from '@ngx-translate/core';
+import {config} from '../../globals';
 import {CountryUtil} from '../../common/country-util';
 import {Code} from '../model/publish/code';
 
@@ -40,16 +41,21 @@ import {Code} from '../model/publish/code';
 export class ProductCertificatesTabComponent implements OnInit {
 
     @Input() catalogueLine: CatalogueLine;
-    @Input() disabled: boolean
+    @Input() disabled: boolean;
 
     addCertForm: FormGroup;
     countryFormControl: FormControl;
-    certificateFilesProvided = false;
     config = myGlobals.config;
     selectedFiles: BinaryObject[] = [];
     selectedCountries: string[] = [];
     updateMode: 'add' | 'edit';
+
+    arbitraryCertificates: Certificate[];
+    circularEconomyCertificates: Certificate[];
+    certificateFilesProvided = false;
     editedCertificate: Certificate;
+    // group of the certificate being added or edited
+    certificateGroup: 'arbitrary' | 'circularEconomy';
 
     constructor(private _fb: FormBuilder,
         private modalService: NgbModal,
@@ -57,12 +63,15 @@ export class ProductCertificatesTabComponent implements OnInit {
     }
 
     ngOnInit() {
-        // nothing for now
+        this.updateCertificateLists();
     }
 
-    onEdit(popup, i: number) {
+    onEdit(popup, i: number, certificateGroup: 'arbitrary' | 'circularEconomy') {
         this.updateMode = 'edit';
-        this.editedCertificate = this.catalogueLine.goodsItem.item.certificate[i];
+        this.certificateGroup = certificateGroup;
+        let certificate = certificateGroup == 'arbitrary' ? this.arbitraryCertificates[i]: this.circularEconomyCertificates[i];
+        const index = this.catalogueLine.goodsItem.item.certificate.indexOf(certificate);
+        this.editedCertificate = this.catalogueLine.goodsItem.item.certificate[index];
         this.certificateFilesProvided = true;
         this.addCertForm = this._fb.group({
             name: [this.editedCertificate.certificateTypeCode.name],
@@ -83,12 +92,15 @@ export class ProductCertificatesTabComponent implements OnInit {
         this.modalService.open(popup);
     }
 
-    onDelete(i: number) {
-        this.catalogueLine.goodsItem.item.certificate.splice(i, 1);
+    onDelete(certificate) {
+        let index = this.catalogueLine.goodsItem.item.certificate.indexOf(certificate);
+        this.catalogueLine.goodsItem.item.certificate.splice(index, 1);
+        this.updateCertificateLists();
     }
 
-    onAddCertificate(content) {
+    onAddCertificate(content, certificateGroup: 'arbitrary' | 'circularEconomy') {
         this.updateMode = 'add';
+        this.certificateGroup = certificateGroup;
         this.addCertForm = this._fb.group({
             name: [""],
             description: [""],
@@ -138,22 +150,25 @@ export class ProductCertificatesTabComponent implements OnInit {
         if (this.updateMode === 'add') {
             this.catalogueLine.goodsItem.item.certificate.push(certificate);
         }
+        this.updateCertificateLists();
         close();
     }
 
-    validateCountry(): boolean {
-        return CountryUtil.validateCountrySimple(this.countryFormControl.value);
-    }
-
-    onCountrySelected() {
-        this.selectedCountries.push(this.countryFormControl.value);
-        this.countryFormControl.setValue('');
+    onCountrySelected(event) {
+        this.selectedCountries.push(event.item);
+        setTimeout(() => {
+            this.countryFormControl.setValue('');
+        });
     }
 
     onCountryRemoved(countryName: string) {
         this.selectedCountries.splice(this.selectedCountries.indexOf(countryName), 1);
         this.countryFormControl.setValue('');
     }
+
+    /*
+     template getters
+     */
 
     getSuggestions = (text$: Observable<string>) =>
         text$.pipe(
@@ -172,5 +187,21 @@ export class ProductCertificatesTabComponent implements OnInit {
             countryNames.push(CountryUtil.getCountryByISO(country.identificationCode.value));
         }
         return countryNames;
+    }
+
+    public getCircularCertificateTypes(): string[] {
+        return this.config.circularEconomy.productCertificates;
+    }
+
+    private updateCertificateLists(): void {
+        this.circularEconomyCertificates = [];
+        this.arbitraryCertificates = [];
+        this.catalogueLine.goodsItem.item.certificate.forEach(cert => {
+            if (cert.certificateType === config.circularEconomy.certificateGroup) {
+                this.circularEconomyCertificates.push(cert);
+            } else {
+                this.arbitraryCertificates.push(cert);
+            }
+        });
     }
 }

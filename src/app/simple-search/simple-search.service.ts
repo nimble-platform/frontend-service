@@ -610,7 +610,13 @@ export class SimpleSearchService {
         return value.replace(regexp, '\\$1');
     }
 
-    checkField(field: string, prefix: string = '', facetMetadata: any = null): boolean {
+    /**
+     * Checks whether a facet should be shown on the UI
+     * @param field
+     * @param prefix
+     * @param facetMetadata
+     */
+    isFieldDisplayed(field: string, prefix: string = '', facetMetadata: any = null): boolean {
         if (field == this.product_name || field == this.product_img || field == this.product_vendor_id || field == this.product_cat || field == this.product_cat_mix) {
             return false;
         }
