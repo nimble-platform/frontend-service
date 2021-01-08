@@ -141,7 +141,7 @@
         <div class="card-body">
             <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.DELIVERY_LOCATION.typeID); let i = index;">
                 <div class="row price-option-row">
-                    <price-option-view class="col-11" [catalogueLine]="catalogueLine" [discountUnits]="discountUnits" [readonly]="readonly" [priceOption]="priceOption.option">
+                    <price-option-view class="col-11" [catalogueLine]="catalogueLine" [discountUnits]="discountUnits" [readonly]="readonly" [priceOption]="priceOption.option" [parentForm]="formGroup" [componentIndex]="i">
                     </price-option-view>
                     <div class="col-1" *ngIf="!readonly">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">
