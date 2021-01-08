@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CatalogueService} from '../catalogue/catalogue.service';
 import {CallStatus} from '../common/call-status';
@@ -61,7 +61,7 @@ import {AmountUI} from '../catalogue/model/ui/amount-ui';
     templateUrl: './product-details.component.html',
     styleUrls: ['./product-details.component.css']
 })
-export class ProductDetailsComponent implements OnInit {
+export class ProductDetailsComponent implements OnInit, OnDestroy {
     // the first two call status are just to control the enabled/disabled status of quantity input
     // we need initCheckgetProductStatus since getProductStatus is updated by the view based on user actions
     initCheckGetFrameContractStatus: CallStatus = new CallStatus();

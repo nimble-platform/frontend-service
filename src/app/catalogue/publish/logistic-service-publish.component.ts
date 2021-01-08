@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import { Component, OnInit } from "@angular/core";
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { UBLModelUtils } from '../model/ubl-model-utils';
 import { Location } from '@angular/common';
@@ -49,7 +49,7 @@ import 'rxjs/add/operator/takeUntil';
     templateUrl: "./logistic-service-publish.component.html",
     styleUrls: ["./logistic-service-publish.component.css"]
 })
-export class LogisticServicePublishComponent implements OnInit {
+export class LogisticServicePublishComponent implements OnInit , OnDestroy{
 
     constructor(public categoryService: CategoryService,
         private catalogueService: CatalogueService,

@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { Text } from '../model/publish/text';
 import { ItemProperty } from '../model/publish/item-property';
 import {
@@ -82,7 +82,7 @@ interface CategoryProperties {
     templateUrl: "./single-publish.component.html",
     styleUrls: ["./single-publish.component.css"]
 })
-export class SinglePublishComponent implements OnInit {
+export class SinglePublishComponent implements OnInit , OnDestroy{
 
     publishMode: PublishMode;
     publishStatus: CallStatus = new CallStatus();

@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import { CallStatus } from "../../../common/call-status";
 import { BPEService } from "../../bpe.service";
 import { Clause } from '../../../catalogue/model/publish/clause';
@@ -33,7 +33,7 @@ import {CountryUtil} from '../../../common/country-util';
     templateUrl: "./terms-and-conditions.component.html",
     styleUrls: ["./terms-and-conditions.component.css"]
 })
-export class TermsAndConditionsComponent implements OnInit {
+export class TermsAndConditionsComponent implements OnInit, OnDestroy {
 
     // Inputs
     @Input() sellerPartyId: string;

@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import { Component, OnInit } from "@angular/core";
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { AppComponent } from "../app.component";
 import { CookieService } from "ng2-cookies";
 import { BPEService } from "../bpe/bpe.service";
@@ -33,7 +33,7 @@ import {NetworkCompanyListService} from '../user-mgmt/network-company-list.servi
     templateUrl: "./dashboard-threaded.component.html",
     styleUrls: ["./dashboard-threaded.component.css"]
 })
-export class DashboardThreadedComponent implements OnInit {
+export class DashboardThreadedComponent implements OnInit, OnDestroy {
 
     user: DashboardUser;
     selectedTab: string;

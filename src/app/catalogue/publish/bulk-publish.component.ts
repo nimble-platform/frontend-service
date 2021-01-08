@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import {Component, ElementRef, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import { CallStatus } from "../../common/call-status";
 import { DEFAULT_LANGUAGE } from "../model/constants";
 import { CategoryService } from "../category/category.service";
@@ -34,7 +34,7 @@ import {PublishService} from '../publish-and-aip.service';
     templateUrl: "./bulk-publish.component.html",
     styleUrls: ["./bulk-publish.component.css"]
 })
-export class BulkPublishComponent implements OnInit, OnChanges {
+export class BulkPublishComponent implements OnInit, OnChanges, OnDestroy {
     catalogueIds: string[];
     catalogueUuids: string[];
 

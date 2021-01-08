@@ -12,7 +12,7 @@
    limitations under the License.
  */
 
-import { Component, Input, OnInit } from "@angular/core";
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import { PriceOption } from "../../catalogue/model/publish/price-option";
 import { CatalogueLine } from '../../catalogue/model/publish/catalogue-line';
 import { EmptyFormBase } from '../../common/validation/empty-form-base';
@@ -22,7 +22,7 @@ const QUANTITY_PRICE_OPTION = 'quantity_price_option';
     selector: "quantity-price-option",
     templateUrl: "./quantity-price-option.component.html"
 })
-export class QuantityPriceOptionComponent extends EmptyFormBase implements OnInit {
+export class QuantityPriceOptionComponent extends EmptyFormBase implements OnInit, OnDestroy {
     @Input() catalogueLine: CatalogueLine;
     @Input() priceOption: PriceOption;
     @Input() discountUnits;

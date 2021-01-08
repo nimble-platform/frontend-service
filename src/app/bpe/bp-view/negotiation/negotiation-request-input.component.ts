@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import { Component, EventEmitter, OnInit, Input, Output} from "@angular/core";
+import {Component, EventEmitter, OnInit, Input, Output, OnDestroy} from '@angular/core';
 import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { UnitService } from "../../../common/unit-service";
 import { ChildFormBase } from '../../../common/validation/child-form-base';
@@ -29,7 +29,7 @@ const FIELD_NAME_NEGOTIATION_REQUEST_QUANTITY_INPUT_UNIT = 'quantity_unit';
     templateUrl: "./negotiation-request-input.component.html",
     styleUrls: ["./negotiation-request-input.component.css"],
 })
-export class NegotiationRequestInputComponent extends ChildFormBase implements OnInit {
+export class NegotiationRequestInputComponent extends ChildFormBase implements OnInit , OnDestroy{
 
     @Input() label: string;
     @Input() description: string;

@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import { ProcessInstanceGroup } from "../model/process-instance-group";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BPDataService } from "../bp-view/bp-data-service";
@@ -52,7 +52,7 @@ import {CancelCollaborationStatus} from '../../common/model/cancel-collaboration
     templateUrl: './thread-summary.component.html',
     styleUrls: ['./thread-summary.component.css']
 })
-export class ThreadSummaryComponent implements OnInit {
+export class ThreadSummaryComponent implements OnInit, OnDestroy {
 
     @Input() processInstanceGroup: ProcessInstanceGroup;
     @Input() collaborationGroupId: string;

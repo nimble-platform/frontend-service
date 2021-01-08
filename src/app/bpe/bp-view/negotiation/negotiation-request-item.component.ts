@@ -12,7 +12,7 @@
    limitations under the License.
  */
 
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {BPDataService} from '../bp-data-service';
 import {CURRENCIES} from '../../../catalogue/model/constants';
 import {RequestForQuotation} from '../../../catalogue/model/publish/request-for-quotation';
@@ -58,7 +58,7 @@ const ORDER_QUANTITY_NUMBER_FIELD_NAME = 'order_quantity';
     templateUrl: "./negotiation-request-item.component.html",
     styleUrls: ["./negotiation-request-item.component.css"]
 })
-export class NegotiationRequestItemComponent extends ChildFormBase implements OnInit {
+export class NegotiationRequestItemComponent extends ChildFormBase implements OnInit , OnDestroy{
 
     /**
      * View data fields
