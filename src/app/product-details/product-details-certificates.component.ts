@@ -14,19 +14,12 @@
    limitations under the License.
  */
 
-import {Component, Input, EventEmitter, Output, OnInit} from '@angular/core';
-import { ProductWrapper } from "../common/product-wrapper";
-import { CompanySettings } from "../user-mgmt/model/company-settings";
-import { UserService } from "../user-mgmt/user.service";
-import { CatalogueService } from "../catalogue/catalogue.service";
-import { Certificate } from "../catalogue/model/publish/certificate";
-import { Country } from '../catalogue/model/publish/country';
-import { DEFAULT_LANGUAGE } from "../catalogue/model/constants";
-import { TranslateService } from '@ngx-translate/core';
-import {CountryUtil} from '../common/country-util';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ProductWrapper} from '../common/product-wrapper';
+import {CompanySettings} from '../user-mgmt/model/company-settings';
+import {Certificate} from '../catalogue/model/publish/certificate';
 import {config} from '../globals';
 import {Certificate as UserMgmtCertificate} from '../user-mgmt/model/certificate';
-import {User} from '../user-mgmt/model/user';
 
 @Component({
     selector: 'product-details-certificates',
@@ -43,10 +36,7 @@ export class ProductDetailsCertificatesComponent implements OnInit {
     productCircularEconomyCertificates: Certificate[];
     productArbitraryCertificates: Certificate[];
 
-    constructor(private translate: TranslateService,
-        private userService: UserService,
-        private catalogueService: CatalogueService) {
-
+    constructor() {
     }
 
     ngOnInit(): void {
@@ -68,58 +58,6 @@ export class ProductDetailsCertificatesComponent implements OnInit {
             } else {
                 this.productArbitraryCertificates.push(cert);
             }
-        });
-    }
-
-    downloadCertificate(id: string) {
-        this.userService.downloadCert(id);
-    }
-
-    getCertificateCountryNames(countries: Country[]) {
-        let countryNames: string = null;
-        if (countries == null || countries.length == 0) {
-            return countryNames;
-        }
-
-        for (let country of countries) {
-            if (countryNames == null) {
-                countryNames = CountryUtil.getCountryByISO(country.identificationCode.value);
-            }
-            else {
-                countryNames += "," + CountryUtil.getCountryByISO(country.identificationCode.value);
-            }
-        }
-        return countryNames;
-    }
-
-    downloadProductCertificate(certificate: Certificate) {
-        let defaultLanguage = DEFAULT_LANGUAGE();
-        let fileUri = certificate.documentReference[0].attachment.embeddedDocumentBinaryObject.uri;
-        for (let certFile of certificate.documentReference) {
-            if (certFile.attachment.embeddedDocumentBinaryObject.languageID == defaultLanguage) {
-                fileUri = certFile.attachment.embeddedDocumentBinaryObject.uri;
-                break;
-            }
-        }
-        this.catalogueService.getBinaryObject(fileUri).then(binaryObject => {
-            const binaryString = window.atob(binaryObject.value);
-            const binaryLen = binaryString.length;
-            const bytes = new Uint8Array(binaryLen);
-            for (let i = 0; i < binaryLen; i++) {
-                const ascii = binaryString.charCodeAt(i);
-                bytes[i] = ascii;
-            }
-            const a = document.createElement("a");
-            document.body.appendChild(a);
-            const blob = new Blob([bytes], { type: binaryObject.mimeCode });
-            const url = window.URL.createObjectURL(blob);
-            a.href = url;
-            a.download = binaryObject.fileName;
-            a.click();
-            window.URL.revokeObjectURL(url);
-
-        }).catch(error => {
-            console.error("Failed to download the file", error);
         });
     }
 }

@@ -49,6 +49,7 @@ import {SearchFacetComponent} from './search/search-facet.component';
 import {CountryInputComponent} from './country-input-component';
 import {AddressMapComponent} from './address-map.component';
 import {LeafletModule} from '@asymmetrik/ngx-leaflet';
+import {CertificateViewComponent} from './certificate-view-component';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -89,6 +90,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         CountryInputComponent,
         MultiAddressInputComponent,
         InputLabelComponent,
+        CertificateViewComponent,
         AmountInputComponent,
         ExpandableFlexRow,
         MultiTypeInputComponent,
@@ -114,6 +116,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         ConfirmModalComponent,
         MultiAddressInputComponent,
         InputLabelComponent,
+        CertificateViewComponent,
         AmountInputComponent,
         ExpandableFlexRow,
         MultiTypeInputComponent,
