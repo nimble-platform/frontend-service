@@ -210,7 +210,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 public shoppingCartDataService: ShoppingCartDataService,
                 private translateService: TranslateService,
                 private cookieService: CookieService,
-                private appComponent: AppComponent,
+                public appComponent: AppComponent,
                 private unitService:UnitService,
                 private modalService: NgbModal,
                 public route: ActivatedRoute,
