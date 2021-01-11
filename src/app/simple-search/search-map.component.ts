@@ -103,7 +103,7 @@ export class SearchMapComponent {
             content = partySearchResult.legalName;
         }
         // distance
-        if (this.companyAddress.locationLatitude !== null && this.companyAddress.locationLongitude !== null) {
+        if (this.companyAddress && this.companyAddress.locationLatitude !== null && this.companyAddress.locationLongitude !== null) {
             const companyMarker = L.marker([this.companyAddress.locationLatitude, this.companyAddress.locationLongitude]);
             content += '<br>' + this.translateService.instant('Distance') + ': ' + (companyMarker._latlng.distanceTo(marker._latlng)).toFixed(0) / 1000 + ' km';
         }

@@ -787,7 +787,7 @@
 
                     </div>
                     </ng-container>
-                    <ng-container *ngIf="mapView && companyAddress">
+                    <ng-container *ngIf="mapView && (!appComponent.isLoggedIn || companyAddress)">
                         <div class="w-100">
                             <search-map [searchResults]="searchResults" [companyAddress]="companyAddress"></search-map>
                         </div>

@@ -157,7 +157,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
 
     // fields for map view
     // the address of active company
-    companyAddress:Address;
+    companyAddress:Address = null;
     // end of fields for map view
 
     // keeps the images if exists for the product search results
@@ -221,10 +221,11 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         // get the address of active company
-        const userId = this.cookieService.get("user_id");
-        this.userService.getSettingsForUser(userId).then(settings => {
-            this.companyAddress = settings.details.address;
-        });
+        if(this.appComponent.isLoggedIn){
+            this.userService.getSettingsForUser(this.cookieService.get("user_id")).then(settings => {
+                this.companyAddress = settings.details.address;
+            });
+        }
         window.scrollTo(0, 0);
         this.appComponent.translate.get(['Other']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
             this.translations = res;
