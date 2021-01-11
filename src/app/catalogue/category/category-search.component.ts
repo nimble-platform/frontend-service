@@ -274,26 +274,36 @@ export class CategorySearchComponent implements OnInit {
         this.categoryService
             .getRootCategories(taxonomyIds)
             .then(rootCategories => {
-                this.rootCategories = sortCategories(rootCategories);
+                this.setRootCategories(rootCategories);
                 this.getCategoriesStatus.aggregatedCallBack("Retrieved category details", true);
-                for(let taxonomyId of taxonomyIds){
-                    let logisticsCategory = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].logisticsCategory);
-                    if (logisticsCategory != null) {
-                        let searchIndex = findCategoryInArray(this.rootCategories, logisticsCategory);
-                        this.rootCategories.splice(searchIndex, 1);
-                    }
-                    for (var i = 0; i < this.categoryFilter[taxonomyId].hiddenCategories.length; i++) {
-                        let filterCat = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].hiddenCategories[i]);
-                        if (filterCat != null) {
-                            let searchIndex = findCategoryInArray(this.rootCategories, filterCat);
-                            this.rootCategories.splice(searchIndex, 1);
-                        }
-                    }
-                }
             })
             .catch(error => {
                 this.getCategoriesStatus.aggregatedError("Failed to retrieve category details", error);
             });
+    }
+
+    /**
+     * Sets the root categories by excluding the ones which are configured as hidden
+     * */
+    setRootCategories(rootCategories:any){
+        // set root categories
+        this.rootCategories = sortCategories(rootCategories);
+        // exclude the hidden ones
+        let taxonomyIds = this.taxonomyId == "All" ? Object.keys(this.categoryFilter) : [this.taxonomyId];
+        for(let taxonomyId of taxonomyIds){
+            let logisticsCategory = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].logisticsCategory);
+            if (logisticsCategory != null) {
+                let searchIndex = findCategoryInArray(this.rootCategories, logisticsCategory);
+                this.rootCategories.splice(searchIndex, 1);
+            }
+            for (var i = 0; i < this.categoryFilter[taxonomyId].hiddenCategories.length; i++) {
+                let filterCat = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].hiddenCategories[i]);
+                if (filterCat != null) {
+                    let searchIndex = findCategoryInArray(this.rootCategories, filterCat);
+                    this.rootCategories.splice(searchIndex, 1);
+                }
+            }
+        }
     }
 
     getSuggestions = (text$: Observable<string>) =>
@@ -313,11 +323,34 @@ export class CategorySearchComponent implements OnInit {
                 this.parentCategories = null;
                 this.pathToSelectedCategories = null;
                 this.categories = categories;
+                // exclude the hidden categories
+                let taxonomyIds = this.taxonomyId == "All" ? Object.keys(this.categoryFilter) : [this.taxonomyId];
+                for(let taxonomyId of taxonomyIds){
+                    let logisticsCategory = this.categories.find(c => c.code === this.categoryFilter[taxonomyId].logisticsCategory);
+                    if (logisticsCategory != null) {
+                        let searchIndex = findCategoryInArray(this.categories, logisticsCategory);
+                        this.categories.splice(searchIndex, 1);
+                    }
+                    for (var i = 0; i < this.categoryFilter[taxonomyId].hiddenCategories.length; i++) {
+                        let filterCat = this.categories.find(c => this.getCategoryCode(c.rootCategoryUri) === this.categoryFilter[taxonomyId].hiddenCategories[i]);
+                        if (filterCat != null) {
+                            let searchIndex = findCategoryInArray(this.categories, filterCat);
+                            this.categories.splice(searchIndex, 1);
+                        }
+                    }
+                }
                 this.getCategoriesStatus.aggregatedCallBack("Successfully got search results", true);
             })
             .catch(error => {
                 this.getCategoriesStatus.aggregatedError("Error while searching for categories", error);
             });
+    }
+
+    /**
+     * Returns the category code for the given category uri
+     * */
+    getCategoryCode(categoryUri:string){
+        return categoryUri.substr(categoryUri.lastIndexOf('#') + 1);
     }
 
     addCategoryToSelected(category: Category): void {
@@ -350,7 +383,7 @@ export class CategorySearchComponent implements OnInit {
                 this.categoryService
                     .getCategory(category)
                     .then(category => {
-                        this.rootCategories = sortCategories(categories.categories[0]);
+                        this.setRootCategories(categories.categories[0]);
                         if (!scrollToDivId) {
                             this.scrollToDivId = category.code;
                         }
@@ -395,7 +428,8 @@ export class CategorySearchComponent implements OnInit {
             properties: [],
             keywords: [],
             taxonomyId: cat_split[1],
-            categoryUri: ""
+            categoryUri: "",
+            rootCategoryUri: null
         };
         this.getCategoryDetails(catFull, true);
     }

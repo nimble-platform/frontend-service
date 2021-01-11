@@ -37,7 +37,8 @@ export class CategoryModelUtils {
             null,
             null,
             null,
-            uri);
+            uri,
+            null);
         return category;
     }
 }
