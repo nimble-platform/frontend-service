@@ -95,7 +95,8 @@ export const config = {
             'Type I Ecolabel (ECO LABEL, NF Environment, Blue Angel, etc)',
             'Type III Ecolabel (Environmental Product Declaration / Product Footprint)',
             'Free of Hazardous Substances'
-        ]
+        ],
+        indexField: "circularEconomyCertificates"
     },
     "contractForCatalogueEnabled":false,
     "collaborationEnabled": true,

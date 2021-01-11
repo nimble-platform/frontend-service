@@ -127,6 +127,9 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     productVendorFilter:Filter = null;
     // other filters for product search
     productOtherFilter:Filter = null;
+    // circular economy certificate filters for product search
+    // it is used iff the product/service filter is not enabled
+    circularEconomyCertificatesFilter:Filter = null;
     // filters for company search
     companyFilter:Filter = null;
     // end of filters for product and company search
@@ -2153,6 +2156,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         this.productOtherFilter = new Filter();
         this.companyFilter = new Filter();
         this.catalogueFilter = new Filter();
+        this.circularEconomyCertificatesFilter = new Filter();
         // add each facet to proper filter
         for(let facet of this.facetList){
             if(facet.total > 0){
@@ -2168,6 +2172,14 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                     // set selectedCatalogueUuidFromCatalogIdFilter to its catalogue id
                     if(this.isCompanySpecificFacetSelected() && facet.options && facet.options.length == 1){
                         this.selectedCatalogueUuidFromCatalogIdFilter = facet.options[0].realName;
+                    }
+                }
+                if(!this.config.productServiceFiltersEnabled && facet.name === this.config.circularEconomy.indexField){
+                    // add facet
+                    this.circularEconomyCertificatesFilter.facets.push(facet);
+                    // uncollapse the filter if it has selected facets
+                    if(facet.selected){
+                        this.circularEconomyCertificatesFilter.isCollapsed = false;
                     }
                 }
                 if(this.checkProdCat(facet.name)){
