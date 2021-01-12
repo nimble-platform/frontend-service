@@ -15,13 +15,15 @@
    limitations under the License.
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Address } from '../model/address';
-import { Observable } from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import {CountryUtil} from '../../common/country-util';
 import {Coordinate} from '../../catalogue/model/publish/coordinate';
+import {addressToString} from '../utils';
+import 'rxjs/add/operator/takeUntil';
 
 @Component({
     moduleId: module.id,
@@ -31,7 +33,7 @@ import {Coordinate} from '../../catalogue/model/publish/coordinate';
 })
 
 
-export class AddressSubForm implements OnInit{
+export class AddressSubForm implements OnInit,OnDestroy{
 
     @Input('group')
     public addressForm: FormGroup;
@@ -40,6 +42,10 @@ export class AddressSubForm implements OnInit{
     @Input() mapView: boolean = false;
     // location coordinate used in the address map
     coordinate:Coordinate;
+    // address as string
+    addressString:string;
+
+    ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(
     ) {
@@ -48,6 +54,24 @@ export class AddressSubForm implements OnInit{
     ngOnInit(): void {
         // set coordinate using the form data
         this.coordinate = new Coordinate(this.addressForm.controls.locationLongitude.value,this.addressForm.controls.locationLatitude.value);
+        // subscribe to the address form changes for the map view
+        if(this.mapView){
+            this.onAddressFormChanges();
+        }
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    }
+
+    /**
+     * Sets the address value as string when the address form is changed
+     * */
+    onAddressFormChanges(){
+        this.addressForm.valueChanges.takeUntil(this.ngUnsubscribe).pipe(debounceTime(500)).subscribe(value => {
+            this.addressString = addressToString(value);
+        })
     }
 
     getSuggestions = (text$: Observable<string>) =>

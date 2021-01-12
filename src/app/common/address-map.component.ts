@@ -16,6 +16,9 @@
 
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import * as L from 'leaflet';
+import * as ELG from 'esri-leaflet-geocoder';
+import "esri-leaflet-geocoder/dist/esri-leaflet-geocoder.css";
+import "esri-leaflet-geocoder/dist/esri-leaflet-geocoder";
 import 'style-loader!leaflet/dist/leaflet.css';
 import {Coordinate} from '../catalogue/model/publish/coordinate';
 import {AddressMapService} from './address-map.service';
@@ -29,6 +32,23 @@ import 'rxjs/add/operator/takeUntil';
 export class AddressMapComponent implements OnInit, OnDestroy {
 
     @Input() coordinate: Coordinate;
+    // address as string
+    _addressString:string;
+    @Input('addressString')
+    set addressString(addressString: string) {
+        this._addressString = addressString;
+
+        if(this.map){
+            // create a marker for the location of address
+            this.getGeoLocationForAddress().then(value => {
+                this.createMarker(value);
+            })
+        }
+    }
+
+    get addressString(): string {
+        return this._addressString;
+    }
     @Input() disabled: boolean = false;
     @Output() coordinateChange = new EventEmitter<Coordinate>();
 
@@ -92,16 +112,38 @@ export class AddressMapComponent implements OnInit, OnDestroy {
         // if the map is not disabled, handle the click events on map
         if (!this.disabled) {
             this.map.on('click', e => {
-                // remove the existing marker
-                if (this.marker) {
-                    this.map.removeLayer(this.marker);
-                }
-                // create new marker
-                this.marker = new L.marker([e.latlng.lat, e.latlng.lng], this.markerIcon).addTo(this.map);
-                // emit the change on coordinate
-                this.coordinateChange.emit(new Coordinate(e.latlng.lng, e.latlng.lat));
+                this.createMarker(e)
             });
         }
 
+    }
+
+    /**
+     * Creates a marker on the map for the given location
+     * */
+    createMarker(location){
+        // remove the existing marker
+        if (this.marker) {
+            this.map.removeLayer(this.marker);
+        }
+        // create new marker
+        this.marker = new L.marker([location.latlng.lat, location.latlng.lng], this.markerIcon).addTo(this.map);
+        // emit the change on coordinate
+        this.coordinateChange.emit(new Coordinate(location.latlng.lng, location.latlng.lat));
+    }
+
+    /**
+     * Returns a promise for the geolocation of the address
+     * */
+    getGeoLocationForAddress(){
+        return new Promise<any>((resolve, reject) => {
+            ELG.geocode().text(this.addressString).run(function (err, results, response) {
+                if (err) {
+                    reject(err)
+                }
+
+                resolve(results.results[0])
+            });
+        });
     }
 }

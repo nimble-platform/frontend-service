@@ -50,6 +50,7 @@
         "jquery": "~3.3",
         "jshint": "~2.9",
         "leaflet": "^1.0.0",
+        "esri-leaflet-geocoder": "^2.3.4",
         "lunr": "~2.3",
         "moment": "~2.22",
         "ng2-cookies": "~1.0",
