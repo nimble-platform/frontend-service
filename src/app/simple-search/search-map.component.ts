@@ -28,9 +28,8 @@ import {TranslateService} from '@ngx-translate/core';
 
 export class SearchMapComponent {
 
-    // search results could be either product search results or company search results. They are differentiated by checking the
-    // manufacturer field of a result
-    @Input() searchResults: any[];
+    // company solr results
+    @Input() companyResults: any[];
     @Input() companyAddress: Address;
 
     // map options
@@ -65,9 +64,9 @@ export class SearchMapComponent {
     onMapReady(map: L.Map): void {
         // set the map
         this.map = map;
-        if(this.searchResults && this.searchResults.length > 0){
+        if(this.companyResults && this.companyResults.length > 0){
             // mark the location of each company on the map
-            this.searchResults.forEach(searchResult => {
+            this.companyResults.forEach(searchResult => {
                 let company = searchResult.manufacturer ? searchResult.manufacturer :searchResult;
                 if (company.locationLatitude !== null && company.locationLongitude !== null) {
                     // create marker

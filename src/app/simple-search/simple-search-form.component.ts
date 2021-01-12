@@ -157,6 +157,8 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     facetQuery: any[];
     // results of product/company search
     searchResults: any;
+    // company solr results for the map view
+    companyResults: any[];
 
     // fields for map view
     // the address of active company
@@ -760,6 +762,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                             this.callback = true;
                             this.searchCallStatus.callback('Search done.', true);
                             this.searchResults = res.result;
+                            this.companyResults = [];
                             this.size = res.totalElements;
                             this.page = p;
                             this.start = this.page * this.rows - this.rows + 1;
@@ -791,6 +794,8 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                                         //getting the manufacturer ids list
                                         let manufacturerIds = Array.from(this.manufacturerIdCountMap.keys());
                                         this.getCompanyNameFromIds(manufacturerIds).then((res1) => {
+                                            // set company results
+                                            this.companyResults = res1.result;
                                             this.handleCompanyFacets(res1, 'manufacturer.', this.manufacturerIdCountMap);
                                             //this.cat_loading = false;
                                             this.callback = true;
@@ -851,6 +856,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                             this.callback = true;
                             this.searchCallStatus.callback('Company search done.', true);
                             this.searchResults = res.result;
+                            this.companyResults = [];
                             this.size = res.totalElements;
                             this.page = p;
                             this.start = this.page * this.rows - this.rows + 1;
@@ -869,6 +875,22 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                                 this.page = p;
                                 this.start = this.page * this.rows - this.rows + 1;
                                 this.end = this.start + res.result.length - 1;
+                                // set company results
+                                for (let facet in res.facets) {
+                                    if (facet == this.product_vendor_id) {
+                                        let facetEntries = res.facets[this.product_vendor_id].entry;
+                                        let companyIds = [];
+                                        for (let manufacturerEntry of facetEntries) {
+                                            companyIds.push(manufacturerEntry.label)
+                                        }
+                                        this.getCompanyNameFromIds(companyIds).then((res1) => {
+                                            this.companyResults = res1.result;
+                                        }).catch((error) => {
+                                            this.searchCallStatus.error('Error while getting company names in the search.', error);
+                                        });
+                                        break;
+                                    }
+                                }
                             }).catch(error => {
                                 this.searchCallStatus.error('Error while running company search.', error);
                             })

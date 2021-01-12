@@ -822,7 +822,7 @@
                     </ng-container>
                     <ng-container *ngIf="mapView && (!appComponent.isLoggedIn || companyAddress)">
                         <div class="w-100">
-                            <search-map [searchResults]="searchResults" [companyAddress]="companyAddress"></search-map>
+                            <search-map [companyAddress]="companyAddress" [companyResults]="companyResults"></search-map>
                         </div>
                     </ng-container>
                     <!-- Pagination -->
