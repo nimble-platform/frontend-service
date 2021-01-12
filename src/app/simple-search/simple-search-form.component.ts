@@ -306,6 +306,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 this.cat = '';
             }
 
+            this.mapView = false;
             // if the standard taxonomy is 'All', then we use 'eClass' as the default taxonomy
             // and populate 'taxonomyIDs' variable with the ones available in the instance
             if (myGlobals.config.standardTaxonomy.localeCompare('All') == 0) {
