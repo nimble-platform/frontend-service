@@ -10,9 +10,14 @@ import {DEFAULT_LANGUAGE} from '../catalogue/model/constants';
 import {Facet} from '../common/model/facet';
 import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {DatePipe} from '@angular/common';
+import {DemandLastSeenResponse} from '../catalogue/model/publish/demand-last-seen-response';
 
 @Injectable()
 export class DemandService {
+
+    // demand last seen response for the active user
+    public demandLastSeenResponse:DemandLastSeenResponse = null;
+
     constructor(private http: Http,
                 private userService: UserService,
                 public datePipe: DatePipe,
@@ -127,6 +132,23 @@ export class DemandService {
         return this.http
             .post(url, null, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
+            .catch(this.handleError);
+    }
+
+    public addLastSeenDemandId(lastSeenDemandId:string): Promise<any> {
+        return this.http
+            .post(catalogue_endpoint + `/demands/last-seen`,  lastSeenDemandId,{ headers: getAuthorizedHeaders(this.cookieService) })
+            .toPromise()
+            .catch(this.handleError);
+    }
+
+    public getDemandLastSeenResponse(){
+        this.http
+            .get(catalogue_endpoint + `/demands/last-seen/response`,  { headers: getAuthorizedHeaders(this.cookieService) })
+            .toPromise()
+            .then(res => {
+                this.demandLastSeenResponse = new DemandLastSeenResponse(res.json());
+            })
             .catch(this.handleError);
     }
 

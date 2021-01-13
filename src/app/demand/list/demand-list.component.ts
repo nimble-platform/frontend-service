@@ -26,6 +26,7 @@ import {FacetValue} from '../../common/model/facet-value';
 import {DEFAULT_LANGUAGE} from '../../catalogue/model/constants';
 import {SimpleSearchService} from '../../simple-search/simple-search.service';
 import {CountryUtil} from '../../common/country-util';
+import {AppComponent} from '../../app.component';
 
 @Component({
     selector: 'demand-list',
@@ -73,6 +74,7 @@ export class DemandListComponent implements OnInit, OnDestroy {
         private translate: TranslateService,
         private router: Router,
         private route: ActivatedRoute,
+        private appComponent:AppComponent,
         private location: Location,
     ) { }
 
@@ -111,10 +113,17 @@ export class DemandListComponent implements OnInit, OnDestroy {
 
             this.getDemands();
         });
+
+        // clear the new demand count for the demand search
+        if(!this.companyDemands && this.demandService.demandLastSeenResponse){
+            this.demandService.demandLastSeenResponse.newDemandCount = 0;
+        }
     }
 
     ngOnDestroy(): void {
         this.queryParamSubscription.unsubscribe();
+        // get demand last seen response for the user
+        this.demandService.getDemandLastSeenResponse();
     }
 
     onPageChange(pageNo: number): void {
@@ -228,6 +237,10 @@ export class DemandListComponent implements OnInit, OnDestroy {
                         });
                     }
 
+                    // add the last seen demand id for the user
+                    if(!this.companyDemands && this.demands.length > 0){
+                        this.demandService.addLastSeenDemandId(this.demands[0].demand.hjid);
+                    }
                     this.getCompanyNameFromIds();
                     this.searchCallStatus.callback(null, true);
                 }).catch(e => {

@@ -105,6 +105,8 @@
             <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
                 <a class="nav-link" routerLink="/demand">
                     <i class="far fa-star"></i> <span [innerHTML]="'Demands' | translate"></span>
+                    <!-- New Demands Count -->
+                    <span *ngIf="demandService.demandLastSeenResponse && demandService.demandLastSeenResponse.newDemandCount > 0" class="badge badge-pill badge-danger ml-1">{{demandService.demandLastSeenResponse.newDemandCount}}</span>
                 </a>
             </li>
             <li class="nav-item" *ngIf="checkRoles('reg_comp')" routerLinkActive="active">

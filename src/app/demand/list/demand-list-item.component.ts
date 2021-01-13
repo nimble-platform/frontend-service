@@ -32,7 +32,8 @@ import {AppComponent} from '../../app.component';
 
 @Component({
     selector: 'demand-list-item',
-    templateUrl: './demand-list-item.component.html'
+    templateUrl: './demand-list-item.component.html',
+    styleUrls: ['./demand-list-item.component.css']
 })
 export class DemandListItemComponent {
     @Input() demand: Demand;
@@ -51,6 +52,8 @@ export class DemandListItemComponent {
     selectPreferredValue = selectPreferredValue;
     selectPartyName = selectPartyName;
     getCountryByISO = CountryUtil.getCountryByISO;
+    // flag if the demand is new for the user or not (in other words, the demand is already seen by the user or not)
+    isNewDemand:boolean = true;
 
     constructor(
         private demandService: DemandService,
@@ -67,6 +70,10 @@ export class DemandListItemComponent {
     ngOnInit(): void {
         this.isLoggedIn = !!this.cookieService.get('user_id')
         this.userCompanyId = this.cookieService.get('company_id');
+        // mark the demand as new if the user has not seen it before
+        if(this.demand.metadata.ownerCompany[0] === this.userCompanyId || (this.demandService.demandLastSeenResponse.lastSeenDemandId && this.demandService.demandLastSeenResponse.lastSeenDemandId >= this.demand.hjid)){
+            this.isNewDemand = false;
+        }
         if (this.isLoggedIn) {
             this.getOwnerCompanyDetails();
         }

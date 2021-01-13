@@ -41,6 +41,7 @@ import { CallStatus } from "./common/call-status";
 import {DomSanitizer, Title} from '@angular/platform-browser';
 import {ConfirmModalComponent} from './common/confirm-modal.component';
 import {CountryUtil} from './common/country-util';
+import {DemandService} from './demand/demand-service';
 
 @Component({
     selector: 'nimble-app',
@@ -95,6 +96,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         private route: ActivatedRoute,
         private modalService: NgbModal,
         private titleService: Title,
+        private demandService: DemandService,
         public translate: TranslateService,
         public sanitizer: DomSanitizer
     ) {
@@ -318,6 +320,11 @@ export class AppComponent implements OnInit, AfterViewInit {
                 }).catch((e) => {
                     this.submitCallStatus.error("Login failed", e);
                 })
+        }
+
+        // get demand last seen response for the user
+        if(this.isLoggedIn){
+            this.demandService.getDemandLastSeenResponse();
         }
 
         this.route.queryParams.subscribe(params => {
