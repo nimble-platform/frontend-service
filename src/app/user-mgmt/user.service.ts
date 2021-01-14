@@ -181,10 +181,10 @@ export class UserService {
             })
     }
 
-    getParty(partyId: string, delegateId: string = FEDERATIONID()): Promise<Party> {
-        let url = `${this.url}/party/${partyId}`;
+    getParty(partyId: string, delegateId: string = FEDERATIONID(),includeRoles:boolean = false): Promise<Party> {
+        let url = `${this.url}/party/${partyId}?includeRoles=${includeRoles}`;
         if (this.delegated) {
-            url = `${this.delegate_url}/party/${partyId}?delegateId=${delegateId}`;
+            url = `${this.delegate_url}/party/${partyId}?delegateId=${delegateId}&includeRoles=${includeRoles}`;
         }
         let headers = this.getAuthorizedHeaders();
         return this.http

@@ -29,6 +29,7 @@ import {CookieService} from 'ng2-cookies';
 import {Party} from '../../catalogue/model/publish/party';
 import {CountryUtil} from '../../common/country-util';
 import {AppComponent} from '../../app.component';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'demand-list-item',
@@ -59,6 +60,7 @@ export class DemandListItemComponent {
         private demandService: DemandService,
         private demandPublishService: DemandPublishService,
         private categoryService: CategoryService,
+        private translateService: TranslateService,
         private bpeService: BPEService,
         private userService: UserService,
         private cookieService: CookieService,
@@ -115,8 +117,38 @@ export class DemandListItemComponent {
         });
     }
 
-    onContactClicked(): void {
+    onContactClicked(companyData): void {
+        // create interest activity for the demand
         this.demandService.createInterestActivity(this.demand.hjid);
-        this.router.navigate(['/user-mgmt/company-details'], {queryParams: {id: this.companyData.id}})
+        // get contact details of the party and open a mail template
+        this.userService.getParty(companyData.uri, FEDERATIONID(), true).then(party => {
+            // find the email address of purchasers, monitors and legal representatives
+            let purchasers = [];
+            let monitors = [];
+            let legalRepresentatives = [];
+            for (let person of party.person) {
+                if (person.role.indexOf('purchaser') != -1) {
+                    purchasers.push(person.contact.electronicMail)
+                } else if (person.role.indexOf('monitor') != -1) {
+                    monitors.push(person.contact.electronicMail)
+                } else if (person.role.indexOf('legal_representative') != -1) {
+                    legalRepresentatives.push(person.contact.electronicMail)
+                }
+            }
+            // decide who will receive the email
+            let mailto = 'mailto:';
+            if (purchasers.length > 0) {
+                mailto += purchasers.join();
+            } else if (monitors.length > 0) {
+                mailto += monitors.join();
+            } else if (legalRepresentatives.length > 0) {
+                mailto += legalRepresentatives.join();
+            }
+            // add mail subject
+            var subject = this.translateService.instant('Demand Interest');
+            mailto += '?subject=' + encodeURIComponent(subject);
+            // open mail template
+            window.open(mailto, '_blank')
+        })
     }
 }
