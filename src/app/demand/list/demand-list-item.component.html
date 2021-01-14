@@ -63,7 +63,7 @@
                 </button>
             </div>
             <!-- if action buttons are not shown, show buyer's info -->
-            <div *ngIf="!showActionButtons && buyerParty" class="pointer" (click)="onContactClicked(companyData)">
+            <div *ngIf="companyData && !showActionButtons && buyerParty" class="pointer" (click)="onContactClicked(companyData)">
                 <div>
                     <span *ngIf="companyData.brandName">{{ selectNameFromLabelObject(companyData.brandName) }}</span>
                     <span *ngIf="!companyData.brandName">{{ companyData.legalName }}</span>
