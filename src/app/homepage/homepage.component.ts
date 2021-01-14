@@ -195,6 +195,18 @@ export class HomepageComponent {
         });
     }
 
+    onPublishDemandClicked(): void {
+        this.router.navigate(['/demand/publish']);
+    }
+
+    onSearchDemandClicked(): void {
+        this.router.navigate(['/demand'], {
+            queryParams: {
+                page: 1,
+            }
+        });
+    }
+
     onPublishProductClicked(): void {
         this.router.navigate(['catalogue/publish-single'], { queryParams: { pageRef: 'homepage'} });
     }
