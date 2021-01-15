@@ -12,7 +12,7 @@
    limitations under the License.
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Text} from '../../app/catalogue/model/publish/text';
 import {TranslateService} from '@ngx-translate/core';
 import {Demand} from '../catalogue/model/publish/demand';
@@ -42,7 +42,7 @@ import {CountryUtil} from '../common/country-util';
     templateUrl: './demand-publish.component.html',
     styleUrls: ['./demand-publish.component.css']
 })
-export class DemandPublishComponent extends ChildFormBase implements OnInit {
+export class DemandPublishComponent extends ChildFormBase implements OnInit, OnDestroy {
     publishMode: 'create' | 'edit' = 'create';
 
     // demand object being updated
@@ -80,14 +80,6 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
             if (params['publishMode']) {
                 this.publishMode = params['publishMode'];
 
-            } else {
-                // if the publish mode is not specified in the query parameter, first check if it is available in the publish service.
-                // it might have been initialized for a publish activity started earlier
-                if (this.demandPublishService.publishMode) {
-                    this.publishMode = this.demandPublishService.publishMode;
-                } else {
-                    this.publishMode = 'create';
-                }
             }
         });
         // reset demand publishing service data when we publish a new demand
@@ -130,6 +122,11 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
                 this.demand.buyerCountry.value = res.negotiationSettings.company.postalAddress.country.identificationCode.value;
             });
         }
+    }
+
+    ngOnDestroy(): void {
+        // reset the data of demand publish service while leaving the page
+        this.demandPublishService.resetData();
     }
 
     onAddTitle(): void {
@@ -221,9 +218,6 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit {
     }
 
     onSelectCategory(): void {
-        this.demandPublishService.modifiedDemand = this.demand;
-        this.demandPublishService.publishMode = this.publishMode;
-
         if (this.selectedCategory) {
             this.categoryService.selectedCategories = [this.selectedCategory];
         }
