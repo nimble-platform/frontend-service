@@ -130,7 +130,7 @@ export class SimpleSearchService {
         }
 
         const facetIndex: number = facets.findIndex(f => f === 'certificateCode');
-        if (facetIndex) {
+        if (facetIndex != -1) {
             facets.splice(facetIndex, 1);
         }
         searchObject.sort = [];
@@ -189,7 +189,7 @@ export class SimpleSearchService {
         sort = sort.replace('{LANG}', DEFAULT_LANGUAGE());
 
         const facetIndex: number = facets.findIndex(f => f === 'certificateCode');
-        if (facetIndex) {
+        if (facetIndex != -1) {
             facets.splice(facetIndex, 1);
         }
 
@@ -683,7 +683,7 @@ export class SimpleSearchService {
         }
 
         const facetIndex: number = facets.findIndex(f => f === 'certificateCode');
-        if (facetIndex) {
+        if (facetIndex != -1) {
             facets.splice(facetIndex, 1);
         }
 
