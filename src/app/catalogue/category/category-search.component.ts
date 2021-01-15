@@ -291,17 +291,11 @@ export class CategorySearchComponent implements OnInit {
         // exclude the hidden ones
         let taxonomyIds = this.taxonomyId == "All" ? Object.keys(this.categoryFilter) : [this.taxonomyId];
         for(let taxonomyId of taxonomyIds){
-            let logisticsCategory = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].logisticsCategory);
-            if (logisticsCategory != null) {
-                let searchIndex = findCategoryInArray(this.rootCategories, logisticsCategory);
-                this.rootCategories.splice(searchIndex, 1);
-            }
+            // remove logistics categories
+            this.rootCategories = this.rootCategories.filter(category => category.code !== this.categoryFilter[taxonomyId].logisticsCategory)
+            // remove hidden categories
             for (var i = 0; i < this.categoryFilter[taxonomyId].hiddenCategories.length; i++) {
-                let filterCat = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].hiddenCategories[i]);
-                if (filterCat != null) {
-                    let searchIndex = findCategoryInArray(this.rootCategories, filterCat);
-                    this.rootCategories.splice(searchIndex, 1);
-                }
+                this.rootCategories = this.rootCategories.filter(c => c.code !== this.categoryFilter[taxonomyId].hiddenCategories[i]);
             }
         }
     }
@@ -326,17 +320,11 @@ export class CategorySearchComponent implements OnInit {
                 // exclude the hidden categories
                 let taxonomyIds = this.taxonomyId == "All" ? Object.keys(this.categoryFilter) : [this.taxonomyId];
                 for(let taxonomyId of taxonomyIds){
-                    let logisticsCategory = this.categories.find(c => c.code === this.categoryFilter[taxonomyId].logisticsCategory);
-                    if (logisticsCategory != null) {
-                        let searchIndex = findCategoryInArray(this.categories, logisticsCategory);
-                        this.categories.splice(searchIndex, 1);
-                    }
+                    // remove logistics categories
+                    this.categories = this.categories.filter(category => category.code !== this.categoryFilter[taxonomyId].logisticsCategory)
+                    // remove hidden categories
                     for (var i = 0; i < this.categoryFilter[taxonomyId].hiddenCategories.length; i++) {
-                        let filterCat = this.categories.find(c => this.getCategoryCode(c.rootCategoryUri) === this.categoryFilter[taxonomyId].hiddenCategories[i]);
-                        if (filterCat != null) {
-                            let searchIndex = findCategoryInArray(this.categories, filterCat);
-                            this.categories.splice(searchIndex, 1);
-                        }
+                        this.categories = this.categories.filter(c => this.getCategoryCode(c.rootCategoryUri) !== this.categoryFilter[taxonomyId].hiddenCategories[i]);
                     }
                 }
                 this.getCategoriesStatus.aggregatedCallBack("Successfully got search results", true);
