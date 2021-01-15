@@ -144,7 +144,7 @@ export class DemandService {
 
     public getDemandLastSeenResponse(){
         this.http
-            .get(catalogue_endpoint + `/demands/last-seen/response`,  { headers: getAuthorizedHeaders(this.cookieService) })
+            .get(catalogue_endpoint + `/demands/last-seen/response?dueDate=${this.datePipe.transform(new Date(),'yyyy-MM-dd')}`,  { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
                 this.demandLastSeenResponse = new DemandLastSeenResponse(res.json());
