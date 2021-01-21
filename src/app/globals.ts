@@ -106,6 +106,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - defaultBusinessProcessIds: Array of default business processes that shall be enabled for a company upon registration. Applicable values are "Item_Information_Request", "Ppap", "Negotiation", "Order", "Transport_Execution_Plan" and "Fulfilment". An empty array enables all processes
 - defaultSearchIndex: If "Name" the product search query prioritizes the product name, if "Category" it prioritizes the category name
 - delegationEnabled: Boolean flag if the federation feature is available for the instance
+- demandsEnabled: Boolean flag if the demand functionality is enabled
 - displayCategoryCounts: Boolean flag if the category counts are displayed in the category filter. If it's false, then we show the count only for the selected category.
 - docLink: Link to the documentation resources
 - enableStripePayment: Boolean flag if the stripe payment is enabled or not
@@ -219,6 +220,7 @@ export const config = {
     ],
     "defaultSearchIndex": "Name",
     "delegationEnabled": true,
+    "demandsEnabled": false,
     "displayCategoryCounts":true,
     "docLink": "https://www.nimble-project.org/docs/",
     "enableStripePayment": false,

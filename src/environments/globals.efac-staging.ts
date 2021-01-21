@@ -111,6 +111,7 @@ export const config = {
     "defaultBusinessProcessIds": [
     ],
     "delegationEnabled": true,
+    "demandsEnabled": false,
     "displayCategoryCounts":true,
     "docLink": "https://www.nimble-project.org/docs/",
     "enableStripePayment": true,

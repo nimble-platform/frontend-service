@@ -61,7 +61,7 @@
                     <a href id="PROJECTS" *ngIf="config.projectsEnabled && this.appComponent.checkRoles('projects')" [ngClass]="{'nav-link': true, active: selectedTab === TABS.PROJECTS}" (click)="onChangeTab($event,'PROJECTS')"><span [innerHTML]="'Projects' | translate"></span></a>
                 </li>
                 <li class="nav-item">
-                    <a href id="DEMANDS" [ngClass]="{'nav-link': true, active: selectedTab === TABS.DEMANDS}" (click)="onChangeTab($event,'DEMANDS')"><span [innerHTML]="'Demands' | translate"></span></a>
+                    <a href id="DEMANDS" *ngIf="config.demandsEnabled" [ngClass]="{'nav-link': true, active: selectedTab === TABS.DEMANDS}" (click)="onChangeTab($event,'DEMANDS')"><span [innerHTML]="'Demands' | translate"></span></a>
                 </li>
                 <li class="nav-item">
                     <a href id="FRAME_CONTRACTS" *ngIf="config.frameContractTabEnabled && this.appComponent.checkRoles('bp')" [ngClass]="{'nav-link': true, active: selectedTab === TABS.FRAME_CONTRACTS}" (click)="onChangeTab($event,'FRAME_CONTRACTS')"><span [innerHTML]="'Frame Contracts' | translate"></span></a>

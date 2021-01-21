@@ -105,6 +105,7 @@ export const config = {
     ],
     "defaultSearchIndex": "Category",
     "delegationEnabled": false,
+    "demandsEnabled": true,
     "displayCategoryCounts":false,
     "docLink": "http://b2bm.aidimme.es/manual-de-usuario/",
     "enableStripePayment": false,

@@ -53,7 +53,7 @@
                     <i class="fa fa-search"></i> <span [innerHTML]="'Search' | translate"></span>
                 </a>
             </li>
-            <li class="nav-item" routerLinkActive="active">
+            <li *ngIf="config.demandsEnabled" class="nav-item" routerLinkActive="active">
                 <a class="nav-link" routerLink="/demand">
                     <i class="far fa-star"></i> <span [innerHTML]="'Demands' | translate"></span>
                 </a>
@@ -92,7 +92,7 @@
                     <a *ngIf="enableLogisticServicePublishing" class="dropdown-item" [routerLink]="['/catalogue/publish-logistic']" routerLinkActive="active">
                         <i class="fa fa-truck dd-icon"></i> <span [innerHTML]="'Logistics Service' | translate"></span>
                     </a>
-                    <a class="dropdown-item" [routerLink]="['/demand/publish']" routerLinkActive="active">
+                    <a *ngIf="config.demandsEnabled" class="dropdown-item" [routerLink]="['/demand/publish']" routerLinkActive="active">
                         <i class="far fa-star"></i> <span [innerHTML]="'Demand' | translate"></span>
                     </a>
                 </div>
@@ -102,7 +102,7 @@
                     <i class="fa fa-search"></i> <span [innerHTML]="'Search' | translate"></span>
                 </a>
             </li>
-            <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <li *ngIf="config.demandsEnabled" class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
                 <a class="nav-link" routerLink="/demand">
                     <i class="far fa-star"></i> <span [innerHTML]="'Demands' | translate"></span>
                     <!-- New Demands Count -->

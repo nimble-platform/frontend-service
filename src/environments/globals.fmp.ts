@@ -109,6 +109,7 @@ export const config = {
     ],
     "defaultSearchIndex": "Category",
     "delegationEnabled": false,
+    "demandsEnabled": true,
     "displayCategoryCounts":false,
     "docLink": "https://www.nimble-project.org/docs_es/",
     "enableStripePayment": false,
