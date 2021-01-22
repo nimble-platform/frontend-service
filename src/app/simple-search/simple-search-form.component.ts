@@ -1181,7 +1181,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                         // we have already created a facet for this property
                         if (facetObj) {
                             facetObj.units.push(unit);
-                            this.setFacetValues(facets, facetObj, facet, unit, facetMetadata);
+                            this.setFacetValues(facets, facetObj, facet, unit, facetMetadata,genName);
                         }
                         // create a facet for this quantity property
                         else {
@@ -1217,7 +1217,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         };
         this.facetList.push(facetObj);
 
-        this.setFacetValues(facets, facetObj, facet, unit, facetMetadata);
+        this.setFacetValues(facets, facetObj, facet, unit, facetMetadata,genName);
     }
 
     /**
@@ -1228,8 +1228,9 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
      * @param facet
      * @param unit
      * @param facetMetadata
+     * @param unitGenName
      */
-    private setFacetValues(facets: any, facetObj: any, facet: string, unit: string, facetMetadata: any[]): void {
+    private setFacetValues(facets: any, facetObj: any, facet: string, unit: string, facetMetadata: any[], unitGenName:string): void {
         for (let facet_inner of facets[facet].entry) {
             let displayedFacetValue = this.getDisplayedFacetValue(facet_inner.label, facets, facet, facetMetadata, unit);
             if (!displayedFacetValue) {
@@ -1240,7 +1241,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             if (displayedFacetValue !== '' && displayedFacetValue !== ':' && displayedFacetValue !== ' ' && displayedFacetValue.indexOf('urn:oasis:names:specification:ubl:schema:xsd') === -1) {
                 facetObj.total += facet_innerCount;
                 let isValueSelected = false;
-                if (this.isFacetValueSelected(facetObj.name, facet_inner.label)) {
+                if (this.isFacetValueSelected(unitGenName ? unitGenName :facetObj.name, facet_inner.label)) {
                     facetObj.selected = true;
                     isValueSelected = true;
                 }
@@ -1249,7 +1250,8 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                     'realName': displayedFacetValue, // the displayed label
                     'count': facet_innerCount,
                     'unit': unit, // unit
-                    'selected': isValueSelected
+                    'selected': isValueSelected,
+                    "unitGenName": unit ? unitGenName : null // solr index field name for the option
                 });
             }
         }
@@ -1721,14 +1723,22 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     }
 
     getFacetName(facet: string): string {
-        let name = facet;
         for (let i = 0; i < this.facetList.length; i++) {
             const comp = this.facetList[i].name;
+            // check the facet name
             if (comp.localeCompare(facet) == 0) {
-                name = this.facetList[i].realName;
+                return this.getName(this.facetList[i].realName);
+            }
+            // check the facet option names
+            else if(this.facetList[i].units){
+                for(let option of this.facetList[i].options){
+                    if (option.unitGenName.localeCompare(facet) == 0) {
+                        return this.getName(this.facetList[i].realName);
+                    }
+                }
             }
         }
-        return this.getName(name);
+        return this.getName(facet);
     }
 
     getFacetQueryName(facet: string): string {
@@ -1758,6 +1768,11 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         let facetNameValue = facet.split(':');
         let facetName = facetNameValue[0];
         let value = facetNameValue[1];
+        // handle the facets with quantity type
+        if(facetName.endsWith("_dvalues")){
+            let facetDetails = this.facetList.find(f => facetName.startsWith(f.localName))
+            return facetDetails.options.find(option => option.unitGenName === facetName).realName;
+        }
         value = value.split('@')[0];
         value = value.replace(/"/g, '');
         // use the translation of activity sector
