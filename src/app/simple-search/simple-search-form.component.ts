@@ -45,6 +45,8 @@ import * as L from 'leaflet';
 import 'style-loader!leaflet/dist/leaflet.css';
 import {UserService} from '../user-mgmt/user.service';
 import {Address} from '../user-mgmt/model/address';
+import {Facet} from './model/facet';
+import {FacetOption} from './model/facet-option';
 
 
 @Component({
@@ -153,7 +155,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     model = new Search('');
     objToSubmit = new Search('');
     // keeps the facet list set when the product/company results are received
-    facetList: any;
+    facetList: Facet[];
     facetQuery: any[];
     // results of product/company search
     searchResults: any;
@@ -1005,7 +1007,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             let genName = 'manufacturer.brandName';
             let name = 'manufacturer.' + DEFAULT_LANGUAGE() + '_brandName';
             let brandNameMap = companyFacetMap.get(DEFAULT_LANGUAGE() + '_brandName');
-            let options: any[] = [];
+            let options: FacetOption[] = [];
             brandNameMap.forEach((count, brandName) => {
                 if (brandName != '') {
                     let delimiterIndex = brandName.indexOf('@');
@@ -1022,19 +1024,19 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                     if (facetQueries.indexOf(fq) != -1) {
                         inFacetQuery = true;
                     }
-                    options.push({
+                    options.push(new FacetOption({
                         'name': brandName,
                         'realName': brandName,
                         'count': count,
                         'languageId': languageId,
                         "selected": isValueSelected
-                    });
+                    }));
                 }
             });
             if (total == 0) {
                 total = 1;
             }
-            this.facetList.push({
+            this.facetList.push(new Facet({
                 'name': name,
                 'genName': genName,
                 'realName': this.getName(genName, this.product_vendor),
@@ -1043,7 +1045,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 'total': total,
                 'selected': selected,
                 'expanded': false
-            });
+            }));
 
             this.sortFacetObj(this.facetList[this.facetList.length - 1]);
         }
@@ -1072,7 +1074,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                     continue;
                 }
                 //creating options[]
-                let options: any[] = [];
+                let options: FacetOption[] = [];
 
                 for (let facet_inner of res.facets[facet].entry) {
                     facet_innerLabel = facet_inner.label;
@@ -1089,19 +1091,19 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                             selected = true;
                             isValueSelected = true;
                         }
-                        options.push({
+                        options.push(new FacetOption({
                             'name': facet_inner.label,
                             'realName': facet.endsWith("activitySectors") ? this.translate.instant(facet_innerLabel) : facet_innerLabel, // use the translation of activity sector
                             'count': facetCount,
                             'selected': isValueSelected
-                        });
+                        }));
                     }
                 }
 
                 if (total == 0) {
                     total = 1;
                 }
-                this.facetList.push({
+                this.facetList.push(new Facet({
                     'name': name,
                     'genName': genName,
                     'realName': this.getName(genName, this.product_vendor),
@@ -1110,7 +1112,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                     'total': total,
                     'selected': selected,
                     'expanded': false
-                });
+                }));
                 this.sortFacetObj(this.facetList[this.facetList.length - 1]);
             }
         }
@@ -1201,7 +1203,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
 
     private createNewFacetObject(facet: string, genName: string, facetTranslatedLabel: string, unit: string, showContent: boolean, localName: string,
                                  facets: any, facetMetadata: any[]): void {
-        const facetObj: any = {
+        const facetObj: Facet = new Facet({
             'name': facet,
             'genName': genName,
             'realName': facetTranslatedLabel,
@@ -1214,7 +1216,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             'expanded': false,
             'localName': localName,
             'dataType': facetMetadata[facet] ? facetMetadata[facet].dataType : null
-        };
+        });
         this.facetList.push(facetObj);
 
         this.setFacetValues(facets, facetObj, facet, unit, facetMetadata,genName);
@@ -1245,14 +1247,14 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                     facetObj.selected = true;
                     isValueSelected = true;
                 }
-                facetObj.options.push({
+                facetObj.options.push(new FacetOption({
                     'name': facet_inner.label, // the label with the language id, if there is any
                     'realName': displayedFacetValue, // the displayed label
                     'count': facet_innerCount,
                     'unit': unit, // unit
                     'selected': isValueSelected,
                     "unitGenName": unit ? unitGenName : null // solr index field name for the option
-                });
+                }));
             }
         }
         this.sortFacetObj(facetObj);
@@ -1330,7 +1332,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         return null;
     }
 
-    private sortFacetObj(facetObj: any) {
+    private sortFacetObj(facetObj: Facet) {
         facetObj.options.sort(function (a, b) {
             const a_c = a.realName;
             const b_c = b.realName;
