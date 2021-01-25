@@ -1192,7 +1192,26 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                     } else {
                         continue;
                     }
-                } else {
+                }
+                // handle packaging amount
+                else if(facet.endsWith("package")){
+                    // get the unit for the packaging amount
+                    let packagingUnitFacet = facets[facet+"Unit"];
+                    // get corresponding facet
+                    let facetObj = this.facetList.find(f => f.localName === "package");
+                    // quantity unit
+                    let unit = packagingUnitFacet.entry[0].label;
+                    // we have already created a facet for this property
+                    if (facetObj) {
+                        facetObj.units.push(unit);
+                        this.setFacetValues(facets, facetObj, facet, unit, facetMetadata,genName);
+                    }
+                    // create a facet for this quantity property
+                    else {
+                        this.createNewFacetObject(facet, genName, this.translate.instant("Packaging"), unit, showContent, "package", facets, facetMetadata);
+                    }
+                }
+                else {
                     this.createNewFacetObject(facet, genName, facetTranslatedLabel, null, showContent, null, facets, facetMetadata);
                 }
             }
@@ -1773,6 +1792,10 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         // handle the facets with quantity type
         if(facetName.endsWith("_dvalues")){
             let facetDetails = this.facetList.find(f => facetName.startsWith(f.localName))
+            return facetDetails.options.find(option => option.unitGenName === facetName).realName;
+        }
+        if(facetName.endsWith("package")){
+            let facetDetails = this.facetList.find(f => facetName.endsWith(f.localName))
             return facetDetails.options.find(option => option.unitGenName === facetName).realName;
         }
         value = value.split('@')[0];
