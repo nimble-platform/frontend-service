@@ -400,7 +400,7 @@ export const product_filter_mappings = {
     "origin": "Vendor Origin"
 };
 export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "doctype", "manufacturerId", "manufacturerItemId", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType", "allLabels", "sparePart"];
-export const product_nonfilter_regex = ["_packageUnit", "lmf.", "manufacturer.", "_id", "_lowercaseLabel", "_txt", "_desc", "_label", "_key", "_price", "_deliveryTime","_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass","baseQuantity","items_package","_deliveryTime"];
+export const product_nonfilter_regex = ["_baseQuantityUnit","_packageUnit", "lmf.", "manufacturer.", "_id", "_lowercaseLabel", "_txt", "_desc", "_label", "_key", "_price", "_deliveryTime","_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass","baseQuantity","items_package","_deliveryTime"];
 export const product_nonfilter_data_type = ["string","double","price","deliveryPeriod"]
 export const product_configurable = [];
 export const product_default = {};

@@ -1193,12 +1193,25 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                         continue;
                     }
                 }
-                // handle packaging amount
-                else if(facet.endsWith("package")){
+                // handle packaging amount and base quantity amount
+                else if(facet.endsWith("package") || facet.endsWith("baseQuantity")){
+                    let isPackageFacet = facet.endsWith("package");
+                    // translation key for the facet name
+                    let translationKey = null;
+                    // local name of facet
+                    let localName = null;
+                    if(isPackageFacet){
+                        translationKey = "Packaging";
+                        localName = "package";
+                    } else{
+                        translationKey = "Base Quantity";
+                        localName = "baseQuantity";
+                    }
+
                     // get the unit for the packaging amount
                     let packagingUnitFacet = facets[facet+"Unit"];
                     // get corresponding facet
-                    let facetObj = this.facetList.find(f => f.localName === "package");
+                    let facetObj = this.facetList.find(f => f.localName === localName);
                     // quantity unit
                     let unit = packagingUnitFacet.entry[0].label;
                     // we have already created a facet for this property
@@ -1208,7 +1221,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                     }
                     // create a facet for this quantity property
                     else {
-                        this.createNewFacetObject(facet, genName, this.translate.instant("Packaging"), unit, showContent, "package", facets, facetMetadata);
+                        this.createNewFacetObject(facet, genName, this.translate.instant(translationKey), unit, showContent, localName, facets, facetMetadata);
                     }
                 }
                 else {
@@ -1794,7 +1807,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             let facetDetails = this.facetList.find(f => facetName.startsWith(f.localName))
             return facetDetails.options.find(option => option.unitGenName === facetName).realName;
         }
-        if(facetName.endsWith("package")){
+        if(facetName.endsWith("package") || facetName.endsWith("baseQuantity")){
             let facetDetails = this.facetList.find(f => facetName.endsWith(f.localName))
             return facetDetails.options.find(option => option.unitGenName === facetName).realName;
         }
