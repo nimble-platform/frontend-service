@@ -18,6 +18,7 @@ export class FacetOption {
     public count: number = 0; // the result count
     public languageId: string = null; // the language id of the facet option, used for the brand name facet options
     public selected: boolean = false; // whether the facet option is selected
+    public unit: string = null // unit for the quantity facet options
     public unitGenName: string = null; // the name of solr index field for facet option, used for the quantity facet options since each unit has a different index field name on solr
 
     constructor(json?: any) {
@@ -28,6 +29,7 @@ export class FacetOption {
             this.languageId = json.languageId;
             this.selected = json.selected;
             this.unitGenName = json.unitGenName;
+            this.unit = json.unit;
         }
     }
 }
