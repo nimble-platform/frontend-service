@@ -14,7 +14,7 @@
    limitations under the License.
  -->
 
-<p><span [innerHTML]="'All published products / services must belong to at least one category, which will describe the product / service and help customers find your offering.' | translate"></span></p>
+<p *ngIf="titleTranslationKey"><span [innerHTML]="titleTranslationKey | translate"></span></p>
 <div class="form-group row d-flex">
     <div class="col-12 inline">
         <form #categorySearch="ngForm" (ngSubmit)="onSearchCategory()" novalidate>

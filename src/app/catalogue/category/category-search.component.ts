@@ -46,6 +46,7 @@ type SelectedTab = "TREE"
 export class CategorySearchComponent implements OnInit {
     // whether the categories are selected for the publishing
     @Input() categoriesSelected:boolean = false;
+    @Input() titleTranslationKey:string = null;
     @Output() onCategoryRemoved = new EventEmitter<string>();
     selectedTab: SelectedTab = "TREE";
 

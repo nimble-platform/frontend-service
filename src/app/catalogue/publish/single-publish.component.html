@@ -25,6 +25,7 @@
     <!--Category selection-->
     <div *ngIf="publishingStep == 'Category'" class="space-before">
         <category-search
+                titleTranslationKey="All published products / services must belong to at least one category, which will describe the product / service and help customers find your offering."
                 [categoriesSelected]="categorySelectedForPublishing"
                 (onCategoryRemoved)="onRemoveCategory($event)"
         ></category-search>
