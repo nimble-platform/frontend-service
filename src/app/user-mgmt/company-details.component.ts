@@ -121,8 +121,11 @@ export class CompanyDetailsComponent implements OnInit {
                         this.details = details;
                         this.setCompanyContacts();
                         // retrieve the translations of industry sectors
-                        let industrySectors = selectValueOfTextObject(details.details.industrySectors).split("\n");
-                        this.industrySectorTranslations = industrySectors.map(industrySector => this.translate.instant(industrySector)).join("\n");
+                        let industrySectorValue = selectValueOfTextObject(details.details.industrySectors)
+                        if(industrySectorValue !== ''){
+                            let industrySectors = industrySectorValue.split("\n");
+                            this.industrySectorTranslations = industrySectors.map(industrySector => this.translate.instant(industrySector)).join("\n");
+                        }
 
                         this.initCallStatus.callback("Details successfully fetched", true);
                     })
