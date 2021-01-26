@@ -1240,7 +1240,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             'genName': genName,
             'realName': facetTranslatedLabel,
             'options': [],
-            'units': unit ? [unit] : null, // available units for this quantity properties
+            'units': unit !== null ? [unit] : null, // available units for this quantity properties
             'selectedUnit': unit, // selected unit in the facet
             'total': 0,
             'showContent': showContent,
@@ -2320,6 +2320,17 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             }
         }
         return false;
+    }
+
+    /**
+     * Returns the facet options for the selected unit if the facet options belong to a quantity facet.
+     * Otherwise, returns the given facet options.
+     * */
+    getFacetOptions(options:FacetOption[],selectedUnit:string){
+        if(selectedUnit !== null){
+            return options.filter(option => option.unit === selectedUnit);
+        }
+        return options;
     }
 
     // methods for catalogue exchange functionality

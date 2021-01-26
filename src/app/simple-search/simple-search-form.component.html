@@ -670,7 +670,7 @@
 
                         </div>
                         <!-- Other Filters -->
-                        <div *ngIf="checkOtherCatCount()>0">
+                        <div *ngIf="checkOtherCatCount()>0 && productOtherFilter">
 
                             <div class="pointer"
                                  (click)="productOtherFilter.isCollapsed=!productOtherFilter.isCollapsed">
@@ -707,7 +707,7 @@
                                             {{ facet.realName }}
                                         </div>
                                         <div *ngIf="facet.showContent" class="card-body">
-                                            <div *ngFor="let facetInner of facet.options; let i = index">
+                                            <div *ngFor="let facetInner of getFacetOptions(facet.options,facet.selectedUnit); let i = index">
                                                 <div *ngIf="!facetInner.selected && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
                                                     <span *ngIf="facet.dataType != 'boolean'" class="clickable"
                                                           (click)="setFacet(facetInner.unitGenName ? facetInner.unitGenName : facet.name,facetInner.name,facet.genName)"
@@ -729,7 +729,7 @@
                                                        aria-hidden="true"></i> ({{ facetInner.count }})
                                                 </div>
                                             </div>
-                                            <div *ngIf="facet.options.length>maxFacets">
+                                            <div *ngIf="getFacetOptions(facet.options,facet.selectedUnit).length>maxFacets">
                                                 <hr>
                                                 <span class="clickable" (click)="facet.expanded=!facet.expanded"><span
                                                         *ngIf="!facet.expanded"><span
