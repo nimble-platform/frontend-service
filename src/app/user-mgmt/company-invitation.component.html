@@ -88,23 +88,25 @@
         <tr [hidden]="!membersFetched || invPending.length > 0">
             <td colspan="4"><span [innerHTML]="'No data' | translate"></span></td>
         </tr>
-        <tr *ngFor="let inv of invPending">
-            <td>{{inv.email}}</td>
-            <td>
-                <span *ngIf="!inv.pending" class="badge badge-success"><span [innerHTML]="'Registered' | translate"></span></span>
-                <span *ngIf="inv.pending" class="badge badge-info"><span [innerHTML]="'Invitation pending' | translate"></span></span>
-            </td>
-            <td>
+        <ng-container *ngFor="let inv of invPending">
+            <tr *ngIf="inv.email">
+                <td>{{inv.email}}</td>
+                <td>
+                    <span *ngIf="!inv.pending" class="badge badge-success"><span [innerHTML]="'Registered' | translate"></span></span>
+                    <span *ngIf="inv.pending" class="badge badge-info"><span [innerHTML]="'Invitation pending' | translate"></span></span>
+                </td>
+                <td>
                 <span *ngFor="let role of userRoles">
                     <div *ngIf="inv.roleIDs.indexOf(role.identifier)!=-1"><span [innerHTML]="role.name | translate"></span></div>
                 </span>
-            </td>
-            <td *ngIf="appComponent.checkRoles('comp') && !platformManagerMode">
-                <button *ngIf="!inv.pending&&!checkMail(inv.email)" class="btn btn-primary btn-sm" (click)="editRole(inv);openModal(role);"><span [innerHTML]="'Edit' | translate"></span></button>
-                <button *ngIf="inv.pending&&!checkMail(inv.email)&&appComponent.checkRoles('legal')" class="btn btn-danger btn-sm" (click)="cancelInvite(inv)"><span [innerHTML]="'Cancel' | translate"></span></button>
-                <button *ngIf="!inv.pending&&!checkMail(inv.email)&&appComponent.checkRoles('legal')" class="btn btn-danger btn-sm ml-2" (click)="deleteInvite(inv)"><span [innerHTML]="'Delete' | translate"></span></button>
-            </td>
-        </tr>
+                </td>
+                <td *ngIf="appComponent.checkRoles('comp') && !platformManagerMode">
+                    <button *ngIf="!inv.pending&&!checkMail(inv.email)" class="btn btn-primary btn-sm" (click)="editRole(inv);openModal(role);"><span [innerHTML]="'Edit' | translate"></span></button>
+                    <button *ngIf="inv.pending&&!checkMail(inv.email)&&appComponent.checkRoles('legal')" class="btn btn-danger btn-sm" (click)="cancelInvite(inv)"><span [innerHTML]="'Cancel' | translate"></span></button>
+                    <button *ngIf="!inv.pending&&!checkMail(inv.email)&&appComponent.checkRoles('legal')" class="btn btn-danger btn-sm ml-2" (click)="deleteInvite(inv)"><span [innerHTML]="'Delete' | translate"></span></button>
+                </td>
+            </tr>
+        </ng-container>
     </table>
 </div>
 
