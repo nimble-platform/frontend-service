@@ -50,7 +50,7 @@
                     </select>
                 </div>
 
-                <div *ngIf="appComponent.checkRoles('catalogue')" class="col-1 d-flex justify-content-center m-auto">
+                <div *ngIf="appComponent.checkRoles('catalogue') || appComponent.checkRoles('export-catalogue')" class="col-1 d-flex justify-content-center m-auto">
                     <ul class="nav navbar-nav">
                         <li ngbDropdown class="nav-item dropdown">
                             <button class="navbar-toggler bordered" type="button" aria-controls="navbarNavAltMarkup"
@@ -59,29 +59,31 @@
                             </button>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuUser"
                                  ngbDropdownMenu>
-                                <button class="dropdown-item" (click)="navigateToThePublishPage()">
-                                    <span [innerHTML]="'Publish Product' | translate"></span>
-                                </button>
-                                <button class="dropdown-item" (click)="navigateToBulkUploadPage()">
-                                    <span [innerHTML]="'Publish Multiple Products' | translate"></span>
-                                </button>
-                                <button class="dropdown-item" (click)="onUploadImage()">
-                                    <span [innerHTML]="'Upload Image Package' | translate"></span>
-                                </button>
-                                <button class="dropdown-item" (click)="onExportCatalogue()">
+                                <ng-container *ngIf="appComponent.checkRoles('catalogue')">
+                                    <button class="dropdown-item" (click)="navigateToThePublishPage()">
+                                        <span [innerHTML]="'Publish Product' | translate"></span>
+                                    </button>
+                                    <button class="dropdown-item" (click)="navigateToBulkUploadPage()">
+                                        <span [innerHTML]="'Publish Multiple Products' | translate"></span>
+                                    </button>
+                                    <button class="dropdown-item" (click)="onUploadImage()">
+                                        <span [innerHTML]="'Upload Image Package' | translate"></span>
+                                    </button>
+                                    <button class="dropdown-item" (click)="onChangeProductStatus()">
+                                        <span [innerHTML]="'Change Status' | translate"></span>
+                                    </button>
+                                    <button class="dropdown-item" (click)="onDeleteCatalogueImages()">
+                                        <span [innerHTML]="'Delete All Product Images' | translate"></span>
+                                    </button>
+                                    <button class="dropdown-item" (click)="onAddingCatalogue()">
+                                        <span [innerHTML]="'Add Catalogue' | translate"></span>
+                                    </button>
+                                    <button class="dropdown-item" (click)="onDeleteCatalogue()">
+                                        <span [innerHTML]="'Delete Catalogue' | translate"></span>
+                                    </button>
+                                </ng-container>
+                                <button *ngIf="appComponent.checkRoles('export-catalogue')" class="dropdown-item" (click)="onExportCatalogue()">
                                     <span [innerHTML]="'Export Catalogue' | translate"></span>
-                                </button>
-                                <button class="dropdown-item" (click)="onChangeProductStatus()">
-                                    <span [innerHTML]="'Change Status' | translate"></span>
-                                </button>
-                                <button class="dropdown-item" (click)="onDeleteCatalogueImages()">
-                                    <span [innerHTML]="'Delete All Product Images' | translate"></span>
-                                </button>
-                                <button class="dropdown-item" (click)="onAddingCatalogue()">
-                                    <span [innerHTML]="'Add Catalogue' | translate"></span>
-                                </button>
-                                <button class="dropdown-item" (click)="onDeleteCatalogue()">
-                                    <span [innerHTML]="'Delete Catalogue' | translate"></span>
                                 </button>
                             </div>
                         </li>

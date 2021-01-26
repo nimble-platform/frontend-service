@@ -132,7 +132,7 @@ export class CatalogueViewComponent implements OnInit {
 
     constructor(private cookieService: CookieService,
         private publishService: PublishService,
-        private appComponent: AppComponent,
+        public appComponent: AppComponent,
         private catalogueService: CatalogueService,
         private categoryService: CategoryService,
         public networkCompanyListService: NetworkCompanyListService,

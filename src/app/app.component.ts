@@ -796,6 +796,10 @@ export class AppComponent implements OnInit, AfterViewInit {
                 if (demo)
                     this.allowed = true;
                 break;
+            case "export-catalogue":
+                if (all_rights || publish || sales || monitor)
+                    this.allowed = true;
+                break;
             default:
                 break;
         }
