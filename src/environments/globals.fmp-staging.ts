@@ -111,6 +111,7 @@ export const config = {
     "enableStripePayment": false,
     "faviconPath": "./assets/B2B_favicon.ico",
     "frameContractTabEnabled": true,
+    "hideContactInformationInCompanyDetails": true,
     "hideLogAnalytics": true,
     "hidePriceFunctionality": false,
     "hideTradeDetailsTab": true,

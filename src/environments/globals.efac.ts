@@ -118,6 +118,7 @@ export const config = {
     "enableStripePayment": true,
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
+    "hideContactInformationInCompanyDetails": false,
     "hideLogAnalytics": false,
     "hidePriceFunctionality": true,
     "hideTradeDetailsTab": false,

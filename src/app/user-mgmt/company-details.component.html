@@ -218,7 +218,7 @@
         </div>
     </div>
     <!-- Company Contacts -->
-    <div *ngIf="companyContacts.length > 0" class="col-12">
+    <div *ngIf="!config.hideContactInformationInCompanyDetails && companyContacts.length > 0" class="col-12">
         <hr>
         <h4 [innerHTML]="'Company Contact'|translate" class="space-after"></h4>
         <table class="table table-striped table-bordered mb-1 mt-0">

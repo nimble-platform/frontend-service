@@ -112,6 +112,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - enableStripePayment: Boolean flag if the stripe payment is enabled or not
 - faviconPath: Link to the favicon
 - frameContractEnabled: Boolean flag is frame contracts are applicable
+- hideContactInformationInCompanyDetails: Boolean flag if the company contact is shown in the company details page
 - hideLogAnalytics: Boolean flag if the log analytics tab in platform analytics is hidden
 - hidePriceFunctionality: Boolean flag if the functionality of hiding prices for the catalogue is enabled
 - hideTradeDetailsTab: Boolean flag whether to hide the trade details in the company settings page
@@ -226,6 +227,7 @@ export const config = {
     "enableStripePayment": false,
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
+    "hideContactInformationInCompanyDetails": false,
     "hideLogAnalytics": false,
     "hidePriceFunctionality": false,
     "hideTradeDetailsTab": true,

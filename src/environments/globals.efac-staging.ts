@@ -116,6 +116,7 @@ export const config = {
     "docLink": "https://www.nimble-project.org/docs/",
     "enableStripePayment": true,
     "faviconPath": "./assets/favicon.ico",
+    "hideContactInformationInCompanyDetails": false,
     "hideLogAnalytics": false,
     "hidePriceFunctionality": true,
     "hideTradeDetailsTab": false,
