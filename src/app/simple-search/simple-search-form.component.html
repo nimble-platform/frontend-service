@@ -530,11 +530,8 @@
                             <div *ngIf="!circularEconomyCertificatesFilter.isCollapsed">
                                 <div *ngFor="let facet of circularEconomyCertificatesFilter.facets">
                                     <div class="card mb-3">
-                                        <div class="card-header" (click)="onFacetClicked(facet)">
-                                            {{ getName(facet.realName) }}
-                                        </div>
                                         <!-- Facet values... Show them when the facet is expanded -->
-                                        <div class="card-body" *ngIf="facet.showContent">
+                                        <div class="card-body">
                                             <div *ngFor="let facetInner of facet.options; let i=index">
                                                 <div *ngIf="!facetInner.selected && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
                                                     <span class="clickable"
