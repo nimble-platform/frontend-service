@@ -192,6 +192,7 @@ export const config = {
     "vatEnabled": true,
     "projectsEnabled": true,
     "requiredAgreements": [],
+    "separateFilterForCircularEconomyCertificatesInCompanySearch": false,
     "showChat": false,
     "showAgent": false,
     "showBusinessKeywordsInCompanyDetails":true,

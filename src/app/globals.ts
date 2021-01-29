@@ -141,6 +141,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - requiredAgreements: Array of JSON objects defining the terms a user has to agree to upon registration. Each entry uses the following structure:
 	* title: Title to be displayed on the UI
 	* src: Link to the agreement document
+- separateFilterForCircularEconomyCertificatesInCompanySearch: Boolean flag if the separate filter will be created for company circular economy certificates in the company search
 - showChat: Boolean flag if the chat is available on the instance
 - showAgent: Boolean flag if the agent configuration is available on the instance
 - showBusinessKeywordsInCompanyDetails: Boolean flag if the business keywords are visible in the company details page
@@ -345,6 +346,7 @@ export const config = {
             "src": "./assets/eula.pdf"
         }
     ],
+    "separateFilterForCircularEconomyCertificatesInCompanySearch": false,
     "showChat": true,
     "showAgent": true,
     "showBusinessKeywordsInCompanyDetails":true,

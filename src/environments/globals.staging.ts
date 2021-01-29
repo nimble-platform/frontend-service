@@ -229,6 +229,7 @@ export const config = {
             "src": "./assets/eula.pdf"
         }
     ],
+    "separateFilterForCircularEconomyCertificatesInCompanySearch": false,
     "showChat": true,
     "showAgent": true,
     "showBusinessKeywordsInCompanyDetails":true,

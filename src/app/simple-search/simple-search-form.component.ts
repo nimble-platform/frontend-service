@@ -74,6 +74,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     product_base_quantity = product_base_quantity;
     product_base_quantity_unit = product_base_quantity_unit;
     product_price = myGlobals.product_price;
+    separateFilterForCircularEconomyCertificatesInCompanySearch = myGlobals.config.separateFilterForCircularEconomyCertificatesInCompanySearch;
     product_delivery_time = myGlobals.product_delivery_time;
     product_currency = myGlobals.product_currency;
     product_filter_prod = myGlobals.product_filter_prod;
@@ -2303,6 +2304,14 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                         facet.expanded = true;
                     }
                 }
+            }
+        }
+        // for company search, circular economy certificate facet is included in the company main filter
+        // Depending on the config, we can create a separate filter for circular economy certificates
+        if(this.separateFilterForCircularEconomyCertificatesInCompanySearch){
+            let circularEconomyFacetIndex = this.companyFilter.facets.findIndex(facet => facet.genName === this.config.circularEconomy.indexField);
+            if(circularEconomyFacetIndex !== -1){
+                this.companyFilter.facets.splice(circularEconomyFacetIndex,1);
             }
         }
     }

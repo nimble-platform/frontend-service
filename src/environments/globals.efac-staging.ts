@@ -291,6 +291,7 @@ export const config = {
             "src": "./assets/tos.pdf"
         }
     ],
+    "separateFilterForCircularEconomyCertificatesInCompanySearch": false,
     "showChat": false,
     "showAgent": false,
     "showBusinessKeywordsInCompanyDetails":true,

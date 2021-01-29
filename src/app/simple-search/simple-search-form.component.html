@@ -797,6 +797,51 @@
                             <hr/>
 
                         </div>
+                        <!-- Circular Economy Certificates Filters -->
+                        <div *ngIf="circularEconomyCertificatesFilter && circularEconomyCertificatesFilter.facets.length > 0">
+
+                            <div class="pointer"
+                                 (click)="circularEconomyCertificatesFilter.isCollapsed=!circularEconomyCertificatesFilter.isCollapsed">
+                                <h5><span [innerHTML]="'Sustainability / Environment Certificates' | translate"></span>
+                                    <span *ngIf="circularEconomyCertificatesFilter.isCollapsed"><i
+                                            class="fa fa-angle-double-down pl-1"></i></span><span
+                                            *ngIf="!circularEconomyCertificatesFilter.isCollapsed"><i
+                                            class="fa fa-angle-double-up pl-1"></i></span></h5>
+                            </div>
+
+                            <div *ngIf="!circularEconomyCertificatesFilter.isCollapsed">
+                                <div *ngFor="let facet of circularEconomyCertificatesFilter.facets">
+                                    <div class="card mb-3">
+                                        <!-- Facet values... Show them when the facet is expanded -->
+                                        <div class="card-body">
+                                            <div *ngFor="let facetInner of facet.options; let i=index">
+                                                <div *ngIf="!facetInner.selected && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
+                                                    <span class="clickable"
+                                                          (click)="setFacet(facet.name,facetInner.name,facet.genName)"
+                                                          [title]="facetInner.realName">{{ facetInner.realName.substring(0, 30) }}
+                                                        <span *ngIf="facetInner.realName.length>30">...</span></span>
+                                                </div>
+                                                <div *ngIf="facetInner.selected && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
+                                                    <span class="clickable"
+                                                          (click)="setFacet(facet.name,facetInner.name,facet.genName)"
+                                                          [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0, 30) }}
+                                                        <span *ngIf="facetInner.realName.length>30">...</span></b></span>
+                                                </div>
+                                            </div>
+                                            <div *ngIf="facet.options.length>maxFacets">
+                                                <hr>
+                                                <span class="clickable" (click)="facet.expanded=!facet.expanded"><span
+                                                        *ngIf="!facet.expanded"><span
+                                                        [innerHTML]="'Show more' | translate"></span></span><span
+                                                        *ngIf="facet.expanded"><span
+                                                        [innerHTML]="'Show less' | translate"></span></span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr/>
+                        </div>
                         <!-- Rating/Trust Filters -->
                         <div *ngIf="checkCompTrustCatCount()>0">
 
