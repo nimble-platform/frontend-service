@@ -44,8 +44,8 @@
                     <option value="score desc" [selected]="sort=='score desc'"></option>
                     <option value="lowercaseLegalName asc" [selected]="sort=='lowercaseLegalName asc'"><span [innerHTML]="'A -> Z' | translate"></span></option>
                     <option value="lowercaseLegalName desc" [selected]="sort=='lowercaseLegalName desc'"><span [innerHTML]="'Z -> A' | translate"></span></option>
-                    <option *ngIf="mgmt_view" value="uri asc" [selected]="sort=='uri asc'"><span [innerHTML]="'ID: 0 -> 9' | translate"></span></option>
-                    <option *ngIf="mgmt_view" value="uri desc" [selected]="sort=='uri desc'"><span [innerHTML]="'ID: 9 -> 0' | translate"></span></option>
+                    <option *ngIf="mgmt_view" value="idSorted asc" [selected]="sort=='idSorted asc'"><span [innerHTML]="'ID: 0 -> 9' | translate"></span></option>
+                    <option *ngIf="mgmt_view" value="idSorted desc" [selected]="sort=='idSorted desc'"><span [innerHTML]="'ID: 9 -> 0' | translate"></span></option>
                 </select>
             </div>
         </div>
