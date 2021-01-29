@@ -217,6 +217,12 @@
             </div>
         </div>
     </div>
+    <!-- Company Certificates -->
+    <div *ngIf="details.certificates.length > 0" class="col-12">
+        <hr>
+        <company-certificates-settings [settings]="details" [certificates]="details.certificates" [onlyCertificatesReadOnly]="true">
+        </company-certificates-settings>
+    </div>
     <!-- Company Contacts -->
     <div *ngIf="!config.hideContactInformationInCompanyDetails && companyContacts.length > 0" class="col-12">
         <hr>

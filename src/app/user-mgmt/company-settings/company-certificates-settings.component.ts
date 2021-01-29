@@ -48,7 +48,8 @@ export class CompanyCertificatesSettingsComponent {
     circularEconomyCertificates: Certificate[];
     arbitraryCertificates: Certificate[];
     @Input() ppapLevel: any;
-
+    // if true, only company certificates are displayed in readonly mode hiding PPAP level
+    @Input() onlyCertificatesReadOnly:boolean = false;
     @Output() onSaveEvent: EventEmitter<void> = new EventEmitter();
 
     config = myGlobals.config;
