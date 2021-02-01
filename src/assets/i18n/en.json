@@ -785,6 +785,8 @@
     "Invalid country": "Invalid country",
     "Invalid email or password": "Invalid email or password",
     "Invitation pending": "Invitation pending",
+    "Invitation to platform": "Invitation to {{platformName}}",
+    "Invite to Platform": "Invite to Platform",
     "Invoice": "Invoice",
     "Invoice Id": "Invoice Id",
     "IoT Information": "IoT Information",

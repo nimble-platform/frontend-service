@@ -206,6 +206,9 @@
                     <a *ngIf="checkRoles('pm')" class="dropdown-item" routerLink="/analytics/platform" routerLinkActive="active">
                         <i class="fa fa-chart-area dd-icon"></i> <span [innerHTML]="'Platform Analytics' | translate"></span>
                     </a>
+                    <a *ngIf="isLoggedIn && config.invitationToPlatformEnabled" class="dropdown-item" [href]="getInvitationMailTo()">
+                        <i class="fas fa-user-plus dd-icon"></i> <span [innerHTML]="'Invite to Platform' | translate"></span>
+                    </a>
                 </div>
             </li>
         </ul>

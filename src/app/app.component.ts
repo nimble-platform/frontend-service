@@ -806,4 +806,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         return this.allowed;
     }
 
+    getInvitationMailTo(){
+        return "mailto:?subject=" + encodeURIComponent(this.translate.instant("Invitation to platform",{platformName:this.config.platformNameInMail}));
+    }
 }

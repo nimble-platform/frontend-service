@@ -127,6 +127,7 @@ export const config = {
         "en": "<br/>E-Mail: <a href='mailto:nimble@il.ibm.com'>nimble@il.ibm.com</a><br/>",
         "es": "<br/>Correo electrónico: <a href='mailto:nimble@il.ibm.com'>nimble@il.ibm.com</a><br/>"
     },
+    "invitationToPlatformEnabled": false,
     "kibanaConfig": {
         "companyDashboards": [],
         "companyGraphs": [],
