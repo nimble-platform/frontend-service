@@ -20,7 +20,6 @@ import {MultiTypeValue} from './multi-type-value';
 export class NonPublicInformation {
     constructor(
         public id: string = null,
-        public panelName: string = null,
         public value: MultiTypeValue = null
     ) {
     }

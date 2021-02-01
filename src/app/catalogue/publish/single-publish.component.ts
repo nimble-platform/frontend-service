@@ -1309,7 +1309,6 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
 
                 let nonPublicInformationUI = new NonPublicInformationUi();
                 nonPublicInformationUI.id = nonPublicInformation.id ;
-                nonPublicInformationUI.panelName = nonPublicInformation.panelName;
 
                 let indexes = []
                 let multiTypeValue = new MultiTypeValue();
@@ -1347,7 +1346,6 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
 
                 let nonPublicInformationUI = new NonPublicInformationUi();
                 nonPublicInformationUI.id = nonPublicInformation.id ;
-                nonPublicInformationUI.panelName = nonPublicInformation.panelName;
 
                 let indexes = []
                 let multiTypeValue = new MultiTypeValue();
@@ -1377,7 +1375,6 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
         for (let nonPublicInformationUI of this.nonPublicInformationUIs) {
             let nonPublicInformation:NonPublicInformation = new NonPublicInformation();
             nonPublicInformation.id = nonPublicInformationUI.id;
-            nonPublicInformation.panelName = nonPublicInformationUI.panelName;
 
             let multiTypeValue = new MultiTypeValue();
             multiTypeValue.valueQualifier = nonPublicInformationUI.value.valueQualifier;

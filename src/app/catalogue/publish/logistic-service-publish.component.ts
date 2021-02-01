@@ -526,7 +526,6 @@ export class LogisticServicePublishComponent implements OnInit , OnDestroy{
                 for (let catalogueLineNonPublicInformation of catalogueLine1.nonPublicInformation) {
                     let nonPublicInformation:NonPublicInformation = new NonPublicInformation();
                     nonPublicInformation.id = catalogueLineNonPublicInformation.id;
-                    nonPublicInformation.panelName = catalogueLineNonPublicInformation.panelName;
 
                     let property = catalogueLine1.goodsItem.item.additionalItemProperty.find(value => value.id === catalogueLineNonPublicInformation.id);
 

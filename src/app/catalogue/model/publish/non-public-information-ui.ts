@@ -20,7 +20,6 @@ import {MultiTypeValue} from './multi-type-value';
 export class NonPublicInformationUi {
     constructor(
         public id: string = null,
-        public panelName: string = null,
         public value: MultiTypeValue = null,
         public indexes: number[] = [] // keeps the indexes of product property values marked as non-public
     ) {
