@@ -74,6 +74,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     product_base_quantity = product_base_quantity;
     product_base_quantity_unit = product_base_quantity_unit;
     product_price = myGlobals.product_price;
+    product_price_hidden = myGlobals.product_price_hidden;
     separateFilterForCircularEconomyCertificatesInCompanySearch = myGlobals.config.separateFilterForCircularEconomyCertificatesInCompanySearch;
     product_delivery_time = myGlobals.product_delivery_time;
     product_currency = myGlobals.product_currency;

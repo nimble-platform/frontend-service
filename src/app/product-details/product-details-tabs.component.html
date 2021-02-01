@@ -79,41 +79,41 @@
     <div *ngIf="selectedTab === 'DETAILS'" class="p-3 col-12">
         <ng-container *ngIf="isLoggedIn">
             <!-- The product/service does not have any details -->
-            <div *ngIf="wrapper.getDimensions(false).length == 0 && wrapper.getUniquePropertiesWithValue().length === 0 && wrapper.getAdditionalDocuments().length === 0">
+            <div *ngIf="wrapper.getDimensions(false).length == 0 && wrapper.getPublicUniquePropertiesWithValue().length === 0 && wrapper.getAdditionalDocuments().length === 0">
                 <p class="p-1"><span [innerHTML]="'This product / service does not seem to have any details.' | translate"></span></p>
             </div>
 
             <div class="row p-1" >
                 <!-- Properties including dimensions -->
-                <div class="col-6" *ngIf="wrapper.getDimensions(false).length > 0 || wrapper.getUniquePropertiesWithValue().length > 0">
+                <div class="col-6" *ngIf="wrapper.getDimensions(false).length > 0 || wrapper.getPublicUniquePropertiesWithValue().length > 0">
                     <h3><span [innerHTML]="'Properties' | translate"></span></h3>
 
                     <table class="table table-sm">
                         <tbody>
-                            <!-- Dimensions -->
-                            <ng-container *ngIf="wrapper.getDimensions(false).length > 0">
-                                <tr *ngFor="let multiValuedDimension of wrapper.getDimensionMultiValue(false)">
-                                    <td><b>{{ multiValuedDimension.attributeID | translate }}: </b></td>
-                                    <td>{{getMultiValuedDimensionAsString(multiValuedDimension.measure)}}</td>
-                                </tr>
-                            </ng-container>
-                            <!-- Properties -->
-                            <ng-container *ngIf=" wrapper.getUniquePropertiesWithValue().length > 0">
-                                <tr *ngFor="let property of wrapper.getUniquePropertiesWithValue()">
-                                    <td><b>{{ getHumanReadablePropertyName(wrapper.getPropertyName(property)) }}: </b></td>
-                                    <td>
+                        <!-- Dimensions -->
+                        <ng-container *ngIf="wrapper.getDimensions(false).length > 0">
+                            <tr *ngFor="let multiValuedDimension of wrapper.getPublicDimensionMultiValue()">
+                                <td><b>{{ multiValuedDimension.attributeID | translate }}: </b></td>
+                                <td>{{getMultiValuedDimensionAsString(multiValuedDimension.measure)}}</td>
+                            </tr>
+                        </ng-container>
+                        <!-- Properties -->
+                        <ng-container *ngIf=" wrapper.getPublicUniquePropertiesWithValue().length > 0">
+                            <tr *ngFor="let property of wrapper.getPublicUniquePropertiesWithValue()">
+                                <td><b>{{ getHumanReadablePropertyName(wrapper.getPropertyName(property)) }}: </b></td>
+                                <td>
                                         <span *ngIf="property.valueQualifier !== 'FILE' && property.valueQualifier !== 'BOOLEAN'">
                                             {{ getPropertyValuesAsStrings(property).join(", ") }}
                                         </span>
-                                            <span *ngIf="property.valueQualifier === 'BOOLEAN'">
+                                    <span *ngIf="property.valueQualifier === 'BOOLEAN'">
                                             <i class="fa boolean-type {{getPropertyValuesAsStrings(property)[0] == 'true' ? 'fa-check': 'fa-times'}}" aria-hidden="true"></i>
                                         </span>
-                                        <ng-container *ngIf="property.valueQualifier === 'FILE'">
-                                            <file-input presentationMode="view" [binaryObjects]="property.valueBinary" [multiple]="true" [small]="true"></file-input>
-                                        </ng-container>
-                                    </td>
-                                </tr>
-                            </ng-container>
+                                    <ng-container *ngIf="property.valueQualifier === 'FILE'">
+                                        <file-input presentationMode="view" [binaryObjects]="property.valueBinary" [multiple]="true" [small]="true"></file-input>
+                                    </ng-container>
+                                </td>
+                            </tr>
+                        </ng-container>
                         </tbody>
                     </table>
                 </div>
@@ -140,23 +140,25 @@
         <ng-container *ngIf="isLoggedIn">
             <div style="flex-grow:1;">
                 <h3 *ngIf="wrapper.getPricePerItem() != 'On demand' || wrapper.getFreeSample() != 'No'" class="p-1"><span [innerHTML]="'Price' | translate"></span></h3>
-                <div *ngIf="wrapper.getPricePerItem() != 'On demand'" class="p-1">
+                <div *ngIf="wrapper.getPricePerItem() != 'On demand' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DEFAULT_PRICE) " class="p-1">
                     <strong><span [innerHTML]="'Price:' | translate"></span> </strong> {{ wrapper.getPricePerItemAmountUI()|amountUiTranslatePipe }}
                 </div>
-                <div *ngIf="config.vatEnabled && wrapper.getVat() != ''" class="p-1">
+                <div *ngIf="config.vatEnabled && wrapper.getVat() != '' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.VAT) " class="p-1">
                     <strong><span [innerHTML]="'VAT:' | translate"></span></strong> {{ wrapper.getVat() }}%
                 </div>
-                <div *ngIf="wrapper.getMinimumOrderQuantityString() != 'Not specified'" class="p-1">
+                <div *ngIf="wrapper.getMinimumOrderQuantityString() != 'Not specified' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.MINIMUM_ORDER_QUANTITY) " class="p-1">
                     <strong><span [innerHTML]="'Minimum Order Quantity:' | translate"></span></strong> {{ wrapper.getMinimumOrderQuantity()|quantityTranslatePipe }}
                 </div>
-                <div *ngIf="wrapper.getFreeSample() != 'No'" class="p-1">
+                <div *ngIf="wrapper.getFreeSample() != 'No' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.FREE_SAMPLE) " class="p-1">
                     <strong><span [innerHTML]="'Free Sample:' | translate"></span></strong>
                     <i class="fa boolean-type {{wrapper.getFreeSample() == 'Yes' ? 'fa-check': 'fa-times'}}" aria-hidden="true"></i>
                 </div>
-                <h3 *ngIf="wrapper.line.priceOption && wrapper.line.priceOption.length > 0" class="p-1"><span [innerHTML]="'Discounts/Charges' | translate"></span></h3>
-                <div class="p-1">
-                    <discount-details [catalogueLine]="wrapper.line" [companyNegotiationSettings]="settings.negotiationSettings" [readonly]="true"></discount-details>
-                </div>
+                <ng-container *ngIf="wrapper.line.priceOption && wrapper.line.priceOption.length > 0 && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DISCOUNT_CHARGES)">
+                    <h3 class="p-1"><span [innerHTML]="'Discounts/Charges' | translate"></span></h3>
+                    <div class="p-1">
+                        <discount-details [catalogueLine]="wrapper.line" [companyNegotiationSettings]="settings.negotiationSettings" [readonly]="true"></discount-details>
+                    </div>
+                </ng-container>
             </div>
         </ng-container>
         <ng-container *ngIf="!isLoggedIn">
@@ -167,32 +169,32 @@
     <!-- Delivery & Trading Tab -->
     <div *ngIf="selectedTab === 'DELIVERY_TRADING'" class="p-3 col-12">
         <div class="d-flex" *ngIf="isLogistics === false">
-            <div class="flex-item">
-                <h3 *ngIf="wrapper.getIncoterms() != 'None' || wrapper.getSpecialTerms() != 'None' || wrapper.getDeliveryPeriodString() != 'None'" class="pt-2 p-1"><span [innerHTML]="'Delivery Terms' | translate"></span></h3>
-                <div *ngIf="wrapper.getIncoterms() != 'None'" class="p-1">
+            <div *ngIf="wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.INCOTERMS) && (wrapper.getIncoterms() != 'None' || wrapper.getSpecialTerms() != 'None' || wrapper.getDeliveryPeriodString() != 'None')" class="flex-item">
+                <h3 class="pt-2 p-1"><span [innerHTML]="'Delivery Terms' | translate"></span></h3>
+                <div *ngIf="wrapper.getIncoterms() != 'None' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.INCOTERMS)" class="p-1">
                     <strong><span [innerHTML]="'Incoterms:' | translate"></span></strong> {{ wrapper.getIncoterms() | translate}}
                 </div>
-                <div *ngIf="wrapper.getSpecialTerms() != 'None'" class="p-1">
+                <div *ngIf="wrapper.getSpecialTerms() != 'None' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.SPECIAL_TERMS)" class="p-1">
                     <strong><span [innerHTML]="'Special Terms:' | translate"></span></strong> {{ wrapper.getSpecialTerms() }}
                 </div>
-                <div *ngIf="wrapper.getDeliveryPeriodString() != 'None'" class="p-1">
+                <div *ngIf="wrapper.getDeliveryPeriodString() != 'None' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DELIVERY_PERIOD)" class="p-1">
                     <strong><span [innerHTML]="'Delivery Period:' | translate"></span></strong> {{ wrapper.getDeliveryPeriod() | quantityTranslatePipe}}
                 </div>
             </div>
             <div class="flex-item">
-                <h3 *ngIf="wrapper.getPackaging() != 'Not specified'" class="pt-2 p-1"><span [innerHTML]="'Packaging' | translate"></span></h3>
-                <div *ngIf="wrapper.getPackaging() != 'Not specified'" class="p-1">
+                <h3 *ngIf="wrapper.getPackaging() != 'Not specified' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.PACKAGING_TYPE) && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.QUANTITY_PER_PACKAGE)" class="pt-2 p-1"><span [innerHTML]="'Packaging' | translate"></span></h3>
+                <div *ngIf="wrapper.getPackaging() != 'Not specified' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.PACKAGING_TYPE) && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.QUANTITY_PER_PACKAGE)" class="p-1">
                     <strong><span [innerHTML]="'Packaging' | translate"></span>: </strong> {{ wrapper.getPackagingAmountUI()|amountUiTranslatePipe }}
                 </div>
             </div>
-            <div class="flex-item">
+            <div *ngIf="wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.CUSTOMIZABLE) " class="flex-item">
                 <h3 class="pt-2 p-1"><span [innerHTML]="'Customization' | translate"></span></h3>
                 <div class="p-1">
                     <strong><span [innerHTML]="'Customizable' | translate"></span>: </strong>
                     <i class="fa boolean-type {{wrapper.getCustomizable() == 'Yes' ? 'fa-check': 'fa-times'}}" aria-hidden="true"></i>
                 </div>
             </div>
-            <div *ngIf="product_filter_prod.indexOf('sparePart') != -1" class="flex-item">
+            <div *ngIf="product_filter_prod.indexOf('sparePart') != -1 && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.SPARE_PART) " class="flex-item">
                 <h3 class="pt-2 p-1"><span [innerHTML]="'Spare Part' | translate"></span></h3>
                 <div class="p-1">
                     <strong><span [innerHTML]="'Spare Part' | translate"></span>: </strong> {{ wrapper.getSparePart() }}

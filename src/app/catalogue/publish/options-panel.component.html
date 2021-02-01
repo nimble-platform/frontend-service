@@ -18,7 +18,7 @@
     <div class="col-3">
         <strong class="font-weight-bold">{{title}}</strong>
     </div>
-    <div class="col-9">
+    <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-7' : 'col-9'}}">
         <!--options-->
         <div *ngFor="let option of options" class="row no-gutters">
             <input class="align-self-center custom-checkbox col-1" type="checkbox" [checked]="isSelected(option)" (change)="onCheckboxChanged($event.target.checked,option)">
@@ -47,5 +47,9 @@
                 <i *ngIf="!isDefaultOption(selectedOption)" class="fa fa-times-circle pl-1" placement="right" (click)="onOptionRemoved(selectedOption)"></i>
             </div>
         </div>
+    </div>
+    <div *ngIf="nonPublicInformationFunctionalityEnabled && itemProperty" class="col-2" style="padding-right: 0;padding-left: 0;text-align: center">
+        <b>{{'Non Public ?'|translate}}</b>
+        <input type="checkbox" (change)="onNonPublicClicked($event.target.checked)" [checked]="isNonPublicChecked()">
     </div>
 </div>

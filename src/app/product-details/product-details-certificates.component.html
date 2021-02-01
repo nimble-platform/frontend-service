@@ -17,16 +17,16 @@
 <div class="p-1">
     <!-- Product / Service Certificates -->
     <ng-container *ngIf="wrapper.line.goodsItem.item.certificate.length !== 0">
-        <certificate-view *ngIf="productCircularEconomyCertificates.length !== 0"
+        <certificate-view *ngIf="productCircularEconomyCertificates.length !== 0 && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.CIRCULAR_ECONOMY_CERTIFICATES)"
                           tableName="Circular Economy (Environment / Sustainability)"
                           [certificates]="productCircularEconomyCertificates"></certificate-view>
-        <certificate-view *ngIf="productArbitraryCertificates.length !== 0"
+        <certificate-view *ngIf="productArbitraryCertificates.length !== 0 && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.OTHER_PRODUCT_CERTIFICATES)"
                           [tableName]="productCircularEconomyCertificates.length !==0 ? 'Other Certificates':null "
                           [certificates]="productArbitraryCertificates"></certificate-view>
     </ng-container>
     <!-- Company Certificates -->
     <ng-container *ngIf="settings.certificates.length !== 0">
-        <h3 class="mt-5">{{'Company Certificates' | translate}}</h3>
+        <h3>{{'Company Certificates' | translate}}</h3>
         <certificate-view *ngIf="companyCircularEconomyCertificates.length !== 0"
                           [userMgmtCertificates]="companyCircularEconomyCertificates"
                           tableName="Circular Economy (Environment / Sustainability)"></certificate-view>

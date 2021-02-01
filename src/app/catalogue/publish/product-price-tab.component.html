@@ -14,55 +14,96 @@
    limitations under the License.
  -->
 
+<div *ngIf="nonPublicInformationFunctionalityEnabled" class="row space-after">
+    <div class="col-10"></div>
+    <div class="col-2">
+        <b>{{'Non Public ?'|translate}}</b>
+        <div>
+            <input type="checkbox" (change)="markAllInformationAsNonPublic($event.target.checked)" [checked]="isAllInformationMarkedAsNonPublic()">
+        </div>
+    </div>
+</div>
+
 <!-- Price -->
 <div class="row">
-    <div class="col-3">
-        <strong><span [innerHTML]="'Default Price:' | translate"></span></strong>
+    <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-10' : 'col-12'}}">
+        <div class="row">
+            <div class="col-3">
+                <strong><span [innerHTML]="'Default Price:' | translate"></span></strong>
+            </div>
+            <div class="col-3">
+                <input type="number" class="form-control form-control-sm" [(ngModel)]="catalogueLine.requiredItemLocationQuantity.price.priceAmount.value" [step]="priceAmountStep" [formControl]="priceAmountFormControl">
+            </div>
+            <div class="col-1">
+                <select class="form-control form-control-sm" [(ngModel)]="catalogueLine.requiredItemLocationQuantity.price.priceAmount.currencyID" (click)="updateDiscountUnits()">
+                    <option *ngFor="let currency of CURRENCIES" [value]="currency">
+                        {{ currency }}
+                    </option>
+                </select>
+            </div>
+            <div class="col-5">
+                <quantity-input label="{{'per'|translate}}" labelClass="col-1" valueQuantityClass="col-11" [quantity]="catalogueLine.requiredItemLocationQuantity.price.baseQuantity" [formFieldName]="baseQuantityFieldName" [parentForm]="formGroup" (onQuantityUnitChange)="onBaseQuantityUnitChanged($event)">
+                </quantity-input>
+            </div>
+        </div>
     </div>
-    <div class="col-3">
-        <input type="number" class="form-control form-control-sm" [(ngModel)]="catalogueLine.requiredItemLocationQuantity.price.priceAmount.value" [step]="priceAmountStep" [formControl]="priceAmountFormControl">
-    </div>
-    <div class="col-1">
-        <select class="form-control form-control-sm" [(ngModel)]="catalogueLine.requiredItemLocationQuantity.price.priceAmount.currencyID" (click)="updateDiscountUnits()">
-            <option *ngFor="let currency of CURRENCIES" [value]="currency">
-                {{ currency }}
-            </option>
-        </select>
-    </div>
-    <div class="col-5">
-        <quantity-input label="{{'per'|translate}}" labelClass="col-1" valueQuantityClass="col-11" [quantity]="catalogueLine.requiredItemLocationQuantity.price.baseQuantity" [formFieldName]="baseQuantityFieldName" [parentForm]="formGroup" (onQuantityUnitChange)="onBaseQuantityUnitChanged($event)">
-        </quantity-input>
+    <div *ngIf="nonPublicInformationFunctionalityEnabled" class="col-2 d-flex align-items-center">
+        <input type="checkbox" (change)="onNonPublicClicked(NON_PUBLIC_FIELD_ID.DEFAULT_PRICE,$event.target.checked)" [checked]="isNonPublicChecked(NON_PUBLIC_FIELD_ID.DEFAULT_PRICE)">
     </div>
 </div>
+
 
 <!-- VAT -->
-<div *ngIf="config.vatEnabled" class="row space-before">
-    <div class="col-3">
-        <strong><span [innerHTML]="'VAT(%):' | translate"></span></strong>
+<div *ngIf="config.vatEnabled"  class="row">
+    <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-10' : 'col-12'}}">
+        <div class="row space-before">
+            <div class="col-3">
+                <strong><span [innerHTML]="'VAT(%):' | translate"></span></strong>
+            </div>
+            <div class="col-3">
+                <input type="number" class="form-control form-control-sm" [(ngModel)]="catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent" step="1">
+            </div>
+        </div>
     </div>
-    <div class="col-3">
-        <input type="number" class="form-control form-control-sm" [(ngModel)]="catalogueLine.requiredItemLocationQuantity.applicableTaxCategory[0].percent" step="1">
+    <div *ngIf="nonPublicInformationFunctionalityEnabled" class="col-2 d-flex align-items-center">
+        <input type="checkbox" (change)="onNonPublicClicked(NON_PUBLIC_FIELD_ID.VAT,$event.target.checked)" [checked]="isNonPublicChecked(NON_PUBLIC_FIELD_ID.VAT)">
     </div>
 </div>
+
 
 <!-- Minimum Order Quantity -->
-<div class="row space-before">
-    <div class="col-3">
-        <strong><span [innerHTML]="'Minimum Order Quantity:' | translate"></span></strong>
+<div class="row">
+    <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-10' : 'col-12'}}">
+        <div class="row space-before">
+            <div class="col-3">
+                <strong><span [innerHTML]="'Minimum Order Quantity:' | translate"></span></strong>
+            </div>
+            <div class="col-3">
+                <quantity-input valueSizeClass="col-9" unitSizeClass="col-3" [quantity]="catalogueLine.minimumOrderQuantity" disableQuantityUnit="true">
+                </quantity-input>
+            </div>
+        </div>
     </div>
-    <div class="col-3">
-        <quantity-input valueSizeClass="col-9" unitSizeClass="col-3" [quantity]="catalogueLine.minimumOrderQuantity" disableQuantityUnit="true">
-        </quantity-input>
+    <div *ngIf="nonPublicInformationFunctionalityEnabled" class="col-2 d-flex align-items-center">
+        <input type="checkbox" (change)="onNonPublicClicked(NON_PUBLIC_FIELD_ID.MINIMUM_ORDER_QUANTITY,$event.target.checked)" [checked]="isNonPublicChecked(NON_PUBLIC_FIELD_ID.MINIMUM_ORDER_QUANTITY)">
     </div>
 </div>
 
+
 <!-- Free Sample -->
-<div class="row space-before">
-    <div class="col-3">
-        <strong><span [innerHTML]="'Free Sample:' | translate"></span></strong>
+<div class="row">
+    <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-10' : 'col-12'}}">
+        <div class="row space-before">
+            <div class="col-3">
+                <strong><span [innerHTML]="'Free Sample:' | translate"></span></strong>
+            </div>
+            <div class="col-9">
+                <input type="checkbox" [(ngModel)]="catalogueLine.freeOfChargeIndicator" >
+            </div>
+        </div>
     </div>
-    <div class="col-9">
-        <input type="checkbox" [(ngModel)]="catalogueLine.freeOfChargeIndicator">
+    <div *ngIf="nonPublicInformationFunctionalityEnabled" class="col-2 d-flex align-items-center">
+        <input type="checkbox" (change)="onNonPublicClicked(NON_PUBLIC_FIELD_ID.FREE_SAMPLE,$event.target.checked)" [checked]="isNonPublicChecked(NON_PUBLIC_FIELD_ID.FREE_SAMPLE)">
     </div>
 </div>
 

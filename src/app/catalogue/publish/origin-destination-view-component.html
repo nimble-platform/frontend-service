@@ -18,7 +18,7 @@
     <div class="col-3">
         <label class="font-weight-bold">{{title}}</label>
     </div>
-    <div class="col-9">
+    <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-6' : 'col-9'}}">
         <!-- All over the world-->
         <div class="row">
             <input class="align-self-center custom-checkbox col-1" type="checkbox" (change)="onAllOverTheWorldOptionSelected($event.target.checked)" [(ngModel)]="isAllOverTheWorldOptionSelected">
@@ -54,6 +54,10 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div *ngIf="nonPublicInformationFunctionalityEnabled && itemProperty" class="col-2" style="padding-right: 0;padding-left: 0;text-align: center">
+        <b>{{'Non Public ?'|translate}}</b>
+        <input type="checkbox" (change)="onNonPublicClicked($event.target.checked)" [checked]="isNonPublicChecked()">
     </div>
 <!--    <div class="col-3">-->
 <!--        <div class="row d-flex flex-wrap">-->

@@ -262,7 +262,7 @@
                                         </strong>
                                     </p>
                                     <p>{{selectDescription(catLine.goodsItem.item)}}</p>
-                                    <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null"
+                                    <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null && isPricePublicInformation(catLine)"
                                        class="all-break">{{catLine.requiredItemLocationQuantity.price.priceAmount.value + " " + catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p>
                                 </div>
                                 <div *ngIf="!productSelectionForOffering && appComponent.checkRoles('catalogue')"

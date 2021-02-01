@@ -36,7 +36,7 @@ import * as lunr from 'lunr';
 import {FormGroup} from '@angular/forms';
 import {EditPropertyModalComponent} from './edit-property-modal.component';
 import * as myGlobals from '../../globals';
-import {DEFAULT_LANGUAGE, LANGUAGES} from '../model/constants';
+import {DEFAULT_LANGUAGE, LANGUAGES, NON_PUBLIC_FIELD_ID} from '../model/constants';
 import {MultiValuedDimension} from '../model/publish/multi-valued-dimension';
 import {Code} from '../model/publish/code';
 import {ProductPublishStep} from './product-publish-step';
@@ -64,6 +64,9 @@ import {SelectedProperty} from '../model/publish/selected-property';
 import 'rxjs/add/observable/fromPromise'
 import 'rxjs/add/observable/interval';
 import 'rxjs/add/operator/takeUntil';
+import {NonPublicInformation} from '../model/publish/non-public-information';
+import {MultiTypeValue} from '../model/publish/multi-type-value';
+import {NonPublicInformationUi} from '../model/publish/non-public-information-ui';
 
 interface SelectedProperties {
     [key: string]: SelectedProperty;
@@ -90,6 +93,9 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
     productCatalogueRetrievalStatus: CallStatus = new CallStatus();
     ngUnsubscribe: Subject<void> = new Subject<void>();
 
+    // array of non-public product properties and dimensions
+    nonPublicInformationUIs: NonPublicInformationUi[] = [];
+    nonPublicInformationFunctionalityEnabled = myGlobals.config.nonPublicInformationFunctionalityEnabled;
     catalogueLine: CatalogueLine = null;
     productWrapper: ProductWrapper = null;
     companySettings: CompanySettings;
@@ -344,6 +350,9 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
 
         // call this function with dimension unit list to be sure that item will have some dimension
         this.multiValuedDimensions = this.productWrapper.getDimensionMultiValue(true, this.dimensions);
+        if(this.nonPublicInformationFunctionalityEnabled){
+            this.populateNonPublicInformation()
+        }
     }
 
     // methods to handle publishing of products
@@ -432,6 +441,9 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
         // nullify the transportation service details since a regular product is being published
         splicedCatalogueLine.goodsItem.item.transportationServiceDetails = null;
 
+        if(this.nonPublicInformationFunctionalityEnabled){
+            splicedCatalogueLine.nonPublicInformation = this.processNonPublicProductPropertiesAndDimensions(splicedCatalogueLine)
+        }
         this.publish(splicedCatalogueLine, exitThePage);
     }
 
@@ -453,6 +465,9 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
             // nullify the transportation service details since a regular product is being published
             splicedCatalogueLine.goodsItem.item.transportationServiceDetails = null;
 
+            if(this.nonPublicInformationFunctionalityEnabled){
+                splicedCatalogueLine.nonPublicInformation = this.processNonPublicProductPropertiesAndDimensions(splicedCatalogueLine)
+            }
             // update existing product
             this.saveEditedProduct(exitThePage, splicedCatalogueLine);
         }
@@ -675,6 +690,10 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
                 return key !== getPropertyKey(prop);
             })
         }
+
+        if(this.nonPublicInformationFunctionalityEnabled){
+            this.removeNonPublicInformation(property.id)
+        }
     }
 
     getSelectedPropertiesCount(): number{
@@ -718,6 +737,9 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
                 break;
             default:
             // BINARY and BOOLEAN: nothing
+        }
+        if(this.nonPublicInformationFunctionalityEnabled){
+            this.removeNonPublicInformationIndex(property.id,index)
         }
     }
 
@@ -869,9 +891,13 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
     }
 
     onRemoveDimension(attributeId: string, quantity: Quantity) {
+        let index: number = this.productWrapper.item.dimension.slice().reverse().findIndex(dim => dim.attributeID == attributeId && dim.measure.value == quantity.value);
         this.productWrapper.removeDimension(attributeId, quantity);
         // update dimensions
         this.multiValuedDimensions = this.productWrapper.getDimensionMultiValue();
+        if(this.nonPublicInformationFunctionalityEnabled){
+            this.removeNonPublicInformationIndex(attributeId,index);
+        }
     }
 
     public getMultiValuedDimensionCount():number{
@@ -1201,4 +1227,184 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
         this.handleRequiredProperties();
     }
     // the end of methods to handle guided publishing
+
+    // methods to handle non-public information
+    removeNonPublicInformation(id){
+        let i = this.nonPublicInformationUIs.findIndex(value => value.id === id);
+        if(i !== -1){
+            this.nonPublicInformationUIs.splice(i,1)
+        }
+    }
+
+    removeNonPublicInformationIndex(id, index){
+        let nonPublicInformationIndex = this.nonPublicInformationUIs.findIndex(value => value.id === id);
+        if(nonPublicInformationIndex !== -1){
+            let i = this.nonPublicInformationUIs[nonPublicInformationIndex].indexes.indexOf(index);
+            if(i !== -1){
+                this.nonPublicInformationUIs[nonPublicInformationIndex].indexes.splice(i,1)
+            }
+            if(this.nonPublicInformationUIs[nonPublicInformationIndex].indexes.length === 0){
+                this.nonPublicInformationUIs.splice(nonPublicInformationIndex,1)
+            }
+        }
+    }
+
+    onPropertyNonPublicClicked(property:ItemProperty, propertyValueIndex, checked:boolean){
+        if(checked){
+            let multiTypeValue:MultiTypeValue = new MultiTypeValue();
+            multiTypeValue.valueQualifier = property.valueQualifier;
+            switch (property.valueQualifier){
+                case "STRING":
+                    multiTypeValue.value = property.value;
+                    break;
+                case "QUANTITY":
+                    multiTypeValue.valueQuantity = property.valueQuantity;
+                    break;
+                case "NUMBER":
+                    multiTypeValue.valueDecimal = property.valueDecimal;
+            }
+            let nonPublicInformationUI = new NonPublicInformationUi();
+            nonPublicInformationUI.id = property.id;
+            nonPublicInformationUI.value = multiTypeValue;
+            nonPublicInformationUI.indexes = [propertyValueIndex];
+
+            this.nonPublicInformationUIs.push(nonPublicInformationUI);
+        } else{
+            let nonPublicInformation = this.nonPublicInformationUIs.find(value => value.id == property.id);
+            nonPublicInformation.indexes.splice(nonPublicInformation.indexes.indexOf(propertyValueIndex),1);
+        }
+    }
+
+    onDimensionNonPublicClicked(property:MultiValuedDimension,index,checked:boolean){
+        if(checked){
+            let multiTypeValue:MultiTypeValue = new MultiTypeValue();
+            multiTypeValue.valueQualifier = "QUANTITY";
+            multiTypeValue.valueQuantity = property.measure;
+            let nonPublicInformationUI = new NonPublicInformationUi();
+            nonPublicInformationUI.id = property.attributeID;
+            nonPublicInformationUI.value = multiTypeValue;
+            nonPublicInformationUI.indexes = [index];
+
+            this.nonPublicInformationUIs.push(nonPublicInformationUI);
+        } else{
+            let nonPublicInformation = this.nonPublicInformationUIs.find(value => value.id == property.attributeID);
+            nonPublicInformation.indexes.splice(nonPublicInformation.indexes.indexOf(index),1);
+        }
+    }
+
+    isNonPublicChecked(fieldId, index){
+        let nonPublicInformation = this.nonPublicInformationUIs.find(value => value.id == fieldId);
+        if(nonPublicInformation){
+            return nonPublicInformation.indexes.indexOf(index) !== -1;
+        }
+        return false;
+    }
+
+    populateNonPublicInformation(){
+        this.nonPublicInformationUIs = [];
+        if(this.catalogueLine.nonPublicInformation && this.catalogueLine.nonPublicInformation.length > 0){
+            // handle additional item properties
+            for (let itemProperty of this.catalogueLine.goodsItem.item.additionalItemProperty) {
+                let nonPublicInformation = this.catalogueLine.nonPublicInformation.find(value => value.id === itemProperty.id);
+
+                let nonPublicInformationUI = new NonPublicInformationUi();
+                nonPublicInformationUI.id = nonPublicInformation.id ;
+                nonPublicInformationUI.panelName = nonPublicInformation.panelName;
+
+                let indexes = []
+                let multiTypeValue = new MultiTypeValue();
+                multiTypeValue.valueQualifier = itemProperty.valueQualifier;
+                switch (multiTypeValue.valueQualifier){
+                    case "STRING":
+                        multiTypeValue.value = itemProperty.value;
+                        for (let value of nonPublicInformation.value.value) {
+                            let index = itemProperty.value.findIndex(value1 => value1.value === value.value && value1.languageID === value.languageID)
+                            indexes.push(index);
+                        }
+                        break;
+                    case "QUANTITY":
+                        multiTypeValue.valueQuantity = itemProperty.valueQuantity;
+                        for (let value of nonPublicInformation.value.valueQuantity) {
+                            let index = itemProperty.valueQuantity.findIndex(value1 => value1.value === value.value && value1.unitCode === value.unitCode)
+                            indexes.push(index);
+                        }
+                        break;
+                    case "NUMBER":
+                        multiTypeValue.valueDecimal = itemProperty.valueDecimal;
+                        for (let value of nonPublicInformation.value.valueDecimal) {
+                            let index = itemProperty.valueDecimal.findIndex(value1 => value1 == value)
+                            indexes.push(index);
+                        }
+                }
+                nonPublicInformationUI.value = multiTypeValue;
+                nonPublicInformationUI.indexes = indexes;
+
+                this.nonPublicInformationUIs.push(nonPublicInformationUI)
+            }
+            // handle dimensions
+            for (let dimension of this.multiValuedDimensions) {
+                let nonPublicInformation = this.catalogueLine.nonPublicInformation.find(value => value.id === dimension.attributeID);
+
+                let nonPublicInformationUI = new NonPublicInformationUi();
+                nonPublicInformationUI.id = nonPublicInformation.id ;
+                nonPublicInformationUI.panelName = nonPublicInformation.panelName;
+
+                let indexes = []
+                let multiTypeValue = new MultiTypeValue();
+                multiTypeValue.valueQualifier = "QUANTITY";
+                multiTypeValue.valueQuantity = dimension.measure;
+                for (let value of nonPublicInformation.value.valueQuantity) {
+                    let index = dimension.measure.findIndex(value1 => value1.value === value.value && value1.unitCode === value.unitCode)
+                    indexes.push(index);
+                }
+                nonPublicInformationUI.value = multiTypeValue;
+                nonPublicInformationUI.indexes = indexes;
+
+                this.nonPublicInformationUIs.push(nonPublicInformationUI)
+            }
+        }
+
+    }
+
+    /**
+     * Converts {@link NonPublicInformationUi} to {@link NonPublicInformation} for the given catalogue line
+     * */
+    processNonPublicProductPropertiesAndDimensions(splicedCatalogueLine:CatalogueLine){
+        let constants = Object.keys(NON_PUBLIC_FIELD_ID).map(value => NON_PUBLIC_FIELD_ID[value]);
+
+        let nonPublicInformationList = splicedCatalogueLine.nonPublicInformation.filter(value => constants.indexOf(value.id) !== -1)
+
+        for (let nonPublicInformationUI of this.nonPublicInformationUIs) {
+            let nonPublicInformation:NonPublicInformation = new NonPublicInformation();
+            nonPublicInformation.id = nonPublicInformationUI.id;
+            nonPublicInformation.panelName = nonPublicInformationUI.panelName;
+
+            let multiTypeValue = new MultiTypeValue();
+            multiTypeValue.valueQualifier = nonPublicInformationUI.value.valueQualifier;
+            switch (multiTypeValue.valueQualifier){
+                case "STRING":
+                    for (let index of nonPublicInformationUI.indexes) {
+                        multiTypeValue.value.push(new Text(nonPublicInformationUI.value.value[index].value,nonPublicInformationUI.value.value[index].languageID));
+                    }
+                    break;
+                case "QUANTITY":
+                    for (let index of nonPublicInformationUI.indexes) {
+                        multiTypeValue.valueQuantity.push(new Quantity(nonPublicInformationUI.value.valueQuantity[index].value,nonPublicInformationUI.value.valueQuantity[index].unitCode));
+                    }
+                    break;
+                case "NUMBER":
+                    for (let index of nonPublicInformationUI.indexes) {
+                        multiTypeValue.valueDecimal.push(nonPublicInformationUI.value.valueDecimal[index]);
+                    }
+            }
+
+            nonPublicInformation.value = multiTypeValue;
+
+            nonPublicInformationList.push(nonPublicInformation)
+        }
+
+        return nonPublicInformationList;
+    }
+
+    // the end of methods to handle non-public information
 }

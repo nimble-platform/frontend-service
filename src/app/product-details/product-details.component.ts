@@ -40,7 +40,7 @@ import {Quantity} from '../catalogue/model/publish/quantity';
 import {DiscountModalComponent} from './discount-modal.component';
 import {BpActivityEvent} from '../catalogue/model/publish/bp-start-event';
 import {CookieService} from 'ng2-cookies';
-import {FAVOURITE_LINEITEM_PUT_OPTIONS, FEDERATIONID} from '../catalogue/model/constants';
+import {FAVOURITE_LINEITEM_PUT_OPTIONS, FEDERATIONID, NON_PUBLIC_FIELD_ID} from '../catalogue/model/constants';
 import * as myGlobals from '../globals';
 import {DiscountPriceWrapper} from '../common/discount-price-wrapper';
 import {DigitalAgreement} from '../catalogue/model/publish/digital-agreement';
@@ -90,6 +90,7 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
     isLogistics: boolean = false;
     isTransportService: boolean = false;
 
+    NON_PUBLIC_FIELD_ID = NON_PUBLIC_FIELD_ID
     termsSelectBoxValue: 'product_defaults' | 'frame_contract' = 'product_defaults';
 
     // business workflow of seller company
@@ -319,14 +320,23 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
      */
 
     getPriceAmountUI(): AmountUI {
+        if(this.productWrapper && !this.productWrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DEFAULT_PRICE)){
+            return new AmountUI();
+        }
         return this.priceWrapper.discountedPriceAmountUI;
     }
 
     getPricePerItem(): string {
+        if(this.productWrapper && !this.productWrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DEFAULT_PRICE)){
+            return 'On demand';
+        }
         return this.priceWrapper.discountedPricePerItemString;
     }
 
     hasPrice(): boolean {
+        if(this.productWrapper && !this.productWrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DEFAULT_PRICE)){
+            return false;
+        }
         return this.priceWrapper.itemPrice.hasPrice();
     }
 
@@ -335,11 +345,14 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
     }
 
     getStepRange(): number {
+        if (this.productWrapper && !this.productWrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DEFAULT_PRICE)) {
+            return 1;
+        }
         return getStepRangeForPrice(this.priceWrapper.price);
     }
 
     getQuantityUnit(): string {
-        if (!this.line) {
+        if (!this.line || !this.productWrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DEFAULT_PRICE)) {
             return '';
         }
         return this.line.requiredItemLocationQuantity.price.baseQuantity.unitCode || '';
@@ -347,7 +360,7 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 
     getMinimumOrderQuantity(): number {
         let price: Price = this.line.requiredItemLocationQuantity.price;
-        if (price) {
+        if (price && this.productWrapper && this.productWrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DEFAULT_PRICE)) {
             if (this.line.requiredItemLocationQuantity.price.baseQuantity.value) {
                 return this.line.requiredItemLocationQuantity.price.baseQuantity.value;
             }

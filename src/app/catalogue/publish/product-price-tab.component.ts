@@ -16,7 +16,7 @@
 
 import { Component, OnInit, Input } from "@angular/core";
 import { CatalogueLine } from "../model/publish/catalogue-line";
-import { CURRENCIES, PRICE_OPTIONS } from "../model/constants";
+import { CURRENCIES, PRICE_OPTIONS, NON_PUBLIC_FIELD_ID } from "../model/constants";
 import { PriceOptionCountPipe } from "../../product-details/price-option/price-option-count.pipe";
 import { PriceOptionPipe } from "../../product-details/price-option/price-option.pipe";
 import { CompanyNegotiationSettings } from '../../user-mgmt/model/company-negotiation-settings';
@@ -34,6 +34,7 @@ import { priceValidator } from '../../common/validation/validators';
 import { FIELD_NAME_PRODUCT_PRICE_AMOUNT, FIELD_NAME_PRODUCT_PRICE_BASE_QUANTITY } from '../../common/constants';
 import {Quantity} from '../model/publish/quantity';
 import {CountryUtil} from '../../common/country-util';
+import {NonPublicInformation} from '../model/publish/non-public-information';
 const PRODUCT_PRICE_INPUT = 'product_price';
 @Component({
     selector: "product-price-tab",
@@ -54,6 +55,9 @@ export class ProductPriceTabComponent extends ChildFormBase implements OnInit {
     // TODO: later, get these from a service?
     CURRENCIES = CURRENCIES;
     object = Object;
+    NON_PUBLIC_FIELD_ID = NON_PUBLIC_FIELD_ID;
+    private PRICE_NON_PUBLIC_FIELD_IDS = [NON_PUBLIC_FIELD_ID.DEFAULT_PRICE,NON_PUBLIC_FIELD_ID.VAT,NON_PUBLIC_FIELD_ID.MINIMUM_ORDER_QUANTITY,NON_PUBLIC_FIELD_ID.FREE_SAMPLE,NON_PUBLIC_FIELD_ID.DISCOUNT_CHARGES]
+    nonPublicInformationFunctionalityEnabled = myGlobals.config.nonPublicInformationFunctionalityEnabled
 
     discountUnits = [];
     defaultVatRate: number = 20;
@@ -131,5 +135,43 @@ export class ProductPriceTabComponent extends ChildFormBase implements OnInit {
 
     onBaseQuantityUnitChanged(unit:string){
         this.catalogueLine.minimumOrderQuantity.unitCode = unit;
+    }
+
+    onNonPublicClicked(fieldId, checked){
+        if(checked){
+            let nonPublicInformation:NonPublicInformation = new NonPublicInformation();
+            nonPublicInformation.id = fieldId;
+            this.catalogueLine.nonPublicInformation.push(nonPublicInformation);
+        } else{
+            const index = this.catalogueLine.nonPublicInformation.findIndex(value => value.id === fieldId);
+            this.catalogueLine.nonPublicInformation.splice(index,1);
+        }
+    }
+
+    markAllInformationAsNonPublic(checked){
+        if(checked){
+            this.PRICE_NON_PUBLIC_FIELD_IDS.forEach(fieldId => {
+                let nonPublicInformation:NonPublicInformation = new NonPublicInformation();
+                nonPublicInformation.id = fieldId;
+                this.catalogueLine.nonPublicInformation.push(nonPublicInformation);
+            })
+        } else{
+            this.PRICE_NON_PUBLIC_FIELD_IDS.forEach(fieldId => {
+                this.catalogueLine.nonPublicInformation = this.catalogueLine.nonPublicInformation.filter(value => value.id !== fieldId);
+            })
+        }
+    }
+
+    isAllInformationMarkedAsNonPublic(){
+        for (let fieldId of this.PRICE_NON_PUBLIC_FIELD_IDS) {
+            if(this.catalogueLine.nonPublicInformation.findIndex(value => value.id === fieldId) === -1){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    isNonPublicChecked(fieldId){
+        return this.catalogueLine.nonPublicInformation.findIndex(value => value.id === fieldId) !== -1;
     }
 }

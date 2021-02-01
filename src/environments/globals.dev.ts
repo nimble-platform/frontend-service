@@ -148,6 +148,7 @@ export const config = {
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": false,
     "networkEnabled": false,
+    "nonPublicInformationFunctionalityEnabled": false,
     "paymentMeans": [
         "Credit Card",
         "ACH Transfer",
@@ -317,6 +318,7 @@ export const class_label = "classification.allLabels";
 export const product_description = "description";
 export const product_img = "imgageUri";
 export const product_price = "price";
+export const product_price_hidden = "priceHidden";
 export const product_delivery_time = "deliveryTime";
 export const product_currency = "currency";
 export const product_cat = "classificationUri";

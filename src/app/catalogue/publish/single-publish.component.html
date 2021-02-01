@@ -56,7 +56,7 @@
         <!-- Product Details Tab -->
         <div class="row space-before" [hidden]="publishingStep != 'Details'">
             <!-- Dimensions -->
-            <div class="col-8 section">
+            <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-11' : 'col-8'}} section">
                 <div (click)="toggleDimensionCard()" class="d-flex justify-content-between">
                     <span [innerHTML]="'Dimensions' | translate" ></span>
                     <i>
@@ -66,6 +66,10 @@
                     </i>
                 </div>
                 <div [hidden]="!showDimensions">
+                    <div *ngIf="nonPublicInformationFunctionalityEnabled" class="row">
+                        <div class="col-10"></div>
+                        <div class="col-2" style="text-align: end"><b>{{'Non Public ?'|translate}}</b></div>
+                    </div>
                     <div class="row border-bottom m-0" *ngFor="let multiValuedDimension of multiValuedDimensions">
                         <div class="col-3" style="padding:.75rem;padding-left:0;">
                             <div class="col-form-label">
@@ -87,16 +91,20 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col-3 align-right" style="padding:.75rem;padding-right:0;">
+                        <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-2' : 'col-3'}} align-right" style="padding:.75rem;padding-right:0;">
                             <button class="btn btn-outline-primary" (click)="onAddDimension(multiValuedDimension.attributeID)">
                                 <span [innerHTML]="'Add' | translate"></span>
                             </button>
+                        </div>
+                        <div *ngIf="nonPublicInformationFunctionalityEnabled" class="col-1" style="display: grid;margin-bottom: .75rem;grid-template-columns: repeat(1,1fr);align-items: center;justify-items: center;">
+                            <input *ngFor="let quantity of multiValuedDimension.measure;let i=index" type="checkbox" style="display: block" (change)="onDimensionNonPublicClicked(multiValuedDimension,i,$event.target.checked)"
+                                   [checked]="isNonPublicChecked(multiValuedDimension.attributeID,i)">
                         </div>
                     </div>
                 </div>
             </div>
             <!-- Additional Information-->
-            <div class="col-8 space-before section">
+            <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-11' : 'col-8'}} space-before section">
                 <div (click)="toggleAdditionalInformationCard()" class="d-flex justify-content-between">
                     <span [innerHTML]="'Upload Additional Information' | translate" ></span>
                     <i>
@@ -111,7 +119,7 @@
                 </div>
             </div>
             <!-- Properties-->
-            <div class="col-8 space-before section">
+            <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-11' : 'col-8'}} space-before section">
                 <div (click)="toggleProperties()" class="d-flex justify-content-between">
                     <span [innerHTML]="'Properties' | translate" ></span>
                     <i>
@@ -121,13 +129,19 @@
                     </i>
                 </div>
                 <div [hidden]="!showProperties">
+                    <div *ngIf="nonPublicInformationFunctionalityEnabled" class="row">
+                        <div class="col-10"></div>
+                        <div class="col-2" style="text-align: end"><b>{{'Non Public ?'|translate}}</b></div>
+                    </div>
                     <div class="row border-bottom m-0" *ngFor="let prop of getProductProperties()">
+                        <!-- Property Name -->
                         <div class="col-3" style="padding:.75rem;padding-left:0;">
                             <div class="col-form-label">
                                 <strong [title]="getDefinition(prop)">{{ getPrettyName(prop) }}: </strong>
                             </div>
                         </div>
-                        <div class="col-6">
+                        <!-- Property Values -->
+                        <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-5' : 'col-6'}}">
                             <table *ngIf="prop.valueQualifier === 'FILE'" class="table table-borderless" style="margin-bottom:.75rem;">
                                 <tbody>
                                 <tr>
@@ -175,6 +189,7 @@
                                 </tbody>
                             </table>
                         </div>
+                        <!-- Action Buttons -->
                         <div class="col-3 align-right" style="padding:.75rem;padding-right:0;">
                             <ng-container *ngIf="!prop.required">
                                 <button class="btn btn-outline-primary" (click)="onAddValue(prop)" *ngIf="prop.valueQualifier !== 'BOOLEAN' && prop.valueQualifier !== 'FILE'">
@@ -183,6 +198,14 @@
                                 <button class="btn btn-outline-primary ml-1" (click)="onEditProperty(prop)"><span [innerHTML]="'Edit' | translate"></span></button>
                                 <button class="btn btn-danger ml-1" (click)="onRemoveProperty(prop)"><span [innerHTML]="'Delete' | translate"></span></button>
                             </ng-container>
+                        </div>
+                        <div *ngIf="nonPublicInformationFunctionalityEnabled" class="col-1" style="display: grid;margin-bottom: .75rem;grid-template-columns: repeat(1,1fr);align-items: center;justify-items: center;">
+                            <ng-container  *ngIf="prop.valueQualifier !== 'FILE'">
+                                <input *ngFor="let value of getValues(prop);let i=index" type="checkbox" style="display: block" (change)="onPropertyNonPublicClicked(prop,i,$event.target.checked)"
+                                       [checked]="isNonPublicChecked(prop.id,i)">
+                            </ng-container>
+                            <input *ngIf="prop.valueQualifier === 'FILE'" type="checkbox" style="display: block" (change)="onPropertyNonPublicClicked(prop,0,$event.target.checked)"
+                                   [checked]="isNonPublicChecked(prop.id,0)">
                         </div>
                     </div>
                     <div class="space-before">
@@ -214,7 +237,7 @@
         <!-- Certificates -->
         <div class="row space-before" [hidden]="publishingStep != 'Certificates'">
             <div class="col-12">
-                <product-certificates-tab [catalogueLine]="catalogueLine" [disabled]="isLoading()">
+                <product-certificates-tab [catalogueLine]="catalogueLine" [wrapper]="productWrapper" [disabled]="isLoading()">
                 </product-certificates-tab>
             </div>
         </div>

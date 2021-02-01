@@ -20,6 +20,7 @@ import {CompanySettings} from '../user-mgmt/model/company-settings';
 import {Certificate} from '../catalogue/model/publish/certificate';
 import {config} from '../globals';
 import {Certificate as UserMgmtCertificate} from '../user-mgmt/model/certificate';
+import { NON_PUBLIC_FIELD_ID } from '../catalogue/model/constants';
 
 @Component({
     selector: 'product-details-certificates',
@@ -31,6 +32,7 @@ export class ProductDetailsCertificatesComponent implements OnInit {
     @Input() settings: CompanySettings;
     @Output() certificateStatus = new EventEmitter<boolean>();
 
+    NON_PUBLIC_FIELD_ID = NON_PUBLIC_FIELD_ID;
     companyCircularEconomyCertificates: UserMgmtCertificate[];
     companyArbitraryCertificates: UserMgmtCertificate[];
     productCircularEconomyCertificates: Certificate[];

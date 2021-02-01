@@ -20,7 +20,13 @@ import { ItemProperty } from '../model/publish/item-property';
 import { selectNameFromLabelObject, selectPreferredValue } from '../../common/utils';
 import { PublishingPropertyService } from './publishing-property.service';
 import { TranslateService } from '@ngx-translate/core';
+import {NonPublicInformation} from '../model/publish/non-public-information';
+import {CatalogueLine} from '../model/publish/catalogue-line';
+import {config} from '../../globals';
 
+/**
+ * This component is used to display options for the properties of Logistics Services
+ * */
 @Component({
     selector: "options-panel",
     templateUrl: "./options-panel.component.html",
@@ -36,10 +42,12 @@ export class OptionsPanelComponent implements OnInit {
     @Input() itemProperty: ItemProperty;
     @Input() checkboxOther = true;
     @Input() selectedOptionsWithExtraColumn = true;
+    @Input() catalogueLine:CatalogueLine = null;
     // variables
     options = [];
 
     option: string = null;
+    nonPublicInformationFunctionalityEnabled = config.nonPublicInformationFunctionalityEnabled;
 
     isOtherOptionEnabled = false;
     title: string = null;
@@ -101,5 +109,20 @@ export class OptionsPanelComponent implements OnInit {
             }
         }
         return false;
+    }
+
+    onNonPublicClicked(checked){
+        if(checked){
+            let nonPublicInformation:NonPublicInformation = new NonPublicInformation();
+            nonPublicInformation.id = this.itemProperty.id;
+            this.catalogueLine.nonPublicInformation.push(nonPublicInformation);
+        } else{
+            const index = this.catalogueLine.nonPublicInformation.findIndex(value => value.id === this.itemProperty.id);
+            this.catalogueLine.nonPublicInformation.splice(index,1);
+        }
+    }
+
+    isNonPublicChecked(){
+        return this.catalogueLine.nonPublicInformation.findIndex(value => value.id === this.itemProperty.id) !== -1;
     }
 }

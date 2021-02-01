@@ -23,6 +23,9 @@ import { TranslateService } from '@ngx-translate/core';
 import {CountryUtil} from '../../common/country-util';
 import {Observable} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
+import {NonPublicInformation} from '../model/publish/non-public-information';
+import {CatalogueLine} from '../model/publish/catalogue-line';
+import {config} from '../../globals';
 
 @Component({
     selector: "origin-destination-view",
@@ -35,7 +38,9 @@ export class OriginDestinationViewComponent implements OnInit {
 
     // stores the address information
     @Input() itemProperty: ItemProperty;
+    @Input() catalogueLine:CatalogueLine = null;
 
+    nonPublicInformationFunctionalityEnabled = config.nonPublicInformationFunctionalityEnabled;
     regionOptions = REGIONS;
 
     isAllOverTheWorldOptionSelected: boolean = false;
@@ -168,5 +173,20 @@ export class OriginDestinationViewComponent implements OnInit {
             }
         }
         return false;
+    }
+
+    onNonPublicClicked(checked){
+        if(checked){
+            let nonPublicInformation:NonPublicInformation = new NonPublicInformation();
+            nonPublicInformation.id = this.itemProperty.id;
+            this.catalogueLine.nonPublicInformation.push(nonPublicInformation);
+        } else{
+            const index = this.catalogueLine.nonPublicInformation.findIndex(value => value.id === this.itemProperty.id);
+            this.catalogueLine.nonPublicInformation.splice(index,1);
+        }
+    }
+
+    isNonPublicChecked(){
+        return this.catalogueLine.nonPublicInformation.findIndex(value => value.id === this.itemProperty.id) !== -1;
     }
 }

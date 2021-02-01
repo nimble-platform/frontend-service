@@ -43,6 +43,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from "../../app.component";
 import { Subject } from 'rxjs';
 import 'rxjs/add/operator/takeUntil';
+import {NonPublicInformation} from '../model/publish/non-public-information';
+import {MultiTypeValue} from '../model/publish/multi-type-value';
+import {Text} from '../model/publish/text';
+import {Quantity} from '../model/publish/quantity';
 
 @Component({
     selector: "logistic-service-publish",
@@ -510,6 +514,52 @@ export class LogisticServicePublishComponent implements OnInit , OnDestroy{
         }
     }
 
+    /**
+     * Creates {@link NonPublicInformation} for each non-public property of given catalogue lines
+     * The created {@link NonPublicInformation} includes the all values of property
+     * */
+    processNonPublicProductProperties(catalogueLines:CatalogueLine[]){
+        if(this.config.nonPublicInformationFunctionalityEnabled){
+            for (let catalogueLine1 of catalogueLines) {
+                let nonPublicInformationList = []
+
+                for (let catalogueLineNonPublicInformation of catalogueLine1.nonPublicInformation) {
+                    let nonPublicInformation:NonPublicInformation = new NonPublicInformation();
+                    nonPublicInformation.id = catalogueLineNonPublicInformation.id;
+                    nonPublicInformation.panelName = catalogueLineNonPublicInformation.panelName;
+
+                    let property = catalogueLine1.goodsItem.item.additionalItemProperty.find(value => value.id === catalogueLineNonPublicInformation.id);
+
+                    if(property){
+                        let multiTypeValue = new MultiTypeValue();
+                        multiTypeValue.valueQualifier = property.valueQualifier;
+                        switch (multiTypeValue.valueQualifier){
+                            case "STRING":
+                                for (let value of property.value) {
+                                    multiTypeValue.value.push(new Text(value.value,value.languageID));
+                                }
+                                break;
+                            case "QUANTITY":
+                                for (let quantity of property.valueQuantity) {
+                                    multiTypeValue.valueQuantity.push(new Quantity(quantity.value,quantity.unitCode));
+                                }
+                                break;
+                            case "NUMBER":
+                                for (let decimal of property.valueDecimal) {
+                                    multiTypeValue.valueDecimal.push(decimal);
+                                }
+                        }
+                        nonPublicInformation.value = multiTypeValue;
+
+                        nonPublicInformationList.push(nonPublicInformation)
+                    }
+
+                }
+                catalogueLine1.nonPublicInformation =  nonPublicInformationList;
+            }
+        }
+
+    }
     // publish or save
 
     onPublish(exitThePage: boolean) {
@@ -597,6 +647,9 @@ export class LogisticServicePublishComponent implements OnInit , OnDestroy{
             splicedCatalogueLines.push(this.removeEmptyProperties(catalogueLine));
         }
 
+        if(this.config.nonPublicInformationFunctionalityEnabled){
+            this.processNonPublicProductProperties(splicedCatalogueLines)
+        }
         if (this.catalogueService.catalogueResponse.catalogueUuid == null) {
             const userId = this.cookieService.get("user_id");
             this.userService.getUserParty(userId).then(userParty => {
@@ -639,6 +692,9 @@ export class LogisticServicePublishComponent implements OnInit , OnDestroy{
             splicedCatalogueLines.push(this.removeEmptyProperties(catalogueLine));
         }
 
+        if(this.config.nonPublicInformationFunctionalityEnabled){
+            this.processNonPublicProductProperties(splicedCatalogueLines)
+        }
         // TODO: create a service to update multiple catalogue lines
         for (let catalogueLine of splicedCatalogueLines) {
             this.publishStatus.aggregatedSubmit();

@@ -32,6 +32,9 @@ import { TranslateService } from '@ngx-translate/core';
 import {config} from '../../globals';
 import {CountryUtil} from '../../common/country-util';
 import {Code} from '../model/publish/code';
+import {ProductWrapper} from '../../common/product-wrapper';
+import {NonPublicInformation} from '../model/publish/non-public-information';
+import { NON_PUBLIC_FIELD_ID } from "../model/constants";
 
 @Component({
     selector: "product-certificates-tab",
@@ -41,8 +44,12 @@ import {Code} from '../model/publish/code';
 export class ProductCertificatesTabComponent implements OnInit {
 
     @Input() catalogueLine: CatalogueLine;
+    @Input() wrapper: ProductWrapper;
     @Input() disabled: boolean;
 
+    NON_PUBLIC_FIELD_ID = NON_PUBLIC_FIELD_ID;
+    private CERTIFICATE_NON_PUBLIC_FIELD_IDS = [NON_PUBLIC_FIELD_ID.OTHER_PRODUCT_CERTIFICATES,NON_PUBLIC_FIELD_ID.CIRCULAR_ECONOMY_CERTIFICATES]
+    nonPublicInformationFunctionalityEnabled = config.nonPublicInformationFunctionalityEnabled;
     addCertForm: FormGroup;
     countryFormControl: FormControl;
     config = myGlobals.config;
@@ -203,5 +210,42 @@ export class ProductCertificatesTabComponent implements OnInit {
                 this.arbitraryCertificates.push(cert);
             }
         });
+    }
+
+    onNonPublicClicked(fieldId, checked){
+        if(checked){
+            let nonPublicInformation:NonPublicInformation = new NonPublicInformation();
+            nonPublicInformation.id = fieldId;
+            this.wrapper.addNonPublicInformation(nonPublicInformation)
+        } else{
+            this.wrapper.removeNonPublicInformation(fieldId);
+        }
+    }
+
+    isNonPublicChecked(fieldId){
+        return this.wrapper.nonPublicInformation.findIndex(value => value.id === fieldId) !== -1;
+    }
+
+    markAllInformationAsNonPublic(checked){
+        if(checked){
+            this.CERTIFICATE_NON_PUBLIC_FIELD_IDS.forEach(fieldId => {
+                let nonPublicInformation:NonPublicInformation = new NonPublicInformation();
+                nonPublicInformation.id = fieldId;
+                this.wrapper.addNonPublicInformation(nonPublicInformation);
+            })
+        } else{
+            this.CERTIFICATE_NON_PUBLIC_FIELD_IDS.forEach(fieldId => {
+                this.wrapper.removeNonPublicInformation(fieldId);
+            })
+        }
+    }
+
+    isAllInformationMarkedAsNonPublic(){
+        for (let fieldId of this.CERTIFICATE_NON_PUBLIC_FIELD_IDS) {
+            if(this.wrapper.nonPublicInformation.findIndex(value => value.id === fieldId) === -1){
+                return false;
+            }
+        }
+        return true;
     }
 }

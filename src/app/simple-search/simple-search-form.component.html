@@ -948,7 +948,7 @@
                                                     <ng-container *ngIf="isLoggedIn">
                                                         <!-- Price is available -->
                                                         <ng-container
-                                                                *ngIf="result[product_price] && !checkEmpty(result[product_price])">
+                                                                *ngIf="result[product_price] && !checkEmpty(result[product_price]) && !result[product_price_hidden]">
                                                     <span class="badge badge-primary-nimble">
                                                         <ng-container *ngIf="result[product_base_quantity] > 1">
                                                             <span>{{roundToTwoDecimals(result[product_price][getCurrency(result[product_price])])}} {{getCurrency(result[product_price])}}</span>
@@ -962,7 +962,7 @@
                                                         </ng-container>
                                                         <!-- Price is not available -->
                                                         <span class="badge badge-warning"
-                                                              *ngIf="!result[product_price] || checkEmpty(result[product_price])"><span
+                                                              *ngIf="!result[product_price] || checkEmpty(result[product_price]) || result[product_price_hidden]"><span
                                                                 [innerHTML]="'Price: Upon request' | translate"></span></span><br/>
                                                         <!-- Shopping cart buttons -->
                                                         <ng-container

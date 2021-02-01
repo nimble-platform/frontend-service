@@ -30,6 +30,7 @@ import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
 import {FRAME_CONTRACT_DURATION_TERM_NAME} from '../../../common/constants';
 import {Delivery} from '../../../catalogue/model/publish/delivery';
 import {AmountUI} from '../../../catalogue/model/ui/amount-ui';
+import {NON_PUBLIC_FIELD_ID} from '../../../catalogue/model/constants';
 
 /**
  * Convenient getters (and some setters) for catalogue line, request for quotations and quotations.
@@ -80,7 +81,7 @@ export class NegotiationModelWrapper {
                 rfq.requestForQuotationLine[this.lineIndex].lineItem.paymentMeans.paymentMeansCode.value,
                 rfq.requestForQuotationLine[this.lineIndex].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure,
                 rfq.requestForQuotationLine[this.lineIndex].lineItem.deliveryTerms.deliveryLocation.address,
-                catalogueLine.priceHidden
+                catalogueLine.priceHidden || catalogueLine.nonPublicInformation.findIndex(value => value.id === NON_PUBLIC_FIELD_ID.DEFAULT_PRICE) !== -1
             );
             this.rfqDiscountPriceWrapper = new DiscountPriceWrapper(
                 catalogueLine.requiredItemLocationQuantity.price,
@@ -131,6 +132,9 @@ export class NegotiationModelWrapper {
      */
 
     public get lineDeliveryPeriod(): Quantity {
+        if(this.catalogueLine.nonPublicInformation.findIndex(value => value.id === NON_PUBLIC_FIELD_ID.DELIVERY_PERIOD) !== -1){
+            return new Quantity();
+        }
         return this.catalogueLine.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
     }
 
@@ -139,6 +143,9 @@ export class NegotiationModelWrapper {
     }
 
     public get lineWarranty(): Quantity {
+        if(this.catalogueLine.nonPublicInformation.findIndex(value => value.id === NON_PUBLIC_FIELD_ID.WARRANTY_PERIOD) !== -1){
+            return new Quantity();
+        }
         return this.catalogueLine.warrantyValidityPeriod.durationMeasure;
     }
 
@@ -148,7 +155,7 @@ export class NegotiationModelWrapper {
 
     public get lineIncotermsString(): string {
         let incoterms = this.catalogueLine.goodsItem.deliveryTerms.incoterms;
-        if (incoterms == null || incoterms == '') {
+        if (incoterms == null || incoterms == '' || this.catalogueLine.nonPublicInformation.findIndex(value => value.id === NON_PUBLIC_FIELD_ID.INCOTERMS) !== -1) {
             return 'None';
         }
         return incoterms;
@@ -171,15 +178,25 @@ export class NegotiationModelWrapper {
      */
 
     public get originalLineDeliveryPeriod(): Quantity {
-        return this.initialImmutableCatalogueLine.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
+        if(this.initialImmutableCatalogueLine.nonPublicInformation.findIndex(value => value.id === NON_PUBLIC_FIELD_ID.DELIVERY_PERIOD) === -1){
+            return this.initialImmutableCatalogueLine.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
+        }
+        return new Quantity();
+
     }
 
     public get originalLineWarranty(): Quantity {
-        return this.initialImmutableCatalogueLine.warrantyValidityPeriod.durationMeasure;
+        if(this.initialImmutableCatalogueLine.nonPublicInformation.findIndex(value => value.id === NON_PUBLIC_FIELD_ID.WARRANTY_PERIOD) === -1){
+            return this.initialImmutableCatalogueLine.warrantyValidityPeriod.durationMeasure;
+        }
+        return new Quantity();
     }
 
     public get originalLineIncoterms(): string {
-        return this.initialImmutableCatalogueLine.goodsItem.deliveryTerms.incoterms;
+        if(this.initialImmutableCatalogueLine.nonPublicInformation.findIndex(value => value.id === NON_PUBLIC_FIELD_ID.INCOTERMS) === -1){
+            return this.initialImmutableCatalogueLine.goodsItem.deliveryTerms.incoterms;
+        }
+        return null;
     }
 
     /**
@@ -187,7 +204,11 @@ export class NegotiationModelWrapper {
      */
 
     public get rfqPriceAmountUI(): AmountUI {
-        return this.rfqDiscountPriceWrapper.priceAmountUI;
+        if(this.initialImmutableCatalogueLine.nonPublicInformation.findIndex(value => value.id === NON_PUBLIC_FIELD_ID.DEFAULT_PRICE) === -1){
+            return this.rfqDiscountPriceWrapper.priceAmountUI;
+        }
+        return new AmountUI();
+
     }
 
     public get rfqPricePerItemString(): string {

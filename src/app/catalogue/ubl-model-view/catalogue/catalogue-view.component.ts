@@ -31,7 +31,7 @@ import { selectDescription, selectName } from '../../../common/utils';
 import { ItemProperty } from '../../model/publish/item-property';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs/Observable';
-import { CATALOGUE_LINE_SORT_OPTIONS, CATALOGUE_LINE_STATUS } from '../../model/constants';
+import {CATALOGUE_LINE_SORT_OPTIONS, CATALOGUE_LINE_STATUS, NON_PUBLIC_FIELD_ID} from '../../model/constants';
 import { Catalogue } from '../../model/publish/catalogue';
 import { CatalogueLine } from "../../model/publish/catalogue-line";
 import { TranslateService } from '@ngx-translate/core';
@@ -683,5 +683,9 @@ export class CatalogueViewComponent implements OnInit {
         }).catch(() => {
             this.productCatalogueRetrievalStatus.error('Failed to get product catalogues');
         });
+    }
+
+    isPricePublicInformation(catLine:CatalogueLine){
+        return !(catLine.nonPublicInformation && catLine.nonPublicInformation.findIndex(value => value.id === NON_PUBLIC_FIELD_ID.DEFAULT_PRICE) !== -1);
     }
 }

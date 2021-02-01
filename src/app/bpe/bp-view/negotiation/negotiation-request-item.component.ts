@@ -14,7 +14,7 @@
 
 import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {BPDataService} from '../bp-data-service';
-import {CURRENCIES} from '../../../catalogue/model/constants';
+import {CURRENCIES, NON_PUBLIC_FIELD_ID} from '../../../catalogue/model/constants';
 import {RequestForQuotation} from '../../../catalogue/model/publish/request-for-quotation';
 import {CallStatus} from '../../../common/call-status';
 import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
@@ -518,7 +518,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     }
 
     getQuantityUnit(): string {
-        if (!this.wrapper.catalogueLine) {
+        if (!this.wrapper.catalogueLine || this.wrapper.catalogueLine.nonPublicInformation.findIndex(value => value.id === NON_PUBLIC_FIELD_ID.DEFAULT_PRICE) !== -1) {
             return "";
         }
         return this.wrapper.catalogueLine.requiredItemLocationQuantity.price.baseQuantity.unitCode || "";
@@ -666,8 +666,10 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     }
 
     private initOrderQuantityFormControl(): void {
-        let step: number = this.wrapper.lineDiscountPriceWrapper.price.baseQuantity.value || 1;
-        let min: number = this.wrapper.catalogueLine.minimumOrderQuantity && this.wrapper.catalogueLine.minimumOrderQuantity.value ? this.wrapper.catalogueLine.minimumOrderQuantity.value : step;
+        let step: number = this.wrapper.lineDiscountPriceWrapper.price.baseQuantity.value && this.wrapper.catalogueLine.nonPublicInformation.findIndex(value => value.id === NON_PUBLIC_FIELD_ID.DEFAULT_PRICE) === -1
+            ? this.wrapper.lineDiscountPriceWrapper.price.baseQuantity.value : 1;
+        let min: number = this.wrapper.catalogueLine.minimumOrderQuantity && this.wrapper.catalogueLine.minimumOrderQuantity.value
+        && this.wrapper.catalogueLine.nonPublicInformation.findIndex(value => value.id === NON_PUBLIC_FIELD_ID.MINIMUM_ORDER_QUANTITY) === -1 ? this.wrapper.catalogueLine.minimumOrderQuantity.value : step;
         let validators: ValidatorFn[] = [stepValidator(step), Validators.required, Validators.min(min)];
         this.orderQuantityFormControl = new FormControl({value:this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.quantity.value, disabled: this.isReadOnly()}, validators);
         this.addToCurrentForm(ORDER_QUANTITY_NUMBER_FIELD_NAME, this.orderQuantityFormControl);

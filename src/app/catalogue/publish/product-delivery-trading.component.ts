@@ -15,7 +15,7 @@
  */
 
 import { Component, OnInit, Input } from "@angular/core";
-import { INCOTERMS } from "../model/constants";
+import {INCOTERMS, NON_PUBLIC_FIELD_ID} from '../model/constants';
 import { ProductWrapper } from "../../common/product-wrapper";
 import { Text } from "../model/publish/text";
 import { DEFAULT_LANGUAGE } from '../model/constants';
@@ -27,6 +27,8 @@ import {UserService} from '../../user-mgmt/user.service';
 import {Quantity} from '../model/publish/quantity';
 import {TermsAndConditionUtils} from '../model/model-util/terms-and-condition-utils';
 import {copy} from '../../common/utils';
+import {NonPublicInformation} from '../model/publish/non-public-information';
+import {config} from '../../globals';
 const PRODUCT_DELIVERY_TRADING_INPUT = 'product_delivery_trading';
 @Component({
     selector: "product-delivery-trading",
@@ -40,6 +42,9 @@ export class ProductDeliveryTradingComponent extends EmptyFormBase implements On
     @Input() companyNegotiationSettings: CompanyNegotiationSettings;
 
     INCOTERMS = INCOTERMS;
+    nonPublicInformationFunctionalityEnabled = config.nonPublicInformationFunctionalityEnabled
+    NON_PUBLIC_FIELD_ID = NON_PUBLIC_FIELD_ID;
+    private DELIVERY_TRADING_NON_PUBLIC_FIELD_IDS = [NON_PUBLIC_FIELD_ID.WARRANTY_PERIOD,NON_PUBLIC_FIELD_ID.INCOTERMS,NON_PUBLIC_FIELD_ID.DELIVERY_PERIOD,NON_PUBLIC_FIELD_ID.SPECIAL_TERMS,NON_PUBLIC_FIELD_ID.QUANTITY_PER_PACKAGE,NON_PUBLIC_FIELD_ID.PACKAGING_TYPE,NON_PUBLIC_FIELD_ID.CUSTOMIZABLE,NON_PUBLIC_FIELD_ID.SPARE_PART]
 
     warrantyPeriodRangeDefinition:string = null;
     deliveryPeriodRangeDefinition:string = null;
@@ -86,4 +91,40 @@ export class ProductDeliveryTradingComponent extends EmptyFormBase implements On
         }
     }
 
+    onNonPublicClicked(fieldId, checked){
+        if(checked){
+            let nonPublicInformation:NonPublicInformation = new NonPublicInformation();
+            nonPublicInformation.id = fieldId;
+            this.wrapper.addNonPublicInformation(nonPublicInformation)
+        } else{
+            this.wrapper.removeNonPublicInformation(fieldId);
+        }
+    }
+
+    isNonPublicChecked(fieldId){
+        return this.wrapper.nonPublicInformation.findIndex(value => value.id === fieldId) !== -1;
+    }
+
+    markAllInformationAsNonPublic(checked){
+        if(checked){
+            this.DELIVERY_TRADING_NON_PUBLIC_FIELD_IDS.forEach(fieldId => {
+                let nonPublicInformation:NonPublicInformation = new NonPublicInformation();
+                nonPublicInformation.id = fieldId;
+                this.wrapper.addNonPublicInformation(nonPublicInformation);
+            })
+        } else{
+            this.DELIVERY_TRADING_NON_PUBLIC_FIELD_IDS.forEach(fieldId => {
+                this.wrapper.removeNonPublicInformation(fieldId);
+            })
+        }
+    }
+
+    isAllInformationMarkedAsNonPublic(){
+        for (let fieldId of this.DELIVERY_TRADING_NON_PUBLIC_FIELD_IDS) {
+            if(this.wrapper.nonPublicInformation.findIndex(value => value.id === fieldId) === -1){
+                return false;
+            }
+        }
+        return true;
+    }
 }
