@@ -83,7 +83,7 @@ export class CatalogueService {
                         this.catalogueResponse = new CataloguePaginationResponse(null, 0, []);
                         return this.catalogueResponse;
                     } else {
-                        this.handleError(res.getBody());
+                        return this.handleError(res);
                     }
                 });
         })
