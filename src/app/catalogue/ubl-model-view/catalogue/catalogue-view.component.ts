@@ -126,7 +126,7 @@ export class CatalogueViewComponent implements OnInit {
     CATALOGUE_LINE_SORT_OPTIONS = CATALOGUE_LINE_SORT_OPTIONS;
     CATALOGUE_LINE_STATUS = CATALOGUE_LINE_STATUS;
 
-    private searchText: string = "";
+    public searchText: string = "";
 
     encodeURIComponent = encodeURIComponent;
 
@@ -274,16 +274,6 @@ export class CatalogueViewComponent implements OnInit {
         this.whiteBlackListPanelVisible = false;
         this.requestCatalogue();
     }
-
-    search = (text$: Observable<string>) =>
-        text$.pipe(
-            debounceTime(200),
-            distinctUntilChanged(),
-            switchMap(() => {
-                this.requestCatalogue();
-                return [];
-            })
-        );
 
     requestCatalogue(): void {
         const userId = this.cookieService.get("user_id");

@@ -26,8 +26,19 @@
             <div class="input-group form-group"
                  style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
                 <div class="col-3 mt-auto">
-                    <input class="form-control" type="text" [(ngModel)]="searchText" [ngbTypeahead]="search"
-                           [placeholder]="'Search ...' | translate">
+                    <form (ngSubmit)="requestCatalogue()" novalidate>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control"
+                                   [(ngModel)]="searchText" [disabled]="getCatalogueStatus.isLoading()"
+                                   name="searchTerm" [placeholder]="'Search ...' | translate">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-outline-secondary"
+                                        [disabled]="getCatalogueStatus.isLoading()">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
 
                 <div class="col-3">
