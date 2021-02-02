@@ -20,7 +20,7 @@
         </call-status>
     </div>
 
-    <div *ngIf="catalogueResponse && catalogueResponse.categoryNames.length > 0">
+    <div *ngIf="catalogueResponse && catalogueResponse.categoryUris.length > 0">
         <div>
             <!-- Product Filtering and Sorting-->
             <div class="input-group form-group"
@@ -44,7 +44,7 @@
                 <div class="col-3">
                     <select class="custom-select " [(ngModel)]="selectedCategory" (change)="requestCatalogue()">
                         <option [value]="'All'"><span [innerHTML]="'Category: All' | translate"></span></option>
-                        <option *ngFor="let type of categoryNames">{{type}}</option>
+                        <option *ngFor="let category of categoriesInSolrFormat" [value]="category.uri">{{selectPreferredNameForSolrCategory(category)}}</option>
                     </select>
                 </div>
                 <div class="col-2">
@@ -322,7 +322,7 @@
     </div>
 
     <div class="jumbotron"
-         *ngIf="catalogueResponse && catalogueResponse.categoryNames.length == 0 && cataloguesIds.length < 2">
+         *ngIf="catalogueResponse && catalogueResponse.categoryUris.length == 0 && cataloguesIds.length < 2">
         <h3><span [innerHTML]="'No published products / services.' | translate"></span></h3>
         <ng-container *ngIf="appComponent.checkRoles('catalogue')">
             <h5 class="mt-3">
@@ -338,7 +338,7 @@
         </ng-container>
     </div>
 
-    <div *ngIf="cataloguesIds.length > 1 && catalogueResponse && catalogueResponse.categoryNames.length == 0">
+    <div *ngIf="cataloguesIds.length > 1 && catalogueResponse && catalogueResponse.categoryUris.length == 0">
         <div class="row" style="background-color:#F2F2F2">
             <div *ngIf="cataloguesIds.length > 0" class="col-11 space-before">
                 <div class="row">

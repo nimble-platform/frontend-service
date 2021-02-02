@@ -140,6 +140,23 @@ export function selectPreferredName(cp: Category | Property, lang?: string): str
     return cp.preferredName[0].value;
 }
 
+export function selectPreferredNameForSolrCategory(category): string {
+    if (!category) {
+        return '';
+    }
+
+    let name = category.label[DEFAULT_LANGUAGE()];
+    if(name){
+        return name;
+    }
+    let englishName = category.label["en"];
+    if (englishName) {
+        return englishName;
+    }
+
+    return category.label[Object.keys(category.label)[0]];
+}
+
 // returns the all values for the default language of the browser
 // if there's no value for the default language of the browser, then returns english values if possible
 export function selectPreferredValues(texts: Text[], lang?: string): string[] {
@@ -527,6 +544,10 @@ export function currencyToString(currencyId: string): string {
 
 export function sortCategories(categories: Category[]): Category[] {
     return categories.sort((a, b) => selectPreferredName(a).localeCompare(selectPreferredName(b)));
+}
+
+export function sortSolrCategories(categories: any): any {
+    return categories.sort((a, b) => selectPreferredNameForSolrCategory(a).localeCompare(selectPreferredNameForSolrCategory(b)));
 }
 
 export function sortProperties(properties: Property[]): Property[] {

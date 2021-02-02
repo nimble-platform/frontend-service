@@ -19,7 +19,7 @@ export class CataloguePaginationResponse {
         public catalogueUuid: string = null, // uuid of the catalogue
         public size: number = null, // the number of catalogue lines which the catalogue contains
         public catalogueLines: CatalogueLine[] = null, // catalogue lines of the catalogue
-        public categoryNames: String[] = [], // names of the categories which are included in catalogue lines of the catalogue
+        public categoryUris: string[] = [], // uris of the categories which are included in catalogue lines of the catalogue
         public catalogueId: string = null, // identifier of the catalogue
         public priceHidden: boolean = false, // whether the price is hidden for the catalogue or not
         public permittedParties:string[] = [], // white list for the catalogue

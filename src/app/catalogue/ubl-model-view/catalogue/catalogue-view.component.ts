@@ -22,7 +22,7 @@ import { CallStatus } from "../../../common/call-status";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { PublishService } from "../../publish-and-aip.service";
 import { CategoryService } from "../../category/category.service";
-import {copy, isLogisticsService} from '../../../common/utils';
+import {copy, isLogisticsService, selectPreferredNameForSolrCategory, sortSolrCategories} from '../../../common/utils';
 import { UserService } from "../../../user-mgmt/user.service";
 import { CompanySettings } from "../../../user-mgmt/model/company-settings";
 import { CataloguePaginationResponse } from '../../model/publish/catalogue-pagination-response';
@@ -63,8 +63,8 @@ export class CatalogueViewComponent implements OnInit {
     // catalogue lines which are available to the user after search operation
     catalogueLinesArray: CatalogueLine[] = [];
 
-    // categories
-    categoryNames: any = [];
+    // categories of the catalogue lines retrieved from indexing-service
+    categoriesInSolrFormat: any = [];
     selectedCategory = "All";
 
     // necessary info for pagination
@@ -129,6 +129,7 @@ export class CatalogueViewComponent implements OnInit {
     public searchText: string = "";
 
     encodeURIComponent = encodeURIComponent;
+    selectPreferredNameForSolrCategory = selectPreferredNameForSolrCategory;
 
     constructor(private cookieService: CookieService,
         private publishService: PublishService,
@@ -169,7 +170,7 @@ export class CatalogueViewComponent implements OnInit {
             this.selectedCatalogue = this.catalogueUuid;
             this.catalogueLinesWRTTypes = [];
             this.catalogueLinesArray = [];
-            this.categoryNames = [];
+            this.categoriesInSolrFormat = [];
             this.selectedCategory = "All";
             this.productStatus = "All";
             this.collectionSize = 0;
@@ -304,10 +305,14 @@ export class CatalogueViewComponent implements OnInit {
             this.getCompanySettings(userId)
         ])
             .then(([catalogueResponse, settings]) => {
-                this.catalogueResponse = catalogueResponse;
-                this.settings = settings;
-                this.updateView();
-                this.getCatalogueStatus.callback(null, true);
+                this.categoryService.getCategories(catalogueResponse.categoryUris).then(categories => {
+                    this.catalogueResponse = catalogueResponse;
+                    this.settings = settings;
+                    this.updateView(categories.result);
+                    this.getCatalogueStatus.callback(null, true);
+                }).catch(error => {
+                    this.getCatalogueStatus.error("Failed to get catalogue", error);
+                })
             },
                 error => {
                     this.getCatalogueStatus.error("Failed to get catalogue", error);
@@ -324,9 +329,9 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     // called when the catalogue pagination response is retrieved to update the view
-    private updateView(): void {
+    private updateView(categoriesInSolrFormat = null): void {
         let len = this.catalogueResponse.catalogueLines.length;
-        this.categoryNames = this.catalogueResponse.categoryNames;
+        this.categoriesInSolrFormat = sortSolrCategories(categoriesInSolrFormat);
         this.collectionSize = this.catalogueResponse.size;
         this.catalogueLinesArray = [...this.catalogueResponse.catalogueLines];
         this.catalogueLinesWRTTypes = this.catalogueLinesArray;
