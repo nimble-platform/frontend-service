@@ -162,7 +162,8 @@
             <div class="form-group row">
                 <label class="col-2 col-form-label"><span [innerHTML]="'File' | translate"></span></label>
                 <div class="col-10">
-                    <file-input [disabled]="disabled" [presentationMode]="'edit'" (onSelectFile)="onSetCertificateFile($event)" (onRemovingEmit)="removedFile($event)" [languageEnabled]="true" [binaryObjects]="selectedFiles" [multiple]="false" required>
+                    <file-input [disabled]="disabled" [presentationMode]="'edit'" (onSelectFile)="onSetCertificateFile($event)" (onRemovingEmit)="removedFile($event)"
+                                [binaryObjects]="selectedFiles" [multiple]="false" required>
                     </file-input>
                 </div>
             </div>
