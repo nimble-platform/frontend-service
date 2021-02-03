@@ -820,6 +820,7 @@
     "KZ": "Kazakhstan",
     "LA": "Lao People's Democratic Republic",
     "Language": "Language",
+    "LANGUAGE_ID_REQUIRED": "Select a language id for each file",
     "Last Name": "Last Name",
     "Last Offer": "Last Offer",
     "LB": "Lebanon",

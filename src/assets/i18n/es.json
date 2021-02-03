@@ -820,6 +820,7 @@
     "KZ": "Kazajistán",
     "LA": "Laos",
     "Language": "Idioma",
+    "LANGUAGE_ID_REQUIRED": "Select a language id for each file (es)",
     "Last Name": "Apellido(s)",
     "Last Offer": "Última Oferta",
     "LB": "Líbano",

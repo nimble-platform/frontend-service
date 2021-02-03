@@ -216,10 +216,14 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-primary save-cert-btn" [disabled]="!addCertForm.valid || disabled" (click)="onCertificateDetailsProvided(addCertForm, d);">
-                <span><span [innerHTML]="'Add' | translate"></span>
-                </span>
-            </button>
+            <span [ngbTooltip]="getAddCertificateErrorMessages()" [placement]="'auto'" title="" style="margin-right: 0">
+                <button type="button" class="btn btn-primary save-cert-btn" [disabled]="!addCertForm.valid || !areLanguageIdsProvidedForFiles() || disabled" (click)="onCertificateDetailsProvided(addCertForm, d);">
+                    <span>
+                        <span [innerHTML]="'Add' | translate">
+                        </span>
+                    </span>
+                </button>
+            </span>
         </div>
     </form>
 </ng-template>

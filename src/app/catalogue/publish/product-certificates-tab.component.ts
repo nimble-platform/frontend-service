@@ -248,4 +248,17 @@ export class ProductCertificatesTabComponent implements OnInit {
         }
         return true;
     }
+
+    // methods for validation
+    areLanguageIdsProvidedForFiles(): boolean{
+        let fileWithNoLanguageId = this.selectedFiles.filter(value => !value.languageID).length;
+        return fileWithNoLanguageId === 0;
+    }
+
+    getAddCertificateErrorMessages(){
+        if(!this.areLanguageIdsProvidedForFiles()){
+            return this.translate.instant("LANGUAGE_ID_REQUIRED");
+        }
+    }
+    // the end of methods for validation
 }
