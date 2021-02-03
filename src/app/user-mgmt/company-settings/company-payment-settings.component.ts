@@ -23,7 +23,6 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {AppComponent} from '../../app.component';
 import {TranslateService} from '@ngx-translate/core';
 import {BPEService} from '../../bpe/bpe.service';
-import {copy} from '../../common/utils';
 
 
 @Component({
@@ -60,22 +59,8 @@ export class CompanyPaymentSettingsComponent implements OnInit {
                 if (response) {
                     // set stripe login link
                     this.stripeLoginLink = response;
-                    this.initCallStatus.callback(this.translateService.instant('Retrieved account login link'), true);
-                } else {
-                    console.log("here")
-                    // the company has an invalid stripe account id, therefore delete this account
-                    this.userService.deleteAccount(this.companySettings.tradeDetails.stripeAccountId).then(response => {
-                        if (response) {
-                            // reset company stripe account id
-                            this.companySettings.tradeDetails.stripeAccountId = null;
-                            // reset stripe login link
-                            this.stripeLoginLink = null;
-                            this.initCallStatus.callback(null, true);
-                        } else {
-                            this.initCallStatus.error(this.translateService.instant('Failed to initialize payment settings'));
-                        }
-                    })
                 }
+                this.initCallStatus.callback(this.translateService.instant('Retrieved account login link'), true);
             }).catch(() => {
                 this.initCallStatus.error('Failed to initialize payment settings')
             })
