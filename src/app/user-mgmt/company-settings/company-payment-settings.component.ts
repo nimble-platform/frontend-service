@@ -62,19 +62,19 @@ export class CompanyPaymentSettingsComponent implements OnInit {
                     this.stripeLoginLink = response;
                     this.initCallStatus.callback(this.translateService.instant('Retrieved account login link'), true);
                 } else {
-                    // the company has an invalid stripe account id, therefore
-                    // delete this account id from the company settings
-                    let companySettings = copy(this.companySettings);
-                    companySettings.tradeDetails.stripeAccountId = null;
-                    this.userService.putSettingsForParty(companySettings, this.companySettings.companyID).then(() => {
-                        // reset company account id
-                        this.companySettings.tradeDetails.stripeAccountId = null;
-                        // reset stripe login link
-                        this.stripeLoginLink = null;
-                        this.initCallStatus.callback(null, true);
-                    }).catch(error => {
-                        this.initCallStatus.error(this.translateService.instant('Failed to initialize payment settings'));
-                    });
+                    console.log("here")
+                    // the company has an invalid stripe account id, therefore delete this account
+                    this.userService.deleteAccount(this.companySettings.tradeDetails.stripeAccountId).then(response => {
+                        if (response) {
+                            // reset company stripe account id
+                            this.companySettings.tradeDetails.stripeAccountId = null;
+                            // reset stripe login link
+                            this.stripeLoginLink = null;
+                            this.initCallStatus.callback(null, true);
+                        } else {
+                            this.initCallStatus.error(this.translateService.instant('Failed to initialize payment settings'));
+                        }
+                    })
                 }
             }).catch(() => {
                 this.initCallStatus.error('Failed to initialize payment settings')
