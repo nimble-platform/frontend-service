@@ -68,6 +68,8 @@ export class FileInputComponent implements OnInit {
                 this.fileExistsWithDefaultLanguage = true;
             }
         }
+        // initialize the selected language for new files
+        this.setSelectedLanguage()
     }
 
     onChooseFile(event: any): void {
@@ -85,6 +87,7 @@ export class FileInputComponent implements OnInit {
                     const binaryObject = new BinaryObject(base64String, file.type, file.name, "", self.selectedLanguage);
                     self.binaryObjects.push(binaryObject);
                     self.onSelectFile.emit(binaryObject);
+                    self.setSelectedLanguage()
                 };
                 reader.readAsDataURL(file);
             }
@@ -99,6 +102,7 @@ export class FileInputComponent implements OnInit {
         if (removed.length > 0) {
             this.onClearFile.emit(removed[0]);
             this.onRemovingEmit.emit(true);
+            this.setSelectedLanguage()
         }
     }
 
@@ -136,6 +140,44 @@ export class FileInputComponent implements OnInit {
 
     isShowingInput(): boolean {
         return this.presentationMode === 'edit'
-            && (this.multiple || this.binaryObjects.length === 0);
+            && (this.multiple || this.binaryObjects.length === 0) && (this.languages.length !== this.binaryObjects.length);
+    }
+
+    /**
+     * Method to find the language ids which are not used for the file names
+     * */
+    getAvailableLanguagesForFiles(){
+        let languageIds = this.binaryObjects.map(value => value.languageID);
+        return this.languages.filter(languageId => languageIds.indexOf(languageId) == -1);
+    }
+
+    /**
+     * Returns the available languages for the given file language
+     * */
+    getLanguagesForFile(fileLanguage:string){
+        let languageIds = this.getAvailableLanguagesForFiles();
+        if(fileLanguage && languageIds.indexOf(fileLanguage) === -1){
+            languageIds.push(fileLanguage);
+        }
+        return languageIds;
+    }
+
+    /**
+     * Sets the selected language based on the available and default languages
+     * */
+    setSelectedLanguage(){
+        let availableLanguages = this.getAvailableLanguagesForFiles();
+        this.selectedLanguage = availableLanguages[0];
+        if(availableLanguages.indexOf(this.activeLanguage) !== -1){
+            this.selectedLanguage = this.activeLanguage;
+        }
+    }
+
+    /**
+     * Updates the selected language for new files when a language is selected for a file
+     * */
+    onLanguageIdSelected(){
+        let availableLanguages = this.getAvailableLanguagesForFiles();
+        this.selectedLanguage = availableLanguages[0];
     }
 }
