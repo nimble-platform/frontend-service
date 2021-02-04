@@ -25,7 +25,7 @@ export const data_channel_endpoint = `${base_path}/data-channel`;
 export const data_aggregation_endpoint = `${base_path}/data-aggregation`;
 export const trust_service_endpoint = `${base_path}/trust`;
 export const indexing_service_endpoint = `${base_path}/index`;
-export const rocketChatEndpoint = `https://efactory-security-portal.salzburgresearch.at/chat`;
+export const rocketChatEndpoint = `https://efpf-security-portal.salzburgresearch.at/chat`;
 export const logstash_endpoint = `${base_path}/logstash`;
 export const kibana_endpoint = `${base_path}/kibana/app/kibana`;
 export const delegate_endpoint = `${base_path}:9265`;
@@ -33,7 +33,7 @@ export const agent_mgmt_endpoint = `http://159.69.214.42/agents`;
 export const collaboration_endpoint = `${collab_path}`;
 export const certificate_of_origin_endpoint = `http://161.156.70.125:7695`;
 export const legislation_endpoint = `http://77.230.101.223/nimsys`;
-export const eFactory_indexing_endpoint = "https://efactory-security-portal.salzburgresearch.at/api/index";
+export const eFactory_indexing_endpoint = "https://efpf-security-portal.salzburgresearch.at/api/index";
 
 // Explorative Search endpoints
 
